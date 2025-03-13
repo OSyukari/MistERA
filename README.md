@@ -1,6 +1,7 @@
 # MistEra Build
 
-迷雾Era的试玩build，直接运行exe即可。
+迷雾Era的试玩build。请直接去Release页下载最新的Package（已经build好的压缩包）
+Repo中只保存了代码和Json文件，并未包括dll等（会导致仓库容量无法抑制地膨胀）
 
 默认分辨率为1920x1017（1080p窗口）
 
