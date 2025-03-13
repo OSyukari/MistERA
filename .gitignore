@@ -11,7 +11,7 @@
 !README.md
 !ci/*
 
-!Assets
+!Assets/
 Assets/*
 !Assets/Data
 !Assets/Scripts
@@ -21,7 +21,7 @@ Assets/*
 /*/*.txt
 /*/*.unity
 /*/*.png
-*.meta
+/*.meta
 /*/*.prefab
 /*/*.xlsx
 /*/*.asset
