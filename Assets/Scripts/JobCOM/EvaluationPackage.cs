@@ -1,0 +1,1429 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using System.Linq;
+using Newtonsoft.Json;
+using static scr_panel_COMmanager;
+
+[System.Serializable]
+public enum ParticipantType { 
+    doer,
+    receiver,
+    master,
+    observer
+}
+
+
+[System.Serializable]
+public class EvaluationPackage
+{
+    public bool skipLogging = false;
+    [SerializeField][JsonProperty] private int doerRef = -1;
+    private Character_Trainable doerCache = null;
+    [JsonIgnore] public Character_Trainable Doer { get { 
+            if (doerCache == null && doerRef > -1) doerCache = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
+            return doerCache;
+        } }
+
+    [SerializeField][JsonProperty] private int receiverRef = -1;
+    private Character_Trainable receiverCache = null;
+
+    [JsonIgnore] public Character_Trainable Receiver
+    {
+        get
+        {
+            if (receiverCache == null && receiverRef > -1) receiverCache = scr_System_CampaignManager.current.FindInstanceByID(receiverRef);
+            return receiverCache;
+        }
+    }
+
+    private List<Character_Trainable> additionalActorsCache = null;
+    private List<Character_Trainable> additionalActors{get
+        {
+            if (additionalActorRefs == null) return new List<Character_Trainable>();
+            if (additionalActorsCache == null)
+            {
+                additionalActorsCache = new List<Character_Trainable>();
+                foreach(var i in additionalActorRefs) additionalActorsCache.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
+            }
+            return additionalActorsCache;
+        }
+    }
+    [SerializeField][JsonProperty] private List<int> additionalActorRefs = new List<int>();
+
+    [JsonIgnore] public Character_Trainable Master { get { return (Package != null ?  Package.Master : null); } }
+
+    [JsonIgnore]
+     public AP_Priority EP_Priority
+    {
+        get
+        {
+            bool isplayerPacakge = this.Actors.Find(x => x.RefID == 0) != null;
+            bool isInteraction = this.ReceiverTargetTag.Contains("interaction") && !this.ReceiverTargetTag.Contains("NonInteraction");
+            bool isSpecial = this.ReceiverTargetTag.Contains("initSex") || this.ReceiverTargetTag.Contains("endSex");
+
+            if (isplayerPacakge)
+            {
+                if (isSpecial) return AP_Priority.player_interaction_special;
+                else return AP_Priority.player_interaction;
+            }
+            else
+            {
+                if (isSpecial) return AP_Priority.npc_interaction_special;
+                else if (isInteraction) return AP_Priority.npc_interaction;
+                else return AP_Priority.npc_action;
+            }
+        }
+    }
+
+    public override string ToString()
+    {
+        return "["+(this.Package == null ? "?" : this.Package.Duration) +"]"+ (this.Doer == null ? "null" : this.Doer.FirstName) + "|" + (this.targetCOM == null ? "notCOM" : this.targetCOM.DisplayName(this.VariantID)) + "|" + (this.Receiver == null ? "null" : this.Receiver.FirstName);
+    }
+
+    protected List<Character_Trainable> actors = null;
+    [JsonIgnore] public List<Character_Trainable> Actors { get { 
+            if (actors == null)
+            {
+                actors = new List<Character_Trainable>();
+
+                if (Doer != null) actors.Add(Doer);
+                if (Receiver != null) actors.Add(Receiver);
+
+                if (additionalActors != null)
+                {
+                    actors.AddRange(additionalActors);
+                }
+
+                actors = actors.Distinct().ToList();
+                actors.Remove(null);
+            }
+            return actors; } }
+
+    [SerializeField][JsonProperty] protected int requestRate, attitudeRate_pos_doer, attitudeRate_neg_doer;
+    [SerializeField][JsonProperty] protected int responseRate, attitudeRate_pos_receiver, attitudeRate_neg_receiver;
+
+    [JsonIgnore] public int ResponseRate { get { return responseRate; } }
+    [JsonIgnore] public int RequestRate { get { return requestRate; } }
+
+    public List<string> GetActorEPTags(int refID)
+    {
+        if (this.DoerRef == refID) return this.DoerTargetTag;
+        else if (this.ReceiverRef == refID) return this.ReceiverTargetTag;
+        else return new List<string>();
+    }
+
+    [JsonIgnore]
+    public Memory_Attitude ReceiverAttitude
+    {
+        get
+        {
+            return attitude_receiver;
+        }
+    }
+
+    [JsonIgnore]
+    public Memory_Attitude DoerAttitude
+    {
+        get{ return attitude_doer; }
+    }
+
+    [SerializeField][JsonProperty] List<string> extraDoerTags = new List<string>();
+    [SerializeField][JsonProperty] List<string> extraCOMTags = new List<string>();
+    [SerializeField][JsonProperty] List<string> extraReceiverTags = new List<string>();
+
+    [JsonIgnore] public List<string> DoerSelfTag { get
+        {
+            if (this.receiverRef == -1 || receiverRef == doerRef) return DoerTargetTag;
+            else return extraDoerTags.Distinct().ToList(); ;
+        } }
+    [JsonIgnore] public List<string> ReceiverTargetTag
+    {
+        get
+        {
+            return Enumerable.Concat(extraCOMTags, extraReceiverTags).Distinct().ToList();
+        }
+    }
+    [JsonIgnore] public List<string> DoerTargetTag
+    {
+        get
+        {
+            return Enumerable.Concat(extraCOMTags, extraDoerTags).Distinct().ToList();
+        }
+    }
+    [JsonIgnore] public List<string> ReceiverSelfTag { get
+        {
+            return extraReceiverTags.Distinct().ToList(); ;
+        } }
+
+    //MessageLog log;
+
+    [JsonIgnore] public COM targetCOM { get { return Package == null ? null : Package.targetCOM; } }
+    //bool isValid;
+
+    [JsonIgnore] public Job job { get { return p.job; } }
+    Job_Sex_Group jobSex { get { return job as Job_Sex_Group; } }
+    ActionPackage p;
+    ActionPackage_Sex pSex { get { return p as ActionPackage_Sex; } }
+
+    [JsonIgnore] public int DoerRef { get { return doerRef; } }
+    [JsonIgnore] public int ReceiverRef { get { return receiverRef; } }
+    [JsonIgnore] public ActionPackage Package { get { return p; } }
+
+    public Memory_Attitude GetActorAttitude(int actorRef)
+    {
+        if (Doer != null && Doer.RefID == actorRef) return DoerAttitude;
+        else if (Receiver != null && Receiver.RefID == actorRef) return ReceiverAttitude;
+        else return Memory_Attitude.None;
+    }
+    [JsonIgnore] public int VariantID { get { return Package.COMVariantID; } }
+
+    public EvaluationPackage()
+    {
+
+    }
+    public EvaluationPackage( Character_Trainable doer, Character_Trainable receiver, COM targetCOM, ActionPackage p, List<Character_Trainable> extraActors = null)
+    {
+        //isValid = true;
+
+        if (doer != null)
+        {
+            this.doerRef = doer.RefID;
+            this.doerCache = doer;
+        }
+        //else isValid = false;
+
+        if (receiver != null)
+        {
+            this.receiverCache = receiver;
+            this.receiverRef = receiver.RefID;
+        }
+        //this.job = p.job;
+        this.p = p;
+
+       
+
+        if (extraActors != null)
+        {
+            foreach(var i in extraActors) additionalActorRefs.Add(i.RefID);
+            this.additionalActorsCache = extraActors;
+        }
+        //result_experiences = new Dictionary<int, Dictionary<string, int>>();
+    }
+
+    public bool isDoer(Character_Trainable c) { return Doer == c; }
+    public bool isReceiver(Character_Trainable c) { return Receiver == c; }
+
+    // Validation Codes
+
+    public void AddExtraCOMTags(string s)
+    {
+        this.extraCOMTags.Add(s);
+    }
+
+    public bool Evaluate()
+    {
+        this.tooltip.Clear();
+
+        if (Doer.Stats.isConsciousnessUnconscious || Doer.Stats.isConsciousnessReduced) foreach (var str in Doer.Stats.Consciousness.Tags) AddModifier(Doer.RefID, str, 0);
+        extraDoerTags = new List<string>();
+        extraCOMTags = new List<string>();
+        extraReceiverTags = new List<string>();
+        Utility.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+
+        CalculateRequestRate();
+        CalculateResponseRate();
+
+        return true;
+    }
+
+
+    /// <summary>
+    /// Rate at which doer is likely to proceed with the command
+    /// </summary>
+    /// <param name="requestRate"></param>
+    protected void CalculateRequestRate(bool isThreat = false)
+    {
+
+        /*
+        int _requestRate = 100;
+
+        if (doer.RefID == 0) _requestRate = 100;
+        else if (receiver == null || doer == receiver) _requestRate = 100;
+
+        if (targetCOM.requirements.requirement.req_Receivers.requireConscious && doer.Status.isConsciousnessUnconscious) _requestRate = 0;
+
+        if (Package.masterRef >= 0 && doer.RefID != Package.masterRef)
+        {  // meaning master present // calculate willingness mod
+
+        }
+
+        if (receiver != null && doer != receiver)
+        {   // check doer willingness to do on receiver
+
+
+
+        }
+        requestRate = _requestRate;
+            */
+
+        int r1, r2;
+        CalculateWillingness(true, Doer, p.Master, out r1, isThreat);
+        CalculateWillingness(true, Doer, Receiver, out r2, isThreat);
+        requestRate = Math.Max(r1, r2);
+        if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Request rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + "] Doer->Master[" + r1 + "] Doer->Receiver[" + r2 + "] final[" + requestRate + "]");
+        //if (requestRate == 95 && (p.Master == null || p.Master == doer)) requestRate = 100;  // if no master involved, skip)
+
+        int n1, n2, p1, p2;
+
+
+        var a = Doer;
+        a = Receiver;
+        CalculateAttitudeRate(doerCache, Package.Master, out n1, out p1);
+        CalculateAttitudeRate(doerCache, receiverCache, out n2, out p2);
+
+        attitudeRate_neg_doer = Math.Min(n1, n2);
+        attitudeRate_pos_doer = Math.Min(p1, p2);
+    }
+
+    /// <summary>
+    /// Calculate the willingness for 'self' to do targetCOM under influence of 'target'.<br/>
+    /// Target can be nulla
+    /// </summary>
+    /// <param name="self"></param>
+    /// <param name="target"></param>
+    /// <param name="rateValue"></param>
+    /// <param name="isThreat"></param>
+    protected void CalculateWillingness(bool isDoer, Character_Trainable self, Character_Trainable target, out int rateValue , bool isThreat = false)
+    {
+        int _responseRate = 100;
+
+        if (self == null || self.RefID == 0 || target == null || target.RefID == self.RefID)
+        {
+            rateValue = 100;
+            return;
+        }
+
+
+
+        /////////////////////////////////////////////////////////
+
+        RelationshipManager.Character_Relationship rel = self.Relationships.FindRelationshipWith(target);
+
+        float baseValue = targetCOM.baseAcceptanceValue;
+       // float diceMax = 20;
+        //float diceMin = 0;
+        float average = (20 + 0) / 2;
+
+        if (rel != null)
+        {
+            AddModifier(self.RefID, "Obedience", ((int)rel.Obedience(null) - (int)RelationshipObedienceType.Normal) * 5);
+            baseValue -= ((int)rel.Obedience(null) - (int)RelationshipObedienceType.Normal) * 5;
+        }
+
+        if (self.Stats.Mood != null && Math.Abs( self.Stats.Mood.Severity) >= 1)
+        {
+            AddModifier(self.RefID, "Mood", (int)self.Stats.Mood.Severity * 5);
+            baseValue -= (int)self.Stats.Mood.Severity;
+        }
+
+        //Debug.Log("Dice expectedAverage[" + (int) ((diceMax + diceMin) / 2) + "] + ["+ (isThreat ? (rel.Trust + rel.Fear) / 10 : rel.Trust / 10) + "]");
+
+        if (extraCOMTags.Contains("safe") && rel != null)
+        {
+            AddModifier(self.RefID, "[Safe]", 2);
+            baseValue -= 2;
+        }
+
+
+        if(self.Stats.Lust != null)
+        {
+            if (extraCOMTags.Contains("sex") || extraCOMTags.Contains("service"))
+            {
+                if (self.Stats.Lust.Severity > 0)
+                {
+                    AddModifier(self.RefID, "[Lust]", 0);
+                    baseValue *= (0.5f * self.Stats.Lust.Severity);
+                }
+                else baseValue *= (1 + 1.5f * (Math.Abs(self.Stats.Lust.Severity) + 1));
+                if (rel != null) average += rel.Desire / 10;
+            }
+            else if (extraCOMTags.Contains("massage"))
+            {
+                if (self.Stats.Lust.Severity > 0)
+                {
+                    AddModifier(self.RefID, "[Lust]", 0);
+                    baseValue *= (0.5f * self.Stats.Lust.Severity);
+                }
+                else baseValue *= (1 + 1.0f * (Math.Abs(self.Stats.Lust.Severity) + 1));
+                if (rel != null) average += rel.Desire / 10;
+            }
+            else if (extraCOMTags.Contains("touch"))
+            {
+                if (self.Stats.Lust.Severity > 0)
+                {
+                    AddModifier(self.RefID, "[Lust]", 0);
+                    baseValue *= (0.5f * self.Stats.Lust.Severity);
+                }
+                else baseValue *= (1 + 0.5f * (Math.Abs(self.Stats.Lust.Severity) + 1));
+                if (rel != null) average += rel.Desire / 10;
+            }
+        }
+        
+
+        // Get Recent Interaction Memory Adjustment
+        if (rel != null) average += self.Memory.GetMemoryAdjustment(modifiers, rel.TargetID, targetCOM, extraCOMTags);
+
+        // If self is in party with target chara, add bonus
+        if (target != null && target.RefID == 0 && scr_System_CampaignManager.current.PlayerPartyMembers.Contains(self.RefID))
+        {   // party members shouldnt include player himself right ?
+            AddModifier(self.RefID, "In same party!", 2);
+            baseValue -= 2;
+        }
+
+        if (extraCOMTags.Contains("job") && p.job.FactionOwner != null && self.FactionManager.Factions.Contains(p.job.FactionOwner) && (target == null || target.FactionManager.Factions.Contains(p.job.FactionOwner)))
+        {
+            AddModifier(self.RefID, "Helping Work", 2);
+            baseValue -= 2;
+        }
+        if (self.isAnimal)
+        {
+            AddModifier(self.RefID, "is Animal", 10);
+            baseValue -= 10;
+        }
+        if (self.isMale && target != null && target.isFemale)
+        {
+            AddModifier(self.RefID, "horny", 10);
+            baseValue -= 10;
+        }
+
+        float consciousness = self.Stats.Consciousness.Severity;
+        if (self.isTimeStopped)
+        {
+            AddModifier(self.RefID, "Timestopped!", 0);
+
+            if (self == Receiver) _responseRate = 100;
+            else _responseRate = 0;
+        }
+        else if (self.Climaxing)
+        {
+            AddModifier(self.RefID, "Climaxing!", 0);
+
+            if (self == Receiver) _responseRate = 100;
+            else _responseRate = 0;
+        }
+        else if (self.Stats.isConsciousnessUnconscious)
+        {
+            AddModifier(self.RefID, "%%comLogs_causes_unconscious%%", 0);
+
+            if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = 100;
+            else if (self == Doer && !targetCOM.requirements.requirement.req_Doers.requireConscious) _responseRate = 100;
+            else _responseRate = 0;
+        }
+        else if (self.Stats.isConsciousnessReduced)
+        {
+            int consciousPenalty = Math.Clamp((100 - (int)consciousness * 100) * 10, 0, 100);
+            // if unconscious return success rate max
+            //else
+            AddModifier(self.RefID, "%%comLogs_causes_reduced_consciousness%%", 0);
+            if (50 + 5 * (average - baseValue) + consciousPenalty >= 100)
+            {
+                if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = 100;
+                else if (self == Doer && !targetCOM.requirements.requirement.req_Doers.requireConscious) _responseRate = 100;
+                else _responseRate = 0;
+            }
+            else
+            {
+                if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
+                else if (self == Doer && !targetCOM.requirements.requirement.req_Doers.requireConscious) _responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
+                else _responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) - consciousPenalty, 5, 95);
+
+            }
+        }else if (self.isRestrained || self.isImprisoned)
+        {
+            AddModifier(self.RefID, "Restrained", 0);
+            _responseRate = 100;
+        }
+        else
+        {
+            int consciousPenalty = Math.Clamp((100 - (int)consciousness * 100) * 10, 0, 100);
+           //  if unconscious return success rate max
+            //else
+
+            _responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
+        }
+
+        if (false && extraCOMTags.Contains("debug_refuse") && self.RefID > 0)
+        {
+            AddModifier(self.RefID, "Debug Refusal", 0);
+            _responseRate = 0;
+        }
+        
+        rateValue = _responseRate;
+    } 
+
+
+    //Dictionary<int, Dictionary<string, int>> result_experiences;
+    //Dictionary<int, Dictionary<string, int>> result_stats;
+    /// <summary>
+    /// Rate at which receiver is likely to agree to command<br/>
+    /// Modifies responserate<br/>
+    /// how is this different from asking doer ?
+    /// </summary>
+    /// <param name="responseRate"></param>
+    /// <param name="isThreat"></param>
+    protected void CalculateResponseRate(bool isThreat = false)
+    {
+
+        if (Receiver != null)
+        {
+            int r1, r2;
+            //CalculateAcceptance(ref receiver, ref p.Master, out r1, isThreat);
+            //CalculateAcceptance(ref receiver, ref doer, out r2, isThreat);
+            CalculateWillingness(false,Receiver,  p.Master, out r1, isThreat);
+            CalculateWillingness(false,Receiver, Doer, out r2, isThreat);
+            responseRate = Math.Max(r1, r2);
+            if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Response rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + "] Receiver->Master[" + r1 + "] Receiver->Doer[" + r2 + "] final["+ responseRate + "]");
+
+        }
+        else
+        {
+            responseRate = 100;
+        }
+
+        var a = Doer;
+        a = Receiver;
+        int p1, p2, n1, n2;
+        CalculateAttitudeRate( receiverCache,  doerCache, out n1, out p1);
+        CalculateAttitudeRate( receiverCache,  Package.Master, out n2, out p2);
+
+        attitudeRate_neg_receiver = Math.Min(n1, n2);
+        attitudeRate_pos_receiver = Math.Min(p1, p2);
+
+
+    }
+
+    protected void CalculateAcceptance(ref Character_Trainable self, ref Character_Trainable target, out int rateValue, bool isThreat = false)
+    {
+        if (target == null || self == target)
+        {
+            rateValue = 100;
+        }
+        else
+        {
+            RelationshipManager.Character_Relationship rel = self.Relationships.FindRelationshipWith(target.RefID);
+
+            float baseValue = targetCOM.baseAcceptanceValue;
+            float diceMax = 20 + (self.Stats.Mood.Severity >= 0 ? rel.Goodwill / 10 : rel.Goodwill / 20);
+            float diceMin = 0 - (self.Stats.Mood.Severity <= 0 ? rel.Badwill / 10 : rel.Badwill / 20);
+            float average = ((diceMax + diceMin) / 2) + (isThreat ? (rel.Trust + rel.Fear) / 10 : rel.Trust / 10);
+            //Debug.Log("Dice expectedAverage[" + (int) ((diceMax + diceMin) / 2) + "] + ["+ (isThreat ? (rel.Trust + rel.Fear) / 10 : rel.Trust / 10) + "]");
+
+
+            if(self.Stats.Lust != null)
+            {
+                if (ReceiverTargetTag.Contains("sex"))
+                {
+                    if (self.Stats.Lust.Severity > 0)
+                    {
+                        AddModifier(self.RefID, "[Lust]", 0);
+                        baseValue *= (0.5f * self.Stats.Lust.Severity);
+                    }
+                    else baseValue *= (1 + 1.5f * (Math.Abs(self.Stats.Lust.Severity) + 1));
+                    average += rel.Desire / 10;
+                }
+                else if (ReceiverTargetTag.Contains("massage"))
+                {
+                    if (self.Stats.Lust.Severity > 0)
+                    {
+                        AddModifier(self.RefID, "[Lust]", 0);
+                        baseValue *= (0.5f * self.Stats.Lust.Severity);
+                    }
+                    else baseValue *= (1 + 1.0f * (Math.Abs(self.Stats.Lust.Severity) + 1));
+                    average += rel.Desire / 10;
+                }
+                else if (ReceiverTargetTag.Contains("touch"))
+                {
+                    if (self.Stats.Lust.Severity > 0)
+                    {
+                        AddModifier(self.RefID, "[Lust]", 0);
+                        baseValue *= (0.5f * self.Stats.Lust.Severity);
+                    }
+                    else baseValue *= (1 + 0.5f * (Math.Abs(self.Stats.Lust.Severity) + 1));
+                    average += rel.Desire / 10;
+                }
+            }
+            
+
+            if (rel != null) average += self.Memory.GetMemoryAdjustment(modifiers, rel.TargetID, targetCOM, DoerTargetTag);
+
+            float consciousness = self.Stats.Consciousness.Severity;
+            if (scr_System_Time.current.TimeStop && !self.CanActInTimeStop)
+            {
+                AddModifier(self.RefID, "Timestop!", 0);
+                rateValue = 100;
+            }
+            else if (self.Stats.isConsciousnessUnconscious)
+            {
+                AddModifier(self.RefID, "%%comLogs_causes_unconscious%%", 0);
+                rateValue = 100;
+            }
+            else if (self.Stats.isConsciousnessReduced)
+            {
+                int consciousPenalty = Math.Clamp((100 - (int)consciousness * 100) * 10, 0, 100);
+                // if unconscious return success rate max
+                //else
+                AddModifier(self.RefID, "%%comLogs_causes_reduced_consciousness%%", 0);
+                if (50 + 5 * (average - baseValue) + consciousPenalty >= 100)
+                {
+                    rateValue = 100;
+                }
+                else
+                {
+                    rateValue = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
+                }
+            }
+            else
+            {
+                int consciousPenalty = Math.Clamp((100 - (int)consciousness * 100) * 10, 0, 100);
+                // if unconscious return success rate max
+                //else
+                rateValue = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Response rate 25% neg 50% neutral 25% pos<br/>
+    /// return the attitude of 1st actor toward 2nd actor
+    /// </summary>
+    /// <param name="receiver"></param>
+    /// <param name="rel"></param>
+    /// <param name="targetCOM"></param>
+    /// <param name="isPositive"></param>
+    /// <returns></returns>
+    protected void CalculateAttitudeRate(Character_Trainable self, Character_Trainable target, out int attitudeRate_neg, out int attitudeRate_pos)
+    {
+        if (self == null)
+        {
+            attitudeRate_neg = 0;
+            attitudeRate_pos = 0;
+            return;
+        }
+        else if (target == null || self == target || self.RefID == target.RefID)
+        {        //if (receiver == null || doer.RefID == receiver.RefID)
+            attitudeRate_neg = 0;
+            attitudeRate_pos = 0;
+            return;
+        }
+        else if (scr_System_Time.current.TimeStop && !self.CanActInTimeStop)
+        {
+            attitudeRate_neg = 100;
+            attitudeRate_pos = 0;
+            return;
+        }
+        else if (self.Stats.isConsciousnessUnconscious)
+        {        //else if (receiver.Status.isConsciousnessUnconscious )
+            attitudeRate_neg = 100;
+            attitudeRate_pos = 0;
+            return;
+        }
+        else
+        {
+            RelationshipManager.Character_Relationship rel = self.Relationships.FindRelationshipWith(target.RefID);
+
+            if (rel == null) Debug.LogError("EVP relationship null");
+
+            float average = 50f;
+            float consciousness = self.Stats.Consciousness.Severity;
+
+            if (self.Stats.Mood !=null && self.Stats.Mood.Severity > 0) average += (rel.Goodwill / 10 - rel.Badwill / 20);
+            else if (self.Stats.Mood != null && self.Stats.Mood.Severity < 0) average += (rel.Goodwill / 20 - rel.Badwill / 10);
+            else average += (rel.Goodwill / 20 - rel.Badwill / 20);
+
+            // lower consciousness (100 to 0) higher is penalty (0 to 100)
+            if (self.Stats.isConsciousnessReduced) average -= Math.Clamp((100 - (int)consciousness * 100), 0, 100);
+
+            attitudeRate_pos = (int)Math.Clamp(25 + (average - 50f), 5, 100);
+            attitudeRate_neg = (int)Math.Clamp(25 + (50f - average), 5, 100);
+        }
+    }
+
+
+
+
+    /////////////////////
+// Execution Codes
+
+    /// <summary>
+    /// Called on every AP Request().
+    /// Request data are stored in EP and on subsequent calls by AP.Execution() will skip the Request() part
+    /// </summary>
+    /// <returns></returns>
+    public bool Request()
+    {
+        //result_stats = new Dictionary<int, Dictionary<string, int>>();
+        //result_experiences = new Dictionary<int, Dictionary<string, int>>();
+
+        return TryRespond(false);
+    }
+
+    /// <summary>
+    /// Cleared on Execute() so no need to store any of it. But the property must 
+    /// </summary>
+    [JsonProperty] public ExperienceLog m = new ExperienceLog();
+
+    public void Execute()
+    {
+        //if (receiver == null || doer == receiver) receiver = doer;
+
+        targetCOM.ApplyCost(this);
+
+        // clear previous tags, cuz some command have built-in random part selection we dont want both part end up in tags
+        if (Doer.Stats.isConsciousnessUnconscious || Doer.Stats.isConsciousnessReduced) foreach (var str in Doer.Stats.Consciousness.Tags) AddModifier(Doer.RefID, str, 0);
+        extraDoerTags = new List<string>();
+        extraCOMTags = new List<string>();
+        extraReceiverTags = new List<string>();
+        Utility.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+
+        if (response == Memory_Response.None)
+        {// doer unwilling
+            Doer.Memory.AddEntry_Request(DoerSelfTag, ReceiverTargetTag, p.Master != null ? p.masterRef : (Receiver != null ? Receiver.RefID : Doer.RefID), targetCOM, VariantID, true, null, attitude_doer, Memory_Response.Refuse, Doer.Stats.MemoryLength, p.masterRef);
+        }
+        else if (response == Memory_Response.Refuse)
+        {
+            Doer.Memory.AddEntry_Request(DoerSelfTag, ReceiverTargetTag, Receiver == null ? Doer.RefID : Receiver.RefID, targetCOM, VariantID, true, null, attitude_doer, response, Doer.Stats.MemoryLength, p.masterRef);
+            if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_Request(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, attitude_receiver, response, Receiver.Stats.MemoryLength, p.masterRef);
+
+            
+        }
+        else if (response == Memory_Response.Accept)
+        {
+            if (targetCOM is COM_Sex)
+            {
+                Fuck_2(null, Doer, targetCOM, Receiver == null ? Doer : Receiver, pSex.isStrongPenetration || pSex.targetCOM.variants[pSex.COMVariantID].setForce, response);
+            }
+            else
+            {
+                //Debug.Log("AddMem non Sex");
+                RollResult();
+
+
+
+                Doer.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, Receiver == null ? Doer.RefID : Receiver.RefID, targetCOM, VariantID, true, null, Memory_Response.Accept, attitude_doer, Doer.Stats.MemoryLength, p.masterRef);
+                if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, Memory_Response.Accept, attitude_receiver, Receiver.Stats.MemoryLength, p.masterRef);
+
+                Utility.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag,  m);
+                Utility.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m);
+            }
+
+            //apply results later cuz results require COM attitude end
+            if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer);
+            if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver);
+
+        }
+
+    }
+
+
+    /// <summary>
+    /// Result check success or failure will change initial attitude
+    /// </summary>
+    protected void RollResult()
+    {
+        // first roll action result: how successful is the action. get relevant tag, get relevant skill, make skill check
+        // then reroll attitude but with previous result as modifier, also add in social skills as modifier
+        int baseDC = targetCOM.baseD20Check;
+        // modify base DC, lower for easier, higher for harder
+        
+        int diceRoll = Utility.Dice(1, 100, 0);
+        if (diceRoll >= 95) response = Memory_Response.CriticalSuccess;
+        else if (diceRoll <= 5) response = Memory_Response.CriticalFailure;
+        else response = diceRoll >= baseDC*5 ? Memory_Response.Success : Memory_Response.Failure;
+
+        int responseStep = (int)Memory_Response.None;
+        if (response >= Memory_Response.Success) responseStep = response - Memory_Response.Success + 1;
+        else if (response >= Memory_Response.CriticalFailure) responseStep = Memory_Response.Success - response;
+        // increase initial attitude by steps in success
+        if (attitude_doer != Memory_Attitude.None) attitude_doer = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_doer + responseStep));
+        if (attitude_receiver != Memory_Attitude.None) attitude_receiver = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + responseStep));
+
+    }
+
+    [JsonIgnore] public string Description_Begin { get {
+            string s = targetCOM.variants[VariantID].GetDescription_Begin(this);
+            if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_begin);
+            Utility.StringReplace(this, ref s);
+            return s; } }
+    [JsonIgnore] public string Description_Ongoing { get { 
+            string s = targetCOM.variants[VariantID].GetDescription_Ongoing(this);
+            if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_ongoing);
+            Utility.StringReplace(this, ref s);
+            return s;
+    } }
+
+    [JsonIgnore] public string Description_Remove { get { 
+            string s = targetCOM.variants[VariantID].GetDescription_Remove(this);
+            if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_abort);
+            Utility.StringReplace(this, ref s);
+            return s;
+
+        } }
+    [JsonIgnore] public string Description_After { get { 
+            string s = targetCOM.variants[VariantID].GetDescription_After(this);
+            if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", "");
+            Utility.StringReplace(this, ref s);
+            return s;
+        } }
+
+    [JsonIgnore] public string CheckResults
+    {   // obsolete, we want both individually
+        get
+        {
+            Debug.Log("Getting EP CheckResult, doer["+(Doer == null?"null":Doer.FirstName)+"] result["+checkResults_doer+"] receiver["+(Receiver == null?"null":Receiver.FirstName)+"] result["+checkResults_receiver+"]");
+            if (response == Memory_Response.None || Receiver == null) return checkResults_doer;
+            else return checkResults_receiver;
+        }
+    }
+
+    /// <summary>
+    /// rewritten on RollRequest()
+    /// </summary>
+    [SerializeField][JsonProperty] public string checkResults_doer = "";
+    [SerializeField][JsonProperty] public string checkResults_receiver = "";
+
+    /// <summary>
+    /// Internal method. Run after data initialized. 
+    /// read and build all relevant data structure that are required for evaluation
+    /// </summary>
+    protected bool RollRequest()
+    {
+        bool returnVal = true;
+        int diceroll = Utility.Dice(1, 100, 0);
+        if (requestRate <= 0) returnVal = false;
+        else if (requestRate >= 100) returnVal = true;
+        else
+        {
+            if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = requestRate >= scr_System_CampaignManager.current.DeterministicThreshold ? 0 : 100;
+
+            if (diceroll >= 95 && requestRate <= 95) returnVal = false; // rate <= 95 allow crit failure 
+            else if (diceroll <= 5 && requestRate >= 5) returnVal = true; // rate >= 5 allow crit success
+            else returnVal = diceroll <= requestRate;
+        }
+        RollAttitude(ref attitudeRate_pos_doer, ref attitudeRate_neg_doer, ref attitude_doer);
+
+        List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID);
+        checkResults_doer = Doer.FirstName + ": " + (mods.Count > 0 ? String.Join(" + ", modifiers.GetModifiersByRefID(Doer.RefID)) + " = ": "") + (requestRate >= 100 ? "automatic success" : diceroll + " <= " + requestRate + " "+(returnVal ?  "Success":"Failure") +" " +"("+attitude_doer + ")");
+        return returnVal;
+    }
+
+    [SerializeField][JsonProperty] protected Memory_Attitude attitude_doer, attitude_receiver;
+    [SerializeField][JsonProperty] Memory_Response response;
+    // public bool ExecutedSuccessful { get { return response == Memory_Response.Accept; } }
+
+    [JsonIgnore] public Memory_Response Response { get { return response; } }
+
+    public List<string> tooltip = new List<string>();
+
+    protected bool TryRespond(bool recalculateRate = false)
+    {
+        /// <summary>
+        /// Store all check-influencing factors by dictionary %query% string key
+        /// </summary>
+        m.Clear();
+
+        if (recalculateRate)
+        {
+            CalculateRequestRate();
+            CalculateResponseRate();
+        }
+
+        // unwilling todo
+        if (!RollRequest())
+        {
+            response = Memory_Response.None;
+            // result = "[" + doer.FirstName + "] is unwilling to do [" + targetCOM.displayName + "] on/with [" + receiver.FirstName + "]";
+        }
+        else
+        {
+            // deduce cost for successful response
+            if (!RollResponse()) response = Memory_Response.Refuse;
+            else response = Memory_Response.Accept;
+        }
+
+        return response == Memory_Response.Accept;
+    }
+
+    [SerializeField][JsonProperty] Modifiers modifiers = new Modifiers();
+
+    private void RollAttitude(ref int attitudeRate_pos, ref int attitudeRate_neg, ref Memory_Attitude attitude_begin)
+    {
+        int diceroll = Utility.Dice(1, 100, 0);
+
+        if (diceroll >= (100 - attitudeRate_pos)) attitude_begin = Memory_Attitude.Like;
+        else if (diceroll <= attitudeRate_neg) attitude_begin = Memory_Attitude.Dislike;
+        else attitude_begin = Memory_Attitude.Neutral;
+    }
+
+    private void AddModifier(int charaRef, string key, int count)
+    {
+        key = scr_System_Serializer.current.Dictionary.Parse(key);
+        modifiers.AddModifier(charaRef, key, count);
+    }
+
+    /// <summary>
+    /// Response rate 25% neg 50% neutral 25% pos
+    /// </summary>
+    /// <param name="receiver"></param>
+    /// <param name="rel"></param>
+    /// <param name="targetCOM"></param>
+    /// <param name="isPositive"></param>
+    /// <returns></returns>
+
+    private bool RollResponse()
+    {
+        bool returnVal = true;
+        // first find if doer is willing
+        int diceroll = Utility.Dice(1, 100, 0);
+        if (Receiver == null || Receiver.RefID == 0)
+        {
+            // display player option menu to decide accept or refuse
+            returnVal = true;
+            checkResults_receiver = "";
+            attitude_receiver = Memory_Attitude.None;
+        }  
+        else
+        {
+            if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = responseRate >= scr_System_CampaignManager.current.DeterministicThreshold ? 0 : 100;
+
+            if (diceroll >= 95 && responseRate <= 95) returnVal = false; // rate <= 95 allow crit failure 
+            else if (diceroll <= 5 && responseRate >= 5) returnVal = true; // rate >= 5 allow crit success
+            else returnVal = diceroll <= responseRate;
+
+            RollAttitude(ref attitudeRate_pos_receiver, ref attitudeRate_neg_receiver, ref attitude_receiver);
+            List<string> mods = modifiers.GetModifiersByRefID(Receiver.RefID);
+            checkResults_receiver = Receiver.FirstName + ": " + (mods.Count > 0 ? String.Join(" + ", mods) + " = " : "") + (responseRate >= 100 ? "automatic success" : diceroll + " <= " + responseRate + " " + (returnVal ? "Success" : "Failure"))  + " " + "(" + attitude_receiver + ")";
+        }
+        return returnVal;
+    }
+
+
+
+    //// SEX COM STUFF
+    ///
+    private void Fuck_2(Job job, Character_Trainable doer, COM com, Character_Trainable receiver, bool isForce, Memory_Response _response)
+    {
+        int variantID = com.GetValidVariant(doer.RefID, (receiver == null || receiver.RefID == doer.RefID) ? -1 : receiver.RefID);
+
+        //string s2 = "DoSexInteraction: Character [" + doerRef + "] do sex [" + com.DisplayName(variantID) + "] to [" + receiverRef + "]!\n" + s;
+
+        string s = (doer.RefID == 0 ? "" : doer.FirstName + " - ") + com.DisplayName(variantID) + " " + (isForce ? "HC" : "") + " ";
+
+        Character_Trainable target = (receiver == null || receiver.RefID == 0) ? doer : receiver;
+
+        //m.AddHeader(s);
+
+
+        if (_response == Memory_Response.Accept)
+        {
+            //if (doer != receiver) receiver.AddSexLogOngoing(doer.RefID, receiver.RefID, com.ID, 1);
+            // if doing to self then always accept. 
+            BodyInternal_Instance doerBody = doer.Body.GetRandomInternalWithTag(com.requirements.requirement.doerBodyTags[Utility.GetRandIndexFromListCount(com.requirements.requirement.doerBodyTags.Count)]);
+            BodyInternal_Instance receiverBody = receiver.Body.GetRandomInternalWithTag(com.requirements.requirement.receiverBodyTags[Utility.GetRandIndexFromListCount(com.requirements.requirement.receiverBodyTags.Count)]);
+
+            List<BodyInternal_Instance> receiverList = new List<BodyInternal_Instance>();
+            List<BodyInternal_Instance> doerList = new List<BodyInternal_Instance>();
+
+            bool executed = false;
+            executed = executed || Fuck_3(true, true, doer, doerBody, receiverBody, com, variantID, isForce, true)
+                                || Fuck_3(true, false, receiver, receiverBody, doerBody, com, variantID, isForce, false)
+                                || Fuck_3(false, true, doer, doerBody, receiverBody, com, variantID, isForce, true);
+
+            if (!executed) Debug.LogError("com " + com.displayName + " not executed due to not finding required bodypart");
+        }
+        else
+        {
+            Debug.Log("com " + com.displayName + " not executed due to refusal, removed from job queue.");
+            if (job != null) job.NotifyRefusal(com, receiver.RefID);
+        }
+    }
+
+    [System.Serializable]
+    public class Modifiers
+    {
+        public Dictionary<int, Dictionary<string, int>> modifiers = new Dictionary<int, Dictionary<string, int>>();
+
+        public Modifiers(){
+        }
+
+        public void AddModifier(int charaRef, string key, int count)
+        {
+            if (!modifiers.ContainsKey(charaRef)) modifiers.Add(charaRef, new Dictionary<string, int>());
+
+            if (modifiers[charaRef].ContainsKey(key)) modifiers[charaRef][key] += count;
+            else modifiers[charaRef].Add(key, count);
+        }
+        public List<string> GetModifiersByRefID(int refID)
+        {
+            List<string> list = new List<string>();
+            if (!modifiers.ContainsKey(refID)) return list;
+            foreach (var mod in modifiers[refID]) list.Add(mod.Key + (mod.Value == 0 ? "" : mod.Value.ToString("+0;-#")));
+            return list;
+        }
+    }
+
+    /// <summary>
+    /// All variables are nullable
+    /// </summary>
+    /// <param name="fucker"></param>
+    /// <param name="fucked"></param>
+    /// <param name="com"></param>
+    /// <returns></returns>
+    protected float GetCOMStrength(BodyInternal_Instance fucker, BodyInternal_Instance fucked, COM com, bool isforce)
+    {
+        float fuckerMOD = fucker == null || fucker.SensitivitySkill == null ? 0 : fucker.SensitivitySkill.GetSkillLevel * 0.2f;
+        float fuckedMOD = fucked == null || fucked.SensitivitySkill == null ? 0 : fucked.SensitivitySkill.GetSkillLevel * 0.2f;
+
+        float value = 5 + fuckerMOD + fuckedMOD;
+        if (isforce) value *= 1.2f;
+        return value;
+    }
+
+    private bool Fuck_3(bool penetrateOnly ,bool isReceiverFucked, Character_Trainable fucker, BodyInternal_Instance internal_fucker, BodyInternal_Instance internal_fucked, COM com, int variantID, bool isForce, bool logMessage)
+    {
+        string fuckerName = "fucker["+(fucker == null ? "null" : fucker.FirstName)+"] " + "internal["+(internal_fucker == null?"null":internal_fucker.DisplayName)+"]";
+        string fuckedName = "fucked["+(internal_fucked == null || internal_fucked .Owner == null ? "null" : internal_fucked.Owner.FirstName) +"] " + "internal["+(internal_fucked == null?"null": internal_fucked.DisplayName)+"]";
+
+        // external might not increase sensitivity, whereas internal will increase
+        // meaning = external fuck internal, get internal kojo
+
+        int fuckerPleasure = 0;
+        int fuckedPleasure = 0;
+        float baseStrength = GetCOMStrength(internal_fucker, internal_fucked, com, isForce);
+
+        // list to prevent infinite loop.
+        List<BodyInternal_Instance> history = new List<BodyInternal_Instance>();
+
+        if (internal_fucker != null && internal_fucked != null && internal_fucker.canFuck && internal_fucked.canBePenetrated)
+        {
+           // Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
+            history.Add(internal_fucked);
+            Penetrate(baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, internal_fucker, internal_fucked, isForce, 0);
+        }
+        else
+        {
+            if (penetrateOnly) return false;
+            //  Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
+            List<string> newlist1 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
+            List<string> newlist2 = isReceiverFucked ? DoerSelfTag : ReceiverSelfTag;
+
+            if (internal_fucked != null && internal_fucked.canBeStimulated) Stimulate(isReceiverFucked ? false : true, ref newlist1, targetCOM, VariantID, ref fuckedPleasure, internal_fucked, fucker, baseStrength, internal_fucker);
+            else Utility.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m);
+
+            if (internal_fucker != null && internal_fucker.canBeStimulated) Stimulate(isReceiverFucked ? true : false, ref newlist2, targetCOM, VariantID, ref fuckerPleasure, internal_fucker, internal_fucked.Owner, baseStrength, internal_fucked);
+            else Utility.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, m);
+        }
+
+        Memory_Attitude fucked_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + (int)(fuckedPleasure / 5)));
+        if (fucked_att != Memory_Attitude.None && logMessage) internal_fucked.Owner.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, fucker.RefID, com, VariantID, false, null, internal_fucked.Owner.canAct ? Memory_Response.Success : Memory_Response.Accept, fucked_att, internal_fucked.Owner.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
+
+        Memory_Attitude fucker_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_doer + (int)(fuckerPleasure / 5)));
+        if (fucker != null && fucker_att != Memory_Attitude.None && logMessage) fucker.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, internal_fucked.Owner.RefID, com, VariantID, true, null, fucker.canAct ? Memory_Response.Success : Memory_Response.Accept, fucker_att, fucker.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
+
+        Debug.Log("Fuck_3 final interaction result fuckerPleasure["+fuckerPleasure+"] initA["+attitude_doer.ToString()+"] endA["+fucker_att.ToString()+"] fuckedPleasure["+fuckedPleasure+ "] initA["+attitude_receiver.ToString()+"] endA[" + fucked_att.ToString()+"]");
+        attitude_receiver = fucked_att;
+        attitude_doer = fucker_att;
+        return true;
+    }
+
+    private void Penetrate(float baseStrength,  bool isReceiverFucked, ref List<BodyInternal_Instance> history, ref int fuckerPleasure, ref int fuckedPleasure, BodyInternal_Instance fucker, BodyInternal_Instance fucked, bool isForce = false, float fuckerDepthReduction = 0)
+    {
+        List<string> s = new List<string>();
+
+        s.Add(fucker.DisplayName + " fucking " + fucked.DisplayName);
+        /*
+            s += "Fuck Transaction : \nFUCKER size[" + fucker.Rank_Size + " " + fucker.Size + "] " +
+      "current[" + fucker.CurrentSize + " " + fucker.CurrentMaxSize + "] " +
+      "depth[" + fucker.Rank_Depth + " " + fucker.Depth + "] current[" + fucker.CurrentDepth + "] " +
+      "FUCKED size[" + fucked.Rank_Size + " " + fucked.Size + "] " +
+      "current[" + fucked.CurrentSize + " " + fucked.CurrentMaxSize + "] " +
+      "depth[" + fucked.Rank_Depth + " " + fucked.Depth + "] current[" + fucked.CurrentDepth + "]\n";
+        */
+        var fuckerTags = isReceiverFucked ? DoerSelfTag : ReceiverSelfTag;
+        var fuckedTags = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
+        fuckedTags.AddRange(fucked.Base.tags);
+        fuckedTags.Add("penetration");
+
+        float fuckerPl = 0, fuckedPl = 0, fuckerPn = 0, fuckedPn = 0, expansion = 0;
+        // ??????Size????????????Size
+        if (fucked.canBePenetrated)
+        {
+            if (fucker.CurrentSize > Math.Max( fucked.CurrentMaxSize, fucked.CurrentMaxSize) * 1.25)
+            {
+                // if size > size * 1.5 pain 
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times max_maxsize [" + fucked.CurrentMaxSize +"|"+ fucked.CurrentMaxSize + "] : response heavy pain, expanding");
+
+                var painMultiplier = fucker.CurrentSize / Math.Max(fucked.CurrentMaxSize, fucked.CurrentSize);
+
+                fuckerPl = baseStrength * 0.7f; fuckerPn = painMultiplier * 0.5f;
+                fuckedPl = 0f;                  fuckedPn = baseStrength * painMultiplier;
+                expansion = painMultiplier;
+            }
+            else if (fucker.CurrentSize > fucked.CurrentMaxSize * 1.25)
+            {
+                // if size > size * 1.5 pain 
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times CurrentMaxSize [" + fucked.CurrentMaxSize + "] : response pain, expanding");
+                fuckerPl = baseStrength * 1.0f; ;       
+                fuckedPl = baseStrength * 0.3f;   fuckedPn = baseStrength * 0.6f;
+                expansion = 3;
+
+            }
+            else if (fucker.CurrentSize > fucked.CurrentSizeExtended * 1.25)
+            {
+                // if size > size * 1.5 pain 
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times CurrentSizeExtended [" + fucked.CurrentSizeExtended + "] : response pain, expanding");
+                fuckerPl = baseStrength * 1.3f;
+                fuckedPl = baseStrength * 0.6f; fuckedPn = baseStrength * 0.3f;
+                expansion = 1;
+
+            }
+            else if (fucker.CurrentSize >= fucked.CurrentSize)
+            {   // perfect match between size and extend
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] 1 to 1.25 times CurrentSize [" + fucked.CurrentSize + "] : perfect match");
+                fuckerPl = baseStrength * 1.6f;
+                fuckedPl = baseStrength * 1.2f; 
+
+            }
+            else if (fucker.CurrentSize >= fucked.CurrentSize*0.8)
+            {
+                // else if size >= size pleasure
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] between 0.8 and 1.0 CurrentSize [" + fucked.CurrentSize + "] : response satisfied");
+                fuckerPl = baseStrength * 1.3f; ;
+                fuckedPl = baseStrength;
+            }
+            else
+            {
+                // else less pleasure
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] smaller than 0.8 size [" + fucked.CurrentSize + "] : response less pleasure");
+                fuckerPl = baseStrength * 1.0f;
+                fuckedPl = baseStrength * 0.3f;
+            }
+        }
+        else
+        {
+            fuckedPl = baseStrength;
+            s.Add(fucked.DisplayName + " cannot be penetrated, skipping size check");
+        }
+
+
+        if (fucker.canBeStimulated) Stimulate(isReceiverFucked ? true : false, ref fuckerTags, targetCOM, VariantID, ref fuckerPleasure, fucker, fucked.Owner, fuckerPl, fucked, fuckerPn, expansion);
+        if (fucked.canBeStimulated) Stimulate(isReceiverFucked ? false : true, ref fuckedTags, targetCOM, VariantID, ref fuckedPleasure, fucked, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
+
+        // ????????????
+        
+        if (isForce && fucked.canBePenetrated)
+        {
+            if (fucked.Base.tag_directionOut != "" && fucked.Base.tag_directionOut != "ext")
+            {
+                BodyInternal_Instance directionOut = fucked.Owner.Body.GetRandomInternalWithTag(fucked.Base.tag_directionOut);
+                if (!history.Contains(directionOut))
+                {
+                    history.Add(directionOut);
+
+                    if (directionOut.hasTag("external") && !directionOut.canBePenetrated && directionOut.canBeStimulated)
+                    {
+                        s.Add("Fucker stimulating external part [" + directionOut.DisplayName + "]");
+                        var fuckedTags2 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
+                        fuckedTags.AddRange(directionOut.Base.tags);
+                        fuckedTags.Add("penetration");
+                        Stimulate(isReceiverFucked ? false : true, ref fuckedTags2, targetCOM, VariantID, ref fuckedPleasure, directionOut, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
+                    }else if (directionOut.canBePenetrated && fucker.CurrentDepth - fuckerDepthReduction >= fucked.CurrentDepth)
+                    {
+                        s.Add("Fucker Depth [" + (fucker.CurrentDepth - fuckerDepthReduction) + "] bigger than 1.25 depth [" + fucked.CurrentDepth + "]");
+                        Penetrate(baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, fucker, directionOut, isForce, fucker.CurrentDepth - fuckerDepthReduction - fucked.CurrentDepth);
+                    }
+                    else
+                    {
+                        s.Add("Fucker Depth [" + (fucker.CurrentDepth - fuckerDepthReduction) + "] cannot penetrate target depth [" + fucked.CurrentDepth + "]");
+                    }
+                   
+                }
+            }
+
+            if (fucked.Base.tag_directionIn != "" && fucked.Base.tag_directionIn != "ext")
+            {
+                BodyInternal_Instance directionIn = fucked.Owner.Body.GetRandomInternalWithTag(fucked.Base.tag_directionIn);
+                if (!history.Contains(directionIn))
+                {
+                    history.Insert(0, directionIn);
+
+                    if (directionIn.hasTag("external") && !directionIn.canBePenetrated && directionIn.canBeStimulated)
+                    {
+                        s.Add("Fucker stimulating external part [" + directionIn.DisplayName + "]");
+                        var fuckedTags2 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
+                        fuckedTags.AddRange(directionIn.Base.tags);
+                        fuckedTags.Add("penetration");
+                        Stimulate(isReceiverFucked ? false : true, ref fuckedTags2, targetCOM, VariantID, ref fuckedPleasure, directionIn, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
+                    }
+                    else if (directionIn.canBePenetrated && fucker.CurrentDepth - fuckerDepthReduction >= fucked.CurrentDepth)
+                    {
+                        s.Add("Fucker Depth [" + (fucker.CurrentDepth - fuckerDepthReduction) + "] bigger than 1.25 depth [" + fucked.CurrentDepth + "]");
+                        Penetrate(baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, fucker, directionIn, isForce, fucker.CurrentDepth - fuckerDepthReduction - fucked.CurrentDepth);
+                    }
+                    else
+                    {
+                        s.Add("Fucker Depth [" + (fucker.CurrentDepth - fuckerDepthReduction) + "] cannot penetrate target  depth [" + fucked.CurrentDepth + "]");
+                    }
+                }
+            }
+        }
+        else
+        {
+            s.Add(fucked.DisplayName + " cannot be penetrated or not force fucking, skipping depth check");
+        }
+
+        s.Add("Final Resolution :" + (fucker == null ? "" : "Fucker " + fucker.Owner.FirstName + " pleasure [" + fucker.Owner.Stats.SexStimulation.Severity + "]") + " Fucked " + fucked.Owner.FirstName + " pleasure [" + fucked.Owner.Stats.SexStimulation.Severity + "]");
+        Debug.Log(String.Join("\n",s));
+
+        //message.AddMessage(s);
+
+    }
+
+
+    protected void PenetrationFollowUp()
+    {
+
+    }
+
+    public void ReEstablishParent(ActionPackage ap)
+    {
+        this.p = ap;
+        this.m = new ExperienceLog();
+    }
+
+
+    /// <summary>
+    /// Ownertags collect info related to body, mainly whether it's receiver (add command specificatin to this) or doer (do not add)
+    /// </summary>
+    /// <param name="ownerTags"></param>
+    /// <param name="com"></param>
+    /// <param name="variantID"></param>
+    /// <param name="pleasureTotal"></param>
+    /// <param name="body"></param>
+    /// <param name="source"></param>
+    /// <param name="pleasure"></param>
+    /// <param name="sourceBody"></param>
+    /// <param name="pain"></param>
+    /// <param name="expansion"></param>
+    private void Stimulate(bool isDoer, ref List<string> ownerTags, COM com, int variantID, ref int pleasureTotal, BodyInternal_Instance body, Character_Trainable source, float pleasure, BodyInternal_Instance sourceBody = null, float pain = 0, float expansion = 0)
+    {
+        string debug = "Stimulating body part [" + body.DisplayName + "] from [" + body.Owner.FirstName + "], error ";
+        /* pleasure will factor in sensitivity data
+         * pleasure is not necessarily pleasure, its more like stimulation strength.
+         * if not sensitive then stimulation might be bad.
+         * 
+         * pain will factor in pain sensitivity.
+         * if sensitivity low or pain pleasure high then turn it into          
+         */
+        if (body == null)
+        {
+            debug += "body part null";
+            Debug.Log(debug);
+            return;
+        }
+
+        //if (sourceBody != null) tags.AddRange(sourceBody.Base.tags);
+        body.NotifySexExperience(source.RefID, sourceBody == null ? source.FirstName : sourceBody.DisplayNameFull, com.DisplayName(variantID), ownerTags, isDoer? ReceiverTargetTag : DoerTargetTag, sourceBody == null ? null : sourceBody.Base.tags );
+        body.Stimulate(ref ownerTags, ref pleasureTotal,ref pleasure,ref pain);
+
+        if (sourceBody != null) body.LogLastInteractedRef(sourceBody);
+
+        pleasure -= (pain + expansion);
+
+        if (pleasure > 0 )
+        {   // has experience logging
+            var newTags = new List<string>(ownerTags);
+            newTags.Add("pleasure");    // add duplicate to not contaminate experience gain amount
+            body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pleasure, isDoer, m);
+        }
+
+        if (pain > 0 || expansion > 0)
+        {
+            var newTags = new List<string>(ownerTags);
+            if (pain > 0)
+            {   // check relationship add fear
+                if(source != null && body.Owner.canAct)
+                {
+                    var relation = body.Owner.Relationships.FindRelationshipWith(source);
+                    if (relation != null && relation.Obedience(null) > RelationshipObedienceType.Normal)
+                    {
+                        this.m.AddRelations(body.Owner.RefID, source.RefID, RelationshipScoreType.Fear, (int) pain);
+                        relation.ModRelationValue(RelationshipScoreType.Fear, pain);
+                    }
+                }
+                
+                newTags.Add("pain");
+            }
+            if (expansion > 0) newTags.Add("expansion");
+            body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pain + expansion, isDoer, m);
+        }
+    }
+}
+
+[System.Serializable]
+public class ExperienceLog
+{
+    protected SortedDictionary<int, Dictionary<string, int>> StatLog = new SortedDictionary<int, Dictionary<string, int>>();
+    protected SortedDictionary<int, Dictionary<string, int>> ExpLog = new SortedDictionary<int, Dictionary<string, int>>();
+    protected SortedDictionary<int, Dictionary<int, int>> RelationLog = new SortedDictionary<int, Dictionary<int, int>>();
+
+    public ExperienceLog()
+    {
+
+    }
+   
+    public void AddExperience(int charaRef, string expID, int count)
+    {
+       // Debug.Log("EVP Explog, adding experiences "+expID);
+        if (!this.ExpLog.ContainsKey(charaRef)) ExpLog.Add(charaRef, new Dictionary<string, int>());
+
+        if (ExpLog[charaRef].ContainsKey(expID)) ExpLog[charaRef][expID] += count;
+        else ExpLog[charaRef].Add(expID, count);
+    }
+
+    /// <summary>
+    /// Only logs relation increase from NPC toward PC
+    /// </summary>
+    /// <param name="charaRef"></param>
+    /// <param name="relID"></param>
+    /// <param name="count"></param>
+    public void AddRelations(int sourceCharaRef, int targetCharaRef, RelationshipScoreType relID, int count)
+    {
+        //Debug.Log("EVP Explog, adding relations");
+        // Debug.LogError("AddRelations between ["+sourceCharaRef+"] and ["+targetCharaRef+"]");
+        int playerRef = scr_System_CampaignManager.current.Player.RefID;
+        if (sourceCharaRef == playerRef) return;
+        if (targetCharaRef != playerRef) return;
+
+        if (!this.RelationLog.ContainsKey(sourceCharaRef)) RelationLog.Add(sourceCharaRef, new Dictionary<int, int>());
+
+        if (RelationLog[sourceCharaRef].ContainsKey((int)relID)) RelationLog[sourceCharaRef][(int)relID] += count;
+        else RelationLog[sourceCharaRef].Add((int)relID, count);
+    }
+
+    public void AddStats(int charaRef, string statID, int count)
+    {
+        //Debug.Log("EVP Explog, adding stat");
+        if (!this.StatLog.ContainsKey(charaRef)) StatLog.Add(charaRef, new Dictionary<string, int>());
+
+        if (StatLog[charaRef].ContainsKey(statID)) StatLog[charaRef][statID] += count;
+        else StatLog[charaRef].Add(statID, count);
+    }
+
+    public void MergeWith(ExperienceLog log)
+    {
+       // Debug.Log("EVP Explog, merging");
+
+        foreach (KeyValuePair<int, Dictionary<string, int>> kvp in log.ExpLog)
+        {
+            if (!this.ExpLog.ContainsKey(kvp.Key)) ExpLog.Add(kvp.Key, kvp.Value);
+            else
+            {
+
+                foreach (KeyValuePair<string, int> kkvp in kvp.Value)
+                {
+                    if (!this.ExpLog[kvp.Key].ContainsKey(kkvp.Key)) this.ExpLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
+                    else this.ExpLog[kvp.Key][kkvp.Key] += kkvp.Value;
+                }
+            }
+        }
+
+        foreach (KeyValuePair<int, Dictionary<int, int>> kvp in log.RelationLog)
+        {
+            if (!this.RelationLog.ContainsKey(kvp.Key)) RelationLog.Add(kvp.Key, kvp.Value);
+            else
+            {
+
+                foreach (KeyValuePair<int, int> kkvp in kvp.Value)
+                {
+                    if (!this.RelationLog[kvp.Key].ContainsKey(kkvp.Key)) this.RelationLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
+                    else this.RelationLog[kvp.Key][kkvp.Key] += kkvp.Value;
+                }
+            }
+        }
+
+        foreach (KeyValuePair<int, Dictionary<string, int>> kvp in log.StatLog)
+        {
+            if (!this.StatLog.ContainsKey(kvp.Key)) StatLog.Add(kvp.Key, kvp.Value);
+            else
+            {
+                foreach (KeyValuePair<string, int> kkvp in kvp.Value)
+                {
+                    if (!this.StatLog[kvp.Key].ContainsKey(kkvp.Key)) this.StatLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
+                    else this.StatLog[kvp.Key][kkvp.Key] += kkvp.Value;
+                }
+            }
+        }
+    }
+
+    public void Clear()
+    {
+
+        bool clearedBeforePrint = false;
+        foreach (KeyValuePair<int, Dictionary<string, int>> kvp in ExpLog)
+        {
+            if (kvp.Value.Count > 0) clearedBeforePrint = true;
+            kvp.Value.Clear();
+        }
+        ExpLog.Clear();
+
+        //if(clearedBeforePrint) Debug.LogError("EVP Explog cleared before print ? ");
+
+        foreach (KeyValuePair<int, Dictionary<int, int>> kvp in RelationLog) kvp.Value.Clear();
+        RelationLog.Clear();
+
+        foreach (KeyValuePair<int, Dictionary<string, int>> kvp in StatLog) kvp.Value.Clear();
+        StatLog.Clear();
+    }
+
+    public string PrintContent()
+    {
+       // Debug.Log("EVP Explog, print");
+        List<string> lines = new List<string>();
+
+        foreach (var kvp_refID in StatLog)
+        {
+            if (kvp_refID.Value.Count > 0)
+            {
+                string s = "Stats(" + scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + "): ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + scr_System_Serializer.current.Dictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                lines.Add(s);
+            }
+        }
+
+        foreach (var kvp_refID in RelationLog)
+        {
+            if (kvp_refID.Value.Count > 0)
+            {
+                string s = "Relations(" + scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + "): ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + scr_System_Serializer.current.Dictionary.QueryThenParse("relationship_"+ ((RelationshipScoreType) kvp.Key).ToString().ToLower())   + "" + kvp.Value.ToString("+0;-#") + " ";
+                lines.Add(s);
+            }
+        }
+
+        foreach (var kvp_refID in ExpLog)
+        {
+            if (kvp_refID.Value.Count > 0)
+            {
+                string s = "Experiences(" + scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + "): ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + scr_System_Serializer.current.Dictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                lines.Add(s);
+            }
+        }
+
+        return String.Join("\n", lines);
+    }
+
+}

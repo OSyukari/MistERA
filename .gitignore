@@ -3,7 +3,7 @@
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 
-*
+/*
 
 !.gitignore
 !.gitattributes
@@ -21,7 +21,7 @@ Assets/*
 /*/*.txt
 /*/*.unity
 /*/*.png
-/*/*.meta
+*.meta
 /*/*.prefab
 /*/*.xlsx
 /*/*.asset

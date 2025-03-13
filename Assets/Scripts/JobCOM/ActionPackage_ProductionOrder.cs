@@ -1,0 +1,109 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using Newtonsoft.Json;
+
+
+[System.Serializable]
+public class ActionPackage_ProductionOrder : ActionPackage
+{
+    [JsonIgnore] public override string JoinAPDescriptorKey { get { return "ActionPackage_ProductionOrder_join"; } }
+    [SerializeField][JsonProperty] private string orderRecipeUID = "";
+    private Manageable.ProductionOrder order_cache = null;
+    private Manageable.ProductionOrder order
+    {
+        get
+        {
+            if (order_cache == null)
+            {
+                order_cache = jobFurn.FactionOwner.GetProductionOrdersByUID(orderRecipeUID);
+            }
+            return order_cache;
+        }
+    }
+    private Job_Furniture jobFurn { get { return job as Job_Furniture; } }
+
+    /*
+    protected string displayNameCache = "";
+
+    [JsonIgnore] public override string DisplayName { 
+        get 
+        { 
+            if(displayNameCache == ""){
+                displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ActionPackage_ProductionOrder_displayName").Replace("$orderName$", scr_System_Serializer.current.GetByNameOrID_Item_Base(order.Recipe.outputItemBaseID).DisplayName);
+            }
+            return displayNameCache; 
+    }
+        } */
+
+    public ActionPackage_ProductionOrder()
+    {
+
+    }
+    public ActionPackage_ProductionOrder(Manageable.ProductionOrder order, Job_Furniture job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef)
+    {
+        ReInitializeCOM(order, job, targetCOM, doer, receiver, masterRef);
+    }
+
+    protected void ReInitializeCOM(Manageable.ProductionOrder order, Job_Furniture job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
+    {
+        base.ReInitializeCOM(job, targetCOM, doer, receiver, masterRef, resetDuration);
+        this.jobRefID = job.RefID;
+        this.job_cached = job;
+        this.orderRecipeUID = order.Recipe.RecipeUID;
+    }
+
+    [JsonIgnore] public override int RoomKey
+    {
+        get
+        {
+            if (roomKey == -1) roomKey = job.ParentRoom.RefID;
+            return roomKey;
+        }
+    }
+
+    protected override bool PreEvaluate()
+    {
+
+        base.PreEvaluate();
+        if (order == null) Debug.LogError("ActionPackage_ProductionOrder: JobInRoom["+job.ParentRoom.DisplayName+"] COM["+targetCOM.displayName+"] has null order !");
+        else if (order.Count <= 0)
+        {
+            tooltip.Add("Production order already fulfilled");
+            Debug.Log("Production order fulfilled");
+            isValid = false;
+        }
+
+        return isValid;
+
+
+    }
+
+    protected override bool Evaluate()
+    {
+        return base.Evaluate();
+    }
+
+    public override ActionPackage Copy()
+    {
+        ActionPackage_ProductionOrder copy = new ActionPackage_ProductionOrder(order, jobFurn, targetCOM, doerRefs, receiverRefs, masterRef);
+        copy.SetVariantID(this.validVariant);
+        copy.LoggedBegin = this.LoggedBegin;
+        copy.duration = this.duration;
+        return copy;
+    }
+
+    // move one step along the path
+    protected override void Execution()
+    {
+        order.AddProgress(targetCOM.TimeScale);
+
+
+        Debug.Log("ActionPackage_ProductionOrder: JobInRoom[" + job.ParentRoom.DisplayName + "] COM[" + targetCOM.displayName + "] has null order ?"+(order == null));
+
+        base.Execution();
+        Debug.Log("Production order ticked, requestAccepted "+requestAccepted);
+        if (requestAccepted) foreach (var ep in packages) order.AddProgress(targetCOM.TimeScale);
+    }
+}

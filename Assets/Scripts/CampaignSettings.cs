@@ -1,0 +1,164 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
+using Newtonsoft.Json;
+
+[System.Serializable]
+public class CampaignSettings
+{
+    public string ID = "";
+    [SerializeField][JsonProperty] protected string displayName;
+    [JsonIgnore] public string DisplayName{get{ return scr_System_Serializer.current.Dictionary.QueryThenParse(ID);}}
+    [SerializeField][JsonProperty] protected string tooltip;
+    [JsonIgnore] public string Tooltip { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(ID+"_tooltip"); } }
+    public bool isAvailable = true;
+    public string requireOriginID = "";
+    public List<CampaignSettings_ExtraOptions> extraOptions = new List<CampaignSettings_ExtraOptions>();
+
+    public CampaignSettings_ExtraOptions GetPreviousOption(CampaignSettings_ExtraOptions ex)
+    {
+        if (extraOptions.Contains(ex))
+        {
+            int index = extraOptions.IndexOf(ex);
+            if (index - 1 < 0) return extraOptions[extraOptions.Count - 1];
+            else return extraOptions[index - 1];
+        }
+        else
+        {
+            return ex;
+        }
+    }
+
+    public CampaignSettings_ExtraOptions GetNextOption(CampaignSettings_ExtraOptions ex)
+    {
+        if (extraOptions.Contains(ex))
+        {
+            int index = extraOptions.IndexOf(ex);
+            if (index + 1 >= extraOptions.Count) return extraOptions[0];
+            else return extraOptions[index + 1];
+        }
+        else
+        {
+            return ex;
+        }
+    }
+
+}
+
+[System.Serializable]
+public class CampaignSettings_ExtraOptions
+{
+    public string ID = "";
+    [SerializeField][JsonProperty] protected string displayName;
+    public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(ID, displayName); } }
+    [SerializeField][JsonProperty] protected string tooltip;
+    public string Tooltip { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
+    public List<CampaignSettings_Initializer> initializers = new List<CampaignSettings_Initializer>();
+
+}
+
+[System.Serializable]
+public class CampaignSettings_Initializer
+{
+    public string initClass = "";
+    public List<string> initArguments = new List<string>();
+}
+
+[System.Serializable]
+public class Index_CampaignSetting: I_IndexHasID, I_IndexHasTooltip, I_IndexMergeable, I_NeedLateInitialize
+{
+    [SerializeField][JsonProperty] protected List<CampaignSettings> list = new List<CampaignSettings>();
+    protected System.Collections.Concurrent.ConcurrentDictionary<string, CampaignSettings> _List;
+    [JsonIgnore] public List<CampaignSettings> List { get { return list; } }
+
+    public void MergeWith(I_IndexMergeable list){
+        var l = list as Index_CampaignSetting;
+        if (l == null) return;
+        else if (l.list == null) return;
+        else
+        {
+            this.list.AddRange(l.list);
+        }
+    }
+
+
+    protected CampaignSettings getItemBefore(CampaignSettings o)
+    {
+        int index = list.IndexOf(o);
+        if (index < 0) return null;
+
+        if (index - 1 < 0) return list[list.Count - 1];
+        else return list[index - 1];
+    }
+    public CampaignSettings GetItemBefore(CampaignSettings r)
+    {
+        int loopCounter = 0;
+        CampaignSettings cs = getItemBefore(r) as CampaignSettings;
+        while (cs != r && cs != null && loopCounter < 50)
+        {
+            if (cs.isAvailable) return cs;
+            else cs = getItemBefore(cs) as CampaignSettings;
+            loopCounter++;
+        }
+        return r;
+    }
+    protected CampaignSettings getItemAfter(CampaignSettings o)
+    {
+        int index = list.IndexOf(o);
+        if (index < 0) return null;
+
+        if (index + 1 >= list.Count) return list[0];
+        else return list[index + 1];
+    }
+
+    public CampaignSettings GetItemAfter(CampaignSettings r)
+    {
+        int loopCounter = 0;
+        CampaignSettings cs = getItemAfter(r);
+        while (cs != r && cs != null && loopCounter < 50)
+        {
+            if (cs.isAvailable) return cs;
+            else cs = getItemAfter(cs);
+            loopCounter++;
+        }
+        return r;
+    }
+
+    public void RegisterAllID()
+    {
+        Debug.Log("Index_CampaignSetting : registering ID with list length [" + list.Count + "]");
+
+        foreach (CampaignSettings s in list)
+        {
+            scr_System_Serializer.current.RegisterIDtoLib(s.ID, s);
+        }
+    }
+    public void RegisterAllTooltip()
+    {
+
+        foreach (CampaignSettings s in list)
+        {
+            scr_System_tooltipDictionary.current.AddEntry(s.ID, s.Tooltip);
+
+        }
+        
+    }
+
+    public void LateInitialize()
+    {
+        var ids = new Dictionary<string, CampaignSettings>();
+        foreach (var i in list) ids.Add(i.ID, i);
+        _List = new System.Collections.Concurrent.ConcurrentDictionary<string, CampaignSettings>(ids);
+    }
+
+    public CampaignSettings GetByID(string id)
+    {
+        if (_List.TryGetValue(id, out CampaignSettings result)) return result;
+        return null;
+    }
+
+
+}
+
