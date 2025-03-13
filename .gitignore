@@ -10,8 +10,11 @@
 !gitlab-ci.yml
 !README.md
 !ci/*
-!Assets/Data/*
-!Assets/Scripts/*
+
+!Assets
+Assets/*
+!Assets/Data
+!Assets/Scripts
 
 /*/*.mat
 /*/*.shader
