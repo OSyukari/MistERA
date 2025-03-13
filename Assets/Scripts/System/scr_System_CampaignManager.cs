@@ -394,33 +394,6 @@ public class scr_System_CampaignManager : MonoBehaviour
         //Debug.Log("UpdateAllCharaJob complete after " + (DateTime.Now - currentTime).TotalNanoseconds + "ms");
     }
 
-    public class ThreadedCharaUpdate
-    {
-        private ManualResetEvent _doneEvent;
-        List<Character_Trainable> cs;
-        int currentHour;
-        public List<string> s { 
-            get { 
-                return (_s == null) ? new List<string>() : _s; 
-            } 
-        }
-        protected List<string> _s;
-        public ThreadedCharaUpdate(  ManualResetEvent doneEvent, List<Character_Trainable> cs, int currentHour, bool logMessage)
-        {
-            _doneEvent = doneEvent;
-            this.cs = cs;
-            this.currentHour = currentHour;
-            this._s = logMessage ? new List<string>() : null;
-        }
-
-        public void ThreadPoolCallback(object threadContext)
-        {
-            foreach(var c in cs) c.TryGetJob(currentHour, _s);
-            _doneEvent.Set();
-        }
-    
-    }
-
     /// <summary>
     /// Check all package by room, find all player related packages, take the maximum package duration from all and write into both arguments.<br/>
     /// If no player package, both arguments will have a value of 1

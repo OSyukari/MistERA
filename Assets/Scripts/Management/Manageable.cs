@@ -368,7 +368,7 @@ public class Manageable : I_Disposable
         else return new List<Job_CharaCOM>();
     }
 
-    public List<Job_Furniture> GetValidJobs_Recreation(Character_Trainable chara, int currentHour, List<string> s = null)
+    public List<Job_Furniture> GetValidJobs_Recreation(Character_Trainable chara, int currentHour, List<string> s = null, bool skipPrivate = false)
     {
         //Debug.Log("Begin getvalidRecreation");
         List<Job_Furniture> possibleJobs;
@@ -378,6 +378,11 @@ public class Manageable : I_Disposable
             ss += " found no valid [recreation] instances offered by Furnitures from chara["+chara.FirstName+"] currenthour["+currentHour+"]";
             if (s != null) s.Add(ss);
             return new List<Job_Furniture>();
+        }
+
+        if(skipPrivate)
+        {
+            possibleJobs.RemoveAll(x => x.ParentRoom.isRoomPrivate);
         }
 
         if (!TryValidateAllInstances(ref possibleJobs, chara))

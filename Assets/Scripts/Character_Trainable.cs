@@ -911,8 +911,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 foreach (Manageable faction in FactionManager.HomeFactions)
                 {
-                    possibleRecreations.AddRange(faction.GetValidJobs_Recreation(this, currentHour, s));
-                    possibleRecreations.RemoveAll(x => x.ParentRoom.isRoomPrivate);
+                    possibleRecreations.AddRange(faction.GetValidJobs_Recreation(this, currentHour, s,true));
                     break;
                 }
 
