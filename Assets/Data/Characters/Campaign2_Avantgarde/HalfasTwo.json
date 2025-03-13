@@ -1,0 +1,93 @@
+
+{
+    "baseID": "Campaign2_Chara_HalfasTwo",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                
+                "portrait_offset_x": -107.044,
+                "portrait_offset_y": -532.036,
+                "portrait_offset_size": 1.15,
+                
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.6,
+
+                "Variants":[
+                    {
+                        "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+                        "Conditions":[
+                            {
+                                "$type":"PortraitManager+PortraitValidators, Assembly-CSharp", 
+                                "requireNaked":"lower"
+                            },
+                            {
+                                "$type":"PortraitManager+PortraitValidators, Assembly-CSharp", 
+                                "requireNaked":"torso"
+                            }
+                        ],
+                        "PortraitVariantData":"Avantgarde/Avantgarde_HalfasTwo/Actor_13_bust",
+                        "IconVariantData":"Avantgarde/Avantgarde_HalfasTwo/Actor_2_icon"
+                    }
+                ],
+
+                "portrait_path":"Avantgarde/Avantgarde_HalfasTwo/Actor_2_bust",
+                "icon_path":"Avantgarde/Avantgarde_HalfasTwo/Actor_2_icon"
+            }
+        ]
+    },
+    "Template":{
+        "Appearance": "Female",
+        "BodyType": "Default",
+        "stat_STR": 12,
+        "stat_CON": 11,
+        "stat_PSY": 15,
+        "stat_WIL": 15,
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_E",
+        "size_P": "trait_Size_P_none",
+        "size_V": "trait_Size_V_1",
+        "size_A": "trait_Size_A_1",
+        "Height":162,
+        "initialRelationship":[
+            {
+                "baseID":"PLAYER",
+                "initialPersonalRelationship":"relationship_slave",
+                "initialPersonalRelationship_isA":false
+            },
+            {
+                "baseID":"Campaign2_Chara_HalfasThree",
+                "initialBiologicalRelationship":"relationship_sibling",
+                "initialBiologicalRelationship_isA":true
+            },
+            {
+                "baseID":"Campaign2_Chara_HalfasOne",
+                "initialBiologicalRelationship":"relationship_sibling",
+                "initialBiologicalRelationship_isA":false
+            }
+        ],
+        "initialInventory":[
+            { "ID":"clothing_inner_necktie" },
+            { "ID":"clothing_inner_shirt" },
+            { "ID":"clothing_inner_skirt", "nameOverwrite":"clothing_inner_miniskirt" },
+            { "ID":"clothing_skin_panty" },
+            { "ID":"clothing_skin_bra" },
+            { "ID":"clothing_skin_stocking" },
+            { "ID":"clothing_inner_shoes" },
+            { "ID":"clothing_inner_hair_ribbon" }
+        ]
+    },
+    "firstName": "Campaign2_Chara_HalfasTwo_FirstName",
+    "middleName": "",
+    "lastName": "Campaign2_Chara_Halfas_LastName",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_TraveleracrossGates",
+    "race": "humanRace_demon",
+    "raceTemplate": "humanRaceAddon_Magician",
+    "startingGift": "charOriginGift_none"
+}

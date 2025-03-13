@@ -1,0 +1,198 @@
+{
+    "StatusEXs":{
+        "list":[
+        {
+            "statusID":"chara_status_mood",
+            "displayName":"Mood",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "constant":true,
+            "variationMode":
+                { "variationTypeString":"statModifiers", "value": 0, "stringData":"capMod" }
+            ,
+            "variants":[
+                { "displayName":"极恶",     "threshold":-3.0 },
+                { "displayName":"极恶",     "threshold":-1.9 },
+                { "displayName":"糟糕",     "threshold":-0.9 }, 
+                { "displayName":"普通",     "threshold":0.9 }, 
+                { "displayName":"好心情",   "threshold":1.9 },
+                { "displayName":"绝佳",     "threshold":2.9 },
+                { "displayName":"绝佳",     "threshold":3.0 }
+            ]
+        },
+        {
+            "statusID":"chara_status_stress",
+            "displayName":"Stress",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "constant":true,
+            "variationMode":
+                { "variationTypeString":"statModifiers", "value": 0, "stringData":"capMod" }
+            ,
+            "variants":[
+                { "displayName":"界限",     "threshold":-3.0 },
+                { "displayName":"界限",     "threshold":-1.9 },
+                { "displayName":"紧张",     "threshold":-0.9 },
+                { "displayName":"冷静",     "threshold":0.9 },
+                { "displayName":"平静",     "threshold":1.9 },
+                { "displayName":"放松",     "threshold":2.9 },
+                { "displayName":"放松",     "threshold":3.0 }
+            ]
+        },
+        {
+            "statusID":"chara_status_lust",
+            "displayName":"Lust",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "constant":true,
+            "variationMode":
+                { "variationTypeString":"statModifiers", "value": 0, "stringData":"capMod"  }
+            ,
+            "variants":[
+                { "displayName":"无欲",     "threshold":-3.0 },
+                { "displayName":"无欲",     "threshold":-0.9 },
+                { "displayName":"",         "threshold":0.9 },
+                { "displayName":"不满",     "threshold":1.9 },
+                { "displayName":"发情",     "threshold":2.9 },
+                { "displayName":"发情",     "threshold":3.0 }
+            ]
+        },
+        {
+            "statusID":"chara_status_consciousness",
+            "displayName":"Consciousness",
+            "noDisplay":false,
+            "stringFormat":"P0",
+            "constant":true,
+            "variationMode":
+                {
+                    "variationTypeString":"statModifiers",
+                    "value":1
+                }
+            ,
+            "variants":[
+                { "displayName":"昏迷", "tags":["consciousness_unconscious"], "threshold":0.1 },
+                { "displayName":"睡眠", "tags":["consciousness_unconscious"], "threshold":0.4 },
+                { "displayName":"半醒", "tags":["consciousness_reduced"], "threshold":0.7 },
+                { "displayName":"不集中", "threshold":0.9 },
+                { "displayName":"清醒", "threshold":1.0 }
+            ]
+        },
+        {
+            "statusID":"chara_status_sex_stimulation",
+            "displayName":"性快感",
+            "constant":true,
+            "stringFormat":"N0",
+            "noDisplay":false,
+            "variationMode":
+            {
+                "variationTypeString":"summation",
+                "stringData":"chara_status_sex"
+            },
+            "variants":[
+                {
+                    "displayName":"贤者时间",
+                    "threshold":-20
+                },
+                {
+                    "displayName":"",
+                    "threshold":0
+                },
+                {
+                    "displayName":"微弱",
+                    "threshold":19
+                },
+                {
+                    "displayName":"弱",
+                    "threshold":39,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"中",
+                    "threshold":59,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"2"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"强",
+                    "threshold":79,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"高潮前",
+                    "threshold":1000,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_orificelubrication",
+            "displayName":"润滑",
+            "constant":true,
+            "stringFormat":"N0",
+            "noDisplay":false,
+            "variationMode":
+            { "variationTypeString":"statModifiers", "value": 0, "stringData":"capMod" },
+            "variants":[
+                {
+                    "displayName":"无",
+                    "threshold":0
+                },
+                {
+                    "displayName":"微弱",
+                    "threshold":19
+                },
+                {
+                    "displayName":"弱",
+                    "threshold":39,
+                    "stat_modifiers":[
+                    ]
+                },
+                {
+                    "displayName":"中",
+                    "threshold":59,
+                    "stat_modifiers":[
+                    ]
+                },
+                {
+                    "displayName":"强",
+                    "threshold":79,
+                    "stat_modifiers":[
+                    ]
+                }
+            ]
+        }
+    ]
+    }
+    
+}

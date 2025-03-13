@@ -1,0 +1,132 @@
+{
+    "humanoid_RaceTemplates":
+    {
+        "list": [
+        {
+            "ID": "humanRaceAddon_standard",
+            "displayName": "Standard",
+            "tooltip": "Standard specimen of their species.",
+            "stat_modifiers": []
+        },
+        {
+            "ID": "humanRaceAddon_scavenger",
+            "displayName": "Scavenger",
+            "tooltip": "Somewhat accustomed to the life in the Mistland.\nCON+1 WIL+1",
+            "stat_modifiers": [
+                {
+                    "statID":"Constitution",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                },
+                {
+                    "statID":"Willpower",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                }
+            ]
+        },
+        {
+            "ID": "humanRaceAddon_Magician",
+            "displayName": "Magician",
+            "tooltip": "Possess above-average magical ability, and most-likely not from around here.\nEither came here through one of the Gates, or from the Tower.\nPSY+3",
+            "stat_modifiers": [
+                {
+                    "statID":"Psyche",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"3"
+                }
+            ]
+        },
+        {
+            "ID": "humanRaceAddon_Mistaken",
+            "displayName": "Mist-Taken",
+            "tooltip": "No longer capable of thought.\nSolely driven by their bestial hunger, not realizing they no longer need to feed.\nSTR+4 CON+4 PSY-8 WIL-8",
+            "stat_modifiers": [
+                {
+                    "statID":"Strength",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"4"
+                },
+                {
+                    "statID":"Constitution",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"4"
+                },
+                {
+                    "statID":"Psyche",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"-8"
+                },
+                {
+                    "statID":"Willpower",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"-8"
+                }
+            ]
+        },
+        {
+            "ID": "humanRaceAddon_Mistborn",
+            "displayName": "Mistborn",
+            "tooltip": "Descendent of a Mist-Taken, has somehow kept a sliver of sanity and reason.\nSTR+3 CON+3 PSY-4 WIL-4",
+            "stat_modifiers": [
+                {
+                    "statID":"Strength",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"3"
+                },
+                {
+                    "statID":"Constitution",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"3"
+                },
+                {
+                    "statID":"Psyche",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"-4"
+                },
+                {
+                    "statID":"Willpower",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"-4"
+                }
+            ]
+        },
+        {
+            "ID": "humanRaceAddon_Android_Nikke",
+            "displayName": "Nikke",
+            "tooltip": "Android body housing a human consciousness. Made to resemble humanoid physiology as close as possible.\nIn spite of their superhuman capabilities, Nikkes still need an environment close to human experience to maintain their mental stability.\nSTR+10 CON+10",
+            "addStatsKeyword":["hunger","sleep","stress","lust","mood"],
+            "stat_modifiers": [
+                {
+                    "statID":"Strength",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"10"
+                },
+                {
+                    "statID":"Constitution",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"10"
+                },
+                {
+                    "statID":"stats_derived_baselineObedience",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                }
+            ],
+            "needs":[
+                {
+                    "ID":"food",
+                    "displayName":"food need",
+                    "tooltip":"tooltip",
+                    "statusDebuffID": "chara_status_malnourished",
+                    "consumeItemByTag": "food_meal",
+                    "requiresStatKeyword": "hunger",
+                    "overwritesNeedsIDs": []
+                }
+            ]
+        },
+        {
+            "ID": "humanRaceAddon_Android_Sirin",
+            "displayName": "Sirin",
+            "tooltip": "Light-weight, mass-produced mechanical android, housing artificial intelligence based on a humanoid being.\nSirins can function as long as they are operating a loosely humanoid frame",
+            "stat_modifiers": [
+                {
+                    "statID":"Constitution",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"-2"
+                },
+                {
+                    "statID":"stats_derived_baselineObedience",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"2"
+                }
+            ],
+            "addStatsKeyword":["mood"]
+        }
+    ]
+    }
+}

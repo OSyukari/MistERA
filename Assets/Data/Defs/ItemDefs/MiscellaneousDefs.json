@@ -1,0 +1,14 @@
+{
+    "Items":{
+"list":
+[
+    {
+        "id":"item_misc_money",
+        "displayName":"MRE ration",
+        "tooltip":"Meal ready-to-eat. Provide 1 food value for 24 hours, and allow taking meal in canteen.",
+        "Tags":["item_money"],
+        "itemComps_Template":[]
+    }
+]
+    }
+}

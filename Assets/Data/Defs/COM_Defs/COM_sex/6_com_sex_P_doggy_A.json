@@ -1,0 +1,204 @@
+{
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"com_sex_P_doggy_A",
+                "ActionPackageClass":"ActionPackage_Sex",
+                "displayName":"com_sex_P_doggy_A_displayName_1",
+                "timeScale":3,
+                "comTags":["sex","penetration"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["penis"],
+                            "minRevealingScore":1,
+                            "cost_ST": 2
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["anus"],
+                            "minRevealingScore":1,
+                            "requireConscious":false,
+                            "requireAction":false
+                        }
+                    }
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "variants":[
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_missionary_A" 
+                            } 
+                        },
+                        "displayName":"com_sex_P_A_overpen_1",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_missionary_A" 
+                            } 
+                        },
+                        "displayName":"com_sex_P_A_overpen_2",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_missionary_A" 
+                            } 
+                        },
+                        "displayName":"com_sex_P_A_overpen_3",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_missionary_A" 
+                            } 
+                        },
+                        "displayName":"com_sex_P_A_overpen_4",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{  "requireCOMID":"com_sex_P_missionary_A" 
+                            } 
+                        },
+                        "displayName":"com_sex_P_A_force_1",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{  "requireCOMID":"com_sex_P_missionary_A" 
+                            } 
+                        },
+                        "displayName":"com_sex_P_A_force_2",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{  "requireCOMID":"com_sex_P_missionary_A" 
+                            } 
+                        },
+                        "displayName":"com_sex_P_A_force_3",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{  "requireCOMID":"com_sex_P_missionary_A" 
+                            } 
+                        },
+                        "displayName":"com_sex_P_A_force_4",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_P_doggy_A_displayName_1"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_P_doggy_A_displayName_2"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_P_doggy_A_displayName_3"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_P_doggy_A_displayName_4"
+                    }
+                ],
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "$doer.firstname$的阴茎在$receiver.firstname$的肛门中进出" ]
+                        }
+                    ]
+                },
+                "descriptions_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "$doer.firstname$将肉棒从$receiver.firstname$的肛内抽出来" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "即将射精的$doer.firstname$将肉棒狠狠顶入了$receiver.firstname$的体内" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": ["$doer.firstname$从背后压上了$receiver.firstname$，肉棒插入了对方的肛门"]
+                        }
+                    ]
+                    
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,185 @@
+{
+    "language":"default",
+    "entries":
+    [
+        {"ID":"campaign_starfarers","Entry":"星之旅人"},
+        {"ID":"campaign_starfarers_tooltip","Entry":"为了方便熟悉游戏机制而设计的小型剧本。\n限制：玩家角色起源必须是%%charOrigin_TraveleracrossGates%%，角色初始礼物不会生效。\n\n此剧本为碧蓝档案同人"},
+        {"ID":"campaign1_start_default","Entry":"老师"},
+        {"ID":"campaign1_start_default_tooltip","Entry":"以碧蓝档案的老师身份，与%%factionName_Utnapishtim%%的领航员们一同开始游戏。\n身为老师，玩家有义务管理%%factionName_Utnapishtim%%阵营，有义务维护学生们的身心健康。\n限制：玩家不可参与战斗（未实装），不可做出越界的举止（未实装）\n玩家的立绘和名字会被更改"},
+        
+        {"ID":"campaign1_start_student","Entry":"（未实装）学生"},
+        {"ID":"campaign1_start_student_tooltip","Entry":"（未实装）以奇沃托斯的学生身份，与生命守护者的领航员们一同开始游戏。\n身为学生，玩家可以参与战斗。\n限制：玩家的种族模板会被改为--学生模板--\n--学生模板--：--模板描述--"},
+        {"ID":"campaign1_start_debug","Entry":"（未实装）debug"},
+        {"ID":"campaign1_start_debug_tooltip","Entry":"（未实装）Start with extra debug NPC in party"},
+
+
+        {"ID":"factionName_Utnapishtim","Entry":"生命守护者"},
+
+        {"ID":"Campaign1_player_firstname","Entry":"老师"},
+        {"ID":"Campaign1_player_middlename","Entry":""},
+        {"ID":"Campaign1_player_lastname","Entry":""},
+        {"ID":"Campaign1_player_nameDisplayFormat","Entry":"%%chara_fullname_firstToLast%%"},
+
+        {"ID":"Campaign1_Char_Himari_FirstName","Entry":"日鞠"},
+        {"ID":"Campaign1_Char_Himari_LastName","Entry":"明星"},
+
+        {"ID":"Campaign1_Char_Ako_FirstName","Entry":"亚子"},
+        {"ID":"Campaign1_Char_Ako_LastName","Entry":"天雨"},
+
+        {"ID":"Campaign1_Char_Yuuka_FirstName","Entry":"优香"},
+        {"ID":"Campaign1_Char_Yuuka_LastName","Entry":"早濑"},
+
+        {"ID":"Campaign1_Char_Ayumu_FirstName","Entry":"步"},
+        {"ID":"Campaign1_Char_Ayumu_LastName","Entry":"岩柜"},
+
+        {"ID":"Campaign1_Char_Rin_FirstName","Entry":"琳"},
+        {"ID":"Campaign1_Char_Rin_LastName","Entry":"七神"},
+
+        {"ID":"Campaign1_Char_Ayane_FirstName","Entry":"绫音"},
+        {"ID":"Campaign1_Char_Ayane_LastName","Entry":"奥空"},
+
+        {"ID":"Campaign1_Char_Momoka_FirstName","Entry":"桃香"},
+        {"ID":"Campaign1_Char_Momoka_LastName","Entry":"由良木"},
+
+        {"ID":"Campaign1_Char_Hanako_FirstName","Entry":"花子"},
+        {"ID":"Campaign1_Char_Hanako_LastName","Entry":"浦和"},
+
+        {"ID":"Campaign1_Char_Kayoko_FirstName","Entry":"佳代子"},
+        {"ID":"Campaign1_Char_Kayoko_LastName","Entry":"鬼方"},
+
+        {"ID":"humanRaceAddon_Kivotos_Trinity","Entry":"圣三一学生"},
+        {"ID":"humanRaceAddon_Kivotos_Trinity_tooltip","Entry":"%%tooltip_kivotos_halo_effect%%"},
+        {"ID":"humanRaceAddon_Kivotos_Gehenna","Entry":"格黑那学生"},
+        {"ID":"humanRaceAddon_Kivotos_Gehenna_tooltip","Entry":"%%tooltip_kivotos_halo_effect%%"},
+        {"ID":"humanRaceAddon_Kivotos_Millenium","Entry":"千年学生"},
+        {"ID":"humanRaceAddon_Kivotos_Millenium_tooltip","Entry":"%%tooltip_kivotos_halo_effect%%"},
+        {"ID":"humanRaceAddon_Kivotos_GSC","Entry":"联邦学生会学生"},
+        {"ID":"humanRaceAddon_Kivotos_GSC_tooltip","Entry":"%%tooltip_kivotos_halo_effect%%"},
+        {"ID":"humanRaceAddon_Kivotos_Abydos","Entry":"阿拜多斯学生"},
+        {"ID":"humanRaceAddon_Kivotos_Abydos_tooltip","Entry":"%%tooltip_kivotos_halo_effect%%"},
+
+        {"ID":"tooltip_kivotos_halo_effect","Entry":"光环：MP不会自然回复，获得等同于MP上限/2的全类型伤害减免。\n上述效果未实装"},
+
+        {"ID":"clothing_bluearchive_Navigator_Hat","Entry":"领航员帽子"},
+        {"ID":"clothing_bluearchive_Navigator_Dress","Entry":"领航员连衣裙"},
+        {"ID":"clothing_bluearchive_Navigator_SleevelessMinidress","Entry":"领航员无袖迷你连衣裙"},
+        {"ID":"clothing_bluearchive_Navigator_Minidress","Entry":"领航员迷你连衣裙"},
+        {"ID":"clothing_bluearchive_Navigator_Coat","Entry":"领航员大衣"},
+        {"ID":"clothing_bluearchive_Navigator_Cape","Entry":"领航员披肩"},
+        {"ID":"clothing_bluearchive_Navigator_ShortCoat","Entry":"领航员短袖外衣"},
+        {"ID":"clothing_bluearchive_Navigator_Longcoat","Entry":"舰长的外衣"},
+        {"ID":"clothing_bluearchive_Navigator_Glove","Entry":"领航员手套"},
+        {"ID":"clothing_bluearchive_Navigator_HeelBoot","Entry":"领航员高跟靴"},
+        {"ID":"clothing_bluearchive_Navigator_Boot","Entry":"领航员靴子"},
+        {"ID":"clothing_inner_hair_ribbon","Entry":"发带"},
+        {"ID":"clothing_skin_hair_hairpin","Entry":"发卡"},
+
+        {"ID":"clothing_skin_socks","Entry":"袜子"},
+        {"ID":"clothing_inner_necktie","Entry":"领带"},
+        {"ID":"clothing_inner_shoes","Entry":"鞋子"},
+        {"ID":"clothing_inner_pants","Entry":"裤子"},
+        {"ID":"clothing_inner_shirt","Entry":"衬衣"},
+        {"ID":"clothing_skin_panty","Entry":"内裤"},
+        {"ID":"clothing_inner_hairpin","Entry":"发卡"},
+        {"ID":"clothing_inner_skirt","Entry":"裙子"},
+        {"ID":"clothing_inner_miniskirt","Entry":"超短裙"},
+        {"ID":"clothing_outer_suit","Entry":"西装"},
+
+        {"ID":"clothing_skin_bracelet_double","Entry":"成对手链"},
+        {"ID":"clothing_skin_bra","Entry":"胸罩"},
+        {"ID":"clothing_skin_panty_opencrotch","Entry":"开裆裤"},
+        {"ID":"clothing_skin_earring","Entry":"耳环"},
+        {"ID":"clothing_outer_wristcuff_single","Entry":"手铐"},
+        {"ID":"clothing_outer_blanket_lower","Entry":"毛毯"},
+        {"ID":"clothing_skin_contactlens","Entry":"隐形眼镜"},
+        {"ID":"clothing_bluearchive_Navigator_CaptainsGunHolster","Entry":"舰长的枪套"},
+        {"ID":"clothing_bluearchive_Navigator_CaptainsHHBoot","Entry":"舰长的高跟靴"},
+        {"ID":"clothing_skin_necklace","Entry":"项链"},
+        {"ID":"clothing_skin_neckribbon","Entry":"颈带"},
+        {"ID":"clothing_skin_clit_piercing","Entry":"阴蒂穿环"},
+        {"ID":"clothing_skin_nipple_piercing","Entry":"乳头穿环"},
+
+        {"ID":"clothing_skin_stocking","Entry":"丝袜"},
+        {"ID":"clothing_skin_stocking_pantyhose","Entry":"连裤袜"},
+        
+
+        {"ID":"map_hallway","Entry":"走廊"},
+        {"ID":"map_singleSuite","Entry":"单人套房"},
+        {"ID":"map_singleRoom","Entry":"单人房"},
+        {"ID":"map_doubleRoom","Entry":"双人房"},
+        {"ID":"map_execSuite","Entry":"商务套房"},
+        {"ID":"map_storeroom","Entry":"仓库"},
+
+        {"ID":"bridge_flightcontrol","Entry":"航控"},
+        {"ID":"bridge_bridge","Entry":"舰桥"},
+        {"ID":"bridge_briefing","Entry":"简报室"},
+        {"ID":"bridge_lounge","Entry":"休息室"},
+        {"ID":"bridge_captainsoffice","Entry":"舰长办公室"},
+        {"ID":"bridge_captainsroom","Entry":"舰长房间"},
+        {"ID":"bridge_toilet","Entry":"厕所"},
+
+        {"ID":"lounge2_dining","Entry":"餐厅"},
+        {"ID":"lounge2_multiuseroom","Entry":"多媒体室"},
+        {"ID":"lounge2_housekeeping1","Entry":"杂物间"},
+        {"ID":"lounge2_library","Entry":"图书馆"},
+        {"ID":"lounge2_library_computers1","Entry":"电脑室"},
+        {"ID":"lounge2_library_computers2","Entry":"电脑室"},
+        {"ID":"lounge2_kitchen","Entry":"厨房"},
+
+        {"ID":"hydroponics_hydroponics","Entry":"水培农场"},
+        {"ID":"hydroponics_storage1","Entry":"仓库"},
+        {"ID":"hydroponics_storage2","Entry":"仓库"},
+        {"ID":"hydroponics_engineering","Entry":"制造工坊"},
+        {"ID":"hydroponics_carniculture_production","Entry":"肉培农场"},
+        {"ID":"hydroponics_carniculture_office","Entry":"肉培工作室"},
+        {"ID":"hydroponics_carniculture_labs","Entry":"肉培实验室"},
+
+        {"ID":"medbay_pharmacy","Entry":"药房"},
+        {"ID":"medbay_med_exam_1","Entry":"诊疗室"},
+        {"ID":"medbay_med_exam_2","Entry":"诊疗室"},
+        {"ID":"medbay_cryo","Entry":"冷冻休眠"},
+        {"ID":"medbay_shooting_range","Entry":"靶场"},
+        {"ID":"medbay_dojo_arena","Entry":"道场"},
+        {"ID":"medbay_changing_room","Entry":"更衣室"},
+        {"ID":"medbay_life_support","Entry":"维生系统"},
+        {"ID":"medbay_lab","Entry":"实验室"},
+        {"ID":"medbay_security_office","Entry":"警卫室"},
+        {"ID":"medbay_decontamination","Entry":"除菌室"},
+        {"ID":"medbay_isolation_office","Entry":"隔离区警卫室"},
+        {"ID":"medbay_isolation_room_1","Entry":"群体隔离间"},
+        {"ID":"medbay_isolation_room_2","Entry":"双人隔离间"},
+        {"ID":"medbay_isolation_operation_room","Entry":"隔离间手术室"},
+        {"ID":"medbay_isolation_storage","Entry":"隔离间储物室"},
+        {"ID":"medbay_isolation_morgue","Entry":"隔离间停尸房"},
+
+        {"ID":"medbay_isolation_morgue","Entry":"隔离间停尸房"},
+
+        {"ID":"map_prisoncell_single","Entry":"单人牢房"},
+        {"ID":"map_prisoncell_double","Entry":"双人牢房"},
+
+
+        {"ID":"campaign1_map_utnapishtim_bridge","Entry":"%%factionName_Utnapishtim%%舰桥"},
+        {"ID":"campaign1_map_utnapishtim_living","Entry":"%%factionName_Utnapishtim%%居住区"},
+        {"ID":"campaign1_map_utnapishtim_faming","Entry":"%%factionName_Utnapishtim%%农业区"},
+        {"ID":"campaign1_map_utnapishtim_medical","Entry":"%%factionName_Utnapishtim%%医疗区"},
+
+
+
+        {"ID":"Campaign1_Nikke_Rapi_firstname","Entry":"拉毗"},
+        {"ID":"Campaign1_Nikke_Anis_firstname","Entry":"阿妮斯"},
+        {"ID":"Campaign1_Nikke_Neon_firstname","Entry":"尼恩"},
+        {"ID":"Campaign1_86_Lerche_firstname","Entry":"蕾尔赫"},
+        {"ID":"humanRaceAddon_Android_Sirin","Entry":"西琳"},
+        {"ID":"humanRaceAddon_Android_Sirin_tooltip","Entry":"作为轻量且能被批量生产的战斗仿生人，%%humanRaceAddon_Android_Sirin%%尽管也复刻了人类的大脑结构，但只在外观上做到了人形，一动起来就会透露出不自然感。\n作为轻量化的代价，%%humanRaceAddon_Android_Sirin%%的持续作战能力较低。\nCON-2 基础服从度+2"},
+        {"ID":"humanRaceAddon_Android_Nikke","Entry":"妮姬"},
+        {"ID":"humanRaceAddon_Android_Nikke_tooltip","Entry":"为了容纳人类思维，在制作上更贴近人类外观的仿生人。\n尽管战力远超常人，%%humanRaceAddon_Android_Nikke%%仍需要与正常人类相似的生活环境，以此维持自身的精神安定。\nSTR+10 CON+10 基础服从度+1"},
+        {"ID":"humanRace_android_complex","Entry":"高等仿生人"},
+        {"ID":"humanRace_android_complex_tooltip","Entry":"%%humanRace_android_simple_tooltip%%\n相较通常仿生人，高等仿生人在更多方面贴近人类，相对的维护需求也更高。"},
+        {"ID":"humanRace_android_simple","Entry":"仿生人"},
+        {"ID":"humanRace_android_simple_tooltip","Entry":"被制造的人形机械，它们的存在意义常为填补某些特定需求。\n大部分仿生人没有维生需求。"}
+
+
+        
+
+    ]
+}

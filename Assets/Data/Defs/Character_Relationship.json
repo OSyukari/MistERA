@@ -1,0 +1,131 @@
+{
+    "RelationshipTypes":
+    {
+        "list_biological":[
+            {
+                "ID":"relationship_parent",
+                "displayName":"relationship_parent_displayName",
+                "DisplayName_A_is_to_B":"relationship_parent_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_parent_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "_comment":"trust|fear|good|bad|lust",
+                "RelationshipModA":[100,0,100,0,0],
+                "RelationshipModB":[100,100,100,100,0]
+            },
+            {
+                "ID":"relationship_sibling",
+                "displayName":"relationship_sibling_displayName",
+                "DisplayName_A_is_to_B":"relationship_sibling_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_sibling_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "RelationshipModA":[100,0,100,100,0],
+                "RelationshipModB":[100,0,100,100,0]
+            },
+            {
+                "ID":"relationship_stepparent",
+                "displayName":"relationship_stepparent_displayName",
+                "DisplayName_A_is_to_B":"relationship_stepparent_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_stepparent_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "RelationshipModA":[0,0,50,0,0],
+                "RelationshipModB":[-50,50,0,50,0]
+            }
+        ],
+        "list_social":
+        [
+            {
+                "ID":"relationship_colleague",
+                "displayName":"relationship_colleague_displayName",
+                "isEqualRelationship":true,
+                "Requirements":[ ],
+                "RelationshipMod":[20,0,0,0,0]
+            },
+            {
+                "ID":"relationship_subordinate",
+                "displayName":"relationship_subordinate_displayName",
+                "DisplayName_A_is_to_B":"relationship_subordinate_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_subordinate_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "Requirements":[ ],
+                "RelationshipModA":[10,0,0,0,0],
+                "RelationshipModB":[20,0,0,0,0]
+            }
+        ],
+        "list_personal":[
+            {
+                "ID":"relationship_couple",
+                "displayName":"relationship_couple_displayName",
+                "isEqualRelationship":true,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "RelationshipMod":[20,20,20,20,100]
+            },
+            {
+                "ID":"relationship_marriage",
+                "displayName":"relationship_marriage_displayName",
+                "isEqualRelationship":true,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "RelationshipMod":[50,25,50,25,50]
+            },
+            {
+                "ID":"relationship_fwb",
+                "displayName":"relationship_fwb_displayName",
+                "isEqualRelationship":true,
+                "Requirements":[ ],
+                "RelationshipMod":[0,0,20,0,100]
+            },
+            {
+                "ID":"relationship_friend",
+                "displayName":"relationship_friend_displayName",
+                "isEqualRelationship":true,
+                "Requirements":[ ],
+                "RelationshipMod":[20,0,20,0,0]
+            },
+            {
+                "ID":"relationship_bff",
+                "displayName":"relationship_bff_displayName",
+                "isEqualRelationship":true,
+                "Requirements":[ ],
+                "RelationshipMod":[100,0,100,0,0]
+            },
+            {
+                "ID":"relationship_mentor",
+                "displayName":"relationship_mentor_displayName",
+                "DisplayName_A_is_to_B":"relationship_mentor_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_mentor_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "Requirements":[ ],
+                "_comment":"trust|fear|good|bad|lust",
+                "RelationshipModA":[0,0,0,0,0],
+                "RelationshipModB":[30,0,0,0,0]
+            },
+            {
+                "ID":"relationship_slave",
+                "displayName":"relationship_slave_displayName",
+                "DisplayName_A_is_to_B":"relationship_slave_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_slave_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "Requirements":[ ],
+                "RelationshipModA":[0,0,0,0,100],
+                "RelationshipModB":[0,200,0,100,0]
+            },
+            {
+                "ID":"relationship_servant",
+                "displayName":"relationship_servant_displayName",
+                "DisplayName_A_is_to_B":"relationship_servant_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_servant_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "Requirements":[ ],
+                "RelationshipModA":[0,0,0,0,50],
+                "RelationshipModB":[50,50,0,50,0]
+            }
+        ]
+    }
+}

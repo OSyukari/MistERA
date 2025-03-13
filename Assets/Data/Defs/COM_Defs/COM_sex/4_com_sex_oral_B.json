@@ -1,0 +1,108 @@
+{
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"com_sex_oral_B",
+                "ActionPackageClass":"ActionPackage_Sex",
+                "displayName":"com_sex_oral_B_displayName_1",
+                "timeScale":3,
+                "comTags":["sex","service"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["mouth"],
+                            "minRevealingScore":1,
+                            "cost_ST": 1
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["breast"],
+                            "minRevealingScore":1,
+                            "requireConscious":false,
+                            "requireAction":false
+                        }
+                    }
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "variants":[
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_oral_B_displayName_1"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_oral_B_displayName_2"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_oral_B_displayName_3"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_oral_B_displayName_4"
+                    }
+                ],
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "$doer.firstname$正吸吮着$receiver.firstname$的乳头" ]
+                        }
+                    ]
+                },
+                "descriptions_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "$doer.firstname$松开了含在嘴里的$receiver.firstname$的乳头" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "$doer.firstname$在口中感受着$receiver.firstname$乳头的突起" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": ["$doer.firstname$将$receiver.firstname$的乳头含在了嘴里"]
+                        }
+                    ]
+                    
+                }
+            }
+        ]
+    }
+}

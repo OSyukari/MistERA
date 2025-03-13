@@ -1,0 +1,189 @@
+{
+    "Skills":
+    {
+        "list":
+        [
+            {
+                "ID":"skill_sexSkill_technique",
+                "levels":
+                [   {
+                        "DisplayName":"-"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                        "stat_modifiers":
+                        [
+
+                        ],
+                        "DisplayName":"1"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+   
+                         ],
+                        "DisplayName":"2"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+     
+                         ],
+                        "DisplayName":"3"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+           
+                         ],
+                        "DisplayName":"4"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+           
+                         ],
+                        "DisplayName":"5"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+                   
+                         ],
+                        "DisplayName":"6"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+               
+                         ],
+                        "DisplayName":"7"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+                
+                         ],
+                        "DisplayName":"8"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+                    
+                         ],
+                        "DisplayName":"9"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+                 
+                         ],
+                        "DisplayName":"10"
+                    }
+                ]
+            }
+        ]
+    }
+        
+    
+}

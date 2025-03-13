@@ -1,0 +1,79 @@
+
+{
+    "baseID": "Campaign1_Char_Yuuka",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": 14.286,
+                "portrait_offset_y": -391.378,
+                "portrait_offset_size": 1.12,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.8,
+
+                "icon_path":"Images/BlueArchive/Yuuka/Yuuka_Ark_Uniform_Icon.png",
+                "_comment":"utnapishtim uniform",
+                "_comment2":"missing default, CH0184_spr sport",
+
+                "materialTexturePaths":["BlueArchive_Extracted/Texture2D/NP0109_spr"],
+                "atlasJSON_path":"BlueArchive_Extracted/TextAsset/NP0109_spr.atlas",
+                "skeletonJSON_path":"BlueArchive_Extracted/TextAsset/NP0109_spr.skel",
+                "skeletonScale":0.005,
+                "idleAnimName":"Idle_01"
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 14,
+      "stat_CON": 12,
+      "stat_PSY": 12,
+      "stat_WIL": 12,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_D",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":156,
+      "initialRelationship":[
+            {
+                "baseID":"PLAYER",
+                "initialPersonalRelationship":"relationship_mentor",
+                "initialPersonalRelationship_isA":false
+            },
+            {
+                "baseID":"Campaign1_Char_Himari",
+                "initialPersonalRelationship":"relationship_bff"
+            }
+        ],
+      "initialInventory":[
+            { "ID":"clothing_bluearchive_Navigator_Hat" },
+            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_Minidress" },
+            { "ID":"clothing_bluearchive_Navigator_Cape" },
+            { "ID":"clothing_bluearchive_Navigator_Glove" },
+            { "ID":"clothing_bluearchive_Navigator_Boot", "nameOverwrite":"clothing_bluearchive_Navigator_HeelBoot" },
+            { "ID":"clothing_skin_socks" },
+            { "ID":"clothing_skin_panty" },
+            { "ID":"clothing_inner_hair_ribbon" },
+            { "ID":"clothing_skin_bra" }
+        ],
+      "Skills": null
+    },
+    "firstName": "Campaign1_Char_Yuuka_FirstName",
+    "middleName": "",
+    "lastName": "Campaign1_Char_Yuuka_LastName",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_KivotosStudent",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_Kivotos_Millenium",
+    "startingGift": "charOriginGift_none"
+}

@@ -1,0 +1,206 @@
+{
+    "BodyPartBases":
+    {
+        "BodyPart_Base": 
+        [
+            {
+                "id": "head_humanoid_base",
+                "displayName":"%%bodyPart_base_head%%",
+                "tooltip":"An {0}'s head.",
+                "availableSlotsString":["Hair", "Face", "Eyes"],
+                "childID":["torso_humanoid_base"],
+                "internalID":["mouth_humanoid_base"],
+                "tags":["head"],
+                "sortOrder":0
+            },
+            {
+                "id": "torso_humanoid_base",
+                "displayName":"%%bodyPart_base_torso%%",
+                "tooltip":"An {0}'s upper body.",
+                "availableSlotsString":["Neck","Torso"],
+                "childID":["arm_humanoid_base", "arm_humanoid_base", "lower_humanoid_base"],
+                "internalID":["stomach_humanoid_base","breasts_humanoid_base"],
+                "tags":["torso"],
+                "sortOrder":1
+            },
+            {
+                "id": "arm_humanoid_base",
+                "displayName":"%%bodyPart_base_arm%%",
+                "tooltip":"An {0}'s arm.",
+                "availableSlotsString":["Hand"],
+                "tags":["arm"],
+                "sortOrder":2
+            },
+            {
+                "id": "lower_humanoid_base",
+                "displayName":"%%bodyPart_base_lower%%",
+                "tooltip":"An {0}'s lower body.",
+                "availableSlotsString":["Lower"],
+                "childID":["leg_humanoid_base","leg_humanoid_base"],
+                "internalID":["anus_humanoid_base","guts_humanoid_base","penis_humanoid_base","vagina_humanoid_base","womb_humanoid_base","clit_humanoid_base"],
+                "tags":["lower"],
+                "sortOrder":3
+            },
+            {
+                "id": "leg_humanoid_base",
+                "displayName":"%%bodyPart_base_leg%%",
+                "tooltip":"An {0}'s leg.",
+                "availableSlotsString":["Leg"],
+                "childID":["feet_humanoid_base"],
+                "tags":["leg"],
+                "sortOrder":4
+            },
+            {
+                "id": "feet_humanoid_base",
+                "displayName":"%%bodyPart_base_feet%%",
+                "tooltip":"An {0}'s feet.",
+                "availableSlotsString":["Feet"],
+                "tags":["feet"],
+                "sortOrder":5
+            }
+        ],
+        "BodyInternal_Base": 
+        [
+            {
+                "id": "mouth_humanoid_base",
+                "displayName":"%%bodyPart_internal_mouth%%",
+                "tooltip":"An {0}'s mouth.",
+                "availableSlotsString":["Mouth"],
+                "equipLayersString":["Skin"],
+                "tags":["mouth","internal"],
+                "tag_directionIn":"ext",
+                "tag_directionOut":"stomach",
+                "sensitivityClassString":"M",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_M",
+                "sortOrder":0,
+                "sizeRatio":0.1,
+                "depthRatio":0.05,
+                "volumeRatio":0.2,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
+                "virginityLossTags":["internal", "external"]
+            },
+            {
+                "id": "stomach_humanoid_base",
+                "displayName":"%%bodyPart_internal_stomach%%",
+                "tooltip":"An {0}'s stomach.",
+                "tags":["stomach","internal"],
+                "tag_directionIn":"mouth",
+                "tag_directionOut":"guts",
+                "sortOrder":1,
+                "volumeRatio":12,
+                "depthRatio":0.4
+            },
+            {
+                "id": "breasts_humanoid_base",
+                "displayName":"%%bodyPart_internal_breasts%%",
+                "tooltip":"An {0}'s breast.",
+                "availableSlotsString":["Breasts"],
+                "equipLayersString":["Skin"],
+                "tags":["breast","nipple"],
+                "sensitivityClassString":"B",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_B",
+                "sortOrder":2,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin_silent%%",
+                "virginityLossTags":["penetration"]
+            },
+            {
+                "id": "penis_humanoid_base",
+                "displayName":"%%bodyPart_internal_penis%%",
+                "tooltip":"An {0}'s penis.",
+                "equipLayersString":["Skin"],
+                "tags":["penis","testicle","external"],
+                "sensitivityClassString":"C",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
+                "sortOrder":7,
+                "sizeRatio":0.1,
+                "depthRatio":0.1,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
+                "virginityLossTags":["penetration"]
+            },
+            {
+                "id": "clit_humanoid_base",
+                "displayName":"%%bodyPart_internal_clit%%",
+                "tooltip":"An {0}'s clitoris.",
+                "availableSlotsString":["Clitoris"],
+                "equipLayersString":["Skin"],
+                "tags":["clit","external"],
+                "tag_directionIn":"vagina",
+                "tag_directionOut":"ext",
+                "sensitivityClassString":"C",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
+                "sizeRatio":0,
+                "volumeRatio":0,
+                "depthRatio":0,
+                "sortOrder":3
+            },
+            {
+                "id": "vagina_humanoid_base",
+                "displayName":"%%bodyPart_internal_vagina%%",
+                "tooltip":"An {0}'s vagina.",
+                "availableSlotsString":["Vagina"],
+                "equipLayersString":["Skin"],
+                "tags":["vagina","internal","arousalExpansion"],
+                "tag_directionIn":"womb",
+                "tag_directionOut":"clit",
+                "sensitivityClassString":"V",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_V",
+                "sizeRatio":0.05,
+                "volumeRatio":0.2,
+                "needLubrication":true,
+                "depthRatio":0.05,
+                "sortOrder":5,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
+                "_comment":"v is hardcoded to double its depth when aroused",
+                "virginityLossTags":["penetration"]
+            },
+            {
+                "id": "womb_humanoid_base",
+                "displayName":"%%bodyPart_internal_womb%%",
+                "tooltip":"An {0}'s womb.",
+                "availableSlotsString":["Womb"],
+                "equipLayersString":["Skin"],
+                "tags":["womb","internal"],
+                "sensitivityClassString":"W",
+                "tag_directionOut":"vagina",
+                "sizeRatio":0.01,
+                "volumeRatio":0.2,
+                "depthRatio":0.05,
+                "sortOrder":6,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin_silent%%",
+                "virginityLossTags":["penetration"],
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_W"
+            },
+            {
+                "id": "guts_humanoid_base",
+                "displayName":"%%bodyPart_internal_guts%%",
+                "tooltip":"An {0}'s guts.",
+                "tags":["guts","internal"],
+                "tag_directionIn":"stomach",
+                "tag_directionOut":"anus",
+                "volumeRatio":20,
+                "depthRatio":2.5,
+                "sortOrder":8
+            },
+            {
+                "id": "anus_humanoid_base",
+                "displayName":"%%bodyPart_internal_anus%%",
+                "tooltip":"An {0}'s anus.",
+                "availableSlotsString":["Anus"],
+                "equipLayersString":["Skin"],
+                "tags":["anus","internal","arousalExpansion"],
+                "tag_directionIn":"guts",
+                "tag_directionOut":"ext",
+                "sensitivityClassString":"A",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_A",
+                "needLubrication":true,
+                "sizeRatio":0.02,
+                "volumeRatio":2,
+                "depthRatio":0.1,
+                "sortOrder":9,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
+                "virginityLossTags":["penetration"]
+            }
+        ]
+    }
+    
+}

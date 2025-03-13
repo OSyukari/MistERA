@@ -1,0 +1,831 @@
+{
+    "Floors":{
+        "list":
+    [
+        {
+            "ID":"floor_stockasset_bridge",
+            "imagePath":"ShipGenerator/stockasset_bridge",
+            "floorWidth":800.0,
+            "floorHeight":800.0,
+            "exits":[
+                {
+                    "ID":"South",
+                    "connectedRoom":"bridge_hallway1",
+                    "offsetY":-450.0
+                }
+            ],
+            "rooms":[
+                {
+                    "ID":"bridge_flightcontrol",
+                    "displayName":"Flight Control",
+                    "offsetX":114.0,
+                    "offsetY":-167.0,
+                    "connects": 
+                    [ { "ID":"bridge_bridge", "cost":1.0 } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_UtnapishtimBridge_V2"
+                },
+                {
+                    "ID":"bridge_bridge",
+                    "displayName":"Bridge",
+                    "offsetX":6.0,
+                    "connects": 
+                    [ { "ID":"bridge_hallway2", "cost":1.0  },
+                    { "ID":"bridge_hallway1", "cost":1.0  }],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_UtnapishtimBridge_V2"
+                },
+                {
+                    "ID":"bridge_briefing",
+                    "displayName":"Briefing",
+                    "offsetX":350.0,
+                    "offsetY":-335.0,
+                    "connects": 
+                    [ { "ID":"bridge_hallway1", "cost":1.0  } ],
+                    "furnitureIDs":
+                    [   "furniture_TV_flatscreen", "furniture_dining_table_10" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_SchaleOperationRoom"
+                },
+                {
+                    "ID":"bridge_lounge",
+                    "displayName":"Lounge",
+                    "offsetX":-85.0,
+                    "offsetY":-319.0,
+                    "connects": 
+                    [ { "ID":"bridge_bridge", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_sofa_1", "furniture_sofa_1","furniture_sofa_3","furniture_sofa_3",
+                     "furniture_sofa_1","furniture_round_table_4","furniture_round_table_4",
+                                    "furniture_TV_flatscreen" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_RestingLounge"
+                },
+                {
+                    "ID":"bridge_captainsoffice",
+                    "displayName":"Captain's Office",
+                    "offsetX":-286.0,
+                    "offsetY":-355.0,
+                    "connects":
+                    [ { "ID":"bridge_hallway2", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_cafe_table_2","furniture_sofa_3"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ReceptionRoom"
+                },
+                {
+                    "ID":"bridge_captainsroom",
+                    "displayName":"Captain's Room",
+                    "offsetX":-365.0,
+                    "offsetY":-334.0,
+                    "connects":
+                    [ { "ID":"bridge_captainsoffice", "cost":1.0  } ],
+                    "furnitureIDs":
+                    [   "furniture_sofa_1",
+                        "furniture_bed_double",
+                        "furniture_shower",
+                        "furniture_bathroom_set" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"bridge_toilet",
+                    "displayName":"Toilet",
+                    "offsetX":103.0,
+                    "offsetY":-333.0,
+                    "connects":
+                    [ { "ID":"bridge_lounge", "cost":1.0  } ],
+                    "furnitureIDs":
+                    [   "furniture_bathroom_set",
+                    "furniture_bathroom_set",
+                    "furniture_bathroom_set",
+                    "furniture_bathroom_set",
+                    "furniture_bathroom_set",
+                        "furniture_bathroom_set" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShowerRoom"
+                },
+                {
+                    "ID":"bridge_hallway1",
+                    "displayName":"map_hallway",
+                    "offsetX":206.0,
+                    "offsetY":-376.0,
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                },
+                {
+                    "ID":"bridge_hallway2",
+                    "displayName":"map_hallway",
+                    "offsetX":-206.0,
+                    "offsetY":-376.0,
+                    "connects":
+                    [ { "ID":"bridge_hallway1"  , "cost":1.0  }],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                }
+            ]
+        },
+        {
+            "ID":"floor_stockasset_lounge2",
+            "imagePath":"ShipGenerator/stockasset_lounge2",
+            "floorWidth":800.0,
+            "floorHeight":800.0,
+            "exits":[
+                {
+                    "ID":"North",
+                    "connectedRoom": "lounge2_hallway1",
+                    "offsetY":450.0
+                },
+                {
+                    "ID":"South",
+                    "connectedRoom": "lounge2_hallway3",
+                    "offsetY":-450.0
+                },
+                {
+                    "ID":"East",
+                    "connectedRoom": "lounge2_hallway2",
+                    "offsetX":500.0
+                },
+                {
+                    "ID":"West",
+                    "connectedRoom": "lounge2_hallway4",
+                    "offsetX":-500.0
+                }
+            ],
+            "rooms":[
+                {
+                    "ID":"lounge2_dining",
+                    "displayName":"Dining Area",
+                    "offsetY":177.0,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 },
+                    { "ID":"lounge2_hallway2", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [
+                        "furniture_sofa_3","furniture_sofa_1","furniture_sofa_1",
+                        "furniture_cafe_table_2","furniture_cafe_table_2","furniture_cafe_table_2","furniture_round_table_4","furniture_round_table_4",
+                        "furniture_dining_table_10","furniture_piano","furniture_marker_getmeal"
+                    ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_SchoolCafeteria"
+                },
+                {
+                    "ID":"lounge2_multiuseroom",
+                    "displayName":"Multimedia Room",
+                    "offsetY":-102.0,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 },
+                    { "ID":"lounge2_hallway2", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_TV_flatscreen"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Auditorium"
+                },
+                {
+                    "ID":"lounge2_singlesuite1",
+                    "displayName":"map_singleSuite",
+                    "offsetX":-314,
+                    "offsetY":106.3,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_bathroom_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_singlesuite2",
+                    "displayName":"map_singleSuite",
+                    "offsetX":-314,
+                    "offsetY":23,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_bathroom_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_singlesuite3",
+                    "displayName":"map_singleSuite",
+                    "offsetX":-314,
+                    "offsetY":-60.5,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_bathroom_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_singlesuite4",
+                    "displayName":"map_singleSuite",
+                    "offsetX":-314,
+                    "offsetY":-142.2,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_bathroom_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_singlesuite5",
+                    "displayName":"map_singleSuite",
+                    "offsetX":314,
+                    "offsetY":106.3,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_bathroom_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_singlesuite6",
+                    "displayName":"map_singleSuite",
+                    "offsetX":314,
+                    "offsetY":23,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_bathroom_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_singlesuite7",
+                    "displayName":"map_singleSuite",
+                    "offsetX":314,
+                    "offsetY":-60.5,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_bathroom_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_singlesuite8",
+                    "displayName":"map_singleSuite",
+                    "offsetX":314,
+                    "offsetY":-142.2,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_bathroom_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_SR_1",
+                    "displayName":"map_singleRoom",
+                    "offsetX":-122,
+                    "offsetY":-349,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_toilet_shower_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_StudentRoom"
+                },
+                {
+                    "ID":"lounge2_SR_2",
+                    "displayName":"map_singleRoom",
+                    "offsetX":-38,
+                    "offsetY":-349,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_toilet_shower_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_StudentRoom"
+                },
+                {
+                    "ID":"lounge2_SR_3",
+                    "displayName":"map_singleRoom",
+                    "offsetX":46,
+                    "offsetY":-349,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_toilet_shower_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_StudentRoom"
+                },
+                {
+                    "ID":"lounge2_SR_4",
+                    "displayName":"map_singleRoom",
+                    "offsetX":128,
+                    "offsetY":-349,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":
+                    [   "furniture_bed_single",
+                        "furniture_shower",
+                        "furniture_toilet_shower_set","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_StudentRoom"
+                },
+                {
+                    "ID":"lounge2_exec_suite_1",
+                    "displayName":"map_execSuite",
+                    "offsetX":-309.1,
+                    "offsetY":316,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_bed_double",
+                    "furniture_round_table_4","furniture_sofa_1","furniture_sofa_1",
+                    "furniture_stove","furniture_shower","furniture_bathroom_set","furniture_bathtub",
+                                    "furniture_TV_flatscreen"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_exec_suite_2",
+                    "displayName":"map_execSuite",
+                    "offsetX":310.7,
+                    "offsetY":316,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway2", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_bed_double",
+                    "furniture_round_table_4","furniture_sofa_1","furniture_sofa_1",
+                    "furniture_stove","furniture_shower","furniture_bathroom_set","furniture_bathtub",
+                                    "furniture_TV_flatscreen"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_exec_suite_3",
+                    "displayName":"map_execSuite",
+                    "offsetX":-140.6,
+                    "offsetY":336,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_bed_single",
+                                "furniture_shower","furniture_bathroom_set",
+                            "furniture_table_1_chair_1","furniture_stove"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_exec_suite_4",
+                    "displayName":"map_execSuite",
+                    "offsetX":139.3,
+                    "offsetY":336,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway2", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_bed_single",
+                                "furniture_shower","furniture_bathroom_set",
+                            "furniture_table_1_chair_1","furniture_stove"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                },
+                {
+                    "ID":"lounge2_SR_5",
+                    "displayName":"map_singleRoom",
+                    "offsetX":-286.6,
+                    "offsetY":-269.8,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_bed_single","furniture_toilet_shower_set","furniture_shower"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms2"
+                },
+                {
+                    "ID":"lounge2_DR_1",
+                    "displayName":"map_doubleRoom",
+                    "offsetX":-364.2,
+                    "offsetY":-285.8,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_bed_single_bunk","furniture_bathroom_set","furniture_shower"
+                ,"furniture_stove"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Dormitory"
+                },
+                {
+                    "ID":"lounge2_housekeeping1",
+                    "displayName":"House Keeping 1",
+                    "offsetX":-290.9,
+                    "offsetY":-365.7,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_stove"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Warehouse"
+                },
+                {
+                    "ID":"lounge2_library",
+                    "displayName":"Library",
+                    "offsetX":291.5,
+                    "offsetY":-330,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway4", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_dining_table_10","furniture_bookshelves","furniture_sofa_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Library"
+                },
+                {
+                    "ID":"lounge2_library_computers1",
+                    "displayName":"Computers Room 1",
+                    "offsetX":372.6,
+                    "offsetY":-310.5,
+                    "connects": 
+                    [ { "ID":"lounge2_library", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_computer_terminal","furniture_computer_terminal"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ComputerCenter"
+                },
+                {
+                    "ID":"lounge2_library_computers2",
+                    "displayName":"Computers Room 2",
+                    "offsetX":372.6,
+                    "offsetY":-349.9,
+                    "connects": 
+                    [ { "ID":"lounge2_library", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_computer_terminal","furniture_computer_terminal"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ComputerCenter"
+                },
+                {
+                    "ID":"lounge2_kitchen",
+                    "displayName":"Galley",
+                    "offsetY":374,
+                    "connects": 
+                    [ { "ID":"lounge2_dining", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_galley"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Kitchen"
+                },
+                {
+                    "ID":"lounge2_hallway1",
+                    "displayName":"map_hallway",
+                    "offsetX":-211,
+                    "offsetY":207,
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                },
+                {
+                    "ID":"lounge2_hallway2",
+                    "displayName":"map_hallway",
+                    "offsetX":210,
+                    "offsetY":207,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 },
+                    { "ID":"lounge2_hallway4", "cost":1.0 } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                },
+                {
+                    "ID":"lounge2_hallway3",
+                    "displayName":"map_hallway",
+                    "offsetX":-218.4,
+                    "offsetY":-205,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                },
+                {
+                    "ID":"lounge2_hallway4",
+                    "displayName":"map_hallway",
+                    "offsetX":210,
+                    "offsetY":-205,
+                    "connects": 
+                    [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                }
+            ]
+        },
+        {
+            "ID":"floor_stockasset_hydroponics",
+            "imagePath":"ShipGenerator/stockasset_hydroponic4",
+            "floorWidth":800.0,
+            "floorHeight":800.0,
+            "exits":[
+                {
+                    "ID":"East",
+                    "connectedRoom": "hydroponics_hydroponics",
+                    "offsetX":500.0
+                },
+                {
+                    "ID":"West",
+                    "connectedRoom": "hydroponics_hydroponics",
+                    "offsetX":-500.0
+                }
+            ],
+            "rooms":[
+                {
+                    "ID":"hydroponics_hydroponics",
+                    "displayName":"Hydroponics",
+                    "offsetY":206,
+                    "furnitureIDs":["furniture_hydroponics","furniture_hydroponics",
+                    "furniture_hydroponics","furniture_hydroponics","furniture_hydroponics"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LemonForest"
+                },
+                {
+                    "ID":"hydroponics_hallway1",
+                    "displayName":"map_hallway",
+                    "offsetY":-207,
+                    "connects": 
+                    [ { "ID":"hydroponics_hydroponics", "cost":1.0  } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                },
+                {
+                    "ID":"hydroponics_storage1",
+                    "displayName":"map_storeroom",
+                    "offsetX":-333,
+                    "offsetY":-287,
+                    "connects": 
+                    [ { "ID":"hydroponics_hallway1", "cost":1.0  } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Warehouse"
+                },
+                {
+                    "ID":"hydroponics_storage2",
+                    "displayName":"map_storeroom",
+                    "offsetX":329,
+                    "offsetY":-287,
+                    "connects": 
+                    [ { "ID":"hydroponics_hallway1", "cost":1.0  } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Warehouse"
+                },
+                {
+                    "ID":"hydroponics_engineering",
+                    "displayName":"Engineering",
+                    "offsetY":-316.0,
+                    "connects":
+                    [ { "ID":"hydroponics_hallway1", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_workbench_engineering"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Hangar"
+                },
+                {
+                    "ID":"hydroponics_carniculture_production",
+                    "displayName":"Carniculture Production",
+                    "offsetX":-211,
+                    "offsetY":-43,
+                    "connects":
+                    [ { "ID":"hydroponics_hallway1", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_carniculture_pod","furniture_carniculture_pod"
+                                ,"furniture_carniculture_pod","furniture_carniculture_pod"
+                                ,"furniture_carniculture_pod","furniture_carniculture_pod"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LemonForest"
+                },
+                {
+                    "ID":"hydroponics_carniculture_office",
+                    "displayName":"Carniculture Office",
+                    "offsetX":149,
+                    "offsetY":-43,
+                    "connects":
+                    [ { "ID":"hydroponics_carniculture_production", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_computer_terminal","furniture_computer_terminal",
+                        "furniture_computer_terminal","furniture_dining_table_10","furniture_round_table_4"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ValkyrieOffice2"
+                },
+                {
+                    "ID":"hydroponics_carniculture_labs",
+                    "displayName":"Carniculture Labs",
+                    "offsetX":334,
+                    "offsetY":-19,
+                    "connects":
+                    [ { "ID":"hydroponics_carniculture_office", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_research_biochem"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Lab"
+                }
+            ]
+        },
+        {
+            "ID":"floor_stockasset_medbay",
+            "imagePath":"ShipGenerator/stockasset_medbay",
+            "floorWidth":800.0,
+            "floorHeight":800.0,
+            "exits":[
+                {
+                    "ID":"North",
+                    "connectedRoom": "medbay_hallway_1",
+                    "offsetY":450.0
+                },
+                {
+                    "ID":"South",
+                    "connectedRoom": "medbay_hallway_3",
+                    "offsetY":-450.0
+                },
+                {
+                    "ID":"East",
+                    "connectedRoom": "medbay_hallway_2",
+                    "offsetX":500.0
+                },
+                {
+                    "ID":"West",
+                    "connectedRoom": "medbay_hallway_4",
+                    "offsetX":-500.0
+                }
+            ],
+            "rooms":[
+                {
+                    "ID":"medbay_hallway_1",
+                    "displayName":"map_hallway",
+                    "offsetX":-242.9,
+                    "offsetY":228.3,
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                },
+                {
+                    "ID":"medbay_hallway_2",
+                    "displayName":"map_hallway",
+                    "offsetX":256,
+                    "offsetY":228.3,
+                    "connects": 
+                    [ { "ID":"medbay_hallway_1", "cost":1.0  } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                },
+                {
+                    "ID":"medbay_hallway_3",
+                    "displayName":"map_hallway",
+                    "offsetX":-281,
+                    "offsetY":-205,
+                    "connects": 
+                    [ { "ID":"medbay_hallway_1", "cost":1.0  } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                },
+                {
+                    "ID":"medbay_hallway_4",
+                    "displayName":"map_hallway",
+                    "offsetX":297,
+                    "offsetY":-205,
+                    "connects": 
+                    [ { "ID":"medbay_hallway_2", "cost":1.0  },
+                    { "ID":"medbay_hallway_3", "cost":1.0  } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor"
+                },
+                {
+                    "ID":"medbay_pharmacy",
+                    "displayName":"Pharmacy",
+                    "offsetX":-328.7,
+                    "offsetY":-125,
+                    "connects": 
+                    [ { "ID":"medbay_hallway_3", "cost":1.0 } ],
+                    "furnitureIDs":["furniture_workbench_chemistry","furniture_computer_terminal","furniture_table_1_chair_1"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Lab"
+                },
+                {
+                    "ID":"medbay_med_exam_1",
+                    "displayName":"Examination Room 1",
+                    "offsetX":-328.7,
+                    "offsetY":-23,
+                    "connects": 
+                    [ { "ID":"medbay_hallway_3", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_round_table_4","furniture_hospital_bed"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Infirmary"
+                },
+                {
+                    "ID":"medbay_med_exam_2",
+                    "displayName":"Examination Room 2",
+                    "offsetX":-328.7,
+                    "offsetY":61.1,
+                    "connects": 
+                    [ { "ID":"medbay_hallway_3", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_round_table_4","furniture_hospital_bed"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Infirmary"
+                },
+                {
+                    "ID":"medbay_cryo",
+                    "displayName":"Cryo",
+                    "offsetX":-328.7,
+                    "offsetY":142.4,
+                    "connects": 
+                    [ { "ID":"medbay_hallway_3", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_cryopod","furniture_cryopod","furniture_cryopod"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_UndergroundPassage_Night"
+                },
+                {
+                    "ID":"medbay_shooting_range",
+                    "displayName":"Range 1",
+                    "offsetX":226,
+                    "offsetY":-272,
+                    "connects":
+                    [ { "ID":"medbay_hallway_4", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_shooting_range_spot","furniture_shooting_range_spot",
+                    "furniture_shooting_range_spot","furniture_shooting_range_spot",
+                    "furniture_table_1_chair_1","furniture_table_1_chair_1" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShootingRange"
+                },
+                {
+                    "ID":"medbay_dojo_arena",
+                    "displayName":"Arena",
+                    "offsetY":-85,
+                    "connects":
+                    [ { "ID":"medbay_hallway_3", "cost":1.0  },
+                    { "ID":"medbay_hallway_4", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_arena_spot","furniture_arena_spot" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Gym"
+                },
+                {
+                    "ID":"medbay_changing_room",
+                    "displayName":"Changing Room",
+                    "offsetX":334,
+                    "offsetY":-85,
+                    "connects":
+                    [ { "ID":"medbay_hallway_4", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_bathroom_set","furniture_shower"
+                                ,"furniture_bathroom_set","furniture_shower" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LockerRoom"
+                },
+                {
+                    "ID":"medbay_life_support",
+                    "displayName":"Life Support",
+                    "offsetY":350,
+                    "connects":
+                    [ { "ID":"medbay_hallway_1", "cost":1.0  },
+                    { "ID":"medbay_hallway_2", "cost":1.0  } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_SpecialOperationRoom"
+                },
+                {
+                    "ID":"medbay_lab",
+                    "displayName":"Laboratory",
+                    "offsetX":-328,
+                    "offsetY":329,
+                    "connects":
+                    [ { "ID":"medbay_hallway_1", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_research_physics"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_SpecialOperationRoom"
+                },
+                {
+                    "ID":"medbay_security_office",
+                    "displayName":"Security Office",
+                    "offsetX":341,
+                    "offsetY":329,
+                    "connects":
+                    [ { "ID":"medbay_hallway_2", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_computer_terminal","furniture_computer_terminal","furniture_computer_terminal"
+                            ,"furniture_bathroom_set","furniture_shower" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_KohshinjoRoom"
+                },
+                {
+                    "ID":"medbay_decontamination",
+                    "displayName":"Decontamination",
+                    "offsetX":168,
+                    "offsetY":130,
+                    "connects":
+                    [ { "ID":"medbay_hallway_2", "cost":2.0  },
+                    { "ID":"medbay_isolation_office", "cost":2.0  }],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_BuildingCorridor2"
+                },
+                {
+                    "ID":"medbay_isolation_office",
+                    "displayName":"Isolation Office",
+                    "offsetX":125,
+                    "offsetY":79,
+                    "furnitureIDs":["furniture_computer_terminal", "furniture_table_1_chair_1" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_InterrogationRoom"
+                },
+                {
+                    "ID":"medbay_isolation_room_1",
+                    "displayName":"Isolation",
+                    "offsetX":-61,
+                    "offsetY":79,
+                    "connects":
+                    [ { "ID":"medbay_isolation_office", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_toilet_shower_set",
+                "furniture_prison_containment_spot_2",
+                "furniture_prison_containment_spot_2",
+                "furniture_prison_containment_spot_2",
+                "furniture_prison_containment_spot_2",
+                "furniture_prison_containment_spot",
+                "furniture_prison_containment_spot",
+                "furniture_prison_containment_spot"],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Prison"
+                },
+                {
+                    "ID":"medbay_isolation_room_2",
+                    "displayName":"Isolation",
+                    "offsetX":311,
+                    "offsetY":79,
+                    "connects":
+                    [ { "ID":"medbay_isolation_office", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_toilet_shower_set",
+                    "furniture_prison_containment_spot_2",
+                    "furniture_prison_containment_spot_2",
+                    "furniture_prison_containment_spot_2",
+                    "furniture_prison_containment_spot_2",
+                    "furniture_prison_containment_spot",
+                    "furniture_prison_containment_spot",
+                    "furniture_prison_containment_spot" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Prison"
+                },
+                {
+                    "ID":"medbay_isolation_operation_room",
+                    "displayName":"Operation Room",
+                    "offsetX":105,
+                    "offsetY":227,
+                    "connects":
+                    [ { "ID":"medbay_isolation_office", "cost":1.0  } ],
+                    "furnitureIDs":["furniture_computer_terminal", "furniture_hospital_bed", "furniture_hospital_bed" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_InSideTank"
+                },
+                {
+                    "ID":"medbay_isolation_storage",
+                    "displayName":"Storage",
+                    "offsetY":227,
+                    "connects":
+                    [ { "ID":"medbay_isolation_operation_room", "cost":1.0  } ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Warehouse"
+                },
+                {
+                    "ID":"medbay_isolation_morgue",
+                    "displayName":"Morgue",
+                    "offsetX":-97,
+                    "offsetY":227,
+                    "connects":
+                    [ { "ID":"medbay_isolation_storage", "cost":1.0  },
+                    { "ID":"medbay_hallway_1", "cost":2.0  } ],
+                    "furnitureIDs":["furniture_bathroom_set", "furniture_table_1_chair_1" ],
+                    "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Warehouse"
+                }
+            ]
+        }
+    ]
+    }
+    
+}

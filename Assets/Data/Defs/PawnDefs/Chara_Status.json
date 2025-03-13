@@ -1,0 +1,801 @@
+{
+    "Status":{
+        "list":[
+        {
+            "statusID":"chara_status_alcohol",
+            "displayName":"酒精",
+            "variationMode":
+                {
+                    "variationTypeString":"linear",
+                    "value":-0.2
+                }
+            ,
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":0
+                },
+                {
+                    "displayName":"清醒",
+                    "threshold":19
+                },
+                {
+                    "displayName":"微醉",
+                    "threshold":39,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"1"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"1"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"酒醉",
+                    "threshold":59,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"-0.3"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"烂醉",
+                    "threshold":79,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"-0.45"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"人事不省",
+                    "threshold":200,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"-0.6"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"酒精中毒",
+                    "threshold":500,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_alcohol", "type":"setBase", "valueType":"number", "valueString":"-0.75"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_aphrodisiac",
+            "displayName":"催情",
+            "variationMode": { "variationTypeString":"linear", "value":-1 } ,
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":0
+                },
+                {
+                    "displayName":"微弱",
+                    "threshold":19
+                },
+                {
+                    "displayName":"弱",
+                    "threshold":39,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_aphrodisiac", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"中",
+                    "threshold":59,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_aphrodisiac", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_aphrodisiac", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"强",
+                    "threshold":79,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_aphrodisiac", "type":"setBase", "valueType":"number", "valueString":"3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_aphrodisiac", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_aphrodisiac", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"极强",
+                    "threshold":1000,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_aphrodisiac", "type":"setBase", "valueType":"number", "valueString":"4"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_aphrodisiac", "type":"setBase", "valueType":"number", "valueString":"3"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_aphrodisiac", "type":"setBase", "valueType":"number", "valueString":"2"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_hypnosis",
+            "displayName":"Hypnosis Status",
+            "variationMode": { "variationTypeString":"linear", "value":0 } ,
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":0
+                },
+                {
+                    "displayName":"催眠：微弱",
+                    "threshold":19
+                },
+                {
+                    "displayName":"催眠：弱",
+                    "threshold":39,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_hypnosis", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"催眠：中",
+                    "threshold":59,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_hypnosis", "type":"setBase", "valueType":"number", "valueString":"2"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"催眠：强",
+                    "threshold":79,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_hypnosis", "type":"setBase", "valueType":"number", "valueString":"3"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"催眠：极强",
+                    "threshold":1000,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_hypnosis", "type":"setBase", "valueType":"number", "valueString":"4"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_analgesic",
+            "displayName":"Analgesic Status",
+            "variationMode": { "variationTypeString":"linear", "value":0 } ,
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":25
+                },
+                {
+                    "displayName":"麻醉：弱",
+                    "threshold":50
+                },
+                {
+                    "displayName":"麻醉：中",
+                    "threshold":75
+                },
+                {
+                    "displayName":"麻醉：强",
+                    "threshold":100
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_drugged",
+            "displayName":"麻药",
+            "variationMode":
+                {
+                    "variationTypeString":"linear",
+                    "value":-0.2
+                }
+            ,
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":0
+                },
+                {
+                    "displayName":"微量",
+                    "threshold":19,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"1"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"-0.1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"弱",
+                    "threshold":39,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"1"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"-0.2"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"中",
+                    "threshold":59,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"3"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"-0.3"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"强",
+                    "threshold":79,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"4"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"3"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"-0.4"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"极强",
+                    "threshold":79,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"5"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"4"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_drugged", "type":"setBase", "valueType":"number", "valueString":"-0.5"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_climaxing",
+            "displayName":"绝顶中",
+            "constant":true,
+            "noDisplay":false,
+            "variationMode":
+            {
+                "variationTypeString":"linear",
+                "value":-1
+            },
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":0,
+                    "stat_modifiers":[]
+                },
+                {
+                    "displayName":"高潮中",
+                    "threshold":999,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_climaxing", "type":"setBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_climaxing", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_climaxing", "type":"setBase", "valueType":"number", "valueString":"3"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_climaxing", "type":"setBase", "valueType":"number", "valueString":"-0.3"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sexual_climax_after",
+            "displayName":"绝顶后",
+            "constant":true,
+            "noDisplay":true,
+            "variationMode":
+            {
+                "variationTypeString":"linear",
+                "value":1
+            },
+            "variants":[
+                {
+                    "displayName":"连续高潮瘫软",
+                    "threshold":-500,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"连续高潮瘫软",
+                    "threshold":-100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"高潮后余韵",
+                    "threshold":-1,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"1"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"",
+                    "threshold":0,
+                    "stat_modifiers":[
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sex_climax_count",
+            "displayName":"连续绝顶计数",
+            "constant":true,
+            "noDisplay":true,
+            "variationMode":
+            {
+                "variationTypeString":"sex",
+                "pauseXMinAfterMod":1,
+                "value":-0.1
+            },
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":0,
+                    "stat_modifiers":[ ]
+                },
+                {
+                    "displayName":"高潮后余韵",
+                    "threshold":2,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"连续高潮瘫软",
+                    "threshold":5,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"高潮后余韵",
+                    "threshold":999,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sex_B",
+            "displayName":"B快感",
+            "constant":true,
+            "noDisplay":true,
+            "variationMode":
+            {
+                "variationTypeString":"sex",
+                "pauseXMinAfterMod":1,
+                "value":-1,
+                "stringData":"B"
+            },
+            "variants":[
+                { "displayName":"", "threshold":0 },
+                { "displayName":"", "threshold":1 ,
+                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                             "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_B" } ]
+                },
+                { "displayName":"", "threshold":1000,
+                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                             "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_B" } ] 
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sex_M",
+            "displayName":"M快感",
+            "constant":true,
+            "noDisplay":true,
+            "variationMode":
+            {
+                "variationTypeString":"sex",
+                "pauseXMinAfterMod":1,
+                "value":-1,
+                "stringData":"M"
+            },
+            "variants":[
+                { "displayName":"", "threshold":0,
+                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                         "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_M" } ]  },
+                { "displayName":"", "threshold":1000,
+                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                             "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_M" } ] 
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sex_C",
+            "displayName":"C快感",
+            "constant":true,
+            "noDisplay":true,
+            "variationMode":
+            {
+                "variationTypeString":"sex",
+                "pauseXMinAfterMod":1,
+                "value":-1,
+                "stringData":"C"
+            },
+            "variants":[
+                { "displayName":"", "threshold":0,
+                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                         "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_C" } ] },
+                { "displayName":"", "threshold":1000,
+                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                             "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_C" } ] 
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sex_V",
+            "displayName":"V快感",
+            "constant":true,
+            "noDisplay":true,
+            "variationMode":
+            {
+                "variationTypeString":"sex",
+                "pauseXMinAfterMod":1,
+                "value":-1,
+                "stringData":"V"
+            },
+            "variants":[
+                { "displayName":"", "threshold":0 ,
+                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                         "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_V" } ] },
+                { "displayName":"", "threshold":1000,
+                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                             "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_V" } ] 
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sex_A",
+            "displayName":"A快感",
+            "constant":true,
+            "noDisplay":true,
+            "variationMode":
+            {
+                "variationTypeString":"sex",
+                "pauseXMinAfterMod":1,
+                "value":-1,
+                "stringData":"A"
+            },
+            "variants":[
+                { "displayName":"", "threshold":0,
+                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                         "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_A" } ]  },
+                { "displayName":"", "threshold":1000,
+                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                             "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_A" } ] 
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sex_W",
+            "displayName":"W快感",
+            "constant":true,
+            "noDisplay":true,
+            "variationMode":
+            {
+                "variationTypeString":"sex",
+                "pauseXMinAfterMod":1,
+                "value":-1,
+                "stringData":"W"
+            },
+            "variants":[
+                { "displayName":"", "threshold":0,
+                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                         "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_W" } ]  },
+                { "displayName":"", "threshold":1000,
+                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
+                             "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_W" } ] 
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_cryosleep",
+            "displayName":"冷冻睡眠",
+            "variationMode": { "variationTypeString":"linear", "value":0 } ,
+            "variants":[
+                {
+                    "displayName":"", "threshold":0
+                },
+                {
+                    "displayName":"冷冻睡眠",
+                    "threshold":0.1,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_cryosleep", "type":"setBase", "valueType":"number", "valueString":"-1.0"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_fatigue",
+            "displayName":"疲劳",
+            "variationMode": { "variationTypeString":"linear", "value":0 } ,
+            "variants":[
+                {
+                    "displayName":"", "threshold":0
+                },
+                {
+                    "displayName":"疲劳",
+                    "threshold":0.9,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_fatigue", "type":"setBase", "valueType":"number", "valueString":"-1.0"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"极度疲劳",
+                    "threshold":1.9,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_fatigue", "type":"setBase", "valueType":"number", "valueString":"-2.0"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sleeping",
+            "displayName":"Sleep Status",
+            "variationMode": { "variationTypeString":"linear", "value":-1 } ,
+            "_comments":"hardcoded status with duration set to sleep minutes ticking down.",
+            "_comments2":"hardcoded Fullrest effect on status expire removal",
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":0
+                },
+                {
+                    "displayName":"睡眠中",
+                    "threshold":9999,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_sleeping", "type":"setBase", "valueType":"number", "valueString":"-0.8"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_sleep_deprived",
+            "displayName":"Sleep Deprived",
+            "variationMode": { "variationTypeString":"linear", "value":-1 } ,
+            "_comments":"hardcoded status with duration set to 24 hours ticking down.",
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":0
+                },
+                {
+                    "displayName":"睡眠不足",
+                    "threshold":9999,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_sleep_deprived", "type":"setBase", "valueType":"number", "valueString":"-0.2"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_malnourished",
+            "displayName":"Lacking food",
+            "variationMode": { "variationTypeString":"linear", "value":-1 } ,
+            "_comments":"hardcoded status with duration set to 24 hours ticking down.",
+            "variants":[
+                {
+                    "displayName":"",
+                    "threshold":0
+                },
+                {
+                    "displayName":"饥饿",
+                    "threshold":9999,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_malnourished", "type":"setBase", "valueType":"number", "valueString":"-1.0"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+    }
+    
+}

@@ -1,0 +1,149 @@
+{
+    "Skills":
+    {
+        "list":
+        [
+            {
+                "ID":"skill_sensitivity_C",
+                "requirements":{
+                    "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                    "entries":[ { "requireBodyTag":["clit"] },
+                                { "requireBodyTag":["penis"] } ]
+                },
+                "hasGenderVariant":false,
+                "levels":
+                [   {
+                        "DisplayName":"-"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_C", "operand":"gte", "value":50 }]
+                                }
+                            ]
+                         },
+                        "stat_modifiers":
+                        [
+                            { 
+                                "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"10"
+                            }
+                        ],
+                        "DisplayName":"1"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_C", "operand":"gte", "value":100 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"20"
+                             }
+                         ],
+                        "DisplayName":"2"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_C", "operand":"gte", "value":300 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"30"
+                             }
+                         ],
+                        "DisplayName":"3"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_C", "operand":"gte", "value":500 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"40"
+                             }
+                         ],
+                        "DisplayName":"4"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_C", "operand":"gte", "value":1000 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"50"
+                             }
+                         ],
+                        "DisplayName":"5"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_C", "operand":"gte", "value":2000 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"60"
+                             }
+                         ],
+                        "DisplayName":"6"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_C", "operand":"gte", "value":3000 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"70"
+                             }
+                         ],
+                        "DisplayName":"7"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_C", "operand":"gte", "value":4000 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"80"
+                             }
+                         ],
+                        "DisplayName":"8"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_C", "operand":"gte", "value":5000 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"90"
+                             }
+                         ],
+                        "DisplayName":"9"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_C", "operand":"gte", "value":10000 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_C", "modKey":"skill_sensitivity_C", "type":"setBase", "valueType":"number", "valueString":"100"
+                             }
+                         ],
+                        "DisplayName":"10"
+                    }
+                ]
+            }
+        ]
+    }
+        
+    
+}

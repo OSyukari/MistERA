@@ -1,0 +1,91 @@
+
+{
+    "baseID": "Campaign2_Chara_Elena",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                
+                "portrait_offset_x": -96.631,
+                "portrait_offset_y": -492.008,
+                "portrait_offset_size": 1.15,
+                
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.6,
+
+                "Variants":[
+                    {
+                        "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+                        "Conditions":[
+                            {
+                                "$type":"PortraitManager+PortraitValidators, Assembly-CSharp", 
+                                "requireNaked":"lower"
+                            },
+                            {
+                                "$type":"PortraitManager+PortraitValidators, Assembly-CSharp", 
+                                "requireNaked":"torso"
+                            }
+                        ],
+                        "PortraitVariantData":"Avantgarde/Avantgarde_Elena/Actor_24_bust",
+                        "IconVariantData":"Avantgarde/Avantgarde_Elena/Actor_24_icon"
+                    }
+                ],
+                "portrait_path":"Avantgarde/Avantgarde_Elena/Actor_3_bust",
+                "icon_path":"Avantgarde/Avantgarde_Elena/Actor_3_icon"
+            }
+        ]
+    },
+    "Template":{
+        "Appearance": "Female",
+        "BodyType": "Default",
+        "stat_STR": 12,
+        "stat_CON": 11,
+        "stat_PSY": 15,
+        "stat_WIL": 15,
+        "Height":166,
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_E",
+        "size_P": "trait_Size_P_none",
+        "size_V": "trait_Size_V_1",
+        "size_A": "trait_Size_A_1",
+        "initialRelationship":[
+            {
+                "baseID":"Campaign2_Chara_Amelie",
+                "initialPersonalRelationship":"relationship_friend"
+            },
+            {
+                "baseID":"Campaign2_Chara_Hiyori",
+                "initialPersonalRelationship":"relationship_friend"
+            },
+            {
+                "baseID":"Campaign2_Chara_Olivia",
+                "initialPersonalRelationship":"relationship_friend"
+            }
+        ],
+        "initialInventory":[
+            { "ID":"clothing_inner_necktie" },
+            { "ID":"clothing_inner_shirt" },
+            { "ID":"clothing_inner_skirt", "nameOverwrite":"clothing_inner_miniskirt" },
+            { "ID":"clothing_skin_panty" },
+            { "ID":"clothing_skin_bra" },
+            { "ID":"clothing_skin_socks" },
+            { "ID":"clothing_inner_shoes" },
+            { "ID":"clothing_inner_hair_ribbon" },
+            { "ID":"clothing_skin_earring" },
+            { "ID":"clothing_skin_bracelet_double" }
+        ]
+    },
+    "firstName": "Campaign2_Chara_Elena_FirstName",
+    "middleName": "",
+    "lastName": "Campaign2_Chara_Elena_LastName",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_TraveleracrossGates",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_Magician",
+    "startingGift": "charOriginGift_none"
+}

@@ -1,0 +1,476 @@
+{
+    "language":"default",
+    "entries":
+    [
+
+        {"ID":"ui_entry_traits","Entry":"特质"},
+        {"ID":"ui_entry_derivedStats","Entry":"衍生属性"},
+        {"ID":"ui_entry_status","Entry":"状态"},
+        {"ID":"ui_entry_healthstatus","Entry":"健康状态"},
+        {"ID":"ui_entry_baseStats","Entry":"基础属性"},
+        {"ID":"ui_entry_abnormalExp","Entry":"异常经验"},
+
+        {"ID":"management_faction_socialStatus_baseString","Entry":"$factionname$的$status$"},
+        {"ID":"management_faction_socialStatus_manager","Entry":"管理者"},
+        {"ID":"management_faction_socialStatus_member","Entry":"成员"},
+        {"ID":"management_faction_socialStatus_visitor","Entry":"访客"},
+        {"ID":"management_faction_socialStatus_prisoner","Entry":"囚犯"},
+
+        {"ID":"ui_entry_memory_description","Entry":"$refused$$ordered_by$$with_targets$$com$$multiple_counts$"},
+        {"ID":"ui_entry_memory_description_with_targets", "Entry":"与$targets$"},
+        {"ID":"ui_entry_memory_description_by_targets", "Entry":"被$targets$"},
+        {"ID":"ui_entry_memory_description_refused","Entry":"拒绝了"},
+        {"ID":"ui_entry_memory_description_ordered_by","Entry":"听从$master$的指令"},
+        {"ID":"ui_entry_memory_description_multiple_counts","Entry":"了$counts$次"},
+
+        {"ID":"ui_entry_memory_description_cum_vagina_humanoid_base","Entry":"中出"},
+        {"ID":"ui_entry_memory_description_cum_womb_humanoid_base","Entry":"子宫内中出"},
+        {"ID":"ui_entry_memory_description_cum_anus_humanoid_base","Entry":"在肛内射精"},
+        {"ID":"ui_entry_memory_description_cum_mouth_humanoid_base","Entry":"在口内射精"},
+        {"ID":"ui_entry_memory_description_cum_stomach_humanoid_base","Entry":"深喉射精"},
+        {"ID":"ui_entry_memory_description_creampie","Entry":"被$target$$cum_verb$了$elem1$次，共射出了$elem2$ml的精液||1||$amount$"},
+        {"ID":"ui_entry_memory_description_cum","Entry":"射精了$elem1$次，共射出了$elem2$ml的精液||1||$amount$"},
+        {"ID":"ui_entry_memory_description_cumOnto","Entry":"对$target$$cum_verb$了$elem1$次，共射出了$elem2$ml的精液||1||$amount$"},
+
+        {"ID":"ui_entry_memory_description_climax","Entry":"绝顶了$elem1$次||1"},
+        {"ID":"ui_entry_memory_description_climax_keyworded","Entry":"$part$强绝顶$elem1$次||1"},
+
+
+        {"ID":"ui_currentSexJob_swapTargets","Entry":"< 交换对象 >"},
+        {"ID":"ui_currentSexJob_swapTargets_tooltip","Entry":"互换当前选择的指令执行和接受对象"},
+        {"ID":"ui_currentSexJob_setDoer_tooltip","Entry":"将当前角色设定为指令执行者"},
+        {"ID":"ui_currentSexJob_setReceiver_tooltip","Entry":"将当前角色设定为指令接受者"},
+        {"ID":"ui_comPanel_filters_deterministicRolls","Entry":"非随机判定"},
+        {"ID":"ui_comPanel_filters_deterministicRolls_tooltip","Entry":"判定成功率大于65%时必定成功，反之必定失败"},
+
+        {"ID":"comManager_tab_skinship","Entry":"触摸"},
+        {"ID":"comManager_tab_sex","Entry":"性交"},
+        {"ID":"comManager_tab_act","Entry":"行动"},
+        {"ID":"comManager_tab_interact","Entry":"互动"},
+        {"ID":"comManager_tab_inventory","Entry":"道具"},
+        {"ID":"comManager_tab_combat","Entry":"战斗"},
+
+        {"ID":"tag_food_meal","Entry":"餐点"},
+        {"ID":"tag_food_meat","Entry":"生肉"},
+        {"ID":"tag_food_raw","Entry":"生鲜"},
+        {"ID":"tag_trash","Entry":"垃圾"},
+        {"ID":"tag_stomach","Entry":"胃"},
+        {"ID":"tag_anus","Entry":"肛门"},
+        {"ID":"tag_clit","Entry":"阴蒂"},
+        {"ID":"tag_vagina","Entry":"阴道"},
+        {"ID":"tag_mouth","Entry":"嘴"},
+        {"ID":"tag_breast","Entry":"胸部"},
+        {"ID":"tag_nipple","Entry":"乳头"},
+        {"ID":"tag_arm","Entry":"手臂"},
+        {"ID":"tag_leg","Entry":"腿"},
+        {"ID":"tag_feet","Entry":"足"},
+        {"ID":"tag_penis","Entry":"阴茎"},
+        {"ID":"tag_testicle","Entry":"睾丸"},
+        {"ID":"tag_internal","Entry":"体内"},
+        {"ID":"tag_furniture","Entry":"家具"},
+        {"ID":"tag_bed","Entry":"床"},
+        {"ID":"tag_TV","Entry":"电视"},
+        {"ID":"tag_production_cooking","Entry":"生产-烹饪"},
+        {"ID":"tag_cooking","Entry":"tag_cooking 这个tag有在用吗？"},
+        {"ID":"tag_shower","Entry":"洗浴"},
+        {"ID":"tag_bathroom","Entry":"浴室"},
+        {"ID":"tag_farm_cultivate_crop","Entry":"生产-农作"},
+        {"ID":"tag_farm_maintain","Entry":"维护农场"},
+        {"ID":"tag_production_engineering","Entry":"生产-工程"},
+        {"ID":"tag_research_engineering","Entry":"研究-工程"},
+        {"ID":"tag_farm_cultivate_meat","Entry":"生产-肉培"},
+        {"ID":"tag_research_biochemistry","Entry":"研究-生化"},
+        {"ID":"tag_research_physics","Entry":"研究-物理"},
+        {"ID":"tag_production_chemistry","Entry":"生产-化学"},
+        {"ID":"tag_cryo","Entry":"冷冻休眠"},
+        {"ID":"tag_training_shooting","Entry":"训练-射击"},
+        {"ID":"tag_training_melee","Entry":"训练-格斗"},
+        {"ID":"tag_timestop","Entry":"时停"},
+        {"ID":"tag_sleeping","Entry":"睡眠"},
+        {"ID":"tag_unconscious","Entry":"无意识"},
+        {"ID":"tag_interaction","Entry":"互动"},
+        {"ID":"tag_action","Entry":"行动"},
+        {"ID":"tag_player","Entry":"玩家限定"},
+        {"ID":"tag_sleep","Entry":"睡眠"},
+        {"ID":"tag_recreation","Entry":"娱乐"},
+        {"ID":"tag_debug_refuse","Entry":"必定拒绝"},
+        {"ID":"tag_desk","Entry":"桌子"},
+        {"ID":"tag_touch","Entry":"身体接触"},
+        {"ID":"tag_massage","Entry":"抚摸身体"},
+        {"ID":"tag_service","Entry":"侍奉"},
+        {"ID":"tag_sex","Entry":"性交"},
+        {"ID":"tag_penetration","Entry":"插入"},
+        {"ID":"tag_norepeat","Entry":"不自动重复"},
+        {"ID":"tag_noAction","Entry":"非行动判定"},
+        {"ID":"tag_safe","Entry":"健全"},
+        {"ID":"tag_job","Entry":"工作"},
+
+        {"ID":"comManager_filter_debug","Entry":"Debug"},
+        {"ID":"comManager_filter_touch","Entry":"触摸"},
+        {"ID":"comManager_filter_service","Entry":"奉仕"},
+        {"ID":"comManager_filter_breast","Entry":"胸"},
+        {"ID":"comManager_filter_oral","Entry":"口"},
+        {"ID":"comManager_filter_vaginal","Entry":"阴"},
+        {"ID":"comManager_filter_anal","Entry":"肛"},
+        {"ID":"comManager_filter_ingest","Entry":"服用"},
+        {"ID":"comManager_filter_equip","Entry":"装备"},
+        {"ID":"comManager_filter_room","Entry":"家具"},
+        {"ID":"comManager_filter_work","Entry":"工作"},
+
+        {"ID":"comManager_title_skinship_self","Entry":"肌肤接触 - 无目标"},
+        {"ID":"comManager_title_skinship_target","Entry":"肌肤接触 - 目标[$name$]"},
+
+        {"ID":"comManager_title_interact_self","Entry":"行动 - 无目标"},
+        {"ID":"comManager_title_interact_target","Entry":"互动 - 目标[$name$]"},
+
+        {"ID":"comManager_title_inventory_self","Entry":"道具 - 目标自身"},
+        {"ID":"comManager_title_inventory_target","Entry":"道具 - 目标[$name$]"},
+
+        {"ID":"comManager_title_sex_participant","Entry":"[$doer$] 对 [$receiver$] 执行..."},
+        {"ID":"comManager_title_sex_observer","Entry":"命令 [$doer$] 对 [$receiver$] 执行..."},
+
+        {"ID":"comManager_com_undress_all","Entry":"脱下全部"},
+        {"ID":"comManager_com_undress_Skin","Entry":"脱下%%equip_layer_Skin%%"},
+        {"ID":"comManager_com_undress_Inner","Entry":"脱下%%equip_layer_Inner%%"},
+        {"ID":"comManager_com_undress_Outer","Entry":"脱下%%equip_layer_Outer%%"},
+
+        {"ID":"comManager_com_redress_all","Entry":"穿上全部"},
+        {"ID":"comManager_com_redress_Skin","Entry":"穿上%%equip_layer_Skin%%"},
+        {"ID":"comManager_com_redress_Inner","Entry":"穿上%%equip_layer_Inner%%"},
+        {"ID":"comManager_com_redress_Outer","Entry":"穿上%%equip_layer_Outer%%"},
+
+        {"ID":"comManager_com_follow_request","Entry":"邀请同行"},
+        {"ID":"comManager_com_follow_stop","Entry":"中止同行"},
+        {"ID":"comManager_com_followCarry_request","Entry":"携带对象"},
+        {"ID":"comManager_com_followCarry_stop","Entry":"停止携带"},
+
+        {"ID":"comManager_bottom_inspect","Entry":"角色详细"},
+        {"ID":"comManager_bottom_inspectSelf","Entry":"玩家角色详细"},
+        {"ID":"comManager_bottom_management","Entry":"阵营管理"},
+        {"ID":"comManager_bottom_logs","Entry":"历史记录"},
+        {"ID":"comManager_bottom_room","Entry":"当前房间"},
+        {"ID":"comManager_bottom_map","Entry":"地图"},
+
+        {"ID":"ui_quicksave","Entry":"快速保存"},
+        {"ID":"ui_quicksave_tooltip","Entry":"将当前的游戏数据保存到本地存取"},
+        {"ID":"ui_quicksave_tooltip_cannotSaveduringUpdate","Entry":"不可在游戏更新期间存档"},
+        {"ID":"ui_quicksave_tooltip_cannotSaveDuringSex","Entry":"不可在做爱中途存档"},
+
+        {"ID":"ui_updating","Entry":"更新中……"},
+
+        {"ID":"ui_console","Entry":"控制台"},
+
+        {"ID":"ui_load","Entry":"读取存档"},
+        {"ID":"ui_load_deleteSave","Entry":"删除存档"},
+        {"ID":"ui_load_tooltip_cannotLoadduringUpdate","Entry":"不可在游戏更新期间读档"},
+        {"ID":"ui_load_tooltip_cannotLoadduringSex","Entry":"不可在做爱中途读档"},
+        {"ID":"ui_load_savefileLoc","Entry":"存档的位置在 /游戏目录/Data/Save/ "},
+        {"ID":"ui_load_fileDescription","Entry":"$filename$\n第$days$天，$hours$:$minutes$，$playerName$ $floor$ $room$"},
+
+        {"ID":"charaDetail_btn_basicInfo","Entry":"基础"},
+        {"ID":"charaDetail_btn_healthStatus","Entry":"健康"},
+        {"ID":"charaDetail_btn_equip","Entry":"装备"},
+        {"ID":"charaDetail_btn_relationship","Entry":"社交"},
+        {"ID":"charaDetail_btn_manage","Entry":"管理"},
+        {"ID":"charaDetail_btn_sexRecord","Entry":"性记录"},
+        {"ID":"charaDetail_btn_memories","Entry":"记忆"},
+
+        {"ID":"charaDetail_panel_relationship","Entry":"人际关系"},
+        {"ID":"charaDetail_panel_skills","Entry":"技能"},
+        {"ID":"charaDetail_panel_experiences","Entry":"经验"},
+        {"ID":"charaDetail_panel_bodyexp","Entry":"身体数据"},
+
+        {"ID":"charaDetail_tooltip_canMovePortrait","Entry":"可通过鼠标左键拖拽和滚轮缩放调整角色图像的默认位置"},
+
+        {"ID":"comLogs_causes_previousLogs_positive","Entry":"<link=\"$linkTooltip$\">前回互动$amount$</link>"},
+        {"ID":"comLogs_causes_previousLogs_negative","Entry":"<link=\"$linkTooltip$\">前回互动$amount$</link>"},
+        {"ID":"comLogs_causes_unconscious","Entry":"<link=\"\">失去意识</link>"},
+        {"ID":"comLogs_causes_reduced_consciousness","Entry":"<link=\"\">意识涣散</link>"},
+
+        {"ID":"ui_calendar_dayCount","Entry":"第$yearCount$年，第$dayOfYear$日"},
+        {"ID":"ui_calendar_month","Entry":"$seasons$ $monthName$ $dayOfWeek$"},
+
+        {"ID":"ui_management_topbar_population","Entry":"人口：$population$"},
+        {"ID":"ui_management_topbar_tooltip_populationMaintenance","Entry":"每日人口维护消耗：\n$costs$"},
+        {"ID":"ui_management_line_populationMaintenance","Entry":"每日人口维护消耗：$costs$"},
+        {"ID":"ui_management_topbar_resources","Entry":"资源：$resources$"},
+
+        {"ID":"ui_management_overview_dailyReport","Entry":"<link=\"ui_management_overview_dailyReport_tooltip\">每日报告</link>"},
+        {"ID":"ui_management_overview_dailyReport_tooltip","Entry":"此处会显示昨天的数据更新总览，会在每日0:00更新\n包含信息如下：\n- 成员的技能升级信息\n- 全员的需求是否满足"},
+
+        {"ID":"ui_header_player","Entry":"玩家："},
+        {"ID":"ui_header_target","Entry":"对象："},
+        {"ID":"ui_header_allmembers","Entry":"房间内角色："},
+        {"ID":"ui_room_furnitureList","Entry":"家具：$list$"},
+
+        {"ID":"ui_calendar_dayOfWeek_Monday","Entry":"周一"},
+        {"ID":"ui_calendar_dayOfWeek_Tuesday","Entry":"周二"},
+        {"ID":"ui_calendar_dayOfWeek_Wednesday","Entry":"周三"},
+        {"ID":"ui_calendar_dayOfWeek_Thursday","Entry":"周四"},
+        {"ID":"ui_calendar_dayOfWeek_Friday","Entry":"周五"},
+        {"ID":"ui_calendar_dayOfWeek_Saturday","Entry":"周六"},
+        {"ID":"ui_calendar_dayOfWeek_Sunday","Entry":"周日"},
+
+        {"ID":"ui_time_quadran_earlymorning","Entry":"清晨"},
+        {"ID":"ui_time_quadran_morning","Entry":"上午"},
+        {"ID":"ui_time_quadran_noon","Entry":"中午"},
+        {"ID":"ui_time_quadran_afternoon","Entry":"午后"},
+        {"ID":"ui_time_quadran_evening","Entry":"傍晚"},
+        {"ID":"ui_time_quadran_lateevening","Entry":"夜晚"},
+        {"ID":"ui_time_quadran_night","Entry":"深夜"},
+        {"ID":"ui_time_quadran_midnight","Entry":"午夜"},
+        {"ID":"ui_time_special_timestop","Entry":"时间停止"},
+
+        {"ID":"ui_intro_charaSelect_title","Entry":"选择预设玩家角色"},
+        {"ID":"ui_intro_charaSelect_newchara","Entry":"新建角色"},
+        {"ID":"wip_disabled","Entry":"施工中"},
+        {"ID":"ui_intro_charaSelect_title","Entry":"选择预设玩家角色"},
+        
+        {"ID":"management_faction_managers_tooltip","Entry":"阵营内角色对阵营的好恶会连带影响对管理者的态度"},
+        {"ID":"management_faction_managers","Entry":"<link=management_faction_managers_tooltip>阵营管理者：</link>"},
+
+        {"ID":"management_faction_floors_tooltip","Entry":"（施工中）"},
+        {"ID":"management_faction_floors","Entry":"<link=management_faction_floors_tooltip>阵营领地：</link>"},
+
+        {"ID":"management_faction_others_nameplate","Entry":"未分类阵营 - $name$"},
+        {"ID":"management_faction_work_nameplate","Entry":"工作阵营 - $name$"},
+        {"ID":"management_faction_home_nameplate","Entry":"家庭阵营 - $name$"},
+        {"ID":"management_faction_home","Entry":"<link=management_faction_home_tooltip>家庭阵营</link>"},
+        {"ID":"management_faction_home_tooltip","Entry":"家庭阵营需要满足角色的每日需求（例如每日的食物供应）\n若角色的全部需求都有被满足，角色对家庭阵营管理者的信任会增加（每日结算），反之则会降低"},
+        {"ID":"management_faction_home_temporary","Entry":"<link=management_faction_home_temporary_tooltip>临时家庭阵营</link>"},
+        {"ID":"management_faction_home_temporary_tooltip","Entry":"同家庭阵营，但优先级高于家庭阵营。负责处理角色暂时脱离家庭阵营的情况（例如外出探险）"},
+        {"ID":"management_faction_work","Entry":"<link=management_faction_work_tooltip>工作阵营</link>"},
+        {"ID":"management_faction_work_tooltip","Entry":"（未实装）"},
+
+        {"ID":"ui_management_tab_overview","Entry":"阵营简介"},
+        {"ID":"ui_management_tab_production","Entry":"订单生产"},
+        {"ID":"ui_management_tab_jobs","Entry":"工作分配"},
+
+        {"ID":"ui_management_production_jobPostDesc","Entry":"$comName$ 已有$count$个工作岗位"},
+        {"ID":"ui_management_production_jobAssigned","Entry":"当前安排的每日工时：$hours$"},
+        {"ID":"ui_management_production_jobReqByOrder","Entry":"完成剩余订单所需工时：$hours$"},
+        {"ID":"ui_management_production_jobReqByMaintenance","Entry":"每日维护农场必要工时：$hours$"},
+        {"ID":"ui_management_production_jobAlert","Entry":"警告：当前安排的工时不足以完成每日需求！"},
+
+        {"ID":"ui_management_production_order_typeChange","Entry":"可切换该订单的执行次数。\n%%craftCount%%：执行指定回数的订单生产\n%%craftUntilCount%%：只要当前据点的道具数量低于指定数就会持续生产"},
+        {"ID":"craftCount","Entry":"制造指定数"},
+        {"ID":"craftUntilCount","Entry":"持续制造"},
+
+        {"ID":"ui_management_production_PO_TITLE","Entry":"生产订单"},
+        {"ID":"ui_management_production_orderName","Entry":"订单内容"},
+        {"ID":"ui_management_production_currentlyOwn","Entry":"目前持有"},
+        {"ID":"ui_management_production_orderType","Entry":"订单类别"},
+        {"ID":"ui_management_production_amount","Entry":"订单数"},
+
+        {"ID":"ui_management_jobs_edit_tooltip","Entry":"更改NPC的每日工作安排\nNPC会遵循 工作阵营>家庭阵营>私人时间 的阵营优先级来决定和执行执行时间安排\nNPC会在私人时间内安排睡眠时间（优先选择无间断的私人时间）\n为了确保NPC适当休息，请确保NPC至少有等同于睡眠时长需求的无间断私人时间\nNPC的私人时间行动优先级为 进食>睡觉>娱乐\n\n更详细的解释请见%%helper_messageTitle%%"},
+        {"ID":"ui_management_jobs_edit","Entry":"更改日程"},
+        {"ID":"ui_management_jobs_schedule","Entry":"工作日程表"},
+        {"ID":"ui_management_jobs_viewCharaDetail_tooltip","Entry":"打开角色的详细信息面板"},
+        {"ID":"ui_management_jobs_viewCharaDetail","Entry":"查看角色详细"},
+        {"ID":"ui_management_jobs_currentInfo","Entry":"当前位置：$location$，当前正在：$jobdescription$"},
+
+        {"ID":"ui_map_roomName_prison","Entry":"监狱"},
+
+        {"ID":"ui_map_roomName_privateroom_0","Entry":"闲置的房间"},
+        {"ID":"ui_map_roomName_privateroom_1","Entry":"$owner$的房间"},
+        {"ID":"ui_map_roomName_privateroom_2","Entry":"$owner1$和$owner2$的房间"},
+        {"ID":"ui_map_roomName_privateroom_more","Entry":"$owners$的房间"},
+
+        {"ID":"ui_map_roomName_privateroom_1","Entry":"$owner$的房间"},
+
+        {"ID":"ui_button_closeTab","Entry":"关闭"},
+        {"ID":"ui_button_tooltip_exit","Entry":"也可通过右键点击面板或左键点面板外黑框来退出当前界面"},
+        {"ID":"ui_header_target_currentJob","Entry":"当前工作："},
+        {"ID":"ui_header_target_nextHour","Entry":"下个小时："},
+
+        {"ID":"com_special_timestop_tooltip","Entry":"停止时间，只有玩家可以行动。与玩家同行中的角色会与玩家一同移动\n开启时停不消耗时间，结束时停会消耗1分钟\n时停中非玩家角色无法行动。无法成为指令执行者，但可成为部分指令的对象"},
+        {"ID":"com_special_timestop_begin","Entry":"时间停止"},
+        {"ID":"com_special_timestop_end","Entry":"结束时停"},
+
+        {"ID":"com_special_initSex_tooltip","Entry":"邀请当前房间内全部角色做爱\n意识清醒的角色会判定接受度（目前未实装）\n全员接受了的话，所有清醒的角色（包括玩家）会脱光自身的衣服，耗费5分钟"},
+        {"ID":"com_special_initSex_start","Entry":"推倒"},
+        {"ID":"com_special_initSex_end","Entry":"结束做爱"},
+        {"ID":"com_special_initSex_sleeping_start","Entry":"睡眠奸"},
+        {"ID":"com_special_initSex_sleeping_end","Entry":"结束眠奸"},
+        {"ID":"com_special_initSex_timestop_start","Entry":"时停奸"},
+        {"ID":"com_special_initSex_timestop_end","Entry":"结束时奸"},
+
+        
+        {"ID":"helper_messageTitle","Entry":"指南"},
+
+        {"ID":"campaign_starfarers_guide","Entry":"%%campaign_starfarers%%剧本简介"},
+        {"ID":"campaign_starfarers_guide_content","Entry":"在此剧本中，玩家扮演的‘老师’作为阵营“%%factionName_Utnapishtim%%”的管理者，需要确保所有学生的身心维持健康。\n作为初始剧本，玩家和NPC的行动范围都十分受限，战斗系统因为还没开始做所以也不会任何危险\n数值都还没开始填所以模拟经营的数值管理也不需要担心\n\n\n请至少确保每天能够生产等同于据点人口数量的%%tag_food_meal%%（过剩生产会被浪费）\n请确保每天给学生安排了足够的工时来完成上述生产指标，且不要在学生工作时去打扰\n只要满足了作为阵营管理者的义务（确保一日三餐），老师就能获得学生们的信赖（未实装，人际关系要重做）"},
+
+        {"ID":"helper_AIRoutine_guide","Entry":"NPC行为逻辑"},
+        {"ID":"helper_AIRoutine_guide_content","Entry":"所有NPC都会照着下述的顺序排查条件决定行动（内容略有简化）\n- 检查自身是否能够自由行动（没有在睡觉，没有昏迷，没有被拘束，没有在跟随玩家等）\n- 检查自身是否衣冠不整，是的话会寻找合适的房间（私人浴室或者公共浴室）整理衣物（该项目未实装）\n- 以 工作阵营 > 临时家庭阵营 > 家庭阵营 > 自身自由时间表 的优先顺序检查自身在当前时刻是否有被安排工作（睡觉也是工作），有的话，寻找阵营内是否有能够被执行的该类工作，有的话前去执行\n- 以同样的优先级顺序，检查阵营内有没有可以吃的餐点，有的话就前往进餐（该行动意义只是模拟，没去吃也不会有惩罚，实际是否满足每日需求只看每日结算时道具数量）（该项目有BUG暂时被关掉了，等后续修复）\n- 同上，但检查的是据点内可以使用的休闲娱乐项目\n\n\nNPC搜索行动项目时只会在公共房间和自己的私人房间内搜索，不会跑到别人的私人房间休息。\nNPC会在没有被任何阵营安排工作的自由时间内安排连续的睡眠时间，且睡着后只有睡够了才会自然醒来（目前还未实装叫醒NPC的功能）\n条件允许的话，NPC会将睡眠时间设定到与自身家庭阵营（或临时阵营）的睡眠时间一致。"},
+
+        {"ID":"helper_AIInteract_guide","Entry":"NPC互动逻辑"},
+        {"ID":"helper_AIInteract_guide_content","Entry":"（由于大量必要的数值还没填所以就只写最简化的版本）\n大部分互动指令都有成功率判定，能影响判定的要素如下：\n指令基础成功率 + 指令类型调整 + 当前心情调整 + 当前健康状态调整 + 最近的几项记忆调整 + 与执行对象的关系调整 + 与对象的最近一次互动调整\n上述的成功率调整项目有的没做完，有的可能有bug，所以暂时无法描述太详细\n\nNPC会将所有的互动都记下来。大部分记忆过一段时间就会被忘记，且所有没被忘记的记忆条目之中只有最近的几项会改变NPC的心情和紧张指数。\n记忆条目的内容可以在角色的个人资料中查看，被‘忘记’的项目会在每日更新时删除，部分特殊的记忆项目（如初体验）永远不会被忘记\n每项记忆条目的判定加成/减值只会在与该记忆条目有关的人互动时生效，且只有最近的一项记忆条目会生效\n\n总的来说，与NPC互动成功会提高后续指令成功率（可堆叠），而互动失败（互动被拒绝或者结果太糟糕）会降低后续成功率（可堆叠），连续互动失败只会越来越糟。遇到这种情况，请等NPC自己休息一会调整下心情，或者等NPC做了点别的事情将之前的糟糕体验忘掉后，再次互动吧！"},
+
+        {"ID":"helper_HomeFaction_guide","Entry":"家庭阵营管理"},
+        {"ID":"helper_HomeFaction_guide_content","Entry":"每位阵营的成员都有维生需求（例如进食和睡眠），每天每位成员都会从所属的家庭阵营（或临时家庭阵营）索取对应资源。阵营的库存有足够的对应资源满足所有同类需求的话，所有人的该项需求都会满足，反之全员都会判定为未满足需求\n（假设阵营内有10人每天需要10份%%tag_food_meal%%但每日更新时阵营库存只有9份，那么全员都会判定为挨饿了）\n\n由于还没做这方面的具体数值，所以直接将生产%%tag_food_meal%%的素材消耗移除掉了，只要耗费足够的工时就能制作。\n目前玩家不可以直接参与食材生产（因为UI按钮麻烦），玩家只能通过在据点管理界面发订单和安排工时，让NPC去生产\n\n睡眠需求的判定有别于食物，睡眠需求只有NPC确实睡着了才会被判定为满足。NPC什么时候睡觉取决于需要睡多久和有没有足够的空闲时间睡觉，如果工作排太满空闲时间不足那NPC就不会睡……除非休息的时候不小心睡着（此项未实装）"},
+
+        {"ID":"helper_era_guide","Entry":"调教"},
+        {"ID":"helper_era_guide_content","Entry":"还没开始做。技能/特质/经验等era传统项目虽然是一开始就着手的，但是做到后面发现一开始的构思太简单所以有关内容全部删掉了，请静待后续版本。\n目前实装的只有指令的执行逻辑。数值、地文、口上这些还等后续慢慢填（翻译成人话那就是：招人啦！）\n\n调教互动可以简单分为两种：\n- 1对1的EraTW式接触互动（无本番），选择任意目标然后，触摸界面的所有指令都在此类（除开推倒）。不满足条件的互动（脱得不够）不会显示\n- N对N的EraTK式互动，在选择了任意目标后点选触摸界面的推倒按钮，与当前房间内的所有人开始调教。所有互动都会显示，但不满足条件的话无法点选\n\n所有调教系指令都有对身体部位的要求，如果部分指令无法执行，可能是因为缺乏必要的身体部位，也可能是因为执行者或对象的衣服没脱够\n在任何1对N，N对1，或者N对N的互动中，每个执行者都只能与一个对象进行互动，所以每次都是随机在N个对象中抽选一位进行互动，而不是TK式的同时与全员。"},
+
+
+        {"ID":"UI_chara_relationship_text","Entry":"$name$的$relation$"},
+
+        {"ID":"Necro_Mode","Entry":"<link=\"Necro_Mode_tooltip\">死体调教设定</link>"},
+        {"ID":"Necro_Mode_tooltip","Entry":"调整是否能与死体互动\n%%notimplemented%%"},
+        {"ID":"Necro_Mode.disabled","Entry":"<link=\"Necro_Mode.disabled_tooltip\">禁止</link>"},
+        {"ID":"Necro_Mode.disabled_tooltip","Entry":"不可与死体互动"},
+        {"ID":"Necro_Mode.nonhuman","Entry":"<link=\"Necro_Mode.nonhuman_tooltip\">允许非人类</link>"},
+        {"ID":"Necro_Mode.nonhuman_tooltip","Entry":"非人类的NPC（动物，非人的类人生物等）能够与死体互动"},
+        {"ID":"Necro_Mode.allowall","Entry":"<link=\"Necro_Mode.allowall_tooltip\">全部允许</link>"},
+        {"ID":"Necro_Mode.allowall_tooltip","Entry":"所有NPC都能够与死体互动"},
+
+        {"ID":"Sex_Presence_Mode","Entry":"<link=\"Sex_Presence_Mode_tooltip\">调教内容显示</link>"},
+        {"ID":"Sex_Presence_Mode_tooltip","Entry":"调整调教相关内容和指令的显示\n%%notimplemented%%"},
+        {"ID":"Sex_Presence_Mode.minimal","Entry":"<link=\"Sex_Presence_Mode.minimal_tooltip\">最低</link>"},
+        {"ID":"Sex_Presence_Mode.minimal_tooltip","Entry":"隐藏调教相关的内容"},
+        {"ID":"Sex_Presence_Mode.indirect","Entry":"<link=\"Sex_Presence_Mode.indirect_tooltip\">间接</link>"},
+        {"ID":"Sex_Presence_Mode.indirect_tooltip","Entry":"隐藏玩家对NPC的调教指令"},
+        {"ID":"Sex_Presence_Mode.all","Entry":"<link=\"Sex_Presence_Mode.all_tooltip\">全部</link>"},
+        {"ID":"Sex_Presence_Mode.all_tooltip","Entry":"显示所有调教相关内容与指令"},
+
+        {"ID":"ui_prefs_contentFilter","Entry":"<link=\"ui_prefs_contentFilter_tooltip\">要素开关</link>"},
+        {"ID":"ui_prefs_contentFilter_tooltip","Entry":"选择游戏内是否会出现该要素"},
+
+        {"ID":"ui_prefs_gendersetting","Entry":"<link=\"ui_prefs_gendersetting_tooltip\">性别设定</link>"},
+        {"ID":"ui_prefs_gendersetting_tooltip","Entry":"调整游戏内的性别判定，和允许的性别间互动"},
+        {"ID":"ui_prefs_gendersetting_on","Entry":"此处的性别判定用意为决定两个角色间是否可以成立调教行为\n未被分类为%%Male%%或%%Female%%的角色会被分到%%Ambiguous%%"},
+
+        {"ID":"ui_prefs_requireContentS","Entry":"该设定需要游戏允许出现R18要素"},
+        {"ID":"ui_prefs_trainsetting","Entry":"<link=\"ui_prefs_trainsetting_tooltip\">调教设定</link>"},
+        {"ID":"ui_prefs_trainsetting_tooltip","Entry":"调整游戏内的调教相关的内容出现与否，以及基于上述角色性别的调教互动成立与否"},
+
+
+
+        {"ID":"tooltip_genderDemo_Otokofutanari","Entry":"<link=\"tooltip_genderDemo_Otokofutanari_tooltip\">男扶她</link>"},
+        {"ID":"tooltip_genderDemo_Otokofutanari_tooltip","Entry":"男性，但有额外阴道"},
+
+        {"ID":"tooltip_genderDemo_Male","Entry":"<link=\"tooltip_genderDemo_Male_tooltip\">男性</link>"},
+        {"ID":"tooltip_genderDemo_Male_tooltip","Entry":"生理男性，外观男性"},
+        {"ID":"tooltip_genderDemo_Female","Entry":"<link=\"tooltip_genderDemo_Female_tooltip\">女性</link>"},
+        {"ID":"tooltip_genderDemo_Female_tooltip","Entry":"生理女性，外观女性"},
+        {"ID":"tooltip_genderDemo_Tomboy","Entry":"<link=\"tooltip_genderDemo_Tomboy_tooltip\">假小子</link>"},
+        {"ID":"tooltip_genderDemo_Tomboy_tooltip","Entry":"外观，服饰或行为更接近男性的生理女性"},
+        {"ID":"tooltip_genderDemo_Tomgirl","Entry":"<link=\"tooltip_genderDemo_Tomgirl_tooltip\">伪娘</link>"},
+        {"ID":"tooltip_genderDemo_Tomgirl_tooltip","Entry":"外观，服饰或行为更接近女性的生理男性"},
+        {"ID":"tooltip_genderDemo_Futanari","Entry":"<link=\"tooltip_genderDemo_Futanari_tooltip\">扶她</link>"},
+        {"ID":"tooltip_genderDemo_Futanari_tooltip","Entry":"外观女性，但有两性的性征"},
+        {"ID":"tooltip_genderDemo_O.Funanari","Entry":"<link=\"tooltip_genderDemo_O.Funanari_tooltip\">男扶她</link>"},
+        {"ID":"tooltip_genderDemo_O.Funanari_tooltip","Entry":"外观男性，但有两性的性征"},
+
+        {"ID":"tooltip_genderDemo_Male_Ambi","Entry":"<link=\"tooltip_genderDemo_Male_Ambi_tooltip\">男性？</link>"},
+        {"ID":"tooltip_genderDemo_Male_Ambi_tooltip","Entry":"生理男性，外观为性别不定"},
+        {"ID":"tooltip_genderDemo_Female_Ambi","Entry":"<link=\"tooltip_genderDemo_Female_Ambi_tooltip\">女性？</link>"},
+        {"ID":"tooltip_genderDemo_Female_Ambi_tooltip","Entry":"生理女性，外观性别不定"},
+        {"ID":"tooltip_genderDemo_Futanari_Ambi","Entry":"<link=\"tooltip_genderDemo_Futanari_Ambi_tooltip\">扶她？</link>"},
+        {"ID":"tooltip_genderDemo_Futanari_Ambi_tooltip","Entry":"拥有两性性征，外观性别不定"},
+
+        {"ID":"tooltip_genderDemo_MaleCategory","Entry":"%%Male%%分类"},
+        {"ID":"tooltip_genderDemo_FemaleCategory","Entry":"%%Female%%分类"},
+        {"ID":"tooltip_genderDemo_AmbiguousCategory","Entry":"%%Ambiguous%%分类"},
+
+        {"ID":"ui_prefs_genderRestriction_appearance","Entry":"<link=\"ui_prefs_genderRestriction_appearance_tooltip\">角色外观</link>"},
+        {"ID":"ui_prefs_genderRestriction_appearance_tooltip","Entry":"判断角色是否为该性别时，是否考虑角色的外观设定\n允许的外观设定有 %%Male%% / %%Female%% / %%Ambiguous%%）"},
+        {"ID":"ui_prefs_genderRestriction_p","Entry":"<link=\"ui_prefs_genderRestriction_p_tooltip\">阴茎</link>"},
+        {"ID":"ui_prefs_genderRestriction_p_tooltip","Entry":"判断角色是否为该性别时，是否需要阴茎"},
+        {"ID":"ui_prefs_genderRestriction_v","Entry":"<link=\"ui_prefs_genderRestriction_v_tooltip\">阴道</link>"},
+        {"ID":"ui_prefs_genderRestriction_v_tooltip","Entry":"判断角色是否为该性别时，是否需要阴道"},
+
+        {"ID":"ui_prefs_genderDemo","Entry":"显示性别分类结果"},
+
+        {"ID":"ui_prefs_train_genderRestriction_left","Entry":"是否允许右侧作为执行者对左侧行使调教指令"},
+        {"ID":"ui_prefs_train_genderRestriction_right","Entry":"是否允许左侧作为执行者对右侧行使调教指令"},
+        {"ID":"ui_prefs_train_genderRestriction_middle","Entry":"是否完全禁止左右侧间的任何调教指令"},
+
+        {"ID":"Gender_Priority","Entry":"<link=\"Gender_Priority_tooltip\">性别判定优先级</link>"},
+        {"ID":"Gender_Priority_tooltip","Entry":"调整角色判定性别时优先哪边"},
+        {"ID":"Gender_Priority.male_first","Entry":"<link=\"Gender_Priority.male_first_tooltip\">男性优先</link>"},
+        {"ID":"Gender_Priority.male_first_tooltip","Entry":"优先判定角色是否为男性"},
+        {"ID":"Gender_Priority.female_first","Entry":"<link=\"Gender_Priority.female_first_tooltip\">女性优先</link>"},
+        {"ID":"Gender_Priority.female_first_tooltip","Entry":"优先判定角色是否为女性"},
+
+        {"ID":"Creature_Mode","Entry":"<link=\"Creature_Mode_tooltip\">生物性别限制</link>"},
+        {"ID":"Creature_Mode_tooltip","Entry":"调整非人生物的性别\n%%notimplemented%%"},
+        {"ID":"Creature_Mode.disabled","Entry":"<link=\"Creature_Mode.disabled_tooltip\">禁止</link>"},
+        {"ID":"Creature_Mode.disabled_tooltip","Entry":"不做性别判定（可能无法参与调教）"},
+        {"ID":"Creature_Mode.all_male","Entry":"<link=\"Creature_Mode.all_male_tooltip\">全部雄性</link>"},
+        {"ID":"Creature_Mode.all_male_tooltip","Entry":"所有非人生物均为雄性"},
+        {"ID":"Creature_Mode.all_female","Entry":"<link=\"Creature_Mode.all_female_tooltip\">全部雌性</link>"},
+        {"ID":"Creature_Mode.all_female_tooltip","Entry":"所有非人生物均为雌性"},
+        {"ID":"Creature_Mode.use_both","Entry":"<link=\"Creature_Mode.use_both_tooltip\">两方均允许</link>"},
+        {"ID":"Creature_Mode.use_both_tooltip","Entry":"不限制非人生物的性别"},
+
+        {"ID":"Gender_App_Condition","Entry":"<link=\"Gender_App_Condition_tooltip\">性别的外观限制</link>"},
+        {"ID":"Gender_App_Condition_tooltip","Entry":"调整当前性别判定时是否参考目标外观"},
+        {"ID":"Gender_App_Condition.female_only","Entry":"<link=\"Gender_App_Condition.female_only_tooltip\">女性限定</link>"},
+        {"ID":"Gender_App_Condition.female_only_tooltip","Entry":"只允许女性外观的角色"},
+        {"ID":"Gender_App_Condition.female_or_ambi","Entry":"<link=\"Gender_App_Condition.female_or_ambi_tooltip\">非男性即可</link>"},
+        {"ID":"Gender_App_Condition.female_or_ambi_tooltip","Entry":"外观不为男性的即可（允许秀吉）"},
+        {"ID":"Gender_App_Condition.dont_care","Entry":"<link=\"Gender_App_Condition.dont_care_tooltip\">不在乎</link>"},
+        {"ID":"Gender_App_Condition.dont_care_tooltip","Entry":"不做限制"},
+        {"ID":"Gender_App_Condition.male_or_ambi","Entry":"<link=\"Gender_App_Condition.male_or_ambi_tooltip\">非女性即可</link>"},
+        {"ID":"Gender_App_Condition.male_or_ambi_tooltip","Entry":"外观不为女性的即可（允许秀吉）"},
+        {"ID":"Gender_App_Condition.male_only","Entry":"<link=\"Gender_App_Condition.male_only_tooltip\">男性限定</link>"},
+        {"ID":"Gender_App_Condition.male_only_tooltip","Entry":"只允许男性外观的角色"},
+
+        {"ID":"Gender_Condition","Entry":"<link=\"Gender_Condition_tooltip\">性别判定条件</link>"},
+        {"ID":"Gender_Condition_tooltip","Entry":"调整当前性别判定时是否参考目标外观"},
+        {"ID":"Gender_Condition.forbid","Entry":"<link=\"Gender_Condition.forbid_tooltip\">禁止</link>"},
+        {"ID":"Gender_Condition.forbid_tooltip","Entry":"满足该条件的不会被判定为当前性别"},
+        {"ID":"Gender_Condition.dont_care","Entry":"<link=\"Gender_Condition.dont_care_tooltip\">不在乎</link>"},
+        {"ID":"Gender_Condition.dont_care_tooltip","Entry":"判定性别时跳过该条件"},
+        {"ID":"Gender_Condition.require","Entry":"<link=\"Gender_Condition.require_tooltip\">必须</link>"},
+        {"ID":"Gender_Condition.require_tooltip","Entry":"只有满足该条件的才可能被判定为当前性别"},
+
+        {"ID":"Cannibal_Mode","Entry":"<link=\"Cannibal_Mode_tooltip\">食人设定</link>"},
+        {"ID":"Cannibal_Mode_tooltip","Entry":"调整食人要素的出现与否\n%%notimplemented%%"},
+        {"ID":"Cannibal_Mode.disabled","Entry":"<link=\"Cannibal_Mode.disabled_tooltip\">禁止</link>"},
+        {"ID":"Cannibal_Mode.disabled_tooltip","Entry":"不会出现相关内容"},
+        {"ID":"Cannibal_Mode.non_humanoid_only","Entry":"<link=\"Cannibal_Mode.non_humanoid_only_tooltip\">允许非人类</link>"},
+        {"ID":"Cannibal_Mode.non_humanoid_only_tooltip","Entry":"允许非人类的类人生物捕食人类"},
+        {"ID":"Cannibal_Mode.no_restriction","Entry":"<link=\"Cannibal_Mode.no_restriction_tooltip\">无限制</link>"},
+        {"ID":"Cannibal_Mode.no_restriction_tooltip","Entry":"无限制"},
+
+        {"ID":"Dismember_Mode","Entry":"<link=\"Dismember_Mode_tooltip\">肢体破坏设定</link>"},
+        {"ID":"Dismember_Mode_tooltip","Entry":"调整肢体破坏要素的出现与否\n%%notimplemented%%"},
+        {"ID":"Dismember_Mode.disabled","Entry":"<link=\"Dismember_Mode.disabled_tooltip\">禁止</link>"},
+        {"ID":"Dismember_Mode.disabled_tooltip","Entry":"不会出现相关内容"},
+        {"ID":"Dismember_Mode.corpse_only","Entry":"<link=\"Dismember_Mode.corpse_only_tooltip\">限定死体</link>"},
+        {"ID":"Dismember_Mode.corpse_only_tooltip","Entry":"允许死体被拆解"},
+        {"ID":"Dismember_Mode.dead_and_living","Entry":"<link=\"Dismember_Mode.dead_and_living_tooltip\">无限制</link>"},
+        {"ID":"Dismember_Mode.dead_and_living_tooltip","Entry":"无限制"},
+
+        {"ID":"Sex_Mode","Entry":"<link=\"Sex_Mode_tooltip\">成人要素设定</link>"},
+        {"ID":"Sex_Mode_tooltip","Entry":"调整成人要素的出现与否\n%%notimplemented%%"},
+        {"ID":"Sex_Mode.disabled","Entry":"<link=\"Sex_Mode.disabled_tooltip\">禁止</link>"},
+        {"ID":"Sex_Mode.disabled_tooltip","Entry":"不会出现相关内容"},
+        {"ID":"Sex_Mode.enabled","Entry":"<link=\"Sex_Mode.enabled_tooltip\">允许</link>"},
+        {"ID":"Sex_Mode.enabled_tooltip","Entry":"会出现R18内容"},
+        {"ID":"Sex_Mode.hardcore","Entry":"<link=\"Sex_Mode.hardcore_tooltip\">硬核</link>"},
+        {"ID":"Sex_Mode.hardcore_tooltip","Entry":"允许R18G的硬核要素"},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {"ID":"a","Entry":"b"}
+
+
+
+    ]
+}

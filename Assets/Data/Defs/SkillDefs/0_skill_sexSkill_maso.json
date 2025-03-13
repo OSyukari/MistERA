@@ -1,0 +1,123 @@
+{
+    "Skills":
+    {
+        "list":
+        [
+            {
+                "ID":"skill_sexSkill_maso",
+                "levels":
+                [   {
+                        "DisplayName":"-"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_maso", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                        "stat_modifiers":
+                        [
+           
+                        ],
+                        "DisplayName":"1"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_maso", "operand":"gte", "value":100 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+               
+                         ],
+                        "DisplayName":"2"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_maso", "operand":"gte", "value":220 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+             
+                         ],
+                        "DisplayName":"3"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_maso", "operand":"gte", "value":400 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                   
+                         ],
+                        "DisplayName":"4"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_maso", "operand":"gte", "value":800 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                
+                         ],
+                        "DisplayName":"5"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_maso", "operand":"gte", "value":1600 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                            
+                         ],
+                        "DisplayName":"6"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_maso", "operand":"gte", "value":2000 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                           
+                         ],
+                        "DisplayName":"7"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_maso", "operand":"gte", "value":2800 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                           
+                         ],
+                        "DisplayName":"8"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_maso", "operand":"gte", "value":4000 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                           
+                         ],
+                        "DisplayName":"9"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_maso", "operand":"gte", "value":6000 }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                            
+                         ],
+                        "DisplayName":"10"
+                    }
+                ]
+            }
+        ]
+    }
+        
+    
+}

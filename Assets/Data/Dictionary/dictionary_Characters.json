@@ -1,0 +1,459 @@
+{
+    "language":"default",
+    "entries":
+    [
+
+        {"ID":"relationship_trust","Entry":"信赖"},
+        {"ID":"relationship_trust_tooltip","Entry":"成功的[%%tag_job%%]类指令会增加指令参与者互相的信赖\n成功的每日管理能增加阵营成员对阵营领导者的信赖\n作为阵营成员完成工作指令也能增加阵营管理者对成员的信赖\n工作成果糟糕的话不会增加任何信赖\n\n%%relationship_usedtocalculate_obedience%%\n自尊低下时信赖提供的数值减半"},
+
+        {"ID":"relationship_fear","Entry":"恐惧"},
+        {"ID":"relationship_fear_tooltip","Entry":"当角色的服从度高于2（%%relationship_obedience_3_High%%/%%relationship_obedience_3_Low%%/%%relationship_obedience_3_Fear%%）时，受到疼痛会增加等量的恐惧\n\n%%relationship_usedtocalculate_obedience%%\n%%relationship_usedtocalculate_attitude%%\n角色不处于紧张或心情糟糕时，恐惧不会提供任何数值。角色心情糟糕且紧张的话，恐惧数值会更高"},
+
+        {"ID":"relationship_goodwill","Entry":"好感"},
+        {"ID":"relationship_goodwill_tooltip","Entry":"%%relationship_usedtocalculate_attitude%%\n角色心情好时好感数值取更高，反之取更低\n角色紧张时好感数值取更高（但放松时不会取低）\n当角色的当前恐惧超过当前好感时，好感数值取0"},
+
+        {"ID":"relationship_badwill","Entry":"厌恶"},
+        {"ID":"relationship_badwill_tooltip","Entry":"%%relationship_usedtocalculate_attitude%%\n角色心情差时厌恶数值取更高，反之取更低\n角色紧张时厌恶数值取更高（但放松时不会取低）\n当角色的当前恐惧超过当前厌恶时，厌恶数值取0"},
+
+        {"ID":"relationship_desire","Entry":"欲求"},
+        {"ID":"relationship_desire_tooltip","Entry":"%%relationship_usedtocalculate_attitude%%\n角色当前的%%chara_status_lust%%越高，该数值也取高，反之取低\n角色会将所有作为%%relationship_desire%%对象的角色关系按数值排位，对该角色的%%relationship_desire%%最终数值取 [数值除以排名]"},
+
+        {"ID":"relationship_usedtocalculate_obedience","Entry":"该数值主要被用来计算角色的当前服从度"},
+        {"ID":"relationship_usedtocalculate_attitude","Entry":"该数值主要被用来计算角色的当前态度"},
+
+        {"ID":"personality_selfesteem","Entry":"自尊"},
+        {"ID":"personality_selfesteem_tooltip","Entry":"低自尊会提高角色的服从度，降低角色的%%relationship_trust%%程度\n工作能提升自尊，特定指令会降低自尊，经历心创体验也会降低自尊"},
+        {"ID":"personality_corruption","Entry":"堕落"},
+        {"ID":"personality_corruption_tooltip","Entry":"角色对性相关指令的接受程度，数值越高越容易接受相关指令\n高堕落也会增加角色的服从度"},
+        {"ID":"personality_hope","Entry":"希望"},
+
+        {"ID":"relationship_obedience","Entry":"服从度"},
+        {"ID":"relationship_obedience_tooltip","Entry":"服从度会根据角色的性格基础数据（未实装）和心情状态浮动\n服从度会提供[ (当前服从等级-2)*5]的D20指令判定成功率（每点+-25%成功率）\n\n受%%relationship_trust%%，%%relationship_fear%%，和%%personality_selfesteem%%（未实装）影响"},
+
+        {"ID":"relationship_attitude","Entry":"态度"},
+        {"ID":"relationship_attitude_tooltip","Entry":"受%%relationship_goodwill%%，%%relationship_badwill%%，和%%relationship_desire%%影响"},
+
+        {"ID":"relationship_obedience_0_High","Entry":"反抗"},
+        {"ID":"relationship_obedience_0_Low","Entry":"忽视"},
+        {"ID":"relationship_obedience_0_Fear","Entry":"忽视"},
+
+        {"ID":"relationship_obedience_1_High","Entry":"不服"},
+        {"ID":"relationship_obedience_1_Low","Entry":"不服"},
+        {"ID":"relationship_obedience_1_Fear","Entry":"不服"},
+
+        {"ID":"relationship_obedience_2_High","Entry":"平常"},
+        {"ID":"relationship_obedience_2_Low","Entry":"平常"},
+        {"ID":"relationship_obedience_2_Fear","Entry":"平常"},
+
+        {"ID":"relationship_obedience_3_High","Entry":"友善"},
+        {"ID":"relationship_obedience_3_Low","Entry":"顺从"},
+        {"ID":"relationship_obedience_3_Fear","Entry":"谨慎"},
+
+        {"ID":"relationship_obedience_4_High","Entry":"信赖"},
+        {"ID":"relationship_obedience_4_Low","Entry":"屈服"},
+        {"ID":"relationship_obedience_4_Fear","Entry":"惧怕"},
+
+        {"ID":"relationship_obedience_5_High","Entry":"仰慕"},
+        {"ID":"relationship_obedience_5_Low","Entry":"盲从"},
+        {"ID":"relationship_obedience_5_Fear","Entry":"恐惧"},
+        
+        {"ID":"relationship_attitude_0_High","Entry":"反感"},
+        {"ID":"relationship_attitude_0_Low","Entry":"厌恶"},
+
+        {"ID":"relationship_attitude_1_High","Entry":"消极"},
+        {"ID":"relationship_attitude_1_Low","Entry":"不快"},
+
+        {"ID":"relationship_attitude_2_High","Entry":"平常"},
+        {"ID":"relationship_attitude_2_Low","Entry":"平常"},
+
+        {"ID":"relationship_attitude_3_High","Entry":"喜欢"},
+        {"ID":"relationship_attitude_3_Low","Entry":"喜欢"},
+
+        {"ID":"relationship_attitude_4_High","Entry":"欲求"},
+        {"ID":"relationship_attitude_4_Low","Entry":"喜爱"},
+
+        {"ID":"relationship_attitude_5_High","Entry":"爱欲"},
+        {"ID":"relationship_attitude_5_Low","Entry":"最爱"},
+
+
+
+
+        {"ID":"relationship_couple_displayName","Entry":"恋人"},
+        {"ID":"relationship_couple_displayName_male","Entry":"男朋友"},
+        {"ID":"relationship_couple_displayName_female","Entry":"女朋友"},
+        {"ID":"relationship_fwb_displayName","Entry":"炮友"},
+        {"ID":"relationship_friend_displayName","Entry":"好友"},
+        {"ID":"relationship_bff_displayName","Entry":"挚友"},
+        {"ID":"relationship_colleague_displayName","Entry":"同僚"},
+        {"ID":"relationship_marriage_displayName","Entry":"婚姻"},
+        {"ID":"relationship_marriage_displayName_male","Entry":"丈夫"},
+        {"ID":"relationship_marriage_displayName_female","Entry":"妻子"},
+
+        {"ID":"relationship_slave_displayName","Entry":"奴役"},
+        {"ID":"relationship_slave_displayName_A_is_to_B","Entry":"主人"},
+        {"ID":"relationship_slave_displayName_B_is_to_A","Entry":"奴隶"},
+
+        {"ID":"relationship_servant","Entry":"主仆"},
+        {"ID":"relationship_servant_displayName_A_is_to_B","Entry":"主人"},
+        {"ID":"relationship_servant_displayName_B_is_to_A","Entry":"仆人"},
+
+        {"ID":"relationship_subordinate_displayName","Entry":"工作"},
+        {"ID":"relationship_subordinate_displayName_A_is_to_B","Entry":"上司"},
+        {"ID":"relationship_subordinate_displayName_B_is_to_A","Entry":"下属"},
+
+        {"ID":"relationship_mentor_displayName","Entry":"师徒"},
+        {"ID":"relationship_mentor_displayName_A_is_to_B","Entry":"导师"},
+        {"ID":"relationship_mentor_displayName_B_is_to_A","Entry":"学生"},
+
+        {"ID":"relationship_parent_displayName","Entry":"家人"},
+        {"ID":"relationship_parent_displayName_A_is_to_B","Entry":"父母"},
+        {"ID":"relationship_parent_displayName_A_is_to_B_male","Entry":"父亲"},
+        {"ID":"relationship_parent_displayName_A_is_to_B_Female","Entry":"母亲"},
+        {"ID":"relationship_parent_displayName_B_is_to_A","Entry":"子女"},
+        {"ID":"relationship_parent_displayName_B_is_to_A_male","Entry":"儿子"},
+        {"ID":"relationship_parent_displayName_B_is_to_A_Female","Entry":"女儿"},
+
+        {"ID":"relationship_sibling_displayName","Entry":"家人"},
+        {"ID":"relationship_sibling_displayName_A_is_to_B","Entry":"哥哥姐姐"},
+        {"ID":"relationship_sibling_displayName_A_is_to_B_male","Entry":"哥哥"},
+        {"ID":"relationship_sibling_displayName_A_is_to_B_female","Entry":"姐姐"},
+        {"ID":"relationship_sibling_displayName_B_is_to_A","Entry":"弟妹"},
+        {"ID":"relationship_sibling_displayName_B_is_to_A_male","Entry":"弟弟"},
+        {"ID":"relationship_sibling_displayName_B_is_to_A_female","Entry":"妹妹"},
+
+        {"ID":"relationship_stepparent_displayName","Entry":"家人"},
+        {"ID":"relationship_stepparent_displayName_A_is_to_B","Entry":"继父母"},
+        {"ID":"relationship_stepparent_displayName_A_is_to_B_male","Entry":"继父"},
+        {"ID":"relationship_stepparent_displayName_A_is_to_B_female","Entry":"继母"},
+        {"ID":"relationship_stepparent_displayName_B_is_to_A","Entry":"继子女"},
+        {"ID":"relationship_stepparent_displayName_B_is_to_A_male","Entry":"继子"},
+        {"ID":"relationship_stepparent_displayName_B_is_to_A_female","Entry":"继女"},
+
+        {"ID":"Self","Entry":"自己"},
+        {"ID":"Male","Entry":"男性"},
+        {"ID":"Female","Entry":"女性"},
+        {"ID":"Ambiguous","Entry":"性别不明"},
+
+        {"ID":"humanRace_human","Entry":"人类"},
+        {"ID":"humanRace_elf","Entry":"精灵"},
+        {"ID":"humanRace_angel","Entry":"天使"},
+        {"ID":"humanRace_demon","Entry":"恶魔"},
+        {"ID":"humanRace_beastkin_cat","Entry":"猫人"},
+
+        {"ID":"humanRaceAddon_standard","Entry":""},
+        {"ID":"humanRaceAddon_scavenger","Entry":"拾荒者"},
+        {"ID":"humanRaceAddon_Magician","Entry":"魔术师"},
+        {"ID":"humanRaceAddon_Mistaken","Entry":"迷者"},
+        {"ID":"humanRaceAddon_Mistborn","Entry":"迷子"},
+
+
+        {"ID":"charOriginGift_none","Entry":"无"},
+        {"ID":"charOriginGift_companion","Entry":"追加同伴"},
+        {"ID":"charOriginGift_stopwatch","Entry":"秒表"},
+        {"ID":"charOriginGift_giftcard","Entry":"礼品卡"},
+        {"ID":"charOriginGift_dominator","Entry":"仲裁者"},
+        {"ID":"charOriginGift_animalcompanion","Entry":"动物伙伴"},
+
+        {"ID":"charOrigin_EmissaryoftheTower","Entry":"高塔使节"},
+        {"ID":"charOrigin_TraveleracrossGates","Entry":"域外来客"},
+        {"ID":"charOrigin_ForestDweller","Entry":"森林住民"},
+        {"ID":"charOrigin_KivotosStudent","Entry":"奇沃托斯学生"},
+
+
+        {"ID":"body_part","Entry":"身体部位"},
+        {"ID":"body_slot","Entry":"装备栏位"},
+        {"ID":"equip_layer_Skin","Entry":"贴身"},
+        {"ID":"equip_layer_Inner","Entry":"衣物"},
+        {"ID":"equip_layer_Outer","Entry":"大衣"},
+        {"ID":"equip_layer_Shell","Entry":"装甲"},
+
+        {"ID":"bodyPart_base_head","Entry":"头部"},
+        {"ID":"bodyPart_base_torso","Entry":"上身"},
+        {"ID":"bodyPart_base_arm","Entry":"手臂"},
+        {"ID":"bodyPart_base_lower","Entry":"下半身"},
+        {"ID":"bodyPart_base_leg","Entry":"腿部"},
+        {"ID":"bodyPart_base_feet","Entry":"足"},
+
+        {"ID":"bodyPart_internal_mouth","Entry":"嘴"},
+        {"ID":"bodyPart_internal_stomach","Entry":"胃"},
+        {"ID":"bodyPart_internal_breasts","Entry":"胸"},
+        {"ID":"bodyPart_internal_penis","Entry":"阴茎"},
+        {"ID":"bodyPart_internal_clit","Entry":"阴蒂"},
+        {"ID":"bodyPart_internal_vagina","Entry":"阴道"},
+        {"ID":"bodyPart_internal_womb","Entry":"子宫"},
+        {"ID":"bodyPart_internal_guts","Entry":"肠"},
+        {"ID":"bodyPart_internal_anus","Entry":"肛门"},
+
+        {"ID":"equip_slot_None","Entry":"-"},
+        {"ID":"equip_slot_Hand","Entry":"手"},
+        {"ID":"equip_slot_Hair","Entry":"头"},
+        {"ID":"equip_slot_Face","Entry":"脸"},
+        {"ID":"equip_slot_Eyes","Entry":"眼"},
+        {"ID":"equip_slot_Neck","Entry":"脖"},
+        {"ID":"equip_slot_Torso","Entry":"上身"},
+        {"ID":"equip_slot_Lower","Entry":"下身"},
+        {"ID":"equip_slot_Leg","Entry":"腿"},
+        {"ID":"equip_slot_Feet","Entry":"足"},
+        {"ID":"equip_slot_Mouth","Entry":"嘴"},
+        {"ID":"equip_slot_Stomach","Entry":"胃"},
+        {"ID":"equip_slot_Breasts","Entry":"胸"},
+        {"ID":"equip_slot_Nipples","Entry":"乳头"},
+        {"ID":"equip_slot_Clitoris","Entry":"阴蒂"},
+        {"ID":"equip_slot_Vagina","Entry":"阴道"},
+        {"ID":"equip_slot_Womb","Entry":"子宫"},
+        {"ID":"equip_slot_Anus","Entry":"肛门"},
+
+        {"ID":"bodyPart_internal_lastExpFormat","Entry":"最近体验：与$target$的$command$"},
+        {"ID":"bodyPart_internal_expVirginLoss","Entry":"在与$target$的$command$中失去了$partname$初体验"},
+        {"ID":"bodyPart_internal_virgin_silent","Entry":""},
+        {"ID":"bodyPart_internal_virgin","Entry":"未经人事"},
+
+        {"ID":"chara_fullname_firstToLast","Entry":"$firstName$ $middleName$ $lastName$"},
+        {"ID":"chara_fullname_lastToFirst","Entry":"$lastName$ $middleName$ $firstName$"},   
+
+        {"ID":"experience_sex_cum","Entry":"射精（$amount$ml）"},
+        {"ID":"experience_sex_cumtainer","Entry":"射精（$partname$：$amount$ml）"},
+
+        {"ID":"experience_sex_climax","Entry":"绝顶"},
+        {"ID":"experience_sex_strong_climax","Entry":"$sensitivity$强绝顶$count$"},
+
+        {"ID":"experience_sex_strong_climax_1","Entry":""},
+        {"ID":"experience_sex_strong_climax_2","Entry":"（二重绝顶）"},
+        {"ID":"experience_sex_strong_climax_3","Entry":"（三重绝顶）"},
+        {"ID":"experience_sex_strong_climax_4","Entry":"（四重绝顶）"},
+        {"ID":"experience_sex_strong_climax_5","Entry":"（五重绝顶）"},
+        {"ID":"experience_sex_strong_climax_6","Entry":"（六重绝顶）"},
+
+
+        {"ID":"experience_sex_male","Entry":"男性经验"},
+        {"ID":"experience_sex_female","Entry":"女性经验"},
+        {"ID":"experience_sex_masturbate","Entry":"自慰经验"},
+        {"ID":"experience_sex_exposure","Entry":"露出经验"},
+        {"ID":"experience_sex_animal","Entry":"兽奸经验"}, {"ID":"experience_sex_animal_climax","Entry":"兽奸绝顶经验"},
+        {"ID":"experience_sex_insect","Entry":"虫奸经验"},
+        {"ID":"experience_sex_nonhuman","Entry":"异种经验"},
+        {"ID":"experience_sex_service","Entry":"奉仕经验"},
+        {"ID":"experience_sex_maso","Entry":"被虐经验"},
+        {"ID":"experience_sex_milking","Entry":"榨乳经验"},
+        {"ID":"experience_sex_sado","Entry":"施虐经验"},
+        {"ID":"experience_sex_raped","Entry":"强奸经验"},
+        {"ID":"experience_sex_necro","Entry":"死奸经验"},
+
+        {"ID":"experience_sex_timestop","Entry":"时奸经验"}, 
+        {"ID":"experience_sex_hypnosis","Entry":"催眠经验"}, {"ID":"experience_sex_hypnosis_climax","Entry":"催眠绝顶经验"},
+        {"ID":"experience_sex_sleeping","Entry":"眠奸经验"}, {"ID":"experience_sex_sleeping_climax","Entry":"眠奸绝顶经验"},
+
+        {"ID":"experience_sex_C","Entry":"C经验"}, {"ID":"experience_sex_C_climax","Entry":"C绝顶经验"},
+
+        {"ID":"experience_sex_B","Entry":"B经验"}, {"ID":"experience_sex_B_climax","Entry":"B绝顶经验"},
+
+        {"ID":"experience_sex_swallow_cum","Entry":"精饮经验"},
+        {"ID":"experience_sex_swallow_cum_climax","Entry":"精饮高潮经验"},
+        {"ID":"experience_sex_swallow_cum_total","Entry":"饮精量"},
+
+        {"ID":"experience_sex_M","Entry":"M经验"},
+        {"ID":"experience_sex_M_climax","Entry":"M绝顶经验"},
+        {"ID":"experience_sex_M_cum","Entry":"口内射精经验"},
+        {"ID":"experience_sex_M_cum_total","Entry":"口内射精量"},
+        {"ID":"experience_sex_M_expansion","Entry":"M扩张经验"},
+
+        {"ID":"experience_sex_V","Entry":"V经验"},
+        {"ID":"experience_sex_V_climax","Entry":"V绝顶经验"},
+        {"ID":"experience_sex_V_cum","Entry":"内射经验"},
+        {"ID":"experience_sex_V_cum_total","Entry":"阴道内射量"},
+        {"ID":"experience_sex_V_expansion","Entry":"V扩张经验"},
+
+        {"ID":"experience_sex_W","Entry":"W经验"},
+        {"ID":"experience_sex_W_climax","Entry":"W绝顶经验"},
+        {"ID":"experience_sex_W_cum","Entry":"子宫射精经验"},
+        {"ID":"experience_sex_W_cum_total","Entry":"子宫内射精量"},
+        {"ID":"experience_sex_W_expansion","Entry":"W扩张经验"},
+
+        {"ID":"experience_sex_A","Entry":"A经验"},
+        {"ID":"experience_sex_A_climax","Entry":"A绝顶经验"},
+        {"ID":"experience_sex_A_cum","Entry":"肛内射精经验"},
+        {"ID":"experience_sex_A_cum_total","Entry":"肛内射精量"},
+        {"ID":"experience_sex_A_expansion","Entry":"A扩张经验"},
+
+        {"ID":"experience_male_DisplayName_Female","Entry":"性交经验"},
+        {"ID":"experience_male_DisplayName_Male","Entry":"BL经验"},
+        {"ID":"experience_male_Climax_DisplayName_Female","Entry":"性交绝顶经验"},
+        {"ID":"experience_male_Climax_DisplayName_Male","Entry":"BL绝顶经验"},
+        {"ID":"experience_male_RankDisplayName_Female","Entry":"性交成瘾"},
+        {"ID":"experience_male_RankDisplayName_Male","Entry":"BL成瘾"},
+
+        {"ID":"experience_female_DisplayName_Female","Entry":"百合经验"},
+        {"ID":"experience_female_DisplayName_Male","Entry":"性交经验"},
+        {"ID":"experience_female_Climax_DisplayName_Female","Entry":"百合绝顶经验"},
+        {"ID":"experience_female_Climax_DisplayName_Male","Entry":"性交绝顶经验"},
+        {"ID":"experience_female_RankDisplayName_Female","Entry":"百合成瘾"},
+        {"ID":"experience_female_RankDisplayName_Male","Entry":"性交成瘾"},
+        
+        {"ID":"experience_service_DisplayName","Entry":"奉仕经验"},
+        {"ID":"experience_service_Climax_DisplayName","Entry":"奉仕绝顶经验"},
+        {"ID":"experience_service_RankDisplayName","Entry":"奉仕成瘾"},
+
+        {"ID":"experience_masturbate_DisplayName","Entry":"自慰经验"},
+        {"ID":"experience_masturbate_Climax_DisplayName","Entry":"自慰绝顶经验"},
+        {"ID":"experience_masturbate_RankDisplayName","Entry":"自慰成瘾"},
+
+        {"ID":"experience_maso_DisplayName","Entry":"被虐经验"},
+        {"ID":"experience_maso_Climax_DisplayName","Entry":"被虐绝顶经验"},
+        {"ID":"experience_maso_RankDisplayName","Entry":"被虐成瘾"},
+
+        {"ID":"experience_sado_DisplayName","Entry":"施虐经验"},
+        {"ID":"experience_sado_Climax_DisplayName","Entry":"施虐绝顶经验"},
+        {"ID":"experience_sado_RankDisplayName","Entry":"施虐成瘾"},
+
+        {"ID":"experience_exposure_DisplayName","Entry":"露出经验"},
+        {"ID":"experience_exposure_Climax_DisplayName","Entry":"露出绝顶经验"},
+        {"ID":"experience_exposure_RankDisplayName","Entry":"露出成瘾"},
+
+        {"ID":"experience_rape_DisplayName","Entry":"强奸经验"},
+        {"ID":"experience_rape_Climax_DisplayName","Entry":"强奸绝顶经验"},
+        {"ID":"experience_rape_RankDisplayName","Entry":"强奸成瘾"},
+
+        {"ID":"experience_hypnosis_DisplayName","Entry":"催眠经验"},
+        {"ID":"experience_hypnosis_Climax_DisplayName","Entry":"催眠绝顶经验"},
+        {"ID":"experience_hypnosis_RankDisplayName","Entry":"催眠成瘾"},
+
+        {"ID":"experience_milking_DisplayName","Entry":"榨乳经验"},
+        {"ID":"experience_milking_Climax_DisplayName","Entry":"榨乳绝顶经验"},
+        {"ID":"experience_milking_RankDisplayName","Entry":"榨乳成瘾"},
+
+        {"ID":"experience_nonhuman_animal_DisplayName","Entry":"兽奸经验"},
+        {"ID":"experience_nonhuman_animal_Climax_DisplayName","Entry":"兽奸绝顶经验"},
+        {"ID":"experience_nonhuman_animal_RankDisplayName","Entry":"兽奸成瘾"},
+
+        {"ID":"experience_nonhuman_insect_DisplayName","Entry":"虫奸经验"},
+        {"ID":"experience_nonhuman_insect_Climax_DisplayName","Entry":"虫奸绝顶经验"},
+        {"ID":"experience_nonhuman_insect_RankDisplayName","Entry":"虫奸成瘾"},
+
+        {"ID":"experience_nonhuman_tentacles_DisplayName","Entry":"触手经验"},
+        {"ID":"experience_nonhuman_tentacles_Climax_DisplayName","Entry":"触手绝顶经验"},
+        {"ID":"experience_nonhuman_tentacles_RankDisplayName","Entry":"触手成瘾"},
+
+        {"ID":"experience_nonhuman_DisplayName","Entry":"异种奸经验"},
+        {"ID":"experience_nonhuman_Climax_DisplayName","Entry":"异种奸绝顶经验"},
+        {"ID":"experience_nonhuman_RankDisplayName","Entry":"异种奸成瘾"},
+
+        {"ID":"experience_pain","Entry":"苦痛经验"},
+        {"ID":"experience_pain_pleasure","Entry":"苦痛快乐经验"},
+        {"ID":"experience_abnormal","Entry":"异常经验"},
+
+        {"ID":"skill_sensitivity_tooltip1","Entry":"该技能每等级增加对应部位的敏感度上限，略微增加对应部位的快感和苦痛获取"},
+        {"ID":"skill_sensitivity_tooltip2","Entry":"该技能每等级增加对应部位的尺寸包容度（不增加实际尺寸）"},
+
+        {"ID":"skill_sensitivity_C","Entry":"C感觉"}, {"ID":"skill_sensitivity_C_tooltip","Entry":"%%skill_sensitivity_tooltip1%%"},
+        {"ID":"skill_sensitivity_B","Entry":"B感觉"}, {"ID":"skill_sensitivity_B_tooltip","Entry":"%%skill_sensitivity_tooltip1%%"},
+        {"ID":"skill_sensitivity_V","Entry":"V感觉"}, {"ID":"skill_sensitivity_V_tooltip","Entry":"%%skill_sensitivity_tooltip1%%\n%%skill_sensitivity_tooltip2%%"},
+        {"ID":"skill_sensitivity_A","Entry":"A感觉"}, {"ID":"skill_sensitivity_A_tooltip","Entry":"%%skill_sensitivity_tooltip1%%\n%%skill_sensitivity_tooltip2%%"},
+        {"ID":"skill_sensitivity_W","Entry":"W感觉"}, {"ID":"skill_sensitivity_W_tooltip","Entry":"%%skill_sensitivity_tooltip1%%\n%%skill_sensitivity_tooltip2%%"},
+        {"ID":"skill_sensitivity_M","Entry":"M感觉"}, {"ID":"skill_sensitivity_M_tooltip","Entry":"%%skill_sensitivity_tooltip1%%\n%%skill_sensitivity_tooltip2%%"},
+
+        {"ID":"notimplemented","Entry":"该条目未实装"},
+
+        {"ID":"skill_sexSkill_technique","Entry":"性交技巧"}, {"ID":"skill_sexSkill_technique_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_sexSkill_service","Entry":"奉仕精神"},{"ID":"skill_sexSkill_service_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_sexSkill_exposure","Entry":"露出癖好"},{"ID":"skill_sexSkill_exposure_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_sexSkill_maso","Entry":"受虐倾向"},{"ID":"skill_sexSkill_maso_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_sexSkill_sado","Entry":"施虐倾向"}, {"ID":"skill_sexSkill_sado_tooltip","Entry":"%%notimplemented%%"},
+
+        {"ID":"skill_expansion_tooltip1","Entry":"该技能每等级增加对应部位的尺寸和深度"},
+
+        {"ID":"skill_expansion_V","Entry":"阴道扩张"}, {"ID":"skill_expansion_V_tooltip","Entry":"%%skill_expansion_tooltip1%%"},
+        {"ID":"skill_expansion_A","Entry":"肛门扩张"}, {"ID":"skill_expansion_A_tooltip","Entry":"%%skill_expansion_tooltip1%%"},
+        {"ID":"skill_expansion_W","Entry":"子宫扩张"}, {"ID":"skill_expansion_W_tooltip","Entry":"%%skill_expansion_tooltip1%%"},
+        {"ID":"skill_expansion_M","Entry":"深喉扩张"}, {"ID":"skill_expansion_M_tooltip","Entry":"%%skill_expansion_tooltip1%%"},
+
+        {"ID":"skill_addiction_cum","Entry":"精液中毒"},  {"ID":"skill_addiction_cum_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_addiction_masturbation","Entry":"自慰中毒"},  {"ID":"skill_addiction_masturbation_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_addiction_sex","Entry":"性交中毒"},  {"ID":"skill_addiction_sex_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_addiction_bestiality","Entry":"兽奸中毒"},  {"ID":"skill_addiction_bestiality_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_addiction_homosexual_male","Entry":"BL中毒"}, {"ID":"skill_addiction_homosexual_male_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_addiction_homosexual_female","Entry":"百合中毒"}, {"ID":"skill_addiction_homosexual_female_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_addiction_raped","Entry":"被奸中毒"}, {"ID":"skill_addiction_raped_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_addiction_prostitution","Entry":"卖春中毒"}, {"ID":"skill_addiction_prostitution_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_addiction_hypnosis","Entry":"催眠中毒"}, {"ID":"skill_addiction_hypnosis_tooltip","Entry":"%%notimplemented%%"},
+        {"ID":"skill_addiction_milking","Entry":"喷乳中毒"}, {"ID":"skill_addiction_milking_tooltip","Entry":"%%notimplemented%%"},
+
+        {"ID":"stats_base_Strength","Entry":"力量"},
+        {"ID":"stats_base_Strength_tooltip","Entry":"%%notimplemented%%\n\nA mix of traditional Strength and Dexterity.\nRepresent how a character act on his environment.\nDetermine carry weight, and Str-based skills (starting level and max level)."},
+
+        {"ID":"stats_base_Constitution","Entry":"体质"},
+        {"ID":"stats_base_Constitution_tooltip","Entry":"%%notimplemented%%\n\nTraditional Constitution.\nRepresent how a character respond to environment.\nDetermine HP value, and CON-based skills (starting level and max level)."},
+
+        {"ID":"stats_base_Psyche","Entry":"心灵"},
+        {"ID":"stats_base_Psyche_tooltip","Entry":"%%notimplemented%%\n\nRepresent traditional Intelligence.\nRepresent how one feels about his environment.\nDetermine MP value and PSY-based skills (starting level and max level)."},
+
+        {"ID":"stats_base_Willpower","Entry":"意志"},
+        {"ID":"stats_base_Willpower_tooltip","Entry":"%%notimplemented%%\n\nRepresent traditional Wisdom.\nRepresent how one express himself.\nDetermine Stress cap, and WIL-based skills."},
+
+        {"ID":"stats_derived_extended_hp","Entry":"HP"},
+        {"ID":"stats_derived_extended_hp_tooltip","Entry":"%%notimplemented%%\n\nHealth Point.\nIf this reaches 0, character will become unconscious\nIf it reaches negative Constitution score, character dies.\nTemporary injury will decrese score, permanent injury will decrease maximum.\nMaximum score is 10 + CON Modifier + others.\nNaturally recovers during sleep."},
+
+        {"ID":"stats_derived_extended_mp","Entry":"MP"},
+        {"ID":"stats_derived_extended_mp_tooltip","Entry":"%%notimplemented%%\n\nMana Point, required for casting spells.\nMaximum score is 0 + PSY Modifier + others.\nNaturally recovers during sleep or rest."},
+
+        {"ID":"stats_derived_extended_energy","Entry":"精力"},
+        {"ID":"stats_derived_extended_energy_tooltip","Entry":"执行需要社交、脑力、和集中的工作时消耗\n上限为%%stats_base_Willpower%%*10+其他补正\n能通过睡眠或休息回复\n当精力过低时角色心情会降低，%%notimplemented%%"},
+
+        {"ID":"stats_derived_extended_stamina","Entry":"耐力"},
+        {"ID":"stats_derived_extended_stamina_tooltip","Entry":"执行体力劳动时消耗\n上限为%%stats_base_Constitution%%*10+其他补正\n能通过睡眠或休息回复\n当角色体力过低时会陷入疲劳状态，%%notimplemented%%"},
+
+        {"ID":"statsEX_capModded","Entry":"该属性的上限和下限不会超过最高和最低的单项数值调整"},
+
+        {"ID":"chara_status_mood","Entry":"心情"},
+        {"ID":"chara_status_mood_tooltip","Entry":"影响执行指令时角色的初始态度\n心情好时厌恶数值取半或更低，心情差时好意数值取半或更低\n%%statsEX_capModded%%"},
+
+        {"ID":"chara_status_stress","Entry":"压力"},
+        {"ID":"chara_status_stress_tooltip","Entry":"影响角色的恐惧数值，低压力时恐惧取半或更低，高压力时取全数值或更高\n高压力时好意和厌恶数值都取更高\n影响角色在做爱时的扩张能力\n%%statsEX_capModded%%"},
+
+        {"ID":"chara_status_lust","Entry":"欲望"},
+        {"ID":"chara_status_lust_tooltip","Entry":"影响角色对肢体接触的接受度\n影响角色态度计算中的欲望数值\n影响角色在做爱时的扩张能力\n%%statsEX_capModded%%"},
+
+        {"ID":"chara_status_consciousness","Entry":"意识"},
+        {"ID":"chara_status_consciousness_tooltip","Entry":"角色的清醒程度\n意识低于70%的时候角色会处于意识低下，更难做出理智判断\n低于30%时角色昏迷"},
+
+        {"ID":"chara_status_sex_stimulation","Entry":"性快感"},
+        {"ID":"chara_status_sex_stimulation_tooltip","Entry":"角色的当前快感数值，会因为高潮而被扣除。\n当快感数值达到100时将执行高潮判定，如果此时部位的刺激度也达到了100将会强绝顶。"},
+
+        {"ID":"stats_derived_sleepNeed","Entry":"睡眠需求"},
+        {"ID":"stats_derived_sleepNeed_tooltip","Entry":"角色每日需要的睡眠时间（小时单位）"},
+
+        {"ID":"stats_derived_memoryEntryCount","Entry":"记忆条目数量"},
+        {"ID":"stats_derived_memoryEntryCount_tooltip","Entry":"该数值决定了角色的心情会受到多少项记忆条目影响（从新到旧）"},
+
+        {"ID":"stats_derived_memoryLength","Entry":"记忆时间"},
+        {"ID":"stats_derived_memoryLength_tooltip","Entry":"该数值决定了角色的每项（非永久的）记忆条目会在记忆中保留多久（分钟单位）"},
+
+        {"ID":"chara_status_orificelubrication_tooltip","Entry":"角色性器官润滑程度，该数值低于50时润滑不足\n可以通过快感提升，其他的提升手段暂未实装"},
+
+        {"ID":"stats_derived_maxSensitivity_tooltip","Entry":"相关身体部位的快感数值无法超过上限"},
+
+        {"ID":"stats_derived_maxSensitivity_C","Entry":"C敏感"},
+        {"ID":"stats_derived_maxSensitivity_C_tooltip","Entry":"%%stats_derived_maxSensitivity_tooltip%%"},
+
+        {"ID":"stats_derived_maxSensitivity_V","Entry":"V敏感"},
+        {"ID":"stats_derived_maxSensitivity_V_tooltip","Entry":"%%stats_derived_maxSensitivity_tooltip%%"},
+
+        {"ID":"stats_derived_maxSensitivity_B","Entry":"B敏感"},
+        {"ID":"stats_derived_maxSensitivity_B_tooltip","Entry":"%%stats_derived_maxSensitivity_tooltip%%"},
+
+        {"ID":"stats_derived_maxSensitivity_A","Entry":"A敏感"},
+        {"ID":"stats_derived_maxSensitivity_A_tooltip","Entry":"%%stats_derived_maxSensitivity_tooltip%%"},
+
+        {"ID":"stats_derived_maxSensitivity_M","Entry":"M敏感"},
+        {"ID":"stats_derived_maxSensitivity_M_tooltip","Entry":"%%stats_derived_maxSensitivity_tooltip%%"},
+
+        {"ID":"stats_derived_maxSensitivity_W","Entry":"W敏感"},
+        {"ID":"stats_derived_maxSensitivity_W_tooltip","Entry":"%%stats_derived_maxSensitivity_tooltip%%"},
+
+
+        {"ID":"chara_currentjob_sleeping","Entry":"睡眠中"},
+        {"ID":"chara_currentjob_unconscious","Entry":"昏迷中"},
+        {"ID":"chara_currentjob_pathing","Entry":"前往$room$"},
+
+        {"ID":"chara_currently_doing","Entry":"$chara$正在$currentjob$"}
+    ]
+}

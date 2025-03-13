@@ -1,0 +1,57 @@
+{
+    "Character_Origins":
+    {
+        "list": [
+        {
+            "ID": "charOrigin_none",
+            "displayname": "",
+            "tooltip": "",
+            "availableOptionsID": [
+                "charOriginGift_none"
+            ],
+            "disallowRaceTemplate_ID": []
+        },{
+            "ID": "charOrigin_EmissaryoftheTower",
+            "displayname": "Emissary of the Tower",
+            "tooltip": "Raised inside a Tower above clouds among your family.\nNow you've been selected by the Admin to go venture outside the Tower.\nStart with a cellphone.\nLimit: Race Modifier must be Magician.",
+            "forceRaceTemplate_ID": "humanRaceAddon_Magician",
+            "availableOptionsID": [
+                "charOriginGift_none",
+                "charOriginGift_companion",
+                "charOriginGift_stopwatch",
+                "charOriginGift_giftcard",
+                "charOriginGift_dominator"
+            ]
+        },
+        {
+            "ID": "charOrigin_TraveleracrossGates",
+            "displayname": "Traveler across Gates",
+            "tooltip": "You are not native of this realm, you merely stepped through a doorway and here you are.\nLimit: Race Modifier must not be Mist-taken or Mistborn.",
+            "availableOptionsID": [
+                "charOriginGift_none",
+                "charOriginGift_companion",
+                "charOriginGift_stopwatch",
+                "charOriginGift_animalcompanion"
+            ],
+            "disallowRaceTemplate_ID": [
+                "humanRaceAddon_Mistaken",
+                "humanRaceAddon_Mistborn"
+            ]
+        },
+        {
+            "ID": "charOrigin_ForestDweller",
+            "displayname": "Forest Dweller",
+            "tooltip": "You are born in this world, this forest of steel and concrete engulfed by a mist.\nLimit: Race Modifier cannot be Magician.",
+            "availableOptionsID": [
+                "charOriginGift_none",
+                "charOriginGift_companion",
+                "charOriginGift_animalcompanion"
+            ],
+            "disallowRaceTemplate_ID": [
+                "humanRaceAddon_Magician"
+            ]
+        }
+    ]
+    }
+    
+}

@@ -1,0 +1,59 @@
+{
+    "MapPlans":
+    {
+        "list":
+        [
+            {
+                "ID":"map_outside_convenience_store",
+                "z_rotation":0.0,
+                "initializeFaction":"outside_convenience_store",
+                "setPrivateRoomOwner":true,
+                "floors":
+                [
+                    {
+                        "ID":"floor_stockasset_bridge",
+                        "nameOverwrite":"campaign1_map_utnapishtim_bridge",
+                        "Additional":
+                        [
+                            {
+                                "addClass":"map_init_organization",
+                                "map_init_organization":{ "orgID":"Utnapishtim", "addCharaToFaction":true, "setPrivateRoom":true }
+                            }
+                        ]
+                    }
+                ],
+                "managerBaseIDs":["PLAYER"],
+                "workHours":[
+                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":8,"endHour":11,"comID":"com_job_production_cooking" },
+                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":13,"endHour":15,"comID":"com_job_production_cooking" },
+                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":16,"endHour":18,"comID":"com_job_production_cooking" },
+
+                    { "charaBaseID":"Campaign1_Char_Himari", "startHour":8,"endHour":11,"comID":"com_job_production_engineering" },
+                    { "charaBaseID":"Campaign1_Char_Himari", "startHour":13,"endHour":18,"comID":"com_job_research_engineering" },
+
+                    { "charaBaseID":"Campaign1_Char_Hanako", "startHour":8,"endHour":11,"comID":"com_job_production_chemistry" },
+                    { "charaBaseID":"Campaign1_Char_Hanako", "startHour":13,"endHour":18,"comID":"com_job_research_biochemistry" },
+
+                    { "charaBaseID":"Campaign1_Char_Kayoko", "startHour":8,"endHour":11,"comID":"com_job_training_shooting" },
+                    { "charaBaseID":"Campaign1_Char_Kayoko", "startHour":13,"endHour":18,"comID":"com_job_training_melee" },
+
+                    { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":8,"endHour":11,"comID":"com_job_research_physics" },
+                    { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":13,"endHour":18,"comID":"com_job_research_physics" },
+
+                    { "charaBaseID":"Campaign1_Char_Rin", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Rin", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
+
+                    { "charaBaseID":"Campaign1_Char_Momoka", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Momoka", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
+
+                    { "charaBaseID":"Campaign1_Char_Ayumu", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Ayumu", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
+
+                    { "charaBaseID":"Campaign1_Char_Ayane", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Ayane", "startHour":13,"endHour":18,"comID":"com_job_cleaning" }
+                ]
+            }
+        ]
+    }
+
+}

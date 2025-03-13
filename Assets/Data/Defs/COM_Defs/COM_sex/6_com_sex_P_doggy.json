@@ -1,0 +1,454 @@
+{
+    "COMs":
+    {
+        "list":[
+        {
+    "ID":"com_sex_P_doggy",
+    "ActionPackageClass":"ActionPackage_Sex",
+    "displayName":"com_sex_P_doggy_displayName_1",
+    "timeScale":3,
+    "comTags":["sex","penetration"],
+    "requirements":{
+        "requirement":{
+            "req_Doers":{
+                "BodyTags":["penis"],
+                "minRevealingScore":1,
+                "cost_ST": 2
+            },
+            "req_Receivers":{
+                "BodyTags":["vagina"],
+                "minRevealingScore":1,
+                "requireConscious":false,
+                "requireAction":false
+            }
+        }
+    },
+    "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+    "DifficultyCheck":{ "baseD20Check":0 },
+    "variants":[
+        {
+            "requirements":{ 
+                "requirement":{ "doerCount":1, "receiverCount":1 },
+                "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_doggy" 
+                } },
+            "displayName":"com_sex_P_V_overpen_1",
+            "setForce":true
+        },
+        {
+            "requirements":{ 
+                "requirement":{ "doerCount":1, "receiverCount":99 },
+                "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_doggy" 
+            } },
+            "displayName":"com_sex_P_V_overpen_2",
+            "setForce":true
+        },
+        {
+            "requirements":{ 
+                "requirement":{ "doerCount":99, "receiverCount":1 },
+                "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_doggy" 
+            } },
+            "displayName":"com_sex_P_V_overpen_3",
+            "setForce":true
+        },
+        {
+            "requirements":{ 
+                "requirement":{ "doerCount":99,  "receiverCount":99 },
+                "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_doggy" } },
+            "displayName":"com_sex_P_V_overpen_4",
+            "setForce":true
+        },
+        {
+            "requirements":{ 
+                "requirement":{ "doerCount":1, "receiverCount":1 },
+                "requireExisting":{ "requireCOMID":"com_sex_P_doggy"  }
+            },
+            "setForce":true ,
+            "displayName":"com_sex_P_V_force_1"
+        },
+        {
+            "requirements":{ 
+                "requirement":{ "doerCount":1, "receiverCount":99 },
+                "requireExisting":{ "requireCOMID":"com_sex_P_doggy"  }
+            },
+            "setForce":true ,
+            "displayName":"com_sex_P_V_force_2"
+        },
+        {
+            "requirements":{ "requirement":{ "doerCount":99, "receiverCount":1 },
+            "requireExisting":{ "requireCOMID":"com_sex_P_doggy"  }},
+            "setForce":true ,
+            "displayName":"com_sex_P_V_force_3"
+        },
+        {
+            "requirements":{ "requirement":{ "doerCount":99,  "receiverCount":99 } ,
+            "requireExisting":{ "requireCOMID":"com_sex_P_doggy"  }},
+            "setForce":true ,
+            "displayName":"com_sex_P_V_force_4"
+        },
+        {
+            "requirements":{ "requirement":{ "doerCount":1, "receiverCount":1 } },
+            "displayName":"com_sex_P_doggy_displayName_1"
+        },
+        {
+            "requirements":{ "requirement":{ "doerCount":1, "receiverCount":99 } },
+            "displayName":"com_sex_P_doggy_displayName_2"
+        },
+        {
+            "requirements":{ "requirement":{ "doerCount":99, "receiverCount":1 } },
+            "displayName":"com_sex_P_doggy_displayName_3"
+        },
+        {
+            "requirements":{ "requirement":{ "doerCount":99, "receiverCount":99 } },
+            "displayName":"com_sex_P_doggy_displayName_4"
+        }
+    ],
+    "description_begin":{
+        "Entries":[ 
+            {
+                "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
+                "keepLooking":true,
+                "conditions":[
+                    { "validateChara":{"target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"false" } },
+                    { "validateChara":{"target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"false" } }
+                ],
+                "Entries":[
+                    {
+                        "_comment":"receiver is estrus",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validateChara":{"target":"receiver", "statID":"isInEstrus", "operand":"eq", "value":"true" } }
+                        ],
+                        "texts":[
+                            "$receiver.firstname$被情欲所驱使，像是在撒娇一样伸出屁股…",
+                            "发情的$receiver.firstname$在粗暴的抽插下喘着粗气……"
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comment":"middle branch, no condition, always check",
+                "keepLooking":true,
+                "conditions":[ ],
+                "Entries":[
+                    {
+                        "_comment":"timestop branch",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validateChara":{"target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"true" } }
+                        ],
+                        "Entries":[
+                            {
+                                "_comment":"receiver cannot act anyway, so assume doer is master",
+                                "keepLooking":false,
+                                "Entries":[
+                                    {
+                                        "_comment":"if exist previous insert - missionary",
+                                        "keepLooking":false,
+                                        "conditions":[
+                                            { "validateJob":{"existsPreviousCOM":"com_sex_P_missionary"} }
+                                        ],
+                                        "texts":[
+                                            "$doer.firstname$在品味身体动弹不得的$receiver.firstname$膣内的触感的同时、再次開始动起了腰…"
+                                        ]
+                                    },
+                                    {
+                                        "_comment":"if none of the above = new insert",
+                                        "keepLooking":false,
+                                        "texts":[
+                                            "$doer.firstname$将時停中的$receiver.firstname$仰面推倒、把即将暴発的阴茎插入了$receiver.v$里…"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "_comment":"unconscious branch",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validateChara":{"target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"true" } }
+                        ],
+                        "texts":[],
+                        "Entries":[
+                            {
+                                "_comment":"else : if doer is ordering",
+                                "keepLooking":false,
+                                "Entries":[
+                                    {
+                                        "_comment":"if exist previous insert - missionary",
+                                        "keepLooking":false,
+                                        "conditions":[
+                                            { "validateJob":{"existsPreviousCOM":"com_sex_P_missionary"} }
+                                        ],
+                                        "texts":[
+                                            "$doer.firstname$在品味着睡眠中的$receiver.firstname$膣内的触感的同时、再次開始动起了腰…"
+                                        ]
+                                    },
+                                    {
+                                        "_comment":"if none of the above = new insert",
+                                        "keepLooking":false,
+                                        "texts":[
+                                            "$doer.firstname$将睡眠中的$receiver.firstname$仰面推倒、把即将暴発的阴茎插入了$receiver.v$里…"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "_comment":"conscious and can act branch.",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validateChara":{"target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"false" } },
+                            { "validateChara":{"target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"false" } }
+                        ],
+                        "Entries":[
+                            {
+                                "_comment":"",
+                                "keepLooking":false,
+                                "Entries":[
+                                    {
+                                        "_comment":"if exist previous insert - reverse cowgirl/reverse sitting -> back facing doer but exclude doggy",
+                                        "keepLooking":false,
+                                        "conditions":[
+                                            { "validateJob":{"existsPreviousCOM":"com_sex_P_missionary"} }
+                                        ],
+                                        "Entries":[
+                                            {
+                                                "_comment":"if someone else (non-participant) is ordering",
+                                                "keepLooking":false,
+                                                "conditions":[
+                                                    { "validatePackage":{"existsMaster_NonActor":true} }
+                                                ],
+                                                "texts":[
+                                                    "$master.firstname$命令$doer.firstname$改变体位成後背位，再次移动腰部。\n$doer.firstname$把$receiver.firstname$推倒，从后面压住，再次开始扭动腰…"
+                                                ]
+                                            },
+                                            {
+                                                "_comment":"if receiver is ordering",
+                                                "keepLooking":false,
+                                                "conditions":[
+                                                    { "validatePackage":{"existsMaster_Receiver":true} }
+                                                ],
+                                                "texts":[
+                                                     "$receiver.firstname$自己向前倒下，匍匐在地上，让$doer.firstname$用后背位扭动腰…"
+                                                ]
+                                            },
+                                            {
+                                                "_comment":"else : doer is ordering",
+                                                "keepLooking":false,
+                                                "conditions":[ ],
+                                                "texts":[
+                                                    "$doer.firstname$把$receiver.firstname$推倒，从后面压住，然后以后背位的姿势再次开始扭动腰…"                
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "_comment":"if exist previous insert - cowgirl/facingeachother/missionary -> facing each other",
+                                        "keepLooking":false,
+                                        "conditions":[
+                                            { "validateJob":{"existsPreviousCOM":"com_sex_P_cowgirl"} }
+                                        ],
+                                        "Entries":[
+                                            {
+                                                "_comment":"if someone else (non-participant) is ordering",
+                                                "keepLooking":false,
+                                                "conditions":[
+                                                    { "validatePackage":{"existsMaster_NonActor":true} }
+                                                ],
+                                                "texts":[
+                                                    "$master.firstname$命令$doer.firstname$改变体位成後背位，再次移动腰部。\n$doer.firstname$抽插着$receiver.firstname$匍匐的身体，再次开始扭动腰…"
+                                                ]
+                                            },
+                                            {
+                                                "_comment":"if receiver is ordering",
+                                                "keepLooking":false,
+                                                "conditions":[
+                                                    { "validatePackage":{"existsMaster_Receiver":true} }
+                                                ],
+                                                "texts":[
+                                                     "$receiver.firstname$扭转身体自己匍匐在地，让$doer.firstname$在后面扭动着腰…"
+                                                ]
+                                            },
+                                            {
+                                                "_comment":"else : doer is ordering",
+                                                "keepLooking":false,
+                                                "conditions":[ ],
+                                                "texts":[
+                                                    "$doer.firstname$在插入的状态下将$receiver.firstname$的身体转回去，趴在地上，以后背位的姿势再次开始扭动腰…"                
+                                                ]
+                                            }
+
+                                        ]
+        
+                                    },
+                                    {
+                                        "_comment":"else: new insert",
+                                        "keepLooking":false,
+                                        "conditions":[ ],
+                                        "Entries":[
+                                            {
+                                                "_comment":"if someone else (non-participant) is ordering",
+                                                "keepLooking":false,
+                                                "conditions":[
+                                                    { "validatePackage":{"existsMaster_NonActor":true} }
+                                                ],
+                                                "texts":[
+                                                    "$master.firstname$命令$doer.firstname$用後背位侵犯$receiver.firstname$\n$doer.firstname$让$receiver.firstname$匍匐，把肉棒插入$receiver.firstname$的$receiver.v$摇晃腰…"
+                                                ]
+                                            },
+                                            {
+                                                "_comment":"if receiver is ordering",
+                                                "keepLooking":false,
+                                                "conditions":[
+                                                    { "validatePackage":{"existsMaster_Receiver":true} }
+                                                ],
+                                                "texts":[
+                                                     "$receiver.firstname$将%STR_BODY(\"尻：外見\", MTAR:0)%对向$doer.firstname$，从后面让肉棒插入$receiver.v$…"
+                                                ]
+                                            },
+                                            {
+                                                "_comment":"else : doer is ordering",
+                                                "keepLooking":false,
+                                                "conditions":[ ],
+                                                "texts":[
+                                                    "$doer.firstname$的肉棒从后面插入$receiver.firstname$的$receiver.v$，开始多次撞击腰部"                
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comment":"check cum branch, add this if doer can cum",
+                "keepLooking":true,
+                "conditions":[
+                    { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } }
+                ],
+                "texts":[
+                    "在射精的瞬間$doer.firstname$将阴茎深深突入了膣内最深处…"
+                ]
+            }
+        ]
+        
+    },
+    "descriptions_remove":{
+
+        "Entries":[
+            {
+                "_comment":"",
+                "keepLooking":false,
+                "texts":[ "$doer.firstname$从$receiver.firstname$的小穴内拔出了阴茎…" ]
+            }
+        ]
+        
+    },
+    "description_ongoing":{
+
+        "Entries":[ 
+            {
+                "_comment":"50% chance entering this. %LOCALS:0% = 危険日的秘裂",
+                "keepLooking":false,
+                "conditions":[
+                    { "validatorChance":{"percentChance":50} }
+                ],
+                "texts":[ "$receiver.firstname$的小穴插入了$doer.firstname$的阴茎…" ]
+            },
+            {
+                "_comment":"if not previous, then this",
+                "keepLooking":false,
+                "Entries":[
+                    {
+                        "_comment":"if receiver is fatigued conscious but stamina low",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validateChara":{"target":"receiver", "statID":"isFatigued", "operand":"eq", "value":"true" } }
+                        ],
+                        "texts":[
+                            "$doer.firstname$从背后激烈地抽插着昏过去的$receiver.firstname$的小穴…",
+                            "$doer.firstname$从后面无数次摇动腰部拍打在筋疲力尽的$receiver.firstname$的$receiver.v$上…"
+                        ]
+                    },
+                    {
+                        "_comment":"if someone else is ordering",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validatePackage":{"existsMaster_NonActor":true} }
+                        ],
+                        "texts":[ "$master.firstname$命令$doer.firstname$用后背位插入$receiver.firstname$，并更激烈地扭动腰" ],
+                        "Entries":[
+                            {
+                                "_comment":"",
+                                "keepLooking":false,
+                                "texts":[ 
+                                    "$doer.firstname$按照指示的那样激烈地运动腰部，从后面无数次地冲击着$receiver.firstname$的小穴深处…",
+                                    "$doer.firstname$按照指示的那样激烈地运动腰部，从后面好几次冲击$receiver.firstname$的$receiver.v$…" 
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "_comment":"if receiver is ordering ?",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validatePackage":{"existsMaster_Receiver":true} }
+                        ],
+                        "texts":[ "$receiver.firstname$一边摇着屁股，一边要求$doer.firstname$的腰动得更激烈些" ],
+                        "Entries":[
+                            {
+                                "_comment":"",
+                                "keepLooking":false,
+                                "texts":[ 
+                                    "$doer.firstname$再次抓住$receiver.firstname$的腰，用腰部从后面无数次撞击$receiver.firstname$的小穴深处…",
+                                    "$doer.firstname$再次抓住$receiver.firstname$的腰，摆动腰部从后面好几次撞入$receiver.v$里…"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "_comment":"else: if doer is ordering",
+                        "keepLooking":false,
+                        "texts":[
+                            "$doer.firstname$抓住了趴在地上的$receiver.firstname$的腰，激烈地刺到了小穴深处…",
+                            "$doer.firstname$从背后插入了$receiver.firstname$的$receiver.v$，用腰部无数次地击打…"
+                        ]
+                    }
+                ]
+            }
+         ]
+        
+        
+    },
+    "description_after":{
+
+        "Entries":[ 
+            {
+                "_comment":"check climax variant",
+                "keepLooking":true,
+                "conditions":[
+                    { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } }
+                ],
+                "Entries":[
+                    {
+                        "_comment":"multiple climax",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validateChara":{"target":"receiver", "statID":"currentClimaxCount", "operand":"gte", "value":"5" } }
+                        ],
+                        "texts":[
+                            "$receiver.firstname$撑不起来的上身，全身颤抖着…",
+                            "$receiver.firstname$一边品尝着激烈绝顶的余韵，一边淫荡地扭动着含着$doer.firstname$的屁股…"
+                        ]
+                    }
+                ]
+            }
+         ]
+        
+        
+    }
+    }]}}

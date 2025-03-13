@@ -1,0 +1,68 @@
+{
+    "baseID": "Campaign1_86_Lerche",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                
+                "portrait_offset_x": 23.607,
+                "portrait_offset_y": -222.628,
+                "portrait_offset_size": 1.21,
+                
+                "icon_offset_x":0,
+                "icon_offset_y":-113.2,
+                "icon_offset_size":0.45,
+
+                "portrait_path":"86/Lerche",
+                "icon_path":""
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 14,
+      "stat_CON": 18,
+      "stat_PSY": 12,
+      "stat_WIL": 12,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_A",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":145,
+      "initialRelationship":[
+            {
+                "baseID":"PLAYER",
+                "initialPersonalRelationship":"relationship_servant",
+                "initialPersonalRelationship_isA":false
+            }
+        ],
+      "initialInventory":[
+            { "ID":"clothing_bluearchive_Navigator_Hat" },
+            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Cape" },
+            { "ID":"clothing_bluearchive_Navigator_Glove" },
+            { "ID":"clothing_bluearchive_Navigator_Boot" },
+            { "ID":"clothing_skin_socks" },
+            { "ID":"clothing_skin_panty" },
+            { "ID":"clothing_inner_hair_ribbon" },
+            { "ID":"clothing_skin_bra" }
+        ],
+      "Skills": null
+    },
+    "firstName": "Campaign1_86_Lerche_firstname",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "humanRace_android_simple",
+    "raceTemplate": "humanRaceAddon_Android_Sirin",
+    "startingGift": "charOriginGift_none"
+}
+    

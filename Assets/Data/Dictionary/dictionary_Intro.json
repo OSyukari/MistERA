@@ -1,0 +1,48 @@
+{
+    "language":"default",
+    "entries":
+    [
+        {"ID":"Game_Title","Entry":"迷雾Era"},
+        {"ID":"Game_Maker","Entry":"Silent Forest"},
+        {"ID":"Version_Number","Entry":"0.1"},
+
+        {"ID":"intro_title_card_1","Entry":"%%Game_Title%%"},
+        {"ID":"intro_title_card_2","Entry":"作者 %%Game_Maker%%"},
+        {"ID":"intro_title_card_3","Entry":"v%%Version_Number%%"},
+
+        {"ID":"intro_button_newGame","Entry":"新游戏"},
+        {"ID":"intro_button_continue","Entry":"继续游戏"},
+        {"ID":"intro_button_editPref","Entry":"偏好设置"},
+        {"ID":"intro_button_charEditor","Entry":"角色编辑"},
+        {"ID":"intro_button_exit","Entry":"退出游戏"},
+
+        {"ID":"intro_message_1","Entry":"左键点击[方框]内文字确认选择"},
+        {"ID":"intro_message_2","Entry":"鼠标悬停<link=\"tooltip_highlight\"><mark=#ffff0044>高亮</mark></link>文字以获取额外信息"},
+
+        {"ID":"tooltip_highlight","Entry":"该条目并无额外信息"},
+        {"ID":"tooltip_cannotLoadSave","Entry":"未检测到存档"},
+
+
+        {"ID":"campaign","Entry":"剧本"},
+        {"ID":"campaign_option","Entry":"初始选项"},
+        {"ID":"player","Entry":"玩家"},
+        {"ID":"player_character","Entry":"玩家角色"},
+        {"ID":"player_extra","Entry":"额外选项"},
+
+        {"ID":"newGame_button_chooseChara","Entry":"选择%%player_character%%"},
+        {"ID":"newGame_button_chooseExtra","Entry":"选择%%player_extra%%"},
+        {"ID":"newGame_button_beginCampaign","Entry":"开始剧本"},
+        {"ID":"newGame_button_returnToMain","Entry":"回到主页面"},
+
+        {"ID":"campaign_chalicedivers","Entry":"地牢潜兵"},
+        {"ID":"campaign_chalicedivers_tooltip","Entry":"A limited-scope campaign aimed at learning or experimenting with combat systems. Death no longer result in a game over.\nStart the campaign with up to 2 additional companions chosen from a preset selection (Starting Option Companion is disabled in this campaign)\nLimit: Player Character Origin must be Forest Dweller\nStarting Gift Companion is disabled.\n\nThis is a parody of Bloodborne, with some more references from various ero-games."},
+        {"ID":"campaign2_start_none","Entry":"独狼"},
+        {"ID":"campaign2_start_none_tooltip","Entry":"Begin with no extra companion, instead start with more resources.\nAll companions are recruitable in-game regardless of starting options."},
+        {"ID":"campaign2_start_tadadada_dungeonwithgal","Entry":"辣妹地牢"},
+        {"ID":"campaign2_start_tadadada_dungeonwithgal_tooltip","Entry":"Begin with Monica & Yamemoto.\n(from ダンジョンウィズガール by ただただ愚か)"},
+        {"ID":"campaign2_start_avantgarde_amelie","Entry":"堕落轮回"},
+        {"ID":"campaign2_start_avantgarde_amelie_tooltip","Entry":"Begin with Amelie\n(from アメリ・ブランシェットは何度も堕ちる ～カレドニー魔法学院と繰り返す一週間～ by AVANTGARDE)"},
+
+        {"ID":"campaign_mistera","Entry":"迷雾年代"}
+    ]
+}

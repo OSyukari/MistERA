@@ -1,0 +1,67 @@
+{
+"Experiences":{
+"list":[
+    {  "ExperienceID":"experience_sex_male",  "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","male"] , "ExcludeOwnerTags":["unconscious"] },
+    {  "ExperienceID":"experience_sex_female", "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","female"], "ExcludeOwnerTags":["unconscious"] },
+    {  "ExperienceID":"experience_sex_masturbate", "applyToReceiver":false, "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","masturbate"] },
+    {  "ExperienceID":"experience_sex_exposure", "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","naked"] },
+    {  "ExperienceID":"experience_sex_animal", "RequiredOwnerTags":["human"], "RequiredCOMTags":["animal","unsafe"] },
+    {  "ExperienceID":"experience_sex_animal_climax", "RequiredOwnerTags":["human"], "RequiredCOMTags":["animal","unsafe","climax"] },
+    {  "ExperienceID":"experience_sex_insect", "RequiredOwnerTags":["human"], "RequiredCOMTags":["insect","unsafe"]  },
+    {  "ExperienceID":"experience_sex_nonhuman","RequiredOwnerTags":["human"],  "RequiredCOMTags":["creature","unsafe"]  },
+    {  "ExperienceID":"experience_sex_service",  "applyToReceiver":false, "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","service"]  },
+    {  "ExperienceID":"experience_sex_maso",  "ApplyToDoer":false, "RequiredOwnerTags":["human","pain"], "RequiredCOMTags":["unsafe"]  },
+    {  "ExperienceID":"experience_sex_sado", "applyToReceiver":false,"RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","pain"] },
+    {  "ExperienceID":"experience_sex_raped",  "ApplyToDoer":false, "RequiredOwnerTags":["human","raped"], "RequiredCOMTags":["unsafe"]  },
+    {  "ExperienceID":"experience_sex_necro",  "applyToReceiver":false, "RequiredOwnerTags":[], "RequiredCOMTags":["unsafe","corpse"] },
+
+    {  "ExperienceID":"experience_sex_milking",  "ApplyToDoer":false, "RequiredOwnerTags":["human","female"], "RequiredCOMTags":["unsafe","milking"] },
+
+    {  "ExperienceID":"experience_sex_timestop",  "ApplyToDoer":false, "RequiredOwnerTags":["timestop"], "RequiredCOMTags":["unsafe"]},
+    {  "ExperienceID":"experience_sex_sleeping",  "ApplyToDoer":false, "RequiredOwnerTags":["unconscious"], "RequiredCOMTags":["unsafe"] },
+    {  "ExperienceID":"experience_sex_sleeping_climax",  "ApplyToDoer":false, "RequiredOwnerTags":["unconscious","climax"], "RequiredCOMTags":["unsafe"] },
+    {  "ExperienceID":"experience_sex_hypnosis", "CountTotal":true,  "ApplyToDoer":false, "RequiredOwnerTags":["hypnotised"], "RequiredCOMTags":["unsafe"] },
+    {  "ExperienceID":"experience_sex_hypnosis_climax",  "ApplyToDoer":false, "RequiredOwnerTags":["hypnotised","climax"], "RequiredCOMTags":["unsafe"] },
+    
+    {  "ExperienceID":"experience_pain", "CountTotal":true,"DisplayAmountString":"", "RequiredOwnerTags":["human","pain"] ,
+        "_comment":"this exists to inform player that they've caused pain instead of pleasure."
+    },
+
+    {  "ExperienceID":"experience_sex_C", "CountTotal":true,"DisplayAmountString":"", "RequiredOwnerTags":["human","chara_status_sex_C","pleasure"] },
+    {  "ExperienceID":"experience_sex_C_climax",  "RequiredOwnerTags":["human","chara_status_sex_C","climax"] },
+
+    {  "ExperienceID":"experience_sex_B","CountTotal":true, "RequiredOwnerTags":["human","chara_status_sex_B","pleasure"] },
+    {  "ExperienceID":"experience_sex_B_climax",  "RequiredOwnerTags":["human","chara_status_sex_B","climax"] },
+
+    {  "ExperienceID":"experience_sex_swallow_cum",  "RequiredOwnerTags":["human","stomach","cum"] },
+    {  "ExperienceID":"experience_sex_swallow_cum_climax",  "RequiredOwnerTags":["human","stomach","cum","climax"] },
+    {  "ExperienceID":"experience_sex_swallow_cum_total", "DisplayAmountString":"ml","CountTotal":true,  "RequiredOwnerTags":["human","stomach","cum"] },
+
+    {  "ExperienceID":"experience_sex_M", "CountTotal":true, "RequiredOwnerTags":["human","chara_status_sex_M","pleasure"] },
+    {  "ExperienceID":"experience_sex_M_climax",  "RequiredOwnerTags":["human","chara_status_sex_M","climax"] },
+    {  "ExperienceID":"experience_sex_M_cum",  "RequiredOwnerTags":["human","chara_status_sex_M","cum"] },
+    {  "ExperienceID":"experience_sex_M_cum_total", "DisplayAmountString":"ml","CountTotal":true,  "RequiredOwnerTags":["human","chara_status_sex_M","cum"] },
+    {  "ExperienceID":"experience_sex_M_expansion", "CountTotal":true,  "RequiredOwnerTags":["human","chara_status_sex_M","expansion"] },
+
+
+    {  "ExperienceID":"experience_sex_V", "CountTotal":true, "RequiredOwnerTags":["human","chara_status_sex_V","pleasure"] },
+    {  "ExperienceID":"experience_sex_V_climax",  "RequiredOwnerTags":["human","chara_status_sex_V","climax"] },
+    {  "ExperienceID":"experience_sex_V_cum",  "RequiredOwnerTags":["human","chara_status_sex_V","cum"] },
+    {  "ExperienceID":"experience_sex_V_cum_total", "DisplayAmountString":"ml","CountTotal":true,  "RequiredOwnerTags":["human","chara_status_sex_V","cum"] },
+    {  "ExperienceID":"experience_sex_V_expansion", "CountTotal":true,  "RequiredOwnerTags":["human","chara_status_sex_V","expansion"] },
+
+    {  "ExperienceID":"experience_sex_W","CountTotal":true, "RequiredOwnerTags":["human","chara_status_sex_W","pleasure"] },
+    {  "ExperienceID":"experience_sex_W_climax",  "RequiredOwnerTags":["human","chara_status_sex_W","climax"] },
+    {  "ExperienceID":"experience_sex_W_cum",  "RequiredOwnerTags":["human","chara_status_sex_W","cum"] },
+    {  "ExperienceID":"experience_sex_W_cum_total","DisplayAmountString":"ml", "CountTotal":true,  "RequiredOwnerTags":["human","chara_status_sex_W","cum"] },
+    {  "ExperienceID":"experience_sex_W_expansion", "CountTotal":true,  "RequiredOwnerTags":["human","chara_status_sex_W","expansion"] },
+
+    {  "ExperienceID":"experience_sex_A","CountTotal":true, "RequiredOwnerTags":["human","chara_status_sex_A","pleasure"] },
+    {  "ExperienceID":"experience_sex_A_climax",  "RequiredOwnerTags":["human","chara_status_sex_A","climax"] },
+    {  "ExperienceID":"experience_sex_A_cum",  "RequiredOwnerTags":["human","chara_status_sex_A","cum"] },
+    {  "ExperienceID":"experience_sex_A_cum_total","DisplayAmountString":"ml", "CountTotal":true,  "RequiredOwnerTags":["human","chara_status_sex_A","cum"] },
+    {  "ExperienceID":"experience_sex_A_expansion", "CountTotal":true,  "RequiredOwnerTags":["human","chara_status_sex_A","expansion"] }
+
+]
+}
+}

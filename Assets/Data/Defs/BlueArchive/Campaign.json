@@ -1,0 +1,342 @@
+{
+    "CampaignSettings":
+    {
+        "list":[
+        {
+            "ID":"campaign_starfarers",
+            "displayName":"Starfarers",
+            "tooltip":"A limited-scope campaign aimed at learning or experimenting with game systems.\nAll combat and adult contents are not available in this campaign.\nScope: Settlement (NPC management, social interactions, survival)\nLimit: Player Character Origin must be Traveler across Gates, all starting gifts are disabled.\n\nThis is a parody of Blue Archive.",
+            "requireOriginID":"charOrigin_TraveleracrossGates",
+            "extraOptions":[
+                {
+                    "ID":"campaign1_start_default",
+                    "displayName":"Sensei",
+                    "tooltip":"Play as Sensei from Blue Archive, and begin with the flight crews of Utnapishtim.\nAs Sensei, player is being given the management role in the Utnapishtim faction, and so everyone's wellbeing rest on the player's shoulders.",
+                    "initializers":[
+                        {
+                            "initClass":"campaign_init_playerNameIDs",
+                            "initArguments":["PLAYER","%%Campaign1_player_firstname%%","%%Campaign1_player_middlename%%","%%Campaign1_player_lastname%%","%%Campaign1_player_nameDisplayFormat%%"]
+                        },
+                        {
+                            "initClass":"campaign_init_playerPortrait",
+                            "initArguments":["{ \"$type\":\"PortraitManager+CharaPortrait_Image, Assembly-CSharp\",\"portrait_offset_size\":1.0 ,\"portrait_offset_x\":-98.792,\"portrait_offset_y\":132.658,\"Variants\":[], \"portrait_path\":\"BlueArchive_Extracted/SchoolIcon/School_Icon_ETC\" }"]
+                        },
+                        {
+                            "initClass":"campaign_init_homefaction",
+                            "initArguments":["Utnapishtim","true", "true"]
+                        },
+                        {
+                            "initClass":"campaign_init_map_root",
+                            "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
+                        },
+                        {
+                            "initClass":"campaign_init_productionOrder",
+                            "initArguments":["Utnapishtim", "production_cooking_consumable_meal_MRE_1", "craftUntilCount" ]
+                        }
+                        
+                    ]
+                },
+                {
+                    "ID":"campaign1_start_debug",
+                    "displayName":"Debug",
+                    "tooltip":"Start with extra debug NPC in party",
+                    "initializers":[
+                        {
+                            "initClass":"campaign_init_playerNameIDs",
+                            "initArguments":["PLAYER","%%Campaign1_player_firstname%%","%%Campaign1_player_middlename%%","%%Campaign1_player_lastname%%","%%Campaign1_player_nameDisplayFormat%%"]
+                        },
+                        {
+                            "initClass":"campaign_init_playerPortrait",
+                            "initArguments":["{ \"$type\":\"PortraitManager+CharaPortrait_Image, Assembly-CSharp\",\"portrait_offset_size\":1.0 ,\"portrait_offset_x\":-98.792,\"portrait_offset_y\":132.658,\"Variants\":[], \"portrait_path\":\"BlueArchive_Extracted/SchoolIcon/School_Icon_ETC\" }"]
+                        },
+                        {
+                            "initClass":"campaign_init_homefaction",
+                            "initArguments":["Utnapishtim","true", "true"]
+                        },
+                        {
+                            "initClass":"campaign_init_homefaction",
+                            "initArguments":["External","false", "false"]
+                        },
+                        {
+                            "initClass":"campaign_init_map_root",
+                            "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Amelie","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Hiyori","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Olivia","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Elena","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_HalfasOne","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_HalfasThree","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_HalfasTwo","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_couple1_Male","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_couple1_Female","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Rapi","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Anis","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionVisitor",
+                            "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Neon","External"]
+                        },
+                        {
+                            "initClass":"campaign_init_partymembers",
+                            "initArguments":["Campaign1_86_Lerche"]
+                        },
+                        {
+                            "initClass":"campaign_init_productionOrder",
+                            "initArguments":["Utnapishtim", "production_cooking_consumable_meal_MRE_1", "craftUntilCount" ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+    },
+    "humanoid_RaceTemplates":
+    {
+        "list": [
+        {
+            "ID": "humanRaceAddon_Kivotos_Trinity",
+            "displayName": "Trinity Student",
+            "tooltip": "Possess a halo that enhances all status at the cost of MP.\nEvery day when waking up, all current MP are converted into temporary stat bonus.\nLast till character sleeps or lose consciousness.\nProvides +1 Psyche bonus.",
+            "stat_modifiers": [
+                {
+                    "statID":"Willpower",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                }
+            ] 
+        },
+        {
+            "ID": "humanRaceAddon_Kivotos_Gehenna",
+            "displayName": "Gehenna Student",
+            "tooltip": "Possess a halo that enhances all status at the cost of MP.\nEvery day when waking up, all current MP are converted into temporary stat bonus.\nLast till character sleeps or lose consciousness.\nProvides +1 Strength bonus.",
+            "stat_modifiers": [
+                {
+                    "statID":"Strength",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                }
+            ] 
+        },
+        {
+            "ID": "humanRaceAddon_Kivotos_Millenium",
+            "displayName": "Millenium Student",
+            "tooltip": "Possess a halo that enhances all status at the cost of MP.\nEvery day when waking up, all current MP are converted into temporary stat bonus.\nLast till character sleeps or lose consciousness.\nProvides +1 Psyche bonus.",
+            "stat_modifiers": [
+                {
+                    "statID":"Psyche",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                }
+            ] 
+        },
+        {
+            "ID": "humanRaceAddon_Kivotos_GSC",
+            "displayName": "GSC Student",
+            "tooltip": "Possess a halo that enhances all status at the cost of MP.\nEvery day when waking up, all current MP are converted into temporary stat bonus.\nLast till character sleeps or lose consciousness.\nProvides +1 Willpower bonus.",
+            "stat_modifiers": [
+                {
+                    "statID":"Willpower",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                }
+            ] 
+        },
+        {
+            "ID": "humanRaceAddon_Kivotos_Abydos",
+            "displayName": "Abydos Student",
+            "tooltip": "Possess a halo that enhances all status at the cost of MP.\nEvery day when waking up, all current MP are converted into temporary stat bonus.\nLast till character sleeps or lose consciousness.\nProvides +1 Constitution bonus.",
+            "stat_modifiers": [
+                {
+                    "statID":"Constitution",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                }
+            ] 
+        }
+    ]
+    },
+    "Character_Origins":
+    {
+        "list": [
+        {
+            "ID": "charOrigin_KivotosStudent",
+            "displayname": "Kivotos Student",
+            "tooltip": "Native of another world.\nLimit: Race Modifier must be Kivotos Student.",
+            "availableOptionsID": [
+                "charOriginGift_none"
+            ],
+            "forceRaceTemplate_ID": "humanRaceAddon_Kivotos"
+        }
+    ]
+    },
+    "MapPlans":{
+        "list":
+        [
+            {
+                "ID":"map_bluearchive_utnapishtim",
+                "z_rotation":0.0,
+                "initializeFaction":"Utnapishtim",
+                "setPrivateRoomOwner":true,
+                "floors":[
+                    {
+                        "ID":"floor_stockasset_bridge",
+                        "nameOverwrite":"campaign1_map_utnapishtim_bridge",
+                        "Additional":[
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"bridge_captainsroom", "charaBaseID": [ "Campaign1_Char_Rin" ] }
+                            },
+                            {
+                                "addClass":"map_init_organization",
+                                "map_init_organization":{ "orgID":"Utnapishtim", "addCharaToFaction":true, "setPrivateRoom":true }
+                            }
+                        ]
+                    },
+                    {
+                        "ID":"floor_stockasset_lounge2",
+                        "nameOverwrite":"campaign1_map_utnapishtim_living",
+                        "Additional":[
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite1", "charaBaseID": [ "Campaign1_Char_Ako" ] }
+                            },
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite2", "charaBaseID": [ "Campaign1_Char_Ayane" ] }
+                            },
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite3", "charaBaseID": [ "Campaign1_Char_Hanako" ] }
+                            },
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite4", "charaBaseID": [ "Campaign1_Char_Kayoko" ] }
+                            },
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite5", "charaBaseID": [ "Campaign1_Char_Ayumu" ] }
+                            },
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite6", "charaBaseID": [ "Campaign1_Char_Momoka" ] }
+                            },
+                            {
+                                "addClass":"map_init_playerLocation",
+                                "map_init_playerLocation":{ "roomID":"lounge2_exec_suite_1" }
+                            },
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"lounge2_exec_suite_2", "charaBaseID": [ "Campaign1_Char_Himari", "Campaign1_Char_Yuuka" ] }
+                            },
+                            {
+                                "addClass":"map_init_organization",
+                                "map_init_organization":{ "orgID":"Utnapishtim", "addCharaToFaction":true, "setPrivateRoom":true }
+                            }
+                        ],
+                        "connectTo":
+                            {
+                                "fromExitID":"North",
+                                "targetFloorID":"floor_stockasset_bridge",
+                                "targetExitID":"South"
+                            }
+                        
+                    },
+                    {
+                        "ID":"floor_stockasset_hydroponics",
+                        "nameOverwrite":"campaign1_map_utnapishtim_faming",
+                        "Additional":[
+                            {
+                                "addClass":"map_init_organization",
+                                "map_init_organization":{ "orgID":"Utnapishtim" }
+                            }
+                        ],
+                        "connectTo":
+                            {
+                                "fromExitID":"East",
+                                "targetFloorID":"floor_stockasset_lounge2",
+                                "targetExitID":"West"
+                            }
+                        
+                    },
+                    {
+                        "ID":"floor_stockasset_medbay",
+                        "nameOverwrite":"campaign1_map_utnapishtim_medical",
+                        "Additional":[
+                            {
+                                "addClass":"map_init_organization",
+                                "map_init_organization":{ "orgID":"Utnapishtim" }
+                            }
+                        ],
+                        "connectTo":
+                            {
+                                "fromExitID":"West",
+                                "targetFloorID":"floor_stockasset_lounge2",
+                                "targetExitID":"East"
+                            }
+                        
+                    }
+                ],
+                "managerBaseIDs":["PLAYER"],
+                "workHours":[
+                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":8,"endHour":11,"comID":"com_job_production_cooking" },
+                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":13,"endHour":15,"comID":"com_job_production_cooking" },
+                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":16,"endHour":18,"comID":"com_job_production_cooking" },
+
+                    { "charaBaseID":"Campaign1_Char_Himari", "startHour":8,"endHour":11,"comID":"com_job_production_engineering" },
+                    { "charaBaseID":"Campaign1_Char_Himari", "startHour":13,"endHour":18,"comID":"com_job_research_engineering" },
+
+                    { "charaBaseID":"Campaign1_Char_Hanako", "startHour":8,"endHour":11,"comID":"com_job_production_chemistry" },
+                    { "charaBaseID":"Campaign1_Char_Hanako", "startHour":13,"endHour":18,"comID":"com_job_research_biochemistry" },
+
+                    { "charaBaseID":"Campaign1_Char_Kayoko", "startHour":8,"endHour":11,"comID":"com_job_training_shooting" },
+                    { "charaBaseID":"Campaign1_Char_Kayoko", "startHour":13,"endHour":18,"comID":"com_job_training_melee" },
+
+                    { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":8,"endHour":11,"comID":"com_job_research_physics" },
+                    { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":13,"endHour":18,"comID":"com_job_research_physics" },
+
+                    { "charaBaseID":"Campaign1_Char_Rin", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Rin", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
+
+                    { "charaBaseID":"Campaign1_Char_Momoka", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Momoka", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
+
+                    { "charaBaseID":"Campaign1_Char_Ayumu", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Ayumu", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
+
+                    { "charaBaseID":"Campaign1_Char_Ayane", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Ayane", "startHour":13,"endHour":18,"comID":"com_job_cleaning" }
+                ]
+            }
+        ]
+    }
+
+    
+}

@@ -1,0 +1,128 @@
+{
+    "baseID": "Campaign1_Nikke_Neon",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": 22.187,
+                "portrait_offset_y": -693.742,
+                "portrait_offset_size": 1.03,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":1.0,
+
+
+                "icon_path":"Images/NIKKE/si_c011_00_s.png",
+                "_comment":"utnapishtim uniform",
+
+                "materialTexturePaths":["NIKKE/c011/c011_00"],
+                "atlasJSON_path":"NIKKE/c011/c011_00.atlas",
+                "skeletonJSON_path":"NIKKE/c011/c011_00.skel",
+                "skeletonScale":0.005,
+                "idleAnimName":"idle"
+
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": 22.187,
+                "portrait_offset_y": -693.742,
+                "portrait_offset_size": 1.03,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":1.0,
+
+
+                "icon_path":"Images/NIKKE/si_c011_01_00_s.png",
+                "_comment":"utnapishtim uniform",
+
+                "materialTexturePaths":["NIKKE/c011_01/c011_01"],
+                "atlasJSON_path":"NIKKE/c011_01/c011_01_00.atlas",
+                "skeletonJSON_path":"NIKKE/c011_01/c011_01_00.skel",
+                "skeletonScale":0.005,
+                "idleAnimName":"idle"
+
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": 22.187,
+                "portrait_offset_y": -693.742,
+                "portrait_offset_size": 1.03,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":1.0,
+
+
+                "icon_path":"Images/NIKKE/si_c014_00_s.png",
+                "_comment":"utnapishtim uniform",
+
+                "materialTexturePaths":["NIKKE/c014/c014_00"],
+                "atlasJSON_path":"NIKKE/c014/c014_00.atlas",
+                "skeletonJSON_path":"NIKKE/c014/c014_00.skel",
+                "skeletonScale":0.005,
+                "idleAnimName":"idle"
+
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 14,
+      "stat_CON": 18,
+      "stat_PSY": 12,
+      "stat_WIL": 12,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_A",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":145,
+      "initialRelationship":[
+            {
+                "baseID":"PLAYER",
+                "initialPersonalRelationship":"relationship_servant",
+                "initialPersonalRelationship_isA":false
+            },
+            {
+                "baseID":"Campaign1_Nikke_Anis",
+                "initialPersonalRelationship":"relationship_bff"
+            },
+            {
+                "baseID":"Campaign1_Nikke_Rapi",
+                "initialPersonalRelationship":"relationship_bff"
+            }
+        ],
+      "initialInventory":[
+            { "ID":"clothing_bluearchive_Navigator_Hat" },
+            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Cape" },
+            { "ID":"clothing_bluearchive_Navigator_Glove" },
+            { "ID":"clothing_bluearchive_Navigator_Boot" },
+            { "ID":"clothing_skin_socks" },
+            { "ID":"clothing_skin_panty" },
+            { "ID":"clothing_inner_hair_ribbon" },
+            { "ID":"clothing_skin_bra" }
+        ],
+      "Skills": null
+    },
+    "firstName": "Campaign1_Nikke_Neon_firstname",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "humanRace_android_complex",
+    "raceTemplate": "humanRaceAddon_Android_Nikke",
+    "startingGift": "charOriginGift_none"
+}
+    

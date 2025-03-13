@@ -1,0 +1,983 @@
+{
+    "Traits_Groups":{
+        "traits_STR": [
+        {
+            "displayName":"",
+            "ID": "trait_Singular_STR",
+            "entries": [
+                {
+                    "trait_ID": "trait_Singular_STR_FinesseTraining",
+                    "trait_displayname": "Finesse Training",
+                    "trait_score":0,
+                    "trait_tooltip": "Use STR modifier when determining Melee skill's initial level and max-level.\nBy default, use CON when calculating Melee Skill."
+                }
+            ],
+            "type": 0,
+            "sortTypeString":"Singular",
+            "neutralIndex": -1,
+            "group_tooltip": ""
+        },
+        {
+            "displayName":"Pain Sensitivity",
+            "ID": "trait_PainSensitivity",
+            "entries": [
+                {
+                    "trait_ID": "trait_PainSensitivity_sensitive",
+                    "trait_displayname": "Pain sensitive",
+                    "trait_score":-1,
+                    "trait_tooltip": "respond much stronger to pain, whether its beneficial or detrimental."
+                },
+                {
+                    "trait_ID": "trait_PainSensitivity_default",
+                    "trait_displayname": "Default",
+                    "trait_score":0,
+                    "isDisplayable":false,
+                    "trait_tooltip": "Default pain sensitivity"
+                },
+                {
+                    "trait_ID": "trait_PainSensitivity_insensitive",
+                    "trait_displayname": "Pain tolerant",
+                    "trait_score":1,
+                    "trait_tooltip": "respond much less to pain."
+                },
+                {
+                    "trait_ID": "trait_PainSensitivity_nopain",
+                    "trait_displayname": "No Pain",
+                    "trait_score":2,
+                    "trait_tooltip": "does not feel pain."
+                }
+            ],
+            "type": 0,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "How much does one respond to pain."
+        },
+        {
+            "displayName":"Carry Weight",
+            "ID": "trait_CarryWeight",
+            "entries": [
+                {
+                    "trait_ID": "trait_CarryWeight_weak",
+                    "trait_displayname": "Frail Back",
+                    "trait_score":-1,
+                    "trait_tooltip": "Carry weight -25%\nSTR score -3 (base value adjustment) when determining equipment stat requirement (excluding weapon)",
+
+                    "modifiers_stats":
+                    [
+                        {
+                            "statID":"stat_str",
+                            "contextKey":["equip_gear"],
+                            "modKey":"baseValue", "type":"addBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"stats_derived_carryCapacity",
+                            "contextKey":[],
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.25"
+                        }
+                    ]
+                },
+                {
+                    "trait_ID": "trait_CarryWeight_default",
+                    "trait_displayname": "Default",
+                    "trait_score":0,
+                    "isDisplayable":false,
+                    "trait_tooltip": "Default carry weight."
+                },
+                {
+                    "trait_ID": "trait_CarryWeight_strong",
+                    "trait_displayname": "Strong Back",
+                    "trait_score":1,
+                    "trait_tooltip": "Carry weight +25%, related stat score +3 when determining equipment stat requirement (excluding weapon, round down, after multiplier)"
+                }
+            ],
+            "type": 0,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "How much can one carry gears."
+        }
+    ],
+    "traits_CON": [
+        {
+            "displayName":"",
+            "ID": "trait_Singular_CON",
+            "entries": [
+                {
+                    "trait_ID": "trait_Singular_CON_Porter",
+                    "trait_displayname": "Porter",
+                    "trait_score":0,
+                    "trait_tooltip": "Use CON modifier when calculating carry weight.\nBy default, use STR when calculating carry weight."
+                }
+            ],
+            "type": 1,
+            "sortTypeString":"Singular",
+            "neutralIndex": -1,
+            "group_tooltip": ""
+        },
+        {
+            "displayName":"Sleep Quality",
+            "ID": "trait_SleepQuality",
+            "entries": [
+                {
+                    "trait_ID": "trait_SleepQuality_shallow",
+                    "trait_displayname": "Light sleeper",
+                    "trait_score":-1,
+                    "trait_tooltip": "wakes easily with the slight amount of noise."
+                },
+                {
+                    "trait_ID": "trait_SleepQuality_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default sleep quality."
+                },
+                {
+                    "trait_ID": "trait_SleepQuality_deep",
+                    "trait_displayname": "Deep sleeper",
+                    "trait_score":1,
+                    "trait_tooltip": "Even alarm clock have a hard time waking this one up."
+                }
+            ],
+            "type": 1,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "How hard it is to wake one up from sleeping."
+        },
+        {
+            "displayName":"Sleep Length",
+            "ID": "trait_SleepLength",
+            "entries": [
+                {
+                    "trait_ID": "trait_SleepLength_more",
+                    "trait_displayname": "Sleeper",
+                    "trait_score":-1,
+                    "trait_tooltip": "Requires more sleep time than average.\nRequired sleep time +2 hours."
+                },
+                {
+                    "trait_ID": "trait_SleepLength_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default sleep length"
+                },
+                {
+                    "trait_ID": "trait_SleepLength_less",
+                    "trait_displayname": "Quick sleeper",
+                    "trait_score":1,
+                    "trait_tooltip": "Requires less sleep time than average.\nRequired sleep time -2 hours."
+                }
+            ],
+            "type": 1,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "How much sleep does one require compared to the average of one's race."
+        },
+        {
+            "displayName":"Alcohol Tolerance",
+            "ID": "trait_AlcoholTolerance",
+            "entries": [
+                {
+                    "trait_ID": "trait_AlcoholTolerance_verybad",
+                    "trait_displayname": "Alcohol allergic",
+                    "trait_score":-2,
+                    "trait_tooltip": "gets drunken with a single sip of alcohol. (+200%)"
+                },
+                {
+                    "trait_ID": "trait_AlcoholTolerance_bad",
+                    "trait_displayname": "Easily drunken",
+                    "trait_score":-1,
+                    "trait_tooltip": "gets drunken much faster. (+100%)"
+                },
+                {
+                    "trait_ID": "trait_AlcoholTolerance_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default alcohol tolerance."
+                },
+                {
+                    "trait_ID": "trait_AlcoholTolerance_good",
+                    "trait_displayname": "Drinker",
+                    "trait_score":1,
+                    "trait_tooltip": "gets drunken much slower. (-30%)"
+                },
+                {
+                    "trait_ID": "trait_AlcoholTolerance_verygood",
+                    "trait_displayname": "Very good drinker",
+                    "trait_score":2,
+                    "trait_tooltip": "rarely gets drunk. (-60%)"
+                },
+                {
+                    "trait_ID": "trait_AlcoholTolerance_insensitive",
+                    "trait_displayname": "Alcohol insensitive",
+                    "trait_score":3,
+                    "trait_tooltip": "this one never gets drunk. period. (-99%)"
+                }
+            ],
+            "type": 1,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 2,
+            "group_tooltip": "How does one respond to alcohol."
+        },
+        {
+            "displayName":"Immunity",
+            "ID": "trait_Immunity",
+            "entries": [
+                {
+                    "trait_ID": "trait_Immunity_bad",
+                    "trait_displayname": "Sickly",
+                    "trait_score":-1,
+                    "trait_tooltip": "recover much slower from disease. (-50%)"
+                },
+                {
+                    "trait_ID": "trait_Immunity_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default immunity."
+                },
+                {
+                    "trait_ID": "trait_Immunity_good",
+                    "trait_displayname": "Super-immune",
+                    "trait_score":1,
+                    "trait_tooltip": "recover much faster from disease. (+30%)"
+                }
+            ],
+            "type": 1,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "How one respond if they happened to be sick."
+        },
+        {
+            "displayName":"Melee Combat",
+            "ID": "trait_MeleeCombat",
+            "entries": [
+                {
+                    "trait_ID": "trait_MeleeCombat_bad",
+                    "trait_displayname": "Weak Melee",
+                    "trait_score":-1,
+                    "trait_tooltip": "-50% to related stat modifier when calculating Melee Skill (round down)"
+                },
+                {
+                    "trait_ID": "trait_MeleeCombat_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Use related stat modifier for calculating Melee Skill."
+                },
+                {
+                    "trait_ID": "trait_MeleeCombat_good",
+                    "trait_displayname": "Strong Melee",
+                    "trait_score":1,
+                    "trait_tooltip": "+50% to related stat modifier when calculating Melee Skill (round down)"
+                }
+            ],
+            "type": 1,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "How one respond if they happened to be sick."
+        }
+    ],
+    "traits_PSY": [
+        {
+            "displayName":"",
+            "ID": "trait_Singular_PSY",
+            "entries": [
+                {
+                    "trait_ID": "trait_Singular_Psy0",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy1",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy2",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy3",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy4",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy5",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy6",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy7",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy8",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy9",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy10",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy11",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy12",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy13",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy14",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy111",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy121",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy131",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                },
+                {
+                    "trait_ID": "trait_Singular_Psy141",
+                    "trait_displayname": "Placeholder Trait Psy",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                }
+            ],
+            "type": 2,
+            "sortTypeString":"Singular",
+            "neutralIndex": -1,
+            "group_tooltip": ""
+        },
+        {
+            "displayName":"Social Encounter",
+            "ID": "trait_SocialEncounter",
+            "entries": [
+                {
+                    "trait_ID": "trait_SocialEncounter_shutin",
+                    "trait_displayname": "Shut-In",
+                    "trait_score":-2,
+                    "trait_tooltip": "stressed by any social encounter. happy when left alone."
+                },
+                {
+                    "trait_ID": "trait_SocialEncounter_individual",
+                    "trait_displayname": "Prefer alone",
+                    "trait_score":-1,
+                    "trait_tooltip": "stressed by new encounter. feel comfortable in familiar environment."
+                },
+                {
+                    "trait_ID": "trait_SocialEncounter_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default social encounter modifier."
+                },
+                {
+                    "trait_ID": "trait_SocialEncounter_group",
+                    "trait_displayname": "Prefer people",
+                    "trait_score":1,
+                    "trait_tooltip": "stressed by new environment, feel comfortable with familiar people."
+                }
+            ],
+            "type": 2,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 2,
+            "group_tooltip": "How one respond to social encounter."
+        },
+        {
+            "displayName":"Empathy",
+            "ID": "trait_Empathy",
+            "entries": [
+                {
+                    "trait_ID": "trait_Empathy_psychopath",
+                    "trait_displayname": "Psychopath",
+                    "trait_score":-1,
+                    "trait_tooltip": "doesnt care about other people."
+                },
+                {
+                    "trait_ID": "trait_Empathy_selfcentered",
+                    "trait_displayname": "Self-Centered",
+                    "trait_score":0,
+                    "trait_tooltip": "will care about others after one's need is taken care of."
+                },
+                {
+                    "trait_ID": "trait_Empathy_othersfirst",
+                    "trait_displayname": "Compassionate",
+                    "trait_score":0,
+                    "trait_tooltip": "Seeing others in pain makes you painful."
+                }
+            ],
+            "type": 2,
+            "sortTypeString":"UnsortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "Likelihood of having an emotional response from witnessing other's experience."
+        }
+    ],
+    "traits_WIL": [
+        {
+            "displayName":"",
+            "ID": "trait_Singular_WIL",
+            "entries": [
+                {
+                    "trait_ID": "trait_Singular_Willpower0",
+                    "trait_displayname": "Placeholder Trait Will",
+                    "trait_score":0,
+                    "trait_tooltip": ""
+                }
+            ],
+            "type": 3,
+            "sortTypeString":"Singular",
+            "neutralIndex": -1,
+            "group_tooltip": ""
+        },
+        {
+            "displayName":"Expressiveness",
+            "ID": "trait_Expressiveness",
+            "entries": [
+                {
+                    "trait_ID": "trait_Expressiveness_introvert",
+                    "trait_displayname": "Introvert",
+                    "trait_score":0,
+                    "trait_tooltip": "much less likely to express feeling. accumulate stress faster."
+                },
+                {
+                    "trait_ID": "trait_Expressiveness_default",
+                    "trait_displayname": "Default",
+                    "trait_score":0,
+                    "isDisplayable":false,
+                    "trait_tooltip": "Default expressiveness."
+                },
+                {
+                    "trait_ID": "trait_Expressiveness_extrovert",
+                    "trait_displayname": "Extrovert",
+                    "trait_score":0,
+                    "trait_tooltip": "more likely to express feeling, whether positive or negative, independent of one's capability at accurately expressing them."
+                }
+            ],
+            "type": 3,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "Likelihood to express one's emotion openly."
+        },
+        {
+            "displayName":"Mood Strength",
+            "ID": "trait_MoodStrength",
+            "entries": [
+                {
+                    "trait_ID": "trait_MoodStrength_low",
+                    "trait_displayname": "Ephemeral mood",
+                    "trait_score":0,
+                    "trait_tooltip": "Positive and negative emotions does much as a ripple in your mind."
+                },
+                {
+                    "trait_ID": "trait_MoodStrength_default",
+                    "trait_displayname": "Default",
+                    "trait_score":0,
+                    "isDisplayable":false,
+                    "trait_tooltip": "Default mood strength"
+                },
+                {
+                    "trait_ID": "trait_MoodStrength_high",
+                    "trait_displayname": "Intense Mood",
+                    "trait_score":0,
+                    "trait_tooltip": "Cheerful event makes one forget about the bad, and negative event will bring out all the biles..."
+                }
+            ],
+            "type": 3,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "How strong are positive or negative mood."
+        }
+    ],
+    "traits_STR_SEX": [],
+    "traits_CON_SEX": [
+        {
+            "displayName":"",
+            "ID": "trait_Singular_SEX",
+            "entries": [
+                {
+                    "trait_ID": "trait_Singular_Masochist",
+                    "trait_displayname": "Masochist 自虐狂",
+                    "trait_score":0,
+                    "trait_tooltip": "sexually gratified by receiving pain or/and humiliation."
+                },
+                {
+                    "trait_ID": "trait_Singular_Sadist",
+                    "trait_displayname": "Sadist",
+                    "trait_score":0,
+                    "trait_tooltip": "sexually gratified by inflicting pain or/and humiliation."
+                }
+            ],
+            "type": 5,
+            "sortTypeString":"Singular",
+            "neutralIndex": -1,
+            "group_tooltip": ""
+        },
+        {
+            "displayName":"Cum Speed",
+            "ID": "trait_CumSpeed",
+            "entries": [
+                {
+                    "trait_ID": "trait_CumSpeed_premature",
+                    "trait_displayname": "Premature",
+                    "trait_score":-1,
+                    "trait_tooltip": "cum way faster than average."
+                },
+                {
+                    "trait_ID": "trait_CumSpeed_default",
+                    "trait_displayname": "Default",
+                    "trait_score":0,
+                    "isDisplayable":false,
+                    "trait_tooltip": "Default cum speed."
+                },
+                {
+                    "trait_ID": "trait_CumSpeed_late",
+                    "trait_displayname": "Lasting",
+                    "trait_score":1,
+                    "trait_tooltip": "it'll take a while before you actually cum."
+                }
+            ],
+            "type": 5,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "How fast does one cum (affect both penis and vagina/clit activities)."
+        },
+        {
+            "displayName":"Gender Preference",
+            "ID": "trait_GenderPreference",
+            "entries": [
+                {
+                    "trait_ID": "trait_GenderPreference_hetero",
+                    "trait_displayname": "Heterosexual",
+                    "trait_score":0,
+                    "trait_tooltip": "sexually attracted to people of different gender."
+                },
+                {
+                    "trait_ID": "trait_GenderPreference_homo",
+                    "trait_displayname": "Homosexual",
+                    "trait_score":0,
+                    "trait_tooltip": "sexually attracted to people of same gender."
+                },
+                {
+                    "trait_ID": "trait_GenderPreference_all",
+                    "trait_displayname": "Pansexual",
+                    "trait_score":0,
+                    "trait_tooltip": "sexually attracted to people independent of gender."
+                },
+                {
+                    "trait_ID": "trait_GenderPreference_none",
+                    "trait_displayname": "Asexual",
+                    "trait_score":0,
+                    "trait_tooltip": "does not feel sexual attraction from other people."
+                }
+            ],
+            "type": 5,
+            "sortTypeString":"UnsortedList",
+            "neutralIndex": 0,
+            "group_tooltip": "Sexual attraction. Influences opinion and favorability towards other.\nSee the related configurations in [Edit Preference] to decide what factor in determining gender.\nDefault: only appearance decide a person's 'gender group'."
+        }
+    ],
+    "traits_PSY_SEX": [],
+    "traits_WIL_SEX": [],
+    "traits_BODY": [
+        {
+            "displayName":"",
+            "ID": "trait_Sensitivity_B",
+            "entries": [
+                {
+                    "trait_ID": "trait_Sensitivity_B_dull",
+                    "trait_displayname": "Dull",
+                    "trait_score":-10,
+                    "trait_tooltip": "B Sensitivity Dull"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_B_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default B sensitivity."
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_B_sensitive",
+                    "trait_displayname": "Sensitive",
+                    "trait_score":10,
+                    "trait_tooltip": "B Sensitive"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_B_supersensitive",
+                    "trait_displayname": "Super Sensitive",
+                    "trait_score":20,
+                    "trait_tooltip": "B Super Sensitive"
+                }
+            ],
+            "type": 8,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "Breast part sensitivity."
+        },
+        {
+            "displayName":"",
+            "ID": "trait_Sensitivity_M",
+            "entries": [
+                {
+                    "trait_ID": "trait_Sensitivity_M_dull",
+                    "trait_displayname": "Dull",
+                    "trait_score":-10,
+                    "trait_tooltip": "M Sensitivity Dull"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_M_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default M sensitivity"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_M_sensitive",
+                    "trait_displayname": "Sensitive",
+                    "trait_score":10,
+                    "trait_tooltip": "M Sensitive"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_M_supersensitive",
+                    "trait_displayname": "Super Sensitive",
+                    "trait_score":20,
+                    "trait_tooltip": "M Super Sensitive"
+                }
+            ],
+            "type": 8,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "Mouth part sensitivity."
+        },
+        {
+            "displayName":"",
+            "ID": "trait_Sensitivity_C",
+            "entries": [
+                {
+                    "trait_ID": "trait_Sensitivity_C_dull",
+                    "trait_displayname": "Dull",
+                    "trait_score":-50,
+                    "trait_tooltip": "C Sensitivity Dull"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_C_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default C sensitivity."
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_C_sensitive",
+                    "trait_displayname": "Sensitive",
+                    "trait_score":50,
+                    "trait_tooltip": "C Sensitive"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_C_supersensitive",
+                    "trait_displayname": "Sensitive",
+                    "trait_score":100,
+                    "trait_tooltip": "C Sensitive"
+                }
+            ],
+            "type": 8,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "Clit/Penis part sensitivity. If a character has both vagina and penis, this applies to both."
+        },
+        {
+            "displayName":"",
+            "ID": "trait_Sensitivity_V",
+            "entries": [
+                {
+                    "trait_ID": "trait_Sensitivity_V_dull",
+                    "trait_displayname": "Dull",
+                    "trait_score":-20,
+                    "trait_tooltip": "V Sensitivity Dull"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_V_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default V sensitivity."
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_V_sensitive",
+                    "trait_displayname": "Sensitive",
+                    "trait_score":20,
+                    "trait_tooltip": "V Sensitive"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_V_supersensitive",
+                    "trait_displayname": "Sensitive",
+                    "trait_score":40,
+                    "trait_tooltip": "V Sensitive"
+                }
+            ],
+            "type": 8,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "Vagina part sensitivity."
+        },
+        {
+            "displayName":"",
+            "ID": "trait_Sensitivity_A",
+            "entries": [
+                {
+                    "trait_ID": "trait_Sensitivity_A_dull",
+                    "trait_displayname": "Dull",
+                    "trait_score":-5,
+                    "trait_tooltip": "A Sensitivity Dull"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_A_default",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Default A sensitivity"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_A_sensitive",
+                    "trait_displayname": "Sensitive",
+                    "trait_score":5,
+                    "trait_tooltip": "A Sensitive"
+                },
+                {
+                    "trait_ID": "trait_Sensitivity_A_supersensitive",
+                    "trait_displayname": "Super Sensitive",
+                    "trait_score":10,
+                    "trait_tooltip": "A Super Sensitive"
+                }
+            ],
+            "type": 8,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "Anal part sensitivity."
+        },
+        {
+            "displayName":"",
+            "ID": "trait_Size_B",
+            "entries": [
+                {
+                    "trait_ID": "trait_Size_B_none",
+                    "trait_displayname": "No Breast",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "No breast. Cannot engage in breast related activities."
+                },
+                {
+                    "trait_ID": "trait_Size_B_AAA",
+                    "trait_displayname": "Nipples",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "Has nipple. Default breast size for males. Cannot lactate."
+                },
+                {
+                    "trait_ID": "trait_Size_B_AA",
+                    "trait_displayname": "Very Small",
+                    "trait_score":0,
+                    "trait_tooltip": "Has breast."
+                },
+                {
+                    "trait_ID": "trait_Size_B_A",
+                    "trait_displayname": "Small",
+                    "trait_score":0,
+                    "trait_tooltip": "Has breast."
+                },
+                {
+                    "trait_ID": "trait_Size_B_B",
+                    "trait_displayname": "Average",
+                    "trait_score":0,
+                    "trait_tooltip": "Has breast."
+                },
+                {
+                    "trait_ID": "trait_Size_B_C",
+                    "trait_displayname": "Average+",
+                    "trait_score":0,
+                    "trait_tooltip": "Has breast."
+                },
+                {
+                    "trait_ID": "trait_Size_B_D",
+                    "trait_displayname": "Big",
+                    "trait_score":0,
+                    "trait_tooltip": "Has breast."
+                },
+                {
+                    "trait_ID": "trait_Size_B_E",
+                    "trait_displayname": "Bigger",
+                    "trait_score":0,
+                    "trait_tooltip": "Has breast."
+                },
+                {
+                    "trait_ID": "trait_Size_B_F",
+                    "trait_displayname": "Huge",
+                    "trait_score":0,
+                    "trait_tooltip": "Has breast."
+                },
+                {
+                    "trait_ID": "trait_Size_B_G",
+                    "trait_displayname": "Yuge",
+                    "trait_score":0,
+                    "trait_tooltip": "Has breast."
+                },
+                {
+                    "trait_ID": "trait_Size_B_H",
+                    "trait_displayname": "Holy",
+                    "trait_score":0,
+                    "trait_tooltip": "Has breast."
+                }
+            ],
+            "type": 8,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 4,
+            "group_tooltip": "Breast part size."
+        },
+        {
+            "displayName":"",
+            "ID": "trait_Size_P",
+            "entries": [
+                {
+                    "trait_ID": "trait_Size_P_none",
+                    "trait_displayname": "No penis",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "No penis. Cannot engage in penis related activities."
+                },
+                {
+                    "trait_ID": "trait_Size_P_tiny",
+                    "trait_displayname": "tiny",
+                    "trait_score":0,
+                    "trait_tooltip": "Has penis."
+                },
+                {
+                    "trait_ID": "trait_Size_P_small",
+                    "trait_displayname": "Small",
+                    "trait_score":0,
+                    "trait_tooltip": "Has penis."
+                },
+                {
+                    "trait_ID": "trait_Size_P_average",
+                    "trait_displayname": "average",
+                    "trait_score":0,
+                    "trait_tooltip": "Has penis."
+                },
+                {
+                    "trait_ID": "trait_Size_P_big",
+                    "trait_displayname": "big",
+                    "trait_score":0,
+                    "trait_tooltip": "Has penis."
+                },
+                {
+                    "trait_ID": "trait_Size_P_huge",
+                    "trait_displayname": "huge",
+                    "trait_score":0,
+                    "trait_tooltip": "Has penis."
+                }
+            ],
+            "type": 8,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 3,
+            "group_tooltip": "Penis part size."
+        },
+        {
+            "displayName":"",
+            "ID": "trait_Size_V",
+            "entries": [
+                {
+                    "trait_ID": "trait_Size_V_none",
+                    "trait_displayname": "No vagina",
+                    "trait_score":0,
+                    "trait_tooltip": "No vagina and no clitoris. Cannot engage in vagina or clitoris related activities."
+                },
+                {
+                    "trait_ID": "trait_Size_V_1",
+                    "trait_displayname": "has vagina",
+                    "trait_score":0,
+                    "trait_tooltip": "Has vagina and clitoris. Can engage in vagina or clitoris related activities.\nCan get pregnant via vagina related activities."
+                }
+            ],
+            "type": 8,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "has vagina or not."
+        },
+        {
+            "displayName":"",
+            "ID": "trait_Size_A",
+            "entries": [
+                {
+                    "trait_ID": "trait_Size_A_none",
+                    "trait_displayname": "No anus",
+                    "trait_score":0,
+                    "trait_tooltip": "No anus. Cannot engage in anus related activities."
+                },
+                {
+                    "trait_ID": "trait_Size_A_1",
+                    "trait_displayname": "has anus",
+                    "trait_score":0,
+                    "trait_tooltip": "Has anus. Can engage in anus related activites."
+                }
+            ],
+            "type": 8,
+            "sortTypeString":"SortedList",
+            "neutralIndex": 1,
+            "group_tooltip": "has anus or not. "
+        }
+    ]
+    }
+    
+}

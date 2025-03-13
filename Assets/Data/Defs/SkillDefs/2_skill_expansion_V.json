@@ -1,0 +1,149 @@
+{
+    "Skills":
+    {
+        "list":
+        [
+            {
+                "ID":"skill_expansion_V",
+                "requirements":{
+                    "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                    "entries":[ { "requireBodyTag":["vagina"] } ]
+                },
+                "hasGenderVariant":false,
+                "allowAutoUpgrade":false,
+                "levels":
+                [   {
+                        "DisplayName":"-"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":50, "WipeExperienceOnLevelUp":true }]
+                                }
+                            ]
+                         },
+                        "stat_modifiers":
+                        [
+                            { 
+                                "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"10"
+                            }
+                        ],
+                        "DisplayName":"1"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":100 , "WipeExperienceOnLevelUp":true}]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"20"
+                             }
+                         ],
+                        "DisplayName":"2"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":300, "WipeExperienceOnLevelUp":true }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"30"
+                             }
+                         ],
+                        "DisplayName":"3"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":500 , "WipeExperienceOnLevelUp":true}]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"40"
+                             }
+                         ],
+                        "DisplayName":"4"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":1000 , "WipeExperienceOnLevelUp":true}]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"50"
+                             }
+                         ],
+                        "DisplayName":"5"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":2000, "WipeExperienceOnLevelUp":true }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"60"
+                             }
+                         ],
+                        "DisplayName":"6"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":3000 , "WipeExperienceOnLevelUp":true}]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"70"
+                             }
+                         ],
+                        "DisplayName":"7"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":4000 , "WipeExperienceOnLevelUp":true}]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"80"
+                             }
+                         ],
+                        "DisplayName":"8"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":5000 , "WipeExperienceOnLevelUp":true}]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"90"
+                             }
+                         ],
+                        "DisplayName":"9"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_V_expansion", "operand":"gte", "value":10000, "WipeExperienceOnLevelUp":true }]}]
+                         },
+                         "stat_modifiers":
+                         [
+                             { 
+                                 "statID":"stats_derived_maxSensitivity_V", "modKey":"skill_expansion_V", "type":"setBase", "valueType":"number", "valueString":"100"
+                             }
+                         ],
+                        "DisplayName":"10"
+                    }
+                ]
+            }
+        ]
+    }
+        
+    
+}

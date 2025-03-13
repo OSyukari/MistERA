@@ -1,0 +1,622 @@
+{
+    "Items":{
+        "list":[
+        {
+            "id":"clothing_outer_head_helmet",
+            "displayName":"Hemlet",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hair",
+                        "revealingString":"Armored",
+                        "equipLayerString":"Outer"
+                    }
+                }
+            ]
+        },{
+            "id":"clothing_outer_breastplate",
+            "displayName":"Breastplate",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Torso",
+                        "revealingString":"Armored",
+                        "equipLayerString":"Outer"
+                    }
+                }
+            ]
+        },{
+            "id":"clothing_outer_gauntlet",
+            "displayName":"Gauntlet",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hand",
+                        "revealingString":"Armored",
+                        "equipLayerString":"Outer",
+                        "equipCount":2
+                    }
+                }
+            ]
+        },{
+            "id":"clothing_outer_boots",
+            "displayName":"Boots",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Feet",
+                        "revealingString":"Armored",
+                        "equipLayerString":"Outer",
+                        "equipCount":2
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_outer_suit",
+            "displayName":"Suit",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Torso",
+                        "coverSlotString":["Lower"],
+                        "equipLayerString":"Outer"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_outer_hat",
+            "displayName":"Hat",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hair",
+                        "equipLayerString":"Outer"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_outer_waistAccessory",
+            "displayName":"Waist Accessory",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Lower",
+                        "equipLayerString":"Outer",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_outer_wristcuff_single",
+            "displayName":"Wristcuff",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hand",
+                        "equipLayerString":"Inner"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_bracelet_double",
+            "displayName":"Bracelet",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hand",
+                        "equipLayerString":"Inner",
+                        "revealingString":"SeeThrough",
+                        "equipCount":2
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_outer_blanket_lower",
+            "displayName":"Blanket",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Lower",
+                        "equipLayerString":"Outer",
+                        "allowHalfDressed":true,
+                        "coverSlotString":["Leg"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_shirt",
+            "displayName":"Shirt",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Torso",
+                        "equipLayerString":"Inner"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_pants",
+            "displayName":"Pants",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Lower",
+                        "equipLayerString":"Inner"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_skirt",
+            "displayName":"Skirt",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Lower",
+                        "equipLayerString":"Inner",
+                        "revealingString":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_hairpin",
+            "displayName":"Hairpin",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hair",
+                        "equipLayerString":"Inner",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_glove",
+            "displayName":"Glove",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hand",
+                        "equipLayerString":"Skin",
+                        "equipCount":2
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_glove_lace",
+            "displayName":"Lace Glove",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hand",
+                        "equipLayerString":"Skin",
+                        "revealingString":"SeeThrough",
+                        "equipCount":2
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_shoes",
+            "displayName":"Shoes",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Feet",
+                        "equipLayerString":"Inner",
+                        "equipCount":2,
+                        "revealingString":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_killerheels",
+            "displayName":"Killer Heels",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Feet",
+                        "equipLayerString":"Inner",
+                        "equipCount":2,
+                        "revealingString":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_hair_ribbon",
+            "displayName":"Hair Ribbon",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hair",
+                        "equipLayerString":"Inner",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_hair_hairpin",
+            "displayName":"Hairpin",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hair",
+                        "equipLayerString":"Skin",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_choker",
+            "displayName":"Choker",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Neck",
+                        "equipLayerString":"Inner",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_inner_necktie",
+            "displayName":"Necktie",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Neck",
+                        "equipLayerString":"Inner",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_earring",
+            "displayName":"Earring",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Face",
+                        "equipLayerString":"Skin",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_contactlens",
+            "displayName":"Contact lens",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Eyes",
+                        "equipLayerString":"Skin",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_bra",
+            "displayName":"Bra",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Torso",
+                        "equipLayerString":"Skin",
+                        "partialUndress":
+                        [
+                            {
+                                "displayName":"鬆開胸罩",
+                                "statusID":"chara_status_undress_top_skin_bra"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_ring",
+            "displayName":"Ring",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hand",
+                        "equipLayerString":"Inner",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_panty",
+            "displayName":"Panty",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Lower",
+                        "equipLayerString":"Skin",
+                        "partialUndress":
+                        [
+                            {
+                                "displayName":"掀開内褲",
+                                "statusID":"chara_status_undress_lower_skin_panty"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_cape",
+            "displayName":"Cape",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Neck",
+                        "equipLayerString":"Outer",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_panty_opencrotch",
+            "displayName":"Open crotch pants",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Lower",
+                        "equipLayerString":"Skin",
+                        "revealingString":"SeeThrough",
+                        "coverSlotString":["Leg"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_stocking",
+            "displayName":"Stocking",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Feet",
+                        "equipLayerString":"Skin",
+                        "equipCount":2,
+                        "revealingString":"SeeThrough",
+                        "coverSlotString":["Leg"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_socks",
+            "displayName":"Socks",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Feet",
+                        "equipLayerString":"Skin",
+                        "equipCount":2,
+                        "revealingString":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_necklace",
+            "displayName":"Necklace",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Neck",
+                        "equipLayerString":"Skin",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_nipple_piercing",
+            "displayName":"Nipple Piercing",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Breasts",
+                        "equipLayerString":"Skin",
+                        "revealingString":"Erotic"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_clit_piercing",
+            "displayName":"Clit Piercing",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Clitoris",
+                        "equipLayerString":"Skin",
+                        "revealingString":"Erotic"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Dress",
+            "displayName":"Navigator's Dress",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Torso",
+                        "equipLayerString":"Inner",
+                        "allowHalfDressed":true,
+                        "coverSlotString":["Lower"],
+                        "equipTags":[],
+                        "stat_modifiers":[
+                            {
+                                "statID":"Constitution",
+                                "modKey":"clothing_bluearchive_Navigator_Dress", "type":"addBase", "valueType":"number", "valueString":"0.5"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Boot",
+            "displayName":"Navigator's Boot",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Feet",
+                        "equipLayerString":"Inner",
+                        "equipCount":2,
+                        "stat_modifiers":[
+                            {
+                                "statID":"Constitution",
+                                "modKey":"clothing_bluearchive_Navigator_Boot", "type":"addBase", "valueType":"number", "valueString":"1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Cape",
+            "displayName":"Navigator's Cape",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Neck",
+                        "equipLayerString":"Outer",
+                        "revealingString":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Hat",
+            "displayName":"Navigator's Hat",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hair",
+                        "equipLayerString":"Outer",
+                        "revealingString":"SeeThrough",
+                        "stat_modifiers":[
+                            {
+                                "statID":"Willpower",
+                                "modKey":"clothing_bluearchive_Navigator_Hat", "type":"addBase", "valueType":"number", "valueString":"1"
+                            },
+                            {
+                                "statID":"stats_derived_hp_max",
+                                "modKey":"clothing_bluearchive_Navigator_Hat", "type":"addBase", "valueType":"number", "valueString":"2"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Coat",
+            "displayName":"Navigator's Coat",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Torso",
+                        "equipLayerString":"Outer"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Longcoat",
+            "displayName":"Captain's Long Coat",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Torso",
+                        "equipLayerString":"Outer",
+                        "coverSlotString":["Lower"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Glove",
+            "displayName":"Navigator's Glove",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlotString":"Hand",
+                        "equipLayerString":"Skin",
+                        "equipCount":2,
+                        "revealingString":"ShapeReveal"
+                    }
+                }
+            ]
+        }
+        
+    ]
+    }
+    
+}

@@ -1,0 +1,32 @@
+{
+    "language":"default",
+    "entries":
+    [
+        {"ID":"Campaign2_Chara_couple1_Female_FirstName","Entry":"莫妮卡"},
+        {"ID":"Campaign2_Chara_couple1_Male_FirstName","Entry":"止本"},
+
+
+        {"ID":"Campaign2_Chara_Halfas_LastName","Entry":"哈尔法斯"},
+        {"ID":"Campaign2_Chara_HalfasOne_FirstName","Entry":"罗丝"},
+        {"ID":"Campaign2_Chara_HalfasThree_FirstName","Entry":"米娅"},
+        {"ID":"Campaign2_Chara_HalfasTwo_FirstName","Entry":"蕾拉"},
+
+        {"ID":"Campaign2_Chara_Amelie_FirstName","Entry":"艾米莉"},
+        {"ID":"Campaign2_Chara_Amelie_LastName","Entry":"布朗谢"},
+
+        {"ID":"Campaign2_Chara_Elena_FirstName","Entry":"艾琳娜"},
+        {"ID":"Campaign2_Chara_Elena_LastName","Entry":"方汀"},
+
+        {"ID":"Campaign2_Chara_Hiyori_FirstName","Entry":"日和"},
+        {"ID":"Campaign2_Chara_Hiyori_LastName","Entry":"贺茂"},
+
+        {"ID":"Campaign2_Chara_Olivia_FirstName","Entry":"奥莉薇娅"},
+        {"ID":"Campaign2_Chara_Olivia_LastName","Entry":"穆柴尔"},
+
+        {"ID":"creature_animal_pig","Entry":"猪"},
+        {"ID":"creature_animal_horse","Entry":"马"},
+        {"ID":"creature_animal_warg","Entry":"座狼"},
+        {"ID":"creature_humanoid_goblin","Entry":"哥布林"}
+
+    ]
+}

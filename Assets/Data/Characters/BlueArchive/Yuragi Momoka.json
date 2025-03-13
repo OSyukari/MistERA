@@ -1,0 +1,107 @@
+{
+    "baseID": "Campaign1_Char_Momoka",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": -99.949,
+                "portrait_offset_y": 17.627,
+                "portrait_offset_size": 1.03,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.8,
+
+                "Disable":true,
+
+                "icon_path":"Images/BlueArchive/Momoka/Momoka_Ark_Uniform_Icon.png",
+                "_comment":"utnapishtim uniform",
+
+                "materialTexturePaths":["BlueArchive_Extracted/Texture2D/NP0098_spr"],
+                "atlasJSON_path":"BlueArchive_Extracted/TextAsset/NP0098_spr.atlas",
+                "skeletonJSON_path":"BlueArchive_Extracted/TextAsset/NP0098_spr.skel",
+                "skeletonScale":0.005,
+                "idleAnimName":"Idle_01"
+
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": -21.207,
+                "portrait_offset_y": -313.4,
+                "portrait_offset_size": 1.07,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.8,
+
+                "icon_path":"Images/BlueArchive/Momoka/Momoka_Ark_Uniform_Icon.png",
+                "_comment":"default L2D",
+
+                "_comment3":"following assets are loaded via Resources.Load, so they must be inside a Resources folder. For txt file dont need extension",
+                "materialTexturePaths":["BlueArchive_Extracted/Texture2D/Momoka_weekdungeon"],
+                "atlasJSON_path":"BlueArchive_Extracted/TextAsset/Momoka_weekdungeon.atlas",
+                "skeletonJSON_path":"BlueArchive_Extracted/TextAsset/Momoka_weekdungeon.skel",
+                "skeletonScale":0.005,
+                "idleAnimName":"Idle_01"
+
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 14,
+      "stat_CON": 18,
+      "stat_PSY": 12,
+      "stat_WIL": 12,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_A",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":145,
+      "initialRelationship":[
+            {
+                "baseID":"PLAYER",
+                "initialPersonalRelationship":"relationship_mentor",
+                "initialPersonalRelationship_isA":false
+            },
+            {
+                "baseID":"Campaign1_Char_Rin",
+                "initialPersonalRelationship":"relationship_bff"
+            },
+            {
+                "baseID":"Campaign1_Char_Ayumu",
+                "initialPersonalRelationship":"relationship_bff"
+            }
+        ],
+      "initialInventory":[
+            { "ID":"clothing_bluearchive_Navigator_Hat" },
+            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Cape" },
+            { "ID":"clothing_bluearchive_Navigator_Glove" },
+            { "ID":"clothing_bluearchive_Navigator_Boot" },
+            { "ID":"clothing_skin_socks" },
+            { "ID":"clothing_skin_panty" },
+            { "ID":"clothing_inner_hair_ribbon" },
+            { "ID":"clothing_skin_bra" }
+        ],
+      "Skills": null
+    },
+    "firstName": "Campaign1_Char_Momoka_FirstName",
+    "middleName": "",
+    "lastName": "Campaign1_Char_Momoka_LastName",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_KivotosStudent",
+    "race": "humanRace_demon",
+    "raceTemplate": "humanRaceAddon_Kivotos_GSC",
+    "startingGift": "charOriginGift_none"
+}
+    
