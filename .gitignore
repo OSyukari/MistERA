@@ -15,11 +15,14 @@
 Assets/*
 !Assets/Data
 !Assets/Scripts
+!Assets/Scenes
+
 
 *.mat
 *.shader
 *.txt
 *.unity
+*.renderTexture
 *.png
 *.meta
 *.prefab

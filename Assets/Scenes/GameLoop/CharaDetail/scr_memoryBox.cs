@@ -1,0 +1,18 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+using Unity;
+using UnityEngine.UI;
+
+public class scr_memoryBox : MonoBehaviour
+{
+    public TMP_Text timeStamp;
+    public scr_HoverableText memText;
+    public Image image;
+    private void Awake()
+    {
+        image.color = scr_System_CentralControl.current.pref.BackgroundColor_Transparent;
+    }
+
+}
