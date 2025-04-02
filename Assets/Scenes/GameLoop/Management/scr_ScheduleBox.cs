@@ -33,18 +33,18 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         }
         int currentHour = scr_System_Time.current.getCurrentTime().Hour;
         c = parent.currentChara;
-        com = c.CurrentJobSchedule(index);
+        comName = c.CurrentJobName(index);
         faction = c.CurrentJobScheduleFaction(index);
         factionPriority = c.FactionManager.Factions;
         indexCurrent = factionPriority.IndexOf(parent.CurrentFaction);
         indexCOM = factionPriority.IndexOf(faction);
 
-        if (com != null) text.text = index + "H - " + com.DisplayName();
+        if (comName.Length > 0) text.text = index + "H - " + comName;
         else text.text = "-";
 
 
         if (faction != null) text.text += "(" + faction.ID + ")";
-        else if (com != null) text.text += "(personal time)";
+        else if (comName.Length > 0) text.text += "(personal time)";
 
         if (index == currentHour) text.text = "> " + text.text + " <";
 
@@ -53,7 +53,7 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         
     }
     public Color32 baseColor, disableColor;
-    COM com = null;
+    string comName = "";
     Manageable faction = null;
     Character_Trainable c = null;
     List<Manageable> factionPriority;
@@ -84,7 +84,7 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         int indexCurrent = factionPriority.IndexOf(parent.CurrentFaction);
 
         int indexCOM = (faction == null? -1: factionPriority.IndexOf(faction)) ;
-        COM com = c.CurrentJobSchedule(index);
+        //COM com = c.CurrentJobSchedule(index);
         // indexCurrent >= 0; indexCurrent < 0
         // indexCOM >= 0; indexCOM < 0
         if (indexCurrent >= indexCOM)

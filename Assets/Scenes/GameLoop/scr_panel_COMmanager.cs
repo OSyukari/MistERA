@@ -602,7 +602,7 @@ public class scr_panel_COMmanager : scr_Menu
                         }
                         else if (c.comTags.Contains("touch") && !c.comTags.Contains("sex"))
                         {
-                            MakeCOMButton(Box_TouchCOMs, buttonPrefab_COM, jobChara, c, true, true);
+                            MakeCOMButton(Box_TouchCOMs, buttonPrefab_COM, jobChara, c, true, false);
                         }
                         else if (c.comTags.Contains("service") && !c.comTags.Contains("sex"))
                         {
@@ -1291,6 +1291,7 @@ public class scr_panel_COMmanager : scr_Menu
                     targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
                     targets = targets.Distinct().ToList();
                     targets.Remove(0);
+                    targets.RemoveAll(x => doers.Contains(x) || receivers.Contains(x));
 
                     if (doers.Count < 1) doers.Add(0);
                     else if (!doers.Contains(0) && !receivers.Contains(0)) receivers.Add(0);

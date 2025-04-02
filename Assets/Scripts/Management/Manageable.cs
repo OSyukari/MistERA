@@ -11,6 +11,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using JetBrains.Annotations;
 using static Job_Furniture;
+using System.Security.Cryptography;
 
 [System.Serializable]
 public enum Manageable_GuestStatus
@@ -584,7 +585,7 @@ public class Manageable : I_Disposable
     public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, List<string> s = null)
     {
         string ss = " (" + ID + ")";
-        if (GetSchedule(chara).schedule[currentHour] == "")
+        if (GetSchedule(chara).Get(currentHour).comIDs.Count < 1)
         {
             ss += "no scheduled job";
 
@@ -608,7 +609,7 @@ public class Manageable : I_Disposable
         // chara job is null, try give job
         // first find a valid instance of job
         List<Job_Furniture> possibleJobs;
-        if (!TryFindValidJobInstances(out possibleJobs, chara, GetSchedule(chara).schedule[currentHour]))
+        if (!TryFindValidJobInstances(out possibleJobs, chara, GetSchedule(chara).Get(currentHour)))
         {
             ss += " found no valid jobinstances offered by Furnitures";
             if (s != null) s.Add(ss);
@@ -616,7 +617,7 @@ public class Manageable : I_Disposable
         }
         else if (!TryValidateAllInstances(ref possibleJobs, chara))
         {
-            ss += " cannot pass validate check for any of the offered [" + GetSchedule(chara).schedule[currentHour] + "] job instances";
+            ss += " cannot pass validate check for any of the offered [" + GetSchedule(chara).Get(currentHour).Name + "] job instances";
             if (s != null) s.Add(ss);
             return null;
         }
@@ -663,6 +664,18 @@ public class Manageable : I_Disposable
         //Debug.Log("FindValidJobInstances for comID[" + comID + "] has COM[" + comID + "] existProductionOrder [" + ExistsProductionOrderWith(targetCOM) + "] with [" + jobPosts[targetCOM].Count+ "] instances ");
         return list.Count > 0;
     }
+
+    protected bool TryFindValidJobInstances(out List<Job_Furniture> list, Character_Trainable c, HourlySchedule schedule)
+    {
+        var rnd = schedule.getRandCOM;
+        if (rnd == null)
+        {
+            list = new List<Job_Furniture>();
+            return false;
+        }
+        else return TryFindValidJobInstances(out list, c, rnd.ID);
+    }
+
     protected bool TryFindValidJobInstances(out List<Job_Furniture> list, Character_Trainable c, string comID)
     {
         list = new List<Job_Furniture>();
@@ -779,7 +792,7 @@ public class Manageable : I_Disposable
 
             for (int i = init.startHour; i <= init.endHour; i++)
             {
-                charaSchedules[c.RefID].schedule[i] = init.comID;
+                charaSchedules[c.RefID].Get(i).Set(init.comID);
             }
 
             List<string> s = new List<string>();
@@ -793,11 +806,28 @@ public class Manageable : I_Disposable
         if (this.ManagedChara.Find(x => x.BaseID == c.BaseID) == null) return;
         if (!ManagedRefs.Contains(c.RefID)) return;
 
-        if (targetCOM != null) charaSchedules[c.RefID].schedule[hour] = targetCOM.ID;
-        else charaSchedules[c.RefID].schedule[hour] = "";
+        if (targetCOM != null) charaSchedules[c.RefID].Get(hour).Set(targetCOM.ID);
+        else charaSchedules[c.RefID].Get(hour).Set("");
 
         List<string> s = new List<string>();
         c.FactionManager.UpdateSchedule(ref s);
+    }
+
+    public void SetWorkHours(Character_Trainable c, JobPostPreset preset)
+    {
+        if (preset == null || !preset.isActive) {
+            foreach (var hour in preset.activeHours) SetWorkHours(c, hour);
+            return;
+        }
+
+        if (this.ManagedChara.Find(x => x.BaseID == c.BaseID) == null) return;
+        if (!ManagedRefs.Contains(c.RefID)) return;
+
+        foreach(var hour in preset.activeHours)
+        {
+            charaSchedules[c.RefID].Get(hour).Set(preset.jobPostID, preset.workCommands);
+        }
+
     }
 
     /// <summary>
@@ -1098,7 +1128,7 @@ public class Manageable : I_Disposable
             {
                 for (int i = startHour; i <= endHour; i++)
                 {
-                    kvp.Value.schedule[i] = jobCOM;
+                    kvp.Value.Get(i).Set(jobCOM);
                 }
             }
         }
@@ -1107,15 +1137,23 @@ public class Manageable : I_Disposable
     [System.Serializable]
     public class Job_Schedule
     {
-        public string[] schedule;
+        [SerializeField]
+        [JsonProperty]
+        protected HourlySchedule[] schedule = new HourlySchedule[24];
+
+        public HourlySchedule Get(int hour)
+        {
+            if(schedule[hour] == null) schedule[hour] = new HourlySchedule();
+            return schedule[hour];
+        }
+
         public Job_Schedule(COM initializeJob = null, List<int> jobHours = null)
         {
-            schedule = new string[24];
-            Clear();
+            for (int i = 0; i < 24; i++) if (schedule[i] == null) schedule[i] = new HourlySchedule();
 
             if (initializeJob != null && jobHours != null && jobHours.Count > 0)
             {
-                foreach (int hour in jobHours) schedule[hour] = initializeJob.ID;
+                foreach (int hour in jobHours) schedule[hour].Set(initializeJob);
             }
 
         }
@@ -1123,7 +1161,7 @@ public class Manageable : I_Disposable
         public int GetWorkHoursWithCOM(string comID)
         {
             int count = 0;
-            for (int i = 0; i < schedule.Length; i++) if (schedule[i] == comID) count += 60;
+            for (int i = 0; i < schedule.Length; i++) if (schedule[i].comIDs.Contains(comID)) count += 60;
             return count;
         }
 
@@ -1131,9 +1169,110 @@ public class Manageable : I_Disposable
         {
             for (int i = 0; i < schedule.Length; i++)
             {
-                schedule[i] = "";
+                schedule[i].Set("");
             }
         }
+    }
+
+    [System.Serializable]
+    public class HourlySchedule
+    {
+
+        public string jobID = "";
+        public List<string> comIDs = new List<string>();
+
+        public HourlySchedule(){}
+
+        public void Set(COM com)
+        {
+            if (com == null)
+            {
+                this.comIDs = new List<string>();
+                this.jobID = "";
+            }
+            else
+            {
+                this.comIDs = new List<string>() { com.ID };
+                this.jobID = "";
+            }
+
+        }
+
+        public void Set(string jobID, List<string> coms)
+        {
+            /*  this is executed on jobpost template creation
+            coms = coms.Distinct().ToList();
+            coms.RemoveAll(x=>x.Length < 1);
+            */
+            if (coms.Count > 0)
+            {
+                this.comIDs = new List<string>(coms);
+                this.jobID = jobID;
+            }
+            else
+            {
+                Set("");
+            }
+
+        }
+
+        public void Set(string com)
+        {
+            if (com.Length < 1)
+            {
+                this.comIDs = new List<string>();
+                this.jobID = "";
+            }
+            else
+            {
+                this.comIDs = new List<string>() { com };
+                this.jobID = "";
+            }
+
+        }
+
+        protected List<COM> cache_com = null;
+
+        public List<COM> COMs { get {
+                if (cache_com == null)
+                {
+                    cache_com = new List<COM>();
+                    foreach(var i in comIDs)
+                    {
+                        var v = scr_System_Serializer.current.GetByNameOrID_COM(i);
+                        if (v != null) cache_com.Add(v);
+                    }
+                }
+                return cache_com; } }
+
+        protected string cache_name = "";
+
+        public string Name { get
+            {
+                if(cache_name == "")
+                {
+                    if (this.jobID.Length > 0) cache_name = scr_System_Serializer.current.Dictionary.QueryThenParse(this.jobID);
+                    else if (this.COMs.Count > 0)
+                    {
+                        var temp = new List<string>();
+                        foreach (var i in COMs) temp.Add(i.DisplayName(0));
+                        cache_name = String.Join(",", temp);
+                    }
+                }
+                return cache_name;
+            } }
+
+        public bool isActive { get { return this.jobID.Length > 0 || this.comIDs.Count > 0; } }
+        public COM getRandCOM
+        {
+            get
+            {
+                if (!isActive) return null;
+                int i = COMs.Count;
+                return COMs[Utility.GetRandIndexFromListCount(i)];
+            }
+        }
+
     }
 
 
@@ -1454,6 +1593,55 @@ public class Manageable : I_Disposable
             return resourceSheet;
         }
 
+    }
+
+    public List<JobPostPreset> JobPostsPresets = new List<JobPostPreset>();
+    public void AddJobPost(MapPlan.WorkModuleInit module)
+    {
+        this.JobPostsPresets.Add(new JobPostPreset(module));
+    }
+
+    [System.Serializable]
+    public class JobPostPreset
+    {
+        public JobPostPreset(MapPlan.WorkModuleInit module)
+        {
+            this.jobPostID = module.jobPostID;
+
+            this.workCommands = new List<string>(module.workCommands);
+            this.workCommands = this.workCommands.Distinct().ToList();
+            this.workCommands.RemoveAll(x => x.Length < 1);
+
+            this.activeHours = new List<int>(module.activeHours);
+            this.activeHours = this.activeHours.Distinct().ToList();
+            this.activeHours.RemoveAll(x => x < 0 || x > 23);
+
+            foreach (var item in module.hourlyPayout) this.hourlyPayout.Add(new ItemEntry(item));
+        }
+
+        public string jobPostID;
+        public List<string> workCommands = new List<string>();
+        public List<int> activeHours = new List<int>();
+        public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
+        
+        [JsonIgnore] 
+        public bool isActive { get { return this.workCommands.Count > 0 && this.activeHours.Count > 0; } }
+
+        // Resolve Item payout as long as current hour has registered work
+
+        [System.Serializable]
+        public class ItemEntry
+        {
+            public ItemEntry(MapPlan.WorkModuleInit.ItemEntry entry)
+            {
+                this.itemID = entry.itemID;
+                this.itemNameOverwrite = entry.itemNameOverwrite;
+                this.itemCount = entry.itemCount;
+            }
+            public string itemID;
+            public string itemNameOverwrite;
+            public string itemCount;
+        }
     }
 }
 

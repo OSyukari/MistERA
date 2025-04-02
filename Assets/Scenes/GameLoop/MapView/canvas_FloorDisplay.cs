@@ -108,7 +108,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         scr_SelectableText btn = r2.GetComponent<scr_SelectableText>();
 
         btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn));
-
+        btn.showBrackets = false;
         Floor_Instance parentFloor = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(ri.RefID);
         int tempRefID = ri.RefID;
         if (parentFloor != null) tempRefID -= parentFloor.FloorCode;
@@ -123,11 +123,11 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
             if (names.Count > 0)
             {
-                btn.SetText(tempRefID + " - "+ ri.DisplayName + "] \n["+String.Join(" ", names));
+                btn.SetText("[ "+tempRefID + " - "+ ri.DisplayName + " ] \n[ "+String.Join(" ", names)+" ]");
             }
             else
             {
-                btn.SetText(tempRefID + " - " + ri.DisplayName, true);
+                btn.SetText("[ " + tempRefID + " - " + ri.DisplayName + " ] \n[]");
             }
         }
         else

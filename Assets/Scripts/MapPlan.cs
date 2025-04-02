@@ -62,14 +62,15 @@ public class MapPlan
         var targetFaction = factionOverride != "" ? factionOverride : initializeFaction;
 
         if (targetFaction != "")
-        {
+        {   
+            // get target faction
             Manageable org = scr_System_CampaignManager.current.FindorAddHomeFactionByID(targetFaction);
+
+            // add floor to faction and set all chara in map as faction member and set private room ownership
             foreach(var f in list.Values)  org.AddToFaction(f, true, setPrivateRoomOwner);
 
-            if (workHours != null && workHours.Count > 0)
-            {
-                foreach (var i in workHours) org.InitWorkHours(i);
-            }
+            if (workHours != null && workHours.Count > 0) foreach (var i in workHours) org.InitWorkHours(i);
+            
             if (managerBaseIDs != null && managerBaseIDs.Count > 0)
             {
                 foreach(string id in managerBaseIDs)
@@ -80,15 +81,14 @@ public class MapPlan
                         if (scr_System_CampaignManager.current.Player.FactionManager.Faction_Home == null) scr_System_CampaignManager.current.Player.FactionManager.SetHomeFaction(org.ID, true);
                         else scr_System_CampaignManager.current.Player.FactionManager.AddWorkFaction(org.ID, true);
                     }
-                    else
-                    {
-                        foreach (var i in org.ManagedChara)
-                        {
-                            if (i.BaseID == id) org.AddToFaction(i.RefID, Manageable_GuestStatus.Manager);
-                        }
-
-                    }
+                    else  foreach (var i in org.ManagedChara) if (i.BaseID == id) org.AddToFaction(i.RefID, Manageable_GuestStatus.Manager);
                 }
+            }
+
+            // set work hours
+            foreach(var module in workModules)
+            {
+                org.AddJobPost(module);
             }
         }
 
@@ -101,6 +101,25 @@ public class MapPlan
 
     public List<string> managerBaseIDs = new List<string>();
     public List<WorkHoursInit> workHours = null;
+    public List<WorkModuleInit> workModules = new List<WorkModuleInit>();
+
+    [System.Serializable]
+    public class WorkModuleInit
+    {
+        public string jobPostID;
+        public List<int> peakHours = new List<int>();
+        public List<string> workCommands = new List<string>();
+        public List<int> activeHours = new List<int>();
+        public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
+
+        [System.Serializable]
+        public class ItemEntry
+        {
+            public string itemID;
+            public string itemNameOverwrite;
+            public string itemCount;
+        }
+    }
 
     [System.Serializable]
     public class WorkHoursInit

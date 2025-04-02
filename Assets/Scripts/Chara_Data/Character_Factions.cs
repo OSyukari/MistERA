@@ -252,25 +252,25 @@ public class Character_Factions
         {
             Manageable.Job_Schedule schedule = faction.GetSchedule(Owner);
             if (schedule == null) continue;
-            string comID = schedule.schedule[hour];
-            if (comID != "") return faction;
+            //string comID = schedule.Get(hour).comIDs;
+            if (schedule.Get(hour).comIDs.Count > 0) return faction;
         }
         return null;
     }
-    public COM CurrentJobSchedule(int hour = -1)
+
+    public string CurrentJobName(int hour)
     {
-        string comID = "";
+        var v = CurrentJobScheduleFaction(hour);
+        if(v == null) return "none";
+        return v.GetSchedule(Owner).Get(hour).Name;
+    }
+
+    public Manageable.HourlySchedule CurrentJobPost(int hour = -1)
+    {
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
-        foreach (var faction in Factions)
-        {
-            Manageable.Job_Schedule schedule = faction.GetSchedule(Owner);
-            if (schedule == null) continue;
-            comID = schedule.schedule[hour];
-            if (comID != "") return scr_System_Serializer.current.GetByNameOrID_COM(comID);
-        }
-        comID = privateSchedule.schedule[hour];
-        if (comID != "") return scr_System_Serializer.current.GetByNameOrID_COM(comID);
-        else return null;
+        var v = CurrentJobScheduleFaction((int)hour);
+        if(v == null) return null;
+        return v.GetSchedule(Owner).Get(hour);
     }
 
     [SerializeField][JsonProperty] protected Manageable.Job_Schedule privateSchedule =  new Manageable.Job_Schedule();
@@ -300,7 +300,7 @@ public class Character_Factions
             for (int i = 0; i < sleepHours; i++)
             {
                 targetHour = (homeSleepHour + i) % 24;
-                privateSchedule.schedule[targetHour] = "com_furniture_sleep";
+                privateSchedule.Get(targetHour).Set("com_furniture_sleep");
             }
         }
         else if (consecutiveRestHour >= sleepHours)
@@ -315,7 +315,7 @@ public class Character_Factions
                 for (int i = sleepHours; i > 0; i--)
                 {
                     int targetHour = endHour - i;
-                    privateSchedule.schedule[targetHour < 0 ? targetHour + 24 : targetHour] = "com_furniture_sleep";
+                    privateSchedule.Get(targetHour < 0 ? targetHour + 24 : targetHour).Set( "com_furniture_sleep");
                 }
             }
             else if (consecutiveRestHour - sleepHours >= 1)
@@ -324,7 +324,7 @@ public class Character_Factions
                 for (int i = sleepHours; i > 0; i--)
                 {
                     int targetHour = endHour - i;
-                    privateSchedule.schedule[targetHour < 0 ? targetHour + 24 : targetHour] = "com_furniture_sleep";
+                    privateSchedule.Get(targetHour < 0 ? targetHour + 24 : targetHour).Set("com_furniture_sleep");
                 }
             }
             else if (consecutiveRestHour - sleepHours == 0)
@@ -333,7 +333,7 @@ public class Character_Factions
                 for (int i = sleepHours; i > 0; i--)
                 {
                     int targetHour = endHour - i;
-                    privateSchedule.schedule[targetHour < 0 ? targetHour + 24 : targetHour] = "com_furniture_sleep";
+                    privateSchedule.Get(targetHour < 0 ? targetHour + 24 : targetHour).Set("com_furniture_sleep");
                 }
             }
         }

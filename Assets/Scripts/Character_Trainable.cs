@@ -568,10 +568,22 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         if (RefID == 0) scr_System_CampaignManager.current.NotifyPlayerJobChange(job == null? -1:job.RefID, job);
     }
 
-    public COM CurrentJobSchedule(int hour = -1)
+
+
+    public Manageable.HourlySchedule GetJobPost(int hour = -1)
     {
         if (FactionManager == null) return null;
-        else return FactionManager.CurrentJobSchedule(hour);
+        else
+        {
+            if(hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
+            return FactionManager.CurrentJobPost(hour);
+        }
+    }
+
+    public string CurrentJobName(int hour = -1)
+    {
+        if (FactionManager == null) return "none";
+        return FactionManager.CurrentJobName(hour);
     }
 
     public Manageable CurrentJobScheduleFaction(int hour = -1)
@@ -705,7 +717,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         foreach (var faction in FactionManager.Factions) factionstring.Add(faction.ID + (faction.isCharaManager(this) ? "*" : ""));
         //if (chara.CurrentJobRefID)
 
-        COM currentScheduleCOM = CurrentJobSchedule();
+        var jobpost = GetJobPost(currentHour);
+        COM currentScheduleCOM = jobpost == null ? null : jobpost.getRandCOM;
 
         // if sleeping and current schedule is not sleep 
         if ((currentScheduleCOM == null || currentScheduleCOM.ID != "com_furniture_sleep") && (CurrentJob != null && CurrentJob.hasActivePackge(RefID, "com_furniture_sleep")))
@@ -714,7 +727,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
             ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + " in room [" + job.ParentRoom.DisplayName + "]");
             if(s != null) s.Add(ss);
-            ChangeCurrentJob(job);
+            ChangeCurrentJob(job, job == null || currentScheduleCOM == null ? "" : currentScheduleCOM.ID);
 
             // check if can break sleep (check if still tired), if cannot break then return here
         }
@@ -764,6 +777,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
         if (currentScheduleCOM != null && currentScheduleCOM.ID != "com_furniture_sleep")
         {   // if current schedule has available job (exclude sleep)
+
+            // first get command by ID, if command 
+            // first check if chara is already doing related job == currentjob exist
             if (CurrentJob != null && (CurrentJob.hasActivePackge(RefID, currentScheduleCOM.ID) || (CurrentJob.allusableCOMs.Contains(currentScheduleCOM) && CurrentJob.hasActivePathing(RefID))))
             {   // if current is of same type as schedule, dont do anything. 
                 return;
@@ -952,8 +968,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (!hasSleepNeed) return false;
             if (this.FactionManager.HasSleepSchedule) 
             {
-                var v = FactionManager.CurrentJobSchedule();
-                return v != null && v.ID == "com_furniture_sleep";
+                var v = GetJobPost();
+                return v != null && v.comIDs.Contains("com_furniture_sleep");
             }
             else
             {

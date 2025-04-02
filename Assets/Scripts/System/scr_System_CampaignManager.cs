@@ -806,6 +806,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     Room_Instance debugRoom;
     public void StartCampaign(CampaignSettings camp, CampaignSettings_ExtraOptions camp_ex, Character_Trainable main, Character_Trainable sub = null)
     {
+        // Debug.Log("3d8 " + Utility.Dice(1, 8) + " " + Utility.Dice(1, 8) + " " + Utility.Dice(1, 8));
 
         viewMode = ViewMode.View_Room;
 

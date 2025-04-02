@@ -4,9 +4,9 @@
         "list":
         [
             {
-                "ID":"map_outside_convenience_store",
+                "ID":"map_jp_convenience_store",
                 "z_rotation":0.0,
-                "initializeFaction":"outside_convenience_store",
+                "initializeFaction":"jp_convenience_store",
                 "setPrivateRoomOwner":true,
                 "floors":
                 [
@@ -22,36 +22,145 @@
                         ]
                     }
                 ],
-                "managerBaseIDs":["PLAYER"],
-                "workHours":[
-                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":8,"endHour":11,"comID":"com_job_production_cooking" },
-                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":13,"endHour":15,"comID":"com_job_production_cooking" },
-                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":16,"endHour":18,"comID":"com_job_production_cooking" },
+                "_comment":"here is faction initializer. Calling mapPlan init create a new instance of the faction following this same template.",
+                "_comment2":"called by MapPlan.Instantiate(args)",
+                "workModules":
+                [
+                    {
+                        "jobPostID":"jp_convenience_store_clerk_morning",
+                        "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
+                        "workCommands":["jp_convenience_store_frontDesk","jp_convenience_store_storageCleaning"],
+                        "activeHours":[ 6, 7, 8, 9,10,11,12,13], "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"7000" }  ]
+                    },
+                    {
+                        "jobPostID":"jp_convenience_store_clerk_afternoon",
+                        "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
+                        "workCommands":["jp_convenience_store_frontDesk","jp_convenience_store_storageCleaning"],
+                        "activeHours":[14,15,16,17,18,19,20,21], "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"7000" }  ]
+                    },
+                    {
+                        "jobPostID":"jp_convenience_store_clerk_midnight",
+                        "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
+                        "workCommands":["jp_convenience_store_frontDesk","jp_convenience_store_storageCleaning"],
+                        "activeHours":[22,23, 0, 1, 2, 3, 4, 5], "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"10000" }  ]
+                    }
+                ],
+                "managerBaseIDs":[""],
+                "workHours":[],
+                "workAssignment":[]
 
-                    { "charaBaseID":"Campaign1_Char_Himari", "startHour":8,"endHour":11,"comID":"com_job_production_engineering" },
-                    { "charaBaseID":"Campaign1_Char_Himari", "startHour":13,"endHour":18,"comID":"com_job_research_engineering" },
-
-                    { "charaBaseID":"Campaign1_Char_Hanako", "startHour":8,"endHour":11,"comID":"com_job_production_chemistry" },
-                    { "charaBaseID":"Campaign1_Char_Hanako", "startHour":13,"endHour":18,"comID":"com_job_research_biochemistry" },
-
-                    { "charaBaseID":"Campaign1_Char_Kayoko", "startHour":8,"endHour":11,"comID":"com_job_training_shooting" },
-                    { "charaBaseID":"Campaign1_Char_Kayoko", "startHour":13,"endHour":18,"comID":"com_job_training_melee" },
-
-                    { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":8,"endHour":11,"comID":"com_job_research_physics" },
-                    { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":13,"endHour":18,"comID":"com_job_research_physics" },
-
-                    { "charaBaseID":"Campaign1_Char_Rin", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
-                    { "charaBaseID":"Campaign1_Char_Rin", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
-
-                    { "charaBaseID":"Campaign1_Char_Momoka", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
-                    { "charaBaseID":"Campaign1_Char_Momoka", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
-
-                    { "charaBaseID":"Campaign1_Char_Ayumu", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
-                    { "charaBaseID":"Campaign1_Char_Ayumu", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
-
-                    { "charaBaseID":"Campaign1_Char_Ayane", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
-                    { "charaBaseID":"Campaign1_Char_Ayane", "startHour":13,"endHour":18,"comID":"com_job_cleaning" }
-                ]
+            }
+        ]
+    },
+    "Furnitures":
+    {
+        "list":
+        [
+            {
+                "ID":"furniture_marker_jp_convenience_store_frontDesk",
+                "displayName":"workMarker",
+                "noDisplay":true,
+                "recipe":[],
+                "furnitureSize":2,
+                "givesJob": [ { "comID":["jp_convenience_store_frontDesk"] } ]
+            },
+            {
+                "ID":"furniture_marker_jp_convenience_store_storageCleaning",
+                "displayName":"workMarker",
+                "noDisplay":true,
+                "recipe":[],
+                "furnitureSize":2,
+                "givesJob": [ { "comID":["jp_convenience_store_storageCleaning"] } ]
+            }
+        ]
+    },
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"jp_convenience_store_frontDesk",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_convenience_store_frontDesk_displayName_1",
+                "timeScale":30,
+                "comTags":["job","furniture","workModules","!!!!extrajobcomtag!!!!"],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    },
+                    "requireFactionExisting": {
+                        "jobKeyword": "!!!!extrajobcomtag!!!!"
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 20
+                                }
+                            }
+                        },
+                        "displayName": "jp_convenience_store_frontDesk_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "jp_convenience_store_frontDesk_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 0
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 10
+                },
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "$doer.firstname$正在工作" ]
+                        }
+                    ]
+                },
+                "descriptions_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "$doer.firstname$停下了工作" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts":[ "$receiver.firstname$结束了工作" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": ["$doer.firstname$开始工作"]
+                        }
+                    ]
+                    
+                }
             }
         ]
     }

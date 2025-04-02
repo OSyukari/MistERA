@@ -342,7 +342,8 @@ public class Job_Furniture : Job
             ActionPackage package = null;
 
             //first.
-            COM scheduleCOM = c.CurrentJobSchedule();
+            var scheduleCOM = getActorPriorityCOM(c.RefID);
+            if (scheduleCOM == null) scheduleCOM = c.GetJobPost().getRandCOM;
             if (scheduleCOM != null)
             {
                 ss += "detected scheduledCOM " + scheduleCOM.ID + "|";

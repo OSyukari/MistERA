@@ -122,9 +122,9 @@ public class scr_panel_TargetInfo : scr_Menu
 
             int nextHour = scr_System_Time.current.getCurrentTime().Hour + 1;
             if (nextHour >= 24) nextHour -= 24;
-            COM nextHourCOM = chara.FactionManager.CurrentJobSchedule(nextHour);
+            var nextHourJob = chara.FactionManager.CurrentJobPost(nextHour);
             Manageable faction = chara.FactionManager.CurrentJobScheduleFaction(nextHour);
-            nextHourJobDesc.text = nextHourCOM == null ? "free time" : nextHourCOM.DisplayName() + (faction != null ? "(" + chara.FactionManager.CurrentJobScheduleFaction(nextHour).ID + ")" : "") ;
+            nextHourJobDesc.text = (nextHourJob == null || nextHourJob.Name == "") ? "free time" : nextHourJob.Name + (faction != null ? "(" + chara.FactionManager.CurrentJobScheduleFaction(nextHour).ID + ")" : "") ;
 
             /*
             foreach(var i in managedEquipRefs) DestroyCOMButton(i);
