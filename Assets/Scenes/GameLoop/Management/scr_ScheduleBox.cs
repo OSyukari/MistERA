@@ -22,6 +22,7 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
     {
         baseColor = scr_System_CentralControl.current.pref.TextColor_neutral;
         disableColor = scr_System_CentralControl.current.pref.TextColor_disabled;
+        highlightColor = scr_System_CentralControl.current.pref.TextColor_toggle;
     }
 
     public void Refresh()
@@ -34,8 +35,10 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         int currentHour = scr_System_Time.current.getCurrentTime().Hour;
         c = parent.currentChara;
         comName = c.CurrentJobName(index);
-        faction = c.CurrentJobScheduleFaction(index);
+        faction = c.CurrentJobScheduleFaction(index); // get job faction at hour[index]
+
         factionPriority = c.FactionManager.Factions;
+
         indexCurrent = factionPriority.IndexOf(parent.CurrentFaction);
         indexCOM = factionPriority.IndexOf(faction);
 
@@ -49,10 +52,11 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         if (index == currentHour) text.text = "> " + text.text + " <";
 
         if (indexCurrent < indexCOM) this.text.color = disableColor;
+        else if (parent.CurrentHighlightHours != null && parent.CurrentHighlightHours.Contains(this.index)) this.text.color = highlightColor;
         else this.text.color = baseColor;
         
     }
-    public Color32 baseColor, disableColor;
+    public Color32 baseColor, disableColor, highlightColor;
     string comName = "";
     Manageable faction = null;
     Character_Trainable c = null;

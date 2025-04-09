@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections;
 using UnityEngine;
 using Newtonsoft.Json;
+using static Manageable;
 
 [System.Serializable]
 public class Character_Factions
@@ -190,6 +191,16 @@ public class Character_Factions
         if ((Factions.Find(x => x.ID == sourceFaction.ID) == null) )return;
         if (!sourceFaction.ManagedRefs.Contains(Owner.RefID)) return;
         sourceFaction.SetWorkHours(Owner, hour, selectedCOM);
+
+        List<string> s = new List<string>();
+        UpdateSchedule(ref s);
+    }
+
+    public void SetSchedule(Manageable sourceFaction, JobPostPreset preset)
+    {
+        if ((Factions.Find(x => x.ID == sourceFaction.ID) == null)) return;
+        if (!sourceFaction.ManagedRefs.Contains(Owner.RefID)) return;
+        sourceFaction.SetWorkHours(Owner, preset);
 
         List<string> s = new List<string>();
         UpdateSchedule(ref s);

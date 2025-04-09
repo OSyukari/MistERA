@@ -7,6 +7,8 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System;
 using System.Diagnostics;
+using UnityEngine.UIElements;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 
 public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
@@ -233,7 +235,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public scr_HoverableText chara_Race, chara_RaceTemplate;
     public scr_SelectableText chara_HomeFaction, chara_TempHomeFaction;
     public TMP_Text chara_location_ap;
-    public RectTransform chara_schedulebox, chara_scheduleCOMbox;
+    public RectTransform chara_schedulebox;
+    public List<RectTransform> chara_scheduleCOMboxes;
     public RectTransform list_chara;
     public scr_SelectableText prefab_charaNameButton;
 
@@ -296,6 +299,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     }
 
     COM currentHighlightJobCOM = null;
+    public List<int> CurrentHighlightHours = null;
     public COM CurrentHighlightJOBCOM { get { return currentHighlightJobCOM; } }
 
 
@@ -313,7 +317,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         currentChara = c;
 
         chara_fullname.text = c.FullName;
-        charaGender.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(currentChara.Appearance.ToString()), false);
+        charaGender.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(currentChara.Appearance.ToString()));
         chara_Race.SetText(currentChara.Race.DisplayName, false, currentChara.Race.ID + "_tooltip");
         chara_RaceTemplate.SetText(currentChara.RaceTemplate.DisplayName, false, currentChara.RaceTemplate.ID + "_tooltip");
 
@@ -389,7 +393,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 case 31: // chara detail tab
                     button.Initialize(this, new button_CharaDetail(this)); break;
                 case 32: // chara edit schedule
-                    button.Initialize(this, new button_EditSchedule(this, button, chara_schedulebox, chara_scheduleCOMbox)); break;
+                    button.Initialize(this, new button_EditSchedule(this, button, chara_schedulebox, chara_scheduleCOMboxes)); break;
                 case 9999: // exit
                     button.Initialize(this, button_alwaysValid); break;
                 default:
@@ -448,10 +452,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         // if click outside box
-        if (eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
-        // inside box
-        else if (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
-        //Debug.Log("scr_Menu_CharaDetail: OnPointerClick! Data["+eventData.pointerPress+"] rawData["+ eventData.rawPointerPress + "]");
+        if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)))
+        {
+            if (chara_scheduleCOMboxes[0].gameObject.activeInHierarchy)
+            {
+                (validatorsByID[32] as I_ButtonClickable).OnClickButton();
+            }
+            else scr_System_SceneManager.current.UnloadLastCanvasFromScene();
+        }
     }
 
 
@@ -739,17 +747,18 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public class button_EditSchedule : ButtonValidator, I_ButtonClickable
     {
         new scr_Canvas_Management parent;
-        RectTransform scheduleRect, comRect;
+        RectTransform scheduleRect;
+        List<RectTransform> comRects;
         scr_SelectableText button;
         bool isActive = false;
-        public button_EditSchedule(scr_Canvas_Management parent, scr_SelectableText button, RectTransform scheduleRect, RectTransform comRect) : base(parent)
+        public button_EditSchedule(scr_Canvas_Management parent, scr_SelectableText button, RectTransform scheduleRect, List<RectTransform> comRects) : base(parent)
         {
             this.parent = parent;
             this.scheduleRect = scheduleRect;
-            this.comRect = comRect;
+            this.comRects = comRects;
             isActive = false;
             this.button = button;
-            this.comRect.gameObject.SetActive(false);
+            foreach (var i in comRects) i.gameObject.SetActive(false);
         }
 
         public override bool IsButtonValid()
@@ -774,17 +783,16 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             if (isActive)
             {
                 isActive = !isActive;
-                parent.AssignCOM_Deactivate();
                 parent.RefreshCurrentChara();
                 parent.currentHighlightJobCOM = null;
             }
             else
             {
                 isActive = !isActive;
-
             }
             button.Toggle(true, isActive);
-            comRect.gameObject.SetActive(isActive);
+            button.Validate();
+            foreach (var i in comRects) i.gameObject.SetActive(isActive);
 
             if (scheduleRect.transform.childCount >= 24)
             {
@@ -798,8 +806,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     
                 }
             }
-
-            if (isActive) parent.AssignCOM_Activate();
         }
     }
 
@@ -807,79 +813,254 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     {
         new scr_Canvas_Management parent;
         scr_SelectableText button;
-        COM highlightCOM;
+
         TMP_Text description;
-        public button_setHighlightCOM(scr_Canvas_Management parent, scr_SelectableText button, COM highlightCOM, TMP_Text description) : base(parent)
+
+
+        Manageable.JobPostPreset preset = null;
+        Manageable presetOwnerFaction = null;
+        public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, Manageable.JobPostPreset preset, Manageable presetOwnerFaction) : base(parent)
         {
             this.parent = parent;
-            this.button = button;
-            this.highlightCOM = highlightCOM;
+            this.button = box.button;
             button.isButtonToggle = true;
-            this.description = description;
+            this.description = box.description;
+
+            this.preset = preset;
+            this.presetOwnerFaction = presetOwnerFaction;
+
+            
+            button.SetText(preset.jobPostID);
+            var strs = new List<string>();
+            foreach (var cid in preset.workCommands) strs.Add(scr_System_Serializer.current.GetByNameOrID_COM(cid).displayName);
+            this.description.text = String.Join(",", strs) + $"\nWork Hours:[{String.Join(" ", preset.activeHours)}]";
+            box.notifyTarget = this;
+        }
+
+        COM highlightCOM = null;
+        public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, COM highlightCOM) : base(parent)
+        {
+            this.parent = parent;
+            this.button = box.button;
+            button.isButtonToggle = true;
+            this.description = box.description;
+
+            this.highlightCOM = highlightCOM;
             if (highlightCOM == null) description.text = "";
         }
 
         public override bool IsButtonValid()
         {
-            if (parent.currentHighlightJobCOM == highlightCOM)
+            if (this.preset != null)
             {
-                button.Toggle(true, true);
+                // check if preset hours are occupied by any other faction else than self and/or home
+                // if occupied, false.
+                // else, true
+
+                // on click:
+                // non home will register work faction and overwrite home
+                // home will wipe all other home preset and write self (ensuring no 2 job)
+                // one faction only one preset
+                // different faction preset can coexist as long as schedule no conflict
+                var returnVal = true;
+                var chara = parent.currentChara;
+                //var priorityFaction = chara.FactionManager.Factions;
+                foreach (var hour in preset.activeHours)
+                {
+                    var f = chara.CurrentJobScheduleFaction(hour);
+                    if (f == null || f == this.presetOwnerFaction || chara.FactionManager.HomeFactions.Contains(f))
+                    {
+                        // self = home | job
+                        // target = null | home | job
+
+                        // home -> null, job -> null, home -> home, job -> home, allow
+                        // home -> job, job -> job, DISALLOW
+                        // nothing happens
+                    }
+                    else
+                    {
+                        returnVal = false;
+                        tooltip += $"job preset conflict with existing schedule from [{f.FactionDisplayName}]";
+                        break;
+                    }
+                }
+
+                return returnVal;
             }
             else
             {
-                button.Toggle(true, false);
-            }
-            if (highlightCOM != null) description.text = parent.CurrentFaction.GetJobAlertInfo(highlightCOM);
+                if (this.highlightCOM == null)
+                {
+                    return false;
+                }
+                if (parent.currentHighlightJobCOM == highlightCOM)
+                {
+                    button.Toggle(true, true);
+                }
+                else
+                {
+                    button.Toggle(true, false);
+                }
+                description.text = parent.CurrentFaction.GetJobAlertInfo(highlightCOM);
 
-            return true;
+                return true;
+            }
         }
 
         public void OnClickButton()
         {
-            if (parent.currentHighlightJobCOM != highlightCOM) parent.currentHighlightJobCOM = highlightCOM;
-            else parent.currentHighlightJobCOM = null;
-        }
-    }
-
-
-
-    List<COM> tempListCOM = new List<COM>();
-    public scr_button_setHighlightCOM prefab_setHighlightCOM;
-    public void AssignCOM_Activate()
-    {
-        List<COM> list = new List<COM>();
-        list.Add(null);
-        list.AddRange(currentFaction.JobPosts);
-
-        foreach (COM c in list)
-        {
-            int hash = 10000 + (c != null? c.ID.GetHashCode():0);
-
-            if (buttonsByID.ContainsKey(hash))
+            if (this.preset == null)
             {
-                UnityEngine.Debug.LogError("canvas management assign com makebutton error duplicate id hash");
+                if (parent.currentHighlightJobCOM != highlightCOM) parent.currentHighlightJobCOM = highlightCOM;
+                else parent.currentHighlightJobCOM = null;
             }
             else
             {
-                scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
-                RectTransform r = scr.GetComponent<RectTransform>();
-                r.SetParent(list_assignCOM, false);
-                scr_SelectableText comp = scr.button;
+                var chara = parent.currentChara;
+                for (int i = 0; i < 24; i++)
+                {
+                    // first wipe
+                    presetOwnerFaction.SetWorkHours(chara, i, null);
+                    //parent.currentChara.FactionManager.SetSchedule(presetOwnerFaction, i, null);
+                }
+                chara.FactionManager.SetSchedule(presetOwnerFaction, this.preset);
 
-                comp.Initialize(this, new button_setHighlightCOM(this, comp, c, scr.description));
-                comp.linkText = (c != null? c.ID : "");
-                comp.SetText(c != null? c.DisplayName():"None");
+            }
 
-                comp.optionID = hash;
+        }
 
-                buttonsByID.Add(comp.optionID, comp);
-                validatorsByID.Add(comp.optionID, comp.Validator);
+        public void NotifyPointerEnter()
+        {
+            if (this.preset != null) parent.CurrentHighlightHours = this.preset.activeHours;
+            else parent.CurrentHighlightHours = null;
 
-                comp.Validate();
+            parent.ValidateAll();
+        }
+        public void NotifyPointerExit()
+        {
+            parent.CurrentHighlightHours = null;
+            parent.ValidateAll();
+        }
+    }
 
-                tempListCOM.Add(c);
+    public scr_button_setHighlightCOM prefab_setHighlightCOM;
+
+    public enum JobAssignmentTab
+    {
+        singleCOM,
+        jobPost,
+        externalJob
+    }
+    List<int> tempListHash = new List<int>();
+
+    public void OnChildActive(JobAssignmentTab tabID, RectTransform rectTransform)
+    {
+        switch(tabID)
+        {
+            case JobAssignmentTab.singleCOM:
+
+                List<COM> list = new List<COM>();
+                list.AddRange(currentFaction.JobPosts);
+                list.RemoveAll(x => x == null);
+
+
+                foreach (COM c in list)
+                {
+                    int hash = AssertUniqueHash( c.ID.GetHashCode() );
+
+                    scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
+                    RectTransform r = scr.GetComponent<RectTransform>();
+                    r.SetParent(rectTransform, false);
+                    scr_SelectableText comp = scr.button;
+
+                    comp.Initialize(this, new button_setHighlightCOM(this, scr, c));
+                    comp.linkText = (c != null ? c.ID : "");
+                    comp.SetText(c != null ? c.DisplayName() : "None");
+
+                    comp.optionID = hash;
+
+                    buttonsByID.Add(comp.optionID, comp);
+                    validatorsByID.Add(comp.optionID, comp.Validator);
+
+                    comp.Validate();
+
+                    tempListHash.Add(hash);
+                    
+                }
+
+
+                break;
+            case JobAssignmentTab.jobPost:
+                var list2 = currentFaction.JobPostsPresets;
+
+                
+                foreach (var c in list2)
+                {
+
+
+                    int hash = AssertUniqueHash(c.jobPostID.GetHashCode());
+
+                    scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
+                    RectTransform r = scr.GetComponent<RectTransform>();
+                    r.SetParent(rectTransform, false);
+                    scr.description.text = c.jobPostID;
+
+                    /*
+                    scr_SelectableText comp = scr.button;
+
+                    comp.Initialize(this, new button_setHighlightCOM(this, comp, c, scr.description));
+                    comp.linkText = (c != null ? c.jobPostID : "");
+                    comp.SetText(c != null ? c.DisplayName() : "None");
+
+                    comp.optionID = hash;
+
+                    buttonsByID.Add(comp.optionID, comp);
+                    validatorsByID.Add(comp.optionID, comp.Validator);
+
+                    comp.Validate();
+
+                    tempListHash.Add(hash);
+                    */
+                }
+
+                break;
+            case JobAssignmentTab.externalJob: 
+
+                foreach(var faction in currentFaction.ConnectedFactions)
+                {
+                    foreach(var c in faction.JobPostsPresets)
+                    {
+                        int hash = AssertUniqueHash(c.jobPostID.GetHashCode());
+
+                        scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
+                        RectTransform r = scr.GetComponent<RectTransform>();
+                        r.SetParent(rectTransform, false);
+                        scr.description.text = c.jobPostID;
+                    }
+                }
+                break;
+        }
+
+    }
+
+    public void OnChildDisable(JobAssignmentTab tabID, RectTransform rect)
+    {
+        foreach(var hash in tempListHash)
+        {
+            scr_SelectableText text = buttonsByID[hash];
+            buttonsByID.Remove(hash);
+            ButtonValidator validator = validatorsByID[hash];
+            validatorsByID.Remove(hash);
+
+            if(validator != null) validator.Destroy();
+            if (text != null)
+            {
+                text.gameObject.SetActive(false);
+                Destroy(text.gameObject);
             }
         }
+
+        tempListHash.Clear();
     }
 
     public void NotifyScheduleChanged()
@@ -887,26 +1068,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         ValidateAll();
     }
 
-    public void AssignCOM_Deactivate()
-    {
-        for(int i = tempListCOM.Count - 1; i >=0;i--)
-        {
-            COM c = tempListCOM[i];
-            int hash = 10000 + (c != null ? c.ID.GetHashCode() : 0);
-
-            scr_SelectableText text = buttonsByID[hash];
-            buttonsByID.Remove(hash);
-            ButtonValidator validator = validatorsByID[hash];
-            validatorsByID.Remove(hash);
-
-            validator.Destroy();
-            text.gameObject.SetActive(false);
-            Destroy(text.gameObject);
-            tempListCOM.RemoveAt(i);
-        }
-
-        while (list_assignCOM.transform.childCount > 0) DestroyImmediate(list_assignCOM.transform.GetChild(0).gameObject);
-    }
 
 
 }

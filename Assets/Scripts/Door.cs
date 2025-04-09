@@ -38,6 +38,9 @@ public class Door_Instance
         {
             cost = 0.1f;
            // Debug.Log("DoorInstance with 0f cost, this could be dangerous. defaulting to 0.1f");
+        }else if (cost > 30f)
+        {
+            Debug.Log("DoorInstance with cost higher than 30f, might lead to unintended gameplay behaviors (such as excessive pathing time)");
         }
         this.cost = cost;
     }

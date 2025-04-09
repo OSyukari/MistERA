@@ -74,6 +74,9 @@ public class Map_Instance
         //Debug.Log("RebuildActiveFloorRefs: source["+ (playerRoom == null? "null": playerRoom.DisplayName)+"|"+ (playerRoom.parentFloor == null ? "null": playerRoom.parentFloor.displayName)+ "]" + String.Join("|", _activeFloorRefIDs));
     }
 
+
+
+
     [SerializeField][JsonProperty] List<int> _activeFloorRefIDs = null;
     [JsonIgnore] public List<int> ActiveFloorRefIDs
     {
@@ -219,9 +222,19 @@ public class Map_Instance
                     FloorLayout.Add(new Tuple<int, int>(targetExit.Item3, floorExit.Item3), new Vector2(targetExit.Item4.offsetX, targetExit.Item4.offsetY));
                 }
             }
-        }       
+        }
 
-
+        //Debug.LogError("MAP GRAPH REBUILT");
+        foreach (var a in factionGraphs)
+        {
+            Manageable fa = scr_System_CampaignManager.current.FindFactionByID(a.Key);
+            foreach(var b in a.Value)
+            {
+                Manageable fb = scr_System_CampaignManager.current.Map.GetRoomByRef(b).FactionOwner;
+                ConnectFactions(fa, fb);
+            }
+            
+        }
         /*
          https://github.com/KeRNeLith/QuikGraph/wiki/Creating-Graphs
 
@@ -660,6 +673,114 @@ public class Map_Instance
         }
 
         return resultsHolder;
+    }
+
+    /// <summary>
+    /// This list will be used when creating player move button and when update existing
+    /// </summary>
+    [SerializeField][JsonProperty] Dictionary<string, List<int>> factionGraphs = new Dictionary<string, List<int>>();
+
+    public List<Manageable> GetConnectedFactionRooms(string factionID)
+    {
+        var list = new List<Manageable>();
+        if (!factionGraphs.ContainsKey(factionID)) return list;
+
+        var selfFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
+        if (selfFaction == null || selfFaction.MainExit == null)
+        {
+            Debug.LogError($"Faction [{selfFaction.ID}] has no main exit");
+            return list;
+        }
+        foreach (var i in factionGraphs[factionID])
+        {
+            var j = scr_System_CampaignManager.current.Map.GetRoomByRef(i);
+            if (j == null || j.FactionOwner == null) continue;
+            if (j.FactionOwner.MainExit == null)
+            {
+                Debug.LogError($"Faction [{j.FactionOwner.ID}] has no main exit");
+                continue;
+            }
+            list.Add(j.FactionOwner);
+        }
+        return list;    
+    }
+    public void OnFactionMainExitChange(Manageable faction, int oldExitRef, int newExitRef)
+    {
+        var existingExitConnections = factionGraphs.ContainsKey(faction.ID) ? factionGraphs[faction.ID] : new List<int>();
+        // exit is duplicate of entry
+
+        foreach(var target in existingExitConnections)
+        {
+            var targetRoom = scr_System_CampaignManager.current.Map.GetRoomByRef(target);
+            if (targetRoom == null) continue;
+
+            RemoveFactionExit(oldExitRef, target);
+
+            bool opsResult = true;
+            opsResult = AddFactionExit(newExitRef, target, new Door_Instance(faction.MainExitCost)) && opsResult;
+            opsResult = AddFactionExit(target, newExitRef, RemoveFactionExit(target, oldExitRef)) && opsResult;
+
+            if (!opsResult) Debug.LogError($"OnFactionMainExitChange ERROR [{faction.ID}] update room [{targetRoom.DisplayName}], result {opsResult}");
+        }
+
+    }
+
+    public void ConnectFactions(Manageable a, Manageable b)
+    {
+        if (a == null || b == null)
+        {
+            Debug.LogError($"Connecting Factions [{a.ID}] and [{b.ID}] error, one of them is null");
+            return;
+        }
+        if (a.MainExit == null || b.MainExit == null)
+        {
+            Debug.LogError($"Connecting Factions [{a.ID}] and [{b.ID}] error, one of them has null exit");
+            return;
+        }
+
+        if (!factionGraphs.ContainsKey(a.ID)) factionGraphs.Add(a.ID, new List<int>() { b.MainExit.RefID });
+        else if (!factionGraphs[a.ID].Contains(b.MainExit.RefID)) factionGraphs[a.ID].Add(b.MainExit.RefID);
+
+        if (!factionGraphs.ContainsKey(b.ID)) factionGraphs.Add(b.ID, new List<int>() { a.MainExit.RefID });
+        else if (!factionGraphs[b.ID].Contains(a.MainExit.RefID)) factionGraphs[b.ID].Add(a.MainExit.RefID);
+
+        bool opsResult = true;
+        opsResult = AddFactionExit(a.MainExit.RefID, b.MainExit.RefID, new Door_Instance(a.MainExitCost)) && opsResult;
+        opsResult = AddFactionExit(b.MainExit.RefID, a.MainExit.RefID, new Door_Instance(b.MainExitCost)) && opsResult;
+
+        if(!opsResult) Debug.LogError($"Connecting Factions [{a.ID}] and [{b.ID}], result {opsResult}");
+        else Debug.Log($"Connecting Factions [{a.ID}] and [{b.ID}], result {opsResult}");
+    }
+
+    public void DisconnectFactions(Manageable a, Manageable b)
+    {
+        if (a == null || b == null) return;
+        if (a.MainExit == null || b.MainExit == null) return;
+
+        RemoveFactionExit(a.MainExit.RefID, b.MainExit.RefID);
+        RemoveFactionExit(b.MainExit.RefID, a.MainExit.RefID);
+
+        if (factionGraphs.ContainsKey(a.ID)) factionGraphs[a.ID].Remove(b.MainExit.RefID);
+        if (factionGraphs.ContainsKey(b.ID)) factionGraphs[b.ID].Remove(a.MainExit.RefID);
+    }
+
+    protected bool AddFactionExit(int from, int to, Door_Instance cost)
+    {
+        if (cost == null) return false;
+        var edge = new TaggedEdge<int, Door_Instance>(from, to, cost);
+        if (graph.Edges.ToList().Find(x=>x.Source == from && x.Target == to) == null) graph.AddVerticesAndEdge(edge);
+        return true;
+    }
+
+    protected Door_Instance RemoveFactionExit(int from, int to)
+    {
+        var target = graph.Edges.ToList().Find(x=>x.Source == from && x.Target == to);
+        if (target == null) return null;
+        else
+        {
+            graph.RemoveEdge(target);
+            return target.Tag;
+        }
     }
 
     public void SerializationRebuilt()

@@ -30,7 +30,11 @@ public class ActionPackage_PathTo : ActionPackage
     {
         get
         {
-            if(_path == null && doerRef != -1 && TargetRoom != null) _path = scr_System_CampaignManager.current.Map.Findpath(doerRef, TargetRoom.RefID).ToList();
+            if (_path == null && doerRef != -1 && TargetRoom != null)
+            {
+                var enumerator = scr_System_CampaignManager.current.Map.Findpath(doerRef, TargetRoom.RefID);
+                _path = enumerator == null ? new List<TaggedEdge<int, Door_Instance>>() : enumerator.ToList();
+            }
             return _path == null ? null : _path.GetEnumerator();
         }
     }
@@ -62,6 +66,14 @@ public class ActionPackage_PathTo : ActionPackage
 
         if (path == null) duration = 1;
         else{
+
+            if (true)
+            {
+                List<string> l = new List<string>();
+                foreach (var i in _path) l.Add($"[{i.Source}]-"+(i.Tag == null ? "X" : i.Tag.Cost)+"->[{i.Target}]");
+                Debug.Log($"Path created: {String.Join("\n",l)}");
+            }
+
             var pp = path;
             pp.MoveNext();
             duration += (int)pp.Current.Tag.Cost;

@@ -30,6 +30,14 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable
 
 }
 
+[System.Serializable]
+
+public class Map_MainExit
+{
+    public string roomID = "";
+    public int exitCost = 1;
+}
+
 /// <summary>
 /// Assets\Data\Defs\MapDefs\MapDefs.json
 /// </summary>
@@ -39,6 +47,7 @@ public class MapPlan
     public string ID = "";
     public float z_rotation = 0f;
     [SerializeField] public List<MapPlan_Floor> floors;
+    [SerializeField] public Map_MainExit mainExit = null;
 
     public Dictionary<int, Floor_Instance> Instantiate(string factionOverride = "", bool disablePlayerInit = false, bool disableCharaInstantiation = false)
     {
@@ -90,8 +99,12 @@ public class MapPlan
             {
                 org.AddJobPost(module);
             }
-        }
 
+            if (mainExit != null && mainExit.roomID != "")
+            {
+                org.SetMainExit(mainExit);
+            }
+        }
 
         return list;
     }
@@ -120,6 +133,9 @@ public class MapPlan
             public string itemCount;
         }
     }
+
+
+
 
     [System.Serializable]
     public class WorkHoursInit

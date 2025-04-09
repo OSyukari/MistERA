@@ -908,6 +908,13 @@ public class scr_System_CampaignManager : MonoBehaviour
                     map.AddMapTemplate(ini.initArguments[0], ini.initArguments[1].ToString());
                     // FindInstanceByID(0).baseID = ini.initArguments[0];
                 }
+                else if (ini.initClass == "campaign_init_factionConnect")
+                {
+                    var f1 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[0]);
+                    var f2 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[1]);
+                    scr_System_CampaignManager.current.Map.ConnectFactions(f1, f2);
+                    // FindInstanceByID(0).baseID = ini.initArguments[0];
+                }
             }
 
             //

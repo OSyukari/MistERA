@@ -46,8 +46,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             {
                 if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode())*2))
                 {
-                    addBtn(prefab_roomButton, picture.rectTransform, ri, false);
-                    addBtn(prefab_roomButton, roomList, ri, true, true);
+                    addBtn(prefab_roomButton, picture.rectTransform, ri, false,false,true);
+                    addBtn(prefab_roomButton, roomList, ri, true, true, false);
 
                 }
                 else
@@ -97,7 +97,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         btn.Validate();
     }
 
-    private void addBtn(RectTransform prefab, RectTransform parent, Room_Instance ri, bool extraOffset = false, bool displayCharaName = false)
+    private void addBtn(RectTransform prefab, RectTransform parent, Room_Instance ri, bool extraOffset = false, bool displayCharaName = false, bool showBracket = false)
     {
         RectTransform r2 = Instantiate(prefab);
         r2.SetParent(parent, false);
@@ -108,7 +108,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         scr_SelectableText btn = r2.GetComponent<scr_SelectableText>();
 
         btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn));
-        btn.showBrackets = false;
+        btn.showBrackets = showBracket;
         Floor_Instance parentFloor = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(ri.RefID);
         int tempRefID = ri.RefID;
         if (parentFloor != null) tempRefID -= parentFloor.FloorCode;

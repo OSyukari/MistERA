@@ -115,7 +115,7 @@
         {"ID":"bridge_briefing","Entry":"简报室"},
         {"ID":"bridge_lounge","Entry":"休息室"},
         {"ID":"bridge_captainsoffice","Entry":"舰长办公室"},
-        {"ID":"bridge_captainsroom","Entry":"舰长房间"},
+        {"ID":"bridge_captainsroom","Entry":"??????"},
         {"ID":"bridge_toilet","Entry":"厕所"},
 
         {"ID":"lounge2_dining","Entry":"餐厅"},

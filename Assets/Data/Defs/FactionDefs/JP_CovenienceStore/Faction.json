@@ -8,16 +8,17 @@
                 "z_rotation":0.0,
                 "initializeFaction":"jp_convenience_store",
                 "setPrivateRoomOwner":true,
+                "mainExit": { "roomID": "store_1F_entrance", "exitCost": 5 },
                 "floors":
                 [
                     {
-                        "ID":"floor_stockasset_bridge",
-                        "nameOverwrite":"campaign1_map_utnapishtim_bridge",
+                        "ID":"floor_jp_convenience_store",
+                        "nameOverwrite":"",
                         "Additional":
                         [
                             {
                                 "addClass":"map_init_organization",
-                                "map_init_organization":{ "orgID":"Utnapishtim", "addCharaToFaction":true, "setPrivateRoom":true }
+                                "map_init_organization":{ "orgID":"jp_convenience_store", "addCharaToFaction":true, "setPrivateRoom":true }
                             }
                         ]
                     }
@@ -70,7 +71,7 @@
                 "noDisplay":true,
                 "recipe":[],
                 "furnitureSize":2,
-                "givesJob": [ { "comID":["jp_convenience_store_storageCleaning"] } ]
+                "givesJob": [  ]
             }
         ]
     },

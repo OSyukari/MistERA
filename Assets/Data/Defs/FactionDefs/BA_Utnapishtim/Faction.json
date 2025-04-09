@@ -116,6 +116,14 @@
                         {
                             "initClass":"campaign_init_productionOrder",
                             "initArguments":["Utnapishtim", "production_cooking_consumable_meal_MRE_1", "craftUntilCount" ]
+                        },
+                        {
+                            "initClass":"campaign_init_map_extra",
+                            "initArguments":["map_jp_convenience_store", "SunMart"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionConnect",
+                            "initArguments":["Utnapishtim", "SunMart"]
                         }
                     ]
                 }
@@ -205,15 +213,12 @@
                 "z_rotation":0.0,
                 "initializeFaction":"Utnapishtim",
                 "setPrivateRoomOwner":true,
+                "mainExit": { "roomID": "bridge_captainsroom", "exitCost": 5 },
                 "floors":[
                     {
                         "ID":"floor_stockasset_bridge",
                         "nameOverwrite":"campaign1_map_utnapishtim_bridge",
                         "Additional":[
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"bridge_captainsroom", "charaBaseID": [ "Campaign1_Char_Rin" ] }
-                            },
                             {
                                 "addClass":"map_init_organization",
                                 "map_init_organization":{ "orgID":"Utnapishtim", "addCharaToFaction":true, "setPrivateRoom":true }
@@ -249,12 +254,20 @@
                                 "map_init_placeChara":{ "roomID":"lounge2_singlesuite6", "charaBaseID": [ "Campaign1_Char_Momoka" ] }
                             },
                             {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite7", "charaBaseID": [ "Campaign1_Char_Himari" ] }
+                            },
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite8", "charaBaseID": [ "Campaign1_Char_Yuuka" ] }
+                            },
+                            {
                                 "addClass":"map_init_playerLocation",
                                 "map_init_playerLocation":{ "roomID":"lounge2_exec_suite_1" }
                             },
                             {
                                 "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_exec_suite_2", "charaBaseID": [ "Campaign1_Char_Himari", "Campaign1_Char_Yuuka" ] }
+                                "map_init_placeChara":{ "roomID":"lounge2_exec_suite_2", "charaBaseID": [ "Campaign1_Char_Rin" ] }
                             },
                             {
                                 "addClass":"map_init_organization",

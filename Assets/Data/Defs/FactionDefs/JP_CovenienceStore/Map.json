@@ -1,0 +1,151 @@
+{
+    "Floors":
+    {
+        "list":[
+            {
+                "ID":"floor_jp_convenience_store",
+                "imagePath":"Workplaces/SunMart/floorplan",
+                "floorWidth":911.0,
+                "floorHeight":714.0,
+                "mapExit":"store_1F_entrance",
+                "exits":[
+                    {
+                        "ID":"South",
+                        "connectedRoom":"store_1F_entrance",
+                        "offsetY":-407.0
+                    }
+                ],
+                "rooms":[
+                    {
+                        "ID":"store_2F_canteen",
+                        "displayName":"2F Canteen",
+                        "offsetX":-335.6,
+                        "offsetY":67,
+                        "connects": [ { "ID":"store_2F_hallway", "cost":1.0 } ],
+                        "furnitureIDs":["furniture_galley"],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_UtnapishtimBridge_V2"
+                    },
+                    {
+                        "ID":"store_2F_toilet_ex",
+                        "displayName":"2F Large Toilet??",
+                        "offsetX":-334.3,
+                        "offsetY":156.1,
+                        "connects": [ { "ID":"store_2F_hallway", "cost":1.0  }],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_shower"],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_UtnapishtimBridge_V2"
+                    },
+                    {
+                        "ID":"store_2F_toilet",
+                        "displayName":"2F Toilet",
+                        "offsetX":-334.3,
+                        "offsetY":232.4,
+                        "connects": [ { "ID":"store_2F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_shower"],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_SchaleOperationRoom"
+                    },
+                    {
+                        "ID":"store_1F_office",
+                        "displayName":"Office",
+                        "offsetX":202,
+                        "offsetY":101.4,
+                        "connects": [ { "ID":"store_1F_storage", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_bed_single",
+                                        "furniture_table_1_chair_1"],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_LuxuriousRooms"
+                    },
+                    {
+                        "ID":"store_1F_kitchen",
+                        "displayName":"Kitchen",
+                        "offsetX":202,
+                        "offsetY":192,
+                        "connects": [ { "ID":"store_1F_storage", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_galley"],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShowerRoom"
+                    },
+                    {
+                        "ID":"store_1F_storage",
+                        "displayName":"Storage",
+                        "offsetX":342.1,
+                        "offsetY":158.1,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_marker_jp_convenience_store_storageCleaning"],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShowerRoom"
+                    },
+                    {
+                        "ID":"store_1F_parking",
+                        "displayName":"Parking",
+                        "offsetX":309.9,
+                        "offsetY":-115.1,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShowerRoom"
+                    },
+                    {
+                        "ID":"store_1F_shopping_1",
+                        "displayName":"Shop Area 1",
+                        "offsetX":-33.7,
+                        "offsetY":-100,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShowerRoom"
+                    },
+                    {
+                        "ID":"store_1F_shopping_2",
+                        "displayName":"Shop Area 2",
+                        "offsetX":-33.7,
+                        "offsetY":158.1,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShowerRoom"
+                    },
+                    {
+                        "ID":"store_1F_counter",
+                        "displayName":"Counter",
+                        "offsetX":-33.7,
+                        "offsetY":-262.3,
+                        "connects": [ { "ID":"store_1F_shopping_1", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_marker_jp_convenience_store_frontDesk"],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShowerRoom"
+                    },
+                    {
+                        "ID":"store_1F_entrance",
+                        "displayName":"Entrance",
+                        "offsetX":-218.7,
+                        "offsetY":-283.6,
+                        "connects": [ { "ID":"store_1F_counter", "cost":1.0  },
+                                      { "ID":"store_1F_parking", "cost":4.0  }  ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShowerRoom"
+                    },
+                    {
+                        "ID":"store_1F_postOffice",
+                        "displayName":"Post Office",
+                        "offsetX":-314.8,
+                        "offsetY":-162.9,
+                        "connects": [ { "ID":"store_1F_entrance", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ShowerRoom"
+                    },
+                    {
+                        "ID":"store_2F_hallway",
+                        "displayName":"2F Hallway",
+                        "offsetX":-400.7,
+                        "offsetY":169.8,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_RestingLounge"
+                    },
+                    {
+                        "ID":"store_1F_hallway",
+                        "displayName":"1F Hallway",
+                        "offsetX":202,
+                        "offsetY":53.2,
+                        "connects": [ { "ID":"store_2F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_ReceptionRoom"
+                    }
+                ]
+            }
+        ]
+    }
+}

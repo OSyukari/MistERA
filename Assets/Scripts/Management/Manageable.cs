@@ -44,6 +44,33 @@ public class Manageable : I_Disposable
         }
     }
 
+
+    [JsonIgnore] protected Room_Instance mainExit_cache = null;
+    [JsonIgnore] public Room_Instance MainExit { get
+    {
+        if (mainExit_cache == null)
+        {
+            mainExit_cache = mainExit == null ? null :
+                             mainExit.roomID == "" ? null :
+                             ManagedRooms.Values.ToList().Find(x => x.Base.ID == mainExit.roomID);
+        }
+        return mainExit_cache;
+    } }
+
+    [JsonIgnore] public int MainExitCost { get { return mainExit == null ? 1 : mainExit.exitCost; } }
+    [SerializeField][JsonProperty] protected Map_MainExit mainExit = null;
+    public void SetMainExit(Map_MainExit exit)
+    {
+        // refresh map
+        int previousRef = MainExit == null ? -1 : MainExit.RefID;
+        mainExit = exit;
+        mainExit_cache = null;
+        int newRef = MainExit == null ? -1 : MainExit.RefID;
+
+        // all established paths
+        scr_System_CampaignManager.current.Map.OnFactionMainExitChange(this, previousRef, newRef);
+    }
+
     public bool isManager(int charaRef)
     {
         return charaGuestStatus.ContainsKey(charaRef) && charaGuestStatus[charaRef] == Manageable_GuestStatus.Manager;
@@ -1134,6 +1161,14 @@ public class Manageable : I_Disposable
         }
     }
 
+    [JsonIgnore] public List<Manageable> ConnectedFactions
+    {
+        get
+        {
+            return scr_System_CampaignManager.current.Map.GetConnectedFactionRooms(this.ID);
+        }
+    }
+
     [System.Serializable]
     public class Job_Schedule
     {
@@ -1595,7 +1630,7 @@ public class Manageable : I_Disposable
 
     }
 
-    public List<JobPostPreset> JobPostsPresets = new List<JobPostPreset>();
+    [SerializeField] public List<JobPostPreset> JobPostsPresets = new List<JobPostPreset>();
     public void AddJobPost(MapPlan.WorkModuleInit module)
     {
         this.JobPostsPresets.Add(new JobPostPreset(module));

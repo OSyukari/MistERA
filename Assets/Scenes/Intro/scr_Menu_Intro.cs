@@ -70,7 +70,7 @@ public abstract class scr_Menu : MonoBehaviour
             s += hash + "\n";
             counter++;
         }
-        if (counter > 0) Debug.LogError(s);
+        if (counter == 100) Debug.LogError(s);
         return hash;
     }
 
