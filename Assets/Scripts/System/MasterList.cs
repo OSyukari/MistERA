@@ -20,6 +20,7 @@ public class MasterList
             if (list == null)
             {
                 list = new ArrayList();
+                list.Add(Dictionary);
                 list.Add(Experiences);
                 list.Add(Character_Origin_StartingOptions);
                 list.Add(RelationshipTypes);
@@ -30,6 +31,8 @@ public class MasterList
                 list.Add(CharacterTemplates);
                 list.Add(Character_Personalities);
                 list.Add(Character_Origins);    // need to be ordered later cuz require other list to be ready
+                list.Add(COMs);
+
             }
             return list;
         }
@@ -45,6 +48,8 @@ public class MasterList
     public Index_CharaSkills Skills = null;
     public Character_Trainable_SerializableTemplate_Index CharacterTemplates = null;
     public Character_Personality_Index Character_Personalities = null;
+    public Index_COM COMs = null;
+    public Dictionary_Index Dictionary = null;
 
     public void InitializeLists()
     {
@@ -58,6 +63,8 @@ public class MasterList
         this.Skills = new Index_CharaSkills();
         this.CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
         this.Character_Personalities = new Character_Personality_Index();
+        this.COMs = new Index_COM();
+        this.Dictionary = new Dictionary_Index();
     }
 
     public void MergeWith(MasterList list)
@@ -80,6 +87,7 @@ public class MasterList
 
         foreach (object l in List)
         {
+            if (l is ISerializationCallbackReceiver) (l as ISerializationCallbackReceiver).OnAfterDeserialize();
             if (l is I_IndexHasID) (l as I_IndexHasID).RegisterAllID();
             if (l is I_IndexHasTooltip) (l as I_IndexHasTooltip).RegisterAllTooltip();
         }

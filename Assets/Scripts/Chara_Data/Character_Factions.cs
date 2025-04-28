@@ -186,24 +186,60 @@ public class Character_Factions
         foreach(var v in WorkFactions) v.NotifyFactionMemberChange();
     }
 
+    /// <summary>
+    /// Workfaction for now does not allow setting single, so if target is not registered as home it will skip setting
+    /// </summary>
+    /// <param name="sourceFaction"></param>
+    /// <param name="hour"></param>
+    /// <param name="selectedCOM"></param>
     public void SetSchedule(Manageable sourceFaction, int hour, COM selectedCOM)
     {
-        if ((Factions.Find(x => x.ID == sourceFaction.ID) == null) )return;
-        if (!sourceFaction.ManagedRefs.Contains(Owner.RefID)) return;
-        sourceFaction.SetWorkHours(Owner, hour, selectedCOM);
+        //string message = "";
 
+        if (!HomeFactions.Contains(sourceFaction)) return;
+
+        if(selectedCOM != null)
+        {
+            // check every hour setting if jobpost clear it
+            sourceFaction.SetWorkHour(Owner, hour, selectedCOM);    
+        }
+
+        sourceFaction.SetWorkHour(Owner, hour, selectedCOM);
+        
         List<string> s = new List<string>();
         UpdateSchedule(ref s);
     }
 
+
+    
+    /// <summary>
+    /// if chara already belong to said faction (eg home faction) apply it directly
+    /// if chara does not belong:
+    /// - then job setting will be as job faction
+    /// - register as job faction and apply
+    /// </summary>
+    /// <param name="sourceFaction"></param>
+    /// <param name="preset"></param>
     public void SetSchedule(Manageable sourceFaction, JobPostPreset preset)
     {
-        if ((Factions.Find(x => x.ID == sourceFaction.ID) == null)) return;
-        if (!sourceFaction.ManagedRefs.Contains(Owner.RefID)) return;
-        sourceFaction.SetWorkHours(Owner, preset);
+        //string message = "";
+        if (preset == null || !preset.isActive)
+        {
+            if (WorkFactions.Contains(sourceFaction)) RemoveWorkFaction(sourceFaction.ID);
+        }
+        else
+        {
+            if (!this.Factions.Contains(sourceFaction)) AddWorkFaction(sourceFaction.ID);
+            foreach(var hour in preset.activeHours)
+            {
+                sourceFaction.SetWorkHour(Owner, hour, preset.jobPostID, preset.workCommands);
+            }
+        }
 
         List<string> s = new List<string>();
         UpdateSchedule(ref s);
+        
+        //Debug.Log($"chara {Owner.FirstName} setschedule {preset.jobPostID} for faction {sourceFaction.ID}, {message}");
     }
 
 
@@ -255,7 +291,11 @@ public class Character_Factions
         UpdateSchedule(ref s);
     }
 
-
+    /// <summary>
+    /// return value of Null include case where chara has private schedule!!!!
+    /// </summary>
+    /// <param name="hour"></param>
+    /// <returns></returns>
     public Manageable CurrentJobScheduleFaction(int hour = -1)
     {
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
@@ -272,7 +312,7 @@ public class Character_Factions
     public string CurrentJobName(int hour)
     {
         var v = CurrentJobScheduleFaction(hour);
-        if(v == null) return "none";
+        if(v == null) return privateSchedule.Get(hour).Name;
         return v.GetSchedule(Owner).Get(hour).Name;
     }
 
@@ -280,7 +320,7 @@ public class Character_Factions
     {
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
         var v = CurrentJobScheduleFaction((int)hour);
-        if(v == null) return null;
+        if(v == null) return privateSchedule.Get(hour);
         return v.GetSchedule(Owner).Get(hour);
     }
 
@@ -357,16 +397,15 @@ public class Character_Factions
     /// If a modification has taken place, use UpdateSchedule() instead
     /// </summary>
     /// <param name="s"></param>
-    public Tuple<int[], int> ValidateSchedule(ref List<string> s)
+    public Tuple<int[], int> ValidateSchedule(ref List<string> s, List<int> extraSchedule = null, bool extraDebug = false)
     {
         int consecutiveRestHour = 0;
         int counter = 0;
-
         int[] consecutiveSleepHours = new int[24];
 
         for(int i = 0; i < 48; i++)
         {
-            if (CurrentJobScheduleFaction(i%24) != null) counter = 0;
+            if (CurrentJobScheduleFaction(i%24) != null || (extraSchedule != null && extraSchedule.Contains(i%24))) counter = 0;
             else
             {
                 if (counter < 24) counter++;
@@ -378,11 +417,11 @@ public class Character_Factions
         int listMax = consecutiveSleepHours.Max();
         int sleepHours = Owner.Stats.SleepHours;
 
-        s.Add("Required Sleep hours [" + sleepHours + "]");
+        if(extraDebug) s.Add("Required Sleep hours [" + sleepHours + "]");
 
-        if (consecutiveRestHour < sleepHours) s.Add("Does not have enough freetime for a full rest");
-        else s.Add("Max Consecutive free hours [" + consecutiveRestHour + "] listMax ["+ listMax+ "] indexOflistMax [" + Array.IndexOf(consecutiveSleepHours, consecutiveSleepHours.Max()).ToString() + "]");
-        s.Add("\n"+String.Join(" ", consecutiveSleepHours));
+        if (consecutiveRestHour < sleepHours) s.Add(Utility.WrapTextColor("Does not have enough freetime for a full rest", scr_System_CentralControl.current.pref.TextColor_conflict) );
+        else if (extraDebug) s.Add("Max Consecutive free hours [" + consecutiveRestHour + "] listMax ["+ listMax+ "] indexOflistMax [" + Array.IndexOf(consecutiveSleepHours, consecutiveSleepHours.Max()).ToString() + "]");
+        if (extraDebug) s.Add("\n"+String.Join(" ", consecutiveSleepHours));
 
         // if we dont have enough consecutive time, we wipe everything and everytime character rest it falls dead sleep
         return new Tuple<int[], int>(consecutiveSleepHours, consecutiveRestHour);

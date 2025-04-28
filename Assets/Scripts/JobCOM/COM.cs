@@ -233,21 +233,10 @@ public class COM : ISerializationCallbackReceiver
 
     public COM_Requirements requirements = new COM_Requirements();
 
-    // ??????EP??
-    public COM_Descriptions description_begin;
-    // com??????????????????????????
-    //      1
-    public COM_Descriptions descriptions_remove;
-    // com??
-    //      ???N
-    public COM_Descriptions description_ongoing;
-    // com????????
-    //      ???N???master???????variant???/??/????
-    public COM_Descriptions description_after;
-    // com?????
-    //      ????????
-    // COM??????????
-    // 
+         public COM_Descriptions description_begin = new COM_Descriptions();
+        public COM_Descriptions descriptions_remove = new COM_Descriptions();
+        public COM_Descriptions description_ongoing = new COM_Descriptions();
+        public COM_Descriptions description_after = new COM_Descriptions();
 
     public string GetDescription_Begin(EvaluationPackage evp, int variantID)
     {
@@ -645,7 +634,7 @@ public class COM : ISerializationCallbackReceiver
         public COM_Descriptions description_ongoing = new COM_Descriptions();
         public COM_Descriptions description_after = new COM_Descriptions();
 
-        public COM_Requirements requirements;
+        public COM_Requirements requirements = new COM_Requirements();
         public bool setForce = false;
 
         public string GetDescription_Begin(EvaluationPackage evp)
@@ -784,7 +773,7 @@ public class COM : ISerializationCallbackReceiver
         {
             this.displayName = s;
             ownerCOMID = c.ID;
-            requirements = new COM_Requirements();
+            //this.requirements = new COM_Requirements();
             //Debug.LogError("COMVARIANT create useBaseDsc?[ " + (useBaseDscription == 1) + "] useAnotherDesc?[" + (useAnotherVariantDescription > -1) + "]");
         }
 
@@ -800,6 +789,7 @@ public class COM : ISerializationCallbackReceiver
         }
         public void Read(COM c) {
             //if (c.VariantDoNotReadRequirement) Debug.LogError("reading variant req despite forbidden");
+            if(c == null) Debug.LogError("reading variant req owner null");
             ownerCOMID = c.ID;
             if (!c.VariantDoNotReadRequirement) this.requirements.Read(c.requirements);
             //if (!(useBaseDsc == 1)) Debug.LogError("owner ["+ownerCOM.displayName+"] COMVARIANT READ useBaseDsc?[ " + (useBaseDsc == 1) + "] useAnotherDesc?[" + (useAnothersDesc > -1) + "]");

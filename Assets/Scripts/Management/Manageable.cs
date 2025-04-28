@@ -828,33 +828,36 @@ public class Manageable : I_Disposable
         }
     }
 
-    public void SetWorkHours(Character_Trainable c, int hour, COM targetCOM = null)
+    /// <summary>
+    /// This method should only be called by Character.FactionManager.SetSchedule
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="hour"></param>
+    /// <param name="targetCOM"></param>
+    public void SetWorkHour(Character_Trainable c, int hour, COM targetCOM = null)
     {
-        if (this.ManagedChara.Find(x => x.BaseID == c.BaseID) == null) return;
-        if (!ManagedRefs.Contains(c.RefID)) return;
-
-        if (targetCOM != null) charaSchedules[c.RefID].Get(hour).Set(targetCOM.ID);
-        else charaSchedules[c.RefID].Get(hour).Set("");
-
-        List<string> s = new List<string>();
-        c.FactionManager.UpdateSchedule(ref s);
+        if (!charaSchedules.ContainsKey(c.RefID)) Debug.LogError($"Setting work for {c.FirstName} but target not registerd");
+        else charaSchedules[c.RefID].Get(hour).Set(targetCOM == null ? "" : targetCOM.ID);
+    }
+    /// <summary>
+    /// This method should only be called by Character.FactionManager.SetSchedule
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="hour"></param>
+    /// <param name="jobPostID"></param>
+    /// <param name="commands"></param>
+    public void SetWorkHour(Character_Trainable c, int hour, string jobPostID, List<string> commands)
+    {
+        if (!charaSchedules.ContainsKey(c.RefID)) Debug.LogError($"Setting work for {c.FirstName} but target not registerd");
+        else charaSchedules[c.RefID].Get(hour).Set(jobPostID, commands);
     }
 
-    public void SetWorkHours(Character_Trainable c, JobPostPreset preset)
+    public void UnsetWork(Character_Trainable c)
     {
-        if (preset == null || !preset.isActive) {
-            foreach (var hour in preset.activeHours) SetWorkHours(c, hour);
-            return;
-        }
-
-        if (this.ManagedChara.Find(x => x.BaseID == c.BaseID) == null) return;
-        if (!ManagedRefs.Contains(c.RefID)) return;
-
-        foreach(var hour in preset.activeHours)
+        if (charaGuestStatus.ContainsKey(c.RefID))
         {
-            charaSchedules[c.RefID].Get(hour).Set(preset.jobPostID, preset.workCommands);
-        }
 
+        }
     }
 
     /// <summary>
@@ -1268,20 +1271,21 @@ public class Manageable : I_Disposable
 
         protected List<COM> cache_com = null;
 
-        public List<COM> COMs { get {
+        [JsonIgnore] public List<COM> COMs { get {
                 if (cache_com == null)
                 {
                     cache_com = new List<COM>();
                     foreach(var i in comIDs)
                     {
                         var v = scr_System_Serializer.current.GetByNameOrID_COM(i);
-                        if (v != null) cache_com.Add(v);
+                        if (v != null && !cache_com.Contains(v)) cache_com.Add(v);
                     }
                 }
                 return cache_com; } }
 
         protected string cache_name = "";
 
+        [JsonIgnore]
         public string Name { get
             {
                 if(cache_name == "")
@@ -1297,7 +1301,9 @@ public class Manageable : I_Disposable
                 return cache_name;
             } }
 
-        public bool isActive { get { return this.jobID.Length > 0 || this.comIDs.Count > 0; } }
+        [JsonIgnore] public bool isActive { get { return this.jobID.Length > 0 || this.comIDs.Count > 0; } }
+
+        [JsonIgnore]
         public COM getRandCOM
         {
             get
@@ -1639,22 +1645,37 @@ public class Manageable : I_Disposable
     [System.Serializable]
     public class JobPostPreset
     {
+        public JobPostPreset()
+        {
+
+        }
         public JobPostPreset(MapPlan.WorkModuleInit module)
         {
             this.jobPostID = module.jobPostID;
 
-            this.workCommands = new List<string>(module.workCommands);
+
+            this.workCommands = new List<string>();
+            this.workCommands.AddRange(module.workCommands);
             this.workCommands = this.workCommands.Distinct().ToList();
             this.workCommands.RemoveAll(x => x.Length < 1);
+
+            //Debug.LogError($"new module {module.jobPostID} jobs |{String.Join(",", module.workCommands)}| selfcommands |{String.Join(",", this.workCommands)}|");
 
             this.activeHours = new List<int>(module.activeHours);
             this.activeHours = this.activeHours.Distinct().ToList();
             this.activeHours.RemoveAll(x => x < 0 || x > 23);
 
-            foreach (var item in module.hourlyPayout) this.hourlyPayout.Add(new ItemEntry(item));
+            foreach (var item in module.hourlyPayout)
+            {
+                if (item != null) this.hourlyPayout.Add(new ItemEntry(item));
+            }
         }
 
-        public string jobPostID;
+        [JsonIgnore] public string Name { get
+            {
+                return scr_System_Serializer.current.Dictionary.QueryThenParse(jobPostID);
+            } }
+        public string jobPostID = "";
         public List<string> workCommands = new List<string>();
         public List<int> activeHours = new List<int>();
         public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
@@ -1664,18 +1685,58 @@ public class Manageable : I_Disposable
 
         // Resolve Item payout as long as current hour has registered work
 
+        [JsonIgnore]
+        public string PrintPayout
+        {
+            get
+            {
+                if (hourlyPayout.Count < 1) return "none";
+                else if (hourlyPayout.Count < 2) return hourlyPayout[0].Print;
+                else return hourlyPayout[0].Print + "(...)";
+            }
+        }
+
+
         [System.Serializable]
         public class ItemEntry
         {
+            public ItemEntry()
+            {
+
+            }
             public ItemEntry(MapPlan.WorkModuleInit.ItemEntry entry)
             {
                 this.itemID = entry.itemID;
                 this.itemNameOverwrite = entry.itemNameOverwrite;
                 this.itemCount = entry.itemCount;
             }
-            public string itemID;
-            public string itemNameOverwrite;
-            public string itemCount;
+            public string itemID = "";
+            public string itemNameOverwrite = "";
+            public int itemCount = 0;
+
+            string _cache = "";
+            [JsonIgnore] public string Print
+            {
+                get
+                {
+                    if (_cache != "") return _cache;
+                    var count = (itemCount >= 10000000) ? (((int)(itemCount / 1000000)).ToString() + "M") : ((itemCount >= 10000) ? (((int)(itemCount/1000)).ToString() + "K") : itemCount.ToString());
+
+                    if (this.itemID == "" || itemCount == 0) _cache = "none";
+                    else
+                    {
+                        var item = scr_System_Serializer.current.GetByNameOrID_Item_Base(this.itemID);
+                        var basestr = (item.Tags.Contains("item_money") ?
+                                    scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_currency") :
+                                    scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_item"));
+
+                        _cache = basestr.Replace("$item$", this.itemNameOverwrite != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse(this.itemNameOverwrite) : scr_System_Serializer.current.Dictionary.QueryThenParse(this.itemID))
+                                             .Replace("$count$", count);
+                    }
+                    return _cache;
+                    //else return $"{scr_System_Serializer.current.Dictionary.QueryThenParse(itemNameOverwrite != "" ? itemNameOverwrite : itemID)} x{itemCount}";
+                }
+            }
         }
     }
 }

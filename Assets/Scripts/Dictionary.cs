@@ -3,15 +3,117 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
+using System.Linq;
+using Newtonsoft.Json.Linq;
+using NUnit.Framework;
+
+public class Dictionary_Master
+{
+    protected ArrayList list = null;
+    public ArrayList List
+    {
+        get
+        {
+            if (list == null)
+            {
+                list = new ArrayList();
+                list.Add(Dictionary);
+            }
+            return list;
+        }
+    }
+
+    public Dictionary_Index Dictionary = new Dictionary_Index();
+
+    public void MergeWith(MasterList list)
+    {
+        for (int i = 0; i < this.List.Count; i++)
+        {
+            if (list.List[i] == null) continue;
+            //if (this.List[i] == null) this.List[i] = 
+            I_IndexMergeable a = this.List[i] as I_IndexMergeable;
+            I_IndexMergeable b = list.List[i] as I_IndexMergeable;
+            if (a != null && b != null) a.MergeWith(b);
+            else
+            {
+                Debug.LogError("Index Merge operation failed at index " + i);
+            }
+        }
+    }
+    public void Initialize()
+    {
+
+        foreach (object l in List)
+        {
+            if (l is ISerializationCallbackReceiver) (l as ISerializationCallbackReceiver).OnAfterDeserialize();
+            if (l is I_IndexHasID) (l as I_IndexHasID).RegisterAllID();
+        }
+
+        foreach (object l in List)
+        {
+            if (l is I_NeedLateInitialize) (l as I_NeedLateInitialize).LateInitialize();
+            if (l is I_IndexHasTooltip) (l as I_IndexHasTooltip).RegisterAllTooltip();  // tooltip uses dictionary
+        }
+    }
+}
 
 [System.Serializable]
-public class Dictionary_Master 
+public class Dictionary_Index : I_IndexMergeable
 {
-    Dictionary<string, Dictionary_Index> m_Dictionary;
-    public Dictionary_Master()
-    {
-        m_Dictionary = new Dictionary<string, Dictionary_Index>();
+    public SortedDictionary<string, SortedDictionary<string, string>> Entries = null;
+
+    public Dictionary_Index() {
+        Entries = new SortedDictionary<string, SortedDictionary<string, string>>();
+        Entries.Add("default", new SortedDictionary<string, string>());
+    
     }
+
+    public void MergeWith(I_IndexMergeable list)
+    {
+        var l = list as Dictionary_Index;
+        if (l == null) return;
+        else if (l.Entries == null) return;
+        else
+        {
+            foreach (var entry in l.Entries)
+            {
+                if (!this.Entries.ContainsKey(entry.Key)) this.Entries.Add(entry.Key, new SortedDictionary<string, string>());
+                var tempdic = this.Entries[entry.Key].Concat(entry.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                this.Entries[entry.Key] = new SortedDictionary<string, string>(tempdic);
+            }
+        }
+    }
+
+    private string cachedLang = "";
+    private SortedDictionary<string, string> _currentDict = null;
+    protected SortedDictionary<string, string> currentDict { get
+        {
+            if (cachedLang != "" && cachedLang == scr_System_CentralControl.current.Language) 
+            {
+                // nothing happens
+            }
+            else if (scr_System_CentralControl.current == null) 
+            {
+                Debug.LogError($"Central control null");
+                cachedLang = "default";
+                _currentDict = Entries["default"];
+            }
+            else if (Entries.ContainsKey(scr_System_CentralControl.current.Language))
+            {
+
+                    _currentDict = Entries[scr_System_CentralControl.current.Language];
+     
+
+            }
+            else
+            {
+                Debug.LogError($"DICTIONARY MISSING LANGUAGE FOR {scr_System_CentralControl.current.Language}");
+                return null;
+            }
+            return _currentDict;
+            
+            
+        } }
 
     /// <summary>
     /// Find entry in dictionary, and return without parsing
@@ -20,9 +122,7 @@ public class Dictionary_Master
     /// <returns></returns>
     public string Query(string ID)
     {
-        Dictionary_Index current = m_Dictionary["default"];
-        string result = current.Query(ID);
-        return result == null ? ID : result;
+        return currentDict == null ? "ERROR Dictionary NULL" : (currentDict.ContainsKey(ID) ? currentDict[ID] : ID);
     }
 
     /// <summary>
@@ -68,37 +168,6 @@ public class Dictionary_Master
     static string strReplacerPattern = @"[%][%]([A-Za-z]|[0-9]|[_])+[%][%]";
     static string strContentPattern = @"(?<=%%)\S+(?=%%)";
     //Regex strReplacer = new Regex(strReplacerPattern);
-
-    public void AddToDict(Dictionary_Index dict)
-    {
-        if (m_Dictionary.ContainsKey(dict.language)) m_Dictionary[dict.language].entries.AddRange(dict.entries);
-        else m_Dictionary.Add(dict.language, dict);
-    }
-}
-
-[System.Serializable]
-public class Dictionary_Index
-{
-    public string language = "default";
-    public List<Dictionary_Entry> entries;
-
-    public string Query(string ID)
-    {
-        var result = entries.Find(x => x.ID == ID);
-        if (result != null) return result.Entry;
-        else
-        {
-            //Debug.Log("Unimplemented Dictionary Entry for [" + ID + "] in dictionary [" + language + "]");
-            return ID;
-        }
-    }
-
-    [System.Serializable]
-    public class Dictionary_Entry
-    {
-        public string ID;
-        public string Entry;
-    }
 
 }
 

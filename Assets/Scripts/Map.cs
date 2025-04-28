@@ -231,7 +231,7 @@ public class Map_Instance
             foreach(var b in a.Value)
             {
                 Manageable fb = scr_System_CampaignManager.current.Map.GetRoomByRef(b).FactionOwner;
-                ConnectFactions(fa, fb);
+                if(fa != null && fb != null) ConnectFactions(fa, fb);
             }
             
         }

@@ -1,0 +1,36 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "default":
+            {
+                "Campaign2_Chara_couple1_Female_FirstName":"莫妮卡",
+                "Campaign2_Chara_couple1_Male_FirstName":"止本",
+        
+        
+                "Campaign2_Chara_Halfas_LastName":"哈尔法斯",
+                "Campaign2_Chara_HalfasOne_FirstName":"罗丝",
+                "Campaign2_Chara_HalfasThree_FirstName":"米娅",
+                "Campaign2_Chara_HalfasTwo_FirstName":"蕾拉",
+        
+                "Campaign2_Chara_Amelie_FirstName":"艾米莉",
+                "Campaign2_Chara_Amelie_LastName":"布朗谢",
+        
+                "Campaign2_Chara_Elena_FirstName":"艾琳娜",
+                "Campaign2_Chara_Elena_LastName":"方汀",
+        
+                "Campaign2_Chara_Hiyori_FirstName":"日和",
+                "Campaign2_Chara_Hiyori_LastName":"贺茂",
+        
+                "Campaign2_Chara_Olivia_FirstName":"奥莉薇娅",
+                "Campaign2_Chara_Olivia_LastName":"穆柴尔",
+        
+                "creature_animal_pig":"猪",
+                "creature_animal_horse":"马",
+                "creature_animal_warg":"座狼",
+                "creature_humanoid_goblin":"哥布林"
+            }
+        }
+    }
+}

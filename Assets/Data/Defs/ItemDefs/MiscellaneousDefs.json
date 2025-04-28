@@ -8,7 +8,15 @@
         "tooltip":"Meal ready-to-eat. Provide 1 food value for 24 hours, and allow taking meal in canteen.",
         "Tags":["item_money"],
         "itemComps_Template":[]
+    },
+    {
+        "id":"currency_JPY",
+        "displayName":"JPY",
+        "tooltip":"Currency in circulation in limited area.",
+        "Tags":["item_money"],
+        "itemComps_Template":[]
     }
+
 ]
     }
 }

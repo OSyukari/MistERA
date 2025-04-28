@@ -6,9 +6,9 @@ using System.IO;
 using TMPro;
 using UnityEngine.EventSystems;
 using System;
-using System.Diagnostics;
-using UnityEngine.UIElements;
 using System.Runtime.InteropServices.WindowsRuntime;
+using static Unity.Burst.Intrinsics.X86.Avx;
+using System.Reflection;
 
 
 public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
@@ -235,7 +235,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public scr_HoverableText chara_Race, chara_RaceTemplate;
     public scr_SelectableText chara_HomeFaction, chara_TempHomeFaction;
     public TMP_Text chara_location_ap;
-    public RectTransform chara_schedulebox;
+    public RectTransform chara_schedulebox; 
+    public Image chara_scheduleBoxBG;
+
     public List<RectTransform> chara_scheduleCOMboxes;
     public RectTransform list_chara;
     public scr_SelectableText prefab_charaNameButton;
@@ -299,7 +301,19 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     }
 
     COM currentHighlightJobCOM = null;
-    public List<int> CurrentHighlightHours = null;
+    public List<int> _currentHighlightHours = new List<int>();
+    public List<int> CurrentHighlightHours { get
+        {
+            return _currentHighlightHours;
+        } 
+        set
+        {
+            _currentHighlightHours = value;
+            ValidateAll();
+        }
+    }
+
+
     public COM CurrentHighlightJOBCOM { get { return currentHighlightJobCOM; } }
 
 
@@ -327,17 +341,31 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         chara_TempHomeFaction.SetText(currentChara.FactionManager.Faction_Home_Temporary == null ? " - " : currentChara.FactionManager.Faction_Home_Temporary.FactionDisplayName);
 
 
-        Manageable.Job_Schedule jbsch = currentFaction.GetSchedule(c);
+
         // int currentHour = scr_System_Time.current.getCurrentTime().Hour;
 
         foreach (Manageable faction in c.FactionManager.WorkFactions)
         {
-            TMP_Text newLine = Instantiate(prefab_text_standard).GetComponent<TMP_Text>();
-            newLine.text = faction.ID;
-            newLine.rectTransform.SetParent(list_factionWork, false);
-            if (faction == currentFaction) newLine.color = Color.cyan;
+            var newLine = Instantiate(prefab_text_linkbutton);
+
+            var text = newLine.GetComponent<scr_SelectableText>();
+            text.SetText(faction.FactionDisplayName);
+            if (faction == currentFaction) text.Text.color = text.baseColor;
+            else text.Text.color = text.disableColor;// (true,true);
+
+            newLine.SetParent(list_factionWork, false);
+            //LayoutRebuilder.ForceRebuildLayoutImmediate(newLine);
         }
 
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(list_factionWork);
+    }
+    protected void RefreshCurrentChara()
+    {
+        if (!chara_schedulebox.gameObject.activeInHierarchy) return;
+        List<string> warnings = new List<string>();
+        currentChara.FactionManager.ValidateSchedule(ref warnings);
+
+        Manageable.Job_Schedule jbsch = currentFaction.GetSchedule(currentChara);
         if (chara_schedulebox.transform.childCount >= 24 && jbsch != null)
         {
 
@@ -350,13 +378,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 }
             }
         }
-
-        RefreshCurrentChara();
-    }
-    public void RefreshCurrentChara()
-    {
-        List<string> warnings = new List<string>();
-        currentChara.FactionManager.ValidateSchedule(ref warnings);
 
         chara_warnings.text = String.Join("\n", warnings);
     }
@@ -393,7 +414,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 case 31: // chara detail tab
                     button.Initialize(this, new button_CharaDetail(this)); break;
                 case 32: // chara edit schedule
-                    button.Initialize(this, new button_EditSchedule(this, button, chara_schedulebox, chara_scheduleCOMboxes)); break;
+                    button.Initialize(this, new button_EditSchedule(this, button, chara_schedulebox, chara_scheduleBoxBG, chara_scheduleCOMboxes)); break;
                 case 9999: // exit
                     button.Initialize(this, button_alwaysValid); break;
                 default:
@@ -433,6 +454,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public override void ValidateAll()
     {
         base.ValidateAll();
+        RefreshCurrentChara();
         CalculateProductionWarning();
     }
 
@@ -491,6 +513,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             parent.SetCurrentChara(charaRefID);
+            parent.ValidateAll();
         }
 
 
@@ -750,12 +773,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         RectTransform scheduleRect;
         List<RectTransform> comRects;
         scr_SelectableText button;
+        Image background;
         bool isActive = false;
-        public button_EditSchedule(scr_Canvas_Management parent, scr_SelectableText button, RectTransform scheduleRect, List<RectTransform> comRects) : base(parent)
+        public button_EditSchedule(scr_Canvas_Management parent, scr_SelectableText button, RectTransform scheduleRect, Image scheduleRectBG, List<RectTransform> comRects) : base(parent)
         {
             this.parent = parent;
             this.scheduleRect = scheduleRect;
             this.comRects = comRects;
+            this.background = scheduleRectBG;
             isActive = false;
             this.button = button;
             foreach (var i in comRects) i.gameObject.SetActive(false);
@@ -783,8 +808,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             if (isActive)
             {
                 isActive = !isActive;
-                parent.RefreshCurrentChara();
+                //parent.RefreshCurrentChara();
                 parent.currentHighlightJobCOM = null;
+                parent.SetCurrentChara(parent.currentChara);
+                parent.ValidateAll();
             }
             else
             {
@@ -793,19 +820,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             button.Toggle(true, isActive);
             button.Validate();
             foreach (var i in comRects) i.gameObject.SetActive(isActive);
-
-            if (scheduleRect.transform.childCount >= 24)
-            {
-                for (int i = 0; i < 24; i++)
-                {
-                    scr_ScheduleBox box = scheduleRect.transform.GetChild(i).GetComponent<scr_ScheduleBox>();
-                    if (box == null) continue;
-                    box.SetActive(isActive);
-
-                    box.Refresh();
-                    
-                }
-            }
+            background.gameObject.SetActive(isActive);
         }
     }
 
@@ -815,12 +830,16 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         scr_SelectableText button;
 
         TMP_Text description;
-
+        scr_SelectableText buttonText;
 
         Manageable.JobPostPreset preset = null;
         Manageable presetOwnerFaction = null;
-        public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, Manageable.JobPostPreset preset, Manageable presetOwnerFaction) : base(parent)
+        bool unset = false;
+
+
+        public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText, Manageable.JobPostPreset preset, Manageable presetOwnerFaction) : base(parent)
         {
+            this.buttonText = buttonText;
             this.parent = parent;
             this.button = box.button;
             button.isButtonToggle = true;
@@ -829,17 +848,36 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             this.preset = preset;
             this.presetOwnerFaction = presetOwnerFaction;
 
-            
-            button.SetText(preset.jobPostID);
+
+            // button.SetText(preset.jobPostID);
             var strs = new List<string>();
-            foreach (var cid in preset.workCommands) strs.Add(scr_System_Serializer.current.GetByNameOrID_COM(cid).displayName);
-            this.description.text = String.Join(",", strs) + $"\nWork Hours:[{String.Join(" ", preset.activeHours)}]";
+            if (preset != null)
+            {
+                foreach (var cid in preset.workCommands)
+                {
+                    //Debug.Log($"preset workcommand {cid}");
+                    var c_com = scr_System_Serializer.current.GetByNameOrID_COM(cid);
+                    if (c_com != null) strs.Add(c_com.DisplayName());
+                    else Debug.LogError($"CANNOT FIND WORK PRESET COMMAND {cid}");
+                }
+                description.text = scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_description_desc")
+                    .Replace("$description$", String.Join(",", strs))
+                    .Replace("$hour$", preset.activeHours.Count.ToString())
+                    .Replace("$payout$", preset.PrintPayout)
+                    .Replace("$additionalDescription$", "");
+
+            }
+            else description.text = "error";
             box.notifyTarget = this;
+
+            buttonText.linkText = "";
+            buttonText.SetTextPreInit($"{this.presetOwnerFaction.FactionDisplayName} : {preset.Name}");
         }
 
         COM highlightCOM = null;
-        public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, COM highlightCOM) : base(parent)
+        public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText,  COM highlightCOM) : base(parent)
         {
+            this.buttonText = buttonText;
             this.parent = parent;
             this.button = box.button;
             button.isButtonToggle = true;
@@ -847,10 +885,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
             this.highlightCOM = highlightCOM;
             if (highlightCOM == null) description.text = "";
+
+            buttonText.linkText = (highlightCOM != null ? highlightCOM.ID : "");
+            buttonText.SetTextPreInit(highlightCOM != null ? highlightCOM.DisplayName() : "None");
         }
 
         public override bool IsButtonValid()
         {
+            tooltip = "";
             if (this.preset != null)
             {
                 // check if preset hours are occupied by any other faction else than self and/or home
@@ -864,18 +906,44 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 // different faction preset can coexist as long as schedule no conflict
                 var returnVal = true;
                 var chara = parent.currentChara;
-                //var priorityFaction = chara.FactionManager.Factions;
+                bool ttip_overwrite_home = false;
+                bool ttip_external = false;
+
+                // self = home | job
+                // target = null | home | job
+
+                // home -> null, job -> null, home -> home, job -> home, allow
+                // home -> job, job -> job, DISALLOW
+                // nothing happens
+
+                // if this is currently set, flag toggled and allow click (to cancel it)
+                // if this is not currently set and there is conflict, disallow clicking
+
                 foreach (var hour in preset.activeHours)
                 {
                     var f = chara.CurrentJobScheduleFaction(hour);
-                    if (f == null || f == this.presetOwnerFaction || chara.FactionManager.HomeFactions.Contains(f))
+                    if (f == null)
                     {
-                        // self = home | job
-                        // target = null | home | job
-
-                        // home -> null, job -> null, home -> home, job -> home, allow
-                        // home -> job, job -> job, DISALLOW
-                        // nothing happens
+                        // allow set
+                        unset = false;
+                    }
+                    else if (f == this.presetOwnerFaction)  // same faction overwrite ?
+                    {
+                        // same faction
+                        var existingJobID = this.presetOwnerFaction.GetSchedule(chara).Get(hour).jobID;
+                        if (existingJobID == this.preset.jobPostID)
+                        {
+                            // chara has already assigned identical jobpost, allow unset
+                            unset = true;
+                            button.Toggle(true, true);
+                            break;
+                        }
+                    }
+                    else if (chara.FactionManager.HomeFactions.Contains(f)) // target is home and self is obviously not home
+                    {
+                        // allow overwriting homefaction
+                        unset = false;
+                        ttip_overwrite_home = true;
                     }
                     else
                     {
@@ -884,6 +952,22 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                         break;
                     }
                 }
+
+                if (returnVal)
+                {
+                    tooltip += "will overwrite previous job setting, if any\n";
+                    if (!chara.FactionManager.HomeFactions.Contains(presetOwnerFaction)) tooltip += "chara will be added to job faction\n";
+                    List<string> s = new List<string>();
+                    if (!unset) chara.FactionManager.ValidateSchedule(ref s, preset.activeHours);
+                    this.tooltip += String.Join("\n", s)+"\n";
+                }
+                if (ttip_overwrite_home) tooltip += "will overwrite home faction job setting\n";
+                if (unset)
+                {
+                    tooltip += "will unset\n";
+                    button.Toggle(true, true);
+                }
+                else if (returnVal) button.Toggle(true, false);
 
                 return returnVal;
             }
@@ -917,14 +1001,28 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             else
             {
                 var chara = parent.currentChara;
-                for (int i = 0; i < 24; i++)
-                {
-                    // first wipe
-                    presetOwnerFaction.SetWorkHours(chara, i, null);
-                    //parent.currentChara.FactionManager.SetSchedule(presetOwnerFaction, i, null);
+                
+                for(int i = 0; i < 24; i++)
+                {   // first wipe. one faction can only assign a single job preset to a chara, so we first wipe existing
+                    chara.FactionManager.SetSchedule(presetOwnerFaction, i, null);//.SetWorkHours(chara, i, null);
                 }
-                chara.FactionManager.SetSchedule(presetOwnerFaction, this.preset);
 
+                if(!unset)
+                {   // then, if not unset, set this preset
+                    chara.FactionManager.SetSchedule(presetOwnerFaction, this.preset);
+                }
+                else
+                {
+                    chara.FactionManager.SetSchedule(presetOwnerFaction, null);
+                }
+               // for (int i = 0; i < 24; i++)
+               // {
+                    // first wipe
+                //    presetOwnerFaction.SetWorkHours(chara, i, null);
+                    //parent.currentChara.FactionManager.SetSchedule(presetOwnerFaction, i, null);
+                //}
+                //c.FactionManager.SetSchedule(parent.CurrentFaction, index, parent.CurrentHighlightJOBCOM);
+                parent.NotifyScheduleChanged();
             }
 
         }
@@ -934,10 +1032,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             if (this.preset != null) parent.CurrentHighlightHours = this.preset.activeHours;
             else parent.CurrentHighlightHours = null;
 
+            //Debug.Log("NOTIFY POINTER ENTER");
+
             parent.ValidateAll();
         }
         public void NotifyPointerExit()
         {
+            //Debug.Log("NOTIFY POINTER EXIT");
+
             parent.CurrentHighlightHours = null;
             parent.ValidateAll();
         }
@@ -973,10 +1075,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     r.SetParent(rectTransform, false);
                     scr_SelectableText comp = scr.button;
 
-                    comp.Initialize(this, new button_setHighlightCOM(this, scr, c));
-                    comp.linkText = (c != null ? c.ID : "");
-                    comp.SetText(c != null ? c.DisplayName() : "None");
-
+                    comp.Initialize(this, new button_setHighlightCOM(this, scr, comp, c));
                     comp.optionID = hash;
 
                     buttonsByID.Add(comp.optionID, comp);
@@ -1003,8 +1102,15 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
                     RectTransform r = scr.GetComponent<RectTransform>();
                     r.SetParent(rectTransform, false);
-                    scr.description.text = c.jobPostID;
+                    //scr.description.text = c.jobPostID;
 
+                    scr_SelectableText comp = scr.button;
+                    comp.Initialize(this, new button_setHighlightCOM(this, scr, comp, c, currentFaction));
+                    comp.optionID = hash;
+                    buttonsByID.Add(comp.optionID, comp);
+                    validatorsByID.Add(comp.optionID, comp.Validator);
+                    comp.Validate();
+                    tempListHash.Add(hash);
                     /*
                     scr_SelectableText comp = scr.button;
 
@@ -1035,7 +1141,15 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                         scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
                         RectTransform r = scr.GetComponent<RectTransform>();
                         r.SetParent(rectTransform, false);
-                        scr.description.text = c.jobPostID;
+                        //scr.description.text = c.jobPostID;
+
+                        scr_SelectableText comp = scr.button;
+                        comp.Initialize(this, new button_setHighlightCOM(this, scr, comp, c, faction));
+                        comp.optionID = hash;
+                        buttonsByID.Add(comp.optionID, comp);
+                        validatorsByID.Add(comp.optionID, comp.Validator);
+                        comp.Validate();
+                        tempListHash.Add(hash);
                     }
                 }
                 break;
@@ -1065,6 +1179,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
     public void NotifyScheduleChanged()
     {
+        
         ValidateAll();
     }
 

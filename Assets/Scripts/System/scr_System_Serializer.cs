@@ -51,7 +51,9 @@ public class scr_System_Serializer : MonoBehaviour
     }
     // Singleton
     public static scr_System_Serializer current;
-    public Dictionary_Master Dictionary;
+
+    protected Dictionary_Master _masterDictionary = new Dictionary_Master();
+    public Dictionary_Index Dictionary { get { return MasterList.Dictionary; }  }
     private void Awake()
     {
         // scr_System_tooltipDictionary must first initialize
@@ -69,8 +71,6 @@ public class scr_System_Serializer : MonoBehaviour
         ID_Library = new Dictionary<string, object>();
         TooltipLibrary = new Dictionary<string, string>();
 
-        Dictionary = new Dictionary_Master();
-
         sensitivityClass_statusID_LookUp = new Dictionary<string, string>();
 
         DataPath = new Dictionary<Type, string>();
@@ -78,21 +78,25 @@ public class scr_System_Serializer : MonoBehaviour
 
         DataPath.Add(typeof(Character_BaseID_Index), Application.dataPath + "/Data/Characters/");
 
-        DataPath.Add(typeof(Dictionary_Index), Application.dataPath + "/Data/Dictionary/");
 
+#if UNITY_EDITOR
+
+
+#endif
+
+    }
+
+    private void Start()
+    {
+        // before master dictionary load, central control player pref must exist to check language
+        //_masterDictionary = LoadDictionary();
         masterList = LoadDefs();
         MasterList = LoadDefs(true);
-        LoadDictionaryFolderJSON(); // NOT IN SAME LIST
 
         LoadCharactersFoldersJSON();
 
         masterList.Initialize();
         MasterList.Initialize();
-
-#if UNITY_EDITOR
-        
-
-#endif
 
     }
 
@@ -121,7 +125,7 @@ public class scr_System_Serializer : MonoBehaviour
     public Character_Base_Index index_Characters_Bases { get { return masterList.Character_Bases as Character_Base_Index; } }
     public Index_BodyPartBase index_BodyPartBase { get { return masterList.BodyPartBases as Index_BodyPartBase; } }
     public Index_Item_Base index_Item_Base { get { return masterList.Items as Index_Item_Base; } }
-    public Index_COM index_COM { get { return masterList.COMs as Index_COM; } }
+    public Index_COM index_COM { get { return MasterList.COMs as Index_COM; } }
     public Index_Floor_Base index_Floor_Base { get { return masterList.Floors as Index_Floor_Base; } }
     public Index_MapPlan index_MapPlan { get { return masterList.MapPlans as Index_MapPlan; } }
     public Index_FurnitureBase index_FurnitureBase { get { return masterList.Furnitures as Index_FurnitureBase; } }
@@ -228,27 +232,8 @@ public class scr_System_Serializer : MonoBehaviour
         masterList.Character_Bases = newIndex;
         MasterList.CharacterTemplates = newIndex2;
     }
-    public void LoadDictionaryFolderJSON()
-    {
-        string path = GetDataPathbyType(typeof(Dictionary_Index));
-       // Dictionary_Index i = new Dictionary_Index();
-        if (Directory.Exists(path))
-        {
-            DirectoryInfo d = new DirectoryInfo(path);
-            foreach (var file in d.GetFiles("*.json"))
-            {
-                //Debug.Log("reading dictionary file : " + file.FullName);
-                // JsonUtility.FromJson(File.ReadAllText(file.FullName), typeof(Dictionary_Index));
-                Dictionary_Index i = JsonUtility.FromJson(File.ReadAllText(file.FullName), typeof(Dictionary_Index)) as Dictionary_Index;
-                Dictionary.AddToDict(i);
-            }
-        }
-        else
-        {
-            Debug.Log("reading dictionary file ERROR directory not exist");
-        }
-    }
 
+    /*
     public Index_COM LoadCOMFolderJSON()
     {
         string path = GetDataPathbyType(typeof(Index_COM));
@@ -288,7 +273,7 @@ public class scr_System_Serializer : MonoBehaviour
 
 
         return i;
-    }
+    }*/
 
     public masterList LoadDefs()
     {
@@ -318,7 +303,31 @@ public class scr_System_Serializer : MonoBehaviour
             foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
             {   // all files must be index_com files
                 MasterList l = JsonConvert.DeserializeObject<MasterList>(File.ReadAllText(file.FullName),Utility.SerializerSettings);
-                if (l != null) i.MergeWith(l);
+                if (l != null)
+                {
+                    i.MergeWith(l);
+                    Debug.Log($"Reading json file {file.FullName}");
+                }
+            }
+        }
+        return i;
+    }
+
+    public Dictionary_Master LoadDictionary(bool val = true)
+    {
+        string path = GetDataPathbyType(typeof(masterList));
+        Dictionary_Master i = new Dictionary_Master();
+        if (Directory.Exists(path))
+        {
+            DirectoryInfo d = new DirectoryInfo(path);
+            foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
+            {   // all files must be index_com files
+                MasterList l = JsonConvert.DeserializeObject<MasterList>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                if (l != null)
+                {
+                    i.MergeWith(l);
+                    Debug.Log($"Reading json file {file.FullName}");
+                }
             }
         }
         return i;

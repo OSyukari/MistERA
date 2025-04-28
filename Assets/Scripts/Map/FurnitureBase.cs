@@ -9,6 +9,10 @@ public class FurnitureBase //: ISerializationCallbackReceiver
 {
     public string ID = "";
     public string displayName = "";
+    [JsonIgnore] public string DisplayName { get
+        {
+            return scr_System_Serializer.current.Dictionary.QueryThenParse(ID, displayName);
+        } }
     // recipe
     public float furnitureSize = 0f;
     public List<Furniture_COMGiver> givesJob = new List<Furniture_COMGiver>();
@@ -74,7 +78,7 @@ public class FurnitureInstance: IDisposable, I_Disposable
             return furnitureBaseRef;
         } }
 
-    [JsonIgnore] public string DisplayName { get { return FurnitureBase.displayName; } }
+    [JsonIgnore] public string DisplayName { get { return FurnitureBase.DisplayName; } }
 
     [JsonIgnore] protected int jobGiverID = -1;
     protected Job_Furniture JobGiverCache = null;

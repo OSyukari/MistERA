@@ -151,7 +151,7 @@ public class Room_Instance: IDisposable, I_Disposable
         get
         {
             string names = "";
-            foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names += " " + kvp.Key.displayName + (kvp.Value > 1 ? "x" + kvp.Value : "") ;
+            foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names += " " + kvp.Key.DisplayName + (kvp.Value > 1 ? "x" + kvp.Value : "") ;
             return names != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$",names) : "";
         }
     }
@@ -162,7 +162,7 @@ public class Room_Instance: IDisposable, I_Disposable
         get
         {
             string names = "";
-            foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names += "  <link="+kvp.Key.ID + "_tooltip" + ">" + kvp.Key.displayName + (kvp.Value > 1 ? "x" + kvp.Value : "") + "</link>";
+            foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names += "  <link="+kvp.Key.ID + "_tooltip" + ">" + kvp.Key.DisplayName + (kvp.Value > 1 ? "x" + kvp.Value : "") + "</link>";
             return names != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", names) : "";
         }
     }

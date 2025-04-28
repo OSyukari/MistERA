@@ -119,7 +119,7 @@ public class MapPlan
     [System.Serializable]
     public class WorkModuleInit
     {
-        public string jobPostID;
+        public string jobPostID = "";
         public List<int> peakHours = new List<int>();
         public List<string> workCommands = new List<string>();
         public List<int> activeHours = new List<int>();
@@ -128,9 +128,9 @@ public class MapPlan
         [System.Serializable]
         public class ItemEntry
         {
-            public string itemID;
-            public string itemNameOverwrite;
-            public string itemCount;
+            public string itemID = "";
+            public string itemNameOverwrite = "";
+            public int itemCount = 0;
         }
     }
 

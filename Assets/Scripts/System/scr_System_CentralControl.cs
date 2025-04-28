@@ -91,6 +91,7 @@ public class scr_System_CentralControl : MonoBehaviour
         
     }
 
+    public string Language { get { return "default"; } }
     public void SaveUserPref()
     {
         string filePath = Application.dataPath + "/UserPrefs.json";

@@ -22,6 +22,10 @@ public class COM_FarmRecipe : COM
         if (comp != null)
         {
             this.ID = this.ID + "_" + comp.yieldItemID;
+            if(scr_System_Serializer.current.GetByNameOrID_Item_Base(comp.yieldItemID) == null)
+            {
+                Debug.LogError($"Serialize error item |{comp.yieldItemID}| cannot be found in IDLib");
+            }
             this.displayName = displayName + "_" + scr_System_Serializer.current.GetByNameOrID_Item_Base(comp.yieldItemID).DisplayName;
             //comTags.Add("job");
             comTags.AddRange(this.requirements.requireContaining.allowPlanting);

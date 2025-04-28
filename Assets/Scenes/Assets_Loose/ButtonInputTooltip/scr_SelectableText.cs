@@ -72,9 +72,10 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             if (validator == null || validator.State == ButtonValidator_States.Valid)
             {
+                if (onHoverExit != null) onHoverExit();
+
                 if (isButtonToggle && isToggled) Text.color = ToggledColor;
                 else Text.color = BaseColor;
-                if (onHoverExit != null) onHoverExit();
             }
 
             else Text.color = errorColor;
@@ -89,8 +90,8 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (isValid)
         {
-            Text.color = hoverColor;
             if (onHoverEnter != null) onHoverEnter();
+            Text.color = hoverColor;
         }
     }
 
@@ -99,8 +100,8 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (eventData.pointerId == -1 && isValid && optionID != -1 && !forbidNotify)
         {
             //Debug.Log("SelectableText Notify Parent : optionID [" + optionID + "]");
-            parent.Notify(optionID);
             if (onClick != null) onClick();
+            parent.Notify(optionID);
         }
     }
 
@@ -110,6 +111,7 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!initialized) Awake();
         this.text.text = scr_System_Serializer.current.Dictionary.QueryThenParse(this.text.text);
+        //this.text.text = scr_System_Serializer.current.Dictionary.QueryThenParse(this.text.text);
 
         if (validator != null)
         {
@@ -150,7 +152,14 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
             else isToggled = !isToggled;
         }
     }
-
+    /// <summary>
+    /// Setting this will overwrite Component ReplaceText, and will read this instead.
+    /// </summary>
+    /// <param name="s"></param>
+    public void SetTextPreInit(string s)
+    {
+        this.replaceText = s;
+    }
     public void SetText(string s, bool newLine = false)
     {
         s = scr_System_Serializer.current.Dictionary.QueryThenParse(s);
@@ -182,14 +191,14 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
     private string replaceText = "";
 
     /// <summary>
-    /// 
+    /// If SetTextPreInit is called before Initialize, then Component ReplaceText will not be read.
     /// </summary>
     /// <param name="parent">script that dispatch validator, on command re-validate all buttons, and receive button click response</param>
     /// <param name="v">validator for button, dispatched by parent, has pointer to all info he know, return bool and a string for customTooltip</param>
     public void Initialize(scr_Menu parent, ButtonValidator v)
     {
         if (!initialized) Awake();
-        replaceText = this.GetComponent<scr_HoverableText>().replaceText;
+        if (this.replaceText == "") replaceText = this.GetComponent<scr_HoverableText>().replaceText;
         //Debug.Log("initiaze button parent[" + parent + "] validator[" + v + "] text ["+this.Text.text+"]");
         if (parent == null || v == null) Debug.Log("button.initialize failed cuz parent["+parent+"] or validator["+ v+"]");
         this.validator = v;

@@ -73,7 +73,7 @@ public class masterList : ISerializationCallbackReceiver
                 list.Add(Stats_Derived_Bases);
                 list.Add(BodyPartBases);
                 list.Add(Items);
-                list.Add(COMs);
+              //  list.Add(COMs);
                 list.Add(Floors);
                 list.Add(MapPlans);
                 list.Add(Furnitures);
@@ -100,7 +100,7 @@ public class masterList : ISerializationCallbackReceiver
         this.Furnitures = new Index_FurnitureBase();
 
         this.MapPlans = new Index_MapPlan();
-        this.COMs = new Index_COM();
+       // this.COMs = new Index_COM();
 
         this.Character_Bases = new Character_Base_Index();
         this.BodyPartBases = new Index_BodyPartBase();
@@ -116,7 +116,7 @@ public class masterList : ISerializationCallbackReceiver
     public Character_BaseID_Index Character_BaseIDs = null;
     public Index_BodyPartBase BodyPartBases = null;
     public Index_Item_Base Items = null;
-    public Index_COM COMs = null;
+    //public Index_COM COMs = null;
     public Index_Floor_Base Floors = null;
     public Index_MapPlan MapPlans = null;
     public Index_FurnitureBase Furnitures = null;

@@ -119,11 +119,11 @@
                         },
                         {
                             "initClass":"campaign_init_map_extra",
-                            "initArguments":["map_jp_convenience_store", "SunMart"]
+                            "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
                         },
                         {
                             "initClass":"campaign_init_factionConnect",
-                            "initArguments":["Utnapishtim", "SunMart"]
+                            "initArguments":["Utnapishtim", "jp_convenience_store_SunMart"]
                         }
                     ]
                 }

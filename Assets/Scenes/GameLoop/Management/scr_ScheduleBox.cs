@@ -18,11 +18,19 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         this.text.text = text;
     }
 
+    protected string desc = "";
+    protected string desc_personal = "";
+    protected string desc_noplan = "";
+
     public void Awake()
     {
         baseColor = scr_System_CentralControl.current.pref.TextColor_neutral;
         disableColor = scr_System_CentralControl.current.pref.TextColor_disabled;
         highlightColor = scr_System_CentralControl.current.pref.TextColor_toggle;
+        conflictColor = scr_System_CentralControl.current.pref.TextColor_conflict;
+        desc_personal = scr_System_Serializer.current.Dictionary.QueryThenParse("management_schedule_box_freetime");
+        desc = scr_System_Serializer.current.Dictionary.QueryThenParse("management_schedule_box_description");
+        desc_noplan = scr_System_Serializer.current.Dictionary.QueryThenParse("management_schedule_box_none");
     }
 
     public void Refresh()
@@ -42,21 +50,18 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         indexCurrent = factionPriority.IndexOf(parent.CurrentFaction);
         indexCOM = factionPriority.IndexOf(faction);
 
-        if (comName.Length > 0) text.text = index + "H - " + comName;
-        else text.text = "-";
-
-
-        if (faction != null) text.text += "(" + faction.ID + ")";
-        else if (comName.Length > 0) text.text += "(personal time)";
-
-        if (index == currentHour) text.text = "> " + text.text + " <";
+        text.text = (index == currentHour ? "> " : "") + index + "H - " + desc.Replace("$com$", comName.Length > 0 ? comName : desc_noplan)
+                                         .Replace("$faction$", faction != null ? faction.FactionDisplayName : desc_personal) + (index == currentHour ? " <" : "");
 
         if (indexCurrent < indexCOM) this.text.color = disableColor;
-        else if (parent.CurrentHighlightHours != null && parent.CurrentHighlightHours.Contains(this.index)) this.text.color = highlightColor;
-        else this.text.color = baseColor;
+        else if (parent.CurrentHighlightHours != null && parent.CurrentHighlightHours.Contains(this.index))
+        {
+            this.text.color = faction == null ? highlightColor : conflictColor;
+        }
+        else this.text.color = faction == parent.CurrentFaction ? baseColor : disableColor;
         
     }
-    public Color32 baseColor, disableColor, highlightColor;
+    public Color32 baseColor, disableColor, highlightColor, conflictColor;
     string comName = "";
     Manageable faction = null;
     Character_Trainable c = null;

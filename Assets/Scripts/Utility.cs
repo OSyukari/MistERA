@@ -52,6 +52,11 @@ public static class Utility
                             Converters = new JsonConverter[] { new JSON_SO_Converter<Character_Trainable>() }
     };
 
+    public static string WrapTextColor(string text, Color32 c)
+    {
+        string cHex = $"#{c.r:X2}{c.g:X2}{c.b:X2}{c.a:X2}";
+        return $"<color={cHex}>{text}</color>";
+    }
     public static string GetEnumString(System.Type type, object value) {
         return System.Enum.GetName(type, value);
     }

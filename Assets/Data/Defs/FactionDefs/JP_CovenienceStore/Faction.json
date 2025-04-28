@@ -30,20 +30,23 @@
                     {
                         "jobPostID":"jp_convenience_store_clerk_morning",
                         "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
-                        "workCommands":["jp_convenience_store_frontDesk","jp_convenience_store_storageCleaning"],
-                        "activeHours":[ 6, 7, 8, 9,10,11,12,13], "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"7000" }  ]
+                        "workCommands":["jp_convenience_store_frontDesk"],
+                        "activeHours":[ 6, 7, 8, 9,10,11,12,13], 
+                        "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"7000" }  ]
                     },
                     {
                         "jobPostID":"jp_convenience_store_clerk_afternoon",
                         "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
-                        "workCommands":["jp_convenience_store_frontDesk","jp_convenience_store_storageCleaning"],
-                        "activeHours":[14,15,16,17,18,19,20,21], "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"7000" }  ]
+                        "workCommands":["jp_convenience_store_frontDesk"],
+                        "activeHours":[14,15,16,17,18,19,20,21], 
+                        "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"7000" }  ]
                     },
                     {
                         "jobPostID":"jp_convenience_store_clerk_midnight",
                         "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
-                        "workCommands":["jp_convenience_store_frontDesk","jp_convenience_store_storageCleaning"],
-                        "activeHours":[22,23, 0, 1, 2, 3, 4, 5], "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"10000" }  ]
+                        "workCommands":["jp_convenience_store_frontDesk"],
+                        "activeHours":[22,23, 0, 1, 2, 3, 4, 5], 
+                        "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"10000" }  ]
                     }
                 ],
                 "managerBaseIDs":[""],
@@ -59,8 +62,7 @@
         [
             {
                 "ID":"furniture_marker_jp_convenience_store_frontDesk",
-                "displayName":"workMarker",
-                "noDisplay":true,
+                "displayName":"frontdesk",
                 "recipe":[],
                 "furnitureSize":2,
                 "givesJob": [ { "comID":["jp_convenience_store_frontDesk"] } ]

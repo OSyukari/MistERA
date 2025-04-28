@@ -1,0 +1,19 @@
+{   
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "default":
+            {
+                "factionName_jp_convenience_store_SunMart":"SunMart便利店",
+
+                "jp_convenience_store_frontDesk_displayName_1":"前台接待",
+                "jp_convenience_store_clerk_morning":"兼职 清晨",
+                "jp_convenience_store_clerk_afternoon":"兼职 午后",
+                "jp_convenience_store_clerk_midnight":"兼职 午夜",
+
+                "furniture_marker_jp_convenience_store_frontDesk":"收银台"
+            }
+        }
+    }
+}

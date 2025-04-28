@@ -119,9 +119,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         //this.jobs = obj.Jobs;
         //index_JobReferenceIDCache = null;
 
+        // faction path will fail to build since factions do not exist yet
+        // but map is required for jobs to serialize so we have to build them despite missing data
         map = obj.Map;
         map.SerializationRebuilt();
-
 
         //Debug.LogError("Index_JobReferenceID clear");
         //Index_JobReferenceID = obj.Jobs;
@@ -138,7 +139,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         organizations = obj.Factions;
         foreach (var i in organizations) i.OnAfterDeserialize();
 
-
+        // now rebuild full map data
+        map.SerializationRebuilt();
+        
 
         Index_referenceID = obj.Characters;
         foreach (var i in Index_referenceID) i.Value.OnAfterDeserialize();
