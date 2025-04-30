@@ -87,6 +87,11 @@ public class Inventory
         if(added) foreach (string tag in i.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag]++;
     }
 
+    public void AddItem(List<Item_Instance> i)
+    {
+        foreach (var ii in i) AddItem(ii);
+    }
+
     public int TickTokenItem(string tokenTag, int count)
     {
         if (count >= 0) return count;   // count is a negative number
@@ -160,8 +165,7 @@ public class Inventory
             if (count < 1 || item == null) break;
             if (item.isToken)
             { 
-                var vvvv = WorldManager.Instantiate(item.BaseID, item.DisplayName);
-                vvvv.SetCount(count);
+                var vvvv = WorldManager.Instantiate(item.BaseID, item.DisplayName, count);
                 results.Add(vvvv);
                 break;
             }
@@ -175,8 +179,7 @@ public class Inventory
             }
             else
             {
-                var vv = WorldManager.Instantiate(item.BaseID, item.nameOverwrite);
-                vv.SetCount(count);
+                var vv = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, count);
                 foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= count;
                 item.ModCount( -count);
                 results.Add(vv);
@@ -211,6 +214,12 @@ public class Inventory
         foreach (KeyValuePair<string,int> kvp in tracker) list.Add(kvp.Key + ":" + kvp.Value);// tokentracker[stringkey] + "+" + );
         string s = "Total Item Count [" + Contents.Count + "], TagsTracker " + String.Join("|", list);
         return s;
+    }
+
+    public bool HasRequiredItems(List<Manageable.ItemEntry> entries, int count)
+    {
+        foreach (var entry in entries) if (GetItemCount(entry.itemID) < entry.itemCount * count) return false;
+        return true;
     }
 
 }

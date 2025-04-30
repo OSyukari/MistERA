@@ -17,8 +17,9 @@ public class FurnitureBase //: ISerializationCallbackReceiver
     public float furnitureSize = 0f;
     public List<Furniture_COMGiver> givesJob = new List<Furniture_COMGiver>();
     public bool noDisplay = false;
-    public bool isJobGiver { get { return this.givesJob.Count > 0; } }
+    [JsonIgnore] public bool isJobGiver { get { return this.givesJob.Count > 0; } }
 
+    [JsonIgnore]
     public bool isValid
     {
         get
@@ -44,13 +45,18 @@ public class FurnitureBase //: ISerializationCallbackReceiver
     [System.Serializable]
     public class Furniture_COMGiver
     {
-        [SerializeField] private List<string> comID = new List<string>();
-        [SerializeField] private List<string> comTags = new List<string>();
+        [SerializeField][JsonProperty] private List<string> comID = new List<string>();
+        [SerializeField][JsonProperty] private List<string> comTags = new List<string>();
         public List<COM> GetCOMs()
         {
             List<COM> returnValues = new List<COM>();
 
-            foreach(string i in comID) returnValues.Add(scr_System_Serializer.current.index_COM.list.Find(x => x.ID == i));
+            foreach (string i in comID)
+            {
+                var temp = scr_System_Serializer.current.GetByNameOrID_COM(i);
+                if (temp != null) returnValues.Add(temp);
+                else Debug.LogError($"FURNITURE COMGIVER CANNOT FIND COMMAND {i}");
+            }
 
             if (comTags.Count > 0) returnValues.AddRange(scr_System_Serializer.current.index_COM.list.FindAll(x => Utility.ListContainsStrict(x.comTags, comTags)));
 
@@ -63,7 +69,7 @@ public class FurnitureBase //: ISerializationCallbackReceiver
 [System.Serializable]
 public class FurnitureInstance: IDisposable, I_Disposable
 {
-    [JsonIgnore] private int parentRoomID = -1;
+    private int parentRoomID = -1;
     private Room_Instance parentRoomRef = null;
     [JsonIgnore] public Room_Instance ParentRoom 
     { get {
@@ -80,7 +86,7 @@ public class FurnitureInstance: IDisposable, I_Disposable
 
     [JsonIgnore] public string DisplayName { get { return FurnitureBase.DisplayName; } }
 
-    [JsonIgnore] protected int jobGiverID = -1;
+    protected int jobGiverID = -1;
     protected Job_Furniture JobGiverCache = null;
     [JsonIgnore] public Job_Furniture JobGiver
     {
@@ -147,9 +153,9 @@ public class FurnitureInstance: IDisposable, I_Disposable
 
 
 [System.Serializable]
-public class Index_FurnitureBase : I_IndexHasID, I_IndexMergeable
+public class Index_FurnitureBase : I_IndexHasID, I_IndexMergeable, ISerializationCallbackReceiver
 {
-    [SerializeField] public List<FurnitureBase> list = new List<FurnitureBase>();
+    public List<FurnitureBase> list = new List<FurnitureBase>();
     public void RegisterAllID()
     {
         Debug.Log("Index_FurnitureBase : registering ID with list length [" + list.Count + "]");
@@ -170,4 +176,13 @@ public class Index_FurnitureBase : I_IndexHasID, I_IndexMergeable
         }
     }
 
+    public void OnBeforeSerialize()
+    {
+
+    }
+
+    public void OnAfterDeserialize()
+    {
+        foreach(var i in list) i.OnAfterDeserialize();
+    }
 }

@@ -90,9 +90,6 @@
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true
-                    },
-                    "requireFactionExisting": {
-                        "jobKeyword": "!!!!extrajobcomtag!!!!"
                     }
                 },
                 "variants": [

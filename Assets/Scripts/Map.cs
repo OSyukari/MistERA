@@ -274,8 +274,12 @@ public class Map_Instance
         else return null;
     }
 
-    public List<int> dirtyCharaRef = new List<int>();
-    public List<ActionPackage> dirtyCharaAPRef = new List<ActionPackage>();
+    [JsonIgnore] public List<int> dirtyCharaRef = new List<int>();
+
+    /// <summary>
+    /// Campaignmanager will inject dirty ap when registering new AP
+    /// </summary>
+    [JsonIgnore] public List<ActionPackage> dirtyCharaAPRef = new List<ActionPackage>();
 
     public void RebuildRoomCharaRef()
     {
@@ -378,6 +382,7 @@ public class Map_Instance
         }
     }
 
+    /*
     struct UpdateRoomParallelFor : IJobParallelFor
     {
         [ReadOnly] public NativeArray<int> roomRefIDs;
@@ -389,7 +394,7 @@ public class Map_Instance
         {
             var charaInRoom = charaRefIDs[j].Distinct().ToList();
             // if(Rooms.ContainsKey(iii.Key) && iii.Value.Count > 0) Debug.Log("roomCharaRef " + Rooms[iii.Key].DisplayName + " and charaRefs " + String.Join("|", iii.Value));
-            /*if (iii.Key == scr_System_CampaignManager.current.CurrentRoom.RefID)
+            if (iii.Key == scr_System_CampaignManager.current.CurrentRoom.RefID)
             {
                 if (!charaInRoom.Contains(0))
                 {
@@ -397,7 +402,7 @@ public class Map_Instance
                     charaInRoom.Add(0);
                 }
                 //Debug.Log("roomCharaRef " + GetRoomByRef(iii.Key).DisplayName + " and charaRefs " + String.Join("|", charaInRoom));
-            }*/
+            }
             for (int x = 0; x < charaInRoom.Count; x++)
             {
                 var xx = scr_System_CampaignManager.current.FindInstanceByID(charaInRoom[x]);
@@ -451,9 +456,9 @@ public class Map_Instance
 
                         Utility.GetEPsFrom(yy, out List<EvaluationPackage> yyEPs);
 
-                        /*
+                        
                         Prioritise self or target.
-                         */
+                         
 
                         isDirty = isDirty || (xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume || dirtyCharaRefs.Contains(charaInRoom[y]);
                         //bool isSeeing = dirtyCharaAPRef.Contains(charaInRoom[x]) || dirtyCharaAPRef.Contains(charaInRoom[y]) || ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume);
@@ -466,7 +471,7 @@ public class Map_Instance
                 }
             }
         }
-    }
+    }*/
 
     public void UpdateAllRoom()
     {

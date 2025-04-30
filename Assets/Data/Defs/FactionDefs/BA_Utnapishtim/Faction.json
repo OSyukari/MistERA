@@ -31,7 +31,7 @@
                         },
                         {
                             "initClass":"campaign_init_productionOrder",
-                            "initArguments":["Utnapishtim", "production_cooking_consumable_meal_MRE_1", "craftUntilCount" ]
+                            "initArguments":["Utnapishtim", "production_cooking_consumable_meal_MRE_1", "craftUntilCount" ,10]
                         }
                         
                     ]
@@ -91,14 +91,6 @@
                         },
                         {
                             "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_couple1_Male","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_couple1_Female","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
                             "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Rapi","External"]
                         },
                         {
@@ -115,7 +107,7 @@
                         },
                         {
                             "initClass":"campaign_init_productionOrder",
-                            "initArguments":["Utnapishtim", "production_cooking_consumable_meal_MRE_1", "craftUntilCount" ]
+                            "initArguments":["Utnapishtim", "production_cooking_consumable_meal_MRE_1", "craftUntilCount",20]
                         },
                         {
                             "initClass":"campaign_init_map_extra",
@@ -319,9 +311,8 @@
                 ],
                 "managerBaseIDs":["PLAYER"],
                 "workHours":[
-                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":8,"endHour":11,"comID":"com_job_production_cooking" },
-                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":13,"endHour":15,"comID":"com_job_production_cooking" },
-                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":16,"endHour":18,"comID":"com_job_production_cooking" },
+                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Ako", "startHour":13,"endHour":18,"comID":"com_job_cleaning" },
 
                     { "charaBaseID":"Campaign1_Char_Himari", "startHour":8,"endHour":11,"comID":"com_job_production_engineering" },
                     { "charaBaseID":"Campaign1_Char_Himari", "startHour":13,"endHour":18,"comID":"com_job_research_engineering" },
@@ -335,13 +326,13 @@
                     { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":8,"endHour":11,"comID":"com_job_research_physics" },
                     { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":13,"endHour":18,"comID":"com_job_research_physics" },
 
-                    { "charaBaseID":"Campaign1_Char_Rin", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Rin", "startHour":8,"endHour":11,"comID":"com_job_production_cooking" },
                     { "charaBaseID":"Campaign1_Char_Rin", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
 
-                    { "charaBaseID":"Campaign1_Char_Momoka", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Momoka", "startHour":8,"endHour":11,"comID":"com_job_production_cooking" },
                     { "charaBaseID":"Campaign1_Char_Momoka", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
 
-                    { "charaBaseID":"Campaign1_Char_Ayumu", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
+                    { "charaBaseID":"Campaign1_Char_Ayumu", "startHour":8,"endHour":11,"comID":"com_job_production_cooking" },
                     { "charaBaseID":"Campaign1_Char_Ayumu", "startHour":13,"endHour":18,"comID":"com_job_farm_maintain" },
 
                     { "charaBaseID":"Campaign1_Char_Ayane", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },

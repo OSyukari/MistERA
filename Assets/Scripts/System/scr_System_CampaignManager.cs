@@ -57,6 +57,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         LogManager = new MessageLogManager();
     }
 
+
+    public Inventory Recycler = new Inventory();
+
     public List<ActionPackage> GetRegisteredAPByRoom(int roomID, bool getExecutedAPs = true)
     {
         var returnVal = (registeredPackagesByRoom.ContainsKey(roomID) ? registeredPackagesByRoom[roomID] : new List<ActionPackage>());
@@ -894,7 +897,8 @@ public class scr_System_CampaignManager : MonoBehaviour
                     Manageable f = FindorAddHomeFactionByID(ini.initArguments[0]);
                     ItemComponentTemplate_Craftable_Recipe r = scr_System_Serializer.current.CraftingRecipe.Find(x => x.RecipeUID == ini.initArguments[1]);
                     Manageable.ProductionOrderType type = (Manageable.ProductionOrderType) Enum.Parse(typeof(Manageable.ProductionOrderType), ini.initArguments[2]);
-                    f.AddProductionOrder(r, 10, type);
+                    if (int.TryParse(ini.initArguments[3], out int count)) f.AddProductionOrder(r, count, type);
+                    
                 }
                 else if (ini.initClass == "campaign_init_factionVisitor")
                 {
@@ -1310,10 +1314,11 @@ public class scr_System_CampaignManager : MonoBehaviour
 
 public static class WorldManager
 {
-    public static Item_Instance Instantiate(string parentID, string nameOverwrite = "")
+    public static Item_Instance Instantiate(string parentID, string nameOverwrite = "", int innerCount = 1)
     {
         if (scr_System_Serializer.current.GetByNameOrID_Item_Base(parentID) == null) return null;
         Item_Instance i = new Item_Instance(parentID, nameOverwrite);
+        i.SetCount(innerCount);
         scr_System_CampaignManager.current.Register(i);
         return i;
     }

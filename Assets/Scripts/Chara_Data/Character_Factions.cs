@@ -196,14 +196,11 @@ public class Character_Factions
     {
         //string message = "";
 
-        if (!HomeFactions.Contains(sourceFaction)) return;
-
-        if(selectedCOM != null)
+        if (selectedCOM != null && !HomeFactions.Contains(sourceFaction))
         {
-            // check every hour setting if jobpost clear it
-            sourceFaction.SetWorkHour(Owner, hour, selectedCOM);    
+            Debug.LogError($"setschedule single target {sourceFaction.FactionDisplayName} not in homefactions, return");
+            return;
         }
-
         sourceFaction.SetWorkHour(Owner, hour, selectedCOM);
         
         List<string> s = new List<string>();

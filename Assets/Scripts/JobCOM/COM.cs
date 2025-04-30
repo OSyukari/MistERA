@@ -18,7 +18,7 @@ public class Index_COM : I_IndexHasID, I_IndexHasTooltip, ISerializationCallback
             this.list.AddRange(l.list);
         }
     }
-    public Rigidbody2D d = new();
+
     public void OnAfterDeserialize()
     {
         for (int i = list.Count - 1; i >= 0; i--)

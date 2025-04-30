@@ -50,7 +50,7 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         indexCurrent = factionPriority.IndexOf(parent.CurrentFaction);
         indexCOM = factionPriority.IndexOf(faction);
 
-        text.text = (index == currentHour ? "> " : "") + index + "H - " + desc.Replace("$com$", comName.Length > 0 ? comName : desc_noplan)
+        text.text = (index == currentHour ? "> " : "") + index + "H - " + desc.Replace("$com$", comName != "" ? comName : desc_noplan)
                                          .Replace("$faction$", faction != null ? faction.FactionDisplayName : desc_personal) + (index == currentHour ? " <" : "");
 
         if (indexCurrent < indexCOM) this.text.color = disableColor;
@@ -85,9 +85,11 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        //Debug.Log("OnPointerDown");
+        
         if (!isActive) return;
         if (c == null) return;
+
+        //Debug.Log("OnPointerDown");
 
         List<Manageable> factionPriority = c.FactionManager.Factions;
         int indexCurrent = factionPriority.IndexOf(parent.CurrentFaction);
@@ -101,12 +103,12 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
             //Debug.Log("ScheduleBox OnPointerDown from index[" + index + "] setting com [" + (com == null?"null": c.CurrentJobSchedule(index).ID) + "] to ["+ (parent.CurrentHighlightJOBCOM == null ? "null" : parent.CurrentHighlightJOBCOM.ID) + "]");
 
             c.FactionManager.SetSchedule(parent.CurrentFaction, index, parent.CurrentHighlightJOBCOM);
-            Refresh();
+            //Refresh();
             parent.NotifyScheduleChanged();
         }
         else
         {
-            //Debug.Log("ScheduleBox OPD index smaller, ignored");
+            Debug.Log($"ScheduleBox OPD index {indexCurrent} not gte {indexCOM}, ignored");
         }
     }
 }

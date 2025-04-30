@@ -85,7 +85,7 @@
             "ID":"furniture_galley",
             "displayName":"厨房",
             "recipe":[],
-            "furnitureSize":2,
+            "furnitureSize":3,
             "givesJob":
             [ { "comTags":["furniture","production_cooking"] } ]
         },

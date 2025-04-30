@@ -532,15 +532,15 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         new scr_Canvas_Management parent;
         scr_SelectableText text;
         Initializer init;
-        scr_PointerEnterNotifier pointerhandler;
+       // scr_PointerEnterNotifier pointerhandler;
         public button_ChangeTab(scr_Canvas_Management parent, scr_SelectableText text, RectTransform target, Initializer init = null) : base(parent)
         {
             this.parent = parent;
             this.text = text;
             this.target = target;
             this.init = init;
-            pointerhandler = text.GetComponent<scr_PointerEnterNotifier>();
-            pointerhandler.Initialize(parent, text.optionID);
+           // pointerhandler = text.GetComponent<scr_PointerEnterNotifier>();
+           // pointerhandler.Initialize(parent, text.optionID);
         }
 
         public override bool IsButtonValid()
@@ -820,6 +820,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             button.Toggle(true, isActive);
             button.Validate();
             foreach (var i in comRects) i.gameObject.SetActive(isActive);
+            for (var i = 0; i < parent.chara_schedulebox.childCount; i++)
+            {
+                parent.chara_schedulebox.GetChild(i).GetComponent<scr_ScheduleBox>().SetActive(isActive);
+            }
             background.gameObject.SetActive(isActive);
         }
     }

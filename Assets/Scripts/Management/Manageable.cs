@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using JetBrains.Annotations;
 using static Job_Furniture;
 using System.Security.Cryptography;
+using static UnityEditor.Progress;
+using NUnit.Framework.Constraints;
 
 [System.Serializable]
 public enum Manageable_GuestStatus
@@ -24,6 +26,8 @@ public enum Manageable_GuestStatus
 [System.Serializable]
 public class Manageable : I_Disposable
 {
+    [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }    
+
     
     protected virtual bool isManageableHours(int hour)
     {
@@ -189,6 +193,29 @@ public class Manageable : I_Disposable
         Inventory.UpdateTimeMinute(t);
 
     }
+    
+    protected void OnHourUpdate(TimeSpan t)
+    {
+        int currentHour = (scr_System_Time.current.getCurrentTime().Hour + 24 - 1) % 24;
+        foreach(var cSchedule in charaSchedules)
+        {
+            // first check if chara is in faction
+            if (!isCharaInManagedSpace(cSchedule.Key)) continue;
+
+            // check if chara previous hour is jobpost
+            if (cSchedule.Value == null || cSchedule.Value.Get(currentHour).jobID == "") continue;
+            var _jobpost = this.JobPostsPresets.Find(x => x.jobPostID == cSchedule.Value.Get(currentHour).jobID);
+            if (_jobpost == null) continue;
+
+            var c = scr_System_CampaignManager.current.FindInstanceByID(cSchedule.Key);
+            var targetFaction = c == null ? null : c.FactionManager.HomeFactions.First();
+            if(targetFaction == null) continue;
+
+            // self will pay wage to targetfaction
+            TradeRecords.Payment(targetFaction, new List<ItemEntry>(), _jobpost.hourlyPayout);
+        }
+    }
+
     protected void OnTimeUpdate(TimeSpan t)
     {
         // check daily reset
@@ -202,11 +229,20 @@ public class Manageable : I_Disposable
     public void NotifyFactionMemberChange()
     {
         this.charaMaintenanceCostCache = null;
+        this.TradeRecords.Clear();
     }
 
-    protected void OnDayUpdate(int updateOrder)
+
+    protected void OnDayUpdate_0(int updateOrder)
+    {
+        if (updateOrder != 0) return;
+        this.TradeRecords.Clear();
+    }
+
+    protected void OnDayUpdate_1(int updateOrder)
     {
         if (updateOrder != 1) return;
+        this.TradeRecords.ProcessAllPayments();
         RefreshDailyOrder();
         CheckDailyResourceConsumption();
         // character log their daily consumption at updateOrder 2
@@ -215,6 +251,7 @@ public class Manageable : I_Disposable
     protected void OnDayUpdate_3(int updateOrder)
     {   // character log their daily consumption at updateOrder 2, refresh report at update3
         if (updateOrder != 3) return;
+        this.dailyReports.AddRange(this.TradeRecords.Details);
         dailyReports_previous = dailyReports;
         dailyReports = new List<string>();
     }
@@ -266,10 +303,11 @@ public class Manageable : I_Disposable
 
         
         scr_System_Time.current.Observer_globalTime += OnTimeUpdate;
-        scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate;
+        scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate_1;
         scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate_3;
 
         scr_System_Time.current.Observer_globalTime_5min += OnTimeUpdate5;
+        scr_System_Time.current.Observer_globalTime_Hours += OnHourUpdate;
 
         socialStatus_manager = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_socialStatus_manager");
         socialStatus_member = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_socialStatus_member");
@@ -729,9 +767,15 @@ public class Manageable : I_Disposable
         return null;
     }
 
+    protected bool isCharaInManagedSpace(int refID)
+    {
+        return isCharaInManagedSpace(scr_System_CampaignManager.current.FindInstanceByID(refID));
+    }
     protected bool isCharaInManagedSpace(Character_Trainable c)
     {
-        if (managedRoomRefs.Keys.Contains(scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID).RefID)) return true;
+        if (c == null) return false;
+        var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+        if (room != null && managedRoomRefs.Keys.Contains(room.RefID)) return true;
         else return false;
     }
 
@@ -836,7 +880,7 @@ public class Manageable : I_Disposable
     /// <param name="targetCOM"></param>
     public void SetWorkHour(Character_Trainable c, int hour, COM targetCOM = null)
     {
-        if (!charaSchedules.ContainsKey(c.RefID)) Debug.LogError($"Setting work for {c.FirstName} but target not registerd");
+        if (!charaSchedules.ContainsKey(c.RefID)) return; // Debug.LogError($"Setting work for {c.FirstName} but target not registerd");
         else charaSchedules[c.RefID].Get(hour).Set(targetCOM == null ? "" : targetCOM.ID);
     }
     /// <summary>
@@ -849,6 +893,7 @@ public class Manageable : I_Disposable
     public void SetWorkHour(Character_Trainable c, int hour, string jobPostID, List<string> commands)
     {
         if (!charaSchedules.ContainsKey(c.RefID)) Debug.LogError($"Setting work for {c.FirstName} but target not registerd");
+        else if (this.JobPostsPresets.Find(x => x.jobPostID == jobPostID) == null) Debug.LogError($"faction {this.ID} does not contain job preset {jobPostID}");
         else charaSchedules[c.RefID].Get(hour).Set(jobPostID, commands);
     }
 
@@ -1055,7 +1100,7 @@ public class Manageable : I_Disposable
     Dictionary<COM, List<Job_Furniture>> jobPosts;
 
 
-
+    
     [JsonIgnore] public List<COM> JobPosts { get { return jobPosts.Keys.ToList(); } }
     [JsonIgnore] public List<COM> NonJobPosts { get { return nonjobPosts.Keys.ToList(); } }
     public string printDebugInfo_Jobs()
@@ -1233,7 +1278,8 @@ public class Manageable : I_Disposable
                 this.comIDs = new List<string>() { com.ID };
                 this.jobID = "";
             }
-
+            this.cache_com = null;
+            cache_name = "";
         }
 
         public void Set(string jobID, List<string> coms)
@@ -1251,7 +1297,8 @@ public class Manageable : I_Disposable
             {
                 Set("");
             }
-
+            this.cache_com = null;
+            cache_name = "";
         }
 
         public void Set(string com)
@@ -1266,7 +1313,8 @@ public class Manageable : I_Disposable
                 this.comIDs = new List<string>() { com };
                 this.jobID = "";
             }
-
+            this.cache_com = null;
+            cache_name = "";
         }
 
         protected List<COM> cache_com = null;
@@ -1316,6 +1364,204 @@ public class Manageable : I_Disposable
 
     }
 
+    [JsonProperty][SerializeField] protected TradeManager tradeRecords = null;
+    [JsonIgnore] public TradeManager TradeRecords
+    {
+        get
+        {
+            if(this.tradeRecords == null) this.tradeRecords = new TradeManager(this);
+            return this.tradeRecords;
+        }
+    }
+
+    [System.Serializable]
+    public class TradeManager
+    {
+        public Dictionary<string, List<Trade>> transaction_recurring = new Dictionary<string, List<Trade>>();
+        public Dictionary<string, List<Trade>> transaction_onetime = new Dictionary<string, List<Trade>> ();
+        public List<string> warnings = new List<string>();
+
+        public Dictionary<string, int> records = new Dictionary<string, int>();
+
+        [JsonIgnore]
+        public List<string> Details
+        {
+            get
+            {
+                var s = new List<string>();
+                foreach (var r in records) s.Add(r.Key + r.Value.ToString("+0;-#"));
+                s.AddRange(warnings);
+                return s;
+            }
+        }
+
+        /// <summary>
+        /// Called before dailyupdate to sync up data removal time
+        /// </summary>
+        public void Clear()
+        {
+            this.warnings.Clear();
+            this.records.Clear();
+        }
+
+        [System.Serializable]
+        public class Trade
+        {
+            public List<ItemEntry> items = new List<ItemEntry>();
+            public List<ItemEntry> costs = new List<ItemEntry>();
+            public int count = 0;
+            public Trade() { }
+            public Trade(List<ItemEntry> items, List<ItemEntry> costs, int count = 1)
+            {
+                this.items = items;
+                this.costs = costs;
+                this.count = count;
+            }
+
+            [JsonIgnore]
+            public string Display
+            {
+                get
+                {
+                    var s = new Dictionary<string, int>();
+                    foreach(var i in items)
+                    {
+                        if (!s.ContainsKey(i.itemID)) s.Add(i.itemID, 0);
+                        s[i.itemID] += i.itemCount * count;
+                    }
+                    foreach(var i in costs)
+                    {
+                        if (!s.ContainsKey(i.itemID)) s.Add(i.itemID, 0);
+                        s[i.itemID] -= i.itemCount * count;
+                    }
+                    var s2 = new List<string>();
+                    foreach(var i in s) s2.Add(i.Key + i.Value.ToString("+0;-#"));
+                    return String.Join("|", s2);
+                }
+            }
+        }
+
+        public void AddRecord(string id, int count)
+        {
+            if (this.records.ContainsKey(id)) this.records[id] += count;
+            else this.records.Add(id, count);
+        }
+
+        public void ProcessAllPayments()
+        {
+            foreach (var payment in transaction_recurring)
+            {
+                var targetFaction = scr_System_CampaignManager.current.FindFactionByID(payment.Key);
+                if (targetFaction == null) continue;
+
+                foreach (var _trade in payment.Value)
+                {
+                    if(!ProcessPayment_Single(targetFaction, _trade)) 
+                    {
+                        warnings.Add(Utility.WrapTextColor($"transaction Source[{Owner.FactionDisplayName}] Target[{targetFaction.FactionDisplayName}] Content[{_trade.Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict));
+                    }
+                }
+            }
+
+            foreach (var payment in transaction_onetime)
+            {
+                var targetFaction = scr_System_CampaignManager.current.FindFactionByID(payment.Key);
+                if (targetFaction == null) continue;
+
+                foreach (var _trade in payment.Value)
+                {
+                    if (!ProcessPayment_Single(targetFaction, _trade))
+                    {
+                        warnings.Add(Utility.WrapTextColor($"transaction Source[{Owner.FactionDisplayName}] Target[{targetFaction.FactionDisplayName}] Content[{_trade.Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict));
+                    }
+                }
+            }
+        }
+
+        public bool ProcessPayment_Single(Manageable targetFaction, Trade _trade)
+        {
+            if (targetFaction == null) return false;
+
+            Inventory recycler = scr_System_CampaignManager.current.Recycler;
+            Inventory self = Owner.isPlayerFaction ? Owner.Inventory : recycler;
+            Inventory target = targetFaction.isPlayerFaction ? targetFaction.Inventory : recycler;
+
+            if (self == target) return true;
+
+            var selfRecords = self == recycler ? null : Owner.TradeRecords;
+            var targetRecords = target == recycler ? null : targetFaction.TradeRecords;
+
+            if ((self == recycler || self.HasRequiredItems(_trade.costs, _trade.count)) && (target == recycler || target.HasRequiredItems(_trade.items, _trade.count)))
+            {
+                foreach (var item in _trade.costs)
+                {
+                    var amount = item.itemCount * _trade.count;
+                    if (self == recycler) target.AddItem(WorldManager.Instantiate(item.itemID, item.itemNameOverwrite, amount));
+                    else target.AddItem(self.RemoveItem(item.itemID, amount));
+
+                    if (selfRecords != null) selfRecords.AddRecord(item.itemID, -amount);
+                    if (targetRecords != null) targetRecords.AddRecord(item.itemID, amount);
+                }
+                foreach (var item in _trade.items)
+                {
+                    var amount = item.itemCount * _trade.count;
+                    if (target == recycler) self.AddItem(WorldManager.Instantiate(item.itemID, item.itemNameOverwrite, amount));
+                    else self.AddItem(target.RemoveItem(item.itemID, amount));
+
+                    if (selfRecords != null) selfRecords.AddRecord(item.itemID, amount);
+                    if (targetRecords != null) targetRecords.AddRecord(item.itemID, -amount);
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public string ownerRef = "";
+        protected Manageable _ownerRefCache = null;
+        [JsonIgnore] public Manageable Owner
+        {
+            get
+            {
+                if (this._ownerRefCache == null) this._ownerRefCache = scr_System_CampaignManager.current.FindFactionByID(ownerRef);
+                return _ownerRefCache;
+            }
+        }
+
+        public TradeManager() { }
+        public TradeManager(Manageable m)
+        {
+            this.ownerRef = m.ID;
+            this._ownerRefCache = m;
+        }
+
+        public void Payment(Manageable toTarget, List<ItemEntry> purchaseItem, List<ItemEntry> payCost)
+        {
+            if (toTarget == null) return;
+            TryAdd(ref transaction_onetime, toTarget.ID, purchaseItem, payCost);
+        }
+
+        protected void TryAdd(ref Dictionary<string, List<Trade>> mainList, string factionID, List<ItemEntry> item, List<ItemEntry> cost)
+        {
+            if (!mainList.ContainsKey(factionID)) mainList.Add(factionID, new List<Trade>());
+
+            bool added = false;
+            foreach(var _item in mainList[factionID])
+            {
+                if ((_item.items == item || (_item.items.Count == 0 && item.Count == 0)) && (_item.costs == cost || (_item.costs.Count == 0 && cost.Count == 0)))
+                {
+                    _item.count++;
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) mainList[factionID].Add(new Trade(item, cost));
+        }
+
+    }
 
 
 
@@ -1596,7 +1842,7 @@ public class Manageable : I_Disposable
     public void DisposeInternal()
     {
         scr_System_Time.current.Observer_globalTime -= OnTimeUpdate;
-        scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate;
+        scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_1;
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_3;
     }
 
@@ -1669,6 +1915,11 @@ public class Manageable : I_Disposable
             {
                 if (item != null) this.hourlyPayout.Add(new ItemEntry(item));
             }
+
+            foreach(var item in module.hourlyCost)
+            {
+                if (item != null) this.hourlyCost.Add(new ItemEntry(item));
+            }
         }
 
         [JsonIgnore] public string Name { get
@@ -1679,6 +1930,7 @@ public class Manageable : I_Disposable
         public List<string> workCommands = new List<string>();
         public List<int> activeHours = new List<int>();
         public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
+        public List<ItemEntry> hourlyCost = new List<ItemEntry>();
         
         [JsonIgnore] 
         public bool isActive { get { return this.workCommands.Count > 0 && this.activeHours.Count > 0; } }
@@ -1697,45 +1949,48 @@ public class Manageable : I_Disposable
         }
 
 
-        [System.Serializable]
-        public class ItemEntry
+        
+    }
+
+    [System.Serializable]
+    public class ItemEntry
+    {
+        public ItemEntry()
         {
-            public ItemEntry()
-            {
 
-            }
-            public ItemEntry(MapPlan.WorkModuleInit.ItemEntry entry)
-            {
-                this.itemID = entry.itemID;
-                this.itemNameOverwrite = entry.itemNameOverwrite;
-                this.itemCount = entry.itemCount;
-            }
-            public string itemID = "";
-            public string itemNameOverwrite = "";
-            public int itemCount = 0;
+        }
+        public ItemEntry(MapPlan.WorkModuleInit.ItemEntry entry)
+        {
+            this.itemID = entry.itemID;
+            this.itemNameOverwrite = entry.itemNameOverwrite;
+            this.itemCount = entry.itemCount;
+        }
+        public string itemID = "";
+        public string itemNameOverwrite = "";
+        public int itemCount = 0;
 
-            string _cache = "";
-            [JsonIgnore] public string Print
+        string _cache = "";
+        [JsonIgnore]
+        public string Print
+        {
+            get
             {
-                get
+                if (_cache != "") return _cache;
+                var count = (itemCount >= 10000000) ? (((int)(itemCount / 1000000)).ToString() + "M") : ((itemCount >= 10000) ? (((int)(itemCount / 1000)).ToString() + "K") : itemCount.ToString());
+
+                if (this.itemID == "" || itemCount == 0) _cache = "none";
+                else
                 {
-                    if (_cache != "") return _cache;
-                    var count = (itemCount >= 10000000) ? (((int)(itemCount / 1000000)).ToString() + "M") : ((itemCount >= 10000) ? (((int)(itemCount/1000)).ToString() + "K") : itemCount.ToString());
+                    var item = scr_System_Serializer.current.GetByNameOrID_Item_Base(this.itemID);
+                    var basestr = (item.Tags.Contains("item_money") ?
+                                scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_currency") :
+                                scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_item"));
 
-                    if (this.itemID == "" || itemCount == 0) _cache = "none";
-                    else
-                    {
-                        var item = scr_System_Serializer.current.GetByNameOrID_Item_Base(this.itemID);
-                        var basestr = (item.Tags.Contains("item_money") ?
-                                    scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_currency") :
-                                    scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_item"));
-
-                        _cache = basestr.Replace("$item$", this.itemNameOverwrite != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse(this.itemNameOverwrite) : scr_System_Serializer.current.Dictionary.QueryThenParse(this.itemID))
-                                             .Replace("$count$", count);
-                    }
-                    return _cache;
-                    //else return $"{scr_System_Serializer.current.Dictionary.QueryThenParse(itemNameOverwrite != "" ? itemNameOverwrite : itemID)} x{itemCount}";
+                    _cache = basestr.Replace("$item$", this.itemNameOverwrite != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse(this.itemNameOverwrite) : scr_System_Serializer.current.Dictionary.QueryThenParse(this.itemID))
+                                         .Replace("$count$", count);
                 }
+                return _cache;
+                //else return $"{scr_System_Serializer.current.Dictionary.QueryThenParse(itemNameOverwrite != "" ? itemNameOverwrite : itemID)} x{itemCount}";
             }
         }
     }

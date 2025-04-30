@@ -32,7 +32,7 @@ public class MasterList
                 list.Add(Character_Personalities);
                 list.Add(Character_Origins);    // need to be ordered later cuz require other list to be ready
                 list.Add(COMs);
-
+                list.Add(Furnitures);
             }
             return list;
         }
@@ -50,6 +50,7 @@ public class MasterList
     public Character_Personality_Index Character_Personalities = null;
     public Index_COM COMs = null;
     public Dictionary_Index Dictionary = null;
+    public Index_FurnitureBase Furnitures = null;
 
     public void InitializeLists()
     {
@@ -65,6 +66,7 @@ public class MasterList
         this.Character_Personalities = new Character_Personality_Index();
         this.COMs = new Index_COM();
         this.Dictionary = new Dictionary_Index();
+        this.Furnitures = new Index_FurnitureBase();
     }
 
     public void MergeWith(MasterList list)

@@ -128,7 +128,7 @@ public class scr_System_Serializer : MonoBehaviour
     public Index_COM index_COM { get { return MasterList.COMs as Index_COM; } }
     public Index_Floor_Base index_Floor_Base { get { return masterList.Floors as Index_Floor_Base; } }
     public Index_MapPlan index_MapPlan { get { return masterList.MapPlans as Index_MapPlan; } }
-    public Index_FurnitureBase index_FurnitureBase { get { return masterList.Furnitures as Index_FurnitureBase; } }
+    public Index_FurnitureBase index_FurnitureBase { get { return MasterList.Furnitures as Index_FurnitureBase; } }
     public Index_Status index_Status { get { return masterList.Status as Index_Status; } }
     public Index_StatusEx index_StatusEX { get { return masterList.StatusEXs as Index_StatusEx; } }
     public Index_Experiences index_Experiences { get { return MasterList.Experiences; } }

@@ -124,6 +124,7 @@ public class MapPlan
         public List<string> workCommands = new List<string>();
         public List<int> activeHours = new List<int>();
         public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
+        public List<ItemEntry> hourlyCost = new List<ItemEntry>();
 
         [System.Serializable]
         public class ItemEntry
