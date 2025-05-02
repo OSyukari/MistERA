@@ -21,6 +21,8 @@ public abstract class scr_Menu : MonoBehaviour
 
     public Canvas m_Canvas;
     protected Camera m_Camera;
+    public delegate void Action();
+    public Action onSelfExit = null; 
 
     protected virtual void OnEnable()
     {
@@ -63,10 +65,11 @@ public abstract class scr_Menu : MonoBehaviour
     {
         int counter = 0;
         string s = "";
+        if (hash == 0) hash += 1;
         while (counter < 100 && (buttonsByID.ContainsKey(hash) || validatorsByID.ContainsKey(hash)))
         {
             s += "hash collision on hash " + hash + ", rehashing into ";
-            hash = buttonsByID[hash].GetHashCode();
+            hash = (hash*2).GetHashCode();
             s += hash + "\n";
             counter++;
         }
@@ -118,6 +121,7 @@ public abstract class scr_Menu : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
+        if (onSelfExit != null) onSelfExit();
         Destroy(tooltip);
     }
     public scr_SelectableText GetButtonByID(int id)

@@ -49,8 +49,8 @@
             "results": 
             { "results_character":
                 [
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"5" } },
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"15" } }
+                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"4" } },
+                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"8" } }
                 ]
             },
             "variants":[
@@ -77,7 +77,8 @@
             "results": 
             { "results_character":
                 [ 
-                    {  "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"5" } } 
+                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"5" } } ,
+                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"10" } }
                 ]
             },
             "variants":[
@@ -104,7 +105,8 @@
             "results": 
             { "results_character":
                 [
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"10" } }
+                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"10" } },
+                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"10" } }
                 ]
             },
             "variants":[
@@ -122,7 +124,7 @@
             "ID":"com_furniture_takeShower",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_furniture_takeShower_displayName_1",
-            "timeScale":15,
+            "timeScale":30,
             "comTags":["furniture", "shower"],
             "requirements":{ "requirement":{ "doerCount":1 } },
             "variants":[
@@ -149,7 +151,7 @@
             { "results_character":
                 [
                     { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"5" } },
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"15" } }
+                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"10" } }
                 ]
             }
         },
@@ -189,7 +191,7 @@
             "comTags":["furniture","desk"],
             "requirements":
             { 
-                "requirement":{ "treatReceiverAsDoer":true, "doerCount":1 , "req_Doers": { "cost_EN": 30 }} 
+                "requirement":{ "treatReceiverAsDoer":true, "doerCount":1 , "req_Doers": { "cost_EN": 10 }} 
             },
             "variants":[
                 {

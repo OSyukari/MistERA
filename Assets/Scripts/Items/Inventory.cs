@@ -132,8 +132,6 @@ public class Inventory
 
                 Contents.RemoveAt(j);
                 contentRefs.Remove(item.RefID);
-                //tracker_update = true;
-                //if (!(item.isToken && item.markTokenUsed))
                 foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag]-=item.Count;
                 scr_System_CampaignManager.current.Unregister(item);
 
@@ -207,13 +205,33 @@ public class Inventory
         return i;
     }
 
-    public string PrintContent()
+    public string PrintContent(bool verticalBreak = false, bool printFullContent = false)
     {
-        List<string> list = new List<string>();
-        //foreach(var kvp in tracker) list.Add(kvp.Key+":"+kvp.Value);
-        foreach (KeyValuePair<string,int> kvp in tracker) list.Add(kvp.Key + ":" + kvp.Value);// tokentracker[stringkey] + "+" + );
-        string s = "Total Item Count [" + Contents.Count + "], TagsTracker " + String.Join("|", list);
-        return s;
+        if(!printFullContent)
+        {
+            List<string> list = new List<string>();
+            //foreach(var kvp in tracker) list.Add(kvp.Key+":"+kvp.Value);
+            foreach (KeyValuePair<string, int> kvp in tracker) list.Add(kvp.Key + ":" + kvp.Value);// tokentracker[stringkey] + "+" + );
+            string s = "Total Item Count [" + Contents.Count + "], TagsTracker " + String.Join(verticalBreak ?"\n" : "|", list);
+            return s;
+        }
+        else
+        {
+            List<string> list = new List<string>();
+            //foreach(var kvp in tracker) list.Add(kvp.Key+":"+kvp.Value);
+            foreach (var item in Contents) list.Add(item.Print());// tokentracker[stringkey] + "+" + );
+            return String.Join(verticalBreak ? "\n" : "|", list);
+        }
+
+    }
+
+    public void AddContentToDict(ref Dictionary<string, int> dict)
+    {
+        foreach(var item in Contents)
+        {
+            if (!dict.ContainsKey(item.BaseID)) dict.Add(item.BaseID, 0);
+            dict[item.BaseID] += item.Count;
+        }
     }
 
     public bool HasRequiredItems(List<Manageable.ItemEntry> entries, int count)

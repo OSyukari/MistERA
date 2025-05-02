@@ -64,6 +64,11 @@ public class Item_Instance : IDisposable, I_Disposable
         }
     }
 
+    public string Print()
+    {
+        return this.DisplayName + " x" + this.Count;
+    }
+
     public string nameOverwrite = "";
     [SerializeField][JsonProperty] protected List<ItemComponent_Base> compInstances = new List<ItemComponent_Base>();
     protected List<ItemComponent_Base> compInstances_nonSerialized = new List<ItemComponent_Base>();

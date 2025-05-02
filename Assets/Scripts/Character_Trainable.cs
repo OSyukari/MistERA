@@ -642,7 +642,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             ss += jobInternalStatus;
             if (!hasPackage)
             {
-                ss += " || Job cannot give valid package, releasing";
+                ss += $" || Job cannot give valid package, releasing from |{CurrentJob.RefID}|";
                 ChangeCurrentJob(null);
             }
             // release from job
@@ -725,7 +725,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         {   // try to wake up
             Job job = null;
 
-            ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + " in room [" + job.ParentRoom.DisplayName + "]");
+            ss += "Changing job to " + (job == null ? "NULL" : String.Join("|", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
             if(s != null) s.Add(ss);
             ChangeCurrentJob(job, job == null || currentScheduleCOM == null ? "" : currentScheduleCOM.ID);
 
@@ -751,7 +751,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     if (possibleJobs != null && possibleJobs.Count > 0)
                     {
                         Job job = possibleJobs[0];
-                        ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + " in room [" + job.ParentRoom.DisplayName + "]");
+                        ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                         if(s != null) s.Add(ss);
                         ChangeCurrentJob(job, "com_furniture_restroom_fix");
                         return;
@@ -795,7 +795,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     {
                         Job job = possibleJobs[0];
                         var targetID = ((job == null || currentScheduleCOM == null) ? "" : currentScheduleCOM.ID);
-                        ss += "Changing job to faction "+ faction.FactionDisplayName+"" + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + " in room [" + job.ParentRoom.DisplayName + "]");
+                        ss += "Changing job to faction "+ faction.FactionDisplayName+"" + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                         if(s != null) s.Add(ss);
                         ChangeCurrentJob(job, targetID);
                         return;
@@ -819,7 +819,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
-                    ss += "Changing job to eating " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + " in room [" + job.ParentRoom.DisplayName + "]");
+                    ss += "Changing job to eating " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                     if(s != null) s.Add(ss);
                     ChangeCurrentJob(job,"","food_meal");
                     return;
@@ -843,7 +843,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
-                    ss += "Changing job to sleep " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + " in room [" + job.ParentRoom.DisplayName + "]");
+                    ss += "Changing job to sleep " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                     if(s != null) s.Add(ss);
                     ChangeCurrentJob(job, "com_furniture_sleep");
                     return;
@@ -861,14 +861,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 foreach (Manageable faction in FactionManager.HomeFactions)
                 {
-                    possibleResting.AddRange(faction.GetValidJobs_Recreation(this, currentHour, s));
+                    possibleResting.AddRange(faction.GetValidJobs_nonJob_byTags(this, currentHour, "rest", s));
                     break;
                 }
 
                 if (possibleResting.Count > 0)
                 {
                     Job job = possibleResting[Utility.GetRandIndexFromListCount(possibleResting.Count)];
-                    ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + " in room [" + job.ParentRoom.DisplayName + "]");
+                    ss += "Changing job to resting job " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $" |{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                     if (s != null) s.Add(ss);
                     ChangeCurrentJob(job, "", "rest");
                     return;
@@ -901,7 +901,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (possibletargets.Count > 0)
             {
                 Job job = possibletargets[Utility.GetRandIndexFromListCount(possibletargets.Count)];
-                ss += "Changing job to having sex with " + (job == null ? "NULL" :  "interaction in room [" + job.ParentRoom.DisplayName + "]");
+                ss += "Changing job to having sex with " + (job == null ? "NULL" : "interaction |"+(job == null ? "null" : job.RefID)+"| in room[" + job.ParentRoom.DisplayName + "]");
                 //Debug.LogError("Animal fucking ");
                 if(s != null) s.Add(ss);
                 ChangeCurrentJob(job, "com_interaction_initiateSex");
@@ -927,14 +927,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 foreach (Manageable faction in FactionManager.HomeFactions)
                 {
-                    possibleRecreations.AddRange(faction.GetValidJobs_Recreation(this, currentHour, s,true));
+                    possibleRecreations.AddRange(faction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true));
                     break;
                 }
 
                 if (possibleRecreations.Count > 0)
                 {
                     Job job = possibleRecreations[Utility.GetRandIndexFromListCount(possibleRecreations.Count)];
-                    ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + " in room [" + job.ParentRoom.DisplayName + "]");
+                    ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                     if(s != null) s.Add(ss);
                     ChangeCurrentJob(job,"","recreation");
                     return;

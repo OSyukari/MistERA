@@ -379,15 +379,15 @@ public class scr_System_Serializer : MonoBehaviour
         return data;
     }
 
-    public List<ItemComponentTemplate_Craftable_Recipe> CraftingRecipe = new List<ItemComponentTemplate_Craftable_Recipe>();
+    public Dictionary<string, ItemComponentTemplate_Craftable_Recipe> CraftingRecipe = new Dictionary<string, ItemComponentTemplate_Craftable_Recipe>();
 
     public void AddCraftingRecipe(List<ItemComponentTemplate_Craftable_Recipe> recipeList)
     {
         foreach (var c in recipeList)
         {
-            if (!CraftingRecipe.Contains(c))
+            if (!CraftingRecipe.ContainsKey(c.RecipeUID))
             {
-                CraftingRecipe.Add(c);
+                CraftingRecipe.Add(c.RecipeUID, c);
                 scr_System_tooltipDictionary.current.AddEntry(c.RecipeUID, c.Tooltip);
             }
         }

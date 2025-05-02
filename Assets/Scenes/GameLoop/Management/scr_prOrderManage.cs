@@ -12,4 +12,5 @@ public class scr_prOrderManage : MonoBehaviour
     public scr_SelectableText buttonMinus;
     public scr_SelectableText buttonPlus;
     public scr_SelectableText btn_action;
+    public TMP_Text warningMsg;
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 // ItemComponent_Craftable
 [System.Serializable]
@@ -35,6 +36,11 @@ public class ItemComponentTemplate_Craftable
     {
         public string baseID;
         public int amount;
+
+        [JsonIgnore] public string Name { get
+            {
+                return scr_System_Serializer.current.Dictionary.QueryThenParse(baseID);
+            } }
     }
 
 }

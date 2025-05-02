@@ -23,6 +23,11 @@
                         ]
                     }
                 ],
+                "salesInventory":[
+                    {
+                        "matchByTags":["consumable","industrial","rarity_common"]
+                    }
+                ],
                 "_comment":"here is faction initializer. Calling mapPlan init create a new instance of the faction following this same template.",
                 "_comment2":"called by MapPlan.Instantiate(args)",
                 "workModules":
@@ -98,8 +103,8 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 10,
-                                    "cost_EN": 20
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -110,8 +115,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 5,
-                                    "cost_EN": 10
+                                    "cost_ST": 2,
+                                    "cost_EN": 5
                                 }
                             }
                         },

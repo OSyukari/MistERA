@@ -40,6 +40,8 @@ public class DebugLogSettings
     public bool Debug_Logging_Unimplemented_KojoEvent = false;
     public bool Debug_Logging_KojoEvents = false;
     public bool Debug_Logging_UpdateTimeCost = false;
+    public bool Debug_Logging_CurrentFurnitureJobInRoom = false;
+    public bool Debug_Logging_Pathing = false;
 }
 
 public class scr_System_CentralControl : MonoBehaviour

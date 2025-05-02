@@ -725,29 +725,33 @@ public class scr_panel_COMmanager : scr_Menu
             }
         }
 
-        string s = "Current furniture in room: ";
-        foreach (var furniture in scr_System_CampaignManager.current.CurrentRoom.Furnitures) {
-            s += "[" + furniture.DisplayName + "]:";
-            if (furniture.JobGiver != null)
-            {
-                foreach (COM c in furniture.JobGiver.allusableCOMs) s += c.ID + " ";
-            }
-            s += "] ";
-         }
-        Debug.Log(s);
 
-        string s2 = "Current Jobs in room: ";
-        foreach (var job in scr_System_CampaignManager.current.CurrentRoom.Jobs)
+        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_CurrentFurnitureJobInRoom)
         {
-            s2 += "[" + job.RefID + "]:";
-            foreach (COM c in job.allusableCOMs)
+            string s = "Current furniture in room: \n";
+            foreach (var furniture in scr_System_CampaignManager.current.CurrentRoom.Furnitures)
             {
-                s2 += c.ID + " ";
+                s += "[" + furniture.DisplayName + "]:";
+                if (furniture.JobGiver != null)
+                {
+                    foreach (COM c in furniture.JobGiver.allusableCOMs) s += c.ID + " ";
+                }
+                s += "]\n";
             }
-            s2 += "] ";
-        }
-        Debug.Log(s2);
+            Debug.Log(s);
 
+            string s2 = "Current Jobs in room: \n";
+            foreach (var job in scr_System_CampaignManager.current.CurrentRoom.Jobs)
+            {
+                s2 += "[" + job.RefID + "]:";
+                foreach (COM c in job.allusableCOMs)
+                {
+                    s2 += c.ID + " ";
+                }
+                s2 += "]\n";
+            }
+            Debug.Log(s2);
+        }
     }
 
     private void DestroyCOMBox(int jobRef)

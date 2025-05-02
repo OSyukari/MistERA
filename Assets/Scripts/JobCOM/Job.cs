@@ -122,7 +122,7 @@ public class Job : IDisposable, I_Disposable
     [JsonIgnore] public List<string> allusableCOMStrings { get
         {
             List<string> names = new List<string>();
-            foreach(var i in allusableCOMs) names.Add(i.displayName);
+            foreach(var i in allusableCOMs) if(!names.Contains(i.DisplayName())) names.Add(i.DisplayName());
             return names;
         } }
 
@@ -199,6 +199,7 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
+    [System.Serializable]
     public class COM_Match
     {
         public string comID = "";
@@ -231,7 +232,8 @@ public class Job : IDisposable, I_Disposable
 
     public virtual void RemoveActor(int charaRef)
     {
-        if (this.actorRefID.Contains(charaRef) && this.actorRefIDStorage != null && this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
+        //if (this.actorRefID.Contains(charaRef) && this.actorRefIDStorage != null && this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
+        if (this.actorRefIDStorage != null && this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
         for (int i = packages_current.Count - 1; i >= 0; i--) if (packages_current[i].actorRefs.Contains(charaRef)) packages_current.RemoveAt(i);
         for (int i = packages_previous.Count - 1; i >= 0; i--)
         {

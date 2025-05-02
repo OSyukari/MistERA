@@ -104,6 +104,11 @@ public class MapPlan
             {
                 org.SetMainExit(mainExit);
             }
+
+            foreach(var itemInit in salesInventory)
+            {
+                org.AddSalesInventory(itemInit);
+            }
         }
 
         return list;
@@ -115,6 +120,30 @@ public class MapPlan
     public List<string> managerBaseIDs = new List<string>();
     public List<WorkHoursInit> workHours = null;
     public List<WorkModuleInit> workModules = new List<WorkModuleInit>();
+    public List<SalesInventoryInit> salesInventory = new List<SalesInventoryInit>();
+
+    [System.Serializable]
+    public class SalesInventoryInit
+    {
+        public List<string> matchByTags = new List<string>();
+        public string matchByID = "";
+        public string nameOverwrite = "";
+        public int itemCount = 1;
+
+        public List<Manageable.ItemEntry> GetContent()
+        {
+            var list = new List<Manageable.ItemEntry>();
+            if (matchByID != "") list.Add(new Manageable.ItemEntry(matchByID, nameOverwrite, itemCount));
+            if (matchByTags.Count > 0)
+            {
+                foreach(var item in scr_System_Serializer.current.index_Item_Base.list)
+                {
+                    if (Utility.ListContainsStrict(item.Tags, matchByTags)) list.Add(new Manageable.ItemEntry(item.id, "", itemCount));
+                }
+            }
+            return list;            
+        }
+    }
 
     [System.Serializable]
     public class WorkModuleInit

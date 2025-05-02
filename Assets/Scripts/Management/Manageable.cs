@@ -9,11 +9,6 @@ using QuikGraph;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
-using JetBrains.Annotations;
-using static Job_Furniture;
-using System.Security.Cryptography;
-using static UnityEditor.Progress;
-using NUnit.Framework.Constraints;
 
 [System.Serializable]
 public enum Manageable_GuestStatus
@@ -243,7 +238,6 @@ public class Manageable : I_Disposable
     {
         if (updateOrder != 1) return;
         this.TradeRecords.ProcessAllPayments();
-        RefreshDailyOrder();
         CheckDailyResourceConsumption();
         // character log their daily consumption at updateOrder 2
     }
@@ -355,7 +349,12 @@ public class Manageable : I_Disposable
         return ProductionOrders.Find(x=>x.Recipe.RecipeUID == UID);
     }
 
-    public void AddProductionOrder(ItemComponentTemplate_Craftable_Recipe recipe, int count, ProductionOrderType orderType, bool allowDuplicate = true)
+    public void AddTradeOrder(ItemEntry entry, Manageable target, int count, ProductionOrderType orderType = ProductionOrderType.craftCount, bool allowDuplicate = true)
+    {
+
+    }
+
+    public void AddProductionOrder(ItemComponentTemplate_Craftable_Recipe recipe, int count, ProductionOrderType orderType = ProductionOrderType.craftCount, bool allowDuplicate = true)
     {
         //Debug.Log("adding PO " + recipe.RecipeUID + " with count " + count + " and type " + orderType.ToString());
         if (!allowDuplicate && GetProductionOrdersByUID(recipe.RecipeUID) != null) return; 
@@ -372,17 +371,6 @@ public class Manageable : I_Disposable
     {
         return ProductionOrders.Contains(order);
     }
-
-    protected void RefreshDailyOrder()
-    {
-        // daily reset
-
-        // wipe completed daily order
-        // for (int i = ProductionOrdersDaily_temp.Count - 1; i >= 0; i--) if (ProductionOrdersDaily_temp[i].Count <= 0 || ProductionOrdersDaily.Find(x => x.Recipe == ProductionOrdersDaily_temp[i].Recipe) == null) ProductionOrdersDaily_temp.RemoveAt(i);
-
-        //for (int i = ProductionOrders.Count - 1; i >= 0; i--) if (ProductionOrders[i].Count <= 0) ProductionOrders.RemoveAt(i);
-    }
-
 
     protected void Manage(int currentHour, int currentMinute)
     {
@@ -434,26 +422,26 @@ public class Manageable : I_Disposable
         else return new List<Job_CharaCOM>();
     }
 
-    public List<Job_Furniture> GetValidJobs_Recreation(Character_Trainable chara, int currentHour, List<string> s = null, bool skipPrivate = false)
+    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false)
     {
         //Debug.Log("Begin getvalidRecreation");
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
-        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", "recreation"))
+        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", tag))
         {
-            ss += " found no valid [recreation] instances offered by Furnitures from chara["+chara.FirstName+"] currenthour["+currentHour+"]";
+            ss += $" found no valid [{tag}] instances offered by Furnitures from chara[" + chara.FirstName + "] currenthour[" + currentHour + "]";
             if (s != null) s.Add(ss);
             return new List<Job_Furniture>();
         }
 
-        if(skipPrivate)
+        if (skipPrivate)
         {
             possibleJobs.RemoveAll(x => x.ParentRoom.isRoomPrivate);
         }
 
         if (!TryValidateAllInstances(ref possibleJobs, chara))
         {
-            ss += " cannot pass validate check for any of the Recreation job instances";
+            ss += $" cannot pass validate check for any of the {tag} job instances";
             if (s != null) s.Add(ss);
             return new List<Job_Furniture>();
         }
@@ -470,7 +458,7 @@ public class Manageable : I_Disposable
             //Debug.Log("GetValidPaths failed after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
             return new List<Job_Furniture>();
         }
-        
+
     }
 
     public List<Job_Furniture> GetValidJobs_Meal(Character_Trainable chara, int currentHour, List<string> s = null)
@@ -1137,37 +1125,13 @@ public class Manageable : I_Disposable
             */
             string s2 = "";
             s2 += jobInfo.Replace("$comName$", jobCOM.DisplayName()).Replace("$count$", jobPosts[jobCOM].Count.ToString());
-            s2 += "\n" + GetJobAlertInfo(jobCOM);
+            s2 += "\n" + GetJobCOMAlertInfo(jobCOM);
             s.Add(s2);
         }
 
         return String.Join("\n\n", s);
     }
 
-    string jobInfo, jobAssigned, jobReqByOrder, jobReqByMaintenance, jobAlert;
-
-    public string GetJobAlertInfo(COM jobCOM)
-    {
-        string s2 = "";
-        // com is main
-        int assignedWorkLoad = 0;
-        int requiredWorkLoad = 0;
-        int ordersWorkLoad = 0;
-        int maintenanceWorkLoad = 0;
-        foreach (var schedule in this.charaSchedules.Values) assignedWorkLoad += schedule.GetWorkHoursWithCOM(jobCOM.ID);
-
-        foreach (var order in ProductionOrders) if (jobCOM.comTags.Contains(order.Recipe.jobKeyword)) ordersWorkLoad += order.ExpectedWorkload;
-        if (jobCOM.ID.Contains("_maintain")) foreach (var job in jobPosts[jobCOM]) if (job.isCOMValid(jobCOM)) maintenanceWorkLoad += jobCOM.TimeScale;
-
-        s2 += jobAssigned.Replace("$hours$", ((int)Math.Ceiling(assignedWorkLoad / 60f)).ToString());
-
-        if (requiredWorkLoad > 0) s2 += "\n"+jobReqByOrder.Replace("$hours$", ((int)Math.Ceiling(requiredWorkLoad / 60f)).ToString());
-        if (ordersWorkLoad > 0) s2 += "\n" + jobReqByOrder.Replace("$hours$", ((int)Math.Ceiling(ordersWorkLoad / 60f)).ToString());
-        if (maintenanceWorkLoad > 0) s2 += "\n" + jobReqByMaintenance.Replace("$hours$", ((int)Math.Ceiling(maintenanceWorkLoad / 60f)).ToString());
-        if (assignedWorkLoad < requiredWorkLoad) s2 += "\n" + jobAlert; 
-
-        return s2;
-    }
 
     public string printDebugInfo_Orders()
     {
@@ -1194,6 +1158,120 @@ public class Manageable : I_Disposable
 
         return String.Join("\n", s);
     }
+
+
+
+    [JsonIgnore] public Dictionary<string, int> productionWarnings = new Dictionary<string, int>();
+    [JsonIgnore] public Dictionary<string, int> resourceWarnings = new Dictionary<string, int>();
+
+    /// <summary>
+    /// This refresh internal warning messages. Only required when message is required...
+    /// </summary>
+    public void RefreshProductionAlertMSG()
+    {
+        productionWarnings.Clear();
+        resourceWarnings.Clear();
+
+        this.Inventory.AddContentToDict(ref this.resourceWarnings);
+
+        AddJobCOMAlertInfo(ref productionWarnings);
+
+        foreach (var order in ProductionOrders)
+        {   // all resource input output for production orders
+            var outputID = order.Recipe.outputItemBaseID;
+            if (!resourceWarnings.ContainsKey(outputID)) resourceWarnings.Add(outputID, 0);
+            resourceWarnings[outputID] += order.Recipe.outputAmount * order.Count;
+
+            foreach(var req in order.Recipe.itemRequirements)
+            {
+                var reqID = req.baseID;
+                if (!resourceWarnings.ContainsKey(reqID)) resourceWarnings.Add(reqID, 0);
+                resourceWarnings[reqID] -= req.amount * order.Count;
+            }
+        }
+
+        this.TradeRecords.AddDicionaryRecords(ref this.resourceWarnings);
+    }
+
+
+    string jobInfo, jobAssigned, jobReqByOrder, jobReqByMaintenance, jobAlert;
+
+    public void GetResourceAlertInfo()
+    {
+
+    }
+
+    public void AddJobCOMAlertInfo(ref Dictionary<string, int> dict)
+    {
+        // com is main
+       // int assignedWorkLoad = 0;
+        //int requiredWorkLoad = 0;
+       // int ordersWorkLoad = 0;
+       // int maintenanceWorkLoad = 0;
+
+        foreach (var schedule in this.charaSchedules.Values) schedule.AddDictionary(ref dict);// assignedWorkLoad += schedule.GetWorkHoursWithCOM(jobCOM.ID);
+        //assignedWorkLoad = (int)Math.Ceiling(assignedWorkLoad / 60f);
+
+        foreach (var order in ProductionOrders)
+        {
+            if (!dict.ContainsKey(order.Recipe.jobKeyword)) dict.Add(order.Recipe.jobKeyword, 0);
+            dict[order.Recipe.jobKeyword] -= order.ExpectedWorkload;
+        }
+
+
+        //if (jobCOM.ID.Contains("_maintain")) foreach (var job in jobPosts[jobCOM]) if (job.isCOMValid(jobCOM)) maintenanceWorkLoad += jobCOM.TimeScale;
+        foreach(var kvp in jobPosts)
+        {
+            var jobCOM = kvp.Key;
+            if (jobCOM.ID.Contains("_maintain")) continue;
+            foreach(var job in kvp.Value) 
+            {    
+                if (job.isCOMValid(jobCOM))
+                {
+                    foreach(var tag in jobCOM.comTags)
+                    {
+                        if (!dict.ContainsKey(tag)) dict.Add(tag, 0);
+                        dict[tag] -= jobCOM.TimeScale;
+                    }
+                    
+                } }
+        }
+
+        //maintenanceWorkLoad = (int)Math.Ceiling(maintenanceWorkLoad / 60f);
+
+        //if (requiredWorkLoad > 0) s2.Add(jobReqByOrder.Replace("$hours$", ((int)Math.Ceiling(requiredWorkLoad / 60f)).ToString()));
+        //if (ordersWorkLoad > 0) s2.Add(jobReqByOrder.Replace("$hours$", ((int)Math.Ceiling(ordersWorkLoad / 60f)).ToString()));
+        //if (maintenanceWorkLoad > 0) s2.Add(jobReqByMaintenance.Replace("$hours$", ((int)Math.Ceiling(maintenanceWorkLoad / 60f)).ToString()));
+        //if (assignedWorkLoad < requiredWorkLoad) s2.Add(jobAlert + separator);
+    }
+
+    public string GetJobCOMAlertInfo(COM jobCOM, bool fullInfo = false, string separator = "\n")
+    {
+        List<string> s2 = new List<string>();
+        // com is main
+        int assignedWorkLoad = 0;
+        int requiredWorkLoad = 0;
+        int ordersWorkLoad = 0;
+        int maintenanceWorkLoad = 0;
+        foreach (var schedule in this.charaSchedules.Values) assignedWorkLoad += schedule.GetWorkHoursWithCOM(jobCOM.ID);
+
+        foreach (var order in ProductionOrders) if (jobCOM.comTags.Contains(order.Recipe.jobKeyword)) ordersWorkLoad += order.ExpectedWorkload;
+
+        if (jobCOM.ID.Contains("_maintain")) foreach (var job in jobPosts[jobCOM]) if (job.isCOMValid(jobCOM)) maintenanceWorkLoad += jobCOM.TimeScale;
+
+        if (fullInfo)
+        {
+            s2.Add(jobAssigned.Replace("$hours$", ((int)Math.Ceiling(assignedWorkLoad / 60f)).ToString()));
+        }
+
+        if (requiredWorkLoad > 0) s2.Add(jobReqByOrder.Replace("$hours$", ((int)Math.Ceiling(requiredWorkLoad / 60f)).ToString())) ;
+        if (ordersWorkLoad > 0) s2.Add( jobReqByOrder.Replace("$hours$", ((int)Math.Ceiling(ordersWorkLoad / 60f)).ToString()) );
+        if (maintenanceWorkLoad > 0) s2.Add( jobReqByMaintenance.Replace("$hours$", ((int)Math.Ceiling(maintenanceWorkLoad / 60f)).ToString()) );
+        if (assignedWorkLoad < requiredWorkLoad) s2 .Add(jobAlert + separator);
+
+        return String.Join(separator, s2);
+    }
+
 
     public void InitializeJobSchedule(Character_Trainable c, int startHour, int endHour, string jobCOM)
     {
@@ -1254,6 +1332,19 @@ public class Manageable : I_Disposable
             {
                 schedule[i].Set("");
             }
+        }
+
+        public void AddDictionary(ref Dictionary<string, int> dict)
+        {
+            foreach(var i in schedule) {
+                if (i.COMs != null && i.COMs.Count == 1) {
+                    foreach(var tag in i.COMs[0].comTags)
+                    {
+                        if (!dict.ContainsKey(tag)) dict.Add(tag, 0);
+                        dict[tag] += 60;
+                    }
+                        
+            } }
         }
     }
 
@@ -1382,6 +1473,17 @@ public class Manageable : I_Disposable
         public List<string> warnings = new List<string>();
 
         public Dictionary<string, int> records = new Dictionary<string, int>();
+        public void AddDicionaryRecords(ref Dictionary<string, int> dict)
+        {
+            foreach(var i in transaction_recurring)
+            {
+                foreach (var j in i.Value) j.AddDictionaryRecords(ref dict);
+            }
+            foreach (var i in transaction_onetime)
+            {
+                foreach (var j in i.Value) j.AddDictionaryRecords(ref dict);
+            }
+        } 
 
         [JsonIgnore]
         public List<string> Details
@@ -1424,19 +1526,24 @@ public class Manageable : I_Disposable
                 get
                 {
                     var s = new Dictionary<string, int>();
-                    foreach(var i in items)
-                    {
-                        if (!s.ContainsKey(i.itemID)) s.Add(i.itemID, 0);
-                        s[i.itemID] += i.itemCount * count;
-                    }
-                    foreach(var i in costs)
-                    {
-                        if (!s.ContainsKey(i.itemID)) s.Add(i.itemID, 0);
-                        s[i.itemID] -= i.itemCount * count;
-                    }
+                    AddDictionaryRecords(ref s);
                     var s2 = new List<string>();
                     foreach(var i in s) s2.Add(i.Key + i.Value.ToString("+0;-#"));
                     return String.Join("|", s2);
+                }
+            }
+
+            public void AddDictionaryRecords(ref Dictionary<string, int> s)
+            {
+                foreach (var i in items)
+                {
+                    if (!s.ContainsKey(i.itemID)) s.Add(i.itemID, 0);
+                    s[i.itemID] += i.itemCount * count;
+                }
+                foreach (var i in costs)
+                {
+                    if (!s.ContainsKey(i.itemID)) s.Add(i.itemID, 0);
+                    s[i.itemID] -= i.itemCount * count;
                 }
             }
         }
@@ -1458,7 +1565,9 @@ public class Manageable : I_Disposable
                 {
                     if(!ProcessPayment_Single(targetFaction, _trade)) 
                     {
-                        warnings.Add(Utility.WrapTextColor($"transaction Source[{Owner.FactionDisplayName}] Target[{targetFaction.FactionDisplayName}] Content[{_trade.Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict));
+                        var text = Utility.WrapTextColor($"transaction Source[{Owner.FactionDisplayName}] Target[{targetFaction.FactionDisplayName}] Content[{_trade.Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict);
+                        warnings.Add(text);
+                        targetFaction.TradeRecords.warnings.Add($"{Owner.FactionDisplayName} failed to process transaction: {text}");
                     }
                 }
             }
@@ -1472,7 +1581,9 @@ public class Manageable : I_Disposable
                 {
                     if (!ProcessPayment_Single(targetFaction, _trade))
                     {
-                        warnings.Add(Utility.WrapTextColor($"transaction Source[{Owner.FactionDisplayName}] Target[{targetFaction.FactionDisplayName}] Content[{_trade.Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict));
+                        var text = Utility.WrapTextColor($"transaction Source[{Owner.FactionDisplayName}] Target[{targetFaction.FactionDisplayName}] Content[{_trade.Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict);
+                        warnings.Add(text);
+                        targetFaction.TradeRecords.warnings.Add($"{Owner.FactionDisplayName} failed to process transaction: {text}");
                     }
                 }
             }
@@ -1603,7 +1714,7 @@ public class Manageable : I_Disposable
     public class ProductionOrder
     {
         [JsonIgnore] public ItemComponentTemplate_Craftable_Recipe Recipe { get { 
-            if (recipe_cache == null) recipe_cache = scr_System_Serializer.current.CraftingRecipe.Find(x=>x.RecipeUID == this.recipeID);            
+            if (recipe_cache == null) recipe_cache = scr_System_Serializer.current.CraftingRecipe.ContainsKey(this.recipeID) ? scr_System_Serializer.current.CraftingRecipe[this.recipeID] : null;            
             return recipe_cache; } }
         protected ItemComponentTemplate_Craftable_Recipe recipe_cache = null;
         [SerializeField][JsonProperty] protected string recipeID = "";
@@ -1825,8 +1936,6 @@ public class Manageable : I_Disposable
             }
         }
 
-
-
         if (this.managedRoomRefs != null)
         {
             foreach (var r in ManagedRooms) RefreshRoomJobs(r.Value);
@@ -1836,7 +1945,6 @@ public class Manageable : I_Disposable
         {
             this.Inventory.ReEstablishParent(this);
         }
-
     }
 
     public void DisposeInternal()
@@ -1886,6 +1994,51 @@ public class Manageable : I_Disposable
     public void AddJobPost(MapPlan.WorkModuleInit module)
     {
         this.JobPostsPresets.Add(new JobPostPreset(module));
+    }
+
+    public void AddSalesInventory(MapPlan.SalesInventoryInit inventory)
+    {
+        this.salesInventory.AddEntry(inventory);
+    }
+
+    public SalesInventory salesInventory = new SalesInventory();
+
+    [System.Serializable]
+    public class SalesInventory
+    {
+        public List<MapPlan.SalesInventoryInit> entries = new List<MapPlan.SalesInventoryInit>();
+
+        public SalesInventory()
+        {
+
+        }
+
+        public void AddEntry(MapPlan.SalesInventoryInit inventory)
+        {
+            entries.Add(inventory);
+            _cache = null;
+        }
+
+        protected Dictionary<string, ItemEntry> _cache = null;
+        [JsonIgnore] public List<ItemEntry> Inventory
+        {
+            get
+            {
+                if(_cache == null)
+                {
+                    _cache = new Dictionary<string, ItemEntry>();
+                    foreach(var entry in entries)
+                    {
+                        foreach(var content in entry.GetContent())
+                        {
+                            var key = content.itemID + "|" + content.itemNameOverwrite + "|" + content.itemCount;
+                            if (!_cache.ContainsKey(key)) _cache.Add(key, content);
+                        }
+                    }
+                }
+                return _cache.Values.ToList();
+            }
+        }
     }
 
     [System.Serializable]
@@ -1959,6 +2112,13 @@ public class Manageable : I_Disposable
         {
 
         }
+
+        public ItemEntry(string id, string name, int count)
+        {
+            this.itemCount = count;
+            this.itemNameOverwrite = name;
+            this.itemID = id;
+        }
         public ItemEntry(MapPlan.WorkModuleInit.ItemEntry entry)
         {
             this.itemID = entry.itemID;
@@ -1970,6 +2130,7 @@ public class Manageable : I_Disposable
         public int itemCount = 0;
 
         string _cache = "";
+
         [JsonIgnore]
         public string Print
         {

@@ -895,7 +895,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 else if (ini.initClass == "campaign_init_productionOrder")
                 {
                     Manageable f = FindorAddHomeFactionByID(ini.initArguments[0]);
-                    ItemComponentTemplate_Craftable_Recipe r = scr_System_Serializer.current.CraftingRecipe.Find(x => x.RecipeUID == ini.initArguments[1]);
+                    ItemComponentTemplate_Craftable_Recipe r = scr_System_Serializer.current.CraftingRecipe.ContainsKey(ini.initArguments[1]) ? scr_System_Serializer.current.CraftingRecipe[ini.initArguments[1]] : null;
                     Manageable.ProductionOrderType type = (Manageable.ProductionOrderType) Enum.Parse(typeof(Manageable.ProductionOrderType), ini.initArguments[2]);
                     if (int.TryParse(ini.initArguments[3], out int count)) f.AddProductionOrder(r, count, type);
                     
@@ -935,7 +935,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             {
                 foreach(var i  in Player.FactionManager.ManagerFactions)
                 {
-                    foreach(var rec in scr_System_Serializer.current.CraftingRecipe)
+                    foreach(var rec in scr_System_Serializer.current.CraftingRecipe.Values)
                     {
                         i.AddProductionOrder(rec, 0, 0, false);
                     }

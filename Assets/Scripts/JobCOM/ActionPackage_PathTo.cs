@@ -67,7 +67,7 @@ public class ActionPackage_PathTo : ActionPackage
         if (path == null) duration = 1;
         else{
 
-            if (true)
+            if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_Pathing)
             {
                 List<string> l = new List<string>();
                 foreach (var i in _path) l.Add($"[{i.Source}]-"+(i.Tag == null ? "X" : i.Tag.Cost)+"->[{i.Target}]");

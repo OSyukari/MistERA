@@ -194,14 +194,16 @@ public class Job_Furniture : Job
 
         List<COM> possibleCOMs = actorRefID.Contains(c.RefID) ? actorRefIDStorage[c.RefID].Match(this) : (allowInvalid ? allusableCOMs : new List<COM>());
 
+        if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} looking for {actorRefIDStorage[c.RefID].comID} at step 1");
+        
         if (!allowInvalid) 
         {
-            var vcom = ValidCOMs;
-            possibleCOMs = possibleCOMs.FindAll(x => vcom.Contains(x) 
+            possibleCOMs = possibleCOMs.FindAll(x => ValidCOMs.Contains(x) 
                                                     && CanCOMAcceptMoreActor(x) 
                                                     && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner))
                                                     && (!x.hasFactionReq || !x.isJobCOM || FactionOwner.GetProductionOrder(this, out var xxx, out var po))
                                                 );
+            //if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} at step 2");
         }
 
         List<ActionPackage> results = new List<ActionPackage>();
@@ -220,7 +222,14 @@ public class Job_Furniture : Job
 
     public override bool UpdateActorPackage(Character_Trainable c, out string ss)
     {
+        /*
+             if character hour has com setting, try get com setting job
+            else get random
+         */
+
         ss = "(Job Furniture Internal Status): ";
+        // actor have job but don't have a action package registered.
+        //Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(actorRefID[i]);
 
         // Check has ongoing package
         var temp = packages_current.FindAll(x => x.actorRefs.Contains(c.RefID));
@@ -248,6 +257,9 @@ public class Job_Furniture : Job
         var charaRoom = scr_System_CampaignManager.current.GetCharaRoomInstance(c.RefID);
         if (charaRoom.RefID != this.ParentRoom.RefID)
         {
+            //Debug.Log("JobFurniture : trying to add pathing package to ["+c.FirstName+"]");
+            // 1 - if actor not in job room, set go to room.
+            // make movement package
             ActionPackage_PathTo package = new ActionPackage_PathTo(this, c.RefID, ParentRoom.RefID);
             if (!package.Validate())
             {
@@ -258,33 +270,34 @@ public class Job_Furniture : Job
             AddPackage(new List<ActionPackage>() { package });
             return true;
         }
-
-        var list = MakePackages(c);
-        if(list.Count < 1)
-        {
-            ss += "actor has not valid command or has completed all commands";
-            return false;
-        }
         else
         {
-            var package = list[Utility.GetRandIndexFromListCount(list.Count)];
-            AddPackage(new List<ActionPackage>() { package });
-            //validJobCOMs.Remove(jobCOM);
-            ss += "adding package " + package.DisplayName;
-            return true;
+            //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
+            // 2 - if actor is in room, set COM package
+            // make COM package
+            var list = MakePackages(c);
+            if (list.Count < 1)
+            {
+                ss += "actor has not valid command or has completed all commands";
+                return false;
+            }
+            else
+            {
+                var package = list[Utility.GetRandIndexFromListCount(list.Count)];
+                AddPackage(new List<ActionPackage>() { package });
+                //validJobCOMs.Remove(jobCOM);
+                ss += "adding package " + package.DisplayName;
+                return true;
+            }
         }
-
     }
-    public  bool UpdateActorPackage2(Character_Trainable c, out string ss)
+    /*
+    public bool UpdateActorPackage2(Character_Trainable c, out string ss)
     {
-        /*
-         if character hour has com setting, try get com setting job
-        else get random
-         */
+
 
         ss = "(Job Furniture Internal Status): ";
-            // actor have job but don't have a action package registered.
-            //Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(actorRefID[i]);
+
 
         var temp = packages_current.FindAll(x => x.actorRefs.Contains(c.RefID));
         if (temp.Count > 0)
@@ -315,9 +328,7 @@ public class Job_Furniture : Job
         var charaRoom = scr_System_CampaignManager.current.GetCharaRoomInstance(c.RefID);
         if (charaRoom.RefID != this.ParentRoom.RefID)
         {
-            //Debug.Log("JobFurniture : trying to add pathing package to ["+c.FirstName+"]");
-            // 1 - if actor not in job room, set go to room.
-            // make movement package
+
             ActionPackage_PathTo package = new ActionPackage_PathTo(this, c.RefID, ParentRoom.RefID);
             if (!package.Validate())
             {
@@ -333,9 +344,7 @@ public class Job_Furniture : Job
         {
             List<string> s = new List<string>();
             foreach (var ii in ValidCOMs) s.Add(ii.ID);
-            //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
-            // 2 - if actor is in room, set COM package
-            // make COM package
+            
             COM jobCOM = null;
             Manageable.ProductionOrder po = null;
 
@@ -450,7 +459,7 @@ public class Job_Furniture : Job
 
         }
         //}
-    }
+    }*/
 
     public override void PreUpdateTime(int currentMinute)
     {

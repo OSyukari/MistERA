@@ -25,8 +25,8 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 10,
-                                    "cost_EN": 20
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -37,8 +37,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 5,
-                                    "cost_EN": 10
+                                    "cost_ST": 2,
+                                    "cost_EN": 5
                                 }
                             }
                         },
@@ -76,8 +76,8 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 5,
-                                    "cost_EN": 30
+                                    "cost_ST": 10,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -88,8 +88,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 2,
-                                    "cost_EN": 15
+                                    "cost_ST": 5,
+                                    "cost_EN": 5
                                 }
                             }
                         },
@@ -127,8 +127,8 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 5,
-                                    "cost_EN": 30
+                                    "cost_ST": 10,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -139,8 +139,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 2,
-                                    "cost_EN": 20
+                                    "cost_ST": 5,
+                                    "cost_EN": 5
                                 }
                             }
                         },
@@ -175,8 +175,8 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 5,
-                                    "cost_EN": 30
+                                    "cost_ST": 10,
+                                    "cost_EN": 15
                                 }
                             }
                         },
@@ -187,8 +187,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 2,
-                                    "cost_EN": 20
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -223,8 +223,8 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 5,
-                                    "cost_EN": 30
+                                    "cost_ST": 10,
+                                    "cost_EN": 15
                                 }
                             }
                         },
@@ -235,8 +235,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 2,
-                                    "cost_EN": 20
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -271,8 +271,8 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 5,
-                                    "cost_EN": 30
+                                    "cost_ST": 10,
+                                    "cost_EN": 15
                                 }
                             }
                         },
@@ -283,8 +283,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 2,
-                                    "cost_EN": 20
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -319,8 +319,8 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 30,
-                                    "cost_EN": 20
+                                    "cost_ST": 20,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -331,8 +331,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 30,
-                                    "cost_EN": 20
+                                    "cost_ST": 10,
+                                    "cost_EN": 5
                                 }
                             }
                         },
@@ -367,8 +367,8 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 30,
-                                    "cost_EN": 20
+                                    "cost_ST": 15,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -379,8 +379,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 30,
-                                    "cost_EN": 20
+                                    "cost_ST": 10,
+                                    "cost_EN": 5
                                 }
                             }
                         },
@@ -421,7 +421,7 @@
                                 "doerCount": 1,
                                 "req_Doers": {
                                     "cost_ST": 15,
-                                    "cost_EN": 5
+                                    "cost_EN": 15
                                 }
                             }
                         },
@@ -432,7 +432,8 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 5
+                                    "cost_ST": 10,
+                                    "cost_EN": 10
                                 }
                             }
                         },
@@ -486,7 +487,7 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 90
+                                    "cost_ST": 45
                                 }
                             }
                         },
@@ -497,7 +498,7 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 45
+                                    "cost_ST": 30
                                 }
                             }
                         },
@@ -538,7 +539,7 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 120
+                                    "cost_ST": 90
                                 }
                             }
                         },
@@ -591,7 +592,7 @@
                             "requirement": {
                                 "doerCount": 1,
                                 "req_Doers": {
-                                    "cost_ST": 50
+                                    "cost_ST": 40
                                 }
                             }
                         },
@@ -602,7 +603,7 @@
                             "requirement": {
                                 "doerCount": 2,
                                 "req_Doers": {
-                                    "cost_ST": 25
+                                    "cost_ST": 20
                                 }
                             }
                         },
