@@ -1777,7 +1777,7 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
-            scr_System_CampaignManager.current.CurrentTarget.Stats.AddStatus(statusString);
+            scr_System_CampaignManager.current.CurrentTarget.Stats.AddOrModStatus(statusString);
         }
     }
 

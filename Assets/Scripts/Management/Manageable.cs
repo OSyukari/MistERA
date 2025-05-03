@@ -207,7 +207,11 @@ public class Manageable : I_Disposable
             if(targetFaction == null) continue;
 
             // self will pay wage to targetfaction
-            TradeRecords.Payment(targetFaction, new List<ItemEntry>(), _jobpost.hourlyPayout);
+            foreach(var pay in _jobpost.hourlyPayout)
+            {
+                AddPayment(targetFaction, null, pay, 1);
+            }
+            
         }
     }
 
@@ -224,45 +228,61 @@ public class Manageable : I_Disposable
     public void NotifyFactionMemberChange()
     {
         this.charaMaintenanceCostCache = null;
-        this.TradeRecords.Clear();
     }
 
 
     protected void OnDayUpdate_0(int updateOrder)
     {
         if (updateOrder != 0) return;
-        this.TradeRecords.Clear();
+        DailyReport.Clear();
     }
 
     protected void OnDayUpdate_1(int updateOrder)
     {
         if (updateOrder != 1) return;
-        this.TradeRecords.ProcessAllPayments();
+        this.ProcessAllTransactions();
         CheckDailyResourceConsumption();
         // character log their daily consumption at updateOrder 2
     }
 
+    public void AddPayment(Manageable targetFaction, ItemEntry entry, ItemEntry cost, int count, ProductionOrderType orderType = ProductionOrderType.craftCount)
+    {
+        this.TradeOrders.Add(new TradeOrder(this, targetFaction, entry, cost, count, orderType));
+    }
+
+    protected void ProcessAllTransactions()
+    {
+        foreach(var trade in TradeOrders)
+        {
+            if (trade.Count < 1) continue;
+            if (!trade.ProcessOrder(out string text))
+            {
+                DailyReport.AddTradeWarning(text);
+                trade.TargetFaction.DailyReport.AddTradeWarning($"{FactionDisplayName} failed to process transaction: {text}");
+            }
+        }
+
+        for(int i = TradeOrders.Count - 1; i >= 0; i--)
+        {
+            if (TradeOrders[i].Count < 1 && TradeOrders[i].orderType == ProductionOrderType.craftCount) TradeOrders.RemoveAt(i);
+        }
+    }
+
+
     protected void OnDayUpdate_3(int updateOrder)
     {   // character log their daily consumption at updateOrder 2, refresh report at update3
         if (updateOrder != 3) return;
-        this.dailyReports.AddRange(this.TradeRecords.Details);
-        dailyReports_previous = dailyReports;
-        dailyReports = new List<string>();
+        this.DailyReport.FinalizeReport();
     }
 
-    public void AddDailyReportEntry(string s)
-    {
-        this.dailyReports.Add(s);
-    }
-    [SerializeField][JsonProperty] protected List<string> dailyReports_previous = new List<string>();
-    [SerializeField][JsonProperty] protected List<string> dailyReports = new List<string>();
     public void PrintDailyReport(TMP_Text text)
     {
-        text.text = String.Join("\n", dailyReports_previous);
+        text.text = DailyReport.Print("\n", true, true, true);
     }
 
     public Inventory Inventory;
-    public List<ProductionOrder> ProductionOrders = null;
+    public List<ProductionOrder> ProductionOrders = new List<ProductionOrder>();
+    public List<TradeOrder> TradeOrders = new List<TradeOrder>();
 
     public Manageable()
     {
@@ -279,7 +299,6 @@ public class Manageable : I_Disposable
         charaSchedules = new Dictionary<int, Job_Schedule>();
         charaGuestStatus = new Dictionary<int, Manageable_GuestStatus>();
         this.Inventory = new Inventory(this);
-        ProductionOrders = new List<ProductionOrder>();
     }
 
     string socialStatus_manager, socialStatus_member, socialStatus_visitor, socialStatus_prisoner, socialStatus_baseString;
@@ -297,6 +316,7 @@ public class Manageable : I_Disposable
 
         
         scr_System_Time.current.Observer_globalTime += OnTimeUpdate;
+        scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate_0;
         scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate_1;
         scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate_3;
 
@@ -349,9 +369,9 @@ public class Manageable : I_Disposable
         return ProductionOrders.Find(x=>x.Recipe.RecipeUID == UID);
     }
 
-    public void AddTradeOrder(ItemEntry entry, Manageable target, int count, ProductionOrderType orderType = ProductionOrderType.craftCount, bool allowDuplicate = true)
+    public void AddTradeOrder(ItemEntry entry, ItemEntry costs, Manageable target, int count, ProductionOrderType orderType = ProductionOrderType.craftCount, bool allowDuplicate = true)
     {
-
+        this.TradeOrders.Add(new TradeOrder(this, target, entry, costs, count, orderType));
     }
 
     public void AddProductionOrder(ItemComponentTemplate_Craftable_Recipe recipe, int count, ProductionOrderType orderType = ProductionOrderType.craftCount, bool allowDuplicate = true)
@@ -364,12 +384,21 @@ public class Manageable : I_Disposable
     public void RemoveProductionOrder(ProductionOrder order)
     {
         if (ProductionOrders.Contains(order)) ProductionOrders.Remove(order);
-
     }
 
     public bool HasProductionOrder(ProductionOrder order)
     {
         return ProductionOrders.Contains(order);
+    }
+
+    public void RemoveTradeOrder(TradeOrder order)
+    {
+        if (this.TradeOrders.Contains(order)) TradeOrders.Remove(order);
+    }
+
+    public bool HasTradeOrder(TradeOrder entry)
+    {
+        return TradeOrders.Contains(entry);
     }
 
     protected void Manage(int currentHour, int currentMinute)
@@ -1190,7 +1219,10 @@ public class Manageable : I_Disposable
             }
         }
 
-        this.TradeRecords.AddDicionaryRecords(ref this.resourceWarnings);
+        foreach(var order in TradeOrders)
+        {
+            order.AddDictionaryRecords(ref productionWarnings);
+        }
     }
 
 
@@ -1455,259 +1487,161 @@ public class Manageable : I_Disposable
 
     }
 
-    [JsonProperty][SerializeField] protected TradeManager tradeRecords = null;
-    [JsonIgnore] public TradeManager TradeRecords
-    {
-        get
-        {
-            if(this.tradeRecords == null) this.tradeRecords = new TradeManager(this);
-            return this.tradeRecords;
-        }
-    }
-
     [System.Serializable]
-    public class TradeManager
+    public class TradeOrder
     {
-        public Dictionary<string, List<Trade>> transaction_recurring = new Dictionary<string, List<Trade>>();
-        public Dictionary<string, List<Trade>> transaction_onetime = new Dictionary<string, List<Trade>> ();
-        public List<string> warnings = new List<string>();
-
-        public Dictionary<string, int> records = new Dictionary<string, int>();
-        public void AddDicionaryRecords(ref Dictionary<string, int> dict)
-        {
-            foreach(var i in transaction_recurring)
-            {
-                foreach (var j in i.Value) j.AddDictionaryRecords(ref dict);
-            }
-            foreach (var i in transaction_onetime)
-            {
-                foreach (var j in i.Value) j.AddDictionaryRecords(ref dict);
-            }
-        } 
-
+        public ItemEntry Entry = null;
+        public ItemEntry Cost = null;
+        
         [JsonIgnore]
-        public List<string> Details
+        public int Count
         {
             get
             {
-                var s = new List<string>();
-                foreach (var r in records) s.Add(r.Key + r.Value.ToString("+0;-#"));
-                s.AddRange(warnings);
-                return s;
-            }
-        }
-
-        /// <summary>
-        /// Called before dailyupdate to sync up data removal time
-        /// </summary>
-        public void Clear()
-        {
-            this.warnings.Clear();
-            this.records.Clear();
-        }
-
-        [System.Serializable]
-        public class Trade
-        {
-            public List<ItemEntry> items = new List<ItemEntry>();
-            public List<ItemEntry> costs = new List<ItemEntry>();
-            public int count = 0;
-            public Trade() { }
-            public Trade(List<ItemEntry> items, List<ItemEntry> costs, int count = 1)
-            {
-                this.items = items;
-                this.costs = costs;
-                this.count = count;
-            }
-
-            [JsonIgnore]
-            public string Display
-            {
-                get
+                if (Entry == null) return count;
+                if (orderType == ProductionOrderType.craftUntilCount)
                 {
-                    var s = new Dictionary<string, int>();
-                    AddDictionaryRecords(ref s);
-                    var s2 = new List<string>();
-                    foreach(var i in s) s2.Add(i.Key + i.Value.ToString("+0;-#"));
-                    return String.Join("|", s2);
+                    var currentOwnCount = FactionOwner.Inventory.GetItemCount( Entry.itemID );
+
+                    return Math.Max(0, (int)Math.Ceiling((decimal)(this.count - currentOwnCount) / Entry.itemCount));
                 }
-            }
-
-            public void AddDictionaryRecords(ref Dictionary<string, int> s)
-            {
-                foreach (var i in items)
+                else
                 {
-                    if (!s.ContainsKey(i.itemID)) s.Add(i.itemID, 0);
-                    s[i.itemID] += i.itemCount * count;
-                }
-                foreach (var i in costs)
-                {
-                    if (!s.ContainsKey(i.itemID)) s.Add(i.itemID, 0);
-                    s[i.itemID] -= i.itemCount * count;
+                    return count;
                 }
             }
         }
 
-        public void AddRecord(string id, int count)
+        [JsonIgnore] public string Display
         {
-            if (this.records.ContainsKey(id)) this.records[id] += count;
-            else this.records.Add(id, count);
-        }
-
-        public void ProcessAllPayments()
-        {
-            foreach (var payment in transaction_recurring)
+            get
             {
-                var targetFaction = scr_System_CampaignManager.current.FindFactionByID(payment.Key);
-                if (targetFaction == null) continue;
-
-                foreach (var _trade in payment.Value)
-                {
-                    if(!ProcessPayment_Single(targetFaction, _trade)) 
-                    {
-                        var text = Utility.WrapTextColor($"transaction Source[{Owner.FactionDisplayName}] Target[{targetFaction.FactionDisplayName}] Content[{_trade.Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict);
-                        warnings.Add(text);
-                        targetFaction.TradeRecords.warnings.Add($"{Owner.FactionDisplayName} failed to process transaction: {text}");
-                    }
-                }
-            }
-
-            foreach (var payment in transaction_onetime)
-            {
-                var targetFaction = scr_System_CampaignManager.current.FindFactionByID(payment.Key);
-                if (targetFaction == null) continue;
-
-                foreach (var _trade in payment.Value)
-                {
-                    if (!ProcessPayment_Single(targetFaction, _trade))
-                    {
-                        var text = Utility.WrapTextColor($"transaction Source[{Owner.FactionDisplayName}] Target[{targetFaction.FactionDisplayName}] Content[{_trade.Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict);
-                        warnings.Add(text);
-                        targetFaction.TradeRecords.warnings.Add($"{Owner.FactionDisplayName} failed to process transaction: {text}");
-                    }
-                }
+                //var s = new Dictionary<string, int>();
+                //AddDictionaryRecords(ref s);
+                //var s2 = new List<string>();
+                //foreach(var i in s) s2.Add(i.Key + i.Value.ToString("+0;-#"));
+                return Cost.Print + " -> " + Entry.Print;
             }
         }
 
-        public bool ProcessPayment_Single(Manageable targetFaction, Trade _trade)
+        public void AddDictionaryRecords(ref Dictionary<string, int> s)
         {
-            if (targetFaction == null) return false;
+            if (Entry.itemID != "")
+            {
+                if (!s.ContainsKey(Entry.itemID)) s.Add(Entry.itemID, 0);
+                s[Entry.itemID] += Entry.itemCount * count;
+            }
+
+            if (Cost.itemID != "")
+            {
+                if (!s.ContainsKey(Cost.itemID)) s.Add(Cost.itemID, 0);
+                s[Cost.itemID] -= Cost.itemCount * count;
+            }
+        }
+        
+        [JsonIgnore] public int CountABS { get { return count; } }
+        [SerializeField][JsonProperty] protected int count;
+
+        protected Manageable factionOwnerCache;
+        [JsonIgnore] Manageable FactionOwner { 
+            get { return factionOwnerCache; }
+            set { this.factionOwnerCache = value; }
+        }
+
+        [JsonProperty] [SerializeField] protected string targetFactionID = "";
+        protected Manageable targetFactionCache = null;
+        [JsonIgnore] public Manageable TargetFaction
+        {
+            get
+            {
+                if (targetFactionCache == null) targetFactionCache = scr_System_CampaignManager.current.FindFactionByID(targetFactionID);
+                return targetFactionCache;
+            }
+            set
+            {
+                this.targetFactionCache = value;
+                this.targetFactionID = value.ID;
+            }
+        }
+
+
+        [JsonIgnore] public Inventory targetInventory { get { return FactionOwner.Inventory; } }
+
+        public void AddCount(int i)
+        {
+            this.count = Math.Max(count + i, 0);
+            //this.count += i;
+        }
+
+        public void SetCount(int i)
+        {
+            //this.count = i;
+            this.count = Math.Max(i, 0);
+        }
+        public TradeOrder()
+        {
+
+        }
+
+        public ProductionOrderType orderType = ProductionOrderType.craftCount;
+        public TradeOrder(Manageable factionOwner, Manageable targetFaction, ItemEntry entries, ItemEntry costs, int count, ProductionOrderType orderType)
+        {
+            this.Entry = entries == null ? new ItemEntry() : entries;
+            this.Cost = costs == null ? new ItemEntry() : costs;
+            this.count = count;
+            this.FactionOwner = factionOwner;
+            this.TargetFaction = targetFaction;
+            this.orderType = orderType;
+        }
+
+        public void ReEstablishParent(Manageable m)
+        {
+            this.FactionOwner = m;
+        }
+
+        public bool ProcessOrder(out string warning)
+        {
+            warning = "";
+            if (TargetFaction == null) return false;
 
             Inventory recycler = scr_System_CampaignManager.current.Recycler;
-            Inventory self = Owner.isPlayerFaction ? Owner.Inventory : recycler;
-            Inventory target = targetFaction.isPlayerFaction ? targetFaction.Inventory : recycler;
+            Inventory self = FactionOwner.isPlayerFaction ? FactionOwner.Inventory : recycler;
+            Inventory target = TargetFaction.isPlayerFaction && TargetFaction != FactionOwner ? TargetFaction.Inventory : recycler;
 
-            if (self == target) return true;
-
-            var selfRecords = self == recycler ? null : Owner.TradeRecords;
-            var targetRecords = target == recycler ? null : targetFaction.TradeRecords;
-
-            if ((self == recycler || self.HasRequiredItems(_trade.costs, _trade.count)) && (target == recycler || target.HasRequiredItems(_trade.items, _trade.count)))
+            //if (self == target) return true;
+            var cc = Count;
+            if ((self == recycler || self.HasRequiredItems(Cost, cc)) && (target == recycler || target.HasRequiredItems(Entry, cc)))
             {
-                foreach (var item in _trade.costs)
+                if (Cost.itemID != "")
                 {
-                    var amount = item.itemCount * _trade.count;
-                    if (self == recycler) target.AddItem(WorldManager.Instantiate(item.itemID, item.itemNameOverwrite, amount));
-                    else target.AddItem(self.RemoveItem(item.itemID, amount));
-
-                    if (selfRecords != null) selfRecords.AddRecord(item.itemID, -amount);
-                    if (targetRecords != null) targetRecords.AddRecord(item.itemID, amount);
+                    var cost_count = Cost.itemCount * cc;
+                    if (self == recycler) target.AddItem(WorldManager.Instantiate(Cost.itemID, Cost.itemNameOverwrite, cost_count));
+                    else target.AddItem(self.RemoveItem(Cost.itemID, cost_count));
+                    if (self != recycler) FactionOwner.DailyReport.AddTradeRecord(Cost.itemID, -cost_count);
+                    if (target != recycler && target != self) TargetFaction.DailyReport.AddTradeRecord(Cost.itemID, cost_count);
                 }
-                foreach (var item in _trade.items)
+
+
+                if (Entry.itemID != "")
                 {
-                    var amount = item.itemCount * _trade.count;
-                    if (target == recycler) self.AddItem(WorldManager.Instantiate(item.itemID, item.itemNameOverwrite, amount));
-                    else self.AddItem(target.RemoveItem(item.itemID, amount));
-
-                    if (selfRecords != null) selfRecords.AddRecord(item.itemID, amount);
-                    if (targetRecords != null) targetRecords.AddRecord(item.itemID, -amount);
+                    var entry_count = Entry.itemCount * cc;
+                    if (target == recycler) self.AddItem(WorldManager.Instantiate(Entry.itemID, Entry.itemNameOverwrite, entry_count));
+                    else self.AddItem(target.RemoveItem(Entry.itemID, entry_count));
+                    if (self != recycler) FactionOwner.DailyReport.AddTradeRecord(Entry.itemID, entry_count);
+                    if (target != recycler && target != self) TargetFaction.DailyReport.AddTradeRecord(Entry.itemID, -entry_count);
                 }
+
+                if (this.orderType == ProductionOrderType.craftCount) this.AddCount(-cc);
 
                 return true;
             }
             else
             {
+                warning = Utility.WrapTextColor($"transaction Source[{FactionOwner.FactionDisplayName}] Target[{TargetFaction.FactionDisplayName}] Content[{Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict);
                 return false;
             }
         }
-
-        public string ownerRef = "";
-        protected Manageable _ownerRefCache = null;
-        [JsonIgnore] public Manageable Owner
-        {
-            get
-            {
-                if (this._ownerRefCache == null) this._ownerRefCache = scr_System_CampaignManager.current.FindFactionByID(ownerRef);
-                return _ownerRefCache;
-            }
-        }
-
-        public TradeManager() { }
-        public TradeManager(Manageable m)
-        {
-            this.ownerRef = m.ID;
-            this._ownerRefCache = m;
-        }
-
-        public void Payment(Manageable toTarget, List<ItemEntry> purchaseItem, List<ItemEntry> payCost)
-        {
-            if (toTarget == null) return;
-            TryAdd(ref transaction_onetime, toTarget.ID, purchaseItem, payCost);
-        }
-
-        protected void TryAdd(ref Dictionary<string, List<Trade>> mainList, string factionID, List<ItemEntry> item, List<ItemEntry> cost)
-        {
-            if (!mainList.ContainsKey(factionID)) mainList.Add(factionID, new List<Trade>());
-
-            bool added = false;
-            foreach(var _item in mainList[factionID])
-            {
-                if ((_item.items == item || (_item.items.Count == 0 && item.Count == 0)) && (_item.costs == cost || (_item.costs.Count == 0 && cost.Count == 0)))
-                {
-                    _item.count++;
-                    added = true;
-                    break;
-                }
-            }
-            if (!added) mainList[factionID].Add(new Trade(item, cost));
-        }
-
     }
-
-
-
-
-    /*
-    public string hasEnoughProductionJob()
-    {
-        List<string> s = new List<string>();
-
-        foreach(var jobCOM in jobPosts.Keys)
-        {
-            string s2 = "";
-            // com is main
-            int assignedWorkLoad = 0;
-            int requiredWorkLoad = 0;
-            int ordersWorkLoad = 0;
-            int maintenanceWorkLoad = 0;
-            foreach (var schedule in this.charaSchedules.Values) assignedWorkLoad += schedule.GetWorkHoursWithCOM(jobCOM.ID);
-
-            foreach (var order in ProductionOrdersDaily) if (jobCOM.comTags.Contains(order.Recipe.jobKeyword)) requiredWorkLoad += (int)(Math.Ceiling(((float)order.ExpectedWorkload) / jobCOM.TimeScale) * jobCOM.TimeScale);
-            foreach (var order in ProductionOrders) if (jobCOM.comTags.Contains(order.Recipe.jobKeyword)) ordersWorkLoad += order.ExpectedWorkload;
-            if (jobCOM.ID.Contains("_maintain")) foreach (var job in jobPosts[jobCOM]) if (job.isCOMValid(jobCOM)) maintenanceWorkLoad += jobCOM.TimeScale;
-            
-            s2 += "[" + jobCOM.displayName + "] assigned hours[" + (int)Math.Ceiling(assignedWorkLoad / 60f) + "]";
-            if (requiredWorkLoad > 0) s2 += " daily order requires[" + (int)Math.Ceiling( requiredWorkLoad / 60f) + "]";
-            if (ordersWorkLoad > 0) s2 += " production orders requires[" + (int)Math.Ceiling(ordersWorkLoad / 60f) + "]";
-            if (maintenanceWorkLoad > 0) s2 += " daily maintenance requires maximum of ["+(int) Math.Ceiling(maintenanceWorkLoad / 60f) + "]";
-            if (assignedWorkLoad < requiredWorkLoad) s2 += " Alert, assigned hours insufficient for daily orders!";
-
-            s.Add(s2);
-        }
-
-        return String.Join("\n",s);
-    }*/
-
 
 
     [System.Serializable]
@@ -1899,11 +1833,11 @@ public class Manageable : I_Disposable
             if (itemConsume < 0)
             {
                 returnValue = false;
-                AddDailyReportEntry("insufficient resource " + kvp.Key);
+                DailyReport.AddManageReport("insufficient resource " + kvp.Key, true);
                // if (debug != null) debug.Add("insufficient resource " + kvp.Key);
             }
         }
-        if(returnValue) AddDailyReportEntry("all resources sufficient");
+        if (returnValue) DailyReport.AddManageReport("all resources sufficient");
         return returnValue;
     }
 
@@ -1928,28 +1862,17 @@ public class Manageable : I_Disposable
     {
         InitScript();   // include wiping nonjobpost and jobpost so run this first before anything else
 
-        if (this.ProductionOrders != null)
-        {
-            foreach (var p in ProductionOrders)
-            {
-                p.ReEstablishParent(this);
-            }
-        }
-
-        if (this.managedRoomRefs != null)
-        {
-            foreach (var r in ManagedRooms) RefreshRoomJobs(r.Value);
-        }
-
-        if (this.Inventory != null)
-        {
-            this.Inventory.ReEstablishParent(this);
-        }
+        foreach (var p in ProductionOrders) p.ReEstablishParent(this);
+        foreach (var p in TradeOrders) p.ReEstablishParent(this);
+        if (this.managedRoomRefs != null) foreach (var r in ManagedRooms) RefreshRoomJobs(r.Value);
+        if (this.Inventory != null) this.Inventory.ReEstablishParent(this);
+        
     }
 
     public void DisposeInternal()
     {
         scr_System_Time.current.Observer_globalTime -= OnTimeUpdate;
+        scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_0;
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_1;
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_3;
     }
@@ -2153,6 +2076,67 @@ public class Manageable : I_Disposable
                 return _cache;
                 //else return $"{scr_System_Serializer.current.Dictionary.QueryThenParse(itemNameOverwrite != "" ? itemNameOverwrite : itemID)} x{itemCount}";
             }
+        }
+    }
+
+
+    public DailyReportHandler DailyReport = new DailyReportHandler();
+
+    [System.Serializable]
+    public class DailyReportHandler
+    {
+        public DailyReportHandler()
+        {
+
+        }
+
+        public void Clear()
+        {
+            tradeError = false;
+            tradeLogs.Clear();
+            manageError = false;
+            manageLogs.Clear();
+            tradeRegistry.Clear();
+            tradeWarnings.Clear();
+
+        }
+
+        Dictionary<string, int> tradeRegistry = new Dictionary<string, int>();
+        public void AddTradeRecord(string itemID, int itemCount)
+        {
+            if (this.tradeRegistry.ContainsKey(itemID)) this.tradeRegistry[itemID] += itemCount;
+            else this.tradeRegistry.Add(itemID, itemCount);
+        }
+
+        public void AddTradeWarning(string message)
+        {
+            this.tradeWarnings.Add(message);
+            this.tradeError = true;
+        }
+
+        public bool tradeError = false;
+        public List<string> tradeLogs = new List<string>();
+        public List<string> tradeWarnings = new List<string>();
+
+        public bool manageError = false;
+        public List<string> manageLogs = new List<string>();
+
+        public void AddManageReport(string s, bool isError = false)
+        {
+            this.manageLogs.Add(isError? Utility.WrapTextColor( s, scr_System_CentralControl.current.pref.TextColor_conflict): s );
+            this.manageError = isError || manageError;
+        }
+
+        public void FinalizeReport()
+        {
+            foreach(var entry in tradeRegistry) if(entry.Value != 0) tradeLogs.Add(entry.Key + entry.Value.ToString("+0;-#"));
+        }
+
+        public string Print(string lineBreak = "\n", bool printManage = true, bool printTrade = true, bool printTradeWarning = true)
+        {
+            return (printManage ? String.Join(lineBreak, manageLogs) : "") +"\n"+ 
+                (printTrade ? String.Join(lineBreak, tradeLogs) : "") + "\n" + 
+                (printTradeWarning ? String.Join(lineBreak, tradeWarnings) : "");
         }
     }
 }

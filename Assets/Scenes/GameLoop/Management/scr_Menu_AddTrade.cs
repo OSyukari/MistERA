@@ -34,7 +34,7 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
 
     public void NotifyAddTrade(Manageable.ItemEntry entry, Manageable targetFaction)
     {
-        sourceFaction.AddTradeOrder(entry, targetFaction, 0);
+        sourceFaction.AddTradeOrder(entry, null, targetFaction, 0);
         scr_System_SceneManager.current.UnloadLastCanvasFromScene();
     }
 

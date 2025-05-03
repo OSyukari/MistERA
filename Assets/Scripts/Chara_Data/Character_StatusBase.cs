@@ -8,15 +8,15 @@ using System.Linq;
 using Newtonsoft.Json;
 
 [System.Serializable]
-public abstract class StatusBase
+public abstract class StatusBase : ISerializationCallbackReceiver
 {
 
     public string statusID = "";
-    public string displayName;
+    public string displayName = "";
     public bool noDisplay = false;
     public bool constant = false;
 
-    public bool isValid
+   [JsonIgnore] public bool isValid
     {
         get
         {
@@ -25,21 +25,31 @@ public abstract class StatusBase
         }
     }
 
-    public List<Variant> variants;
+    public List<Variant> variants = new List<Variant>();
 
     [System.Serializable]
     public class Variant
     {
-        public string displayName;
-        public float threshold;
+        public string displayName = "";
+        public float threshold = -1;
         public List<string> tags = new List<string>();
-        public List<Stat_Modifier> stat_modifiers;
+        public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
+    }
+
+    public virtual void OnBeforeSerialize()
+    {
+
+    }
+
+    public virtual void OnAfterDeserialize()
+    {
+
     }
 }
 
 
 [System.Serializable]
-public abstract class StatusInstance
+public abstract class StatusInstance : ISerializationCallbackReceiver
 {
     [SerializeField][JsonProperty] protected string baseID;
     [JsonIgnore] public string ID { get { return baseID; } }
@@ -92,5 +102,14 @@ public abstract class StatusInstance
         this.ownerRef = c.RefID;
     }
 
+    public void OnBeforeSerialize()
+    {
+
+    }
+
+    public void OnAfterDeserialize()
+    {
+
+    }
 }
 

@@ -28,6 +28,7 @@ public class MasterList
                 list.Add(humanoid_RaceTemplates);
                 list.Add(CampaignSettings);
                 list.Add(Skills);
+                list.Add(Status);
                 list.Add(CharacterTemplates);
                 list.Add(Character_Personalities);
                 list.Add(Character_Origins);    // need to be ordered later cuz require other list to be ready
@@ -37,7 +38,7 @@ public class MasterList
             return list;
         }
     }
-
+    public Index_Status Status = null;
     public Index_Experiences Experiences = null;
     public Character_Origin_Index Character_Origins = null;
     public Character_Origin_startingOption_Index Character_Origin_StartingOptions = null;
@@ -62,6 +63,7 @@ public class MasterList
         this.humanoid_RaceTemplates = new Humanoid_RaceTemplate_Index();
         this.CampaignSettings = new Index_CampaignSetting();
         this.Skills = new Index_CharaSkills();
+        this.Status = new Index_Status();
         this.CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
         this.Character_Personalities = new Character_Personality_Index();
         this.COMs = new Index_COM();

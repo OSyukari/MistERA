@@ -12,27 +12,21 @@ Repo中只保存了代码和Json文件，并未包括dll等（会导致仓库容
 以下路径为build内，未build过的结构的话把\Mist Era_Data换成\Assets
 
 - \Mist Era_Data\Data\Characters
-
     - 预设NPC的配置文件夹，只要是在该目录内深度一层以内都会被自动索取（该目录内文件夹内的文件夹大概不会被读取）
 
 - \Mist Era_Data\Data\Defs
-
     - 基础配置信息，指令 物品 地图 口上 全都在这里
 
 - \Mist Era_Data\Data\Dictionary
-
     - 外部翻译用信息，游戏会根据当前选择的词典自动更换取用的翻译文字
 
 - \Mist Era_Data\Presets 
-
     - 玩家预设的储存位置
 
 - \Mist Era_Data\Save
-
     - 存档位置
 
 - %AppData%\LocalLow\Silent Forest\Mist Era
-
     - 玩家Logs保存位置（报错用）
 
 - \Mist Era_Data\Managed\Assembly-CSharp.dll

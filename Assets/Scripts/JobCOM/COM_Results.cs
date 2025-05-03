@@ -227,7 +227,7 @@ public class COM_Results
                         c.LockFurnitureJob(job);
                         job.FactionOwner.AddRoomOwnership(c.RefID, job.ParentRoom.RefID);
                     }
-                    if (scr_System_Serializer.current.GetByNameOrID_Status_Base(statusID) != null) c.Stats.AddStatus(statusID, statusSeverity);
+                    if (scr_System_Serializer.current.GetByNameOrID_Status_Base(statusID) != null) c.Stats.AddOrModStatus(statusID, statusSeverity);
                 }
 
                 protected void Unlock(Job_Furniture job, ActionPackage package, EvaluationPackage m, Character_Trainable c)

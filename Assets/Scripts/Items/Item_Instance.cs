@@ -32,9 +32,9 @@ public class Item_Instance : IDisposable, I_Disposable
 
     public bool canStackWith(Item_Instance item)
     {
-        if(this.Stackable) return true;
-        if(this.BaseID != item.BaseID) return false;
-        if(this.nameOverwrite != item.nameOverwrite) return false;
+        if (!this.Stackable) return false;
+        if (this.BaseID != item.BaseID) return false;
+        if (this.nameOverwrite != item.nameOverwrite) return false;
 
         foreach(var comp in this.compInstances)
         {

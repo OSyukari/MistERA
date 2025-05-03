@@ -6,7 +6,6 @@ using System.Xml;
 using System.Runtime.Serialization;
 using System.Linq;
 using Newtonsoft.Json;
-using UnityEngine.Rendering;
 
 [System.Serializable]
 public class StatsManager
@@ -42,10 +41,8 @@ public class StatsManager
         return needsList_cache;
     }}
 
-    [SerializeField][JsonProperty] protected List<Stats_Derived_Extended_Instance> list_statsExtended;
-    [JsonIgnore] public List<Stats_Derived_Extended_Instance> StatsExtended { get {
-            if (list_statsExtended == null) list_statsExtended = new List<Stats_Derived_Extended_Instance>();
-            return list_statsExtended; } }
+    [SerializeField][JsonProperty] protected List<Stats_Derived_Extended_Instance> list_statsExtended = new List<Stats_Derived_Extended_Instance>();
+    [JsonIgnore] public List<Stats_Derived_Extended_Instance> StatsExtended { get { return list_statsExtended; } }
 
     /// <summary>
     /// Cache the <string statID, object statEX> to save the search for the current session
@@ -79,7 +76,7 @@ public class StatsManager
         this.Willpower.ReEstablishParent(Owner);
 
         if (this.StatusInstances != null) foreach (var i in StatusInstances) i.ReEstablishParent(chara);
-        if (this.list_statsExtended != null) foreach (var i in list_statsExtended) i.ReEstablishParent(chara);
+        foreach (var i in list_statsExtended) i.ReEstablishParent(chara);
         if (this.statusInstancesEx != null) foreach (var i in _statusInstancesEx) i.ReEstablishParent(chara);
 
         this.RefreshAllStats(true);
@@ -89,12 +86,8 @@ public class StatsManager
 
     }
 
-    public StatsManager(Character_Trainable chara) : this()
+    public StatsManager(Character_Trainable chara)
     {
-        
-        this.modifiers = new List<Stat_Modifier>();
-        this.modifiers_temporary = new List<Stat_Modifier>();
-
         ReEstablishParent(chara);
         
         //RefreshAllStats();
@@ -106,11 +99,10 @@ public class StatsManager
         //generate all stat_derived_extended
 
         //Debug.LogError("Initializing ID "+ownerRefID);
-        if (this.statusInstancesEx == null) this._statusInstancesEx = new List<StatusEx_Instance>();
-        if (this.StatusInstances == null) this._statusInstances = new List<Status_Instance>();
-
-        if (this.modifiers == null) this.modifiers = new List<Stat_Modifier>();
-        if (this.modifiers_temporary == null) this.modifiers_temporary = new List<Stat_Modifier>();
+        //if (this.statusInstancesEx == null) this._statusInstancesEx = new List<StatusEx_Instance>();
+        //if (this.StatusInstances == null) this._statusInstances = new List<Status_Instance>();
+        this.modifiers.Clear();
+        this.modifiers_temporary.Clear();
 
         foreach (var statusEX in scr_System_Serializer.current.index_StatusEX.list)
         {
@@ -164,8 +156,7 @@ public class StatsManager
         if (resetPermanentStatCache)
         {
             // this also force clear the modifiers and recollect all of them
-            if (modifiers == null) modifiers = new List<Stat_Modifier>();
-            else modifiers.Clear();
+            modifiers.Clear();
 
             //if (Owner == null) Debug.LogError("Owner Null");
             if (Owner.Race == null) Debug.LogError("Owner " + Owner.FirstName + " Race Null");
@@ -226,7 +217,13 @@ public class StatsManager
     }
 
 
-
+    [JsonIgnore] public bool isSleeping
+    {
+        get
+        {
+            return this.GetStatusSeverityByStringMatch("chara_status_sleeping") > 0;
+        }
+    }
     [JsonIgnore] public float Energy_InteractionCost { get { return -2f; } }
     [JsonIgnore] public float CumThreshold { get { return 100; } }
     [JsonIgnore] public int SleepHours { get { return Owner.hasStatKeyword("sleep") ? (int)GetStatValue("stats_derived_sleepNeed") : 0; } }
@@ -362,7 +359,6 @@ public class StatsManager
     /// <param name="mods"></param>
     public void AddStatModifier(List<Stat_Modifier> mods)
     {
-        if (modifiers == null) modifiers = new List<Stat_Modifier>();
         foreach (Stat_Modifier mod_instance in mods)
         {
             for (int i = modifiers.Count - 1; i >= 0; i--)
@@ -580,8 +576,8 @@ public class StatsManager
 
 
 
-    [SerializeField][JsonProperty] protected List<Status_Instance> _statusInstances;
-    [SerializeField][JsonProperty] protected List<StatusEx_Instance> _statusInstancesEx;
+    [SerializeField][JsonProperty] protected List<Status_Instance> _statusInstances = new List<Status_Instance>();
+    [SerializeField][JsonProperty] protected List<StatusEx_Instance> _statusInstancesEx = new List<StatusEx_Instance>();
     [JsonIgnore] public List<StatusEx_Instance> statusInstancesEx_Displayable
     {
         get
@@ -712,7 +708,7 @@ public class StatsManager
         foreach (var i in statusInstancesEx) i.ClearCache();
     }
 
-    public void AddStatus(string s, float initialSeverity = 0f, int durationMinute = -1)
+    protected void AddStatus(string s, float initialSeverity = 0f, int durationMinute = -1)
     {
         Status_Base target = scr_System_Serializer.current.GetByNameOrID_Status_Base(s);
         if (target != null)

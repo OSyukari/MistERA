@@ -162,7 +162,7 @@ public class StatusEx_Base
 [System.Serializable]
 public class StatusEx_Instance : I_CacheValues
 {
-    [SerializeField][JsonProperty] protected string baseID;
+    [SerializeField][JsonProperty] protected string baseID = "";
     [JsonIgnore] public string ID { get { return baseID; } }
 
     public int duration = -1;
@@ -174,7 +174,7 @@ public class StatusEx_Instance : I_CacheValues
         cached_value = null;
     }
 
-    [SerializeField][JsonProperty] protected float severity;
+    [SerializeField][JsonProperty] protected float severity = 0;
     public int pauseXMinAfterMod = 0;
 
     protected int ownerRef = -1;
@@ -188,7 +188,7 @@ public class StatusEx_Instance : I_CacheValues
         }
     }
 
-    protected StatusEx_Base baseRef;
+    protected StatusEx_Base baseRef = null;
     [JsonIgnore] public StatusEx_Base BaseRef
     {
         get
@@ -281,10 +281,7 @@ public class StatusEx_Instance : I_CacheValues
             else finalResult = Utility.ParseStatMods(this, Owner, StoredModifiers, list, tempList, -999, 999);
 
             cached_value = new Tuple<float, List<string>> (initialValue+finalResult, tempList);
-
-
         }
-        
     }
 
     [JsonIgnore] public string SeverityDisplayName

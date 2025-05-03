@@ -216,8 +216,7 @@ public class Stats_Derived_Extended_Instance
 
     public void Restore(float amount)
     {
-        this.value = Math.Min(MaxValue, this.value + amount);
-        this.value = Math.Max(0f, this.value + amount);
+        this.value = Math.Max(0, Math.Min(MaxValue, this.value + amount));
     }
 
 }

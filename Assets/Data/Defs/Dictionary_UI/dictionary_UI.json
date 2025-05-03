@@ -229,7 +229,7 @@
                 "ui_management_production_PO_TITLE": "制造订单",
                 "ui_management_production_Trade_TITLE": "贸易订单",
                 "ui_management_production_Trade_target": "贸易对象",
-                "ui_management_production_Trade_pricing": "货币",
+                "ui_management_production_Trade_pricing": "订单价格",
                 "ui_management_production_orderName": "订单内容",
                 "ui_management_production_currentlyOwn": "目前持有",
                 "ui_management_production_jobkeyword": "工作类别",

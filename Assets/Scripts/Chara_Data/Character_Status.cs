@@ -16,7 +16,7 @@ public enum StatusTags
 [System.Serializable]
 public class Index_Status:I_IndexHasID, ISerializationCallbackReceiver, I_IndexMergeable
 {
-    [SerializeField] public List<Status_Base> list = new List<Status_Base>();
+    public List<Status_Base> list = new List<Status_Base>();
 
     public void MergeWith(I_IndexMergeable list){
         var l = list as Index_Status;
@@ -37,6 +37,7 @@ public class Index_Status:I_IndexHasID, ISerializationCallbackReceiver, I_IndexM
 
         foreach (var i in list)
         {
+            i.OnAfterDeserialize();
             if (i.variationMode.variationType == Status_Base.Status_Variation_Type.sex)
             {
                 scr_System_Serializer.current.AddSensitivityStatus(i.variationMode.stringData, i.statusID);
@@ -75,11 +76,18 @@ public class Status_Base : StatusBase
 
     public Variations variationMode;
 
+    public override void OnAfterDeserialize()
+    {
+        base.OnAfterDeserialize();
+        this.variationMode.OnAfterDeserialize();
+    }
+
+
     [System.Serializable]
     public class Variations : ISerializationCallbackReceiver
     {
         public Status_Variation_Type variationType;
-        [SerializeField] private string variationTypeString;
+        [SerializeField][JsonProperty] private string variationTypeString;
         public int pauseXMinAfterMod = 0;
         public float value;
         public string stringData = "";
@@ -147,7 +155,7 @@ public class Status_Instance : StatusInstance
         this.maxed = true;
     }
 
-    protected Status_Base baseRef;
+    protected Status_Base baseRef = null;
     [JsonIgnore] public string SeverityDisplayName 
     { 
         get {  return BaseRef.variants[SeverityIndex].displayName;  } 
@@ -215,6 +223,7 @@ public class Status_Instance : StatusInstance
     {
         get
         {
+            if (BaseRef == null || BaseRef.variants == null) Debug.LogError($"severityModifier error, bref null? {BaseRef == null}, variants null? {BaseRef == null || BaseRef.variants == null}");
             return BaseRef.variants[SeverityIndex].stat_modifiers;
         }
     }

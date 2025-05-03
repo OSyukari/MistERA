@@ -136,9 +136,10 @@ public class MapPlan
             if (matchByID != "") list.Add(new Manageable.ItemEntry(matchByID, nameOverwrite, itemCount));
             if (matchByTags.Count > 0)
             {
-                foreach(var item in scr_System_Serializer.current.index_Item_Base.list)
+                foreach(var recipe in scr_System_Serializer.current.CraftingRecipe.Values)
                 {
-                    if (Utility.ListContainsStrict(item.Tags, matchByTags)) list.Add(new Manageable.ItemEntry(item.id, "", itemCount));
+
+                    if (Utility.ListContainsStrict(recipe.OutputItem.Tags, matchByTags)) list.Add(new Manageable.ItemEntry(recipe.OutputItem.id, "", recipe.outputAmount * itemCount));
                 }
             }
             return list;            

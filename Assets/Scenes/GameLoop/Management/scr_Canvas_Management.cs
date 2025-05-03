@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System;
 using System.Linq;
+using Newtonsoft.Json.Bson;
 
 
 public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
@@ -119,7 +120,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
     public scr_prOrderManage prefab_POEntry;
     public scr_prefabTransactionManage prefab_TAEntry;
-    public RectTransform list_orders;
+    public RectTransform list_orders, list_trades;
 
     private void Initialize_FactionProduction()
     {
@@ -129,7 +130,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
        // if (loadedOrders == null) loadedOrders = new List<Manageable.ProductionOrder>();
 
         RefreshPOList();
-
+        RefreshTAList();
     }
 
     private void CalculateProductionWarning()
@@ -147,6 +148,32 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         foreach (var order in currentFaction.ProductionOrders) if (!loadOrders_Removal.ContainsKey(order)) MakePOButton(order);
 
         //foreach(var order in loadedOrders_daily) if (!currentFaction.ProductionOrdersDaily.Contains(order)) DeletePOButton(order)
+    }
+
+    Dictionary<Manageable.TradeOrder, button_ManageTradeOrder_RemoveCount> loadTrades_Removal = new Dictionary<Manageable.TradeOrder, button_ManageTradeOrder_RemoveCount>();
+    public void RefreshTAList()
+    {
+        foreach (var trade in currentFaction.TradeOrders) if (!loadTrades_Removal.ContainsKey(trade)) MakeTOButton(trade);
+    }
+    private void MakeTOButton(Manageable.TradeOrder order)
+    {
+        //TODO
+        int recipeHash = AssertUniqueHash(order.GetHashCode()) * 4;
+        scr_prefabTransactionManage entry = Instantiate(prefab_TAEntry);
+        entry.ItemName.SetText(order.Display);
+        entry.ItemCount.text = currentFaction.Inventory.GetItemCount(order.Entry.itemID).ToString();
+        entry.FactionName.text = order.TargetFaction.FactionDisplayName;
+        entry.pricing.text = " - ";
+        RectTransform rect = entry.GetComponent<RectTransform>();
+
+        RegisterButton(recipeHash + 1, entry.ButtonPlus, new button_ManageTradeOrder_AddCount(this, entry.OrderAmount, order));
+        RegisterButton(recipeHash + 2, entry.Button_orderType, new button_ManageTradeOrder_ChangeType(this, entry.Button_orderType, order));
+        RegisterButton(recipeHash + 3, entry.ButtonMinus, new button_ManageTradeOrder_ReduceCount(this, entry.OrderAmount, order));
+        var remover = new button_ManageTradeOrder_RemoveCount(this, recipeHash, order, entry.warningMsg, entry);
+        RegisterButton(recipeHash, entry.Btn_action, remover);
+
+        rect.SetParent(list_trades, false);
+        loadTrades_Removal.Add(order, remover);
     }
 
     private void MakePOButton(Manageable.ProductionOrder order)
@@ -186,6 +213,16 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         DestroyCOMButton(recipeHash + 2);
         DestroyCOMButton(recipeHash + 3);
         loadOrders_Removal.Remove(po);
+    }
+
+    public void DestroyTOMButton(Manageable.TradeOrder to, int recipeHash)
+    {
+        //// ??????
+        DestroyCOMButton(recipeHash);
+        DestroyCOMButton(recipeHash + 1);
+        DestroyCOMButton(recipeHash + 2);
+        DestroyCOMButton(recipeHash + 3);
+        loadTrades_Removal.Remove(to);
     }
 
     private void DestroyCOMButton(int optionID)
@@ -1244,13 +1281,162 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         protected void OnChildExit()
         {
-            Debug.LogError("UNIMPLEMENTED");
+            //Debug.LogError("UNIMPLEMENTED");
+            this.parent.RefreshTAList();
         }
 
         public void OnClickButton()
         {
             scr_Menu_AddTrade cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.canvas_AddTR.GetComponent<RectTransform>(), parent.transform.parent.GetComponent<RectTransform>()).GetComponent<scr_Menu_AddTrade>();
             cvs.InitializeWithArgument(this.parent.CurrentFaction, OnChildExit);
+        }
+    }
+
+
+
+    public class button_ManageTradeOrder_AddCount : ButtonValidator, I_ButtonClickable
+    {
+
+        new scr_Canvas_Management parent;
+        Manageable.TradeOrder order;
+        TMP_Text text;
+        public button_ManageTradeOrder_AddCount(scr_Canvas_Management parent, TMP_Text text, Manageable.TradeOrder order) : base(parent)
+        {
+            this.parent = parent;
+            this.order = order;
+            this.text = text;
+            this.tooltip = "Add 1 to this Order";
+        }
+
+        public override bool IsButtonValid()
+        {
+            if (!parent.currentFaction.HasTradeOrder(order))
+            {
+                tooltip = "This Trade Order no longer exists.";
+                return false;
+            }
+            text.text = order.CountABS.ToString();
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            order.AddCount(1);
+            //order.AddCount(1);
+            //text.text = order.Count.ToString();
+            //expectedWork.text = ((int)Math.Ceiling(order.Count * order.Recipe.workAmount / 60f)).ToString();
+        }
+    }
+
+    public class button_ManageTradeOrder_ChangeType : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        Manageable.TradeOrder order;
+        scr_SelectableText text;
+        public button_ManageTradeOrder_ChangeType(scr_Canvas_Management parent, scr_SelectableText text, Manageable.TradeOrder order) : base(parent)
+        {
+            this.parent = parent;
+            this.order = order;
+            this.text = text;
+        }
+        public override bool IsButtonValid()
+        {
+            this.text.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(order.orderType.ToString()));
+            return true;
+        }
+        public void OnClickButton()
+        {
+            order.orderType = 1 - order.orderType;
+        }
+    }
+
+    public class button_ManageTradeOrder_ReduceCount : ButtonValidator, I_ButtonClickable
+    {
+
+        new scr_Canvas_Management parent;
+        Manageable.TradeOrder order;
+        TMP_Text text;
+        public button_ManageTradeOrder_ReduceCount(scr_Canvas_Management parent, TMP_Text text, Manageable.TradeOrder order) : base(parent)
+        {
+            this.parent = parent;
+            this.order = order;
+            this.text = text;
+            this.tooltip = "Reduce 1 from this Order";
+        }
+
+        public override bool IsButtonValid()
+        {
+            if (!parent.currentFaction.HasTradeOrder(order))
+            {
+                tooltip = "This Production Order no longer exists.";
+                return false;
+            }
+            text.text = order.CountABS.ToString();
+            if (order.CountABS > 0) return true;
+            else return false;
+        }
+
+        public void OnClickButton()
+        {
+            //parent.currentFaction.AddProductionOrder(order.Recipe, -1);
+            order.AddCount(-1);
+
+            //expectedWork.text = ((int) Math.Ceiling( order.Count * order.Recipe.workAmount / 60f)).ToString();
+        }
+    }
+
+    public class button_ManageTradeOrder_RemoveCount : ButtonValidator, I_ButtonClickable
+    {
+
+        new scr_Canvas_Management parent;
+        Manageable.TradeOrder order;
+        TMP_Text warning;
+        scr_prefabTransactionManage parentRect;
+
+        Color32 conflictColor;
+        string alert_hours, alert_items;
+        int buttonID;
+        public button_ManageTradeOrder_RemoveCount(scr_Canvas_Management parent, int buttonID, Manageable.TradeOrder order, TMP_Text warning, scr_prefabTransactionManage parentRect) : base(parent)
+        {
+            this.parent = parent;
+            this.order = order;
+            this.buttonID = buttonID;
+            this.parentRect = parentRect;
+            this.warning = warning;
+            // this.tooltip = "Delete This Order\nThis functionality is currently disabled";
+            this.conflictColor = scr_System_CentralControl.current.pref.TextColor_conflict;
+            alert_hours = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_missingHours");
+            alert_items = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_missingResource");
+        }
+
+        public override bool IsButtonValid()
+        {
+            // modify warning message
+            this.warning.text = "";
+            var texts = new List<string>();
+            if (this.order.Count > 0)
+            {
+                if (order.Cost.itemID != "") if(!parent.CurrentFaction.resourceWarnings.ContainsKey(order.Cost.itemID) || parent.CurrentFaction.resourceWarnings[order.Cost.itemID] < 0) texts.Add(alert_items.Replace("$itemname$", order.Cost.Print));
+                //if (!parent.CurrentFaction.productionWarnings.ContainsKey(order.Recipe.jobKeyword) || parent.CurrentFaction.productionWarnings[order.Recipe.jobKeyword] < 0) texts.Add(alert_hours.Replace("$comname$", order.Recipe.jobKeyword));
+                this.warning.text = texts.Count > 0 ? Utility.WrapTextColor(String.Join(" ", texts), conflictColor) : "";
+            }
+
+            if (!parent.currentFaction.HasTradeOrder(order))
+            {
+                tooltip = "This Production Order no longer exists.";
+                return false;
+            }
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.currentFaction.RemoveTradeOrder(order);
+            parentRect.gameObject.SetActive(false);
+            parent.DestroyTOMButton(order, buttonID);
+            DestroyImmediate(parentRect.gameObject);
+            //order.AddCount(-1);
+            //text.text = order.Count.ToString();
         }
     }
 }

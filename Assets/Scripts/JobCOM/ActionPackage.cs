@@ -327,9 +327,10 @@ public abstract class ActionPackage
                 //Debug.LogError("AP START WITH TAG SLEEP CHECKING IF SHOULD SLEEP");
                 foreach (var c in doer)
                 {
-                    if (c.shouldSleep && c.RefID > 0)
+                    if (c.shouldSleep && c.RefID > 0 && !c.Stats.isSleeping)
                     {
-                        c.Stats.AddStatus("chara_status_sleeping", c.Stats.SleepHours * 60);
+                        //Debug.LogError($"{c.FirstName} is going to sleep");
+                        c.Stats.AddOrModStatus("chara_status_sleeping", c.Stats.SleepHours * 60);
                         //Debug.Log("ADDING SLEEP TO " + c.FirstName);
                     }
                     
@@ -374,7 +375,8 @@ public abstract class ActionPackage
 
                             if (rc.RefID > 0 && duration == this.targetCOM.TimeScale && targetCOM.comTags.Contains("sleep"))
                             {
-                                rc.Stats.AddStatus("chara_status_sleeping", rc.Stats.SleepHours * 60);
+                                Debug.LogError($"{rc.FirstName} is being set to sleep");
+                                rc.Stats.AddOrModStatus("chara_status_sleeping", rc.Stats.SleepHours * 60);
                                 // if (rc.canSleep) 
 
                             }

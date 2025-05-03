@@ -122,7 +122,7 @@ public class Character_Factions
                 if (!v2 && v.statusDebuffID != "")
                 {   // add status debuff
                     Owner.Stats.AddOrModStatus(v.statusDebuffID, 1441, 1441);
-                    HomeFactions[0].AddDailyReportEntry("Due to missing resource "+v.consumeItemByTag+", "+Owner.FirstName+" is now "+v.statusDebuffID);
+                    HomeFactions[0].DailyReport.AddManageReport("Due to missing resource "+v.consumeItemByTag+", "+Owner.FirstName+" is now "+v.statusDebuffID, true);
                 }
                 returnValue = v2 && returnValue;
             }
@@ -135,11 +135,11 @@ public class Character_Factions
 
                 if (returnValue){
                     Owner.Relationships.FindRelationshipWith(manager.RefID).ModRelationValue(RelationshipScoreType.Trust, 1);
-                    HomeFactions[0].AddDailyReportEntry(Owner.FirstName+"'s trust toward "+manager.FirstName+" has increased by 1");
+                    HomeFactions[0].DailyReport.AddManageReport(Owner.FirstName+"'s trust toward "+manager.FirstName+" has increased by 1");
                 } 
                 else{
                     Owner.Relationships.FindRelationshipWith(manager.RefID).ModRelationValue(RelationshipScoreType.Trust, -1);
-                    HomeFactions[0].AddDailyReportEntry(Owner.FirstName+"'s trust toward "+manager.FirstName+" has decreased by 1");
+                    HomeFactions[0].DailyReport.AddManageReport(Owner.FirstName+"'s trust toward "+manager.FirstName+" has decreased by 1", true);
                 }
             }
 

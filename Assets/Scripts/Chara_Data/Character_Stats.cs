@@ -77,7 +77,7 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
         }
     }
 
-    [NonSerialized] protected List<string> stringResults = new List<string>();
+    protected List<string> stringResults = new List<string>();
     public string ModStrings(List<string> contextKeys = null, string joinSymbol = "\n") 
     {
         var key = contextKeys == null ? new List<string>() : contextKeys;

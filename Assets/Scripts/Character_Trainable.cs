@@ -350,7 +350,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Skills.UpdateAllSkills(updateMessage);
         if (updateMessage.Count > 0)
         {
-            foreach (var i in FactionManager.HomeFactions) i.AddDailyReportEntry(String.Join("\n", updateMessage));
+            foreach (var i in FactionManager.HomeFactions) i.DailyReport.AddManageReport(String.Join("\n", updateMessage));
         }
         this.Relationships.DailyRefresh();
     }

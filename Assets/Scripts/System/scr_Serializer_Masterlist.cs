@@ -77,7 +77,6 @@ public class masterList : ISerializationCallbackReceiver
                 list.Add(Floors);
                 list.Add(MapPlans);
 
-                list.Add(Status);
                 list.Add(StatusEXs);
                 list.Add(Sexperiences);
                 list.Add(StatEXs);
@@ -95,7 +94,6 @@ public class masterList : ISerializationCallbackReceiver
 
         this.Stats_Derived_Bases = new Stats_Derived_Base_Index();
         this.StatEXs = new Stats_Derived_Extended_Index();
-        this.Status = new Index_Status();
         this.Items = new Index_Item_Base();
 
 
@@ -121,7 +119,7 @@ public class masterList : ISerializationCallbackReceiver
     public Index_MapPlan MapPlans = null;
 
     public Character_Base_Index Character_Bases = null;
-    public Index_Status Status = null;
+    //public Index_Status Status = null;
     public Index_StatusEx StatusEXs = null;
     public Index_Sexperiences Sexperiences = null;
     public Stats_Derived_Extended_Index StatEXs = null;

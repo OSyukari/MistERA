@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 // ItemComponent_Craftable
 [System.Serializable]
@@ -13,10 +13,21 @@ public class ItemComponentTemplate_Craftable_Recipe
     public string outputItemBaseID = "";
     public int outputAmount = 0;
 
-    public string DisplayName { get { return scr_System_Serializer.current.GetByNameOrID_Item_Base(outputItemBaseID).DisplayName + " x" + outputAmount; } }
-    public string RecipeUID { get { return jobKeyword + "_" + outputItemBaseID + "_" + outputAmount; } }
+    protected Item_Base _outputItemCache = null;
+    [JsonIgnore] public Item_Base OutputItem { get
+        {
+            if (_outputItemCache == null) _outputItemCache = scr_System_Serializer.current.GetByNameOrID_Item_Base(outputItemBaseID);
+            return _outputItemCache;
+        } }
+
+    string _displayname = "";
+    [JsonIgnore] public string DisplayName { get { 
+            if (_displayname == "") _displayname = scr_System_Serializer.current.GetByNameOrID_Item_Base(outputItemBaseID).DisplayName + " x" + outputAmount;
+            return _displayname;
+        } }
+    [JsonIgnore] public string RecipeUID { get { return jobKeyword + "_" + outputItemBaseID + "_" + outputAmount; } }
     //scr_System_Serializer.current.GetByNameOrID_Item_Base(outputItemBaseID).Tooltip+ 
-    public string Tooltip { get { return "TimeCost [" + workAmount + "]minutes\nSkillRequirement []\nitemRequirement []"; } }
+    [JsonIgnore] public string Tooltip { get { return "TimeCost [" + workAmount + "]minutes\nSkillRequirement []\nitemRequirement []"; } }
 }
 
 [System.Serializable]

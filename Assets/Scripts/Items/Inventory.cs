@@ -71,6 +71,7 @@ public class Inventory
             var v = this.Contents.Find(x => x.canStackWith(i));
             if (v != null)
             {
+                //Debug.LogError($"Merging item {i.DisplayName}x{i.Count} with {v.DisplayName}x{v.Count}");
                 added = true;
                 v.ModCount(i.Count);
                 scr_System_CampaignManager.current.Unregister(i);
@@ -84,12 +85,12 @@ public class Inventory
             this.contentRefs.Add(i.RefID);
         }
 
-        if(added) foreach (string tag in i.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag]++;
+        if (added) foreach (string tag in i.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] += i.Count;
     }
 
-    public void AddItem(List<Item_Instance> i)
+    public void AddItem(List<Item_Instance> list)
     {
-        foreach (var ii in i) AddItem(ii);
+        foreach (var ii in list) AddItem(ii);
     }
 
     public int TickTokenItem(string tokenTag, int count)
@@ -190,6 +191,7 @@ public class Inventory
     public int GetItemCount(string baseID)
     {
         int i = 0;
+        if (baseID == "") return 0;
         foreach (var item in Contents) if (item.BaseID == baseID && !item.markForDelete) i+=item.Count;
 
         //Debug.Log("Faction check item [" + baseID + "] count result [" + i + "]");
@@ -234,10 +236,10 @@ public class Inventory
         }
     }
 
-    public bool HasRequiredItems(List<Manageable.ItemEntry> entries, int count)
+    public bool HasRequiredItems(Manageable.ItemEntry entry, int count)
     {
-        foreach (var entry in entries) if (GetItemCount(entry.itemID) < entry.itemCount * count) return false;
+        if (entry.itemID == "" || count == 0) return true;
+        if (GetItemCount(entry.itemID) < entry.itemCount * count) return false;
         return true;
     }
-
 }
