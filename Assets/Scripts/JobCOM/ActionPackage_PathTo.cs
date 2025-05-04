@@ -26,21 +26,28 @@ public class ActionPackage_PathTo : ActionPackage
         } }
 
     List<TaggedEdge<int, Door_Instance>> _path = null;
-    [JsonIgnore] IEnumerator<TaggedEdge<int, Door_Instance>> path
+    [JsonIgnore]
+    List<TaggedEdge<int, Door_Instance>> path
     {
         get
         {
             if (_path == null && doerRef != -1 && TargetRoom != null)
             {
-                var enumerator = scr_System_CampaignManager.current.Map.Findpath(doerRef, TargetRoom.RefID);
-                _path = enumerator == null ? new List<TaggedEdge<int, Door_Instance>>() : enumerator.ToList();
+                _path = scr_System_CampaignManager.current.Map.Findpath(doerRef, TargetRoom.RefID).ToList();
             }
-            return _path == null ? null : _path.GetEnumerator();
+            return _path;
         }
     }
     protected void PathPop()
     {
-        if (_path != null && _path.Count > 0) _path.RemoveAt(0);
+        if (_path != null)
+        {
+            
+            _path.RemoveAt(0);
+            duration = _path.Count > 0 ? (int)_path[0].Tag.Cost : 0;
+            if (duration > 0) toggleRepeat = true;
+
+        }
     }
 
     [JsonIgnore] private int doerRef { get { return (DoerRefs != null && DoerRefs.Count > 0 ? DoerRefs[0] : -1 ); } }
@@ -75,8 +82,7 @@ public class ActionPackage_PathTo : ActionPackage
             }
 
             var pp = path;
-            pp.MoveNext();
-            duration += (int)pp.Current.Tag.Cost;
+            duration = (int)path.First().Tag.Cost;
         }
 
     }
@@ -123,10 +129,9 @@ public class ActionPackage_PathTo : ActionPackage
         else
         {
             float totalCost = 0f;
-            var pp = path;
-            while (pp.MoveNext())
+            foreach (var pp in path)
             {
-                totalCost += pp.Current.Tag.Cost;
+                totalCost += pp.Tag.Cost;
             }
             if (totalCost >= 99)
             {
@@ -176,57 +181,56 @@ public class ActionPackage_PathTo : ActionPackage
             //
             return;
         }
-        var pp = path;
 
-        if (pp != null)
+        
+        bool moved = false;
+        toggleRepeat = false;
+
+        while (path != null && path.Count > 0)
         {
-            bool moved = false;
-            toggleRepeat = false;
+            var pc = path[0];
+            if (!moved) moved = true;
 
-            while (pp.MoveNext())
-            {
-                var pc = pp.Current;
-                if (!moved) moved = true;
-                else
-                {
-                    // now we at the 2nd e
-                    if ((int)pc.Tag.Cost >= 1)
-                    {
-                        duration = (int)pc.Tag.Cost;
-                        toggleRepeat = true;
-                        break;
-                    }
-                    // if next node 0 cost then no break keep moving
-                }
-                if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" +Doer.FirstName + " leaves room  " + scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName+ "</align>", true);
+            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" +Doer.FirstName + " leaves room  " + scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName+ "</align>", true);
                 
-                scr_System_CampaignManager.current.MoveCharacterTo(doerRef, pc.Target);
-                if ((int)pc.Tag.Cost > 0 && doerRef == 0)
+            scr_System_CampaignManager.current.MoveCharacterTo(doerRef, pc.Target);
+            if ((int)pc.Tag.Cost > 0 && doerRef == 0)
+            {
+                Room_Instance room = scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target);
+                string s = "Entering room " + room.DisplayName;
+                string s2 = "";
+                bool askBreak = false;
+                //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
+                foreach(var charaRef in scr_System_CampaignManager.current.CharaInCurrentRoom)
                 {
-                    Room_Instance room = scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target);
-                    string s = "Entering room " + room.DisplayName;
-                    string s2 = "";
-                    //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
-                    foreach(var charaRef in scr_System_CampaignManager.current.CharaInCurrentRoom)
-                    {
-                        if (charaRef == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(charaRef)) continue;
-                        Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
-                        if (c == null) continue;
-                        s2 += " "+c.FirstName;
-                        scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName+ " is in room" + room.DisplayName+  ", currently " + c.GetJobDescription(), true);
-                    }
+                    if (charaRef == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(charaRef)) continue;
+                    Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
+                    if (c == null) continue;
+                    s2 += " "+c.FirstName;
+                    askBreak = true;
+                    scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName+ " is in room" + room.DisplayName+  ", currently " + c.GetJobDescription(), true);
+                }
 
-                    scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.pref.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Length > 0 ? "\ncurrently in room :"+s2:""), true);
+                scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.pref.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Length > 0 ? "\ncurrently in room :"+s2:""), true);
+                if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)
+                {
 
                 }
-                if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" + Doer.FirstName + " enters room " + scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target).DisplayName + "</align>", true);
-            }
-            this.PathPop();
 
+            }
+            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" + Doer.FirstName + " enters room " + scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target).DisplayName + "</align>", true);
+
+            this.PathPop();
+            if (duration > 0) break;
         }
-        else
-        {
-            Debug.Log("ActionPackage_PathTo [" + Doer.FirstName + "] toward [" + TargetRoom.DisplayName + "] NULL PATH ABORT, Doer currently at ["+scr_System_CampaignManager.current.Map.FindRoomByChara(Doer.RefID).DisplayName+"]");
-        }
+
+        
+           // Debug.Log("ActionPackage_PathTo [" + Doer.FirstName + "] toward [" + TargetRoom.DisplayName + "] NULL PATH ABORT, Doer currently at ["+scr_System_CampaignManager.current.Map.FindRoomByChara(Doer.RefID).DisplayName+"]");
+        
+    }
+
+    protected void QueryInitializer(scr_Menu menu)
+    {
+
     }
 }

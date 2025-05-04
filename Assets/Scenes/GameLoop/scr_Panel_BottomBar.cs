@@ -14,7 +14,6 @@ public class scr_Panel_BottomBar : scr_Menu
 
 
     public List<CanvasGroup> roomView;
-    public List<CanvasGroup> floorView;
     public List<CanvasGroup> logsView;
 
     public bool DisableQuickLoad = true;
@@ -62,17 +61,17 @@ public class scr_Panel_BottomBar : scr_Menu
         {
             case ViewMode.View_Room:
                 foreach (CanvasGroup group in logsView) viewDisable(group);
-                foreach (CanvasGroup group in floorView) viewDisable(group);
+                //foreach (CanvasGroup group in floorView) viewDisable(group);
                 foreach (CanvasGroup group in roomView) viewEnable(group);
                 break;
-            case ViewMode.View_Map:
-                foreach (CanvasGroup group in logsView) viewDisable(group);
-                foreach (CanvasGroup group in roomView) viewDisable(group);
-                foreach (CanvasGroup group in floorView) viewEnable(group);
-                break;
+            //case ViewMode.View_Map:
+            //    foreach (CanvasGroup group in logsView) viewDisable(group);
+            //    foreach (CanvasGroup group in roomView) viewDisable(group);
+            //    foreach (CanvasGroup group in floorView) viewEnable(group);
+            //    break;
             case ViewMode.View_Logs:
                 foreach (CanvasGroup group in roomView) viewDisable(group);
-                foreach (CanvasGroup group in floorView) viewDisable(group);
+                //foreach (CanvasGroup group in floorView) viewDisable(group);
                 foreach (CanvasGroup group in logsView) viewEnable(group);
                 break;
             default:
@@ -123,7 +122,7 @@ public class scr_Panel_BottomBar : scr_Menu
                 case 10: button.Initialize(this, new ButtonValidator_InspectChara(this, button)); break;
                 case 20: button.Initialize(this, new ButtonValidator_ChangeView(this, button, ViewMode.View_Logs)); break;
                 case 21: button.Initialize(this, new ButtonValidator_ChangeView(this, button, ViewMode.View_Room)); break;
-                case 22: button.Initialize(this, new ButtonValidator_ChangeView(this, button, ViewMode.View_Map)); break;
+                case 22: button.Initialize(this, new ButtonValidator_Movement(this)); break;
                 case 30: button.Initialize(this, new ButtonValidator_Management(this, button)); break;
                 case 40: button.Initialize(this, new ButtonValidator_QuickSave(this)); break;
                 case 42: button.Initialize(this, new ButtonValidator_Load(this, button)); break;
@@ -202,6 +201,7 @@ public class scr_Panel_BottomBar : scr_Menu
         }
     }
 
+
     public RectTransform prefab_Canvas_charaDetail;
     public class ButtonValidator_InspectChara : ButtonValidator, I_ButtonClickable
     {
@@ -235,6 +235,43 @@ public class scr_Panel_BottomBar : scr_Menu
 
         }
     }
+
+    public canvas_RoomDisplay canvas_FloorDisplay;
+    public class ButtonValidator_Movement : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Panel_BottomBar parent;
+        public ButtonValidator_Movement(scr_Menu parent) : base(parent)
+        {
+            this.parent = parent as scr_Panel_BottomBar;
+        }
+
+        public override bool IsButtonValid()
+        {
+            tooltip = "";
+
+            Job job = scr_System_CampaignManager.current.Player.CurrentJob;
+            if (job is Job_Sex_Group)
+            {
+                tooltip += "Cannot leave room until Sex is over.";
+                state = ButtonValidator_States.Invalid;
+                return false;
+            }
+            else
+            {
+                tooltip = "";
+                state = ButtonValidator_States.Valid;
+                return true;
+            }
+        }
+
+        public void OnClickButton()
+        {
+            //, parent.m_Canvas.GetComponent<RectTransform>()
+            canvas_RoomDisplay FloorDisplay = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.canvas_FloorDisplay.GetComponent<RectTransform>(), parent.m_Canvas.GetComponent<RectTransform>()).GetComponent<canvas_RoomDisplay>();
+            FloorDisplay.LoadFloor(scr_System_CampaignManager.current.CurrentRoom.parentFloor);
+        }
+    }
+
 
     public RectTransform prefab_Canvas_Management;
     public class ButtonValidator_Management : ButtonValidator, I_ButtonClickable

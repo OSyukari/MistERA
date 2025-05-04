@@ -35,7 +35,7 @@ public class masterList : ISerializationCallbackReceiver
 
         foreach (object l in List){
             if (l is I_IndexHasID)  (l as I_IndexHasID).RegisterAllID();
-            if (l is I_IndexHasTooltip) (l as I_IndexHasTooltip).RegisterAllTooltip();
+            //if (l is I_IndexHasTooltip) (l as I_IndexHasTooltip).RegisterAllTooltip();
         }
 
         foreach (object l in List)
@@ -72,7 +72,7 @@ public class masterList : ISerializationCallbackReceiver
               //  list.Add(Skills);
                 list.Add(Stats_Derived_Bases);
                 list.Add(BodyPartBases);
-                list.Add(Items);
+              //  list.Add(Items);
               //  list.Add(COMs);
                 list.Add(Floors);
                 list.Add(MapPlans);
@@ -94,7 +94,7 @@ public class masterList : ISerializationCallbackReceiver
 
         this.Stats_Derived_Bases = new Stats_Derived_Base_Index();
         this.StatEXs = new Stats_Derived_Extended_Index();
-        this.Items = new Index_Item_Base();
+        //this.Items = new Index_Item_Base();
 
 
         this.MapPlans = new Index_MapPlan();
@@ -113,7 +113,7 @@ public class masterList : ISerializationCallbackReceiver
 
     public Character_BaseID_Index Character_BaseIDs = null;
     public Index_BodyPartBase BodyPartBases = null;
-    public Index_Item_Base Items = null;
+   // public Index_Item_Base Items = null;
     //public Index_COM COMs = null;
     public Index_Floor_Base Floors = null;
     public Index_MapPlan MapPlans = null;

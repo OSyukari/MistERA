@@ -45,7 +45,7 @@ public class Dictionary_Master
 
         foreach (object l in List)
         {
-            if (l is ISerializationCallbackReceiver) (l as ISerializationCallbackReceiver).OnAfterDeserialize();
+            if (l is I_SerializationCallbackReceiver) (l as I_SerializationCallbackReceiver).OnAfterDeserialize();
             if (l is I_IndexHasID) (l as I_IndexHasID).RegisterAllID();
         }
 

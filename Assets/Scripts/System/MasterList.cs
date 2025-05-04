@@ -28,6 +28,7 @@ public class MasterList
                 list.Add(humanoid_RaceTemplates);
                 list.Add(CampaignSettings);
                 list.Add(Skills);
+                list.Add(Items);
                 list.Add(Status);
                 list.Add(CharacterTemplates);
                 list.Add(Character_Personalities);
@@ -50,6 +51,7 @@ public class MasterList
     public Character_Trainable_SerializableTemplate_Index CharacterTemplates = null;
     public Character_Personality_Index Character_Personalities = null;
     public Index_COM COMs = null;
+    public Index_Item_Base Items = null;
     public Dictionary_Index Dictionary = null;
     public Index_FurnitureBase Furnitures = null;
 
@@ -64,6 +66,7 @@ public class MasterList
         this.CampaignSettings = new Index_CampaignSetting();
         this.Skills = new Index_CharaSkills();
         this.Status = new Index_Status();
+        this.Items = new Index_Item_Base();
         this.CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
         this.Character_Personalities = new Character_Personality_Index();
         this.COMs = new Index_COM();
@@ -91,9 +94,9 @@ public class MasterList
 
         foreach (object l in List)
         {
-            if (l is ISerializationCallbackReceiver) (l as ISerializationCallbackReceiver).OnAfterDeserialize();
+            if (l is I_SerializationCallbackReceiver) (l as I_SerializationCallbackReceiver).OnAfterDeserialize();
             if (l is I_IndexHasID) (l as I_IndexHasID).RegisterAllID();
-            if (l is I_IndexHasTooltip) (l as I_IndexHasTooltip).RegisterAllTooltip();
+            //if (l is I_IndexHasTooltip) (l as I_IndexHasTooltip).RegisterAllTooltip();
         }
 
         foreach (object l in List)
@@ -101,4 +104,9 @@ public class MasterList
             if (l is I_NeedLateInitialize) (l as I_NeedLateInitialize).LateInitialize();
         }
     }
+}
+
+public interface I_SerializationCallbackReceiver
+{
+    public void OnAfterDeserialize();
 }

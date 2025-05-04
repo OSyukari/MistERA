@@ -131,7 +131,7 @@
                 "comManager_bottom_management": "阵营管理",
                 "comManager_bottom_logs": "历史记录",
                 "comManager_bottom_room": "当前房间",
-                "comManager_bottom_map": "地图",
+                "comManager_bottom_map": "移动",
                 "ui_quicksave": "快速保存",
                 "ui_quicksave_tooltip": "将当前的游戏数据保存到本地存取",
                 "ui_quicksave_tooltip_cannotSaveduringUpdate": "不可在游戏更新期间存档",
@@ -207,6 +207,20 @@
                 "ui_management_tab_overview": "阵营简介",
                 "ui_management_tab_production": "订单生产",
                 "ui_management_tab_jobs": "工作分配",
+                "ui_management_factionName":"阵营名称",
+                "ui_management_linkStatus":"链接状态",
+
+                "ui_management_linkStatus_add":"添加",
+                "ui_management_linkStatus_add_tooltip":"链接后，当前阵营将能够从主要出口前往对象阵营地图，能够派遣阵营成员去对象阵营打工，能够添加对象阵营的贸易订单",
+                "ui_management_linkStatus_remove":"移除",
+                "ui_management_linkStatus_remove_tooltip":"移除后，会解除与对象的所有贸易订单",
+                "ui_management_linkStatus_remove_error1":"不可在有成员外出打工时删除现有链接",
+
+                "ui_management_linkStatus_tooltip_cannotRemove_working":"不可在有成员外出打工时解除链接",
+
+                "ui_management_connectedFactions": "<link=ui_management_linkStatus_add_tooltip>外部阵营连接：</link>",
+                "ui_management_connectedFactions_edit": "修改阵营连接",
+                "ui_management_connectedFactions_edit_tooltip": "添加或删除现存的链接\n%%ui_management_linkStatus_add_tooltip%%\n%%ui_management_linkStatus_remove_tooltip%%\n%%ui_management_linkStatus_remove_error1%%",
 
                 "ui_management_production_addProduction":"增加制造订单",
                 "ui_management_production_addProduction_tooltip":"制造订单会按照优先顺序（从上到下）判定是否能够和需要执行",
@@ -222,9 +236,11 @@
                 "ui_management_production_missingHours": "当前安排的$comname$工时小于该订单的需求！",
                 "ui_management_production_missingResource": "当前持有的$itemname$小于该订单的需求！",
 
+
+                "ui_management_trade_order_typeChange": "可切换该订单的执行次数。\n%%craftCount%%：购买指定数量的道具\n%%craftUntilCount%%：只要当前据点的道具数量低于指定数就会持续购入",
                 "ui_management_production_order_typeChange": "可切换该订单的执行次数。\n%%craftCount%%：执行指定回数的订单生产\n%%craftUntilCount%%：只要当前据点的道具数量低于指定数就会持续生产",
-                "craftCount": "制造指定数",
-                "craftUntilCount": "持续制造",
+                "craftCount": "单回",
+                "craftUntilCount": "持续",
                 "ui_management_inventory_TITLE": "据点道具栏",
                 "ui_management_production_PO_TITLE": "制造订单",
                 "ui_management_production_Trade_TITLE": "贸易订单",
@@ -268,8 +284,7 @@
                 "com_special_initSex_timestop_start": "时停奸",
                 "com_special_initSex_timestop_end": "结束时奸",
                 "helper_messageTitle": "指南",
-                "campaign_starfarers_guide": "%%campaign_starfarers%%剧本简介",
-                "campaign_starfarers_guide_content": "在此剧本中，玩家扮演的‘老师’作为阵营“%%factionName_Utnapishtim%%”的管理者，需要确保所有学生的身心维持健康。\n作为初始剧本，玩家和NPC的行动范围都十分受限，战斗系统因为还没开始做所以也不会任何危险\n数值都还没开始填所以模拟经营的数值管理也不需要担心\n\n\n请至少确保每天能够生产等同于据点人口数量的%%tag_food_meal%%（过剩生产会被浪费）\n请确保每天给学生安排了足够的工时来完成上述生产指标，且不要在学生工作时去打扰\n只要满足了作为阵营管理者的义务（确保一日三餐），老师就能获得学生们的信赖（未实装，人际关系要重做）",
+                
                 "helper_AIRoutine_guide": "NPC行为逻辑",
                 "helper_AIRoutine_guide_content": "所有NPC都会照着下述的顺序排查条件决定行动（内容略有简化）\n- 检查自身是否能够自由行动（没有在睡觉，没有昏迷，没有被拘束，没有在跟随玩家等）\n- 检查自身是否衣冠不整，是的话会寻找合适的房间（私人浴室或者公共浴室）整理衣物（该项目未实装）\n- 以 工作阵营 > 临时家庭阵营 > 家庭阵营 > 自身自由时间表 的优先顺序检查自身在当前时刻是否有被安排工作（睡觉也是工作），有的话，寻找阵营内是否有能够被执行的该类工作，有的话前去执行\n- 以同样的优先级顺序，检查阵营内有没有可以吃的餐点，有的话就前往进餐（该行动意义只是模拟，没去吃也不会有惩罚，实际是否满足每日需求只看每日结算时道具数量）（该项目有BUG暂时被关掉了，等后续修复）\n- 同上，但检查的是据点内可以使用的休闲娱乐项目\n\n\nNPC搜索行动项目时只会在公共房间和自己的私人房间内搜索，不会跑到别人的私人房间休息。\nNPC会在没有被任何阵营安排工作的自由时间内安排连续的睡眠时间，且睡着后只有睡够了才会自然醒来（目前还未实装叫醒NPC的功能）\n条件允许的话，NPC会将睡眠时间设定到与自身家庭阵营（或临时阵营）的睡眠时间一致。",
                 "helper_AIInteract_guide": "NPC互动逻辑",
@@ -409,8 +424,21 @@
                 "management_setschedule_jobpost":"",
                 "management_setschedule_jobpost_ext":"",
 
+                "management_modCount_add":"点击按钮+1，按住CTRL时+10，按住SHIFT时+100",
+                "management_modCount_sub":"点击按钮-1，按住CTRL时-10，按住SHIFT时-100",
 
-                "a": "b"
+                "msg_manageSuccess":"资源消耗无异常",
+                "msg_manageFailure":"缺乏必要的资源",
+
+                "msg_tradeSuccess":"全部贸易订单都顺利结算",
+                "msg_tradeFailure":"部分订单没能结算",
+
+                "ui_recipe_tooltip":"耗时：$time$分钟\n技能需求：$skillreqs$\n道具消耗：$itemreqs$\n\n$basetooltip$",
+
+
+                "ui_map_floor_roomsList":"房间列表",
+                "ui_map_floor_charaInRoom":"房间内成员",
+                "ui_map_floorList":"楼层列表"
 
 
             }

@@ -1,14 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.IO;
-using QuikGraph;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Linq;
-using UnityEngine.SceneManagement;
-using System.Threading;
 
 [System.Serializable]
 public class scr_System_CampaignManager_Serializable
@@ -536,6 +530,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void FreeUpdateOneStep(ref int totalUpdateTime, ref int updateTime)
     {
+        List<ActionPackage> detachedAPs = new List<ActionPackage>();
+
         if (registeredPackagesByRoom.Count < 1) Debug.Log("CampaignManager FreeUpdate called but no package in list");
         else
         {
@@ -550,11 +546,16 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         bool fullUpdate = scr_System_Time.current.getCurrentTime().Minute % 3 == 0;
         int updateDuration = 1;
+
         foreach (var kvpair_list in registeredPackagesByRoom)
         {
+
             
             var floor = Map.GetFloorByRoomRefID(kvpair_list.Key);
-            if (floor != null && Map.ActiveFloorRefIDs.Contains(floor.refID))
+
+
+
+            if (floor != null && ( Map.ActiveFloorRefIDs.Contains(floor.refID) || kvpair_list.Value.Find(x=>x.actorRefs.Contains(0)) != null ))
             {
                 // normal loop
                 updateDuration = 1;
@@ -579,7 +580,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 //Debug.Log("list count " + i + " " + String.Join("|", list));
                 if (i >= list.Count) continue;  // list might get modified
                 ActionPackage p = list[i];
-
+                int roomKey = p.RoomKey;
                 int duration = p.Duration;
 
                 if (p.Tick(ref freeActors, updateDuration))
@@ -597,14 +598,21 @@ public class scr_System_CampaignManager : MonoBehaviour
                             updateTime = 0;
                         }
 
-                        if(p != null && p.RoomKey != -1 && !executedPackagesByRoom.ContainsKey(p)) executedPackagesByRoom.Add(p, p.RoomKey);
+                        if(p != null && roomKey != -1 && !executedPackagesByRoom.ContainsKey(p)) executedPackagesByRoom.Add(p, roomKey);
                         kvpair_list.Value.Remove(p);// (p);
                             
                         
                         //kvpair_list.Value.RemoveAt(i);
 
                     }
-
+                    else if (p is ActionPackage_PathTo && p.RoomKey != kvpair_list.Key)
+                    {
+                        // check if movement ap changed room
+                        
+                        kvpair_list.Value.Remove(p);// (p);
+                        detachedAPs.Add(p);
+                        
+                    }
                 }
             }
 
@@ -613,6 +621,15 @@ public class scr_System_CampaignManager : MonoBehaviour
                 // if effect requiret not focus, send in allactorsinroom
                 // if not, send in freeactors
             }
+
+            
+        }
+
+        foreach(var p in detachedAPs)
+        {
+            var roomKey = p.RoomKey;
+            if (!registeredPackagesByRoom.ContainsKey(roomKey)) registeredPackagesByRoom.Add(roomKey, new List<ActionPackage>() { p });
+            else registeredPackagesByRoom[roomKey].Add(p);
         }
 
     }
@@ -922,6 +939,20 @@ public class scr_System_CampaignManager : MonoBehaviour
                     scr_System_CampaignManager.current.Map.ConnectFactions(f1, f2);
                     // FindInstanceByID(0).baseID = ini.initArguments[0];
                 }
+                else if (ini.initClass == "campaign_init_factionInventory")
+                {
+                    var f1 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[0]);
+                    var f2 = scr_System_Serializer.current.GetByNameOrID_Item_Base(ini.initArguments[1]);
+                    if (f1 != null && f2 != null && int.TryParse(ini.initArguments[3], out int f4))
+                    {
+                        //Debug.Log($"Instantiating inventory {f1.FactionDisplayName} {f2.DisplayName} {ini.initArguments[2]} {f4}");
+                        f1.Inventory.AddItem(WorldManager.Instantiate(f2.id, ini.initArguments[2], f4));
+                    }
+                    else
+                    {
+                        Debug.LogError($"Error instantiating inventory, {(f1 == null ? ini.initArguments[0] + " missing" : "")} {(f2 == null ? ini.initArguments[1] + " missing" : "")}");
+                    }
+                }
             }
 
             //
@@ -931,7 +962,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
 #if UNITY_EDITOR
             // add every PO
-            if (Player != null && Player.FactionManager.ManagerFactions.Count > 0)
+            if (false && Player != null && Player.FactionManager.ManagerFactions.Count > 0)
             {
                 foreach(var i  in Player.FactionManager.ManagerFactions)
                 {
@@ -1201,6 +1232,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     List<Manageable> organizations;
+    [JsonIgnore] public List<Manageable> Factions { get { return (organizations == null) ? new List<Manageable>() : organizations; } }
     public Manageable FindorAddHomeFactionByID(string id)
     {
         Manageable target = organizations.Find(x => x.ID == id);
@@ -1239,13 +1271,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             string s = "";
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
-            if (i.RefID == -1) i = Register(i);
-            List<int> j = c.EquipItem(i.RefID, false);
-            if (j == null) s = "Error equipping ["+c.FirstName+ "] with [" + i.DisplayName + "], return value null ";
-            else if (j.Count > 0 && j.Exists(x => x == -1)) s = "Error equipping [" + c.FirstName + "] with [" + i.DisplayName + "], return value [" + String.Join(" ", j) + "]";
-            if (j.Exists(x=>x > 0)) s = "Equipping Item: swapped out gear\n"+ String.Join(" ", j);
-
-            if (s.Length > 0) Debug.Log(s);
+            //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
+            if (!c.EquipItem(i.RefID, false)) Debug.LogError($"error equipping {i.DisplayName} on {c.FirstName}");
         }
         return c;
     }
@@ -1316,7 +1343,11 @@ public static class WorldManager
 {
     public static Item_Instance Instantiate(string parentID, string nameOverwrite = "", int innerCount = 1)
     {
-        if (scr_System_Serializer.current.GetByNameOrID_Item_Base(parentID) == null) return null;
+        var baseItem = scr_System_Serializer.current.GetByNameOrID_Item_Base(parentID);
+        if (baseItem  == null){
+            Debug.LogError($"worldmanager instantiate error cannot find baseitem {parentID}");
+            return null;
+        } 
         Item_Instance i = new Item_Instance(parentID, nameOverwrite);
         i.SetCount(innerCount);
         scr_System_CampaignManager.current.Register(i);

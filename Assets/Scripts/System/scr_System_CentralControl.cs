@@ -42,6 +42,7 @@ public class DebugLogSettings
     public bool Debug_Logging_UpdateTimeCost = false;
     public bool Debug_Logging_CurrentFurnitureJobInRoom = false;
     public bool Debug_Logging_Pathing = false;
+    public bool DLog_Equipping = false;
 }
 
 public class scr_System_CentralControl : MonoBehaviour
@@ -840,8 +841,8 @@ public enum InteractionGenderType
 public enum ViewMode
 {
     View_Logs,
-    View_Room,
-    View_Map
+    View_Room
+    //View_Map
 }
 
 public enum Gender_Priority

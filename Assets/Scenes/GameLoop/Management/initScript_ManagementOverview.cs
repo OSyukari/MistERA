@@ -8,6 +8,9 @@ public class initScript_ManagementOverview : MonoBehaviour
 
     public TMP_Text managerNames, floorNames, factionResource, factionPopulation, factionPopMaintenance;
     public TMP_Text dailyReport;
+    public RectTransform linkedFactionGrid;
+    public TMP_Text prefab_factionEntry;
+
 
     string factionPop, factionRes, factionPopTooltip;
     private void Awake()
@@ -17,6 +20,7 @@ public class initScript_ManagementOverview : MonoBehaviour
         factionPopTooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_line_populationMaintenance");
     }
 
+    public scr_HoverableText report_managementResult, report_tradeResults;
 
     public void Initialize(Manageable m)
     {
@@ -25,7 +29,9 @@ public class initScript_ManagementOverview : MonoBehaviour
         foreach (var i in m.Managers) managers.Add(i.FullName);
         managerNames.text = String.Join(", ", managers);
 
-        m.PrintDailyReport(dailyReport);
+        //m.PrintDailyReport(dailyReport);
+        m.PrintDailyReport(report_managementResult, report_tradeResults, dailyReport);
+
 
         List<string> floors = new List<string>();
         //int prCount = 0, usedPRcount = 0;
@@ -96,6 +102,22 @@ public class initScript_ManagementOverview : MonoBehaviour
 
         }
 
+        Utility.DestroyAllChildrenFrom(ref linkedFactionGrid);
+        if (m.ConnectedFactions.Count < 1)
+        {
+            TMP_Text c_name = Instantiate(prefab_factionEntry);
+            c_name.text = "none";
+            c_name.rectTransform.SetParent(this.linkedFactionGrid, false);
+        }
+        else
+        {
+            foreach (var connect in m.ConnectedFactions)
+            {
+                TMP_Text c_name = Instantiate(prefab_factionEntry);
+                c_name.text = connect.FactionDisplayName;
+                c_name.rectTransform.SetParent(this.linkedFactionGrid, false);
+            }
+        }
 
 
         //foreach (KeyValuePair<string, int> kvp in targetFaction.GetMaintenanceCost_Total) values.Add(kvp.Key + kvp.Value.ToString("+0;-#"));

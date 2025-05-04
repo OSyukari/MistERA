@@ -1,26 +1,26 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 [System.Serializable]
 public class ItemComponentTemplate_Ingestible
 {
     public List<Ingestible_IngestMethod> ingestMethod = new List<Ingestible_IngestMethod>();
-    public float amount;
-    public List<ItemComponent_Modifiers> modifiers;
+    public float amount = 0;
+    public List<ItemComponent_Modifiers> modifiers = new List<ItemComponent_Modifiers>();
     // public string giveStatus;
 
     [System.Serializable]
     public class Ingestible_IngestMethod
     {
-        public string bodyTags;
-        public float digestSpeed;
-        public int digestDelay;
-        public int digestDelayVariation;
-        public float amountMod;
-        public string giveStatus;
+        public string bodyTags = "";
+        public float digestSpeed = 0;
+        public int digestDelay = 0;
+        public int digestDelayVariation = 0;
+        public float amountMod = 0;
+        public string giveStatus = "";
 
     }
 }
@@ -65,7 +65,7 @@ public class ItemComponent_Ingestible : ItemComponent_Base
         this.parentID = itemBase.ID;
         this.amount = CompTemplate.comp_Ingestible.amount;
     }
-    [SerializeField][JsonProperty] public float amount;
+    [SerializeField][JsonProperty] public float amount = 0;
     [JsonIgnore] public List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod> ingestMethod { get { return CompTemplate.comp_Ingestible.ingestMethod; } }
     [JsonIgnore] List<ItemComponent_Modifiers> modifiers { get { return CompTemplate.comp_Ingestible.modifiers; } }
     //public string giveStatus { get { return CompTemplate.comp_Ingestible.giveStatus; } }

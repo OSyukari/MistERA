@@ -40,6 +40,8 @@ public class Floor_Base : ISerializationCallbackReceiver
     public float floorWidth = 0f;
     public float floorHeight = 0f;
 
+    public float resize = 1f;
+
     public List<FloorPlan_Exit> exits;
     public List<Room_Base> rooms;
     public List<Door_Base> doors;

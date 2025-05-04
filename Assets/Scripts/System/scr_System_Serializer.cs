@@ -124,7 +124,7 @@ public class scr_System_Serializer : MonoBehaviour
     Index_CampaignSetting index_CampaignSetting { get { return MasterList.CampaignSettings as Index_CampaignSetting; } }
     public Character_Base_Index index_Characters_Bases { get { return masterList.Character_Bases as Character_Base_Index; } }
     public Index_BodyPartBase index_BodyPartBase { get { return masterList.BodyPartBases as Index_BodyPartBase; } }
-    public Index_Item_Base index_Item_Base { get { return masterList.Items as Index_Item_Base; } }
+    public Index_Item_Base index_Item_Base { get { return MasterList.Items as Index_Item_Base; } }
     public Index_COM index_COM { get { return MasterList.COMs as Index_COM; } }
     public Index_Floor_Base index_Floor_Base { get { return masterList.Floors as Index_Floor_Base; } }
     public Index_MapPlan index_MapPlan { get { return masterList.MapPlans as Index_MapPlan; } }
@@ -388,7 +388,6 @@ public class scr_System_Serializer : MonoBehaviour
             if (!CraftingRecipe.ContainsKey(c.RecipeUID))
             {
                 CraftingRecipe.Add(c.RecipeUID, c);
-                scr_System_tooltipDictionary.current.AddEntry(c.RecipeUID, c.Tooltip);
             }
         }
     }
@@ -530,7 +529,7 @@ public class SerializedcustomVerb
 }
 
 [System.Serializable]
-public class Skills_Index : I_IndexHasID, I_IndexHasTooltip, I_IndexMergeable
+public class Skills_Index : I_IndexHasID, I_IndexMergeable
 {
     public List<Skills_Full> list = new List<Skills_Full>();
 
@@ -551,13 +550,6 @@ public class Skills_Index : I_IndexHasID, I_IndexHasTooltip, I_IndexMergeable
         foreach (Skills_Full o in this.list)
         {
             scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
-        }
-    }
-    public void RegisterAllTooltip()
-    {
-        foreach (Skills_Full o in this.list)
-        {
-            scr_System_tooltipDictionary.current.AddEntry(o.ID, o.tooltip);
         }
     }
 }

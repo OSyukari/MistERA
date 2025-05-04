@@ -30,8 +30,16 @@
                             "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
                         },
                         {
-                            "initClass":"campaign_init_productionOrder",
-                            "initArguments":["Utnapishtim", "production_cooking_consumable_meal_MRE_1", "craftUntilCount" ,10]
+                            "initClass":"campaign_init_factionInventory",
+                            "initArguments":["Utnapishtim", "consumable_emergency_ration", "", "30"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionInventory",
+                            "initArguments":["Utnapishtim", "currency_JPY", "", "20000"]
+                        },
+                        {
+                            "initClass":"campaign_init_map_extra",
+                            "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
                         }
                         
                     ]
@@ -54,12 +62,25 @@
                             "initArguments":["Utnapishtim","true", "true"]
                         },
                         {
-                            "initClass":"campaign_init_homefaction",
-                            "initArguments":["External","false", "false"]
-                        },
-                        {
                             "initClass":"campaign_init_map_root",
                             "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionInventory",
+                            "initArguments":["Utnapishtim", "consumable_emergency_ration", "", "30"]
+                        },
+                        {
+                            "initClass":"campaign_init_factionInventory",
+                            "initArguments":["Utnapishtim", "currency_JPY", "", "20000"]
+                        },
+                        {
+                            "initClass":"campaign_init_map_extra",
+                            "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
+                        },
+
+                        {
+                            "initClass":"campaign_init_homefaction",
+                            "initArguments":["External","false", "false"]
                         },
                         {
                             "initClass":"campaign_init_factionVisitor",
@@ -100,22 +121,6 @@
                         {
                             "initClass":"campaign_init_factionVisitor",
                             "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Neon","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_partymembers",
-                            "initArguments":["Campaign1_86_Lerche"]
-                        },
-                        {
-                            "initClass":"campaign_init_productionOrder",
-                            "initArguments":["Utnapishtim", "production_cooking_consumable_meal_MRE_1", "craftUntilCount",20]
-                        },
-                        {
-                            "initClass":"campaign_init_map_extra",
-                            "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionConnect",
-                            "initArguments":["Utnapishtim", "jp_convenience_store_SunMart"]
                         }
                     ]
                 }
@@ -309,6 +314,10 @@
                         
                     }
                 ],
+                "salesCurrency":"currency_pyroxene",
+                "salesInventory":[
+                    { "matchByID":"consumable_10pulls_ticket", "itemCount":1 }
+                 ],
                 "managerBaseIDs":["PLAYER"],
                 "workHours":[
                     { "charaBaseID":"Campaign1_Char_Ako", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
@@ -337,6 +346,51 @@
 
                     { "charaBaseID":"Campaign1_Char_Ayane", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
                     { "charaBaseID":"Campaign1_Char_Ayane", "startHour":13,"endHour":18,"comID":"com_job_cleaning" }
+                ]
+            }
+        ]
+    },
+    "Items":
+    {
+        "list":[
+            {
+                "id":"currency_pyroxene",
+                "displayName":"pyroxene",
+                "tooltip":"no much use beside gacha pulls...",
+                "Tags":[],
+                "value":0.7,
+                "itemComps_Template":[]
+            },
+            {
+                "id":"consumable_10pulls_ticket",
+                "displayName":"10 pulls",
+                "tooltip":"but pulling gacha is not being implemented...",
+                "Tags":[],
+                "value":840,
+                "itemComps_Template":[]
+            },
+            {
+                "id":"consumable_emergency_ration",
+                "displayName":"emergency ration",
+                "tooltip":"not proper food",
+                "Tags":["food_meal","industrial","rarity_rare"],
+                "value":0,
+                "itemComps_Template":[
+                    {
+                        "compType":"ItemComponent_Ingestible",
+                        "comp_Ingestible":{
+                            "ingestMethod":[
+                                {
+                                    "bodyTags":"stomach",
+                                    "digestSpeed": -1,
+                                    "digestDelay":30,
+                                    "digestDelayVariation":10,
+                                    "amountMod":8
+                                }
+                            ],
+                            "amount":5
+                        }
+                    }
                 ]
             }
         ]

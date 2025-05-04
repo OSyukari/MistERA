@@ -13,7 +13,7 @@ public class ItemComponentTemplate_Degradable
 
     //public string relevantItemTag = "";
 
-    public int TotalTick { get
+    [JsonIgnore] public int TotalTick { get
         {
             return (countdown_Days * 24 + countdown_Hours) * 60 + countdown_Minutes;
         } }
@@ -50,7 +50,7 @@ public class ItemComponent_Degradable : ItemComponent_Base
     public ItemComponent_Degradable(){
         
     }
-    [SerializeField][JsonProperty] private int minuteCounter;    //SerializedField
+    [SerializeField][JsonProperty] private int minuteCounter = 0;    //SerializedField
     [JsonIgnore] public int MinuteCounter { get { return minuteCounter; } }
     public override bool Tick(TimeSpan t)
     {

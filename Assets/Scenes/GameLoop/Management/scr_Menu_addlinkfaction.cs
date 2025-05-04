@@ -1,13 +1,13 @@
 using UnityEngine;
 using System;
 using UnityEngine.EventSystems;
-using Cysharp.Threading.Tasks.Triggers;
+using System.Linq;
 
-public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
+public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
 {
     public Manageable sourceFaction;
-    public RectTransform recipeList;
-    public scr_addTrade prefab_trade;
+    public RectTransform factionList;
+    public scr_addLinkBTN prefab_link;
 
     public void InitializeWithArgument(Manageable sourceFaction, Action onExit)
     {
@@ -15,37 +15,29 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
         if (!initialized) Initialize();
 
         this.sourceFaction = sourceFaction;
-        Utility.DestroyAllChildrenFrom(ref recipeList);
+        Utility.DestroyAllChildrenFrom(ref factionList);
 
-        foreach (var entry in sourceFaction.salesInventory.Inventory)
+        foreach (var faction in scr_System_CampaignManager.current.Factions)
         {
             // TODO INSTANTIATE BUTTON
-            MakeRecipeButton(entry, sourceFaction, sourceFaction);
-        }
-
-        foreach(var connect in sourceFaction.ConnectedFactions)
-        {
-            foreach(var entry in connect.salesInventory.Inventory)
-            {
-                MakeRecipeButton(entry, sourceFaction, connect);
-            }
+            if (faction == sourceFaction) continue;
+            else if (faction.MainExit == null) continue;
+            MakeFactionButton(faction);
         }
     }
 
-    public void NotifyAddTrade(Manageable.ItemEntry entry, Manageable targetFaction)
+    public void NotifyChange()
     {
-        var cost = new Manageable.ItemEntry(targetFaction.Currency.id, "", targetFaction.GetPrice(entry, sourceFaction != targetFaction), false);
-        sourceFaction.AddTradeOrder(entry, cost, targetFaction, 0);
         scr_System_SceneManager.current.UnloadLastCanvasFromScene();
     }
 
-    private void MakeRecipeButton(Manageable.ItemEntry entry, Manageable source, Manageable target)
+    private void MakeFactionButton(Manageable target)
     {
-        int recipeHash = AssertUniqueHash((entry.itemID+"|"+entry.itemCount.ToString()).GetHashCode());
-        scr_addTrade box = Instantiate(prefab_trade);
-        box.LoadItemEntry(entry, source, target);
-        RegisterButton(recipeHash, box.Button, new Button_SelectTrade(this, entry, target, box.Button));
-        box.GetComponent<RectTransform>().SetParent(recipeList, false);
+        int buttonHash = AssertUniqueHash(target.GetHashCode());
+        scr_addLinkBTN box = Instantiate(prefab_link);
+        box.Name.text = target.FactionDisplayName;
+        RegisterButton(buttonHash, box.Button, new Button_ToggleLink(this, target, box.Button));
+        box.GetComponent<RectTransform>().SetParent(factionList, false);
     }
 
     private void RegisterButton(int optionID, scr_SelectableText button, ButtonValidator validator)
@@ -139,34 +131,86 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
         // if click outside box
         if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)))
         {
-            
+
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();
-            
+
         }
     }
 
-    public class Button_SelectTrade : ButtonValidator, I_ButtonClickable
+    public class Button_ToggleLink : ButtonValidator, I_ButtonClickable
     {
-        new scr_Menu_AddTrade parent;
+        new scr_Menu_addlinkfaction parent;
         Manageable.ItemEntry entry;
         Manageable targetFaction;
         scr_SelectableText button;
-        public Button_SelectTrade(scr_Menu_AddTrade parent, Manageable.ItemEntry entry, Manageable targetFaction, scr_SelectableText button) : base(parent)
+
+        string add, add_tooltip, remove, remove_tooltip,  remove_error1;
+        bool connect = false;
+        public Button_ToggleLink(scr_Menu_addlinkfaction parent, Manageable targetFaction, scr_SelectableText button) : base(parent)
         {
             this.parent = parent;
-            this.entry = entry;
             this.targetFaction = targetFaction;
             this.button = button;
+
+            add = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_add");
+            add_tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_add_tooltip");
+            remove = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_remove");
+            remove_tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_remove_tooltip");
+            remove_error1 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_remove_error1");
         }
 
         public override bool IsButtonValid()
         {
-            return parent.sourceFaction != null && this.targetFaction != null && this.entry != null;
+            if (parent.sourceFaction == targetFaction)
+            {
+                button.SetText(" - ");
+                return false;
+            }
+            else
+            {
+                if (parent.sourceFaction.ConnectedFactions.Contains(targetFaction))
+                {
+                    button.SetText(remove);
+                    if (targetFaction.ManagedRefs.Count > 0 && Utility.ListContainsLoose(parent.sourceFaction.ManagedRefs, targetFaction.ManagedRefs))
+                    {   // if job assigned, return false
+                        this.tooltip = remove_error1;
+                        return false;
+                    }
+
+                    var targetRooms = targetFaction.ManagedRooms.Keys;
+                    foreach(var chara in parent.sourceFaction.ManagedRefs)
+                    {   // if any chara is present, return false
+                        var room = scr_System_CampaignManager.current.Map.FindRoomByChara(chara);
+                        if (room != null && targetRooms.Contains( room.RefID))
+                        {
+                            this.tooltip = remove_error1;
+                            return false;
+                        }
+                    }
+
+                    this.tooltip = remove;
+                    connect = false;
+                    return true;
+                    
+                }
+                else
+                {
+                    button.SetText(add);
+                    this.tooltip = add_tooltip;
+                    connect = true;
+                    return true;
+                }
+            }
         }
 
         public void OnClickButton()
         {
-            parent.NotifyAddTrade(entry, targetFaction);
+            if (connect) scr_System_CampaignManager.current.Map.ConnectFactions(parent.sourceFaction, targetFaction);
+            else scr_System_CampaignManager.current.Map.DisconnectFactions(parent.sourceFaction, targetFaction);
+            parent.NotifyChange();
         }
     }
+
+
+
 }

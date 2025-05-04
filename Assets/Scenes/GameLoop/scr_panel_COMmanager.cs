@@ -1,12 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using System;
 using TMPro;
 using System.Linq;
-using UnityEngine.UIElements;
-using Newtonsoft.Json.Linq;
 
 public class scr_panel_COMmanager : scr_Menu
 {

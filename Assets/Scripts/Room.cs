@@ -46,27 +46,32 @@ public class Room_Instance: IDisposable, I_Disposable
         {
             if (_displayNameCache == "")
             {
-                if (isRoomPrison && this.FactionOwner != null)
+                if (isRoomPrison)
                 {
                     _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_prison") + " (" + displayName + ")";
                 }
-                else if (isRoomPrivate && this.FactionOwner != null)
+                else if (isRoomPrivate)
                 {
                     //Debug.LogError("RoomDisplaynameCond1");
-                    if (ownerNames.Count > 2)
+                    if(this.FactionOwner == null)
                     {
-                        var owners = String.Join(",", ownerNames);
+                        Debug.Log("PRIVATE ROOM HAS NO FACTION OWNER");
+                        _displayNameCache = displayName;
+                    }
+                    else if (OwnerNames.Count > 2)
+                    {
+                        var owners = String.Join(",", OwnerNames);
                         _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_privateroom_more").Replace("$owners$", owners) + " (" + displayName + ")";
                     }
-                    else if (ownerNames.Count > 1)
+                    else if (OwnerNames.Count > 1)
                     {
                         //Debug.LogError("RoomDisplaynameCond11");
-                        _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_privateroom_2").Replace("$owner1$", ownerNames[0]).Replace("$owner2$", ownerNames[1]) + " (" + displayName + ")";
+                        _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_privateroom_2").Replace("$owner1$", OwnerNames[0]).Replace("$owner2$", OwnerNames[1]) + " (" + displayName + ")";
                     }
-                    else if (ownerNames.Count > 0)
+                    else if (OwnerNames.Count > 0)
                     {
                         //Debug.LogError("RoomDisplaynameCond11");
-                        _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_privateroom_1").Replace("$owner$", ownerNames[0]) + " (" + displayName + ")";
+                        _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_privateroom_1").Replace("$owner$", OwnerNames[0]) + " (" + displayName + ")";
                     }
                     else
                     {
@@ -99,23 +104,32 @@ public class Room_Instance: IDisposable, I_Disposable
     }
     [JsonIgnore] public List<Item_Instance> Items { get { return this.roomItems; } }
 
-    [SerializeField][JsonProperty] protected List<string> ownerNames = null;
-    public void NotifyOwnershipChange(List<int> ownerRefs)
+    protected List<string> ownerNames = null;
+    [JsonIgnore] public List<String> OwnerNames
     {
-        if (ownerNames == null) ownerNames = new List<string>();
-        else ownerNames.Clear();
-
-        if (this.FactionOwner != null)
+        get
         {
-            if (ownerRefs != null && ownerRefs.Count > 0)
+            if (ownerNames == null)
             {
-                foreach (int i in ownerRefs) ownerNames.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
+                this.ownerNames = new List<string>();
+                if (this.FactionOwner != null)
+                {
+                    foreach (var i in FactionOwner.RoomOwners(this.RefID)) ownerNames.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
+                }
+
             }
+            return ownerNames;
         }
     }
+    public void NotifyOwnershipChange(List<int> ownerRefs)
+    {
+        this.ownerNames = null;
+        this._displayNameCache = "";
 
-    [SerializeField][JsonProperty] string baseFloorID;
-    [SerializeField][JsonProperty] string baseRoomID;
+    }
+
+    [SerializeField][JsonProperty] string baseFloorID = "";
+    [SerializeField][JsonProperty] string baseRoomID = "";
     [JsonIgnore] public Room_Base Base
     {
         get
@@ -125,7 +139,7 @@ public class Room_Instance: IDisposable, I_Disposable
         }
     }
 
-    [NonSerialized] Dictionary<FurnitureBase, int> displayableFurnitures = null;
+    Dictionary<FurnitureBase, int> displayableFurnitures = null;
     [JsonIgnore] public Dictionary<FurnitureBase, int> DisplayableFurnitures 
     { 
         get 
@@ -200,7 +214,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
 
     [SerializeField][JsonProperty] protected string factionOwnerRef = "";
-    [JsonIgnore] protected Manageable factionOwner = null;
+    protected Manageable factionOwner = null;
     [JsonIgnore] public Manageable FactionOwner { get { if (factionOwner == null && factionOwnerRef != "") factionOwner = scr_System_CampaignManager.current.FindFactionByID(factionOwnerRef);
             return factionOwner;
         } }
@@ -220,7 +234,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
 
     [SerializeField][JsonProperty] private List<int> roomJobRefs = new List<int>();
-    [JsonIgnore] private List<Job> roomJobs = null;
+    private List<Job> roomJobs = null;
     [JsonIgnore] public List<Job> Jobs 
     { 
         get { 
@@ -235,7 +249,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
 
     [SerializeField][JsonProperty] private List<FurnitureInstance> furnitures = new List<FurnitureInstance>();
-    [JsonIgnore] private List<FurnitureInstance> roomJobFurnitures = new List<FurnitureInstance>();
+    private List<FurnitureInstance> roomJobFurnitures = new List<FurnitureInstance>();
     [JsonIgnore] public List<FurnitureInstance> Furnitures
     {
         get
@@ -261,7 +275,7 @@ public class Room_Instance: IDisposable, I_Disposable
 /// </summary>
     public Room_Instance()
     {
-        this.ownerNames = new List<string>();
+
     }
     public Room_Instance(Floor_Base fb, Room_Base baseRoom):this()
     {

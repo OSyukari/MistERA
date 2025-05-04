@@ -5,7 +5,7 @@
             "id":"consumable_alcohol_beer",
             "displayName":"Beer",
             "tooltip":"Beer can, barely gets one drunk. (1 hour to filter out)",
-            "Tags":["consumable","industrial","rarity_common"],
+            "Tags":["consumable","industrial","rarity_common","do_not_use"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -37,7 +37,7 @@
             "id":"consumable_aphrodisiac_salve",
             "displayName":"Aphrodisiac Salve",
             "tooltip":"Skin balm that can be applied to intimate bits for increased sensitivity",
-            "Tags":["consumable","industrial","rarity_common"],
+            "Tags":["consumable","industrial","rarity_common","do_not_use"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -97,7 +97,8 @@
         {
             "id":"consumable_stamina_drink",
             "displayName":"Stamina Drink",
-            "tooltip":"Drink that enhance male stamina",
+            "tooltip":"Drink that enhance male stamina, currently has no use",
+            "Tags":["do_not_use"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -127,6 +128,7 @@
             "id":"consumable_tlic_sterileeggs",
             "displayName":"Sterile Eggs",
             "tooltip":"Sterile egg, when ingested produces narcotic effect.",
+            "Tags":["do_not_use"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -164,6 +166,7 @@
             "id":"consumable_alcohol_wine",
             "displayName":"Wine",
             "tooltip":"Wine. One glass can make most people tipsy.",
+            "Tags":["do_not_use"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -195,6 +198,7 @@
             "id":"consumable_drug_sleepingpill",
             "displayName":"Sleeping Pill",
             "tooltip":"Sleeping Pill",
+            "Tags":["do_not_use"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -247,7 +251,7 @@
             "id":"consumable_drug_rapedrug",
             "displayName":"Rape Drug",
             "tooltip":"One single pill can make someone obedient for more than 3 hours.",
-            "Tags":["consumable","industrial","rarity_common"],
+            "Tags":["consumable","industrial","rarity_common","do_not_use"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -286,7 +290,7 @@
             "id":"consumable_drug_ovulationpill",
             "displayName":"Ovulation Inducer",
             "tooltip":"Speed up ovulation cycle, and induce mild estrus (make touch and sex act easier).",
-            "Tags":["consumable","industrial","rarity_common"],
+            "Tags":["consumable","industrial","rarity_common","do_not_use"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -431,51 +435,6 @@
                         {
                             "maintenanceCooldown":1380
                         }
-                    }
-                }
-            ]
-        },
-        {
-            "id":"consumable_meal_MRE",
-            "displayName":"MRE ration",
-            "tooltip":"Meal ready-to-eat. Provide 1 food value for 24 hours, and allow taking meal in canteen.",
-            "canBePackaged":true,
-            "Tags":["food_meal","consumable","industrial","rarity_common"],
-            "itemComps_Template":[
-                {
-                    "compType":"ItemComponent_Ingestible",
-                    "comp_Ingestible":{
-                        "ingestMethod":[
-                            {
-                                "bodyTags":"stomach",
-                                "digestSpeed": -1,
-                                "digestDelay":30,
-                                "digestDelayVariation":10,
-                                "amountMod":8
-                            }
-                        ],
-                        "amount":5
-                    }
-                },
-                {
-                    "compType":"ItemComponent_Craftable",
-                    "comp_Craftable":{
-                        "recipes":[
-                            {
-                                "jobKeyword":"production_cooking",
-                                "skillRequirements":[ ],
-                                "itemRequirements":[ ],
-                                "workAmount":30,
-                                "outputItemBaseID":"consumable_meal_MRE",
-                                "outputAmount":1 
-                            }
-                        ]
-                    }
-                },
-                {
-                    "compType":"ItemComponent_Degradable",
-                    "comp_Degradable":{
-                        "countdown_Days":1
                     }
                 }
             ]

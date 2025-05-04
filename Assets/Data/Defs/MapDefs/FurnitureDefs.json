@@ -46,8 +46,7 @@
             "displayName":"长沙发",
             "recipe":[],
             "furnitureSize":4,
-            "givesJob":
-            [ { "comID":["com_furniture_takingBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
         },
         {
             "ID":"furniture_sofa_1",
@@ -101,7 +100,7 @@
             "ID":"furniture_shower",
             "displayName":"淋浴",
             "recipe":[],
-            "furnitureSize":2,
+            "furnitureSize":1,
             "givesJob":
             [ { "comTags":["furniture","shower"] } ]
         },
@@ -109,7 +108,7 @@
             "ID":"furniture_bathtub",
             "displayName":"浴缸",
             "recipe":[],
-            "furnitureSize":2,
+            "furnitureSize":1,
             "givesJob":
             [ { "comTags":["furniture","shower"] } ]
         },
@@ -117,7 +116,7 @@
             "ID":"furniture_bathroom_set",
             "displayName":"卫生间",
             "recipe":[],
-            "furnitureSize":2,
+            "furnitureSize":1,
             "givesJob": [ { "comTags":["furniture","bathroom"] },
             { "comID":["com_furniture_restroom_fix"] } ]
         },
@@ -125,7 +124,7 @@
             "ID":"furniture_toilet_shower_set",
             "displayName":"卫生单间",
             "recipe":[],
-            "furnitureSize":2,
+            "furnitureSize":1,
             "givesJob":
             [ { "comTags":["furniture","bathroom"] },
             { "comTags":["furniture","shower"] },
@@ -135,25 +134,29 @@
             "ID":"furniture_table_1_chair_1",
             "displayName":"单人桌椅",
             "recipe":[],
-            "furnitureSize":1
+            "furnitureSize":1,
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
         },
         {
             "ID":"furniture_dining_table_10",
             "displayName":"长餐桌",
             "recipe":[],
-            "furnitureSize":1
+            "furnitureSize":10,
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
         },
         {
             "ID":"furniture_cafe_table_2",
             "displayName":"咖啡桌",
             "recipe":[],
-            "furnitureSize":1
+            "furnitureSize":2,
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
         },
         {
             "ID":"furniture_round_table_4",
             "displayName":"圆桌",
             "recipe":[],
-            "furnitureSize":1
+            "furnitureSize":4,
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
         },
         {
             "ID":"furniture_piano",

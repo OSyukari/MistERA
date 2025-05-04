@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 
 [System.Serializable]
-public class Index_COM : I_IndexHasID, I_IndexHasTooltip, ISerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable
+public class Index_COM : I_IndexHasID, ISerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable
 {
     public List<COM> list = new List<COM>();
 
@@ -52,17 +52,6 @@ public class Index_COM : I_IndexHasID, I_IndexHasTooltip, ISerializationCallback
         }
 
     }
-    public void RegisterAllTooltip()
-    {
-        foreach (COM s in list)
-        {
-            scr_System_tooltipDictionary.current.AddEntry(s.ID, s.tooltip);
-
-        }
-
-    }
-
-
 
     public void AppendList(Index_COM list)
     {

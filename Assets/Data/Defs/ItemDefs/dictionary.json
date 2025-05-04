@@ -2,7 +2,6 @@
     "Dictionary": {
         "Entries": {
             "default": {
-                "currency_JPY": "日元",
                 "consumable_alcohol_beer":"啤酒",
                 "consumable_alcohol_wine":"红酒",
                 "consumable_drug_rapedrug":"迷药",
@@ -10,6 +9,5 @@
                 "consumable_fruit_potato": "土豆",
                 "consumable_meat_mealworm": "肉虫",
                 "item_trash":"垃圾",
-                "consumable_cum":"精液",
-                "consumable_meal_MRE":"MRE口粮"
+                "consumable_cum":"精液"
             }}}}

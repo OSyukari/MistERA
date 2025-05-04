@@ -1,16 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Xml;
-using System.Runtime.Serialization;
-using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Runtime.CompilerServices;
-using System.Buffers;
-using Newtonsoft.Json.Linq;
-using static Character_Trainable;
 using System.IO;
 
 public enum Humanoid_GenderAppearance
@@ -56,7 +48,7 @@ public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable
         }
     }
 
-    public CharaTemplate GetByCharaFilePath(string path)
+    public Character_Trainable.CharaTemplate GetByCharaFilePath(string path)
     {
         var findresult = this.list.Find(x => x.FileLocation == path);
         if (findresult != null) return findresult.Template;
@@ -73,7 +65,7 @@ public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable
 
         }
     }
-    public CharaTemplate GetByCharaBaseID(string baseID)
+    public Character_Trainable.CharaTemplate GetByCharaBaseID(string baseID)
     {
         var findresult = this.list.Find(x => x.baseID == baseID);
         return findresult == null ? null : findresult.Template;
@@ -85,7 +77,7 @@ public class Character_Trainable_SerializableTemplate
 {
     public string FileLocation = "";
     public string baseID = "";
-    public CharaTemplate Template = null;
+    public Character_Trainable.CharaTemplate Template = null;
 }
 
 
@@ -350,7 +342,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Skills.UpdateAllSkills(updateMessage);
         if (updateMessage.Count > 0)
         {
-            foreach (var i in FactionManager.HomeFactions) i.DailyReport.AddManageReport(String.Join("\n", updateMessage));
+            foreach (var i in FactionManager.HomeFactions) i.DailyReport.AddMiscRecord(String.Join("\n", updateMessage));
         }
         this.Relationships.DailyRefresh();
     }
@@ -745,18 +737,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             {   // current job is null, or current job is not schedule
                 //Debug.LogError(FirstName + " should redress, fetching new job");
                 // at this point we know the previous job can be break
-                foreach (Manageable faction in FactionManager.Factions)
-                {   // get closest schedule job
-                    List<Job_Furniture> possibleJobs = faction.GetValidJobsByCOMID(this, "com_furniture_restroom_fix", s);
-                    if (possibleJobs != null && possibleJobs.Count > 0)
-                    {
-                        Job job = possibleJobs[0];
-                        ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                        if(s != null) s.Add(ss);
-                        ChangeCurrentJob(job, "com_furniture_restroom_fix");
-                        return;
-                    }
+                //foreach (Manageable faction in FactionManager.Factions)
+                //{   // get closest schedule job
+                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobsByCOMID(this, "com_furniture_restroom_fix", s);
+                if (possibleJobs != null && possibleJobs.Count > 0)
+                {
+                    Job job = possibleJobs[0];
+                    ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+                    if(s != null) s.Add(ss);
+                    ChangeCurrentJob(job, "com_furniture_restroom_fix");
+                    return;
                 }
+                //}
             }
         }
 
@@ -788,19 +780,19 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             {   // current job is null, or current job is not schedule
 
                 // at this point we know the previous job can be break
-                foreach (Manageable faction in FactionManager.Factions)
-                {   // get closest schedule job
-                    List<Job_Furniture> possibleJobs = faction.GetValidJobs_Jobs(this, currentHour, s);
-                    if (possibleJobs != null && possibleJobs.Count > 0)
-                    {
-                        Job job = possibleJobs[0];
-                        var targetID = ((job == null || currentScheduleCOM == null) ? "" : currentScheduleCOM.ID);
-                        ss += "Changing job to faction "+ faction.FactionDisplayName+"" + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                        if(s != null) s.Add(ss);
-                        ChangeCurrentJob(job, targetID);
-                        return;
-                    }
+                //foreach (Manageable faction in FactionManager.Factions)
+                //{   // get closest schedule job
+                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Jobs(this, currentHour, s);
+                if (possibleJobs != null && possibleJobs.Count > 0)
+                {
+                    Job job = possibleJobs[0];
+                    var targetID = ((job == null || currentScheduleCOM == null) ? "" : currentScheduleCOM.ID);
+                    ss += "Changing job to faction "+ FactionManager.CurrentlyActiveFaction.FactionDisplayName+"" + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+                    if(s != null) s.Add(ss);
+                    ChangeCurrentJob(job, targetID);
+                    return;
                 }
+               // }
             }
         }
 
@@ -813,18 +805,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 return;
             }
 
-            foreach (Manageable faction in FactionManager.HomeFactions)
+            //foreach (Manageable faction in FactionManager.HomeFactions)
+            //{
+            List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Meal(this, currentHour, s);
+            if (possibleJobs != null && possibleJobs.Count > 0)
             {
-                List<Job_Furniture> possibleJobs = faction.GetValidJobs_Meal(this, currentHour, s);
-                if (possibleJobs != null && possibleJobs.Count > 0)
-                {
-                    Job job = possibleJobs[0];
-                    ss += "Changing job to eating " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                    if(s != null) s.Add(ss);
-                    ChangeCurrentJob(job,"","food_meal");
-                    return;
-                }
+                Job job = possibleJobs[0];
+                ss += "Changing job to eating " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+                if(s != null) s.Add(ss);
+                ChangeCurrentJob(job,"","food_meal");
+                return;
             }
+            //}
         }   // make eating not interruptible ?
         
 
@@ -837,18 +829,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 return;
             }
 
-            foreach (Manageable faction in FactionManager.HomeFactions)
+            //foreach (Manageable faction in FactionManager.HomeFactions)
+            //{
+            List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Sleep(this, currentHour, s);
+            if (possibleJobs != null && possibleJobs.Count > 0)
             {
-                List<Job_Furniture> possibleJobs = faction.GetValidJobs_Sleep(this, currentHour, s);
-                if (possibleJobs != null && possibleJobs.Count > 0)
-                {
-                    Job job = possibleJobs[0];
-                    ss += "Changing job to sleep " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                    if(s != null) s.Add(ss);
-                    ChangeCurrentJob(job, "com_furniture_sleep");
-                    return;
-                }
+                Job job = possibleJobs[0];
+                ss += "Changing job to sleep " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+                if(s != null) s.Add(ss);
+                ChangeCurrentJob(job, "com_furniture_sleep");
+                return;
             }
+            //}
         }
 
 
@@ -859,11 +851,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             {
                 List<Job_Furniture> possibleResting = new List<Job_Furniture>();
 
-                foreach (Manageable faction in FactionManager.HomeFactions)
-                {
-                    possibleResting.AddRange(faction.GetValidJobs_nonJob_byTags(this, currentHour, "rest", s));
-                    break;
-                }
+                //foreach (Manageable faction in FactionManager.HomeFactions)
+                //{
+                possibleResting.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "rest", s));
+               //     break;
+                //}
 
                 if (possibleResting.Count > 0)
                 {
@@ -896,7 +888,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             //Debug.LogError("Animal looking for new target");
             List<Job_CharaCOM> possibletargets = new List<Job_CharaCOM>();
 
-            foreach (Manageable faction in FactionManager.HomeFactions) possibletargets.AddRange(faction.GetValidCharaCOM(this, s));
+            //foreach (Manageable faction in FactionManager.HomeFactions)
+            possibletargets.AddRange(FactionManager.CurrentlyActiveFaction.GetValidCharaCOM(this, s));
 
             if (possibletargets.Count > 0)
             {
@@ -925,11 +918,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             {
                 List<Job_Furniture> possibleRecreations = new List<Job_Furniture>();
 
-                foreach (Manageable faction in FactionManager.HomeFactions)
-                {
-                    possibleRecreations.AddRange(faction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true));
-                    break;
-                }
+                //foreach (Manageable faction in FactionManager.HomeFactions)
+                //{
+               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true));
+                //    break;
+                //}
 
                 if (possibleRecreations.Count > 0)
                 {
@@ -1157,7 +1150,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         return null;
     }
 
-    public List<int> EquipItem(int itemRefID, bool forceEquip = false)
+    public bool EquipItem(int itemRefID, bool forceEquip = false)
     {
         Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
 
@@ -1166,11 +1159,20 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             ItemComponent_Equippable comp = item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
             if (comp != null)
             {
-                Stats.RefreshAllStats(true);
-                return Body.EquipItem(itemRefID, comp.equipCount, forceEquip); 
+                //Stats.RefreshAllStats(true);
+                var list = Body.EquipItem(itemRefID, comp.equipCount, forceEquip);
+                return !list.Contains(-1);
+            }
+            else
+            {
+                Debug.LogError($"Equipitem {item.DisplayName} failed on {FirstName}, target item does not have equip comp");
             }
         }
-        return null;
+        else
+        {
+            Debug.LogError($"Equipitem {itemRefID} failed on {FirstName}, target item cannot be found");
+        }
+        return false;
     }
 
     /// <summary>

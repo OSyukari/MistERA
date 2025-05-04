@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
+using Newtonsoft.Json;
 
 public interface I_ItemComponentTemplate_Comp
 {
@@ -14,7 +14,7 @@ public interface I_ItemComponentTemplate_Comp
 public class ItemComponentTemplate
 {
     public string compType = "ItemComponent_Base";
-    public string Tooltip{get{return "";}}
+    [JsonIgnore] public string Tooltip{get{return "";}}
     // Shared data not copied
     public bool stackable = true;   // stackable = delete self and duplicate other
     protected bool serializeInstanceData = false;
@@ -70,9 +70,6 @@ public class ItemComponentTemplate
                 return new ItemComponent_Degradable(parent);
             case "ItemComponent_Ingestible":
                 return new ItemComponent_Ingestible(parent);
-            // crafting recipe dont need to be put into instances
-            //case "ItemComponent_Craftable":
-            //    return new ItemComponent_Craftable(parent);
             default:
                 return null;
 

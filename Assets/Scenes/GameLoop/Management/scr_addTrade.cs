@@ -8,13 +8,15 @@ public class scr_addTrade : MonoBehaviour
     {
         this.entry = entry;
         this.faction = targetFaction;
-        this.itemName.text = entry.Print;
+        this.itemName.SetText(entry.Print);
+        this.itemName.SetExternalTooltip(entry.Tooltip);
         this.factionName.text = parentFaction == targetFaction ? " - " : faction.FactionDisplayName;
-        this.pricing.text = "-";
+        this.pricing.text = targetFaction.GetPricingLabel(entry, parentFaction != targetFaction);
     }
 
     protected Manageable faction;
     protected Manageable.ItemEntry entry;
-    public TMP_Text itemName, factionName, pricing;
+    public scr_HoverableText itemName;
+    public TMP_Text factionName, pricing;
     public scr_SelectableText Button;
 }

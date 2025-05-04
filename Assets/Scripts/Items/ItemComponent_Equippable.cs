@@ -1,8 +1,8 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public enum BodyEquipLayer
 {
@@ -41,65 +41,23 @@ public enum Revealing
 
 
 [System.Serializable]
-public class ItemComponentTemplate_Equippable : ISerializationCallbackReceiver, I_ItemComponentTemplate_Comp
+public class ItemComponentTemplate_Equippable : I_ItemComponentTemplate_Comp
 {
-    [SerializeField] private string equipSlotString = "";
-    [NonSerialized] public BodyPartEquipSlot equipSlot;
-
-    [SerializeField] private List<string> coverSlotString = new List<string>();
-    [NonSerialized] public List<BodyPartEquipSlot> coverSlot = new List<BodyPartEquipSlot>();
-
-    [SerializeField] private string equipLayerString = "";
-    [NonSerialized] public BodyEquipLayer equipLayer;
-
-    [SerializeField] private string revealingString = "NonRevealing";
-    [NonSerialized] public Revealing revealing;
-
-    [SerializeField] public bool lockable = false;
-
-    [SerializeField] public int equipCount = 1;
-
+    public BodyPartEquipSlot equipSlot = BodyPartEquipSlot.None;
+    public List<BodyPartEquipSlot> coverSlot = new List<BodyPartEquipSlot>();
+    public BodyEquipLayer equipLayer = BodyEquipLayer.None;
+    public Revealing revealing = Revealing.NonRevealing;
+    public bool lockable = false;
+    public int equipCount = 1;
     public List<string> equipTags = new List<string>();
     public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
 
     [System.Serializable]
     public class PartialUndress
     {
-        public string displayName;
-        public string statusID;
+        public string displayName = "";
+        public string statusID = "";
     }
-
-
-    void ISerializationCallbackReceiver.OnBeforeSerialize()
-    {
-        /*
-        revealingString = Enum.GetName(typeof(Revealing), revealing);
-        equipLayerString = Enum.GetName(typeof(BodyEquipLayer), equipLayer);
-        equipSlotString = Enum.GetName(typeof(BodyPartEquipSlot), equipSlot);
-
-        coverSlotString = new List<string>();
-        foreach (BodyPartEquipSlot slot in coverSlot) { coverSlotString.Add(Enum.GetName(typeof(BodyPartEquipSlot), slot)); }
-        */
-    }
-
-    void ISerializationCallbackReceiver.OnAfterDeserialize()
-    {
-        Enum.TryParse(revealingString, out revealing);
-
-        if (equipLayerString != "") Enum.TryParse(equipLayerString, out equipLayer);
-        else { equipLayer = BodyEquipLayer.None; }
-
-        if (equipSlotString != "") Enum.TryParse(equipSlotString, out equipSlot);
-        else equipSlot = BodyPartEquipSlot.None;
-
-        coverSlot = new List<BodyPartEquipSlot>();
-        foreach (string s in coverSlotString)
-        {
-            Enum.TryParse(s, out BodyPartEquipSlot b);
-            coverSlot.Add(b);
-        }
-    }
-
     public bool TryValidate(out string errorMsg)
     {
         errorMsg = "";

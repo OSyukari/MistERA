@@ -1,10 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using System.IO;
 using TMPro;
-using UnityEngine.EventSystems;
 using QuikGraph;
 using System;
 using System.Linq;
@@ -21,9 +17,28 @@ public enum Manageable_GuestStatus
 [System.Serializable]
 public class Manageable : I_Disposable
 {
-    [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }    
+    [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }
 
-    
+    [SerializeField][JsonProperty] protected string salesCurrency = "";
+    protected Item_Base _currency = null;
+    [JsonIgnore] public Item_Base Currency
+    {
+        get
+        {
+            if (_currency == null && salesCurrency != "") _currency = scr_System_Serializer.current.GetByNameOrID_Item_Base(salesCurrency);
+            return _currency;
+        }
+        set
+        {
+            this._currency = value;
+            this.salesCurrency = value.ID;
+        }
+    }
+    public void SetMainCurrency(string itemID)
+    {
+        var temp = scr_System_Serializer.current.GetByNameOrID_Item_Base(itemID);
+        if (temp != null) Currency = temp;
+    }
     protected virtual bool isManageableHours(int hour)
     {
         return false;
@@ -275,9 +290,9 @@ public class Manageable : I_Disposable
         this.DailyReport.FinalizeReport();
     }
 
-    public void PrintDailyReport(TMP_Text text)
+    public void PrintDailyReport(scr_HoverableText management, scr_HoverableText trade, TMP_Text others)
     {
-        text.text = DailyReport.Print("\n", true, true, true);
+        this.DailyReport.Print(management, trade, others);
     }
 
     public Inventory Inventory;
@@ -421,8 +436,8 @@ public class Manageable : I_Disposable
         }
 
 
-        string s = "Faction [" + ID + "] manage at hour [" + currentHour + "]";
-        s += "\n" + Inventory.PrintContent();// + " _ " + String.Join(" ", Inventory.PrintTracker());
+       // string s = "Faction [" + ID + "] manage at hour [" + currentHour + "]";
+       // s += "\n" + Inventory.PrintContent();// + " _ " + String.Join(" ", Inventory.PrintTracker());
     }
 
     public enum ProductionOrderType
@@ -826,7 +841,7 @@ public class Manageable : I_Disposable
         foreach (Room_Instance ri in floor.rooms) AddToFaction(ri, addAllCharaToFaction, setRoomOwnership);
     }
 
-    public void AddToFaction(Room_Instance room, bool addAllCharaToFaction = false, bool setRoomOwnership = false)
+    protected void AddToFaction(Room_Instance room, bool addAllCharaToFaction = false, bool setRoomOwnership = false)
     {
         this.managedRoomRefs.Add(room.RefID, new List<int>());
         this.roomRefsCache = null;
@@ -1066,11 +1081,26 @@ public class Manageable : I_Disposable
         }
     }
 
+    [JsonIgnore] public List<Floor_Instance> ManagedFloors
+    {
+        get
+        {
+            var list = new List<Floor_Instance>();
+            foreach(var room in ManagedRooms.Values) if (!list.Contains(room.parentFloor)) list.Add(room.parentFloor);
+            return list;
+        }
+    }
+
+    /// <summary>
+    /// This will also check if PO is internally valid (recipe item requirement exist)
+    /// </summary>
+    /// <param name="jobKeyword"></param>
+    /// <returns></returns>
     public bool ExistOngoingProductionOrder(string jobKeyword)
     {
         // cleaning is always valid
         if (jobKeyword == "production_cleaning") return true;
-        foreach (var order in ProductionOrders) if (order.Recipe.jobKeyword.Contains(jobKeyword) && order.Count > 0) return true;
+        foreach (var order in ProductionOrders) if (order.Recipe.jobKeyword.Contains(jobKeyword) && order.Count > 0 && order.isRequirementValid) return true;
 
         return false;
     }
@@ -1213,9 +1243,8 @@ public class Manageable : I_Disposable
 
             foreach(var req in order.Recipe.itemRequirements)
             {
-                var reqID = req.baseID;
-                if (!resourceWarnings.ContainsKey(reqID)) resourceWarnings.Add(reqID, 0);
-                resourceWarnings[reqID] -= req.amount * order.Count;
+                if (!resourceWarnings.ContainsKey(req.itemID)) resourceWarnings.Add(req.itemID, 0);
+                resourceWarnings[req.itemID] -= req.itemCount * order.Count;
             }
         }
 
@@ -1285,7 +1314,15 @@ public class Manageable : I_Disposable
         int requiredWorkLoad = 0;
         int ordersWorkLoad = 0;
         int maintenanceWorkLoad = 0;
-        foreach (var schedule in this.charaSchedules.Values) assignedWorkLoad += schedule.GetWorkHoursWithCOM(jobCOM.ID);
+        foreach (var assignment in this.charaSchedules)
+        {
+            var chara = scr_System_CampaignManager.current.FindInstanceByID(assignment.Key);
+            for(int i = 0; i < 24; i++)
+            {
+                if (chara.FactionManager.CurrentJobScheduleFaction(i) != this) continue;
+                if (assignment.Value.HasWorkHoursWithCOM(i, jobCOM.ID)) assignedWorkLoad += 60;
+            }
+        }
 
         foreach (var order in ProductionOrders) if (jobCOM.comTags.Contains(order.Recipe.jobKeyword)) ordersWorkLoad += order.ExpectedWorkload;
 
@@ -1351,11 +1388,17 @@ public class Manageable : I_Disposable
 
         }
 
-        public int GetWorkHoursWithCOM(string comID)
+        public bool HasWorkHoursWithCOM(int hour, string comID)
         {
-            int count = 0;
-            for (int i = 0; i < schedule.Length; i++) if (schedule[i].comIDs.Contains(comID)) count += 60;
-            return count;
+        
+            if (schedule[hour].comIDs.Contains(comID)) return true;
+            else return false;
+        }
+
+        public bool HasWorkHoursWithCOM(string comID)
+        {
+            for (int i = 0; i < 24; i++) if (HasWorkHoursWithCOM(i, comID)) return true;
+            return false;
         }
 
         public void Clear()
@@ -1615,7 +1658,7 @@ public class Manageable : I_Disposable
                 if (Cost.itemID != "")
                 {
                     var cost_count = Cost.itemCount * cc;
-                    if (self == recycler) target.AddItem(WorldManager.Instantiate(Cost.itemID, Cost.itemNameOverwrite, cost_count));
+                    if (self == recycler) target.AddItem(WorldManager.Instantiate(Cost.itemID, Cost.itemCountOverride ? "" : Cost.itemNameOverwrite, cost_count));
                     else target.AddItem(self.RemoveItem(Cost.itemID, cost_count));
                     if (self != recycler) FactionOwner.DailyReport.AddTradeRecord(Cost.itemID, -cost_count);
                     if (target != recycler && target != self) TargetFaction.DailyReport.AddTradeRecord(Cost.itemID, cost_count);
@@ -1625,7 +1668,7 @@ public class Manageable : I_Disposable
                 if (Entry.itemID != "")
                 {
                     var entry_count = Entry.itemCount * cc;
-                    if (target == recycler) self.AddItem(WorldManager.Instantiate(Entry.itemID, Entry.itemNameOverwrite, entry_count));
+                    if (target == recycler) self.AddItem(WorldManager.Instantiate(Entry.itemID, Entry.itemCountOverride ? "" : Entry.itemNameOverwrite, entry_count));
                     else self.AddItem(target.RemoveItem(Entry.itemID, entry_count));
                     if (self != recycler) FactionOwner.DailyReport.AddTradeRecord(Entry.itemID, entry_count);
                     if (target != recycler && target != self) TargetFaction.DailyReport.AddTradeRecord(Entry.itemID, -entry_count);
@@ -1641,6 +1684,12 @@ public class Manageable : I_Disposable
                 return false;
             }
         }
+
+        [JsonIgnore] public string Tooltip
+        { get
+            {
+                return this.Entry == null ? "" : this.Entry.Tooltip;
+            } }
     }
 
 
@@ -1673,7 +1722,21 @@ public class Manageable : I_Disposable
         [SerializeField][JsonProperty] protected int count;
         public int CurrentProgress = 0;
 
-
+        [JsonIgnore] public bool isRequirementValid
+        {
+            get
+            {
+                if (Recipe == null || Recipe.itemRequirements == null) return true;
+                else
+                {
+                    foreach(var req in Recipe.itemRequirements)
+                    {
+                        if (FactionOwner.Inventory.GetItemCount(req.itemID) < req.itemCount) return false;
+                    }
+                }
+                return true;
+            }
+        }
 
         protected Manageable factionOwnerCache;
         [JsonIgnore] Manageable FactionOwner{get{
@@ -1714,20 +1777,27 @@ public class Manageable : I_Disposable
         /// <returns></returns>
         public void AddProgress(int i)
         {
+            
             CurrentProgress += i;
             while (Count > 0 && CurrentProgress >= Recipe.workAmount)
             {
+                if (!isRequirementValid) break;
+                var deleteItems = new List<Item_Instance>();
+                foreach (var req in Recipe.itemRequirements)
+                {
+                    deleteItems.AddRange(FactionOwner.Inventory.RemoveItem(req.itemID, req.itemCount));
+                }
+                scr_System_CampaignManager.current.Recycler.AddItem(deleteItems);
+
                 if (orderType != ProductionOrderType.craftUntilCount) count--;
    
                 CurrentProgress -= Recipe.workAmount;
                 //Debug.LogError("ProductionOrder recipeNull["+(recipe == null)+"] targetInventoryNull["+(targetInventory == null)+"]");
-                for (int ii = 0; ii < Recipe.outputAmount; ii++)
-                {
-                    //Debug.Log("before instantiate");
-                    Item_Instance item = WorldManager.Instantiate(Recipe.outputItemBaseID);
-                    //Debug.Log("before add");
-                    targetInventory.AddItem(item);
-                }
+
+                //Debug.Log("before instantiate");
+                Item_Instance item = WorldManager.Instantiate(Recipe.outputItemBaseID,"", Recipe.outputAmount);
+                //Debug.Log("before add");
+                targetInventory.AddItem(item);
             }
         }
 
@@ -1827,15 +1897,22 @@ public class Manageable : I_Disposable
         DailyCharaMaintenance.Clear();
         foreach (KeyValuePair<string, int> kvp in GetMaintenanceCost_Chara)
         {
+            List<Item_Instance> extraConsume = new List<Item_Instance>();
+            List<string> consumeMessage = new List<string>();
+
             var itemConsume = Inventory.TickTokenItem(kvp.Key, kvp.Value);
+            if (itemConsume < 0 && Inventory.RemoveItemByTag(kvp.Key, -itemConsume, ref extraConsume, ref consumeMessage)) itemConsume = 0;
             DailyCharaMaintenance.Add(new Tuple<string, int>(kvp.Key, itemConsume));
             //GetMaintenanceCost_Chara[kvp.Key] = Inventory.TickTokenItem(kvp.Key, kvp.Value);
+
             if (itemConsume < 0)
             {
                 returnValue = false;
                 DailyReport.AddManageReport("insufficient resource " + kvp.Key, true);
                // if (debug != null) debug.Add("insufficient resource " + kvp.Key);
             }
+            if (extraConsume.Count > 0) scr_System_CampaignManager.current.Recycler.AddItem(extraConsume);
+            if (consumeMessage.Count > 0) DailyReport.AddManageReport($"Consumed resources: {String.Join("\n", consumeMessage)}");
         }
         if (returnValue) DailyReport.AddManageReport("all resources sufficient");
         return returnValue;
@@ -1925,6 +2002,21 @@ public class Manageable : I_Disposable
     }
 
     public SalesInventory salesInventory = new SalesInventory();
+
+    public int GetPrice(ItemEntry entry, bool isExport)
+    {
+        if (entry.BaseItem == null || Currency == null) return 0;
+        return (int)Math.Round( (decimal)((entry.BaseItem.value * entry.itemCount / Currency.value) * (isExport? 2.5 : 1)));
+    }
+
+    string pricelabel = "";
+    public string GetPricingLabel(ItemEntry entry, bool isExport)
+    {
+        if (pricelabel == "") pricelabel = scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_currency");
+        var value = GetPrice(entry, isExport);
+        if (value == 0) return "-";
+        else return pricelabel.Replace("$count$", value.ToString()).Replace("$item$", Currency.DisplayName);
+    }
 
     [System.Serializable]
     public class SalesInventory
@@ -2036,23 +2128,33 @@ public class Manageable : I_Disposable
 
         }
 
-        public ItemEntry(string id, string name, int count)
+        public ItemEntry(string id, string name, int count, bool countOverride)
         {
             this.itemCount = count;
             this.itemNameOverwrite = name;
             this.itemID = id;
+            this.itemCountOverride = countOverride;
         }
-        public ItemEntry(MapPlan.WorkModuleInit.ItemEntry entry)
+        public ItemEntry(ItemEntry entry)
         {
             this.itemID = entry.itemID;
             this.itemNameOverwrite = entry.itemNameOverwrite;
             this.itemCount = entry.itemCount;
+            this.itemCountOverride = entry.itemCountOverride;
         }
         public string itemID = "";
         public string itemNameOverwrite = "";
         public int itemCount = 0;
+        public bool itemCountOverride = false;
 
         string _cache = "";
+
+        Item_Base _base = null;
+        [JsonIgnore] public Item_Base BaseItem { get
+            {
+                if (_base == null && itemID != "") _base = scr_System_Serializer.current.GetByNameOrID_Item_Base(itemID);
+                return _base;
+            } }
 
         [JsonIgnore]
         public string Print
@@ -2060,12 +2162,13 @@ public class Manageable : I_Disposable
             get
             {
                 if (_cache != "") return _cache;
-                var count = (itemCount >= 10000000) ? (((int)(itemCount / 1000000)).ToString() + "M") : ((itemCount >= 10000) ? (((int)(itemCount / 1000)).ToString() + "K") : itemCount.ToString());
+                var count = itemCountOverride ? (itemCount == 0 ? "0" : "1") : (itemCount >= 10000000) ? (((int)(itemCount / 1000000)).ToString() + "M") : ((itemCount >= 10000) ? (((int)(itemCount / 1000)).ToString() + "K") : itemCount.ToString());
 
                 if (this.itemID == "" || itemCount == 0) _cache = "none";
                 else
                 {
                     var item = scr_System_Serializer.current.GetByNameOrID_Item_Base(this.itemID);
+                    if (item == null) return "null";
                     var basestr = (item.Tags.Contains("item_money") ?
                                 scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_currency") :
                                 scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_item"));
@@ -2075,6 +2178,15 @@ public class Manageable : I_Disposable
                 }
                 return _cache;
                 //else return $"{scr_System_Serializer.current.Dictionary.QueryThenParse(itemNameOverwrite != "" ? itemNameOverwrite : itemID)} x{itemCount}";
+            }
+        }
+
+        [JsonIgnore]
+        public string Tooltip
+        {
+            get
+            {
+                return BaseItem == null ? "" : BaseItem.Tooltip;
             }
         }
     }
@@ -2121,6 +2233,12 @@ public class Manageable : I_Disposable
         public bool manageError = false;
         public List<string> manageLogs = new List<string>();
 
+        public List<string> miscMessages = new List<string>();
+        public void AddMiscRecord(string s)
+        {
+            this.miscMessages.Add(s);
+        }
+
         public void AddManageReport(string s, bool isError = false)
         {
             this.manageLogs.Add(isError? Utility.WrapTextColor( s, scr_System_CentralControl.current.pref.TextColor_conflict): s );
@@ -2132,11 +2250,35 @@ public class Manageable : I_Disposable
             foreach(var entry in tradeRegistry) if(entry.Value != 0) tradeLogs.Add(entry.Key + entry.Value.ToString("+0;-#"));
         }
 
-        public string Print(string lineBreak = "\n", bool printManage = true, bool printTrade = true, bool printTradeWarning = true)
+        string msg_manageSuccess = "";
+        string msg_manageFailure = "";
+
+        string msg_tradeFailure = "";
+        string msg_tradeSuccess = "";
+
+        bool initialized = false;
+
+        protected void Initialize()
         {
-            return (printManage ? String.Join(lineBreak, manageLogs) : "") +"\n"+ 
-                (printTrade ? String.Join(lineBreak, tradeLogs) : "") + "\n" + 
-                (printTradeWarning ? String.Join(lineBreak, tradeWarnings) : "");
+            initialized = true;
+            msg_manageSuccess = scr_System_Serializer.current.Dictionary.QueryThenParse("msg_manageSuccess");
+            msg_manageFailure = Utility.WrapTextColor(scr_System_Serializer.current.Dictionary.QueryThenParse("msg_manageFailure"), scr_System_CentralControl.current.pref.TextColor_conflict);
+            msg_tradeFailure = Utility.WrapTextColor(scr_System_Serializer.current.Dictionary.QueryThenParse("msg_tradeFailure"), scr_System_CentralControl.current.pref.TextColor_conflict);
+            msg_tradeSuccess = scr_System_Serializer.current.Dictionary.QueryThenParse("msg_tradeSuccess");
+        }
+        public void Print(scr_HoverableText manage, scr_HoverableText trade, TMP_Text misc)
+        {
+            if (!initialized) Initialize();
+
+            if (manageError) manage.SetText(msg_manageFailure);
+            else manage.SetText(msg_manageSuccess);
+            manage.SetExternalTooltip(String.Join("\n", manageLogs));
+
+            if (tradeError) trade.SetText(msg_tradeFailure);
+            else trade.SetText(msg_tradeSuccess);
+            trade.SetExternalTooltip(String.Join("\n", tradeLogs) + (tradeWarnings.Count > 0 ? "\n" + Utility.WrapTextColor( String.Join("\n", tradeWarnings), scr_System_CentralControl.current.pref.TextColor_conflict) : ""));
+
+            misc.text = String.Join("\n", miscMessages);
         }
     }
 }

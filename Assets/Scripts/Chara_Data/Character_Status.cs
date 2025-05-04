@@ -14,7 +14,7 @@ public enum StatusTags
 
 
 [System.Serializable]
-public class Index_Status:I_IndexHasID, ISerializationCallbackReceiver, I_IndexMergeable
+public class Index_Status:I_IndexHasID, I_SerializationCallbackReceiver, I_IndexMergeable
 {
     public List<Status_Base> list = new List<Status_Base>();
 
@@ -46,10 +46,6 @@ public class Index_Status:I_IndexHasID, ISerializationCallbackReceiver, I_IndexM
 
     }
 
-    public void OnBeforeSerialize()
-    {
-
-    }
 
     public void RegisterAllID()
     {
@@ -84,7 +80,7 @@ public class Status_Base : StatusBase
 
 
     [System.Serializable]
-    public class Variations : ISerializationCallbackReceiver
+    public class Variations
     {
         public Status_Variation_Type variationType;
         [SerializeField][JsonProperty] private string variationTypeString;
@@ -97,11 +93,6 @@ public class Status_Base : StatusBase
         public void OnAfterDeserialize()
         {
             Enum.TryParse(variationTypeString, out variationType);
-        }
-
-        public void OnBeforeSerialize()
-        {
-
         }
 
         [System.Serializable]

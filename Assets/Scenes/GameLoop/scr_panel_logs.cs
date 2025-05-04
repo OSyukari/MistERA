@@ -63,7 +63,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     private void OnLogAdd(MessageLog msg, bool animate)
     {
         todo.Add(msg);
-        if (animate) while(canAnimate) AnimateOneStep();
+        if (animate) while (canAnimate) AnimateOneStep();
+        else if (Input.GetMouseButton(1) && canAnimate) AnimateOneStep();
     }
 
 
@@ -116,6 +117,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
                 if (msg[0] != null && msg[0].Length > 0) currentMsg.GetComponent<TMP_Text>().text += (currentMsg.GetComponent<TMP_Text>().text.Length > 0 ? "\n":"")+ msg[0];
                 msg.RemoveAt(0);
             }
+
+            if (Input.GetMouseButton(1) && canAnimate) AnimateOneStep();
+            // if this state we animate all it might break update routine and return player to main screen while player still has ongoing package
+            
         }
         else
         {
@@ -172,7 +177,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         }
         if (this.gameObject.activeInHierarchy)
         {
-            yield return new WaitForSecondsRealtime(0.2f);
+            yield return new WaitForSecondsRealtime(0.5f);
             scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
         }
     }

@@ -105,10 +105,15 @@ public class MapPlan
                 org.SetMainExit(mainExit);
             }
 
-            foreach(var itemInit in salesInventory)
+            if (this.salesCurrency != "")
             {
-                org.AddSalesInventory(itemInit);
+                org.SetMainCurrency(salesCurrency);
+                foreach (var itemInit in salesInventory)
+                {
+                    org.AddSalesInventory(itemInit);
+                }
             }
+
         }
 
         return list;
@@ -121,6 +126,7 @@ public class MapPlan
     public List<WorkHoursInit> workHours = null;
     public List<WorkModuleInit> workModules = new List<WorkModuleInit>();
     public List<SalesInventoryInit> salesInventory = new List<SalesInventoryInit>();
+    public string salesCurrency = "";
 
     [System.Serializable]
     public class SalesInventoryInit
@@ -129,17 +135,26 @@ public class MapPlan
         public string matchByID = "";
         public string nameOverwrite = "";
         public int itemCount = 1;
+        public bool countOverride = false;
 
         public List<Manageable.ItemEntry> GetContent()
         {
             var list = new List<Manageable.ItemEntry>();
-            if (matchByID != "") list.Add(new Manageable.ItemEntry(matchByID, nameOverwrite, itemCount));
+            if (matchByID != "") list.Add(new Manageable.ItemEntry(matchByID, nameOverwrite, itemCount, countOverride));
             if (matchByTags.Count > 0)
             {
                 foreach(var recipe in scr_System_Serializer.current.CraftingRecipe.Values)
                 {
+                    var outputItem = recipe.OutputItem;
+                    if (outputItem == null) Debug.LogError($"sales inventory get content {recipe.outputItemBaseID} is null");
+                    else if (Utility.ListContainsStrict(outputItem.Tags, matchByTags)) list.Add(new Manageable.ItemEntry(outputItem.id, "", recipe.outputAmount * itemCount, countOverride));
+                }
 
-                    if (Utility.ListContainsStrict(recipe.OutputItem.Tags, matchByTags)) list.Add(new Manageable.ItemEntry(recipe.OutputItem.id, "", recipe.outputAmount * itemCount));
+                foreach (var item in scr_System_Serializer.current.index_Item_Base.list)
+                {
+                    if (item.Tags.Contains("do_not_use")) continue;
+                    if (item.GetCompTemplateByID("ItemComponent_Craftable") != null) continue;
+                    if (Utility.ListContainsStrict(item.Tags, matchByTags)) list.Add(new Manageable.ItemEntry(item.id, "", itemCount, countOverride));
                 }
             }
             return list;            
@@ -153,16 +168,8 @@ public class MapPlan
         public List<int> peakHours = new List<int>();
         public List<string> workCommands = new List<string>();
         public List<int> activeHours = new List<int>();
-        public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
-        public List<ItemEntry> hourlyCost = new List<ItemEntry>();
-
-        [System.Serializable]
-        public class ItemEntry
-        {
-            public string itemID = "";
-            public string itemNameOverwrite = "";
-            public int itemCount = 0;
-        }
+        public List<Manageable.ItemEntry> hourlyPayout = new List<Manageable.ItemEntry>();
+        public List<Manageable.ItemEntry> hourlyCost = new List<Manageable.ItemEntry>();
     }
 
 
@@ -238,6 +245,7 @@ public class MapPlan
                         if (r != null)
                         {
                             scr_System_CampaignManager.current.MoveAllCharaFromDebugToRoom(r);
+                            // TODO
                         }
                         else
                         {

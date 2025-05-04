@@ -9,7 +9,29 @@ using UnityEngine.UI;
 
 public class scr_UpdateHandler : MonoBehaviour
 {
-    public bool Updating = false;
+
+    bool _updating = false;
+    public bool Updating
+    {
+        set
+        {
+            _updating = value;
+            if (imageScript != null)
+            {
+                if (_updating)
+                {
+                    imageScript.Activate();
+//                    imageScript.selfCanvasGroup.alpha = 1;
+                }
+                else imageScript.selfCanvasGroup.alpha = 0;
+            }
+
+        }
+        get
+        {
+            return _updating;
+        }
+    }
     [JsonIgnore] public bool Animating = false;
     private void click(PointerEventData eventData)
     {
@@ -19,13 +41,24 @@ public class scr_UpdateHandler : MonoBehaviour
         // differentiate left and right click and animate all ?
         // dont. if its a single long command its as fast as skip anyway.
         // if multiple commands, it usually involves moving, and we want to let player possible break movement
-
+        bool single = true;
         if ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || oneLoop) && loopCounter < 20)
         {
             StartCoroutine(SingleUpdate());
+            single = false;
         }
         else
         {
+            NotifyLogsSingleUpdate();
+        }
+        /*
+        if ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || oneLoop) && loopCounter < 20)
+        {   // any click start single one
+            StartCoroutine(SingleUpdate());
+        }
+        else
+        {   // no longer update, closing
+            // if right click, or if right was held
             if (eventData.button == PointerEventData.InputButton.Right)
             {
                 imageScript.Deactivate();
@@ -36,13 +69,12 @@ public class scr_UpdateHandler : MonoBehaviour
                 imageScript.Deactivate();
                 NotifyLogsSingleUpdate();
             }
+        }*/
 
-        }
     }
     public static scr_UpdateHandler current;
     scr_System_CampaignManager cnManager;
     scr_AttachToUpdateHandler imageScript = null;
-
 
     public void LoadSaveFile(SaveFileHolder saveHolder, bool unloadCanvas = true){
         if (!saveHolder.isValid) Debug.LogError("LoadSave error did not re-inject file path.");
@@ -83,8 +115,6 @@ public class scr_UpdateHandler : MonoBehaviour
         imageScript = script;
         imageScript.Observer_PointerClick += click;
     }
-
-
 
     // Start is called before the first frame update
     void Awake()
@@ -187,7 +217,6 @@ public class scr_UpdateHandler : MonoBehaviour
         // update per room
 
         Job playerJob = null;
-        if (imageScript != null) imageScript.Activate();
         cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
         //NotifyLogsSingleUpdate();
         while (updateTime > 0)
@@ -244,18 +273,23 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         loopCounter++;
 
-        cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
+        
 
         if (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime2, false) && loopCounter < 20)
-        {
-            if (imageScript != null) imageScript.Deactivate(true);
+        {   // continuous update
+            // ask break
             totalUpdateTime = totalUpdateTime2;
+            cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
+
         }
         else
         {
+            cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, false);
             if (imageScript != null) imageScript.Deactivate();
         }
-
+     
+        
+    
         // exiting loop. if player is involved in a job, here's when we should display it.
         //playerJob = cnManager.Player.CurrentJob;
 
@@ -302,7 +336,7 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         if(names.Count > 0) cnManager.AddLog(-1, "<align=\"right\">" + String.Join("\n", names) + "</align>" , false, true);
         //yield return null;
-        cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, false);
+        
 
         //NotifyLogsSingleUpdate();
         //Debug.LogError("CN MANAGER STILL HAVE PLAYER PACKAGE? " + cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) + " LOOPCOUNTER " + loopCounter);
@@ -314,6 +348,11 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         Updating = false;
 
+        //if (Input.GetMouseButton(1))
+        //{   
+            //Debug.Log("MOUSE BUTTON RIGHT DETECTED SKIPPING ALL");
+        //    NotifyLogsSingleUpdate(true);
+        //}
         //FlushCollectedLogs(false,false);
     }
 
@@ -387,5 +426,11 @@ public class scr_UpdateHandler : MonoBehaviour
     public void NotifyLogsSingleUpdate(bool skipAll = false)
     {
         Observer_LogsSingleStepUpdate?.Invoke(skipAll);
+    }
+
+
+    public int PlayerQuery(Action<scr_Menu> action)
+    {
+        return 0;
     }
 }

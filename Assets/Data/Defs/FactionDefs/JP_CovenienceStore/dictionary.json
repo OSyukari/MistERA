@@ -5,6 +5,9 @@
         {
             "default":
             {
+                "currency_JPY": "日元",
+                "currency_JPY_tooltip": "在部分地区流通的货币",
+
                 "factionName_jp_convenience_store_SunMart":"SunMart便利店",
 
                 "jp_convenience_store_frontDesk_displayName_1":"前台接待",
@@ -14,7 +17,38 @@
                 "jp_convenience_store_clerk_afternoon":"兼职 午后",
                 "jp_convenience_store_clerk_midnight":"兼职 午夜",
 
-                "furniture_marker_jp_convenience_store_frontDesk":"收银台"
+                "furniture_marker_jp_convenience_store_frontDesk":"收银台",
+
+
+                "consumable_onigiri":"饭团",
+                "consumable_onigiri_tooltip":"制作简单，但无法保存很久",
+
+                "consumable_instant_ramen":"泡面",
+                "consumable_instant_ramen_tooltip":"虽然不健康，但能保存很久",
+
+                "consumable_bento_box":"便当盒",
+                "consumable_bento_box_tooltip":"现做的便当盒，无法保存很久",
+
+                "raw_rice":"生米（1g）",
+                "raw_rice_tooltip":"用来制作其他食物的材料",
+
+                "jp_convenience_store_rice_bag_5kg":"生米（5kg）",
+                "jp_convenience_store_pyroxene_4800":"%%currency_pyroxene%% x4800",
+
+                "store_2F_canteen":"员工食堂",
+                "store_2F_toilet_ex":"多功能厕所",
+                "store_2F_toilet":"员工厕所",
+                "store_1F_office":"办公室",
+                "store_1F_kitchen":"厨房",
+                "store_1F_storage":"仓库",
+                "store_1F_parking":"停车场",
+                "store_1F_shopping_1":"购物区1",
+                "store_1F_shopping_2":"购物区2",
+                "store_1F_counter":"结账区",
+                "store_1F_entrance":"入口",
+                "store_1F_postOffice":"邮局",
+                "store_2F_hallway":"2楼走廊",
+                "store_1F_hallway":"1楼走廊"
             }
         }
     }

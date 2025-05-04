@@ -689,6 +689,9 @@ public class BodyInternal_Instance
                     if (contentsIndex[Tuple] == -1)
                     {
                         contentsIndex[Tuple] = itemRefID;
+#if UNITY_EDITOR
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"{Owner.FirstName} successfully equipped {item.DisplayName} at {DisplayName}");
+#endif
                         return 0;
                     }
                     else if (contentsIndex[Tuple] != -1 && forceEquip == true)
@@ -697,12 +700,29 @@ public class BodyInternal_Instance
                         contentsIndex[Tuple] = itemRefID;
 
                         Owner.UnequipItem(returnval);
-
+                        var unequipped = scr_System_CampaignManager.current.FindItemInstanceByID(returnval);
+#if UNITY_EDITOR
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"{Owner.FirstName} successfully equipped {item.DisplayName} at {DisplayName}, unequipping item {unequipped.DisplayName}");
+#endif
                         return returnval;
                     }
                 }
+                else
+                {
+#if UNITY_EDITOR
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.LogError($"bodypart {DisplayName} does not contain index {Tuple} in {String.Join(",", contentsIndex.Keys)}");
+#endif
+                }
                 /// CODE END
             }
+            else
+            {
+                Debug.LogError($"Equipitem {item.DisplayName} failed on {Owner.FirstName} {DisplayName}, target item does not have equip comp");
+            }
+        }
+        else
+        {
+            Debug.LogError($"Equipitem {itemRefID} failed on {Owner.FirstName} {DisplayName}, target item cannot be found");
         }
         return -1;
     }

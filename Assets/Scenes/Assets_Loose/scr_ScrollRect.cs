@@ -655,7 +655,8 @@ namespace UnityEngine.UI
             //Debug.Log("scr_ScrollRect : OnScroll data y " + data.scrollDelta.y);
 
             Vector3 v3 = m_Content.localScale;
-            m_Content.localScale = new Vector3(v3.x + 0.01f * data.scrollDelta.y, v3.y + 0.01f * data.scrollDelta.y, v3.z + 0.01f * data.scrollDelta.y);
+            var sensitivity = scrollSensitivity * 0.01f;
+            m_Content.localScale = new Vector3(v3.x + sensitivity * data.scrollDelta.y, v3.y + sensitivity * data.scrollDelta.y, v3.z + sensitivity * data.scrollDelta.y);
 
             // scrolldown -1 scrollup 1
             /*

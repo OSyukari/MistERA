@@ -34,10 +34,10 @@ public class scr_Panel_Map : scr_Menu, IPointerClickHandler
 
     private void OnViewModeChange(ViewMode vm, bool lockView)
     {
-        if (this.gameObject.activeInHierarchy && vm == ViewMode.View_Map)
-        {
-            if (this.FloorDisplay == null) makeFloorDisplay();
-        }
+        //if (this.gameObject.activeInHierarchy && vm == ViewMode.View_Map)
+        //{
+        //    if (this.FloorDisplay == null) makeFloorDisplay();
+        //}
     }
 
     public override void Initialize()
@@ -145,8 +145,8 @@ public class scr_Panel_Map : scr_Menu, IPointerClickHandler
     {
         FloorDisplay = scr_System_SceneManager.current.LoadCanvasIntoScene(canvas_FloorDisplay, this.m_Canvas.GetComponent<RectTransform>()).GetComponent<canvas_RoomDisplay>();
         
-        if (floorRefID == -1) FloorDisplay.InitializeWithArgument(this, scr_System_CampaignManager.current.PlayerFloor.refID);
-        else FloorDisplay.InitializeWithArgument(this, floorRefID);
+        //if (floorRefID == -1) FloorDisplay.InitializeWithArgument(this, scr_System_CampaignManager.current.PlayerFloor.refID);
+        //else FloorDisplay.InitializeWithArgument(this, floorRefID);
     }
 
 

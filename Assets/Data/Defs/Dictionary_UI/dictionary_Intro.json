@@ -7,11 +7,9 @@
             {
                 "Game_Title":"迷雾Era",
                 "Game_Maker":"Silent Forest",
-                "Version_Number":"0.1",
     
                 "intro_title_card_1":"%%Game_Title%%",
                 "intro_title_card_2":"作者 %%Game_Maker%%",
-                "intro_title_card_3":"v%%Version_Number%%",
     
                 "intro_button_newGame":"新游戏",
                 "intro_button_continue":"继续游戏",
@@ -20,7 +18,9 @@
                 "intro_button_exit":"退出游戏",
     
                 "intro_message_1":"左键点击[方框]内文字确认选择",
-                "intro_message_2":"鼠标悬停<link=\"tooltip_highlight\"><mark=#ffff0044>高亮</mark></link>文字以获取额外信息",
+                "intro_message_2":"鼠标悬停以获取额外信息",
+                "intro_message_3":"汇报BUG用DC链接：$link$\n点击此按钮复制邀请链接",
+                "intro_message_4":"链接已复制！",
     
                 "tooltip_highlight":"该条目并无额外信息",
                 "tooltip_cannotLoadSave":"未检测到存档",

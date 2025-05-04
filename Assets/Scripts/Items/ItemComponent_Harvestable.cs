@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 
 [System.Serializable]
@@ -14,7 +15,7 @@ public class ItemComponentTemplate_Harvestable
      */
 
     // ItemComponent_Harvestable
-    public string compHarvestible_UID { get { return growType+"||"+yieldItemID; } }
+    [JsonIgnore] public string compHarvestible_UID { get { return growType+"||"+yieldItemID; } }
     public string growType = "";
     public int maxGrowth = 0;
     public int harvestThreshold = 0;
@@ -31,33 +32,3 @@ public class ItemComponentTemplate_Harvestable
     }
 
 }
-
-/*
-[System.Serializable]
-public class ItemComponent_Craftable : ItemComponent_Base
-{
-    public override string CompType { get { return "ItemComponent_Craftable"; } }
-
-    public ItemComponent_Craftable(Item_Base itemBase)
-    {
-        this.parent = itemBase;
-        this.parentID = itemBase.ID;
-        this.stackable = true;
-    }
-
-    public List<ItemComponentTemplate_Craftable_Recipe> recipe { get { return CompTemplate.comp_Craftable.recipes; } }
-
-
-    public override string Tooltip
-    {
-        get
-        {
-            string s = "Craft Recipe: ";
-            foreach(ItemComponentTemplate_Craftable_Recipe recipe in this.recipe)
-            {
-                s += "[" +recipe.jobKeyword+" "+recipe.workAmount+ "]";
-            }
-            return s;
-        }
-    }
-}*/

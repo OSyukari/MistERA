@@ -147,11 +147,19 @@ public class Character_Factions
         // else, no home faction, dont check it.
     }
 
+    /// <summary>
+    /// If chara currently has a work schedule, return work schedule location
+    /// else return home faction
+    /// </summary>
     [JsonIgnore]
     public Manageable CurrentlyActiveFaction
     {
         get
         {
+            var faction = CurrentJobScheduleFaction();
+            return faction != null ? faction : HomeFactions.Count > 0 ? HomeFactions[0] : null;
+
+
             var currentRoomID = scr_System_CampaignManager.current.Map.FindRoomByChara(Owner.RefID).RefID;
             foreach (var i in Factions) if (i != null && i.ManagedRooms.ContainsKey(currentRoomID)) return i;
             return null;
@@ -322,7 +330,7 @@ public class Character_Factions
     }
 
     [SerializeField][JsonProperty] protected Manageable.Job_Schedule privateSchedule =  new Manageable.Job_Schedule();
-    [JsonIgnore] public bool HasSleepSchedule { get { return privateSchedule.GetWorkHoursWithCOM("com_furniture_sleep") > 0; } }
+    [JsonIgnore] public bool HasSleepSchedule { get { return privateSchedule.HasWorkHoursWithCOM("com_furniture_sleep"); } }
 
     /// <summary>
     /// Wipe and rebuild personal sleep schedule.<br/>

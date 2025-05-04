@@ -20,66 +20,13 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     public RectTransform prefab_roomButton;
 
-    scr_Panel_Map parent;
+    //scr_Panel_Map parent;
 
-    private void LoadFloor(int refID)
-    {
+    protected List<int> currentFloorIDs = new List<int>();
 
-    }
-    public void InitializeWithArgument(scr_Panel_Map parent, int refID)
-    {
-        if (!initialized) this.Initialize();
-        this.parent = parent;
-
-        //Debug.Log("Chara Detail button keys :" + this.buttonsByID.Keys.ToString());
-
-        //LoadFloor(refID);
-
-        floor = scr_System_CampaignManager.current.Map.FindFloorByRefID(refID);
-        if (floor != null)
-        {
-            picture.sprite = scr_System_CentralControl.current.LoadCachedSprite(floor.FloorBase.imagePath);
-
-            floorName.text = floor.displayName;
-
-            foreach(Room_Instance ri in floor.rooms)
-            {
-                if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode())*2))
-                {
-                    addBtn(prefab_roomButton, picture.rectTransform, ri, false,false,true);
-                    addBtn(prefab_roomButton, roomList, ri, true, true, false);
-
-                }
-                else
-                {
-                    //Debug.Log("scr_Panel_Map OnEnable skipping redraw for room [" + ri.displayName + "]");
-                }
-
-                if (scr_System_CampaignManager.current.Map.floorDoorQuickSearch.ContainsKey(ri.RefID))
-                {
-                    //Debug.Log("scr_Panel_Map searching room with floor exit found match ["+ri.displayName+"]");
-                    int i = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
-                    Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
-                    var j = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(i);
-                    addExit(prefab_roomButton, picture.rectTransform, exit, j);
-                }
-            }
-
-           
-        }
-        else
-        {
-            Debug.LogError("canvas_RoomDisplay ATTEMPTING TO DISPLAY NONEXISTENT ROOM");
-        }
-
-        ValidateAll();
-
-    }
 
     private void addExit(RectTransform prefab, RectTransform parent, Floor_Base.FloorPlan_Exit exits, Floor_Instance targetFloor)
     {
-
-
         RectTransform r2 = Instantiate(prefab);
         r2.SetParent(parent, false);
         r2.anchoredPosition = new Vector2(exits.offsetX, exits.offsetY);
@@ -95,9 +42,11 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         buttonsByID.Add(btn.optionID, btn);
         validatorsByID.Add(btn.optionID, btn.Validator);
         btn.Validate();
+
+        currentFloorIDs.Add(btn.optionID);
     }
 
-    private void addBtn(RectTransform prefab, RectTransform parent, Room_Instance ri, bool extraOffset = false, bool displayCharaName = false, bool showBracket = false)
+    private void addBtn(RectTransform prefab, RectTransform parent, Room_Instance ri, bool extraOffset = false, bool displayCharaName = false)
     {
         RectTransform r2 = Instantiate(prefab);
         r2.SetParent(parent, false);
@@ -108,7 +57,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         scr_SelectableText btn = r2.GetComponent<scr_SelectableText>();
 
         btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn));
-        btn.showBrackets = showBracket;
+
         Floor_Instance parentFloor = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(ri.RefID);
         int tempRefID = ri.RefID;
         if (parentFloor != null) tempRefID -= parentFloor.FloorCode;
@@ -119,16 +68,11 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             List<string> names = new List<string>();
             foreach (int i in list)  if (i != 0) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
 
-            
+            btn.SetText(tempRefID + " - " + ri.DisplayName);
 
-            if (names.Count > 0)
-            {
-                btn.SetText("[ "+tempRefID + " - "+ ri.DisplayName + " ] \n[ "+String.Join(" ", names)+" ]");
-            }
-            else
-            {
-                btn.SetText("[ " + tempRefID + " - " + ri.DisplayName + " ] \n[]");
-            }
+            var namesRect = Instantiate(prefab_text_standard);
+            namesRect.SetParent(parent, false);
+            namesRect.GetComponent<TMP_Text>().text = String.Join(" ", names);
         }
         else
         {
@@ -142,6 +86,9 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         buttonsByID.Add(btn.optionID, btn);
         validatorsByID.Add(btn.optionID, btn.Validator);
         btn.Validate();
+
+
+        currentFloorIDs.Add(btn.optionID);
     }
 
 
@@ -173,8 +120,115 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         }
         // build all presetList
-        //ValidateAll();
+        ValidateAll();
     }
+
+    public scr_factionBlock prefab_FactionBlock;
+    public RectTransform FactionList;
+
+    protected void InitFloorList()
+    {
+        Debug.Log("initfloorlist");
+        var currentFaction = scr_System_CampaignManager.current.CurrentRoom.FactionOwner;
+        BuildFaction(currentFaction);
+        foreach (var connect in currentFaction.ConnectedFactions)
+        {
+            BuildFaction(connect);
+        }
+    }
+
+    List<int> noDestroyList = new List<int>();
+
+    protected void BuildFaction(Manageable faction)
+    {
+        if (faction == null) 
+        {
+            Debug.LogError("initfaction error faction null");
+            return;
+        }
+        else
+        {
+            Debug.Log("initffactionblock " + faction.FactionDisplayName);
+        }
+
+        var block = Instantiate(prefab_FactionBlock);
+        block.transform.SetParent(FactionList, false);
+        block.factionTitle.text = faction.FactionDisplayName;
+
+        foreach(var floor in faction.ManagedFloors)
+        {
+            var btn = Instantiate(block.buttonPrefab);
+            btn.transform.SetParent(block.floorList, false);
+
+            btn.Initialize(this, new ButtonValidator_Floor(this, floor, btn));
+            btn.SetText(floor.displayName);
+
+            btn.optionID = floor.GetHashCode();
+            buttonsByID.Add(btn.optionID, btn);
+            validatorsByID.Add(btn.optionID, btn.Validator);
+
+            noDestroyList.Add(btn.optionID);
+        }
+    }
+
+    public void LoadFloor(Floor_Instance floornew = null)
+    {
+        if (this.floor == null) InitFloorList();
+
+        if (floornew == null) Debug.LogError("canvas_RoomDisplay ATTEMPTING TO DISPLAY NONEXISTENT ROOM");
+        if (floor != floornew)
+        {
+            floor = floornew;
+            // wipe previous
+            foreach(var button in currentFloorIDs)
+            {
+                if (noDestroyList.Contains(button)) continue;
+                var validator = this.validatorsByID[button];
+
+                this.buttonsByID.Remove(button);
+                this.validatorsByID.Remove(button);
+
+                validator.Destroy();
+            }
+            currentFloorIDs.Clear();
+            Utility.DestroyAllChildrenFrom(ref roomList);
+            var pictureRect = picture.rectTransform;
+            Utility.DestroyAllChildrenFrom(ref pictureRect);
+
+
+            // create new
+
+            picture.sprite = scr_System_CentralControl.current.LoadCachedSprite(floor.FloorBase.imagePath);
+            var scale = floor.FloorBase.resize;
+            picture.rectTransform.localScale = new Vector3(scale, scale, scale);
+            floorName.text = floor.displayName;
+
+            foreach (Room_Instance ri in floor.rooms)
+            {
+                if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode()) * 2))
+                {
+                    addBtn(prefab_roomButton, picture.rectTransform, ri, false, false);
+                    addBtn(prefab_roomButton, roomList, ri, true, true);
+
+                }
+                else
+                {
+                    //Debug.Log("scr_Panel_Map OnEnable skipping redraw for room [" + ri.displayName + "]");
+                }
+
+                if (scr_System_CampaignManager.current.Map.floorDoorQuickSearch.ContainsKey(ri.RefID))
+                {
+                    //Debug.Log("scr_Panel_Map searching room with floor exit found match ["+ri.displayName+"]");
+                    int i = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
+                    Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
+                    var j = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(i);
+                    addExit(prefab_roomButton, picture.rectTransform, exit, j);
+                }
+            }
+        }
+        ValidateAll();
+    }
+
 
     public override void Notify(int optionID)
     {
@@ -189,12 +243,10 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         {
             switch (optionID)
             {
-                case 9999:
-                    this.gameObject.SetActive(false);
-                    parent.destroyFloorDisplay();
-                    //scr_System_SceneManager.current.UnloadLastCanvasFromScene();
-                    
-                    break;
+                case -9999:
+                    //this.gameObject.SetActive(false);
+                    //parent.destroyFloorDisplay();
+                    scr_System_SceneManager.current.UnloadLastCanvasFromScene(); break;
                 default: break;
             }
         }
@@ -202,8 +254,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     RectTransform selfRect;
 
-    
 
+    /*
     private void readTXT(string path, TextMeshProUGUI box)
     {
         var sr = new StreamReader(Application.dataPath + "/" + path);
@@ -211,7 +263,9 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         sr.Close();
         box.text = fileContents;
     }
+    */
 
+    /*
     private Texture2D LoadTexture(string FilePath)
     {
 
@@ -229,8 +283,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
                 return Tex2D;                 // If data = readable -> return texture
         }
         return null;                     // Return null if load failed
-
     }
+    */
 
     Texture2D SpriteTexture = null;
     Sprite NewSprite;
@@ -246,7 +300,12 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         image.transform.rotation = Quaternion.identity;
         image.transform.Rotate(new Vector3(0, 0, scr_System_CampaignManager.current.Map.z_rotation));
-    }*/
+    }
+    */
+    public void NotifyMove()
+    {
+        this.Notify(-9999);
+    }
 
     protected override void OnDestroy()
     {
@@ -256,17 +315,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.pointerPress == eventData.rawPointerPress && eventData.button == PointerEventData.InputButton.Left)
-        {
-            this.gameObject.SetActive(false);
-            parent.destroyFloorDisplay();
-        }
-
-        else if (eventData.pointerPress != eventData.rawPointerPress && eventData.button == PointerEventData.InputButton.Right)
-        {
-            this.gameObject.SetActive(false);
-            parent.destroyFloorDisplay();
-        }
+        if (eventData.pointerPress == eventData.rawPointerPress && eventData.button == PointerEventData.InputButton.Left) Notify(-9999);
+        else if (eventData.pointerPress != eventData.rawPointerPress && eventData.button == PointerEventData.InputButton.Right) Notify(-9999);
 
         //Debug.Log("scr_Menu_CharaDetail: OnPointerClick! Data["+eventData.pointerPress+"] rawData["+ eventData.rawPointerPress + "]");
     }
@@ -279,10 +329,12 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         Job playerJob { get { return scr_System_CampaignManager.current.Player.InteractionJob;} }
 
         int roomRef = -1;
+        new canvas_RoomDisplay parent;
         public ButtonValidator_MoveRoom(canvas_RoomDisplay parent, Room_Instance room, scr_SelectableText text) : base(parent)
         {
             this.roomRef = room.RefID;
             this.text = text;
+            this.parent = parent;
         }
 
 
@@ -336,7 +388,14 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
             //scr_System_CampaignManager.current.FreeUpdate();
             scr_System_CampaignManager.current.FreeUpdate();
+            parent.NotifyMove();
             //scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
+        }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+            DestroyImmediate(this.text);
         }
     }
 
@@ -352,7 +411,6 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             this.text = text;
         }
 
-
         public override bool IsButtonValid()
         {
             return true;
@@ -360,7 +418,43 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            parent.parent.changeFloorDisplay(floor.refID);
+            parent.LoadFloor(floor);
+        }
+        public override void Destroy()
+        {
+            base.Destroy();
+            DestroyImmediate(this.text);
+        }
+    }
+
+    public class ButtonValidator_Floor : ButtonValidator, I_ButtonClickable
+    {
+        Floor_Instance floor;
+        scr_SelectableText text;
+        new canvas_RoomDisplay parent;
+        public ButtonValidator_Floor(canvas_RoomDisplay parent, Floor_Instance floor, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent;
+            this.floor = floor;
+            this.text = text;
+        }
+
+        public override bool IsButtonValid()
+        {
+            if (parent.floor == floor)
+            {
+                text.Toggle(true, true);
+            }
+            else
+            {
+                text.Toggle(true, false);
+            }
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.LoadFloor(floor);
         }
     }
 }

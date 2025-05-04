@@ -22,7 +22,7 @@ public abstract class scr_Menu : MonoBehaviour
     public Canvas m_Canvas;
     protected Camera m_Camera;
     public delegate void Action();
-    public Action onSelfExit = null; 
+    public Action onSelfExit = null;
 
     protected virtual void OnEnable()
     {
@@ -149,6 +149,7 @@ public class scr_Menu_Intro : scr_Menu
 
     Dictionary<string, int> dictionary_presetID_path;
 
+    public scr_HoverableText version;
     protected override void Awake()
     {
         base.Awake();
@@ -175,6 +176,8 @@ public class scr_Menu_Intro : scr_Menu
                 case 3:
                     button.Initialize(this, new ButtonValidator_AlwaysFalse(this));
                     break;
+                case 5:
+                    button.Initialize(this, new ButtonValidator_HoverMessage(this, button));break;
                 case -1:break;
                 default:
                     button.Initialize(this, button_alwaysValid);
@@ -192,6 +195,12 @@ public class scr_Menu_Intro : scr_Menu
 
     }
 
+    protected override void Start()
+    {
+        base.Start();
+
+        version.SetText(Application.version);
+    }
     public class ButtonValidator_Load : ButtonValidator, I_ButtonClickable
     {
         new scr_Menu_Intro parent;
@@ -307,6 +316,32 @@ public class scr_Menu_Intro : scr_Menu
                 tooltip = scr_System_tooltipDictionary.current.FindEntry("tooltip_cannotLoadSave");
                 return false;
             }
+        }
+    }
+
+
+    public class ButtonValidator_HoverMessage : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Menu_Intro parent;
+        scr_SelectableText button;
+        string copied = scr_System_Serializer.current.Dictionary.QueryThenParse("intro_message_4");
+        public ButtonValidator_HoverMessage(scr_Menu_Intro parent, scr_SelectableText button) : base(parent)
+        {
+            this.parent = parent;
+            this.button = button;
+            this.tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("intro_message_3")
+                                        .Replace("$link$", Utility.bugReport);
+        }
+
+        public override bool IsButtonValid()
+        {
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            GUIUtility.systemCopyBuffer = Utility.bugReport;
+            button.SetText(copied);
         }
     }
 

@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Linq;
+using Unity;
 using Newtonsoft.Json;
 
 
@@ -66,12 +65,13 @@ public class Inventory
     public void AddItem(Item_Instance i)
     {
         bool added = false;
+        var temp = tracker; 
         if (!added)
         {
             var v = this.Contents.Find(x => x.canStackWith(i));
             if (v != null)
             {
-                //Debug.LogError($"Merging item {i.DisplayName}x{i.Count} with {v.DisplayName}x{v.Count}");
+                Debug.Log($"Merging item {i.DisplayName}x{i.Count} with {v.DisplayName}x{v.Count}");
                 added = true;
                 v.ModCount(i.Count);
                 scr_System_CampaignManager.current.Unregister(i);
@@ -153,6 +153,44 @@ public class Inventory
         return null;
     }
 
+    /// <summary>
+    /// This will skip token items
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <param name="count"></param>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public bool RemoveItemByTag(string tag, int count, ref List<Item_Instance> list, ref List<string> message)
+    {
+        var tempList = new Dictionary<string, int>();
+
+        foreach(var item in this.Contents)
+        {
+            if (item.isToken) continue;
+            if (!item.Tags.Contains(tag)) continue;
+            if (item.Count < 1) continue;
+            if (!tempList.ContainsKey(item.BaseID)) tempList.Add(item.BaseID, 0);
+            tempList[item.BaseID] += item.Count;
+        }
+        foreach(var kvp in tempList)
+        {
+            if (count < 1) break;
+            var removeCount = Math.Min(kvp.Value, count);
+            var temp = RemoveItem(kvp.Key, removeCount);
+
+            if (temp.Count > 0)
+            {
+                list.AddRange(temp);
+                var names = new List<string>();
+                foreach (var item in temp) names.Add(item.Print());
+                message.Add($"removed item {String.Join(",",names)}");
+                count -= removeCount;
+            }
+        }
+
+        return count == 0;
+    }
+
     public List<Item_Instance> RemoveItem(string baseID, int count)
     {
         var lists = Contents.FindAll(x=>x.BaseID == baseID);
@@ -173,8 +211,7 @@ public class Inventory
                 count -= item.Count;
                 foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag]-=item.Count;
                 results.Add(item);
-                lists.RemoveAt(i);
-
+                Contents.Remove(item);
             }
             else
             {
@@ -206,6 +243,11 @@ public class Inventory
         //Debug.Log("Faction check item [" + baseID + "] count result [" + i + "]");
         return i;
     }
+
+    [JsonIgnore] public List<Item_Instance> ContentsPrintable { get
+        {
+            return Contents.FindAll(x => x.Displayable);
+        } }
 
     public string PrintContent(bool verticalBreak = false, bool printFullContent = false)
     {

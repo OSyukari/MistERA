@@ -1,11 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Xml;
-using System.Xml.Serialization;
 using System;
 using Newtonsoft.Json;
-using System.Linq;
 
 
 /// <summary>
@@ -32,13 +28,15 @@ public class Item_Instance : IDisposable, I_Disposable
 
     public bool canStackWith(Item_Instance item)
     {
-        if (!this.Stackable) return false;
+        if (this.isToken != item.isToken) return false;
+        if (this.Stackable != item.Stackable) return false;
         if (this.BaseID != item.BaseID) return false;
+        if (this.Count == 0 || item.Count == 0) return false;
         if (this.nameOverwrite != item.nameOverwrite) return false;
 
         foreach(var comp in this.compInstances)
         {
-            if(comp == null) continue;
+            if (comp == null) continue;
             var comp2 = item.compInstances.Find(x => x.CompType == comp.CompType);
             if (comp2 == null || !comp.canMergeWith(comp2)) return false;
         }
@@ -48,13 +46,20 @@ public class Item_Instance : IDisposable, I_Disposable
 
     [SerializeField][JsonProperty] protected int referenceID = -1;
     [JsonIgnore] public int RefID { get { return referenceID; } }
-    [JsonIgnore] public string Tooltip { get { return Parent.Tooltip; } }
+    [JsonIgnore] public string Tooltip { get { 
+            
+            List<string> compTooltips = new List<string>();
+            foreach(var c in Comps) compTooltips.Add(c.Tooltip);
+            return Parent.Tooltip + (compTooltips.Count > 0 ? "\n\n"+String.Join("\n",compTooltips) : ""); } }
     [JsonIgnore] public bool Stackable { get { return Parent.Stackable && this.compInstances.Count < 1; } }
     [JsonIgnore] public int Cleanliness { get { return Parent.cleanlinessMod; } }
     [JsonIgnore] public bool isTrash { get { return Parent.Tags.Contains("trash"); } }
     [JsonIgnore] public bool Equippable { get { return Parent.Equippable; } }
 
     [JsonIgnore] public bool isToken { get { return Parent.isTokenItem; } }
+    /// <summary>
+    /// Print name only without count
+    /// </summary>
     [JsonIgnore] public string DisplayName
     {
         get
@@ -64,10 +69,30 @@ public class Item_Instance : IDisposable, I_Disposable
         }
     }
 
+    [JsonIgnore] public bool Displayable { get { return !this.isToken || this.Count > 0; } }
+
+    /// <summary>
+    /// print name and count according to item type
+    /// </summary>
+    /// <returns></returns>
     public string Print()
     {
-        return this.DisplayName + " x" + this.Count;
+        if (this._cache_printfull == "") this._cache_printfull = isCurrency ?
+                          scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_currency")
+                        : scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_item");
+
+
+        return this._cache_printfull.Replace("$item$", DisplayName).Replace("$count$", CountString);
     }
+
+    [JsonIgnore] public string CountString { get
+        {
+            if (isCurrency) return Count >= 10000000 ? (((int)(Count / 1000)).ToString() + "M") : (Count >= 10000 ? (((int)(Count/1000)).ToString()+"K") : (Count.ToString())); 
+            else return Count.ToString();
+        } }
+    [JsonIgnore] public bool isCurrency { get { return this.Tags.Contains("item_money"); } }
+
+    string _cache_printfull = "";
 
     public string nameOverwrite = "";
     [SerializeField][JsonProperty] protected List<ItemComponent_Base> compInstances = new List<ItemComponent_Base>();

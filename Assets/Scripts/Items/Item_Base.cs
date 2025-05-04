@@ -6,9 +6,9 @@ using System.Linq;
 using Newtonsoft.Json;
 
 [System.Serializable]
-public class Index_Item_Base : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitialize, I_IndexMergeable
+public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable, I_SerializationCallbackReceiver
 {
-    [SerializeField] public List<Item_Base> list = new List<Item_Base>();
+    public List<Item_Base> list = new List<Item_Base>();
 
     public void MergeWith(I_IndexMergeable list){
         var l = list as Index_Item_Base;
@@ -20,6 +20,8 @@ public class Index_Item_Base : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitia
         }
     }
 
+
+
     public void RegisterAllID()
     {
         Debug.Log("Index_Item_Base : registering ID with list length [" + list.Count + "]");
@@ -28,18 +30,6 @@ public class Index_Item_Base : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitia
         {
             scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
         }
-    }
-    public void RegisterAllTooltip()
-    {
-        foreach (Item_Base o in this.list)
-        {
-            scr_System_tooltipDictionary.current.AddEntry(o.ID, o.tooltip);
-        }
-    }
-
-    public void AppendList(Index_Item_Base list)
-    {
-        this.list.AddRange(list.list);
     }
 
     /// <summary>
@@ -92,12 +82,22 @@ public class Index_Item_Base : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitia
         foreach(var i in newItems)
         {
             scr_System_Serializer.current.RegisterIDtoLib(i.ID, i);
-            scr_System_tooltipDictionary.current.AddEntry(i.ID, i.tooltip);
             list.Add(i);
             for (int ii = i.itemComps_Template.Count - 1; ii >= 0; ii--)
             {
                //if (i.itemComps_Template[ii].comp_Craftable != null) scr_System_Serializer.current.AddCraftingRecipe(i.itemComps_Template[ii].comp_Craftable.recipes);
             }
+        }
+
+      //  list = list.Where(x => !x.Tags.Contains("do_not_use")).ToList();
+    }
+
+    public void OnAfterDeserialize()
+    {
+        for(int i = list.Count - 1; i >= 0; i--)
+        {
+            if (list[i].Tags.Contains("do_not_use")) list.RemoveAt(i);
+            else list[i].OnAfterDeserialize();
         }
     }
 }
@@ -105,33 +105,50 @@ public class Index_Item_Base : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitia
 
 
 [System.Serializable]
-public class Item_Base : ISerializationCallbackReceiver
+public class Item_Base
 {
     // serialize interface ? no
-    [SerializeField] public string id = "";
-    public string ID { get { return id; } }
+    public string id = "";
+    [JsonIgnore] public string ID { get { return id; } }
 
-    [SerializeField] public string displayName = "";
-    public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(id, displayName); } }
+    public string displayName = "";
+    [JsonIgnore] public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(id, displayName); } }
 
-    [SerializeField] public string tooltip = "";
-    public string Tooltip { get { return tooltip; } }
+    public string tooltip = "";
+    [JsonIgnore]
+    public string Tooltip
+    {
+        get
+        {
+            if (_tooltipCache == "")
+            {
+                var compTooltips = new List<string>();
+                foreach (var comp in this.itemComps_Template) if (comp.Tooltip.Length > 0) compTooltips.Add(comp.Tooltip);
+                _tooltipCache = scr_System_Serializer.current.Dictionary.QueryThenParse(id + "_tooltip", tooltip) + (compTooltips.Count > 0 ? "\n\n"+ String.Join("\n", compTooltips) : "");
+            }
+            return _tooltipCache;
+        }
+    }
+
+    string _tooltipCache = "";
 
     public bool noDisplay = false;
+    public float value = 0;
     /*
     [NonSerialized] private List<ItemComponent_Base> itemComps = new List<ItemComponent_Base>();
     public List<ItemComponent_Base> ItemComps { get { return itemComps; } }
     */
     public bool canBePackaged = false;
-    [SerializeField] public int cleanlinessMod = 0;
-    [SerializeField] public List<string> Tags = new List<string>();
+    public int cleanlinessMod = 0;
+    public List<string> Tags = new List<string>();
     public ItemComponentTemplate GetCompTemplateByID(string id)
     {
         return itemComps_Template.Find(x => x.compType == id);
     }
 
-    [SerializeField] public List<string> givesJobID = new List<string>();
-    public List<string> GivesJobID { get { return givesJobID; } }
+    public List<string> givesJobID = new List<string>();
+    [JsonIgnore] public List<string> GivesJobID { get { return givesJobID; } }
+    [JsonIgnore]
     public bool IsJobGiver
     {
         get
@@ -141,24 +158,25 @@ public class Item_Base : ISerializationCallbackReceiver
         }
     }
 
-    [SerializeField] public List<ItemComponentTemplate> itemComps_Template = new List<ItemComponentTemplate>();
+    public List<ItemComponentTemplate> itemComps_Template = new List<ItemComponentTemplate>();
 
 
     public bool isTokenItem = false;
 
-    void ISerializationCallbackReceiver.OnBeforeSerialize()
-    {
 
-    }
-
-    void ISerializationCallbackReceiver.OnAfterDeserialize()
+    public void OnAfterDeserialize()
     {
 
         this.stackable = true;
 
         // determine token
         // can set istokenitem true and forget about this part
-        if (this.Tags.Contains("food_meal") && this.itemComps_Template.Find(x=>x.compType == "ItemComponent_Degradable") != null) this.isTokenItem = true;
+
+        if (this.Tags.Contains("food_meal") && this.itemComps_Template.Find(x => x.compType == "ItemComponent_Degradable") != null)
+        {
+            //Debug.LogError($"item {this.id} set to token item");
+            this.isTokenItem = true;
+        }
 
         foreach(ItemComponentTemplate i in itemComps_Template)
         {
@@ -206,13 +224,13 @@ public class Item_Base : ISerializationCallbackReceiver
 
     }
 
-    public bool Equippable { get { return itemComps_Template.Exists(x => x.compType == "ItemComponent_Equippable"); } }
+    [JsonIgnore] public bool Equippable { get { return itemComps_Template.Exists(x => x.compType == "ItemComponent_Equippable"); } }
 
     [NonSerialized] private bool stackable;
-    public bool Stackable { get { return stackable; } }
+    [JsonIgnore] public bool Stackable { get { return stackable; } }
 
     private bool valid = true;
-    public bool isValid { get { 
+    [JsonIgnore] public bool isValid { get { 
             
             
             return valid; 
@@ -260,11 +278,11 @@ public class Item_Base : ISerializationCallbackReceiver
 [System.Serializable]
 public class ItemComponent_SerializedData
 {
-    public string compType;
+    public string compType = "";
 
 
-    public int currentGrowth; //ItemComponent_Harvestable
-    public int minuteCounter; //ItemComponent_Degradable
+    public int currentGrowth = 0; //ItemComponent_Harvestable
+    public int minuteCounter = 0; //ItemComponent_Degradable
 
 
 }

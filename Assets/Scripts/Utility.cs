@@ -47,6 +47,14 @@ public static class Utility
     public static float Ranking_P_size_Step = 2.0f;
 
     // cum 3.25+-1.75 ml
+    public static bool CTRL { get
+        {
+            return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+        } }
+
+    public static bool SHIFT { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
+
+    public static string bugReport = "https://discord.gg/XK6vm4xPh5";
 
     public static JsonSerializerSettings SerializerSettings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto ,
                             Converters = new JsonConverter[] { new JSON_SO_Converter<Character_Trainable>() }

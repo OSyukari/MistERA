@@ -155,6 +155,10 @@ public class BodyPart_Instance
                     if (contentsIndex[Tuple] == -1)
                     {
                         contentsIndex[Tuple] = itemRefID;
+                        // equip success
+#if UNITY_EDITOR
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"{Owner.FirstName} successfully equipped {item.DisplayName} at {DisplayName}");
+#endif
                         return 0;
                     }
                     else if (contentsIndex[Tuple] != -1 && forceEquip == true)
@@ -163,21 +167,39 @@ public class BodyPart_Instance
                         contentsIndex[Tuple] = itemRefID;
 
                         Owner.UnequipItem(returnval);
-
+                        var unequipped = scr_System_CampaignManager.current.FindItemInstanceByID(returnval);
+                        // replace equipped
+#if UNITY_EDITOR
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"{Owner.FirstName} successfully equipped {item.DisplayName} at {DisplayName}, unequipping item {unequipped.DisplayName}");
+#endif
                         return returnval;
                     }
                 }
                 else
                 {
-
+#if UNITY_EDITOR
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.LogError($"bodypart {DisplayName} does not contain index {Tuple} in {String.Join(",", contentsIndex.Keys)}, checking childrens");
+#endif
+                    // equip failed ask next
                     foreach (BodyInternal_Instance i in this.internals)
                     {
+#if UNITY_EDITOR
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.LogError($"trying equip item on children {i.DisplayName}");
+#endif
                         int j = i.EquipItem(itemRefID, forceEquip);
                         if (j > -1) return j;
                     }
                 }
                 /// CODE END
             }
+            else
+            {
+                Debug.LogError($"{Owner.FirstName} failed equipping {item.DisplayName}, cannot find item equippable comp");
+            }
+        }
+        else
+        {
+            Debug.LogError($"{Owner.FirstName} failed equipping {itemRefID}, cannot find item by ref");
         }
         return -1;
     }
@@ -208,7 +230,7 @@ public class BodyPart_Instance
         }
         foreach (BodyInternal_Instance i in this.internals)
         {
-            list.Add(i.EquipItemDirect(itemRefID, slot, layer));
+            //list.Add(i.EquipItemDirect(itemRefID, slot, layer));
         }
 
         return list;

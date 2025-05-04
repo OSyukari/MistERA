@@ -8,9 +8,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hair",
-                        "revealingString":"Armored",
-                        "equipLayerString":"Outer"
+                        "equipSlot":"Hair",
+                        "revealing":"Armored",
+                        "equipLayer":"Outer"
                     }
                 }
             ]
@@ -21,9 +21,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Torso",
-                        "revealingString":"Armored",
-                        "equipLayerString":"Outer"
+                        "equipSlot":"Torso",
+                        "revealing":"Armored",
+                        "equipLayer":"Outer"
                     }
                 }
             ]
@@ -34,9 +34,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hand",
-                        "revealingString":"Armored",
-                        "equipLayerString":"Outer",
+                        "equipSlot":"Hand",
+                        "revealing":"Armored",
+                        "equipLayer":"Outer",
                         "equipCount":2
                     }
                 }
@@ -48,9 +48,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Feet",
-                        "revealingString":"Armored",
-                        "equipLayerString":"Outer",
+                        "equipSlot":"Feet",
+                        "revealing":"Armored",
+                        "equipLayer":"Outer",
                         "equipCount":2
                     }
                 }
@@ -63,9 +63,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Torso",
-                        "coverSlotString":["Lower"],
-                        "equipLayerString":"Outer"
+                        "equipSlot":"Torso",
+                        "coverSlot":["Lower"],
+                        "equipLayer":"Outer"
                     }
                 }
             ]
@@ -77,8 +77,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hair",
-                        "equipLayerString":"Outer"
+                        "equipSlot":"Hair",
+                        "equipLayer":"Outer"
                     }
                 }
             ]
@@ -90,9 +90,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Lower",
-                        "equipLayerString":"Outer",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Lower",
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -104,8 +104,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hand",
-                        "equipLayerString":"Inner"
+                        "equipSlot":"Hand",
+                        "equipLayer":"Inner"
                     }
                 }
             ]
@@ -117,9 +117,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hand",
-                        "equipLayerString":"Inner",
-                        "revealingString":"SeeThrough",
+                        "equipSlot":"Hand",
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough",
                         "equipCount":2
                     }
                 }
@@ -132,10 +132,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Lower",
-                        "equipLayerString":"Outer",
+                        "equipSlot":"Lower",
+                        "equipLayer":"Outer",
                         "allowHalfDressed":true,
-                        "coverSlotString":["Leg"]
+                        "coverSlot":["Leg"]
                     }
                 }
             ]
@@ -147,8 +147,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Torso",
-                        "equipLayerString":"Inner"
+                        "equipSlot":"Torso",
+                        "equipLayer":"Inner"
                     }
                 }
             ]
@@ -160,8 +160,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Lower",
-                        "equipLayerString":"Inner"
+                        "equipSlot":"Lower",
+                        "equipLayer":"Inner"
                     }
                 }
             ]
@@ -173,9 +173,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Lower",
-                        "equipLayerString":"Inner",
-                        "revealingString":"ShapeReveal"
+                        "equipSlot":"Lower",
+                        "equipLayer":"Inner",
+                        "revealing":"ShapeReveal"
                     }
                 }
             ]
@@ -187,9 +187,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hair",
-                        "equipLayerString":"Inner",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Hair",
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -201,8 +201,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hand",
-                        "equipLayerString":"Skin",
+                        "equipSlot":"Hand",
+                        "equipLayer":"Skin",
                         "equipCount":2
                     }
                 }
@@ -215,9 +215,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hand",
-                        "equipLayerString":"Skin",
-                        "revealingString":"SeeThrough",
+                        "equipSlot":"Hand",
+                        "equipLayer":"Skin",
+                        "revealing":"SeeThrough",
                         "equipCount":2
                     }
                 }
@@ -230,10 +230,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Feet",
-                        "equipLayerString":"Inner",
+                        "equipSlot":"Feet",
+                        "equipLayer":"Inner",
                         "equipCount":2,
-                        "revealingString":"ShapeReveal"
+                        "revealing":"ShapeReveal"
                     }
                 }
             ]
@@ -245,10 +245,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Feet",
-                        "equipLayerString":"Inner",
+                        "equipSlot":"Feet",
+                        "equipLayer":"Inner",
                         "equipCount":2,
-                        "revealingString":"ShapeReveal"
+                        "revealing":"ShapeReveal"
                     }
                 }
             ]
@@ -260,9 +260,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hair",
-                        "equipLayerString":"Inner",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Hair",
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -274,9 +274,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hair",
-                        "equipLayerString":"Skin",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Hair",
+                        "equipLayer":"Skin",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -288,9 +288,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Neck",
-                        "equipLayerString":"Inner",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Neck",
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -302,9 +302,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Neck",
-                        "equipLayerString":"Inner",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Neck",
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -316,9 +316,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Face",
-                        "equipLayerString":"Skin",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Face",
+                        "equipLayer":"Skin",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -330,9 +330,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Eyes",
-                        "equipLayerString":"Skin",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Eyes",
+                        "equipLayer":"Skin",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -344,8 +344,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Torso",
-                        "equipLayerString":"Skin",
+                        "equipSlot":"Torso",
+                        "equipLayer":"Skin",
                         "partialUndress":
                         [
                             {
@@ -364,9 +364,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hand",
-                        "equipLayerString":"Inner",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Hand",
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -378,8 +378,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Lower",
-                        "equipLayerString":"Skin",
+                        "equipSlot":"Lower",
+                        "equipLayer":"Skin",
                         "partialUndress":
                         [
                             {
@@ -398,9 +398,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Neck",
-                        "equipLayerString":"Outer",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Neck",
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -412,10 +412,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Lower",
-                        "equipLayerString":"Skin",
-                        "revealingString":"SeeThrough",
-                        "coverSlotString":["Leg"]
+                        "equipSlot":"Lower",
+                        "equipLayer":"Skin",
+                        "revealing":"SeeThrough",
+                        "coverSlot":["Leg"]
                     }
                 }
             ]
@@ -427,11 +427,11 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Feet",
-                        "equipLayerString":"Skin",
+                        "equipSlot":"Feet",
+                        "equipLayer":"Skin",
                         "equipCount":2,
-                        "revealingString":"SeeThrough",
-                        "coverSlotString":["Leg"]
+                        "revealing":"SeeThrough",
+                        "coverSlot":["Leg"]
                     }
                 }
             ]
@@ -443,10 +443,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Feet",
-                        "equipLayerString":"Skin",
+                        "equipSlot":"Feet",
+                        "equipLayer":"Skin",
                         "equipCount":2,
-                        "revealingString":"ShapeReveal"
+                        "revealing":"ShapeReveal"
                     }
                 }
             ]
@@ -458,9 +458,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Neck",
-                        "equipLayerString":"Skin",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Neck",
+                        "equipLayer":"Skin",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -472,9 +472,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Breasts",
-                        "equipLayerString":"Skin",
-                        "revealingString":"Erotic"
+                        "equipSlot":"Breasts",
+                        "equipLayer":"Skin",
+                        "revealing":"Erotic"
                     }
                 }
             ]
@@ -486,9 +486,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Clitoris",
-                        "equipLayerString":"Skin",
-                        "revealingString":"Erotic"
+                        "equipSlot":"Clitoris",
+                        "equipLayer":"Skin",
+                        "revealing":"Erotic"
                     }
                 }
             ]
@@ -500,10 +500,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Torso",
-                        "equipLayerString":"Inner",
+                        "equipSlot":"Torso",
+                        "equipLayer":"Inner",
                         "allowHalfDressed":true,
-                        "coverSlotString":["Lower"],
+                        "coverSlot":["Lower"],
                         "equipTags":[],
                         "stat_modifiers":[
                             {
@@ -522,8 +522,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Feet",
-                        "equipLayerString":"Inner",
+                        "equipSlot":"Feet",
+                        "equipLayer":"Inner",
                         "equipCount":2,
                         "stat_modifiers":[
                             {
@@ -542,9 +542,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Neck",
-                        "equipLayerString":"Outer",
-                        "revealingString":"SeeThrough"
+                        "equipSlot":"Neck",
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough"
                     }
                 }
             ]
@@ -556,9 +556,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hair",
-                        "equipLayerString":"Outer",
-                        "revealingString":"SeeThrough",
+                        "equipSlot":"Hair",
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough",
                         "stat_modifiers":[
                             {
                                 "statID":"Willpower",
@@ -580,8 +580,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Torso",
-                        "equipLayerString":"Outer"
+                        "equipSlot":"Torso",
+                        "equipLayer":"Outer"
                     }
                 }
             ]
@@ -593,9 +593,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Torso",
-                        "equipLayerString":"Outer",
-                        "coverSlotString":["Lower"]
+                        "equipSlot":"Torso",
+                        "equipLayer":"Outer",
+                        "coverSlot":["Lower"]
                     }
                 }
             ]
@@ -607,10 +607,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlotString":"Hand",
-                        "equipLayerString":"Skin",
+                        "equipSlot":"Hand",
+                        "equipLayer":"Skin",
                         "equipCount":2,
-                        "revealingString":"ShapeReveal"
+                        "revealing":"ShapeReveal"
                     }
                 }
             ]

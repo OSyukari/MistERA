@@ -97,7 +97,7 @@ public class ActionPackage_ProductionOrder : ActionPackage
     // move one step along the path
     protected override void Execution()
     {
-        order.AddProgress(targetCOM.TimeScale);
+        //order.AddProgress(targetCOM.TimeScale);
 
 
         Debug.Log("ActionPackage_ProductionOrder: JobInRoom[" + job.ParentRoom.DisplayName + "] COM[" + targetCOM.displayName + "] has null order ?"+(order == null));

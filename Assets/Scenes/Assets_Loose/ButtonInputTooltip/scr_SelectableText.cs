@@ -200,7 +200,7 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (!initialized) Awake();
         if (this.replaceText == "") replaceText = this.GetComponent<scr_HoverableText>().replaceText;
         //Debug.Log("initiaze button parent[" + parent + "] validator[" + v + "] text ["+this.Text.text+"]");
-        if (parent == null || v == null) Debug.Log("button.initialize failed cuz parent["+parent+"] or validator["+ v+"]");
+        if (parent == null || v == null) Debug.Log("button.initialize failed cuz parent["+parent+"] or validator["+ v+"] buttonID "+this.optionID);
         this.validator = v;
         this.parent = parent;
         this.Text.text = this.replaceText != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse(replaceText) : scr_System_Serializer.current.Dictionary.QueryThenParse(this.Text.text);

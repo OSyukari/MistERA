@@ -163,6 +163,9 @@ public class Character_Body
         List<int> list = new List<int>();
         foreach (BodyPart_Instance i in Body)
         {
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"trying equipping item {itemRefID} on bodypart {i.DisplayName}");
+#endif
             j = i.EquipItem(itemRefID, forceEquip);
             if (j > -1)
             {
@@ -173,34 +176,39 @@ public class Character_Body
         }
 
         list = list.Distinct().ToList();
-        list.Remove((int)0);
+        list.Remove(0);
 
         if (list.Exists(x => x == -1)) Debug.Log("Error equipping [" + Owner.FirstName + "] with [" + itemRefID + "], return value [" + list.ToString() + "]");
         else
         {
-
             Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
+            ItemComponent_Equippable comp = item != null ? item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable : null;
+            if (comp != null && comp.statModifiers.Count > 0) Owner.Stats.RefreshAllStats(true);
+        }
+        /// what the fuck is below code doing ???
+        /*
+        Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
 
-            if (item != null)
+        if (item != null)
+        {
+            ItemComponent_Equippable comp = item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
+            if (comp != null)
             {
-                ItemComponent_Equippable comp = item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
-                if (comp != null)
+                foreach (BodyPartEquipSlot s in comp.coverSlot)
                 {
-                    foreach (BodyPartEquipSlot s in comp.coverSlot)
+                    foreach (BodyPart_Instance i in Body)
                     {
-                        foreach (BodyPart_Instance i in Body)
-                        {
-                            //Debug.Log("EQUIPPING COVER SLOT " + s + " " + comp.equipLayer);
-                            list.AddRange(i.EquipItemDirect(itemRefID, s, comp.equipLayer));
-                        }
+                        //Debug.Log("EQUIPPING COVER SLOT " + s + " " + comp.equipLayer);
+                        list.AddRange(i.EquipItemDirect(itemRefID, s, comp.equipLayer));
                     }
-                    if (comp.statModifiers.Count > 0) Owner.Stats.RefreshAllStats(true);
                 }
+                if (comp.statModifiers.Count > 0) Owner.Stats.RefreshAllStats(true);
             }
         }
+        
 
         list = list.Distinct().ToList();
-        list.Remove((int)0);
+        list.Remove((int)0);*/
         return list;
     }
 
