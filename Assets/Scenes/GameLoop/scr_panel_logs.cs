@@ -87,8 +87,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         scr_System_CampaignManager.current.Logs.Clear();
     }
 
-    List<List<string>> msgLog;
-    List<string> msg;
+    //List<List<string>> msgLog;
+    //List<string> msg;
 
     private RectTransform currentMsgLog, currentMsg;
     private void AnimateOneStep()
@@ -100,74 +100,42 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
         UpdateAnimatingStatus();
 
-        if (!canAnimate) {
-            //Debug.LogError("Log Panel AnimateOneStep : !canAnimate");
-            scr_System_CampaignManager.current.Log_TryClearChar(true);
-            return;
-        }
-
         //Debug.Log("loglist anchored position is " + LogsList.anchoredPosition.x + "|" + LogsList.anchoredPosition.y);
         LogsList.anchoredPosition = new Vector2(0, 0);
 
-        if (msg.Count > 0)
+        var current = todo.Count > 0 ? todo[0] : null;
+        if(current == null)
         {
-            //Debug.Log("Log Panel AnimateOneStep : msg[0].Length > 0");
-            while (msg.Count > 0)
-            {
-                if (msg[0] != null && msg[0].Length > 0) currentMsg.GetComponent<TMP_Text>().text += (currentMsg.GetComponent<TMP_Text>().text.Length > 0 ? "\n":"")+ msg[0];
-                msg.RemoveAt(0);
-            }
-
-            if (Input.GetMouseButton(1) && canAnimate) AnimateOneStep();
-            // if this state we animate all it might break update routine and return player to main screen while player still has ongoing package
-            
+            scr_System_CampaignManager.current.Log_TryClearChar(true);
+            return;
         }
-        else
+        else if (!current.displayed)
         {
-            if (msgLog.Count > 0)
+            if (current is Message_Text)
             {
-                //Debug.Log("Log Panel AnimateOneStep : msgLog count > 0");
-                while (msgLog.Count > 0)
-                {
-                    msg.AddRange(msgLog[0]);
-                    msgLog.RemoveAt(0);
-                }
-                // change current message ref (make new)
-                currentMsg = Instantiate(prefab_LogLine);
-                currentMsg.SetParent(currentMsgLog, false);
-                var box = currentMsgLog.GetComponent<scr_MessageLogBox>();
+                RectTransform msgbox;
+                if (current.PortraitRef == -1000) msgbox = Instantiate(prefab_SeparationEntry);
+                else msgbox = Instantiate(prefab_LogEntry);
 
-                AnimateOneStep();
+                msgbox.SetParent(LogsList, false);
+                (current as Message_Text).Draw(msgbox.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine);
             }
-            else
+            else if (current is Message_Question)
             {
-                if (todo.Count > 0)
-                {
-                    //Debug.Log("Log Panel AnimateOneStep : Todo Count > 0");
-                    MessageLog a = todo[0];
-                    msgLog.AddRange(a.Iterate());
-                    
-                    // change current LogBox ref (make new)
-                    if (a.PortraitRef == -1000) currentMsgLog = Instantiate(prefab_SeparationEntry);
-                    else currentMsgLog = Instantiate(prefab_LogEntry);
-                    
-                    var box = currentMsgLog.GetComponent<scr_MessageLogBox>();
-                    box.Initialize(a.PortraitRef);
-                    currentMsgLog.SetParent(LogsList, false);
-
-                    if (a.PortraitRef > -1) scr_System_CampaignManager.current.Log_TrySetChara(a.PortraitRef, true);
-
-                    todo.RemoveAt(0);
-                    AnimateOneStep();
-                }
-                else
-                {
-                    Debug.LogError("Log Panel AnimateOneStep : Todo Count = 0, Else!");
-                }
-
+                var question = Instantiate(prefab_question);
+                question.transform.SetParent(LogsList, false);
+                (current as Message_Question).Draw(question);
             }
         }
+        else if (current.canAnimate())
+        {
+            current.Animate();
+        }
+
+        if (!current.canAnimate()) todo.RemoveAt(0);
     }
+
+
     private IEnumerator AnimateAll()
     {
         while (canAnimate)
@@ -182,13 +150,13 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         }
     }
 
-    public bool canAnimate { get { return todo.Count > 0 || msgLog.Count > 0 || msg.Count > 0; } }
+    public bool canAnimate { get { return todo.Count > 0; } }
 
 
     public RectTransform LogsList;
-    public RectTransform prefab_LogEntry, prefab_LogLine, prefab_SeparationEntry;
-
-
+    public RectTransform prefab_LogEntry, prefab_SeparationEntry;
+    public TMP_Text prefab_LogLine;
+    public scr_menu_question prefab_question;
 
 
     private void OnDisable()
@@ -224,8 +192,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         scr_UpdateHandler.current.Observer_LogsSingleStepUpdate += SingleUpdate;
 
         todo = new List<MessageLog>();
-        msg = new List<string>();
-        msgLog = new List<List<string>>();
+       // msg = new List<string>();
+       // msgLog = new List<List<string>>();
 
         this.gameObject.SetActive(false);
     }
@@ -262,7 +230,14 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
         if (!canAnimate && !lockView && (clickID == -1 || clickID == -2) && Utility.isClickBelowDragThreshold(eventData))
         {   // exclude middle mouse
-            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
+            if (LogsList.anchoredPosition != new Vector2(0, 0))
+            {
+                LogsList.anchoredPosition = new Vector2(0, 0);
+            }
+            else
+            {
+                scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
+            }
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {

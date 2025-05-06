@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using TMPro;
 
 
 /// <summary>
@@ -10,7 +12,7 @@ using System.Linq;
 /// </summary>
 public class MessageLogManager
 {
-    public List<MessageLog> Logs;
+    public List<MessageLog> Logs = new List<MessageLog>();
 
 
     int currentLogRef = -1;
@@ -52,11 +54,10 @@ public class MessageLogManager
         if (s.Length < 1) return null;
 
         List<string> splitted = s.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
-        MessageLog log = new MessageLog(refID);
+        Message_Text log = new Message_Text(refID);
         foreach (string ss in splitted) if (ss.Length > 0) log.AddMessage(ss, rA);
 
-        Logs.Add(log);
-        return log;
+        return AddLog(log, animate);
     }
 
     public MessageLog AddLog(MessageLog log, bool animate = false)
@@ -67,7 +68,7 @@ public class MessageLogManager
 
     public MessageLogManager()
     {
-        this.Logs = new List<MessageLog>();
+
     }
 
     public void Clear()
@@ -84,45 +85,39 @@ public class MessageLogManager
 }
 
 [System.Serializable]
-public class MessageLog
+
+public class Message_Text : MessageLog
 {
-    private int portraitRefID = -1;
-    public int PortraitRef { get { return portraitRefID; } }
-
-    public DateTime time;
-
-    private string header = "";
-    public string Header { get { return header; } }
-
-    private string causes = "";
-    private List<Message> messages;
-    public List<Message> Messages { get { return messages; } }
-    public void ClearMessages()
+    public override bool canAnimate()
     {
-        this.messages.Clear();
+        if (lines == null) lines = Iterate();
+        return lines.Count > 0;
     }
-    //private Dictionary<Tuple<int, string>,int> experience;
-    private Dictionary<int, Dictionary<string, int>> experiences;
+    public string Header = "";
+    private string causes = "";
 
-    public void AddHeader(string s) { this.header += s; }
+    public List<Message> Messages = new List<Message>();
+
+    public void AddHeader(string s) { this.Header += s; }
 
     public void AddCauses(string s) { this.causes += s; }
-    public void AddExperience(int charaRef, string expID, int count) 
+    public void AddExperience(int charaRef, string expID, int count)
     {
         if (!this.experiences.ContainsKey(charaRef)) experiences.Add(charaRef, new Dictionary<string, int>());
 
         if (experiences[charaRef].ContainsKey(expID)) experiences[charaRef][expID] += count;
         else experiences[charaRef].Add(expID, count);
     }
+
     public void AddExperience(Dictionary<int, Dictionary<string, int>> dict)
     {
-        foreach(KeyValuePair<int, Dictionary<string, int>> kvp in dict)
+        foreach (KeyValuePair<int, Dictionary<string, int>> kvp in dict)
         {
             if (!this.experiences.ContainsKey(kvp.Key)) experiences.Add(kvp.Key, kvp.Value);
             else
             {
 
-                foreach(KeyValuePair<string, int> kkvp in kvp.Value)
+                foreach (KeyValuePair<string, int> kkvp in kvp.Value)
                 {
                     if (!this.experiences[kvp.Key].ContainsKey(kkvp.Key)) this.experiences[kvp.Key].Add(kkvp.Key, kkvp.Value);
                     else this.experiences[kvp.Key][kkvp.Key] += kkvp.Value;
@@ -130,14 +125,17 @@ public class MessageLog
             }
         }
     }
+    //private Dictionary<Tuple<int, string>,int> experience;
+    protected Dictionary<int, Dictionary<string, int>> experiences = new Dictionary<int, Dictionary<string, int>>();
 
-    public List<List<string>> Iterate(bool iteratePerLine = false)
+    List<List<string>> lines = null;
+    protected List<List<string>> Iterate(bool iteratePerLine = false)
     {
         List<List<string>> lines = new List<List<string>>();
-        if (header != "") lines.Add(new List<string> { header });
-        if (causes != "") lines.Add(new List<string> { "Influencing Factors: "+ causes });
-        foreach (var m in messages) lines.Add(m.Iterate(iteratePerLine));
-        foreach(var kvp_refID in experiences)
+        if (Header != "") lines.Add(new List<string> { Header });
+        if (causes != "") lines.Add(new List<string> { "Influencing Factors: " + causes });
+        foreach (var m in Messages) lines.Add(m.Iterate(iteratePerLine));
+        foreach (var kvp_refID in experiences)
         {
             if (kvp_refID.Value.Count > 0)
             {
@@ -151,22 +149,17 @@ public class MessageLog
 
     public void AddMessage(List<string> s, bool rA)
     {
-        foreach(var en in s) messages.Add(new Message(en, rA));
+        foreach (var en in s) Messages.Add(new Message(en, rA));
     }
     public void AddMessage(string s, bool rA)
     {
-        if (s.Length > 0) messages.Add(new Message(s, rA));
+        if (s.Length > 0) Messages.Add(new Message(s, rA));
     }
 
-    public MessageLog(int portraitRefID, List<Message> messages = null, DateTime time = default)
+    public Message_Text(int portraitRefID, List<Message> messages = null, DateTime time = default):base(portraitRefID, time)
     {
-        this.portraitRefID = portraitRefID;
-        this.messages = new List<Message>();
-        if (time != default) this.time = time;
-        else this.time = scr_System_Time.current.getCurrentTime();
-        this.experiences = new Dictionary<int, Dictionary<string, int>>();
+        this.Messages = new List<Message>();
     }
-
 
     /// <summary>
     /// One paragraph that displays 
@@ -184,9 +177,105 @@ public class MessageLog
 
         public List<string> Iterate(bool lineBreak = false)
         {
-            if (!lineBreak) return new List<string> { content };
+
+            if (!lineBreak || (content.Length > 0 && content.StartsWith("<") && content.EndsWith(">") )) return new List<string> { content };
             else return content.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
 
         }
     }
+
+    scr_MessageLogBox selfBox = null;
+    TMP_Text currentLine = null;
+    public void Draw(scr_MessageLogBox box, TMP_Text linePrefab)
+    {
+        this.Draw();
+
+        this.selfBox = box;
+        this.prefab_LogLine = linePrefab;
+
+        box.Initialize(this.PortraitRef);
+        if (this.PortraitRef > -1) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
+        if(canAnimate()) Animate();
+    }
+
+
+    List<string> msg = new List<string>();
+    protected TMP_Text prefab_LogLine;
+
+    public override void Animate()
+    {
+        if (msg.Count < 1 && lines.Count > 0)
+        {
+            msg = lines[0];
+            lines.RemoveAt(0);
+            currentLine = UnityEngine.Object.Instantiate(prefab_LogLine);
+            currentLine.transform.SetParent(selfBox.transform, false);
+        }
+
+        while (msg.Count > 0 && currentLine != null)
+        {
+            currentLine.text += (currentLine.text.Length > 0 ? "\n" : "") + msg[0];
+            msg.RemoveAt(0);
+        }
+
+        if (Input.GetMouseButton(1) && this.canAnimate()) Animate();
+    }
+}
+
+
+
+
+
+[System.Serializable]
+public class Message_Question : MessageLog
+{
+
+    public override bool canAnimate()
+    {
+        return false;
+    }
+    EventEntry.EventEntry_Question question;
+    public Message_Question(int portraitRef, EventEntry.EventEntry_Question question, DateTime time = default):base(portraitRef, time)
+    {
+        this.question = question;
+    }
+
+    public override void Animate()
+    {
+        Debug.LogError("Animate called on message_question");
+    }
+
+    public void Draw(scr_menu_question questionBox)
+    {
+        base.Draw();
+        questionBox.InitializeWithArgs(question);
+    }
+}
+
+
+[System.Serializable]
+public abstract class MessageLog
+{
+    public bool displayed = false;
+    public abstract bool canAnimate();
+
+    public int PortraitRef = -1;
+
+    public DateTime time;
+    
+    public MessageLog(int portraitRef, DateTime time = default)
+    {
+        this.PortraitRef = portraitRef;
+        if (time != default) this.time = time;
+        else this.time = scr_System_Time.current.getCurrentTime();
+
+    }
+
+    public abstract void Animate();
+   
+    public void Draw()
+    {
+        this.displayed = true;
+    }
+
 }

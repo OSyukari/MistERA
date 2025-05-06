@@ -9,6 +9,18 @@ using UnityEngine.UI;
 
 public class scr_UpdateHandler : MonoBehaviour
 {
+    [SerializeField] public EventManager EventHandler = new EventManager();
+
+    public void LoadEvent(bool startImmediate, string eventID = "", string label = "")
+    {
+        this.EventHandler.LoadNext(eventID, label, startImmediate);
+    }
+
+    public void NotifyEventEntryEnd()
+    {
+        // eventhandler should at this point have a next loaded
+        this.EventHandler.Start();
+    }
 
     bool _updating = false;
     public bool Updating
@@ -149,27 +161,26 @@ public class scr_UpdateHandler : MonoBehaviour
 
     public void StartUpdate(bool silent = false)
     {
-        if (imageScript == null) Debug.LogError("UPDATEHANDLER NO IMAGE ATTACHED");
+        //if (imageScript == null) Debug.LogError("UPDATEHANDLER NO IMAGE ATTACHED");
 
-        firstPreUpdate = true;
+         firstPreUpdate = true;
         if (firstPreUpdate) Observer_PreUpdateTime?.Invoke();
         timeStop = scr_System_Time.current.TimeStop;
         loopCounter = 0;
         oneLoop = true;
 
         //FlushCollectedLogs(false, true);
-
-        if (imageScript != null)
-        {
+        //if (imageScript != null)
+        //{
             // Updatetime is used to register loop count in minutes
             // totalUpdateTime is used when loop finishes and print value.
             // tldr, totalUpdateTime is the update duration count, and we should filter command logging based on this value.
-            if ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || oneLoop) && loopCounter < 20) StartCoroutine(SingleUpdate());
-        }
-        else
-        {
-            while ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || oneLoop) && loopCounter < 20) StartCoroutine(SingleUpdate());
-        }
+        if ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || EventHandler.canRun) && loopCounter < 20) StartCoroutine(SingleUpdate());
+        //}
+        //else
+        //{
+        //    while ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || oneLoop) && loopCounter < 20) StartCoroutine(SingleUpdate());
+        //}
     }
 
     public bool DoDisplayCOM(ActionPackage p)
@@ -210,6 +221,7 @@ public class scr_UpdateHandler : MonoBehaviour
     public bool isFirstUpdate { get { return firstLoopCounter > 0; } }
     private IEnumerator SingleUpdate()
     {
+        //Debug.Log("Singleupdate : start");
         var Clock = scr_System_CentralControl.current.LogPrefs.Debug_Logging_UpdateTimeCost ;
         Updating = true;
         firstLoopCounter = 2;
@@ -218,9 +230,18 @@ public class scr_UpdateHandler : MonoBehaviour
 
         Job playerJob = null;
         cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
-        //NotifyLogsSingleUpdate();
-        while (updateTime > 0)
+
+        if (EventHandler.canRun)
         {
+            Debug.Log("Singleupdate : Eventhandler can run, waiting");
+            EventHandler.Start();
+            yield return new WaitUntil(() => EventHandler.Status == EventStatus.idle);
+        }
+        //Debug.Log($"Singleupdate : eventhandler end, updatetime? {updateTime}");
+        //NotifyLogsSingleUpdate();
+        while (updateTime > 0)  // updatetime can be 0 if there is no player package
+        {   // if indeed 0 updatetime, then none of the below preupdate postupdate will be called.
+
             var time = Clock ? Utility.ReinitStopWatch(stopWatch) : TimeSpan.Zero;
             var time2 = time;
             //foreach (Manageable faction in organizations) faction.Manage();
@@ -228,7 +249,8 @@ public class scr_UpdateHandler : MonoBehaviour
             FlushCollectedLogs(true, oneLoop);
             oneLoop = false;
 
-            Observer_PreUpdateTime?.Invoke();
+            if (firstPreUpdate) firstPreUpdate = false;
+            else Observer_PreUpdateTime?.Invoke();
             if (Clock) Debug.Log("Observer_PreUpdateTime complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
             cnManager.FreeUpdateOneStep(ref totalUpdateTime, ref updateTime);
@@ -268,7 +290,14 @@ public class scr_UpdateHandler : MonoBehaviour
 
             if (Clock) Debug.Log("SingleUpdate 1 loop End, total time " + Utility.LogStopwatch(stopWatch, ref time));
             stopWatch.Stop();
-            yield return null;
+
+            if (EventHandler.canRun)
+            {
+                Debug.Log($"Singleupdate : eventhandler can run, running... current updatetime {updateTime}");
+                EventHandler.Start();
+                yield return new WaitUntil(() => EventHandler.Status == EventStatus.idle);
+            }
+            else yield return null;
             //yield return new WaitForSecondsRealtime(0.001f);
         }
         loopCounter++;
@@ -331,10 +360,10 @@ public class scr_UpdateHandler : MonoBehaviour
             if (charaRef == 0 || cnManager.PlayerPartyMembers.Contains(charaRef)) continue;
             Character_Trainable c = cnManager.FindInstanceByID(charaRef);
             if (c == null) continue;
-            names.Add(scr_System_Serializer.current.Dictionary.Query("chara_currently_doing").Replace("$chara$",c.FirstName).Replace("$currentjob$", c.GetJobDescription()));
+            names.Add("<align=\"right\">"+scr_System_Serializer.current.Dictionary.Query("chara_currently_doing").Replace("$chara$",c.FirstName).Replace("$currentjob$", c.GetJobDescription()) +"</align>");
             //cnManager.AddLog(charaRef, c.FirstName+ " is in room" + room.DisplayName+  ", currently " + c.GetJobDescription(), true);
         }
-        if(names.Count > 0) cnManager.AddLog(-1, "<align=\"right\">" + String.Join("\n", names) + "</align>" , false, true);
+        if(names.Count > 0) cnManager.AddLog(-1, String.Join("\n", names) , false, true);
         //yield return null;
         
 
@@ -347,13 +376,6 @@ public class scr_UpdateHandler : MonoBehaviour
             scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
         }
         Updating = false;
-
-        //if (Input.GetMouseButton(1))
-        //{   
-            //Debug.Log("MOUSE BUTTON RIGHT DETECTED SKIPPING ALL");
-        //    NotifyLogsSingleUpdate(true);
-        //}
-        //FlushCollectedLogs(false,false);
     }
 
 

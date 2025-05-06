@@ -171,6 +171,16 @@ public class scr_System_CampaignManager : MonoBehaviour
         //ChangeCurrentViewMode(ViewMode.View_Logs);
     }
 
+    public void AddLog_Line(EventEntry.EventEntry_Line line, bool animate = true)
+    {
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(-1, line.line, animate, false), animate);
+    }
+
+    public void AddLog_Question(EventEntry.EventEntry_Question question, bool animate = true) 
+    {
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(new Message_Question(-1, question)), animate);
+    }
+
     public event Action<MessageLog, bool> Observer_MessageLogs;
 
 
@@ -404,26 +414,30 @@ public class scr_System_CampaignManager : MonoBehaviour
     public bool ExistPlayerPackage(out int updateTime, out int totalUpdateTime, bool checkUnexecuted = true)
     {
         bool returnVal = false;
-        updateTime = 1;
+        updateTime = 0;
 
-       // string s = "ExistPlayerPackage : ";
+        //string s = "ExistPlayerPackage : ";
 
+        
         foreach (var kvpair_list in registeredPackagesByRoom)
         {
             foreach (var p in kvpair_list.Value)
             {
-                if (p.Duration < 1 || (!checkUnexecuted && !p.Ticked)) continue;
+                if (p.Duration < 1) continue;
+                if (!checkUnexecuted && !p.Ticked) continue;
                 if (p.actorRefs.Contains(0) || p.masterRef == 0)
                 {
-                  //  s += p.DisplayName + "[" + p.Duration + "] ";
+                    //s += p.DisplayName + "[" + p.Duration + "] ";
                     returnVal = true;
                     updateTime = Math.Max(updateTime, p.Duration);
                 }
             }
         }
+        
+
 
         totalUpdateTime = updateTime;
-       // Debug.Log(s);
+        //Debug.Log(s);
         return returnVal;
     }
 

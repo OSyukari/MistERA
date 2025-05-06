@@ -35,6 +35,7 @@ public class MasterList
                 list.Add(Character_Origins);    // need to be ordered later cuz require other list to be ready
                 list.Add(COMs);
                 list.Add(Furnitures);
+                list.Add(Events);
             }
             return list;
         }
@@ -54,6 +55,7 @@ public class MasterList
     public Index_Item_Base Items = null;
     public Dictionary_Index Dictionary = null;
     public Index_FurnitureBase Furnitures = null;
+    public Index_Events Events = null;
 
     public void InitializeLists()
     {
@@ -72,6 +74,7 @@ public class MasterList
         this.COMs = new Index_COM();
         this.Dictionary = new Dictionary_Index();
         this.Furnitures = new Index_FurnitureBase();
+        this.Events = new Index_Events();
     }
 
     public void MergeWith(MasterList list)

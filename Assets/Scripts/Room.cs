@@ -55,7 +55,7 @@ public class Room_Instance: IDisposable, I_Disposable
                     //Debug.LogError("RoomDisplaynameCond1");
                     if(this.FactionOwner == null)
                     {
-                        Debug.Log("PRIVATE ROOM HAS NO FACTION OWNER");
+                        //Debug.Log("PRIVATE ROOM HAS NO FACTION OWNER");
                         _displayNameCache = displayName;
                     }
                     else if (OwnerNames.Count > 2)

@@ -841,8 +841,12 @@ public abstract class ActionPackage
                 if (ep.Doer != null && ep.Doer.RefID != 0) checkResults.Add("("+title + ") " + ep.checkResults_doer);
                 if (ep.Receiver != null && ep.Receiver.RefID != 0 && (ep.Doer == null || ep.Doer.RefID != ep.Receiver.RefID)) checkResults.Add("("+title + ") " + ep.checkResults_receiver);
             }
+            if (rightAlign)
+            {
+                for (int i = 0; i < checkResults.Count; i++) checkResults[i] = "<align=\"right\">" + checkResults[i] + "<\"align>";
+            } //foreach(var res in checkResults) res = "<align=\"right\">" + res + "<\"align>";
             string finalResults = String.Join("\n", checkResults);
-            if (rightAlign) finalResults = "<align=\"right\">" + finalResults + "<\"align>";
+
             scr_UpdateHandler.current.NotifyCheckResult(finalResults);
         }
 
