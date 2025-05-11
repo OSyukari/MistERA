@@ -1,0 +1,29 @@
+{
+    "_Events":{
+        "list":[
+            {
+                "ID":"onMove_interrupt",
+                "trigger":"onmove",
+                "self":[
+
+                ],
+                "target":
+                [
+
+                ],
+                "conditions":[
+
+                ],
+                "events":[
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "question":"",
+                        "options":[
+
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

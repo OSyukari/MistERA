@@ -5,15 +5,15 @@
                 "ID": "testEvent",
                 "events": [
                     {
-                        "$type": "EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "line": "first line!"
                     },
                     {
-                        "$type": "EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "line": "second line!"
                     },
                     {
-                        "$type": "EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "question": "make a choice",
                         "options": [
                             {
@@ -22,7 +22,7 @@
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
-                                            "testEvent",
+                                            "",
                                             "AAA"
                                         ]
                                     }
@@ -34,7 +34,7 @@
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
-                                            "testEvent",
+                                            "",
                                             "BBB"
                                         ]
                                     }
@@ -46,7 +46,7 @@
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
-                                            "testEvent",
+                                            "",
                                             "CCC"
                                         ]
                                     }
@@ -55,25 +55,25 @@
                         ]
                     },
                     {
-                        "$type": "EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "AAA",
                         "line": "AAA!",
-                        "next": "end"
+                        "nextEntryLabel": "end"
                     },
                     {
-                        "$type": "EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "BBB",
                         "line": "BBB!",
-                        "next": "end"
+                        "nextEntryLabel": "end"
                     },
                     {
-                        "$type": "EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "CCC",
                         "line": "CCC!",
-                        "next": "end"
+                        "nextEntryLabel": "end"
                     },
                     {
-                        "$type": "EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "end",
                         "line": "this is the end!",
                         "isLast": true

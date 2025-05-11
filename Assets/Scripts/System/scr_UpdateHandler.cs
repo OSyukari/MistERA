@@ -9,17 +9,14 @@ using UnityEngine.UI;
 
 public class scr_UpdateHandler : MonoBehaviour
 {
-    [SerializeField] public EventManager EventHandler = new EventManager();
+    public EventManager EventHandler = new EventManager();
 
-    public void LoadEvent(bool startImmediate, string eventID = "", string label = "")
+    public bool Lock
     {
-        this.EventHandler.LoadNext(eventID, label, startImmediate);
-    }
-
-    public void NotifyEventEntryEnd()
-    {
-        // eventhandler should at this point have a next loaded
-        this.EventHandler.Start();
+        get
+        {
+            return Updating || EventHandler.Active || Animating;
+        }
     }
 
     bool _updating = false;
@@ -33,9 +30,13 @@ public class scr_UpdateHandler : MonoBehaviour
                 if (_updating)
                 {
                     imageScript.Activate();
-//                    imageScript.selfCanvasGroup.alpha = 1;
+                    //                    imageScript.selfCanvasGroup.alpha = 1;
                 }
-                else imageScript.selfCanvasGroup.alpha = 0;
+                else
+                {
+                    imageScript.Deactivate();
+                    //imageScript.selfCanvasGroup.alpha = 0;
+                }
             }
 
         }
@@ -44,7 +45,24 @@ public class scr_UpdateHandler : MonoBehaviour
             return _updating;
         }
     }
-    [JsonIgnore] public bool Animating = false;
+
+    bool _animating = false;
+    public bool Animating
+    {
+        get
+        {
+            return _animating;
+        }
+        set
+        {
+            _animating = value;
+
+            if (!_animating && cnManager.ExistPlayerPackage(out int aaa, out int bbb))
+            {
+                click(null);
+            }
+        }
+    }
     private void click(PointerEventData eventData)
     {
 
@@ -54,9 +72,10 @@ public class scr_UpdateHandler : MonoBehaviour
         // dont. if its a single long command its as fast as skip anyway.
         // if multiple commands, it usually involves moving, and we want to let player possible break movement
         bool single = true;
-        if ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || oneLoop) && loopCounter < 20)
+        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime)) && loopCounter < 20)
         {
             StartCoroutine(SingleUpdate());
+
             single = false;
         }
         else
@@ -85,8 +104,13 @@ public class scr_UpdateHandler : MonoBehaviour
 
     }
     public static scr_UpdateHandler current;
-    scr_System_CampaignManager cnManager;
+    public scr_System_CampaignManager cnManager;
     scr_AttachToUpdateHandler imageScript = null;
+
+    public void InvokeEventStatus(EventStatus status, bool forcelogging)
+    {
+        this.Observer_EventStatus?.Invoke(status, forcelogging);
+    }
 
     public void LoadSaveFile(SaveFileHolder saveHolder, bool unloadCanvas = true){
         if (!saveHolder.isValid) Debug.LogError("LoadSave error did not re-inject file path.");
@@ -158,12 +182,13 @@ public class scr_UpdateHandler : MonoBehaviour
     public event Action Observer_PostUpdateTime_3; 
     //public event Action Observer_PostUpdateTime_4;
     public event Action<bool> Observer_LogsSingleStepUpdate;
+    public event Action<EventStatus, bool> Observer_EventStatus;
 
     public void StartUpdate(bool silent = false)
     {
         //if (imageScript == null) Debug.LogError("UPDATEHANDLER NO IMAGE ATTACHED");
 
-         firstPreUpdate = true;
+        firstPreUpdate = true;
         if (firstPreUpdate) Observer_PreUpdateTime?.Invoke();
         timeStop = scr_System_Time.current.TimeStop;
         loopCounter = 0;
@@ -175,7 +200,10 @@ public class scr_UpdateHandler : MonoBehaviour
             // Updatetime is used to register loop count in minutes
             // totalUpdateTime is used when loop finishes and print value.
             // tldr, totalUpdateTime is the update duration count, and we should filter command logging based on this value.
-        if ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || EventHandler.canRun) && loopCounter < 20) StartCoroutine(SingleUpdate());
+        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime)) && loopCounter < 20)
+        { 
+            StartCoroutine(SingleUpdate()); 
+        }
         //}
         //else
         //{
@@ -231,12 +259,13 @@ public class scr_UpdateHandler : MonoBehaviour
         Job playerJob = null;
         cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
 
-        if (EventHandler.canRun)
+        if (EventHandler.Active)
         {
-            Debug.Log("Singleupdate : Eventhandler can run, waiting");
-            EventHandler.Start();
+            Debug.Log($"Singleupdate : eventhandler active, waiting at pre updatetime {updateTime}");
+            Updating = false;
             yield return new WaitUntil(() => EventHandler.Status == EventStatus.idle);
         }
+        Updating = true;
         //Debug.Log($"Singleupdate : eventhandler end, updatetime? {updateTime}");
         //NotifyLogsSingleUpdate();
         while (updateTime > 0)  // updatetime can be 0 if there is no player package
@@ -291,10 +320,10 @@ public class scr_UpdateHandler : MonoBehaviour
             if (Clock) Debug.Log("SingleUpdate 1 loop End, total time " + Utility.LogStopwatch(stopWatch, ref time));
             stopWatch.Stop();
 
-            if (EventHandler.canRun)
+            if (EventHandler.Active)
             {
-                Debug.Log($"Singleupdate : eventhandler can run, running... current updatetime {updateTime}");
-                EventHandler.Start();
+                Updating = false;
+                Debug.Log($"Singleupdate : eventhandler active, waiting at updatetime{updateTime}");
                 yield return new WaitUntil(() => EventHandler.Status == EventStatus.idle);
             }
             else yield return null;
@@ -307,14 +336,15 @@ public class scr_UpdateHandler : MonoBehaviour
         if (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime2, false) && loopCounter < 20)
         {   // continuous update
             // ask break
+
             totalUpdateTime = totalUpdateTime2;
+            Debug.Log($"totalupdatetime {updateTime} {totalUpdateTime}");
             cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
 
         }
         else
         {
             cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, false);
-            if (imageScript != null) imageScript.Deactivate();
         }
      
         

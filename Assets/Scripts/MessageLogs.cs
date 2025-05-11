@@ -16,7 +16,7 @@ public class MessageLogManager
 
 
     int currentLogRef = -1;
-    bool Animating { get { return scr_UpdateHandler.current.Updating || scr_UpdateHandler.current.Animating; } }
+    bool Animating { get { return scr_UpdateHandler.current.Lock || scr_UpdateHandler.current.Animating; } }
 
     public bool SetLogChara(int refID, bool isAnimating = false)
     {
@@ -156,7 +156,7 @@ public class Message_Text : MessageLog
         if (s.Length > 0) Messages.Add(new Message(s, rA));
     }
 
-    public Message_Text(int portraitRefID, List<Message> messages = null, DateTime time = default):base(portraitRefID, time)
+    public Message_Text(int portraitRefID, List<Message> messages = null, DateTime time = default, EventInstance parentEvent = null ):base(portraitRefID, time, parentEvent)
     {
         this.Messages = new List<Message>();
     }
@@ -234,8 +234,8 @@ public class Message_Question : MessageLog
     {
         return false;
     }
-    EventEntry.EventEntry_Question question;
-    public Message_Question(int portraitRef, EventEntry.EventEntry_Question question, DateTime time = default):base(portraitRef, time)
+    Event.EventEntry.EventEntry_Question question;
+    public Message_Question(int portraitRef, EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default):base(portraitRef, time, parent)
     {
         this.question = question;
     }
@@ -245,10 +245,10 @@ public class Message_Question : MessageLog
         Debug.LogError("Animate called on message_question");
     }
 
-    public void Draw(scr_menu_question questionBox)
+    public void Draw(Canvas mainCanvas, scr_menu_question questionBox)
     {
         base.Draw();
-        questionBox.InitializeWithArgs(question);
+        questionBox.InitializeWithArgs(mainCanvas, parentEvent, question);
     }
 }
 
@@ -259,13 +259,16 @@ public abstract class MessageLog
     public bool displayed = false;
     public abstract bool canAnimate();
 
+    public EventInstance parentEvent = null;
+
     public int PortraitRef = -1;
 
     public DateTime time;
     
-    public MessageLog(int portraitRef, DateTime time = default)
+    public MessageLog(int portraitRef, DateTime time = default, EventInstance parentEvent = null)
     {
         this.PortraitRef = portraitRef;
+        this.parentEvent = parentEvent;
         if (time != default) this.time = time;
         else this.time = scr_System_Time.current.getCurrentTime();
 

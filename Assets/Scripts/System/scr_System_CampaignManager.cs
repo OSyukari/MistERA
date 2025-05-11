@@ -171,14 +171,21 @@ public class scr_System_CampaignManager : MonoBehaviour
         //ChangeCurrentViewMode(ViewMode.View_Logs);
     }
 
-    public void AddLog_Line(EventEntry.EventEntry_Line line, bool animate = true)
+
+    /// <summary>
+    /// For now, line does not register parent instance, as there is no need, it does not catch a response
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="line"></param>
+    /// <param name="animate"></param>
+    public void AddLog_Line(Event.EventEntry.EventEntry_Line line, bool animate = true)
     {
         Observer_MessageLogs?.Invoke(LogManager.AddLog(-1, line.line, animate, false), animate);
     }
 
-    public void AddLog_Question(EventEntry.EventEntry_Question question, bool animate = true) 
+    public void AddLog_Question(EventInstance parent, Event.EventEntry.EventEntry_Question question, bool animate = true) 
     {
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(new Message_Question(-1, question)), animate);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(new Message_Question(-1, parent, question)), animate);
     }
 
     public event Action<MessageLog, bool> Observer_MessageLogs;
@@ -438,6 +445,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         totalUpdateTime = updateTime;
         //Debug.Log(s);
+        //Debug.Log($"EXIST PLAYER PACKAGE {updateTime} {totalUpdateTime}");
         return returnVal;
     }
 
@@ -684,10 +692,15 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void ChangeCurrentViewMode(ViewMode vm, bool lockView = false)
     {
-        if (viewMode != vm) viewMode = vm;
-        Observer_CurrentViewMode?.Invoke(vm, lockView);
-        if (viewMode == ViewMode.View_Room) scr_UpdateHandler.current.Animating = false;
-        
+        // if update lock, allow only setting to logs
+        if (scr_UpdateHandler.current.Animating && vm != ViewMode.View_Logs) return;
+        else if (viewMode == ViewMode.View_Logs && vm == ViewMode.View_Room && scr_UpdateHandler.current.Updating) scr_UpdateHandler.current.StartUpdate(); 
+        else
+        {
+            if (viewMode != vm) viewMode = vm;
+            Observer_CurrentViewMode?.Invoke(vm, lockView);
+            if (viewMode == ViewMode.View_Room) scr_UpdateHandler.current.Animating = false;
+        }
     }
 
     public event Action<int, Job> Observer_PlayerJob;

@@ -10,7 +10,7 @@ public class scr_MessageLogBox : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public void OnPointerEnter(PointerEventData eventData)
     {
 
-        if (charaRefID > -1 && !scr_UpdateHandler.current.Updating)
+        if (charaRefID > -1 && !scr_UpdateHandler.current.Lock)
         {
             //Debug.Log("scr_MessageLogBox OnPointerEnter, refID "+charaRefID);
             scr_System_CampaignManager.current.Log_TrySetChara(charaRefID, false);

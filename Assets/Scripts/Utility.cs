@@ -879,6 +879,15 @@ public static class Utility
                     }
                 }
                 break;
+            case "loadevent":
+                if (parsed.Count() < 2) return;
+                else
+                {
+                    string evID = parsed[1];
+                    string evLbl = parsed.Count() >= 3 ? parsed[2] : "";
+                    scr_UpdateHandler.current.EventHandler.StartEvent(evID, evLbl);
+                }
+                break;
 
         }
 

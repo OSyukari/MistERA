@@ -149,17 +149,24 @@ public class scr_Panel_BottomBar : scr_Menu
         ViewMode targetVM;
         scr_SelectableText text;
         new scr_Panel_BottomBar parent;
+        string errorTooltip1;
         public ButtonValidator_ChangeView(scr_Panel_BottomBar parent, scr_SelectableText text, ViewMode targetVM) : base(parent)
         {
             this.parent = parent;
             this.targetVM = targetVM;
             this.text = text;
+            errorTooltip1 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_load_tooltip_cannotLoadduringUpdate");
         }
 
         public override bool IsButtonValid()
         {
             tooltip = "";
             //Debug.Log("isbuttonvalid " + targetVM);
+            if(scr_UpdateHandler.current.Lock)
+            {
+                this.tooltip = errorTooltip1;
+                return false;
+            }
             if (scr_System_CampaignManager.current.CurrentViewMode == targetVM)
             {
                 state = ButtonValidator_States.Valid;
@@ -240,15 +247,21 @@ public class scr_Panel_BottomBar : scr_Menu
     public class ButtonValidator_Movement : ButtonValidator, I_ButtonClickable
     {
         new scr_Panel_BottomBar parent;
+        string errorTooltip1;
         public ButtonValidator_Movement(scr_Menu parent) : base(parent)
         {
             this.parent = parent as scr_Panel_BottomBar;
+            errorTooltip1 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_load_tooltip_cannotLoadduringUpdate");
         }
 
         public override bool IsButtonValid()
         {
             tooltip = "";
-
+            if (scr_UpdateHandler.current.Lock)
+            {
+                this.tooltip = errorTooltip1;
+                return false;
+            }
             Job job = scr_System_CampaignManager.current.Player.CurrentJob;
             if (job is Job_Sex_Group)
             {
@@ -277,16 +290,23 @@ public class scr_Panel_BottomBar : scr_Menu
     public class ButtonValidator_Management : ButtonValidator, I_ButtonClickable
     {
         new scr_Panel_BottomBar parent;
+        string errorTooltip1;
         public ButtonValidator_Management (scr_Menu parent, scr_SelectableText text): base(parent)
         {
             this.parent = parent as scr_Panel_BottomBar;
             this.text = text;
+            errorTooltip1 = scr_System_Serializer.current.Dictionary.Query("ui_quicksave_tooltip_cannotSaveduringUpdate");
         }
 
         scr_SelectableText text;
 
         public override bool IsButtonValid()
         {
+            if (scr_UpdateHandler.current.Lock)
+            {
+                this.tooltip = errorTooltip1;
+                return false;
+            }
             if (scr_System_CampaignManager.current.Player.FactionManager.ManagerFactions.Count > 0)
             {
                 return true;
@@ -328,7 +348,7 @@ public class scr_Panel_BottomBar : scr_Menu
                 this.tooltip = "quicksave disabled";
                 return false;
             }
-            else if (scr_UpdateHandler.current.Updating)
+            else if (scr_UpdateHandler.current.Lock)
             {
                 this.tooltip = errorTooltip1;
                 return false;
@@ -367,7 +387,7 @@ public class scr_Panel_BottomBar : scr_Menu
         public override bool IsButtonValid()
         {
             this.tooltip = "";
-            if (scr_UpdateHandler.current.Updating)
+            if (scr_UpdateHandler.current.Lock)
             {
                 this.tooltip = errorTooltip1;
                 return false;

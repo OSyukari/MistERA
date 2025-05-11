@@ -1,0 +1,293 @@
+
+using UnityEngine;
+
+using System;
+using System.Collections.Generic;
+
+using Newtonsoft.Json;
+
+
+
+[System.Serializable]
+public class Event : I_SerializationCallbackReceiver
+{
+    public string ID = "";
+    /// <summary>
+    /// Since there is jump involved, Event itself should not be managing the flow
+    /// Event only responsible for query and nothing more
+    /// </summary>
+    /// 
+    public List<EventEntry> events = new List<EventEntry>();
+
+
+    /// <summary>
+    /// trigger keyword will allow it to be called whenever something happens
+    /// </summary>
+    public string trigger = "";
+    public EventEntry GetEntryWithLabel(string label)
+    {
+        if (label == "") return this.events.Count > 0 ? this.events[0] : null;
+        if (jumpLabels.ContainsKey(label)) return jumpLabels[label];
+        else return null;
+    }
+
+    public EventEntry GetEntryAfter(EventEntry entry)
+    {
+        int index = entry == null ? 0 : this.events.IndexOf(entry) + 1;
+        if (index >= this.events.Count) return null;
+        return this.events[index];
+    }
+
+    Dictionary<string, EventEntry> jumpLabels = new Dictionary<string, EventEntry>();
+    public void OnAfterDeserialize()
+    {
+        foreach (var ev in this.events) if (ev.label != "") jumpLabels.Add(ev.label, ev);
+    }
+
+    public List<Condition> asd = new List<Condition>();
+
+    [System.Serializable]
+    public abstract class EventEntry
+    {
+
+        public string label = "";
+        public bool isLast = false;
+        public string nextEventID = "";
+        public string nextEntryLabel = "";
+
+        public List<Query> queries = new List<Query>();
+        public List<Condition> conditions = new List<Condition>();
+
+        public bool isValid { get
+            {
+                // execute every query
+                // check every condition
+                //
+                foreach(var cond in conditions) if (!cond.isValid()) return false;
+                return true;
+            } }
+
+        [System.Serializable]
+        public class Query
+        {
+
+        }
+
+        public virtual void Execute(EventInstance owner)
+        {
+            // at this stage, isvalid should be true
+        }
+
+        [System.Serializable]
+        public class EventEntry_Line : EventEntry
+        {
+            public string line = "";
+
+            public override void Execute(EventInstance owner)
+            {
+                base.Execute(owner);
+
+                Debug.Log($"Executing entry {line} ");
+                // display line
+                scr_System_CampaignManager.current.AddLog_Line(this, false);
+
+                // immediate load next
+                if (isLast) owner.Notify(EventStatus.reset);
+                else
+                {
+                    owner.Notify(EventStatus.running);
+                    owner.LoadNext(true, nextEventID, nextEntryLabel);
+                }
+            }
+        }
+
+        [System.Serializable]
+        public class EventEntry_Question : EventEntry
+        {
+            public string question = "";
+            public List<Options> options = new List<Options>();
+
+            public override void Execute(EventInstance owner)
+            {
+                base.Execute(owner);
+
+                Debug.Log($"Executing entry {question} ");
+
+                scr_System_CampaignManager.current.AddLog_Question(owner, this, false);
+                owner.Notify(EventStatus.waiting);
+                // load next but allow to be overwritten
+                //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
+            }
+
+
+
+            /// <summary>
+            /// Option class must be a class that serialize from json
+            /// text directly serialized, it will need to go through dictionary before display
+            /// allow premade string replacers, but at what scope?
+            /// anyway since json serialize, it cannot be a delegate
+            /// check command validator
+            /// self validator and executor will need to read local string data
+            /// </summary>
+            [System.Serializable]
+            public class Options
+            {
+                public string option = "";
+
+                public List<Condition> Conditions = new List<Condition>();
+
+                public bool isValid()
+                {
+                    foreach (Condition c in Conditions) if (!c.isValid()) return false;
+                    return true;
+                }
+
+
+                /// <summary>
+                /// What should this do ?
+                /// Validator should already be called before this point
+                /// so if we reach this stage
+                /// all validator already passed
+                /// 
+                /// results do need to be dirrerents as they could apply to different things
+                /// so each have their scope
+                /// also different type of executor may not coexist ?
+                /// such as 2 jump execution should not..
+                /// or at least, they are pased sequentially
+                /// so if 2nd jump has its own conditons passed it will overwrite first?
+                /// 
+                /// 
+                /// </summary>
+                public List<Executor> Results = new List<Executor>();
+
+
+                [System.Serializable]
+                public enum ExecutionType
+                {
+                    None,
+                    JumpToLabel
+                }
+
+                public void Execute(EventInstance owner)
+                {   // this can be send to button as result handler
+
+                    // allow next to be overridden by any of results
+                    foreach (var op in Results)
+                    {
+                        if (op.isValid()) op.Execute(owner);
+                    }
+                    owner.Notify(EventStatus.running);
+                    //scr_UpdateHandler.current.NotifyEventStatus(EventStatus.running, false, true);
+                }
+
+                [System.Serializable]
+                public class Executor
+                {   // handle a single result
+                    public List<Condition> conditions = new List<Condition>();
+                    public ExecutionType Type = ExecutionType.None;
+                    public List<string> arguments = new List<string>();
+
+                    public bool isValid()
+                    {
+                        foreach (var condition in conditions) if (!condition.isValid()) return false;
+                        return true;
+                    }
+
+                    public void Execute(EventInstance owner)
+                    {
+                        switch (Type)
+                        {
+                            case ExecutionType.JumpToLabel:
+                                if (arguments.Count != 2)
+                                {
+                                    Debug.LogError("jumptolabel does not have enough arguments");
+                                    owner.Notify(EventStatus.reset);
+                                }
+                                else owner.LoadNext(false, arguments[0], arguments[1]);
+                                break;
+                            default: return;
+
+                        }
+                    }
+                }
+
+
+
+            }
+
+        }
+
+
+    }
+
+    [System.Serializable]
+    public class Condition
+    {
+        public bool isValid()
+        {
+            return true;
+        }
+    }
+
+}
+
+
+
+
+
+
+/// <summary>
+/// what type of targeting makes sense? in a dialogue query ?
+/// 1. player exist
+/// 2. target might or might not exist
+/// 
+/// 1. check player stat
+/// 2. check target stat
+/// 3. check player and target relationship
+/// 4. check player and a 3rd party stat
+/// 5. check target and 3rd party stat
+/// 6. 
+/// baseid target? no
+/// </summary>
+[System.Serializable]
+public enum ConditionValidator_Target
+{
+    Self,
+    Target
+}
+
+
+[System.Serializable]
+public class ConditionValidator
+{
+    string target;
+
+}
+
+[System.Serializable]
+public class Index_Events : I_NeedLateInitialize, I_IndexMergeable, I_SerializationCallbackReceiver
+{
+    public List<Event> list = new List<Event>();
+
+    public void MergeWith(I_IndexMergeable list)
+    {
+        var l = list as Index_Events;
+        if (l == null) return;
+        else if (l.list == null) return;
+        else
+        {
+            this.list.AddRange(l.list);
+        }
+    }
+
+    public void LateInitialize()
+    {
+
+    }
+
+    public void OnAfterDeserialize()
+    {
+        foreach (var i in list) i.OnAfterDeserialize();
+        Debug.Log($"Successfully serialized {this.list.Count} events");
+    }
+}

@@ -41,10 +41,10 @@ public abstract class scr_Menu : MonoBehaviour
     // Attach all observers here and init data structure without validation
     protected virtual void Awake(){
 
-        if (m_Canvas.renderMode == RenderMode.ScreenSpaceOverlay)
-            m_Camera = null;
-        else
-            m_Camera = Camera.main;
+        if (m_Canvas != null)
+        {
+            SetCanvas(m_Canvas, false);
+        }
 
         tooltip = this.GetComponent<scr_Canvas_tooltipHandler>();
 
@@ -54,6 +54,19 @@ public abstract class scr_Menu : MonoBehaviour
         foreach(Image i in background_solid) i.color = scr_System_CentralControl.current.pref.BackgroundColor_Opaque;
         foreach (Image i in background_transparent) i.color = scr_System_CentralControl.current.pref.BackgroundColor_Transparent;
 
+    }
+
+    public void SetCanvas(Canvas c, bool overrideSorting)
+    {
+        if (c == null) return;
+
+        this.m_Canvas = c;
+        if (m_Canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            m_Camera = null;
+        else
+            m_Camera = Camera.main;
+
+        this.m_Canvas.overrideSorting = overrideSorting;
     }
 
     /// <summary>

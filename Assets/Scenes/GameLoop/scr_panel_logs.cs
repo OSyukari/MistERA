@@ -39,11 +39,14 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         }
     }
 
+    bool firstLine = true;
+
     protected override void OnEnable()
     {
         base.OnEnable();
         LogsList.gameObject.SetActive(true);
-        if (canAnimate) AnimateOneStep();
+        firstLine = true;
+        if (firstLine && canAnimate) AnimateOneStep();
         //if (canAnimate) AnimateOneStep();
         // foreach log in logs
         // if not in tracked list, build into list
@@ -63,14 +66,28 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     private void OnLogAdd(MessageLog msg, bool animate)
     {
         todo.Add(msg);
-        if (animate) while (canAnimate) AnimateOneStep();
-        else if (Input.GetMouseButton(1) && canAnimate) AnimateOneStep();
+        UpdateAnimatingStatus();
+        Debug.Log($"onLogsAdd, firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
+        if (firstLine || animate) SingleUpdate(false);
     }
 
+    private void SingleUpdate(bool skipAll)
+    {
+        if (canAnimate)
+        {
+            if (skipAll || Input.GetMouseButton(1)) AnimateAll();
+            else AnimateOneStep();
+        }
+        else
+        {
+            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
+        }
+    }
 
     protected void UpdateAnimatingStatus()
     {
-        scr_UpdateHandler.current.Animating = canAnimate;
+        scr_UpdateHandler.current.Animating = Active || canAnimate;
+        //Debug.Log($"update animating status {scr_UpdateHandler.current.Animating} lock {scr_UpdateHandler.current.Lock} updating {scr_UpdateHandler.current.Updating} event {scr_UpdateHandler.current.EventHandler.Active}");
     }
 
     List<MessageLog> todo;
@@ -93,12 +110,12 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     private RectTransform currentMsgLog, currentMsg;
     private void AnimateOneStep()
     {
+        Debug.Log($"Animateonestep, firstline {firstLine}");
+        firstLine = false;
         while (LogsList.transform.childCount > scr_System_CentralControl.current.pref.MaxLogCount)
         {
             DestroyImmediate(LogsList.transform.GetChild(0).gameObject);
         }
-
-        UpdateAnimatingStatus();
 
         //Debug.Log("loglist anchored position is " + LogsList.anchoredPosition.x + "|" + LogsList.anchoredPosition.y);
         LogsList.anchoredPosition = new Vector2(0, 0);
@@ -124,7 +141,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
             {
                 var question = Instantiate(prefab_question);
                 question.transform.SetParent(LogsList, false);
-                (current as Message_Question).Draw(question);
+                (current as Message_Question).Draw(this.m_Canvas, question);
             }
         }
         else if (current.canAnimate())
@@ -132,26 +149,31 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
             current.Animate();
         }
 
-        if (!current.canAnimate()) todo.RemoveAt(0);
+        if (current.displayed && !current.canAnimate())
+        {
+            todo.RemoveAt(0);
+            UpdateAnimatingStatus();
+        }
     }
 
 
-    private IEnumerator AnimateAll()
+    private void AnimateAll()
     {
         while (canAnimate)
         {
             AnimateOneStep();
       //      yield return new WaitForSecondsRealtime(0.001f);
         }
-        if (this.gameObject.activeInHierarchy)
+        /*
+        if (!scr_UpdateHandler.current.Lock && this.gameObject.activeInHierarchy)
         {
             yield return new WaitForSecondsRealtime(0.5f);
             scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
-        }
+        }*/
     }
 
     public bool canAnimate { get { return todo.Count > 0; } }
-
+    public bool Active { get { return todo.Count > 0; } }
 
     public RectTransform LogsList;
     public RectTransform prefab_LogEntry, prefab_SeparationEntry;
@@ -167,16 +189,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
     private void OnLogsClear(bool flushOnly)
     {
-        if (flushOnly) StartCoroutine(AnimateAll());
+        if (flushOnly) AnimateAll();
         else this.ClearLogs();
-    }
-
-
-    private void SingleUpdate(bool skipAll)
-    {
-        if (skipAll) StartCoroutine(AnimateAll());
-        else if (canAnimate) AnimateOneStep();
-        else scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
     }
 
     protected override void Awake()
@@ -190,12 +204,20 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
         scr_System_CampaignManager.current.Observer_MessageLogs += OnLogAdd;
         scr_UpdateHandler.current.Observer_LogsSingleStepUpdate += SingleUpdate;
+        scr_UpdateHandler.current.Observer_EventStatus += OnEvent;
 
         todo = new List<MessageLog>();
        // msg = new List<string>();
        // msgLog = new List<List<string>>();
 
         this.gameObject.SetActive(false);
+    }
+
+    protected void OnEvent(EventStatus status, bool forceLogging)
+    {
+        Debug.Log($"OnEvent {status}, waiting? {(status == EventStatus.waiting)} firstline {firstLine}");
+        if (!this.gameObject.activeInHierarchy && status != EventStatus.idle) this.gameObject.SetActive(true);
+        if (forceLogging) this.firstLine = true;
     }
 
     public override void Initialize()
@@ -228,24 +250,18 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     {
         int clickID = eventData.pointerId;
 
-        if (!canAnimate && !lockView && (clickID == -1 || clickID == -2) && Utility.isClickBelowDragThreshold(eventData))
-        {   // exclude middle mouse
-            if (LogsList.anchoredPosition != new Vector2(0, 0))
-            {
-                LogsList.anchoredPosition = new Vector2(0, 0);
-            }
-            else
-            {
-                scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
-            }
-        }
-        else if (eventData.button == PointerEventData.InputButton.Right)
+        if (scr_UpdateHandler.current.Lock)
         {
-            StartCoroutine(AnimateAll());
+            if (canAnimate)
+            {
+                if (Input.GetMouseButton(1)) AnimateAll();
+                else AnimateOneStep();
+            }
         }
         else
         {
-            AnimateOneStep();
+            if (LogsList.anchoredPosition != new Vector2(0, 0)) LogsList.anchoredPosition = new Vector2(0, 0);
+            else scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
         }
     }
 }

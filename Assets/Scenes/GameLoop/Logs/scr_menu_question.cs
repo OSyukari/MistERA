@@ -14,31 +14,37 @@ public class scr_menu_question : scr_Menu
 
     RectTransform self;
 
+
     public bool Active = true;
-    public void InitializeWithArgs(EventEntry.EventEntry_Question query)
+    public void InitializeWithArgs(Canvas mainCanvas, EventInstance instance, Event.EventEntry.EventEntry_Question query)
     {
+        // Initialize();
+        SetCanvas(mainCanvas, true);
         this.Text.SetText(query.question);
 
         foreach (var option in query.options)
         {
             var button = Instantiate(prefab_text_linkbutton).GetComponent<scr_SelectableText>();
-            RegisterButton(option.GetHashCode(), button, new Button_OptionBtn(this, button, option));
+            RegisterButton(option.GetHashCode(), button, new Button_OptionBtn(this, button, instance, option));
             preferredLen = Math.Max(preferredLen, button.GetComponent<TMP_Text>().preferredWidth);
+            button.SetText(option.option);
         }
-        Grid.cellSize = new Vector2(Grid.cellSize.x, (float)Math.Min(self.rect.width * 0.9, preferredLen));
+        Debug.Log($"Initializing question menu, grid size {Grid.cellSize.ToString()} rectsizedelta rectwidth sizedelta gridflexwidth{Grid.flexibleWidth} rectlocalscale");
+        //Grid.cellSize = new Vector2(Grid.cellSize.x, (float)Math.Min(self.rect.width * 0.9, preferredLen));
+        ValidateAll();
     }
 
     public override void Initialize()
     {
         base.Initialize();
 
+        /*
         foreach (scr_SelectableText button in GetComponentsInChildren<scr_SelectableText>(true))
         {
             // Debug.Log("Button " + button + " " + button.optionID);
             switch (button.optionID)
             {
-                default:
-                    button.Initialize(this, button_alwaysValid); break;
+                default:  break;
             }
             if (button.optionID != -1)
             {
@@ -46,7 +52,7 @@ public class scr_menu_question : scr_Menu
                 validatorsByID.Add(button.optionID, button.Validator);
             }
 
-        }
+        }*/
         // build all presetLis
 
     }
@@ -91,7 +97,6 @@ public class scr_menu_question : scr_Menu
     protected override void Awake()
     {
         base.Awake();
-        this.m_Canvas.overrideSorting = true;
         //this.sourceFaction = null;
         button_alwaysValid = new ButtonValidator_AlwaysTrue(this);
     }
@@ -100,30 +105,35 @@ public class scr_menu_question : scr_Menu
     {
         new scr_menu_question parent;
         scr_SelectableText button;
-        EventEntry.EventEntry_Question.Options option;
+        Event.EventEntry.EventEntry_Question.Options option;
+        EventInstance instance;
+        bool selected = false;
 
         /// <summary>
         /// Attach a custom validator, isbuttonvalid check validator, onclick apply validator
         /// </summary>
         /// <param name="parent"></param>
-        public Button_OptionBtn(scr_menu_question parent, scr_SelectableText button, EventEntry.EventEntry_Question.Options option) :base(parent)
+        public Button_OptionBtn(scr_menu_question parent, scr_SelectableText button, EventInstance instance, Event.EventEntry.EventEntry_Question.Options option) :base(parent)
         {
             this.parent = parent;
             this.button = button;
+            this.instance = instance;
             this.option = option;
-
-            this.button.SetText(option.option);
         }
 
         public override bool IsButtonValid()
         {
-            return parent.Active && option.isValid();
+            return selected || (parent.Active && option.isValid());
         }
 
         public void OnClickButton()
         {
-            parent.Active = false;
-            option.Execute();
+            if (!selected)
+            {
+                parent.Active = false;
+                selected = true;
+                option.Execute(instance);
+            }
         }
     }
 }
