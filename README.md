@@ -2,6 +2,10 @@
 
 迷雾Era的试玩build。请直接去[Release页](https://gitgud.io/OS74/mistera/-/releases/permalink/latest)下载最新的Package（已经build好的压缩包）
 
+关于每版本实装的内容简介，请看[CHANGELOG.md](https://gitgud.io/OS74/mistera/-/blob/master/CHANGELOG.md)
+
+关于下版本将要实装的内容，请看[WIKI:预定实装机能](https://gitgud.io/OS74/mistera/-/wikis/release_plan)
+
 Repo中只保存了代码和Json文件，并未包括dll等（会导致仓库容量无法抑制地膨胀）
 
 默认分辨率为1920x1017（1080p窗口）
