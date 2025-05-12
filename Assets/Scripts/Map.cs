@@ -326,9 +326,6 @@ public class Map_Instance
             selfTags = selfTags.Distinct().ToList();
             List<int> ignoreList = new List<int>();
 
-
-
-
             // check interrupt
             var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(iii.Key, true) : dirtyCharaAPRef;
             //Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
@@ -379,99 +376,13 @@ public class Map_Instance
                     }
                 }
             }
+
+            if (isDirty)
+            {
+                scr_UpdateHandler.current.EventHandler.Trigger(xx, EventTrigger.OnEnterRoom);
+            }
         }
     }
-
-    /*
-    struct UpdateRoomParallelFor : IJobParallelFor
-    {
-        [ReadOnly] public NativeArray<int> roomRefIDs;
-        [ReadOnly] public NativeArray<NativeArray<int>> charaRefIDs;
-        [ReadOnly] public NativeArray<int> dirtyCharaRefs;
-        [ReadOnly] public List<ActionPackage> dirtyCharaAPRefs;
-
-        public void Execute(int j)
-        {
-            var charaInRoom = charaRefIDs[j].Distinct().ToList();
-            // if(Rooms.ContainsKey(iii.Key) && iii.Value.Count > 0) Debug.Log("roomCharaRef " + Rooms[iii.Key].DisplayName + " and charaRefs " + String.Join("|", iii.Value));
-            if (iii.Key == scr_System_CampaignManager.current.CurrentRoom.RefID)
-            {
-                if (!charaInRoom.Contains(0))
-                {
-                    //Debug.LogError("charaInRoom does not contain player, fixing");
-                    charaInRoom.Add(0);
-                }
-                //Debug.Log("roomCharaRef " + GetRoomByRef(iii.Key).DisplayName + " and charaRefs " + String.Join("|", charaInRoom));
-            }
-            for (int x = 0; x < charaInRoom.Count; x++)
-            {
-                var xx = scr_System_CampaignManager.current.FindInstanceByID(charaInRoom[x]);
-                Utility.GetEPsFrom(xx, out List<EvaluationPackage> xxEPs);
-
-                bool interrupted = false;
-                bool isDirty = dirtyCharaRefs.Contains(charaInRoom[x]);
-
-                List<string> selfTags = new List<string>();
-                foreach (var i in xxEPs) selfTags.AddRange(i.isDoer(xx) ? i.DoerTargetTag : i.ReceiverTargetTag);
-                selfTags = selfTags.Distinct().ToList();
-                List<int> ignoreList = new List<int>();
-
-
-
-
-                // check interrupt
-                var checkInterruptAPs = isDirty ?scr_System_CampaignManager.current.GetRegisteredAPByRoom(roomRefIDs[j], true) : dirtyCharaAPRefs;
-                //Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
-                if (xx.RefID != 0)
-                {
-                    // only check interrupt if not player
-                    foreach (var i in checkInterruptAPs)
-                    {
-                        if (i.RoomKey != roomRefIDs[j]) continue;// { Debug.LogError("dirtychararef roomkey inequal [" + i.RoomKey + "] [" + iii.Key + "]"); continue; }
-                        if (i.actorRefs.Contains(charaInRoom[x])) continue;//{ Debug.LogError("dirtychararef actorref contains [" + String.Join("|", i.actorRefs) + "] [" + charaInRoom[x] + "]"); continue; }
-                        if (xx.CurrentJob != null && i.job != null && i.job.RefID == xx.CurrentJobRefID) continue;//{ Debug.LogError("dirtychararef currentjob identical [" + i.job.DisplayName + "]"); continue; }
-                        if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
-                        if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
-
-                        if (xx.Relationships.CheckInterrupt(i, selfTags))
-                        {
-                            interrupted = true;
-                            ignoreList.AddRange(i.actorRefs);
-                        }
-                        //interrupted = xx.Relationships.CheckInterrupt(i, selfTags) || interrupted;
-
-                    }
-                }
-
-
-                if (!interrupted)
-                {                // check greeting
-                    for (int y = 0; y < charaInRoom.Count; y++)
-                    {
-                        if (x == y) continue;
-                        if (charaInRoom[x] == charaInRoom[y]) continue;
-
-                        var yy = scr_System_CampaignManager.current.FindInstanceByID(charaInRoom[y]);
-                        if (xx == null || yy == null) continue;
-
-                        Utility.GetEPsFrom(yy, out List<EvaluationPackage> yyEPs);
-
-                        
-                        Prioritise self or target.
-                         
-
-                        isDirty = isDirty || (xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume || dirtyCharaRefs.Contains(charaInRoom[y]);
-                        //bool isSeeing = dirtyCharaAPRef.Contains(charaInRoom[x]) || dirtyCharaAPRef.Contains(charaInRoom[y]) || ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume);
-                        if (isDirty && !(scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[x]) && scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[y])))
-                        {
-                            xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "Greeting");
-                            //yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "Greeting");
-                        }
-                    }
-                }
-            }
-        }
-    }*/
 
     public void UpdateAllRoom()
     {

@@ -21,9 +21,50 @@ public class EventInstance
     }
 
     bool firstInit = true;
-    public EventInstance(int maxCallStack = 50)
+
+    protected int targetRef = -1;
+    protected Character_Trainable _self = null;
+    public Character_Trainable Self { get
+        {
+            if (_self == null) _self = targetRef == -1 ? null : scr_System_CampaignManager.current.FindInstanceByID(targetRef);
+            return _self;
+        }
+        set
+        {
+            _self = value;
+            if (value != null) targetRef = value.RefID;
+        }
+    
+    }
+
+
+    public Dictionary<string, List<Character_Trainable>> Targets = new Dictionary<string, List<Character_Trainable>>();
+
+    /// <summary>
+    /// TargetRef == -1 for null target
+    /// </summary>
+    /// <param name="targetRef"></param>
+    /// <param name="maxCallStack"></param>
+    public EventInstance (Character_Trainable eventSelf, bool startImmediate, string eventID, string label, int maxCallStack = 50)
     {
+        this.Self = eventSelf;
         this.maxCallStack = maxCallStack;
+        // init stuff
+        LoadNext(false, eventID, label);
+        if (startImmediate) Start();
+
+    }
+
+    public string Name { get
+        {
+            return $"EvInstance {(nextEvent == null ? "null" : nextEvent.ID)} {(nextEntry == null ? "null" : nextEntry.Name)}";
+        } }
+
+    protected bool _isvalid = false;
+    public bool isValid
+    {
+        get { return _isvalid && canRun; }
+        set { this._isvalid = value; }
     }
 
     protected Event currentEvent = null;
@@ -55,7 +96,17 @@ public class EventInstance
             }
         }
 
-        if (canRun && startImmediate) Start();
+        if (canRun && !nextEvent.Validate(this))
+        {
+            isValid = false;
+            //Debug.LogError($"error on {this.Name}");
+        }
+        else
+        {
+            //Debug.Log($"Event instance on {(Self == null ? "null" : Self.FirstName)} isvalid on {this.Name}");
+            isValid = canRun;
+            if (canRun && startImmediate) Start();
+        }
     }
 
     public EventStatus Status
@@ -63,7 +114,7 @@ public class EventInstance
         get
         {
             if (currentEntry != null && currentEntry is Event.EventEntry.EventEntry_Question) return EventStatus.waiting;
-            else if (currentEvent != null && currentEntry != null) return EventStatus.running;
+            else if ((currentEvent != null && currentEntry != null) || canRun) return EventStatus.running;
             else return EventStatus.idle;
             
         }
@@ -73,20 +124,30 @@ public class EventInstance
     public bool Displayable { get { return true; } }
     public void Start(bool waitingEnd = false)
     {
-        //Debug.Log("start!!!");
+
         if (canRun && (this.Status != EventStatus.waiting || waitingEnd))
         {
+            Debug.Log($"event {Name} start canRun");
             currentEntry = nextEntry;
             currentEvent = nextEvent;
             nextEntry = null;
             nextEvent = null;
             if (currentEntry.isValid)
             {
+                Debug.Log($"event {Name} isvalid, executing");
                 updateHandler.InvokeEventStatus(EventStatus.running, firstInit || waitingEnd);
                 firstInit = false;
                 currentEntry.Execute(this);
             }
-            else this.Clear("currententry not valid, resetting");
+            else
+            {
+                Debug.Log($"event {Name} invalid, resetting");
+                this.Clear("currententry not valid, resetting");
+            }
+        }
+        else
+        {
+            Debug.Log($"event {Name} start cannot run, exiting");
         }
     }
 

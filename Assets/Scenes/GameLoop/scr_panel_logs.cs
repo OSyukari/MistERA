@@ -67,7 +67,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     {
         todo.Add(msg);
         UpdateAnimatingStatus();
-        Debug.Log($"onLogsAdd, firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
+        Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
         if (firstLine || animate) SingleUpdate(false);
     }
 

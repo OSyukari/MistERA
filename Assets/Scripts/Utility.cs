@@ -103,6 +103,21 @@ public static class Utility
         return counter;
     }
 
+    public static bool MatchAPbyType(ActionPackage ap, string type)
+    {
+        switch (type)
+        {
+            case "ActionPackage_PathTo": return ap is ActionPackage_PathTo;
+            case "ActionPackage_Sex": return ap is ActionPackage_Sex;
+            case "ActionPackage_Interaction": return ap is ActionPackage_Interaction;
+            case "ActionPackage_ProductionOrder": return ap is ActionPackage_ProductionOrder;
+            case "ActionPackage_Redress": return ap is ActionPackage_Redress;
+            case "ActionPackage_Undress": return ap is ActionPackage_Undress;
+            default: return false;
+        }
+    }
+
+
     public static bool ArePackagesEqual(ActionPackage a, ActionPackage b)
     {
         if (a.GetType() != b.GetType()) return false;
@@ -880,12 +895,16 @@ public static class Utility
                 }
                 break;
             case "loadevent":
-                if (parsed.Count() < 2) return;
+                if (parsed.Count() >= 3 && int.TryParse(parsed[1], out int eventTargetRef))
+                {
+                    var eventTarget = eventTargetRef == -1 ? null : scr_System_CampaignManager.current.FindInstanceByID(eventTargetRef);
+                    string evID = parsed[2];
+                    string evLbl = parsed.Count() >= 4 ? parsed[3] : "";
+                    scr_UpdateHandler.current.EventHandler.StartEvent(eventTarget, evID, evLbl);
+                }
                 else
                 {
-                    string evID = parsed[1];
-                    string evLbl = parsed.Count() >= 3 ? parsed[2] : "";
-                    scr_UpdateHandler.current.EventHandler.StartEvent(evID, evLbl);
+                    Debug.LogError($"parse console command {parsed[0]} error");
                 }
                 break;
 

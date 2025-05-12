@@ -322,11 +322,19 @@ public class scr_UpdateHandler : MonoBehaviour
 
             if (EventHandler.Active)
             {
+                Debug.Log($"Singleupdate : eventhandler active, waiting at updatetime {updateTime}");
                 Updating = false;
-                Debug.Log($"Singleupdate : eventhandler active, waiting at updatetime{updateTime}");
-                yield return new WaitUntil(() => EventHandler.Status == EventStatus.idle);
+                EventHandler.Run();
             }
-            else yield return null;
+            while (EventHandler.Active)
+            {
+                //Updating = false;
+                //Debug.Log($"Singleupdate : eventhandler active, waiting at updatetime {updateTime}");
+                //EventHandler.Run();
+                //yield return new WaitUntil(() => EventHandler.Status == EventStatus.reset);
+                yield return null;
+            }
+            yield return null;
             //yield return new WaitForSecondsRealtime(0.001f);
         }
         loopCounter++;

@@ -128,7 +128,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     protected void InitFloorList()
     {
-        Debug.Log("initfloorlist");
+        //Debug.Log("initfloorlist");
         var currentFaction = scr_System_CampaignManager.current.CurrentRoom.FactionOwner;
         BuildFaction(currentFaction);
         foreach (var connect in currentFaction.ConnectedFactions)
@@ -143,12 +143,12 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     {
         if (faction == null) 
         {
-            Debug.LogError("initfaction error faction null");
+           // Debug.LogError("initfaction error faction null");
             return;
         }
         else
         {
-            Debug.Log("initffactionblock " + faction.FactionDisplayName);
+           // Debug.Log("initffactionblock " + faction.FactionDisplayName);
         }
 
         var block = Instantiate(prefab_FactionBlock);

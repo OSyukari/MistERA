@@ -19,11 +19,106 @@ public class Event : I_SerializationCallbackReceiver
     /// 
     public List<EventEntry> events = new List<EventEntry>();
 
+    public bool Validate(EventInstance instance)
+    {
+        if (!SelfValidator.isCharaValid(instance.Self)) return false;
+        foreach(var targetscope in TargetValidators)
+        {
+            if (!targetscope.FindTargets(instance.Self, ref instance.Targets)) return false;
+        }
+        return true;
+    }
 
     /// <summary>
     /// trigger keyword will allow it to be called whenever something happens
     /// </summary>
-    public string trigger = "";
+    public EventTrigger trigger = EventTrigger.None;
+
+    //
+    public EventScope_Self SelfValidator = new EventScope_Self();
+
+    [System.Serializable]
+    public class EventScope_Self
+    {
+        public List<CharaCondition> chara_conditions = new List<CharaCondition>();
+        public bool isCharaValid(Character_Trainable c)
+        {
+            foreach (var cond in chara_conditions) if (!cond.isValid(c)) return false;
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Allowed chara_conditions parameters:
+    /// - [isPlayer]
+    /// - [hasActionPackageType] [typename]
+    /// </summary>
+    [System.Serializable]
+    public class CharaCondition
+    {
+
+        public List<string> parameters = new List<string>();
+
+        public bool isValid(Character_Trainable c)
+        {
+            if (parameters.Count < 1) return true;
+            switch(parameters[0])
+            {
+                case "isPlayer":
+                    return scr_System_CampaignManager.current.Player == c;
+                case "hasActionPackageType":
+                    if (parameters.Count < 2) return false;
+                    else
+                    {
+                        var packages = scr_System_CampaignManager.current.GetExistingPackages(c, true, false, false);
+                        return packages.Find(x => Utility.MatchAPbyType(x, parameters[1])) != null;
+                    }
+                default: 
+                    return true;
+            }
+        }
+    }
+
+
+
+
+    [System.Serializable]
+    public class EventScope_Target
+    {
+        public string refKey = "";
+        public TargetScope baseScope = TargetScope.None;
+        public List<CharaCondition> chara_conditions = new List<CharaCondition>();
+        public int minTargetCount = -1;
+        public int maxTargetCount = -1;
+        public bool FindTargets(Character_Trainable self, ref Dictionary<string, List<Character_Trainable>> library)
+        {
+            if (refKey == "") return true;
+
+            var list = new List<Character_Trainable>();
+
+            if (baseScope != TargetScope.None) 
+            {
+                switch(baseScope)
+                {
+                    case TargetScope.AllCharaInSelfRoom:
+                        if (self == null) return false;
+                        var room = scr_System_CampaignManager.current.GetCharaRoomInstance(self.RefID);
+                        var charaRefs = room == null ? new List<int>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
+                        foreach (var refid in charaRefs) {
+                            var chara = scr_System_CampaignManager.current.FindInstanceByID(refid);
+                            foreach (var cond in chara_conditions) if (!cond.isValid(chara)) continue;
+                            if (!list.Contains(chara)) list.Add(chara);
+                        }
+                        break;
+                    default: break;
+                }
+            }
+            library.Add(refKey, new List<Character_Trainable>());
+            return (minTargetCount == -1 || list.Count >= minTargetCount) && (maxTargetCount == -1 || list.Count <= maxTargetCount);
+        }
+    }
+
+
     public EventEntry GetEntryWithLabel(string label)
     {
         if (label == "") return this.events.Count > 0 ? this.events[0] : null;
@@ -44,11 +139,12 @@ public class Event : I_SerializationCallbackReceiver
         foreach (var ev in this.events) if (ev.label != "") jumpLabels.Add(ev.label, ev);
     }
 
-    public List<Condition> asd = new List<Condition>();
+    public List<EventScope_Target> TargetValidators = new List<EventScope_Target>();
 
     [System.Serializable]
     public abstract class EventEntry
     {
+        public virtual string Name { get { return ""; } }
 
         public string label = "";
         public bool isLast = false;
@@ -81,6 +177,7 @@ public class Event : I_SerializationCallbackReceiver
         [System.Serializable]
         public class EventEntry_Line : EventEntry
         {
+            public override string Name { get { return line; } }
             public string line = "";
 
             public override void Execute(EventInstance owner)
@@ -104,6 +201,7 @@ public class Event : I_SerializationCallbackReceiver
         [System.Serializable]
         public class EventEntry_Question : EventEntry
         {
+            public override string Name { get { return question; } }
             public string question = "";
             public List<Options> options = new List<Options>();
 
@@ -165,7 +263,9 @@ public class Event : I_SerializationCallbackReceiver
                 public enum ExecutionType
                 {
                     None,
-                    JumpToLabel
+                    JumpToLabel,
+                    EventEnd,
+                    InterruptAP_byType
                 }
 
                 public void Execute(EventInstance owner)
@@ -204,6 +304,46 @@ public class Event : I_SerializationCallbackReceiver
                                     owner.Notify(EventStatus.reset);
                                 }
                                 else owner.LoadNext(false, arguments[0], arguments[1]);
+                                break;
+                            case ExecutionType.EventEnd:
+                                owner.Notify(EventStatus.reset);
+                                break;
+                            case ExecutionType.InterruptAP_byType:
+                                if (arguments.Count != 2)
+                                {
+                                    Debug.LogError("interruptAP does not have enough arguments");
+                                    owner.Notify(EventStatus.reset);
+                                }
+                                else
+                                {
+                                    var packages = new List<ActionPackage>();
+                                    if (arguments[0] == "self")
+                                    {
+                                        // interrupt self AP by arg[1]
+                                        foreach (var p in scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, false, true)) if (!packages.Contains(p) && Utility.MatchAPbyType(p, arguments[1])) packages.Add(p);
+
+                                    }
+                                    else
+                                    {
+                                        // interrupt target AP by arg[1]
+                                        if (!owner.Targets.ContainsKey(arguments[1])) Debug.LogError("error target scope error");
+                                        else
+                                        {
+                                            foreach(var chara in owner.Targets[arguments[1]])
+                                            {
+                                                // interrupt chara ap by arg[1]
+                                                foreach(var p in scr_System_CampaignManager.current.GetExistingPackages(chara, true, false, true)) if (!packages.Contains(p) && Utility.MatchAPbyType(p, arguments[1])) packages.Add(p);
+                                            }
+                                        }
+                                    }
+
+                                    foreach(var p in packages)
+                                    {
+                                        // interrupt each
+                                        p.DisablePackage();
+                                    }
+
+                                }
                                 break;
                             default: return;
 

@@ -425,7 +425,18 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         //string s = "ExistPlayerPackage : ";
 
-        
+        foreach(var p in GetExistingPackages(scr_System_CampaignManager.current.Player, checkUnexecuted, false, true))
+        {
+            //if (p.Duration < 1) continue;
+            //if (!checkUnexecuted && !p.Ticked) continue;
+           // if (p.actorRefs.Contains(0) || p.masterRef == 0)
+            //{
+                //s += p.DisplayName + "[" + p.Duration + "] ";
+                returnVal = true;
+                updateTime = Math.Max(updateTime, p.Duration);
+            //}
+        }
+        /*
         foreach (var kvpair_list in registeredPackagesByRoom)
         {
             foreach (var p in kvpair_list.Value)
@@ -439,15 +450,39 @@ public class scr_System_CampaignManager : MonoBehaviour
                     updateTime = Math.Max(updateTime, p.Duration);
                 }
             }
-        }
-        
-
+        }*/
 
         totalUpdateTime = updateTime;
         //Debug.Log(s);
         //Debug.Log($"EXIST PLAYER PACKAGE {updateTime} {totalUpdateTime}");
         return returnVal;
     }
+
+    public List<ActionPackage> GetExistingPackages (Character_Trainable c, bool checkUnexecuted, bool checkExecuted, bool checkMaster)
+    {
+        List<ActionPackage> results = new List<ActionPackage>();
+        var room = Map.FindRoomByChara(c.RefID);
+
+        foreach (var kvpair_list in registeredPackagesByRoom)
+        {
+           
+            foreach (var p in GetExistingPackages2(c, kvpair_list.Value, checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
+            
+        }
+                //if (room != null && registeredPackagesByRoom.ContainsKey(room.RefID)) foreach(var p in GetExistingPackages2(c, registeredPackagesByRoom[room.RefID], checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
+                //if (c.CurrentJob != null) foreach(var p in GetExistingPackages2(c, c.CurrentJob.ActivePackages, checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
+                //if (c.InteractionJob != null) foreach (var p in GetExistingPackages2(c, c.InteractionJob.ActivePackages, checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
+        return results;
+
+    }
+
+    protected List<ActionPackage> GetExistingPackages2 (Character_Trainable c, List<ActionPackage> list, bool checkUnexecuted, bool checkExecuted, bool checkMaster)
+    {
+        List<ActionPackage> results = new List<ActionPackage>();
+        foreach (var p in list) if ((p.actorRefs.Contains(c.RefID) || p.masterRef == c.RefID) && !results.Contains(p) && (p.Ticked || checkUnexecuted) && (p.Duration > 0 || checkExecuted)) results.Add(p);
+        return results;
+    }
+
 
     public bool ShowCharaLog(int refID)
     {

@@ -1,26 +1,90 @@
 {
-    "_Events":{
+    "Events":{
         "list":[
             {
-                "ID":"onMove_interrupt",
-                "trigger":"onmove",
-                "self":[
-
-                ],
-                "target":
-                [
-
-                ],
-                "conditions":[
-
+                "ID":"OnEnterRoom",
+                "trigger":"OnEnterRoom",
+                "SelfValidator":{
+                    "chara_conditions":
+                    [
+                        { "parameters":["isPlayer"] }
+                    ]
+                },
+                "events":[
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "Player OnEnterRoom!"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "Event END",
+                        "nextEntryLabel": "end"
+                    }
+                ]
+            },
+            {
+                "ID":"OnEnterRoom_interrupt",
+                "trigger":"OnEnterRoom",
+                "SelfValidator":{
+                    "chara_conditions":
+                    [
+                        { "parameters":["isPlayer"] },
+                        { "parameters":["hasActionPackageType","ActionPackage_PathTo"] }
+                    ]
+                },
+                "TargetValidators":[
+                    {
+                        "refkey":"targets",
+                        "baseScope":"AllCharaInSelfRoom",
+                        "minTargetCount":1
+                    }
                 ],
                 "events":[
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
-                        "question":"",
+                        "question":"$self.name$ enters room and meet $targets.name$ in room",
                         "options":[
-
+                            { "option": "keep moving", "Results":[ { "Type":"EventEnd" } ] },
+                            { "option": "stop", "Results":[ { "Type":"JumpToLabel", "arguments":["OnEnterRoom_interruptOthers",""] } ] }
                         ]
+                    }
+                ]
+            },
+            {
+                "ID":"OnEnterRoom_interruptOthers",
+                "SelfValidator":{
+                    "chara_conditions":
+                    [
+                        { "parameters":["isPlayer"] }
+                    ]
+                },
+                "TargetValidators":[
+                    {
+                        "refkey":"targets",
+                        "baseScope":"AllCharaInSelfRoom",
+                        "minTargetCount":1,
+                        "chara_conditions":[
+                            { "parameters":["hasActionPackageType","ActionPackage_PathTo"] }
+                        ]
+                    }
+                ],
+                "events":[
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "question":"$targets.name$ are leaving room",
+                        "options":[
+                            { "option": "let them be", "Results":[ { "Type":"EventEnd" } ] },
+                            {   "option": "stop them", 
+                                "Results":[ 
+                                    { "Type":"InterruptAP_byType", "arguments":["targets","ActionPackage_PathTo"] },
+                                    { "Type":"JumpToLabel", "arguments":["","end"] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "$self.name$ called $targets.name$",
+                        "nextEntryLabel": "end"
                     }
                 ]
             }
