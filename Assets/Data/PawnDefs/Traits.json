@@ -13,7 +13,7 @@
                 }
             ],
             "type": 0,
-            "sortTypeString":"Singular",
+            "SortType":"Singular",
             "neutralIndex": -1,
             "group_tooltip": ""
         },
@@ -48,7 +48,7 @@
                 }
             ],
             "type": 0,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "How much does one respond to pain."
         },
@@ -91,7 +91,7 @@
                 }
             ],
             "type": 0,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "How much can one carry gears."
         }
@@ -109,7 +109,7 @@
                 }
             ],
             "type": 1,
-            "sortTypeString":"Singular",
+            "SortType":"Singular",
             "neutralIndex": -1,
             "group_tooltip": ""
         },
@@ -138,7 +138,7 @@
                 }
             ],
             "type": 1,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "How hard it is to wake one up from sleeping."
         },
@@ -167,7 +167,7 @@
                 }
             ],
             "type": 1,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "How much sleep does one require compared to the average of one's race."
         },
@@ -214,7 +214,7 @@
                 }
             ],
             "type": 1,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 2,
             "group_tooltip": "How does one respond to alcohol."
         },
@@ -243,7 +243,7 @@
                 }
             ],
             "type": 1,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "How one respond if they happened to be sick."
         },
@@ -272,7 +272,7 @@
                 }
             ],
             "type": 1,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "How one respond if they happened to be sick."
         }
@@ -398,7 +398,7 @@
                 }
             ],
             "type": 2,
-            "sortTypeString":"Singular",
+            "SortType":"Singular",
             "neutralIndex": -1,
             "group_tooltip": ""
         },
@@ -433,7 +433,7 @@
                 }
             ],
             "type": 2,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 2,
             "group_tooltip": "How one respond to social encounter."
         },
@@ -461,7 +461,7 @@
                 }
             ],
             "type": 2,
-            "sortTypeString":"UnsortedList",
+            "SortType":"UnsortedList",
             "neutralIndex": 1,
             "group_tooltip": "Likelihood of having an emotional response from witnessing other's experience."
         }
@@ -479,7 +479,7 @@
                 }
             ],
             "type": 3,
-            "sortTypeString":"Singular",
+            "SortType":"Singular",
             "neutralIndex": -1,
             "group_tooltip": ""
         },
@@ -508,7 +508,7 @@
                 }
             ],
             "type": 3,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Likelihood to express one's emotion openly."
         },
@@ -537,7 +537,7 @@
                 }
             ],
             "type": 3,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "How strong are positive or negative mood."
         }
@@ -562,7 +562,7 @@
                 }
             ],
             "type": 5,
-            "sortTypeString":"Singular",
+            "SortType":"Singular",
             "neutralIndex": -1,
             "group_tooltip": ""
         },
@@ -591,7 +591,7 @@
                 }
             ],
             "type": 5,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "How fast does one cum (affect both penis and vagina/clit activities)."
         },
@@ -625,7 +625,7 @@
                 }
             ],
             "type": 5,
-            "sortTypeString":"UnsortedList",
+            "SortType":"UnsortedList",
             "neutralIndex": 0,
             "group_tooltip": "Sexual attraction. Influences opinion and favorability towards other.\nSee the related configurations in [Edit Preference] to decide what factor in determining gender.\nDefault: only appearance decide a person's 'gender group'."
         }
@@ -664,7 +664,7 @@
                 }
             ],
             "type": 8,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Breast part sensitivity."
         },
@@ -699,7 +699,7 @@
                 }
             ],
             "type": 8,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Mouth part sensitivity."
         },
@@ -734,7 +734,7 @@
                 }
             ],
             "type": 8,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Clit/Penis part sensitivity. If a character has both vagina and penis, this applies to both."
         },
@@ -769,7 +769,7 @@
                 }
             ],
             "type": 8,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Vagina part sensitivity."
         },
@@ -804,7 +804,7 @@
                 }
             ],
             "type": 8,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Anal part sensitivity."
         },
@@ -882,7 +882,7 @@
                 }
             ],
             "type": 8,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 4,
             "group_tooltip": "Breast part size."
         },
@@ -929,7 +929,7 @@
                 }
             ],
             "type": 8,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 3,
             "group_tooltip": "Penis part size."
         },
@@ -951,7 +951,7 @@
                 }
             ],
             "type": 8,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "has vagina or not."
         },
@@ -973,7 +973,7 @@
                 }
             ],
             "type": 8,
-            "sortTypeString":"SortedList",
+            "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "has anus or not. "
         }

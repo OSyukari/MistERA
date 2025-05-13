@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 
 [System.Serializable]
-public class Character_Origin_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitialize, I_IndexMergeable
+public class Character_Origin_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable
 {
     [SerializeField][JsonProperty] protected List<Character_Origin> list = new List<Character_Origin>();
 
@@ -33,28 +33,17 @@ public class Character_Origin_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLat
             foreach (string s in c.disallowRace_ID) { c.DisallowRace.Add(scr_System_Serializer.current.MasterList.humanoid_Races.GetByID(s)); }
             foreach (string s in c.disallowRaceTemplate_ID) { c.DisallowRaceTemplate.Add(scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetByID(s)); }
         }
+    }
+
+    public void RegisterAllID()
+    {
+        Debug.Log("Character_Origin_Index : registering ID with list length [" +list.Count+ "]") ;
 
         var ids = new Dictionary<string, Character_Origin>();
         foreach (var i in list) ids.Add(i.ID, i);
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Character_Origin>(ids);
     }
-    public void RegisterAllID()
-    {
-        Debug.Log("Character_Origin_Index : registering ID with list length [" +list.Count+ "]") ;
 
-        foreach (Character_Origin o in this.list)
-        {
-            //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
-        }
-    }
-    public void RegisterAllTooltip()
-    {
-        foreach (Character_Origin o in this.list)
-        {
-            scr_System_tooltipDictionary.current.AddEntry(o.ID, o.tooltip);
-        }
-    }
     public Character_Origin GetItemBefore(Character_Origin o)
     {
         int index = list.IndexOf(o);
@@ -72,15 +61,15 @@ public class Character_Origin_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLat
         else return list[index + 1];
     }
 
-    public Character_Origin GetByID(string id)
-    {
+    public Character_Origin GetByID(string id) 
+    {   
         if (_List.TryGetValue(id, out Character_Origin result)) return result;
-        return null;
+        return null; 
     }
 }
 
 [System.Serializable]
-public class Character_Origin_startingOption_Index : I_IndexHasID, I_IndexHasTooltip, I_IndexMergeable, I_NeedLateInitialize
+public class Character_Origin_startingOption_Index : I_IndexHasID, I_IndexMergeable
 {
     [SerializeField][JsonProperty] protected List<Character_Origin_startingOption> list = new List<Character_Origin_startingOption>();
     [JsonIgnore] public List<Character_Origin_startingOption> List { get { return list; } }
@@ -100,18 +89,11 @@ public class Character_Origin_startingOption_Index : I_IndexHasID, I_IndexHasToo
     public void RegisterAllID()
     {
         Debug.Log("Character_Origin_startingOption_Index : registering ID with list length [" + list.Count + "]");
-        foreach (Character_Origin_startingOption o in this.list)
-        {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
-        }
+        var ids = new Dictionary<string, Character_Origin_startingOption>();
+        foreach (var i in list) ids.Add(i.ID, i);
+        _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Character_Origin_startingOption>(ids);
     }
-    public void RegisterAllTooltip()
-    {
-        foreach (Character_Origin_startingOption o in this.list)
-        {
-            scr_System_tooltipDictionary.current.AddEntry(o.ID, o.Tooltip);
-        }
-    }
+
     public Character_Origin_startingOption GetItemBefore(Character_Origin_startingOption o)
     {
 
@@ -130,24 +112,17 @@ public class Character_Origin_startingOption_Index : I_IndexHasID, I_IndexHasToo
         else return list[index + 1];
     }
 
-    public void LateInitialize()
-    {
-        var ids = new Dictionary<string, Character_Origin_startingOption>();
-        foreach (var i in list) ids.Add(i.ID, i);
-        _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Character_Origin_startingOption>(ids);
-    }
-
-    public Character_Origin_startingOption GetByID(string id)
-    {
+    public Character_Origin_startingOption GetByID(string id) 
+    {   
         if (_List.TryGetValue(id, out Character_Origin_startingOption result)) return result;
-        return null;
+        return null; 
     }
 
 }
 
 
 [System.Serializable]
-public class Humanoid_Race_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitialize, I_IndexMergeable
+public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
 {
     [SerializeField][JsonProperty] protected List<Humanoid_Race> list = new List<Humanoid_Race>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_Race> _List;
@@ -167,18 +142,11 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLateIn
     public void RegisterAllID()
     {
         Debug.Log("Humanoid_Race_Index : registering ID with list length [" + list.Count + "]");
-        foreach (Humanoid_Race o in this.list)
-        {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
-        }
+        var ids = new Dictionary<string, Humanoid_Race>();
+        foreach (var i in list) ids.Add(i.ID, i);
+        _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_Race>(ids);
     }
-    public void RegisterAllTooltip()
-    {
-        foreach (Humanoid_Race o in this.list)
-        {
-            scr_System_tooltipDictionary.current.AddEntry(o.ID, o.Tooltip);
-        }
-    }
+
     public Humanoid_Race GetItemBefore(Humanoid_Race o)
     {
         int index = list.IndexOf(o);
@@ -196,22 +164,15 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLateIn
         else return list[index + 1];
     }
 
-    public void LateInitialize()
-    {
-        var ids = new Dictionary<string, Humanoid_Race>();
-        foreach (var i in list) ids.Add(i.ID, i);
-        _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_Race>(ids);
-    }
-
     public Humanoid_Race GetByID(string id)
-    {
+    {   
         if (_List.TryGetValue(id, out Humanoid_Race result)) return result;
-        return null;
+        return null; 
     }
 }
 
 [System.Serializable]
-public class Humanoid_RaceTemplate_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitialize, I_IndexMergeable
+public class Humanoid_RaceTemplate_Index : I_IndexHasID, I_IndexMergeable
 {
     [SerializeField][JsonProperty] protected List<Humanoid_RaceTemplate> list = new List<Humanoid_RaceTemplate>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_RaceTemplate> _List;
@@ -231,18 +192,11 @@ public class Humanoid_RaceTemplate_Index : I_IndexHasID, I_IndexHasTooltip, I_Ne
     public void RegisterAllID()
     {
         Debug.Log("Humanoid_RaceTemplate_Index : registering ID with list length [" + list.Count + "]");
-        foreach (Humanoid_RaceTemplate o in this.list)
-        {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
-        }
+        var ids = new Dictionary<string, Humanoid_RaceTemplate>();
+        foreach (var i in list) ids.Add(i.ID, i);
+        _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_RaceTemplate>(ids);
     }
-    public void RegisterAllTooltip()
-    {
-        foreach (Humanoid_RaceTemplate o in this.list)
-        {
-            scr_System_tooltipDictionary.current.AddEntry(o.ID, o.Tooltip);
-        }
-    }
+
     public Humanoid_RaceTemplate GetItemBefore(Humanoid_RaceTemplate o)
     {
         int index = list.IndexOf(o);
@@ -259,17 +213,11 @@ public class Humanoid_RaceTemplate_Index : I_IndexHasID, I_IndexHasTooltip, I_Ne
         if (index + 1 >= list.Count) return list[0];
         else return list[index + 1];
     }
-    public void LateInitialize()
-    {
-        var ids = new Dictionary<string, Humanoid_RaceTemplate>();
-        foreach (var i in list) ids.Add(i.ID, i);
-        _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_RaceTemplate>(ids);
-    }
 
     public Humanoid_RaceTemplate GetByID(string id)
-    {
+    {   
         if (_List.TryGetValue(id, out Humanoid_RaceTemplate result)) return result;
-        return null;
+        return null; 
     }
 }
 

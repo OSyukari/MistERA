@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Xml;
-using System.Runtime.Serialization;
-using System.Linq;
 using Newtonsoft.Json;
 
 [System.Serializable]
-public class Index_StatusEx : I_IndexHasID, ISerializationCallbackReceiver, I_IndexMergeable
+public class Index_StatusEx : I_IndexHasID, I_IndexMergeable
 {
-    [SerializeField] public List<StatusEx_Base> list = new List<StatusEx_Base>();
+    public List<StatusEx_Base> list = new List<StatusEx_Base>();
 
     public void MergeWith(I_IndexMergeable list)
     {
@@ -22,36 +19,15 @@ public class Index_StatusEx : I_IndexHasID, ISerializationCallbackReceiver, I_In
             this.list.AddRange(l.list);
         }
     }
-
-
-    public void OnAfterDeserialize()
-    {
-        // register all sex status to sensitivity data
-        // dictionary "C" -> "chara_status_sexual_C" for quick lookup and alter status when sex
-
-        /*
-        foreach (var i in list)
-        {
-            if (i.variationMode.variationType == StatusEx_Base.Status_Variation_Type.sex)
-            {
-                scr_System_Serializer.current.AddSensitivityStatus(i.variationMode.stringData, i.statusID);
-            }
-        }*/
-
-    }
-
-    public void OnBeforeSerialize()
-    {
-
-    }
-
+    public StatusEx_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+    Dictionary<string, StatusEx_Base> ID_Dictionary = new Dictionary<string, StatusEx_Base>();
     public void RegisterAllID()
     {
         Debug.Log("Index_StatusEx : registering ID with list length [" + list.Count + "]");
 
         foreach (StatusEx_Base o in this.list)
         {
-            if (o.isValid) scr_System_Serializer.current.RegisterIDtoLib(o.statusID, o);
+            if (o.isValid) ID_Dictionary.Add(o.statusID, o);
         }
     }
 
@@ -61,13 +37,13 @@ public class Index_StatusEx : I_IndexHasID, ISerializationCallbackReceiver, I_In
 public class StatusEx_Base
 {
     public string statusID = "";
-    [SerializeField][JsonProperty] protected string displayName;
-    public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(statusID, displayName); } }
+    [SerializeField][JsonProperty] protected string displayName = "";
+    [JsonIgnore] public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(statusID, displayName); } }
     public bool noDisplay = false;
     public bool constant = false;
     public string stringFormat = "N1";
 
-    public bool isValid
+    [JsonIgnore] public bool isValid
     {
         get
         {
@@ -76,46 +52,37 @@ public class StatusEx_Base
         }
     }
 
-    public List<Variant> variants;
+    public List<Variant> variants = new List<Variant>();
 
     [System.Serializable]
     public class Variant
     {
-        public string displayName;
-        public float threshold;
+        public string displayName = "";
+        public float threshold = 0;
         public List<string> tags = new List<string>();
-        public List<Stat_Modifier> stat_modifiers;
+        public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
     }
 
+    [System.Serializable]
     public enum Status_Variation_Type
     {
+        None = 0,
         summation,
   //      condition,
         statModifiers
     }
 
-    public Variations variationMode;
+    public Variations variationMode = null;
 
     [System.Serializable]
-    public class Variations : ISerializationCallbackReceiver
+    public class Variations
     {
-        public Status_Variation_Type variationType;
-        [SerializeField] private string variationTypeString;
+        public Status_Variation_Type variationType = Status_Variation_Type.None;
         public int pauseXMinAfterMod = 0;
-        public float value;
+        public float value = 0;
         public string stringData = "";
         //public List<Variation_Conditions> conditions = new List<Variation_Conditions>();
         
-
-        public void OnAfterDeserialize()
-        {
-            Enum.TryParse(variationTypeString, out variationType);
-        }
-
-        public void OnBeforeSerialize()
-        {
-
-        }
 
         [System.Serializable]
         public class Variation_Conditions

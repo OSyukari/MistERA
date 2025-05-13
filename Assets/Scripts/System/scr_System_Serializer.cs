@@ -16,10 +16,6 @@ public interface I_IndexHasID
 {
     public void RegisterAllID();
 }
-public interface I_IndexHasTooltip
-{
-    public void RegisterAllTooltip();
-}
 
 public interface I_NeedLateInitialize
 {
@@ -28,27 +24,12 @@ public interface I_NeedLateInitialize
 
 public class scr_System_Serializer : MonoBehaviour
 {
-    protected string DataPath_Local = "/Data/Defs/";
-    protected string DataPath_Persistent;
-    private Dictionary<Type, string> DataPath;
+    protected string DataPath_Local = "/Data/";
+    //private Dictionary<Type, string> DataPath;
 
-    protected Dictionary<string, string> TooltipLibrary;
 
-    public masterList masterList;
     public MasterList MasterList;
 
-    private string GetDataPathbyType_JSON(Type type)
-    {
-        return DataPath[type]+".json";
-    }
-    private string GetDataPathbyType_XML(Type type)
-    {
-        return DataPath[type]+".xml";
-    }
-    private string GetDataPathbyType(Type type)
-    {
-        return DataPath[type];
-    }
     // Singleton
     public static scr_System_Serializer current;
 
@@ -68,34 +49,18 @@ public class scr_System_Serializer : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
-        ID_Library = new Dictionary<string, object>();
-        TooltipLibrary = new Dictionary<string, string>();
-
+        //ID_Library = new Dictionary<string, object>();
         sensitivityClass_statusID_LookUp = new Dictionary<string, string>();
-
-        DataPath = new Dictionary<Type, string>();
-        DataPath.Add(typeof(masterList), Application.dataPath + DataPath_Local);
-
-        DataPath.Add(typeof(Character_BaseID_Index), Application.dataPath + "/Data/Characters/");
-
-
-#if UNITY_EDITOR
-
-
-#endif
-
     }
 
     private void Start()
     {
         // before master dictionary load, central control player pref must exist to check language
         //_masterDictionary = LoadDictionary();
-        masterList = LoadDefs();
         MasterList = LoadDefs(true);
 
         LoadCharactersFoldersJSON();
 
-        masterList.Initialize();
         MasterList.Initialize();
 
     }
@@ -117,59 +82,26 @@ public class scr_System_Serializer : MonoBehaviour
     
     Humanoid_Race_Index index_HumanoidRace { get { return MasterList.humanoid_Races as Humanoid_Race_Index; } }
     Humanoid_RaceTemplate_Index index_HRaceTemplate { get { return MasterList.humanoid_RaceTemplates as Humanoid_RaceTemplate_Index; } }
-    public Traits_Group_Index index_TraitsAll { get { return masterList.Traits_Groups as Traits_Group_Index; } }
+    public Traits_Group_Index index_TraitsAll { get { return MasterList.Traits_Groups as Traits_Group_Index; } }
     //public Skills_Index index_SkillsAll { get { return masterList.Skills as Skills_Index; } }
-    public Stats_Derived_Base_Index index_StatsDerived { get { return masterList.Stats_Derived_Bases as Stats_Derived_Base_Index; }  }
+    public Stats_Derived_Base_Index index_StatsDerived { get { return MasterList.Stats_Derived_Bases as Stats_Derived_Base_Index; }  }
 
     Index_CampaignSetting index_CampaignSetting { get { return MasterList.CampaignSettings as Index_CampaignSetting; } }
-    public Character_Base_Index index_Characters_Bases { get { return masterList.Character_Bases as Character_Base_Index; } }
-    public Index_BodyPartBase index_BodyPartBase { get { return masterList.BodyPartBases as Index_BodyPartBase; } }
+    public Character_Base_Index index_Characters_Bases { get { return MasterList.Character_Bases as Character_Base_Index; } }
+    public Index_BodyPartBase index_BodyPartBase { get { return MasterList.BodyPartBases as Index_BodyPartBase; } }
     public Index_Item_Base index_Item_Base { get { return MasterList.Items as Index_Item_Base; } }
     public Index_COM index_COM { get { return MasterList.COMs as Index_COM; } }
-    public Index_Floor_Base index_Floor_Base { get { return masterList.Floors as Index_Floor_Base; } }
-    public Index_MapPlan index_MapPlan { get { return masterList.MapPlans as Index_MapPlan; } }
+    public Index_Floor_Base index_Floor_Base { get { return MasterList.Floors as Index_Floor_Base; } }
+    public Index_MapPlan index_MapPlan { get { return MasterList.MapPlans as Index_MapPlan; } }
     public Index_FurnitureBase index_FurnitureBase { get { return MasterList.Furnitures as Index_FurnitureBase; } }
     public Index_Status index_Status { get { return MasterList.Status as Index_Status; } }
-    public Index_StatusEx index_StatusEX { get { return masterList.StatusEXs as Index_StatusEx; } }
+    public Index_StatusEx index_StatusEX { get { return MasterList.StatusEXs as Index_StatusEx; } }
     public Index_Experiences index_Experiences { get { return MasterList.Experiences; } }
     public Index_CharaSkills index_Skills { get { return MasterList.Skills; } }
-    public Stats_Derived_Extended_Index index_StatsExtended { get { return masterList.StatEXs as Stats_Derived_Extended_Index; } }
+    public Stats_Derived_Extended_Index index_StatsExtended { get { return MasterList.StatEXs as Stats_Derived_Extended_Index; } }
     Humanoid_RaceTemplateAddon_Index index_HRTemplateAddon;
 
-    Dictionary<string, object> ID_Library;
-    public void RegisterIDtoLib(string id, object o) {
-        if (id.Length > 0)
-        {
-
-            if (ID_Library.ContainsKey(id))
-            {
-                if (id != "trait_neutral") Debug.Log("Serializer Error : library already contains id [" + id + "]");
-            }
-            else
-            {
-                //Debug.Log("registering ID [" + id + "]");
-                ID_Library.Add(id, o);
-            }
-        }
-    }
-
-    public void RemoveIDfromLib(string id) {
-        if (id.Length > 0)
-        {
-           ID_Library.Remove(id);
-        }
-    }
-
-    public void SaveAll()
-    {
-        SaveDataXML(index_TraitsAll.GetType(), index_TraitsAll);
-    }
-
-    public void SaveDataJSON(Type type, object obj)
-    {
-        string s = JsonUtility.ToJson(obj);
-        System.IO.File.WriteAllText(GetDataPathbyType_JSON(type), s);
-    }
+    //Dictionary<string, object> ID_Library;
 
     public void SavePresetJSON(Character_Trainable obj)
     {
@@ -178,17 +110,10 @@ public class scr_System_Serializer : MonoBehaviour
         System.IO.File.WriteAllText(Utility.GetSavePath_Preset()+ obj.FirstName+((obj.MiddleName.Length < 1)? " " : " "+obj.MiddleName+" ")+obj.LastName+".json", s);
     }
 
-
-
     public Character_Trainable LoadPresetJSON(string filename)
     {
         //Debug.Log("Loading JSON preset " + Utility.GetSavePath_Preset() + filename);
         return scr_System_CentralControl.current.LoadCharaData(Utility.GetSavePath_Preset() + filename);
-    }
-
-    public object LoadDataJSON(Type type, string path)
-    {
-        return JsonConvert.DeserializeObject(File.ReadAllText(path+".json"),type);
     }
 
 
@@ -197,11 +122,14 @@ public class scr_System_Serializer : MonoBehaviour
 
         var newIndex = new Character_Base_Index();
         var newIndex2 = new Character_Trainable_SerializableTemplate_Index();
-        string path = GetDataPathbyType(typeof(Character_BaseID_Index));
+        //string path = Application.dataPath + "/Data/Characters/";
+        string path = Application.dataPath + DataPath_Local;
         if (Directory.Exists(path))
         {
             DirectoryInfo d = new DirectoryInfo(path);
-            foreach (var file in d.GetFiles("*.json"))
+
+            //foreach (var file in d.GetFiles("*.json"))
+            foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
             {
                 var i = JsonConvert.DeserializeObject<Character_Trainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
                 if (i == null || i.BaseID == null) continue;
@@ -212,89 +140,16 @@ public class scr_System_Serializer : MonoBehaviour
                 ii.FileLocation = file.FullName;
                 newIndex2.list.Add(ii);
             }
-            foreach (var folder in d.GetDirectories())
-            {
-                foreach (var file in folder.GetFiles("*.json"))
-                {
-                    var i = JsonConvert.DeserializeObject<Character_Trainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
-                    if (i == null || i.BaseID == null) continue;
-                    newIndex.baseCharacters.Add(i);
-                    i.FileLocation = file.FullName;
-
-                    Character_Trainable_SerializableTemplate ii = JsonConvert.DeserializeObject<Character_Trainable_SerializableTemplate>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
-                    ii.FileLocation = file.FullName;
-                    newIndex2.list.Add(ii);
-                }
-            }
         }
 
         Debug.Log("Adding "+newIndex.baseCharacters.Count+" characters to masterlist");
-        masterList.Character_Bases = newIndex;
+        MasterList.Character_Bases = newIndex;
         MasterList.CharacterTemplates = newIndex2;
-    }
-
-    /*
-    public Index_COM LoadCOMFolderJSON()
-    {
-        string path = GetDataPathbyType(typeof(Index_COM));
-        Index_COM i = new Index_COM();
-        if (Directory.Exists(path))
-        {
-            DirectoryInfo d = new DirectoryInfo(path);
-
-            foreach (var folder in d.GetDirectories())
-            {
-                foreach (var file in folder.GetFiles("*.json"))
-                {
-                    Debug.Log("reading standalone COM file : " + file.FullName);
-                    //COM c = LoadDataJSON(typeof(COM), file.FullName) as COM;
-                    COM com = JsonUtility.FromJson(File.ReadAllText(file.FullName), typeof(COM)) as COM;
-                    //COM com = JsonConvert.DeserializeObject<COM>(File.ReadAllText(file.FullName), new JsonSerializerSettings { MaxDepth = 20 });
-                    if (com != null)
-                    {
-                        //com.OnAfterDeserialize();
-                        i.list.Add(com);
-                    }
-                }
-            }
-            i.OnAfterDeserialize();
-
-            foreach (var file in d.GetFiles("*.json"))
-            {   // all files must be index_com files
-                Debug.Log("reading index COM file : " + file.FullName);
-
-                i.AppendList(LoadDataJSON(typeof(Index_COM), file.FullName) as Index_COM);
-            }
-        }
-        else
-        {
-            Debug.Log("reading personality file ERROR directory not exist");
-        }
-
-
-        return i;
-    }*/
-
-    public masterList LoadDefs()
-    {
-        string path = GetDataPathbyType(typeof(masterList));
-        masterList i = new masterList();
-        i.InitializeLists();
-        if (Directory.Exists(path))
-        {
-            DirectoryInfo d = new DirectoryInfo(path);
-            foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
-            {   // all files must be index_com files
-                masterList l = JsonUtility.FromJson(File.ReadAllText(file.FullName), typeof(masterList)) as masterList;
-                if (l != null) i.MergeWith(l);
-            }
-        }
-        return i;
     }
 
     public MasterList LoadDefs(bool val = true)
     {
-        string path = GetDataPathbyType(typeof(masterList));
+        string path = Application.dataPath + DataPath_Local;
         MasterList i = new MasterList();
         i.InitializeLists();
         if (Directory.Exists(path))
@@ -315,7 +170,7 @@ public class scr_System_Serializer : MonoBehaviour
 
     public Dictionary_Master LoadDictionary(bool val = true)
     {
-        string path = GetDataPathbyType(typeof(masterList));
+        string path = Application.dataPath + DataPath_Local;
         Dictionary_Master i = new Dictionary_Master();
         if (Directory.Exists(path))
         {
@@ -331,52 +186,6 @@ public class scr_System_Serializer : MonoBehaviour
             }
         }
         return i;
-    }
-
-    /// <summary>
-    /// takes a copy of the objectm and serialize it into the desired object
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="path"></param>
-    /// <param name="reference"></param>
-    public void SaveDataXML(Type type, object reference, string path = null)
-    {
-        XmlSerializer serializer = new XmlSerializer(type);
-        FileStream stream;
-        if (path != null)
-        {
-            stream = new FileStream(path, FileMode.Create);
-        }
-        else
-        {
-            stream = new FileStream(GetDataPathbyType_XML(type), FileMode.Create);
-        }
-        serializer.Serialize(stream, reference);
-        stream.Close();
-    }
-
-    /// <summary>
-    /// return the deserialized index object
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public object LoadDataXML(Type type, string path = null)
-    {
-        object data;
-        XmlSerializer serializer = new XmlSerializer(type);
-        FileStream stream;
-        if (path != null)
-        {
-            stream = new FileStream(path, FileMode.Open);
-        }
-        else
-        {
-            stream = new FileStream(GetDataPathbyType(type), FileMode.Open);
-        }
-        data = serializer.Deserialize(stream);
-        stream.Close();
-        return data;
     }
 
     public Dictionary<string, ItemComponentTemplate_Craftable_Recipe> CraftingRecipe = new Dictionary<string, ItemComponentTemplate_Craftable_Recipe>();
@@ -401,97 +210,79 @@ public class scr_System_Serializer : MonoBehaviour
 
     public Traits GetByNameOrID_Traits(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as Traits;
-        else return null;
+        return MasterList.Traits_Groups.GetTraitByID(name_or_id);
     }
     public scr_Traits_Group GetByNameOrID_TraitsGroup(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as scr_Traits_Group;
-        else return null;
+        return MasterList.Traits_Groups.GetGroupByID(name_or_id);
     }
 
     public Skills_Full GetByNameOrID_Skills(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as Skills_Full;
-        else return null;
+        Debug.LogError("fetching skills unimplemented");
+        return null;
     }
 
     public Stats_Derived_Base GetByNameOrID_StatsDerivedBase(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as Stats_Derived_Base;
-        else return null;
+        return MasterList.Stats_Derived_Bases.GetByID(name_or_id);
     }
 
     public Item_Base GetByNameOrID_Item_Base(string name_or_id){
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as Item_Base;
-        else return null;
+        return MasterList.Items.GetByID(name_or_id);
     }
 
     public BodyPart_Base GetByNameOrID_BodyPart_Base(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as BodyPart_Base;
-        else return null;
+        return MasterList.BodyPartBases.GetPartByID(name_or_id);
     }
 
     public COM GetByNameOrID_COM(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as COM;
-        else return null;
+        return MasterList.COMs.GetByID(name_or_id);
     }
 
     public BodyInternal_Base GetByNameOrID_BodyInternal_Base(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as BodyInternal_Base;
-        else return null;
+        return MasterList.BodyPartBases.GetInternalByID(name_or_id);
     }
 
     public CharaSkill GetByNameOrID(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as CharaSkill;
-        else return null;
+        return MasterList.Skills.GetByID(name_or_id);
     }
     public Floor_Base GetByNameOrID_Floor_Base(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as Floor_Base;
-        else return null;
+        return MasterList.Floors.GetByID(name_or_id);
     }
     public MapPlan GetByNameOrID_MapPlan(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as MapPlan;
-        else return null;
+        return MasterList.MapPlans.GetByID(name_or_id);
     }
 
     public FurnitureBase GetByNameOrID_FurnitureBase(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as FurnitureBase;
-        else return null;
+        return MasterList.Furnitures.GetByID(name_or_id);
     }
 
     public Status_Base GetByNameOrID_Status_Base(string name_or_id)
     {
-        if (name_or_id == null || name_or_id == "") return null;
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as Status_Base;
-        else return null;
+        return MasterList.Status.GetByID(name_or_id);
     }
 
     public StatusEx_Base GetByNameOrID_StatusEx_Base(string name_or_id)
     {
-        if (name_or_id == null || name_or_id == "") return null;
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as StatusEx_Base;
-        else return null;
+        return MasterList.StatusEXs.GetByID(name_or_id);
     }
 
     public Stats_Derived_Extended GetByNameOrID_StatusEx(string name_or_id)
     {
-        if (name_or_id == null || name_or_id == "") return null;
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as Stats_Derived_Extended;
-        else return null;
+        return MasterList.StatEXs.GetByID(name_or_id);
     }
 
     public Sexperience_Base GetByNameOrID_ExperienceBase(string name_or_id)
     {
-        if (ID_Library.ContainsKey(name_or_id)) return ID_Library[name_or_id] as Sexperience_Base;
-        else return null;
+        return MasterList.Sexperiences.GetByID(name_or_id);
     }
 }
 
@@ -511,23 +302,6 @@ public class Character_Trainable_Root
 }
 
 
-
-[System.Serializable]
-public class SerializedcustomVerb
-{
-    public string verbClassString;
-    public string name;
-    public VerbBase verbBase
-    {
-        get
-        {
-            if (v == null) v = Activator.CreateInstance(Type.GetType(verbClassString)) as VerbBase;
-            return v;
-        }
-    }
-    public VerbBase v = null;
-}
-
 [System.Serializable]
 public class Skills_Index : I_IndexHasID, I_IndexMergeable
 {
@@ -543,15 +317,17 @@ public class Skills_Index : I_IndexHasID, I_IndexMergeable
         }
     }
 
+    Dictionary<string, Skills_Full> ID_Dictionary = new Dictionary<string, Skills_Full>();
     public void RegisterAllID()
     {
         Debug.Log("Skills_Index : registering ID with list length [" + list.Count + "]");
 
         foreach (Skills_Full o in this.list)
         {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            ID_Dictionary.Add(o.ID, o);
         }
     }
+    public Skills_Full GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
 }
 
 
@@ -562,7 +338,7 @@ public class Humanoid_RaceTemplateAddon_Index
 }
 
 [System.Serializable]
-public class Traits_Group_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitialize, I_IndexMergeable
+public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable
 {
 
     public void MergeWith(I_IndexMergeable list){
@@ -601,7 +377,7 @@ public class Traits_Group_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLateIni
     public List<scr_Traits_Group> traits_BODY = new List<scr_Traits_Group>();
 
     private List<List<scr_Traits_Group>> traitsall = null;
-    public List<List<scr_Traits_Group>> traits_All
+    [JsonIgnore] public List<List<scr_Traits_Group>> traits_All
     {
         get
         {
@@ -640,6 +416,13 @@ public class Traits_Group_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLateIni
             }
         }
     }
+
+    Dictionary<string, scr_Traits_Group> ID_Dictionary1 = new Dictionary<string, scr_Traits_Group>();
+    Dictionary<string, Traits> ID_Dictionary2 = new Dictionary<string, Traits>();
+
+    public scr_Traits_Group GetGroupByID(string id) { return ID_Dictionary1.ContainsKey(id) ? ID_Dictionary1[id] : null; }
+    public Traits GetTraitByID(string id) { return ID_Dictionary2.ContainsKey(id) ? ID_Dictionary2[id] : null; }
+
     public void RegisterAllID()
     {
         Debug.Log("Traits_Group_Index : registering ID with list length [" + traits_All.Count + "]");
@@ -648,25 +431,10 @@ public class Traits_Group_Index : I_IndexHasID, I_IndexHasTooltip, I_NeedLateIni
         {
             foreach (scr_Traits_Group s in o)
             {
-                scr_System_Serializer.current.RegisterIDtoLib(s.ID, s);
+                ID_Dictionary1.Add(s.ID, s);
                 foreach (Traits t in s.entries)
                 {
-                    scr_System_Serializer.current.RegisterIDtoLib(t.ID, t);
-                }
-
-            }
-        }
-    }
-    public void RegisterAllTooltip()
-    {
-        foreach (List<scr_Traits_Group> o in traits_All)
-        {
-            foreach (scr_Traits_Group s in o)
-            {
-                scr_System_tooltipDictionary.current.AddEntry(s.ID, s.tooltip);
-                foreach (Traits t in s.entries)
-                {
-                    scr_System_tooltipDictionary.current.AddEntry(t.ID, t.tooltip);
+                    ID_Dictionary2.Add(t.ID, t);
                 }
 
             }

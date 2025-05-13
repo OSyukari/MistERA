@@ -7,6 +7,10 @@ using System.Linq;
 using Newtonsoft.Json;
 
 
+public interface I_IndexMergeable
+{
+    public void MergeWith(I_IndexMergeable list);
+}
 
 
 [System.Serializable]
@@ -21,7 +25,17 @@ public class MasterList
             {
                 list = new ArrayList();
                 list.Add(Dictionary);
+
+                list.Add(Stats_Derived_Bases);
+                list.Add(BodyPartBases);
+                list.Add(Floors);
+                list.Add(MapPlans);
+                list.Add(StatusEXs);
+                list.Add(Sexperiences);
+                list.Add(StatEXs);
+
                 list.Add(Experiences);
+                list.Add(Traits_Groups);
                 list.Add(Character_Origin_StartingOptions);
                 list.Add(RelationshipTypes);
                 list.Add(humanoid_Races);
@@ -40,6 +54,17 @@ public class MasterList
             return list;
         }
     }
+    public Traits_Group_Index Traits_Groups = null;
+    public Index_Sexperiences Sexperiences = null;
+    public Index_BodyPartBase BodyPartBases = null;
+    public Stats_Derived_Base_Index Stats_Derived_Bases = null;
+    //public Character_BaseID_Index Character_BaseIDs = null;
+    public Index_Floor_Base Floors = null;
+    public Index_MapPlan MapPlans = null;
+    public Character_Base_Index Character_Bases = null;
+    public Index_StatusEx StatusEXs = null;
+    public Stats_Derived_Extended_Index StatEXs = null;
+
     public Index_Status Status = null;
     public Index_Experiences Experiences = null;
     public Character_Origin_Index Character_Origins = null;
@@ -60,6 +85,15 @@ public class MasterList
     public void InitializeLists()
     {
         this.Experiences = new Index_Experiences();
+        this.Stats_Derived_Bases = new Stats_Derived_Base_Index();
+        this.Character_Bases = new Character_Base_Index();
+        this.BodyPartBases = new Index_BodyPartBase();
+        this.Floors = new Index_Floor_Base();
+        this.MapPlans = new Index_MapPlan();
+        this.StatusEXs = new Index_StatusEx();
+        this.StatEXs = new Stats_Derived_Extended_Index();
+        this.Sexperiences = new Index_Sexperiences();
+        this.Traits_Groups = new Traits_Group_Index();
         this.Character_Origins = new Character_Origin_Index();
         this.Character_Origin_StartingOptions = new Character_Origin_startingOption_Index();
         this.RelationshipTypes = new Index_RelationshipTypes();
@@ -99,7 +133,6 @@ public class MasterList
         {
             if (l is I_SerializationCallbackReceiver) (l as I_SerializationCallbackReceiver).OnAfterDeserialize();
             if (l is I_IndexHasID) (l as I_IndexHasID).RegisterAllID();
-            //if (l is I_IndexHasTooltip) (l as I_IndexHasTooltip).RegisterAllTooltip();
         }
 
         foreach (object l in List)

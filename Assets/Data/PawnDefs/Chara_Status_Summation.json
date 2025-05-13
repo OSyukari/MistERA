@@ -8,7 +8,7 @@
             "stringFormat":"N0",
             "constant":true,
             "variationMode":
-                { "variationTypeString":"statModifiers", "value": 0, "stringData":"capMod" }
+                { "variationType":"statModifiers", "value": 0, "stringData":"capMod" }
             ,
             "variants":[
                 { "displayName":"极恶",     "threshold":-3.0 },
@@ -27,7 +27,7 @@
             "stringFormat":"N0",
             "constant":true,
             "variationMode":
-                { "variationTypeString":"statModifiers", "value": 0, "stringData":"capMod" }
+                { "variationType":"statModifiers", "value": 0, "stringData":"capMod" }
             ,
             "variants":[
                 { "displayName":"界限",     "threshold":-3.0 },
@@ -46,7 +46,7 @@
             "stringFormat":"N0",
             "constant":true,
             "variationMode":
-                { "variationTypeString":"statModifiers", "value": 0, "stringData":"capMod"  }
+                { "variationType":"statModifiers", "value": 0, "stringData":"capMod"  }
             ,
             "variants":[
                 { "displayName":"无欲",     "threshold":-3.0 },
@@ -65,7 +65,7 @@
             "constant":true,
             "variationMode":
                 {
-                    "variationTypeString":"statModifiers",
+                    "variationType":"statModifiers",
                     "value":1
                 }
             ,
@@ -85,7 +85,7 @@
             "noDisplay":false,
             "variationMode":
             {
-                "variationTypeString":"summation",
+                "variationType":"summation",
                 "stringData":"chara_status_sex"
             },
             "variants":[
@@ -162,7 +162,7 @@
             "stringFormat":"N0",
             "noDisplay":false,
             "variationMode":
-            { "variationTypeString":"statModifiers", "value": 0, "stringData":"capMod" },
+            { "variationType":"statModifiers", "value": 0, "stringData":"capMod" },
             "variants":[
                 {
                     "displayName":"无",

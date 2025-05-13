@@ -153,16 +153,17 @@ public class FurnitureInstance: IDisposable, I_Disposable
 
 
 [System.Serializable]
-public class Index_FurnitureBase : I_IndexHasID, I_IndexMergeable, ISerializationCallbackReceiver
+public class Index_FurnitureBase : I_IndexHasID, I_IndexMergeable, I_SerializationCallbackReceiver
 {
     public List<FurnitureBase> list = new List<FurnitureBase>();
+    Dictionary<string, FurnitureBase> ID_Dictionary = new Dictionary<string, FurnitureBase>();
     public void RegisterAllID()
     {
         Debug.Log("Index_FurnitureBase : registering ID with list length [" + list.Count + "]");
 
         foreach (FurnitureBase o in this.list)
         {
-            if (o.isValid) scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            if (o.isValid) ID_Dictionary.Add(o.ID, o);
         }
     }
 
@@ -176,13 +177,10 @@ public class Index_FurnitureBase : I_IndexHasID, I_IndexMergeable, ISerializatio
         }
     }
 
-    public void OnBeforeSerialize()
-    {
-
-    }
-
     public void OnAfterDeserialize()
     {
         foreach(var i in list) i.OnAfterDeserialize();
     }
+
+    public FurnitureBase GetByID(string ID) {  return ID_Dictionary.ContainsKey(ID) ? ID_Dictionary[ID] : null; }
 }

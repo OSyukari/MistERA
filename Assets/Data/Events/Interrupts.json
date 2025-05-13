@@ -7,7 +7,8 @@
                 "SelfValidator":{
                     "chara_conditions":
                     [
-                        { "parameters":["isPlayer"] }
+                        { "parameters":["isPlayer"] },
+                        { "parameters":["hasActionPackageType","ActionPackage_PathTo"] }
                     ]
                 },
                 "events":[
@@ -18,7 +19,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "line": "Event END",
-                        "nextEntryLabel": "end"
+                        "isLast": true
                     }
                 ]
             },
@@ -32,10 +33,11 @@
                         { "parameters":["hasActionPackageType","ActionPackage_PathTo"] }
                     ]
                 },
-                "TargetValidators":[
+                "TargetValidators":
+                [
                     {
                         "refkey":"targets",
-                        "baseScope":"AllCharaInSelfRoom",
+                        "baseScope":"AllCharaInSelfRoom_ExcludeSelf",
                         "minTargetCount":1
                     }
                 ],
@@ -61,7 +63,7 @@
                 "TargetValidators":[
                     {
                         "refkey":"targets",
-                        "baseScope":"AllCharaInSelfRoom",
+                        "baseScope":"AllCharaInSelfRoom_ExcludeSelf",
                         "minTargetCount":1,
                         "chara_conditions":[
                             { "parameters":["hasActionPackageType","ActionPackage_PathTo"] }

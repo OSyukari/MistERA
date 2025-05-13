@@ -8,16 +8,6 @@ using System.IO;
 using QuikGraph.Algorithms;
 using Newtonsoft.Json;
 
-
-
-
-[System.Serializable]
-public class FloorExit
-{
-
-}
-
-
 // Instantiate floor with floorplan
 // campaignmanager dispense floor uid
 // campaignmanager instantiate all items in floor
@@ -30,7 +20,7 @@ public class FloorExit
 
 // scriptableobject, Create instance floor
 [System.Serializable]
-public class Floor_Base : ISerializationCallbackReceiver
+public class Floor_Base
 {
     // awake register to list
     public string ID = "";
@@ -42,18 +32,12 @@ public class Floor_Base : ISerializationCallbackReceiver
 
     public float resize = 1f;
 
-    public List<FloorPlan_Exit> exits;
-    public List<Room_Base> rooms;
-    public List<Door_Base> doors;
+    public List<FloorPlan_Exit> exits = new List<FloorPlan_Exit>();
+    public List<Room_Base> rooms = new List<Room_Base>();
+    public List<Door_Base> doors = new List<Door_Base>();
 
     private bool valid = true;
-    public bool isValid { get { return valid; } }
-
-    public void OnBeforeSerialize()
-    {
-
-    }
-
+    [JsonIgnore] public bool isValid { get { return valid; } }
 
     //public List<Room>
 
@@ -358,17 +342,18 @@ public class Floor_Instance : IDisposable, I_Disposable
 
 
 [System.Serializable]
-public class Index_Floor_Base : I_IndexHasID, I_IndexMergeable
+public class Index_Floor_Base : I_IndexHasID, I_IndexMergeable, I_SerializationCallbackReceiver
 {
-    [SerializeField] public List<Floor_Base> list = new List<Floor_Base>();
-
+    public List<Floor_Base> list = new List<Floor_Base>();
+    public Floor_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+    Dictionary<string, Floor_Base> ID_Dictionary = new Dictionary<string, Floor_Base>();
     public void RegisterAllID()
     {
         Debug.Log("Index_Floor_Base : registering ID with list length [" + list.Count + "]");
 
         foreach (Floor_Base o in this.list)
         {
-            if (o.isValid) scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            if (o.isValid) ID_Dictionary.Add(o.ID, o);
         }
     }
 
@@ -380,5 +365,10 @@ public class Index_Floor_Base : I_IndexHasID, I_IndexMergeable
             if (this.list == null) this.list = new List<Floor_Base>();
             this.list.AddRange(l.list);
         }
+    }
+
+    public void OnAfterDeserialize()
+    {
+        foreach(var i in list) i.OnAfterDeserialize();
     }
 }

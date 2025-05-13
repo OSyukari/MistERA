@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Newtonsoft.Json;
 
 [System.Serializable]
-public class Index_BodyPartBase : I_IndexHasID, I_IndexHasTooltip, I_NeedLateInitialize, I_IndexMergeable
+public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable
 {
     public List<BodyPart_Base> BodyPart_Base = new List<BodyPart_Base>();
     public List<BodyInternal_Base> BodyInternal_Base = new List<BodyInternal_Base>();
@@ -19,6 +20,8 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexHasTooltip, I_NeedLateIni
         }
     }
 
+    Dictionary<string, BodyPart_Base> ID_Dictionary1 = new Dictionary<string, BodyPart_Base>();
+    Dictionary<string, BodyInternal_Base> ID_Dictionary2 = new Dictionary<string, BodyInternal_Base>();
     public void RegisterAllID()
     {
         Debug.Log("Index_BodyPartBase : registering ID with list length [" + BodyPart_Base.Count+ "]+["+ BodyInternal_Base .Count+ "]") ;
@@ -26,105 +29,54 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexHasTooltip, I_NeedLateIni
         foreach (BodyPart_Base o in this.BodyPart_Base)
         {
             //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            ID_Dictionary1.Add(o.ID, o);
         }
+
         foreach (BodyInternal_Base o in this.BodyInternal_Base)
         {
             //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            ID_Dictionary2.Add(o.ID, o);
         }
 
-       
-    }
-
-    public void RegisterAllTooltip()
-    {
-        foreach (BodyPart_Base o in this.BodyPart_Base)
+        var keys = ID_Dictionary1.Keys;
+        foreach(var key in keys)
         {
-            scr_System_tooltipDictionary.current.AddEntry(o.ID, o.Tooltip);
-        }
-        foreach (BodyInternal_Base o in this.BodyInternal_Base)
-        {
-            scr_System_tooltipDictionary.current.AddEntry(o.ID, o.Tooltip);
-        }
-    }
-
-    void I_NeedLateInitialize.LateInitialize()
-    {
-        foreach (BodyPart_Base b in BodyPart_Base)
-        {
-            foreach (string s in b.availableSlotsString)
+            if (!ID_Dictionary1[key].isValid)
             {
-                BodyPartEquipSlot slot = BodyPartEquipSlot.None;
-                Enum.TryParse(s, out slot);
-                if (slot != BodyPartEquipSlot.None) b.availableSlots.Add(slot);
-            }
-            foreach (string s in b.equipLayersString)
-            {
-                BodyEquipLayer layer = BodyEquipLayer.None;
-                Enum.TryParse(s, out layer);
-                if (layer != BodyEquipLayer.None) b.equipLayers.Add(layer);
-
-            }
-
-            // ERROR CHECKING START
-            if (!b.isValid)
-            {
-                Debug.LogError("BodyPart_Base [" + b.ID + "] not valid: all its childs' sortOrder must be strictly bigger than its own sortOrder.");
-                scr_System_Serializer.current.RemoveIDfromLib(b.ID);
-                // prevent it from being used.
-            }
-
-            // ERROR CHECKING END
-        }
-        foreach (BodyInternal_Base b in BodyInternal_Base)
-        {
-            foreach (string s in b.availableSlotsString)
-            {
-                BodyPartEquipSlot slot = BodyPartEquipSlot.None;
-                Enum.TryParse(s, out slot);
-                if (slot != BodyPartEquipSlot.None) b.availableSlots.Add(slot);
-            }
-            foreach (string s in b.equipLayersString)
-            {
-                BodyEquipLayer layer = BodyEquipLayer.None;
-                Enum.TryParse(s, out layer);
-                if (layer != BodyEquipLayer.None) b.equipLayers.Add(layer);
-
+                 Debug.LogError("BodyPart_Base [" + key + "] not valid: all its childs' sortOrder must be strictly bigger than its own sortOrder.");
+                ID_Dictionary1.Remove(key);
             }
         }
     }
+    public BodyPart_Base GetPartByID(string id) { return ID_Dictionary1.ContainsKey(id) ? ID_Dictionary1[id] : null; }
+    public BodyInternal_Base GetInternalByID(string id) { return ID_Dictionary2.ContainsKey(id) ? ID_Dictionary2[id] : null; }
 }
 
 [System.Serializable]
 public class BodyPart_Base
 {
-    [SerializeField] private string id = "";
-    public string ID { get { return id; } }
+    [SerializeField][JsonProperty] private string id = "";
+    [JsonIgnore] public string ID { get { return id; } }
 
 
-    [SerializeField] private string tooltip = "";
-    public string Tooltip { get { return tooltip; } }
+    [SerializeField][JsonProperty] private string tooltip = "";
+    [JsonIgnore] public string Tooltip { get { return tooltip; } }
 
 
-    [SerializeField] private string displayName = "";
-    public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(displayName); } }
+    [SerializeField][JsonProperty] private string displayName = "";
+    [JsonIgnore] public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(displayName); } }
 
     public List<string> internalID = new List<string>();
 
-    public List<string> availableSlotsString = new List<string>();
-    [NonSerialized] public List<BodyPartEquipSlot> availableSlots = new List<BodyPartEquipSlot>();
+    public List<BodyPartEquipSlot> AvailableSlots = new List<BodyPartEquipSlot>();
 
+    //public List<string> equipLayersString = new List<string>() { "Skin", "Inner", "Outer" };//, "Shell"
+    public List<BodyEquipLayer> equipLayers = new List<BodyEquipLayer>() { BodyEquipLayer.Skin, BodyEquipLayer.Inner, BodyEquipLayer.Outer };
 
-    public List<BodyPartEquipSlot> AvailableSlots { get { return availableSlots; } }
+    public List<string> childID = new List<string>();
 
-    public List<string> equipLayersString = new List<string>() { "Skin", "Inner", "Outer" };//, "Shell"
-    [NonSerialized] public List<BodyEquipLayer> equipLayers = new List<BodyEquipLayer>();
-
-    [SerializeField] public List<string> childID = new List<string>();
-
-    [SerializeField] public int sortOrder = 99;
-    [SerializeField] public List<string> tags = new List<string>();
+    public int sortOrder = 99;
+    public List<string> tags = new List<string>();
     //[SerializeField]
     //public List<ItemComponent_Data> Comps = new List<ItemComponent_Data>();
 
@@ -144,7 +96,7 @@ public class BodyPart_Base
     /// <summary>
     /// Dumb isValid check, child sortOrder must be strictly bigger than parent
     /// </summary>
-    public bool isValid
+    [JsonIgnore] public bool isValid
     {
         get
         {

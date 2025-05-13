@@ -5,20 +5,21 @@ using System;
 using Newtonsoft.Json;
 
 [System.Serializable]
-public class Index_Sexperiences : I_IndexHasID,I_IndexMergeable
+public class Index_Sexperiences : I_IndexHasID, I_IndexMergeable
 {
-    [SerializeField] public List<Sexperience_Base> list = new List<Sexperience_Base>();
+    public List<Sexperience_Base> list = new List<Sexperience_Base>();
 
+    Dictionary<string, Sexperience_Base> ID_Dictionary = new Dictionary<string, Sexperience_Base>();
     public void RegisterAllID()
     {
         Debug.Log("Index_Sexperiences : registering ID with list length [" + list.Count +"]");
 
         foreach (Sexperience_Base o in this.list)
         {
-            if (o.isValid) scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            if (o.isValid) ID_Dictionary.Add(o.ID, o);
         }
     }
-
+    public Sexperience_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
     public void MergeWith(I_IndexMergeable list){
         var l = list as Index_Sexperiences;
         if (l == null) return;
@@ -212,7 +213,7 @@ public class ExperienceClass
 }
 
 [System.Serializable]
-public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_NeedLateInitialize
+public class Index_Experiences : I_IndexMergeable, I_IndexHasID
 {
     [SerializeField][JsonProperty] protected List<ExperienceClass> list = new List<ExperienceClass>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, ExperienceClass> _List;
@@ -231,10 +232,7 @@ public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_NeedLateIniti
     public void RegisterAllID()
     {
         Debug.Log("Registering Experiences with count " + list.Count);
-    }
 
-    public void LateInitialize()
-    {
         var ids = new Dictionary<string, ExperienceClass>();
         foreach(var i in list) ids.Add(i.ExperienceID, i);
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, ExperienceClass>(ids);

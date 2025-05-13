@@ -9,6 +9,7 @@ public enum BodyEquipLayer
     None, Skin, Inner, Outer//, Shell
 }
 
+[System.Serializable]
 public enum BodyPartEquipSlot
 {
     None,
@@ -29,6 +30,7 @@ public enum BodyPartEquipSlot
     Anus
 }
 
+[System.Serializable]
 public enum Revealing
 {
     Erotic = -1,

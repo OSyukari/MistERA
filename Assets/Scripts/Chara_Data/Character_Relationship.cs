@@ -720,7 +720,7 @@ public class RelationshipType
 }
 
 [System.Serializable]
-public class Index_RelationshipTypes: I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize
+public class Index_RelationshipTypes: I_IndexHasID, I_IndexMergeable
 {
     [SerializeField][JsonProperty] protected List<RelationshipType> list_biological = new List<RelationshipType>();
     [SerializeField][JsonProperty] protected List<RelationshipType> list_social = new List<RelationshipType>();
@@ -743,28 +743,12 @@ public class Index_RelationshipTypes: I_IndexHasID, I_IndexMergeable, I_NeedLate
             if (l.list_personal != null) this.list_personal .AddRange(l.list_personal);
         }
     }
+
+    Dictionary<string, RelationshipType> ID_Dictionary = new Dictionary<string, RelationshipType>();
     public void RegisterAllID()
     {
         Debug.Log("Index_Status : registering ID with list length bio[" + list_biological.Count + "] personal[" + list_personal.Count + "] social[" + list_social.Count + "]");
 
-        foreach (RelationshipType o in this.list_biological)
-        {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
-        }
-
-        foreach (RelationshipType o in this.list_social)
-        {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
-        }
-
-        foreach (RelationshipType o in this.list_personal)
-        {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
-        }
-    }
-
-    public void LateInitialize()
-    {
         var ids = new Dictionary<string, RelationshipType>();
         foreach (var i in List) ids.Add(i.ID, i);
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, RelationshipType>(ids);

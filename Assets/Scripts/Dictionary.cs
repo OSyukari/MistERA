@@ -52,7 +52,7 @@ public class Dictionary_Master
         foreach (object l in List)
         {
             if (l is I_NeedLateInitialize) (l as I_NeedLateInitialize).LateInitialize();
-            if (l is I_IndexHasTooltip) (l as I_IndexHasTooltip).RegisterAllTooltip();  // tooltip uses dictionary
+            //if (l is I_IndexHasTooltip) (l as I_IndexHasTooltip).RegisterAllTooltip();  // tooltip uses dictionary
         }
     }
 }

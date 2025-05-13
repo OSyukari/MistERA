@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 
@@ -7,11 +8,11 @@ using UnityEngine;
 public class Door_Base
 {
     public string ID = "";
-    public string A;
-    public string B;
+    public string A = "";
+    public string B = "";
     public float cost = 0f;
     public bool lockable = false;
-    public bool Lockable
+    [JsonIgnore] public bool Lockable
     {
         get
         {

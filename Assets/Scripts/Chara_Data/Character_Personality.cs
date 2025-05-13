@@ -13,6 +13,7 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
 {
     public List<Character_Personality> list = new List<Character_Personality>();
 
+    Dictionary<string, Character_Personality> ID_Dictionary = new Dictionary<string, Character_Personality>();
     public void RegisterAllID()
     {
         Debug.Log("Character_Personality_Index : registering ID with list length [" + list.Count+ "]") ;
@@ -20,10 +21,10 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
         foreach (Character_Personality o in this.list)
         {
             //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            ID_Dictionary.Add(o.ID, o);
         }
     }
-
+    
     public void MergeWith(I_IndexMergeable list){
         var l = list as Character_Personality_Index;
         if (l == null) return;
@@ -34,11 +35,7 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
         }
     }
 
-    public Character_Personality GetByID(string id)
-    {
-        var result = list.Find(x => x.ID == id);
-        return result;
-    }
+    public Character_Personality GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
 
     public void LateInitialize()
     {

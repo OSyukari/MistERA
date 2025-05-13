@@ -149,7 +149,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
 
     // temporary inventory for unequipped items
-    public List<int> inventory_ref;
+    public List<int> inventory_ref = new List<int>();
 
     [JsonIgnore] public bool CanActInTimeStop { get { return this.RefID == 0; } }
     [JsonIgnore] public bool isTimeStopped { get { return scr_System_Time.current.TimeStop && !CanActInTimeStop; } }
@@ -203,7 +203,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         scr_UpdateHandler.current.Observer_PreUpdateTime += PreUpdateTime;
         scr_UpdateHandler.current.Observer_PostUpdateTime_2 += PostUpdateTime2;
         scr_UpdateHandler.current.Observer_PostUpdateTime_3 += PostUpdateTime3;
-        inventory_ref = new List<int>();
         RestoreAll(true);
 
         this.interactionJobPointer = new Job_CharaCOM(refID);
@@ -223,7 +222,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
 
 
-    public bool canAct
+    [JsonIgnore] public bool canAct
     {
         get
         {
@@ -418,14 +417,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
     public Character_Trainable(bool InitializeNew)
     {
-        this.firstName = "Jane"; this.middleName = ""; this.lastName = "Doe";
-        this.nameDisplayFormat = "chara_fullname_firstToLast";
         //Stats = new StatsManager(this);
-        this.Origin = scr_System_Serializer.current.MasterList.Character_Origins.GetByID("charOrigin_EmissaryoftheTower");
-        this.Race = scr_System_Serializer.current.MasterList.humanoid_Races.GetByID("humanRace_human");
-        this.RaceTemplate = scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetByID("humanRaceAddon_Magician");
-        this.StartingGift = scr_System_Serializer.current.MasterList.Character_Origin_StartingOptions.GetByID(this.Origin.availableOptionsID[0]);
-        this.traits = new List<string>();
         this.birthday = Utility.GetCampaignTime().AddYears(-Age);
 
         InitializeAllTraits();
@@ -464,8 +456,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public MemoryManager Memory = null;
 
-    [SerializeField][JsonProperty] protected string firstName, middleName, lastName;
-    [SerializeField][JsonProperty] protected string nameDisplayFormat;
+    [SerializeField][JsonProperty] protected string firstName = "Jane", middleName = "", lastName = "Doe";
+    [SerializeField][JsonProperty] protected string nameDisplayFormat = "chara_fullname_firstToLast";
 
     public void SetName(string firstName, string middleName, string lastName, string displayFormat){
         this.firstName = firstName;
@@ -484,7 +476,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 .Replace("$lastName$", LastName).Replace(" $middleName$", MiddleName == "" ? "" : " "+MiddleName).Replace("$firstName$", FirstName);
         } }
 
-    [SerializeField][JsonProperty] private string origin;
+    [SerializeField][JsonProperty] private string origin = "charOrigin_EmissaryoftheTower";
     [JsonIgnore] public Character_Origin Origin { 
         get { return scr_System_Serializer.current.MasterList.Character_Origins.GetByID(origin); } 
         set { origin = value.ID; } }
@@ -499,7 +491,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         get { return scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetByID(raceTemplate); } 
         set { raceTemplate = value.ID; } }
 
-    [SerializeField][JsonProperty] private string startingGift;
+    [SerializeField][JsonProperty] private string startingGift = "charOriginGift_none";
     [JsonIgnore] public Character_Origin_startingOption StartingGift { 
         get { return scr_System_Serializer.current.MasterList.Character_Origin_StartingOptions.GetByID(startingGift); } 
         set { startingGift = value.ID; } }
@@ -531,9 +523,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return currentJobPointer; } }
 
 
-    [SerializeField]
-    [JsonProperty]
-    protected List<int> activeJobRefs = new List<int>();
+    [SerializeField] [JsonProperty] protected List<int> activeJobRefs = new List<int>();
     public void ChangeCurrentJob(Job job = null, string targetCOMid = "", string targetCOMTag = "")
     {
         this._cachedJobDescription = "";
@@ -611,10 +601,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     public bool HasTrait(Traits t) { return traits.Contains(t.ID); }
 
     [JsonIgnore] public int Age { get { return 22; } }
-    [SerializeField] private bool noAging = false;
+    [SerializeField][JsonProperty] private bool noAging = false;
 
-    [SerializeField] private DateTime birthday;
-    [JsonIgnore]public DateTime Birthday { get { return birthday; } set { birthday = value; } }
+    [SerializeField][JsonProperty] private DateTime birthday;
+    [JsonIgnore] public DateTime Birthday { get { return birthday; } set { birthday = value; } }
 
     public void TryGetJob(int currentHour, List<string> s)
     {
@@ -956,7 +946,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
     }
 
-    [JsonIgnore]public bool shouldSleep { get
+    [JsonIgnore] public bool shouldSleep { get
         {
             if (!hasSleepNeed) return false;
             if (this.FactionManager.HasSleepSchedule) 
@@ -970,7 +960,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             }
         } }
 
-    [JsonIgnore]public bool shouldRest { get
+    [JsonIgnore] public bool shouldRest { get
         {
             if (Stats.Stamina != null && Stats.Stamina.ValuePercentile < 0.5) return true;
             if (Stats.Energy != null && Stats.Energy.ValuePercentile < 0.5) return true;
@@ -1270,12 +1260,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     }
 
-
-    public void OnBeforeSerialize()
-    {
-
-    }
-
     public void OnAfterDeserialize()
     {
         string s = "Loaded Chara " + FullName + "\n";
@@ -1353,7 +1337,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         public List<RelationshipManager.presetRelationship> initialRelationship = new List<RelationshipManager.presetRelationship>();
         public List<presetInventory> initialInventory = new List<presetInventory>();
 
-        public List<Skills> Skills;
+        public List<Skills> Skills = new List<Skills>();
 
         public int Height = 163;
 
@@ -1409,7 +1393,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         [System.Serializable]
         public class presetInventory
         {
-            public string ID;
+            public string ID = "";
             public string nameOverwrite = "";
         }
 
@@ -1494,28 +1478,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
 }
 
-
-
-
-public class Character_Trainable_Template : Character_Trainable
-{
-
-}
-
-
-
-public class Character_Human : Character_Trainable {
-    /*
-     
-     
-     */
-
-}
-
-public class Character_Elf : Character_Trainable { }
-
-public class Character_ : Character_Trainable { }
-
 [System.Serializable]
 public class Character_BaseID_Index
 {
@@ -1556,12 +1518,15 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID
         return null;
     }
 
+    Dictionary <string, Character_Trainable> ID_Dictionary = new Dictionary<string, Character_Trainable>();
     public void RegisterAllID()
     {
         //Debug.Log("Character_Base_Index : registering ID with list length [" + baseCharacters.Count + "]");
         foreach (Character_Trainable o in this.baseCharacters)
         {
-            scr_System_Serializer.current.RegisterIDtoLib(o.BaseID, o);
+            ID_Dictionary.Add(o.BaseID, o);
         }
     }
+
+    public Character_Trainable GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
 }

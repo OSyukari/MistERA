@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System;
 
 [System.Serializable]
-public class Stats_Derived_Base_Index : I_IndexHasID, I_IndexHasTooltip, I_IndexMergeable
+public class Stats_Derived_Base_Index : I_IndexHasID, I_IndexMergeable
 {
     public List<Stats_Derived_Base> list = new List<Stats_Derived_Base>();
 
@@ -19,16 +19,14 @@ public class Stats_Derived_Base_Index : I_IndexHasID, I_IndexHasTooltip, I_Index
         }
     }
 
+    Dictionary<string, Stats_Derived_Base> ID_Dictionary = new Dictionary<string, Stats_Derived_Base>();
     public void RegisterAllID()
     {
         Debug.Log("Stats_Derived_Base_Index : registering ID with list length [" + list.Count + "]");
-        foreach (Stats_Derived_Base o in list) scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+        foreach (Stats_Derived_Base o in list) ID_Dictionary.Add(o.ID, o);
     }
+    public Stats_Derived_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
 
-    void I_IndexHasTooltip.RegisterAllTooltip()
-    {
-        foreach (Stats_Derived_Base o in list) scr_System_tooltipDictionary.current.AddEntry(o.ID, o.Tooltip);
-    }
 }
 
 [System.Serializable]

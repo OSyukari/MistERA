@@ -9,14 +9,9 @@ using Spine;
 using Newtonsoft.Json.Linq;
 
 [System.Serializable]
-public class Index_CharaSkills : I_IndexMergeable, I_NeedLateInitialize, I_IndexHasID
+public class Index_CharaSkills : I_IndexMergeable, I_IndexHasID
 {
     public List<CharaSkill> list = new List<CharaSkill>();
-
-    public void LateInitialize()
-    {
-        Debug.Log("Index_CharaSkills initialized with " + list.Count + " elements");
-    }
 
     public void MergeWith(I_IndexMergeable list)
     {
@@ -25,13 +20,15 @@ public class Index_CharaSkills : I_IndexMergeable, I_NeedLateInitialize, I_Index
         else if (l.list == null || l.list.Count < 1) return;
         else this.list.AddRange(l.list);
     }
-
+    public CharaSkill GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+    Dictionary<string, CharaSkill> ID_Dictionary = new Dictionary<string, CharaSkill>();
     public void RegisterAllID()
     {
         foreach (CharaSkill o in this.list)
         {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            ID_Dictionary.Add(o.ID, o);
         }
+        Debug.Log("Index_CharaSkills initialized with " + list.Count + " elements");
     }
 }
 

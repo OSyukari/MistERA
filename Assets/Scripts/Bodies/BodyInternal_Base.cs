@@ -2,41 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Newtonsoft.Json;
 
 [System.Serializable]
 public class BodyInternal_Base
 {
-    [SerializeField] private string id = "";
-    public string ID { get { return id; } }
+    [SerializeField][JsonProperty] private string id = "";
+    [JsonIgnore] public string ID { get { return id; } }
 
 
-    [SerializeField] private string tooltip = "";
-    public string Tooltip { get { return tooltip; } }
+    [SerializeField][JsonProperty] private string tooltip = "";
+    [JsonIgnore] public string Tooltip { get { return tooltip; } }
 
 
-    [SerializeField] private string displayName = "";
-    public string DisplayName { get { return scr_System_Serializer.current.Dictionary.Parse(displayName); } }
+    [SerializeField][JsonProperty] private string displayName = "";
+    [JsonIgnore] public string DisplayName { get { return scr_System_Serializer.current.Dictionary.Parse(displayName); } }
 
     public List<string> internalID = new List<string>();
 
-    public List<string> availableSlotsString = new List<string>();
-    [NonSerialized] public List<BodyPartEquipSlot> availableSlots = new List<BodyPartEquipSlot>();
+    public List<BodyPartEquipSlot> AvailableSlots = new List<BodyPartEquipSlot>();
+    public List<BodyEquipLayer> equipLayers = new List<BodyEquipLayer>();
 
+    public List<string> childID = new List<string>();
 
-    public List<BodyPartEquipSlot> AvailableSlots { get { return availableSlots; } }
-
-    public List<string> equipLayersString = new List<string>();
-    [NonSerialized] public List<BodyEquipLayer> equipLayers = new List<BodyEquipLayer>();
-
-    [SerializeField] public List<string> childID = new List<string>();
-
-    [SerializeField] public int sortOrder = 99;
-    [SerializeField] public List<string> tags = new List<string>();
+    public int sortOrder = 99;
+    public List<string> tags = new List<string>();
     //[SerializeField]
     //public List<ItemComponent_Data> Comps = new List<ItemComponent_Data>();
 
-    [SerializeField] public string firstExperienceDesc = "";
-    [SerializeField] public List<string> virginityLossTags = new List<string>();
+    public string firstExperienceDesc = "";
+    public List<string> virginityLossTags = new List<string>();
 
     public List<string> GetAllChildsID()
     {
@@ -51,15 +46,15 @@ public class BodyInternal_Base
         return value;
     }
 
-    [SerializeField] public string tag_directionIn = "";
-    [SerializeField] public string tag_directionOut = "";
+    public string tag_directionIn = "";
+    public string tag_directionOut = "";
 
-    public bool canOverflowIn { get { return tag_directionIn != ""; } }
-    public bool canOverflowOut { get { return tag_directionOut != ""; } }
+    [JsonIgnore] public bool canOverflowIn { get { return tag_directionIn != ""; } }
+    [JsonIgnore] public bool canOverflowOut { get { return tag_directionOut != ""; } }
 
 
-    [SerializeField] public string sensitivityClassString = "";
-    [SerializeField] public string maxSensitivityStatString = "";
+    public string sensitivityClassString = "";
+    public string maxSensitivityStatString = "";
 
     public bool needLubrication = false;
     public float sizeRatio = 0;

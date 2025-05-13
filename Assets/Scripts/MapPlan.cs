@@ -1,24 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Newtonsoft.Json;
 
 
 [System.Serializable]
 public class Index_MapPlan : I_IndexHasID, I_IndexMergeable
 {
-    [SerializeField] public List<MapPlan> list = new List<MapPlan>();
+    public List<MapPlan> list = new List<MapPlan>();
 
+    Dictionary<string, MapPlan> ID_Dictionary = new Dictionary<string, MapPlan>();
     public void RegisterAllID()
     {
         Debug.Log("Index_MapPlan : registering ID with list length [" + list.Count + "]");
 
         foreach (MapPlan o in this.list)
         {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            ID_Dictionary.Add(o.ID, o);
         }
     }
-
+    public MapPlan GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
     public void MergeWith(I_IndexMergeable list){
         var l = list as Index_MapPlan;
         if (l == null) return;
@@ -46,8 +47,8 @@ public class MapPlan
 {
     public string ID = "";
     public float z_rotation = 0f;
-    [SerializeField] public List<MapPlan_Floor> floors;
-    [SerializeField] public Map_MainExit mainExit = null;
+    public List<MapPlan_Floor> floors = new List<MapPlan_Floor>();
+    public Map_MainExit mainExit = null;
 
     public Dictionary<int, Floor_Instance> Instantiate(string factionOverride = "", bool disablePlayerInit = false, bool disableCharaInstantiation = false)
     {
@@ -150,7 +151,7 @@ public class MapPlan
                     else if (Utility.ListContainsStrict(outputItem.Tags, matchByTags)) list.Add(new Manageable.ItemEntry(outputItem.id, "", recipe.outputAmount * itemCount, countOverride));
                 }
 
-                foreach (var item in scr_System_Serializer.current.index_Item_Base.list)
+                foreach (var item in scr_System_Serializer.current.index_Item_Base.List)
                 {
                     if (item.Tags.Contains("do_not_use")) continue;
                     if (item.GetCompTemplateByID("ItemComponent_Craftable") != null) continue;
@@ -189,9 +190,9 @@ public class MapPlan
     public class MapPlan_Floor
     {
         public string ID = "";
-        public List<MapPlan_FloorInit> Additional;
+        public List<MapPlan_FloorInit> Additional = new List<MapPlan_FloorInit>();
         public string nameOverwrite = "";
-        public MapPlan_FloorDoors connectTo;
+        public MapPlan_FloorDoors connectTo = new MapPlan_FloorDoors();
 
         public Floor_Instance Instantiate(bool disablePlayerInit = false, bool disableCharaInstantiation = false)
         {
@@ -211,7 +212,7 @@ public class MapPlan
             else return null;
         }
 
-        public MapPlan_FloorDoors Exit
+        [JsonIgnore] public MapPlan_FloorDoors Exit
         {
             get { return this.connectTo; }
         }
@@ -221,17 +222,17 @@ public class MapPlan
     [System.Serializable]
     public class MapPlan_FloorDoors
     {
-        public string fromExitID;
-        public string targetFloorID;
-        public string targetExitID;
+        public string fromExitID = "";
+        public string targetFloorID = "";
+        public string targetExitID = "";
     }
 
     [System.Serializable]
     public class MapPlan_FloorInit
     {
         public string addClass = "";
-        [SerializeField] Map_init_playerLocation map_init_playerLocation = null;
-        [SerializeField] Map_init_placeChara map_init_placeChara = null;
+        public Map_init_playerLocation map_init_playerLocation = null;
+        public Map_init_placeChara map_init_placeChara = null;
 
         public void Initialize(Floor_Instance f, bool disablePlayerInit = false, bool disableCharaInstantiation = false)
         {
@@ -290,16 +291,16 @@ public class MapPlan
         }
 
         [System.Serializable]
-        class Map_init_playerLocation
+        public class Map_init_playerLocation
         {
             public string roomID = "";
         }
 
         [System.Serializable]
-        class Map_init_placeChara
+        public class Map_init_placeChara
         {
             public string roomID = "";
-            public List<string> charaBaseID;
+            public List<string> charaBaseID = new List<string>();
         }
 
 

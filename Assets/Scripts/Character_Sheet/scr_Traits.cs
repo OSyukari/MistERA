@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Newtonsoft.Json;
 
+[System.Serializable]
 public enum Trait_Type
 // decide which column trait gets displayed
 {
@@ -18,6 +20,7 @@ public enum Trait_Type
     Untyped// affect physical and biological 
 }
 
+[System.Serializable]
 public enum Trait_Group_Type
 // decide whether trait group is sorted or just random collection
 {
@@ -31,25 +34,23 @@ public enum Trait_Group_Type
 public class Traits
 {
 
-    private Trait_Type type = Trait_Type.Untyped;
-    public Trait_Type Type { get { return type; } set { type = value; } }
+    [SerializeField][JsonProperty] private Trait_Type type = Trait_Type.Untyped;
+    [JsonIgnore] public Trait_Type Type { get { return type; } set { type = value; } }
 
-    [NonSerialized]
     protected string parentID = "";
-    public string ParentID { get { return parentID; } set { parentID = value; } }
+    [JsonIgnore] public string ParentID { get { return parentID; } set { parentID = value; } }
 
     //-serialized data--
 
-    [SerializeField]
-    private string trait_ID;
-    public string ID { get { return trait_ID; } }
+    [SerializeField][JsonProperty] private string trait_ID = "";
+    [JsonIgnore] public string ID { get { return trait_ID; } }
 
-    public int trait_score;
-    [SerializeField] private string trait_displayname;
-    public string trait_tooltip;
+    public int trait_score = 0;
+    [SerializeField][JsonProperty] private string trait_displayname = "";
+    public string trait_tooltip = "";
 
-    public string displayname { get { return trait_displayname; } }
-    public string tooltip { get { return trait_tooltip; } }
+    [JsonIgnore] public string displayname { get { return trait_displayname; } }
+    [JsonIgnore] public string tooltip { get { return trait_tooltip; } }
 
     public bool isDisplayable = true;
     //-----------------
@@ -70,42 +71,30 @@ public class Traits
 [System.Serializable]
 public class Traits_index
 {
-    public List<scr_Traits_Group> groups;
+    public List<scr_Traits_Group> groups = new List<scr_Traits_Group>();
 }
 
 [System.Serializable]
 public class scr_Traits_Group
 {
     //-SerializedData-------
-    public int neutralIndex;
-    public string group_tooltip;
-    public string sortTypeString;
+    public int neutralIndex = 0;
+    public string group_tooltip = "";
 
     [SerializeField]
+    [JsonProperty]
     private Trait_Type type = Trait_Type.Untyped;
-    public Trait_Type Type { get { return type; } }
+    [JsonIgnore] public Trait_Type Type { get { return type; } }
 
-    public string tooltip { get { return group_tooltip; } }
-    public string displayName;
-    public string ID;
+    [JsonIgnore] public string tooltip { get { return group_tooltip; } }
+    public string displayName = "";
+    public string ID = "";
 
-    public List<Traits> entries;
+    public List<Traits> entries = new List<Traits>();
     //----------------------
 
 
-    private Trait_Group_Type sortType = Trait_Group_Type.Untyped;
-    public Trait_Group_Type SortType
-    {
-        get
-        {
-            if (sortType == Trait_Group_Type.Untyped)
-            {
-                Enum.TryParse(sortTypeString, out sortType);
-            }
-            return sortType;
-        }
-    }
-
+    public Trait_Group_Type SortType = Trait_Group_Type.Untyped;
 
     public Traits getNeutralinGroup()
     {
@@ -143,17 +132,4 @@ public class scr_Traits_Group
 }
 
 
-public abstract class VerbBase
-{
-    public abstract string dosomething();
-}
-
-
-public class Verb_Child1 : VerbBase
-{
-    public override string dosomething()
-    {
-        return "verbchild";
-    }
-}
 

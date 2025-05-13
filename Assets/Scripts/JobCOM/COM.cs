@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 
 [System.Serializable]
-public class Index_COM : I_IndexHasID, ISerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable
+public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable
 {
     public List<COM> list = new List<COM>();
 
@@ -35,11 +35,9 @@ public class Index_COM : I_IndexHasID, ISerializationCallbackReceiver, I_NeedLat
         }
     }
 
-    public void OnBeforeSerialize()
-    {
+    public COM GetByID(string ID) { return ID_Dictionary.ContainsKey(ID) ? ID_Dictionary[ID] : null; }
 
-    }
-
+    Dictionary<string, COM> ID_Dictionary = new Dictionary<string, COM>();
     public void RegisterAllID()
     {
 
@@ -47,7 +45,7 @@ public class Index_COM : I_IndexHasID, ISerializationCallbackReceiver, I_NeedLat
         foreach (COM s in list)
         {
             //Debug.Log("serializing com id "+s.ID);
-            scr_System_Serializer.current.RegisterIDtoLib(s.ID, s);
+            ID_Dictionary.Add(s.ID, s);
 
         }
 
@@ -65,7 +63,7 @@ public class Index_COM : I_IndexHasID, ISerializationCallbackReceiver, I_NeedLat
         {
             if (list[i].ID == "com_furniture_getmeal")
             {
-                foreach (Item_Base item in scr_System_Serializer.current.index_Item_Base.list)
+                foreach (Item_Base item in scr_System_Serializer.current.index_Item_Base.List)
                 {
                     if (item.Tags.Contains("food_meal"))
                     {
@@ -148,9 +146,9 @@ public class Index_COM : I_IndexHasID, ISerializationCallbackReceiver, I_NeedLat
 
         foreach (var i in newCOMs)
         {
-            scr_System_Serializer.current.RegisterIDtoLib(i.ID, i);
-            scr_System_tooltipDictionary.current.AddEntry(i.ID, i.tooltip);
+            //scr_System_tooltipDictionary.current.AddEntry(i.ID, i.tooltip);
             list.Add(i);
+            ID_Dictionary.Add(i.ID, i);
         }
         //list.AddRange(newCOMs);
 

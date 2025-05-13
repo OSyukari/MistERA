@@ -45,15 +45,15 @@ public class Index_Status:I_IndexHasID, I_SerializationCallbackReceiver, I_Index
         }
 
     }
-
-
+    public Status_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+    Dictionary<string, Status_Base> ID_Dictionary = new Dictionary<string, Status_Base>();
     public void RegisterAllID()
     {
         Debug.Log("Index_Status : registering ID with list length [" + list.Count + "]");
 
         foreach (Status_Base o in this.list)
         {
-            if (o.isValid) scr_System_Serializer.current.RegisterIDtoLib(o.statusID, o);
+            if (o.isValid) ID_Dictionary.Add(o.statusID, o);
         }
     }
 

@@ -67,7 +67,7 @@ public class CampaignSettings_Initializer
 }
 
 [System.Serializable]
-public class Index_CampaignSetting: I_IndexHasID, I_IndexHasTooltip, I_IndexMergeable, I_NeedLateInitialize
+public class Index_CampaignSetting: I_IndexHasID, I_IndexMergeable
 {
     [SerializeField][JsonProperty] protected List<CampaignSettings> list = new List<CampaignSettings>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, CampaignSettings> _List;
@@ -126,28 +126,11 @@ public class Index_CampaignSetting: I_IndexHasID, I_IndexHasTooltip, I_IndexMerg
         return r;
     }
 
+    //Dictionary<string, CampaignSettings> ID_Dictionary = new Dictionary<string, CampaignSettings>();
     public void RegisterAllID()
     {
         Debug.Log("Index_CampaignSetting : registering ID with list length [" + list.Count + "]");
 
-        foreach (CampaignSettings s in list)
-        {
-            scr_System_Serializer.current.RegisterIDtoLib(s.ID, s);
-        }
-    }
-    public void RegisterAllTooltip()
-    {
-
-        foreach (CampaignSettings s in list)
-        {
-            scr_System_tooltipDictionary.current.AddEntry(s.ID, s.Tooltip);
-
-        }
-        
-    }
-
-    public void LateInitialize()
-    {
         var ids = new Dictionary<string, CampaignSettings>();
         foreach (var i in list) ids.Add(i.ID, i);
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, CampaignSettings>(ids);

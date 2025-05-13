@@ -92,7 +92,11 @@ public class EventInstance
                 // so here we only accept either empty or non empty label
                 // empty label = start from first, nonempty = start from albel
                 nextEntry = label != "" ? nextEvent.GetEntryWithLabel(label) : nextEvent.GetEntryAfter(currentEntry);
-                if (nextEntry == null) this.Clear($"Eventhandler error! event {eventID} either doesnt have any entry or doesnt have label {label}");
+                if (nextEntry == null)
+                {
+                    if (currentEntry.isLast) this.Clear();
+                    else this.Clear($"Eventhandler error! event {eventID} either doesnt have any entry or doesnt have label {label}");
+                }
             }
         }
 

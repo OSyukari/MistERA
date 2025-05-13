@@ -5,20 +5,16 @@ using System;
 using Newtonsoft.Json;
 
 [System.Serializable]
-public class Stats_Derived_Extended_Index : I_IndexHasID, I_IndexHasTooltip, I_IndexMergeable, ISerializationCallbackReceiver
+public class Stats_Derived_Extended_Index : I_IndexHasID, I_IndexMergeable
 {
     public List<Stats_Derived_Extended> list = new List<Stats_Derived_Extended>();
 
+    Dictionary<string, Stats_Derived_Extended> ID_Dictionary = new Dictionary<string, Stats_Derived_Extended>();
     public void RegisterAllID()
     {
         Debug.Log("Stats_Derived_Extended_Index : registering ID with list length [" + list.Count + "]");
 
-        foreach (Stats_Derived_Extended o in list) scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
-    }
-
-    void I_IndexHasTooltip.RegisterAllTooltip()
-    {
-        foreach (Stats_Derived_Extended o in list) scr_System_tooltipDictionary.current.AddEntry(o.ID, o.Tooltip);
+        foreach (Stats_Derived_Extended o in list) ID_Dictionary.Add(o.ID, o);
     }
 
     public void MergeWith(I_IndexMergeable list){
@@ -30,16 +26,7 @@ public class Stats_Derived_Extended_Index : I_IndexHasID, I_IndexHasTooltip, I_I
             this.list.AddRange(l.list);
         }
     }
-
-    public void OnBeforeSerialize()
-    {
-
-    }
-
-    public void OnAfterDeserialize()
-    {
-
-    }
+    public Stats_Derived_Extended GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
 }
 
 
@@ -89,8 +76,8 @@ public class Stats_Derived_Extended
     [System.Serializable]
     public class MaxValue
     {
-        [SerializeField][JsonProperty] protected string valueType;
-        [SerializeField][JsonProperty] protected string valueString;
+        [SerializeField][JsonProperty] protected string valueType = "";
+        [SerializeField][JsonProperty] protected string valueString = "";
 
         public float GetMaxValue(Character_Trainable c)
         {

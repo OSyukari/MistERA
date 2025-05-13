@@ -326,7 +326,7 @@ public class scr_Menu_Intro : scr_Menu
 
                 // D:/Unity/EraDivers/Assets
                 state = ButtonValidator_States.Invalid;
-                tooltip = scr_System_tooltipDictionary.current.FindEntry("tooltip_cannotLoadSave");
+                tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("tooltip_cannotLoadSave");
                 return false;
             }
         }

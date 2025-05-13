@@ -8,8 +8,8 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable, I_SerializationCallbackReceiver
 {
-    public List<Item_Base> list = new List<Item_Base>();
-
+    [SerializeField][JsonProperty] protected List<Item_Base> list = new List<Item_Base>();
+    public List<Item_Base> List { get { return this.ID_Dictionary.Values.ToList(); } }
     public void MergeWith(I_IndexMergeable list){
         var l = list as Index_Item_Base;
         if (l == null) return;
@@ -20,18 +20,18 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
         }
     }
 
-
-
+    Dictionary<string, Item_Base> ID_Dictionary = new Dictionary<string, Item_Base>();
     public void RegisterAllID()
     {
         Debug.Log("Index_Item_Base : registering ID with list length [" + list.Count + "]");
 
         foreach (Item_Base o in this.list)
         {
-            scr_System_Serializer.current.RegisterIDtoLib(o.ID, o);
+            if (o.Tags.Contains("do_not_use")) continue;
+            ID_Dictionary.Add(o.ID, o);
         }
     }
-
+    public Item_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
     /// <summary>
     /// this should run after all calls to appendlist
     /// </summary>
@@ -81,8 +81,8 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
 
         foreach(var i in newItems)
         {
-            scr_System_Serializer.current.RegisterIDtoLib(i.ID, i);
             list.Add(i);
+            ID_Dictionary.Add(i.id, i);
             for (int ii = i.itemComps_Template.Count - 1; ii >= 0; ii--)
             {
                //if (i.itemComps_Template[ii].comp_Craftable != null) scr_System_Serializer.current.AddCraftingRecipe(i.itemComps_Template[ii].comp_Craftable.recipes);

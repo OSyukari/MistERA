@@ -15,7 +15,8 @@ public enum EventTrigger
 public enum TargetScope
 {
     None,
-    AllCharaInSelfRoom
+    AllCharaInSelfRoom,
+    AllCharaInSelfRoom_ExcludeSelf
 }
 
 public class EventManager

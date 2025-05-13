@@ -98,22 +98,36 @@ public class Event : I_SerializationCallbackReceiver
 
             if (baseScope != TargetScope.None) 
             {
-                switch(baseScope)
+                Room_Instance room = null;
+                List<int> charaRefs = null;
+
+                switch (baseScope)
                 {
                     case TargetScope.AllCharaInSelfRoom:
                         if (self == null) return false;
-                        var room = scr_System_CampaignManager.current.GetCharaRoomInstance(self.RefID);
-                        var charaRefs = room == null ? new List<int>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
+                        room = scr_System_CampaignManager.current.GetCharaRoomInstance(self.RefID);
+                        charaRefs = room == null ? new List<int>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
                         foreach (var refid in charaRefs) {
                             var chara = scr_System_CampaignManager.current.FindInstanceByID(refid);
                             foreach (var cond in chara_conditions) if (!cond.isValid(chara)) continue;
                             if (!list.Contains(chara)) list.Add(chara);
                         }
                         break;
+                    case TargetScope.AllCharaInSelfRoom_ExcludeSelf:
+                        if (self == null) return false;
+                        room = scr_System_CampaignManager.current.GetCharaRoomInstance(self.RefID);
+                        charaRefs = room == null ? new List<int>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
+                        foreach (var refid in charaRefs) {
+                            var chara = scr_System_CampaignManager.current.FindInstanceByID(refid);
+                            foreach (var cond in chara_conditions) if (!cond.isValid(chara)) continue;
+                            if (!list.Contains(chara) && chara != self) list.Add(chara);
+                        }
+                        break;
                     default: break;
                 }
             }
-            library.Add(refKey, new List<Character_Trainable>());
+            if (library.ContainsKey(refKey)) library[refKey] = list;
+            else library.Add(refKey, list);
             return (minTargetCount == -1 || list.Count >= minTargetCount) && (maxTargetCount == -1 || list.Count <= maxTargetCount);
         }
     }
@@ -405,7 +419,7 @@ public class ConditionValidator
 }
 
 [System.Serializable]
-public class Index_Events : I_NeedLateInitialize, I_IndexMergeable, I_SerializationCallbackReceiver
+public class Index_Events : I_IndexMergeable, I_SerializationCallbackReceiver
 {
     public List<Event> list = new List<Event>();
 
@@ -418,11 +432,6 @@ public class Index_Events : I_NeedLateInitialize, I_IndexMergeable, I_Serializat
         {
             this.list.AddRange(l.list);
         }
-    }
-
-    public void LateInitialize()
-    {
-
     }
 
     public void OnAfterDeserialize()
