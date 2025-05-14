@@ -30,7 +30,9 @@ public class Event : I_SerializationCallbackReceiver
             {
                 List<string> names = new List<string>();
                 foreach (var i in instance.Targets[targetscope.refKey]) names.Add(i.FirstName);
-                Debug.Log($"TargetScope {targetscope.baseScope} find targets {instance.Targets[targetscope.refKey].Count} {String.Join("|", names)}");
+#if UNITY_EDITOR
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"TargetScope {targetscope.baseScope} find targets {instance.Targets[targetscope.refKey].Count} {String.Join("|", names)}");
+#endif
             }
         }
         return true;
@@ -139,7 +141,9 @@ public class Event : I_SerializationCallbackReceiver
                             if (!isvalid) continue;
                             if (!list.Contains(chara))
                             {
-                                Debug.Log($"Chara {chara.FirstName} satisfy condition {baseScope}");
+#if UNITY_EDITOR
+                                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Chara {chara.FirstName} satisfy condition {baseScope}");
+#endif
                                 list.Add(chara);
                             }
                         }
@@ -165,6 +169,7 @@ public class Event : I_SerializationCallbackReceiver
     {
         int index = entry == null || !this.events.Contains(entry) ? 0 : this.events.IndexOf(entry) + 1;
         if (index >= this.events.Count) return null;
+        else if (index > 0 && entry.isLast) return null;
         return this.events[index];
     }
 
@@ -219,17 +224,19 @@ public class Event : I_SerializationCallbackReceiver
             {
                 base.Execute(owner);
 
-                Debug.Log($"Executing entry {line} ");
+#if UNITY_EDITOR
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {line} ");
+#endif
                 // display line
-                scr_System_CampaignManager.current.AddLog_Line(this, false);
+
+                scr_System_CampaignManager.current.AddLog_Line(owner, this, false);
 
                 // immediate load next
-                if (isLast) owner.Notify(EventStatus.reset);
-                else
-                {
+                //if (isLast) owner.Notify(EventStatus.reset);
+                
                     owner.LoadNext(true, nextEventID, nextEntryLabel);
                     //owner.Notify(EventStatus.running);
-                }
+                
             }
         }
 
@@ -244,7 +251,9 @@ public class Event : I_SerializationCallbackReceiver
             {
                 base.Execute(owner);
 
-                Debug.Log($"Executing entry {question} ");
+#if UNITY_EDITOR
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {question} ");
+#endif
 
                 scr_System_CampaignManager.current.AddLog_Question(owner, this, false);
                 owner.Notify(EventStatus.waiting);
@@ -261,7 +270,9 @@ public class Event : I_SerializationCallbackReceiver
             {
                 base.Execute(owner);
 
-                Debug.Log($"Executing branch ");
+#if UNITY_EDITOR
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing branch ");
+#endif
                 bool executed = false;
                 foreach (var p in options)
                 {
@@ -297,6 +308,7 @@ public class Event : I_SerializationCallbackReceiver
 
             public List<Condition> Conditions = new List<Condition>();
             public List<CharaCondition> self_chara_conditions = new List<CharaCondition>();
+            public bool isDefaultCancel = false;
 
             public bool isValid(EventInstance owner)
             {
@@ -377,12 +389,16 @@ public class Event : I_SerializationCallbackReceiver
                         case ExecutionType.JumpToLabel:
                             if (arguments.Count != 2)
                             {
-                                Debug.LogError("jumptolabel does not have enough arguments");
+#if UNITY_EDITOR
+                                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError("jumptolabel does not have enough arguments");
+#endif
                                 return false;
                             }
                             else
                             {
-                                Debug.Log($"JumpToLabel {arguments[0]} {arguments[1]}");
+#if UNITY_EDITOR
+                                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JumpToLabel {arguments[0]} {arguments[1]}");
+#endif
                                 owner.LoadNext(false, arguments[0], arguments[1]);
                                 return true;
                             }
@@ -391,44 +407,52 @@ public class Event : I_SerializationCallbackReceiver
                         case ExecutionType.InterruptAP_byType:
                             if (arguments.Count < 2)
                             {
-                                Debug.LogError("interruptAP does not have enough arguments");
+#if UNITY_EDITOR
+                                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError("interruptAP does not have enough arguments");
+#endif
                                 return false;
                             }
                             else
                             {
                                 //Debug.Log("Executing InterruptAP_byType");
                                 //owner.Notify(EventStatus.reset);
-                                
+                                List<ActionPackage> queryPackages;
                                 //var packages = new List<ActionPackage>();
                                 if (arguments[0] == "self")
                                 {
                                     // interrupt self AP by arg[1]
-                                    Debug.Log($"Executing InterruptAP_byType argument self, current self {(owner.Self == null ? "null" : owner.Self.FirstName)}");
-
-                                    var queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
+#if UNITY_EDITOR
+                                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing InterruptAP_byType argument self, current self {(owner.Self == null ? "null" : owner.Self.FirstName)}");
+#endif
+                                    queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
                                     //Debug.Log($"found relevant package {queryPackages.Count}");
                                     queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, arguments[1]));
-                                    Debug.Log($"found relevant package {queryPackages.Count}");
+#if UNITY_EDITOR
+                                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count}");
+#endif
                                     foreach (var package in queryPackages) package.DisablePackage();
-                                    //owner.Notify(EventStatus.running);
                                     return true;
-                                    break;
-                                    // foreach (var p in queryPackages) if (!packages.Contains(p) && Utility.MatchAPbyType(p, arguments[1])) packages.Add(p);
-                                    //Debug.Log($"added package count {packages.Count}");
                                 }
                                 else
                                 {
                                     // interrupt target AP by arg[1]
-                                    Debug.Log("Executing InterruptAP_byType argument else");
-                                    return false;
-                                    if (!owner.Targets.ContainsKey(arguments[0])) Debug.LogError("error target scope error");
+                                    if (!owner.Targets.ContainsKey(arguments[0]))
+                                    {
+                                        Debug.LogError("error target scope error");
+                                        return false;
+                                    }
                                     else
                                     {
                                         foreach (var chara in owner.Targets[arguments[0]])
                                         {
-                                            // interrupt chara ap by arg[1]
-                                            //foreach (var p in scr_System_CampaignManager.current.GetExistingPackages(chara, true, false, true)) if (!packages.Contains(p) && Utility.MatchAPbyType(p, arguments[1])) packages.Add(p);
+                                            queryPackages = scr_System_CampaignManager.current.GetExistingPackages(chara, true, true, true);
+                                            queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, arguments[1]));
+#if UNITY_EDITOR
+                                            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count} on {chara.FirstName}");
+#endif
+                                            foreach (var package in queryPackages) package.DisablePackage();
                                         }
+                                        return true;
                                     }
                                 }
                             }

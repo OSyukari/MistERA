@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class scr_menu_question : scr_Menu
 {
@@ -14,47 +15,32 @@ public class scr_menu_question : scr_Menu
 
     RectTransform self;
 
-
+    scr_panel_logs logs;
     public bool Active = true;
-    public void InitializeWithArgs(Canvas mainCanvas, EventInstance instance, Event.EventEntry.EventEntry_Question query)
+    public void InitializeWithArgs(Canvas mainCanvas, EventInstance instance, Event.EventEntry.EventEntry_Question query, scr_panel_logs logs)
     {
         // Initialize();
+        this.logs = logs;
         SetCanvas(mainCanvas, true);
-        this.Text.SetText(query.question);
+        this.Text.SetText(Utility.ParseEventEntry(instance, query.question));
         self = this.GetComponent<RectTransform>();
         foreach (var option in query.options)
         {
             var button = Instantiate(prefab_text_linkbutton).GetComponent<scr_SelectableText>();
             RegisterButton(option.GetHashCode(), button, new Button_OptionBtn(this, button, instance, option));
             preferredLen = Math.Max(preferredLen, button.GetComponent<TMP_Text>().preferredWidth);
-            button.SetText(option.option);
+            button.SetText(Utility.ParseEventEntry(instance, option.option));
+            if (option.isDefaultCancel && defaultCancel == null) defaultCancel = button.Validator as Button_OptionBtn;
         }
-        Debug.Log($"Initializing question menu, grid size {Grid.cellSize.ToString()} rectTransformSizedelta {self.sizeDelta} rectwidth {self.rect.width} gridflexwidth {Grid.flexibleWidth} rectlocalscale");
+       // Debug.Log($"Initializing question menu, grid size {Grid.cellSize.ToString()} rectTransformSizedelta {self.sizeDelta} deltaX {self.sizeDelta.x} rectwidth {self.rect.width} gridflexwidth {Grid.flexibleWidth} rectlocalscale");
         //Grid.cellSize = new Vector2(Grid.cellSize.x, (float)Math.Min(self.rect.width * 0.9, preferredLen));
         ValidateAll();
+        if (defaultCancel != null && logs != null) logs.Observer_OnClick += OnClick;
     }
 
     public override void Initialize()
     {
         base.Initialize();
-
-        /*
-        foreach (scr_SelectableText button in GetComponentsInChildren<scr_SelectableText>(true))
-        {
-            // Debug.Log("Button " + button + " " + button.optionID);
-            switch (button.optionID)
-            {
-                default:  break;
-            }
-            if (button.optionID != -1)
-            {
-                buttonsByID.Add(button.optionID, button);
-                validatorsByID.Add(button.optionID, button.Validator);
-            }
-
-        }*/
-        // build all presetLis
-
     }
 
     public override void ValidateAll()
@@ -62,6 +48,21 @@ public class scr_menu_question : scr_Menu
         base.ValidateAll();
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (this.defaultCancel != null && logs != null) logs.Observer_OnClick -= OnClick;
+    }
+
+    protected void OnClick(PointerEventData pointer)
+    {
+        if (defaultCancel == null || logs == null) return;
+        if (pointer.button != PointerEventData.InputButton.Right) return;
+        if (!defaultCancel.IsButtonValid()) return;
+        Notify(defaultCancel.button.optionID);
+    }
+
+    Button_OptionBtn defaultCancel = null;
 
     public override void Notify(int optionID)
     {
@@ -104,11 +105,10 @@ public class scr_menu_question : scr_Menu
     public class Button_OptionBtn : ButtonValidator, I_ButtonClickable
     {
         new scr_menu_question parent;
-        scr_SelectableText button;
+        public scr_SelectableText button;
         Event.EventEntry.EventEntry_Question.Options option;
         EventInstance instance;
         bool selected = false;
-
         /// <summary>
         /// Attach a custom validator, isbuttonvalid check validator, onclick apply validator
         /// </summary>
@@ -119,6 +119,12 @@ public class scr_menu_question : scr_Menu
             this.button = button;
             this.instance = instance;
             this.option = option;
+
+            var tooltip1 = option.option + "_tooltip";
+            var tooltip2 = scr_System_Serializer.current.Dictionary.QueryThenParse(tooltip1, tooltip1);
+            if (tooltip2 != tooltip1) this.tooltip += tooltip2;
+
+            if (option.isDefaultCancel) this.tooltip += (this.tooltip.Length > 0 ? "\n":"") + scr_System_Serializer.current.Dictionary.QueryThenParse("event_isDefaultCancel_tooltip");
         }
 
         public override bool IsButtonValid()

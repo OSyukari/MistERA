@@ -116,10 +116,61 @@ public static class Utility
             case "ActionPackage_Undress": returnValue = ap is ActionPackage_Undress; break;
             default: returnValue = false; break;
         }
-        Debug.LogError($"MatchAPbyType {type} on ap {ap.GetType()} returnvalue {returnValue}");
         return returnValue;
     }
 
+
+    static Regex regex_eventKeyword = new Regex(@"\$[a-zA-Z\._]+\$");
+    /// <summary>
+    /// This will auto run dictionary query parse on string s
+    /// </summary>
+    /// <param name="owner"></param>
+    /// <param name="s"></param>
+    /// <param name="separator"></param>
+    /// <returns></returns>
+    public static string ParseEventEntry(EventInstance owner, string s, string separator = ",")
+    {
+        var newString = scr_System_Serializer.current.Dictionary.QueryThenParse( s);
+
+        MatchCollection matches = regex_eventKeyword.Matches(newString);
+        foreach (var match in matches.ToList())
+        {
+            var len = match.Value.Length;
+            if (len <= 3) continue;
+            var kvp = match.Value.Substring(1, len-2).Split('.');
+            if (kvp.Length != 2) continue;
+            Debug.Log($"Parse event kvp {String.Join("|", kvp)}");
+            if (kvp[0] == "self" && owner.Self != null)
+            {
+                switch(kvp[1])
+                {
+                    case "name": newString = newString.Replace(match.Value, owner.Self.FirstName); break;
+                    case "room_name":
+                        var room = scr_System_CampaignManager.current.Map.FindRoomByChara(owner.Self.RefID);
+                        if (room != null) newString = newString.Replace(match.Value, room.DisplayName); break;
+                    default: break;
+                }
+            }
+            else if (owner.Targets.ContainsKey(kvp[0]))
+            {
+                bool error = false;
+                List<string> collect = new List<string>();
+                foreach (var c in owner.Targets[kvp[0]])
+                {
+                    switch(kvp[1])
+                    {
+                        case "name": if (!collect.Contains(c.FirstName)) collect.Add(c.FirstName); break;
+                        case "room_name":
+                            var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+                            if (room != null && !collect.Contains(room.DisplayName)) collect.Add(room.DisplayName); break;
+                        default: error = true; break;
+                    }
+                }
+                if (!error) newString = newString.Replace(match.Value, String.Join(separator, collect));
+            }
+        }
+        return newString;
+    }
 
     public static bool ArePackagesEqual(ActionPackage a, ActionPackage b)
     {

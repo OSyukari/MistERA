@@ -43,6 +43,7 @@ public class DebugLogSettings
     public bool Debug_Logging_CurrentFurnitureJobInRoom = false;
     public bool Debug_Logging_Pathing = false;
     public bool DLog_Equipping = false;
+    public bool DLog_Events = false;
 }
 
 public class scr_System_CentralControl : MonoBehaviour

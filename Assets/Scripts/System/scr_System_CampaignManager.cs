@@ -183,9 +183,10 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="parent"></param>
     /// <param name="line"></param>
     /// <param name="animate"></param>
-    public void AddLog_Line(Event.EventEntry.EventEntry_Line line, bool animate = true)
+    public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool animate = true)
     {
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(-1, line.line, animate, false), animate);
+        // here we need to process line into translated
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(-1, Utility.ParseEventEntry(instance, line.line), animate, false), animate);
     }
 
     public void AddLog_Question(EventInstance parent, Event.EventEntry.EventEntry_Question question, bool animate = true) 

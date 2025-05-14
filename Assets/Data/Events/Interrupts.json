@@ -30,9 +30,8 @@
                     "chara_conditions":
                     [
                         { "parameters":["isPlayer"] },
-                        { "parameters":["hasActionPackageType","ActionPackage_PathTo", "true", "true"] }
-                    ],
-                    "_comment":"has ap true true, will return true even if ap pathTo end"
+                        { "parameters":["hasActionPackageType","ActionPackage_PathTo", "true", "false"] }
+                    ]
                 },
                 "TargetValidators":
                 [
@@ -44,30 +43,12 @@
                 ],
                 "events":[
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment":"silent branching. if branch failed to match any condition and jump away, go to next block leavingroom",
-                        "options":[
-                            { 
-                                "_comment":"checkExecuted false is more strict than other way around. if match, goto interrupt self",
-                                "self_chara_conditions": 
-                                [
-                                    { "parameters":["hasActionPackageType","ActionPackage_PathTo", "true", "false"] }
-                                ],
-                                "Results":[ { "Type":"JumpToLabel", "arguments":["","interruptSelf"] } ] 
-                            },
-                            { 
-                                "_comment":"if previous fail, then it means true true, jumping to next event",
-                                "Results":[ { "Type":"JumpToLabel", "arguments":["OnEnterRoom_interruptOthers",""] } ] 
-                            }
-                        ]
-                    },
-                    {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "interruptSelf",
-                        "question":"$self.name$ enters room and meet $targets.name$ in room",
+                        "question":"event_OnEnterRoom_interrupt_ev01",
                         "options":[
-                            { "option": "keep moving", "Results":[ { "Type":"EventEnd" } ] },
-                            { "option": "stop", 
+                            { "option": "event_OnEnterRoom_interrupt_ev01_op1", "isDefaultCancel":true, "Results":[ { "Type":"EventEnd" } ] },
+                            { "option": "event_OnEnterRoom_interrupt_ev01_op2", 
                                 "Results":
                                 [ 
                                     { "Type":"InterruptAP_byType", "arguments":["self","ActionPackage_PathTo"] },
@@ -79,50 +60,26 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "end",
-                        "line": "$self.name$ stopped moving",
-                        "nextEventID":"OnEnterRoom_interruptOthers"
-                    }
-                ]
-            },
-            {
-                "ID":"OnEnterRoom_interruptOthers",
-                "SelfValidator":{
-                    "chara_conditions":
-                    [
-                        { "parameters":["isPlayer"] }
-                    ]
-                },
-                "TargetValidators":[
-                    {
-                        "refkey":"targets",
-                        "baseScope":"AllCharaInSelfRoom_ExcludeSelf",
-                        "minTargetCount":1,
-                        "chara_conditions":[
-                            { "parameters":["hasActionPackageType","ActionPackage_PathTo"] }
-                        ],
-                        "_comment":"hasActionPackageType without extra arguments default to true false"
-                    }
-                ],
-                "events":[
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
-                        "question":"$targets.name$ are leaving room",
-                        "options":[
-                            { "option": "let them be", "Results":[ { "Type":"EventEnd" } ] },
-                            {   "option": "stop them", 
-                                "Results":[ 
-                                    { "Type":"InterruptAP_byType", "arguments":["targets","ActionPackage_PathTo"] },
-                                    { "Type":"JumpToLabel", "arguments":["","end"] } ] }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "end",
-                        "isLast":true,
-                        "line": "$self.name$ called $targets.name$"
+                        "isLast": true,
+                        "line": "event_OnEnterRoom_interrupt_ev02"
                     }
                 ]
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "default":
+            {
+                "event_OnEnterRoom_interrupt_ev01":"$self.name$在进入$self.room_name$时遇到了$targets.name$",
+                "event_OnEnterRoom_interrupt_ev01_op1":"继续移动",
+                "event_OnEnterRoom_interrupt_ev01_op2":"在此停下",
+                "event_OnEnterRoom_interrupt_ev02":"$self.name$停下了脚步",
+                "event_OnEnterRoom_interrupt_ev01_op2_tooltip":"将中断当前未处理完毕的移动指令",
+                "event_isDefaultCancel_tooltip":"在当前界面的任意非按钮处按右键时也会自动选择该选项"
+            }
+        }
     }
 }

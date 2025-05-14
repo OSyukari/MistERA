@@ -44,7 +44,9 @@ public class EventManager
             var newinstance = new EventInstance(chara, false, i.ID, "");
             if ( !newinstance.isValid) continue;
             // if condition satisfy, launch event
-            Debug.Log($"Trigger {trigger} Hit event {newinstance.Name} on {chara.FirstName}");
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Trigger {trigger} Hit event {newinstance.Name} on {chara.FirstName}");
+#endif
             StartEvent(newinstance, false); // trigger is not called from main thread, so calling event start would cause error
         }
     }
@@ -80,26 +82,33 @@ public class EventManager
     {
         // forbid run if updating
         var activeEV = this.activeEvents.Count > 0 ? this.activeEvents[0] : null;
-        if (resumeWaiting) Debug.LogError("RESUMEWAITRING");
+
         if (!updateHandler.Updating || ignoreUpdate)
         {
-            Debug.Log($"Eventmanager run, activeEV {(activeEV == null ? "null" : activeEV.Name)}");
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Eventmanager run, activeEV {(activeEV == null ? "null" : activeEV.Name)}");
+#endif
             while (activeEV != null && (activeEV.Status == EventStatus.running || activeEV.Status == EventStatus.waiting && resumeWaiting))
             {
-                Debug.Log($"activeEV run! {activeEV.Status}");
+#if UNITY_EDITOR
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"activeEV run! {activeEV.Status}");
+#endif
                 activeEV.Start(resumeWaiting);
             }
             if (activeEV != null && activeEV.Status < EventStatus.waiting)
             {
                 activeEvents.RemoveAt(0);
-                if (this.activeEvents.Count > 0) Run(); // run next
+                while (this.activeEvents.Count > 0 && !this.activeEvents[0].Validate()) activeEvents.RemoveAt(0);
+
+                if(this.activeEvents.Count > 0) Run(); // run next
                 else if (updateHandler.halted) updateHandler.StartUpdate(true);
             }
         }
         else
         {
-
-            Debug.LogError($"Event {(activeEV == null ? "null" : activeEV.Name)} run call skipped due to updating");
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError($"Event {(activeEV == null ? "null" : activeEV.Name)} run call skipped due to updating");
+#endif
             return;
         }
 

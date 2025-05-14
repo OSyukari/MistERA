@@ -245,10 +245,10 @@ public class Message_Question : MessageLog
         Debug.LogError("Animate called on message_question");
     }
 
-    public void Draw(Canvas mainCanvas, scr_menu_question questionBox)
+    public void Draw(Canvas mainCanvas, scr_menu_question questionBox , scr_panel_logs logs = null)
     {
         base.Draw();
-        questionBox.InitializeWithArgs(mainCanvas, parentEvent, question);
+        questionBox.InitializeWithArgs(mainCanvas, parentEvent, question, logs);
     }
 }
 

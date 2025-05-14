@@ -360,7 +360,9 @@ public class scr_UpdateHandler : MonoBehaviour
         if (EventHandler.Active)
         {
 
-            Debug.LogError($"EVENTHANDLER ACTIVE, running... is Updating? {Updating}");
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError($"EVENTHANDLER ACTIVE, running... is Updating? {Updating}");
+#endif 
             EventHandler.Run(false, true);
         }
     }

@@ -77,6 +77,9 @@ public class EventInstance
 
     public void LoadNext(bool startImmediate, string eventID = "", string label = "")
     {
+#if UNITY_EDITOR
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"LoadNext immediate? {startImmediate} {eventID} {label}");
+#endif
         this.maxCallStack -= 1;
         if (this.maxCallStack < 0) 
         {
@@ -101,16 +104,20 @@ public class EventInstance
             }
         }
 
-        if (canRun && nextEvent.Validate(this))
+        if (canRun && (nextEvent == currentEvent || nextEvent.Validate(this)))
         {
-            Debug.Log($"Event instance on {(Self == null ? "null" : Self.FirstName)} isvalid on {this.Name}");
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Event instance on {(Self == null ? "null" : Self.FirstName)} isvalid on {this.Name}");
+#endif
             isValid = true;
             if (canRun && startImmediate) Start();
         }
         else
         {
             isValid = false;
-            Debug.LogError($"error on next {(canRun ? nextEvent.ID : "null")} cannot run or invalid (this might not be an error)");
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError($"error on next {(canRun ? nextEvent.ID : "null")} cannot run or invalid (this might not be an error)");
+#endif
             this.Clear();
         }
     }
@@ -133,27 +140,35 @@ public class EventInstance
 
         if (canRun && (this.Status != EventStatus.waiting || waitingEnd))
         {
-            Debug.Log($"event {Name} start canRun");
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event {Name} start canRun");
+#endif
             currentEntry = nextEntry;
             currentEvent = nextEvent;
             nextEntry = null;
             nextEvent = null;
             if (currentEntry.isValid)
             {
-                Debug.Log($"event {Name} isvalid, executing");
+#if UNITY_EDITOR
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event {Name} isvalid, executing");
+#endif
                 updateHandler.InvokeEventStatus(Status, firstInit || waitingEnd);
                 firstInit = false;
                 currentEntry.Execute(this);
             }
             else
             {
-                Debug.Log($"event {Name} invalid, resetting");
+#if UNITY_EDITOR
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event {Name} invalid, resetting");
+#endif
                 this.Clear("currententry not valid, resetting");
             }
         }
         else
         {
-            Debug.Log($"event {Name} start cannot run, exiting");
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event {Name} start cannot run, exiting");
+#endif
         }
     }
 
@@ -166,6 +181,11 @@ public class EventInstance
         if (errorMsg != "") Debug.LogError(errorMsg);
     }
 
+    public bool Validate()
+    {
+        isValid = this.canRun && this.nextEvent.Validate(this);
+        return isValid;
+    }
     /// <summary>
     /// Generic return call from EventEntry.Execute to Event's parent
     /// 

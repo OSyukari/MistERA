@@ -110,7 +110,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     private RectTransform currentMsgLog, currentMsg;
     private void AnimateOneStep()
     {
-       // Debug.Log($"Animateonestep, firstline {firstLine}");
+        // Debug.Log($"Animateonestep, firstline {firstLine}");
+        animationLock = true;
         firstLine = false;
         while (LogsList.transform.childCount > scr_System_CentralControl.current.pref.MaxLogCount)
         {
@@ -124,6 +125,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         if(current == null)
         {
             scr_System_CampaignManager.current.Log_TryClearChar(true);
+            animationLock = false;
             return;
         }
         else if (!current.displayed)
@@ -141,7 +143,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
             {
                 var question = Instantiate(prefab_question);
                 question.transform.SetParent(LogsList, false);
-                (current as Message_Question).Draw(this.m_Canvas, question);
+                (current as Message_Question).Draw(this.m_Canvas, question, this);
             }
         }
         else if (current.canAnimate())
@@ -154,16 +156,21 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
             todo.RemoveAt(0);
             UpdateAnimatingStatus();
         }
+
+
+        animationLock = false;
     }
 
-
+    bool animationLock = false;
     private void AnimateAll()
     {
+        animationLock = true;
         while (canAnimate)
         {
             AnimateOneStep();
       //      yield return new WaitForSecondsRealtime(0.001f);
         }
+        animationLock = false;
         /*
         if (!scr_UpdateHandler.current.Lock && this.gameObject.activeInHierarchy)
         {
@@ -214,10 +221,14 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
     protected void OnEvent(EventStatus status, bool forceLogging)
     {
-        Debug.Log($"OnEvent {status}, waiting? {(status == EventStatus.waiting)} firstline {firstLine}");
+#if UNITY_EDITOR
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"OnEvent {status}, waiting? {(status == EventStatus.waiting)} firstline {firstLine}");
+#endif
         if (!this.gameObject.activeInHierarchy && status != EventStatus.idle) this.gameObject.SetActive(true);
         if (forceLogging) this.firstLine = true;
     }
+
+    public Action<PointerEventData> Observer_OnClick;
 
     public override void Initialize()
     {
@@ -252,9 +263,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         if (scr_UpdateHandler.current.Updating || scr_UpdateHandler.current.EventHandler.Active || canAnimate)
         {
             Debug.Log($"OnPointerClick updating[{scr_UpdateHandler.current.Updating}] evActive[{scr_UpdateHandler.current.EventHandler.Active}] canAnimate[{canAnimate}]");
-            if (canAnimate)
+            Observer_OnClick?.Invoke(eventData);
+            if (canAnimate && !animationLock)
             {
-                if (Input.GetMouseButton(1)) AnimateAll();
+                if (eventData.button == PointerEventData.InputButton.Right || Input.GetMouseButton(1)) AnimateAll();
                 else AnimateOneStep();
             }
         }
