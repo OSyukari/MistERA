@@ -76,21 +76,34 @@ public class EventManager
         }
     }
 
-    public void Run(bool resumeWaiting = false)
+    public void Run(bool resumeWaiting = false, bool ignoreUpdate = false)
     {
+        // forbid run if updating
         var activeEV = this.activeEvents.Count > 0 ? this.activeEvents[0] : null;
-        Debug.Log($"Eventmanager run, activeEV {(activeEV == null ? "null" : activeEV.Name)}");
-        while (activeEV != null && (activeEV.Status == EventStatus.running || activeEV.Status == EventStatus.waiting && resumeWaiting))
+        if (resumeWaiting) Debug.LogError("RESUMEWAITRING");
+        if (!updateHandler.Updating || ignoreUpdate)
         {
-            Debug.Log($"activeEV run! {activeEV.Status}");
-            activeEV.Start(resumeWaiting);
+            Debug.Log($"Eventmanager run, activeEV {(activeEV == null ? "null" : activeEV.Name)}");
+            while (activeEV != null && (activeEV.Status == EventStatus.running || activeEV.Status == EventStatus.waiting && resumeWaiting))
+            {
+                Debug.Log($"activeEV run! {activeEV.Status}");
+                activeEV.Start(resumeWaiting);
+            }
+            if (activeEV != null && activeEV.Status < EventStatus.waiting)
+            {
+                activeEvents.RemoveAt(0);
+                if (this.activeEvents.Count > 0) Run(); // run next
+                else if (updateHandler.halted) updateHandler.StartUpdate(true);
+            }
         }
-        if (activeEV != null && activeEV.Status < EventStatus.waiting)
+        else
         {
-            Debug.Log($"event {activeEV.Name} end at status {activeEV.Status}");
-            activeEvents.RemoveAt(0);
-            if (this.activeEvents.Count > 0) Run();
+
+            Debug.LogError($"Event {(activeEV == null ? "null" : activeEV.Name)} run call skipped due to updating");
+            return;
         }
+
+
     }
 
     public bool Active { get { return this.activeEvents.Count > 0; } }

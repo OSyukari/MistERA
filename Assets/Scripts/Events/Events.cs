@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
+using System.Linq;
 
 
 
@@ -25,6 +26,12 @@ public class Event : I_SerializationCallbackReceiver
         foreach(var targetscope in TargetValidators)
         {
             if (!targetscope.FindTargets(instance.Self, ref instance.Targets)) return false;
+            else
+            {
+                List<string> names = new List<string>();
+                foreach (var i in instance.Targets[targetscope.refKey]) names.Add(i.FirstName);
+                Debug.Log($"TargetScope {targetscope.baseScope} find targets {instance.Targets[targetscope.refKey].Count} {String.Join("|", names)}");
+            }
         }
         return true;
     }
@@ -51,7 +58,7 @@ public class Event : I_SerializationCallbackReceiver
     /// <summary>
     /// Allowed chara_conditions parameters:
     /// - [isPlayer]
-    /// - [hasActionPackageType] [typename]
+    /// - [hasActionPackageType] [typename] [checkUnexecuted default true] [checkExecuted default false]
     /// </summary>
     [System.Serializable]
     public class CharaCondition
@@ -62,6 +69,7 @@ public class Event : I_SerializationCallbackReceiver
         public bool isValid(Character_Trainable c)
         {
             if (parameters.Count < 1) return true;
+            else if (c == null) return false;
             switch(parameters[0])
             {
                 case "isPlayer":
@@ -69,9 +77,13 @@ public class Event : I_SerializationCallbackReceiver
                 case "hasActionPackageType":
                     if (parameters.Count < 2) return false;
                     else
-                    {
-                        var packages = scr_System_CampaignManager.current.GetExistingPackages(c, true, false, false);
-                        return packages.Find(x => Utility.MatchAPbyType(x, parameters[1])) != null;
+                    {   
+                        bool arg2 = parameters.Count >= 3 && bool.TryParse(parameters[2], out bool _a) ? bool.Parse(parameters[2]) : true;
+                        bool arg3 = parameters.Count >= 4 && bool.TryParse(parameters[3], out bool _b) ? bool.Parse(parameters[3]) : false;
+                        var packages = scr_System_CampaignManager.current.GetExistingPackages(c, arg2, arg3, false);
+                        //Debug.Log($"found relevant package {packages.Count}");
+                        var results = packages.FindAll(x => Utility.MatchAPbyType(x, parameters[1]));
+                        return results.Count > 0;
                     }
                 default: 
                     return true;
@@ -109,7 +121,9 @@ public class Event : I_SerializationCallbackReceiver
                         charaRefs = room == null ? new List<int>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
                         foreach (var refid in charaRefs) {
                             var chara = scr_System_CampaignManager.current.FindInstanceByID(refid);
-                            foreach (var cond in chara_conditions) if (!cond.isValid(chara)) continue;
+                            bool isvalid = true;
+                            foreach (var cond in chara_conditions) if (!cond.isValid(chara)) isvalid = false;
+                            if (!isvalid) continue;
                             if (!list.Contains(chara)) list.Add(chara);
                         }
                         break;
@@ -119,15 +133,22 @@ public class Event : I_SerializationCallbackReceiver
                         charaRefs = room == null ? new List<int>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
                         foreach (var refid in charaRefs) {
                             var chara = scr_System_CampaignManager.current.FindInstanceByID(refid);
-                            foreach (var cond in chara_conditions) if (!cond.isValid(chara)) continue;
-                            if (!list.Contains(chara) && chara != self) list.Add(chara);
+                            if (chara == self) continue;
+                            bool isvalid = true;
+                            foreach (var cond in chara_conditions) if (!cond.isValid(chara)) isvalid = false;
+                            if (!isvalid) continue;
+                            if (!list.Contains(chara))
+                            {
+                                Debug.Log($"Chara {chara.FirstName} satisfy condition {baseScope}");
+                                list.Add(chara);
+                            }
                         }
                         break;
                     default: break;
                 }
             }
-            if (library.ContainsKey(refKey)) library[refKey] = list;
-            else library.Add(refKey, list);
+            if (library.ContainsKey(refKey)) library.Remove(refKey);
+            library.Add(refKey, list);
             return (minTargetCount == -1 || list.Count >= minTargetCount) && (maxTargetCount == -1 || list.Count <= maxTargetCount);
         }
     }
@@ -142,7 +163,7 @@ public class Event : I_SerializationCallbackReceiver
 
     public EventEntry GetEntryAfter(EventEntry entry)
     {
-        int index = entry == null ? 0 : this.events.IndexOf(entry) + 1;
+        int index = entry == null || !this.events.Contains(entry) ? 0 : this.events.IndexOf(entry) + 1;
         if (index >= this.events.Count) return null;
         return this.events[index];
     }
@@ -206,8 +227,8 @@ public class Event : I_SerializationCallbackReceiver
                 if (isLast) owner.Notify(EventStatus.reset);
                 else
                 {
-                    owner.Notify(EventStatus.running);
                     owner.LoadNext(true, nextEventID, nextEntryLabel);
+                    //owner.Notify(EventStatus.running);
                 }
             }
         }
@@ -230,148 +251,193 @@ public class Event : I_SerializationCallbackReceiver
                 // load next but allow to be overwritten
                 //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
             }
+        }
+        [System.Serializable]
+        public class EventEntry_Branch : EventEntry
+        {
+            public List<Options> options = new List<Options>();
 
+            public override void Execute(EventInstance owner)
+            {
+                base.Execute(owner);
+
+                Debug.Log($"Executing branch ");
+                bool executed = false;
+                foreach (var p in options)
+                {
+                    if (p.isValid(owner) && p.Execute(owner))
+                    {
+                        executed = true;
+                        break;
+                    }
+                }
+
+                if (executed) owner.Notify(EventStatus.running);
+                else if (!isLast) owner.LoadNext(true, nextEventID, nextEntryLabel);
+                else owner.Notify(EventStatus.reset);
+
+                
+                // load next but allow to be overwritten
+                //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
+            }
+        }
+
+        /// <summary>
+        /// Option class must be a class that serialize from json
+        /// text directly serialized, it will need to go through dictionary before display
+        /// allow premade string replacers, but at what scope?
+        /// anyway since json serialize, it cannot be a delegate
+        /// check command validator
+        /// self validator and executor will need to read local string data
+        /// </summary>
+        [System.Serializable]
+        public class Options
+        {
+            public string option = "";
+
+            public List<Condition> Conditions = new List<Condition>();
+            public List<CharaCondition> self_chara_conditions = new List<CharaCondition>();
+
+            public bool isValid(EventInstance owner)
+            {
+                foreach (var c in Conditions) if (!c.isValid()) return false;
+                foreach (var c in self_chara_conditions) if (!c.isValid(owner.Self)) return false;
+                return true;
+            }
 
 
             /// <summary>
-            /// Option class must be a class that serialize from json
-            /// text directly serialized, it will need to go through dictionary before display
-            /// allow premade string replacers, but at what scope?
-            /// anyway since json serialize, it cannot be a delegate
-            /// check command validator
-            /// self validator and executor will need to read local string data
+            /// What should this do ?
+            /// Validator should already be called before this point
+            /// so if we reach this stage
+            /// all validator already passed
+            /// 
+            /// results do need to be dirrerents as they could apply to different things
+            /// so each have their scope
+            /// also different type of executor may not coexist ?
+            /// such as 2 jump execution should not..
+            /// or at least, they are pased sequentially
+            /// so if 2nd jump has its own conditons passed it will overwrite first?
+            /// 
+            /// 
             /// </summary>
-            [System.Serializable]
-            public class Options
-            {
-                public string option = "";
+            public List<Executor> Results = new List<Executor>();
 
-                public List<Condition> Conditions = new List<Condition>();
+
+            [System.Serializable]
+            public enum ExecutionType
+            {
+                None,
+                JumpToLabel,
+                EventEnd,
+                InterruptAP_byType
+            }
+
+            public bool Execute(EventInstance owner, bool sendNotify = false)
+            {   // this can be send to button as result handler
+
+                // allow next to be overridden by any of results
+                bool continue_notify = true;
+                foreach (var op in Results)
+                {
+                    if (op.isValid()) continue_notify = op.Execute(owner) && continue_notify;
+                    else continue_notify = false;
+                }
+                if (continue_notify && owner.isValid)
+                {
+                    if (sendNotify) owner.Notify(EventStatus.running);
+                    return true;
+                }
+                else 
+                {
+                    if (sendNotify) owner.Notify(EventStatus.reset);
+                    return false; 
+                }
+                //scr_UpdateHandler.current.NotifyEventStatus(EventStatus.running, false, true);
+            }
+
+            [System.Serializable]
+            public class Executor
+            {   // handle a single result
+                public List<Condition> conditions = new List<Condition>();
+                public ExecutionType Type = ExecutionType.None;
+                public List<string> arguments = new List<string>();
 
                 public bool isValid()
                 {
-                    foreach (Condition c in Conditions) if (!c.isValid()) return false;
+                    foreach (var condition in conditions) if (!condition.isValid()) return false;
                     return true;
                 }
 
-
-                /// <summary>
-                /// What should this do ?
-                /// Validator should already be called before this point
-                /// so if we reach this stage
-                /// all validator already passed
-                /// 
-                /// results do need to be dirrerents as they could apply to different things
-                /// so each have their scope
-                /// also different type of executor may not coexist ?
-                /// such as 2 jump execution should not..
-                /// or at least, they are pased sequentially
-                /// so if 2nd jump has its own conditons passed it will overwrite first?
-                /// 
-                /// 
-                /// </summary>
-                public List<Executor> Results = new List<Executor>();
-
-
-                [System.Serializable]
-                public enum ExecutionType
+                public bool Execute(EventInstance owner)
                 {
-                    None,
-                    JumpToLabel,
-                    EventEnd,
-                    InterruptAP_byType
-                }
-
-                public void Execute(EventInstance owner)
-                {   // this can be send to button as result handler
-
-                    // allow next to be overridden by any of results
-                    foreach (var op in Results)
+                    //Debug.Log($"Execute option type {Type}");
+                    switch (Type)
                     {
-                        if (op.isValid()) op.Execute(owner);
-                    }
-                    owner.Notify(EventStatus.running);
-                    //scr_UpdateHandler.current.NotifyEventStatus(EventStatus.running, false, true);
-                }
-
-                [System.Serializable]
-                public class Executor
-                {   // handle a single result
-                    public List<Condition> conditions = new List<Condition>();
-                    public ExecutionType Type = ExecutionType.None;
-                    public List<string> arguments = new List<string>();
-
-                    public bool isValid()
-                    {
-                        foreach (var condition in conditions) if (!condition.isValid()) return false;
-                        return true;
-                    }
-
-                    public void Execute(EventInstance owner)
-                    {
-                        switch (Type)
-                        {
-                            case ExecutionType.JumpToLabel:
-                                if (arguments.Count != 2)
+                        case ExecutionType.JumpToLabel:
+                            if (arguments.Count != 2)
+                            {
+                                Debug.LogError("jumptolabel does not have enough arguments");
+                                return false;
+                            }
+                            else
+                            {
+                                Debug.Log($"JumpToLabel {arguments[0]} {arguments[1]}");
+                                owner.LoadNext(false, arguments[0], arguments[1]);
+                                return true;
+                            }
+                        case ExecutionType.EventEnd:
+                            return false;
+                        case ExecutionType.InterruptAP_byType:
+                            if (arguments.Count < 2)
+                            {
+                                Debug.LogError("interruptAP does not have enough arguments");
+                                return false;
+                            }
+                            else
+                            {
+                                //Debug.Log("Executing InterruptAP_byType");
+                                //owner.Notify(EventStatus.reset);
+                                
+                                //var packages = new List<ActionPackage>();
+                                if (arguments[0] == "self")
                                 {
-                                    Debug.LogError("jumptolabel does not have enough arguments");
-                                    owner.Notify(EventStatus.reset);
-                                }
-                                else owner.LoadNext(false, arguments[0], arguments[1]);
-                                break;
-                            case ExecutionType.EventEnd:
-                                owner.Notify(EventStatus.reset);
-                                break;
-                            case ExecutionType.InterruptAP_byType:
-                                if (arguments.Count != 2)
-                                {
-                                    Debug.LogError("interruptAP does not have enough arguments");
-                                    owner.Notify(EventStatus.reset);
+                                    // interrupt self AP by arg[1]
+                                    Debug.Log($"Executing InterruptAP_byType argument self, current self {(owner.Self == null ? "null" : owner.Self.FirstName)}");
+
+                                    var queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
+                                    //Debug.Log($"found relevant package {queryPackages.Count}");
+                                    queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, arguments[1]));
+                                    Debug.Log($"found relevant package {queryPackages.Count}");
+                                    foreach (var package in queryPackages) package.DisablePackage();
+                                    //owner.Notify(EventStatus.running);
+                                    return true;
+                                    break;
+                                    // foreach (var p in queryPackages) if (!packages.Contains(p) && Utility.MatchAPbyType(p, arguments[1])) packages.Add(p);
+                                    //Debug.Log($"added package count {packages.Count}");
                                 }
                                 else
                                 {
-                                    var packages = new List<ActionPackage>();
-                                    if (arguments[0] == "self")
-                                    {
-                                        // interrupt self AP by arg[1]
-                                        foreach (var p in scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, false, true)) if (!packages.Contains(p) && Utility.MatchAPbyType(p, arguments[1])) packages.Add(p);
-
-                                    }
+                                    // interrupt target AP by arg[1]
+                                    Debug.Log("Executing InterruptAP_byType argument else");
+                                    return false;
+                                    if (!owner.Targets.ContainsKey(arguments[0])) Debug.LogError("error target scope error");
                                     else
                                     {
-                                        // interrupt target AP by arg[1]
-                                        if (!owner.Targets.ContainsKey(arguments[1])) Debug.LogError("error target scope error");
-                                        else
+                                        foreach (var chara in owner.Targets[arguments[0]])
                                         {
-                                            foreach(var chara in owner.Targets[arguments[1]])
-                                            {
-                                                // interrupt chara ap by arg[1]
-                                                foreach(var p in scr_System_CampaignManager.current.GetExistingPackages(chara, true, false, true)) if (!packages.Contains(p) && Utility.MatchAPbyType(p, arguments[1])) packages.Add(p);
-                                            }
+                                            // interrupt chara ap by arg[1]
+                                            //foreach (var p in scr_System_CampaignManager.current.GetExistingPackages(chara, true, false, true)) if (!packages.Contains(p) && Utility.MatchAPbyType(p, arguments[1])) packages.Add(p);
                                         }
                                     }
-
-                                    foreach(var p in packages)
-                                    {
-                                        // interrupt each
-                                        p.DisablePackage();
-                                    }
-
                                 }
-                                break;
-                            default: return;
+                            }
+                        default: return false; 
 
-                        }
                     }
                 }
-
-
-
             }
-
         }
-
-
     }
 
     [System.Serializable]
@@ -419,7 +485,7 @@ public class ConditionValidator
 }
 
 [System.Serializable]
-public class Index_Events : I_IndexMergeable, I_SerializationCallbackReceiver
+public class Index_Events : I_IndexMergeable, I_IndexHasID,  I_SerializationCallbackReceiver
 {
     public List<Event> list = new List<Event>();
 
@@ -434,9 +500,19 @@ public class Index_Events : I_IndexMergeable, I_SerializationCallbackReceiver
         }
     }
 
+    Dictionary<string, Event> ID_Dictionary = new Dictionary<string, Event>();
+
     public void OnAfterDeserialize()
     {
         foreach (var i in list) i.OnAfterDeserialize();
         Debug.Log($"Successfully serialized {this.list.Count} events");
     }
+
+    public void RegisterAllID()
+    {
+        foreach(var i in list) ID_Dictionary.Add(i.ID, i);
+    }
+
+    public Event GetByID(string ID)
+    { return ID_Dictionary.ContainsKey(ID) ? ID_Dictionary[ID] : null; }
 }

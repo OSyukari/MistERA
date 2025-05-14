@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -57,10 +58,10 @@ public class scr_UpdateHandler : MonoBehaviour
         {
             _animating = value;
 
-            if (!_animating && cnManager.ExistPlayerPackage(out int aaa, out int bbb))
-            {
-                click(null);
-            }
+            //if (!_animating && cnManager.ExistPlayerPackage(out int aaa, out int bbb))
+            //{
+            //    click(null);
+            //}
         }
     }
     private void click(PointerEventData eventData)
@@ -71,36 +72,7 @@ public class scr_UpdateHandler : MonoBehaviour
         // differentiate left and right click and animate all ?
         // dont. if its a single long command its as fast as skip anyway.
         // if multiple commands, it usually involves moving, and we want to let player possible break movement
-        bool single = true;
-        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime)) && loopCounter < 20)
-        {
-            StartCoroutine(SingleUpdate());
-
-            single = false;
-        }
-        else
-        {
-            NotifyLogsSingleUpdate();
-        }
-        /*
-        if ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || oneLoop) && loopCounter < 20)
-        {   // any click start single one
-            StartCoroutine(SingleUpdate());
-        }
-        else
-        {   // no longer update, closing
-            // if right click, or if right was held
-            if (eventData.button == PointerEventData.InputButton.Right)
-            {
-                imageScript.Deactivate();
-                NotifyLogsSingleUpdate(true);
-            }
-            else
-            {
-                imageScript.Deactivate();
-                NotifyLogsSingleUpdate();
-            }
-        }*/
+        StartUpdate(false, false, true);
 
     }
     public static scr_UpdateHandler current;
@@ -173,8 +145,8 @@ public class scr_UpdateHandler : MonoBehaviour
     int updateTime, totalUpdateTime, totalUpdateTime2;
     bool firstPreUpdate;
     bool timeStop;
-    int loopCounter;
     bool oneLoop;
+    public bool halted = false;
 
     public event Action Observer_PreUpdateTime;
     public event Action Observer_PostUpdateTime_1;
@@ -184,31 +156,28 @@ public class scr_UpdateHandler : MonoBehaviour
     public event Action<bool> Observer_LogsSingleStepUpdate;
     public event Action<EventStatus, bool> Observer_EventStatus;
 
-    public void StartUpdate(bool silent = false)
+    public void StartUpdate(bool init, bool silent = false, bool updateUI = false)
     {
         //if (imageScript == null) Debug.LogError("UPDATEHANDLER NO IMAGE ATTACHED");
 
-        firstPreUpdate = true;
-        if (firstPreUpdate) Observer_PreUpdateTime?.Invoke();
-        timeStop = scr_System_Time.current.TimeStop;
-        loopCounter = 0;
-        oneLoop = true;
-
+        if (init)
+        {
+            firstPreUpdate = true;
+            if (firstPreUpdate) Observer_PreUpdateTime?.Invoke();
+            timeStop = scr_System_Time.current.TimeStop;
+            oneLoop = true;
+        }
         //FlushCollectedLogs(false, true);
         //if (imageScript != null)
         //{
-            // Updatetime is used to register loop count in minutes
-            // totalUpdateTime is used when loop finishes and print value.
-            // tldr, totalUpdateTime is the update duration count, and we should filter command logging based on this value.
-        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime)) && loopCounter < 20)
-        { 
-            StartCoroutine(SingleUpdate()); 
+        // Updatetime is used to register loop count in minutes
+        // totalUpdateTime is used when loop finishes and print value.
+        // tldr, totalUpdateTime is the update duration count, and we should filter command logging based on this value.
+        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime)) && !EventHandler.Active)
+        {
+            StartCoroutine(SingleUpdate());
         }
-        //}
-        //else
-        //{
-        //    while ((cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || oneLoop) && loopCounter < 20) StartCoroutine(SingleUpdate());
-        //}
+        else if (updateUI) NotifyLogsSingleUpdate();
     }
 
     public bool DoDisplayCOM(ActionPackage p)
@@ -252,24 +221,20 @@ public class scr_UpdateHandler : MonoBehaviour
         //Debug.Log("Singleupdate : start");
         var Clock = scr_System_CentralControl.current.LogPrefs.Debug_Logging_UpdateTimeCost ;
         Updating = true;
+        bool repeat = false;
+        int loopCount = 0;
         firstLoopCounter = 2;
         FlushCollectedLogs(false, oneLoop);
         // update per room
 
         Job playerJob = null;
         cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
-
-        if (EventHandler.Active)
-        {
-            Debug.Log($"Singleupdate : eventhandler active, waiting at pre updatetime {updateTime}");
-            yield return null;
-        }
-        Updating = true;
         //Debug.Log($"Singleupdate : eventhandler end, updatetime? {updateTime}");
         //NotifyLogsSingleUpdate();
-        while (updateTime > 0)  // updatetime can be 0 if there is no player package
+        var copy = updateTime;
+        while (updateTime > 0 && !EventHandler.Active)  // updatetime can be 0 if there is no player package
         {   // if indeed 0 updatetime, then none of the below preupdate postupdate will be called.
-
+            loopCount++;
             var time = Clock ? Utility.ReinitStopWatch(stopWatch) : TimeSpan.Zero;
             var time2 = time;
             //foreach (Manageable faction in organizations) faction.Manage();
@@ -319,40 +284,29 @@ public class scr_UpdateHandler : MonoBehaviour
             if (Clock) Debug.Log("SingleUpdate 1 loop End, total time " + Utility.LogStopwatch(stopWatch, ref time));
             stopWatch.Stop();
 
-            if (EventHandler.Active)
-            {
-                Debug.Log($"Singleupdate : eventhandler active, waiting at updatetime {updateTime}");
-                Updating = false;
-                EventHandler.Run();
-            }
             yield return null;
             //yield return new WaitForSecondsRealtime(0.001f);
         }
-        loopCounter++;
 
-        
-
-        if (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime2, false) && loopCounter < 20)
+        if (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime2, false))
         {   // continuous update
             // ask break
-
             totalUpdateTime = totalUpdateTime2;
-            Debug.Log($"totalupdatetime {updateTime} {totalUpdateTime}");
+            //Debug.Log($"totalupdatetime {updateTime} {totalUpdateTime}");
             cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
-
+            halted = EventHandler.Active;
         }
         else
         {
-            cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, false);
+            cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, EventHandler.Active);
         }
-     
         
-    
         // exiting loop. if player is involved in a job, here's when we should display it.
         //playerJob = cnManager.Player.CurrentJob;
 
         // begin job message
         if (false && playerJob != null) cnManager.AddLog(-1, playerJob.MessagesBefore);
+
         cnManager.AddLog(-1, String.Join("\n", message_begin));
         cnManager.AddLog(-1, String.Join("\n", message_ongoing));
         
@@ -381,7 +335,7 @@ public class scr_UpdateHandler : MonoBehaviour
         if (timeStop) totalUpdateTime = 0;
 
 
-        cnManager.AddLog(-1000, "<align=\"right\">" + "(" + totalUpdateTime + " Minutes) " + scr_System_Time.current.getCurrentTime().ToString() + "</align>", false, false);
+        cnManager.AddLog(-1000, "<align=\"right\">" + "(" + (loopCount) + " Minutes) " + scr_System_Time.current.getCurrentTime().ToString() + "</align>", false, false);
 
         List<string> names = new List<string>();
         foreach (var charaRef in cnManager.CharaInCurrentRoom)
@@ -396,15 +350,19 @@ public class scr_UpdateHandler : MonoBehaviour
         //yield return null;
         
 
-        //NotifyLogsSingleUpdate();
-        //Debug.LogError("CN MANAGER STILL HAVE PLAYER PACKAGE? " + cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) + " LOOPCOUNTER " + loopCounter);
-
         if (playerJob == null || playerJob is Job_Sex_Group) { }
         else
         {   // release player from previous job registry to avoid lingering COM display
             scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
         }
         Updating = false;
+
+        if (EventHandler.Active)
+        {
+
+            Debug.LogError($"EVENTHANDLER ACTIVE, running... is Updating? {Updating}");
+            EventHandler.Run(false, true);
+        }
     }
 
 

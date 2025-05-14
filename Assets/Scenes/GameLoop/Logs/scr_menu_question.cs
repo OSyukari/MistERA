@@ -21,7 +21,7 @@ public class scr_menu_question : scr_Menu
         // Initialize();
         SetCanvas(mainCanvas, true);
         this.Text.SetText(query.question);
-
+        self = this.GetComponent<RectTransform>();
         foreach (var option in query.options)
         {
             var button = Instantiate(prefab_text_linkbutton).GetComponent<scr_SelectableText>();
@@ -29,7 +29,7 @@ public class scr_menu_question : scr_Menu
             preferredLen = Math.Max(preferredLen, button.GetComponent<TMP_Text>().preferredWidth);
             button.SetText(option.option);
         }
-        Debug.Log($"Initializing question menu, grid size {Grid.cellSize.ToString()} rectsizedelta rectwidth sizedelta gridflexwidth{Grid.flexibleWidth} rectlocalscale");
+        Debug.Log($"Initializing question menu, grid size {Grid.cellSize.ToString()} rectTransformSizedelta {self.sizeDelta} rectwidth {self.rect.width} gridflexwidth {Grid.flexibleWidth} rectlocalscale");
         //Grid.cellSize = new Vector2(Grid.cellSize.x, (float)Math.Min(self.rect.width * 0.9, preferredLen));
         ValidateAll();
     }
@@ -123,7 +123,7 @@ public class scr_menu_question : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return selected || (parent.Active && option.isValid());
+            return selected || (parent.Active && option.isValid(instance));
         }
 
         public void OnClickButton()
@@ -132,7 +132,7 @@ public class scr_menu_question : scr_Menu
             {
                 parent.Active = false;
                 selected = true;
-                option.Execute(instance);
+                option.Execute(instance, true);
             }
         }
     }

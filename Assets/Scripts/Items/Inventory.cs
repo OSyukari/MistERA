@@ -10,6 +10,7 @@ public class Inventory
 {
 
     [SerializeField][JsonProperty] protected List<int> contentRefs = new List<int>();
+    [JsonIgnore] public List<int> ContentRefs { get { return contentRefs; } }
     private List<Item_Instance> contents_cache = null;
     protected List<Item_Instance> Contents
     {

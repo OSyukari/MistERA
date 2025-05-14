@@ -665,7 +665,7 @@ public class Map_Instance
         opsResult = AddFactionExit(b.MainExit.RefID, a.MainExit.RefID, new Door_Instance(b.MainExitCost)) && opsResult;
 
         if(!opsResult) Debug.LogError($"Connecting Factions [{a.ID}] and [{b.ID}], result {opsResult}");
-        else Debug.Log($"Connecting Factions [{a.ID}] and [{b.ID}], result {opsResult}");
+        //else Debug.Log($"Connecting Factions [{a.ID}] and [{b.ID}], result {opsResult}");
     }
 
     public void DisconnectFactions(Manageable a, Manageable b)

@@ -105,16 +105,19 @@ public static class Utility
 
     public static bool MatchAPbyType(ActionPackage ap, string type)
     {
+        bool returnValue = false;
         switch (type)
         {
-            case "ActionPackage_PathTo": return ap is ActionPackage_PathTo;
-            case "ActionPackage_Sex": return ap is ActionPackage_Sex;
-            case "ActionPackage_Interaction": return ap is ActionPackage_Interaction;
-            case "ActionPackage_ProductionOrder": return ap is ActionPackage_ProductionOrder;
-            case "ActionPackage_Redress": return ap is ActionPackage_Redress;
-            case "ActionPackage_Undress": return ap is ActionPackage_Undress;
-            default: return false;
+            case "ActionPackage_PathTo": returnValue = ap is ActionPackage_PathTo;break;
+            case "ActionPackage_Sex": returnValue = ap is ActionPackage_Sex; break;
+            case "ActionPackage_Interaction": returnValue = ap is ActionPackage_Interaction; break;
+            case "ActionPackage_ProductionOrder": returnValue = ap is ActionPackage_ProductionOrder; break;
+            case "ActionPackage_Redress": returnValue = ap is ActionPackage_Redress; break;
+            case "ActionPackage_Undress": returnValue = ap is ActionPackage_Undress; break;
+            default: returnValue = false; break;
         }
+        Debug.LogError($"MatchAPbyType {type} on ap {ap.GetType()} returnvalue {returnValue}");
+        return returnValue;
     }
 
 

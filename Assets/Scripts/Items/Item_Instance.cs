@@ -200,7 +200,7 @@ public class Item_Instance : IDisposable, I_Disposable
 
             var c = comp.Instantiate(parent);
             if (c is null) continue;
-            Debug.Log("ReAdding comp " + comp.compType + " for item ref " + this.RefID + " " + Base.DisplayName+", Stackable? "+c.Stackable);
+            //Debug.Log("ReAdding comp " + comp.compType + " for item ref " + this.RefID + " " + Base.DisplayName+", Stackable? "+c.Stackable);
             if (c.Stackable) compInstances_nonSerialized.Add(c);
             else compInstances.Add(c);
             

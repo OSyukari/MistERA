@@ -67,7 +67,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     {
         todo.Add(msg);
         UpdateAnimatingStatus();
-        Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
+        //Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
         if (firstLine || animate) SingleUpdate(false);
     }
 
@@ -86,7 +86,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
     protected void UpdateAnimatingStatus()
     {
-        scr_UpdateHandler.current.Animating = Active || canAnimate;
+        scr_UpdateHandler.current.Animating = canAnimate;
         //Debug.Log($"update animating status {scr_UpdateHandler.current.Animating} lock {scr_UpdateHandler.current.Lock} updating {scr_UpdateHandler.current.Updating} event {scr_UpdateHandler.current.EventHandler.Active}");
     }
 
@@ -110,7 +110,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     private RectTransform currentMsgLog, currentMsg;
     private void AnimateOneStep()
     {
-        Debug.Log($"Animateonestep, firstline {firstLine}");
+       // Debug.Log($"Animateonestep, firstline {firstLine}");
         firstLine = false;
         while (LogsList.transform.childCount > scr_System_CentralControl.current.pref.MaxLogCount)
         {
@@ -173,7 +173,6 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     }
 
     public bool canAnimate { get { return todo.Count > 0; } }
-    public bool Active { get { return todo.Count > 0; } }
 
     public RectTransform LogsList;
     public RectTransform prefab_LogEntry, prefab_SeparationEntry;
@@ -250,8 +249,9 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     {
         int clickID = eventData.pointerId;
 
-        if (scr_UpdateHandler.current.Lock)
+        if (scr_UpdateHandler.current.Updating || scr_UpdateHandler.current.EventHandler.Active || canAnimate)
         {
+            Debug.Log($"OnPointerClick updating[{scr_UpdateHandler.current.Updating}] evActive[{scr_UpdateHandler.current.EventHandler.Active}] canAnimate[{canAnimate}]");
             if (canAnimate)
             {
                 if (Input.GetMouseButton(1)) AnimateAll();
@@ -260,6 +260,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         }
         else
         {
+            UpdateAnimatingStatus();
             if (LogsList.anchoredPosition != new Vector2(0, 0)) LogsList.anchoredPosition = new Vector2(0, 0);
             else scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
         }

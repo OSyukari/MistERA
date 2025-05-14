@@ -84,7 +84,8 @@ public class EventInstance
         }
         else
         {
-            nextEvent = eventID == "" ? currentEvent : scr_System_Serializer.current.MasterList.Events.list.Find(x => x.ID == eventID);
+            
+            nextEvent = eventID == "" ? currentEvent : scr_System_Serializer.current.GetEventByID(eventID);
             if (nextEvent == null) this.Clear($"Eventhandler cannot find event with id {eventID}");
             else
             {
@@ -100,16 +101,17 @@ public class EventInstance
             }
         }
 
-        if (canRun && !nextEvent.Validate(this))
+        if (canRun && nextEvent.Validate(this))
         {
-            isValid = false;
-            //Debug.LogError($"error on {this.Name}");
+            Debug.Log($"Event instance on {(Self == null ? "null" : Self.FirstName)} isvalid on {this.Name}");
+            isValid = true;
+            if (canRun && startImmediate) Start();
         }
         else
         {
-            //Debug.Log($"Event instance on {(Self == null ? "null" : Self.FirstName)} isvalid on {this.Name}");
-            isValid = canRun;
-            if (canRun && startImmediate) Start();
+            isValid = false;
+            Debug.LogError($"error on next {(canRun ? nextEvent.ID : "null")} cannot run or invalid (this might not be an error)");
+            this.Clear();
         }
     }
 
@@ -139,7 +141,7 @@ public class EventInstance
             if (currentEntry.isValid)
             {
                 Debug.Log($"event {Name} isvalid, executing");
-                updateHandler.InvokeEventStatus(EventStatus.running, firstInit || waitingEnd);
+                updateHandler.InvokeEventStatus(Status, firstInit || waitingEnd);
                 firstInit = false;
                 currentEntry.Execute(this);
             }
@@ -178,19 +180,18 @@ public class EventInstance
     public void Notify (EventStatus status)
     {
         // notify reset / waiting / running
-        switch(status)
+        var currStatus = this.Status;
+        switch (status)
         {
-            case EventStatus.reset: 
-                this.Clear("");
-                break;
+            case EventStatus.reset:  this.Clear(""); break;
             case EventStatus.running:
                 updateHandler.cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
-                if (this.Status == EventStatus.waiting) updateHandler.EventHandler.Run(true);
+                //if (this.Status == EventStatus.waiting) updateHandler.EventHandler.Run(true);
                 // other repeated run calls should be handled by eventmanager
                 break;
             default: break;
         }
-
+        if (status != EventStatus.waiting) updateHandler.EventHandler.Run(currStatus == EventStatus.waiting);
         /*
          * 
         updateHandler.InvokeEventStatus(status, forceLogging);

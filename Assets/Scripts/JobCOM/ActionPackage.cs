@@ -260,7 +260,7 @@ public abstract class ActionPackage
     /// <summary>
     /// Set Duration to 0, making it eligible for removal in Job.PostUpdateTime
     /// </summary>
-    public void DisablePackage(bool extraTick = false)
+    public virtual void DisablePackage(bool extraTick = false)
     {
         if (!extraTick) this.duration = -1;
         else this.duration = -2;

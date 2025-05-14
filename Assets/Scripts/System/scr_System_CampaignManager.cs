@@ -51,7 +51,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         LogManager = new MessageLogManager();
     }
 
-
+    /// <summary>
+    /// This inventory's content is not serialized into save data
+    /// on save, every refid inside is transferred into deletedrefs
+    /// </summary>
     public Inventory Recycler = new Inventory();
 
     public List<ActionPackage> GetRegisteredAPByRoom(int roomID, bool getExecutedAPs = true)
@@ -77,6 +80,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.refIDCounter = refIDCounter;
 
         obj.DeletedRefIDs = deletedRefIDs;
+        if (this.Recycler.ContentRefs.Count > 0) obj.DeletedRefIDs.AddRange(this.Recycler.ContentRefs);
+
         obj.Items = Index_ItemReferenceID;
         obj.Party = party;
         obj.Map = map;
@@ -461,17 +466,22 @@ public class scr_System_CampaignManager : MonoBehaviour
     public List<ActionPackage> GetExistingPackages (Character_Trainable c, bool checkUnexecuted, bool checkExecuted, bool checkMaster)
     {
         List<ActionPackage> results = new List<ActionPackage>();
+        if (c == null)
+        {
+            Debug.LogError("GetExistingPackages null chara");
+            return results;
+        }
         var room = Map.FindRoomByChara(c.RefID);
 
+        /*
         foreach (var kvpair_list in registeredPackagesByRoom)
         {
-           
             foreach (var p in GetExistingPackages2(c, kvpair_list.Value, checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
-            
         }
-                //if (room != null && registeredPackagesByRoom.ContainsKey(room.RefID)) foreach(var p in GetExistingPackages2(c, registeredPackagesByRoom[room.RefID], checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
-                //if (c.CurrentJob != null) foreach(var p in GetExistingPackages2(c, c.CurrentJob.ActivePackages, checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
-                //if (c.InteractionJob != null) foreach (var p in GetExistingPackages2(c, c.InteractionJob.ActivePackages, checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
+        */
+        if (room != null && registeredPackagesByRoom.ContainsKey(room.RefID)) foreach(var p in GetExistingPackages2(c, registeredPackagesByRoom[room.RefID], checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
+        if (c.CurrentJob != null) foreach(var p in GetExistingPackages2(c, c.CurrentJob.ActivePackages, checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
+        if (c.InteractionJob != null) foreach (var p in GetExistingPackages2(c, c.InteractionJob.ActivePackages, checkUnexecuted, checkExecuted, checkMaster)) if (!results.Contains(p)) results.Add(p);
         return results;
 
     }
@@ -569,7 +579,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         //FreeUpdateAsync();
         ClearLogs();
         if (!silent && addText != "") AddLog(addLogRefID, addText, true);
-        scr_UpdateHandler.current.StartUpdate(silent);
+        scr_UpdateHandler.current.StartUpdate(true, silent);
         //StartCoroutine(FreeUpdateCoroutine());
 
         // coroutine will catch all job that need detailed display
@@ -728,8 +738,12 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void ChangeCurrentViewMode(ViewMode vm, bool lockView = false)
     {
         // if update lock, allow only setting to logs
-        if (scr_UpdateHandler.current.Animating && vm != ViewMode.View_Logs) return;
-        else if (viewMode == ViewMode.View_Logs && vm == ViewMode.View_Room && scr_UpdateHandler.current.Updating) scr_UpdateHandler.current.StartUpdate(); 
+        if (scr_UpdateHandler.current.Animating && vm != ViewMode.View_Logs)
+        {
+            Debug.LogError($"ChangeCurrentViewMode to {vm}, error, still animating");
+            return;
+        }
+        else if (viewMode == ViewMode.View_Logs && vm == ViewMode.View_Room && ExistPlayerPackage(out int a, out int b)) scr_UpdateHandler.current.StartUpdate(false);
         else
         {
             if (viewMode != vm) viewMode = vm;

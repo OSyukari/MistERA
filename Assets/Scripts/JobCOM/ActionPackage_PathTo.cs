@@ -229,6 +229,11 @@ public class ActionPackage_PathTo : ActionPackage
         
     }
 
+    public override void DisablePackage(bool extraTick = false)
+    {
+        base.DisablePackage(extraTick);
+        while (path.Count > 0) PathPop();
+    }
     protected void QueryInitializer(scr_Menu menu)
     {
 

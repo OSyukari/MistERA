@@ -237,6 +237,10 @@ public class scr_System_Serializer : MonoBehaviour
         return MasterList.BodyPartBases.GetPartByID(name_or_id);
     }
 
+    public Event GetEventByID(string name_or_id)
+    {
+        return MasterList.Events.GetByID(name_or_id);
+    }
     public COM GetByNameOrID_COM(string name_or_id)
     {
         return MasterList.COMs.GetByID(name_or_id);
