@@ -11,6 +11,9 @@
 !README.md
 !ci/*
 
+!Demo/
+!Demo/*.png
+
 !Assets/
 Assets/*
 !Assets/Data
