@@ -570,7 +570,11 @@ public class COM_Requirements
         public bool Validate(Manageable m)
         {
             if (jobKeyword != "" && (m == null || !m.ExistOngoingProductionOrder(jobKeyword))) return false;
-            if (inventoryItemBaseID != "" && (m == null || m.Inventory.GetItemCount(inventoryItemBaseID) < 1)) return false;
+            if (inventoryItemBaseID != "" && (m == null || m.Inventory.GetItemCount(inventoryItemBaseID) < 1))
+            {
+               // Debug.LogError($"validate inventory for {(m == null ? "null" : m.FactionDisplayName)} error, does not contain item {inventoryItemBaseID} or low count {m.Inventory.GetItemCount(inventoryItemBaseID)}");
+                return false;
+            }
             return true;
         }
 

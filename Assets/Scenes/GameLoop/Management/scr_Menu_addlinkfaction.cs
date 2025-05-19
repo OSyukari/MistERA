@@ -24,6 +24,7 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
             else if (faction.MainExit == null) continue;
             MakeFactionButton(faction);
         }
+        ValidateAll();
     }
 
     public void NotifyChange()
@@ -48,7 +49,7 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
             button.optionID = optionID;
             buttonsByID.Add(button.optionID, button);
             validatorsByID.Add(button.optionID, button.Validator);
-            button.Validate();
+            //button.Validate();
             // return true;
         }
         // else return false;
@@ -140,7 +141,7 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
     public class Button_ToggleLink : ButtonValidator, I_ButtonClickable
     {
         new scr_Menu_addlinkfaction parent;
-        Manageable.ItemEntry entry;
+        ItemEntry entry;
         Manageable targetFaction;
         scr_SelectableText button;
 

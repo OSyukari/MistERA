@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
-using static scr_panel_COMmanager;
 
 [System.Serializable]
 public enum ParticipantType { 
@@ -753,26 +752,26 @@ public class EvaluationPackage
     }
 
     [JsonIgnore] public string Description_Begin { get {
-            string s = targetCOM.variants[VariantID].GetDescription_Begin(this);
+            string s = targetCOM.variants[VariantID].GetDescription_Begin(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_begin);
             Utility.StringReplace(this, ref s);
             return s; } }
     [JsonIgnore] public string Description_Ongoing { get { 
-            string s = targetCOM.variants[VariantID].GetDescription_Ongoing(this);
+            string s = targetCOM.variants[VariantID].GetDescription_Ongoing(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_ongoing);
             Utility.StringReplace(this, ref s);
             return s;
     } }
 
     [JsonIgnore] public string Description_Remove { get { 
-            string s = targetCOM.variants[VariantID].GetDescription_Remove(this);
+            string s = targetCOM.variants[VariantID].GetDescription_Remove(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_abort);
             Utility.StringReplace(this, ref s);
             return s;
 
         } }
     [JsonIgnore] public string Description_After { get { 
-            string s = targetCOM.variants[VariantID].GetDescription_After(this);
+            string s = targetCOM.variants[VariantID].GetDescription_After(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", "");
             Utility.StringReplace(this, ref s);
             return s;

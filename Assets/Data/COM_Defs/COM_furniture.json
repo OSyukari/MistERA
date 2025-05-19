@@ -1,309 +1,588 @@
 {
-    "COMs":
-    {
-        "list":[
-        {
-            "ID":"com_furniture_sleep",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_furniture_sleep_displayName_1",
-            "timeScale":180,
-            "_baseAcceptanceValue":"actor will always accept when their own AI decide to go to sleep, so this value is only checked if they were invited by someone else to sleep. Currently they'll lose consciousness when touching bed, but in the future i would like to extend this command into masturbation sex command or straight up sex. Instead of making them unable to act for the whole duration, make it so they'll prefer to stay in bed but nothing stops them from having sex or toilet or wander into someone else's room. or make it so their sleep consciousness mod fluctuate",
-            "comTags":["furniture","bed","sleep"],
-            "requirements":{ 
-                "requirement":{ 
-                    "treatReceiverAsDoer":true,
-                    "req_Doers":{ "requireConscious":false }
-                } 
-            },
-            "results":  
-            { "results_character":
-                [
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"60" } },
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"30" } }
-                ]
-            },
-            "variants":[
-                {
-                    "requirements":{ "requirement":{ "doerCount":1 } }, "displayName":"com_furniture_sleep_displayName_1"
+    "COMs": {
+        "list": [
+            {
+                "ID": "com_furniture_sleep",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_sleep_displayName_1",
+                "timeScale": 180,
+                "_baseAcceptanceValue": "actor will always accept when their own AI decide to go to sleep, so this value is only checked if they were invited by someone else to sleep. Currently they'll lose consciousness when touching bed, but in the future i would like to extend this command into masturbation sex command or straight up sex. Instead of making them unable to act for the whole duration, make it so they'll prefer to stay in bed but nothing stops them from having sex or toilet or wander into someone else's room. or make it so their sleep consciousness mod fluctuate",
+                "comTags": [
+                    "furniture",
+                    "bed",
+                    "sleep"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "requireConscious": false
+                        }
+                    }
                 },
-                {
-                    "requirements":{ "requirement":{ "doerCount":99 } }, "displayName":"com_furniture_sleep_displayName_2"
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_ST",
+                                "value": "60"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "30"
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_sleep_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99
+                            }
+                        },
+                        "displayName": "com_furniture_sleep_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 15
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
                 }
-            ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":0 }
-        },
-        {
-            "ID":"com_furniture_takingBreak",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_furniture_takingBreak_displayName_1",
-            "timeScale":15,
-            "comTags":["furniture","bed","sleep","rest"],
-            "_comments":"all COM with sleep tag are hard-coded to allow character without sleep need to recover 1HP and 1MP on command completion",
-            "requirements":{ 
-                "requirement":
-                { 
-                    "treatReceiverAsDoer":true  
-                } 
             },
-            "results": 
-            { "results_character":
-                [
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"4" } },
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"8" } }
-                ]
-            },
-            "variants":[
-                {
-                    "requirements":{ "requirement":{ "doerCount":1 } }, "displayName":"com_furniture_takingBreak_displayName_1"
+            {
+                "ID": "com_furniture_takingBreak",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_takingBreak_displayName_1",
+                "timeScale": 15,
+                "comTags": [
+                    "furniture",
+                    "bed",
+                    "sleep",
+                    "rest"
+                ],
+                "_comments": "all COM with sleep tag are hard-coded to allow character without sleep need to recover 1HP and 1MP on command completion",
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    }
                 },
-                {
-                    "requirements":{ "requirement":{ "doerCount":99 } }, "displayName":"com_furniture_takingBreak_displayName_2"
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_ST",
+                                "value": "4"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "8"
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_takingBreak_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99
+                            }
+                        },
+                        "displayName": "com_furniture_takingBreak_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 5
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
                 }
-            ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":5 },
-            "DifficultyCheck":{ "baseD20Check":0 }
-        },
-        {
-            "ID":"com_furniture_playVideoGames",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_furniture_playVideoGames_displayName_1",
-            "timeScale":30,
-            "comTags":["furniture","TV","recreation"],
-            "requirements":
-            { 
-                "requirement": { "treatReceiverAsDoer":true, "req_Doers": { "cost_EN": 5 } }
             },
-            "results": 
-            { "results_character":
-                [ 
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"5" } } ,
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"10" } }
-                ]
-            },
-            "variants":[
-                {
-                    "requirements":{ "requirement":{ "doerCount":1 } }, "displayName":"com_furniture_playVideoGames_displayName_1"
+            {
+                "ID": "com_furniture_playVideoGames",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_playVideoGames_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture",
+                    "TV",
+                    "recreation"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "cost_EN": 5
+                        }
+                    }
                 },
-                {
-                    "requirements":{ "requirement":{ "doerCount":99 } }, "displayName":"com_furniture_playVideoGames_displayName_2"
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_ST",
+                                "value": "5"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "10"
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_playVideoGames_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99
+                            }
+                        },
+                        "displayName": "com_furniture_playVideoGames_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 5
                 }
-            ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":10 },
-            "DifficultyCheck":{ "baseD20Check":5 }
-        },
-        {
-            "ID":"com_furniture_watchVideo",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_furniture_watchVideo_displayName_1",
-            "timeScale":30,
-            "comTags":["furniture","TV","recreation"],
-            "requirements":
-            { 
-                "requirement": { "treatReceiverAsDoer":true, "req_Doers": { "cost_EN": 5 } } 
             },
-            "results": 
-            { "results_character":
-                [
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"10" } },
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"10" } }
-                ]
-            },
-            "variants":[
-                {
-                    "requirements":{ "requirement":{ "doerCount":1 } }, "displayName":"com_furniture_watchVideo_displayName_1"
+            {
+                "ID": "com_furniture_watchVideo",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_watchVideo_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture",
+                    "TV",
+                    "recreation"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "cost_EN": 5
+                        }
+                    }
                 },
-                {
-                    "requirements":{ "requirement":{ "doerCount":99 } }, "displayName":"com_furniture_watchVideo_displayName_2"
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_ST",
+                                "value": "10"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "10"
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_watchVideo_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99
+                            }
+                        },
+                        "displayName": "com_furniture_watchVideo_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 5
                 }
-            ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":10 },
-            "DifficultyCheck":{ "baseD20Check":5 }
-        },
-        {
-            "ID":"com_furniture_takeShower",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_furniture_takeShower_displayName_1",
-            "timeScale":30,
-            "comTags":["furniture", "shower"],
-            "requirements":{ "requirement":{ "doerCount":1 } },
-            "variants":[
-                {
-                    "requirements":{ "requirement":{ "receiverCount":0 } },
-                    "displayName":"com_furniture_takeShower_displayName_1"
+            },
+            {
+                "ID": "com_furniture_takeShower",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_takeShower_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture",
+                    "shower"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "doerCount": 1
+                    }
                 },
-                {
-                    "requirements":{ "requirement":{ "receiverCount":1 } },
-                    "displayName":"com_furniture_takeShower_displayName_2"
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "receiverCount": 0
+                            }
+                        },
+                        "displayName": "com_furniture_takeShower_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "receiverCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_takeShower_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "receiverCount": 99
+                            }
+                        },
+                        "displayName": "com_furniture_takeShower_displayName_3"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 25
                 },
-                {
-                    "requirements":{ "requirement":{ "receiverCount":99 } },
-                    "displayName":"com_furniture_takeShower_displayName_3"
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                },
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_ST",
+                                "value": "5"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "10"
+                            }
+                        }
+                    ]
                 }
-            ],
-            "AcceptanceCheck":{
-                "baseAcceptanceValue":25
             },
-            "DifficultyCheck":{
-                "baseD20Check":0
+            {
+                "ID": "com_furniture_restroom_fix",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_restroom_fix_displayName_1",
+                "timeScale": 15,
+                "comTags": [
+                    "furniture",
+                    "bathroom",
+                    "fixingClothes"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": {
+                            "requireUndressed": true
+                        }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_restroom_fix_displayName_1"
+                    }
+                ],
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "redress"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "5"
+                            }
+                        }
+                    ]
+                },
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 25
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
             },
-            "results": 
-            { "results_character":
-                [
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_ST", "value":"5" } },
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"10" } }
-                ]
+            {
+                "ID": "com_job_study",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_job_study_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture",
+                    "desk"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "doerCount": 1,
+                        "req_Doers": {
+                            "cost_EN": 10
+                        }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_job_study_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99
+                            }
+                        },
+                        "displayName": "com_job_study_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 15
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_furniture_cryosleep",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "COMRepeat": true,
+                "displayName": "com_furniture_cryosleep_displayName",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "doerCount": 1,
+                        "receiverCount": 1,
+                        "req_Doers": {
+                            "allowNPC": false
+                        },
+                        "req_Receivers": {
+                            "requireConscious": false,
+                            "requireUnrestrained": true
+                        }
+                    },
+                    "requireContaining": {
+                        "requireContentAbsent": true,
+                        "allowPlanting": [
+                            "character_trainable",
+                            "cryo"
+                        ]
+                    }
+                },
+                "results": {
+                    "results_jobContainer": [
+                        {
+                            "entry_conditions": {
+                                "applyToReceiver": true
+                            },
+                            "entry_results": {
+                                "isCharaContainer": true,
+                                "lockChara": {
+                                    "statusID": "chara_status_cryosleep",
+                                    "statusSeverity": 1.0,
+                                    "locationLock": true
+                                }
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {}
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 20
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_furniture_getmeal",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "COMRepeat": false,
+                "HideWhenInvalid": false,
+                "displayName": "com_furniture_getmeal_displayName",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_getmeal_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99
+                            }
+                        },
+                        "displayName": "com_furniture_getmeal_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_furniture_prison",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "COMRepeat": true,
+                "displayName": "com_furniture_prison_displayname",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "doerCount": 1,
+                        "receiverCount": 1,
+                        "req_Doers": {
+                            "allowNPC": false
+                        },
+                        "req_Receivers": {
+                            "requireConscious": false,
+                            "requireUnrestrained": true,
+                            "requireAction": false
+                        }
+                    },
+                    "requireContaining": {
+                        "requireContentAbsent": true,
+                        "allowPlanting": [
+                            "character_trainable",
+                            "prison"
+                        ]
+                    }
+                },
+                "results": {
+                    "results_jobContainer": [
+                        {
+                            "entry_conditions": {
+                                "applyToReceiver": true
+                            },
+                            "entry_results": {
+                                "isCharaContainer": true,
+                                "lockChara": {
+                                    "locationLock": true
+                                }
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {}
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 30
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
             }
-        },
-        {
-            "ID":"com_furniture_restroom_fix",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_furniture_restroom_fix_displayName_1",
-            "timeScale":15,
-            "comTags":["furniture","bathroom","fixingClothes"],
-            "requirements":{  
-                "requirement":{ 
-                    "req_Doers":{
-                        "requireUndressed" :true
-                    }  }  },
-            "variants":[
-                {
-                    "requirements":{ "requirement":{ "doerCount":1 } },
-                    "displayName":"com_furniture_restroom_fix_displayName_1"
-                }
-            ],
-            "results": 
-            { 
-                "results_character":
-                [
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"redress" } } ,
-                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"5" } }
-                ]
-            },
-            "AcceptanceCheck":{ "baseAcceptanceValue":25 },
-            "DifficultyCheck":{ "baseD20Check":0 }
-        },
-        {
-            "ID":"com_job_study",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_job_study_displayName_1",
-            "timeScale":30,
-            "comTags":["furniture","desk"],
-            "requirements":
-            { 
-                "requirement":{ "treatReceiverAsDoer":true, "doerCount":1 , "req_Doers": { "cost_EN": 10 }} 
-            },
-            "variants":[
-                {
-                    "requirements":{ "requirement":{  "doerCount":1 } },
-                    "displayName":"com_job_study_displayName_1"
-                },
-                {
-                    "requirements":{ "requirement":{  "doerCount":99 } },
-                    "displayName":"com_job_study_displayName_2"
-                }
-            ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":0 }
-        },
-        {
-            "ID":"com_furniture_cryosleep",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "COMRepeat":true,
-            "displayName":"com_furniture_cryosleep_displayName",
-            "timeScale":30,
-            "comTags":["furniture"],
-            "requirements":{ 
-                "requirement":{ 
-                    "doerCount":1, "receiverCount":1, 
-                    "req_Doers":{"allowNPC":false},
-                    "req_Receivers":{
-                        "requireConscious":false,
-                        "requireUnrestrained":true
-                    }
-                },
-                "requireContaining":{ "requireContentAbsent"  :true,
-                        "allowPlanting":["character_trainable", "cryo"] }
-            },
-            "results": 
-            { 
-                "results_jobContainer":[
-                    {
-                        "entry_conditions": { "applyToReceiver":true },
-                        "entry_results":{
-                            "isCharaContainer":true,
-                            "lockChara":{
-                                "statusID":"chara_status_cryosleep",
-                                "statusSeverity":1.0,
-                                "locationLock":true
-                            }
-                        }}
-                ]
-            },
-            "variants":[
-                {  "requirements": {  } }
-            ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":0 }
-        },
-        {
-            "ID":"com_furniture_getmeal",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "COMRepeat":false,
-            "HideWhenInvalid":true,
-            "displayName":"com_furniture_getmeal_displayName",
-            "timeScale":30,
-            "comTags":["furniture"],
-            "requirements":{ "requirement":{ "treatReceiverAsDoer":true } },
-            "variants":[
-                { "requirements":{"requirement":{ "doerCount":1 }} ,
-                "displayName":"com_furniture_getmeal_displayName_1"},
-                { "requirements":{"requirement":{ "doerCount":99 }} ,
-                "displayName":"com_furniture_getmeal_displayName_2"}
-            ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":10 },
-            "DifficultyCheck":{ "baseD20Check":0 }
-        },
-        {
-            "ID":"com_furniture_prison",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "COMRepeat":true,
-            "displayName":"com_furniture_prison_displayname",
-            "timeScale":30,
-            "comTags":["furniture"],
-            "requirements":{ 
-                "requirement":{ 
-                    "doerCount":1, "receiverCount":1, 
-                    "req_Doers":{"allowNPC":false},
-                    "req_Receivers":{
-                        "requireConscious":false,
-                        "requireUnrestrained":true,
-                        "requireAction":false
-                    }
-                },
-                "requireContaining":{ "requireContentAbsent"  :true,
-                        "allowPlanting":["character_trainable", "prison"] }
-            },
-            "results": 
-            { 
-                "results_jobContainer":[
-                    {
-                        "entry_conditions": { "applyToReceiver":true },
-                        "entry_results":{
-                            "isCharaContainer":true,
-                            "lockChara":{
-                                "locationLock":true
-                            }
-                        }}
-                ]
-            },
-            "variants":[
-                {  "requirements": {  } }
-            ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":30 },
-            "DifficultyCheck":{ "baseD20Check":0 }
-        }
-    ]
+        ]
     }
-    
 }

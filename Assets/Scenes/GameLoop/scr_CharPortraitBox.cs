@@ -50,10 +50,10 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         if (vm == ViewMode.View_Room) ReadCurrentChar(scr_System_CampaignManager.current.CurrentTargetRef);
     }
 
-    private void ReadCurrentLogImage(int id)
+    private void ReadCurrentLogImage(PortraitManager id)
     {
         //Debug.Log("ReadCurrentChar");
-        if (id == -1) return;
+        if (id == null) return;
         else if (this.canvas == null) return;
         else if (scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Logs) return;
         else CheckCharaChange(id);
@@ -66,15 +66,18 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         else if (this.canvas == null) return;
         else if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Logs) return;
         else CheckCharaChange(id);
+        
     }
 
+    /*
     Character_Trainable chara { get
         {
             if (chara_refID < 0) return null;
             return scr_System_CampaignManager.current.FindInstanceByID(chara_refID);
-        } }
+        } }*/
 
-    int chara_refID = -1;
+    //int chara_refID = -1;
+    PortraitManager portrait = null;
     Canvas canvas = null;
     public bool InitializeWithArgument(int refID, Canvas canvas)
     {
@@ -85,18 +88,25 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
         return true;
     }
-    public int PreviousRef = -1;
+
+    PortraitManager PreviousRef = null;
+
     private void CheckCharaChange(int refID)
+    {
+        var chara = scr_System_CampaignManager.current.FindInstanceByID(refID);
+        CheckCharaChange(chara == null ? null : chara.PortraitManager);
+    }
+    private void CheckCharaChange(PortraitManager newPortrait)
     {
         //spineRect.gameObject.SetActive(false);
         //picture.gameObject.SetActive(true);
     
 
-        PreviousRef = chara_refID;
-        chara_refID = refID;
-        if (chara != null)
+        PreviousRef = portrait;
+        portrait = newPortrait;
+        if (portrait != null)
         {
-            if(chara_refID != PreviousRef) {
+            if(portrait != PreviousRef) {
                 // spineRect.gameObject.SetActive(false);
                 if (spineRect != null)
                 {
@@ -104,7 +114,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
                 }
                 picture.gameObject.SetActive(true);
             }
-            chara.PortraitManager.GetValidPortrait().DrawPortrait(this);
+            portrait.GetValidPortrait().DrawPortrait(this);
         }
 
 
@@ -112,7 +122,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         {   // somehow first activation of spine does not play animation correctly
             spineRect.gameObject.SetActive(false);
             firstInit = false;
-            chara.PortraitManager.GetValidPortrait().DrawPortrait(this);
+            portrait.GetValidPortrait().DrawPortrait(this);
         }
 
         if(spineLoader != null)
@@ -137,15 +147,16 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
     {
-        if (chara != null) chara.PortraitManager.Click();
+        if (portrait != null) portrait.Click();
 
+        /*
         if (eventData.button == PointerEventData.InputButton.Left && Utility.isClickBelowDragThreshold(eventData) && this.chara != null)
         {
             //Debug.Log("Mouse Click on [" + this.chara.baseID + "] refID [" + chara.referenceID + "]");
 
             detail = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_Canvas_charaDetail, canvas.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaDetail>();
             detail.InitializeWithArgument(chara_refID);
-        }
+        }*/
     }
 
     bool mouseOver;
@@ -177,7 +188,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void updateImage()
     {
-        if (chara == null)
+        if (portrait == null)
         {
             picture.gameObject.SetActive(false);
             if(spineRect != null) spineRect.gameObject.SetActive(false);
@@ -217,10 +228,10 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             ActivateOvumBox(false);
         }
 
-        ScaleStatBar(hp, chara.Stats.HP);
-        ScaleStatBar(mp, chara.Stats.MP);
-        ScaleStatBar(st, chara.Stats.Stamina);
-        ScaleStatBar(en, chara.Stats.Energy);
+        //ScaleStatBar(hp, chara.Stats.HP);
+        //ScaleStatBar(mp, chara.Stats.MP);
+        //ScaleStatBar(st, chara.Stats.Stamina);
+        //ScaleStatBar(en, chara.Stats.Energy);
 
         //Debug.Log("refresh character " + chara.FirstName + " hp " + chara.Stats.HP.Value + "/" + chara.Stats.HP.MaxValue + " mp "+chara.Stats.MP.Value+"/"+ chara.Stats.MP.MaxValue+" st "+ chara.Stats.Stamina.Value+"/"+ chara.Stats.Stamina.MaxValue+" en "+ chara.Stats.Energy.Value+"/"+ chara.Stats.Energy.MaxValue);
     }
@@ -242,7 +253,8 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         xray_B.GetComponent<Image>().sprite = null;
         xray_W.GetComponent<Image>().sprite = null;
 
-        if (chara.Template.isMale && !scr_System_CentralControl.current.gay)
+
+        if (true)//chara.Template.isMale && !scr_System_CentralControl.current.gay)
         {
             xray_A.GetComponent<Image>().sprite = null;
             xray_M.GetComponent<Image>().sprite = null;
@@ -253,7 +265,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             Utility.LoadSprite(XraySprite.widget_oral0, xray_M.GetComponent<Image>());
         }
 
-        if (chara.Template.isFemale)
+        if (false)//chara.Template.isFemale)
         {
             ActivateOvumBox(true);
             Utility.LoadSprite(XraySprite.rjw_egg1, box_ovum.GetComponent<Image>());
@@ -269,8 +281,10 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void ActivateOvumBox(bool toggle)
     {
-        if (toggle)
+
+        if (false)//toggle)
         {
+            /*
             box_ovum.gameObject.SetActive(true);
             if (chara.Womb != null)
             {
@@ -284,6 +298,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             {
                 Utility.LoadSprite(null, box_ovum.GetComponent<Image>());
             }
+            */
         }
         else
         {
@@ -296,6 +311,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         xray_B.GetComponent<Image>().sprite = null;
         xray_M.GetComponent<Image>().sprite = null;
 
+        /*
         if (chara.Template.isMale && !scr_System_CentralControl.current.gay) xray_A.GetComponent<Image>().sprite = null;
         else Utility.LoadSprite(XraySprite.eratw_a1, xray_A.GetComponent<Image>());
 
@@ -311,7 +327,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             ActivateOvumBox(false);
             xray_W.GetComponent<Image>().sprite = null;
             xray_V.GetComponent<Image>().sprite = null;
-        }
+        }*/
     }
 
 

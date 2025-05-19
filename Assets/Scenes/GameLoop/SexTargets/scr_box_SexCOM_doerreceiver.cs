@@ -16,12 +16,12 @@ public class scr_box_SexCOM_doerreceiver : MonoBehaviour
     {
         if (Chara == null) return;
       
-        Chara.Stats.Sex_A.Draw(A);
-        Chara.Stats.Sex_B.Draw(B);
-        Chara.Stats.Sex_C.Draw(C);
-        Chara.Stats.Sex_M.Draw(M);
-        Chara.Stats.Sex_V.Draw(V);
-        Chara.Stats.Sex_W.Draw(W);
+        UI_Utility.Draw(Chara.Stats.Sex_A, A);
+        UI_Utility.Draw(Chara.Stats.Sex_B, B);
+        UI_Utility.Draw(Chara.Stats.Sex_C, C);
+        UI_Utility.Draw(Chara.Stats.Sex_M, M);
+        UI_Utility.Draw(Chara.Stats.Sex_V, V);
+        UI_Utility.Draw(Chara.Stats.Sex_W, W);
 
     }
 

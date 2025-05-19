@@ -96,7 +96,7 @@ public class initScript_basicInfo : MonoBehaviour
             if (!statDerived.Parent.isValidStatFor(chara)) continue;
             if (statDerived.Parent.noDisplay) continue;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
-            statDerived.Draw(link);
+            UI_Utility.Draw(statDerived, link);
             link.GetComponent<RectTransform>().SetParent(statsGrid, false);
         }
 
@@ -125,7 +125,8 @@ public class initScript_basicInfo : MonoBehaviour
             if (i.BaseRef.noDisplay) continue;
             //ii += 1;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
-            i.Draw(link);
+            
+            UI_Utility.Draw(i, link);
             link.GetComponent<RectTransform>().SetParent(statusGrid, false);
             //box.GetComponent<TMP_Text>().text = i.BaseRef.displayName + " : severity["+i.Severity + "] duration["+i.duration+"] displayName[" + i.SeverityDisplayName+"]";
         }

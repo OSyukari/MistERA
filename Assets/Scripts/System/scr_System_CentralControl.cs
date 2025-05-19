@@ -16,10 +16,7 @@ using System.Security.Cryptography;
 using Cysharp.Threading.Tasks;
 using System.Text;
 
-public interface SpineAssetHandler
-{
-    public void LoadSpineJSON(string materialTexturePath, string atlasJSON_path, string skeletonJSON_path, out Texture2D spineLoader_Texture, out TextAsset spineLoader_atlasJSON, out TextAsset spineLoader_skeletonJSON);
-}
+
 
 [System.Serializable]
 public class scr_System_CentralControl_Serializable

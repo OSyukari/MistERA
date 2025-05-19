@@ -92,7 +92,7 @@ public class scr_panel_PlayerInfo : MonoBehaviour
             {
                 RectTransform box = Instantiate(prefab_text_link);
                 box.SetParent(StatusBox, false);
-                si.Draw(box.GetComponent<scr_HoverableText>());
+                UI_Utility.Draw(si, box.GetComponent<scr_HoverableText>());
             }
         }
     }

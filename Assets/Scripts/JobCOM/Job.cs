@@ -407,6 +407,9 @@ public class Job : IDisposable, I_Disposable
     {
         // foreach package, add current time
         // foreach package, if forcefuck valid, add it to package
+        //Debug.Log("Preupdatetime!");
+
+
         DateTime current = scr_System_Time.current.getCurrentTime();
         exp.Clear();
         for(int i = packages_current.Count - 1; i >= 0; i--)

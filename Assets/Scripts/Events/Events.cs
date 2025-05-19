@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json;
 using System.Linq;
+using UnityEditor.Playables;
 
 
 
@@ -136,6 +137,7 @@ public class Event : I_SerializationCallbackReceiver
                         foreach (var refid in charaRefs) {
                             var chara = scr_System_CampaignManager.current.FindInstanceByID(refid);
                             if (chara == self) continue;
+                            if (scr_System_CampaignManager.current.IsInSameParty(self, chara)) continue;
                             bool isvalid = true;
                             foreach (var cond in chara_conditions) if (!cond.isValid(chara)) isvalid = false;
                             if (!isvalid) continue;
@@ -209,35 +211,11 @@ public class Event : I_SerializationCallbackReceiver
 
         }
 
-        public virtual void Execute(EventInstance owner)
-        {
-            // at this stage, isvalid should be true
-        }
-
         [System.Serializable]
         public class EventEntry_Line : EventEntry
         {
             public override string Name { get { return line; } }
             public string line = "";
-
-            public override void Execute(EventInstance owner)
-            {
-                base.Execute(owner);
-
-#if UNITY_EDITOR
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {line} ");
-#endif
-                // display line
-
-                scr_System_CampaignManager.current.AddLog_Line(owner, this, false);
-
-                // immediate load next
-                //if (isLast) owner.Notify(EventStatus.reset);
-                
-                    owner.LoadNext(true, nextEventID, nextEntryLabel);
-                    //owner.Notify(EventStatus.running);
-                
-            }
         }
 
         [System.Serializable]
@@ -246,51 +224,11 @@ public class Event : I_SerializationCallbackReceiver
             public override string Name { get { return question; } }
             public string question = "";
             public List<Options> options = new List<Options>();
-
-            public override void Execute(EventInstance owner)
-            {
-                base.Execute(owner);
-
-#if UNITY_EDITOR
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {question} ");
-#endif
-
-                scr_System_CampaignManager.current.AddLog_Question(owner, this, false);
-                owner.Notify(EventStatus.waiting);
-                // load next but allow to be overwritten
-                //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
-            }
         }
         [System.Serializable]
         public class EventEntry_Branch : EventEntry
         {
             public List<Options> options = new List<Options>();
-
-            public override void Execute(EventInstance owner)
-            {
-                base.Execute(owner);
-
-#if UNITY_EDITOR
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing branch ");
-#endif
-                bool executed = false;
-                foreach (var p in options)
-                {
-                    if (p.isValid(owner) && p.Execute(owner))
-                    {
-                        executed = true;
-                        break;
-                    }
-                }
-
-                if (executed) owner.Notify(EventStatus.running);
-                else if (!isLast) owner.LoadNext(true, nextEventID, nextEntryLabel);
-                else owner.Notify(EventStatus.reset);
-
-                
-                // load next but allow to be overwritten
-                //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
-            }
         }
 
         /// <summary>
@@ -345,29 +283,6 @@ public class Event : I_SerializationCallbackReceiver
                 InterruptAP_byType
             }
 
-            public bool Execute(EventInstance owner, bool sendNotify = false)
-            {   // this can be send to button as result handler
-
-                // allow next to be overridden by any of results
-                bool continue_notify = true;
-                foreach (var op in Results)
-                {
-                    if (op.isValid()) continue_notify = op.Execute(owner) && continue_notify;
-                    else continue_notify = false;
-                }
-                if (continue_notify && owner.isValid)
-                {
-                    if (sendNotify) owner.Notify(EventStatus.running);
-                    return true;
-                }
-                else 
-                {
-                    if (sendNotify) owner.Notify(EventStatus.reset);
-                    return false; 
-                }
-                //scr_UpdateHandler.current.NotifyEventStatus(EventStatus.running, false, true);
-            }
-
             [System.Serializable]
             public class Executor
             {   // handle a single result
@@ -379,86 +294,6 @@ public class Event : I_SerializationCallbackReceiver
                 {
                     foreach (var condition in conditions) if (!condition.isValid()) return false;
                     return true;
-                }
-
-                public bool Execute(EventInstance owner)
-                {
-                    //Debug.Log($"Execute option type {Type}");
-                    switch (Type)
-                    {
-                        case ExecutionType.JumpToLabel:
-                            if (arguments.Count != 2)
-                            {
-#if UNITY_EDITOR
-                                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError("jumptolabel does not have enough arguments");
-#endif
-                                return false;
-                            }
-                            else
-                            {
-#if UNITY_EDITOR
-                                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JumpToLabel {arguments[0]} {arguments[1]}");
-#endif
-                                owner.LoadNext(false, arguments[0], arguments[1]);
-                                return true;
-                            }
-                        case ExecutionType.EventEnd:
-                            return false;
-                        case ExecutionType.InterruptAP_byType:
-                            if (arguments.Count < 2)
-                            {
-#if UNITY_EDITOR
-                                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError("interruptAP does not have enough arguments");
-#endif
-                                return false;
-                            }
-                            else
-                            {
-                                //Debug.Log("Executing InterruptAP_byType");
-                                //owner.Notify(EventStatus.reset);
-                                List<ActionPackage> queryPackages;
-                                //var packages = new List<ActionPackage>();
-                                if (arguments[0] == "self")
-                                {
-                                    // interrupt self AP by arg[1]
-#if UNITY_EDITOR
-                                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing InterruptAP_byType argument self, current self {(owner.Self == null ? "null" : owner.Self.FirstName)}");
-#endif
-                                    queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
-                                    //Debug.Log($"found relevant package {queryPackages.Count}");
-                                    queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, arguments[1]));
-#if UNITY_EDITOR
-                                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count}");
-#endif
-                                    foreach (var package in queryPackages) package.DisablePackage();
-                                    return true;
-                                }
-                                else
-                                {
-                                    // interrupt target AP by arg[1]
-                                    if (!owner.Targets.ContainsKey(arguments[0]))
-                                    {
-                                        Debug.LogError("error target scope error");
-                                        return false;
-                                    }
-                                    else
-                                    {
-                                        foreach (var chara in owner.Targets[arguments[0]])
-                                        {
-                                            queryPackages = scr_System_CampaignManager.current.GetExistingPackages(chara, true, true, true);
-                                            queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, arguments[1]));
-#if UNITY_EDITOR
-                                            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count} on {chara.FirstName}");
-#endif
-                                            foreach (var package in queryPackages) package.DisablePackage();
-                                        }
-                                        return true;
-                                    }
-                                }
-                            }
-                        default: return false; 
-
-                    }
                 }
             }
         }

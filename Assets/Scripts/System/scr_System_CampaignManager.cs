@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 [System.Serializable]
 public class scr_System_CampaignManager_Serializable
@@ -23,6 +24,9 @@ public class scr_System_CampaignManager_Serializable
     public string campaignSettingID;
     // LogsManager? dont need serializing, logs are throwaway lines anyway
 }
+
+
+
 
 public class scr_System_CampaignManager : MonoBehaviour
 {
@@ -59,6 +63,9 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public List<ActionPackage> GetRegisteredAPByRoom(int roomID, bool getExecutedAPs = true)
     {
+        //LocalizeDictionary.Instance.Set();
+       // LocalizeDictionary
+
         var returnVal = (registeredPackagesByRoom.ContainsKey(roomID) ? registeredPackagesByRoom[roomID] : new List<ActionPackage>());
         if (getExecutedAPs)
         {
@@ -172,7 +179,8 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void AddLog(int refID, string s, bool animate = false, bool rightAlign = false)
     {
         if (s.Length < 1) return;
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(refID, s, animate, rightAlign), animate);
+        var chara = scr_System_CampaignManager.current.FindInstanceByID(refID);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, animate, rightAlign), animate);
         //ChangeCurrentViewMode(ViewMode.View_Logs);
     }
 
@@ -186,19 +194,19 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool animate = true)
     {
         // here we need to process line into translated
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(-1, Utility.ParseEventEntry(instance, line.line), animate, false), animate);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(null, Utility.ParseEventEntry(instance, line.line), animate, false), animate);
     }
 
     public void AddLog_Question(EventInstance parent, Event.EventEntry.EventEntry_Question question, bool animate = true) 
     {
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(new Message_Question(-1, parent, question)), animate);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(new Message_Question(null, parent, question)), animate);
     }
 
     public event Action<MessageLog, bool> Observer_MessageLogs;
 
 
-    public event Action<int> Observer_LogsCharaChange;
-    public void Log_TrySetChara(int refID, bool isAnimating)
+    public event Action<PortraitManager> Observer_LogsCharaChange;
+    public void Log_TrySetChara(PortraitManager refID, bool isAnimating)
     {
 
         if (LogManager.SetLogChara(refID, isAnimating))
@@ -555,6 +563,13 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public bool isPlayerConscious { get { return !Player.Stats.isConsciousnessUnconscious; } }
 
+
+    public bool IsInSameParty(Character_Trainable a, Character_Trainable b)
+    {
+        if (a == null || b == null) return false;
+        return (a == b || (isPlayerPartyMember(a.RefID) && isPlayerPartyMember(b.RefID)));
+    }
+
     public bool IsDisplayCOM(ActionPackage ap)
     {
         bool returnVal = false;
@@ -600,7 +615,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         List<ActionPackage> detachedAPs = new List<ActionPackage>();
 
-        if (registeredPackagesByRoom.Count < 1) Debug.Log("CampaignManager FreeUpdate called but no package in list");
+        if (registeredPackagesByRoom.Count < 1) Debug.LogError("CampaignManager FreeUpdate called but no package in list");
         else
         {
             string s = "CampaignManager FreeUpdate\n";
@@ -989,7 +1004,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 else if (ini.initClass == "campaign_init_productionOrder")
                 {
                     Manageable f = FindorAddHomeFactionByID(ini.initArguments[0]);
-                    ItemComponentTemplate_Craftable_Recipe r = scr_System_Serializer.current.CraftingRecipe.ContainsKey(ini.initArguments[1]) ? scr_System_Serializer.current.CraftingRecipe[ini.initArguments[1]] : null;
+                    ItemComponentTemplate_Craftable_Recipe r = Masterlist_Items.Instance.GetRecipeByID(ini.initArguments[1]);
                     Manageable.ProductionOrderType type = (Manageable.ProductionOrderType) Enum.Parse(typeof(Manageable.ProductionOrderType), ini.initArguments[2]);
                     if (int.TryParse(ini.initArguments[3], out int count)) f.AddProductionOrder(r, count, type);
                     
@@ -1035,24 +1050,6 @@ public class scr_System_CampaignManager : MonoBehaviour
             //
             // map.playerInitLocation
             // move everyone in  currentRoom into initlocation room
-
-
-#if UNITY_EDITOR
-            // add every PO
-            if (false && Player != null && Player.FactionManager.ManagerFactions.Count > 0)
-            {
-                foreach(var i  in Player.FactionManager.ManagerFactions)
-                {
-                    foreach(var rec in scr_System_Serializer.current.CraftingRecipe.Values)
-                    {
-                        i.AddProductionOrder(rec, 0, 0, false);
-                    }
-                    
-                }
-            }
-#endif
-
-
         }
 
 
@@ -1346,7 +1343,6 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         foreach(Character_Trainable.CharaTemplate.presetInventory p in c.Template.initialInventory)
         {
-            string s = "";
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
             //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
             if (!c.EquipItem(i.RefID, false)) Debug.LogError($"error equipping {i.DisplayName} on {c.FirstName}");
@@ -1421,10 +1417,11 @@ public static class WorldManager
     public static Item_Instance Instantiate(string parentID, string nameOverwrite = "", int innerCount = 1)
     {
         var baseItem = scr_System_Serializer.current.GetByNameOrID_Item_Base(parentID);
-        if (baseItem  == null){
+        if (baseItem == null)
+        {
             Debug.LogError($"worldmanager instantiate error cannot find baseitem {parentID}");
             return null;
-        } 
+        }
         Item_Instance i = new Item_Instance(parentID, nameOverwrite);
         i.SetCount(innerCount);
         scr_System_CampaignManager.current.Register(i);
@@ -1436,5 +1433,147 @@ public static class WorldManager
         Item_Instance_Cum i = new Item_Instance_Cum(owner, nameOverwrite);
         scr_System_CampaignManager.current.Register(i);
         return i;
+    }
+
+    public static Dictionary<int, Floor_Instance> Instantiate(MapPlan map, string factionOverride = "", bool disablePlayerInit = false, bool disableCharaInstantiation = false)
+    {
+        Dictionary<int, Floor_Instance> list = new Dictionary<int, Floor_Instance>();
+        var initialRefID = -1;
+        foreach (MapPlan.MapPlan_Floor fpi in map.floors)
+        {
+            Floor_Instance fp = WorldManager.Instantiate( fpi,disablePlayerInit, disableCharaInstantiation);
+
+            if (fp != null && fp.refID > 0)
+            {
+                list.Add(fp.refID, fp);
+                if (initialRefID == -1) initialRefID = fp.refID;
+                fp.RegisterMapTemplate(map.ID, initialRefID);
+
+            }
+        }
+
+        // at this stage, all character should have been initialized
+        var targetFaction = factionOverride != "" ? factionOverride : map.initializeFaction;
+
+        if (targetFaction != "")
+        {
+            // get target faction
+            Manageable org = scr_System_CampaignManager.current.FindorAddHomeFactionByID(targetFaction);
+
+            // add floor to faction and set all chara in map as faction member and set private room ownership
+            foreach (var f in list.Values) org.AddToFaction(f, true, map.setPrivateRoomOwner);
+
+            if (map.workHours != null && map.workHours.Count > 0) foreach (var i in map.workHours) org.InitWorkHours(i);
+
+            if (map.managerBaseIDs != null && map.managerBaseIDs.Count > 0)
+            {
+                foreach (string id in map.managerBaseIDs)
+                {
+                    if (id == "PLAYER")
+                    {
+                        org.AddToFaction(0, Manageable_GuestStatus.Manager);
+                        if (scr_System_CampaignManager.current.Player.FactionManager.Faction_Home == null) scr_System_CampaignManager.current.Player.FactionManager.SetHomeFaction(org.ID, true);
+                        else scr_System_CampaignManager.current.Player.FactionManager.AddWorkFaction(org.ID, true);
+                    }
+                    else foreach (var i in org.ManagedChara) if (i.BaseID == id) org.AddToFaction(i.RefID, Manageable_GuestStatus.Manager);
+                }
+            }
+
+            // set work hours
+            foreach (var module in map.workModules)
+            {
+                org.AddJobPost(module);
+            }
+
+            if (map.mainExit != null && map.mainExit.roomID != "")
+            {
+                org.SetMainExit(map.mainExit);
+            }
+
+            if (map.salesCurrency != "")
+            {
+                org.SetMainCurrency(map.salesCurrency);
+                foreach (var itemInit in map.salesInventory)
+                {
+                    org.AddSalesInventory(itemInit);
+                }
+            }
+
+        }
+
+        return list;
+    }
+
+    public static Floor_Instance Instantiate(MapPlan.MapPlan_Floor floor, bool disablePlayerInit = false, bool disableCharaInstantiation = false)
+    {
+        Floor_Base fp = scr_System_Serializer.current.GetByNameOrID_Floor_Base(floor.ID);
+        if (fp != null)
+        {
+            Floor_Instance f = new Floor_Instance(fp, floor.nameOverwrite);
+            scr_System_CampaignManager.current.Register(f);
+            // initialize with additional
+            foreach (MapPlan.MapPlan_FloorInit init in floor.Additional)
+            {
+                Intialize(init, f, disablePlayerInit, disableCharaInstantiation);
+            }
+
+            return f;
+        }
+        else return null;
+    }
+
+    public static void Intialize(MapPlan.MapPlan_FloorInit init, Floor_Instance f, bool disablePlayerInit = false, bool disableCharaInstantiation = false)
+    {
+        switch (init.addClass)
+        {
+            case "map_init_playerLocation":
+
+                if (!disablePlayerInit && init.map_init_playerLocation != null && init.map_init_playerLocation.roomID != "")
+                {
+                    Room_Instance r = f.FindRoom(init.map_init_playerLocation.roomID);
+                    if (r != null)
+                    {
+                        scr_System_CampaignManager.current.MoveAllCharaFromDebugToRoom(r);
+                        // TODO
+                    }
+                    else
+                    {
+                        Debug.LogError("map_init_playerLocation, error room not found.");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("map_init_playerLocation, error reading room init config.");
+                }
+
+                break;
+            case "map_init_placeChara":
+                if (!disableCharaInstantiation && init.map_init_placeChara != null && init.map_init_placeChara.roomID != "")
+                {
+                    Room_Instance r = f.FindRoom(init.map_init_placeChara.roomID);
+                    if (r != null && init.map_init_placeChara.charaBaseID.Count > 0)
+                    {
+                        foreach (string s in init.map_init_placeChara.charaBaseID)
+                        {
+                            scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(s, r);
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError("map_init_placeChara, error room not found.");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("map_init_placeChara, error reading chara init config.");
+                }
+
+                break;
+
+
+
+            default: break;
+
+        }
     }
 }

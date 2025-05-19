@@ -132,11 +132,16 @@ public abstract class ActionPackage
     protected COM targetCOMCache = null;
     [JsonIgnore] public COM targetCOM { get
         {
-            if (targetCOMCache == null && targetCOMID != "") targetCOMCache = scr_System_Serializer.current.GetByNameOrID_COM(targetCOMID);
+            if (targetCOMCache == null && targetCOMID != "")
+            {
+                targetCOMCache = scr_System_Serializer.current.GetByNameOrID_COM(targetCOMID);
+            }
             return targetCOMCache;
         } }
 
-    [JsonIgnore] public virtual string DisplayName { get { return targetCOM != null ? (COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName()):" - "; } }
+    [JsonIgnore] public virtual string DisplayName { get {
+            //if (targetCOM != null && targetCOM.comTags.Contains("food_meal")) Debug.LogError($"mealcom name {targetCOM.DisplayName(0)}, ismealcom ? {(targetCOM is COM_TakeMeal)}");
+            return targetCOM != null ? (COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName()):" - "; } }
      public string DescriptionText(bool isDoer, int charaRef)
     {
         if (targetCOM == null || COMVariantID < 0) return "";

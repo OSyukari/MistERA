@@ -1524,7 +1524,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                 this.tooltip = "";
             }
 
-            Trait_Type current = parent.Traits_GetTraitByID(buttonID).Type;
+            Trait_Type current = parent.Traits_GetTraitByID(buttonID).type;
             switch (current)
             {
                 case Trait_Type.Strength:
@@ -1555,7 +1555,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                     break;
             }
             totalScore = 0;
-            foreach (Traits t in parent.Traits_getTraitbyID.Values) if (t.Type == A || t.Type == B) totalScore += t.trait_score;
+            foreach (Traits t in parent.Traits_getTraitbyID.Values) if (t.type == A || t.type == B) totalScore += t.trait_score;
             if (statMod < totalScore)
             {
                 if (result != false) this.state = ButtonValidator_States.Conflict;
@@ -1600,7 +1600,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                 this.tooltip = "";
             }
 
-            Trait_Type current = parent.Traits_GetTraitByID(buttonID).Type;
+            Trait_Type current = parent.Traits_GetTraitByID(buttonID).type;
             switch (current)
             {
                 case Trait_Type.Strength:
@@ -1631,7 +1631,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                     break;
             }
             totalScore = 0;
-            foreach (Traits t in parent.Traits_getTraitbyID.Values) if (t.Type == A || t.Type == B) totalScore += t.trait_score;
+            foreach (Traits t in parent.Traits_getTraitbyID.Values) if (t.type == A || t.type == B) totalScore += t.trait_score;
             if (statMod < totalScore)
             {
                 if (result != false) this.state = ButtonValidator_States.Conflict;

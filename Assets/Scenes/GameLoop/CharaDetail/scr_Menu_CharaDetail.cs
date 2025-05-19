@@ -323,7 +323,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             RectTransform rect = Instantiate(prefab_boxRelationship);
             rect.SetParent(boxRelationshipList, false);
             listRelationship.Add(rect);
-            rel.Draw(rect.GetComponent<scr_box_relationship>());
+            UI_Utility.Draw(rel, rect.GetComponent<scr_box_relationship>());
         }
 
         for (int i = chara.Memory.Entries.Count - 1; i >= 0; i--)// Memory_Entry mem in chara.MemoryManager.entries)

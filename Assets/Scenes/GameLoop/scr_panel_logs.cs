@@ -132,9 +132,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         {
             if (current is Message_Text)
             {
-                RectTransform msgbox;
-                if (current.PortraitRef == -1000) msgbox = Instantiate(prefab_SeparationEntry);
-                else msgbox = Instantiate(prefab_LogEntry);
+                RectTransform msgbox = Instantiate(prefab_LogEntry);
+                //if (current.PortraitRef == -1000) msgbox = Instantiate(prefab_SeparationEntry);
 
                 msgbox.SetParent(LogsList, false);
                 (current as Message_Text).Draw(msgbox.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine);

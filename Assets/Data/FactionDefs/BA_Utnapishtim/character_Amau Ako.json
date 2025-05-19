@@ -13,6 +13,20 @@
                 "icon_offset_y":0.0,
                 "icon_offset_size":0.8,
 
+                "Variants":
+                [
+                  {
+                    "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+                    "Conditions":[
+                        {
+                            "$type":"PortraitManager+PortraitValidators, Assembly-CSharp", 
+                            "requireUnconscious":true
+                        }
+                    ],
+                    "PortraitVariantData":"99"
+                  }
+                ],
+
                 "icon_path":"Images/BlueArchive/Ako/Ako_Ark_Uniform_Icon.png",
                 "_comment":"utnapishtim uniform",
                 "_comment2":"ako_spr default, NP0019_spr bleeding, NP0059_spr sport, CH0231_spr dress",

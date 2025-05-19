@@ -58,7 +58,7 @@ public class FurnitureBase //: ISerializationCallbackReceiver
                 else Debug.LogError($"FURNITURE COMGIVER CANNOT FIND COMMAND {i}");
             }
 
-            if (comTags.Count > 0) returnValues.AddRange(scr_System_Serializer.current.index_COM.list.FindAll(x => Utility.ListContainsStrict(x.comTags, comTags)));
+            if (comTags.Count > 0) returnValues.AddRange(scr_System_Serializer.current.index_COM.GetByTags(comTags));
 
             return returnValues;
         }

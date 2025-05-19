@@ -89,7 +89,7 @@ public class Job_Furniture : Job
         get
         {
             List<COM> returnValues = new List<COM>();
-            foreach (var com in ValidCOMs) if (com.isRecreationCOM || com.comTags.Contains("food_meal")) returnValues.Add(com);
+            foreach (var com in ValidCOMs) if (com.comTags.Contains("food_meal")) returnValues.Add(com);
             return returnValues;
         }
     }
@@ -143,7 +143,7 @@ public class Job_Furniture : Job
             if (com.comTags.Contains("job")) hasProductionJob = true;
             if (com.requirements.requireContaining != null && com.requirements.requireContaining.isValid) isContainer = true;
         }
-        return list;
+        return list.Distinct().ToList();
     }
 
 
@@ -164,6 +164,7 @@ public class Job_Furniture : Job
             // Debug.LogError("Validating "+com.ID+" : validateRoom[" + com.ValidateRoom(ParentRoom) + "] validateJob[" + com.ValidateJob(this) + "] validateAcceptActor[" + CanCOMAcceptMoreActor(com) + "]");
             if (com.ValidateRoom(ParentRoom) && com.ValidateJob(this) && CanCOMAcceptMoreActor(com)) ValidCOMs.Add(com);
             //else if (!com.comTags.Contains("job") && com.ValidateRoom(ParentRoom) && com.ValidateJob(this) && CanCOMAcceptMoreActor(com)) validNonJobCOMs.Add(com);
+            else if (com is COM_TakeMeal) Debug.LogError($"food com {com.ID} not valid, validatejob {com.ValidateJob(this)}");
         }
     }
 
@@ -210,11 +211,17 @@ public class Job_Furniture : Job
         foreach(var com in possibleCOMs)
         {
             Manageable.ProductionOrder po = null;
-            if (!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc, out po))
-            {
+            bool valid = false;
+            //if (!com.hasFactionReq || com.requirements.requireFactionExisting.Validate(FactionOwner) FactionOwner. FactionOwner.GetProductionOrder(this, out var ccc, out po))
+            //{
                 var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, po);
-                if (package.Validate() || allowInvalid) results.Add(package);
-            }
+                if (package.Validate() || allowInvalid)
+                {
+                    results.Add(package);
+                    valid = true;
+                }
+            //}
+            if (com.comTags.Contains("food_meal") && !valid) Debug.LogError($"mealcom {com.ID} failed playerCOM validation, allowinvalid {allowInvalid} hasfactionreq {(!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc2, out po))}");
         }
 
         return results;
@@ -545,7 +552,7 @@ public class Job_Furniture : Job
 
         [JsonIgnore] public ItemComponentTemplate_Harvestable targetCrop{
             get {
-                if (targetCropCache == null && farmRecipeUID != "") targetCropCache = scr_System_Serializer.current.FarmRecipe.Find(x => x.compHarvestible_UID == farmRecipeUID);
+                if (targetCropCache == null && farmRecipeUID != "") targetCropCache = Masterlist_Items.Instance.GetHarvestByID(farmRecipeUID);
                 return targetCropCache;
             }
         }

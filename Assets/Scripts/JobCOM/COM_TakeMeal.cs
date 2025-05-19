@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public class COM_TakeMeal : COM
 
 {
@@ -24,11 +23,12 @@ public class COM_TakeMeal : COM
 
         this.ID += ("_" + baseItem.ID);
         this.comTags.AddRange(item.Tags);
+        this.comTags = this.comTags.Distinct().ToList();
 
         if (this.requirements.requireFactionExisting == null) this.requirements.requireFactionExisting = new COM_Requirements.RequireFactionExisting();
         this.requirements.requireFactionExisting.inventoryItemBaseID = baseItem.ID;
 
-        Debug.Log("Initialized TakeMeal COM [" + ID + "] with base COM [" + baseCOM.ID + "] requiring item [" + this.requirements.requireFactionExisting.inventoryItemBaseID + "]");
+        //Debug.Log("Initialized TakeMeal COM [" + ID + "] with base COM [" + baseCOM.ID + "] requiring item [" + this.requirements.requireFactionExisting.inventoryItemBaseID + "]");
 
 
         COM_Results.Result_Character res = new COM_Results.Result_Character();
@@ -42,14 +42,24 @@ public class COM_TakeMeal : COM
 
     public override string DisplayName(int index = -1)
     {
+        //Debug.Log("getmeal displayname 1");
         if (baseItem != null) return baseCOM.DisplayName(index).Replace("$name$", baseItem.DisplayName);
-        else return baseCOM.DisplayName(index);
+        else
+        {
+            Debug.LogError("error in mealcom getname, cannot find baseItem");
+            return baseCOM.DisplayName(index);
+        }
     }
 
     public override string DisplayName(List<int> doerRefIDs, List<int> receiverRefIDs = null, bool excludeRequireExisting = false)
     {
+        Debug.Log("getmeal displayname 2");
         if (baseItem != null) return baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting).Replace("$name$", baseItem.DisplayName);
-        else return baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting);
+        else
+        {
+            Debug.LogError("error in mealcom getname, cannot find baseItem");
+            return baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting);
+        }
     }
 }
 

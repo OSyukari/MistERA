@@ -105,8 +105,8 @@ public class scr_panel_TargetInfo : scr_Menu
             RelationshipManager.Character_Relationship rel = chara.Relationships.FindRelationshipWith(0);
             if (rel != null)
             {
-                rel.DrawAttitude(attitudeBox);
-                rel.DrawObedience(obedienceBox);
+                UI_Utility.Draw_Attitude(rel, attitudeBox);// rel.DrawAttitude(attitudeBox);
+                UI_Utility.Draw_Obedience(rel, obedienceBox);// rel.DrawObedience(obedienceBox);
             }
 
             if (chara.Stats.Mood != null) chara.Stats.Mood.Draw(moodBox);
@@ -167,7 +167,8 @@ public class scr_panel_TargetInfo : scr_Menu
             {
                 RectTransform box = Instantiate(prefab_text_link);
                 box.SetParent(StatusBox, false);
-                si.Draw(box.GetComponent<scr_HoverableText>());
+
+                UI_Utility.Draw(si, box.GetComponent<scr_HoverableText>());
 
                //text.text = si.BaseRef.displayName + ":" + si.SeverityDisplayName;
             }

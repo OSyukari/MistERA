@@ -19,19 +19,6 @@ public enum Character_BodyType
     CBBE_3BA
 }
 
-
-
-public class JSON_SO_Converter<T> : CustomCreationConverter<T> where T : ScriptableObject
-{   // Reference: https://discussions.unity.com/t/how-to-use-json-net-to-deserialize-into-a-scriptable-object/778840/20
-    // this converter is used in global json deserialize setting, so no need to call this individually.
-    // all subsequent converters should be used in the same way as this one
-    public override T Create(Type objectType)
-    {
-        if (typeof(T).IsAssignableFrom(objectType)) return (T)ScriptableObject.CreateInstance(objectType);
-        return null;
-    }
-}
-
 [System.Serializable]
 public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable
 {
@@ -194,15 +181,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Stats.InitializeWithID(refID, Template.stat_STR, Template.stat_CON, Template.stat_PSY, Template.stat_WIL);
 
         //this.sexLogManager = new SexLogManager(refID);
-        scr_System_Time.current.Observer_globalTime += Observer_GlobalMinute;
-        scr_System_Time.current.Observer_globalTime_5min += Observer_GlobalMinute5;
-        scr_System_Time.current.Observer_globalTime_Hours += Observer_GlobalHour;
-        scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay;
-        scr_System_Time.current.Observer_globalTime_Day += Observer_DebugDailyRefresh;
-
-        scr_UpdateHandler.current.Observer_PreUpdateTime += PreUpdateTime;
-        scr_UpdateHandler.current.Observer_PostUpdateTime_2 += PostUpdateTime2;
-        scr_UpdateHandler.current.Observer_PostUpdateTime_3 += PostUpdateTime3;
+        ReEstablishObservers();
         RestoreAll(true);
 
         this.interactionJobPointer = new Job_CharaCOM(refID);
@@ -795,8 +774,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 return;
             }
 
-            //foreach (Manageable faction in FactionManager.HomeFactions)
-            //{
+            // allow checking during work hour
+
             List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Meal(this, currentHour, s);
             if (possibleJobs != null && possibleJobs.Count > 0)
             {
@@ -819,8 +798,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 return;
             }
 
-            //foreach (Manageable faction in FactionManager.HomeFactions)
-            //{
             List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Sleep(this, currentHour, s);
             if (possibleJobs != null && possibleJobs.Count > 0)
             {
@@ -910,7 +887,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 //foreach (Manageable faction in FactionManager.HomeFactions)
                 //{
-               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true));
+               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,false));
                 //    break;
                 //}
 
@@ -1257,7 +1234,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public void DisposeInternal()
     {
-
+        RemoveObservers();
     }
 
     public void OnAfterDeserialize()
@@ -1290,7 +1267,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
         //if (value) Debug.Log(s);
         //else Debug.LogError(s);
+        ReEstablishObservers();
+    }
+
+    protected void ReEstablishObservers()
+    {
         scr_System_Time.current.Observer_globalTime += Observer_GlobalMinute;
+        scr_System_Time.current.Observer_globalTime_5min += Observer_GlobalMinute5;
         scr_System_Time.current.Observer_globalTime_Hours += Observer_GlobalHour;
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay;
         scr_System_Time.current.Observer_globalTime_Day += Observer_DebugDailyRefresh;
@@ -1300,6 +1283,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         scr_UpdateHandler.current.Observer_PostUpdateTime_3 += PostUpdateTime3;
     }
 
+    protected void RemoveObservers()
+    {
+        scr_System_Time.current.Observer_globalTime -= Observer_GlobalMinute;
+        scr_System_Time.current.Observer_globalTime_5min -= Observer_GlobalMinute5;
+        scr_System_Time.current.Observer_globalTime_Hours -= Observer_GlobalHour;
+        scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay;
+        scr_System_Time.current.Observer_globalTime_Day -= Observer_DebugDailyRefresh;
+
+        scr_UpdateHandler.current.Observer_PreUpdateTime -= PreUpdateTime;
+        scr_UpdateHandler.current.Observer_PostUpdateTime_2 -= PostUpdateTime2;
+        scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= PostUpdateTime3;
+    }
 
     public RelationshipManager Relationships = null;
 

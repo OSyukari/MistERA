@@ -60,7 +60,7 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
             linkInfo = m_TextMeshPro.textInfo.linkInfo[linkIndex];
            // tooltip = scr_System_tooltipDictionary.current.FindEntry(linkInfo.GetLinkID() as string);
-            tooltip += scr_System_Serializer.current.Dictionary.QueryThenParse(linkInfo.GetLinkID() as string);
+            tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse(linkInfo.GetLinkID() as string);
             //Debug.Log("OnPointerEnter, linkIndex [" + linkIndex + "] linkInfo[" + linkInfo + "] tooltip[" + tooltip + "]");
             if (button) tooltip_custom = button.GetCustomTooltip();
             else tooltip_custom = null;

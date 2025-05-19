@@ -6,13 +6,6 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 
-
-public interface I_IndexMergeable
-{
-    public void MergeWith(I_IndexMergeable list);
-}
-
-
 [System.Serializable]
 public class MasterList
 {
@@ -54,9 +47,9 @@ public class MasterList
             return list;
         }
     }
-    public Traits_Group_Index Traits_Groups = null;
+    public Traits_Group_Index Traits_Groups = new Traits_Group_Index();
     public Index_Sexperiences Sexperiences = null;
-    public Index_BodyPartBase BodyPartBases = null;
+    public Index_BodyPartBase BodyPartBases = new Index_BodyPartBase();
     public Stats_Derived_Base_Index Stats_Derived_Bases = null;
     //public Character_BaseID_Index Character_BaseIDs = null;
     public Index_Floor_Base Floors = null;
@@ -65,48 +58,53 @@ public class MasterList
     public Index_StatusEx StatusEXs = null;
     public Stats_Derived_Extended_Index StatEXs = null;
 
-    public Index_Status Status = null;
-    public Index_Experiences Experiences = null;
-    public Character_Origin_Index Character_Origins = null;
-    public Character_Origin_startingOption_Index Character_Origin_StartingOptions = null;
+    public Index_Status Status = new Index_Status();
+    public Index_Experiences Experiences = new Index_Experiences();
+    public Character_Origin_Index Character_Origins = new Character_Origin_Index();
+    public Character_Origin_startingOption_Index Character_Origin_StartingOptions = new Character_Origin_startingOption_Index();
     public Index_RelationshipTypes RelationshipTypes = null;
-    public Humanoid_Race_Index humanoid_Races = null;
-    public Humanoid_RaceTemplate_Index humanoid_RaceTemplates = null;
+    public Humanoid_Race_Index humanoid_Races = new Humanoid_Race_Index();
+    public Humanoid_RaceTemplate_Index humanoid_RaceTemplates = new Humanoid_RaceTemplate_Index();
     public Index_CampaignSetting CampaignSettings = null;
     public Index_CharaSkills Skills = null;
     public Character_Trainable_SerializableTemplate_Index CharacterTemplates = null;
     public Character_Personality_Index Character_Personalities = null;
-    public Index_COM COMs = null;
-    public Index_Item_Base Items = null;
-    public Dictionary_Index Dictionary = null;
+    public Index_COM COMs = new Index_COM();
+    public Index_Item_Base Items = new Index_Item_Base();
+    public Dictionary_Index Dictionary = new Dictionary_Index();
     public Index_FurnitureBase Furnitures = null;
     public Index_Events Events = null;
 
-    public void InitializeLists()
+    public void InitializeLists(bool initCoreList = false)
     {
+        if (initCoreList)
+        {
+            this.Items = Masterlist_Items.Instance.Index;
+
+            this.Dictionary = LocalizeDictionary.Instance.Index;
+
+            this.humanoid_Races = CharaOrigins.Instance.Humanoid_Race_Index;
+            this.Character_Origins = CharaOrigins.Instance.Origins_Index;
+            this.Character_Origin_StartingOptions = CharaOrigins.Instance.StartingOption_Index;
+            this.humanoid_RaceTemplates = CharaOrigins.Instance.RaceTemplateIndex;
+            this.BodyPartBases = CharaOrigins.Instance.BodyPartIndex;
+            this.Traits_Groups = CharaOrigins.Instance.Traits;
+
+        }
         this.Experiences = new Index_Experiences();
         this.Stats_Derived_Bases = new Stats_Derived_Base_Index();
         this.Character_Bases = new Character_Base_Index();
-        this.BodyPartBases = new Index_BodyPartBase();
         this.Floors = new Index_Floor_Base();
         this.MapPlans = new Index_MapPlan();
         this.StatusEXs = new Index_StatusEx();
         this.StatEXs = new Stats_Derived_Extended_Index();
         this.Sexperiences = new Index_Sexperiences();
-        this.Traits_Groups = new Traits_Group_Index();
-        this.Character_Origins = new Character_Origin_Index();
-        this.Character_Origin_StartingOptions = new Character_Origin_startingOption_Index();
         this.RelationshipTypes = new Index_RelationshipTypes();
-        this.humanoid_Races = new Humanoid_Race_Index();
-        this.humanoid_RaceTemplates = new Humanoid_RaceTemplate_Index();
         this.CampaignSettings = new Index_CampaignSetting();
         this.Skills = new Index_CharaSkills();
         this.Status = new Index_Status();
-        this.Items = new Index_Item_Base();
         this.CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
         this.Character_Personalities = new Character_Personality_Index();
-        this.COMs = new Index_COM();
-        this.Dictionary = new Dictionary_Index();
         this.Furnitures = new Index_FurnitureBase();
         this.Events = new Index_Events();
     }
@@ -140,9 +138,4 @@ public class MasterList
             if (l is I_NeedLateInitialize) (l as I_NeedLateInitialize).LateInitialize();
         }
     }
-}
-
-public interface I_SerializationCallbackReceiver
-{
-    public void OnAfterDeserialize();
 }

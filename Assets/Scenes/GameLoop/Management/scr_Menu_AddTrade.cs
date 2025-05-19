@@ -30,16 +30,17 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
                 MakeRecipeButton(entry, sourceFaction, connect);
             }
         }
+        ValidateAll();
     }
 
-    public void NotifyAddTrade(Manageable.ItemEntry entry, Manageable targetFaction)
+    public void NotifyAddTrade(ItemEntry entry, Manageable targetFaction)
     {
-        var cost = new Manageable.ItemEntry(targetFaction.Currency.id, "", targetFaction.GetPrice(entry, sourceFaction != targetFaction), false);
+        var cost = new ItemEntry(targetFaction.Currency.id, "", targetFaction.GetPrice(entry, sourceFaction != targetFaction), false);
         sourceFaction.AddTradeOrder(entry, cost, targetFaction, 0);
         scr_System_SceneManager.current.UnloadLastCanvasFromScene();
     }
 
-    private void MakeRecipeButton(Manageable.ItemEntry entry, Manageable source, Manageable target)
+    private void MakeRecipeButton(ItemEntry entry, Manageable source, Manageable target)
     {
         int recipeHash = AssertUniqueHash((entry.itemID+"|"+entry.itemCount.ToString()).GetHashCode());
         scr_addTrade box = Instantiate(prefab_trade);
@@ -56,7 +57,7 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
             button.optionID = optionID;
             buttonsByID.Add(button.optionID, button);
             validatorsByID.Add(button.optionID, button.Validator);
-            button.Validate();
+            //button.Validate();
             // return true;
         }
         // else return false;
@@ -148,10 +149,10 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
     public class Button_SelectTrade : ButtonValidator, I_ButtonClickable
     {
         new scr_Menu_AddTrade parent;
-        Manageable.ItemEntry entry;
+        ItemEntry entry;
         Manageable targetFaction;
         scr_SelectableText button;
-        public Button_SelectTrade(scr_Menu_AddTrade parent, Manageable.ItemEntry entry, Manageable targetFaction, scr_SelectableText button) : base(parent)
+        public Button_SelectTrade(scr_Menu_AddTrade parent, ItemEntry entry, Manageable targetFaction, scr_SelectableText button) : base(parent)
         {
             this.parent = parent;
             this.entry = entry;

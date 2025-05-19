@@ -4,7 +4,7 @@ using UnityEngine;
 public class scr_addTrade : MonoBehaviour
 {
 
-    public void LoadItemEntry(Manageable.ItemEntry entry, Manageable parentFaction, Manageable targetFaction)
+    public void LoadItemEntry(ItemEntry entry, Manageable parentFaction, Manageable targetFaction)
     {
         this.entry = entry;
         this.faction = targetFaction;
@@ -15,7 +15,7 @@ public class scr_addTrade : MonoBehaviour
     }
 
     protected Manageable faction;
-    protected Manageable.ItemEntry entry;
+    protected ItemEntry entry;
     public scr_HoverableText itemName;
     public TMP_Text factionName, pricing;
     public scr_SelectableText Button;

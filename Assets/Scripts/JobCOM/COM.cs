@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
-using System.Reflection;
+using System.Linq;
 
 [System.Serializable]
 public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable
 {
     public List<COM> list = new List<COM>();
-
+    public List<COM> LIST { get { return ID_Dictionary.Values.ToList(); } }
     public void MergeWith(I_IndexMergeable list) {
         var l = list as Index_COM;
         if (l == null) return;
@@ -35,7 +35,14 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         }
     }
 
-    public COM GetByID(string ID) { return ID_Dictionary.ContainsKey(ID) ? ID_Dictionary[ID] : null; }
+    public COM GetByID(string ID) { 
+        
+        var returnVal = ID_Dictionary.ContainsKey(ID) ? ID_Dictionary[ID] : null;
+        if ( returnVal != null && returnVal.comTags.Contains("food_meal") && !(returnVal is COM_TakeMeal))
+        {
+            Debug.LogError($"getting mealcom {returnVal.ID} ismeal? {returnVal is COM_TakeMeal}");
+        }
+        return returnVal; }
 
     Dictionary<string, COM> ID_Dictionary = new Dictionary<string, COM>();
     public void RegisterAllID()
@@ -45,8 +52,8 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         foreach (COM s in list)
         {
             //Debug.Log("serializing com id "+s.ID);
-            ID_Dictionary.Add(s.ID, s);
-
+            if (ID_Dictionary.ContainsKey(s.ID)) ID_Dictionary[s.ID] = s;
+            else ID_Dictionary.Add(s.ID, s);
         }
 
     }
@@ -63,7 +70,7 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         {
             if (list[i].ID == "com_furniture_getmeal")
             {
-                foreach (Item_Base item in scr_System_Serializer.current.index_Item_Base.List)
+                foreach (Item_Base item in Masterlist_Items.Instance.Index.List)
                 {
                     if (item.Tags.Contains("food_meal"))
                     {
@@ -72,6 +79,7 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                         newCOM1.Initialize(list[i], item);
 
                         if (newCOMs.Find(x => x.ID == newCOM1.ID) == null) newCOMs.Add(newCOM1);
+                        else Debug.LogError($"already contain mealcom with id {newCOM1.ID}");
                     }
                 }
             }
@@ -105,7 +113,7 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 }
                 else
                 { // make farm recipe stuff
-                    foreach (var recipe in scr_System_Serializer.current.FarmRecipe)
+                    foreach (var recipe in Masterlist_Items.Instance.FarmRecipe)
                     {
                         if (list[i].requirements.requireContaining.allowPlanting.Contains(recipe.growType))
                         {
@@ -136,20 +144,20 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 newCOM.ID += "_noSex";
                 newCOMs.Add(newCOM);
             }
-
-            
         }
 
         string s = "COM late initialize Generated RecipeCOMs:\n";
-        foreach (var i in newCOMs) s += i.ID + " ";
-        Debug.Log(s);
 
         foreach (var i in newCOMs)
         {
             //scr_System_tooltipDictionary.current.AddEntry(i.ID, i.tooltip);
+            s += i.ID + " ";
+            i.OnAfterDeserialize();
             list.Add(i);
             ID_Dictionary.Add(i.ID, i);
         }
+
+        Debug.Log(s);
         //list.AddRange(newCOMs);
 
         /*
@@ -160,17 +168,24 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
             if (i.comTags.Contains("initSex") || i.comTags.Contains("endSex")) continue;
             if (!i.requirements.requirement.req_Receivers.requireAbsentJobwithCOMTag.Contains("sex")) i.requirements.requirement.req_Receivers.requireAbsentJobwithCOMTag.Add("sex");
         }*/
+    }
 
-        foreach (var i in list)
+    public List<COM> GetByTags(List<string> tags)
+    {
+        List<COM> coms = LIST.FindAll(x => Utility.ListContainsStrict(x.comTags, tags));
+        List<string> names = new List<string>();
+
+        foreach(var co in coms)
         {
-            i.OnAfterDeserialize();
+            names.Add(co.ID);
         }
-
+        //Debug.Log($"com getbytags {String.Join("|", tags)} return {String.Join("|", names)}");
+        return coms;
     }
 }
 
 [System.Serializable]
-public class COM : ISerializationCallbackReceiver
+public class COM: I_SerializationCallbackReceiver
 {
 
     [System.Serializable]
@@ -230,28 +245,28 @@ public class COM : ISerializationCallbackReceiver
         //Debug.LogError("GetDescription_Begin with variantID " + variantID);
         if (variantID == -1) return description_begin.GetText(ref evp);
         else if (variantID >= variants.Count) return "GetDescription_Begin ERROR variantID out of bound";
-        else return variants[variantID].GetDescription_Begin(evp);
+        else return variants[variantID].GetDescription_Begin(this, evp);
     }
 
     public string GetDescription_Remove(EvaluationPackage evp, int variantID)
     {
         if (variantID == -1) return descriptions_remove.GetText(ref evp);
         else if (variantID >= variants.Count) return "GetDescription_Remove ERROR variantID out of bound";
-        else return variants[variantID].GetDescription_Remove(evp);
+        else return variants[variantID].GetDescription_Remove(this, evp);
     }
 
     public string GetDescription_Ongoing(EvaluationPackage evp, int variantID)
     {
         if (variantID == -1) return description_ongoing.GetText(ref evp);
         else if (variantID >= variants.Count) return "GetDescription_Ongoing ERROR variantID out of bound";
-        else return variants[variantID].GetDescription_Ongoing(evp);
+        else return variants[variantID].GetDescription_Ongoing(this, evp);
     }
 
     public string GetDescription_After(EvaluationPackage evp, int variantID)
     {
         if (variantID == -1) return description_after.GetText(ref evp);
         else if (variantID >= variants.Count) return "GetDescription_After ERROR variantID out of bound";
-        else return variants[variantID].GetDescription_After(evp);
+        else return variants[variantID].GetDescription_After(this, evp);
     }
 
 
@@ -525,12 +540,6 @@ public class COM : ISerializationCallbackReceiver
 
      */
 
-
-    public void OnBeforeSerialize()
-    {
-        
-    }
-
     public void OnAfterDeserialize()
     {
         foreach(string s in requirements.requirement.req_Doers.BodyTags)
@@ -600,12 +609,6 @@ public class COM : ISerializationCallbackReceiver
     [System.Serializable]
     public class COM_Variant
     {
-        string ownerCOMID = "";
-
-        private COM ownerCOM
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_COM(ownerCOMID); }
-        }
         //[NonSerialized] private int ownerIndex = -1;
 
         public string displayName = "";
@@ -624,7 +627,7 @@ public class COM : ISerializationCallbackReceiver
         public COM_Requirements requirements = new COM_Requirements();
         public bool setForce = false;
 
-        public string GetDescription_Begin(EvaluationPackage evp)
+        public string GetDescription_Begin(COM ownerCOM, EvaluationPackage evp)
         {
             //Debug.LogError("GetDescription_Begin Variant isOwnerNull?["+ (ownerCOM == null )+ "] useAnotherDesc?["+ useAnothersDescription + "]");
             //if (ownerCOM == null) Debug.LogError("ownerCOM is null");
@@ -641,7 +644,7 @@ public class COM : ISerializationCallbackReceiver
             return s2;
         }
 
-        public string GetDescription_Remove(EvaluationPackage evp)
+        public string GetDescription_Remove(COM ownerCOM, EvaluationPackage evp)
         {
             
             List<string> s = new List<string>();
@@ -657,12 +660,13 @@ public class COM : ISerializationCallbackReceiver
             return s2;
         }
 
-        public string GetDescription_Ongoing(EvaluationPackage evp)
+        public string GetDescription_Ongoing(COM ownerCOM, EvaluationPackage evp)
         {
             List<string> s = new List<string>();
             s.Add(description_ongoing.GetText(ref evp));
             // prevent infinite loop
             if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_Ongoing(evp, useAnothersDescription));
+            if (evp == null || ownerCOM == null) Debug.LogError($"evp null? {evp == null} ownercom null? {ownerCOM == null}");
             if (useBaseDescription) s.Add(ownerCOM.GetDescription_Ongoing(evp, -1));
 
             if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
@@ -672,7 +676,7 @@ public class COM : ISerializationCallbackReceiver
             return s2;
         }
 
-        public string GetDescription_After(EvaluationPackage evp)
+        public string GetDescription_After(COM ownerCOM, EvaluationPackage evp)
         {
             List<string> s = new List<string>();
             s.Add(description_after.GetText(ref evp));
@@ -759,7 +763,7 @@ public class COM : ISerializationCallbackReceiver
         public COM_Variant(string s, COM c)
         {
             this.displayName = s;
-            ownerCOMID = c.ID;
+            //ownerCOM = c;
             //this.requirements = new COM_Requirements();
             //Debug.LogError("COMVARIANT create useBaseDsc?[ " + (useBaseDscription == 1) + "] useAnotherDesc?[" + (useAnotherVariantDescription > -1) + "]");
         }
@@ -777,7 +781,7 @@ public class COM : ISerializationCallbackReceiver
         public void Read(COM c) {
             //if (c.VariantDoNotReadRequirement) Debug.LogError("reading variant req despite forbidden");
             if(c == null) Debug.LogError("reading variant req owner null");
-            ownerCOMID = c.ID;
+            //ownerCOM = c;
             if (!c.VariantDoNotReadRequirement) this.requirements.Read(c.requirements);
             //if (!(useBaseDsc == 1)) Debug.LogError("owner ["+ownerCOM.displayName+"] COMVARIANT READ useBaseDsc?[ " + (useBaseDsc == 1) + "] useAnotherDesc?[" + (useAnothersDesc > -1) + "]");
         }

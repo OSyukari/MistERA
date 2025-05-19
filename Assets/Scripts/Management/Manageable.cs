@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using QuikGraph;
 using System;
 using System.Linq;
@@ -288,11 +287,6 @@ public class Manageable : I_Disposable
     {   // character log their daily consumption at updateOrder 2, refresh report at update3
         if (updateOrder != 3) return;
         this.DailyReport.FinalizeReport();
-    }
-
-    public void PrintDailyReport(scr_HoverableText management, scr_HoverableText trade, TMP_Text others)
-    {
-        this.DailyReport.Print(management, trade, others);
     }
 
     public Inventory Inventory;
@@ -1696,8 +1690,8 @@ public class Manageable : I_Disposable
     [System.Serializable]
     public class ProductionOrder
     {
-        [JsonIgnore] public ItemComponentTemplate_Craftable_Recipe Recipe { get { 
-            if (recipe_cache == null) recipe_cache = scr_System_Serializer.current.CraftingRecipe.ContainsKey(this.recipeID) ? scr_System_Serializer.current.CraftingRecipe[this.recipeID] : null;            
+        [JsonIgnore] public ItemComponentTemplate_Craftable_Recipe Recipe { get {
+                if (recipe_cache == null) recipe_cache = Masterlist_Items.Instance.GetRecipeByID(this.recipeID);         
             return recipe_cache; } }
         protected ItemComponentTemplate_Craftable_Recipe recipe_cache = null;
         [SerializeField][JsonProperty] protected string recipeID = "";
@@ -2044,7 +2038,7 @@ public class Manageable : I_Disposable
                     _cache = new Dictionary<string, ItemEntry>();
                     foreach(var entry in entries)
                     {
-                        foreach(var content in entry.GetContent())
+                        foreach(var content in Utility.GetContent(entry))
                         {
                             var key = content.itemID + "|" + content.itemNameOverwrite + "|" + content.itemCount;
                             if (!_cache.ContainsKey(key)) _cache.Add(key, content);
@@ -2120,78 +2114,6 @@ public class Manageable : I_Disposable
         
     }
 
-    [System.Serializable]
-    public class ItemEntry
-    {
-        public ItemEntry()
-        {
-
-        }
-
-        public ItemEntry(string id, string name, int count, bool countOverride)
-        {
-            this.itemCount = count;
-            this.itemNameOverwrite = name;
-            this.itemID = id;
-            this.itemCountOverride = countOverride;
-        }
-        public ItemEntry(ItemEntry entry)
-        {
-            this.itemID = entry.itemID;
-            this.itemNameOverwrite = entry.itemNameOverwrite;
-            this.itemCount = entry.itemCount;
-            this.itemCountOverride = entry.itemCountOverride;
-        }
-        public string itemID = "";
-        public string itemNameOverwrite = "";
-        public int itemCount = 0;
-        public bool itemCountOverride = false;
-
-        string _cache = "";
-
-        Item_Base _base = null;
-        [JsonIgnore] public Item_Base BaseItem { get
-            {
-                if (_base == null && itemID != "") _base = scr_System_Serializer.current.GetByNameOrID_Item_Base(itemID);
-                return _base;
-            } }
-
-        [JsonIgnore]
-        public string Print
-        {
-            get
-            {
-                if (_cache != "") return _cache;
-                var count = itemCountOverride ? (itemCount == 0 ? "0" : "1") : (itemCount >= 10000000) ? (((int)(itemCount / 1000000)).ToString() + "M") : ((itemCount >= 10000) ? (((int)(itemCount / 1000)).ToString() + "K") : itemCount.ToString());
-
-                if (this.itemID == "" || itemCount == 0) _cache = "none";
-                else
-                {
-                    var item = scr_System_Serializer.current.GetByNameOrID_Item_Base(this.itemID);
-                    if (item == null) return "null";
-                    var basestr = (item.Tags.Contains("item_money") ?
-                                scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_currency") :
-                                scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_item"));
-
-                    _cache = basestr.Replace("$item$", this.itemNameOverwrite != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse(this.itemNameOverwrite) : scr_System_Serializer.current.Dictionary.QueryThenParse(this.itemID))
-                                         .Replace("$count$", count);
-                }
-                return _cache;
-                //else return $"{scr_System_Serializer.current.Dictionary.QueryThenParse(itemNameOverwrite != "" ? itemNameOverwrite : itemID)} x{itemCount}";
-            }
-        }
-
-        [JsonIgnore]
-        public string Tooltip
-        {
-            get
-            {
-                return BaseItem == null ? "" : BaseItem.Tooltip;
-            }
-        }
-    }
-
-
     public DailyReportHandler DailyReport = new DailyReportHandler();
 
     [System.Serializable]
@@ -2250,35 +2172,21 @@ public class Manageable : I_Disposable
             foreach(var entry in tradeRegistry) if(entry.Value != 0) tradeLogs.Add(entry.Key + entry.Value.ToString("+0;-#"));
         }
 
-        string msg_manageSuccess = "";
-        string msg_manageFailure = "";
+        public string msg_manageSuccess = "";
+        public string msg_manageFailure = "";
 
-        string msg_tradeFailure = "";
-        string msg_tradeSuccess = "";
+        public string msg_tradeFailure = "";
+        public string msg_tradeSuccess = "";
 
-        bool initialized = false;
+        public bool initialized = false;
 
-        protected void Initialize()
+        public void Initialize()
         {
             initialized = true;
             msg_manageSuccess = scr_System_Serializer.current.Dictionary.QueryThenParse("msg_manageSuccess");
             msg_manageFailure = Utility.WrapTextColor(scr_System_Serializer.current.Dictionary.QueryThenParse("msg_manageFailure"), scr_System_CentralControl.current.pref.TextColor_conflict);
             msg_tradeFailure = Utility.WrapTextColor(scr_System_Serializer.current.Dictionary.QueryThenParse("msg_tradeFailure"), scr_System_CentralControl.current.pref.TextColor_conflict);
             msg_tradeSuccess = scr_System_Serializer.current.Dictionary.QueryThenParse("msg_tradeSuccess");
-        }
-        public void Print(scr_HoverableText manage, scr_HoverableText trade, TMP_Text misc)
-        {
-            if (!initialized) Initialize();
-
-            if (manageError) manage.SetText(msg_manageFailure);
-            else manage.SetText(msg_manageSuccess);
-            manage.SetExternalTooltip(String.Join("\n", manageLogs));
-
-            if (tradeError) trade.SetText(msg_tradeFailure);
-            else trade.SetText(msg_tradeSuccess);
-            trade.SetExternalTooltip(String.Join("\n", tradeLogs) + (tradeWarnings.Count > 0 ? "\n" + Utility.WrapTextColor( String.Join("\n", tradeWarnings), scr_System_CentralControl.current.pref.TextColor_conflict) : ""));
-
-            misc.text = String.Join("\n", miscMessages);
         }
     }
 }

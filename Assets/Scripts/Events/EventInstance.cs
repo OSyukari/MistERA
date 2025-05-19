@@ -154,7 +154,7 @@ public class EventInstance
 #endif
                 updateHandler.InvokeEventStatus(Status, firstInit || waitingEnd);
                 firstInit = false;
-                currentEntry.Execute(this);
+                EventUtility.Execute(this, currentEntry);// currentEntry.Execute(this);
             }
             else
             {

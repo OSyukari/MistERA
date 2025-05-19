@@ -104,7 +104,8 @@ public class SpineLoader_41 : SpineLoader
         var idleAnim = self_SkeletonGraphic.skeletonDataAsset.GetSkeletonData(true).FindAnimation(idleAnimName);
         if (idleAnim != null)
         {// send looping idle animation
-            self_SkeletonGraphic.AnimationState.AddAnimation(0, idleAnim, true, 0);
+            //self_SkeletonGraphic.AnimationState.AddAnimation(0, idleAnim, true, 0);
+            self_SkeletonGraphic.AnimationState.SetAnimation(0, idleAnim, true);
             self_SkeletonGraphic.startingAnimation = idleAnimName;
         }
 

@@ -69,6 +69,29 @@ public static class Utility
         return System.Enum.GetName(type, value);
     }
 
+    public static List<ItemEntry> GetContent(MapPlan.SalesInventoryInit inv)
+    {
+        var list = new List<ItemEntry>();
+        if (inv.matchByID != "") list.Add(new ItemEntry(inv.matchByID, inv.nameOverwrite, inv.itemCount, inv.countOverride));
+        if (inv.matchByTags.Count > 0)
+        {
+            foreach (var recipe in Masterlist_Items.Instance.CraftingRecipe.Values)
+            {
+                var outputItem = recipe.OutputItem;
+                if (outputItem == null) Debug.LogError($"sales inventory get content {recipe.outputItemBaseID} is null");
+                else if (Utility.ListContainsStrict(outputItem.Tags, inv.matchByTags)) list.Add(new ItemEntry(outputItem.id, "", recipe.outputAmount * inv.itemCount, inv.countOverride));
+            }
+
+            foreach (var item in scr_System_Serializer.current.index_Item_Base.List)
+            {
+                if (item.Tags.Contains("do_not_use")) continue;
+                if (item.GetCompTemplateByID("ItemComponent_Craftable") != null) continue;
+                if (Utility.ListContainsStrict(item.Tags, inv.matchByTags)) list.Add(new ItemEntry(item.id, "", inv.itemCount, inv.countOverride));
+            }
+        }
+        return list;
+    }
+
     public static float RandVariation(float baseNumber, float maxVariation)
     {
         return baseNumber + UnityEngine.Random.Range(-maxVariation, maxVariation);
@@ -967,6 +990,25 @@ public static class Utility
         if (parsedSuccessful) Debug.Log(s);
     }
 
+    public static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Base source)
+    {
+        return modifier.ValidateAccess(isStatEx, isStatDerived, false, false);
+    }
+    public static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Derived_Base source)
+    {
+        return modifier.ValidateAccess(isStatEx, isStatDerived, true, false);
+    }
+    public static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Derived_Extended_Instance source)
+    {
+        return modifier.ValidateAccess(isStatEx, isStatDerived, true, true);
+    }
+    public static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, StatusEx_Instance source)
+    {
+        return modifier.ValidateAccess(isStatEx, isStatDerived, true, true, true, true);
+    }
+
+
+
     public static float ParseStatMods(object source, Character_Trainable c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, List<string> stringResults = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false )
     {
 
@@ -979,6 +1021,9 @@ public static class Utility
             // if (modifier.ValueType != "number") continue;
             // this filter is done in statmanager getmodifier stage
 
+            bool isStatEx = scr_System_Serializer.current.index_StatsExtended.list.Find(x => x.ID == modifier.valueString) != null;
+            bool isStatDerived = scr_System_Serializer.current.index_StatsDerived.list.Find(x => x.ID == modifier.valueString) != null;
+
             if (source == null)
             {
                 // do nothing
@@ -988,25 +1033,25 @@ public static class Utility
             {
                 sourceID = (source as Stats_Base).ID;
                 //Debug.LogError("source is Stats_Base " + sourceID);
-                if (!modifier.isValidQuery((Stats_Base)source)) continue;
+                if (!isValidQuery(isStatEx, isStatDerived, modifier,(Stats_Base)source)) continue;
             }
             else if (source is Stats_Derived_Base)
             {
                 sourceID = (source as Stats_Derived_Base).ID;
                 //Debug.LogError("source is Stats_Derived_Base " + sourceID);
-                if (!modifier.isValidQuery((Stats_Derived_Base)source)) continue;
+                if (!isValidQuery(isStatEx, isStatDerived, modifier, (Stats_Derived_Base)source)) continue;
             }
             else if (source is Stats_Derived_Extended_Instance)
             {
                 sourceID = (source as Stats_Derived_Extended_Instance).ID;
                 //Debug.LogError("source is Stats_Derived_Extended_Instance " + sourceID);
-                if (!modifier.isValidQuery((Stats_Derived_Extended_Instance)source)) continue;
+                if (!isValidQuery(isStatEx, isStatDerived, modifier, (Stats_Derived_Extended_Instance)source)) continue;
             }
             else if (source is StatusEx_Instance)
             {
                 sourceID = (source as StatusEx_Instance).BaseRef.statusID;
                 //Debug.LogError("source is StatusEx_Instance " + sourceID);
-                if (!modifier.isValidQuery((StatusEx_Instance)source)) continue;
+                if (!isValidQuery(isStatEx, isStatDerived, modifier, (StatusEx_Instance)source)) continue;
             }
             else
             {
@@ -1019,19 +1064,19 @@ public static class Utility
                 var newEntry = new StatsManager.ModStorage(1);
                 storage.Add(modifier.modKey, newEntry);
             }
-            switch (modifier.Type)
+            switch (modifier.type)
             {
                 case Stat_Modifier.StatMod_Type.setBase:
-                    storage[modifier.modKey].baseValue = modifier.Value(c);
+                    storage[modifier.modKey].baseValue = Utility.StatValue(modifier, c);
                     break;
                 case Stat_Modifier.StatMod_Type.setMult:
-                    storage[modifier.modKey].baseMult = modifier.Value(c);
+                    storage[modifier.modKey].baseMult = Utility.StatValue(modifier, c);
                     break;
                 case Stat_Modifier.StatMod_Type.addMult:
-                    storage[modifier.modKey].addMult += modifier.Value(c);
+                    storage[modifier.modKey].addMult += Utility.StatValue(modifier, c);
                     break;
                 case Stat_Modifier.StatMod_Type.addBase:
-                    storage[modifier.modKey].addValue += modifier.Value(c);
+                    storage[modifier.modKey].addValue += Utility.StatValue(modifier, c);
                     break;
             }
         }
@@ -1079,4 +1124,215 @@ public static class Utility
         else return mods;
 
     }
+
+    public static float StatValue(Stat_Modifier modifier, Character_Trainable chara)
+    {
+        if (chara == null && modifier.valueType != "number") Debug.LogError("STATModifier.Value() ALERT: chara parameter is allowed to be null ONLY if valueType is not number");
+        switch (modifier.valueType)
+        {
+            case "getStatValue":
+                return chara.Stats.GetStatValue(modifier.valueString);
+            case "getStatMod":
+                switch (modifier.valueString)
+                {
+                    case "Strength": return chara.Stats.Strength.GetStatMod();
+                    case "Constitution": return chara.Stats.Constitution.GetStatMod();
+                    case "Psyche": return chara.Stats.Psyche.GetStatMod();
+                    case "Willpower": return chara.Stats.Willpower.GetStatMod();
+                }
+                break;
+            case "number":
+                if (float.TryParse(modifier.valueString, out float result)) { return result; }
+                else Debug.LogError("Error float tryparse");
+                break;
+            case "getStatusValue":
+                //Debug.Log("Getting status value");
+                var i = chara.Stats.GetStatusByStringMatch(modifier.valueString);
+                return i == null ? 0 : i.Severity;
+            default:
+                Debug.LogError("StatModifier Parse error, unrecognized valuetype");
+                break;
+
+        }
+        Debug.LogError("Error Getting Value in Stat_Modifier"); 
+        return 0f;
+    }
+
 }
+
+
+public static class EventUtility
+{
+
+    public static void Execute(EventInstance owner, Event.EventEntry ev)
+    {
+        if (ev is Event.EventEntry.EventEntry_Line) Execute(owner, ev as Event.EventEntry.EventEntry_Line);
+        else if (ev is Event.EventEntry.EventEntry_Question) Execute(owner, ev as Event.EventEntry.EventEntry_Question);
+        else if (ev is Event.EventEntry.EventEntry_Branch) Execute(owner, ev as Event.EventEntry.EventEntry_Branch);
+        else Debug.LogError("eventutility error cannot parse");
+    }
+
+
+    public static void Execute(EventInstance owner, Event.EventEntry.EventEntry_Line block)
+    {
+
+#if UNITY_EDITOR
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {block.line} ");
+#endif
+        // display line
+
+        scr_System_CampaignManager.current.AddLog_Line(owner, block, false);
+
+        // immediate load next
+        //if (isLast) owner.Notify(EventStatus.reset);
+
+        owner.LoadNext(true, block.nextEventID, block.nextEntryLabel);
+        //owner.Notify(EventStatus.running);
+    }
+
+    public static void Execute(EventInstance owner, Event.EventEntry.EventEntry_Question block)
+    {
+
+#if UNITY_EDITOR
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {block.question} ");
+#endif
+
+        scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
+        owner.Notify(EventStatus.waiting);
+        // load next but allow to be overwritten
+        //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
+    }
+
+    public static void Execute(EventInstance owner, Event.EventEntry.EventEntry_Branch block)
+    {
+
+#if UNITY_EDITOR
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing branch ");
+#endif
+        bool executed = false;
+        foreach (var p in block.options)
+        {
+            if (p.isValid(owner) && Execute(owner, p))
+            {
+                executed = true;
+                break;
+            }
+        }
+
+        if (executed) owner.Notify(EventStatus.running);
+        else if (!block.isLast) owner.LoadNext(true, block.nextEventID, block.nextEntryLabel);
+        else owner.Notify(EventStatus.reset);
+
+
+        // load next but allow to be overwritten
+        //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
+    }
+
+    public static bool Execute(EventInstance owner, Event.EventEntry.Options ops, bool sendNotify = false)
+    {
+        // allow next to be overridden by any of results
+        bool continue_notify = true;
+        foreach (var op in ops.Results)
+        {
+            if (op.isValid()) continue_notify = Execute(owner, op) && continue_notify;
+            else continue_notify = false;
+        }
+        if (continue_notify && owner.isValid)
+        {
+            if (sendNotify) owner.Notify(EventStatus.running);
+            return true;
+        }
+        else
+        {
+            if (sendNotify) owner.Notify(EventStatus.reset);
+            return false;
+        }
+        //scr_UpdateHandler.current.NotifyEventStatus(EventStatus.running, false, true);
+    }
+
+
+    public static bool Execute(EventInstance owner, Event.EventEntry.Options.Executor exec)
+    {
+        //Debug.Log($"Execute option type {Type}");
+        switch (exec.Type)
+        {
+            case Event.EventEntry.Options.ExecutionType.JumpToLabel:
+                if (exec.arguments.Count != 2)
+                {
+#if UNITY_EDITOR
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError("jumptolabel does not have enough arguments");
+#endif
+                    return false;
+                }
+                else
+                {
+#if UNITY_EDITOR
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JumpToLabel {exec.arguments[0]} {exec.arguments[1]}");
+#endif
+                    owner.LoadNext(false, exec.arguments[0], exec.arguments[1]);
+                    return true;
+                }
+            case Event.EventEntry.Options.ExecutionType.EventEnd:
+                return false;
+            case Event.EventEntry.Options.ExecutionType.InterruptAP_byType:
+                if (exec.arguments.Count < 2)
+                {
+#if UNITY_EDITOR
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError("interruptAP does not have enough arguments");
+#endif
+                    return false;
+                }
+                else
+                {
+                    //Debug.Log("Executing InterruptAP_byType");
+                    //owner.Notify(EventStatus.reset);
+                    List<ActionPackage> queryPackages;
+                    //var packages = new List<ActionPackage>();
+                    if (exec.arguments[0] == "self")
+                    {
+                        // interrupt self AP by arg[1]
+#if UNITY_EDITOR
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing InterruptAP_byType argument self, current self {(owner.Self == null ? "null" : owner.Self.FirstName)}");
+#endif
+                        queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
+                        //Debug.Log($"found relevant package {queryPackages.Count}");
+                        queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, exec.arguments[1]));
+#if UNITY_EDITOR
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count}");
+#endif
+                        foreach (var package in queryPackages) package.DisablePackage();
+                        return true;
+                    }
+                    else
+                    {
+                        // interrupt target AP by arg[1]
+                        if (!owner.Targets.ContainsKey(exec.arguments[0]))
+                        {
+                            Debug.LogError("error target scope error");
+                            return false;
+                        }
+                        else
+                        {
+                            foreach (var chara in owner.Targets[exec.arguments[0]])
+                            {
+                                queryPackages = scr_System_CampaignManager.current.GetExistingPackages(chara, true, true, true);
+                                queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, exec.arguments[1]));
+#if UNITY_EDITOR
+                                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count} on {chara.FirstName}");
+#endif
+                                foreach (var package in queryPackages) package.DisablePackage();
+                            }
+                            return true;
+                        }
+                    }
+                }
+            default: return false;
+
+        }
+    }
+
+
+
+
+}
+

@@ -138,7 +138,8 @@ public class scr_menu_question : scr_Menu
             {
                 parent.Active = false;
                 selected = true;
-                option.Execute(instance, true);
+
+                EventUtility.Execute(instance, option, true);// option.Execute(instance, true);
             }
         }
     }

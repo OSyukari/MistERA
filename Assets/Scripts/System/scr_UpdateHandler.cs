@@ -76,7 +76,17 @@ public class scr_UpdateHandler : MonoBehaviour
 
     }
     public static scr_UpdateHandler current;
-    public scr_System_CampaignManager cnManager;
+
+    protected scr_System_CampaignManager _cnManager = null;
+    public scr_System_CampaignManager cnManager { get
+        {
+            if (_cnManager == null)
+            {
+                _cnManager = scr_System_CampaignManager.current;
+                if (_cnManager != null) _cnManager.NotifyUpdateHandlerExist();
+            }
+            return _cnManager;
+        } }
     scr_AttachToUpdateHandler imageScript = null;
 
     public void InvokeEventStatus(EventStatus status, bool forcelogging)
@@ -127,8 +137,6 @@ public class scr_UpdateHandler : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-
-        cnManager = scr_System_CampaignManager.current;
         if (current == null)
         {
             current = this;
@@ -139,11 +147,10 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
-        if (scr_System_CampaignManager.current != null) scr_System_CampaignManager.current.NotifyUpdateHandlerExist();
     }
 
     int updateTime, totalUpdateTime, totalUpdateTime2;
-    bool firstPreUpdate;
+    bool firstPreUpdate = false;
     bool timeStop;
     bool oneLoop;
     public bool halted = false;
@@ -163,7 +170,7 @@ public class scr_UpdateHandler : MonoBehaviour
         if (init)
         {
             firstPreUpdate = true;
-            if (firstPreUpdate) Observer_PreUpdateTime?.Invoke();
+            Observer_PreUpdateTime?.Invoke();
             timeStop = scr_System_Time.current.TimeStop;
             oneLoop = true;
         }
@@ -221,7 +228,6 @@ public class scr_UpdateHandler : MonoBehaviour
         //Debug.Log("Singleupdate : start");
         var Clock = scr_System_CentralControl.current.LogPrefs.Debug_Logging_UpdateTimeCost ;
         Updating = true;
-        bool repeat = false;
         int loopCount = 0;
         firstLoopCounter = 2;
         FlushCollectedLogs(false, oneLoop);
@@ -242,8 +248,10 @@ public class scr_UpdateHandler : MonoBehaviour
             FlushCollectedLogs(true, oneLoop);
             oneLoop = false;
 
-            if (firstPreUpdate) firstPreUpdate = false;
-            else Observer_PreUpdateTime?.Invoke();
+           // if (firstPreUpdate) firstPreUpdate = false;
+            //else
+            Observer_PreUpdateTime?.Invoke();
+
             if (Clock) Debug.Log("Observer_PreUpdateTime complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
             cnManager.FreeUpdateOneStep(ref totalUpdateTime, ref updateTime);

@@ -30,8 +30,7 @@ public class initScript_ManagementOverview : MonoBehaviour
         managerNames.text = String.Join(", ", managers);
 
         //m.PrintDailyReport(dailyReport);
-        m.PrintDailyReport(report_managementResult, report_tradeResults, dailyReport);
-
+        UI_Utility.PrintDailyReport(m, report_managementResult, report_tradeResults, dailyReport);
 
         List<string> floors = new List<string>();
         //int prCount = 0, usedPRcount = 0;

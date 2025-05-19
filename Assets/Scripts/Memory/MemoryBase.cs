@@ -391,7 +391,7 @@ public class Memory_Entry
         var newstuff = new Stat_Modifier();
         newstuff.statID = statID;
         newstuff.modKey = "Memory_"+ startTime.Ticks;
-        newstuff.Type = Stat_Modifier.StatMod_Type.addBase;
+        newstuff.type = Stat_Modifier.StatMod_Type.addBase;
         //newstuff.SetValueTypeAndString("number", value)
         return newstuff;
     }
@@ -716,7 +716,7 @@ public class Memory_Entry
         List<string> additional = new List<string>();
         if (Tags.Count > 0) additional.Add(PrintTags);
         additional.AddRange(MemInstanceDescriptions);
-        additional.Add("Statmod: Check" + cache_score.ToString("+0;-#") + " Mood"+Mod_Mood.Value(null).ToString("+0;-#")+" Stress"+Mod_Stress.Value(null).ToString("+0;-#")+" Lust"+Mod_Lust.Value(null).ToString("+0;-#"));
+        additional.Add("Statmod: Check" + cache_score.ToString("+0;-#") + " Mood"+Utility.StatValue(Mod_Mood, null).ToString("+0;-#")+" Stress"+Utility.StatValue(Mod_Stress, null).ToString("+0;-#")+" Lust"+Utility.StatValue(Mod_Lust, null).ToString("+0;-#"));
 
         if (scr_System_CampaignManager.current.DebugMode) additional.Add("Internal Duration " + Duration);
 
