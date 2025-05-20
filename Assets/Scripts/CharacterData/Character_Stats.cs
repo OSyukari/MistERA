@@ -84,11 +84,11 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
         return String.Join(joinSymbol, cached_values[key].Item2);
     }
     [JsonIgnore] public int BaseValue { get { return value_base; } }
-    public int FinalValue(List<string> contextKeys = null)
+    public float FinalValue(List<string> contextKeys = null)
     {
         var key = contextKeys == null ? new List<string>() : contextKeys;
         if (!cached_values.ContainsKey(key)) GetValue(key);
-        return (int)cached_values[key].Item1;
+        return cached_values[key].Item1;
     }
 
     protected void GetValue(List<string> contextKeys)
@@ -109,7 +109,7 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
     }
     public int GetStatMod(List<string> contextKeys = null)
     {
-        return FinalValue(contextKeys) / 2 - 5;
+        return (int)FinalValue(contextKeys) / 2 - 5;
     }
 
 }

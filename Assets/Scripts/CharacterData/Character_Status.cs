@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
+using System.Runtime.InteropServices;
 
 public enum StatusTags
 {
@@ -36,10 +37,9 @@ public class Index_Status:I_IndexHasID, I_SerializationCallbackReceiver, I_Index
 
         foreach (var i in list)
         {
-            i.OnAfterDeserialize();
-            if (i.variationMode.variationType == Status_Base.Status_Variation_Type.sex)
+            if (i.variationMode.variationType == Status_Base.Status_Variation_Type.sex && i.variationMode.SensitivityKeyword.Length > 0)
             {
-                scr_System_Serializer.current.AddSensitivityStatus(i.variationMode.stringData, i.statusID);
+                scr_System_Serializer.current.AddSensitivityStatus(i.variationMode.SensitivityKeyword, i.statusID);
             }
         }
 
@@ -59,40 +59,125 @@ public class Index_Status:I_IndexHasID, I_SerializationCallbackReceiver, I_Index
 }
 
 [System.Serializable]
-public class Status_Base : StatusBase
+public class Status_Base
 {
+    public string statusID = "";
+    public string displayName = "";
+    public bool noDisplay = false;
+    public bool constant = false;
+
+    [JsonIgnore]
+    public bool isValid
+    {
+        get
+        {
+            if (this.statusID != "") return true;
+            return false;
+        }
+    }
+
+    public List<Variant> variants = new List<Variant>();
+
+    [System.Serializable]
+    public class Variant
+    {
+        public string displayName = "";
+        public float threshold = -1;
+        public List<string> tags = new List<string>();
+        public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
+    }
+
+    [System.Serializable]
     public enum Status_Variation_Type
     {
         none,
+        /// <summary>
+        /// stat severity will decrease linearly with time * value<br/>
+        /// StringData: [linearDecayValue]
+        /// </summary>
         linear,
+        /// <summary>
+        /// Sine variation will not change status severity or duration.
+        /// Instead, the current variation will be combined value of duration + random sine variation * value.
+        /// string data determine sine sample base.<br/>
+        /// StringData: [sampleBase, cycleLen, intensity]
+        /// </summary>
         sine,
+        /// <summary>
+        /// behave similar to linear variation, but any interaction with sex tag will pause value decay.<br/>
+        /// StringData: [sensitivityKeyword, linearDecay, pauseXMinAfterMod]
+        /// </summary>
         sex
     }
 
-    public Variations variationMode;
-
-    public override void OnAfterDeserialize()
-    {
-        base.OnAfterDeserialize();
-        this.variationMode.OnAfterDeserialize();
-    }
+    public Variations variationMode = new Variations();
 
 
     [System.Serializable]
     public class Variations
     {
-        public Status_Variation_Type variationType;
-        [SerializeField][JsonProperty] private string variationTypeString;
-        public int pauseXMinAfterMod = 0;
-        public float value;
-        public string stringData = "";
+        public Status_Variation_Type variationType = Status_Variation_Type.none;
+        //public int pauseXMinAfterMod = 0;
+        //public float value = 0;
+        public List<string> stringData = new List<string>();
         //public List<Variation_Conditions> conditions = new List<Variation_Conditions>();
-        
 
-        public void OnAfterDeserialize()
+        [JsonIgnore]
+        public int pauseXMinAfterMod 
+        { get {
+            if (this.variationType != Status_Variation_Type.sex) return 0;
+            else if (this.stringData.Count >= 3 && int.TryParse(stringData[2], out int pauseLen)) return pauseLen;
+            else Debug.LogError("StatusVariation missing entry");
+            return 0;
+                
+        } }
+
+        [JsonIgnore]
+        public string SensitivityKeyword
         {
-            Enum.TryParse(variationTypeString, out variationType);
+            get
+            {
+                if (this.variationType != Status_Variation_Type.sex) return "";
+                else if (this.stringData.Count >= 3) return stringData[0];
+                else Debug.LogError("StatusVariation missing entry");
+                return "";
+            }
         }
+
+        [JsonIgnore]
+        public float Decay
+        {
+            get
+            {
+                switch(this.variationType)
+                {
+                    case Status_Variation_Type.linear:
+                        if (stringData.Count >= 1 && float.TryParse(stringData[0], out var linDecay)) return linDecay;
+                        break;
+                    case Status_Variation_Type.sex:
+                        if (stringData.Count >= 3 && float.TryParse(stringData[1], out var sexDecay)) return sexDecay;
+                        break;
+                    default:
+                        break;
+                }
+
+                return 0;
+            }
+        }
+
+        [JsonIgnore]
+        public float SineCycleLen { get
+            {
+                if (variationType == Status_Variation_Type.sine && stringData.Count >= 3 && float.TryParse(stringData[1], out var value)) return value;
+                else return 1;
+            } }
+        [JsonIgnore]
+        public float SineIntensity { get
+            {
+                if (variationType == Status_Variation_Type.sine && stringData.Count >= 3 && float.TryParse(stringData[2], out var value)) return value;
+                else return 0;
+            } }
+
 
         [System.Serializable]
         public class Variation_Conditions
@@ -168,7 +253,14 @@ public class Status_Instance : StatusInstance
     {
         get
         {
-            return severity;
+            var variation = BaseRef.variationMode;
+            if (BaseRef.variationMode.variationType != Status_Base.Status_Variation_Type.sine) return severity;
+            else if (variation.stringData.Count >= 3) return (float)(severity + Utility.SineSample(variation.SineCycleLen, BaseRef.variationMode.stringData[0]) * variation.SineIntensity);
+            else
+            {
+                Debug.LogError("error parsing status severity");
+                return 0f;
+            }
         }
     }
 

@@ -759,7 +759,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             Debug.LogError($"ChangeCurrentViewMode to {vm}, error, still animating");
             return;
         }
-        else if (viewMode == ViewMode.View_Logs && vm == ViewMode.View_Room && ExistPlayerPackage(out int a, out int b)) scr_UpdateHandler.current.StartUpdate(false);
+        else if (viewMode == ViewMode.View_Logs && vm == ViewMode.View_Room && ExistPlayerPackage(out int a, out int b, false)) scr_UpdateHandler.current.StartUpdate(true);
         else
         {
             if (viewMode != vm) viewMode = vm;
@@ -1037,7 +1037,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                     var f2 = scr_System_Serializer.current.GetByNameOrID_Item_Base(ini.initArguments[1]);
                     if (f1 != null && f2 != null && int.TryParse(ini.initArguments[3], out int f4))
                     {
-                        //Debug.Log($"Instantiating inventory {f1.FactionDisplayName} {f2.DisplayName} {ini.initArguments[2]} {f4}");
+                        Debug.Log($"Instantiating inventory {f1.FactionDisplayName} {f2.DisplayName} {ini.initArguments[2]} {f4}");
                         f1.Inventory.AddItem(WorldManager.Instantiate(f2.id, ini.initArguments[2], f4));
                     }
                     else
@@ -1439,6 +1439,8 @@ public static class WorldManager
     {
         Dictionary<int, Floor_Instance> list = new Dictionary<int, Floor_Instance>();
         var initialRefID = -1;
+        var targetFaction = factionOverride != "" ? factionOverride : map.initializeFaction;
+
         foreach (MapPlan.MapPlan_Floor fpi in map.floors)
         {
             Floor_Instance fp = WorldManager.Instantiate( fpi,disablePlayerInit, disableCharaInstantiation);
@@ -1448,20 +1450,58 @@ public static class WorldManager
                 list.Add(fp.refID, fp);
                 if (initialRefID == -1) initialRefID = fp.refID;
                 fp.RegisterMapTemplate(map.ID, initialRefID);
-
             }
         }
 
         // at this stage, all character should have been initialized
-        var targetFaction = factionOverride != "" ? factionOverride : map.initializeFaction;
-
         if (targetFaction != "")
         {
             // get target faction
             Manageable org = scr_System_CampaignManager.current.FindorAddHomeFactionByID(targetFaction);
 
             // add floor to faction and set all chara in map as faction member and set private room ownership
-            foreach (var f in list.Values) org.AddToFaction(f, true, map.setPrivateRoomOwner);
+            foreach (var f in list.Values)
+            {
+                org.AddToFaction(f, true, map.setPrivateRoomOwner);
+            }
+            
+            foreach (var ini in map.initializers)
+            {
+                switch (ini.initClass)
+                {
+                    case "campaign_init_productionOrder":
+                        //Manageable f = FindorAddHomeFactionByID(ini.initArguments[0]);
+                        ItemComponentTemplate_Craftable_Recipe r = Masterlist_Items.Instance.GetRecipeByID(ini.initArguments[1]);
+                        Manageable.ProductionOrderType type = (Manageable.ProductionOrderType)Enum.Parse(typeof(Manageable.ProductionOrderType), ini.initArguments[2]);
+                        if (int.TryParse(ini.initArguments[3], out int count)) org.AddProductionOrder(r, count, type);
+                        break;
+                    /*
+                case "campaign_init_factionVisitor":
+                    Manageable f = FindorAddHomeFactionByID(ini.initArguments[0]);
+                    Manageable g = FindorAddHomeFactionByID(ini.initArguments[3]);
+                    Room_Instance ri = f.ManagedRooms.Values.ToList().Find(x => x.Base.ID == ini.initArguments[1]);
+                    if (ri == null) continue;
+                    Character_Trainable c = InstantiateCharacter_FromBaseID(ini.initArguments[2], ri);
+                    c.FactionManager.SetHomeFaction(g.ID);
+                    c.FactionManager.SetTempHomeFaction(f.ID);
+                    break;*/
+                    case "campaign_init_factionInventory":
+                        var f1 = org;
+                        var f2 = scr_System_Serializer.current.GetByNameOrID_Item_Base(ini.initArguments[1]);
+                        if (f1 != null && f2 != null && int.TryParse(ini.initArguments[3], out int f4))
+                        {
+                            Debug.Log($"Instantiating inventory {f1.FactionDisplayName} {f2.DisplayName} {ini.initArguments[2]} {f4}");
+                            f1.Inventory.AddItem(WorldManager.Instantiate(f2.id, ini.initArguments[2], f4));
+                        }
+                        else
+                        {
+                            Debug.LogError($"Error instantiating inventory, {(f1 == null ? ini.initArguments[0] + " missing" : "")} {(f2 == null ? ini.initArguments[1] + " missing" : "")}");
+                        }
+                        break;
+                    default: break;
+                }                
+            }
+
 
             if (map.workHours != null && map.workHours.Count > 0) foreach (var i in map.workHours) org.InitWorkHours(i);
 
@@ -1498,6 +1538,7 @@ public static class WorldManager
                     org.AddSalesInventory(itemInit);
                 }
             }
+            org.mealHours = map.mealHours;
 
         }
 

@@ -81,6 +81,7 @@ public class scr_System_Time : MonoBehaviour
     {
         if (timeStop != TimestopState.timestop) timeStop = TimestopState.timestop;
         else timeStop = TimestopState.resuming_preupdate;
+        UpdateTime(0, 0, 0, 0, true);
     }
 
     public bool TimeStop { get { return timeStop == TimestopState.timestop;} }

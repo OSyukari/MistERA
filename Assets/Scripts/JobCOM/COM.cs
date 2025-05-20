@@ -25,13 +25,15 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         {
             if (list[i].comTags.Contains("do_not_use")) {
                 list.RemoveAt(i);
-                continue;
             }
-            if (list[i].comTags.Contains("sex") && !(list[i] is COM_Sex))
+            
+            else if (list[i].comTags.Contains("sex") && !(list[i] is COM_Sex))
             {
                 var serializedParent = JsonConvert.SerializeObject(list[i], Utility.SerializerSettings);
                 list[i] = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, Utility.SerializerSettings);
             }
+
+            list[i].OnAfterDeserialize();
         }
     }
 
@@ -407,7 +409,7 @@ public class COM: I_SerializationCallbackReceiver
         return GetValidVariant(doerRefIDs, receiverRefIDs);
     }
 
-    [JsonIgnore] public bool AllowDuringSex;
+    [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex"); } }
 
     public int GetValidVariant(ref List<string> tooltip, List<int> doerRefIDs, List<int> receiverRefIDs, bool excludeRequireExisting = false)
     {
@@ -554,8 +556,6 @@ public class COM: I_SerializationCallbackReceiver
         if (this.variants.Count < 1) variants.Add(new COM_Variant(this.displayName, this));
 
         foreach(COM_Variant vari in this.variants) vari.Read(this);
-
-        AllowDuringSex = comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex");
     }
 
     protected void AddCOMTags(string s)
@@ -819,7 +819,11 @@ public class COM: I_SerializationCallbackReceiver
             case "ActionPackage_ProductionOrder":
                 Job_Furniture jFurn = job as Job_Furniture;
                 if (jFurn == null) break;
-                if (pOrder == null) returnValue = new ActionPackage_Interaction(job, this, doers, receivers, masterRef);
+                else if (pOrder == null)
+                {
+                    Debug.LogError("ActionPackage_ProductionOrder creation error, missing pOrder");
+                    returnValue = new ActionPackage_Interaction(job, this, doers, receivers, masterRef);
+                }
                 else returnValue = new ActionPackage_ProductionOrder(pOrder, jFurn, this, doers, receivers, masterRef);
                 break;
 

@@ -2,53 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Xml;
-using System.Linq;
 using Newtonsoft.Json;
 
 [System.Serializable]
-public abstract class StatusBase : ISerializationCallbackReceiver
-{
-
-    public string statusID = "";
-    public string displayName = "";
-    public bool noDisplay = false;
-    public bool constant = false;
-
-   [JsonIgnore] public bool isValid
-    {
-        get
-        {
-            if (this.statusID != "") return true;
-            return false;
-        }
-    }
-
-    public List<Variant> variants = new List<Variant>();
-
-    [System.Serializable]
-    public class Variant
-    {
-        public string displayName = "";
-        public float threshold = -1;
-        public List<string> tags = new List<string>();
-        public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
-    }
-
-    public virtual void OnBeforeSerialize()
-    {
-
-    }
-
-    public virtual void OnAfterDeserialize()
-    {
-
-    }
-}
-
-
-[System.Serializable]
-public abstract class StatusInstance : ISerializationCallbackReceiver
+public abstract class StatusInstance
 {
     [SerializeField][JsonProperty] protected string baseID;
     [JsonIgnore] public string ID { get { return baseID; } }
@@ -86,7 +43,7 @@ public abstract class StatusInstance : ISerializationCallbackReceiver
     {
 
     }
-    public StatusInstance(StatusBase baseStatus, int refID, float initialSeverity = 0f, int duration = -1)
+    public StatusInstance(Status_Base baseStatus, int refID, float initialSeverity = 0f, int duration = -1)
     {
         this.ownerRef = refID;
         this.baseID = baseStatus.statusID;
@@ -100,12 +57,6 @@ public abstract class StatusInstance : ISerializationCallbackReceiver
         this.owner = c;
         this.ownerRef = c.RefID;
     }
-
-    public void OnBeforeSerialize()
-    {
-
-    }
-
     public void OnAfterDeserialize()
     {
 

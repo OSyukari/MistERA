@@ -415,7 +415,7 @@ public class BodyInternal_Instance
             if (Base.maxSensitivityStatString == "") return 0;
             //Debug.Log("Fetching " + Base.maxSensitivityStatString+", does it exist "+(scr_System_Serializer.current.GetByNameOrID_StatsDerivedBase(Base.maxSensitivityStatString) != null));
 
-            return Owner.Stats.GetDerivedStat(Base.maxSensitivityStatString).FinalValue();
+            return (int)Owner.Stats.GetDerivedStat(Base.maxSensitivityStatString).FinalValue();
         }
     }
 

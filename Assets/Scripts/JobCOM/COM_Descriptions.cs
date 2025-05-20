@@ -38,7 +38,7 @@ public class COM_Descriptions
     }
  
     [System.Serializable]
-    public class Description_Entry :ISerializationCallbackReceiver
+    public class Description_Entry
     {
         public bool keepLooking = false;
         public List<COMDesc_Conditions> conditions = new List<COMDesc_Conditions>();

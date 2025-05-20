@@ -224,6 +224,7 @@ public class StatsManager
     [JsonIgnore] public float Energy_InteractionCost { get { return -2f; } }
     [JsonIgnore] public float CumThreshold { get { return 100; } }
     [JsonIgnore] public int SleepHours { get { return Owner.hasStatKeyword("sleep") ? (int)GetStatValue("stats_derived_sleepNeed") : 0; } }
+    [JsonIgnore] public float SleepDepth { get { return Owner.hasStatKeyword("sleep") ? (float)GetStatValue("stats_derived_sleepDepth") : 0; } }
     [JsonIgnore] public Stats_Derived_Extended_Instance HP { get { return GetStatEx("stats_derived_extended_hp"); } }
     [JsonIgnore] public Stats_Derived_Extended_Instance MP { get { return GetStatEx("stats_derived_extended_mp"); } }
     [JsonIgnore] public Stats_Derived_Extended_Instance Stamina { get { return GetStatEx("stats_derived_extended_stamina"); } }
@@ -483,29 +484,46 @@ public class StatsManager
             }
 
 
-            if (StatusInstances[i].pauseXMinAfterMod == 0 && time > 0 && StatusInstances[i].BaseRef.variationMode.value != 0)
+            if (StatusInstances[i].pauseXMinAfterMod == 0 && time > 0 && StatusInstances[i].BaseRef.variationMode.Decay != 0)
             {
                 switch (StatusInstances[i].BaseRef.variationMode.variationType)
                 {
                     case Status_Base.Status_Variation_Type.linear:
-                        refresh = StatusInstances[i].SeverityAdd(StatusInstances[i].BaseRef.variationMode.value * time) || refresh;
+                        refresh = StatusInstances[i].SeverityAdd(StatusInstances[i].BaseRef.variationMode.Decay * time) || refresh;
                         break;
                     case Status_Base.Status_Variation_Type.sine:
-                        Debug.Log("Sine variation not implemented for status.");
+                        
+                        //Debug.Log("Sine variation not implemented for status.");
                         break;
                     case Status_Base.Status_Variation_Type.sex:
-                        refresh = StatusInstances[i].SeverityAdd(StatusInstances[i].BaseRef.variationMode.value * time) || refresh;
+                        refresh = StatusInstances[i].SeverityAdd(StatusInstances[i].BaseRef.variationMode.Decay * time) || refresh;
                         break;
                     default:
                         break;
 
                 }
             }
+
+            var curr = StatusInstances[i];
+
             if (!StatusInstances[i].BaseRef.constant && StatusInstances[i].SeverityDisplayName == "")
-            {
-                if (StatusInstances[i].BaseRef.statusID == "chara_status_sleeping") Owner.FullRest();
-                StatusInstances.RemoveAt(i);
-                refresh = true;
+            {   // on status disappear
+                
+            }
+
+            if (!curr.BaseRef.constant && curr.pauseXMinAfterMod == 0 && curr.duration > 0)
+            {   // status tick
+                curr.duration = Math.Max(0, curr.duration - time);
+                if (curr.duration == 0)
+                {   // on status expire
+
+                    Debug.Log($"status {curr.ID} on {Owner.FirstName} expired, removing");
+                    StatusInstances.RemoveAt(i);
+                    refresh = true;
+
+                    // if sleep expire, fullrest()
+                    if (curr.BaseRef.statusID == "chara_status_sleeping") Owner.FullRest();
+                }
             }
         }
         pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex - t.Minutes, 0);
@@ -516,7 +534,7 @@ public class StatsManager
 
 
         // refresh character Status Mod
-        if(refresh) UpdateStatus();
+        if (refresh) UpdateStatus();
 
     }
 

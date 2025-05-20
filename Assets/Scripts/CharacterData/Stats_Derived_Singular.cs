@@ -108,7 +108,7 @@ public class Stats_Derived_Base
 public interface I_StatsDisplayable
 {
     public string ModStrings(List<string> contextKeys = null, string joinSymbol = "\n");
-    public int FinalValue(List<string> contextKeys = null);
+    public float FinalValue(List<string> contextKeys = null);
 }
 
 [System.Serializable]
@@ -150,11 +150,11 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         return String.Join(joinSymbol, cached_values[key].Item2);
     }
 
-    public int FinalValue(List<string> contextKeys = null)
+    public float FinalValue(List<string> contextKeys = null)
     {
         var key = contextKeys == null ? new List<string>() : contextKeys;
         if (!cached_values.ContainsKey(key)) GetValue(key);
-        return (int)cached_values[key].Item1 + debugValue;
+        return cached_values[key].Item1 + debugValue;
     }
     protected void GetValue(List<string> contextKeys)
     {

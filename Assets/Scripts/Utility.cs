@@ -14,6 +14,7 @@ using Unity.Jobs;
 using static scr_panel_COMmanager;
 using static Stats_Derived_Extended;
 using QuikGraph.Algorithms.Search;
+using System.IO;
 
 public static class Utility
 {                                               //  F      E      D      C      B      A      S    
@@ -142,6 +143,25 @@ public static class Utility
         return returnValue;
     }
 
+    /// <summary>
+    /// accepted key: hour, minute
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static double SineSample(double cycleLen, string key)
+    {
+        var time = scr_System_Time.current.getCurrentTime();
+        switch(key)
+        {
+            case "hour":
+                return Math.Sin(Math.PI * time.Hour / cycleLen);
+            case "minute":
+                return Math.Sin(Math.PI * time.Minute / cycleLen);
+            default:
+                Debug.LogError($"Utility.SineSample error, unrecognized key {key}");
+                return 0;
+        }
+    }
 
     static Regex regex_eventKeyword = new Regex(@"\$[a-zA-Z\._]+\$");
     /// <summary>
@@ -1157,6 +1177,7 @@ public static class Utility
         Debug.LogError("Error Getting Value in Stat_Modifier"); 
         return 0f;
     }
+
 
 }
 

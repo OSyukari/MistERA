@@ -298,6 +298,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             // Recover chara based on sleep efficiency ?
         }
         this.Body.UpdateTimeHour(t);
+        timeSinceLastEat = Math.Min(24, timeSinceLastEat + 1);
+    }
+
+    public void NotifyFoodConsume(Item_Instance i)
+    {
+        this.timeSinceLastEat = 0;
     }
     private void Observer_GlobalDay(int updateOrder)
     {
@@ -342,6 +348,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
 
     [SerializeField][JsonProperty] protected int lastSleepHour = -1;
+    [SerializeField][JsonProperty] protected int timeSinceLastEat = 24;
     private void Observer_DebugDailyRefresh(int updateOrder)
     {
         if (updateOrder != 0) return;
@@ -704,7 +711,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             }
             else
             {   // current job is null, or current job is not schedule
-                //Debug.LogError(FirstName + " should redress, fetching new job");
                 // at this point we know the previous job can be break
                 //foreach (Manageable faction in FactionManager.Factions)
                 //{   // get closest schedule job
@@ -767,7 +773,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
         // here, character is not doing scheduled job
         // temporarily disable eat cuz need to restrict food hours in faction management
-        if (false && canEat)
+        if (canEat)
         {   // try get food
             if (CurrentJob != null && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("food_meal")) != null)
             {   // if already eating (dont care if it's pathing or executing)
@@ -904,7 +910,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
 
     [JsonIgnore] public bool canEat { get {
-            return this.hasStatKeyword("hunger") && this.Stats.GetStatValue("stats_derived_foodConsumption") >= 1; } }
+            return this.hasStatKeyword("hunger") && this.Stats.GetStatValue("stats_derived_foodConsumption") >= 1 && timeSinceLastEat > 3; } }
     [JsonIgnore] public bool canSleep { get {
             if (!hasSleepNeed) return false;
             if (this.Stats.Fatigue != null && this.Stats.Fatigue.Severity > 0.9) return true;

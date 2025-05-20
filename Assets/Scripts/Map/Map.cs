@@ -11,8 +11,6 @@ using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 using System.Threading.Tasks;
-using static UnityEngine.GraphicsBuffer;
-using System.Net;
 
 
 [System.Serializable]
@@ -54,7 +52,6 @@ public class Map_Instance
             {
                 if(!floors.ContainsKey(fl.Key)) floors.Add(fl.Key, fl.Value);
             }
-
             BuildPath();
         }
     }

@@ -5,7 +5,7 @@ using System;
 using Newtonsoft.Json;
 
 [System.Serializable]
-public class FurnitureBase //: ISerializationCallbackReceiver
+public class FurnitureBase
 {
     public string ID = "";
     public string displayName = "";

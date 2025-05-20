@@ -13,16 +13,16 @@
                 [
                     {
                         "ID":"floor_jp_convenience_store",
-                        "nameOverwrite":"factionName_jp_convenience_store_SunMart",
-                        "Additional":
-                        [
-                            {
-                                "addClass":"map_init_organization",
-                                "map_init_organization":{ "orgID":"jp_convenience_store", "addCharaToFaction":true, "setPrivateRoom":true }
-                            }
-                        ]
+                        "nameOverwrite":"factionName_jp_convenience_store_SunMart"
                     }
                 ],
+                "initializers":[
+                    {
+                        "initClass":"campaign_init_factionInventory",
+                        "initArguments":["jp_convenience_store", "consumable_instant_ramen", "", "1"]
+                    }
+                ],
+                "mealHours":[0, 6, 12, 18],
                 "salesCurrency":"currency_JPY",
                 "salesInventory":[
                     { "matchByTags":["consumable","industrial","rarity_common"] },

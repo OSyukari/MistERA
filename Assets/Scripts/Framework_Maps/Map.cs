@@ -40,6 +40,12 @@ public class Map_MainExit
     public int exitCost = 1;
 }
 
+[System.Serializable]
+public class CampaignSettings_Initializer
+{
+    public string initClass = "";
+    public List<string> initArguments = new List<string>();
+}
 
 /// <summary>
 /// Assets\Data\Defs\MapDefs\MapDefs.json
@@ -60,6 +66,8 @@ public class MapPlan
     public List<WorkModuleInit> workModules = new List<WorkModuleInit>();
     public List<SalesInventoryInit> salesInventory = new List<SalesInventoryInit>();
     public string salesCurrency = "";
+    public List<int> mealHours = new List<int>();
+    public List<CampaignSettings_Initializer> initializers = new List<CampaignSettings_Initializer>();
 
     [System.Serializable]
     public class SalesInventoryInit

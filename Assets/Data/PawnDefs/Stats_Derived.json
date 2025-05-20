@@ -128,6 +128,12 @@
                 "valueBase":{ "baseValue_value":8.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
             },
             {
+                "id": "stats_derived_sleepDepth",
+                "statKeyword":"sleep",
+                "displayName":"Sleep Depth",
+                "valueBase":{ "baseValue_value":1.5, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":1.0, "valueCeiling":9999 }
+            },
+            {
                 "id": "stats_derived_fatigueThreshold",
                 "displayName":"Fatigue Threshold",
                 "statKeyword":"stamina",

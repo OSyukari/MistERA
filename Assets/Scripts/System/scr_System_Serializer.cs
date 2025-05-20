@@ -45,26 +45,6 @@ public class scr_System_Serializer : MonoBehaviour
         LoadCharactersFoldersJSON();
 
         MasterList.Initialize();
-
-        // error checking
-
-        /*
-        foreach (var i in MasterList.COMs.list)
-        {
-            if (i.comTags.Contains("food_meal"))
-            {
-                if (!(MasterList.COMs.GetByID(i.ID) is COM_TakeMeal)) Debug.LogError($"foodcom error target isfood in list {i is COM_TakeMeal} isfood in dict {MasterList.COMs.GetByID(i.ID) is COM_TakeMeal}");
-            }
-        }*/
-
-        /*
-        foreach (var com in MasterList.COMs.LIST)
-        {
-            if (com is COM_TakeMeal || com is COM_Sex || com is COM_Character_Insert || com is COM_Character_Remove || com is COM_FarmRecipe)
-            {
-                Debug.Log($"SPECIAL COM {com.ID}");
-            }
-        }*/
     }
 
 

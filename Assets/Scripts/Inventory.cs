@@ -201,7 +201,7 @@ public class Inventory
         {
             var item = lists[i];
             if (count < 1 || item == null) break;
-            if (item.isToken)
+            if (item.isToken || !this.FactionOwner.isPlayerFaction)
             { 
                 var vvvv = WorldManager.Instantiate(item.BaseID, item.DisplayName, count);
                 results.Add(vvvv);

@@ -158,22 +158,15 @@ public class Item_Base
     public List<ItemComponentTemplate> itemComps_Template = new List<ItemComponentTemplate>();
 
 
-    public bool isTokenItem = false;
+    [JsonIgnore] public bool isTokenItem { get { 
+            return this.Tags.Contains("food_meal") && this.itemComps_Template.Find(x => x.compType == "ItemComponent_Degradable") != null; 
+        } }
 
 
     public void OnAfterDeserialize()
     {
 
         this.stackable = true;
-
-        // determine token
-        // can set istokenitem true and forget about this part
-
-        if (this.Tags.Contains("food_meal") && this.itemComps_Template.Find(x => x.compType == "ItemComponent_Degradable") != null)
-        {
-            //Debug.LogError($"item {this.id} set to token item");
-            this.isTokenItem = true;
-        }
 
         foreach(ItemComponentTemplate i in itemComps_Template)
         {

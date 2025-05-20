@@ -23,7 +23,7 @@
                         "offsetX":-241.2,
                         "offsetY":44.5,
                         "connects": [ { "ID":"store_2F_hallway", "cost":1.0 } ],
-                        "furnitureIDs":["furniture_galley","furniture_round_table_4"],
+                        "furnitureIDs":["furniture_galley","furniture_round_table_4","furniture_marker_getmeal"],
                         "roomImagePath":"Workplaces/SunMart/interior"
                     },
                     {

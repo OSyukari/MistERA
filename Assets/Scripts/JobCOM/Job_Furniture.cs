@@ -164,7 +164,7 @@ public class Job_Furniture : Job
             // Debug.LogError("Validating "+com.ID+" : validateRoom[" + com.ValidateRoom(ParentRoom) + "] validateJob[" + com.ValidateJob(this) + "] validateAcceptActor[" + CanCOMAcceptMoreActor(com) + "]");
             if (com.ValidateRoom(ParentRoom) && com.ValidateJob(this) && CanCOMAcceptMoreActor(com)) ValidCOMs.Add(com);
             //else if (!com.comTags.Contains("job") && com.ValidateRoom(ParentRoom) && com.ValidateJob(this) && CanCOMAcceptMoreActor(com)) validNonJobCOMs.Add(com);
-            else if (com is COM_TakeMeal) Debug.LogError($"food com {com.ID} not valid, validatejob {com.ValidateJob(this)}");
+            //else if (com is COM_TakeMeal) Debug.LogError($"food com {com.ID} not valid, validatejob {com.ValidateJob(this)}");
         }
     }
 
@@ -172,11 +172,8 @@ public class Job_Furniture : Job
     {
         //bool validJob = true;
         //bool validNonJob = true;
-        //Debug.Log("JobFurniture ValidateActor 1");
         if (com != null && !this.ValidCOMs.Contains(com)) return false;
-        //Debug.Log("JobFurniture ValidateActor 2");
         if (com != null) return com.GetValidVariant(new List<Character_Trainable>() { c }, new List<Character_Trainable>()) >= 0;
-        //Debug.Log("JobFurniture ValidateActor 3");
         foreach (COM com2 in this.ValidCOMs)
         {
             if (com2.GetValidVariant(new List<Character_Trainable>() { c }, new List<Character_Trainable>()) >= 0) return true;//validJob = false;
@@ -212,16 +209,16 @@ public class Job_Furniture : Job
         {
             Manageable.ProductionOrder po = null;
             bool valid = false;
-            //if (!com.hasFactionReq || com.requirements.requireFactionExisting.Validate(FactionOwner) FactionOwner. FactionOwner.GetProductionOrder(this, out var ccc, out po))
-            //{
+            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner) && (!com.isJobCOM || FactionOwner.GetProductionOrder(this, out var xxx, out po))))
+            {
                 var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, po);
                 if (package.Validate() || allowInvalid)
                 {
                     results.Add(package);
                     valid = true;
                 }
-            //}
-            if (com.comTags.Contains("food_meal") && !valid) Debug.LogError($"mealcom {com.ID} failed playerCOM validation, allowinvalid {allowInvalid} hasfactionreq {(!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc2, out po))}");
+            }
+           // if (com.comTags.Contains("food_meal") && !valid) Debug.LogError($"mealcom {com.ID} failed playerCOM validation, allowinvalid {allowInvalid} hasfactionreq {(!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc2, out po))}");
         }
 
         return results;

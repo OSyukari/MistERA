@@ -27,6 +27,7 @@ public class COM_TakeMeal : COM
 
         if (this.requirements.requireFactionExisting == null) this.requirements.requireFactionExisting = new COM_Requirements.RequireFactionExisting();
         this.requirements.requireFactionExisting.inventoryItemBaseID = baseItem.ID;
+        if (!item.isTokenItem) this.requirements.requireFactionExisting.allowInPlayerFaction = false;
 
         //Debug.Log("Initialized TakeMeal COM [" + ID + "] with base COM [" + baseCOM.ID + "] requiring item [" + this.requirements.requireFactionExisting.inventoryItemBaseID + "]");
 

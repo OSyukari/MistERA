@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
-using JetBrains.Annotations;
 
 [System.Serializable]
 public enum AP_Priority
@@ -335,7 +334,7 @@ public abstract class ActionPackage
                     if (c.shouldSleep && c.RefID > 0 && !c.Stats.isSleeping)
                     {
                         //Debug.LogError($"{c.FirstName} is going to sleep");
-                        c.Stats.AddOrModStatus("chara_status_sleeping", c.Stats.SleepHours * 60);
+                        c.Stats.AddOrModStatus("chara_status_sleeping", c.Stats.SleepDepth, c.Stats.SleepHours * 60);
                         //Debug.Log("ADDING SLEEP TO " + c.FirstName);
                     }
                     
@@ -381,7 +380,7 @@ public abstract class ActionPackage
                             if (rc.RefID > 0 && duration == this.targetCOM.TimeScale && targetCOM.comTags.Contains("sleep"))
                             {
                                 Debug.LogError($"{rc.FirstName} is being set to sleep");
-                                rc.Stats.AddOrModStatus("chara_status_sleeping", rc.Stats.SleepHours * 60);
+                                rc.Stats.AddOrModStatus("chara_status_sleeping", rc.Stats.SleepDepth, rc.Stats.SleepHours * 60);
                                 // if (rc.canSleep) 
 
                             }

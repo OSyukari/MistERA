@@ -13,24 +13,25 @@ public class COM_Requirements
     /// <summary>
     /// when flagged as true, do not establish doer-receiver relationship, instead make multiple doer-null relationship
     /// </summary>
-    public bool TreatReceiverAsDoer { get { return requirement.TreatReceiverAsDoer; } }
+    [JsonIgnore] public bool TreatReceiverAsDoer { get { return requirement.TreatReceiverAsDoer; } }
 
     /// <summary>
     /// when flagged as true, AND when there is doer-null relationship, make it into doer-doer.
     /// <br/> does nothing when there is doer-receiver relationship
     /// </summary>
-    public bool TreatDoerAsReceiver { get { return requirement.TreatDoerAsReceiver; } }
+    [JsonIgnore] public bool TreatDoerAsReceiver { get { return requirement.TreatDoerAsReceiver; } }
 
     /// <summary>
     /// when flagged as true, add party member to receivers. Happens before TreatReceiverAsDoer
     /// </summary>
-    public bool AddPartyMemberAsReceiver { get { return requirement.AddPartyMemberAsReceiver; } }
+    [JsonIgnore] public bool AddPartyMemberAsReceiver { get { return requirement.AddPartyMemberAsReceiver; } }
 
     /// <summary>
     /// when flagged as true, add party member to receivers. Happens before TreatDoerAsReceiver
     /// </summary>
-    public bool AddPartyMemberAsDoer { get { return requirement.AddPartyMemberAsDoer; } }
+    [JsonIgnore] public bool AddPartyMemberAsDoer { get { return requirement.AddPartyMemberAsDoer; } }
 
+    [JsonIgnore]
     public bool hasFactionReq
     {
         get
@@ -47,6 +48,7 @@ public class COM_Requirements
     }
 
     public Requirement requirement = new Requirement();
+
     [System.Serializable]
     public class Requirement
     {
@@ -65,16 +67,16 @@ public class COM_Requirements
 
         [SerializeField][JsonProperty] protected bool treatReceiverAsDoer = false;
 
-        public bool TreatReceiverAsDoer { get { return treatReceiverAsDoer; } }
+        [JsonIgnore] public bool TreatReceiverAsDoer { get { return treatReceiverAsDoer; } }
 
         [SerializeField][JsonProperty] protected bool treatDoerAsReceiver = false;
-        public bool TreatDoerAsReceiver { get { return treatDoerAsReceiver; } }
+        [JsonIgnore] public bool TreatDoerAsReceiver { get { return treatDoerAsReceiver; } }
 
-        public bool AddPartyMemberAsReceiver { get { return req_Receivers.addPartyMembers; } }
-        public bool AddPartyMemberAsDoer { get { return req_Doers.addPartyMembers; } }
+        [JsonIgnore] public bool AddPartyMemberAsReceiver { get { return req_Receivers.addPartyMembers; } }
+        [JsonIgnore] public bool AddPartyMemberAsDoer { get { return req_Doers.addPartyMembers; } }
 
-        public List<string> doerBodyTags { get { return req_Doers.BodyTags; } }
-        public List<string> receiverBodyTags { get { return req_Receivers.BodyTags; } }
+        [JsonIgnore] public List<string> doerBodyTags { get { return req_Doers.BodyTags; } }
+        [JsonIgnore] public List<string> receiverBodyTags { get { return req_Receivers.BodyTags; } }
 
         public void Read(Requirement req)
         {
@@ -563,16 +565,21 @@ public class COM_Requirements
 
         // NPC assigned by production order tag.
 
-
+        public bool allowInNonPlayerFaction = true;
+        public bool allowInPlayerFaction = true;
         public string jobKeyword = "";
         public string inventoryItemBaseID = "";
 
         public bool Validate(Manageable m)
         {
             if (jobKeyword != "" && (m == null || !m.ExistOngoingProductionOrder(jobKeyword))) return false;
+
+            if (!allowInNonPlayerFaction && !m.isPlayerFaction) return false;
+            if (!allowInPlayerFaction && m.isPlayerFaction) return false;
+
             if (inventoryItemBaseID != "" && (m == null || m.Inventory.GetItemCount(inventoryItemBaseID) < 1))
             {
-               // Debug.LogError($"validate inventory for {(m == null ? "null" : m.FactionDisplayName)} error, does not contain item {inventoryItemBaseID} or low count {m.Inventory.GetItemCount(inventoryItemBaseID)}");
+                //Debug.LogError($"validate inventory for {(m == null ? "null" : m.FactionDisplayName)} error, does not contain item {inventoryItemBaseID} or low count {m.Inventory.GetItemCount(inventoryItemBaseID)}");
                 return false;
             }
             return true;

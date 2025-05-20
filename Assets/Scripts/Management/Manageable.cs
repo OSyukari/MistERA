@@ -18,6 +18,7 @@ public class Manageable : I_Disposable
 {
     [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }
 
+    public List<int> mealHours = new List<int>();
     [SerializeField][JsonProperty] protected string salesCurrency = "";
     protected Item_Base _currency = null;
     [JsonIgnore] public Item_Base Currency
@@ -499,10 +500,19 @@ public class Manageable : I_Disposable
 
     }
 
+    /// <summary>
+    /// If currenthour is not mealhour, return empty
+    /// </summary>
+    /// <param name="chara"></param>
+    /// <param name="currentHour"></param>
+    /// <param name="s"></param>
+    /// <returns></returns>
     public List<Job_Furniture> GetValidJobs_Meal(Character_Trainable chara, int currentHour, List<string> s = null)
     {
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
+        if (!this.mealHours.Contains(currentHour)) return new List<Job_Furniture>();
+
         if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", "food_meal"))
         {
             ss += " found no valid [food_meal] instances offered by Furnitures";

@@ -1569,8 +1569,8 @@ public class scr_panel_COMmanager : scr_Menu
 
             if (scr_System_CampaignManager.current.CurrentTargetRef < 0) return false;
             //Debug.Log("ButtonValidator_IngestItemDebug looking for bodytag [" + ingestTag + "] baseItem isnull ["+(baseItem == null)+"] hastag ["+ scr_System_CampaignManager.current.FindInstanceByID(scr_System_CampaignManager.current.CurrentTarget).Body.HasBodyTag(new List<string>() { ingestTag }) + "]");
-            return baseItem != null &&
-                scr_System_CampaignManager.current.CurrentTarget.Body.HasBodyTag(new List<string>() { ingestTag });
+            this.tooltip = $"baseItem {(baseItem == null ? "null" : baseItem.DisplayName)}, requiredtag {ingestTag} targethastag? {scr_System_CampaignManager.current.CurrentTarget.Body.HasBodyTag(new List<string>() { ingestTag })}";
+            return baseItem != null && scr_System_CampaignManager.current.CurrentTarget.Body.HasBodyTag(new List<string>() { ingestTag });
         }
 
         public void OnClickButton()
@@ -1835,7 +1835,7 @@ public class scr_panel_COMmanager : scr_Menu
                     break;
                 //case COMTabs.Inventory:
                 //    text.SetText("%%comManager_tab_inventory%%");
-                    break;
+                //    break;
                 default:
                     break;
             }

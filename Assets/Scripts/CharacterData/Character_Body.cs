@@ -245,22 +245,29 @@ public class Character_Body
             Debug.LogError("ConsumeIngestible instance [" + i.DisplayName + "] has null ingest comp");
             return false;
         }
-        else
-        {
 
-            if (bodyTag == "") bodyTag = ingest.ingestMethod.First().bodyTags;
-            if (bodyTag != "")
+        if (bodyTag == "") bodyTag = ingest.ingestMethod.First().bodyTags;
+
+        if (bodyTag != "")
+        {
+            var internals = Internals.FindAll(x => x.canContain && x.hasTag(bodyTag));
+            if (internals.Count < 1)
             {
-                var internals = Internals.FindAll(x => x.canContain && x.hasTag(bodyTag));
-                if (internals.Count < 1)
-                {
-                    Debug.LogError("ConsumeIngestible instance [" + i.DisplayName + "] ingestmethod [" + bodyTag + "] has null internal on " + Owner.FirstName);
-                    return false;
-                }
-                else internals[Utility.GetRandIndexFromListCount(internals.Count)].Ingest(i);
+                Debug.LogError("ConsumeIngestible instance [" + i.DisplayName + "] ingestmethod [" + bodyTag + "] has null internal on " + Owner.FirstName);
+                return false;
+            }
+            else
+            {
+                internals[Utility.GetRandIndexFromListCount(internals.Count)].Ingest(i);
+                if (i.Tags.Contains("food_meal")) Owner.NotifyFoodConsume(i);
+                return true;
             }
         }
-        return true;
+        else
+        {
+            return false;
+        }
+        
     }
 
     public bool HasBodyTag(List<string> list)

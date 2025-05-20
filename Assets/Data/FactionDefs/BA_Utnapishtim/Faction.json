@@ -30,18 +30,9 @@
                             "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
                         },
                         {
-                            "initClass":"campaign_init_factionInventory",
-                            "initArguments":["Utnapishtim", "consumable_emergency_ration", "", "30"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionInventory",
-                            "initArguments":["Utnapishtim", "currency_JPY", "", "20000"]
-                        },
-                        {
                             "initClass":"campaign_init_map_extra",
                             "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
                         }
-                        
                     ]
                 },
                 {
@@ -49,79 +40,59 @@
                     "displayName":"Debug",
                     "tooltip":"Start with extra debug NPC in party",
                     "initializers":[
-                        {
-                            "initClass":"campaign_init_playerNameIDs",
-                            "initArguments":["PLAYER","%%Campaign1_player_firstname%%","%%Campaign1_player_middlename%%","%%Campaign1_player_lastname%%","%%Campaign1_player_nameDisplayFormat%%"]
-                        },
-                        {
-                            "initClass":"campaign_init_playerPortrait",
-                            "initArguments":["{ \"$type\":\"PortraitManager+CharaPortrait_Image, Assembly-CSharp\",\"portrait_offset_size\":1.0 ,\"portrait_offset_x\":-98.792,\"portrait_offset_y\":132.658,\"Variants\":[], \"portrait_path\":\"BlueArchive_Extracted/SchoolIcon/School_Icon_ETC\" }"]
-                        },
-                        {
-                            "initClass":"campaign_init_homefaction",
-                            "initArguments":["Utnapishtim","true", "true"]
-                        },
-                        {
-                            "initClass":"campaign_init_map_root",
-                            "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionInventory",
-                            "initArguments":["Utnapishtim", "consumable_emergency_ration", "", "30"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionInventory",
-                            "initArguments":["Utnapishtim", "currency_JPY", "", "20000"]
-                        },
-                        {
-                            "initClass":"campaign_init_map_extra",
-                            "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
-                        },
+{
+    "initClass":"campaign_init_playerNameIDs",
+    "initArguments":["PLAYER","%%Campaign1_player_firstname%%","%%Campaign1_player_middlename%%","%%Campaign1_player_lastname%%","%%Campaign1_player_nameDisplayFormat%%"]
+},
+{
+    "initClass":"campaign_init_playerPortrait",
+    "initArguments":["{ \"$type\":\"PortraitManager+CharaPortrait_Image, Assembly-CSharp\",\"portrait_offset_size\":1.0 ,\"portrait_offset_x\":-98.792,\"portrait_offset_y\":132.658,\"Variants\":[], \"portrait_path\":\"BlueArchive_Extracted/SchoolIcon/School_Icon_ETC\" }"]
+},
+{
+    "initClass":"campaign_init_homefaction",
+    "initArguments":["Utnapishtim","true", "true"]
+},
+{
+    "initClass":"campaign_init_map_root",
+    "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
+},
 
-                        {
-                            "initClass":"campaign_init_homefaction",
-                            "initArguments":["External","false", "false"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Amelie","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Hiyori","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Olivia","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Elena","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_HalfasOne","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_HalfasThree","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_HalfasTwo","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Rapi","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Anis","External"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Neon","External"]
-                        }
+{
+    "initClass":"campaign_init_map_extra",
+    "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
+},
+{
+    "initClass":"campaign_init_homefaction",
+    "initArguments":["External","false", "false"]
+},
+{
+    "initClass":"campaign_init_factionVisitor",
+    "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Amelie","External"]
+},
+{
+    "initClass":"campaign_init_factionVisitor",
+    "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Hiyori","External"]
+},
+{
+    "initClass":"campaign_init_factionVisitor",
+    "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Olivia","External"]
+},
+{
+    "initClass":"campaign_init_factionVisitor",
+    "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Elena","External"]
+},
+{
+    "initClass":"campaign_init_factionVisitor",
+    "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Rapi","External"]
+},
+{
+    "initClass":"campaign_init_factionVisitor",
+    "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Anis","External"]
+},
+{
+    "initClass":"campaign_init_factionVisitor",
+    "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Neon","External"]
+}
                     ]
                 }
             ]
@@ -315,6 +286,17 @@
                     }
                 ],
                 "salesCurrency":"currency_pyroxene",
+                "mealHours":[6, 12, 18],
+                "initializers":[
+                    {
+                        "initClass":"campaign_init_factionInventory",
+                        "initArguments":["Utnapishtim", "consumable_emergency_ration", "", "30"]
+                    },
+                    {
+                        "initClass":"campaign_init_factionInventory",
+                        "initArguments":["Utnapishtim", "currency_JPY", "", "20000"]
+                    }
+                ],
                 "salesInventory":[
                     { "matchByID":"consumable_10pulls_ticket", "itemCount":1 }
                  ],

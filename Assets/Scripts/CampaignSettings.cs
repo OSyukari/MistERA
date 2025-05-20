@@ -59,12 +59,7 @@ public class CampaignSettings_ExtraOptions
 
 }
 
-[System.Serializable]
-public class CampaignSettings_Initializer
-{
-    public string initClass = "";
-    public List<string> initArguments = new List<string>();
-}
+
 
 [System.Serializable]
 public class Index_CampaignSetting: I_IndexHasID, I_IndexMergeable
