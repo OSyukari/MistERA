@@ -137,6 +137,8 @@ public class StatsManager
             return baseStat_WIL; } }
 
 
+
+
     /// <summary>
     /// Lazy Refresh. Only update whats strictly necessary.
     /// </summary>
@@ -218,7 +220,7 @@ public class StatsManager
     {
         get
         {
-            return this.GetStatusSeverityByStringMatch("chara_status_sleeping") > 0;
+            return this.GetStatusByStringMatch("chara_status_sleeping") != null;
         }
     }
     [JsonIgnore] public float Energy_InteractionCost { get { return -2f; } }
@@ -472,7 +474,7 @@ public class StatsManager
         {
             int time = t.Minutes;
 
-            if (StatusInstances[i].BaseRef.variationMode.variationType == Status_Base.Status_Variation_Type.sex && pauseXMinAfterMod_Sex > 0)
+            if (StatusInstances[i].BaseRef.variationMode.pauseXMinAfterMod > 0)
             {
                 StatusInstances[i].pauseXMinAfterMod += pauseXMinAfterMod_Sex;
             }
@@ -484,47 +486,75 @@ public class StatsManager
             }
 
 
-            if (StatusInstances[i].pauseXMinAfterMod == 0 && time > 0 && StatusInstances[i].BaseRef.variationMode.Decay != 0)
+            if (StatusInstances[i].pauseXMinAfterMod == 0 && time > 0 && StatusInstances[i].Decay != 0)
             {
-                switch (StatusInstances[i].BaseRef.variationMode.variationType)
+                var decay = StatusInstances[i].BaseRef.variationMode.baselineVariation.Decay(Owner, StatusInstances[i].Severity);
+                if (decay != 0)
                 {
-                    case Status_Base.Status_Variation_Type.linear:
-                        refresh = StatusInstances[i].SeverityAdd(StatusInstances[i].BaseRef.variationMode.Decay * time) || refresh;
-                        break;
-                    case Status_Base.Status_Variation_Type.sine:
-                        
-                        //Debug.Log("Sine variation not implemented for status.");
-                        break;
-                    case Status_Base.Status_Variation_Type.sex:
-                        refresh = StatusInstances[i].SeverityAdd(StatusInstances[i].BaseRef.variationMode.Decay * time) || refresh;
-                        break;
-                    default:
-                        break;
-
+                    StatusInstances[i].SeverityAdd(decay * time);
+                    refresh = true;
                 }
             }
 
             var curr = StatusInstances[i];
 
-            if (!StatusInstances[i].BaseRef.constant && StatusInstances[i].SeverityDisplayName == "")
+            if (!curr.BaseRef.constant)
             {   // on status disappear
-                
-            }
+                // special handling
+                if (curr.CanBeRemovedBySeverity && curr.duration > 0)
+                {
+                    if (curr.BaseRef.allowNaturalRemoval)
+                    {
+                        Debug.LogError($"status {curr.ID} severity at 0 while duration still at {curr.duration}");
+                        StatusInstances.RemoveAt(i);
+                    }
+                    else if (curr.BaseRef.statusID == "chara_status_sleeping")
+                    {
+                        // remove sleep special
+                        Owner.Stats.AddOrModStatus("chara_status_sleep_deprived", curr.duration, -1);
+                        Debug.Log($"status {curr.ID} severity at 0 while duration still at {curr.duration}, replacing with chara_status_sleep_deprived");
+                        Owner.WakeUp(false);
+                    }
+                    else
+                    {
+                        // throw error
+                        Debug.LogError($"status {curr.ID} does not allow natural removal but lacking removal handling");
+                    }
 
-            if (!curr.BaseRef.constant && curr.pauseXMinAfterMod == 0 && curr.duration > 0)
-            {   // status tick
-                curr.duration = Math.Max(0, curr.duration - time);
-                if (curr.duration == 0)
-                {   // on status expire
-
-                    Debug.Log($"status {curr.ID} on {Owner.FirstName} expired, removing");
-                    StatusInstances.RemoveAt(i);
                     refresh = true;
-
-                    // if sleep expire, fullrest()
-                    if (curr.BaseRef.statusID == "chara_status_sleeping") Owner.FullRest();
                 }
+                
+                // expired with time, allow removal with no calls
+                else if (curr.pauseXMinAfterMod == 0 && curr.duration > 0)
+                {   // status tick
+                    curr.duration = Math.Max(0, curr.duration - time);
+                    if (curr.duration == 0)
+                    {   // on status expire
+
+                        Debug.Log($"status {curr.ID} on {Owner.FirstName} expired, removing");
+
+                        if (curr.BaseRef.allowNaturalRemoval)
+                        {
+                            StatusInstances.RemoveAt(i);
+                        }
+                        else if (curr.BaseRef.statusID == "chara_status_sleeping")
+                        {
+                            Owner.FullRest();
+                            Owner.WakeUp(false);
+                        }
+                        else
+                        {
+                            Debug.LogError($"status {curr.ID} does not allow natural removal but lacking removal handling");
+                        }
+
+                        refresh = true;
+
+                    }
+                }
+
             }
+
+            
         }
         pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex - t.Minutes, 0);
         if (!hasSexualStimulation) consecutiveClimaxCount = 0;
@@ -654,7 +684,14 @@ public class StatsManager
     {
         List<Status_Instance> removelist = this.StatusInstances.FindAll(x => x.ID.Contains(s));
 
-        foreach (Status_Instance status in removelist) StatusInstances.Remove(status);
+        bool update = false;
+        foreach (Status_Instance status in removelist)
+        {
+            StatusInstances.Remove(status);
+            update = true;
+        }
+
+        if (update) UpdateStatus();
 
     }
 
@@ -667,12 +704,12 @@ public class StatsManager
         if (instance != null)
         {
 
-            if (instance.BaseRef.variationMode.variationType == Status_Base.Status_Variation_Type.sex)
+            if (instance.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
             {
                 if (AfterClimax != null && AfterClimax.Severity < 0)
                 {
                     //Debug.LogError("MATH MIN ["+Math.Abs(afterClimax.Severity).ToString()+"] ["+ modSeverity.ToString() + "]");
-                    AfterClimax.SeverityAdd(Math.Min(Math.Abs(AfterClimax.Severity), modSeverity));
+                    AfterClimax.SeverityAdd(Math.Min(Math.Abs(AfterClimax.Severity), modSeverity), severityCap);
                     pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex, 1);
 
                     //if (modSeverity> 0) AddOrModStatus(s, Math.Min(Math.Abs(afterClimax.Severity)) modSeverity - difference, modDuration);
@@ -685,26 +722,16 @@ public class StatsManager
                 //Debug.LogError("SETTING CURRENTLYCLIMAXED TO TRUE");
                 //if (currentlyClimaxed == 0) currentlyClimaxed = 2;
                 //else currentlyClimaxed += 1;
-                if (Climaxing.Severity < 1) Climaxing.SeverityAdd(2);
-                else Climaxing.SeverityAdd(1);
+                if (Climaxing.Severity < 1) Climaxing.SeverityAdd(2, severityCap);
+                else Climaxing.SeverityAdd(1, severityCap);
             }
 
             //Debug.LogError("Stimulating status " + s + " with severityCap at " + severityCap);
-            if ((!(severityCap > -1f)) || ((instance.Severity + modSeverity) < severityCap)) instance.SeverityAdd(modSeverity);
-            else if (severityCap > -1f && instance.Severity < severityCap)
-            {
-                instance.FlagMaxed();
-                instance.SeverityAdd(severityCap - instance.Severity);
-            }
-            else if (severityCap > -1f && instance.Severity >= severityCap) instance.FlagMaxed();
-
-                //instance.SeverityAdd(Math.Min(modSeverity, severityCap - instance.Severity));
-
-
+            instance.SeverityAdd(modSeverity, severityCap);
 
             if (instance.duration != -1) instance.duration += modDuration;
             instance.pauseXMinAfterMod = instance.BaseRef.variationMode.pauseXMinAfterMod;
-            if (instance.BaseRef.variationMode.variationType == Status_Base.Status_Variation_Type.sex)
+            if (instance.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
             {
                 pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex, instance.BaseRef.variationMode.pauseXMinAfterMod);
                 //foreach (var inst in instances) if (inst.BaseRef.variationMode.variationType == Status_Base.Status_Variation_Type.sex) inst.pauseXMinAfterMod = inst.BaseRef.variationMode.pauseXMinAfterMod;
@@ -719,8 +746,18 @@ public class StatsManager
 
     private void UpdateStatus()
     {
+        //bool previouslyConscious = isConsciousnessUnconscious;
+
         this.modifiers_temporary.Clear();
-        foreach (var i in statusInstancesEx) i.ClearCache();
+        foreach (var i in statusInstancesEx) i.ClearCache(true);
+
+        RefreshAllStats();
+        /*
+        if (previouslyConscious && !isConsciousnessUnconscious)
+        {
+            Debug.Log($"Characte {Owner.FirstName} is no longer unconscious, queueing wakeup event");
+            Owner.WakeupPrep();
+        }*/
     }
 
     protected void AddStatus(string s, float initialSeverity = 0f, int durationMinute = -1)
@@ -731,7 +768,7 @@ public class StatsManager
             Status_Instance si = target.Instantiate(ownerRefID, initialSeverity, durationMinute);
             this.StatusInstances.Add(si);
 
-            if (si.BaseRef.variationMode.variationType == Status_Base.Status_Variation_Type.sex) foreach (var inst in StatusInstances) if (inst.BaseRef.variationMode.variationType == Status_Base.Status_Variation_Type.sex) inst.pauseXMinAfterMod = inst.BaseRef.variationMode.pauseXMinAfterMod;
+            if (si.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex) foreach (var inst in StatusInstances) if (inst.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex) inst.pauseXMinAfterMod = inst.BaseRef.variationMode.pauseXMinAfterMod;
         }
         else Debug.LogError("AddStatus Failed cuz target status ["+s+"] unfound");
     }

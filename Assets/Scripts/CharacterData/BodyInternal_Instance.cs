@@ -28,6 +28,8 @@ public class BodyInternal_Instance
     [SerializeField][JsonProperty] protected long firstExperience = 0, lastExperience = 0;
     [SerializeField][JsonProperty] protected string firstExpDesc = "", lastExpDesc = "";
 
+    [JsonIgnore] public string FirstExperienceDesc { get { return this.firstExpDesc; } }
+
     Memory_Entry cache_firstEXP = null, cache_lastEXP = null;
     [JsonIgnore] public Memory_Entry FirstExperience { get
         {
@@ -51,26 +53,29 @@ public class BodyInternal_Instance
         }
     }
 
-    public void NotifySexExperience(int targetRef, string targetName, string com, List<string> ownerTags, List<string> comtags, List<string> targetBodyTag = null, string description = "")
+    public bool NotifySexExperience(string targetName, string comName, List<string> comtags, List<string> targetBodyTag)
     {
         //if (date == "") date = scr_System_Time.current.getCurrentTime().ToLongTimeString();
         comtags.Add("mergeWithAll");
-        Owner.Memory.AddEntry_Custom(ownerTags, comtags, targetRef, false, null, Memory_Attitude.None, Memory_Response.None);
+        //Owner.Memory.AddEntry_Custom(ownerTags, comtags, targetRef, false, null, Memory_Attitude.None, Memory_Response.None);
+       // Owner.Memory.AddEntry_COM(ownerTags, comtags, targetRef, comBase, variantID, false, description, response, attitude);
         //var tempString = description + " Lost " + DisplayName + " virginity in " + com + " with " + targetName;
         this.lastExperience = Owner.Memory.Last.StartTime.Ticks;
-        this.lastExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", com); ;
+        this.lastExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName); ;
 
     
         if (this.firstExperience == 0 && this.Base.firstExperienceDesc != "" && (targetBodyTag != null && Utility.ListContainsLoose(targetBodyTag, this.Base.virginityLossTags) || Utility.ListContainsLoose(comtags, this.Base.virginityLossTags)))
         {
             this.firstExperience = lastExperience;
-            this.firstExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", com).Replace("$partname$", this.DisplayName);
+            this.firstExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
             //     description + " Lost " + DisplayName + " virginity in " + com + " with " + targetName; 
-            ownerTags.Add("important");
-            Owner.Memory.AddEntry_Custom(ownerTags, comtags, targetRef, false, firstExpDesc, Memory_Attitude.None, Memory_Response.None);
+            // Owner.Memory.AddEntry_Custom(ownerTags, comtags, targetRef, false, firstExpDesc, Memory_Attitude.None, Memory_Response.None);
+            //Owner.Memory.AddEntry_COM(ownerTags, comtags, targetRef, comBase, variantID, false, firstExpDesc, response, attitude);
+            return true;
         }
         else
         {
+            return false;
             //Debug.LogError("Checking virginity loss with tags [" + String.Join(",", ownerTags) + "][" + String.Join(",", comtags) + "] with baseTags [" + String.Join(",", this.Base.virginityLossTags) + "]");
         }
     }
@@ -540,7 +545,7 @@ public class BodyInternal_Instance
         var tags = new List<string>();
         tags.AddRange(this.Base.tags);
         if (extra != null) tags.AddRange(extra);
-        if (Owner.Body.Climax) tags.Add("climax");
+        if (Owner.Body.isClimaxing(false)) tags.Add("climax");
         if (this.Sensitivity != "") tags.Add(this.Sensitivity);
         Owner.Skills.CheckExperienceGain(tags, amount, m);
     }

@@ -164,7 +164,7 @@ public class ActionPackage_PathTo : ActionPackage
     /// Does not require EP, thus overwrite.
     /// </summary>
     /// <returns></returns>
-    protected override bool Request()
+    protected override bool Request(bool rebuildPackage = true)
     {
         return isValid;
     }

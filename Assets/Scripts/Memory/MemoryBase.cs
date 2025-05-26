@@ -48,8 +48,10 @@ public class Memory_Entry
         this.endTime = endTime;
     }
 
+    [JsonIgnore]
+    public bool Conscious { get { return !this.selfTags.Contains("unconscious"); } }
     [JsonIgnore] public bool isSexMemory { get { return this.Tags.Contains("sex"); } }
-    [JsonIgnore] public bool isSexTouchMemory { get { return !isSexMemory && this.Tags.Contains("service"); } }
+    [JsonIgnore] public bool isSexTouchMemory { get { return !isSexMemory && ( this.Tags.Contains("service") || this.Tags.Contains("unsafe") ); } }
     [JsonIgnore] public bool isTouchMemory { get { return !isSexTouchMemory && this.Tags.Contains("touch") ; } }
 
     [JsonIgnore] public bool isOnlyRefuseMemory { get { return this.interactions.Find(x => x.response != Memory_Response.Refuse) == null; } }
@@ -134,6 +136,11 @@ public class Memory_Entry
     [JsonIgnore] public List<string> Description { get { return description; } }
 
 
+    public void AddDescription(string desc, string extraTag)
+    {
+
+    }
+
     [SerializeField][JsonProperty] protected int duration;
     [JsonIgnore] public int Duration { get { return duration; } }
 
@@ -180,7 +187,8 @@ public class Memory_Entry
         if (!isEvaluationCached) EvaluateAll();
         else EvaluateSingle(Owner, newInst, ref cache_score, ref cache_acceptCount, ref cache_refuseCount);
 
-        this.description.AddRange(description);
+        description.RemoveAll(x => x.Length < 1);
+        if (description.Count > 0) this.description.AddRange(description);
         this.duration = duration;
         this.roomName = roomName;
 
@@ -232,7 +240,7 @@ public class Memory_Entry
                 break;
             }
         }
-        if (!merged)this.interactions.Add(newInst);
+        if (!merged) this.interactions.Add(newInst);
 
         // clear tags cache, check new tag summation, filter conflict, and re-clear cache
 
@@ -245,7 +253,7 @@ public class Memory_Entry
         
         string[] descSplit = description == null ? null : description.Split("||");
         if (descSplit == null) { }
-        else if (descSplit.Length < 2 && !this.description.Contains(description)) this.description.Add(description);
+        else if (descSplit.Length < 2 && !this.description.Contains(description) && description.Length > 0) this.description.Add(description);
         else
         {
             string s = "Merging Memory Description";
@@ -271,19 +279,19 @@ public class Memory_Entry
                             //break;
                         }
                     }
-                    this.description.Add(newString);
+                    if (newString.Length >= 1) this.description.Add(newString);
                     s+="\nOriginal: " + target + "\nTarget: " + description + "\nResult: " + newString;
                 }
                 else
                 {
                     s += "\nBoth desciption does not have identical split length, adding directly";
-                    this.description.Add(description);
+                    if (description.Length >= 1) this.description.Add(description);
                 }
             }
             else
             {
                 s += "\nNo repeat found, adding directly";
-                this.description.Add(description);
+                if (description.Length >= 1) this.description.Add(description);
             }
             //Debug.LogError(s);
         }
@@ -461,6 +469,7 @@ public class Memory_Entry
         {
             foreach(var ss in description)
             {
+                if (ss.Length < 1) continue;
                 var ssplit = ss.Split("||");
                 if (ssplit.Length < 1) continue;
                 if (ssplit.Length < 2) s += "\n" + ss;
@@ -568,6 +577,7 @@ public class Memory_Entry
             this.isDoer = isDoer;
             this.attitude = attitude == Memory_Attitude.None ? (int)Memory_Attitude.Neutral : (int) attitude;
             this.response = response;
+            //Debug.LogError($"new MemInstance, [{String.Join("|", this.targets)}] [{comID}] [{comVariantID}] [{masterRef}] [{isDoer}] [{this.attitude}] [{this.response}]");
         }
 
         public bool TryMergeWith(in MemInstance mem)

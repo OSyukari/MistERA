@@ -137,7 +137,7 @@
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "conditions":[ { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
                             "texts":[ "$doer.firstname$在射精的瞬间狠狠地按住了$receiver.firstname$的头" ]
                         },
                         {

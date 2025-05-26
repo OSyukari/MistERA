@@ -290,7 +290,7 @@ public class Manageable : I_Disposable
         this.DailyReport.FinalizeReport();
     }
 
-    public Inventory Inventory;
+    public FactionInventory Inventory;
     public List<ProductionOrder> ProductionOrders = new List<ProductionOrder>();
     public List<TradeOrder> TradeOrders = new List<TradeOrder>();
 
@@ -308,7 +308,7 @@ public class Manageable : I_Disposable
         this.managedRoomRefs = new Dictionary<int, List<int>>();
         charaSchedules = new Dictionary<int, Job_Schedule>();
         charaGuestStatus = new Dictionary<int, Manageable_GuestStatus>();
-        this.Inventory = new Inventory(this);
+        this.Inventory = new FactionInventory(this);
     }
 
     string socialStatus_manager, socialStatus_member, socialStatus_visitor, socialStatus_prisoner, socialStatus_baseString;
@@ -1651,9 +1651,9 @@ public class Manageable : I_Disposable
             warning = "";
             if (TargetFaction == null) return false;
 
-            Inventory recycler = scr_System_CampaignManager.current.Recycler;
-            Inventory self = FactionOwner.isPlayerFaction ? FactionOwner.Inventory : recycler;
-            Inventory target = TargetFaction.isPlayerFaction && TargetFaction != FactionOwner ? TargetFaction.Inventory : recycler;
+            FactionInventory recycler = scr_System_CampaignManager.current.Recycler;
+            FactionInventory self = FactionOwner.isPlayerFaction ? FactionOwner.Inventory : recycler;
+            FactionInventory target = TargetFaction.isPlayerFaction && TargetFaction != FactionOwner ? TargetFaction.Inventory : recycler;
 
             //if (self == target) return true;
             var cc = Count;
@@ -1764,7 +1764,7 @@ public class Manageable : I_Disposable
         }
 
         public ProductionOrderType orderType = ProductionOrderType.craftCount;
-        public ProductionOrder(Manageable factionOwner, ref ItemComponentTemplate_Craftable_Recipe recipe, ref Inventory inv, int count, ProductionOrderType orderType, int CurrentProgress = 0)
+        public ProductionOrder(Manageable factionOwner, ref ItemComponentTemplate_Craftable_Recipe recipe, ref FactionInventory inv, int count, ProductionOrderType orderType, int CurrentProgress = 0)
         {
             this.recipeID = recipe.RecipeUID;
             this.recipe_cache = recipe;

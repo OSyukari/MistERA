@@ -41,7 +41,7 @@ public class EventManager
             // check chara satisfy event self condition
             if (!i.SelfValidator.isCharaValid(chara)) continue;
            // Debug.Log($"Trigger {trigger} on {chara.FirstName} trying event {i.ID}");
-            var newinstance = new EventInstance(chara, false, i.ID, "");
+            var newinstance = new EventInstance(chara, i.ID, "");
             if ( !newinstance.isValid) continue;
             // if condition satisfy, launch event
 #if UNITY_EDITOR
@@ -60,12 +60,16 @@ public class EventManager
             return _cnManager;
         } }
 
-    public void StartEvent(Character_Trainable target, string eventID, string label)
+    public void StartEvent(Character_Trainable target, string eventID, string label, bool startImmediate)
     {
-        var newEvent = new EventInstance(target, true, eventID, label);
+        var newEvent = new EventInstance(target, eventID, label);
         //newEvent.LoadNext(true, eventID, label);
         this.activeEvents.Add(newEvent);
-        Run();
+        if (startImmediate)
+        {
+            //ev.Start();
+            Run();
+        }
     }
 
     public void StartEvent(EventInstance ev, bool startImmediate)
@@ -78,10 +82,21 @@ public class EventManager
         }
     }
 
-    public void Run(bool resumeWaiting = false, bool ignoreUpdate = false)
+    int loopCounter = 50;
+
+    public void Run (bool resumeWaiting = false, bool ignoreUpdate = false)
     {
         // forbid run if updating
         var activeEV = this.activeEvents.Count > 0 ? this.activeEvents[0] : null;
+        //Debug.LogError("Eventmanager run");
+
+        if (ignoreUpdate) loopCounter = 50;
+        else if (loopCounter < 1) 
+        { 
+            Debug.LogError("loopcounter exhausted, force exit");
+            return;
+        }
+        else loopCounter -= 1;
 
         if (!updateHandler.Updating || ignoreUpdate)
         {
@@ -90,6 +105,7 @@ public class EventManager
 #endif
             while (activeEV != null && (activeEV.Status == EventStatus.running || activeEV.Status == EventStatus.waiting && resumeWaiting))
             {
+                loopCounter -= 1;
 #if UNITY_EDITOR
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"activeEV run! {activeEV.Status}");
 #endif
@@ -97,9 +113,12 @@ public class EventManager
             }
             if (activeEV != null && activeEV.Status < EventStatus.waiting)
             {
-                activeEvents.RemoveAt(0);
-                while (this.activeEvents.Count > 0 && !this.activeEvents[0].Validate()) activeEvents.RemoveAt(0);
-
+                var first = true;
+                while (this.activeEvents.Count > 0 && (first || !this.activeEvents[0].Validate()))
+                {
+                    first = false;
+                    activeEvents.RemoveAt(0);
+                }
                 if(this.activeEvents.Count > 0) Run(); // run next
                 else if (updateHandler.halted) updateHandler.StartUpdate(true);
             }

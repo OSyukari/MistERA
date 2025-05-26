@@ -178,6 +178,16 @@
                         }
                     ]
                 },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{"target":"receiver", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "即将射精的$receiver.firstname$将肉棒狠狠顶入了$doer.firstname$的体内" ]
+                        }
+                    ]
+                },
                 "description_begin":
                 {
                     "Entries":[ 

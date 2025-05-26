@@ -20,6 +20,16 @@
                 "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 C抚摸口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 C抚摸口上文" ]
+            },
             {
                 "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":[ "($self$) 玩家专用 C抚摸口上文" ]
@@ -36,6 +46,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 A抚摸口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 A抚摸口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 A抚摸口上文"]
             },
@@ -50,6 +70,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 B抚摸口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 B抚摸口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 B抚摸口上文"]
@@ -66,6 +96,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 A指入口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 A指入口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 A指入口上文"]
             },
@@ -80,6 +120,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 V指入口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 V指入口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 V指入口上文"]
@@ -96,6 +146,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 手淫口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 手淫口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 手淫口上文"]
             },
@@ -110,6 +170,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 乳交口交口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 乳交口交口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 乳交口交口上文"]
@@ -126,6 +196,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 乳交口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 乳交口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 乳交口上文"]
             },
@@ -140,6 +220,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 腿按压阴部口上文" ]
+            },
+            {   "requirements": [ { "requireSelfAction":false, "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireSelfAction":false, "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 腿按压阴部口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 腿按压阴部口上文"]
@@ -156,6 +246,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 足交口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 足交口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 足交口上文"]
             },
@@ -170,6 +270,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 舔肛口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 舔肛口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 舔肛口上文"]
@@ -186,6 +296,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 舔乳头口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 舔乳头口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 舔乳头口上文"]
             },
@@ -200,6 +320,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 亲吻口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 亲吻口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 亲吻口上文"]
@@ -216,6 +346,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 强制口交口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 强制口交口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 强制口交口上文"]
             },
@@ -230,6 +370,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 口交口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 口交口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 口交口上文"]
@@ -246,6 +396,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 舔睾丸口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 舔睾丸口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 舔睾丸口上文"]
             },
@@ -260,6 +420,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 舔阴口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 舔阴口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 舔阴口上文"]
@@ -276,6 +446,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 骑乘位素股口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 骑乘位素股口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 骑乘位素股口上文"]
             },
@@ -290,6 +470,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 素股口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 素股口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 素股口上文"]
@@ -306,6 +496,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 骑乘位A口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 骑乘位A口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 骑乘位A口上文"]
             },
@@ -320,6 +520,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 骑乘位V口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 骑乘位V口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 骑乘位V口上文"]
@@ -336,6 +546,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 后背位A口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 后背位A口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 后背位A口上文"]
             },
@@ -350,6 +570,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 后背位V口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 后背位V口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 后背位V口上文"]
@@ -366,6 +596,16 @@
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 正面位A口上文" ]
             },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 正面位A口上文" ]
+            },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 正面位A口上文"]
             },
@@ -380,6 +620,16 @@
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) 时停中 正面位V口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 正面位V口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
                 "responses":["($self$) 玩家专用 正面位V口上文"]
@@ -853,10 +1103,62 @@
         ]
     },
     {
+        "ID":"DisruptSleep",
+        "_comment":"this event fire when character could be disrupted in sleep. this will be called when (1, there is direct interaction) (2, no direct interaction but self is light sleep)",
+        "debugLogging":true,
+        "variants":
+        [
+            {
+                "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping", "pain"],
+                                    "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"gte", "value":1.9 } } ],
+                "responses":[ "<color=#373737>($self$) 熟睡中的$self$被$epDescription$造成的痛楚干扰到</color>" ],
+                "results":[ { "modifyStatusValue":{ "statusID":"chara_status_sleeping","value":-0.1 } } ]
+            },
+            {
+                "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping"],
+                                    "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"gte", "value":1.9 } } ],
+                "responses":[ "<color=#373737>($self$) 熟睡中的$self$对$epDescription$没有任何反应</color>" ]
+            },     
+            {
+                "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping", "pain"],
+                                    "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"gte", "value":0.9 } } ],
+                "responses":[ "<color=#373737>($self$) 睡梦中的$self$被$epDescription$造成的痛楚干扰到</color>" ],
+                "results":[ { "modifyStatusValue":{ "statusID":"chara_status_sleeping","value":-0.2 } } ]
+            },       
+            {
+                "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping"], "targetTags":["sex","penetration"],
+                                    "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"gte", "value":0.9 } } ],
+                "responses":[ "<color=#373737>($self$) 睡梦中的$self$貌似感觉到了$epDescription$，interrupt判定</color>" ],
+                "results":[ { "modifyStatusValue":{ "statusID":"chara_status_sleeping","value":-0.1 } } ]
+            },
+            {
+                "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping"],
+                                    "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"gte", "value":0.9 } } ],
+                "responses":[ "<color=#373737>($self$) 睡梦中的$self$对$epDescription$没有任何反应</color>" ]
+            },   
+            {
+                "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping", "pain"] } ],
+                "responses":[ "<color=#373737>($self$) 浅眠中的$self$被$epDescription$造成的痛楚干扰到</color>" ],
+                "results":[ { "modifyStatusValue":{ "statusID":"chara_status_sleeping","value":-0.3 } } ]
+            },
+            {
+                "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping"] } ],
+                "responses":[ "<color=#373737>($self$) 浅眠中的$self$被$epDescription$的动静干扰到</color>" ],
+                "results":[ { "modifyStatusValue":{ "statusID":"chara_status_sleeping","value":-0.1 } } ]
+            }
+        ]
+    },
+    {
         "ID": "Interrupt",
         "_comment":"Event trigger. Fires when anyone else executes AP in same room, check if Self action should be modified",
         "interruptSelfJob":true,
         "variants":[
+            {
+                "_comment":"this variant triggers when a chara is doing something in same room as sleeping character but the action does not include sleeping chara. For direct disruption, its hardcoded.",
+                "requirements": [ { "requireSelfAction":false, "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"lte", "value":0.9 } } ],
+                "selfEventCall":"DisruptSleep",
+                "keepLooking":true
+            },
             {
                 "requirements": [ { "requireTargetAction":false, "targetTags":["service"] } ],
                 "hideWhenNotFocused":false,

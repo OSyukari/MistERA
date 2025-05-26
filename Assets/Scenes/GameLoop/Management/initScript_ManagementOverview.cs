@@ -10,6 +10,7 @@ public class initScript_ManagementOverview : MonoBehaviour
     public TMP_Text dailyReport;
     public RectTransform linkedFactionGrid;
     public TMP_Text prefab_factionEntry;
+    public TMP_Text factionTimings;
 
 
     string factionPop, factionRes, factionPopTooltip;
@@ -118,6 +119,7 @@ public class initScript_ManagementOverview : MonoBehaviour
             }
         }
 
+        factionTimings.text = $"sleep time {(m is Manageable_HomeFaction ? (m as Manageable_HomeFaction).SharedSleepHour : "none")}, meal time [{String.Join("|",m.mealHours)}]";
 
         //foreach (KeyValuePair<string, int> kvp in targetFaction.GetMaintenanceCost_Total) values.Add(kvp.Key + kvp.Value.ToString("+0;-#"));
         factionResource.text = factionRes.Replace("$resources$", String.Join(" | ", values));  // targetFaction.GetMaintenanceCost_Total

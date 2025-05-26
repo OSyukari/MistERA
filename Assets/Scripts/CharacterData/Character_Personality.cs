@@ -176,6 +176,7 @@ public class Character_Personality
         public List<Variant> variants = new List<Variant>();
         public bool interruptSelfJob = false;
         public bool interruptTargetJob = false;
+        public bool debugLogging = false;
 
         public bool Validate(Character_Trainable owner, Character_Trainable target = null)
         {
@@ -188,7 +189,7 @@ public class Character_Personality
         {
             if (!Validate(rel.Owner, rel.Target)) return "";
 
-            if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Validating kojoResponse ["+ID+"] req [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
+            if (debugLogging || scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Validating kojoResponse ["+ID+"] req [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
 
 
 
@@ -228,8 +229,7 @@ public class Character_Personality
                     {
                         isValid = true;
                         var v = i.GetRandomResponse(relDoer, selfTags, ep.DoerTargetTag, ep, true);
-                        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("finding epdescription "+v+", replace with "+ep.Description_Ongoing);
-                        v = v.Replace("$epDescription$", ep.Description_Ongoing);
+                        //if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("finding epdescription "+v+", replace with "+ep.Description_Ongoing);
                         responses.Add(v);
                         break;
                     }
@@ -237,8 +237,7 @@ public class Character_Personality
                     {
                         isValid = true;
                         var v = i.GetRandomResponse(relReceiver, selfTags, ep.ReceiverTargetTag, ep, true);
-                        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("finding epdescription "+v+", replace with "+ep.Description_Ongoing);
-                        v = v.Replace("$epDescription$", ep.Description_Ongoing);
+                        //if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("finding epdescription "+v+", replace with "+ep.Description_Ongoing);
                         responses.Add(v);
                         break;
                     }
@@ -354,6 +353,7 @@ public class Character_Personality
 
                 var result = scr_System_Serializer.current.Dictionary.QueryThenParse(responses[Utility.GetRandIndexFromListCount(responses.Count)]);
                 result = result.Replace("$self$", rel.Owner.FirstName);
+                if (ep != null) result = result.Replace("$epDescription$", ep.Description_Ongoing);
                 returnV.Add(result);
                 returnV.RemoveAll(x => x == "");
 
@@ -393,10 +393,18 @@ public class Character_Personality
                 public string targetBaseID = "";
                 public bool requireSelfAction = true;
                 public bool requireTargetAction = true;
+                public bool requireEPSuccess = true;
+                /// <summary>
+                /// requireEPFailure takes priority over requireEPSuccess, and both conditions are mutually exclusive.
+                /// if require failure, then success is ignored
+                /// require success only valid when not requiring failure
+                /// </summary>
+                public bool requireEPFailure = false;
                 public List<string> selfTags = new List<string>();
                 public List<string> targetTags = new List<string>();
                 public int variantID = -1;
                 public RequireKojoVariable requireKojoVariable = new RequireKojoVariable();
+                public RequireStatusValue requireSelfStatusValue = new RequireStatusValue();
 
 
                 public bool Validate(RelationshipManager.Character_Relationship rel, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
@@ -433,7 +441,17 @@ public class Character_Personality
                 {
                     if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Validating kojo req [" + (self == null?"null":self.FirstName) + "->" + (target == null ? "null":target.FirstName) + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
 
-                    if (this.targetBaseID != "" && (target == null || target.BaseID != this.targetBaseID)) return false;
+                    if (ep != null)
+                    {
+                        if (requireEPFailure && ep.Response > Memory_Response.Refuse) return false;
+                        else if (!requireEPFailure && requireEPSuccess && ep.Response < Memory_Response.Accept) return false;
+                    }
+                    if (this.targetBaseID != "")
+                    {
+                        if (target == null) return false;
+                        else if (targetBaseID == "PLAYER" && target != scr_System_CampaignManager.current.Player) return false;
+                        else if (targetBaseID != "PLAYER" && target.BaseID != this.targetBaseID) return false;
+                    }    
                     if (requireSelfAction && (self == null || !self.canAct)) return false;
                     if (requireTargetAction && (target == null || !target.canAct)) return false;
                     //if (selfTags.Count < this.selfTags.Count) return false;
@@ -442,12 +460,29 @@ public class Character_Personality
                     if (this.targetTags.Count > 0 && !Utility.ListContainsStrict(targetTags, this.targetTags)) return false;
                     if (this.variantID > -1 && (ep == null || ep.VariantID != this.variantID)) return false;
                     if (this.requireKojoVariable != null && this.requireKojoVariable.isValid && rel != null && !this.requireKojoVariable.Validate(rel)) return false;
+                    if (this.requireSelfStatusValue != null && this.requireSelfStatusValue.isValid && rel != null && !this.requireSelfStatusValue.Validate(rel.Owner)) return false;
                     return true;
 
                 }
                 public bool Validate(RelationshipManager.Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
                 {
                     return Validate(rel.Owner, rel.Target, selfTags, targetTags, ep, rel); 
+                }
+
+                [System.Serializable]
+                public class RequireStatusValue
+                {
+                    public string statusID = "";
+                    public bool checkExistOnly = false;
+                    public LogicalOperand operand = LogicalOperand.none;
+                    public float value = 0;
+                    [JsonIgnore] public bool isValid { get { return this.statusID != "" && (checkExistOnly || operand != LogicalOperand.none); } }
+                    public bool Validate(Character_Trainable chara)
+                    {
+                        var status = chara.Stats.GetStatusByStringMatch(statusID);
+                        if (checkExistOnly) return status != null;
+                        else return status != null && Utility.CompareValue(chara.Stats.GetStatusByStringMatch(statusID).Severity, operand, value);
+                    }
                 }
 
                 [System.Serializable]
@@ -474,9 +509,40 @@ public class Character_Personality
             {   // mainly use to manipulate kojo variables
 
                 public ModKojoVariable modifyKojoVariables = new ModKojoVariable();
+                public EventInitializer launchEvent = new EventInitializer();
+                public ModStatusValue modifyStatusValue = new ModStatusValue();
                 public void Execute(RelationshipManager.Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep = null)
                 {
                     if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel);
+                    if (this.launchEvent != null && this.launchEvent.isValid) launchEvent.Execute(rel.Owner);
+                    if (modifyStatusValue != null && modifyStatusValue.isValid) modifyStatusValue.Execute(rel.Owner);
+                }
+
+                [System.Serializable]
+                public class ModStatusValue
+                {
+                    public string statusID = "";
+                    public float value = 0;
+                    [JsonIgnore] public bool isValid { get { return this.statusID != "" && value != 0; } }
+                    public void Execute(Character_Trainable chara)
+                    {
+                        chara.Stats.AddOrModStatus(statusID, value);
+                    }
+
+                }
+
+                [System.Serializable]
+                public class EventInitializer
+                {
+                    public string eventID = "";
+                    public string eventLabel = "";
+
+                    [JsonIgnore] public bool isValid { get { return this.eventID != ""; } }
+
+                    public void Execute(Character_Trainable chara)
+                    {
+                        scr_UpdateHandler.current.EventHandler.StartEvent(chara, eventID, eventLabel, false);
+                    }
                 }
 
                 [System.Serializable]

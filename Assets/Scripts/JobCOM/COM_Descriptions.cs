@@ -81,6 +81,7 @@ public class COM_Descriptions
             public class Validator_Chara
             {
                 public string target = "";
+                public string evpTag = "";
                 public string statID = "";
                 public string operand = "";
                 public string value = "";

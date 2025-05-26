@@ -90,12 +90,14 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     {
         consoleCount = 0;
         consoleInput.ActivateInputField();
-        var target = scr_System_CampaignManager.current.CurrentTarget;
+        CurrentTarget = scr_System_CampaignManager.current.CurrentTarget;
         var room = scr_System_CampaignManager.current.CurrentRoom;
-        targetName.SetText("CurrentTarget: " + (target == null ? "null" : target.RefID + " " + target.FullName));
-        targetCurrentJob.SetText("CurrentJob: " + (target.CurrentJob == null ? "null" : target.CurrentJob.RefID + " " + target.CurrentJob.DisplayName + " " + (target.CurrentJob.ParentRoom == null ? "nullRoom" : target.CurrentJob.ParentRoom.RefID + " " + target.CurrentJob.ParentRoom.DisplayName)));
+        targetName.SetText("CurrentTarget: " + (CurrentTarget == null ? "null" : CurrentTarget.RefID + " " + CurrentTarget.FullName));
+        targetCurrentJob.SetText("CurrentJob: " + (CurrentTarget.CurrentJob == null ? "null" : CurrentTarget.CurrentJob.RefID + " " + CurrentTarget.CurrentJob.DisplayName + " " + (CurrentTarget.CurrentJob.ParentRoom == null ? "nullRoom" : CurrentTarget.CurrentJob.ParentRoom.RefID + " " + CurrentTarget.CurrentJob.ParentRoom.DisplayName)));
         currentRoom.SetText("CurrentRoom: " + (room == null ? "null" : room.RefID + " " + room.DisplayName));
     }
+
+    [SerializeField] public Character_Trainable CurrentTarget = null;
 
     protected override void Start()
     {

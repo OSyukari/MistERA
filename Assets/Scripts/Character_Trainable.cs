@@ -137,6 +137,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     // temporary inventory for unequipped items
     public List<int> inventory_ref = new List<int>();
+    public CharacterInventory Inventory = new CharacterInventory();
 
     [JsonIgnore] public bool CanActInTimeStop { get { return this.RefID == 0; } }
     [JsonIgnore] public bool isTimeStopped { get { return scr_System_Time.current.TimeStop && !CanActInTimeStop; } }
@@ -223,8 +224,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         return false;
     }
 
+    protected bool queuedWakeup = false;
+
     private void PreUpdateTime()
     {
+        queuedWakeup = false;
         this._cachedJobDescription = "";
         Body.ClearLastInteractedRefs();
     }
@@ -257,7 +261,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
             case "isCumReady":  // check if chara is currently over cum threshold
                 Debug.Log(FirstName + " Comparevalue isCumReady [" + (Stats.SexStimulation.Severity >= Stats.CumThreshold) + "] [" + operand + "] [" + value + "]");
-                return Utility.CompareValue(Stats.SexStimulation.Severity >= Stats.CumThreshold, operand, value);
+                return Utility.CompareValue(Body.isClimaxing(true), operand, value);
 
             case "isFatigued":  // check if chara can act but currently low on stamina
                 return false;
@@ -291,7 +295,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     private void Observer_GlobalHour(TimeSpan t)
     {
         //Debug.Log("Character Observer_GlobalHour for [" + FirstName + "]");
-        if (Stats.GetStatusSeverityByStringMatch("chara_status_sleeping") > 0)
+        //if (Stats.GetStatusSeverityByStringMatch("chara_status_sleeping") > 0)
+        if (Stats.isConsciousnessUnconscious)
         {
             lastSleepHour = scr_System_Time.current.getCurrentTime().Hour;
 
@@ -913,6 +918,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return this.hasStatKeyword("hunger") && this.Stats.GetStatValue("stats_derived_foodConsumption") >= 1 && timeSinceLastEat > 3; } }
     [JsonIgnore] public bool canSleep { get {
             if (!hasSleepNeed) return false;
+            if (this.Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived") > 0) return true;
             if (this.Stats.Fatigue != null && this.Stats.Fatigue.Severity > 0.9) return true;
             return false; } }
     [JsonIgnore] public bool isSleeping { get
@@ -1146,6 +1152,122 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             Debug.LogError($"Equipitem {itemRefID} failed on {FirstName}, target item cannot be found");
         }
         return false;
+    }
+
+    /// <summary>
+    /// If not immediate, then queue event and over <br/>
+    /// if immediate, then actually execute
+    /// </summary>
+    public void WakeUp(bool immediate)
+    {
+        if (!immediate) 
+        {
+            if (!queuedWakeup)
+            {
+                queuedWakeup = true;
+                scr_UpdateHandler.current.EventHandler.StartEvent(this, "QueuedWakeupEvent", "", false);
+            }
+        }
+        else
+        {
+            //Debug.LogError("Wakeup immediate!");
+            // IF SLEEP DEPRIVED, IT IS ALREADY ADDED PRIOR TO THIS POINT (ON CALLING WakeupPrep)        
+            this.Stats.RemoveStatusByStringMatch("chara_status_sleeping");
+            Debug.Log($"Chara wake up at conscious {this.Stats.Consciousness.Severity}");
+
+            if (!this.Stats.isConsciousnessUnconscious)
+            {
+                // re-check every AP
+                Utility.GetAPsFrom(this, out List<ActionPackage> aps);
+                scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
+                List<Job> jobLists_refuse = new List<Job>();
+                List<Job> jobLists_accept = new List<Job>();
+                foreach (var ap in aps)
+                {
+                    var result = ap.retryRequest(this, "justWokenUp");
+
+                    if (!result)
+                    {
+                        if (!jobLists_refuse.Contains(ap.job)) jobLists_refuse.Add(ap.job);
+                        Debug.LogError($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
+                        
+                        ap.ExecutePackageOutsideUpdate();   // execution
+                        ap.job.CollectLogs(ap);
+
+                        ap.DisablePackage();
+                        scr_System_CampaignManager.current.Unregister(ap);
+                        ap.job.CurrentPackages.Remove(ap);
+                        // now need to purge refsed ap
+                    }
+                    else
+                    {
+                        if (!jobLists_accept.Contains(ap.job)) jobLists_accept.Add(ap.job);
+                        Debug.Log($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
+
+                        ap.job.CollectLogs(ap);
+                    }
+                }
+
+                foreach (var job in jobLists_accept) job.NotifyDescriptionsOutOfUpdate();
+                foreach(var job in jobLists_refuse)
+                {
+                    job.NotifyDescriptionsOutOfUpdate();
+                    if (job == this.InteractionJob) continue;
+                    else if (job.GetExistingPackages(this, true, true, true, false).Count < 1)
+                    {
+                        Debug.LogError($"Actor wakeup call, Job {job.DisplayName} no longer has any active package for {FirstName}, try unregistering");
+                        job.RemoveActor(this.RefID);
+                        if (job is Job_Sex_Group && job.actorRefID.Count < 2)
+                        {
+                            Debug.LogError("is sex job, need special handling");
+                            (job as Job_Sex_Group).EndJob();
+                        }
+                    }
+                }
+
+                // if exit job, then removeactor already called endongoingmemory
+                // so, if last memory is ended and uncons, then, problem!
+                var lastMemory = this.Memory.Last;
+                if (!lastMemory.Conscious)
+                {
+
+                }
+                List<string> alert_clothing = new List<string>();
+
+
+                foreach(var item in this.Inventory.ContentsPrintable)
+                {
+                    if (!item.Equippable) continue;
+                    if (item.GetComp_Equippable().equipLayer != BodyEquipLayer.Skin) continue;
+                    // detected item 
+                    alert_clothing.Add($"detected {item.DisplayName} being removed!");
+                }
+
+
+                /*
+                 1. check underwear removal
+                 2. check cum in mouth and vagina
+                 3. check body stimulation level
+                 */
+
+                // if one job got all its ap refused, try leaving job
+                // regardless of accept or refuse, job will have collected new kojo entries, need to manually log them outside of update loop.
+
+
+                // end existing memory entry
+                // check self status
+
+            }
+
+            scr_UpdateHandler.current.FlushCollectedLogs(true, false);
+        }
+    }
+    public void Sleep()
+    {
+        var tired = Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived");
+        var sleepHour = (int)Math.Ceiling(tired > 0 ? Math.Min(Stats.SleepHours * 60, tired) : Stats.SleepHours * 60);
+        Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);
+        Stats.RemoveStatusByStringMatch("chara_status_sleep_deprived");
     }
 
     /// <summary>
@@ -1476,6 +1598,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             set { size_A = value.ID; }
         }
     }
+
+
+    [JsonIgnore] public bool Debug_ForceDeepSleep = false;
+
 
 }
 

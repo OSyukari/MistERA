@@ -324,6 +324,21 @@ public class Job : IDisposable, I_Disposable
         return;
     }
 
+    public void GetActorAPs(int refID, List<ActionPackage> packages)
+    {
+        foreach (var ap in this.packages_current)
+        {
+            if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
+            packages.Add(ap);
+        }
+        foreach (var ap in this.packages_previous)
+        {
+            if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
+            packages.Add(ap);
+        }
+        return;
+    }
+
     public void GetActorEPs(int refID, List<EvaluationPackage> packages)
     {
         foreach (var ap in this.packages_current)
@@ -391,6 +406,26 @@ public class Job : IDisposable, I_Disposable
         return returnVal;
     }
 
+    /// <summary>
+    /// Check active packages only
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="list"></param>
+    /// <param name="checkUnexecuted"></param>
+    /// <param name="checkExecuted"></param>
+    /// <param name="checkMaster"></param>
+    /// <returns></returns>
+    public List<ActionPackage> GetExistingPackages(Character_Trainable c, bool checkUnexecuted, bool checkExecuted, bool checkMaster, bool checkDeleted = false)
+    {
+        return scr_System_CampaignManager.GetExistingPackages2(c, this.ActivePackages, checkUnexecuted, checkExecuted, checkMaster, checkDeleted);
+    }
+
+    public void RemovePackage(ActionPackage ap)
+    {
+        this.packages_previous.Remove(ap);
+        this.packages_current.Remove(ap);
+    }
+
     [JsonIgnore] public List<ActionPackage> CurrentPackages { get { return packages_current; } }
     [JsonIgnore] public List<ActionPackage> ActivePackages { get
         {
@@ -415,6 +450,11 @@ public class Job : IDisposable, I_Disposable
         for(int i = packages_current.Count - 1; i >= 0; i--)
         {
             var p = packages_current[i];
+            if (p.Duration < 0)
+            {
+                packages_current.RemoveAt(i);
+                continue;
+            }
             p.SetActive(current);
             scr_System_CampaignManager.current.Register(p);
             packages_previous.Add(p);
@@ -446,6 +486,66 @@ public class Job : IDisposable, I_Disposable
     /// </summary>
     [JsonIgnore] bool isJobVisibleToPlayer { get { return this.ParentRoom.RefID == scr_System_CampaignManager.current.CurrentRoom.RefID; } }//&& (scr_System_CampaignManager.current.isPlayerConscious || scr_System_CampaignManager.current.DebugMode); }}
 
+    public void CollectLogs(ActionPackage ap)
+    {
+        if (ap.Duration == -1)
+        {   // disabled
+            // check if there is a identical package 
+            if (packages_previous.FindAll(x => Utility.ArePackagesEqual(x, ap)).Count > 1)
+            {
+                //                    continue;
+            }
+            else
+            {   // we know this package has been aborted and it is visible to player, so we print it's abort message
+                // command abort should be rare and NPC are not naturally inclined to do so
+                // so we shouldn't have to filter it
+                foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Abort(ep);
+                ap.DisablePackage(true);
+            }
+
+        }
+        else
+        {
+            if (isPlayerRelatedJob)
+            {
+                if (ap.Duration == 0 && isPlayerRelatedJob)
+                {// 
+                 // duration == 0 this might be aborted
+                    if (!ap.executeSuccessful) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Refuse(ep);
+                }
+                else if (ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
+                {   // one ticked
+
+                    // check player involved in job
+                    if (scr_System_CampaignManager.current.IsDisplayCOM(ap))
+                    {
+                        foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin(ep);
+                    }
+                    else if (scr_UpdateHandler.current.isFirstUpdate)
+                    {
+                        foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Ongoing(ep);
+                    }
+                }
+            }
+            else if (scr_UpdateHandler.current.DoDisplayCOM(ap))
+            {   // is visible to player
+
+                if (!ap.LoggedBegin && ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
+                {   // player not involved in job
+                    // in case they use same furniture as player and get lobbed inside here
+
+                    foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin(ep);
+                    ap.LoggedBegin = true;
+                }
+                else if (scr_UpdateHandler.current.isFirstUpdate)
+                {
+                    foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Ongoing(ep);
+                }
+
+            }
+        }
+    }
+
     public virtual void PostUpdateTime_getLogsBegin()
     {
         if (!isJobVisibleToPlayer) return;
@@ -453,75 +553,19 @@ public class Job : IDisposable, I_Disposable
         // Debug.Log("PostUpdateTime for job " + this.jobRefID);
         for (int i = packages_previous.Count - 1; i >= 0; i--)
         {
-            if (packages_previous[i].Duration == -1)
-            {   // disabled
-                // check if there is a identical package 
-                if (packages_previous.FindAll(x => Utility.ArePackagesEqual(x, packages_previous[i])).Count > 1)
-                {
-                    //                    continue;
-                }
-                else
-                {   // we know this package has been aborted and it is visible to player, so we print it's abort message
-                    // command abort should be rare and NPC are not naturally inclined to do so
-                    // so we shouldn't have to filter it
-                    foreach (EvaluationPackage ep in packages_previous[i].ListEP) LogMessage_Begin_Abort(ep);
-                    packages_previous[i].DisablePackage(true);
-                }
-
-            }
-            else
-            {
-                if (isPlayerRelatedJob)
-                {
-                    if (packages_previous[i].Duration == 0 && isPlayerRelatedJob)
-                    {// 
-                        // duration == 0 this might be aborted
-                        if (!packages_previous[i].executeSuccessful) foreach (EvaluationPackage ep in packages_previous[i].ListEP) LogMessage_Begin_Refuse(ep);
-                    }
-                    else if (packages_previous[i].targetCOM != null && packages_previous[i].Duration + 1 == packages_previous[i].targetCOM.TimeScale)
-                    {   // one ticked
-
-                        // check player involved in job
-                        if (scr_System_CampaignManager.current.IsDisplayCOM(packages_previous[i]))
-                        {
-                            foreach (EvaluationPackage ep in packages_previous[i].ListEP) LogMessage_Begin(ep);
-                        } 
-                        else if ( scr_UpdateHandler.current.isFirstUpdate)
-                        {
-                            foreach (EvaluationPackage ep in packages_previous[i].ListEP) LogMessage_Begin_Ongoing(ep);
-                        }
-                    }
-                }
-                else if (scr_UpdateHandler.current.DoDisplayCOM(packages_previous[i]))
-                {   // is visible to player
-                    
-                    if (!packages_previous[i].LoggedBegin && packages_previous[i].targetCOM != null && packages_previous[i].Duration + 1 == packages_previous[i].targetCOM.TimeScale)
-                    {   // player not involved in job
-                        // in case they use same furniture as player and get lobbed inside here
-
-                        foreach (EvaluationPackage ep in packages_previous[i].ListEP) LogMessage_Begin(ep);
-                        packages_previous[i].LoggedBegin = true;
-                    }
-                    else if ( scr_UpdateHandler.current.isFirstUpdate)
-                    {
-                        foreach (EvaluationPackage ep in packages_previous[i].ListEP) LogMessage_Begin_Ongoing(ep);
-                    }
-
-                }
-            }
-            
-
-            /*
-             
-             
-             */
+            CollectLogs(packages_previous[i]);
         }
-
-
-
         scr_UpdateHandler.current.NotifyJobDescriptions(messages_before, messages_ongoing, null, messages_kojo);
-
         // send log to campaignManager
+    }
+
+    public void NotifyDescriptionsOutOfUpdate()
+    {
+        scr_UpdateHandler.current.NotifyJobDescriptions(messages_before, messages_ongoing, null, messages_kojo);
+        messages_before.Clear();
+        messages_ongoing.Clear();
+        messages_kojo.Clear();
+
     }
 
     public virtual void PostUpdateTime()
@@ -561,6 +605,7 @@ public class Job : IDisposable, I_Disposable
                 }
             }
         }
+
         //InternalJobUpdate();
         scr_UpdateHandler.current.NotifyJobDescriptions(null, null, messages_after, null);
 
@@ -671,6 +716,8 @@ public class Job : IDisposable, I_Disposable
         if(scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName +", tags: ["+String.Join("|",ep.DoerSelfTag)+"] -> ["+String.Join("|", ep.ReceiverTargetTag) + "]");
         var s = ep.Doer == null ? "" : ep.Doer.Relationships.GetKOJOMessage(true, ep);
         var s2 = ep.Receiver == null ? "" : ep.Receiver.Relationships.GetKOJOMessage(false, ep);
+        var rel = ep.Receiver != null && ep.Doer != null ? ep.Receiver.Relationships.FindRelationshipWith(ep.Doer) : null;
+        var s3 = rel == null ? "" : ep.Receiver.isSleeping ? ep.Receiver.Relationships.Personality.GetKOJOMessage("DisruptSleep", rel) : "";
         //var s2 = "Kojo Message triggered for " + ep.Receiver.FirstName + ", tags: [" + String.Join("|", ep.ReceiverSelfTag) + "] -> [" + String.Join("|", ep.DoerTargetTag) + "]";
 
         /* filter by :
@@ -688,8 +735,13 @@ public class Job : IDisposable, I_Disposable
             if (!messages_kojo.ContainsKey(ep.ReceiverRef)) messages_kojo[ep.ReceiverRef] = s2;
             else messages_kojo[ep.ReceiverRef] += "\n" + s2;
         }
-
-        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents && (s.Length > 0 || s2.Length > 0)) Debug.Log("Kojo Message logged: ["+s+"] ["+s2+"]");
+        if (s3.Length > 0)
+        {
+            
+            if (!messages_kojo.ContainsKey(ep.ReceiverRef)) messages_kojo[ep.ReceiverRef] = s3;
+            else messages_kojo[ep.ReceiverRef] += "\n" + s3;
+        }
+        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents && (s.Length > 0 || s2.Length > 0 || s3.Length > 0)) Debug.Log($"Kojo Message logged: [{s}] [{s2}] [{s3}]");
     }
 
     public void LogMessage_Begin_CheckResult(EvaluationPackage ep)

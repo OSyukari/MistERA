@@ -183,7 +183,7 @@
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "conditions":[ { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
                             "texts":[ "即将射精的$doer.firstname$将肉棒狠狠顶入了$receiver.firstname$的体内" ]
                         }
                     ]

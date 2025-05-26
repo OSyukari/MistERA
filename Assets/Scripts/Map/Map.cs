@@ -330,6 +330,7 @@ public class Map_Instance
             if (xx.RefID != 0)
             {
                 // only check interrupt if not player
+                // these are all ap that chara could react to
                 foreach (var i in checkInterruptAPs)
                 {
                     if (i.RoomKey != iii.Key) continue;// { Debug.LogError("dirtychararef roomkey inequal [" + i.RoomKey + "] [" + iii.Key + "]"); continue; }
@@ -344,7 +345,6 @@ public class Map_Instance
                         ignoreList.AddRange(i.actorRefs);
                     }
                     //interrupted = xx.Relationships.CheckInterrupt(i, selfTags) || interrupted;
-
                 }
             }
 

@@ -114,7 +114,7 @@ public class ActionPackage_Undress : ActionPackage
         Debug.Log("ActionPackage_Undress Evaluate on "+DisplayName);
         return true;
     }
-    protected override bool Request()
+    protected override bool Request(bool rebuildPackage = true)
     {
         return isValid;
     }
@@ -210,7 +210,7 @@ public class ActionPackage_Redress : ActionPackage
     {
         return true;
     }
-    protected override bool Request()
+    protected override bool Request(bool rebuildPackage = true)
     {
         return isValid;
     }

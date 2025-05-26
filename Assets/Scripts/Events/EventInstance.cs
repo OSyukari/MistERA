@@ -45,13 +45,13 @@ public class EventInstance
     /// </summary>
     /// <param name="targetRef"></param>
     /// <param name="maxCallStack"></param>
-    public EventInstance (Character_Trainable eventSelf, bool startImmediate, string eventID, string label, int maxCallStack = 50)
+    public EventInstance (Character_Trainable eventSelf, string eventID, string label, int maxCallStack = 50)
     {
         this.Self = eventSelf;
         this.maxCallStack = maxCallStack;
         // init stuff
         LoadNext(false, eventID, label);
-        if (startImmediate) Start();
+        //Start();
 
     }
 

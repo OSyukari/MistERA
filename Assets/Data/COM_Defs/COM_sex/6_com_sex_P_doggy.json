@@ -323,16 +323,6 @@
                         ]
                     }
                 ]
-            },
-            {
-                "_comment":"check cum branch, add this if doer can cum",
-                "keepLooking":true,
-                "conditions":[
-                    { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } }
-                ],
-                "texts":[
-                    "在射精的瞬間$doer.firstname$将阴茎深深突入了膣内最深处…"
-                ]
             }
         ]
         
@@ -427,6 +417,17 @@
     "description_after":{
 
         "Entries":[ 
+            
+            {
+                "_comment":"check cum branch, add this if doer can cum",
+                "keepLooking":true,
+                "conditions":[
+                    { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } }
+                ],
+                "texts":[
+                    "在射精的瞬間$doer.firstname$将阴茎深深突入了膣内最深处…"
+                ]
+            },
             {
                 "_comment":"check climax variant",
                 "keepLooking":true,

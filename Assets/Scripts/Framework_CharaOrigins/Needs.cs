@@ -11,11 +11,11 @@ public class Needs
     /// <summary>
     /// Need ID is also the required stat keyword that will be query inside race.
     /// </summary>
-    public string ID;
-    [SerializeField] protected string displayName;
+    public string ID = "";
+    [SerializeField][JsonProperty] protected string displayName = "";
     public string DisplayName { get { return LocalizeDictionary.Instance.Index.QueryThenParse(ID, displayName); } }
 
-    [SerializeField][JsonProperty] protected string tooltip;
+    [SerializeField][JsonProperty] protected string tooltip = "";
     public string Tooltip { get { return LocalizeDictionary.Instance.Index.QueryThenParse(ID + "_tooltip", tooltip); } }
 
     // In order of tag priority

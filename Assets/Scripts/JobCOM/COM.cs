@@ -227,6 +227,7 @@ public class COM: I_SerializationCallbackReceiver
     [SerializeField] public List<string> comTags = new List<string>();
 
     public bool isSexCOM { get { return comTags.Contains("sex"); } }
+    public bool isUnsafe { get { return comTags.Contains("unsafe"); } }
     public bool isTouchCOM { get { return !isSexCOM && comTags.Contains("touch"); } }
 
     [SerializeField][JsonProperty] protected int timeScale = 0;

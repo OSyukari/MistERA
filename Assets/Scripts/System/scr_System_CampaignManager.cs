@@ -59,7 +59,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// This inventory's content is not serialized into save data
     /// on save, every refid inside is transferred into deletedrefs
     /// </summary>
-    public Inventory Recycler = new Inventory();
+    public FactionInventory Recycler = new FactionInventory();
 
     public List<ActionPackage> GetRegisteredAPByRoom(int roomID, bool getExecutedAPs = true)
     {
@@ -495,10 +495,19 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
-    protected List<ActionPackage> GetExistingPackages2 (Character_Trainable c, List<ActionPackage> list, bool checkUnexecuted, bool checkExecuted, bool checkMaster)
+    public static List<ActionPackage> GetExistingPackages2 (Character_Trainable c, List<ActionPackage> list, bool checkUnexecuted, bool checkExecuted, bool checkMaster, bool checkDeleted = false)
     {
         List<ActionPackage> results = new List<ActionPackage>();
-        foreach (var p in list) if ((p.actorRefs.Contains(c.RefID) || p.masterRef == c.RefID) && !results.Contains(p) && (p.Ticked || checkUnexecuted) && (p.Duration > 0 || checkExecuted)) results.Add(p);
+        foreach (var p in list)
+        {
+            if (!checkDeleted && p.Duration < 0) continue;
+            else if (!p.actorRefs.Contains(c.RefID) && p.masterRef != c.RefID) continue;
+            else if (results.Contains(p)) continue;
+            else if (!p.Ticked && !checkUnexecuted) continue;
+            else if (p.Duration == 0 && !checkExecuted) continue;
+            else if (p.Duration < 0 && !checkDeleted) continue;
+            else results.Add(p);
+        }
         return results;
     }
 
@@ -632,11 +641,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         foreach (var kvpair_list in registeredPackagesByRoom)
         {
-
-            
             var floor = Map.GetFloorByRoomRefID(kvpair_list.Key);
-
-
 
             if (floor != null && ( Map.ActiveFloorRefIDs.Contains(floor.refID) || kvpair_list.Value.Find(x=>x.actorRefs.Contains(0)) != null ))
             {

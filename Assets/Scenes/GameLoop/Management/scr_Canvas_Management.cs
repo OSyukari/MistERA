@@ -17,7 +17,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public TMP_Text production_results;
     public RectTransform inventoryList;
     public TMP_Text chara_warnings;
-    public RectTransform list_factionWork, list_assignCOM;
+    public RectTransform list_factionWork, list_assignCOM, list_CharaNeeds;
 
     public initScript_ManagementOverview overviewScript;
 
@@ -356,13 +356,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public void SetCurrentChara(Character_Trainable c)
     {
         // destroy previous
-        while (list_factionWork.transform.childCount > 0)
-        {
-            DestroyImmediate(list_factionWork.transform.GetChild(0).gameObject);
-        }
+        Utility.DestroyAllChildrenFrom(ref list_factionWork);
+        Utility.DestroyAllChildrenFrom(ref list_CharaNeeds);
 
         // set current
-
         currentChara = c;
 
         chara_fullname.text = c.FullName;
@@ -382,17 +379,32 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         foreach (Manageable faction in c.FactionManager.WorkFactions)
         {
             var newLine = Instantiate(prefab_text_linkbutton);
-
             var text = newLine.GetComponent<scr_SelectableText>();
             text.SetText(faction.FactionDisplayName);
             if (faction == currentFaction) text.Text.color = text.baseColor;
             else text.Text.color = text.disableColor;// (true,true);
-
             newLine.SetParent(list_factionWork, false);
-            //LayoutRebuilder.ForceRebuildLayoutImmediate(newLine);
         }
 
-        //LayoutRebuilder.ForceRebuildLayoutImmediate(list_factionWork);
+        if (c.hasSleepNeed)
+        {
+            var newLine = Instantiate(prefab_text_linkbutton);
+            var text = newLine.GetComponent<scr_SelectableText>();
+            text.showBrackets = false;
+            text.forbidNotify = true;
+            text.SetText("sleep");
+            newLine.SetParent(list_CharaNeeds, false);
+        }
+
+        foreach(var need in c.Stats.Needs)
+        {
+            var newLine = Instantiate(prefab_text_linkbutton);
+            var text = newLine.GetComponent<scr_SelectableText>();
+            text.showBrackets = false;
+            text.forbidNotify = true;
+            text.SetText(need.DisplayName);
+            newLine.SetParent(list_CharaNeeds, false);
+        }
     }
     protected void RefreshCurrentChara()
     {

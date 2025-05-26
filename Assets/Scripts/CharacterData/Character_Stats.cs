@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 public interface I_CacheValues
 {
-    public void ClearCache();
+    public void ClearCache(bool reset = false);
 }
 
 // record base stats: str_base, str_final, str_mod, and the same for con psy and wil
@@ -44,7 +44,7 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
         stat_base_string = statID;
     }
 
-    public void ClearCache()
+    public void ClearCache(bool reset = false)
     {
         this.cached_values.Clear();
     }

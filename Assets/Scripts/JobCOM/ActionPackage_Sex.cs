@@ -67,12 +67,6 @@ public class ActionPackage_Sex : ActionPackage
         return base.Evaluate();
     }
 
-    protected override void Execution()
-    {
-        base.Execution();
-
-    }
-
     public override ActionPackage Copy()
     {
         ActionPackage_Sex copy = new ActionPackage_Sex(job, targetCOM, DoerRefs, ReceiverRefs, masterRef);

@@ -222,7 +222,7 @@ public abstract class ActionPackage
 
         this.tooltip.Clear();
 
-
+        
         this.job_cached = null;
         this.targetCOMCache = null;
         this.variant = null;
@@ -287,8 +287,8 @@ public abstract class ActionPackage
         foreach (var i in this.ListEP) i.m.Clear();
     }
 
-    [SerializeField] public bool LoggedBegin = false;
-    [SerializeField] public bool LoggedOngoing = false;
+    public bool LoggedBegin = false;
+    public bool LoggedOngoing = false;
     public bool Ticked = false;
     // package refused by C_MANAGER due to low package priority
     public void MarkForDelete()
@@ -334,7 +334,7 @@ public abstract class ActionPackage
                     if (c.shouldSleep && c.RefID > 0 && !c.Stats.isSleeping)
                     {
                         //Debug.LogError($"{c.FirstName} is going to sleep");
-                        c.Stats.AddOrModStatus("chara_status_sleeping", c.Stats.SleepDepth, c.Stats.SleepHours * 60);
+                        c.Sleep();
                         //Debug.Log("ADDING SLEEP TO " + c.FirstName);
                     }
                     
@@ -347,47 +347,43 @@ public abstract class ActionPackage
             this.duration = Math.Max(0, this.duration - tickDuration);
             Ticked = true;
             // if refused, cut short the whole thing
-            if (!requested)
+
+            if (!requested && !Request())
             {
-                if (!Request())
-                {
-                    duration = 0;
-                    //Debug.LogError("Actor Refused Package "+DisplayName);
+                duration = 0;
+                //Debug.LogError("Actor Refused Package "+DisplayName);
                     
-                    toggleRepeat = false;
-                    ExecutePackage();
-                    return true;
-                }
-                else
+                toggleRepeat = false;
+                ExecutePackage();
+                return true;
+            }
+            else
+            {
+                if (receiver.Count > 0)
                 {
-
-
-
-                    if (receiver.Count > 0)
+                    string s = "Package "+DisplayName+" accepted : ";
+                    foreach (var rc in receiver)
                     {
-                        string s = "Package "+DisplayName+" accepted : ";
-                        foreach (var rc in receiver)
+                        if (!(this.job is Job_CharaCOM) && rc.CurrentJobRefID != this.job.RefID)
                         {
-                            if (!(this.job is Job_CharaCOM) && rc.CurrentJobRefID != this.job.RefID)
-                            {
-                                string s2 = "";
-                                foreach (var allusablep in job.allusableCOMs) s2 += allusablep.ID + " ";
-                                s += " Changing " + rc.FirstName + "'s job to [" + String.Join(" ", job.allusableCOMStrings) + "] comIDs ["+s2+"]";
+                            string s2 = "";
+                            foreach (var allusablep in job.allusableCOMs) s2 += allusablep.ID + " ";
+                            s += " Changing " + rc.FirstName + "'s job to [" + String.Join(" ", job.allusableCOMStrings) + "] comIDs ["+s2+"]";
 
-                                rc.ChangeCurrentJob(job);
-                            }
+                            rc.ChangeCurrentJob(job);
+                        }
 
-                            if (rc.RefID > 0 && duration == this.targetCOM.TimeScale && targetCOM.comTags.Contains("sleep"))
-                            {
-                                Debug.LogError($"{rc.FirstName} is being set to sleep");
-                                rc.Stats.AddOrModStatus("chara_status_sleeping", rc.Stats.SleepDepth, rc.Stats.SleepHours * 60);
-                                // if (rc.canSleep) 
+                        if (rc.RefID > 0 && duration == this.targetCOM.TimeScale && targetCOM.comTags.Contains("sleep"))
+                        {
+                            Debug.LogError($"{rc.FirstName} is being set to sleep");
+                            rc.Sleep();
+                            // if (rc.canSleep) 
 
-                            }
                         }
                     }
                 }
             }
+            
         }
        
         if (duration <= 0)
@@ -721,6 +717,11 @@ public abstract class ActionPackage
         // if sex, add to sexlog
     }
 
+    public void ExecutePackageOutsideUpdate()
+    {
+        ExecutePackage();
+    }
+
     protected void PreExecution()
     {
 
@@ -762,57 +763,63 @@ public abstract class ActionPackage
     /// Make actual EP and evaluate every single one. If any fail, then return false
     /// </summary>
     /// <returns></returns>
-    protected virtual bool Request()
+    protected virtual bool Request(bool rebuildPackage = true)
     {
         requested = true;
 
-        //result_stats = new Dictionary<int, Dictionary<string, int>>();
-        //result_experiences = new Dictionary<int, Dictionary<string, int>>();
-        packages.Clear();
-        if (targetCOM.requirements.TreatReceiverAsDoer)
+        if (rebuildPackage)
         {
-            var tempArr = new List<Character_Trainable>();
-            tempArr.AddRange(doer);
-            tempArr.AddRange(receiver);
-
-            foreach(var chara in doer) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
-            foreach (var chara in receiver) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
-        }
-        else if (doer.Count < 2 && receiver.Count < 2)
-        {
-            packages.Add(new EvaluationPackage(doer[0], receiver.Count > 0 ? receiver[0] : null, this.targetCOM, this));
-        }
-        else if (receiver.Count < 1)
-        {
-            // random match doer and receivers
-
-            foreach (Character_Trainable temp_doer in doer)
+            //result_stats = new Dictionary<int, Dictionary<string, int>>();
+            //result_experiences = new Dictionary<int, Dictionary<string, int>>();
+            packages.Clear();
+            if (targetCOM.requirements.TreatReceiverAsDoer)
             {
-                packages.Add(new EvaluationPackage(temp_doer, null, this.targetCOM, this));
-            }
+                var tempArr = new List<Character_Trainable>();
+                tempArr.AddRange(doer);
+                tempArr.AddRange(receiver);
 
+                foreach (var chara in doer) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
+                foreach (var chara in receiver) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
+            }
+            else if (doer.Count < 2 && receiver.Count < 2)
+            {
+                packages.Add(new EvaluationPackage(doer[0], receiver.Count > 0 ? receiver[0] : null, this.targetCOM, this));
+            }
+            else if (receiver.Count < 1)
+            {
+                // random match doer and receivers
+
+                foreach (Character_Trainable temp_doer in doer)
+                {
+                    packages.Add(new EvaluationPackage(temp_doer, null, this.targetCOM, this));
+                }
+
+            }
+            else
+            {
+                // random match doer and receivers
+
+                List<Character_Trainable> temp_doers = new List<Character_Trainable>(doer);
+                List<Character_Trainable> temp_receivers = new List<Character_Trainable>(receiver);
+
+                Character_Trainable temp_doer, temp_receiver;
+
+                while (temp_doers.Count > 0 && temp_receivers.Count > 0)
+                {
+                    temp_doer = temp_doers[Utility.GetRandIndexFromListCount(temp_doers.Count)];
+                    temp_doers.Remove(temp_doer);
+                    //c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
+
+                    temp_receiver = temp_receivers[Utility.GetRandIndexFromListCount(temp_receivers.Count)];
+                    temp_receivers.Remove(temp_receiver);
+
+                    packages.Add(new EvaluationPackage(temp_doer, temp_receiver, this.targetCOM, this));
+
+                }
+            }
         }
         else
         {
-            // random match doer and receivers
-
-            List<Character_Trainable> temp_doers = new List<Character_Trainable>(doer);
-            List<Character_Trainable> temp_receivers = new List<Character_Trainable>(receiver);
-
-            Character_Trainable temp_doer, temp_receiver;
-
-            while (temp_doers.Count > 0 && temp_receivers.Count > 0)
-            {
-                temp_doer = temp_doers[Utility.GetRandIndexFromListCount(temp_doers.Count)];
-                temp_doers.Remove(temp_doer);
-                //c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
-
-                temp_receiver = temp_receivers[Utility.GetRandIndexFromListCount(temp_receivers.Count)];
-                temp_receivers.Remove(temp_receiver);
-
-                packages.Add(new EvaluationPackage(temp_doer, temp_receiver, this.targetCOM, this));
-
-            }
 
         }
 
@@ -822,7 +829,7 @@ public abstract class ActionPackage
 
         foreach(var ep in packages)
         {
-            ep.Evaluate();
+            ep.Evaluate(true);
             if (!returnVal) break;
 
             if (!ep.Request()) returnVal = false;
@@ -855,6 +862,44 @@ public abstract class ActionPackage
         }
 
         return returnVal;
+    }
+
+    /// <summary>
+    /// If AP duration is already zero, do not resend request.<br/>
+    /// If ep is accepted, job log ep kojo message.
+    /// </summary>
+    /// <returns></returns>
+    public bool retryRequest(Character_Trainable c, string extraTag)
+    {
+        bool returnValue = false;
+        if (duration < 1)
+        {
+            // character already woke up and at this point package already executed
+            Debug.LogError("RetryRequest called but duration < 1");  // this shouldnt happen anymore as eventhandler run happens after 
+            return true;
+        }
+        else
+        {
+            if (!Request(false))
+            {
+                duration = 0;
+                //Debug.LogError($"AP retryRequest : Package request failure, disabling " + DisplayName);
+                toggleRepeat = false;
+                this.AddExtraCOMTags(new List<string>() { extraTag });
+                returnValue = false;
+            }
+            else returnValue = true;
+            
+
+            foreach (var ep in this.packages)
+            {
+
+                ep.AddExtraActorTags(ep.isDoer(c) ? extraTag : "", ep.isReceiver(c) ? extraTag : "");
+                this.job.LogMessage_Kojo(ep);
+            }
+            return returnValue;
+        }
+
     }
 
     [JsonIgnore] public List<EvaluationPackage> ListEP { get { return packages; } }
@@ -899,8 +944,8 @@ public abstract class ActionPackage
                     {
                         // increase or decrease manager's attitude toward participating actors if their work result is at least neutral
                         foreach (var manager in job.FactionOwner.Managers){
-                            if(ep.Doer != null)manager.Relationships.IncreaseRelationshipWith(ep.DoerRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, ep.m);
-                            if(ep.Receiver != null)manager.Relationships.IncreaseRelationshipWith(ep.ReceiverRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, ep.m);
+                            if(ep.Doer != null) manager.Relationships.IncreaseRelationshipWith(ep.DoerRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, ep.m);
+                            if(ep.Receiver != null) manager.Relationships.IncreaseRelationshipWith(ep.ReceiverRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, ep.m);
                         }
                     }
                     
@@ -920,6 +965,7 @@ public abstract class ActionPackage
                         if(ep.Receiver != null)ep.Receiver.Relationships.ModSelfEsteem(1);
                     }                  
                 }
+
             }
 
             this.job.LogMessage_Kojo(ep);

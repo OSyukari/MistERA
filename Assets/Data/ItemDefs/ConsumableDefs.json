@@ -1,38 +1,7 @@
 {
     "Items":{
 "list":[
-        {
-            "id":"consumable_alcohol_beer",
-            "displayName":"Beer",
-            "tooltip":"Beer can, barely gets one drunk. (1 hour to filter out)",
-            "Tags":["consumable","industrial","rarity_common"],
-            "itemComps_Template":[
-                {
-                    "compType":"ItemComponent_Ingestible",
-                    "comp_Ingestible":{
-                        "ingestMethod":[
-                            {
-                                "bodyTags":"stomach",
-                                "digestSpeed": -2,
-                                "digestDelay":20,
-                                "digestDelayVariation":5,
-                                "amountMod":0.5,
-                                "giveStatus":"chara_status_alcohol"
-                            },
-                            {
-                                "bodyTags":"anus",
-                                "digestSpeed": -6,
-                                "digestDelay":5,
-                                "digestDelayVariation":2,
-                                "amountMod":0.5,
-                                "giveStatus":"chara_status_alcohol"
-                            }
-                        ],
-                        "amount":30
-                    }
-                }
-            ]
-        },
+        
         {
             "id":"consumable_aphrodisiac_salve",
             "displayName":"Aphrodisiac Salve",
@@ -158,38 +127,6 @@
                                 "value":["chara_status_alcohol", 1]
                             }
                         ]
-                    }
-                }
-            ]
-        },
-        {
-            "id":"consumable_alcohol_wine",
-            "displayName":"Wine",
-            "tooltip":"Wine. One glass can make most people tipsy.",
-            "Tags":[],
-            "itemComps_Template":[
-                {
-                    "compType":"ItemComponent_Ingestible",
-                    "comp_Ingestible":{
-                        "ingestMethod":[
-                            {
-                                "bodyTags":"stomach",
-                                "digestSpeed": -2,
-                                "digestDelay":20,
-                                "digestDelayVariation":5,
-                                "amountMod":2,
-                                "giveStatus":"chara_status_alcohol"
-                            },
-                            {
-                                "bodyTags":"anus",
-                                "digestSpeed": -6,
-                                "digestDelay":5,
-                                "digestDelayVariation":2,
-                                "amountMod":2,
-                                "giveStatus":"chara_status_alcohol"
-                            }
-                        ],
-                        "amount":30
                     }
                 }
             ]

@@ -4,7 +4,13 @@
         {
             "statusID":"chara_status_alcohol",
             "displayName":"酒精",
-            "variationMode": { "variationType":"linear", "statModifiers":["-0.2"] } ,
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":0.2
+                }
+            } ,
             "variants":[
                 {
                     "displayName":"",
@@ -125,7 +131,13 @@
         {
             "statusID":"chara_status_aphrodisiac",
             "displayName":"催情",
-            "variationMode": { "variationType":"linear", "stringData":["-1"] } ,
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                }
+            } ,
             "variants":[
                 {
                     "displayName":"",
@@ -200,7 +212,6 @@
         {
             "statusID":"chara_status_hypnosis",
             "displayName":"Hypnosis Status",
-            "variationMode": { "variationType":"linear", "stringData":["0"] } ,
             "variants":[
                 {
                     "displayName":"",
@@ -255,7 +266,6 @@
         {
             "statusID":"chara_status_analgesic",
             "displayName":"Analgesic Status",
-            "variationMode": { "variationType":"linear", "stringData":["0"] } ,
             "variants":[
                 {
                     "displayName":"",
@@ -278,7 +288,13 @@
         {
             "statusID":"chara_status_drugged",
             "displayName":"麻药",
-            "variationMode": { "variationType":"linear", "stringData":["-0.2"] } ,
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":0.2
+                }
+            } ,
             "variants":[
                 {
                     "displayName":"",
@@ -377,7 +393,13 @@
             "displayName":"绝顶中",
             "constant":true,
             "noDisplay":false,
-            "variationMode": { "variationType":"linear", "stringData":["-1"] },
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                }
+            } ,
             "variants":[
                 {
                     "displayName":"",
@@ -413,7 +435,13 @@
             "displayName":"绝顶后",
             "constant":true,
             "noDisplay":true,
-            "variationMode": { "variationType":"linear", "stringData":["1"] },
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                }
+            } ,
             "variants":[
                 {
                     "displayName":"连续高潮瘫软",
@@ -482,7 +510,18 @@
             "displayName":"连续绝顶计数",
             "constant":true,
             "noDisplay":true,
-            "variationMode": { "variationType":"sex", "stringData":["", "-0.1", "1"] },
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":0.1
+                },
+                "randomVariation":{
+                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
+                    "sensitivityKeyword":"",
+                    "pauseXMinAfterMod":1
+                }
+            } ,
             "variants":[
                 {
                     "displayName":"",
@@ -550,7 +589,18 @@
             "displayName":"B快感",
             "constant":true,
             "noDisplay":true,
-            "variationMode": { "variationType":"sex", "stringData":["B", "-1", "1"] },
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                },
+                "randomVariation":{
+                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
+                    "sensitivityKeyword":"B",
+                    "pauseXMinAfterMod":1
+                }
+            } ,
             "variants":[
                 { "displayName":"", "threshold":0 },
                 { "displayName":"", "threshold":1 ,
@@ -568,7 +618,18 @@
             "displayName":"M快感",
             "constant":true,
             "noDisplay":true,
-            "variationMode": { "variationType":"sex", "pauseXMinAfterMod":1, "value":-1, "stringData":["M", "-1", "1"] },
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                },
+                "randomVariation":{
+                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
+                    "sensitivityKeyword":"M",
+                    "pauseXMinAfterMod":1
+                }
+            } ,
             "variants":[
                 { "displayName":"", "threshold":0,
                 "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
@@ -584,7 +645,18 @@
             "displayName":"C快感",
             "constant":true,
             "noDisplay":true,
-            "variationMode": { "variationType":"sex", "stringData":["C","-1","1"] },
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                },
+                "randomVariation":{
+                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
+                    "sensitivityKeyword":"C",
+                    "pauseXMinAfterMod":1
+                }
+            } ,
             "variants":[
                 { "displayName":"", "threshold":0,
                 "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
@@ -600,7 +672,18 @@
             "displayName":"V快感",
             "constant":true,
             "noDisplay":true,
-            "variationMode": { "variationType":"sex", "stringData":["V","-1","1"] },
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                },
+                "randomVariation":{
+                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
+                    "sensitivityKeyword":"V",
+                    "pauseXMinAfterMod":1
+                }
+            } ,
             "variants":[
                 { "displayName":"", "threshold":0 ,
                 "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
@@ -616,7 +699,18 @@
             "displayName":"A快感",
             "constant":true,
             "noDisplay":true,
-            "variationMode": { "variationType":"sex", "stringData":["A","-1","1"] },
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                },
+                "randomVariation":{
+                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
+                    "sensitivityKeyword":"A",
+                    "pauseXMinAfterMod":1
+                }
+            } ,
             "variants":[
                 { "displayName":"", "threshold":0,
                 "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
@@ -632,7 +726,18 @@
             "displayName":"W快感",
             "constant":true,
             "noDisplay":true,
-            "variationMode": { "variationType":"sex", "stringData":["W","-1","1"] },
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                },
+                "randomVariation":{
+                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
+                    "sensitivityKeyword":"W",
+                    "pauseXMinAfterMod":1
+                }
+            } ,
             "variants":[
                 { "displayName":"", "threshold":0,
                 "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
@@ -646,7 +751,6 @@
         {
             "statusID":"chara_status_cryosleep",
             "displayName":"冷冻睡眠",
-            "variationMode": { "variationType":"linear", "stringData":["0"] } ,
             "variants":[
                 {
                     "displayName":"", "threshold":0
@@ -666,7 +770,6 @@
         {
             "statusID":"chara_status_fatigue",
             "displayName":"疲劳",
-            "variationMode": { "variationType":"linear", "stringData":["0"] } ,
             "variants":[
                 {
                     "displayName":"", "threshold":0
@@ -696,13 +799,33 @@
         {
             "statusID":"chara_status_sleeping",
             "displayName":"Sleep Status",
-            "variationMode": { "variationType":"sine", "stringData":["hour","0.75","0.75"] } ,
+            "allowNaturalRemoval":false,
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "statID":"stats_derived_sleepDepth",
+                    "decaySpeed":0.01
+                },
+                "randomVariation":{
+                    "$type":"Status_Base+RandomVariation_Sine, Assembly-CSharp",
+                    "baseSample":"minute",
+                    "cycleLen":45,
+                    "intensityMod":0.75
+                }
+            } ,
             "_comments":"hardcoded status with duration set to sleep minutes ticking down.",
-            "_comments2":"hardcoded Fullrest effect on status expire removal",
+            "_comments2":"hardcoded Fullrest effect on status expire removal, status removal tied to scripted event triggers",
             "variants":[
                 {
-                    "displayName":"",
-                    "threshold":0
+                    "displayName":"刚醒来",
+                    "threshold":0,
+                    "allowRemoval":true,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_sleeping", "type":"setBase", "valueType":"number", "valueString":"-0.7"
+                        }
+                    ]
                 },
                 {
                     "displayName":"浅眠",
@@ -739,8 +862,8 @@
         {
             "statusID":"chara_status_sleep_deprived",
             "displayName":"Sleep Deprived",
-            "variationMode": { "variationType":"linear", "stringData":["-1"] } ,
-            "_comments":"hardcoded status with duration set to 24 hours ticking down.",
+            "variationMode": {  } ,
+            "_comments":"status gained when sleep is disrupted or insufficient, it will go away when character sleep (hardcoded interaction)",
             "variants":[
                 {
                     "displayName":"",
@@ -750,6 +873,10 @@
                     "displayName":"睡眠不足",
                     "threshold":9999,
                     "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_sleep_deprived", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
                         {
                             "statID":"chara_status_consciousness",
                             "modKey":"chara_status_sleep_deprived", "type":"setBase", "valueType":"number", "valueString":"-0.2"
@@ -761,7 +888,13 @@
         {
             "statusID":"chara_status_malnourished",
             "displayName":"Lacking food",
-            "variationMode": { "variationType":"linear", "stringData":["-1"] } ,
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                }
+            } ,
             "_comments":"hardcoded status with duration set to 24 hours ticking down.",
             "variants":[
                 {

@@ -137,7 +137,7 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         this.parent = baseStat;
         this.parentString = baseStat.ID;
     }
-    public void ClearCache()
+    public void ClearCache(bool reset = false)
     {
         cached_values.Clear();
     }

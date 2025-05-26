@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Runtime.CompilerServices;
 
 [System.Serializable]
 public enum ParticipantType { 
@@ -17,6 +18,23 @@ public enum ParticipantType {
 [System.Serializable]
 public class EvaluationPackage
 {
+    protected bool initializedRand = false;
+    protected Unity.Mathematics.Random Random;
+    protected int Dice(int count, int maxVal, int minVal)
+    {
+        if (!initializedRand)
+        {
+            Random = new Unity.Mathematics.Random((uint)GetHashCode());
+            initializedRand = true;
+        }
+        int counter = 0;
+        for (int i = 0; i < count; i++)
+        {
+            counter += Random.NextInt(minVal, maxVal);
+        }
+        return counter;
+    }
+
     public bool skipLogging = false;
     [SerializeField][JsonProperty] private int doerRef = -1;
     private Character_Trainable doerCache = null;
@@ -131,29 +149,32 @@ public class EvaluationPackage
     [SerializeField][JsonProperty] List<string> extraDoerTags = new List<string>();
     [SerializeField][JsonProperty] List<string> extraCOMTags = new List<string>();
     [SerializeField][JsonProperty] List<string> extraReceiverTags = new List<string>();
+    [SerializeField][JsonProperty] List<string> injectedDoerTags = new List<string>();
+    [SerializeField][JsonProperty] List<string> injectedCOMTags = new List<string>();
+    [SerializeField][JsonProperty] List<string> injectedReceiverTags = new List<string>();
 
     [JsonIgnore] public List<string> DoerSelfTag { get
         {
             if (this.receiverRef == -1 || receiverRef == doerRef) return DoerTargetTag;
-            else return extraDoerTags.Distinct().ToList(); ;
+            else return extraDoerTags.Concat(injectedDoerTags).Distinct().ToList(); ;
         } }
     [JsonIgnore] public List<string> ReceiverTargetTag
     {
         get
         {
-            return Enumerable.Concat(extraCOMTags, extraReceiverTags).Distinct().ToList();
+            return Enumerable.Concat(extraCOMTags, extraReceiverTags).Concat(injectedReceiverTags).Concat(injectedCOMTags).Distinct().ToList();
         }
     }
     [JsonIgnore] public List<string> DoerTargetTag
     {
         get
         {
-            return Enumerable.Concat(extraCOMTags, extraDoerTags).Distinct().ToList();
+            return Enumerable.Concat(extraCOMTags, extraDoerTags).Concat(injectedDoerTags).Concat(injectedCOMTags).Distinct().ToList();
         }
     }
     [JsonIgnore] public List<string> ReceiverSelfTag { get
         {
-            return extraReceiverTags.Distinct().ToList(); ;
+            return extraReceiverTags.Concat(injectedReceiverTags).Distinct().ToList(); ;
         } }
 
     //MessageLog log;
@@ -218,17 +239,37 @@ public class EvaluationPackage
 
     public void AddExtraCOMTags(string s)
     {
-        this.extraCOMTags.Add(s);
+        this.injectedCOMTags.Add(s);
+    }
+    public void AddExtraActorTags(string doer, string receiver)
+    {
+        if (doer != "") this.injectedDoerTags.Add(doer);
+        if (receiver != "") this.injectedReceiverTags.Add(receiver);
     }
 
-    public bool Evaluate()
+    public bool Evaluate(bool reset = false)
     {
         this.tooltip.Clear();
+        if (reset)
+        {
+            this.doerCache = null;
+            this.receiverCache = null;
+            this.modifiers.Clear();
+        }
 
-        if (Doer.Stats.isConsciousnessUnconscious || Doer.Stats.isConsciousnessReduced) foreach (var str in Doer.Stats.Consciousness.Tags) AddModifier(Doer.RefID, str, 0);
+        if (Doer.Stats.isConsciousnessUnconscious || Doer.Stats.isConsciousnessReduced)
+        {
+            Debug.LogError("doer uncons or reduced");
+            foreach (var str in Doer.Stats.Consciousness.Tags)
+            {
+                AddModifier(Doer.RefID, str, 0);
+            }
+        }
+
         extraDoerTags = new List<string>();
         extraCOMTags = new List<string>();
         extraReceiverTags = new List<string>();
+
         Utility.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
 
         CalculateRequestRate();
@@ -279,8 +320,8 @@ public class EvaluationPackage
 
         var a = Doer;
         a = Receiver;
-        CalculateAttitudeRate(doerCache, Package.Master, out n1, out p1);
-        CalculateAttitudeRate(doerCache, receiverCache, out n2, out p2);
+        CalculateAttitudeRate(Doer, Package.Master, out n1, out p1);
+        CalculateAttitudeRate(Doer, Receiver, out n2, out p2);
 
         attitudeRate_neg_doer = Math.Min(n1, n2);
         attitudeRate_pos_doer = Math.Min(p1, p2);
@@ -401,20 +442,16 @@ public class EvaluationPackage
         if (self.isTimeStopped)
         {
             AddModifier(self.RefID, "Timestopped!", 0);
-
-            if (self == Receiver) _responseRate = 100;
-            else _responseRate = 0;
+            _responseRate = self == Receiver ? 100 : 0;
         }
         else if (self.Climaxing)
         {
             AddModifier(self.RefID, "Climaxing!", 0);
-
-            if (self == Receiver) _responseRate = 100;
-            else _responseRate = 0;
+            _responseRate = self == Receiver ? 100 : 0;
         }
         else if (self.Stats.isConsciousnessUnconscious)
         {
-            AddModifier(self.RefID, "%%comLogs_causes_unconscious%%", 0);
+            AddModifier(self.RefID, $"%%comLogs_causes_unconscious%%1 value {self.Stats.Consciousness.Severity}", 0);
 
             if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = 100;
             else if (self == Doer && !targetCOM.requirements.requirement.req_Doers.requireConscious) _responseRate = 100;
@@ -480,8 +517,8 @@ public class EvaluationPackage
             int r1, r2;
             //CalculateAcceptance(ref receiver, ref p.Master, out r1, isThreat);
             //CalculateAcceptance(ref receiver, ref doer, out r2, isThreat);
-            CalculateWillingness(false,Receiver,  p.Master, out r1, isThreat);
-            CalculateWillingness(false,Receiver, Doer, out r2, isThreat);
+            CalculateWillingness(false, Receiver,  p.Master, out r1, isThreat);
+            CalculateWillingness(false, Receiver, Doer, out r2, isThreat);
             responseRate = Math.Max(r1, r2);
             if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Response rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + "] Receiver->Master[" + r1 + "] Receiver->Doer[" + r2 + "] final["+ responseRate + "]");
 
@@ -494,8 +531,8 @@ public class EvaluationPackage
         var a = Doer;
         a = Receiver;
         int p1, p2, n1, n2;
-        CalculateAttitudeRate( receiverCache,  doerCache, out n1, out p1);
-        CalculateAttitudeRate( receiverCache,  Package.Master, out n2, out p2);
+        CalculateAttitudeRate( Receiver,  Doer, out n1, out p1);
+        CalculateAttitudeRate( Receiver,  Package.Master, out n2, out p2);
 
         attitudeRate_neg_receiver = Math.Min(n1, n2);
         attitudeRate_pos_receiver = Math.Min(p1, p2);
@@ -565,7 +602,7 @@ public class EvaluationPackage
             }
             else if (self.Stats.isConsciousnessUnconscious)
             {
-                AddModifier(self.RefID, "%%comLogs_causes_unconscious%%", 0);
+                AddModifier(self.RefID, "%%comLogs_causes_unconscious%%2", 0);
                 rateValue = 100;
             }
             else if (self.Stats.isConsciousnessReduced)
@@ -661,12 +698,12 @@ public class EvaluationPackage
     /// Request data are stored in EP and on subsequent calls by AP.Execution() will skip the Request() part
     /// </summary>
     /// <returns></returns>
-    public bool Request()
+    public bool Request( bool recalculateRate = false)
     {
         //result_stats = new Dictionary<int, Dictionary<string, int>>();
         //result_experiences = new Dictionary<int, Dictionary<string, int>>();
 
-        return TryRespond(false);
+        return TryRespond(recalculateRate);
     }
 
     /// <summary>
@@ -721,8 +758,17 @@ public class EvaluationPackage
             //apply results later cuz results require COM attitude end
             if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer);
             if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver);
-
         }
+
+        foreach(var entry in logExps)
+        {
+            if (entry.body.NotifySexExperience(entry.targetName, entry.comName, entry.comtags, entry.targetBodytags))
+            {
+                entry.body.Owner.Memory.AddEntry_Custom(new List<string>() { "mergeWithAll", "important" } , new List<string>(), entry.targetRef, false, entry.body.FirstExperienceDesc, Memory_Attitude.None, Memory_Response.None);
+            }
+        }
+        logExps.Clear();
+                                
 
     }
 
@@ -737,7 +783,7 @@ public class EvaluationPackage
         int baseDC = targetCOM.baseD20Check;
         // modify base DC, lower for easier, higher for harder
         
-        int diceRoll = Utility.Dice(1, 100, 0);
+        int diceRoll = Dice(1, 100, 0);
         if (diceRoll >= 95) response = Memory_Response.CriticalSuccess;
         else if (diceRoll <= 5) response = Memory_Response.CriticalFailure;
         else response = diceRoll >= baseDC*5 ? Memory_Response.Success : Memory_Response.Failure;
@@ -800,7 +846,7 @@ public class EvaluationPackage
     protected bool RollRequest()
     {
         bool returnVal = true;
-        int diceroll = Utility.Dice(1, 100, 0);
+        int diceroll = Dice(1, 100, 0);
         if (requestRate <= 0) returnVal = false;
         else if (requestRate >= 100) returnVal = true;
         else
@@ -859,7 +905,7 @@ public class EvaluationPackage
 
     private void RollAttitude(ref int attitudeRate_pos, ref int attitudeRate_neg, ref Memory_Attitude attitude_begin)
     {
-        int diceroll = Utility.Dice(1, 100, 0);
+        int diceroll = Dice(1, 100, 0);
 
         if (diceroll >= (100 - attitudeRate_pos)) attitude_begin = Memory_Attitude.Like;
         else if (diceroll <= attitudeRate_neg) attitude_begin = Memory_Attitude.Dislike;
@@ -885,7 +931,7 @@ public class EvaluationPackage
     {
         bool returnVal = true;
         // first find if doer is willing
-        int diceroll = Utility.Dice(1, 100, 0);
+        int diceroll = Dice(1, 100, 0);
         if (Receiver == null || Receiver.RefID == 0)
         {
             // display player option menu to decide accept or refuse
@@ -970,6 +1016,11 @@ public class EvaluationPackage
             if (!modifiers.ContainsKey(refID)) return list;
             foreach (var mod in modifiers[refID]) list.Add(mod.Key + (mod.Value == 0 ? "" : mod.Value.ToString("+0;-#")));
             return list;
+        }
+
+        public void Clear()
+        {
+            this.modifiers.Clear();
         }
     }
 
@@ -1234,7 +1285,9 @@ public class EvaluationPackage
         }
 
         //if (sourceBody != null) tags.AddRange(sourceBody.Base.tags);
-        body.NotifySexExperience(source.RefID, sourceBody == null ? source.FirstName : sourceBody.DisplayNameFull, com.DisplayName(variantID), ownerTags, isDoer? ReceiverTargetTag : DoerTargetTag, sourceBody == null ? null : sourceBody.Base.tags );
+        logExps.Add(new DelayedExpLogging( body, source.RefID,  sourceBody == null ? source.FirstName : sourceBody.DisplayNameFull, com.ID, com.DisplayName(variantID), 
+                                ownerTags, sourceBody == null ? null : sourceBody.Base.tags ));
+
         body.Stimulate(ref ownerTags, ref pleasureTotal,ref pleasure,ref pain);
 
         if (sourceBody != null) body.LogLastInteractedRef(sourceBody);
@@ -1264,9 +1317,31 @@ public class EvaluationPackage
                 }
                 
                 newTags.Add("pain");
+                if (isDoer && !extraDoerTags.Contains("pain")) this.extraDoerTags.Add("pain");
+                else if (!isDoer && !extraReceiverTags.Contains("pain")) this.extraReceiverTags.Add("pain");
             }
             if (expansion > 0) newTags.Add("expansion");
             body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pain + expansion, isDoer, m);
+        }
+    }
+
+
+    public List<DelayedExpLogging> logExps = new List<DelayedExpLogging>();
+    public class DelayedExpLogging
+    {
+        public BodyInternal_Instance body;
+        public string targetName, comName, comID;
+        public List<string> comtags, targetBodytags;
+        public int targetRef;
+        public DelayedExpLogging(BodyInternal_Instance body, int targetRef, string targetName, string comID,  string comName, List<string> comtags, List<string> targetBodytags)
+        {
+            this.body = body;
+            this.comID = comID;
+            this.targetRef = targetRef;
+            this.targetName = targetName;
+            this.comName = comName;
+            this.comtags = comtags;
+            this.targetBodytags = targetBodytags;
         }
     }
 }
@@ -1370,10 +1445,10 @@ public class ExperienceLog
     public void Clear()
     {
 
-        bool clearedBeforePrint = false;
+        //bool clearedBeforePrint = false;
         foreach (KeyValuePair<int, Dictionary<string, int>> kvp in ExpLog)
         {
-            if (kvp.Value.Count > 0) clearedBeforePrint = true;
+            //if (kvp.Value.Count > 0) clearedBeforePrint = true;
             kvp.Value.Clear();
         }
         ExpLog.Clear();

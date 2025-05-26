@@ -75,6 +75,8 @@ public class Event : I_SerializationCallbackReceiver
             else if (c == null) return false;
             switch(parameters[0])
             {
+                case "exists":
+                    return c != null;
                 case "isPlayer":
                     return scr_System_CampaignManager.current.Player == c;
                 case "hasActionPackageType":
@@ -88,6 +90,12 @@ public class Event : I_SerializationCallbackReceiver
                         var results = packages.FindAll(x => Utility.MatchAPbyType(x, parameters[1]));
                         return results.Count > 0;
                     }
+                case "isConscious":
+                    return !c.Stats.isConsciousnessUnconscious;
+                case "isUnconscious":
+                    return c.Stats.isConsciousnessUnconscious;
+                case "isSleeping":
+                    return c.Stats.isSleeping;
                 default: 
                     return true;
             }
@@ -229,6 +237,7 @@ public class Event : I_SerializationCallbackReceiver
         public class EventEntry_Branch : EventEntry
         {
             public List<Options> options = new List<Options>();
+
         }
 
         /// <summary>
@@ -280,7 +289,12 @@ public class Event : I_SerializationCallbackReceiver
                 None,
                 JumpToLabel,
                 EventEnd,
-                InterruptAP_byType
+                InterruptAP_byType,
+                /// <summary>
+                /// [StatusID, value]
+                /// </summary>
+                ModStatusValue,
+                WakeUp
             }
 
             [System.Serializable]

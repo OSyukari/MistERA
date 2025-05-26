@@ -53,6 +53,9 @@ public static class Utility
             return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
         } }
 
+
+    public static Unity.Mathematics.Random Random = new Unity.Mathematics.Random(74);
+
     public static bool SHIFT { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
 
     public static string bugReport = "https://discord.gg/XK6vm4xPh5";
@@ -95,12 +98,13 @@ public static class Utility
 
     public static float RandVariation(float baseNumber, float maxVariation)
     {
-        return baseNumber + UnityEngine.Random.Range(-maxVariation, maxVariation);
+        return baseNumber + Random.NextFloat(baseNumber - maxVariation, baseNumber+maxVariation);
     }
+
 
     public static int RandVariation(int baseNumber, int maxVariation)
     {
-        return baseNumber + UnityEngine.Random.Range(-maxVariation, maxVariation);
+        return baseNumber + Random.NextInt(baseNumber - maxVariation, baseNumber+maxVariation);
     }
 
     public static void CheckExperienceGainNoStimulate(Character_Trainable a, float amount, bool isDoer, List<string> selfTags, List<string> comTags, ExperienceLog m = null)
@@ -113,7 +117,7 @@ public static class Utility
         int counter = 0;
         for (int i = 0; i < count; i++)
         {
-            counter += UnityEngine.Random.Range(1,face+1);
+            counter += Random.NextInt(1,face+1);
         }
         return counter;
     }
@@ -122,7 +126,7 @@ public static class Utility
         int counter = 0;
         for (int i = 0; i < count; i++)
         {
-            counter += UnityEngine.Random.Range(minVal, maxVal);
+            counter += Random.NextInt(minVal, maxVal);
         }
         return counter;
     }
@@ -174,6 +178,7 @@ public static class Utility
     public static string ParseEventEntry(EventInstance owner, string s, string separator = ",")
     {
         var newString = scr_System_Serializer.current.Dictionary.QueryThenParse( s);
+        newString = newString.Replace("$currentTime$", scr_System_Time.current.getCurrentTime().ToString());
 
         MatchCollection matches = regex_eventKeyword.Matches(newString);
         foreach (var match in matches.ToList())
@@ -182,7 +187,7 @@ public static class Utility
             if (len <= 3) continue;
             var kvp = match.Value.Substring(1, len-2).Split('.');
             if (kvp.Length != 2) continue;
-            Debug.Log($"Parse event kvp {String.Join("|", kvp)}");
+            //Debug.Log($"Parse event kvp {String.Join("|", kvp)}");
             if (kvp[0] == "self" && owner.Self != null)
             {
                 switch(kvp[1])
@@ -328,6 +333,29 @@ public static class Utility
                 return value1 > value;
             case "lt":
                 return value1 < value;
+            default:
+                Debug.LogError("CompareValue (int) Error: invalid operand");
+                return false;
+        }
+    }
+
+    public static bool CompareValue(float value1, LogicalOperand operand, float value2)
+    {
+
+        switch (operand)
+        {
+            case LogicalOperand.eq:
+                return value1 == value2;
+            case LogicalOperand.neq:
+                return value1 != value2;
+            case LogicalOperand.gte:
+                return value1 >= value2;
+            case LogicalOperand.lte:
+                return value1 <= value2;
+            case LogicalOperand.gt:
+                return value1 > value2;
+            case LogicalOperand.lt:
+                return value1 < value2;
             default:
                 Debug.LogError("CompareValue (int) Error: invalid operand");
                 return false;
@@ -780,8 +808,22 @@ public static class Utility
             if (a.InteractionJob != null) a.InteractionJob.GetActorEPs(a.RefID, EPs);  // get a interactionjob all self
             if (a.CurrentJob != null) a.CurrentJob.GetActorEPs(a.RefID, EPs);   // get a currentjob all self
         }
-
     }
+
+    public static void GetAPsFrom(Character_Trainable a, out List<ActionPackage> APs)
+    {
+        // collect all
+        APs = new List<ActionPackage>();
+
+        if (a != null)
+        {
+            if (a.InteractionJob != null) a.InteractionJob.GetActorAPs(a.RefID, APs);  // get a interactionjob all self
+            if (a.CurrentJob != null) a.CurrentJob.GetActorAPs(a.RefID, APs);   // get a currentjob all self
+        }
+
+        APs = APs.Distinct().ToList();
+    }
+
     public static void GetInteractionTagsFrom(Character_Trainable a, Character_Trainable b, COM com, int variantID, ref List<string> ownerTags, ref List<string> extraComTags, ref List<string> extraTargetTags)
     {
         if (com != null)
@@ -997,7 +1039,7 @@ public static class Utility
                     var eventTarget = eventTargetRef == -1 ? null : scr_System_CampaignManager.current.FindInstanceByID(eventTargetRef);
                     string evID = parsed[2];
                     string evLbl = parsed.Count() >= 4 ? parsed[3] : "";
-                    scr_UpdateHandler.current.EventHandler.StartEvent(eventTarget, evID, evLbl);
+                    scr_UpdateHandler.current.EventHandler.StartEvent(eventTarget, evID, evLbl, true);
                 }
                 else
                 {
@@ -1347,6 +1389,9 @@ public static class EventUtility
                         }
                     }
                 }
+            case Event.EventEntry.Options.ExecutionType.WakeUp:
+                owner.Self.WakeUp(true);
+                return true;
             default: return false;
 
         }

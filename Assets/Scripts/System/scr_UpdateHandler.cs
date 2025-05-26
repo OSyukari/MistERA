@@ -180,9 +180,12 @@ public class scr_UpdateHandler : MonoBehaviour
         // Updatetime is used to register loop count in minutes
         // totalUpdateTime is used when loop finishes and print value.
         // tldr, totalUpdateTime is the update duration count, and we should filter command logging based on this value.
-        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime)) && !EventHandler.Active)
+        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime)))
         {
-            StartCoroutine(SingleUpdate());
+            if (EventHandler.Active)
+            {
+                Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
+            }else StartCoroutine(SingleUpdate());
         }
         else if (updateUI) NotifyLogsSingleUpdate();
     }
@@ -226,6 +229,7 @@ public class scr_UpdateHandler : MonoBehaviour
     private IEnumerator SingleUpdate()
     {
         //Debug.Log("Singleupdate : start");
+
         var Clock = scr_System_CentralControl.current.LogPrefs.Debug_Logging_UpdateTimeCost ;
         Updating = true;
         int loopCount = 0;
@@ -237,12 +241,12 @@ public class scr_UpdateHandler : MonoBehaviour
         cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
         //Debug.Log($"Singleupdate : eventhandler end, updatetime? {updateTime}");
         //NotifyLogsSingleUpdate();
-        var copy = updateTime;
+        //var copy = updateTime;
         while (updateTime > 0 && !EventHandler.Active)  // updatetime can be 0 if there is no player package
         {   // if indeed 0 updatetime, then none of the below preupdate postupdate will be called.
             loopCount++;
-            var time = Clock ? Utility.ReinitStopWatch(stopWatch) : TimeSpan.Zero;
-            var time2 = time;
+            //var time = Clock ? Utility.ReinitStopWatch(stopWatch) : TimeSpan.Zero;
+            //var time2 = time;
             //foreach (Manageable faction in organizations) faction.Manage();
             if (firstLoopCounter > 0) firstLoopCounter --;
             FlushCollectedLogs(true, oneLoop);
@@ -252,48 +256,34 @@ public class scr_UpdateHandler : MonoBehaviour
             //else
             Observer_PreUpdateTime?.Invoke();
 
-            if (Clock) Debug.Log("Observer_PreUpdateTime complete " + Utility.LogStopwatch(stopWatch, ref time2));
+            //if (Clock) Debug.Log("Observer_PreUpdateTime complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
             cnManager.FreeUpdateOneStep(ref totalUpdateTime, ref updateTime);
-            if (Clock) Debug.Log("FreeUpdateOneStep complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
             updateTime -= 1;
             scr_System_Time.current.UpdateTime(0, 0, 1, 0, true);   // if timestop then the value dont really matter
-            if(Clock) Debug.Log("UpdateTime complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
             if (checkResults.Count > 0) cnManager.AddLog(-1, String.Join("\n", checkResults), false);
+            checkResults.Clear();
 
             // during postupdatetime, all job will clear and re-update package, and all character will check cum.
             // separate this.
             playerJob = cnManager.Player.CurrentJob;
 
             Observer_PostUpdateTime_1?.Invoke();    // step where all EP makes message_before
-            // when invoking postUpdate1, totalUpdateTime already exists, so we can allow job instances to ask and use it as filter
-            // even if timestop, totalUpdateTime is the actual minute logic passing, and the filter should still apply
-            if(Clock)  Debug.Log("Observer_PostUpdateTime_1 complete " + Utility.LogStopwatch(stopWatch, ref time2));
-
             Observer_PostUpdateTime_2?.Invoke();    // step where all character check cum
-            if (Clock) Debug.Log("Observer_PostUpdateTime_2 complete " + Utility.LogStopwatch(stopWatch, ref time2));
-
             Observer_PostUpdateTime_3?.Invoke();    // step where all EP makes message_after, and when cleanup happens
-            // also, job internal package renewal
-            if (Clock) Debug.Log("Observer_PostUpdateTime_3 complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
-            //Observer_PostUpdateTime_4?.Invoke();    // sex com panel refresh values
             cnManager.UpdateAllRoom();  // parallel foreach
-            if (Clock) Debug.Log("UpdateAllRoom complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
             cnManager.UpdateAllCharaJob();
-            if (Clock) Debug.Log("UpdateAllCharaJob complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
             cnManager.ClearExecutedAPs();
             //cnManager.ClearLogs(true);
 
-            if (Clock) Debug.Log("SingleUpdate 1 loop End, total time " + Utility.LogStopwatch(stopWatch, ref time));
-            stopWatch.Stop();
-
-            yield return null;
-            //yield return new WaitForSecondsRealtime(0.001f);
+            //stopWatch.Stop();
+            yield return new WaitForSecondsRealtime(0.001f);
+            //yield return 
         }
 
         if (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime2, false))
@@ -317,19 +307,26 @@ public class scr_UpdateHandler : MonoBehaviour
 
         cnManager.AddLog(-1, String.Join("\n", message_begin));
         cnManager.AddLog(-1, String.Join("\n", message_ongoing));
-        
+
+        message_begin.Clear();
+        message_ongoing.Clear();
+
         foreach(var kvp in kojoMsgDictionary)
         {
             cnManager.AddLog(kvp.Key, kvp.Value);
         }
 
+        kojoMsgDictionary.Clear();
+
         // all climax ? need to filter out who worth displaying
         cnManager.AddLog(-1, String.Join("\n", currentRoundClimax));
 
+        currentRoundClimax.Clear();
         // after job message
         if (false && playerJob != null) cnManager.AddLog(-1, playerJob.MessagesAfter);
         cnManager.AddLog(-1, String.Join("\n", message_end));
 
+        message_end.Clear();
 
         // all exp inc message
         foreach(var i in scr_System_CampaignManager.current.ActiveJobsRefsInCurrentRoom)
@@ -339,6 +336,7 @@ public class scr_UpdateHandler : MonoBehaviour
             this.exp.MergeWith(job.exp);
         }
         cnManager.AddLog(-1, exp.PrintContent());
+        exp.Clear();
 
         if (timeStop) totalUpdateTime = 0;
 
@@ -402,24 +400,25 @@ public class scr_UpdateHandler : MonoBehaviour
         if (!kojoMsgDictionary.ContainsKey(charaRefID)) kojoMsgDictionary.Add(charaRefID, s);
         else kojoMsgDictionary[charaRefID] += "\n" + s;
     }
-    private void FlushCollectedLogs(bool flushOut, bool firstLoop)
+    public void FlushCollectedLogs(bool flushOut, bool firstLoop)
     {
-        checkResults.Clear();
-        exp.Clear();
-
-        if (flushOut && message_begin.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_begin), true);
-        if (flushOut&& firstLoop && message_ongoing.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_ongoing), true);
         if (flushOut)
         {
-            foreach (var kvp in kojoMsgDictionary)
+            if (checkResults.Count > 0) cnManager.AddLog(-1, String.Join("\n", checkResults), false);
+            cnManager.AddLog(-1, exp.PrintContent());
+            if (message_begin.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_begin), true);
+            if (firstLoop && message_ongoing.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_ongoing), true);
+
+            foreach(var kvp in kojoMsgDictionary)
             {
                 bool rA = kvp.Key == 0 || kvp.Key == scr_System_CampaignManager.current.CurrentTargetRef;
                 cnManager.AddLog(kvp.Key, kvp.Value, true, !rA);
             }
+            if (currentRoundClimax.Count > 0) cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), true);
+            if (message_end.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_end), true);
         }
-        if (flushOut && currentRoundClimax.Count > 0) cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), true);
-        if (flushOut && message_end.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_end), true);
-
+        exp.Clear();
+        checkResults.Clear();
         currentRoundClimax.Clear();
         message_begin.Clear();
         message_ongoing.Clear(); 
@@ -430,9 +429,9 @@ public class scr_UpdateHandler : MonoBehaviour
     public void NotifyCheckResult(string resultString)
     {
         if (resultString.Length < 1) return;
+        if (!Updating) Debug.LogError($"Updatehandler: receiver checkresult [{resultString}] but not currently updating");
         checkResults.Add(resultString);
         //Observer_LogsSingleStepUpdate?.Invoke(false);
-
     }
 
     public void NotifyClimax(int targetRefID, string s, ExperienceLog exp)

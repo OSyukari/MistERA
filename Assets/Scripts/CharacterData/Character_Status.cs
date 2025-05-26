@@ -37,7 +37,7 @@ public class Index_Status:I_IndexHasID, I_SerializationCallbackReceiver, I_Index
 
         foreach (var i in list)
         {
-            if (i.variationMode.variationType == Status_Base.Status_Variation_Type.sex && i.variationMode.SensitivityKeyword.Length > 0)
+            if (i.variationMode.SensitivityKeyword.Length > 0)
             {
                 scr_System_Serializer.current.AddSensitivityStatus(i.variationMode.SensitivityKeyword, i.statusID);
             }
@@ -65,7 +65,7 @@ public class Status_Base
     public string displayName = "";
     public bool noDisplay = false;
     public bool constant = false;
-
+    public bool allowNaturalRemoval = true;
     [JsonIgnore]
     public bool isValid
     {
@@ -82,53 +82,90 @@ public class Status_Base
     public class Variant
     {
         public string displayName = "";
+        public bool allowRemoval = false;
         public float threshold = -1;
         public List<string> tags = new List<string>();
         public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
+
+        [JsonIgnore] public bool allowRemove
+        {
+            get
+            {
+                return allowRemoval || displayName == "";
+            }
+        }
+    }
+    public Variations variationMode = new Variations();
+
+    [System.Serializable]
+    public class RandomVariation
+    {
+
+        public virtual float Variation()
+        {
+            return 0;
+        }
+    }
+    [System.Serializable]
+    public class RandomVariation_Sine : RandomVariation
+    {
+        public string baseSample = "";
+        public float cycleLen = 0;
+        public float intensityMod = 1;
+
+        public override float Variation()
+        {
+            return (float) Utility.SineSample(cycleLen, baseSample) * intensityMod;
+        }
     }
 
     [System.Serializable]
-    public enum Status_Variation_Type
+    public class RandomVariation_Sex : RandomVariation
     {
-        none,
-        /// <summary>
-        /// stat severity will decrease linearly with time * value<br/>
-        /// StringData: [linearDecayValue]
-        /// </summary>
-        linear,
-        /// <summary>
-        /// Sine variation will not change status severity or duration.
-        /// Instead, the current variation will be combined value of duration + random sine variation * value.
-        /// string data determine sine sample base.<br/>
-        /// StringData: [sampleBase, cycleLen, intensity]
-        /// </summary>
-        sine,
-        /// <summary>
-        /// behave similar to linear variation, but any interaction with sex tag will pause value decay.<br/>
-        /// StringData: [sensitivityKeyword, linearDecay, pauseXMinAfterMod]
-        /// </summary>
-        sex
+        public string sensitivityKeyword = "";
+        public int pauseXMinAfterMod = 0;
+
     }
 
-    public Variations variationMode = new Variations();
-
+    [System.Serializable]
+    public class BaselineVariation
+    {
+        public virtual float Decay(Character_Trainable c, float value)
+        {
+            return 0;
+        }
+    }
+    [System.Serializable]
+    public class BaselineVariation_Linear : BaselineVariation
+    {
+        public string statID = "";
+        public float baseValue = 0;
+        public float decaySpeed = 0;
+        public override float Decay(Character_Trainable c, float value)
+        {
+            if (decaySpeed == 0) return 0;
+            var targetValue = statID == "" ? baseValue : c.Stats.GetDerivedStat(statID).FinalValue();
+            var diff = (targetValue - value);
+            if (diff == 0) return 0;
+            var lerpStep = Math.Abs( decaySpeed/(targetValue - value));
+            return (float) Unity.Mathematics.math.lerp(value, targetValue, lerpStep) - value;
+        }
+    }
 
     [System.Serializable]
     public class Variations
     {
-        public Status_Variation_Type variationType = Status_Variation_Type.none;
+        public RandomVariation randomVariation = new RandomVariation();
+        public BaselineVariation baselineVariation = new BaselineVariation();
         //public int pauseXMinAfterMod = 0;
         //public float value = 0;
-        public List<string> stringData = new List<string>();
         //public List<Variation_Conditions> conditions = new List<Variation_Conditions>();
 
         [JsonIgnore]
         public int pauseXMinAfterMod 
         { get {
-            if (this.variationType != Status_Variation_Type.sex) return 0;
-            else if (this.stringData.Count >= 3 && int.TryParse(stringData[2], out int pauseLen)) return pauseLen;
-            else Debug.LogError("StatusVariation missing entry");
-            return 0;
+                if (randomVariation is not RandomVariation_Sex) return 0;
+                else return (randomVariation as RandomVariation_Sex).pauseXMinAfterMod;
                 
         } }
 
@@ -137,46 +174,10 @@ public class Status_Base
         {
             get
             {
-                if (this.variationType != Status_Variation_Type.sex) return "";
-                else if (this.stringData.Count >= 3) return stringData[0];
-                else Debug.LogError("StatusVariation missing entry");
-                return "";
+                if (randomVariation is not RandomVariation_Sex) return "";
+                else return (randomVariation as RandomVariation_Sex).sensitivityKeyword;
             }
         }
-
-        [JsonIgnore]
-        public float Decay
-        {
-            get
-            {
-                switch(this.variationType)
-                {
-                    case Status_Variation_Type.linear:
-                        if (stringData.Count >= 1 && float.TryParse(stringData[0], out var linDecay)) return linDecay;
-                        break;
-                    case Status_Variation_Type.sex:
-                        if (stringData.Count >= 3 && float.TryParse(stringData[1], out var sexDecay)) return sexDecay;
-                        break;
-                    default:
-                        break;
-                }
-
-                return 0;
-            }
-        }
-
-        [JsonIgnore]
-        public float SineCycleLen { get
-            {
-                if (variationType == Status_Variation_Type.sine && stringData.Count >= 3 && float.TryParse(stringData[1], out var value)) return value;
-                else return 1;
-            } }
-        [JsonIgnore]
-        public float SineIntensity { get
-            {
-                if (variationType == Status_Variation_Type.sine && stringData.Count >= 3 && float.TryParse(stringData[2], out var value)) return value;
-                else return 0;
-            } }
 
 
         [System.Serializable]
@@ -236,6 +237,14 @@ public class Status_Instance : StatusInstance
         get {  return BaseRef.variants[SeverityIndex].displayName;  } 
     }
 
+    /// <summary>
+    /// Return true if status current severity falls into removable threshold
+    /// </summary>
+    [JsonIgnore] public bool CanBeRemovedBySeverity { get
+        {
+            return BaseRef.variants[SeverityIndex].allowRemoval;
+        } }
+
     [JsonIgnore] public List<Stat_Modifier> SeverityMods { get { return BaseRef.variants[SeverityIndex].stat_modifiers; } }
 
     [JsonIgnore] public List<string> Tags { get { return this.BaseRef.variants[SeverityIndex].tags; } }
@@ -253,14 +262,49 @@ public class Status_Instance : StatusInstance
     {
         get
         {
-            var variation = BaseRef.variationMode;
-            if (BaseRef.variationMode.variationType != Status_Base.Status_Variation_Type.sine) return severity;
-            else if (variation.stringData.Count >= 3) return (float)(severity + Utility.SineSample(variation.SineCycleLen, BaseRef.variationMode.stringData[0]) * variation.SineIntensity);
+            return severity + Variation;
+        }
+    }
+
+
+    [JsonIgnore]
+    public float Decay { get
+        {
+            if (this.BaseRef.variationMode.baselineVariation is not Status_Base.BaselineVariation_Linear) return 0;
+            return (this.BaseRef.variationMode.baselineVariation as Status_Base.BaselineVariation_Linear).decaySpeed;
+        } }
+
+    [JsonIgnore]
+    public float Variation
+    {
+        get
+        {
+            return this.BaseRef.variationMode.randomVariation.Variation();
+        }
+    }
+
+    [JsonIgnore] public int TickTillDecay
+    {
+        get
+        {
+            var nextIndex = this.SeverityIndex - 1;
+            var decay = Decay;
+            if (nextIndex < 0 || decay == 0) return 0;
             else
             {
-                Debug.LogError("error parsing status severity");
-                return 0f;
+                var threshold = this.BaseRef.variants[nextIndex].threshold;
+                //Debug.Log($"tickTillDecay calc, prevIndex {nextIndex} decay {decay} nextThreshold {threshold}");
+                if (Math.Sign(threshold) == Math.Sign(decay)) return 0;
+                else return (int)(-(this.Severity - threshold) / decay);
             }
+        }
+    }
+
+    [JsonIgnore] public int TickTillExpire
+    {
+        get {
+            var decay = Decay == 0 ? 0 : -this.Severity / Decay;
+            return this.duration == -1 ? (int) decay : (int) Math.Min(this.duration, decay);
         }
     }
 
@@ -269,16 +313,25 @@ public class Status_Instance : StatusInstance
     /// </summary>
     /// <param name="f"></param>
     /// <returns></returns>
-    public bool SeverityAdd(float f)
+    public bool SeverityAdd(float f, float externalCap = -1)
     {
         if (Math.Abs(f) < float.Epsilon) return false;
+        if (!this.BaseRef.allowNaturalRemoval && this.BaseRef.statusID == "chara_status_sleeping" && this.Owner.Debug_ForceDeepSleep) return false;
 
         var initialS = this.SeverityIndex;
 
         severity += f;
-        if (f < 0 && maxed) maxed = false;
-        severity = Mathf.Max(severity, BaseRef.variants[0].threshold);
-        severity = Mathf.Min(severity, BaseRef.variants[BaseRef.variants.Count-1].threshold);
+
+        var min = BaseRef.variants[0].threshold - Variation;
+        var max = BaseRef.variants[BaseRef.variants.Count - 1].threshold + Variation;
+
+        if (externalCap != -1) max = Math.Min(externalCap, max);
+
+        severity = Mathf.Max(severity, min);
+        severity = Mathf.Min(severity, max);
+
+        if (severity == max) maxed = true;
+        else maxed = false;
 
         return this.SeverityIndex != initialS;
     }

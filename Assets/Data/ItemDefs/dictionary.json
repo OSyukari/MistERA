@@ -2,8 +2,6 @@
     "Dictionary": {
         "Entries": {
             "default": {
-                "consumable_alcohol_beer":"啤酒",
-                "consumable_alcohol_wine":"红酒",
                 "consumable_drug_rapedrug":"迷药",
                 "consumable_fruit_tomato": "番茄",
                 "consumable_fruit_potato": "土豆",

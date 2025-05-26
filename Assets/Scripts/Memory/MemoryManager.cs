@@ -265,11 +265,12 @@ public class MemoryManager
         }
         else if (   last != null &&
                     areTagsMergeable(selfTags, last.selfTags) && areTagsMergeable(targetCOMtags, last.targetTags) &&
-                    (targetCOM == null || targetCOM.TimeScale <= 30) &&
+                    ( targetCOM == null || targetCOM.TimeScale <= 30) &&
                     (   // limit merging to stack that is less than 5 minutes and total less than 15 minutes. Longer com will not be merged. Sorter COM will be merged up to 15 min
                         //(last.Tags.Contains("mergeWithAll") || tags.Contains("mergeWithAll")) ||
-                        (targetCOM != null && last.hasInteractionWithCOMID(targetCOM.ID) && ((scr_System_Time.current.getCurrentTime() - last.StartTime).TotalMinutes <= mergeComUnderTimeframe)) || // non sex require targetcom the same, allow new actor joining
+                        ((targetCOM == null || last.hasInteractionWithCOMID(targetCOM.ID)) && ((scr_System_Time.current.getCurrentTime() - last.StartTime).TotalMinutes <= mergeComUnderTimeframe)) || // non sex require targetcom the same, allow new actor joining
                         (last.isSexMemory && last.isOngoing) || // targetCOM.isSexCOM, allow sex to merge with all non sex
+                        (last.isSexTouchMemory && last.isOngoing && targetCOM != null && (targetCOM.isSexCOM || targetCOM.isTouchCOM || targetCOM.isUnsafe)) ||
                         (last.isTouchMemory && (targetCOM != null && !targetCOM.isSexCOM) && ((targetCOM != null && targetCOM.isTouchCOM) || response != Memory_Response.Refuse))  // targetCOM.isTouchCOM, forbid upward merge with sex com
                     )
                 )
@@ -288,9 +289,10 @@ public class MemoryManager
                 + " tagsMergeble[" + (areTagsMergeable(selfTags, last.selfTags)) + " "+ (areTagsMergeable(targetCOMtags, last.targetTags)) 
                 + "] timecost [" + ((targetCOM == null || targetCOM.TimeScale <= 5)) + "]"
                // +" cond0["+ (last.Tags.Contains("") || tags.Contains("mergeWithAll")) + "]" 
-                + " cond1[" + ((targetCOM != null && last.hasInteractionWithCOMID(targetCOM.ID)) && (scr_System_Time.current.getCurrentTime() - last.StartTime).Minutes < mergeComUnderTimeframe)
+                + $" cond1[{targetCOM != null} {targetCOM != null && last.hasInteractionWithCOMID(targetCOM.ID)} {(scr_System_Time.current.getCurrentTime() - last.StartTime).Minutes < mergeComUnderTimeframe}"
                 + "] cond2[" + (last.isSexMemory)+ " " + (last.isOngoing)
-                + "] cond3["+ (last.isTouchMemory)+ " " + (targetCOM != null && !targetCOM.isSexCOM) + " "+ (targetCOM != null && targetCOM.isTouchCOM)+ "||"+ (response != Memory_Response.Refuse) + "]");
+                + $"] cond3[{last.isSexTouchMemory} {last.isOngoing} {targetCOM != null && targetCOM.isSexCOM} {targetCOM != null && targetCOM.isTouchCOM} {targetCOM != null && targetCOM.isUnsafe}"
+                + "] cond4["+ (last.isTouchMemory)+ " " + (targetCOM != null && !targetCOM.isSexCOM) + " "+ (targetCOM != null && targetCOM.isTouchCOM)+ "||"+ (response != Memory_Response.Refuse) + "]");
                 else Debug.Log("MemoryManager newEntry last null");
             }
             string roomName = scr_System_CampaignManager.current.GetCharaRoomInstance(this.ownerRef).DisplayName;

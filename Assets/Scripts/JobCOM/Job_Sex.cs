@@ -483,13 +483,6 @@ public class Job_Sex_Group : Job
 
     public override void PostUpdateTime()
     {
-        /*
-        foreach (var chara in actorRefID)
-        {
-            MessageLog m = new MessageLog(chara);
-            scr_System_CampaignManager.current.FindInstanceByID(chara).Body.CheckClimax(m);
-            if (m.Header.Length > 1) scr_System_CampaignManager.current.AddLog(m, true);
-        }*/
         forceFucking.Clear();
 
         base.PostUpdateTime();

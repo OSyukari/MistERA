@@ -1,0 +1,34 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "QueuedWakeupEvent",
+                "SelfValidator":{
+                    "chara_conditions":[ { "parameters":["isSleeping"] } ]
+                },
+                "events": [
+                    {
+                        "$type":"Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options":[
+                            {
+                                "option": "silent branch event, this shouldnt be displayed",
+                                "Results": [ { "Type": "WakeUp" } ]
+                            }
+                        ],
+                        "isLast" :true
+                    }
+                ]
+            },
+            {
+                "ID": "OnCharaWakeUp",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "（$currentTime$）$self.name$醒来了",
+                        "isLast" :true
+                    }
+                ]
+            }
+        ]
+    }
+}

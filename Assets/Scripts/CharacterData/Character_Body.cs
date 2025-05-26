@@ -94,6 +94,7 @@ public class Character_Body
     public void ClearLastInteractedRefs()
     {
         Climax = false;
+        Cum = false;
         foreach (var organ in Internals) organ.ClearLastInteractedRefs();
     }
 
@@ -212,7 +213,15 @@ public class Character_Body
         return list;
     }
 
-    public bool Climax = false;
+    [SerializeField][JsonProperty] protected bool Climax = false;
+    [SerializeField][JsonProperty] protected bool Cum = false;
+
+    public bool isClimaxing(bool checkCum)
+    {
+        if (checkCum) return Cum;
+        else return Climax;
+    }
+
     [JsonIgnore] public List<int> EquippedItemRefs
     {
         get
@@ -390,16 +399,16 @@ public class Character_Body
                     selfTag.Add(part.Sensitivity);
                     selfTag.Add("climax");
 
-
+                    this.Climax = true;
                     // ADDLOG CLIMAX
                     var cumAmount = 20;
                     if (part.canFuck) cum = part.Cum(cumAmount, exp);
 
-
-
-
                     if (cum != null)
                     {
+
+                        this.Cum = true;
+
                         // find valid container for cum
                         List<BodyInternal_Instance> possiblecontainers = part.LastInteactedRefs.FindAll(x=>x.canContain);
                         List<BodyInternal_Instance> possibleEmptyContainers = possiblecontainers.FindAll(x => !x.containsOverCapacity);

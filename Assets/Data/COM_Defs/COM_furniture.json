@@ -75,7 +75,6 @@
                 "comTags": [
                     "furniture",
                     "bed",
-                    "sleep",
                     "rest"
                 ],
                 "_comments": "all COM with sleep tag are hard-coded to allow character without sleep need to recover 1HP and 1MP on command completion",

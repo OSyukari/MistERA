@@ -204,10 +204,18 @@ public class StatusEx_Instance : I_CacheValues
 
 
     private Tuple<float, List<string>> cached_value = null;
-    
-    public void ClearCache()
+
+
+    public float SeverityPrevious = 0f;
+    public void ClearCache( bool resetOnly = false)
     {
         //Debug.Log("StatEx " + baseID + " CLEAR CACHE");
+        if (resetOnly)
+        {
+            this.cached_value = null;
+            return;
+        }
+        if (cached_value != null) SeverityPrevious = Severity;
         this.cached_value = null;
 
         if (this.BaseRef.variationMode.variationType == StatusEx_Base.Status_Variation_Type.summation)
