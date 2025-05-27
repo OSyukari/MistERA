@@ -1,0 +1,1151 @@
+{
+    "data": [
+        {
+            "id": 87746184,
+            "name": "Albion the Branded Dragon",
+            "typeline": [
+                "Dragon",
+                "Fusion",
+                "Effect"
+            ],
+            "type": "Fusion Monster",
+            "humanReadableCardType": "Fusion Effect Monster",
+            "frameType": "fusion",
+            "desc": "\"Fallen of Albaz\" + 1 LIGHT monster\r\nIf this card is Fusion Summoned: You can Fusion Summon 1 Level 8 or lower Fusion Monster from your Extra Deck, except \"Albion the Branded Dragon\", by banishing Fusion Materials mentioned on it from your hand, field, and/or GY. During the End Phase, if this card is in the GY because it was sent there this turn: You can add to your hand or Set 1 \"Branded\" Spell/Trap directly from your Deck. You can only use each effect of \"Albion the Branded Dragon\" once per turn.",
+            "race": "Dragon",
+            "atk": 2500,
+            "def": 2000,
+            "level": 8,
+            "attribute": "DARK",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/albion-the-branded-dragon-11852",
+            "card_sets": [
+                {
+                    "set_name": "2022 Tin of the Pharaoh's Gods",
+                    "set_code": "MP22-EN076",
+                    "set_rarity": "Prismatic Secret Rare",
+                    "set_rarity_code": "(PScR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Lightning Overdrive",
+                    "set_code": "LIOV-EN033",
+                    "set_rarity": "Ultra Rare",
+                    "set_rarity_code": "(UR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Structure Deck: Albaz Strike",
+                    "set_code": "SDAZ-EN046",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "1.61"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 87746184,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/87746184.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/87746184.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/87746184.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.21",
+                    "tcgplayer_price": "0.20",
+                    "ebay_price": "1.60",
+                    "amazon_price": "0.49",
+                    "coolstuffinc_price": "0.39"
+                }
+            ]
+        },
+        {
+            "id": 6763530,
+            "name": "Branded Banishment",
+            "type": "Trap Card",
+            "humanReadableCardType": "Normal Trap",
+            "frameType": "trap",
+            "desc": "Target 1 \"Despia\" monster or 1 Level 8 or higher Fusion Monster in your GY; Special Summon it, then you can apply this effect.\r\n\u25cf Fusion Summon 1 Level 8 or higher Fusion Monster from your Extra Deck, by banishing Fusion Materials listed on it from either field.\r\nYou can only activate 1 \"Branded Banishment\" per turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-banishment-13036",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Heroes Mega Pack",
+                    "set_code": "MP23-EN102",
+                    "set_rarity": "Prismatic Secret Rare",
+                    "set_rarity_code": "(PScR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Dimension Force",
+                    "set_code": "DIFO-EN072",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 6763530,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/6763530.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/6763530.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/6763530.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.37",
+                    "tcgplayer_price": "0.30",
+                    "ebay_price": "2.98",
+                    "amazon_price": "1.40",
+                    "coolstuffinc_price": "2.99"
+                }
+            ]
+        },
+        {
+            "id": 32756828,
+            "name": "Branded Beast",
+            "type": "Trap Card",
+            "humanReadableCardType": "Continuous Trap",
+            "frameType": "trap",
+            "desc": "Once per turn, during the Main Phase, if you control a \"Bystial\" monster: You can Tribute 1 Dragon monster, then target 1 card your opponent controls; destroy it. During the End Phase: You can target 1 \"Branded\" Continuous Spell/Trap in your GY; place it face-up on your field. You can only use this effect of \"Branded Beast\" once per turn.",
+            "race": "Continuous",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-beast-13359",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Heroes Mega Pack",
+                    "set_code": "MP23-EN209",
+                    "set_rarity": "Rare",
+                    "set_rarity_code": "(R)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Darkwing Blast",
+                    "set_code": "DABL-EN073",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 32756828,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/32756828.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/32756828.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/32756828.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.18",
+                    "tcgplayer_price": "0.14",
+                    "ebay_price": "0.99",
+                    "amazon_price": "0.40",
+                    "coolstuffinc_price": "0.39"
+                }
+            ]
+        },
+        {
+            "id": 60442460,
+            "name": "Branded Befallen",
+            "type": "Trap Card",
+            "humanReadableCardType": "Continuous Trap",
+            "frameType": "trap",
+            "desc": "Once per turn, when your opponent activates a card or effect that targets 1 \"Bystial\" monster you control (and no other cards), or when your opponent activates a card or effect in response to the activation of your \"Bystial\" monster effect: You can target 1 LIGHT or DARK monster in either GY; banish it, and if you do, negate that activated effect.",
+            "race": "Continuous",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-befallen-13555",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Mirrors",
+                    "set_code": "MP24-EN330",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Photon Hypernova",
+                    "set_code": "PHHY-EN073",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 60442460,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/60442460.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/60442460.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/60442460.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.04",
+                    "tcgplayer_price": "0.06",
+                    "ebay_price": "0.00",
+                    "amazon_price": "0.00",
+                    "coolstuffinc_price": "0.39"
+                }
+            ]
+        },
+        {
+            "id": 62022479,
+            "name": "Branded Bond",
+            "type": "Spell Card",
+            "humanReadableCardType": "Normal Spell",
+            "frameType": "spell",
+            "desc": "Special Summon 1 of your \"Fallen of Albaz\" that is banished, in your hand, or in your GY. During the End Phase, if this card is in the GY because it was sent there to activate the effect of \"Fallen of Albaz\" this turn: You can Set this card. You can only use each effect of \"Branded Bond\" once per turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-bond-12180",
+            "card_sets": [
+                {
+                    "set_name": "2022 Tin of the Pharaoh's Gods",
+                    "set_code": "MP22-EN156",
+                    "set_rarity": "Ultra Rare",
+                    "set_rarity_code": "(UR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Dawn of Majesty",
+                    "set_code": "DAMA-EN055",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0.98"
+                },
+                {
+                    "set_name": "Structure Deck: Albaz Strike",
+                    "set_code": "SDAZ-EN023",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0.89"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 62022479,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/62022479.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/62022479.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/62022479.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.05",
+                    "tcgplayer_price": "0.08",
+                    "ebay_price": "1.50",
+                    "amazon_price": "0.25",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 34536828,
+            "name": "Branded Disciple",
+            "type": "Spell Card",
+            "humanReadableCardType": "Continuous Spell",
+            "frameType": "spell",
+            "desc": "When a monster effect activated by your opponent resolves, if that opponent's monster has 0 ATK or DEF, and you control a Level 8 or higher Fiend Fusion Monster, you can negate that activated effect. At the end of the Damage Step, if monsters with 0 ATK battled each other: You can destroy your opponent's battling monster. You can only use each effect of \"Branded Disciple\" once per turn.",
+            "race": "Continuous",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-disciple-12687",
+            "card_sets": [
+                {
+                    "set_name": "Battle of Chaos",
+                    "set_code": "BACH-EN053",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0.81"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 34536828,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/34536828.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/34536828.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/34536828.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.20",
+                    "tcgplayer_price": "0.08",
+                    "ebay_price": "0.99",
+                    "amazon_price": "4.49",
+                    "coolstuffinc_price": "0.49"
+                }
+            ]
+        },
+        {
+            "id": 1041278,
+            "name": "Branded Expulsion",
+            "type": "Trap Card",
+            "humanReadableCardType": "Normal Trap",
+            "frameType": "trap",
+            "desc": "Tribute 1 Fusion Monster, then target 2 non-Fusion Monsters that are banished and/or in either GY; Special Summon both monsters, 1 on each field. If you Tributed a Fusion Monster that mentions \"Fallen of Albaz\" as material to activate this card, you can Special Summon both monsters to your field instead, in Defense Position. You can only activate 1 \"Branded Expulsion\" per turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-expulsion-13209",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Heroes Mega Pack",
+                    "set_code": "MP23-EN144",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Power of the Elements",
+                    "set_code": "POTE-EN070",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0.84"
+                }
+            ],
+            "banlist_info": {
+                "ban_tcg": "Forbidden"
+            },
+            "card_images": [
+                {
+                    "id": 1041278,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/1041278.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/1041278.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/1041278.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.07",
+                    "tcgplayer_price": "0.04",
+                    "ebay_price": "0.99",
+                    "amazon_price": "0.25",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 44362883,
+            "name": "Branded Fusion",
+            "type": "Spell Card",
+            "humanReadableCardType": "Normal Spell",
+            "frameType": "spell",
+            "desc": "Fusion Summon 1 Fusion Monster that mentions \"Fallen of Albaz\" as material from your Extra Deck, using 2 monsters from your hand, Deck, or field as material. You cannot Special Summon from the Extra Deck, except Fusion Monsters, the turn you activate this card. You can only activate 1 \"Branded Fusion\" per turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-fusion-12939",
+            "card_sets": [
+                {
+                    "set_name": "Battles of Legend: Terminal Revenge",
+                    "set_code": "BLTR-EN111",
+                    "set_rarity": "Quarter Century Secret Rare",
+                    "set_rarity_code": "",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Battles of Legend: Terminal Revenge",
+                    "set_code": "BLTR-EN111",
+                    "set_rarity": "Secret Rare",
+                    "set_rarity_code": "(ScR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "OTS Tournament Pack 22",
+                    "set_code": "OP22-EN002",
+                    "set_rarity": "Ultimate Rare",
+                    "set_rarity_code": "(UtR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Structure Deck: Albaz Strike",
+                    "set_code": "SDAZ-EN021",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "3.13"
+                }
+            ],
+            "banlist_info": {
+                "ban_tcg": "Limited",
+                "ban_ocg": "Limited"
+            },
+            "card_images": [
+                {
+                    "id": 44362883,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/44362883.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/44362883.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/44362883.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.25",
+                    "tcgplayer_price": "0.51",
+                    "ebay_price": "37.00",
+                    "amazon_price": "2.05",
+                    "coolstuffinc_price": "3.99"
+                }
+            ]
+        },
+        {
+            "id": 14220547,
+            "name": "Branded in Central Dogmatika",
+            "type": "Spell Card",
+            "humanReadableCardType": "Continuous Spell",
+            "frameType": "spell",
+            "desc": "If you Special Summon 1 Ritual Monster (and no other cards) by a Spell Card or effect (except during the Damage Step): You can look at either player's Extra Deck, and send 1 monster from it to the GY. If you Special Summon 1 Fusion Monster (and no other cards) by a Spell Card or effect (except during the Damage Step): You can target that monster; for the rest of this turn, it gains ATK equal to its original ATK, also it can only attack Attack Position monsters your opponent controls. You can only use each effect of \"Branded in Central Dogmatika\" once per turn.",
+            "race": "Continuous",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-in-central-dogmatika-13183",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Heroes Mega Pack",
+                    "set_code": "MP23-EN138",
+                    "set_rarity": "Rare",
+                    "set_rarity_code": "(R)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Mirrors",
+                    "set_code": "MP24-EN302",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Power of the Elements",
+                    "set_code": "POTE-EN058",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0.8"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 14220547,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/14220547.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/14220547.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/14220547.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.06",
+                    "tcgplayer_price": "0.07",
+                    "ebay_price": "0.99",
+                    "amazon_price": "0.25",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 29948294,
+            "name": "Branded in High Spirits",
+            "type": "Spell Card",
+            "humanReadableCardType": "Quick-Play Spell",
+            "frameType": "spell",
+            "desc": "Reveal 1 monster in your hand and send 1 Level 8 Fusion Monster from your Extra Deck to the GY with the same Type that has 2500 ATK or DEF, then you can apply this effect.\r\n\u25cf Discard the revealed monster, and if you do, add 1 \"Fallen of Albaz\", or 1 monster that mentions it, from your Deck to your hand.\r\nDuring the End Phase, if a Fusion Monster was sent to your GY this turn: You can add this card from the GY to your hand. You can only use 1 \"Branded in High Spirits\" effect per turn, and only once that turn.",
+            "race": "Quick-Play",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-in-high-spirits-12458",
+            "card_sets": [
+                {
+                    "set_name": "2022 Tin of the Pharaoh's Gods",
+                    "set_code": "MP22-EN217",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Burst of Destiny",
+                    "set_code": "BODE-EN055",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 29948294,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/29948294.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/29948294.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/29948294.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.25",
+                    "tcgplayer_price": "0.76",
+                    "ebay_price": "1.69",
+                    "amazon_price": "3.95",
+                    "coolstuffinc_price": "0.39"
+                }
+            ]
+        },
+        {
+            "id": 82738008,
+            "name": "Branded in Red",
+            "type": "Spell Card",
+            "humanReadableCardType": "Quick-Play Spell",
+            "frameType": "spell",
+            "desc": "Target 1 \"Despia\" monster or \"Fallen of Albaz\" in your GY; add it to your hand, then you can apply the following effect.\r\n\u25cf Fusion Summon 1 Level 8 or higher Fusion Monster from your Extra Deck, by banishing Fusion Materials mentioned on it from your hand or field, but it cannot attack directly this turn.\r\nYou can only activate 1 \"Branded in Red\" per turn.",
+            "race": "Quick-Play",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-in-red-12456",
+            "card_sets": [
+                {
+                    "set_name": "2022 Tin of the Pharaoh's Gods",
+                    "set_code": "MP22-EN219",
+                    "set_rarity": "Rare",
+                    "set_rarity_code": "(R)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Burst of Destiny",
+                    "set_code": "BODE-EN057",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "OTS Tournament Pack 22",
+                    "set_code": "OP22-EN026",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 82738008,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/82738008.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/82738008.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/82738008.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.74",
+                    "tcgplayer_price": "0.56",
+                    "ebay_price": "2.99",
+                    "amazon_price": "4.49",
+                    "coolstuffinc_price": "2.99"
+                }
+            ]
+        },
+        {
+            "id": 34995106,
+            "name": "Branded in White",
+            "type": "Spell Card",
+            "humanReadableCardType": "Normal Spell",
+            "frameType": "spell",
+            "desc": "Fusion Summon 1 Fusion Monster from your Extra Deck, using monsters from your hand or field as material, including a Dragon monster. You can also banish monsters from your GY as material, if you use \"Fallen of Albaz\" as Fusion Material from your hand, field, or by banishing itself from your GY. During the End Phase, if this card is in the GY because it was sent there to activate the effect of \"Fallen of Albaz\" this turn: You can Set this card. You can only use each effect of \"Branded in White\" once per turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-in-white-11859",
+            "card_sets": [
+                {
+                    "set_name": "2022 Tin of the Pharaoh's Gods",
+                    "set_code": "MP22-EN093",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Lightning Overdrive",
+                    "set_code": "LIOV-EN055",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Structure Deck: Albaz Strike",
+                    "set_code": "SDAZ-EN022",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "1.15"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 34995106,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/34995106.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/34995106.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/34995106.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.08",
+                    "tcgplayer_price": "0.07",
+                    "ebay_price": "2.90",
+                    "amazon_price": "0.25",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 10065487,
+            "name": "Branded Loss",
+            "type": "Spell Card",
+            "humanReadableCardType": "Normal Spell",
+            "frameType": "spell",
+            "desc": "Target 1 monster your opponent controls that was Special Summoned from the Extra Deck and 1 Fusion Monster you control; shuffle them into the Deck(s), also, during the End Phase of this turn, each player can Special Summon 1 Fusion Monster that mentions \"Fallen of Albaz\" as material from their own Extra Deck. You can only activate 1 \"Branded Loss\" per turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-loss-13033",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Heroes Mega Pack",
+                    "set_code": "MP23-EN095",
+                    "set_rarity": "Rare",
+                    "set_rarity_code": "(R)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Dimension Force",
+                    "set_code": "DIFO-EN057",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0.86"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 10065487,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/10065487.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/10065487.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/10065487.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.09",
+                    "tcgplayer_price": "0.06",
+                    "ebay_price": "0.99",
+                    "amazon_price": "0.45",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 18973184,
+            "name": "Branded Lost",
+            "type": "Spell Card",
+            "humanReadableCardType": "Continuous Spell",
+            "frameType": "spell",
+            "desc": "The activation of your cards and effects that include an effect that Fusion Summons a Fusion Monster cannot be negated, also your opponent cannot activate cards or effects when a monster is Fusion Summoned this way. If you Fusion Summon a Fusion Monster: You can add 1 \"Fallen of Albaz\", or 1 monster that mentions it, from your Deck to your hand. You can only use this effect of \"Branded Lost\" once per turn.",
+            "race": "Continuous",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-lost-12808",
+            "card_sets": [
+                {
+                    "set_name": "Battles of Legend: Terminal Revenge",
+                    "set_code": "BLTR-EN110",
+                    "set_rarity": "Ultra Rare",
+                    "set_rarity_code": "(UR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "OTS Tournament Pack 22",
+                    "set_code": "OP22-EN009",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Structure Deck: Albaz Strike",
+                    "set_code": "SDAZ-EN020",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "1.19"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 18973184,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/18973184.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/18973184.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/18973184.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.11",
+                    "tcgplayer_price": "0.13",
+                    "ebay_price": "1.25",
+                    "amazon_price": "0.25",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 36637374,
+            "name": "Branded Opening",
+            "type": "Spell Card",
+            "humanReadableCardType": "Quick-Play Spell",
+            "frameType": "spell",
+            "desc": "Discard 1 card, then take 1 \"Despia\" monster from your Deck, and either add it to your hand or Special Summon it in Defense Position, also for the rest of this turn after this card resolves, you cannot Special Summon monsters from the Extra Deck, except Fusion Monsters. If a Fusion Monster(s) you control would be destroyed by card effect, you can banish this card from your GY instead. You can only use each effect of \"Branded Opening\" once per turn.",
+            "race": "Quick-Play",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-opening-12166",
+            "card_sets": [
+                {
+                    "set_name": "2022 Tin of the Pharaoh's Gods",
+                    "set_code": "MP22-EN155",
+                    "set_rarity": "Prismatic Secret Rare",
+                    "set_rarity_code": "(PScR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Dawn of Majesty",
+                    "set_code": "DAMA-EN054",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Quarter Century Bonanza",
+                    "set_code": "RA03-EN070",
+                    "set_rarity": "Collector's Rare",
+                    "set_rarity_code": "(CR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Quarter Century Bonanza",
+                    "set_code": "RA03-EN070",
+                    "set_rarity": "Platinum Secret Rare",
+                    "set_rarity_code": "(PS)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Quarter Century Bonanza",
+                    "set_code": "RA03-EN070",
+                    "set_rarity": "Quarter Century Secret Rare",
+                    "set_rarity_code": "",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Quarter Century Bonanza",
+                    "set_code": "RA03-EN070",
+                    "set_rarity": "Secret Rare",
+                    "set_rarity_code": "(ScR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Quarter Century Bonanza",
+                    "set_code": "RA03-EN070",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Quarter Century Bonanza",
+                    "set_code": "RA03-EN070",
+                    "set_rarity": "Ultimate Rare",
+                    "set_rarity_code": "(UtR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Quarter Century Bonanza",
+                    "set_code": "RA03-EN070",
+                    "set_rarity": "Ultra Rare",
+                    "set_rarity_code": "(UR)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 36637374,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/36637374.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/36637374.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/36637374.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.11",
+                    "tcgplayer_price": "0.14",
+                    "ebay_price": "6.29",
+                    "amazon_price": "1.40",
+                    "coolstuffinc_price": "3.99"
+                }
+            ]
+        },
+        {
+            "id": 34090915,
+            "name": "Branded Regained",
+            "type": "Spell Card",
+            "humanReadableCardType": "Continuous Spell",
+            "frameType": "spell",
+            "desc": "If a LIGHT or DARK monster(s) is banished (except during the Damage Step): You can target 1 of those monsters; place that monster on the bottom of the Deck, and if you do, draw 1 card. You can only use this effect of \"Branded Regained\" once per turn. Once per turn, if your opponent Normal or Special Summons a monster (except during the Damage Step): You can target 1 \"Bystial\" monster in your GY; Special Summon it. You can only activate this effect of \"Branded Regained\" once per Chain.",
+            "race": "Continuous",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-regained-13372",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Heroes Mega Pack",
+                    "set_code": "MP23-EN196",
+                    "set_rarity": "Rare",
+                    "set_rarity_code": "(R)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Darkwing Blast",
+                    "set_code": "DABL-EN053",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 34090915,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/34090915.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/34090915.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/34090915.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.32",
+                    "tcgplayer_price": "0.72",
+                    "ebay_price": "1.95",
+                    "amazon_price": "0.00",
+                    "coolstuffinc_price": "0.39"
+                }
+            ]
+        },
+        {
+            "id": 17751597,
+            "name": "Branded Retribution",
+            "type": "Trap Card",
+            "humanReadableCardType": "Counter Trap",
+            "frameType": "trap",
+            "desc": "When a Spell/Trap Card, or monster effect, is activated that includes an effect that Special Summons a monster(s): Return to the Extra Deck, 1 face-up Fusion Monster you control, or 2 Fusion Monsters in your GY, that mention \"Fallen of Albaz\" as material, and if you do, negate the activation, and if you do that, destroy that card. You can banish this card from your GY, then target 1 \"Branded\" Spell/Trap in your GY, except \"Branded Retribution\"; add it to your hand. You can only use 1 \"Branded Retribution\" effect per turn, and only once that turn.",
+            "race": "Counter",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-retribution-12911",
+            "card_sets": [
+                {
+                    "set_name": "Battles of Legend: Terminal Revenge",
+                    "set_code": "BLTR-EN113",
+                    "set_rarity": "Ultra Rare",
+                    "set_rarity_code": "(UR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Structure Deck: Albaz Strike",
+                    "set_code": "SDAZ-EN032",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0.89"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 17751597,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/17751597.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/17751597.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/17751597.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.19",
+                    "tcgplayer_price": "0.23",
+                    "ebay_price": "1.25",
+                    "amazon_price": "0.25",
+                    "coolstuffinc_price": "0.39"
+                }
+            ]
+        },
+        {
+            "id": 81767888,
+            "name": "Branded Sword",
+            "type": "Trap Card",
+            "humanReadableCardType": "Normal Trap",
+            "frameType": "trap",
+            "desc": "Banish any number of \"Branded\" Spells/Traps from your GY; Special Summon that many \"Iceblade Tokens\" (Dragon/DARK/Level 8/ATK 2500/DEF 2000). You can banish this card from your GY, then target 1 of your banished monsters that is \"Fallen of Albaz\" or mentions it; add that monster to your hand. You can only use 1 \"Branded Sword\" effect per turn, and only once that turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/branded-sword-12910",
+            "card_sets": [
+                {
+                    "set_name": "Battles of Legend: Terminal Revenge",
+                    "set_code": "BLTR-EN112",
+                    "set_rarity": "Ultra Rare",
+                    "set_rarity_code": "(UR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Structure Deck: Albaz Strike",
+                    "set_code": "SDAZ-EN031",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "1.34"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 81767888,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/81767888.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/81767888.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/81767888.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.10",
+                    "tcgplayer_price": "0.12",
+                    "ebay_price": "1.24",
+                    "amazon_price": "0.36",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 19271881,
+            "name": "Brightest, Blazing, Branded King",
+            "type": "Trap Card",
+            "humanReadableCardType": "Normal Trap",
+            "frameType": "trap",
+            "desc": "Choose 1 Fusion Monster you control that mentions \"Fallen of Albaz\" as material, and negate the effects of all other face-up cards currently on the field until the end of this turn. During the End Phase, if a Fusion Monster(s) was sent to your GY this turn: You can add this card from the GY to your hand. You can only use 1 \"Brightest, Blazing, Branded King\" effect per turn, and only once that turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/brightest-blazing-branded-king-13697",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Mirrors",
+                    "set_code": "MP24-EN350",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Cyberstorm Access",
+                    "set_code": "CYAC-EN070",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 19271881,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/19271881.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/19271881.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/19271881.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.08",
+                    "tcgplayer_price": "0.08",
+                    "ebay_price": "0.99",
+                    "amazon_price": "0.00",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 45675980,
+            "name": "Etude of the Branded",
+            "type": "Trap Card",
+            "humanReadableCardType": "Continuous Trap",
+            "frameType": "trap",
+            "desc": "During either player's turn, you can: Immediately after this effect resolves, Synchro Summon 1 Synchro Monster, using monsters you control as material, including a Dragon monster. You can only use this effect of \"Etude of the Branded\" once per turn. While you control a \"Bystial\" monster, banish any monsters that would be sent to your opponent's GY as Tributes for their Ritual Summon, or as material for their Fusion, Synchro, or Link Summon.",
+            "race": "Continuous",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/etude-of-the-branded-13709",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Mirrors",
+                    "set_code": "MP24-EN351",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Cyberstorm Access",
+                    "set_code": "CYAC-EN071",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 45675980,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/45675980.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/45675980.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/45675980.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.10",
+                    "tcgplayer_price": "0.11",
+                    "ebay_price": "0.00",
+                    "amazon_price": "0.00",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 93595154,
+            "name": "Judgment of the Branded",
+            "type": "Trap Card",
+            "humanReadableCardType": "Normal Trap",
+            "frameType": "trap",
+            "desc": "Target 1 Level 8 or higher Fusion Monster you control; destroy all monsters your opponent controls with an equal or higher ATK than that monster. During the End Phase, if this card is in the GY because it was sent there to activate the effect of \"Fallen of Albaz\" this turn: You can Set this card. You can only use this effect of \"Judgment of the Branded\" once per turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/judgment-of-the-branded-11855",
+            "card_sets": [
+                {
+                    "set_name": "2022 Tin of the Pharaoh's Gods",
+                    "set_code": "MP22-EN104",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Lightning Overdrive",
+                    "set_code": "LIOV-EN069",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Structure Deck: Albaz Strike",
+                    "set_code": "SDAZ-EN034",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "1.18"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 93595154,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/93595154.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/93595154.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/93595154.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.03",
+                    "tcgplayer_price": "0.05",
+                    "ebay_price": "0.99",
+                    "amazon_price": "4.49",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        },
+        {
+            "id": 72554664,
+            "name": "Light of the Branded",
+            "type": "Spell Card",
+            "humanReadableCardType": "Quick-Play Spell",
+            "frameType": "spell",
+            "desc": "Target 1 Fusion Monster on the field or in either GY; return it to the Extra Deck, then you can Special Summon 1 \"Fallen of Albaz\" from your GY to your field and 1 monster from your opponent's GY to their field. You can only activate 1 \"Light of the Branded\" per turn.",
+            "race": "Quick-Play",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/light-of-the-branded-13556",
+            "card_sets": [
+                {
+                    "set_name": "25th Anniversary Tin: Dueling Mirrors",
+                    "set_code": "MP24-EN178",
+                    "set_rarity": "Ultra Rare",
+                    "set_rarity_code": "(UR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "OTS Tournament Pack 21",
+                    "set_code": "OP21-EN012",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Photon Hypernova",
+                    "set_code": "PHHY-EN056",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 72554664,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/72554664.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/72554664.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/72554664.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.08",
+                    "tcgplayer_price": "0.11",
+                    "ebay_price": "1.39",
+                    "amazon_price": "0.00",
+                    "coolstuffinc_price": "0.39"
+                }
+            ]
+        },
+        {
+            "id": 67100549,
+            "name": "Screams of the Branded",
+            "type": "Trap Card",
+            "humanReadableCardType": "Normal Trap",
+            "frameType": "trap",
+            "desc": "If a Fusion Monster was sent to your GY this turn: Special Summon 1 of your Fusion Monsters that is banished or in your GY. During the End Phase, if this card is in the GY because it was sent there to activate the effect of \"Fallen of Albaz\" this turn: You can Set this card. You can only use this effect of \"Screams of the Branded\" once per turn.",
+            "race": "Normal",
+            "archetype": "Branded",
+            "ygoprodeck_url": "https://ygoprodeck.com/card/screams-of-the-branded-11860",
+            "card_sets": [
+                {
+                    "set_name": "2022 Tin of the Pharaoh's Gods",
+                    "set_code": "MP22-EN103",
+                    "set_rarity": "Super Rare",
+                    "set_rarity_code": "(SR)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Lightning Overdrive",
+                    "set_code": "LIOV-EN068",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0"
+                },
+                {
+                    "set_name": "Structure Deck: Albaz Strike",
+                    "set_code": "SDAZ-EN033",
+                    "set_rarity": "Common",
+                    "set_rarity_code": "(C)",
+                    "set_price": "0.9"
+                }
+            ],
+            "card_images": [
+                {
+                    "id": 67100549,
+                    "image_url": "https://images.ygoprodeck.com/images/cards/67100549.jpg",
+                    "image_url_small": "https://images.ygoprodeck.com/images/cards_small/67100549.jpg",
+                    "image_url_cropped": "https://images.ygoprodeck.com/images/cards_cropped/67100549.jpg"
+                }
+            ],
+            "card_prices": [
+                {
+                    "cardmarket_price": "0.02",
+                    "tcgplayer_price": "0.04",
+                    "ebay_price": "1.50",
+                    "amazon_price": "0.25",
+                    "coolstuffinc_price": "0.25"
+                }
+            ]
+        }
+    ]
+}
