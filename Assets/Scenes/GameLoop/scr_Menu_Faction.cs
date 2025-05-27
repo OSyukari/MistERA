@@ -11,6 +11,7 @@ public class scr_Menu_Faction : MonoBehaviour
     public TMP_Text factionName;
     public TMP_Text factionResources;
     public scr_HoverableText factionPopulation;
+    public scr_HoverableText canEat, canSleep;
 
 
     // Start is called before the first frame update
@@ -40,12 +41,16 @@ public class scr_Menu_Faction : MonoBehaviour
 
     //private Manageable targetFaction = null;
 
+    string sleepname = "";
+
+    Manageable previousFaction = null;
+    int previousHour = -1, currentHour = -1;
+    Character_Trainable player;
+
     private void refreshFaction()
     {
         //Debug.Log("CAMPAIGNMANAGER NOTIFY UPDATE -> refreshFaction");
         var targetFactionList = scr_System_CampaignManager.current.Player.FactionManager.ManagerFactions;
-
-
 
         if (targetFactionList.Count < 1)
         {
@@ -127,11 +132,36 @@ public class scr_Menu_Faction : MonoBehaviour
             }
             
         }
+        currentHour = scr_System_Time.current.getCurrentTime().Hour;
+        player = scr_System_CampaignManager.current.Player;
 
+        if (previousFaction != targetFaction || previousHour != currentHour)
+        {
+            canEat.gameObject.SetActive(targetFaction.mealHours.Contains(currentHour));
 
+            if (player.FactionManager.HasSleepSchedule)
+            {
+                if (sleepname != "") canSleep.gameObject.SetActive(player.FactionManager.CurrentJobName(currentHour) == sleepname);
+                else
+                {
+                    var com = player.FactionManager.CurrentJobPost(currentHour).getRandCOM;
+                    if (com != null && com.ID == "com_furniture_sleep")
+                    {
+                        sleepname = player.FactionManager.CurrentJobName(currentHour);
+
+                    }
+                    else
+                    {
+                        canSleep.gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
 
         //foreach (KeyValuePair<string, int> kvp in targetFaction.GetMaintenanceCost_Total) values.Add(kvp.Key + kvp.Value.ToString("+0;-#"));
         factionResources.text = factionRes.Replace("$resources$", String.Join(" | ", values));  // targetFaction.GetMaintenanceCost_Total
-    
+
+        previousHour = currentHour;
+        previousFaction = targetFaction;
     }
 }

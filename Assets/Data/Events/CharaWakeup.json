@@ -24,7 +24,17 @@
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "（$currentTime$）$self.name$醒来了",
+                        "line": "（$currentTime$）$self.name$醒来了"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options":[
+                            {
+                                "option": "silent branch event, this shouldnt be displayed",
+                                "Results": [ { "Type": "ExecuteCallback", "arguments":["jobCallback"] },
+                                             { "Type": "FlushLogs" } ]
+                            }
+                        ],
                         "isLast" :true
                     }
                 ]

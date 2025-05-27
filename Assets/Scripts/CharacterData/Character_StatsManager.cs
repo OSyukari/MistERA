@@ -453,6 +453,14 @@ public class StatsManager
     [SerializeField][JsonProperty] private int pauseXMinAfterMod_Sex = 0;
 
 
+    public void PreUpdateTimeTick()
+    {
+        for (int i = StatusInstances.Count - 1; i >= 0; i--)
+        {
+            if (!StatusInstances[i].BaseRef.constant) StatusInstances[i].elapsedTime += 1;
+        }
+    }
+
     /// <summary>
     /// Called by character update
     /// </summary>
@@ -550,11 +558,12 @@ public class StatsManager
                         refresh = true;
 
                     }
+                    else if (curr.hasRandomVariation)
+                    {
+                        refresh = true;
+                    }
                 }
-
             }
-
-            
         }
         pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex - t.Minutes, 0);
         if (!hasSexualStimulation) consecutiveClimaxCount = 0;
@@ -703,7 +712,6 @@ public class StatsManager
 
         if (instance != null)
         {
-
             if (instance.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
             {
                 if (AfterClimax != null && AfterClimax.Severity < 0)
@@ -744,20 +752,16 @@ public class StatsManager
         UpdateStatus();
     }
 
+    bool previouslyUnconscious = false;
+
     private void UpdateStatus()
     {
-        //bool previouslyConscious = isConsciousnessUnconscious;
-
+        previouslyUnconscious = isConsciousnessUnconscious;
         this.modifiers_temporary.Clear();
         foreach (var i in statusInstancesEx) i.ClearCache(true);
 
-        RefreshAllStats();
-        /*
-        if (previouslyConscious && !isConsciousnessUnconscious)
-        {
-            Debug.Log($"Characte {Owner.FirstName} is no longer unconscious, queueing wakeup event");
-            Owner.WakeupPrep();
-        }*/
+        //RefreshAllStats();
+       
     }
 
     protected void AddStatus(string s, float initialSeverity = 0f, int durationMinute = -1)

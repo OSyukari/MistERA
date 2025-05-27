@@ -808,7 +808,7 @@
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sine, Assembly-CSharp",
-                    "baseSample":"minute",
+                    "baseSample":"elapsedMinute",
                     "cycleLen":45,
                     "intensityMod":0.75
                 }

@@ -893,9 +893,8 @@ public abstract class ActionPackage
 
             foreach (var ep in this.packages)
             {
-
                 ep.AddExtraActorTags(ep.isDoer(c) ? extraTag : "", ep.isReceiver(c) ? extraTag : "");
-                this.job.LogMessage_Kojo(ep);
+                if (returnValue) this.job.LogMessage_Kojo(ep);
             }
             return returnValue;
         }

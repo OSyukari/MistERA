@@ -132,59 +132,6 @@
             ]
         },
         {
-            "id":"consumable_drug_sleepingpill",
-            "displayName":"Sleeping Pill",
-            "tooltip":"Sleeping Pill",
-            "Tags":["do_not_use"],
-            "itemComps_Template":[
-                {
-                    "compType":"ItemComponent_Ingestible",
-                    "comp_Ingestible":{
-                        "ingestMethod":[
-                            {
-                                "bodyTags":"stomach",
-                                "digestSpeed": -1,
-                                "digestDelay":20,
-                                "digestDelayVariation":10,
-                                "amountMod":0.5,
-                                "giveStatus":"chara_status_alcohol"
-                            },
-                            {
-                                "bodyTags":"anus",
-                                "digestSpeed": -1,
-                                "digestDelay":3,
-                                "digestDelayVariation":1,
-                                "amountMod":2,
-                                "giveStatus":"chara_status_alcohol"
-                            }
-                        ],
-                        "amount":5,
-                        "modifiers":[
-                            {
-                                "modType":"statusMod",
-                                "value":["chara_status_sleep", 10]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "compType":"ItemComponent_Craftable",
-                    "comp_Craftable":{
-                        "recipes":[
-                            {
-                                "jobKeyword":"production_chemistry",
-                                "skillRequirements":[ ],
-                                "itemRequirements":[ ],
-                                "workAmount":1,
-                                "outputItemBaseID":"consumable_drug_sleepingpill",
-                                "outputAmount":1 
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
             "id":"consumable_drug_rapedrug",
             "displayName":"Rape Drug",
             "tooltip":"One single pill can make someone obedient for more than 3 hours.",

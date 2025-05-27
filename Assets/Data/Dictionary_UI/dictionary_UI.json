@@ -132,6 +132,9 @@
                 "comManager_bottom_logs": "历史记录",
                 "comManager_bottom_room": "当前房间",
                 "comManager_bottom_map": "移动",
+
+
+
                 "ui_quicksave": "快速保存",
                 "ui_quicksave_tooltip": "将当前的游戏数据保存到本地存取",
                 "ui_quicksave_tooltip_cannotSaveduringUpdate": "不可在游戏更新期间存档",
@@ -190,6 +193,12 @@
                 "ui_time_special_timestop": "时间停止",
                 "ui_intro_charaSelect_title": "选择预设玩家角色",
                 "ui_intro_charaSelect_newchara": "新建角色",
+
+                "ui_top_faction_canEat": "<link=ui_top_faction_canEat_tooltip>可吃饭</link>",
+                "ui_top_faction_canEat_tooltip": "阵营道具栏内有可食用的餐点时，到了饭点可以在餐厅领取食物。",
+                "ui_top_faction_canSleep": "<link=ui_top_faction_canSleep_tooltip>可睡觉</link>",
+                "ui_top_faction_canSleep_tooltip": "未实装",
+
                 "wip_disabled": "施工中",
                 "management_faction_managers_tooltip": "阵营内角色对阵营的好恶会连带影响对管理者的态度",
                 "management_faction_managers": "<link=management_faction_managers_tooltip>阵营管理者：</link>",

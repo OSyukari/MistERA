@@ -10,7 +10,7 @@
                 "currency_pyroxene":"青辉石",
                 "currency_pyroxene_tooltip":"虽然可以用来抽卡，但由于该功能还未实装，因此没有什么意义\n（暂时也没有做抽卡功能的想法）",
                 "consumable_emergency_ration":"应急食粮",
-                "consumable_emergency_ration_tooltip":"虽然味道难以恭维，但至少能保存很久，不用担心会过期\n不可被生产",
+                "consumable_emergency_ration_tooltip":"虽然味道难以恭维，但至少能保存很久，不用担心会过期\n不可被生产，不能提供进餐指令",
 
                 "campaign_starfarers_guide": "%%campaign_starfarers%%剧本简介",
                 "campaign_starfarers_guide_content": "在此剧本中，玩家扮演的‘老师’作为阵营“%%factionName_Utnapishtim%%”的管理者，需要确保所有学生的身心维持健康。\n作为初始剧本，玩家和NPC的行动范围都十分受限，战斗系统因为还没开始做所以也不会任何危险\n数值都还没开始填所以模拟经营的数值管理也不需要担心\n\n\n首先，请在阵营管理界面添加‘外部阵营链接’\n派遣学生去便利店打工可以挣钱\n贸易订单处可以花钱买食物，也可以订购原材料然后派学生执行食物生产工作\n\n请至少确保每天能够生产等同于据点人口数量的%%tag_food_meal%%（食物会坏，所以过剩生产会被浪费）\n请确保每天给学生安排了足够的工时来完成上述生产指标，且不要在学生工作时去打扰\n只要满足了作为阵营管理者的义务（确保一日三餐），老师就能获得学生们的信赖（人际关系还在施工中）"

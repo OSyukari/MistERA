@@ -4,6 +4,7 @@ using System;
 using Newtonsoft.Json;
 using System.Runtime.InteropServices;
 
+[System.Serializable]
 public enum StatusTags
 {
     consciousness_reduced,
@@ -12,6 +13,15 @@ public enum StatusTags
     drugged
 }
 
+[System.Serializable]
+public enum RandomSample
+{
+    None,
+    worldHour,
+    worldMinute,
+    elapsedHour,
+    elapsedMinute
+}
 
 [System.Serializable]
 public class Index_Status:I_IndexHasID, I_SerializationCallbackReceiver, I_IndexMergeable
@@ -101,21 +111,22 @@ public class Status_Base
     public class RandomVariation
     {
 
-        public virtual float Variation()
+        public virtual float Variation(int elapsed = 0)
         {
             return 0;
         }
     }
+
     [System.Serializable]
     public class RandomVariation_Sine : RandomVariation
     {
-        public string baseSample = "";
+        public RandomSample baseSample = RandomSample.None;
         public float cycleLen = 0;
         public float intensityMod = 1;
 
-        public override float Variation()
+        public override float Variation(int elapsed = 0)
         {
-            return (float) Utility.SineSample(cycleLen, baseSample) * intensityMod;
+            return (float) Utility.SineSample(cycleLen, baseSample, elapsed) * intensityMod;
         }
     }
 
@@ -147,8 +158,10 @@ public class Status_Base
             var targetValue = statID == "" ? baseValue : c.Stats.GetDerivedStat(statID).FinalValue();
             var diff = (targetValue - value);
             if (diff == 0) return 0;
-            var lerpStep = Math.Abs( decaySpeed/(targetValue - value));
-            return (float) Unity.Mathematics.math.lerp(value, targetValue, lerpStep) - value;
+            var abs = Math.Abs(decaySpeed);
+            return diff >= abs ? abs : diff <= -abs ? -abs : 0;
+            //var lerpStep = Math.Abs( decaySpeed/(targetValue - value));
+            //return (float) Unity.Mathematics.math.lerp(value, targetValue, lerpStep) - value;
         }
     }
 
@@ -279,8 +292,16 @@ public class Status_Instance : StatusInstance
     {
         get
         {
-            return this.BaseRef.variationMode.randomVariation.Variation();
+            return this.BaseRef.variationMode.randomVariation.Variation(elapsedTime);
         }
+    }
+
+    [JsonIgnore] public bool hasRandomVariation 
+    { get 
+        {
+            if (this.baseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex) return true;
+            return false;
+        } 
     }
 
     [JsonIgnore] public int TickTillDecay
@@ -299,6 +320,8 @@ public class Status_Instance : StatusInstance
             }
         }
     }
+
+    public int elapsedTime = 0;
 
     [JsonIgnore] public int TickTillExpire
     {

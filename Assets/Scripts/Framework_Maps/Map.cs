@@ -73,6 +73,7 @@ public class MapPlan
     public class SalesInventoryInit
     {
         public List<string> matchByTags = new List<string>();
+        public List<string> exceptTags = new List<string>();
         public string matchByID = "";
         public string nameOverwrite = "";
         public int itemCount = 1;

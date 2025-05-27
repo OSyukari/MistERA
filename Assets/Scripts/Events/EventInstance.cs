@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +23,14 @@ public class EventInstance
 
     bool firstInit = true;
 
+    public bool isVisible
+    {
+        get
+        {
+            return Self == null || scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID);
+        }
+    }
+
     protected int targetRef = -1;
     protected Character_Trainable _self = null;
     public Character_Trainable Self { get
@@ -37,7 +46,7 @@ public class EventInstance
     
     }
 
-
+    public Dictionary<string, List<Action>> FunctionCalls = new Dictionary<string, List<Action>>();
     public Dictionary<string, List<Character_Trainable>> Targets = new Dictionary<string, List<Character_Trainable>>();
 
     /// <summary>

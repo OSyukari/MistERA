@@ -34,13 +34,18 @@
 
                 "consumable_alcohol_beer":"罐装啤酒",
                 "consumable_alcohol_beer_tooltip":"350ml，只喝一罐的话很难醉",
-                "jp_convenience_store_beer_6":"啤酒（6罐装）",
 
                 "consumable_alcohol_wine":"红酒",
                 "consumable_alcohol_wine_tooltip":"375ml玻璃杯装，一杯能让大多数人有醉意",
 
                 "jp_convenience_store_rice_bag_5kg":"生米（5kg）",
                 "jp_convenience_store_pyroxene_4800":"%%currency_pyroxene%% x4800",
+
+                "consumable_drug_sleepingpill":"非处方安眠药",
+                "consumable_drug_sleepingpill_tooltip":"效果一般，副作用较久",
+
+                "jp_convenience_store_otcsleepingpills_6pack":"%%consumable_drug_sleepingpill%%（6粒装）",
+                "jp_convenience_store_beer_6pack":"%%consumable_alcohol_beer%%（6罐装）",
 
                 "store_2F_canteen":"员工食堂",
                 "store_2F_toilet_ex":"多功能厕所",

@@ -77,12 +77,3 @@ public class ItemComponentTemplate
     }
 }
 
-
-
-
-[System.Serializable]
-public class ItemComponent_Modifiers
-{
-
-}
-

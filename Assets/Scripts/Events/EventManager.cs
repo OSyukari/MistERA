@@ -65,6 +65,7 @@ public class EventManager
         var newEvent = new EventInstance(target, eventID, label);
         //newEvent.LoadNext(true, eventID, label);
         this.activeEvents.Add(newEvent);
+        Debug.Log($"startevent {eventID}, isactive {newEvent.Status} currentStatus {Status}");
         if (startImmediate)
         {
             //ev.Start();
@@ -88,7 +89,7 @@ public class EventManager
     {
         // forbid run if updating
         var activeEV = this.activeEvents.Count > 0 ? this.activeEvents[0] : null;
-        //Debug.LogError("Eventmanager run");
+       // Debug.LogError("Eventmanager run");
 
         if (ignoreUpdate) loopCounter = 50;
         else if (loopCounter < 1) 

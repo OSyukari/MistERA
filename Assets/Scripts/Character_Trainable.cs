@@ -231,6 +231,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         queuedWakeup = false;
         this._cachedJobDescription = "";
         Body.ClearLastInteractedRefs();
+        this.Stats.PreUpdateTimeTick();
     }
 
     public bool CompareStatValue(string statID, string operand, string value)
@@ -260,7 +261,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 return Utility.CompareValue(isTimeStopped, operand, value);
 
             case "isCumReady":  // check if chara is currently over cum threshold
-                Debug.Log(FirstName + " Comparevalue isCumReady [" + (Stats.SexStimulation.Severity >= Stats.CumThreshold) + "] [" + operand + "] [" + value + "]");
+               // Debug.Log(FirstName + " Comparevalue isCumReady [" + (Stats.SexStimulation.Severity >= Stats.CumThreshold) + "] [" + operand + "] [" + value + "]");
                 return Utility.CompareValue(Body.isClimaxing(true), operand, value);
 
             case "isFatigued":  // check if chara can act but currently low on stamina
@@ -1173,13 +1174,19 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             //Debug.LogError("Wakeup immediate!");
             // IF SLEEP DEPRIVED, IT IS ALREADY ADDED PRIOR TO THIS POINT (ON CALLING WakeupPrep)        
             this.Stats.RemoveStatusByStringMatch("chara_status_sleeping");
-            Debug.Log($"Chara wake up at conscious {this.Stats.Consciousness.Severity}");
+           // Debug.Log($"Chara wake up at conscious {this.Stats.Consciousness.Severity}");
 
             if (!this.Stats.isConsciousnessUnconscious)
             {
                 // re-check every AP
                 Utility.GetAPsFrom(this, out List<ActionPackage> aps);
-                scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
+
+                var wakeupEV = new EventInstance(this, "OnCharaWakeUp", "");
+                var callbacks = new List<Action>();
+                wakeupEV.FunctionCalls.Add("jobCallback", callbacks);
+                //scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
+                scr_UpdateHandler.current.EventHandler.StartEvent(wakeupEV, false);
+
                 List<Job> jobLists_refuse = new List<Job>();
                 List<Job> jobLists_accept = new List<Job>();
                 foreach (var ap in aps)
@@ -1208,10 +1215,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     }
                 }
 
-                foreach (var job in jobLists_accept) job.NotifyDescriptionsOutOfUpdate();
+                
+                foreach (var job in jobLists_accept)
+                {
+                    callbacks.Add(job.NotifyDescriptionsOutOfUpdate);
+                }
+
                 foreach(var job in jobLists_refuse)
                 {
-                    job.NotifyDescriptionsOutOfUpdate();
+                    callbacks.Add(job.NotifyDescriptionsOutOfUpdate);
                     if (job == this.InteractionJob) continue;
                     else if (job.GetExistingPackages(this, true, true, true, false).Count < 1)
                     {
@@ -1224,9 +1236,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                         }
                     }
                 }
-
+                
                 // if exit job, then removeactor already called endongoingmemory
                 // so, if last memory is ended and uncons, then, problem!
+                
+
                 var lastMemory = this.Memory.Last;
                 if (!lastMemory.Conscious)
                 {
@@ -1259,7 +1273,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
             }
 
-            scr_UpdateHandler.current.FlushCollectedLogs(true, false);
+           // scr_UpdateHandler.current.FlushCollectedLogs(true, false);
         }
     }
     public void Sleep()

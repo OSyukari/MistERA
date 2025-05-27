@@ -248,16 +248,7 @@ public class COM_Results
                     
                 }
             }
-
-
-
-
         }
-
-
-
-
-
     }
 
     public List<Result_Faction_Home> results_home = null;

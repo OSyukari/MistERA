@@ -552,10 +552,12 @@ public class BodyInternal_Instance
 
     public void Ingest(Item_Instance i, ExperienceLog m = null)
     {
+        var comp = i.GetComp_Ingestible();
+        //bool consumed = false;
         if (i as Item_Instance_Cum != null)
         {
-            float amount = i.GetComp_Ingestible().amount;
-            int exp = Math.Abs((int)(i.GetComp_Ingestible().amount / 10)) + 1;
+            float amount = comp.amount;
+            int exp = Math.Abs((int)(comp.amount / 10)) + 1;
 
             AddExperience(amount, new List<string>() { "cum"}, m);
 
@@ -566,6 +568,8 @@ public class BodyInternal_Instance
             }
         }
 
+        Utility.ApplyOnConsume(this, comp.OnUseEffects);
+
         if (i.Stackable)
         {
            // Debug.Log("Tryingest item ["+i.DisplayName+"] stackable!");
@@ -573,19 +577,19 @@ public class BodyInternal_Instance
             {
                 if (kvpair.BaseID == i.BaseID && kvpair.DisplayName == i.DisplayName)
                 {
-                    kvpair.GetComp_Ingestible().amount += i.GetComp_Ingestible().amount;
+                    //consumed = true;
+                    kvpair.GetComp_Ingestible().amount += comp.amount;
                     scr_System_CampaignManager.current.Unregister(i);
                     return;
                 }
             }
         }
 
-        ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method = i.GetComp_Ingestible().ingestMethod.Find(x => this.hasTag(x.bodyTags));
+        ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method = comp.ingestMethod.Find(x => this.hasTag(x.bodyTags));
 
         //if (!contain.ContainsKey(kvp.Key)) DigestDelays.Add(kvp.Key, Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
         this.ContainedRefs_Delays.Add(i.RefID, Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
         contains_cache = null;
-
     }
 
     private string OwnerName

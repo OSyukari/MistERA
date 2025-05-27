@@ -83,17 +83,59 @@ public static class Utility
             {
                 var outputItem = recipe.OutputItem;
                 if (outputItem == null) Debug.LogError($"sales inventory get content {recipe.outputItemBaseID} is null");
-                else if (Utility.ListContainsStrict(outputItem.Tags, inv.matchByTags)) list.Add(new ItemEntry(outputItem.id, "", recipe.outputAmount * inv.itemCount, inv.countOverride));
+                else if (Utility.ListContainsStrict(outputItem.Tags, inv.matchByTags))
+                {
+                    if (inv.exceptTags.Count > 0 && Utility.ListContainsLoose(outputItem.Tags, inv.exceptTags)) continue;
+                    else if (outputItem.Tags.Contains("do_not_sell")) continue;
+                    list.Add(new ItemEntry(outputItem.id, "", recipe.outputAmount * inv.itemCount, inv.countOverride));
+                } 
             }
 
             foreach (var item in scr_System_Serializer.current.index_Item_Base.List)
             {
                 if (item.Tags.Contains("do_not_use")) continue;
                 if (item.GetCompTemplateByID("ItemComponent_Craftable") != null) continue;
-                if (Utility.ListContainsStrict(item.Tags, inv.matchByTags)) list.Add(new ItemEntry(item.id, "", inv.itemCount, inv.countOverride));
+                if (Utility.ListContainsStrict(item.Tags, inv.matchByTags))
+                {
+                    if (inv.exceptTags.Count > 0 && Utility.ListContainsLoose(item.Tags, inv.exceptTags)) continue;
+                    else if (item.Tags.Contains("do_not_sell")) continue;
+                    list.Add(new ItemEntry(item.id, "", inv.itemCount, inv.countOverride));
+                } 
             }
         }
         return list;
+    }
+
+    public static void ApplyOnConsume(BodyInternal_Instance body, List<ItemComponentTemplate_Ingestible.OnUseEffect> onUses)
+    {
+        if (body == null || body.Owner == null) return;
+        if (onUses == null) return;
+        
+        foreach(var onUse in onUses)
+        {
+            if (!onUse.isValid) continue;
+
+            switch (onUse.effectID)
+            {
+                case EffectKeyword.ModStatValue:
+                    if (onUse.arguments.Count >= 2 && float.TryParse(onUse.arguments[1], out float statValue))
+                    {
+                        string statID = onUse.arguments[0];
+                        var stat = body.Owner.Stats.GetStatEx(statID);
+                        if (stat != null) stat.Restore(statValue);
+                    }
+                    break;
+                case EffectKeyword.ModStatValuePercent:
+                    if (onUse.arguments.Count >= 2 && float.TryParse(onUse.arguments[1], out float percentile))
+                    {
+                        string statID = onUse.arguments[0];
+                        var stat = body.Owner.Stats.GetStatEx(statID);
+                        if (stat != null) stat.RestorePercent(percentile);
+                    }
+                    break;
+
+            }
+        }
     }
 
     public static float RandVariation(float baseNumber, float maxVariation)
@@ -152,17 +194,20 @@ public static class Utility
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public static double SineSample(double cycleLen, string key)
+    public static double SineSample(double cycleLen, RandomSample sample, int value)
     {
         var time = scr_System_Time.current.getCurrentTime();
-        switch(key)
+        switch(sample)
         {
-            case "hour":
+            case RandomSample.worldHour:
                 return Math.Sin(Math.PI * time.Hour / cycleLen);
-            case "minute":
+            case RandomSample.worldMinute:
                 return Math.Sin(Math.PI * time.Minute / cycleLen);
+            case RandomSample.elapsedHour:
+                return value == 0 ? 0 : Math.Sin(Math.PI * (value / 60) / cycleLen);
+            case RandomSample.elapsedMinute:
+                return value == 0 ? 0 : Math.Sin(Math.PI * value / cycleLen);
             default:
-                Debug.LogError($"Utility.SineSample error, unrecognized key {key}");
                 return 0;
         }
     }
@@ -1235,7 +1280,6 @@ public static class EventUtility
         else Debug.LogError("eventutility error cannot parse");
     }
 
-
     public static void Execute(EventInstance owner, Event.EventEntry.EventEntry_Line block)
     {
 
@@ -1244,7 +1288,7 @@ public static class EventUtility
 #endif
         // display line
 
-        scr_System_CampaignManager.current.AddLog_Line(owner, block, false);
+        if (owner.isVisible) scr_System_CampaignManager.current.AddLog_Line(owner, block, false);
 
         // immediate load next
         //if (isLast) owner.Notify(EventStatus.reset);
@@ -1260,8 +1304,19 @@ public static class EventUtility
         if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {block.question} ");
 #endif
 
-        scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
-        owner.Notify(EventStatus.waiting);
+        if (owner.isVisible)
+        {
+            scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
+            owner.Notify(EventStatus.waiting);
+        }
+        else
+        {
+            Debug.LogError($"Event {owner.Name} questionbox {block.Name} not visible to player! calling default cancel");
+            var def = block.Default;
+            if (def == null) return;
+            Execute(owner, def);
+        }
+
         // load next but allow to be overwritten
         //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
     }
@@ -1391,6 +1446,24 @@ public static class EventUtility
                 }
             case Event.EventEntry.Options.ExecutionType.WakeUp:
                 owner.Self.WakeUp(true);
+                return true;
+            case Event.EventEntry.Options.ExecutionType.ExecuteCallback:
+                var execKey = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
+                if (!owner.FunctionCalls.ContainsKey(execKey))
+                {
+                    Debug.LogError($"cannot find key [{execKey}] in ExecuteCallback");
+                    return false;
+                }
+                else
+                {
+                    foreach(var callback in owner.FunctionCalls[execKey])
+                    {
+                        callback.Invoke();
+                    }
+                    return true;
+                }
+            case Event.EventEntry.Options.ExecutionType.FlushLogs:
+                scr_UpdateHandler.current.FlushCollectedLogs(true, false);
                 return true;
             default: return false;
 

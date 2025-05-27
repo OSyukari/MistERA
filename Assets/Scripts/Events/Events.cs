@@ -232,6 +232,11 @@ public class Event : I_SerializationCallbackReceiver
             public override string Name { get { return question; } }
             public string question = "";
             public List<Options> options = new List<Options>();
+
+            [JsonIgnore] public Options Default { get {
+
+                    foreach (var i in options) if (i.isDefaultCancel) return i;
+                    return options.Count > 0 ? options[0] : null; } }
         }
         [System.Serializable]
         public class EventEntry_Branch : EventEntry
@@ -294,7 +299,9 @@ public class Event : I_SerializationCallbackReceiver
                 /// [StatusID, value]
                 /// </summary>
                 ModStatusValue,
-                WakeUp
+                WakeUp,
+                ExecuteCallback,
+                FlushLogs
             }
 
             [System.Serializable]

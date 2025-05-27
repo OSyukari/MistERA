@@ -561,16 +561,16 @@ public class Job : IDisposable, I_Disposable
 
     public void NotifyDescriptionsOutOfUpdate()
     {
+        Debug.Log($"NotifyDescriptionsOutOfUpdate on {DisplayName}");
         scr_UpdateHandler.current.NotifyJobDescriptions(messages_before, messages_ongoing, null, messages_kojo);
         messages_before.Clear();
         messages_ongoing.Clear();
         messages_kojo.Clear();
-
     }
 
     public virtual void PostUpdateTime()
     {
-        // Debug.Log("PostUpdateTime for job " + this.jobRefID);
+        //Debug.Log("PostUpdateTime for job " + this.jobRefID);
         actorJobComplete.Clear();
         for ( int i = packages_previous.Count -1; i >= 0; i--)
         {

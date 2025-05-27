@@ -206,5 +206,10 @@ public class Stats_Derived_Extended_Instance
         this.value = Math.Max(0, Math.Min(MaxValue, this.value + amount));
     }
 
+    public void RestorePercent(float percent)
+    {
+        this.value = Math.Max(0, Math.Min(MaxValue, this.value + MaxValue * percent));
+    }
+
 }
 
