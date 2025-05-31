@@ -236,7 +236,7 @@ public class scr_panel_COMmanager : scr_Menu
         if (chara == null) return;
 
         managedList.AddRange(chara.EquippedItemRefs);
-        managedList.AddRange(chara.inventory_ref);
+        managedList.AddRange(chara.Inventory.ContentRefs);
 
         managedList = managedList.Distinct().ToList();
         managedList.Sort();
@@ -884,7 +884,7 @@ public class scr_panel_COMmanager : scr_Menu
         var job = ap.job;
         if (job == null || com == null) 
         {
-            Debug.Log("AP " + ap.DisplayName + " makeCOMButton Error, exiting");
+           // Debug.Log("AP " + ap.DisplayName + " makeCOMButton Error, exiting");
             return;
         }
         var key = "|jobRef|"+ (job == null ? "": job.RefID) + "|comID|" + (com == null? "": com.ID) + "|doers|" + ap.DoerRefs.Sum().ToString();
@@ -1010,10 +1010,19 @@ public class scr_panel_COMmanager : scr_Menu
                 text.gameObject.SetActive(false);
                 return false;
             }
+            else if (!job.ExecutingPackages.Contains(cachedAP))
+            {
+                tooltip += "AP no longer exist in job";
+                return false;
+
+            }
+
             else if (scr_System_CampaignManager.current.DebugMode)
             { 
                 tooltip += "AP " + package.DisplayName + " isSex[" + (package as ActionPackage_Sex != null) + "] isInteract [" + (package as ActionPackage_Interaction != null) + "]\n";
             }
+
+
 
             if (parent.ValidateCOMByTags(com) && com.ValidateJob(job))
             {
@@ -2005,7 +2014,7 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
-            chara.Undress(BodyEquipLayer.None, revealingScoreFilter);
+            chara.Undress(BodyEquipLayer.None, (Revealing)revealingScoreFilter);
             //Debug.Log("Chara [" + chara.FirstName + "] undress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
             scr_System_CampaignManager.current.NotifyUpdate();
@@ -2053,7 +2062,7 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
-            chara.Undress(layer, revealingScoreFilter);
+            chara.Undress(layer, (Revealing)revealingScoreFilter);
             //Debug.Log("Chara [" + chara.FirstName + "] undress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
             scr_System_CampaignManager.current.NotifyUpdate();
@@ -2094,11 +2103,12 @@ public class scr_panel_COMmanager : scr_Menu
             {
                 layer = (BodyEquipLayer)ii;
 
-                if (chara.inventory_ref.Count < revealingScoreFilter) continue;
+                if (chara.Inventory.Contents.Count < revealingScoreFilter) continue;
 
-                foreach (int i in chara.inventory_ref)
+                var list = chara.Inventory.Contents;
+                foreach (var i in list)
                 {
-                    ItemComponent_Equippable comp = scr_System_CampaignManager.current.FindItemInstanceByID(i).GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
+                    ItemComponent_Equippable comp = i.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
                     if (comp != null && comp.equipLayer == layer)
                     {
                         this.text.SetText("%%comManager_com_redress_" + layer.ToString() + "%%");
@@ -2148,7 +2158,7 @@ public class scr_panel_COMmanager : scr_Menu
                 return false;
             }
 
-            if (chara.inventory_ref.Count < 1)
+            if (chara.Inventory.Contents.Count < 1)
             {
                 this.tooltip += "all clothes are dressed";
                 return false;
@@ -2203,7 +2213,7 @@ public class scr_panel_COMmanager : scr_Menu
 
             var equippedPart = chara.GetPartByEquipRef(equipRef);
 
-            isEquipped = !(chara.inventory_ref.Contains(equipRef) || equippedPart == null);
+            isEquipped = !(chara.Inventory.Contains(item) || equippedPart == null);
             isVisible = (!isEquipped || equippedPart.GetRevealingScore(eq.equipLayer) <= 1);
             allowDuringSex = !(chara.CurrentJob is Job_Sex_Group) || (int)eq.revealing <= 0;
 
@@ -2232,7 +2242,7 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
-            if (chara.inventory_ref.Contains(equipRef)) chara.Reequip(equipRef);
+            if (chara.Inventory.Contains(item)) chara.Reequip(item);
             else chara.UnequipItem(equipRef, -1, true, true);
             scr_System_CampaignManager.current.NotifyUpdate();
         }

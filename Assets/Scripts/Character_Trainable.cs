@@ -4,6 +4,8 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.IO;
+using System.Collections;
+using System.Net.Mime;
 
 public enum Humanoid_GenderAppearance
 {
@@ -118,6 +120,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
     }
     [JsonIgnore] public bool canMove { get { return canAct && !isRestrained && !isImprisoned; } }
+    [JsonIgnore] public bool canLeave { get { return canMove && (CurrentJob == null || CurrentJob.CanBeInterrupted); } }
     public void LockFurnitureJob(Job_Furniture i)
     {
         //Debug.Log("LockFurnitureJob [" + FirstName + "] in [" + i.ParentInstance.DisplayName + "]");
@@ -136,7 +139,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
 
     // temporary inventory for unequipped items
-    public List<int> inventory_ref = new List<int>();
+    //public List<int> inventory_ref = new List<int>();
     public CharacterInventory Inventory = new CharacterInventory();
 
     [JsonIgnore] public bool CanActInTimeStop { get { return this.RefID == 0; } }
@@ -695,6 +698,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         COM currentScheduleCOM = jobpost == null ? null : jobpost.getRandCOM;
 
         // if sleeping and current schedule is not sleep 
+        // since sleeping is no longer being handled as a job but as status, this is unnecessary
+        /*
         if ((currentScheduleCOM == null || currentScheduleCOM.ID != "com_furniture_sleep") && (CurrentJob != null && CurrentJob.hasActivePackge(RefID, "com_furniture_sleep")))
         {   // try to wake up
             Job job = null;
@@ -704,6 +709,29 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             ChangeCurrentJob(job, job == null || currentScheduleCOM == null ? "" : currentScheduleCOM.ID);
 
             // check if can break sleep (check if still tired), if cannot break then return here
+        }*/
+
+
+        // can sleep, should sleep, hasSleepPlan
+        if (shouldSleep)
+        {   // if current schedule is sleep then go to sleep
+
+            if (CurrentJob != null && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("sleep")) != null)
+            {   // if already using a furniture that allows sleep, then its a valid one, return
+                return;
+            }
+
+            // chara should go back home to sleep
+            List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Sleep(this, currentHour, s);
+            if (possibleJobs != null && possibleJobs.Count > 0)
+            {
+                Job job = possibleJobs[0];
+                ss += "Changing job to sleep " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+                if (s != null) s.Add(ss);
+                ChangeCurrentJob(job, "com_furniture_sleep");
+                return;
+            }
+            //}
         }
 
         // Redress check
@@ -716,11 +744,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 return;
             }
             else
-            {   // current job is null, or current job is not schedule
-                // at this point we know the previous job can be break
-                //foreach (Manageable faction in FactionManager.Factions)
-                //{   // get closest schedule job
-                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobsByCOMID(this, "com_furniture_restroom_fix", s);
+            {   // get closest schedule job from current location
+                List<Job_Furniture> possibleJobs = FactionManager.CurrentLocaleFaction.GetValidJobsByCOMID(this, "com_furniture_restroom_fix", s);
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
@@ -733,8 +758,29 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             }
         }
 
-        
 
+
+        // temporarily disable eat cuz need to restrict food hours in faction management
+        if (canEat)
+        {   // try get food
+            if (CurrentJob != null && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("food_meal")) != null)
+            {   // if already eating (dont care if it's pathing or executing)
+                return;
+            }
+
+            // allow checking during work hour
+
+            List<Job_Furniture> possibleJobs = FactionManager.CurrentLocaleFaction.GetValidJobs_Meal(this, currentHour, s);
+            if (possibleJobs != null && possibleJobs.Count > 0)
+            {
+                Job job = possibleJobs[0];
+                ss += "Changing job to eating " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+                if (s != null) s.Add(ss);
+                ChangeCurrentJob(job, "", "food_meal");
+                return;
+            }
+            //}
+        }
 
         /// if previous almost over (time less than half and time less than 15min)
         /// if still in pathing
@@ -777,50 +823,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             }
         }
 
-        // here, character is not doing scheduled job
-        // temporarily disable eat cuz need to restrict food hours in faction management
-        if (canEat)
-        {   // try get food
-            if (CurrentJob != null && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("food_meal")) != null)
-            {   // if already eating (dont care if it's pathing or executing)
-                return;
-            }
-
-            // allow checking during work hour
-
-            List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Meal(this, currentHour, s);
-            if (possibleJobs != null && possibleJobs.Count > 0)
-            {
-                Job job = possibleJobs[0];
-                ss += "Changing job to eating " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                if(s != null) s.Add(ss);
-                ChangeCurrentJob(job,"","food_meal");
-                return;
-            }
-            //}
-        }   // make eating not interruptible ?
         
 
-        // can sleep, should sleep, hasSleepPlan
-        if (shouldSleep)
-        {   // if current schedule is sleep then go to sleep
-           
-            if (CurrentJob != null && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("sleep")) != null)
-            {   // if already using a furniture that allows sleep, then its a valid one, return
-                return;
-            }
-
-            List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Sleep(this, currentHour, s);
-            if (possibleJobs != null && possibleJobs.Count > 0)
-            {
-                Job job = possibleJobs[0];
-                ss += "Changing job to sleep " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                if(s != null) s.Add(ss);
-                ChangeCurrentJob(job, "com_furniture_sleep");
-                return;
-            }
-            //}
-        }
 
 
         if (shouldRest)
@@ -899,7 +903,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 //foreach (Manageable faction in FactionManager.HomeFactions)
                 //{
-               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,false));
+               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true));
                 //    break;
                 //}
 
@@ -963,7 +967,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonIgnore] public bool isUndressed { get { return canRedress; } }
     [JsonIgnore] public bool canRedress { get
         {
-            return this.inventory_ref.Count > 0;
+            return this.Inventory.Contents.Count > 0;
         } }
     [JsonIgnore] public bool shouldRedress { get { return canRedress && true; } }
 
@@ -1065,11 +1069,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     {
         if(_cachedJobDescription == "")
         {
-            if (this.InteractionJob != null && this.InteractionJob.isActive) _cachedJobDescription = this.InteractionJob.GetJobDescription(RefID);
+            
+            if (this.isSleeping) _cachedJobDescription = scr_System_Serializer.current.Dictionary.QueryThenParse("chara_currentjob_sleeping");
+            else if (this.Stats.isConsciousnessUnconscious) _cachedJobDescription = scr_System_Serializer.current.Dictionary.QueryThenParse("chara_currentjob_unconscious");
+            else if (this.InteractionJob != null && this.InteractionJob.isActive) _cachedJobDescription = this.InteractionJob.GetJobDescription(RefID);
             else if (this.CurrentJob != null) _cachedJobDescription = this.CurrentJob.GetJobDescription(RefID);
-            else if (this.isSleeping) _cachedJobDescription = scr_System_Serializer.current.Dictionary.Query("chara_currentjob_sleeping");
-            else if (this.Stats.isConsciousnessUnconscious) _cachedJobDescription = "chara_currentjob_unconscious";
-            else _cachedJobDescription = "None";
+            else _cachedJobDescription = scr_System_Serializer.current.Dictionary.QueryThenParse("chara_currentjob_none"); ;
         }
 
         return _cachedJobDescription;
@@ -1174,7 +1179,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             //Debug.LogError("Wakeup immediate!");
             // IF SLEEP DEPRIVED, IT IS ALREADY ADDED PRIOR TO THIS POINT (ON CALLING WakeupPrep)        
             this.Stats.RemoveStatusByStringMatch("chara_status_sleeping");
-           // Debug.Log($"Chara wake up at conscious {this.Stats.Consciousness.Severity}");
+            // Debug.Log($"Chara wake up at conscious {this.Stats.Consciousness.Severity}");
+            List<RelationshipManager.Character_Relationship> accepted = new List<RelationshipManager.Character_Relationship>();
+            List<RelationshipManager.Character_Relationship> refused = new List<RelationshipManager.Character_Relationship>();
 
             if (!this.Stats.isConsciousnessUnconscious)
             {
@@ -1183,12 +1190,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 var wakeupEV = new EventInstance(this, "OnCharaWakeUp", "");
                 var callbacks = new List<Action>();
+                var appends = new List<string>();
                 wakeupEV.FunctionCalls.Add("jobCallback", callbacks);
+                wakeupEV.AppendStrings.Add("onWakeUp", appends);
                 //scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
                 scr_UpdateHandler.current.EventHandler.StartEvent(wakeupEV, false);
 
                 List<Job> jobLists_refuse = new List<Job>();
                 List<Job> jobLists_accept = new List<Job>();
+
                 foreach (var ap in aps)
                 {
                     var result = ap.retryRequest(this, "justWokenUp");
@@ -1196,66 +1206,146 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     if (!result)
                     {
                         if (!jobLists_refuse.Contains(ap.job)) jobLists_refuse.Add(ap.job);
-                        Debug.LogError($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
+                        //Debug.LogError($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
                         
                         ap.ExecutePackageOutsideUpdate();   // execution
                         ap.job.CollectLogs(ap);
 
                         ap.DisablePackage();
                         scr_System_CampaignManager.current.Unregister(ap);
+                        if (ap.job is Job_Sex_Group)
+                        {
+                            foreach(var ep in ap.ListEP)
+                            {
+                                var rel = ep.Relationship(this);
+                                if (rel == null) continue;
+                                if (refused.Contains(rel)) continue;
+                                if (accepted.Contains(rel)) continue;
+
+                                refused.Add(rel);
+                            }
+                        }
                         ap.job.CurrentPackages.Remove(ap);
-                        // now need to purge refsed ap
                     }
                     else
                     {
                         if (!jobLists_accept.Contains(ap.job)) jobLists_accept.Add(ap.job);
-                        Debug.Log($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
+                        // Debug.Log($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
+                        if (ap.job is Job_Sex_Group)
+                        {
+                            foreach (var ep in ap.ListEP)
+                            {
+                                var rel = ep.Relationship(this);
+                                if (rel == null) continue;
+                                if (accepted.Contains(rel)) continue;
 
+                                accepted.Add(rel);
+                                refused.Remove(rel);
+                            }
+                        }
                         ap.job.CollectLogs(ap);
                     }
                 }
 
-                
                 foreach (var job in jobLists_accept)
                 {
                     callbacks.Add(job.NotifyDescriptionsOutOfUpdate);
+
+                    if (jobLists_refuse.Contains(job)) jobLists_refuse.Remove(job);
                 }
 
                 foreach(var job in jobLists_refuse)
                 {
+                    if (job is Job_Sex_Group)
+                    {
+     
+                    }
                     callbacks.Add(job.NotifyDescriptionsOutOfUpdate);
                     if (job == this.InteractionJob) continue;
                     else if (job.GetExistingPackages(this, true, true, true, false).Count < 1)
                     {
-                        Debug.LogError($"Actor wakeup call, Job {job.DisplayName} no longer has any active package for {FirstName}, try unregistering");
+                       // Debug.LogError($"Actor wakeup call, Job {job.DisplayName} no longer has any active package for {FirstName}, try unregistering");
                         job.RemoveActor(this.RefID);
                         if (job is Job_Sex_Group && job.actorRefID.Count < 2)
                         {
-                            Debug.LogError("is sex job, need special handling");
-                            (job as Job_Sex_Group).EndJob();
+                            //Debug.LogError("is sex job, need special handling");
+                            var message = LocalizeDictionary.Instance.Index.QueryThenParse("event_onNightAssaultFailed_jobD").Replace("$chara$", this.FirstName);
+                            Utility.StringReplace(ref message);
+
+                            (job as Job_Sex_Group).EndJob(message);
                         }
                     }
                 }
-                
-                // if exit job, then removeactor already called endongoingmemory
-                // so, if last memory is ended and uncons, then, problem!
-                
 
-                var lastMemory = this.Memory.Last;
-                if (!lastMemory.Conscious)
-                {
-
-                }
-                List<string> alert_clothing = new List<string>();
-
-
-                foreach(var item in this.Inventory.ContentsPrintable)
+                var selfTags = new List<string>();
+                foreach (var item in this.Inventory.ContentsPrintable)
                 {
                     if (!item.Equippable) continue;
                     if (item.GetComp_Equippable().equipLayer != BodyEquipLayer.Skin) continue;
                     // detected item 
-                    alert_clothing.Add($"detected {item.DisplayName} being removed!");
+                    selfTags.Add("removedClothing");
+                    break;
                 }
+                bool foundCum = false;
+                foreach (var organ in this.Body.Internals)
+                {
+                    if (foundCum) break;
+                    foreach (var content in organ.Contains)
+                    {
+                        if (foundCum) break;
+                        if (content is Item_Instance_Cum)
+                        {
+                            selfTags.Add("cum");
+                            foundCum = true;
+                        }
+                    }
+                }
+
+                this.Memory.Last.EndOngoing(scr_System_Time.current.getCurrentTime());
+
+                if (accepted.Count >= 1)
+                {
+                    var randRel = accepted[Utility.GetRandIndexFromListCount(accepted.Count)];
+                    var message = this.Relationships.Personality.GetKOJOMessage("OnNightAssaultSuccess", randRel, selfTags, new List<string>());
+                    Debug.Log($"({FirstName}) detected night assault accept count {accepted.Count}, random select {randRel.TargetName}, message {message}");
+                    appends.Add(message);
+                }
+                else if (refused.Count >= 1)
+                {
+                    var randRel = refused[Utility.GetRandIndexFromListCount(refused.Count)];
+                    var message = this.Relationships.Personality.GetKOJOMessage("OnNightAssaultFailure", randRel, selfTags, new List<string>());
+                    Debug.Log($"({FirstName}) detected night assault accept count {accepted.Count}, random select {randRel.TargetName}, message {message}");
+                    appends.Add(message);
+                    // add moodlet, reduce relationship -> mod relationship record are from ep. or can we directly inject into updatehandler ?
+                    // directly add explog to updatehandler's log
+                    var relationship = randRel.Owner.Relationships;
+                    var logger = scr_System_CampaignManager.current.isCharaVisibleToPlayer(this.RefID) ? scr_UpdateHandler.current.exp : null;
+                    relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Trust, -30, logger);
+                    relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Fear, 30, logger);
+
+                    var mem = this.Memory.AddEntry_Custom(new List<string>(), new List<string>() { "forbidMerge" }, randRel.TargetID, false, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultFailed").Replace("$target$", randRel.Target.firstName), Memory_Attitude.Hate, Memory_Response.Refuse, Stats.MemoryLength*10);
+                    mem.AddMoodletScore(-2, -4, 0);
+                }
+                else
+                {
+                    // first check last memories if any conscious sex then let it go
+                    // NO
+
+                    var rel = this.Relationships.FindRelationshipWith(this);
+                    var message = this.Relationships.Personality.GetKOJOMessage("OnWakeUp", rel, selfTags, new List<string>());
+                    //Debug.Log($"({FirstName}) no night assault, message {message}");
+                    // add moodlet
+                    if (selfTags.Count > 0)
+                    {
+                        var mem = this.Memory.AddEntry_Custom(new List<string>(), new List<string>() { "forbidMerge" }, -1, false, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultDiscover"), Memory_Attitude.Hate, Memory_Response.Refuse, Stats.MemoryLength * 10);
+                        mem.AddMoodletScore(selfTags.Count, (-selfTags.Count - 1) * 2, 0);
+                    }
+                }
+
+                // if exit job, then removeactor already called endongoingmemory
+                // so, if last memory is ended and uncons, then, problem!
+
+                this.Stats.RefreshAllStats();
 
 
                 /*
@@ -1276,6 +1366,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
            // scr_UpdateHandler.current.FlushCollectedLogs(true, false);
         }
     }
+
     public void Sleep()
     {
         var tired = Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived");
@@ -1296,12 +1387,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     /// <param name="unequipLocked"></param>
     public void UnequipItem(int itemRefID, int RevealingFilter = -1, bool unequipArmor = false, bool unequipLocked = false)
     {
-        var comp = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID).GetComp_Equippable();
+        var instance = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
+        var comp = instance.GetComp_Equippable();
         if (((int)comp.revealing >= RevealingFilter || comp.equipLayer == BodyEquipLayer.Outer) && (comp.revealing < Revealing.Armored || unequipArmor ) && (!comp.lockable || unequipLocked))
         {
             if (Body.UnequipItem(itemRefID))
             {
-                inventory_ref.Add(itemRefID);
+                Inventory.AddItem(instance);
+                //inventory_ref.Add(itemRefID);
             }
             Stats.RefreshAllStats(true);
         }
@@ -1309,10 +1402,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
 
     /// <summary>
-    /// default undress all
+    /// default undress all<br/>
+    /// will undress any item.revealing >= revealingfilter
     /// </summary>
     /// <param name="layer"></param>
-    public void Undress(BodyEquipLayer layer = BodyEquipLayer.None, int RevealingFilter = -1, bool unequipArmor = false, bool unequipLocked = false)
+    public void Undress(BodyEquipLayer layer = BodyEquipLayer.None, Revealing RevealingFilter = Revealing.Erotic, bool unequipArmor = false, bool unequipLocked = false)
     {
         if (layer == BodyEquipLayer.None)
         {
@@ -1329,12 +1423,37 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 {
                     int i = instance.GetEquip(layer, slot);
                     if (i <= 0) continue;
-                    UnequipItem(i, RevealingFilter, unequipArmor, unequipLocked);
+                    UnequipItem(i, (int)RevealingFilter, unequipArmor, unequipLocked);
                 }
 
             }
         }
-        
+    }
+
+    public bool NeedUndress(BodyEquipLayer includeLayer, Revealing includeRating)
+    {
+        foreach(var i in Body.EquippedItemRefs)
+        {
+            var item = scr_System_CampaignManager.current.FindItemInstanceByID(i);
+            var comp = item.GetComp_Equippable();
+            if (comp == null) continue;
+            else if (comp.equipLayer < includeLayer) continue;
+            else if (comp.revealing < includeRating) continue;
+            else
+            {
+               // Debug.LogError($"{FirstName} found undress target {item.DisplayName}, equiplayer {comp.equipLayer} < {includeLayer}, {comp.revealing} < {includeRating}");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void UndressAll(BodyEquipLayer upToLayer, Revealing RevealingFilter = Revealing.Erotic, bool unequipArmor = false, bool unequipLocked = false)
+    {
+        for (var layer = BodyEquipLayer.Outer; layer > upToLayer; layer --)
+        {
+            Undress(layer, RevealingFilter, unequipArmor, unequipLocked);
+        }
     }
 
     public void Redress(BodyEquipLayer layer = BodyEquipLayer.None)
@@ -1348,9 +1467,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
         else
         {
-            for(int counter = inventory_ref.Count - 1; counter >= 0; counter--)
+            var contentrefs = new List<Item_Instance>( Inventory.Contents );
+            foreach (var refere in contentrefs)
             {
-                Reequip(inventory_ref[counter], layer);
+                Reequip(refere, layer);
             }
         }
     }
@@ -1359,17 +1479,17 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     /// Reequip from own inventory ref
     /// </summary>
     /// <param name="itemRefID"></param>
-    public void Reequip(int itemRefID, BodyEquipLayer layerFilter = BodyEquipLayer.None)
+    public void Reequip(Item_Instance item, BodyEquipLayer layerFilter = BodyEquipLayer.None)
     {
-        Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
+       // Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
         //Debug.Log("Redressing item ref " + item.DisplayName);
-        if (item != null && inventory_ref.Contains(itemRefID))
+        if (item != null && Inventory.Contains(item))
         {
             ItemComponent_Equippable comp = item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
             if (comp != null && (layerFilter == BodyEquipLayer.None || comp.equipLayer == layerFilter))
             {
                 Body.EquipItem(item.RefID, comp.equipCount, true);
-                inventory_ref.Remove(itemRefID);
+                Inventory.Remove(item);
             }
         }
     }

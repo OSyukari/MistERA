@@ -378,7 +378,19 @@
                 "chara_currentjob_sleeping": "睡眠中",
                 "chara_currentjob_unconscious": "昏迷中",
                 "chara_currentjob_pathing": "前往$room$",
-                "chara_currently_doing": "$chara$正在$currentjob$"
+                "chara_currently_doing": "$chara$$currentjob$",
+                "chara_currentjob_sex_sleeping": "被眠奸中",
+                "chara_currentjob_sex_timestop": "被时奸中",
+                "chara_currentjob_sex_rape": "被强奸中",
+                "chara_currentjob_sex": "做爱中",
+                "chara_currentjob_none": "暂无",
+
+                "event_onNightAssaultFailed_jobD": "$color_error_begin$由于$chara$拒绝了全部指令，互动被解除了$color_error_end$",
+
+                "memory_onNightAssaultFailed": "熟睡时被$target$侵犯了",
+                "memory_onNightAssaultDiscover": "醒来后发现在熟睡时有被人动手动脚的痕迹",
+
+                "messagelog_lose_first_experience": "$color_error_begin$$firstname$失去了$bodypart$初体验$color_error_end$"
             }
         }
     }

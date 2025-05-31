@@ -150,7 +150,7 @@ public class Job_Furniture : Job
     [NonSerialized][JsonIgnore] public bool hasProductionJob = false;   // public accessible value updated by UpdateAllUsableCOMs
     [NonSerialized][JsonIgnore] public bool isContainer = false;        // public accessible value updated by UpdateAllUsableCOMs
 
-    [JsonIgnore] public override bool CanBeInterrupted { get { return base.CanBeInterrupted && !this.isContainer; } }
+    [JsonIgnore] public override bool CanBeInterrupted { get { return base.CanBeInterrupted; } }//&& !this.isContainer; } }
 
     public void RefreshValidCOMs(bool allowLazyRefresh = true)
     {
@@ -259,6 +259,8 @@ public class Job_Furniture : Job
 
         // pathing
         var charaRoom = scr_System_CampaignManager.current.GetCharaRoomInstance(c.RefID);
+        var desiredCOMID = this.actorRefIDStorage[c.RefID].comID;
+        var desiredCOM = this.allusableCOMs.Find(x=>x.ID == desiredCOMID);
         if (charaRoom.RefID != this.ParentRoom.RefID)
         {
             //Debug.Log("JobFurniture : trying to add pathing package to ["+c.FirstName+"]");
@@ -271,6 +273,18 @@ public class Job_Furniture : Job
                 return false;
             }
             ss += "actor pathing created ||";
+            AddPackage(new List<ActionPackage>() { package });
+            return true;
+        }
+        else if (desiredCOM != null && desiredCOM.requirements.clothingRequirement < BodyEquipLayer.Outer && c.NeedUndress(desiredCOM.requirements.clothingRequirement + 1, Revealing.Erotic))
+        {
+            ActionPackage_Undress package = new ActionPackage_Undress(this, c.RefID, desiredCOM.requirements.clothingRequirement, Revealing.Erotic);
+            if (!package.Validate())
+            {
+                ss += "actor undress package creation failed ||";
+                return false;
+            }
+            ss += "actor undress created ||";
             AddPackage(new List<ActionPackage>() { package });
             return true;
         }

@@ -27,7 +27,7 @@ public class EventInstance
     {
         get
         {
-            return Self == null || scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID);
+            return Self == null || Self == scr_System_CampaignManager.current.Player || scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID);
         }
     }
 
@@ -48,6 +48,7 @@ public class EventInstance
 
     public Dictionary<string, List<Action>> FunctionCalls = new Dictionary<string, List<Action>>();
     public Dictionary<string, List<Character_Trainable>> Targets = new Dictionary<string, List<Character_Trainable>>();
+    public Dictionary<string, List<string>> AppendStrings = new Dictionary<string, List<string>>();
 
     /// <summary>
     /// TargetRef == -1 for null target
@@ -59,7 +60,7 @@ public class EventInstance
         this.Self = eventSelf;
         this.maxCallStack = maxCallStack;
         // init stuff
-        LoadNext(false, eventID, label);
+        LoadNext(eventID, label);
         //Start();
 
     }
@@ -84,51 +85,31 @@ public class EventInstance
 
     public int maxCallStack = 0;
 
-    public void LoadNext(bool startImmediate, string eventID = "", string label = "")
+    public void LoadNext(string eventID = "", string label = "")
     {
-#if UNITY_EDITOR
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"LoadNext immediate? {startImmediate} {eventID} {label}");
-#endif
-        this.maxCallStack -= 1;
-        if (this.maxCallStack < 0) 
-        {
-            this.Clear("Eventmanager maxcallstack exceeded limit, halting execution");
-        }
+        nextEvent = eventID == "" ? currentEvent : scr_System_Serializer.current.GetEventByID(eventID);
+        if (nextEvent == null) this.Clear($"EventInstance cannot find event with id {eventID}");
         else
         {
-            
-            nextEvent = eventID == "" ? currentEvent : scr_System_Serializer.current.GetEventByID(eventID);
-            if (nextEvent == null) this.Clear($"Eventhandler cannot find event with id {eventID}");
+            // at this point eventid will never be ""
+            // so here we only accept either empty or non empty label
+            // empty label = start from first, nonempty = start from albel
+            if (label != "")
+            {
+                nextEntry = nextEvent.GetEntryWithLabel(label);
+                if (nextEntry == null) this.Clear($"EventInstance {eventID} cannot find next entry label {label}");
+            }
+            else if (currentEntry != null && currentEntry.isLast) this.Clear($"EventInstance {eventID} islast");
             else
             {
-                // at this point eventid will never be ""
-                // so here we only accept either empty or non empty label
-                // empty label = start from first, nonempty = start from albel
-                nextEntry = label != "" ? nextEvent.GetEntryWithLabel(label) : nextEvent.GetEntryAfter(currentEntry);
-                if (nextEntry == null)
-                {
-                    if (currentEntry.isLast) this.Clear();
-                    else this.Clear($"Eventhandler error! event {eventID} either doesnt have any entry or doesnt have label {label}");
-                }
+                nextEntry = nextEvent.GetEntryAfter(currentEntry);
+                if (nextEntry == null) this.Clear($"EventInstance {eventID} cannot find next entry in current event");
             }
         }
-
-        if (canRun && (nextEvent == currentEvent || nextEvent.Validate(this)))
-        {
-#if UNITY_EDITOR
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Event instance on {(Self == null ? "null" : Self.FirstName)} isvalid on {this.Name}");
-#endif
-            isValid = true;
-            if (canRun && startImmediate) Start();
-        }
-        else
-        {
-            isValid = false;
-#if UNITY_EDITOR
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError($"error on next {(canRun ? nextEvent.ID : "null")} cannot run or invalid (this might not be an error)");
-#endif
-            this.Clear();
-        }
+        
+        if (canRun && (nextEvent == currentEvent || nextEvent.Validate(this))) isValid = true;
+        else this.Clear();
+        
     }
 
     public EventStatus Status
@@ -146,48 +127,35 @@ public class EventInstance
     public bool Displayable { get { return true; } }
     public void Start(bool waitingEnd = false)
     {
-
-        if (canRun && (this.Status != EventStatus.waiting || waitingEnd))
+        if (this.Status == EventStatus.waiting && !waitingEnd) return;
+        maxCallStack -= 1;
+        if (!canRun) Clear("instance cannot run, exiting");
+        else if (maxCallStack < 0) Clear("maxcallstack reached");
+        else
         {
-#if UNITY_EDITOR
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event {Name} start canRun");
-#endif
             currentEntry = nextEntry;
             currentEvent = nextEvent;
             nextEntry = null;
             nextEvent = null;
-            if (currentEntry.isValid)
+
+            if (!currentEntry.isValid) Clear("currententry not valid, resetting");
+            else
             {
-#if UNITY_EDITOR
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event {Name} isvalid, executing");
-#endif
-                updateHandler.InvokeEventStatus(Status, firstInit || waitingEnd);
                 firstInit = false;
                 EventUtility.Execute(this, currentEntry);// currentEntry.Execute(this);
             }
-            else
-            {
-#if UNITY_EDITOR
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event {Name} invalid, resetting");
-#endif
-                this.Clear("currententry not valid, resetting");
-            }
-        }
-        else
-        {
-#if UNITY_EDITOR
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event {Name} start cannot run, exiting");
-#endif
         }
     }
 
-    public void Clear(string errorMsg = "")
+    protected void Clear(string errorMsg = "")
     {
+        isValid = false;
         currentEntry = null;
         nextEntry = null;
         currentEvent = null;
         nextEvent = null;
         if (errorMsg != "") Debug.LogError(errorMsg);
+        updateHandler.EventHandler.Remove(this);
     }
 
     public bool Validate()
@@ -206,33 +174,23 @@ public class EventInstance
     /// NOTIFY RUNNING RESUME RUNNING SELF START
     /// </summary>
     /// <param name="status"></param>
-    public void Notify (EventStatus status)
+    public void Notify (EventStatus status, bool forceLogging = false)
     {
         // notify reset / waiting / running
         var currStatus = this.Status;
         switch (status)
         {
-            case EventStatus.reset:  this.Clear(""); break;
+            case EventStatus.reset: 
+                this.Clear();
+                break;
             case EventStatus.running:
-                updateHandler.cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
+                updateHandler.InvokeEventStatus(status, firstInit || forceLogging);
+                Start(forceLogging);
                 //if (this.Status == EventStatus.waiting) updateHandler.EventHandler.Run(true);
                 // other repeated run calls should be handled by eventmanager
                 break;
-            default: break;
+            default: 
+                break;
         }
-        if (status != EventStatus.waiting) updateHandler.EventHandler.Run(currStatus == EventStatus.waiting);
-        /*
-         * 
-        updateHandler.InvokeEventStatus(status, forceLogging);
-        if (status == EventStatus.running)
-        {
-            cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
-        }
-        else if (status == EventStatus.reset)
-        {
-            this.EventHandler.Clear();
-        }
-         
-         */
     }
 }

@@ -287,7 +287,7 @@ public class scr_panel_TargetInfo : scr_Menu
 
 
             var equippedPart = chara.GetPartByEquipRef(equipRef);
-            if (chara.inventory_ref.Contains(equipRef) || equippedPart == null) return false;
+            if (chara.Inventory.Contains(item) || equippedPart == null) return false;
 
             if (equippedPart.GetRevealingScore(eq.equipLayer) > 1) text.gameObject.SetActive(false);
             else text.gameObject.SetActive(true);

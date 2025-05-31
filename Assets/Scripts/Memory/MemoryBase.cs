@@ -354,7 +354,7 @@ public class Memory_Entry
 
             if (!isEvaluationCached || cache_lust == null) EvaluateAll();
 
-            var value = 0;
+            var value = scoreMod_Lust;
 
             if ((Tags.Contains("sex") || Tags.Contains("massage") || Tags.Contains("touch")) && !Tags.Contains("safe"))
             {
@@ -372,7 +372,7 @@ public class Memory_Entry
         {
             if (!isEvaluationCached || cache_stress == null) EvaluateAll();
 
-            var value = 0;
+            var value = scoreMod_Stress;
 
             if (Tags.Contains("job"))
             {   // if work related, increase stress
@@ -404,13 +404,16 @@ public class Memory_Entry
         return newstuff;
     }
 
+    [SerializeField]
+    [JsonProperty]
+    protected int scoreMod_Mood = 0, scoreMod_Stress = 0, scoreMod_Lust = 0;
     [JsonIgnore] public Stat_Modifier Mod_Mood
     {
         get
         {
             if (!isEvaluationCached || cache_mood == null) EvaluateAll();
 
-            var value = cache_score;
+            var value = scoreMod_Mood + cache_score;
             // Good COM Result increase mood. Bad result decrease Mood.
 
             if (cache_mood == null) cache_mood = initMoodlet("chara_status_mood");
@@ -420,9 +423,20 @@ public class Memory_Entry
         }
     }
 
+    public void AddMoodletScore(int mood, int stress, int lust)
+    {
+        //Debug.LogError($"setmoodletscore mood {scoreMod_Mood}+{mood} stress {scoreMod_Stress}+{stress} lust {scoreMod_Lust}+{lust}");
+        scoreMod_Mood += mood;
+        scoreMod_Stress += stress;
+        scoreMod_Lust += lust;
+
+        this.Owner.Memory.ClearCache();
+    }
+
     public string ToString(bool withDescription = false, bool withRoomName = true, bool withTimeStamp = false)
     {
         string s = "";
+        bool printed = true;
         if (withTimeStamp) s += StartTime.ToShortTimeString() + ": ";
 
         if (isSexMemory)
@@ -458,13 +472,17 @@ public class Memory_Entry
             s += "reacting to timestop end" + interactions.Count;
             s += TargetRefs.Count > 0 && TargetNames.Count > 0 ? " with " + String.Join(",", TargetNames) : "";
         }
-        else
+        else if (!withDescription)
         {
             s += "had some undefined interactions x" + interactions.Count;
             s += TargetRefs.Count > 0 && TargetNames.Count > 0 ? " with " + String.Join(",", TargetNames) : "";
         }
+        else
+        {
+            printed = false;
+        }
 
-        if (withRoomName) s += " in " + roomName;
+        if (printed && withRoomName) s += " in " + roomName;
         if (withDescription)
         {
             foreach(var ss in description)
@@ -472,7 +490,7 @@ public class Memory_Entry
                 if (ss.Length < 1) continue;
                 var ssplit = ss.Split("||");
                 if (ssplit.Length < 1) continue;
-                if (ssplit.Length < 2) s += "\n" + ss;
+                if (ssplit.Length < 2) s += (s.Length > 0 ? "\n" : "") + ss;
                 else
                 {
 
@@ -484,7 +502,7 @@ public class Memory_Entry
                         newS = newS.Replace(keyword, ssplit[i]);
                         //Debug.LogError("Replace Keyword String [" + keyword + "] by ["+ ssplit[i] + "] result [" + newS + "]");
                     }
-                    s += "\n"+ newS;
+                    s += (s.Length > 0 ? "\n" : "") + newS;
                 }
             }
            // s += "\n" + String.Join("\n", description);

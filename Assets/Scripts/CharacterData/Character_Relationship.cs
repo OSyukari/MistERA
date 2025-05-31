@@ -168,7 +168,8 @@ public class RelationshipManager
     }
 
     /// <summary>
-    /// Conditions are pre-filtered in Map pre CheckInterrupt calls
+    /// Conditions are pre-filtered in Map pre CheckInterrupt calls <br/>
+    /// player will trigger interrupt but will skip kojo message logging (cuz messagelog is being taken care of from the other direction)
     /// </summary>
     /// <param name="ap"></param>
     /// <param name="selfTags"></param>
@@ -177,7 +178,7 @@ public class RelationshipManager
         // if any EP satisfy interrupt condition, every actor in ap are checked for relationship mod
         var triggerEventID = "Interrupt";
         var msg = Personality.GetKOJOMessage(triggerEventID, Owner, selfTags, ap.ListEP);
-        if (msg.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+        if (scr_System_CampaignManager.current.Player != Owner && msg.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
         {
             msg = "<align=\"right\">" +msg.Replace("$self$", Owner.FirstName)+ "</align>"  ;//.Replace("$target$", c.FirstName);
             scr_UpdateHandler.current.AppendKojoMessage(Owner.RefID, msg);

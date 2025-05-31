@@ -56,8 +56,7 @@ public class MemoryManager
 
     public void Tick(TimeSpan t)
     {
-        if(recentMemoryCache != null) recentMemoryCache.Clear();
-        recentMemoryCache = null;
+        ClearCache();
 
         foreach (var entry in entries.Values) entry.Tick(t);
     }
@@ -94,6 +93,17 @@ public class MemoryManager
         {
             overrideMemoryCount = Math.Min(overrideMemoryCount, entries.Count);
             recentMemoryCache = new List<Stat_Modifier>();
+            for (int i = entries.Count - 1; i >= 0; i--)
+            {
+                if (overrideMemoryCount < 1) break;
+                if (Entries[i].Duration == 0) continue;
+                overrideMemoryCount -= 1;
+                //            if (entries[i].Duration)
+                recentMemoryCache.Add(Entries[i].Mod_Lust);
+                recentMemoryCache.Add(Entries[i].Mod_Mood);
+                recentMemoryCache.Add(Entries[i].Mod_Stress);
+            }
+            /*
             for (int i = 0; i < overrideMemoryCount && entries.Count - 1 - i >= 0; i++)
             {
                 if (Entries[i].Duration == 0)
@@ -107,6 +117,7 @@ public class MemoryManager
                 recentMemoryCache.Add(Entries[ii].Mod_Mood);
                 recentMemoryCache.Add(Entries[ii].Mod_Stress);
             }
+            */
         }
 
         return recentMemoryCache;
@@ -175,7 +186,11 @@ public class MemoryManager
         return null;
     }
 
-
+    public void ClearCache()
+    {
+        if (recentMemoryCache != null) recentMemoryCache.Clear();
+        recentMemoryCache = null;
+    }
 
 
     //private int ownerRefID;
@@ -197,16 +212,16 @@ public class MemoryManager
     /// External Interfaces 
     /// 
 
-    public void AddEntry_COM(List<string> selfTags, List<string> targetCOMtags, int targetRef, COM targetCOM, int comVariant, bool isDoer, string description, Memory_Response response, Memory_Attitude attitude, int duration = -1, int masterRef = -1, List<int> additionalActors = null)
+    public Memory_Entry AddEntry_COM(List<string> selfTags, List<string> targetCOMtags, int targetRef, COM targetCOM, int comVariant, bool isDoer, string description, Memory_Response response, Memory_Attitude attitude, int duration = -1, int masterRef = -1, List<int> additionalActors = null)
     {
         //Memory_Entry_COM entry = new Memory_Entry_COM(ownerRef, targetRef, targetCOM, description, attitude_begin, attitude_end, duration);
-        AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description, response, attitude, duration, targetCOM, comVariant,  masterRef, additionalActors);
+        return AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description, response, attitude, duration, targetCOM, comVariant,  masterRef, additionalActors);
     }
 
-    public void AddEntry_Request(List<string> selfTags, List<string> targetCOMtags, int targetRef, COM targetCOM, int comVariant, bool isDoer, string description, Memory_Attitude attitude, Memory_Response response, int duration = -1, int masterRef = -1, List<int> additionalActors = null)
+    public Memory_Entry AddEntry_Request(List<string> selfTags, List<string> targetCOMtags, int targetRef, COM targetCOM, int comVariant, bool isDoer, string description, Memory_Attitude attitude, Memory_Response response, int duration = -1, int masterRef = -1, List<int> additionalActors = null)
     {
         //Memory_Entry_Request entry = new Memory_Entry_Request(ownerRef, targetRef, targetCOM, description, attitude, response, duration);
-        AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description, response, attitude, duration, targetCOM, comVariant,  masterRef, additionalActors);
+        return AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description, response, attitude, duration, targetCOM, comVariant,  masterRef, additionalActors);
     }
 
     /// <summary>
@@ -220,11 +235,11 @@ public class MemoryManager
     /// <param name="response"></param>
     /// <param name="duration"></param>
     /// <param name="masterRef"></param>
-    public void AddEntry_Custom(List<string> selfTags, List<string> targetCOMtags, int targetRef, bool isDoer, string description, Memory_Attitude attitude, Memory_Response response, int duration = -1, int masterRef = -1)
+    public Memory_Entry AddEntry_Custom(List<string> selfTags, List<string> targetCOMtags, int targetRef, bool isDoer, string description, Memory_Attitude attitude, Memory_Response response, int duration = -1, int masterRef = -1)
     {
         //Memory_Entry_Custom entry = new Memory_Entry_Custom(ownerRef, targetRef, tags, description, attitude, response, duration);
         //if (description != null && description.Length > 0) Debug.LogError("Adding custom description " + description);
-        AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description,response, attitude, duration, null, -1, masterRef);
+        return AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description,response, attitude, duration, null, -1, masterRef);
     }
 
     /// <summary>
@@ -237,8 +252,10 @@ public class MemoryManager
     /// <param name="duration"></param>
     /// <param name="targetCOM"></param>
     /// <param name="tags">If targetCOM is non null, then anything filled in tags will be added to targetCOM's tags as additional tags.</param>
-    protected void AddEntry(List<string> selfTags, List<string> targetCOMtags, bool isDoer, int targetRef, string desc, Memory_Response response, Memory_Attitude attitude, int duration = -1, COM targetCOM = null, int comVariant = -1,  int masterRef = -1, List<int> additionalActors = null)
+    protected Memory_Entry AddEntry(List<string> selfTags, List<string> targetCOMtags, bool isDoer, int targetRef, string desc, Memory_Response response, Memory_Attitude attitude, int duration = -1, COM targetCOM = null, int comVariant = -1,  int masterRef = -1, List<int> additionalActors = null)
     {
+        ClearCache();
+
         bool debug = true && Owner.BaseID == "Campaign1_Char_Ako";
 
         duration = Owner.Stats.MemoryLength;
@@ -262,6 +279,7 @@ public class MemoryManager
         {
             if (debug) Debug.Log("MemoryManager sametimemerge");
             last.MergeEntry(isDoer, targetRefs, desc, response, attitude, duration, targetCOM, comVariant,  masterRef, selfTags, targetCOMtags);
+            return last;
         }
         else if (   last != null &&
                     areTagsMergeable(selfTags, last.selfTags) && areTagsMergeable(targetCOMtags, last.targetTags) &&
@@ -279,6 +297,7 @@ public class MemoryManager
             // merge lastEntry with current Entry
             // masterref not merged, store it with com
             last.MergeEntry(isDoer, targetRefs, desc, response, attitude, duration, targetCOM, comVariant, masterRef, selfTags, targetCOMtags);
+            return last;
         }
         else
         {
@@ -306,11 +325,13 @@ public class MemoryManager
                 entries.Add(entry.StartTime.Ticks, entry);
              
              */
+            return entry;
         }
     }
 
     protected bool areTagsMergeable(List<string> newTags, List<string> lastTags)
     {
+        if (newTags.Contains("forbidMerge") || lastTags.Contains("forbidMerge")) return false;
         var returnVal = true;
 
         returnVal = (newTags.Contains("timestop") == lastTags.Contains("timestop")) && returnVal;

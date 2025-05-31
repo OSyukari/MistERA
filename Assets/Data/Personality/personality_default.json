@@ -1105,7 +1105,6 @@
     {
         "ID":"DisruptSleep",
         "_comment":"this event fire when character could be disrupted in sleep. this will be called when (1, there is direct interaction) (2, no direct interaction but self is light sleep)",
-        "debugLogging":true,
         "variants":
         [
             {
@@ -1151,6 +1150,7 @@
     {
         "ID": "Interrupt",
         "_comment":"Event trigger. Fires when anyone else executes AP in same room, check if Self action should be modified",
+        "_comment2":"Player is allowed to call interrupt on others, but response text will not display (results will get executed)",
         "interruptSelfJob":true,
         "variants":[
             {
@@ -1158,6 +1158,11 @@
                 "requirements": [ { "requireSelfAction":false, "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"lte", "value":0.9 } } ],
                 "selfEventCall":"DisruptSleep",
                 "keepLooking":true
+            },
+            {
+                "requirements": [ { "targetTags":["privacy"], "requireSelfAction":false, "requireTargetAction":true, "requireEPSuccess":false } ],
+                "responses":[ "($self$) $self$看到$target$$epDescription$</color>" ],
+                "results":[{"launchEvent":{"eventID":"RequestLeave_PrivateAction","eventLabel":"","reverseTargets":true}}]
             },
             {
                 "requirements": [ { "requireTargetAction":false, "targetTags":["service"] } ],
@@ -1178,6 +1183,84 @@
                 "requirements": [ { "selfTags":["job"] ,"targetTags":["recreation"] } ],
                 "hideWhenNotFocused":false,
                 "responses":[ "<color=#373737>($self$) 工作中的$self$撞见$target$玩耍，interrupt判定</color>" ]
+            }
+        ]
+    },
+    {
+        "ID": "OnWakeUp",
+        "_comment":"Event trigger, fired when character wakes up (or regains consciousness). Due to fault in design, this event will launch using relationship self -> self",
+        "variants":
+        [
+            {
+                "requirements": [ { "requireSelfStatusValue":{ "statusID":"chara_status_sex_stimulation", "operand":"gte", "value":39 } } ],
+                "responses":[ "<color=#373737>($self$) $self$对身体的异样感觉感到了疑惑</color>" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "selfTags":["removedClothing"] } ],
+                "responses":[ "<color=#373737>($self$) $self$醒来的时候发现内衣被脱了</color>" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "selfTags":["cum"] } ],
+                "responses":[ "<color=#373737>($self$) $self$醒来的时候在身上发现了精液</color>" ],
+                "keepLooking":true
+            }
+        ]
+    },
+    {
+        "ID": "OnNightAssaultSuccess",
+        "_comment":"Same trigger as OnWakeUp, but this one is used instead if night assault in progress when triggered. use Relationship self -> target",
+        "debugLogging":true,
+        "variants":
+        [
+            {
+                "requirements": [ ],
+                "responses":[ "尽管被吵醒，但$self$并没有对$target$的行为表露出反感……" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "requireSelfStatusValue":{ "statusID":"chara_status_sex_stimulation", "operand":"gte", "value":39 } } ],
+                "responses":[ "<color=#373737>$self$感觉到了身体传来的快感</color>" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "selfTags":["removedClothing"] } ],
+                "responses":[ "<color=#373737>注意到内衣被脱下，但$self$也并没有遮掩的打算</color>" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "selfTags":["cum"] } ],
+                "responses":[ "<color=#373737> $self$醒来的时候在身上发现了精液</color>" ],
+                "keepLooking":true
+            }
+        ]
+    },
+    {
+        "ID": "OnNightAssaultFailure",
+        "_comment":"Same trigger as OnNightAssaultSuccess, but fires only when assault refused and terminated",
+        "debugLogging":true,
+        "variants":
+        [
+            {
+                "requirements": [ ],
+                "responses":[ "($self$) 被惊醒的$self$下意识地推开了$target$" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "requireSelfStatusValue":{ "statusID":"chara_status_sex_stimulation", "operand":"gte", "value":39 } } ],
+                "responses":[ "<color=#373737>感觉到了身体的快感，$self$立刻就明白自己在梦中被$target$做了什么</color>" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "selfTags":["removedClothing"] } ],
+                "responses":[ "<color=#373737>$self$匆忙地抓起床单遮住身体</color>" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "selfTags":["cum"] } ],
+                "responses":[ "<color=#373737>终于注意到身上的精液，$self$的脸色变得惨白</color>" ],
+                "keepLooking":true
             }
         ]
     }

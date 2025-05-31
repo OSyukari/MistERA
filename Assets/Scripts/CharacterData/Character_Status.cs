@@ -266,7 +266,7 @@ public class Status_Instance : StatusInstance
         {
             for ( int i = 0; i < BaseRef.variants.Count ; i ++)
             {
-                if (this.Severity <= BaseRef.variants[i].threshold) return i;
+                if (Math.Round( this.Severity, 1) <= BaseRef.variants[i].threshold) return i;
             }
             return BaseRef.variants.Count - 1;
         } }
@@ -292,7 +292,7 @@ public class Status_Instance : StatusInstance
     {
         get
         {
-            return this.BaseRef.variationMode.randomVariation.Variation(elapsedTime);
+            return (float) Math.Round( this.BaseRef.variationMode.randomVariation.Variation(elapsedTime), 2);
         }
     }
 
@@ -355,6 +355,9 @@ public class Status_Instance : StatusInstance
 
         if (severity == max) maxed = true;
         else maxed = false;
+
+        severity = (float) Math.Round(severity, 2);
+        if (severity < 0.01) severity = 0;
 
         return this.SeverityIndex != initialS;
     }

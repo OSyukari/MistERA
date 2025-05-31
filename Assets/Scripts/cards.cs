@@ -1,4 +1,6 @@
-
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 public enum CardType
 {
     // Fusion Monster
@@ -37,7 +39,7 @@ public class CardsDB : I_SerializationCallbackReceiver
             switch((type, race))
             {
                 case ("Trap Card", "Normal"):
-                    cardType = 
+                    break;
             }
         }
 
@@ -51,12 +53,12 @@ public class CardsDB : I_SerializationCallbackReceiver
         // Trap Card
         // Spell Card
 
-        [Nonserialized][JsonIgnore]
+        [NonSerialized][JsonIgnore]
         public CardType cardType = CardType.None;
 
         public bool isCardType(string type)
         {
-            if (type == null || type.length < 1) return false;
+            if (type == null || type.Length < 1) return false;
             return humanReadableCardType.Contains(type);
         }
 

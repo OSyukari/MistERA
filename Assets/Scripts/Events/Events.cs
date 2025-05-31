@@ -1,12 +1,8 @@
 
 using UnityEngine;
-
 using System;
 using System.Collections.Generic;
-
 using Newtonsoft.Json;
-using System.Linq;
-using UnityEditor.Playables;
 
 
 
@@ -51,10 +47,36 @@ public class Event : I_SerializationCallbackReceiver
     public class EventScope_Self
     {
         public List<CharaCondition> chara_conditions = new List<CharaCondition>();
+        public List<RoomCondition> room_conditions = new List<RoomCondition>();
         public bool isCharaValid(Character_Trainable c)
         {
             foreach (var cond in chara_conditions) if (!cond.isValid(c)) return false;
+            foreach (var cond in room_conditions) if (!cond.isValid(c)) return false;
             return true;
+        }
+    }
+
+    [System.Serializable]
+    public class RoomCondition
+    {
+        public List<string> parameters = new List<string>();
+        public bool isValid(Character_Trainable c)
+        {
+            if (parameters.Count < 1) return true;
+            else if (c == null) return false;
+
+            var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+            if (room == null) return false;
+
+            switch (parameters[0])
+            {
+                case "isRoomPrivate":
+                    return room.isRoomPrivate;
+                case "hasExit":
+                    return room.FactionOwner.MainExit != null && scr_System_CampaignManager.current.Map.Findpath(c.RefID, room.FactionOwner.MainExit.RefID, room.RefID) != null;
+                default:
+                    return true;
+            }
         }
     }
 
@@ -73,6 +95,9 @@ public class Event : I_SerializationCallbackReceiver
         {
             if (parameters.Count < 1) return true;
             else if (c == null) return false;
+
+            var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+
             switch(parameters[0])
             {
                 case "exists":
@@ -96,6 +121,29 @@ public class Event : I_SerializationCallbackReceiver
                     return c.Stats.isConsciousnessUnconscious;
                 case "isSleeping":
                     return c.Stats.isSleeping;
+                case "isRoomOwner":
+                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool value))
+                    {
+                        return room != null && Utility.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, value);
+                    }
+                    else return false;
+                case "canMove":
+                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool value1))
+                    {
+                        return Utility.CompareValue(c.canMove, LogicalOperand.eq, value1);
+                    }
+                    else return false;
+                case "canLeave":
+                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool value12))
+                    {
+                        Debug.LogError($"checking {c.FirstName} canleave {c.canLeave}, currentjob {c.CurrentJobRefID} ");
+                        return Utility.CompareValue(c.canLeave, LogicalOperand.eq, value12);
+                    }
+                    else
+                    {
+                        Debug.LogError("canleave parse error");
+                        return false;
+                    }
                 default: 
                     return true;
             }
@@ -294,14 +342,27 @@ public class Event : I_SerializationCallbackReceiver
                 None,
                 JumpToLabel,
                 EventEnd,
-                InterruptAP_byType,
+                /// <summary>
+                /// [self/targetkey, autoQuitJob?, typefilter]
+                /// </summary>
+                InterruptAP,
                 /// <summary>
                 /// [StatusID, value]
                 /// </summary>
                 ModStatusValue,
                 WakeUp,
                 ExecuteCallback,
-                FlushLogs
+                FlushLogs,
+                FlushAppendStrings,
+                /// <summary>
+                /// [] <br/>
+                /// will also interrupt all existing Job and AP (that's a given)
+                /// </summary>
+                LeaveRoom, 
+                /// <summary>
+                /// [Self/targetlabel, eventid, eventlabel, originalSelfLabel]
+                /// </summary>
+                StartEvent
             }
 
             [System.Serializable]

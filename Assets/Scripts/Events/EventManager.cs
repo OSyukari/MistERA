@@ -65,7 +65,7 @@ public class EventManager
         var newEvent = new EventInstance(target, eventID, label);
         //newEvent.LoadNext(true, eventID, label);
         this.activeEvents.Add(newEvent);
-        Debug.Log($"startevent {eventID}, isactive {newEvent.Status} currentStatus {Status}");
+        Debug.Log($"startevent {eventID} on {(target == null ? "null" : target.FirstName)}, startImmediate? {startImmediate}");
         if (startImmediate)
         {
             //ev.Start();
@@ -76,6 +76,7 @@ public class EventManager
     public void StartEvent(EventInstance ev, bool startImmediate)
     {
         this.activeEvents.Add(ev);
+        Debug.Log($"startevent {ev.Name} on {(ev.Self == null ? "null" : ev.Self.FirstName)}, isValid? {ev.isValid}");
         if (startImmediate)
         {
             //ev.Start();
@@ -83,69 +84,33 @@ public class EventManager
         }
     }
 
-    int loopCounter = 50;
+    protected bool running = false;
 
     public void Run (bool resumeWaiting = false, bool ignoreUpdate = false)
     {
-        // forbid run if updating
-        var activeEV = this.activeEvents.Count > 0 ? this.activeEvents[0] : null;
-       // Debug.LogError("Eventmanager run");
+        if (running) return;
 
-        if (ignoreUpdate) loopCounter = 50;
-        else if (loopCounter < 1) 
-        { 
-            Debug.LogError("loopcounter exhausted, force exit");
-            return;
-        }
-        else loopCounter -= 1;
-
-        if (!updateHandler.Updating || ignoreUpdate)
+        running = true;
+        // one run call should resolve most if not all events, and leave waiting events
+        activeEvents.RemoveAll(x => x.Status != EventStatus.waiting && !x.canRun);
+        activeEvents.RemoveAll(x => x.Status != EventStatus.waiting && !x.Validate());
+        var list = new List<EventInstance>(activeEvents);
+        foreach(var ev in list)
         {
-#if UNITY_EDITOR
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Eventmanager run, activeEV {(activeEV == null ? "null" : activeEV.Name)}");
-#endif
-            while (activeEV != null && (activeEV.Status == EventStatus.running || activeEV.Status == EventStatus.waiting && resumeWaiting))
-            {
-                loopCounter -= 1;
-#if UNITY_EDITOR
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"activeEV run! {activeEV.Status}");
-#endif
-                activeEV.Start(resumeWaiting);
-            }
-            if (activeEV != null && activeEV.Status < EventStatus.waiting)
-            {
-                var first = true;
-                while (this.activeEvents.Count > 0 && (first || !this.activeEvents[0].Validate()))
-                {
-                    first = false;
-                    activeEvents.RemoveAt(0);
-                }
-                if(this.activeEvents.Count > 0) Run(); // run next
-                else if (updateHandler.halted) updateHandler.StartUpdate(true);
-            }
+            if (ev.Status != EventStatus.waiting) ev.Start();
         }
-        else
-        {
-#if UNITY_EDITOR
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError($"Event {(activeEV == null ? "null" : activeEV.Name)} run call skipped due to updating");
-#endif
-            return;
-        }
+        running = false;
+    }
 
-
+    public void Remove(EventInstance ev)
+    {
+        this.activeEvents.Remove(ev);
+        updateHandler.FlushCollectedLogs(true, false, true);
     }
 
     public bool Active { get { return this.activeEvents.Count > 0; } }
 
-    public EventStatus Status
-    {
-        get
-        {
-            if (this.activeEvents.Count > 0)
-            {
-                return this.activeEvents[0].Status;
-            }
-            else return EventStatus.reset;
-        }
-    }
+    public bool hasVisibleEvents { get { return this.activeEvents.Find(x => x.isVisible) != null; } }
+
+    public bool Waiting { get { return this.activeEvents.Find(x=> x.isVisible && x.Status == EventStatus.waiting) != null; } }
 }

@@ -401,6 +401,7 @@ public class Job : IDisposable, I_Disposable
         {
             if(ap.Duration <= 0) continue;
             if(ap.actorRefs.Contains(actorRef)) continue;
+            if(!ap.AllowJoining) continue;
             returnVal.Add(ap);
         }
         return returnVal;
@@ -561,11 +562,12 @@ public class Job : IDisposable, I_Disposable
 
     public void NotifyDescriptionsOutOfUpdate()
     {
-        Debug.Log($"NotifyDescriptionsOutOfUpdate on {DisplayName}");
-        scr_UpdateHandler.current.NotifyJobDescriptions(messages_before, messages_ongoing, null, messages_kojo);
+        //Debug.Log($"NotifyDescriptionsOutOfUpdate on {DisplayName}");
+        scr_UpdateHandler.current.NotifyJobDescriptions(messages_before, messages_ongoing, messages_after, messages_kojo);
         messages_before.Clear();
         messages_ongoing.Clear();
         messages_kojo.Clear();
+        messages_after.Clear();
     }
 
     public virtual void PostUpdateTime()
@@ -597,7 +599,7 @@ public class Job : IDisposable, I_Disposable
                 {
                     //Debug.Log("deleting package " + packages_previous[i].DisplayName);
                     //PackageRemoval(packages_previous[i]);
-                    if (!(packages_previous[i] is ActionPackage_PathTo))
+                    if (!packages_previous[i].isTemporaryAP)
                     {
                         actorJobComplete.AddRange(packages_previous[i].actorRefs);
                     }

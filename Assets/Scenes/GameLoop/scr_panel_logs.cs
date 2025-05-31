@@ -223,7 +223,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 #if UNITY_EDITOR
         if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"OnEvent {status}, waiting? {(status == EventStatus.waiting)} firstline {firstLine}");
 #endif
-        if (!this.gameObject.activeInHierarchy && status != EventStatus.idle) this.gameObject.SetActive(true);
+        if (!this.gameObject.activeInHierarchy) this.gameObject.SetActive(true);
         if (forceLogging) this.firstLine = true;
     }
 

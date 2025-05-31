@@ -191,14 +191,15 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="parent"></param>
     /// <param name="line"></param>
     /// <param name="animate"></param>
-    public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool animate = true)
+    public void AddLog_Line(EventInstance instance, string line, bool animate = true)
     {
         // here we need to process line into translated
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(null, Utility.ParseEventEntry(instance, line.line), animate, false), animate);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(null, line, animate, false), animate);
     }
 
     public void AddLog_Question(EventInstance parent, Event.EventEntry.EventEntry_Question question, bool animate = true) 
     {
+        //scr_UpdateHandler.current.FlushCollectedLogs(true, false);
         Observer_MessageLogs?.Invoke(LogManager.AddLog(new Message_Question(null, parent, question)), animate);
     }
 
@@ -373,7 +374,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public bool isCharaVisibleToPlayer(int charaRefID)
     {
-        return Map.FindRoomByChara(charaRefID).RefID == currentRoomRef;
+        return Map.FindRoomByChara(charaRefID) == Map.FindRoomByChara(Player.RefID);//.RefID == currentRoomRef;
     }
 
     public void NotifyUpdateHandlerExist()
@@ -439,32 +440,18 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         //string s = "ExistPlayerPackage : ";
 
-        foreach(var p in GetExistingPackages(scr_System_CampaignManager.current.Player, checkUnexecuted, false, true))
+        foreach(var p in GetExistingPackages(scr_System_CampaignManager.current.Player, checkUnexecuted, true, true))
         {
             //if (p.Duration < 1) continue;
             //if (!checkUnexecuted && !p.Ticked) continue;
-           // if (p.actorRefs.Contains(0) || p.masterRef == 0)
+            // if (p.actorRefs.Contains(0) || p.masterRef == 0)
             //{
-                //s += p.DisplayName + "[" + p.Duration + "] ";
-                returnVal = true;
-                updateTime = Math.Max(updateTime, p.Duration);
+            //s += p.DisplayName + "[" + p.Duration + "] ";
+            if (p.Duration < 1) continue;
+            returnVal = true;
+            updateTime = Math.Max(updateTime, p.Duration);
             //}
         }
-        /*
-        foreach (var kvpair_list in registeredPackagesByRoom)
-        {
-            foreach (var p in kvpair_list.Value)
-            {
-                if (p.Duration < 1) continue;
-                if (!checkUnexecuted && !p.Ticked) continue;
-                if (p.actorRefs.Contains(0) || p.masterRef == 0)
-                {
-                    //s += p.DisplayName + "[" + p.Duration + "] ";
-                    returnVal = true;
-                    updateTime = Math.Max(updateTime, p.Duration);
-                }
-            }
-        }*/
 
         totalUpdateTime = updateTime;
         //Debug.Log(s);

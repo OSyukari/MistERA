@@ -35,6 +35,7 @@ public class scr_menu_question : scr_Menu
        // Debug.Log($"Initializing question menu, grid size {Grid.cellSize.ToString()} rectTransformSizedelta {self.sizeDelta} deltaX {self.sizeDelta.x} rectwidth {self.rect.width} gridflexwidth {Grid.flexibleWidth} rectlocalscale");
         //Grid.cellSize = new Vector2(Grid.cellSize.x, (float)Math.Min(self.rect.width * 0.9, preferredLen));
         ValidateAll();
+        scr_UpdateHandler.current.InvokeEventStatus(EventStatus.waiting, true);
         if (defaultCancel != null && logs != null) logs.Observer_OnClick += OnClick;
     }
 

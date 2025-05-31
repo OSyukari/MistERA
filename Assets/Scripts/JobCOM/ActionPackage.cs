@@ -34,6 +34,8 @@ public enum AP_Status
 [System.Serializable]
 public abstract class ActionPackage
 {
+
+    [JsonIgnore] public virtual bool isTemporaryAP { get { return false; } }
     protected Character_Trainable master_cached = null;
     [JsonIgnore] public Character_Trainable Master { get
         {
@@ -129,7 +131,7 @@ public abstract class ActionPackage
 
     [SerializeField][JsonProperty] protected string targetCOMID = "";
     protected COM targetCOMCache = null;
-    [JsonIgnore] public COM targetCOM { get
+    [JsonIgnore] public virtual COM targetCOM { get
         {
             if (targetCOMCache == null && targetCOMID != "")
             {
@@ -137,6 +139,14 @@ public abstract class ActionPackage
             }
             return targetCOMCache;
         } }
+
+    [JsonIgnore] public virtual bool AllowJoining
+    {
+        get
+        {
+            return this.targetCOMID != "" && this.targetCOM != null;
+        }
+    }
 
     [JsonIgnore] public virtual string DisplayName { get {
             //if (targetCOM != null && targetCOM.comTags.Contains("food_meal")) Debug.LogError($"mealcom name {targetCOM.DisplayName(0)}, ismealcom ? {(targetCOM is COM_TakeMeal)}");
@@ -147,7 +157,7 @@ public abstract class ActionPackage
 
         var roomName = this.RoomKey != -1 ? scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey).DisplayName : "";
 
-        string s = targetCOM.variants[COMVariantID].GetVariantDescription(false, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
+        string s = targetCOM.GetVariantDescription(COMVariantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
 
         return s;
     } 
@@ -335,16 +345,22 @@ public abstract class ActionPackage
                     {
                         //Debug.LogError($"{c.FirstName} is going to sleep");
                         c.Sleep();
+
                         //Debug.Log("ADDING SLEEP TO " + c.FirstName);
                     }
                     
                 }
                 //if (c.canSleep) 
-               // this.duration += 1;
+                // this.duration += 1;
+                this.duration = tickDuration + 1;
+            }
+            else
+            {
+                // timeStop and allUnconscious will cause Tick to stop ticking.
+                this.duration = Math.Max(0, this.duration - tickDuration);
             }
 
-            // timeStop and allUnconscious will cause Tick to stop ticking.
-            this.duration = Math.Max(0, this.duration - tickDuration);
+
             Ticked = true;
             // if refused, cut short the whole thing
 
@@ -359,6 +375,7 @@ public abstract class ActionPackage
             }
             else
             {
+
                 if (receiver.Count > 0)
                 {
                     string s = "Package "+DisplayName+" accepted : ";
@@ -512,7 +529,7 @@ public abstract class ActionPackage
     }
 
     [SerializeField][JsonProperty] protected int validVariant = -1;
-    [JsonIgnore] public int COMVariantID { get { return validVariant; } }
+    [JsonIgnore] public virtual int COMVariantID { get { return validVariant; } }
     [JsonIgnore] public virtual string ResourceCost 
     { get
         {
@@ -760,7 +777,9 @@ public abstract class ActionPackage
     //Dictionary<int, Dictionary<string, int>> result_experiences;
 
     /// <summary>
-    /// Make actual EP and evaluate every single one. If any fail, then return false
+    /// Make actual EP and evaluate every single one. If any fail, then return false <br/>
+    /// Even if current AP does not need actual EP to handle A->B acceptance, since kojo response and interrupt all works based on EPs, 
+    /// making EP is still required for one to get reactions
     /// </summary>
     /// <returns></returns>
     protected virtual bool Request(bool rebuildPackage = true)

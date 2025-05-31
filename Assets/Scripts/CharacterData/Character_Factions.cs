@@ -167,6 +167,14 @@ public class Character_Factions
     }
 
     [JsonIgnore]
+    public Manageable CurrentLocaleFaction
+    { get
+        {
+            var room = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID);
+            return room.FactionOwner;
+        } }
+
+    [JsonIgnore]
     public string CurrentlyActiveFactionStatus
     {
         get

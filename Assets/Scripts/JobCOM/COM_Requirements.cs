@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 public class COM_Requirements
 {
 
-
+    public BodyEquipLayer clothingRequirement = BodyEquipLayer.Outer;
     /// <summary>
     /// when flagged as true, do not establish doer-receiver relationship, instead make multiple doer-null relationship
     /// </summary>

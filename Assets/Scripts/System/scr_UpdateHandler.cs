@@ -1,12 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class scr_UpdateHandler : MonoBehaviour
 {
@@ -72,6 +68,7 @@ public class scr_UpdateHandler : MonoBehaviour
         // differentiate left and right click and animate all ?
         // dont. if its a single long command its as fast as skip anyway.
         // if multiple commands, it usually involves moving, and we want to let player possible break movement
+        Debug.LogError("click");
         StartUpdate(false, false, true);
 
     }
@@ -242,8 +239,18 @@ public class scr_UpdateHandler : MonoBehaviour
         //Debug.Log($"Singleupdate : eventhandler end, updatetime? {updateTime}");
         //NotifyLogsSingleUpdate();
         //var copy = updateTime;
-        while (updateTime > 0 && !EventHandler.Active)  // updatetime can be 0 if there is no player package
+        while (updateTime > 0 && !EventHandler.Waiting)  // updatetime can be 0 if there is no player package
         {   // if indeed 0 updatetime, then none of the below preupdate postupdate will be called.
+
+            if (EventHandler.Active && !EventHandler.Waiting)
+            {
+                ExecuteEventCallbacks(false);
+                yield return null;
+            }
+            else if (EventHandler.Active && EventHandler.Waiting) break;
+
+            
+            halted = false;
             loopCount++;
             //var time = Clock ? Utility.ReinitStopWatch(stopWatch) : TimeSpan.Zero;
             //var time2 = time;
@@ -280,17 +287,19 @@ public class scr_UpdateHandler : MonoBehaviour
 
             cnManager.ClearExecutedAPs();
             //cnManager.ClearLogs(true);
+            if (EventHandler.Active) EventHandler.Run(false, true);
 
-            //stopWatch.Stop();
             yield return new WaitForSecondsRealtime(0.001f);
             //yield return 
         }
+
+
 
         if (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime2, false))
         {   // continuous update
             // ask break
             totalUpdateTime = totalUpdateTime2;
-            //Debug.Log($"totalupdatetime {updateTime} {totalUpdateTime}");
+           Debug.LogError($"halted totalupdatetime {updateTime} {totalUpdateTime}");
             cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
             halted = EventHandler.Active;
         }
@@ -352,15 +361,15 @@ public class scr_UpdateHandler : MonoBehaviour
             names.Add("<align=\"right\">"+scr_System_Serializer.current.Dictionary.Query("chara_currently_doing").Replace("$chara$",c.FirstName).Replace("$currentjob$", c.GetJobDescription()) +"</align>");
             //cnManager.AddLog(charaRef, c.FirstName+ " is in room" + room.DisplayName+  ", currently " + c.GetJobDescription(), true);
         }
-        if(names.Count > 0) cnManager.AddLog(-1, String.Join("\n", names) , false, true);
+        if (names.Count > 0) cnManager.AddLog(-1, String.Join("\n", names) , false, true);
         //yield return null;
         
 
-        if (playerJob == null || playerJob is Job_Sex_Group) { }
-        else
-        {   // release player from previous job registry to avoid lingering COM display
-            scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
-        }
+        //if (playerJob == null || playerJob is Job_Sex_Group) { }
+        //else
+        //{   // release player from previous job registry to avoid lingering COM display
+        //    scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
+       // }
         Updating = false;
 
         if (EventHandler.Active)
@@ -371,9 +380,27 @@ public class scr_UpdateHandler : MonoBehaviour
 #endif 
             EventHandler.Run(false, true);
         }
+
+        ExecuteEventCallbacks(false);
     }
 
-
+    public void AddEventCallback(Action e)
+    {
+        eventCallbacks.Add(e);
+    }
+    protected List<Action> eventCallbacks = new List<Action>();
+    protected void ExecuteEventCallbacks(bool autoResumeUpdate)
+    {
+        //Debug.LogError("execute callbacks!");
+        foreach (var e in eventCallbacks)
+        {
+            e.Invoke();
+        }
+        eventCallbacks.Clear();
+        var bo = cnManager.ExistPlayerPackage(out var a, out var b, true);
+        //if (!Updating) Debug.LogError($"ExecuteEventCallbacks end, {!EventHandler.Active} {halted} {bo}");
+        if (autoResumeUpdate && !EventHandler.Active && halted && bo) StartUpdate(false);
+    }
 
 
     List<string> message_begin = new List<string>(), message_end = new List<string>();
@@ -400,7 +427,14 @@ public class scr_UpdateHandler : MonoBehaviour
         if (!kojoMsgDictionary.ContainsKey(charaRefID)) kojoMsgDictionary.Add(charaRefID, s);
         else kojoMsgDictionary[charaRefID] += "\n" + s;
     }
-    public void FlushCollectedLogs(bool flushOut, bool firstLoop)
+
+    /// <summary>
+    /// executeCallbacks == true will cause infinite loop if flushcollectedlogs is inside callbacks !!
+    /// </summary>
+    /// <param name="flushOut"></param>
+    /// <param name="firstLoop"></param>
+    /// <param name="executeCallbacks"></param>
+    public void FlushCollectedLogs(bool flushOut, bool firstLoop, bool executeCallbacks = false)
     {
         if (flushOut)
         {
@@ -424,6 +458,8 @@ public class scr_UpdateHandler : MonoBehaviour
         message_ongoing.Clear(); 
         kojoMsgDictionary.Clear();
         message_end.Clear();
+
+        if (executeCallbacks) ExecuteEventCallbacks(true);
     }
 
     public void NotifyCheckResult(string resultString)

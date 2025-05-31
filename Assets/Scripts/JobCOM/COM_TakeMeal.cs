@@ -41,25 +41,31 @@ public class COM_TakeMeal : COM
         this.results.results_character.Add(res);
     }
 
+    public override string GetVariantDescription(int variantID, bool isDoer, int charaRef, string roomName, List<int> DoerRefs, List<int> ReceiverRefs, int masterRef)
+    {
+        var s = base.GetVariantDescription(variantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
+        return Replace(s);
+    }
+
     public override string DisplayName(int index = -1)
     {
-        //Debug.Log("getmeal displayname 1");
-        if (baseItem != null) return baseCOM.DisplayName(index).Replace("$name$", baseItem.DisplayName);
-        else
-        {
-            Debug.LogError("error in mealcom getname, cannot find baseItem");
-            return baseCOM.DisplayName(index);
-        }
+        //Debug.Log($"getmeal displayname 1 on {this.ID} {baseItem.ID} {baseItem.DisplayName}");
+        return Replace(baseCOM.DisplayName(index));
     }
 
     public override string DisplayName(List<int> doerRefIDs, List<int> receiverRefIDs = null, bool excludeRequireExisting = false)
     {
-        Debug.Log("getmeal displayname 2");
-        if (baseItem != null) return baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting).Replace("$name$", baseItem.DisplayName);
+        //Debug.Log("getmeal displayname 2");
+        return Replace(baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting));
+    }
+
+    protected string Replace(string s)
+    {
+        if (baseItem != null) return s.Replace("$name$", baseItem.DisplayName);
         else
         {
-            Debug.LogError("error in mealcom getname, cannot find baseItem");
-            return baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting);
+            //Debug.LogError($"getmeal cannot find meal item on {this.ID}");
+            return s;
         }
     }
 }

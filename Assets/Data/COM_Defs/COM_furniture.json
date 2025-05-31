@@ -10,9 +10,11 @@
                 "comTags": [
                     "furniture",
                     "bed",
-                    "sleep"
+                    "sleep",
+                    "privacy"
                 ],
                 "requirements": {
+                    "clothingRequirement":"Skin",
                     "requirement": {
                         "treatReceiverAsDoer": true,
                         "req_Doers": {
@@ -333,19 +335,13 @@
                 "ID": "com_furniture_restroom_fix",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_restroom_fix_displayName_1",
-                "timeScale": 15,
+                "timeScale": 10,
                 "comTags": [
                     "furniture",
                     "bathroom",
-                    "fixingClothes"
+                    "fixingClothes",
+                    "privacy"
                 ],
-                "requirements": {
-                    "requirement": {
-                        "req_Doers": {
-                            "requireUndressed": true
-                        }
-                    }
-                },
                 "variants": [
                     {
                         "requirements": {
@@ -377,12 +373,16 @@
                         }
                     ]
                 },
+
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 25
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
-                }
+                },
+
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在换衣服"]}], "keepLooking":false },
+                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始换衣服"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_study",

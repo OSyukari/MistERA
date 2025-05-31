@@ -13,7 +13,7 @@ using System.Linq;
 public class ActionPackage_PathTo : ActionPackage
 {
     [SerializeField][JsonProperty] new protected bool toggleRepeat = false;
-
+    [JsonIgnore] public override bool isTemporaryAP { get { return true; } }
 
     [SerializeField][JsonProperty] private int targetRoomRef = -1;
 
@@ -174,7 +174,7 @@ public class ActionPackage_PathTo : ActionPackage
     /// </summary>
     protected override void Execution()
     {
-        Debug.Log("ActionPackage_PathTo Execute for ["+Doer.FirstName+"] toward ["+TargetRoom.DisplayName+"]!");
+        //Debug.Log("ActionPackage_PathTo Execute for ["+Doer.FirstName+"] toward ["+TargetRoom.DisplayName+"]!");
         if(scr_System_CampaignManager.current.Map.FindRoomByChara(Doer.RefID) == TargetRoom)
         {
             //

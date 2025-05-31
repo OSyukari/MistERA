@@ -55,6 +55,15 @@ public class EvaluationPackage
         }
     }
 
+    public RelationshipManager.Character_Relationship Relationship(Character_Trainable self)
+    {
+        if (self == null) return null;
+        else if (this.Doer == self) return this.Doer.Relationships.FindRelationshipWith(this.Receiver);
+        else if (this.Receiver == self) return this.Receiver.Relationships.FindRelationshipWith(this.Doer);
+        else return null;
+        
+    }
+
     private List<Character_Trainable> additionalActorsCache = null;
     private List<Character_Trainable> additionalActors{get
         {
@@ -155,6 +164,7 @@ public class EvaluationPackage
 
     [JsonIgnore] public List<string> DoerSelfTag { get
         {
+            List<string> tags = new List<string>();
             if (this.receiverRef == -1 || receiverRef == doerRef) return DoerTargetTag;
             else return extraDoerTags.Concat(injectedDoerTags).Distinct().ToList(); ;
         } }
@@ -162,14 +172,14 @@ public class EvaluationPackage
     {
         get
         {
-            return Enumerable.Concat(extraCOMTags, extraReceiverTags).Concat(injectedReceiverTags).Concat(injectedCOMTags).Distinct().ToList();
+            return Enumerable.Concat(targetCOM == null? new List<string>() : targetCOM.comTags, extraCOMTags).Concat(extraReceiverTags).Concat(injectedReceiverTags).Concat(injectedCOMTags).Distinct().ToList();
         }
     }
     [JsonIgnore] public List<string> DoerTargetTag
     {
         get
         {
-            return Enumerable.Concat(extraCOMTags, extraDoerTags).Concat(injectedDoerTags).Concat(injectedCOMTags).Distinct().ToList();
+            return Enumerable.Concat(targetCOM == null ? new List<string>() : targetCOM.comTags, extraCOMTags).Concat(extraDoerTags).Concat(injectedDoerTags).Concat(injectedCOMTags).Distinct().ToList();
         }
     }
     [JsonIgnore] public List<string> ReceiverSelfTag { get
@@ -259,7 +269,7 @@ public class EvaluationPackage
 
         if (Doer.Stats.isConsciousnessUnconscious || Doer.Stats.isConsciousnessReduced)
         {
-            Debug.LogError("doer uncons or reduced");
+            //Debug.LogError("doer uncons or reduced");
             foreach (var str in Doer.Stats.Consciousness.Tags)
             {
                 AddModifier(Doer.RefID, str, 0);
@@ -764,6 +774,10 @@ public class EvaluationPackage
         {
             if (entry.body.NotifySexExperience(entry.targetName, entry.comName, entry.comtags, entry.targetBodytags))
             {
+                // first experience loss
+                string s = LocalizeDictionary.Instance.Index.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
+                Utility.StringReplace(entry.body.Owner, ref s);
+                this.m.AddMessage(entry.body.Owner.RefID, s);
                 entry.body.Owner.Memory.AddEntry_Custom(new List<string>() { "mergeWithAll", "important" } , new List<string>(), entry.targetRef, false, entry.body.FirstExperienceDesc, Memory_Attitude.None, Memory_Response.None);
             }
         }
@@ -1311,8 +1325,9 @@ public class EvaluationPackage
                     var relation = body.Owner.Relationships.FindRelationshipWith(source);
                     if (relation != null && relation.Obedience(null) > RelationshipObedienceType.Normal)
                     {
-                        this.m.AddRelations(body.Owner.RefID, source.RefID, RelationshipScoreType.Fear, (int) pain);
-                        relation.ModRelationValue(RelationshipScoreType.Fear, pain);
+                        ModRelationshipResult(relation, RelationshipScoreType.Fear, (int)pain);
+                        //this.m.AddRelations(body.Owner.RefID, source.RefID, RelationshipScoreType.Fear, (int) pain);
+                        //relation.ModRelationValue(RelationshipScoreType.Fear, pain);
                     }
                 }
                 
@@ -1323,6 +1338,12 @@ public class EvaluationPackage
             if (expansion > 0) newTags.Add("expansion");
             body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pain + expansion, isDoer, m);
         }
+    }
+
+    public void ModRelationshipResult(RelationshipManager.Character_Relationship rel, RelationshipScoreType type, int value)
+    {
+        this.m.AddRelations(rel.ownerRefID, rel.TargetID, type, value);
+        rel.ModRelationValue(type, value);
     }
 
 
@@ -1352,6 +1373,7 @@ public class ExperienceLog
     protected SortedDictionary<int, Dictionary<string, int>> StatLog = new SortedDictionary<int, Dictionary<string, int>>();
     protected SortedDictionary<int, Dictionary<string, int>> ExpLog = new SortedDictionary<int, Dictionary<string, int>>();
     protected SortedDictionary<int, Dictionary<int, int>> RelationLog = new SortedDictionary<int, Dictionary<int, int>>();
+    protected SortedDictionary<int, List<string>> MessageLog = new SortedDictionary<int, List<string>>();
 
     public ExperienceLog()
     {
@@ -1385,6 +1407,13 @@ public class ExperienceLog
 
         if (RelationLog[sourceCharaRef].ContainsKey((int)relID)) RelationLog[sourceCharaRef][(int)relID] += count;
         else RelationLog[sourceCharaRef].Add((int)relID, count);
+    }
+
+    public void AddMessage(int charaRef, string message)
+    {
+        if (!this.MessageLog.ContainsKey(charaRef)) MessageLog.Add(charaRef, new List<string>());
+
+        this.MessageLog[charaRef].Add(message);
     }
 
     public void AddStats(int charaRef, string statID, int count)
@@ -1440,6 +1469,12 @@ public class ExperienceLog
                 }
             }
         }
+
+        foreach(KeyValuePair<int, List<string>> kvp in log.MessageLog)
+        {
+            if (!this.MessageLog.ContainsKey(kvp.Key)) MessageLog.Add(kvp.Key, kvp.Value);
+            else MessageLog[kvp.Key].AddRange(kvp.Value);
+        }
     }
 
     public void Clear()
@@ -1460,6 +1495,8 @@ public class ExperienceLog
 
         foreach (KeyValuePair<int, Dictionary<string, int>> kvp in StatLog) kvp.Value.Clear();
         StatLog.Clear();
+
+        MessageLog.Clear();
     }
 
     public string PrintContent()
@@ -1495,6 +1532,16 @@ public class ExperienceLog
                 foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + scr_System_Serializer.current.Dictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
                 lines.Add(s);
             }
+        }
+
+        foreach(var kvp_msg in MessageLog)
+        {
+            if (kvp_msg.Value.Count > 0)
+            {
+                string s = String.Join("\n", kvp_msg.Value);
+                lines.Add(s);
+            }
+
         }
 
         return String.Join("\n", lines);

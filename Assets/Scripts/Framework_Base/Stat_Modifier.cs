@@ -53,6 +53,7 @@ public class Stat_Modifier
     /// <param name="vString"></param>
     public void SetValueTypeAndString(string vType, string vString)
     {
+        //if (statID == "chara_status_stress") Debug.LogError($"Setvaluetypeandstring on {statID} {modKey} {type} {vType} {vString}");
         this.valueType = vType;
         this.valueString = vString;
     }

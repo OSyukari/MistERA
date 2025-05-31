@@ -210,6 +210,11 @@ public class FactionInventory : Inventory
         }
 
     }
+    public override void Remove(Item_Instance item)
+    {
+        base.Remove(item);
+        foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] += item.Count;
+    }
 }
 
 [System.Serializable]
@@ -238,6 +243,8 @@ public class CharacterInventory : Inventory
     {
         this.ownerCache = charaOwner;
     }
+
+
 }
 
 
@@ -248,7 +255,9 @@ public class Inventory
     [SerializeField][JsonProperty] protected List<int> contentRefs = new List<int>();
     [JsonIgnore] public List<int> ContentRefs { get { return contentRefs; } }
     private List<Item_Instance> contents_cache = null;
-    protected List<Item_Instance> Contents
+
+    [JsonIgnore]
+    public List<Item_Instance> Contents
     {
         get
         {
@@ -320,7 +329,6 @@ public class Inventory
             return Contents.FindAll(x => x.Displayable);
         } }
 
-
     public void AddContentToDict(ref Dictionary<string, int> dict)
     {
         foreach(var item in Contents)
@@ -336,5 +344,17 @@ public class Inventory
         if (GetItemCount(entry.itemID) < entry.itemCount * count) return false;
         return true;
     }
+
+    public bool Contains(Item_Instance item)
+    {
+        return this.Contents.Contains(item);
+    }
+    public virtual void Remove(Item_Instance item)
+    {
+        this.Contents.Remove(item);
+
+    }
+
+
 }
 

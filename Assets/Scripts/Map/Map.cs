@@ -327,8 +327,8 @@ public class Map_Instance
             // check interrupt
             var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(iii.Key, true) : dirtyCharaAPRef;
             //Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
-            if (xx.RefID != 0)
-            {
+            //if (xx.RefID != 0)
+            //{
                 // only check interrupt if not player
                 // these are all ap that chara could react to
                 foreach (var i in checkInterruptAPs)
@@ -339,14 +339,15 @@ public class Map_Instance
                     if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
                     if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
 
-                    if (xx.Relationships.CheckInterrupt(i, selfTags))
+                   // Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
+                    if (xx.Relationships.CheckInterrupt(i, selfTags) && xx.RefID != 0)
                     {
                         interrupted = true;
                         ignoreList.AddRange(i.actorRefs);
                     }
                     //interrupted = xx.Relationships.CheckInterrupt(i, selfTags) || interrupted;
                 }
-            }
+           // }
 
 
             if (!interrupted)

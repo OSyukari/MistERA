@@ -15,6 +15,7 @@ using static scr_panel_COMmanager;
 using static Stats_Derived_Extended;
 using QuikGraph.Algorithms.Search;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 public static class Utility
 {                                               //  F      E      D      C      B      A      S    
@@ -66,9 +67,13 @@ public static class Utility
 
     public static string WrapTextColor(string text, Color32 c)
     {
-        string cHex = $"#{c.r:X2}{c.g:X2}{c.b:X2}{c.a:X2}";
-        return $"<color={cHex}>{text}</color>";
+        return $"<color={HexCOLOR(c)}>{text}</color>";
     }
+    public static string HexCOLOR(Color32 c)
+    {
+        return $"#{c.r:X2}{c.g:X2}{c.b:X2}{c.a:X2}"; ;
+    }
+
     public static string GetEnumString(System.Type type, object value) {
         return System.Enum.GetName(type, value);
     }
@@ -355,6 +360,30 @@ public static class Utility
                 return false;
         }
     }
+
+    public static bool CompareValue(bool value1, LogicalOperand operand, bool value)
+    {
+        //Debug.LogError("Comparevalue climaxed ["+value1+"] ["+operand+"] ["+value2+"]");
+        // modify invalid operands into valid ones
+        //if (operand == LogicalOperand.gte || operand == LogicalOperand.lte) operand = LogicalOperand.eq;
+        //else if (operand == LogicalOperand.gt || operand == LogicalOperand.lt) operand = LogicalOperand.neq;
+
+        switch (operand)
+        {
+            case LogicalOperand.eq:
+            case LogicalOperand.gte:
+            case LogicalOperand.lte:
+                return value1 == value;
+            case LogicalOperand.neq:
+            case LogicalOperand.gt:
+            case LogicalOperand.lt:
+                return value1 != value;
+            default:
+                Debug.LogError("CompareValue (boolean) Error: invalid operand");
+                return false;
+        }
+    }
+
     public static bool CompareValue(int value1, string operand, string value2)
     {
         int value;
@@ -693,10 +722,24 @@ public static class Utility
         }
     }
 
+    public static void StringReplace(ref string s)
+    {
+        s = s.Replace("$color_error_begin$", $"<color={Utility.HexCOLOR(scr_System_CentralControl.current.pref.TextColor_conflict)}>")
+            .Replace("$color_error_end$", "</color>");
+    }
+
+
+    public static void StringReplace(Character_Trainable c, ref string s)
+    {
+
+        StringReplace(ref s);
+        s = s.Replace("$firstname$", c.FirstName);
+    }
 
     public static void StringReplace(EvaluationPackage evp, ref string s)
     {
         //if (evp == null) return s;
+        StringReplace(ref s);
         bool doerReplaced = false;
         // %% ____ %% refers to static entry in dictionary
         // $ ____ $ refers to local variable
@@ -1288,13 +1331,20 @@ public static class EventUtility
 #endif
         // display line
 
-        if (owner.isVisible) scr_System_CampaignManager.current.AddLog_Line(owner, block, false);
+        if (owner.isVisible)
+        {
+            var content = Utility.ParseEventEntry(owner, block.line);
+            // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
+            // but on execute they are consistent
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, content, false));
+            //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
+        }
 
         // immediate load next
         //if (isLast) owner.Notify(EventStatus.reset);
 
-        owner.LoadNext(true, block.nextEventID, block.nextEntryLabel);
-        //owner.Notify(EventStatus.running);
+        owner.LoadNext(block.nextEventID, block.nextEntryLabel);
+        owner.Notify(EventStatus.running);
     }
 
     public static void Execute(EventInstance owner, Event.EventEntry.EventEntry_Question block)
@@ -1306,7 +1356,8 @@ public static class EventUtility
 
         if (owner.isVisible)
         {
-            scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
+            scr_UpdateHandler.current.AddEventCallback( () => scr_System_CampaignManager.current.AddLog_Question(owner, block, false) );
+            //scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
             owner.Notify(EventStatus.waiting);
         }
         else
@@ -1314,7 +1365,7 @@ public static class EventUtility
             Debug.LogError($"Event {owner.Name} questionbox {block.Name} not visible to player! calling default cancel");
             var def = block.Default;
             if (def == null) return;
-            Execute(owner, def);
+            Execute(owner, def, true);
         }
 
         // load next but allow to be overwritten
@@ -1338,9 +1389,9 @@ public static class EventUtility
         }
 
         if (executed) owner.Notify(EventStatus.running);
-        else if (!block.isLast) owner.LoadNext(true, block.nextEventID, block.nextEntryLabel);
+        //else if (!block.isLast) owner.LoadNext(true, block.nextEventID, block.nextEntryLabel);
         else owner.Notify(EventStatus.reset);
-
+        
 
         // load next but allow to be overwritten
         //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
@@ -1355,9 +1406,9 @@ public static class EventUtility
             if (op.isValid()) continue_notify = Execute(owner, op) && continue_notify;
             else continue_notify = false;
         }
-        if (continue_notify && owner.isValid)
+        if (continue_notify && owner.canRun)
         {
-            if (sendNotify) owner.Notify(EventStatus.running);
+            if (sendNotify) owner.Notify(EventStatus.running, true);
             return true;
         }
         else
@@ -1387,13 +1438,13 @@ public static class EventUtility
 #if UNITY_EDITOR
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JumpToLabel {exec.arguments[0]} {exec.arguments[1]}");
 #endif
-                    owner.LoadNext(false, exec.arguments[0], exec.arguments[1]);
+                    owner.LoadNext(exec.arguments[0], exec.arguments[1]);
                     return true;
                 }
             case Event.EventEntry.Options.ExecutionType.EventEnd:
                 return false;
-            case Event.EventEntry.Options.ExecutionType.InterruptAP_byType:
-                if (exec.arguments.Count < 2)
+            case Event.EventEntry.Options.ExecutionType.InterruptAP:
+                if (exec.arguments.Count < 3)
                 {
 #if UNITY_EDITOR
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError("interruptAP does not have enough arguments");
@@ -1402,7 +1453,7 @@ public static class EventUtility
                 }
                 else
                 {
-                    //Debug.Log("Executing InterruptAP_byType");
+                    //Debug.Log("Executing InterruptAP");
                     //owner.Notify(EventStatus.reset);
                     List<ActionPackage> queryPackages;
                     //var packages = new List<ActionPackage>();
@@ -1410,15 +1461,36 @@ public static class EventUtility
                     {
                         // interrupt self AP by arg[1]
 #if UNITY_EDITOR
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing InterruptAP_byType argument self, current self {(owner.Self == null ? "null" : owner.Self.FirstName)}");
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing InterruptAP argument self, current self {(owner.Self == null ? "null" : owner.Self.FirstName)}");
 #endif
+                        var joblists = new List<Job>();
                         queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
                         //Debug.Log($"found relevant package {queryPackages.Count}");
-                        queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, exec.arguments[1]));
+                        if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, exec.arguments[2]));
 #if UNITY_EDITOR
                         if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count}");
 #endif
-                        foreach (var package in queryPackages) package.DisablePackage();
+
+                        foreach (var package in queryPackages)
+                        {
+                            package.DisablePackage();
+                            if (!joblists.Contains(package.job)) joblists.Add(package.job);                            
+                        }
+
+                        if (bool.TryParse(exec.arguments[1], out bool autoExit))
+                        {
+                            foreach (var j in joblists)
+                            {
+                                if (j.GetExistingPackages(owner.Self, true, true, true, false).Count > 0) continue;
+                                else if (!j.CanBeInterrupted) return false;
+                                else
+                                {
+                                    owner.Self.ChangeCurrentJob(null);
+                                    Debug.LogError($"{owner.Self.FirstName} job removed due to autoexit");
+                                }
+                            }
+                        }
+
                         return true;
                     }
                     else
@@ -1433,12 +1505,30 @@ public static class EventUtility
                         {
                             foreach (var chara in owner.Targets[exec.arguments[0]])
                             {
+                                var joblists = new List<Job>();
+
                                 queryPackages = scr_System_CampaignManager.current.GetExistingPackages(chara, true, true, true);
-                                queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, exec.arguments[1]));
+                                if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, exec.arguments[2]));
 #if UNITY_EDITOR
                                 if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count} on {chara.FirstName}");
 #endif
-                                foreach (var package in queryPackages) package.DisablePackage();
+                                foreach (var package in queryPackages)
+                                {
+                                    if (!joblists.Contains(package.job) && package.job.CanBeInterrupted) joblists.Add(package.job);
+                                    package.DisablePackage();
+                                }
+
+                                if (bool.TryParse(exec.arguments[1], out bool autoExit))
+                                {
+                                    foreach (var j in joblists)
+                                    {
+                                        if (j.GetExistingPackages(chara, true, true, true, false).Count < 1)
+                                        {
+                                            chara.ChangeCurrentJob(null);
+                                            Debug.LogError($"{chara.FirstName} job removed due to autoexit");
+                                        }
+                                    }
+                                }
                             }
                             return true;
                         }
@@ -1465,6 +1555,73 @@ public static class EventUtility
             case Event.EventEntry.Options.ExecutionType.FlushLogs:
                 scr_UpdateHandler.current.FlushCollectedLogs(true, false);
                 return true;
+            case Event.EventEntry.Options.ExecutionType.FlushAppendStrings:
+                var execKey2 = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
+                if (!owner.AppendStrings.ContainsKey(execKey2)) return false;
+                scr_System_CampaignManager.current.AddLog(owner.Self == null ? -1 : owner.Self.RefID, String.Join("\n", owner.AppendStrings[execKey2]));
+                return true;
+            case Event.EventEntry.Options.ExecutionType.LeaveRoom:
+                if (owner.Self == null) return false;
+ 
+                var currentRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(owner.Self.RefID);
+                if (currentRoom == null) return false;
+
+                var path = scr_System_CampaignManager.current.Map.Findpath(owner.Self.RefID, currentRoom.FactionOwner.MainExit.RefID, currentRoom.RefID);
+                var oneStepExit = path == null || path.Count() < 1 ? -1 : path.First().Target;
+                if (oneStepExit == -1) return false;
+
+                Debug.LogError($"Execute LeaveRoom, one step exit to roomRef {oneStepExit}");
+                scr_System_CampaignManager.current.MoveCharacterTo(owner.Self.RefID, oneStepExit);
+
+                return true;
+            case Event.EventEntry.Options.ExecutionType.StartEvent:
+                if (exec.arguments.Count >= 4)
+                {
+                    var targetChars = new List<Character_Trainable>();
+                    switch(exec.arguments[0])
+                    {
+                        case "self":
+                            if (owner.Self != null) targetChars.Add(owner.Self);
+                            break;
+                        case "":
+                            break;
+                        default:
+                            if (owner.Targets.ContainsKey(exec.arguments[0])) targetChars.AddRange(owner.Targets[exec.arguments[0]]);
+                            break;
+                    }
+
+                    var selfInject = owner.Self == null ? new List<Character_Trainable>() : new List<Character_Trainable>() { owner.Self };
+
+                    if (targetChars.Count < 1 && exec.arguments[0] == "")
+                    {
+                      //  Debug.LogError($"result startevent {exec.arguments[1]} on null actors");
+                        var ev = new EventInstance(null, exec.arguments[1], exec.arguments[2]);
+                        if (exec.arguments[3] != "" && owner.Self != null)
+                        {
+                            //Debug.LogError($"-- injecting self {owner.Self.FirstName} as {selfInject}");
+                            ev.Targets.Add(exec.arguments[3], selfInject);
+                        }
+                        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+                    }
+                    else
+                    {
+                        var evID = exec.arguments[1];
+                        var evLabel = exec.arguments[2];
+                        foreach (var chara in targetChars)
+                        {
+                           // Debug.LogError($"result startevent {exec.arguments[1]} on {chara.FirstName}");
+                            var ev = new EventInstance(chara, exec.arguments[1], exec.arguments[2]);
+                            if (exec.arguments[3] != "" && owner.Self != null)
+                            {
+                                //Debug.LogError($"-- injecting  self {owner.Self.FirstName} as {selfInject}");
+                                ev.Targets.Add(exec.arguments[3], selfInject);
+                            }
+                            scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+                        }
+                    }
+
+                    return true;
+                } else return false;
             default: return false;
 
         }

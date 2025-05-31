@@ -60,7 +60,7 @@ public class Job_Sex_Group : Job
         forceFucking.AddRange(refID);
     }
 
-    public void EndJob()
+    public void EndJob(string appendAfterMsg = "")
     {
         var newList = actorRefID.ToList();
 
@@ -78,6 +78,8 @@ public class Job_Sex_Group : Job
         this.forceFucking.Clear();
         this.packages_current.Clear();
         this.packages_previous.Clear();
+
+        if (appendAfterMsg != "") this.messages_after.Add(appendAfterMsg);
     }
 
     [JsonIgnore] public override List<int> actorRefID
@@ -96,7 +98,10 @@ public class Job_Sex_Group : Job
         if (actorRefID.Contains(charaRef))
         {
             Character_Trainable C = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
-            return C.FirstName + " is having sex";
+            if (C.isTimeStopped) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_sex_timestop");
+            else if (C.isSleeping) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_sex_sleeping");
+            else if (false) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_sex_rape");
+            else return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_sex");
         }
         else
         {
@@ -154,17 +159,17 @@ public class Job_Sex_Group : Job
             foreach (var i in packages_previous) syncTime = Math.Max(syncTime, i.Duration);
             if (syncTime > 0 && c.canAct)
             {
-                AddPackage(new List<ActionPackage> { new ActionPackage_Undress(this, charaRef, syncTime) });
+                AddPackage(new List<ActionPackage> { new ActionPackage_Undress(this, charaRef, BodyEquipLayer.None, Revealing.ShapeReveal, syncTime) });
             }
             else
             {
-                c.Undress(BodyEquipLayer.None, 1, true);
+                c.Undress(BodyEquipLayer.None, Revealing.ShapeReveal, true);
             }
 
         }
         else
         {
-            c.Undress(BodyEquipLayer.None, 1, true);
+            c.Undress(BodyEquipLayer.None, Revealing.ShapeReveal, true);
         }
 
         for(var i = packages_previous.Count - 1; i >= 0; i--)

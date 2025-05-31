@@ -238,10 +238,10 @@ public class COM: I_SerializationCallbackReceiver
 
     public COM_Requirements requirements = new COM_Requirements();
 
-         public COM_Descriptions description_begin = new COM_Descriptions();
-        public COM_Descriptions descriptions_remove = new COM_Descriptions();
-        public COM_Descriptions description_ongoing = new COM_Descriptions();
-        public COM_Descriptions description_after = new COM_Descriptions();
+    public COM_Descriptions description_begin = new COM_Descriptions();
+    public COM_Descriptions descriptions_remove = new COM_Descriptions();
+    public COM_Descriptions description_ongoing = new COM_Descriptions();
+    public COM_Descriptions description_after = new COM_Descriptions();
 
     public string GetDescription_Begin(EvaluationPackage evp, int variantID)
     {
@@ -348,21 +348,6 @@ public class COM: I_SerializationCallbackReceiver
             _tooltip.Add("ValidateCondition failed value1[" + value1 + "] value2[" + value2 + "]");
         } 
         return value1 && value2;
-    }
-
-
-    
-
-    
-
-
-
-    
-
-
-    public string DisplayName(int doerRefID, int receiverRefID = -1)
-    {
-        return DisplayName(new List<int>() { doerRefID }, new List<int>() { receiverRefID });
     }
 
     public virtual string DisplayName(List<int> doerRefIDs, List<int> receiverRefIDs = null, bool excludeRequireExisting = false)
@@ -605,6 +590,11 @@ public class COM: I_SerializationCallbackReceiver
             else foreach (var variant in this.variants) if (variant.requirements.hasFactionReq) return true;
             return false;
         }
+    }
+
+    public virtual string GetVariantDescription(int variantID, bool isDoer, int charaRef, string roomName, List<int> DoerRefs, List<int> ReceiverRefs, int masterRef)
+    {
+        return variants[variantID].GetVariantDescription(false, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
     }
 
     [System.Serializable]

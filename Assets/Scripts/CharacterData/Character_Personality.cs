@@ -163,6 +163,23 @@ public class Character_Personality
         return entries[eventID].GetResponse(rel, xxEPs, yyEPs);
     }
 
+    public string GetKOJOMessage(string eventID, RelationshipManager.Character_Relationship rel, List<string> selfTags, List<string> targetTags)
+    {
+        if (!entries.ContainsKey(eventID))
+        {
+
+            if (this.Fallback != null) return Fallback.GetKOJOMessage(eventID, rel);
+            else if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_Unimplemented_KojoEvent) return "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]";
+            else return "";
+        }
+
+        var xx = rel.Owner;
+        var yy = rel.Target;
+        if (xx == null || yy == null) return "";
+
+        return entries[eventID].GetResponse(rel, selfTags, targetTags);
+    }
+
     /// <summary>
     /// //////////////////////////////////////////////////////////////////
     /// </summary>
@@ -220,8 +237,8 @@ public class Character_Personality
                 isValid = false;
                 foreach (var ep in allEPs)
                 {
-                    relDoer = owner.Relationships.FindRelationshipWith(ep.Doer);
-                    relReceiver = owner.Relationships.FindRelationshipWith(ep.Receiver);
+                    relDoer = owner == ep.Doer ? null : owner.Relationships.FindRelationshipWith(ep.Doer);
+                    relReceiver = owner == ep.Receiver ? null : owner.Relationships.FindRelationshipWith(ep.Receiver);
 
                     if (!Validate(owner, ep.Doer)) continue;
                    if(scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log(owner.FirstName+  " kojo getresponse past validate before doer/receiver validate, relOwner ["+(relDoer == null ? "null "+(ep.Doer == null?"":ep.Doer.FirstName):relDoer.Owner.FirstName +"->"+relDoer.Target.FirstName)+"] relreceiver["+(relReceiver == null ? "null " + (ep.Receiver == null ? "" : ep.Receiver.FirstName) : relReceiver.Owner.FirstName +"->"+ relReceiver.Target.FirstName)+"]");
@@ -268,6 +285,8 @@ public class Character_Personality
                     if (!i.keepLooking) break;// String.Join("\n", responses);
                 }
             }
+            //if (!isValid) Debug.LogError($"cannot find response for {owner.FirstName} on ID {ID}, listEP_count: {allEPs.Count}");
+                
 
             var str = String.Join("\n", responses);
             return str;
@@ -313,6 +332,11 @@ public class Character_Personality
             return GetResponse(rel, sTags, tTags, null);
         }
 
+        public string GetResponse(RelationshipManager.Character_Relationship rel, List<string> selfTags, List<string> targetTags )
+        {
+            if (!Validate(rel.Owner, rel.Target)) return "";
+            return GetResponse(rel, selfTags, targetTags, null);
+        }
 
         [System.Serializable]
         public class Variant
@@ -352,7 +376,7 @@ public class Character_Personality
                 }
 
                 var result = scr_System_Serializer.current.Dictionary.QueryThenParse(responses[Utility.GetRandIndexFromListCount(responses.Count)]);
-                result = result.Replace("$self$", rel.Owner.FirstName);
+                result = result.Replace("$self$", rel.Owner.FirstName).Replace("$target$", rel.Target.FirstName);
                 if (ep != null) result = result.Replace("$epDescription$", ep.Description_Ongoing);
                 returnV.Add(result);
                 returnV.RemoveAll(x => x == "");
@@ -466,7 +490,9 @@ public class Character_Personality
                 }
                 public bool Validate(RelationshipManager.Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
                 {
-                    return Validate(rel.Owner, rel.Target, selfTags, targetTags, ep, rel); 
+                    //var v = 
+                    //if (!v && (rel.ownerRefID == 0 || rel.TargetID == 0)) Debug.LogError("failed validation");
+                    return Validate(rel.Owner, rel.Target, selfTags, targetTags, ep, rel);
                 }
 
                 [System.Serializable]
@@ -514,7 +540,7 @@ public class Character_Personality
                 public void Execute(RelationshipManager.Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep = null)
                 {
                     if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel);
-                    if (this.launchEvent != null && this.launchEvent.isValid) launchEvent.Execute(rel.Owner);
+                    if (this.launchEvent != null && this.launchEvent.isValid) launchEvent.Execute(rel);
                     if (modifyStatusValue != null && modifyStatusValue.isValid) modifyStatusValue.Execute(rel.Owner);
                 }
 
@@ -536,12 +562,15 @@ public class Character_Personality
                 {
                     public string eventID = "";
                     public string eventLabel = "";
+                    public bool reverseTargets = false;
 
                     [JsonIgnore] public bool isValid { get { return this.eventID != ""; } }
 
-                    public void Execute(Character_Trainable chara)
+                    public void Execute(RelationshipManager.Character_Relationship rel)
                     {
-                        scr_UpdateHandler.current.EventHandler.StartEvent(chara, eventID, eventLabel, false);
+                        //Debug.LogError($"Startevent execute {reverseTargets} {rel.Owner.FirstName} {rel.Target.FirstName} {eventID} {eventLabel}");
+                        if (reverseTargets) scr_UpdateHandler.current.EventHandler.StartEvent(rel.Target, eventID, eventLabel, false);
+                        else scr_UpdateHandler.current.EventHandler.StartEvent(rel.Owner, eventID, eventLabel, false);
                     }
                 }
 
