@@ -9,6 +9,7 @@ public class scr_panel_COMmanager : scr_Menu
 
     public TMP_Text title_interaction, title_sex, title_inventory;
     public scr_HoverableText title_furnitures;
+    public TMP_Text ongoingCOMs;
     public enum COMFilter
 
     {
@@ -121,9 +122,17 @@ public class scr_panel_COMmanager : scr_Menu
             if (members.Count > 0) title_interaction.text = scr_System_Serializer.current.Dictionary.Parse("%%comManager_title_interact_target%%").Replace("$name$", name);
             else title_interaction.text = scr_System_Serializer.current.Dictionary.Parse("%%comManager_title_interact_self%%");
         }
-        if (title_furnitures.gameObject.activeInHierarchy)
+        if (title_furnitures.gameObject.activeInHierarchy && scr_System_CampaignManager.current.CurrentRoom != null)
         {
-            if (scr_System_CampaignManager.current.CurrentRoom != null) title_furnitures.SetText(scr_System_CampaignManager.current.CurrentRoom.DisplayableFurnitureNames_withLink);
+            List<string> aps = new List<string>();
+            foreach(var ap in scr_System_CampaignManager.current.GetRegisteredAPByRoom(scr_System_CampaignManager.current.CurrentRoom.RefID, false))
+            {
+                if (ap.job.isPlayerRelatedJob) continue;
+                if (ap.isTemporaryAP) continue;
+                aps.Add(ap.DescriptionText());
+            }
+            title_furnitures.SetText(scr_System_CampaignManager.current.CurrentRoom.DisplayableFurnitureNames_withLink);
+            ongoingCOMs.text = String.Join(", ", aps);
         }
         if (title_inventory.gameObject.activeInHierarchy)
         {
@@ -566,7 +575,7 @@ public class scr_panel_COMmanager : scr_Menu
             s3 += "\nTracking Roomjobref " + job.RefID;
         }
 
-        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_Job) Debug.Log("All tracked job : [" + String.Join("] [", trackedJobRefs) + "]\n"+s3);
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("All tracked job : [" + String.Join("] [", trackedJobRefs) + "]\n"+s3);
 
         foreach(int jobRef in tempList)
         {
@@ -657,6 +666,7 @@ public class scr_panel_COMmanager : scr_Menu
 
                     // Debug.Log("Making Furniture Job ");
                     Job_Furniture jfurn = j as Job_Furniture;
+
                     if ((j as Job_Furniture).allusableCOMs.Count > 0)
                     {
                         if (jfurn.isContainer)
@@ -676,19 +686,30 @@ public class scr_panel_COMmanager : scr_Menu
                         }
                         else
                         {
-                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true))
+                            var packages = (j as Job_Furniture).MakePackagesJoinable(scr_System_CampaignManager.current.Player);
+                            if (packages.Count > 0)
                             {
-
-                                MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM,j, ap.targetCOM, ap.targetCOM.COMRepeat, false, ap);
+                                foreach(var ap in packages)
+                                {
+                                    MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, false, true);
+                                }
+                            }
+                            else
+                            {
+                                foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true))
+                                {
+                                    MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, ap.targetCOM, ap.targetCOM.COMRepeat, false, ap);
+                                }
                             }
                         }
                     }
 
                     /// use a different method
+                    /*
                     foreach (var ap in j.JoinablePackages(0))
                     {
                         MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap,false, false);
-                    }
+                    }*/
                 }
             }
             else
@@ -722,23 +743,12 @@ public class scr_panel_COMmanager : scr_Menu
         }
 
 
-        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_CurrentFurnitureJobInRoom)
+        if (scr_System_CentralControl.current.LogPrefs.DLog_CurrentRoomJob)
         {
-            string s = "Current furniture in room: \n";
-            foreach (var furniture in scr_System_CampaignManager.current.CurrentRoom.Furnitures)
-            {
-                s += "[" + furniture.DisplayName + "]:";
-                if (furniture.JobGiver != null)
-                {
-                    foreach (COM c in furniture.JobGiver.allusableCOMs) s += c.ID + " ";
-                }
-                s += "]\n";
-            }
-            Debug.Log(s);
-
             string s2 = "Current Jobs in room: \n";
             foreach (var job in scr_System_CampaignManager.current.CurrentRoom.Jobs)
             {
+                if (job is Job_Furniture) continue;
                 s2 += "[" + job.RefID + "]:";
                 foreach (COM c in job.allusableCOMs)
                 {
@@ -746,7 +756,20 @@ public class scr_panel_COMmanager : scr_Menu
                 }
                 s2 += "]\n";
             }
-            Debug.Log(s2);
+
+            string s = "Current furniture in room: \n";
+            foreach (var furniture in scr_System_CampaignManager.current.CurrentRoom.Furnitures)
+            {
+                s += "[" + furniture.DisplayName +"|"+furniture.JobGiver.RefID+ "]:";
+                if (furniture.JobGiver != null)
+                {
+                    foreach (COM c in furniture.JobGiver.allusableCOMs) s += c.ID + " ";
+                }
+                s += "]\n";
+            }
+            Debug.Log(s2 +"\n"+s);
+
+
         }
     }
 
@@ -1013,6 +1036,7 @@ public class scr_panel_COMmanager : scr_Menu
             else if (!job.ExecutingPackages.Contains(cachedAP))
             {
                 tooltip += "AP no longer exist in job";
+                text.gameObject.SetActive(false);
                 return false;
 
             }
@@ -1024,68 +1048,73 @@ public class scr_panel_COMmanager : scr_Menu
 
 
 
-            if (parent.ValidateCOMByTags(com) && com.ValidateJob(job))
+            if (parent.ValidateCOMByTags(com))
             {
-
-                if (package is ActionPackage_Sex)
-                {
-                    //Debug.Log("package apsex");
-                    if (scr_System_CampaignManager.current.displaySex) package.ResetRequest(parent.SexComDoers, parent.SexComReceivers, 0);// (package as ActionPackage_Sex).ReInitializeCOM(job, com, parent.SexComDoers, parent.SexComReceivers, 0, false);
-                    else package.ResetRequest(new List<int>() { scr_System_CampaignManager.current.Player.RefID }, scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>(), 0);//(package as ActionPackage_Sex).ReInitializeCOM(job, com, new List<int>() { scr_System_CampaignManager.current.Player.RefID },
-                    //scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0, false);
-                }
-                else if (package is ActionPackage_Interaction || package is ActionPackage_ProductionOrder)
-                {
-                    var doers = new List<int>(package.DoerRefs);
-                    var receivers = new List<int>(package.ReceiverRefs);
-                    List<int> targets = new List<int>();
-                    var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
-                    if (currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
-                    targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
-                    targets = targets.Distinct().ToList();
-                    targets.Remove(0);
-                    targets.RemoveAll(x=>doers.Contains(x) || receivers.Contains(x));
-
-                    if (doers.Count < 1) doers.Add(0);
-                    else if (!doers.Contains(0) && !receivers.Contains(0)) receivers.Add(0);
-                    receivers.AddRange(targets);
-
-                    package.ResetRequest(doers, receivers, 0);
-                    //package.ReInitializeCOM(job, com, doers, receivers, 0, false);
-                }
-                else
-                {
-                    Debug.LogError("COMMANAGER package typecheck failed");
-                }
-
-
-                tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
-                //text.SetText(package.DisplayName);
-
-                if (package.Validate())
-                {
-                    returnVal = returnVal && true;
-                    tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost ["+package.ResourceCost+"]\n";
-                    tooltip += package.GetSuccessRateString();
-                }
-                else
+                if (!com.ValidateJob(job, out var msg))
                 {
                     returnVal = false;
-                    tooltip += "package did not pass internal validation\n";
+                    tooltip += msg + "]\n";
                 }
-                package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
-                tooltip += "\n"+String.Join("\n", package.tooltip);
+                else
+                {
+                    if (package is ActionPackage_Sex)
+                    {
+                        //Debug.Log("package apsex");
+                        if (scr_System_CampaignManager.current.displaySex) package.ResetRequest(parent.SexComDoers, parent.SexComReceivers, 0);// (package as ActionPackage_Sex).ReInitializeCOM(job, com, parent.SexComDoers, parent.SexComReceivers, 0, false);
+                        else package.ResetRequest(new List<int>() { scr_System_CampaignManager.current.Player.RefID }, scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>(), 0);//(package as ActionPackage_Sex).ReInitializeCOM(job, com, new List<int>() { scr_System_CampaignManager.current.Player.RefID },
+                                                                                                                                                                                                                                              //scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0, false);
+                    }
+                    else if (package is ActionPackage_Interaction || package is ActionPackage_ProductionOrder)
+                    {
+                        var doers = new List<int>(package.DoerRefs);
+                        var receivers = new List<int>(package.ReceiverRefs);
+                        List<int> targets = new List<int>();
+                        var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
+                        if (currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
+                        targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
+                        targets = targets.Distinct().ToList();
+                        targets.Remove(0);
+                        targets.RemoveAll(x => doers.Contains(x) || receivers.Contains(x));
 
-                if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
+                        if (doers.Count < 1) doers.Add(0);
+                        else if (!doers.Contains(0) && !receivers.Contains(0)) receivers.Add(0);
+                        receivers.AddRange(targets);
+
+                        package.ResetRequest(doers, receivers, 0);
+                        //package.ReInitializeCOM(job, com, doers, receivers, 0, false);
+                    }
+                    else
+                    {
+                        Debug.LogError("COMMANAGER package typecheck failed");
+                    }
 
 
+                    tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
+                    //text.SetText(package.DisplayName);
+
+                    if (package.Validate())
+                    {
+                        returnVal = returnVal && true;
+                        tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost [" + package.ResourceCost + "]\n";
+                        tooltip += package.GetSuccessRateString();
+                    }
+                    else
+                    {
+                        returnVal = false;
+                        tooltip += "package did not pass internal validation\n";
+                    }
+                    package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
+                    tooltip += "\n" + String.Join("\n", package.tooltip);
+
+                    if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
+                }
             }
             else
             {
                 returnVal = false;
-                tooltip += "package did not pass external validation, validateByTag["+parent.ValidateCOMByTags(com)+"] validateJob["+com.ValidateJob(job)+"]\n";
+                tooltip += "package did not pass external validation, validateByTag[" + parent.ValidateCOMByTags(com) + "]\n";
                 //this.text.gameObject.SetActive(false);
-                display = display && false;
+                display = false;
             }
 
             if (package.DoerRefs.Contains(0)) text.SetText(package.DisplayName);
@@ -1269,77 +1298,83 @@ public class scr_panel_COMmanager : scr_Menu
                 }
             }
 
-            if (parent.ValidateCOMByTags(com) && com.ValidateJob(job))
+            if (parent.ValidateCOMByTags(com))
             {
-                /*
-                if(package is ActionPackage_ProductionOrder)
+                if (com.ValidateJob(job, out var msg))
                 {
-                    Debug.LogError("COMMANAGER package typecheck ActionPackage_ProductionOrder");
-                }
-                else */
-                if (package is ActionPackage_Sex)
-                {
-                    //Debug.Log("package apsex");
-                    if (scr_System_CampaignManager.current.displaySex) package.ResetRequest(parent.SexComDoers, parent.SexComReceivers, 0);// (package as ActionPackage_Sex).ReInitializeCOM(job, com, parent.SexComDoers, parent.SexComReceivers, 0, false);
+                    /*
+if(package is ActionPackage_ProductionOrder)
+{
+    Debug.LogError("COMMANAGER package typecheck ActionPackage_ProductionOrder");
+}
+else */
+                    if (package is ActionPackage_Sex)
+                    {
+                        //Debug.Log("package apsex");
+                        if (scr_System_CampaignManager.current.displaySex) package.ResetRequest(parent.SexComDoers, parent.SexComReceivers, 0);// (package as ActionPackage_Sex).ReInitializeCOM(job, com, parent.SexComDoers, parent.SexComReceivers, 0, false);
+                        else
+                        {
+                            package.ResetRequest(new List<int>() { scr_System_CampaignManager.current.Player.RefID }, scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0);
+                            /*
+                            (package as ActionPackage_Sex).ReInitializeCOM(job, com, new List<int>() { scr_System_CampaignManager.current.Player.RefID },
+                            scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0, false);
+                            */
+                        }
+                    }
+                    else if (package is ActionPackage_Interaction || package is ActionPackage_ProductionOrder)
+                    {
+                        var doers = new List<int>(cachedDoers);
+                        var receivers = new List<int>(cachedReceivers);
+                        List<int> targets = new List<int>();
+                        var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
+                        if (currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
+                        targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
+                        targets = targets.Distinct().ToList();
+                        targets.Remove(0);
+                        targets.RemoveAll(x => doers.Contains(x) || receivers.Contains(x));
+
+                        if (doers.Count < 1) doers.Add(0);
+                        else if (!doers.Contains(0) && !receivers.Contains(0)) receivers.Add(0);
+                        receivers.AddRange(targets);
+
+                        package.ResetRequest(doers, receivers, 0);
+                        // package.ReInitializeCOM(job, com, doers, receivers, 0, false);
+                    }
                     else
                     {
-                        package.ResetRequest(new List<int>() { scr_System_CampaignManager.current.Player.RefID }, scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0);
-                        /*
-                        (package as ActionPackage_Sex).ReInitializeCOM(job, com, new List<int>() { scr_System_CampaignManager.current.Player.RefID },
-                        scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0, false);
-                        */
+                        Debug.LogError("COMMANAGER package typecheck failed");
                     }
-                }
-                else if (package is ActionPackage_Interaction || package is ActionPackage_ProductionOrder)
-                {
-                    var doers = new List<int>(cachedDoers);
-                    var receivers = new List<int>(cachedReceivers);
-                    List<int> targets = new List<int>();
-                    var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
-                    if (currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
-                    targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
-                    targets = targets.Distinct().ToList();
-                    targets.Remove(0);
-                    targets.RemoveAll(x => doers.Contains(x) || receivers.Contains(x));
-
-                    if (doers.Count < 1) doers.Add(0);
-                    else if (!doers.Contains(0) && !receivers.Contains(0)) receivers.Add(0);
-                    receivers.AddRange(targets);
-
-                    package.ResetRequest(doers, receivers, 0);
-                   // package.ReInitializeCOM(job, com, doers, receivers, 0, false);
-                }
-                else
-                {
-                    Debug.LogError("COMMANAGER package typecheck failed");
-                }
 
 
-                tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
-                //text.SetText(package.DisplayName);
+                    tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
+                    //text.SetText(package.DisplayName);
 
-                if (package.Validate())
-                {
-                    returnVal = returnVal && true;
-                    tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost ["+package.ResourceCost+"]\n";
-                    tooltip += package.GetSuccessRateString();
+                    if (package.Validate())
+                    {
+                        returnVal = returnVal && true;
+                        tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost [" + package.ResourceCost + "]\n";
+                        tooltip += package.GetSuccessRateString();
+                    }
+                    else
+                    {
+                        returnVal = false;
+                        tooltip += "package did not pass internal validation\n";
+                    }
+                    package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
+                    tooltip += "\n" + String.Join("\n", package.tooltip);
+
+                    if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
                 }
                 else
                 {
                     returnVal = false;
-                    tooltip += "package did not pass internal validation\n";
+                    tooltip += msg + "\n";
                 }
-                package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
-                tooltip += "\n"+String.Join("\n", package.tooltip);
-
-                if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
-
-
             }
             else
             {
                 returnVal = false;
-                tooltip += "package did not pass external validation, validateByTag["+parent.ValidateCOMByTags(com)+"] validateJob["+com.ValidateJob(job)+"]\n";
+                tooltip += "package did not pass external validation, validateByTag["+parent.ValidateCOMByTags(com)+"]\n";
                 //this.text.gameObject.SetActive(false);
                 display = display && false;
             }

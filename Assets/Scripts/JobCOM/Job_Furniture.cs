@@ -63,17 +63,19 @@ public class Job_Furniture : Job
 
     //public List<COM> validNonJobCOMs. This is a cache value holder, dont need to serialize
     protected List<COM> validCOMs = null;
-    [JsonIgnore] public List<COM> ValidCOMs { get { 
+    [JsonIgnore] public List<COM> ValidCOMs { 
+        get { 
             
             if (validCOMs == null)
             {
                 validCOMs = new List<COM>();
                 foreach(var com in allusableCOMs)
                 {
-                    if (com.ValidateRoom(ParentRoom) && com.ValidateJob(this) && CanCOMAcceptMoreActor(com)) validCOMs.Add(com);
+                    if (com.ValidateRoom(ParentRoom) && com.ValidateJob(this, out var msg) && CanCOMAcceptMoreActor(com)) validCOMs.Add(com);
                 }
             }
-            return validCOMs; } }
+            return validCOMs; } 
+    }
     [JsonIgnore] public List<COM> ValidJobCOMs 
     { 
         get 
@@ -155,17 +157,7 @@ public class Job_Furniture : Job
     public void RefreshValidCOMs(bool allowLazyRefresh = true)
     {
         if (allowLazyRefresh && this.actorRefID.Count < 1 && (this.Container == null || !this.Container.HasContent)) return;
-        ValidCOMs.Clear();
-        //validNonJobCOMs.Clear();
-        //if (isContainer && Container is JobContainer_Chara) Debug.LogError("REFRESH FURNITURE JOB COMS ALLVALID : " + String.Join(",",allusableCOMStrings));
-        foreach (COM com in allusableCOMs)
-        {
-            //&& com.ValidateFaction(FactionOwner)
-            // Debug.LogError("Validating "+com.ID+" : validateRoom[" + com.ValidateRoom(ParentRoom) + "] validateJob[" + com.ValidateJob(this) + "] validateAcceptActor[" + CanCOMAcceptMoreActor(com) + "]");
-            if (com.ValidateRoom(ParentRoom) && com.ValidateJob(this) && CanCOMAcceptMoreActor(com)) ValidCOMs.Add(com);
-            //else if (!com.comTags.Contains("job") && com.ValidateRoom(ParentRoom) && com.ValidateJob(this) && CanCOMAcceptMoreActor(com)) validNonJobCOMs.Add(com);
-            //else if (com is COM_TakeMeal) Debug.LogError($"food com {com.ID} not valid, validatejob {com.ValidateJob(this)}");
-        }
+        validCOMs = null;
     }
 
     public bool ValidateActor(Character_Trainable c, COM com = null)
@@ -180,6 +172,33 @@ public class Job_Furniture : Job
         }
         //Debug.Log("JobFurniture ValidateActor 4");
         return false;
+    }
+
+    public List<ActionPackage> MakePackagesJoinable(Character_Trainable c)
+    {
+        List<ActionPackage> pkgs = new List<ActionPackage>();
+        foreach(var pkg in this.ActivePackages)
+        {
+            if (pkg.Duration <= 1) continue;
+            if (pkg.actorRefs.Contains(c.RefID)) continue;
+            if (!pkg.AllowJoining) continue;
+            if (actorRefID.Contains(c.RefID) && !actorRefIDStorage[c.RefID].Match(pkg.targetCOM))
+            {
+                //Debug.LogError($"{c.FirstName} try join: actor registered for |{actorRefIDStorage[c.RefID].comID}|{actorRefIDStorage[c.RefID].tag}| does not match {pkg.DisplayName}");
+                continue;
+            }
+            //if (pkg.Duration * 2 < pkg.targetCOM.TimeScale) continue;
+            if (!CanCOMAcceptMoreActor(pkg.targetCOM))
+            {
+                //Debug.LogError($"{c.FirstName} try join: {pkg.DisplayName} cannot accept more actor");
+                continue;
+            }//if (pkg.targetCOM.variants[0])
+
+            var newpkg = pkg.Copy();
+            if (newpkg.canJoinAP(c, out var a, out var b) < 0) continue;
+            pkgs.Add(pkg);
+        }
+        return pkgs;
     }
 
     public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false)
@@ -230,7 +249,7 @@ public class Job_Furniture : Job
              if character hour has com setting, try get com setting job
             else get random
          */
-
+        RefreshValidCOMs(true);
         ss = "(Job Furniture Internal Status): ";
         // actor have job but don't have a action package registered.
         //Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(actorRefID[i]);
@@ -293,191 +312,47 @@ public class Job_Furniture : Job
             //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
             // 2 - if actor is in room, set COM package
             // make COM package
-            var list = MakePackages(c);
-            if (list.Count < 1)
+            var list1 = MakePackages(c);
+            var list2 = MakePackagesJoinable(c);
+
+            var pl1 = list1.Count > 0 ? list1[Utility.GetRandIndexFromListCount(list1.Count)] : null;
+            var pl2 = list2.Count > 0 ? list2[Utility.GetRandIndexFromListCount(list2.Count)] : null;
+
+            
+            if (pl2 != null)
+            {
+                if (pl2.DoerRefs.Contains(scr_System_CampaignManager.current.Player.RefID)) {
+                    ss += "try join player existing pkg " + pl2.DescriptionText(c.RefID);
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{c.FirstName} try join player {pl2.DescriptionText(c.RefID)}");
+                    var ev = new EventInstance(c, "RequestJoin", "");
+                    ev.Self = c;
+                    ev.Targets.Add("evTarget", new List<Character_Trainable>() { scr_System_CampaignManager.current.Player });
+                    scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+                    actorJobComplete.Add(c.RefID);
+                    return true;
+                }
+                else
+                {
+                    pl2.JoinAP(c);
+                    ss += "join existing pkg " + pl2.DescriptionText(c.RefID);
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");
+                    return true;
+                }
+
+            }
+            else if (pl1 != null)
+            {
+                AddPackage(new List<ActionPackage>() { pl1 });
+                ss += "creating package " + pl1.DescriptionText(c.RefID);
+                return true;
+            }
+            else
             {
                 ss += "actor has not valid command or has completed all commands";
                 return false;
             }
-            else
-            {
-                var package = list[Utility.GetRandIndexFromListCount(list.Count)];
-                AddPackage(new List<ActionPackage>() { package });
-                //validJobCOMs.Remove(jobCOM);
-                ss += "adding package " + package.DisplayName;
-                return true;
-            }
         }
     }
-    /*
-    public bool UpdateActorPackage2(Character_Trainable c, out string ss)
-    {
-
-
-        ss = "(Job Furniture Internal Status): ";
-
-
-        var temp = packages_current.FindAll(x => x.actorRefs.Contains(c.RefID));
-        if (temp.Count > 0)
-        {
-            ss += "actor aready have current package, ";
-            foreach(var i in temp)
-            {
-                ss += i.DisplayName;
-            }
-            return true;
-        }
-
-        List<ActionPackage> tempList = packages_previous.FindAll(x => x.actorRefs.Contains(c.RefID));
-
-        if (tempList.Exists(x => x.Duration > 0))
-        {
-            ss += "actor aready have ongoing previous package";
-            return true;
-        }
-        else if (actorJobComplete.Contains(c.RefID) || c.RefID == 0)
-        {
-            ss += "actor have completed job, releasing";
-            return false;
-        }
-
-
-        //string ss = "";
-        var charaRoom = scr_System_CampaignManager.current.GetCharaRoomInstance(c.RefID);
-        if (charaRoom.RefID != this.ParentRoom.RefID)
-        {
-
-            ActionPackage_PathTo package = new ActionPackage_PathTo(this, c.RefID, ParentRoom.RefID);
-            if (!package.Validate())
-            {
-                // Debug.LogError("Pathto package validation failed");
-                ss += "actor pathing package creation failed ||";
-                return false;
-            }
-            ss += "actor pathing created ||";
-            AddPackage(new List<ActionPackage>() { package });
-            return true;
-        }
-        else
-        {
-            List<string> s = new List<string>();
-            foreach (var ii in ValidCOMs) s.Add(ii.ID);
-            
-            COM jobCOM = null;
-            Manageable.ProductionOrder po = null;
-
-            ActionPackage package = null;
-
-            //first.
-            var scheduleCOM = getActorPriorityCOM(c.RefID);
-            if (scheduleCOM == null) scheduleCOM = c.GetJobPost().getRandCOM;
-            if (scheduleCOM != null)
-            {
-                ss += "detected scheduledCOM " + scheduleCOM.ID + "|";
-                List<COM> preferredCOMs = ValidCOMs.FindAll(x => x.ID == scheduleCOM.ID);
-                if (preferredCOMs.Count > 0)
-                {
-                    ss += "scheduledCOM Count " + preferredCOMs.Count + "|";
-                    foreach (var validCOM in preferredCOMs)
-                    {
-                        if (!CanCOMAcceptMoreActor(validCOM))
-                        {
-                            ss += "instance cannot accept more actor|";
-                            continue;
-                        }
-                        else
-                        {
-                            ss += "instance CAN accept more actor|";
-                        }
-                        if (validCOM.hasFactionReq)
-                        {
-                            ss += "instance has factionReq|";
-                            //Debug.Log("com ["+validCOM.ID+"] has factionreq");
-                            if (!FactionOwner.GetProductionOrder(this, out jobCOM, out po))
-                            {
-                                ss += "instance did not pass factionReq|";
-                                continue;
-                            }
-                            else
-                            {
-                                ss += "instance passed factionReq|";
-                            }
-                        }
-                        //Debug.Log("com [" + validCOM.ID + "] has no factionreq");
-                        ss += "setting scheduled work "+validCOM.ID+"|";
-                        jobCOM = validCOM;
-                        break;
-                    }
-                }
-            }
-
-            if (jobCOM == null)
-            {   // get meal
-                foreach (var validCOM in ValidMealCOMs)
-                {
-                    if (!CanCOMAcceptMoreActor(validCOM))
-                    {
-                        //Debug.Log("COM "+validCOM.ID+" cannot accept more actor");
-                        continue;
-                    }
-                    //if (validCOM.ID != c.CurrentJobSchedule().ID) continue;
-                    if (validCOM.hasFactionReq && !validCOM.requirements.requireFactionExisting.Validate(FactionOwner)) continue;
-
-                    //Debug.Log("com [" + validCOM.ID + "] has no factionreq");
-                    ss += "setting meal work";
-                    jobCOM = validCOM;
-                    break;
-
-                }
-            }
-
-
-            if (jobCOM == null)
-            {   // get recreation
-                foreach (var validCOM in ValidRecreationCOMs)
-                {
-                    if (!CanCOMAcceptMoreActor(validCOM)) continue;
-                    //if (validCOM.ID != c.CurrentJobSchedule().ID) continue;
-                    if (validCOM.hasFactionReq && !validCOM.requirements.requireFactionExisting.Validate(FactionOwner)) continue;
-
-                    ss += "setting recreation work";
-                    jobCOM = validCOM;
-                    break;
-
-                }
-            }
-
-            // Debug.Log("before jobcom null");
-            if (jobCOM == null)
-            {
-               // Debug.Log("Job has all posts occupied, releasing actor [" + c.FirstName + "]");
-                actorRefID.Remove(c.RefID);
-                //c.ChangeCurrentJob(null);
-                ss += "cannot find any valid job command, releasing";
-                return false;
-                //continue;
-            }
-            //Debug.Log("after jobcom null");
-            package = jobCOM.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, po);
-
-            //Debug.Log("before package valid");
-            if (!package.Validate())
-            {
-                ss += "cannot pass package validation, releasing";
-                //Debug.Log("Package did not pass validation, releasing actor [" + c.FirstName + "]");
-                actorRefID.Remove(c.RefID);
-                return false;
-                //continue;
-            }
-            //Debug.Log("after package valid");
-            AddPackage(new List<ActionPackage>() { package });
-            //validJobCOMs.Remove(jobCOM);
-            ss += "adding package "+package.DisplayName;
-            return true;
-
-        }
-        //}
-    }*/
 
     public override void PreUpdateTime(int currentMinute)
     {
@@ -835,13 +710,23 @@ public class Job_Furniture : Job
         }
     }
 
-    private bool CanCOMAcceptMoreActor(COM com)
+    public bool CanCOMAcceptMoreActor(COM com)
     {
-
+        // one job can only have one active comtype
         if (this.ParentInstance.FurnitureBase.furnitureSize <= 0) return true;
         int i = (com.requirements.requirement.doerCount != -1 ? com.requirements.requirement.doerCount : 1) * (int)this.ParentInstance.FurnitureBase.furnitureSize;
-        foreach (var p in packages_current) if (p.targetCOM == com) i -= p.actorRefs.Count;
-        foreach (var p in packages_previous) if (p.targetCOM == com) i -= p.actorRefs.Count;
+        foreach (var p in packages_current)
+        {
+            if (p.isTemporaryAP) continue;
+            if (p.targetCOM != com) return false;
+            i -= p.actorRefs.Count;
+        }
+        foreach (var p in packages_previous)
+        {
+            if (p.isTemporaryAP) continue;
+            if (p.targetCOM != com) return false;
+            i -= p.actorRefs.Count;
+        }
         if (i > 0) return true;
         return false;
     }

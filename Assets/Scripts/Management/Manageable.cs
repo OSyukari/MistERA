@@ -461,7 +461,7 @@ public class Manageable : I_Disposable
         else return new List<Job_CharaCOM>();
     }
 
-    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false)
+    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true)
     {
         //Debug.Log("Begin getvalidRecreation");
         List<Job_Furniture> possibleJobs;
@@ -487,7 +487,7 @@ public class Manageable : I_Disposable
 
 
 
-        if (GetValidPaths(ref possibleJobs, chara, s))
+        if (GetValidPaths(ref possibleJobs, chara, s, !shortestPathOnly))
         {
             //Debug.Log("GetValidPaths success after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
             return possibleJobs;
@@ -555,12 +555,13 @@ public class Manageable : I_Disposable
         }
     }
 
-    protected bool GetValidPaths(ref List<Job_CharaCOM> possibleJobs, Character_Trainable chara, List<string> s = null)
+    
+    protected bool GetValidPaths(ref List<Job_CharaCOM> possibleJobs, Character_Trainable chara, List<string> s = null, bool randInsteadofShortest = false)
     {
         string ss = "";
         List<int> rooms = new List<int>();
         foreach (var x in possibleJobs) rooms.Add(x.ParentRoom.RefID);
-        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPaths(chara.RefID, rooms);
+        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPaths(chara.RefID, rooms, randInsteadofShortest);
         var list = sortedList.Count > 0 ? sortedList.First().Value : new Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>() ;
         possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
 
@@ -581,7 +582,6 @@ public class Manageable : I_Disposable
                 var b = possibleJobs[0].ParentRoom;
                 ss += " found no pathable job instances from [" + a.RefID + " " + a.DisplayName + "] to [" + b.RefID + " " + b.DisplayName + "]";
                 if (s != null) s.Add(ss);
-                /*return false;*/
             }
         }
         
@@ -599,15 +599,34 @@ public class Manageable : I_Disposable
         }
     }
 
-    protected bool GetValidPaths(ref List<Job_Furniture> possibleJobs, Character_Trainable chara, List<string> s = null)
+
+
+    protected bool GetValidPaths(ref List<Job_Furniture> possibleJobs, Character_Trainable chara, List<string> s = null, bool randInsteadofShortest = false)
     {
         string ss = "";
 
         List<int> rooms = new List<int>();
         foreach (var x in possibleJobs) rooms.Add(x.ParentRoom.RefID);
-        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPaths(chara.RefID, rooms);
-        var list = sortedList.First().Value;
-        possibleJobs = sortedList.Count > 0 ? possibleJobs.FindAll(x=> list.ContainsKey(x.ParentRoom.RefID)) : new List<Job_Furniture>();
+        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPaths(chara.RefID, rooms, randInsteadofShortest);
+
+        Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>> list = null;
+        if (!randInsteadofShortest)
+        {
+            list = sortedList.First().Value;
+            possibleJobs = sortedList.Count > 0 ? possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID)) : new List<Job_Furniture>();
+        }
+        else if (randInsteadofShortest && sortedList.Count > 0)
+        {
+            var randIndex = sortedList.Keys.ToList()[Utility.GetRandIndexFromListCount(sortedList.Count)];
+            list = sortedList[randIndex];
+            possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
+            //Debug.LogError($"GetValidPaths randInsteadofShortest first[{sortedList.First().Key}] chosen[{randIndex}]");
+        }
+        else
+        {
+            possibleJobs = new List<Job_Furniture>();
+        }
+
 
         if (possibleJobs.Count > 0)
         {

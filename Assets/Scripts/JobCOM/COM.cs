@@ -296,11 +296,28 @@ public class COM: I_SerializationCallbackReceiver
         results.ApplyResults(job, p, evp, target);
     }
 
-    public bool ValidateJob(Job j)
+    public bool ValidateJob(Job j, out string msg)
     {
-        if (this.requirements.requireContaining != null && !requirements.requireContaining.Validate(j)) return false;
-        if (hasFactionReq && j.FactionOwner == null) return false;
-        if (j.FactionOwner != null && !ValidateFaction(j.FactionOwner)) return false;
+        msg = "";
+        if (this.requirements.requireContaining != null && !requirements.requireContaining.Validate(j))
+        {
+            msg = "missing require containing item";
+            return false;
+        }
+        if (hasFactionReq && j.FactionOwner == null)
+        {
+            msg = "missing faction owner";
+            return false;
+        }
+        if (j.FactionOwner != null && !ValidateFaction(j.FactionOwner))
+        {
+            return false;
+        }
+        if (j is Job_Furniture && !(j as Job_Furniture).CanCOMAcceptMoreActor(this))
+        {
+            msg = "furniture cannot accept more actor";
+            return false;
+        }
         return true;
     }
 
@@ -685,16 +702,27 @@ public class COM: I_SerializationCallbackReceiver
         public string GetVariantDescription(bool withSelfDescription, bool isDoer, int charaRef, string roomName, List<int> doers, List<int> receivers, int masterRef)
         {
             string baseDesc = "";
+
+            if (this.requirements.requirement.TreatReceiverAsDoer)
+            {
+                doers.AddRange(receivers);
+                receivers.Clear();
+               // Debug.Log($"COM {this.displayName} treat receiver as doer, setting list |{String.Join(" ", doers)}|{String.Join(" ", receivers)}| ");
+            }else
+            {
+
+              //  Debug.Log($"COM {this.displayName} setting list |{String.Join(" ", doers)}|{String.Join(" ", receivers)}| ");
+            }
+
             if (this.requirements.requirement.receiverCount < 1)
             {
-                if (isDoer)
-                {
-                    if (this.requirements.requirement.doerCount < 2) baseDesc = "comDescription_1_0_doer";
-                    else baseDesc = "comDescription_n_0_doer";
-                }
-                else return "";
+
+                if (this.requirements.requirement.doerCount < 2) baseDesc = "comDescription_1_0_doer";
+                else baseDesc = "comDescription_n_0_doer";
+
             }
             else{
+
                 bool isReceiverActive = this.requirements.requirement.req_Receivers.requireAction;
                 bool multDoer = this.requirements.requirement.doerCount > 1;
                 bool multReceiver = this.requirements.requirement.receiverCount > 1;

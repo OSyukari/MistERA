@@ -67,7 +67,7 @@ public class EventInstance
 
     public string Name { get
         {
-            return $"EvInstance {(nextEvent == null ? "null" : nextEvent.ID)} {(nextEntry == null ? "null" : nextEntry.Name)}";
+            return $"EvInstance {(currentEvent != null ? currentEvent.ID : nextEvent != null ? nextEvent.ID : "null")} {(currentEntry != null ? currentEntry.Name : nextEntry != null ? nextEntry.Name : "null")}";
         } }
 
     protected bool _isvalid = false;

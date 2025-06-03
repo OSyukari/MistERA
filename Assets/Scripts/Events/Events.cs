@@ -19,10 +19,10 @@ public class Event : I_SerializationCallbackReceiver
 
     public bool Validate(EventInstance instance)
     {
-        if (!SelfValidator.isCharaValid(instance.Self)) return false;
+        if (!SelfValidator.isCharaValid(instance, instance.Self)) return false;
         foreach(var targetscope in TargetValidators)
         {
-            if (!targetscope.FindTargets(instance.Self, ref instance.Targets)) return false;
+            if (!targetscope.FindTargets(instance, instance.Self, ref instance.Targets)) return false;
             else
             {
                 List<string> names = new List<string>();
@@ -48,9 +48,9 @@ public class Event : I_SerializationCallbackReceiver
     {
         public List<CharaCondition> chara_conditions = new List<CharaCondition>();
         public List<RoomCondition> room_conditions = new List<RoomCondition>();
-        public bool isCharaValid(Character_Trainable c)
+        public bool isCharaValid(EventInstance ev, Character_Trainable c)
         {
-            foreach (var cond in chara_conditions) if (!cond.isValid(c)) return false;
+            foreach (var cond in chara_conditions) if (!cond.isValid(ev ,c)) return false;
             foreach (var cond in room_conditions) if (!cond.isValid(c)) return false;
             return true;
         }
@@ -91,18 +91,25 @@ public class Event : I_SerializationCallbackReceiver
 
         public List<string> parameters = new List<string>();
 
-        public bool isValid(Character_Trainable c)
+        public bool isValid(EventInstance ev, Character_Trainable c)
         {
             if (parameters.Count < 1) return true;
             else if (c == null) return false;
 
             var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
 
+            var debug = true;
+
             switch(parameters[0])
             {
                 case "exists":
+                    //if (debug) Debug.Log($"exist {(c != null ? c.FirstName : "null")}");
                     return c != null;
+                case "excludePlayer":
+                    //if (debug) Debug.Log($"excludePlayer {c.FirstName} {scr_System_CampaignManager.current.Player != c}");
+                    return scr_System_CampaignManager.current.Player != c;
                 case "isPlayer":
+                    //if (debug) Debug.Log($"excludePlayer {c.FirstName} {scr_System_CampaignManager.current.Player == c}");
                     return scr_System_CampaignManager.current.Player == c;
                 case "hasActionPackageType":
                     if (parameters.Count < 2) return false;
@@ -116,32 +123,50 @@ public class Event : I_SerializationCallbackReceiver
                         return results.Count > 0;
                     }
                 case "isConscious":
+                    //if (debug) Debug.Log($"isConscious {c.FirstName} {!c.Stats.isConsciousnessUnconscious}");
                     return !c.Stats.isConsciousnessUnconscious;
                 case "isUnconscious":
                     return c.Stats.isConsciousnessUnconscious;
                 case "isSleeping":
                     return c.Stats.isSleeping;
                 case "isRoomOwner":
-                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool value))
+                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool isRoomOwner))
                     {
-                        return room != null && Utility.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, value);
+                        return room != null && Utility.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, isRoomOwner);
                     }
                     else return false;
                 case "canMove":
-                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool value1))
+                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool canMove))
                     {
-                        return Utility.CompareValue(c.canMove, LogicalOperand.eq, value1);
+                        return Utility.CompareValue(c.canMove, LogicalOperand.eq, canMove);
                     }
                     else return false;
-                case "canLeave":
-                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool value12))
+                case "hasJoinableAP":
+                    if (ev.Self == null) return false;
+                    return c.CurrentJob.GetExistingPackages(c, false, false, false).FindAll(x=>x.AllowJoining && (bool)(x.canJoinAP(ev.Self, out var a, out var b) >= 0)).Count > 0;
+                case "isWorkingOnJob":
+                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool isWorkingOnJob))
                     {
-                        Debug.LogError($"checking {c.FirstName} canleave {c.canLeave}, currentjob {c.CurrentJobRefID} ");
-                        return Utility.CompareValue(c.canLeave, LogicalOperand.eq, value12);
+                        if (debug) Debug.Log($"isWorkingOnJob {c.FirstName} {c.isWorkingOnJob} eq {isWorkingOnJob}");
+                        return Utility.CompareValue(c.isWorkingOnJob, LogicalOperand.eq, isWorkingOnJob);
                     }
                     else
                     {
-                        Debug.LogError("canleave parse error");
+                        Debug.LogError("isWorkingOnJob parse error");
+                        return false;
+                    }
+                case "canInterruptJob":
+                    if (debug) Debug.Log($"canInterruptJob {c.FirstName} {c.CurrentJob == null || c.CurrentJob.CanBeInterrupted}");
+                    return c.CurrentJob == null || c.CurrentJob.CanBeInterrupted;
+                case "canLeave":
+                    if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool canLeave))
+                    {
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"checking {c.FirstName} canleave {c.canLeave}, currentjob {c.CurrentJobRefID} ");
+                        return Utility.CompareValue(c.canLeave, LogicalOperand.eq, canLeave);
+                    }
+                    else
+                    {
+                        Debug.LogError("canLeave parse error");
                         return false;
                     }
                 default: 
@@ -161,7 +186,7 @@ public class Event : I_SerializationCallbackReceiver
         public List<CharaCondition> chara_conditions = new List<CharaCondition>();
         public int minTargetCount = -1;
         public int maxTargetCount = -1;
-        public bool FindTargets(Character_Trainable self, ref Dictionary<string, List<Character_Trainable>> library)
+        public bool FindTargets(EventInstance ev, Character_Trainable self, ref Dictionary<string, List<Character_Trainable>> library)
         {
             if (refKey == "") return true;
 
@@ -181,7 +206,7 @@ public class Event : I_SerializationCallbackReceiver
                         foreach (var refid in charaRefs) {
                             var chara = scr_System_CampaignManager.current.FindInstanceByID(refid);
                             bool isvalid = true;
-                            foreach (var cond in chara_conditions) if (!cond.isValid(chara)) isvalid = false;
+                            foreach (var cond in chara_conditions) if (!cond.isValid(ev, chara)) isvalid = false;
                             if (!isvalid) continue;
                             if (!list.Contains(chara)) list.Add(chara);
                         }
@@ -195,7 +220,7 @@ public class Event : I_SerializationCallbackReceiver
                             if (chara == self) continue;
                             if (scr_System_CampaignManager.current.IsInSameParty(self, chara)) continue;
                             bool isvalid = true;
-                            foreach (var cond in chara_conditions) if (!cond.isValid(chara)) isvalid = false;
+                            foreach (var cond in chara_conditions) if (!cond.isValid(ev, chara)) isvalid = false;
                             if (!isvalid) continue;
                             if (!list.Contains(chara))
                             {
@@ -242,7 +267,7 @@ public class Event : I_SerializationCallbackReceiver
     [System.Serializable]
     public abstract class EventEntry
     {
-        public virtual string Name { get { return ""; } }
+        public virtual string Name { get { return label; } }
 
         public string label = "";
         public bool isLast = false;
@@ -308,12 +333,26 @@ public class Event : I_SerializationCallbackReceiver
 
             public List<Condition> Conditions = new List<Condition>();
             public List<CharaCondition> self_chara_conditions = new List<CharaCondition>();
+            public Dictionary<string, List<CharaCondition>> target_chara_conditions = new Dictionary<string, List<CharaCondition>>();
             public bool isDefaultCancel = false;
+            public bool isDefaultAccept = false;
 
             public bool isValid(EventInstance owner)
             {
                 foreach (var c in Conditions) if (!c.isValid()) return false;
-                foreach (var c in self_chara_conditions) if (!c.isValid(owner.Self)) return false;
+                foreach (var cond in self_chara_conditions) if (!cond.isValid(owner, owner.Self)) return false;
+                foreach (var kvp in target_chara_conditions)
+                {
+                    if (!owner.Targets.ContainsKey(kvp.Key))
+                    {
+                        Debug.LogError($"EventInstance {owner.Name} does not contain scoped target Key [{kvp.Key}]");
+                        return false;
+                    }
+                    foreach(var c in owner.Targets[kvp.Key])
+                    {
+                        foreach (var cond in kvp.Value) if (!cond.isValid(owner,c)) return false;
+                    }
+                }
                 return true;
             }
 
@@ -362,7 +401,8 @@ public class Event : I_SerializationCallbackReceiver
                 /// <summary>
                 /// [Self/targetlabel, eventid, eventlabel, originalSelfLabel]
                 /// </summary>
-                StartEvent
+                StartEvent,
+                JoinTargetJob
             }
 
             [System.Serializable]

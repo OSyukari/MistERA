@@ -39,9 +39,9 @@ public class EventManager
             // check trigger keyword
             if (i.trigger != trigger) continue;
             // check chara satisfy event self condition
-            if (!i.SelfValidator.isCharaValid(chara)) continue;
-           // Debug.Log($"Trigger {trigger} on {chara.FirstName} trying event {i.ID}");
             var newinstance = new EventInstance(chara, i.ID, "");
+            // Debug.Log($"Trigger {trigger} on {chara.FirstName} trying event {i.ID}");
+
             if ( !newinstance.isValid) continue;
             // if condition satisfy, launch event
 #if UNITY_EDITOR
@@ -65,47 +65,42 @@ public class EventManager
         var newEvent = new EventInstance(target, eventID, label);
         //newEvent.LoadNext(true, eventID, label);
         this.activeEvents.Add(newEvent);
-        Debug.Log($"startevent {eventID} on {(target == null ? "null" : target.FirstName)}, startImmediate? {startImmediate}");
-        if (startImmediate)
-        {
-            //ev.Start();
-            Run();
-        }
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"startevent {eventID} on {(target == null ? "null" : target.FirstName)}, startImmediate? {startImmediate}");
+        if (startImmediate) Run();
+        
     }
 
     public void StartEvent(EventInstance ev, bool startImmediate)
     {
         this.activeEvents.Add(ev);
-        Debug.Log($"startevent {ev.Name} on {(ev.Self == null ? "null" : ev.Self.FirstName)}, isValid? {ev.isValid}");
-        if (startImmediate)
-        {
-            //ev.Start();
-            Run();
-        }
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"startevent {ev.Name} on {(ev.Self == null ? "null" : ev.Self.FirstName)}, isValid? {ev.isValid}");
+        if (startImmediate) Run();
     }
 
     protected bool running = false;
+    protected EventInstance runningEV = null;
 
     public void Run (bool resumeWaiting = false, bool ignoreUpdate = false)
     {
-        if (running) return;
-
-        running = true;
-        // one run call should resolve most if not all events, and leave waiting events
-        activeEvents.RemoveAll(x => x.Status != EventStatus.waiting && !x.canRun);
-        activeEvents.RemoveAll(x => x.Status != EventStatus.waiting && !x.Validate());
-        var list = new List<EventInstance>(activeEvents);
-        foreach(var ev in list)
+        var ev = activeEvents.Count > 0 ? activeEvents[0] : null;// actinew List<EventInstance>(activeEvents);
+        if (ev == null || ev.Status == EventStatus.waiting) return;
+        else if (ev != runningEV)
         {
-            if (ev.Status != EventStatus.waiting) ev.Start();
+            // one run call should resolve most if not all events, and leave waiting events
+            activeEvents.RemoveAll(x => x.Status != EventStatus.waiting && !x.canRun);
+            activeEvents.RemoveAll(x => x.Status != EventStatus.waiting && !x.Validate());
+            ev = activeEvents.Count > 0 ? activeEvents[0] : null;// actinew List<EventInstance>(activeEvents);
+
+            runningEV = ev;
+            if (ev != null) ev.Start();
         }
-        running = false;
     }
 
     public void Remove(EventInstance ev)
     {
         this.activeEvents.Remove(ev);
         updateHandler.FlushCollectedLogs(true, false, true);
+        Run();
     }
 
     public bool Active { get { return this.activeEvents.Count > 0; } }

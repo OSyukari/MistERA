@@ -359,7 +359,7 @@ public class COM_Results
         {
             //Debug.Log("Validator_Result Apply on " + c.FirstName);
             if (job.ParentRoom == null) return;
-            if (entry_conditions != null && !entry_conditions.Validate(job,package, m, c)) return;
+            if (entry_conditions != null && !entry_conditions.Validate(job, package, m, c)) return;
             if (entry_results != null) entry_results.Apply(job, package, m, c);
         }
 
@@ -382,6 +382,7 @@ public class COM_Results
 
             public void Apply(Job job, ActionPackage package, EvaluationPackage m, Character_Trainable c)
             {
+                Debug.LogError($"com result moveitem apply {job.FactionOwner.FactionDisplayName} {c.FirstName}");
                 if (moveItem != null && moveItem.isValid)
                 {
 

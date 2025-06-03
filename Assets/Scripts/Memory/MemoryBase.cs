@@ -41,7 +41,7 @@ public class Memory_Entry
     [SerializeField][JsonProperty] protected DateTime endTime = DateTime.MinValue;
     [JsonIgnore] public string PrintTimeStart { get { return StartTime.ToShortTimeString(); } }
     [JsonIgnore] public string PrintTimeStartAndEnd { get { return StartTime.ToShortTimeString() + (isOngoing ? "": " - " + endTime.ToShortTimeString()); } }
-    [JsonIgnore] public string PrintTimeEndToStart { get { return (isOngoing ? "" :endTime.ToShortTimeString() + "\n")+ StartTime.ToShortTimeString(); } }
+    [JsonIgnore] public string PrintTimeEndToStart { get { return (isOngoing || endTime == StartTime ? "" : endTime.ToShortTimeString() + "\n")+ StartTime.ToShortTimeString(); } }
     [JsonIgnore] public bool isOngoing { get { return endTime < startTime; } }
     public void EndOngoing(DateTime endTime)
     {

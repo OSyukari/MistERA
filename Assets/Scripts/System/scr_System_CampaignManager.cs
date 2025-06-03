@@ -339,7 +339,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
     public void Unregister(ActionPackage p)
     {
-        bool debug = scr_System_CentralControl.current.LogPrefs.Debug_Logging_ActionPackage;
+        bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Jobs;
         if (debug) Debug.Log("Unregistering AP " + p.DisplayName);
         if (!registeredPackagesByRoom.ContainsKey(p.RoomKey)) return;
         //if (p.targetCOM.comTags.Contains("character_trainable") && p.Duration > -1) return;
@@ -387,7 +387,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public bool DoFullUpdate(int charaRef)
     {
-        return charaRef == 0 || Map.IsCharaInActiveFloors(charaRef);
+        return charaRef == 0 || Map.IsCharaInActiveFloors(charaRef) || FullUpdate;
     }
 
     /// <summary>
@@ -397,18 +397,16 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         DateTime currentTime = scr_System_Time.current.getCurrentTime();
         int currentHour = currentTime.Hour;
-        List<string> s = scr_System_CentralControl.current.LogPrefs.Debug_Logging_MinuteAllActorsUpdate ? new List<string>() : null;
+        List<string> s = scr_System_CentralControl.current.LogPrefs.DLog_Update ? new List<string>() : null;
         if (s != null) s.Add("UpdateAllChara [" + currentTime.ToString() + "]");
         var list = this.Index_referenceID.Values.ToList();
-
-        bool fullUpdate = scr_System_Time.current.getCurrentTime().Minute % 6 == 0;
 
         if(true)
         {
 
             foreach(var chara in list)
             {
-                if (chara.RefID > 0 && (fullUpdate || DoFullUpdate(chara.RefID)))
+                if (chara.RefID > 0 && DoFullUpdate(chara.RefID))
                 {
                     List<string> sss = s == null ? null : new List<string>();
                     chara.TryGetJob(currentHour, sss);
@@ -607,6 +605,15 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
+    public static int ThrottledUpdate = 3;
+    public static bool FullUpdate
+    {
+        get
+        {
+            return scr_System_Time.current.getCurrentTime().Minute % 3 == 0;
+        }
+    }
+
     public void FreeUpdateOneStep(ref int totalUpdateTime, ref int updateTime)
     {
         List<ActionPackage> detachedAPs = new List<ActionPackage>();
@@ -623,7 +630,6 @@ public class scr_System_CampaignManager : MonoBehaviour
             //Debug.Log(s);
         }
 
-        bool fullUpdate = scr_System_Time.current.getCurrentTime().Minute % 3 == 0;
         int updateDuration = 1;
 
         foreach (var kvpair_list in registeredPackagesByRoom)
@@ -635,7 +641,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 // normal loop
                 updateDuration = 1;
             }
-            else if (fullUpdate)
+            else if (FullUpdate)
             {
                 updateDuration = 3;
             }
@@ -1397,7 +1403,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         if (Index_ItemReferenceID.ContainsKey(i.RefID))
         {
-            Debug.Log("Item unregistered " + i.RefID);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Inventory) Debug.Log($"Item {i.DisplayName} unregistered " + i.RefID);
             Index_ItemReferenceID.Remove(i.RefID);
             deletedRefIDs.Add(i.UnregisterItem());
         }

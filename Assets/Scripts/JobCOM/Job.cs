@@ -34,7 +34,7 @@ public class Job : IDisposable, I_Disposable
     }
     [JsonIgnore] public virtual int targetActorRef { get { return scr_System_CampaignManager.current.CurrentTargetRef; } }
     [JsonIgnore] public virtual bool CanBeInterrupted { get { return true; } }
-
+    
     [JsonIgnore]
     public virtual Room_Instance ParentRoom
     {
@@ -158,7 +158,7 @@ public class Job : IDisposable, I_Disposable
         ActionPackage p = packages_current.Find(x => x.actorRefs.Contains(charaRef));
         if(p != null)
         {
-            string s = p.DescriptionText(p.DoerRefs.Contains(charaRef), charaRef);
+            string s = p.DescriptionText(charaRef);
 
             if (s == "") return ep_prep.Replace("$comdescription$", p.DisplayName);
             else return ep_prep.Replace("$comdescription$", s); 
@@ -169,7 +169,7 @@ public class Job : IDisposable, I_Disposable
         if (p == null) return "idling";
         else
         {
-            string s = p.DescriptionText( p.DoerRefs.Contains(charaRef), charaRef );
+            string s = p.DescriptionText(charaRef );
             if (s == "") return p.DisplayName + scr_System_Serializer.current.Dictionary.Query("comDescription_remainingtime").Replace("$minute$", p.Duration.ToString());
             else return s + scr_System_Serializer.current.Dictionary.Query("comDescription_remainingtime").Replace("$minute$", p.Duration.ToString());
         }
@@ -221,6 +221,11 @@ public class Job : IDisposable, I_Disposable
             var targetList = job.allusableCOMs.FindAll(x => (comID == "" || x.ID == comID) && (tag == "" || x.comTags.Contains(tag)));
             return targetList;
         }
+
+        public bool Match(COM com)
+        {
+            return (comID == "" || com.ID == comID) && (tag == "" || com.comTags.Contains(tag));
+        }
     }
 
     public virtual void Register(int id)
@@ -243,7 +248,7 @@ public class Job : IDisposable, I_Disposable
             {
                 // previous[i] might be the actor lock package, so be careful since removing that one might cause index out of bound
 
-                Debug.Log("Job ["+DisplayName+"] RemoveActor ["+scr_System_CampaignManager.current.FindInstanceByID(charaRef).FirstName+"], unregistering package [" + p.DisplayName + "]");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("Job ["+DisplayName+"] RemoveActor ["+scr_System_CampaignManager.current.FindInstanceByID(charaRef).FirstName+"], unregistering package [" + p.DisplayName + "]");
                 scr_System_CampaignManager.current.Unregister(p);
                 packages_previous.Remove(p);
             }
@@ -715,7 +720,7 @@ public class Job : IDisposable, I_Disposable
     public void LogMessage_Kojo(EvaluationPackage ep)
     {
         if (ep == null) return;
-        if(scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName +", tags: ["+String.Join("|",ep.DoerSelfTag)+"] -> ["+String.Join("|", ep.ReceiverTargetTag) + "]");
+        if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName +", tags: ["+String.Join("|",ep.DoerSelfTag)+"] -> ["+String.Join("|", ep.ReceiverTargetTag) + "]");
         var s = ep.Doer == null ? "" : ep.Doer.Relationships.GetKOJOMessage(true, ep);
         var s2 = ep.Receiver == null ? "" : ep.Receiver.Relationships.GetKOJOMessage(false, ep);
         var rel = ep.Receiver != null && ep.Doer != null ? ep.Receiver.Relationships.FindRelationshipWith(ep.Doer) : null;
@@ -743,7 +748,7 @@ public class Job : IDisposable, I_Disposable
             if (!messages_kojo.ContainsKey(ep.ReceiverRef)) messages_kojo[ep.ReceiverRef] = s3;
             else messages_kojo[ep.ReceiverRef] += "\n" + s3;
         }
-        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents && (s.Length > 0 || s2.Length > 0 || s3.Length > 0)) Debug.Log($"Kojo Message logged: [{s}] [{s2}] [{s3}]");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents && (s.Length > 0 || s2.Length > 0 || s3.Length > 0)) Debug.Log($"Kojo Message logged: [{s}] [{s2}] [{s3}]");
     }
 
     public void LogMessage_Begin_CheckResult(EvaluationPackage ep)

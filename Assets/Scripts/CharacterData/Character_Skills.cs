@@ -99,7 +99,7 @@ public class SkillManager
     {
         ownerTags = ownerTags.Distinct().ToList();
         comTags = comTags.Distinct().ToList();
-        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_ActorExperienceGain) Debug.Log("CheckExperienceGain owner[" + String.Join("|", ownerTags) + "] com[" + String.Join("|", comTags) + "] amount[" + amount + "] isdoer[" + isDoer + "] m[" + (m == null ? "null" : "exist") + "]");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_ExpGain) Debug.Log("CheckExperienceGain owner[" + String.Join("|", ownerTags) + "] com[" + String.Join("|", comTags) + "] amount[" + amount + "] isdoer[" + isDoer + "] m[" + (m == null ? "null" : "exist") + "]");
         foreach (var i in scr_System_Serializer.current.index_Experiences.List)
         {
             if (i.ExcludeCOMTags != null && i.ExcludeCOMTags.Count > 0)

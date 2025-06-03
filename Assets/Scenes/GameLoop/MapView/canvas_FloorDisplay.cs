@@ -7,12 +7,16 @@ using TMPro;
 using UnityEngine.EventSystems;
 using QuikGraph;
 using System;
+using System.Linq;
 
 public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 {
 
     public TMP_Text floorName;
     public RectTransform roomList;
+
+    public IEnumerable<TaggedEdge<int, Door_Instance>> path = null;
+    public int pathCost = 0;
 
     public Image picture;
 
@@ -56,7 +60,6 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         scr_SelectableText btn = r2.GetComponent<scr_SelectableText>();
 
-        btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn));
 
         Floor_Instance parentFloor = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(ri.RefID);
         int tempRefID = ri.RefID;
@@ -64,6 +67,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         if (displayCharaName)
         {
+            btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn));
             List<int> list = scr_System_CampaignManager.current.CharaInRoom(ri.RefID);
             List<string> names = new List<string>();
             foreach (int i in list)  if (i != 0) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
@@ -76,6 +80,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         }
         else
         {
+            btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn, true));
             btn.SetText(tempRefID.ToString());
         }
 
@@ -330,49 +335,60 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         int roomRef = -1;
         new canvas_RoomDisplay parent;
-        public ButtonValidator_MoveRoom(canvas_RoomDisplay parent, Room_Instance room, scr_SelectableText text) : base(parent)
+
+        string ttip = "";
+        public ButtonValidator_MoveRoom(canvas_RoomDisplay parent, Room_Instance room, scr_SelectableText text, bool attachHover = false) : base(parent)
         {
             this.roomRef = room.RefID;
             this.text = text;
             this.parent = parent;
+
+            text.AttachOnHoverEnter(OnHoverEnter);
+            text.AttachOnHoverExit(OnHoverExit);
+            
+
+            ttip = "Room: " + room.DisplayName;
+            if (room.Furnitures.Count > 0) ttip += "\nFurnitures: " + room.DisplayableFurnitureNames;
+            List<int> list = scr_System_CampaignManager.current.CharaInRoom(room.RefID);
+            List<string> names = new List<string>();
+            foreach (int ii in list) if (ii != 0) names.Add(scr_System_CampaignManager.current.FindInstanceByID(ii).FirstName);
+            if (names.Count > 0) ttip += "\nCurrently in room: " + String.Join(" ", names);
         }
 
+        protected void OnHoverExit()
+        {
+            parent.path = null;
+            parent.ValidateAll();
+        }
+
+        protected void OnHoverEnter()
+        {
+            parent.path = scr_System_CampaignManager.current.Map.Findpath(0, room.RefID);
+            float i = 0f;
+            if (parent.path != null) foreach (TaggedEdge<int, Door_Instance> e in parent.path) i += e.Tag.Cost;
+            parent.pathCost = (int)i;
+
+            parent.ValidateAll();
+        }
 
         public override bool IsButtonValid()
         {
-            if (scr_System_CampaignManager.current.CurrentRoom == room)
-            {
-                this.text.Toggle(true, true);
-            }
-            else
+            if (parent.path != null && parent.path.ToList().Find(x=>x.Source == room.RefID || x.Target == room.RefID) != null)
             {
                 this.text.Toggle(true, false);
+                this.tooltip = ttip + "\nTravel Cost: " + (parent.pathCost).ToString() + " minutes";
+                return true;
             }
-
-            IEnumerable<TaggedEdge<int, Door_Instance>> path = scr_System_CampaignManager.current.Map.Findpath(0, room.RefID);
-            float i = 0f;
-            if (path != null) foreach (TaggedEdge<int, Door_Instance> e in path) i += e.Tag.Cost;
-
-            this.tooltip = "Room: "+room.DisplayName;
-            if (room.Furnitures.Count > 0)
+            else if (parent.path == null)
             {
-                tooltip += "\nFurnitures: " + room.DisplayableFurnitureNames;
-                //foreach (FurnitureInstance f in room.Furnitures) if (!f.noDisplay) tooltip += f.DisplayName + " ";
-                //foreach (KeyValuePair<FurnitureBase, int> kvp in room.DisplayableFurnitures) tooltip += kvp.Key.displayName+(kvp.Value > 1?"x"+kvp.Value:"") + " ";
+                this.text.Toggle(true, false);
+                this.tooltip = ttip;
+                return true;
             }
-
-            List<int> list = scr_System_CampaignManager.current.CharaInRoom(room.RefID);
-
-            List<string> names = new List<string>();
-            foreach (int ii in list) if (ii != 0) names.Add(scr_System_CampaignManager.current.FindInstanceByID(ii).FirstName);
-            if (names.Count > 0)
+            else // parent path not null and current room not in path
             {
-                tooltip += "\nCurrently in room: "+String.Join(" ", names);
+                return false;
             }
-
-            this.tooltip += "\nTravel Cost: " + ((int)i).ToString() +" minutes";
-
-            return true;
         }
 
         public void OnClickButton()

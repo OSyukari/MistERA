@@ -74,7 +74,6 @@ public class Map_Instance
 
 
 
-
     [SerializeField][JsonProperty] List<int> _activeFloorRefIDs = null;
     [JsonIgnore] public List<int> ActiveFloorRefIDs
     {
@@ -390,7 +389,11 @@ public class Map_Instance
         //var time = DateTime.Now;
         // List<int> dirtyCharaRefNew = new List<int>();
 
-        System.Threading.Tasks.Parallel.ForEach(roomCharaRef, entry => UpdateRoom(entry));
+        foreach(var i in roomCharaRef)
+        {
+            UpdateRoom(i);
+        }
+        //System.Threading.Tasks.Parallel.ForEach(roomCharaRef, entry => UpdateRoom(entry));
 
 
         //JobHandle handle = default;
@@ -458,12 +461,14 @@ public class Map_Instance
         charaRoomRef[charaRef] = roomRef;
 
         this.roomCharaRef = null;
-        if (charaRef == 0)
+        if (charaRef == scr_System_CampaignManager.current.Player.RefID)
         {
+            var job = scr_System_CampaignManager.current.Player.CurrentJob;
             var room = GetRoomByRef(roomRef);
             var currentTargetRef = scr_System_CampaignManager.current.CurrentTargetRef;
             scr_System_CampaignManager.current.ChangeCurrentRoom(room);
-            if (currentTargetRef > 0 && charaRoomRef[currentTargetRef] != roomRef && !scr_System_CampaignManager.current.isPlayerPartyMember(currentTargetRef)) scr_System_CampaignManager.current.ChangeCurrentTarget(0);
+            if (currentTargetRef > 0 && charaRoomRef[currentTargetRef] != roomRef && !scr_System_CampaignManager.current.isPlayerPartyMember(currentTargetRef)) scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.Player.RefID);
+            if (job != null && job.ParentRoom != null && job.ParentRoom.RefID != roomRef) scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
             RebuildActiveFloorRefs(room);
         }
     }
@@ -550,7 +555,7 @@ public class Map_Instance
     }
 
 
-    public SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> FilterValidPaths(int charaRefID,  List<int> targetRooms)
+    public SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> FilterValidPaths(int charaRefID,  List<int> targetRooms, bool alwaysGetDifferentFloors = false)
     { 
 
         targetRooms = targetRooms.Distinct().ToList();
@@ -572,7 +577,7 @@ public class Map_Instance
             if (!resultsHolder.ContainsKey(key)) resultsHolder.Add(key, new Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>());
             resultsHolder[key].Add(target, path);
         }
-        if (resultsHolder.Count > 0) return resultsHolder;
+        if (!alwaysGetDifferentFloors && resultsHolder.Count > 0) return resultsHolder;
 
         var roomsInDifferentFloor = targetRooms.FindAll(x=>!roomsInSameFloor.Contains(x));
         foreach (var target in roomsInDifferentFloor)

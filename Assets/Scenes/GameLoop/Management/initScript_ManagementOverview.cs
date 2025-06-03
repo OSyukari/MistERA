@@ -13,15 +13,16 @@ public class initScript_ManagementOverview : MonoBehaviour
     public TMP_Text factionTimings;
 
 
-    string factionPop, factionRes, factionPopTooltip;
+    string factionPop, factionRes, factionPopTooltip, currentlyOutside;
     private void Awake()
     {
         factionPop = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_topbar_population");
         factionRes = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_topbar_resources");
         factionPopTooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_line_populationMaintenance");
+        currentlyOutside = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_line_currentlyOutside");
     }
 
-    public scr_HoverableText report_managementResult, report_tradeResults;
+    public scr_HoverableText report_managementResult, report_tradeResults, report_currentlyOutsideFaction;
 
     public void Initialize(Manageable m)
     {
@@ -118,6 +119,20 @@ public class initScript_ManagementOverview : MonoBehaviour
                 c_name.rectTransform.SetParent(this.linkedFactionGrid, false);
             }
         }
+
+        var popCount = 0;
+        List<string> popCountTooltip = new List<string>();
+        foreach(var c in m.ManagedChara_Members)
+        {
+            var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+            if (room != null && !m.ManagedRooms.ContainsKey(room.RefID))
+            {
+                popCountTooltip.Add($"{c.FirstName} is at {room.DisplayName}({room.FactionOwner.FactionDisplayName})");
+                popCount += 1;
+            }
+        }
+        report_currentlyOutsideFaction.SetText(currentlyOutside.Replace("$count$", popCount.ToString()));
+        report_currentlyOutsideFaction.SetExternalTooltip(String.Join("\n", popCountTooltip));
 
         factionTimings.text = $"sleep time {(m is Manageable_HomeFaction ? (m as Manageable_HomeFaction).SharedSleepHour : "none")}, meal time [{String.Join("|",m.mealHours)}]";
 

@@ -28,19 +28,19 @@ public class scr_System_CentralControl_Serializable
 [System.Serializable]
 public class DebugLogSettings
 {
-    public bool Debug_Logging_Job = false;
-    public bool Debug_Logging_ActionPackage = false;
-    public bool Debug_Logging_ActorJob = false;
-    public bool Debug_Logging_ActorExperienceGain = false;
-    public bool Debug_Logging_MinuteAllActorsUpdate = false;
-    public bool Debug_Logging_Unimplemented_KojoCOM = false;
-    public bool Debug_Logging_Unimplemented_KojoEvent = false;
-    public bool Debug_Logging_KojoEvents = false;
-    public bool Debug_Logging_UpdateTimeCost = false;
-    public bool Debug_Logging_CurrentFurnitureJobInRoom = false;
-    public bool Debug_Logging_Pathing = false;
+    public bool DLog_Jobs = false;
+    public bool DLog_ExpGain = false;
+    public bool DLog_Update = false;
+    public bool DLog_CurrentRoomJob = false;
+    public bool DLog_UnimplementedKojo = false;
+    public bool DLog_KojoEvents = false;
+    public bool DLog_Pathing = false;
     public bool DLog_Equipping = false;
     public bool DLog_Events = false;
+    public bool DLog_Inventory = false;
+    public bool DLog_Memory = false;
+    public bool DLog_JoinAP = false;
+    public bool DLog_Relationships = false;
 }
 
 public class scr_System_CentralControl : MonoBehaviour

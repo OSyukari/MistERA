@@ -256,6 +256,9 @@ public class Inventory
     [JsonIgnore] public List<int> ContentRefs { get { return contentRefs; } }
     private List<Item_Instance> contents_cache = null;
 
+    /// <summary>
+    /// This is a cached list, to remove item properly remove from contentrefs
+    /// </summary>
     [JsonIgnore]
     public List<Item_Instance> Contents
     {
@@ -265,7 +268,12 @@ public class Inventory
             {
                 contents_cache = new List<Item_Instance>();
                 if (contentRefs == null) contentRefs = new List<int>();
-                foreach (var item in contentRefs) contents_cache.Add(scr_System_CampaignManager.current.FindItemInstanceByID(item));
+                foreach (var item in contentRefs)
+                {
+                    var i = scr_System_CampaignManager.current.FindItemInstanceByID(item);
+                    if (i == null) continue;
+                    else contents_cache.Add(i);
+                }
             }
             return contents_cache;
         }
@@ -275,6 +283,7 @@ public class Inventory
 
     public virtual bool AddItem(Item_Instance i)
     {
+        bool log = scr_System_CampaignManager.current.Recycler != this && scr_System_CentralControl.current.LogPrefs.DLog_Inventory;
         bool added = false;
 
         if (!added)
@@ -282,7 +291,7 @@ public class Inventory
             var v = this.Contents.Find(x => x.canStackWith(i));
             if (v != null)
             {
-                Debug.Log($"Merging item {i.DisplayName}x{i.Count} with {v.DisplayName}x{v.Count}");
+                if (log) Debug.Log($"Merging item {i.DisplayName}x{i.Count}|{i.RefID}| with {v.DisplayName}x{v.Count}|{v.RefID}|");
                 added = true;
                 v.ModCount(i.Count);
                 scr_System_CampaignManager.current.Unregister(i);
@@ -351,7 +360,13 @@ public class Inventory
     }
     public virtual void Remove(Item_Instance item)
     {
-        this.Contents.Remove(item);
+        if (this.Contents.Contains(item))
+        {
+            this.contents_cache = null;
+            this.contentRefs.Remove(item.RefID);
+            //this.Contents.Remove(item);
+        }
+
 
     }
 

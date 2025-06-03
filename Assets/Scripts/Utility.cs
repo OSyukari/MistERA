@@ -328,6 +328,15 @@ public static class Utility
     /// Check if L2 contain at least 1 element of L1. Also return true if L2 is empty
     /// </summary>
     /// <returns></returns>
+    public static bool ListContainsLoose(List<COM> L1, List<COM> L2)
+    {
+        return L2.Count() == 0 || L2.Except(L1).Count() != L2.Count();
+    }
+
+    /// <summary>
+    /// Check if L2 contain at least 1 element of L1. Also return true if L2 is empty
+    /// </summary>
+    /// <returns></returns>
     public static bool ListContainsLoose(List<string> L1, List<string> L2)
     {
         L1 = L1.Distinct().ToList();
@@ -655,6 +664,8 @@ public static class Utility
             names.Add(c.FirstName);
             if(i != exceptID) namesExcept.Add(c.FirstName);
         }
+
+        //Debug.LogError($"Getactornames, |{String.Join(" ", names)}|{String.Join(" ", namesExcept)}| ");
     }
 
     /// <summary>
@@ -1134,6 +1145,18 @@ public static class Utility
                     Debug.LogError($"parse console command {parsed[0]} error");
                 }
                 break;
+            case "modkojovariable":
+                if (parsed.Count() >= 6 && int.TryParse(parsed[1], out int kojoRelSelf) && int.TryParse(parsed[2], out int kojoRelTarget) && int.TryParse(parsed[5], out var value) && bool.TryParse(parsed[4], out bool isdaily))
+                {
+                    var selfChara = scr_System_CampaignManager.current.FindInstanceByID(kojoRelSelf);
+                    var targetRel = selfChara == null ? null : selfChara.Relationships.FindRelationshipWith(kojoRelTarget);
+                    if (targetRel != null) selfChara.Relationships.ModKojoVariable(isdaily, targetRel, parsed[3], value);
+                }
+                else
+                {
+                    Debug.LogError($"parse console command {parsed[0]} error");
+                }
+                break;
 
         }
 
@@ -1340,9 +1363,6 @@ public static class EventUtility
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
 
-        // immediate load next
-        //if (isLast) owner.Notify(EventStatus.reset);
-
         owner.LoadNext(block.nextEventID, block.nextEntryLabel);
         owner.Notify(EventStatus.running);
     }
@@ -1383,18 +1403,18 @@ public static class EventUtility
         {
             if (p.isValid(owner) && Execute(owner, p))
             {
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Execute Branch {p.option} isvalid and executed");
                 executed = true;
                 break;
+            }
+            else
+            {
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Execute Branch {p.option} failed, isvalid? {p.isValid(owner)} or execution error");
             }
         }
 
         if (executed) owner.Notify(EventStatus.running);
-        //else if (!block.isLast) owner.LoadNext(true, block.nextEventID, block.nextEntryLabel);
         else owner.Notify(EventStatus.reset);
-        
-
-        // load next but allow to be overwritten
-        //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
     }
 
     public static bool Execute(EventInstance owner, Event.EventEntry.Options ops, bool sendNotify = false)
@@ -1443,6 +1463,28 @@ public static class EventUtility
                 }
             case Event.EventEntry.Options.ExecutionType.EventEnd:
                 return false;
+            case Event.EventEntry.Options.ExecutionType.JoinTargetJob:
+                if (exec.arguments.Count >= 2)
+                {
+                    var targetList = owner.Targets[exec.arguments[0]];
+                    var target = targetList.Count < 1 ? null : targetList[Utility.GetRandIndexFromListCount(targetList.Count)];
+                    var targetJob = target == null ? null : target.CurrentJob;
+                    var packages = targetJob == null ? new List<ActionPackage>() : targetJob.GetExistingPackages(target, false, false, false).FindAll(x=> x.AllowJoining && (exec.arguments[1] == "" || x.ComTags.Contains(exec.arguments[1])));
+                    if (packages.Count < 1)
+                    {
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob cannot find package containg keyword [{exec.arguments[1]}], key[{exec.arguments[0]}] targs[{targetList.Count} targ[{(target == null ? "null" : target.FirstName)}");
+                        return false;
+                    }
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
+
+                    var randpackage = packages[Utility.GetRandIndexFromListCount(packages.Count)];
+                    return randpackage.JoinAP(owner.Self);
+                }
+                else
+                {
+                    return false;
+                }
+
             case Event.EventEntry.Options.ExecutionType.InterruptAP:
                 if (exec.arguments.Count < 3)
                 {

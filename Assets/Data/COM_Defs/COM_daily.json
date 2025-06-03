@@ -6,7 +6,10 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_interaction_waste_time_displayName",
             "timeScale":1,
-            "comTags":["action","player"],
+            "comTags": [
+                "action",
+                "player"
+            ],
             "requirements":{
                 "requirement":{
                     "treatReceiverAsDoer":true ,

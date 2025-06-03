@@ -342,6 +342,11 @@
                     "fixingClothes",
                     "privacy"
                 ],
+                "requirements":{  
+                    "requirement":{ 
+                        "req_Doers":{
+                            "requireUndressed" :true
+                        }  }  },
                 "variants": [
                     {
                         "requirements": {

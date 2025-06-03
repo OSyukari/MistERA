@@ -36,9 +36,10 @@ public class RelationshipManager
     {
         var targetList = isDaily ? kojoVariables_Daily : kojoVariables_Permanent;
         var key = rel.Target.RefID.ToString() + "||" + varID;
-        if(targetList.ContainsKey(key)) return targetList[key];
+        if (targetList.ContainsKey(key)) return targetList[key];
         return 0;
     }
+
     public bool GetKojoVariableExist(bool isDaily, Character_Relationship rel, string varID)
     {
         var targetList = isDaily ? kojoVariables_Daily : kojoVariables_Permanent;
@@ -204,7 +205,12 @@ public class RelationshipManager
             Debug.LogError("IncreaseRelationshipWith NULL TARGET REL from " + ownerRef +" to "+ targetRef);
             return;
         }
+        else
+        {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Relationships) Debug.Log($"{Owner.FirstName} relationship increase {relID}{amount} with {targetRel.Target.FirstName}");
+        }
         targetRel.ModRelationValue(relID, amount);
+
         if (exp != null) exp.AddRelations(ownerRef, targetRef, relID, (int)amount); 
     }
 

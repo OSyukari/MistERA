@@ -155,7 +155,8 @@ public class scr_UpdateHandler : MonoBehaviour
     public event Action Observer_PreUpdateTime;
     public event Action Observer_PostUpdateTime_1;
     public event Action Observer_PostUpdateTime_2;
-    public event Action Observer_PostUpdateTime_3; 
+    public event Action Observer_PostUpdateTime_3;
+    public event Action Observer_PostUpdateTime_EventEnd;
     //public event Action Observer_PostUpdateTime_4;
     public event Action<bool> Observer_LogsSingleStepUpdate;
     public event Action<EventStatus, bool> Observer_EventStatus;
@@ -227,7 +228,6 @@ public class scr_UpdateHandler : MonoBehaviour
     {
         //Debug.Log("Singleupdate : start");
 
-        var Clock = scr_System_CentralControl.current.LogPrefs.Debug_Logging_UpdateTimeCost ;
         Updating = true;
         int loopCount = 0;
         firstLoopCounter = 2;
@@ -299,7 +299,7 @@ public class scr_UpdateHandler : MonoBehaviour
         {   // continuous update
             // ask break
             totalUpdateTime = totalUpdateTime2;
-           Debug.LogError($"halted totalupdatetime {updateTime} {totalUpdateTime}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"--- halted totalupdatetime {updateTime} {totalUpdateTime}");
             cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
             halted = EventHandler.Active;
         }
@@ -352,6 +352,7 @@ public class scr_UpdateHandler : MonoBehaviour
 
         cnManager.AddLog(-1000, "<align=\"right\">" + "(" + (loopCount) + " Minutes) " + scr_System_Time.current.getCurrentTime().ToString() + "</align>", false, false);
 
+        /*
         List<string> names = new List<string>();
         foreach (var charaRef in cnManager.CharaInCurrentRoom)
         {
@@ -363,13 +364,13 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         if (names.Count > 0) cnManager.AddLog(-1, String.Join("\n", names) , false, true);
         //yield return null;
-        
+        */
 
         //if (playerJob == null || playerJob is Job_Sex_Group) { }
         //else
         //{   // release player from previous job registry to avoid lingering COM display
         //    scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
-       // }
+        // }
         Updating = false;
 
         if (EventHandler.Active)
@@ -397,6 +398,7 @@ public class scr_UpdateHandler : MonoBehaviour
             e.Invoke();
         }
         eventCallbacks.Clear();
+        Observer_PostUpdateTime_EventEnd?.Invoke();
         var bo = cnManager.ExistPlayerPackage(out var a, out var b, true);
         //if (!Updating) Debug.LogError($"ExecuteEventCallbacks end, {!EventHandler.Active} {halted} {bo}");
         if (autoResumeUpdate && !EventHandler.Active && halted && bo) StartUpdate(false);

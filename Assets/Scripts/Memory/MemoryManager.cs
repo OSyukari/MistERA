@@ -237,6 +237,7 @@ public class MemoryManager
     /// <param name="masterRef"></param>
     public Memory_Entry AddEntry_Custom(List<string> selfTags, List<string> targetCOMtags, int targetRef, bool isDoer, string description, Memory_Attitude attitude, Memory_Response response, int duration = -1, int masterRef = -1)
     {
+        description = description.Replace("$room$", scr_System_CampaignManager.current.Map.FindRoomByChara(Owner.RefID).DisplayName);
         //Memory_Entry_Custom entry = new Memory_Entry_Custom(ownerRef, targetRef, tags, description, attitude, response, duration);
         //if (description != null && description.Length > 0) Debug.LogError("Adding custom description " + description);
         return AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description,response, attitude, duration, null, -1, masterRef);
@@ -256,7 +257,7 @@ public class MemoryManager
     {
         ClearCache();
 
-        bool debug = true && Owner.BaseID == "Campaign1_Char_Ako";
+        bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner.BaseID == "Campaign1_Char_Ako";
 
         duration = Owner.Stats.MemoryLength;
         var description = new List<string>();

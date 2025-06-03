@@ -148,10 +148,46 @@ public abstract class ActionPackage
         }
     }
 
+    /// <summary>
+    /// if invalid, return -1. else return valid COMvariantID
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="doers"></param>
+    /// <param name="receivers"></param>
+    /// <returns></returns>
+    public virtual int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers)
+    {
+        doers = new List<int>();
+        receivers = new List<int>();
+
+        return -1;
+    }
+
+    /// <summary>
+    /// immediate join without redo check
+    /// </summary>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    public bool JoinAP(Character_Trainable c)
+    {
+        var variantID = canJoinAP(c, out var doers, out var receivers);
+        if (variantID >= 0)
+        { 
+            c.ChangeCurrentJob(this.job);
+            this.ResetRequest(doers, receivers, this.masterRef, false);
+            this.validVariant = variantID;
+            return true;
+        }
+        else return false;
+    }
+
+    /// <summary>
+    /// Return COM name. For AP description, go for DescriptionText()
+    /// </summary>
     [JsonIgnore] public virtual string DisplayName { get {
             //if (targetCOM != null && targetCOM.comTags.Contains("food_meal")) Debug.LogError($"mealcom name {targetCOM.DisplayName(0)}, ismealcom ? {(targetCOM is COM_TakeMeal)}");
             return targetCOM != null ? (COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName()):" - "; } }
-     public string DescriptionText(bool isDoer, int charaRef)
+     protected string DescriptionText(bool isDoer, int charaRef)
     {
         if (targetCOM == null || COMVariantID < 0) return "";
 
@@ -160,7 +196,18 @@ public abstract class ActionPackage
         string s = targetCOM.GetVariantDescription(COMVariantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
 
         return s;
-    } 
+    }
+
+    public string DescriptionText()
+    {
+        return doer[0].FirstName + this.job.GetJobDescription(doer[0].RefID);
+    }
+    public string DescriptionText(int charaRef)
+    {
+        if (this.DoerRefs.Contains(charaRef)) return DescriptionText(true, charaRef);
+        else if (this.receiverRefs.Contains(charaRef)) return DescriptionText(false, charaRef);
+        else return "chara does not belong in this AP";
+    }
 
     protected int jobRefID = -1;
     protected Job job_cached = null;
@@ -479,9 +526,9 @@ public abstract class ActionPackage
         }
         else
         {
-            if (!targetCOM.ValidateJob(job))
+            if (!targetCOM.ValidateJob(job, out var msg))
             {
-                tooltip.Add("ActionPackage preEvaluation: job is invalid");
+                tooltip.Add("ActionPackage preEvaluation: job is invalid, "+ msg);
                 isValid = false;
             }
             else if (job.ParentRoom != null && !targetCOM.ValidateRoom(job.ParentRoom))
@@ -744,32 +791,27 @@ public abstract class ActionPackage
 
     }
     [SerializeField][JsonProperty] protected bool requested = false;
-    public void ResetRequest(List<int> doer, List<int> receiver, int masterRef){
+    public void ResetRequest(List<int> doer, List<int> receiver, int masterRef, bool resetRequestCheck = true){
 
         this.tooltip.Clear();
         
-        this.requested = false;
-        this.requestAccepted = false;
+        if (resetRequestCheck)
+        {
+            this.requested = false;
+            this.requestAccepted = false;
+        }
 
-        if (DoerRefs == null) doerRefs = new List<int>();
-        if (ReceiverRefs == null) receiverRefs = new List<int>();
+        receiver.Remove(-1);
+        if (doer != null && doer.Contains(0)) receiver.Remove(0);
 
-        this.doerRefs.Clear();
-        this.receiverRefs.Clear();
+        doerRefs = new List<int>(doer);
+        receiverRefs = new List<int>(receiver);
 
         this.doer_cache = null;
         this.receiver_cache = null;
         this.master_cached = null;
 
-        receiver.Remove(-1);
-        if (doer!=null && doer.Contains(0)) receiver.Remove(0);
-
-        if (doer != null) this.doerRefs.AddRange(doer);
-        if (receiver != null)this.receiverRefs.AddRange(receiver);
-
-
         this.masterRef = masterRef;
-
     }
     [SerializeField][JsonProperty] protected bool requestAccepted = false;
     //Dictionary<int, Dictionary<string, int>> result_stats;
@@ -944,6 +986,13 @@ public abstract class ActionPackage
 
         if (!requested) Request();
         executeSuccessful = true;
+
+        if (this.targetCOM != null && targetCOM.comTags.Contains("food_meal"))
+        {
+            //Debug.LogError("executing meal AP");
+        }
+
+
         foreach (var ep in packages)
         {
             ep.Execute();

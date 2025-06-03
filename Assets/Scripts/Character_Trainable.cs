@@ -6,6 +6,7 @@ using Newtonsoft.Json.Converters;
 using System.IO;
 using System.Collections;
 using System.Net.Mime;
+using Cysharp.Threading.Tasks;
 
 public enum Humanoid_GenderAppearance
 {
@@ -121,6 +122,31 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
     [JsonIgnore] public bool canMove { get { return canAct && !isRestrained && !isImprisoned; } }
     [JsonIgnore] public bool canLeave { get { return canMove && (CurrentJob == null || CurrentJob.CanBeInterrupted); } }
+    [JsonIgnore] public Manageable.HourlySchedule currentHourSchedule { get {
+            return GetJobPost(scr_System_Time.current.getCurrentTime().Hour);
+            //return jobpost == null ? null : jobpost.getRandCOM; 
+        } }
+
+
+    /// <summary>
+    /// If self is player, check all packages in job and find if has active <br/>
+    /// For NPC, since their AI is limited to work on job only when schedules says so, use schedule and match currentjob commands;
+    /// </summary>
+    [JsonIgnore] public bool isWorkingOnJob { get
+        {
+            if (this ==  scr_System_CampaignManager.current.Player)
+            {
+                return CurrentJob != null && CurrentJob.GetExistingPackages(this, false, false, false).FindAll(x => x.ComTags.Contains("job")).Count > 0;
+            }
+            else
+            {
+                var allcoms = CurrentJob == null ? new List<COM>() : CurrentJob.allusableCOMs;
+                var schedule = currentHourSchedule;
+                var scheduleCOMs = schedule == null ? new List<COM>() : schedule.COMs;
+                return scheduleCOMs.Count > 0 && allcoms.Count > 0 && Utility.ListContainsLoose(scheduleCOMs, allcoms);
+            }
+        } }
+
     public void LockFurnitureJob(Job_Furniture i)
     {
         //Debug.Log("LockFurnitureJob [" + FirstName + "] in [" + i.ParentInstance.DisplayName + "]");
@@ -283,6 +309,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     private void PostUpdateTime3()
     {
         this.Skills.FinalizeExperience();
+        this._cachedJobDescription = "";
     }
 
     private void Observer_GlobalMinute5(TimeSpan t)
@@ -312,6 +339,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public void NotifyFoodConsume(Item_Instance i)
     {
+        //Debug.LogError($"{FirstName} notify food consumption {i.DisplayName}");
         this.timeSinceLastEat = 0;
     }
     private void Observer_GlobalDay(int updateOrder)
@@ -603,6 +631,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public void TryGetJob(int currentHour, List<string> s)
     {
+
         if (RefID == 0)
         {
             if(CurrentJob != null && CurrentJob.hasActorCompletedJob(0)) ChangeCurrentJob(null);
@@ -903,7 +932,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 //foreach (Manageable faction in FactionManager.HomeFactions)
                 //{
-               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true));
+               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true, false));
                 //    break;
                 //}
 
@@ -1076,7 +1105,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             else if (this.CurrentJob != null) _cachedJobDescription = this.CurrentJob.GetJobDescription(RefID);
             else _cachedJobDescription = scr_System_Serializer.current.Dictionary.QueryThenParse("chara_currentjob_none"); ;
         }
-
         return _cachedJobDescription;
     }
 
@@ -1185,6 +1213,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
             if (!this.Stats.isConsciousnessUnconscious)
             {
+
+                this.Memory.AddEntry_Custom(new List<string>() { "forbidMerge" }, new List<string>(), -1, false, LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_sleep_end"), Memory_Attitude.None, Memory_Response.None);
                 // re-check every AP
                 Utility.GetAPsFrom(this, out List<ActionPackage> aps);
 
@@ -1373,6 +1403,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         var sleepHour = (int)Math.Ceiling(tired > 0 ? Math.Min(Stats.SleepHours * 60, tired) : Stats.SleepHours * 60);
         Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);
         Stats.RemoveStatusByStringMatch("chara_status_sleep_deprived");
+
+        this.Memory.AddEntry_Custom(new List<string>() { "forbidMerge" }, new List<string>(), -1, false, LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_sleep_begin"), Memory_Attitude.None, Memory_Response.None);
     }
 
     /// <summary>
@@ -1540,9 +1572,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay;
         scr_System_Time.current.Observer_globalTime_Day += Observer_DebugDailyRefresh;
 
+
         scr_UpdateHandler.current.Observer_PreUpdateTime += PreUpdateTime;
         scr_UpdateHandler.current.Observer_PostUpdateTime_2 += PostUpdateTime2;
         scr_UpdateHandler.current.Observer_PostUpdateTime_3 += PostUpdateTime3;
+        scr_UpdateHandler.current.Observer_PostUpdateTime_EventEnd += PostEvent;
+    }
+
+    protected void PostEvent()
+    {
+
     }
 
     protected void RemoveObservers()
@@ -1556,6 +1595,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         scr_UpdateHandler.current.Observer_PreUpdateTime -= PreUpdateTime;
         scr_UpdateHandler.current.Observer_PostUpdateTime_2 -= PostUpdateTime2;
         scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= PostUpdateTime3;
+        scr_UpdateHandler.current.Observer_PostUpdateTime_EventEnd -= PostEvent;
     }
 
     public RelationshipManager Relationships = null;

@@ -159,8 +159,7 @@
                         "displayName":"Multimedia Room",
                         "offsetY":-102.0,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 },
-                        { "ID":"lounge2_hallway2", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway3", "cost":1.0 }, { "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":["furniture_TV_flatscreen"],
                         "roomImagePath":"BlueArchive_Extracted/Media_UI_Scenario_Background/BG_Auditorium"
                     },
@@ -170,7 +169,7 @@
                         "offsetX":-314,
                         "offsetY":106.3,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway1", "cost":1.0 }, { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -183,7 +182,7 @@
                         "offsetX":-314,
                         "offsetY":23,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway1", "cost":1.0 }, { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -196,7 +195,7 @@
                         "offsetX":-314,
                         "offsetY":-60.5,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway1", "cost":1.0 }, { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -209,7 +208,7 @@
                         "offsetX":-314,
                         "offsetY":-142.2,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway1", "cost":1.0 }, { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -222,7 +221,7 @@
                         "offsetX":314,
                         "offsetY":106.3,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway2", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -235,7 +234,7 @@
                         "offsetX":314,
                         "offsetY":23,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway2", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -248,7 +247,7 @@
                         "offsetX":314,
                         "offsetY":-60.5,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway2", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -261,7 +260,7 @@
                         "offsetX":314,
                         "offsetY":-142.2,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway2", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -274,7 +273,7 @@
                         "offsetX":-122,
                         "offsetY":-349,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -287,7 +286,7 @@
                         "offsetX":-38,
                         "offsetY":-349,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -300,7 +299,7 @@
                         "offsetX":46,
                         "offsetY":-349,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -313,7 +312,7 @@
                         "offsetX":128,
                         "offsetY":-349,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
                             "furniture_shower",
@@ -352,7 +351,7 @@
                         "offsetX":-140.6,
                         "offsetY":336,
                         "connects": 
-                        [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway1", "cost":1.0 },{ "ID":"lounge2_hallway2", "cost":1.0 } ],
                         "furnitureIDs":["furniture_bed_single",
                                     "furniture_shower","furniture_bathroom_set",
                                 "furniture_table_1_chair_1","furniture_stove"],
@@ -364,7 +363,7 @@
                         "offsetX":139.3,
                         "offsetY":336,
                         "connects": 
-                        [ { "ID":"lounge2_hallway2", "cost":1.0 } ],
+                        [ { "ID":"lounge2_hallway1", "cost":1.0 },{ "ID":"lounge2_hallway2", "cost":1.0 } ],
                         "furnitureIDs":["furniture_bed_single",
                                     "furniture_shower","furniture_bathroom_set",
                                 "furniture_table_1_chair_1","furniture_stove"],
@@ -586,7 +585,7 @@
                     },
                     {
                         "ID":"South",
-                        "connectedRoom": "medbay_hallway_3",
+                        "connectedRoom": "medbay_hallway_4",
                         "offsetY":-450.0
                     },
                     {
@@ -596,7 +595,7 @@
                     },
                     {
                         "ID":"West",
-                        "connectedRoom": "medbay_hallway_4",
+                        "connectedRoom": "medbay_hallway_3",
                         "offsetX":-500.0
                     }
                 ],

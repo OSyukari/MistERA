@@ -104,12 +104,12 @@ public class Character_Personality
 
     public string GetKOJOMessage(string eventID, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs, RelationshipManager.Character_Relationship rel)
     {
-        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Try GetKOJOMessage evID["+eventID+"] [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", selfEPs) + "] target[" + String.Join("|", targetEPs) + "]");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Try GetKOJOMessage evID["+eventID+"] [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", selfEPs) + "] target[" + String.Join("|", targetEPs) + "]");
         if (rel.Owner.RefID == 0) return "";
         if (!entries.ContainsKey(eventID))
         {
             if (this.Fallback != null) return Fallback.GetKOJOMessage(eventID, selfEPs, targetEPs, rel);
-            else if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_Unimplemented_KojoEvent) return "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]";
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) return "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]";
             else return "";
         }
         if (!entries[eventID].Validate(rel.Owner)) return "";
@@ -118,11 +118,11 @@ public class Character_Personality
 
     public string GetKOJOMessage(string eventID,Character_Trainable owner,  List<string> selfTags, List<EvaluationPackage> allEPs)
     {
-        if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Try GetKOJOMessage from ["+owner.FirstName+"] evID[" + eventID + "] [missing relation, checking with all ep actors] self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", allEPs) + "]");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Try GetKOJOMessage from ["+owner.FirstName+"] evID[" + eventID + "] [missing relation, checking with all ep actors] self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", allEPs) + "]");
         if (!entries.ContainsKey(eventID))
         {
             if (this.Fallback != null) return Fallback.GetKOJOMessage(eventID, owner, selfTags, allEPs);
-            else if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_Unimplemented_KojoEvent) return "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "]";
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) return "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "]";
             else return "";
         }
         if (!entries[eventID].Validate(owner)) return "";
@@ -137,7 +137,7 @@ public class Character_Personality
         if (!entries.ContainsKey(comID))
         {
             if(this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ep, relation);
-            else if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_Unimplemented_KojoCOM) return "Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]";
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) return "Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]";
             else return "";
         }
 
@@ -150,7 +150,7 @@ public class Character_Personality
         {
             
             if (this.Fallback != null) return Fallback.GetKOJOMessage(eventID,rel);
-            else if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_Unimplemented_KojoEvent) return "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]";
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) return "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]";
             else return "";
         }
 
@@ -169,7 +169,7 @@ public class Character_Personality
         {
 
             if (this.Fallback != null) return Fallback.GetKOJOMessage(eventID, rel);
-            else if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_Unimplemented_KojoEvent) return "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]";
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) return "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]";
             else return "";
         }
 
@@ -206,7 +206,7 @@ public class Character_Personality
         {
             if (!Validate(rel.Owner, rel.Target)) return "";
 
-            if (debugLogging || scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Validating kojoResponse ["+ID+"] req [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
+            if (debugLogging || scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojoResponse ["+ID+"] req [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
 
 
 
@@ -219,7 +219,7 @@ public class Character_Personality
                     if (!i.keepLooking) break;
                 }
             }
-            if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("kojoResponse [" + String.Join("\n", responses) + "] ");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("kojoResponse [" + String.Join("\n", responses) + "] ");
             return String.Join("\n", responses);
         }
 
@@ -241,12 +241,12 @@ public class Character_Personality
                     relReceiver = owner == ep.Receiver ? null : owner.Relationships.FindRelationshipWith(ep.Receiver);
 
                     if (!Validate(owner, ep.Doer)) continue;
-                   if(scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log(owner.FirstName+  " kojo getresponse past validate before doer/receiver validate, relOwner ["+(relDoer == null ? "null "+(ep.Doer == null?"":ep.Doer.FirstName):relDoer.Owner.FirstName +"->"+relDoer.Target.FirstName)+"] relreceiver["+(relReceiver == null ? "null " + (ep.Receiver == null ? "" : ep.Receiver.FirstName) : relReceiver.Owner.FirstName +"->"+ relReceiver.Target.FirstName)+"]");
+                   if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log(owner.FirstName+  " kojo getresponse past validate before doer/receiver validate, relOwner ["+(relDoer == null ? "null "+(ep.Doer == null?"":ep.Doer.FirstName):relDoer.Owner.FirstName +"->"+relDoer.Target.FirstName)+"] relreceiver["+(relReceiver == null ? "null " + (ep.Receiver == null ? "" : ep.Receiver.FirstName) : relReceiver.Owner.FirstName +"->"+ relReceiver.Target.FirstName)+"]");
                     if (relDoer != null && i.isValid(relDoer, selfTags, ep.DoerTargetTag, ep))
                     {
                         isValid = true;
                         var v = i.GetRandomResponse(relDoer, selfTags, ep.DoerTargetTag, ep, true);
-                        //if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("finding epdescription "+v+", replace with "+ep.Description_Ongoing);
+                        //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription "+v+", replace with "+ep.Description_Ongoing);
                         responses.Add(v);
                         break;
                     }
@@ -254,7 +254,7 @@ public class Character_Personality
                     {
                         isValid = true;
                         var v = i.GetRandomResponse(relReceiver, selfTags, ep.ReceiverTargetTag, ep, true);
-                        //if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("finding epdescription "+v+", replace with "+ep.Description_Ongoing);
+                        //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription "+v+", replace with "+ep.Description_Ongoing);
                         responses.Add(v);
                         break;
                     }
@@ -300,7 +300,7 @@ public class Character_Personality
             List<string> ss2 = new List<string>();
             foreach (var i in selfEPs) ss1.Add(i.ToString());
             foreach (var i in targetEPs) ss2.Add(i.ToString());
-            if(scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Validating kojo req Multiple EPs [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self["+String.Join("|", ss1) +"] target["+String.Join("|", ss2) +"]");
+            if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req Multiple EPs [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self["+String.Join("|", ss1) +"] target["+String.Join("|", ss2) +"]");
 
 
 
@@ -371,7 +371,7 @@ public class Character_Personality
                    ( rel.Owner.CurrentJob == null || !(rel.Owner.CurrentJob is Job_Sex_Group) || !rel.Owner.CurrentJob.actorRefID.Contains(0))
                     )
                 {
-                    if(scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log(rel.Owner.FirstName + " kojo text skipped, no display");
+                    if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log(rel.Owner.FirstName + " kojo text skipped, no display");
                     return String.Join("\n", returnV);
                 }
 
@@ -437,7 +437,7 @@ public class Character_Personality
                     List<string> ss2 = new List<string>();
                     foreach(var i in selfEPs) ss1.Add(i.ToString());
                     foreach(var i in targetEPs) ss2.Add(i.ToString());
-                    if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Validating kojo req Multiple EPs [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self["+String.Join("|", ss1) +"] target["+String.Join("|", ss2) +"]");
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req Multiple EPs [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self["+String.Join("|", ss1) +"] target["+String.Join("|", ss2) +"]");
 
                     var sTags = new List<string>();
                     var tTags = new List<string>();
@@ -463,7 +463,7 @@ public class Character_Personality
 
                 public bool Validate(Character_Trainable self, Character_Trainable target, List<string> selfTags, List<string> targetTags, EvaluationPackage ep, RelationshipManager.Character_Relationship rel = null)
                 {
-                    if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_KojoEvents) Debug.Log("Validating kojo req [" + (self == null?"null":self.FirstName) + "->" + (target == null ? "null":target.FirstName) + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req [" + (self == null?"null":self.FirstName) + "->" + (target == null ? "null":target.FirstName) + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
 
                     if (ep != null)
                     {
@@ -563,14 +563,26 @@ public class Character_Personality
                     public string eventID = "";
                     public string eventLabel = "";
                     public bool reverseTargets = false;
+                    public string targetKeyword = "";
 
                     [JsonIgnore] public bool isValid { get { return this.eventID != ""; } }
 
                     public void Execute(RelationshipManager.Character_Relationship rel)
                     {
                         //Debug.LogError($"Startevent execute {reverseTargets} {rel.Owner.FirstName} {rel.Target.FirstName} {eventID} {eventLabel}");
-                        if (reverseTargets) scr_UpdateHandler.current.EventHandler.StartEvent(rel.Target, eventID, eventLabel, false);
-                        else scr_UpdateHandler.current.EventHandler.StartEvent(rel.Owner, eventID, eventLabel, false);
+                        EventInstance newEvent = null;
+                        if (reverseTargets)
+                        {
+                            newEvent = new EventInstance(rel.Target, eventID, eventLabel);
+                            if (targetKeyword != "") newEvent.Targets.Add(targetKeyword, new List<Character_Trainable>() { rel.Owner });
+                        }
+                        else
+                        {
+                            newEvent = new EventInstance(rel.Owner, eventID, eventLabel);
+                            if (targetKeyword != "") newEvent.Targets.Add(targetKeyword, new List<Character_Trainable>() { rel.Target });
+                        }
+
+                        if (newEvent != null) scr_UpdateHandler.current.EventHandler.StartEvent(newEvent, false);
                     }
                 }
 

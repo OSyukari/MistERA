@@ -19,7 +19,6 @@ public class Job_CharaCOM : Job
         {
             return scr_System_CampaignManager.current.GetCharaRoomInstance(charaRefID);
         } }
-
     [JsonIgnore] public override int targetActorRef { get { return this.charaRefID; } }
 
     /// <summary>

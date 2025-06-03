@@ -1149,8 +1149,11 @@
     },
     {
         "ID": "Interrupt",
-        "_comment":"Event trigger. Fires when anyone else executes AP in same room, check if Self action should be modified",
+        "_comment":"trigger. Fires when anyone else executes AP in same room, check if Self action should be modified",
         "_comment2":"Player is allowed to call interrupt on others, but response text will not display (results will get executed)",
+        "_comment3":"Relationship: [self] witnessing [target] action",
+        "_comment4":"fired when [target] start new action, or when [self] move into [target] room",
+        "_comment5":"any [self] tag must be preexisting",
         "interruptSelfJob":true,
         "variants":[
             {
@@ -1160,29 +1163,24 @@
                 "keepLooking":true
             },
             {
+                "_comment":"interrupt does not check self AP, selftags will mostly be [], so to remedy this, this response will trigger an event with eventInstance.Self == target, and inject self as argument, letting the event take care of validating everything",
                 "requirements": [ { "targetTags":["privacy"], "requireSelfAction":false, "requireTargetAction":true, "requireEPSuccess":false } ],
                 "responses":[ "($self$) $self$看到$target$$epDescription$</color>" ],
                 "results":[{"launchEvent":{"eventID":"RequestLeave_PrivateAction","eventLabel":"","reverseTargets":true}}]
             },
             {
-                "requirements": [ { "requireTargetAction":false, "targetTags":["service"] } ],
+                "requirements": [ { "requireTargetAction":false, "targetTags":["unsafe"] } ],
                 "hideWhenNotFocused":false,
-                "responses":[ "<color=#373737>($self$) $self$撞见$epDescription$，interrupt判定</color>" ]
+                "responses":[ "<color=#373737>($self$) $self$撞见$epDescription$ (unsafe interrupt)</color>" ]
             },
             {
-                "requirements": [ { "requireTargetAction":false, "targetTags":["sex"] } ],
-                "hideWhenNotFocused":false,
-                "responses":[ "<color=#373737>($self$) $self$撞见$epDescription$，interrupt判定</color>" ]
-            },
-            {
-                "requirements": [ { "selfTags":["recreation"], "targetTags":["job"] } ],
-                "hideWhenNotFocused":false,
-                "responses":[ "<color=#373737>($self$) 玩耍中的$self$撞见$target$工作中，interrupt判定</color>" ]
+                "requirements": [ { "targetTags":["job"] } ],
+                "responses":[ "<color=#373737>($self$) $self$撞见$target$$epDescription$ (join interrupt)</color>" ],
+                "results":[{"launchEvent":{"eventID":"RequestJoin","eventLabel":"","reverseTargets":false,"targetKeyword":"evTarget"}}]
             },
             {
                 "requirements": [ { "selfTags":["job"] ,"targetTags":["recreation"] } ],
-                "hideWhenNotFocused":false,
-                "responses":[ "<color=#373737>($self$) 工作中的$self$撞见$target$玩耍，interrupt判定</color>" ]
+                "responses":[ "<color=#373737>($self$) 工作中的$self$撞见$target$$epDescription$ (disrupt interrupt)</color>" ]
             }
         ]
     },

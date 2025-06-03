@@ -73,7 +73,7 @@ public class ActionPackage_PathTo : ActionPackage
         if (path == null) duration = 1;
         else{
 
-            if (scr_System_CentralControl.current.LogPrefs.Debug_Logging_Pathing)
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Pathing)
             {
                 List<string> l = new List<string>();
                 foreach (var i in _path) l.Add($"[{i.Source}]-"+(i.Tag == null ? "X" : i.Tag.Cost)+"->[{i.Target}]");
@@ -200,14 +200,15 @@ public class ActionPackage_PathTo : ActionPackage
                 string s2 = "";
                 bool askBreak = false;
                 //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
-                foreach(var charaRef in scr_System_CampaignManager.current.CharaInCurrentRoom)
+                
+                foreach (var charaRef in scr_System_CampaignManager.current.CharaInCurrentRoom)
                 {
                     if (charaRef == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(charaRef)) continue;
                     Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
                     if (c == null) continue;
-                    s2 += " "+c.FirstName;
+                    s2 += " " + c.FirstName;
                     askBreak = true;
-                    scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName+ " is in room" + room.DisplayName+  ", currently " + c.GetJobDescription(), true);
+                    //scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName + " is in room" + room.DisplayName + ", currently " + c.GetJobDescription(), true);
                 }
 
                 scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.pref.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Length > 0 ? "\ncurrently in room :"+s2:""), true);

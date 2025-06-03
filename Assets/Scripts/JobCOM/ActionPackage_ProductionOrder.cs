@@ -22,6 +22,22 @@ public class ActionPackage_ProductionOrder : ActionPackage
             return order_cache;
         }
     }
+
+    public override int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers)
+    {
+        var tempPackage = this.Copy();
+
+        doers = new List<int>(DoerRefs);
+        receivers = new List<int>(ReceiverRefs);
+
+        if (doers.Count < 1) doers.Add(c.RefID);
+        else if (!doers.Contains(c.RefID) && !receivers.Contains(c.RefID)) receivers.Add(c.RefID);
+
+        tempPackage.ResetRequest(doers, receivers, this.masterRef);
+        if (tempPackage.Validate()) return tempPackage.COMVariantID;
+        else return -1;
+    }
+
     private Job_Furniture jobFurn { get { return job as Job_Furniture; } }
 
     /*

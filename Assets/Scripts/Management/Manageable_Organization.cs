@@ -30,7 +30,7 @@ public class Manageable_HomeFaction : Manageable
     }
     public Manageable_HomeFaction(string id, int sleepHour = 23):base(id)
     {
-        this.Inventory = new FactionInventory(this, new List<string>() { "food_meal", "food_meat", "food_raw" });
+        this.Inventory = new FactionInventory(this, new List<string>() { "food_meal" });
         this.sharedSleepHour = sleepHour;
     }
 
