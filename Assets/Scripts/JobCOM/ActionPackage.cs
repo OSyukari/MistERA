@@ -170,13 +170,14 @@ public abstract class ActionPackage
     /// <returns></returns>
     public bool JoinAP(Character_Trainable c)
     {
-        var variantID = canJoinAP(c, out var doers, out var receivers);
+        var variantID = canJoinAP(c, out var doers1, out var receivers1);
         if (variantID >= 0)
         { 
             c.ChangeCurrentJob(this.job);
-            this.ResetRequest(doers, receivers, this.masterRef, false);
+            this.ResetRequest(doers1, receivers1, this.masterRef);
             this.validVariant = variantID;
-            return true;
+
+            return Request();
         }
         else return false;
     }

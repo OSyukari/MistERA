@@ -2,105 +2,8 @@
     "Events": {
         "list": [
             {
-                "ID": "RequestJoin_Job",
-                "SelfValidator":{
-                    "chara_conditions":[
-                        {"parameters":["exists"]},
-                        {"parameters":["excludePlayer"]},
-                        {"parameters":["isConscious"]},
-                        {"parameters":["isWorkingOnJob","false"]},
-                        {"parameters":["canInterruptJob"]}
-                    ]
-                },
-                "events": [
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "options":[
-                            {   
-                                "target_chara_conditions":{
-                                    "evTarget":[
-                                        {"parameters":["exists"]},
-                                        {"parameters":["excludePlayer"]},
-                                        {"parameters":["isConscious"]},
-                                        {"parameters":["isWorkingOnJob","true"]},
-                                        {"parameters":["hasJoinableAP"]}
-                                    ]
-                                },
-                                "option": "npc branch",
-                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_join_ops"]} ] 
-                            },
-                            {      
-                                "target_chara_conditions":{
-                                    "evTarget":[
-                                        {"parameters":["exists"]},
-                                        {"parameters":["isPlayer"]},
-                                        {"parameters":["isConscious"]},
-                                        {"parameters":["isWorkingOnJob","true"]},
-                                        {"parameters":["hasJoinableAP"]}
-                                    ]
-                                },
-                                "option": "player branch",
-                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
-                            },
-                            {      
-                                "option": "silent fail branch",
-                                "Results": [ { "Type":"EventEnd"} ] 
-                            }
-                        ],
-                        "isLast": true
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
-                        "label":"br_choice",
-                        "question":"event_RequestJoin_Job_ev01",
-                        "options":[
-                            {   
-                                "option": "event_RequestJoin_Job_ev01_op1",
-                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_join_ops"]} ] 
-                            },
-                            {   
-                                "option": "event_RequestJoin_Job_ev01_op2", "isDefaultCancel":true,
-                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_refuse"]} ] 
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "br_refuse",
-                        "isLast": true,
-                        "line": "event_RequestJoin_Job_ev02"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "label": "br_join_ops",
-                        "options":[
-                            {   
-                                "option": "silent branch event, this shouldnt be displayed",
-                                "Results": [ { "Type":"JoinTargetJob", "arguments":["evTarget", "job"]},
-                                             { "Type":"JumpToLabel", "arguments":["","br_join"]} ] 
-                            },
-                            {   
-                                "option": "silent fail branch",
-                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_join_fail"]} ] 
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "br_join",
-                        "isLast": true,
-                        "line": "event_RequestJoin_Job_ev03"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "br_join_fail",
-                        "isLast": true,
-                        "line": "event_RequestJoin_Job_ev04"
-                    }
-                ]
-            },
-            {
                 "ID": "RequestJoin",
+                "_comment":"this event requires code to inject valid event target prior to event start, the most complex validation [target has a joinable AP] should already be validated beforehand, and since this events only targets chara.currentjob and a job instance (unless its sex) only have 1 executing package per actor... no need to validate more.",
                 "SelfValidator":{
                     "chara_conditions":[
                         {"parameters":["exists"]},
@@ -165,7 +68,7 @@
                         "options":[
                             {   
                                 "option": "silent branch event, this shouldnt be displayed",
-                                "Results": [ { "Type":"MemoryEntry", "arguments":["evTarget", ""]},
+                                "Results": [ { "Type":"AddMemoryEntry", "arguments":["evTarget", ""]},
                                              { "Type":"JumpToLabel", "arguments":["","br_refuse"]} ] 
                             }
                         ]

@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class Job_CharaCOM : Job
 {
+    [JsonIgnore] public override bool MemoryEntrySoftMerge { get { return true; } }
     [SerializeField][JsonProperty] protected int charaRefID;
     private Character_Trainable ownerPointer = null;
 

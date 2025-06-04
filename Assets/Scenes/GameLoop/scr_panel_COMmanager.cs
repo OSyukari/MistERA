@@ -579,15 +579,14 @@ public class scr_panel_COMmanager : scr_Menu
 
         foreach(int jobRef in tempList)
         {
-            
+
+            Job j = scr_System_CampaignManager.current.FindJobInstanceByID(jobRef);
+
             if (!trackedJobRefs.Contains(jobRef) && scr_System_CampaignManager.current.FindJobInstanceByID(jobRef) != null)
             {
 
                 //Debug.Log("tracking jobRef " + jobRef);
-
                 trackedJobRefs.Add(jobRef);
-                Job j = scr_System_CampaignManager.current.FindJobInstanceByID(jobRef);
-
 
                 if (j is Job_CharaCOM)
                 {
@@ -687,20 +686,18 @@ public class scr_panel_COMmanager : scr_Menu
                         else
                         {
                             var packages = (j as Job_Furniture).MakePackagesJoinable(scr_System_CampaignManager.current.Player);
-                            if (packages.Count > 0)
+
+                            foreach(var ap in packages)
                             {
-                                foreach(var ap in packages)
-                                {
-                                    MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, false, true);
-                                }
+                                MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, false, true);
                             }
-                            else
+                            
+                            
+                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true))
                             {
-                                foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true))
-                                {
-                                    MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, ap.targetCOM, ap.targetCOM.COMRepeat, false, ap);
-                                }
+                                MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, ap.targetCOM, ap.targetCOM.COMRepeat, false, ap);
                             }
+                            
                         }
                     }
 
@@ -715,7 +712,6 @@ public class scr_panel_COMmanager : scr_Menu
             else
             {
                 //Debug.Log(jobRef+" already tracked");
-                Job j = scr_System_CampaignManager.current.FindJobInstanceByID(jobRef);
                 if(j is Job_Furniture)
                 {
                     foreach (var ap in j.JoinablePackages(0))
@@ -1349,7 +1345,7 @@ else */
                     tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
                     //text.SetText(package.DisplayName);
 
-                    if (package.Validate())
+                    if (package.Validate() && ((job is not Job_Furniture) || job.ExecutingPackages.Count < 1))
                     {
                         returnVal = returnVal && true;
                         tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost [" + package.ResourceCost + "]\n";

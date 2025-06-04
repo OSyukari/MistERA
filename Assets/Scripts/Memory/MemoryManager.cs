@@ -173,7 +173,7 @@ public class MemoryManager
     public IEnumerable<Memory_Entry> FindEntryWithFilter(int targetRef = -1, string targetCOM = "", List<string> comTags = null)
     {
         if (targetRef == -1 && targetCOM == "" && comTags == null) yield break;
-        foreach (var i in Entries) if (i.Validate(targetRef, targetCOM, comTags)) yield return i;
+        foreach (var i in Entries) if (i.isRelevant(targetRef, targetCOM, comTags)) yield return i;
     }
 
     private Memory_Entry GetMostRecentEntry(int targetRef = -1, COM com = null, List<string> comTags = null, bool checkConscious = true)
@@ -181,7 +181,7 @@ public class MemoryManager
         for (int i = entries.Count - 1; i >= 0; i--)
         {
             var mem = Entries[i];
-            if (mem.Validate(targetRef, com == null ? "" : com.ID, comTags, checkConscious)) return mem;
+            if (mem.isRelevant(targetRef, com == null ? "" : com.ID, comTags, checkConscious)) return mem;
         }
         return null;
     }
@@ -197,152 +197,100 @@ public class MemoryManager
     //Character_Trainable ownerCache = null;
     //Character_Trainable Owner { get { if (ownerCache == null) ownerCache = scr_System_CampaignManager.current.FindInstanceByID(ownerRefID); return ownerCache; } }
 
-
-
-    public void EndOngoingLog(DateTime actorJoinTime)
-    {
-        //SexLogManager.EndOngoingLog(timestamp);
-        if (this.entries == null || this.entries.Count < 1) return;
-        var last = this.Entries[this.entries.Count - 1];
-
-        last.EndOngoing(scr_System_Time.current.getCurrentTime());
-    }
-
-
-    /// External Interfaces 
+    /// <summary>
+    /// Duration == -2 -> permanent. <br/> Duration == -1 -> default
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="duration"></param>
+    /// <returns></returns>
     /// 
-
-    public Memory_Entry AddEntry_COM(List<string> selfTags, List<string> targetCOMtags, int targetRef, COM targetCOM, int comVariant, bool isDoer, string description, Memory_Response response, Memory_Attitude attitude, int duration = -1, int masterRef = -1, List<int> additionalActors = null)
-    {
-        //Memory_Entry_COM entry = new Memory_Entry_COM(ownerRef, targetRef, targetCOM, description, attitude_begin, attitude_end, duration);
-        return AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description, response, attitude, duration, targetCOM, comVariant,  masterRef, additionalActors);
-    }
-
-    public Memory_Entry AddEntry_Request(List<string> selfTags, List<string> targetCOMtags, int targetRef, COM targetCOM, int comVariant, bool isDoer, string description, Memory_Attitude attitude, Memory_Response response, int duration = -1, int masterRef = -1, List<int> additionalActors = null)
-    {
-        //Memory_Entry_Request entry = new Memory_Entry_Request(ownerRef, targetRef, targetCOM, description, attitude, response, duration);
-        return AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description, response, attitude, duration, targetCOM, comVariant,  masterRef, additionalActors);
-    }
-
-    /// <summary>
-    /// use description to append more data using '||' split
-    /// </summary>
-    /// <param name="targetRef"></param>
-    /// <param name="isDoer"></param>
-    /// <param name="tags"></param>
-    /// <param name="description"></param>
-    /// <param name="attitude"></param>
-    /// <param name="response"></param>
-    /// <param name="duration"></param>
-    /// <param name="masterRef"></param>
-    public Memory_Entry AddEntry_Custom(List<string> selfTags, List<string> targetCOMtags, int targetRef, bool isDoer, string description, Memory_Attitude attitude, Memory_Response response, int duration = -1, int masterRef = -1)
-    {
-        description = description.Replace("$room$", scr_System_CampaignManager.current.Map.FindRoomByChara(Owner.RefID).DisplayName);
-        //Memory_Entry_Custom entry = new Memory_Entry_Custom(ownerRef, targetRef, tags, description, attitude, response, duration);
-        //if (description != null && description.Length > 0) Debug.LogError("Adding custom description " + description);
-        return AddEntry(selfTags, targetCOMtags, isDoer, targetRef, description,response, attitude, duration, null, -1, masterRef);
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="targetRef"></param>
-    /// <param name="desc">Description. It is possible to insert multiple description using Split '||' with first item being the unique string ID, all other elements (numbers) will be merged and replace back in.</param>
-    /// <param name="attitude"></param>
-    /// <param name="response"></param>
-    /// <param name="duration"></param>
-    /// <param name="targetCOM"></param>
-    /// <param name="tags">If targetCOM is non null, then anything filled in tags will be added to targetCOM's tags as additional tags.</param>
-    protected Memory_Entry AddEntry(List<string> selfTags, List<string> targetCOMtags, bool isDoer, int targetRef, string desc, Memory_Response response, Memory_Attitude attitude, int duration = -1, COM targetCOM = null, int comVariant = -1,  int masterRef = -1, List<int> additionalActors = null)
+    public Memory_Entry AddEntry(MemInstance memInstance, List<string> selfTags, int duration = -1)
     {
         ClearCache();
 
-        bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner.BaseID == "Campaign1_Char_Ako";
+        var roomRef = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID).RefID;
+        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance);
 
-        duration = Owner.Stats.MemoryLength;
-        var description = new List<string>();
-        if (desc != null && desc.Length > 0) description.Add(desc);
-        if (selfTags == null) selfTags = new List<string>();
-        if(targetCOMtags == null) targetCOMtags = new List<string>();
-
-        selfTags = selfTags.Distinct().ToList();
-        targetCOMtags = targetCOMtags.Distinct().ToList();
-        //if (targetCOM != null && targetCOM.comTags.Contains("initSex")) tags.Add("sex");
-
-        var last = entries.Count > 0 ? Entries[entries.Count - 1] : null;
-
-        List<int> targetRefs = new List<int> { targetRef };
-        if (additionalActors != null) targetRefs.AddRange(additionalActors);
-
-        int mergeComUnderTimeframe = 60;
-
-        if (last != null && (last.StartTime == scr_System_Time.current.getCurrentTime()))// || (last.Tags.Contains("initSex") && !last.Tags.Contains("endSex"))))
+        if (this.Last == null || !this.Last.TryMergeWith(entry))
         {
-            if (debug) Debug.Log("MemoryManager sametimemerge");
-            last.MergeEntry(isDoer, targetRefs, desc, response, attitude, duration, targetCOM, comVariant,  masterRef, selfTags, targetCOMtags);
-            return last;
+            this.entries.Add(entry.StartTime.Ticks, entry);
+            return entry;
         }
-        else if (   last != null &&
-                    areTagsMergeable(selfTags, last.selfTags) && areTagsMergeable(targetCOMtags, last.targetTags) &&
-                    ( targetCOM == null || targetCOM.TimeScale <= 30) &&
-                    (   // limit merging to stack that is less than 5 minutes and total less than 15 minutes. Longer com will not be merged. Sorter COM will be merged up to 15 min
-                        //(last.Tags.Contains("mergeWithAll") || tags.Contains("mergeWithAll")) ||
-                        ((targetCOM == null || last.hasInteractionWithCOMID(targetCOM.ID)) && ((scr_System_Time.current.getCurrentTime() - last.StartTime).TotalMinutes <= mergeComUnderTimeframe)) || // non sex require targetcom the same, allow new actor joining
-                        (last.isSexMemory && last.isOngoing) || // targetCOM.isSexCOM, allow sex to merge with all non sex
-                        (last.isSexTouchMemory && last.isOngoing && targetCOM != null && (targetCOM.isSexCOM || targetCOM.isTouchCOM || targetCOM.isUnsafe)) ||
-                        (last.isTouchMemory && (targetCOM != null && !targetCOM.isSexCOM) && ((targetCOM != null && targetCOM.isTouchCOM) || response != Memory_Response.Refuse))  // targetCOM.isTouchCOM, forbid upward merge with sex com
-                    )
-                )
+        else return this.Last;
+
+    }
+    public Memory_Entry AddEntry(string description, List<int> targets, List<string> selfTags, List<string> targetTags, int duration = -1, Memory_Response response = Memory_Response.Accept, Memory_Attitude attitude = Memory_Attitude.Neutral)
+    {
+        ClearCache();
+
+        var roomRef = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID).RefID;
+
+        MemInstance memInstance = new MemInstance(targets, targetTags, "", -1, -1, false, response, attitude, description);
+        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance);
+
+        if (this.Last == null || !this.Last.TryMergeWith(entry))
         {
-            if (debug) Debug.Log("MemoryManager tagsmerge");
-            // merge lastEntry with current Entry
-            // masterref not merged, store it with com
-            last.MergeEntry(isDoer, targetRefs, desc, response, attitude, duration, targetCOM, comVariant, masterRef, selfTags, targetCOMtags);
-            return last;
+            this.entries.Add(entry.StartTime.Ticks, entry);
+            return entry;
+        }
+        else return this.Last;
+    }
+    /// <summary>
+    /// Duration == -2 -> permanent. <br/> Duration == -1 -> default
+    /// </summary>
+    /// <param name="ep"></param>
+    /// <param name="duration"></param>
+    /// <returns></returns>
+    public Memory_Entry AddEntry(EvaluationPackage ep, int duration = -1)
+    {
+        ClearCache();
+
+        List<string> selfTags, targetTags;
+        Memory_Attitude attitude;
+        List<int> targets = new List<int>();
+        foreach(var i in ep.Actors) if (i != Owner) targets.Add(i.RefID);
+        bool isDoer = false;
+        string description = ep.Package.DescriptionText(Owner.RefID);
+
+        if (ep.Doer == Owner)
+        {
+            selfTags = ep.DoerSelfTag;
+            targetTags = ep.ReceiverTargetTag;
+            attitude = ep.DoerAttitude;
+            isDoer = true;
+        }
+        else if (ep.Receiver == Owner && !ep.Package.ComTags.Contains("ignored"))
+        {
+            selfTags = ep.ReceiverSelfTag;
+            targetTags = ep.DoerTargetTag;
+            attitude = ep.ReceiverAttitude;
+        }
+        else if (ep.Master == Owner)
+        {
+            selfTags = new List<string>();
+            targetTags = new List<string>();
+            attitude = Memory_Attitude.Neutral;
         }
         else
         {
-            // make new entry
-            if (debug)
-            {
-                if (last != null) Debug.Log("MemoryManager makeNewEntry, prev conditions:" 
-                + " tagsMergeble[" + (areTagsMergeable(selfTags, last.selfTags)) + " "+ (areTagsMergeable(targetCOMtags, last.targetTags)) 
-                + "] timecost [" + ((targetCOM == null || targetCOM.TimeScale <= 5)) + "]"
-               // +" cond0["+ (last.Tags.Contains("") || tags.Contains("mergeWithAll")) + "]" 
-                + $" cond1[{targetCOM != null} {targetCOM != null && last.hasInteractionWithCOMID(targetCOM.ID)} {(scr_System_Time.current.getCurrentTime() - last.StartTime).Minutes < mergeComUnderTimeframe}"
-                + "] cond2[" + (last.isSexMemory)+ " " + (last.isOngoing)
-                + $"] cond3[{last.isSexTouchMemory} {last.isOngoing} {targetCOM != null && targetCOM.isSexCOM} {targetCOM != null && targetCOM.isTouchCOM} {targetCOM != null && targetCOM.isUnsafe}"
-                + "] cond4["+ (last.isTouchMemory)+ " " + (targetCOM != null && !targetCOM.isSexCOM) + " "+ (targetCOM != null && targetCOM.isTouchCOM)+ "||"+ (response != Memory_Response.Refuse) + "]");
-                else Debug.Log("MemoryManager newEntry last null");
-            }
-            string roomName = scr_System_CampaignManager.current.GetCharaRoomInstance(this.ownerRef).DisplayName;
-            Memory_Entry entry = new Memory_Entry(this.ownerRef, targetRefs, description, response, attitude, duration, targetCOM, comVariant, isDoer, masterRef, selfTags, targetCOMtags, roomName);
-            entries.Add(entry.StartTime.Ticks, entry);
-            /*  new empty entry with mergewithall
-             
-                if (debug) Debug.Log("MemoryManager mergewithall， cannot merge with prev, cond1["+(last != null) +"] cond2.1["+(last == null?"null": last.isOngoing) +"] cond2.2["+(last == null?"null": last.StartTime == scr_System_Time.current.getCurrentTime()) +"]");
-                string roomName = scr_System_CampaignManager.current.GetCharaRoomInstance(this.ownerRef).DisplayName;
-                Memory_Entry entry = new Memory_Entry(this.ownerRef, targetRefs, description, attitude, response, attitude_end, duration, targetCOM, comVariant, isDoer, masterRef, tags, roomName);
-                entries.Add(entry.StartTime.Ticks, entry);
-             
-             */
+            return null;
+        }
+        var memDuration = selfTags.Contains("important") || duration < -1 ? -2 : duration != -1 ? duration : Owner.Stats.MemoryLength;
+
+
+        var job = ep == null || ep.Package == null ? null : ep.Package.job;
+        var roomRef = ep == null || ep.Package == null ? -1 : ep.Package.RoomKey;
+        var jobDesc = ep == null || ep.Package == null || ep.Package.job == null || !ep.job.MemoryEntrySoftMerge ? "" : ep.Package.job.GetJobDescription(Owner.RefID);
+
+        MemInstance memInstance = new MemInstance(targets, targetTags, ep.targetCOM == null ? "" : ep.targetCOM.ID, ep.VariantID, ep.Master == null ? -1 : ep.Master.RefID, isDoer, ep.Response, attitude, description);
+        Memory_Entry entry = new Memory_Entry(Owner, job, roomRef, selfTags, memInstance, jobDesc, memDuration);
+
+        if (this.Last == null || !this.Last.TryMergeWith(entry))
+        {
+            this.entries.Add(entry.StartTime.Ticks, entry);
             return entry;
         }
+        else return this.Last;
     }
-
-    protected bool areTagsMergeable(List<string> newTags, List<string> lastTags)
-    {
-        if (newTags.Contains("forbidMerge") || lastTags.Contains("forbidMerge")) return false;
-        var returnVal = true;
-
-        returnVal = (newTags.Contains("timestop") == lastTags.Contains("timestop")) && returnVal;
-        returnVal = (newTags.Contains("sleeping") == lastTags.Contains("sleeping")) && returnVal;
-        returnVal = (newTags.Contains("unconscious") == lastTags.Contains("unconscious")) && returnVal;
-
-        returnVal = !(newTags.Contains("sex") && lastTags.Contains("safe")) && returnVal;
-
-        return returnVal || newTags.Contains("mergeWithAll") || lastTags.Contains("mergeWithAll");
-    }
-
 }
 

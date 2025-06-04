@@ -322,8 +322,8 @@ public class Job_Furniture : Job
             if (pl2 != null)
             {
                 if (pl2.DoerRefs.Contains(scr_System_CampaignManager.current.Player.RefID)) {
-                    ss += "try join player existing pkg " + pl2.DescriptionText(c.RefID);
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{c.FirstName} try join player {pl2.DescriptionText(c.RefID)}");
+                    ss += "try join player existing pkg " + pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID);
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.LogError($"{c.FirstName} try join player {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}");
                     var ev = new EventInstance(c, "RequestJoin", "");
                     ev.Self = c;
                     ev.Targets.Add("evTarget", new List<Character_Trainable>() { scr_System_CampaignManager.current.Player });
@@ -335,7 +335,7 @@ public class Job_Furniture : Job
                 {
                     pl2.JoinAP(c);
                     ss += "join existing pkg " + pl2.DescriptionText(c.RefID);
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");
                     return true;
                 }
 

@@ -143,16 +143,15 @@ public class EvaluationPackage
     [JsonIgnore]
     public Memory_Attitude ReceiverAttitude
     {
-        get
-        {
-            return attitude_receiver;
-        }
+        get { return attitude_receiver; }
+        set { attitude_receiver = value; }
     }
 
     [JsonIgnore]
     public Memory_Attitude DoerAttitude
     {
         get{ return attitude_doer; }
+        set { attitude_doer = value; }
     }
 
     [SerializeField][JsonProperty] List<string> extraDoerTags = new List<string>();
@@ -734,17 +733,20 @@ public class EvaluationPackage
         extraReceiverTags = new List<string>();
         Utility.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
 
-        if (response == Memory_Response.None)
+        if (response == Memory_Response.None || response == Memory_Response.Refuse)
         {// doer unwilling
-            Doer.Memory.AddEntry_Request(DoerSelfTag, ReceiverTargetTag, p.Master != null ? p.masterRef : (Receiver != null ? Receiver.RefID : Doer.RefID), targetCOM, VariantID, true, null, attitude_doer, Memory_Response.Refuse, Doer.Stats.MemoryLength, p.masterRef);
+            Doer.Memory.AddEntry(this);
+            //(DoerSelfTag, ReceiverTargetTag, p.Master != null ? p.masterRef : (Receiver != null ? Receiver.RefID : Doer.RefID), targetCOM, VariantID, true, null, attitude_doer, Memory_Response.Refuse, Doer.Stats.MemoryLength, p.masterRef);
+            if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry(this);
         }
+        /*
         else if (response == Memory_Response.Refuse)
         {
             Doer.Memory.AddEntry_Request(DoerSelfTag, ReceiverTargetTag, Receiver == null ? Doer.RefID : Receiver.RefID, targetCOM, VariantID, true, null, attitude_doer, response, Doer.Stats.MemoryLength, p.masterRef);
             if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_Request(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, attitude_receiver, response, Receiver.Stats.MemoryLength, p.masterRef);
 
             
-        }
+        }*/
         else if (response == Memory_Response.Accept)
         {
             if (targetCOM is COM_Sex)
@@ -758,9 +760,12 @@ public class EvaluationPackage
 
 
 
+                Doer.Memory.AddEntry(this);
+                if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry(this);
+                /*
                 Doer.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, Receiver == null ? Doer.RefID : Receiver.RefID, targetCOM, VariantID, true, null, Memory_Response.Accept, attitude_doer, Doer.Stats.MemoryLength, p.masterRef);
                 if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, Memory_Response.Accept, attitude_receiver, Receiver.Stats.MemoryLength, p.masterRef);
-
+                */
                 Utility.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag,  m);
                 Utility.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m);
             }
@@ -778,7 +783,11 @@ public class EvaluationPackage
                 string s = LocalizeDictionary.Instance.Index.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
                 Utility.StringReplace(entry.body.Owner, ref s);
                 this.m.AddMessage(entry.body.Owner.RefID, s);
-                entry.body.Owner.Memory.AddEntry_Custom(new List<string>() { "mergeWithAll", "important" } , new List<string>(), entry.targetRef, false, entry.body.FirstExperienceDesc, Memory_Attitude.None, Memory_Response.None);
+
+                //entry.body.Owner.Memory.AddEntry_Custom(new List<string>() { "mergeWithAll", "important" } , new List<string>(), entry.targetRef, false, entry.body.FirstExperienceDesc, Memory_Attitude.None, Memory_Response.None);
+                
+                var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>(), "", -1, -1, false, Memory_Response.Refuse, Memory_Attitude.Hate, entry.body.FirstExperienceDesc);
+                var mem = entry.body.Owner.Memory.AddEntry(memInst2, new List<string>() { "mergeWithAll", "important" }, -2);
             }
         }
         logExps.Clear();
@@ -1091,14 +1100,22 @@ public class EvaluationPackage
         }
 
         Memory_Attitude fucked_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + (int)(fuckedPleasure / 5)));
-        if (fucked_att != Memory_Attitude.None && logMessage) internal_fucked.Owner.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, fucker.RefID, com, VariantID, false, null, internal_fucked.Owner.canAct ? Memory_Response.Success : Memory_Response.Accept, fucked_att, internal_fucked.Owner.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
-
         Memory_Attitude fucker_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_doer + (int)(fuckerPleasure / 5)));
-        if (fucker != null && fucker_att != Memory_Attitude.None && logMessage) fucker.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, internal_fucked.Owner.RefID, com, VariantID, true, null, fucker.canAct ? Memory_Response.Success : Memory_Response.Accept, fucker_att, fucker.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
+        DoerAttitude = fucker == Doer ? fucker_att : fucked_att;
+        ReceiverAttitude = internal_fucked.Owner == Receiver ? fucked_att : fucker_att;
+
+        if (DoerAttitude != Memory_Attitude.None) Doer.Memory.AddEntry(this);
+        if (ReceiverAttitude != Memory_Attitude.None && Receiver != null && Receiver != Doer && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry(this);
+
+        //if (fucked_att != Memory_Attitude.None && logMessage) internal_fucked.Owner.Memory.AddEntry(this);
+        //internal_fucked.Owner.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, fucker.RefID, com, VariantID, false, null, internal_fucked.Owner.canAct ? Memory_Response.Success : Memory_Response.Accept, fucked_att, internal_fucked.Owner.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
+
+
+        //if (fucker != null && fucker_att != Memory_Attitude.None && logMessage) fucker.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, internal_fucked.Owner.RefID, com, VariantID, true, null, fucker.canAct ? Memory_Response.Success : Memory_Response.Accept, fucker_att, fucker.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
 
         Debug.Log("Fuck_3 final interaction result fuckerPleasure["+fuckerPleasure+"] initA["+attitude_doer.ToString()+"] endA["+fucker_att.ToString()+"] fuckedPleasure["+fuckedPleasure+ "] initA["+attitude_receiver.ToString()+"] endA[" + fucked_att.ToString()+"]");
-        attitude_receiver = fucked_att;
-        attitude_doer = fucker_att;
+        //attitude_receiver = fucked_att;
+        //attitude_doer = fucker_att;
         return true;
     }
 

@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections;
 using System.Net.Mime;
 using Cysharp.Threading.Tasks;
+using UnityEditorInternal;
 
 public enum Humanoid_GenderAppearance
 {
@@ -1079,13 +1080,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         return -1;
     }
 
-    public void EndOngoingMemory(DateTime actorJoinTime, string ignoreMemorywithTag = "")
-    {
-        //Debug.Log("CHARA " + FullName + " END ONGOING MEMORY");
-        if (this.Memory.Last == null) return;
-        if (ignoreMemorywithTag == "" || !this.Memory.Last.Tags.Contains(ignoreMemorywithTag)) this.Memory.EndOngoingLog(actorJoinTime);
-    }
-
     [SerializeField][JsonProperty] private int interactionJobRef = -1;
     private Job_CharaCOM interactionJobPointer = null;
     [JsonIgnore] public Job_CharaCOM InteractionJob { get { if (interactionJobPointer == null) interactionJobPointer = scr_System_CampaignManager.current.FindJobInstanceByID(interactionJobRef) as Job_CharaCOM;
@@ -1214,7 +1208,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (!this.Stats.isConsciousnessUnconscious)
             {
 
-                this.Memory.AddEntry_Custom(new List<string>() { "forbidMerge" }, new List<string>(), -1, false, LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_sleep_end"), Memory_Attitude.None, Memory_Response.None);
+                var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_sleep_end"));
+                this.Memory.AddEntry(memInst, new List<string>() { "forbidMerge" });
                 // re-check every AP
                 Utility.GetAPsFrom(this, out List<ActionPackage> aps);
 
@@ -1331,8 +1326,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     }
                 }
 
-                this.Memory.Last.EndOngoing(scr_System_Time.current.getCurrentTime());
-
                 if (accepted.Count >= 1)
                 {
                     var randRel = accepted[Utility.GetRandIndexFromListCount(accepted.Count)];
@@ -1353,8 +1346,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Trust, -30, logger);
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Fear, 30, logger);
 
-                    var mem = this.Memory.AddEntry_Custom(new List<string>(), new List<string>() { "forbidMerge" }, randRel.TargetID, false, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultFailed").Replace("$target$", randRel.Target.firstName), Memory_Attitude.Hate, Memory_Response.Refuse, Stats.MemoryLength*10);
-                    mem.AddMoodletScore(-2, -4, 0);
+                    var memInst2 = new MemInstance(new List<int>() { randRel.TargetID }, new List<string>(), "", -1, -1, true, Memory_Response.Refuse, Memory_Attitude.Hate, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultFailed").Replace("$target$", randRel.Target.firstName));
+                    memInst2.AddMoodletScore(-2, -4, 0);
+                    var mem = this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" }, Stats.MemoryLength * 10);
                 }
                 else
                 {
@@ -1367,8 +1361,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     // add moodlet
                     if (selfTags.Count > 0)
                     {
-                        var mem = this.Memory.AddEntry_Custom(new List<string>(), new List<string>() { "forbidMerge" }, -1, false, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultDiscover"), Memory_Attitude.Hate, Memory_Response.Refuse, Stats.MemoryLength * 10);
-                        mem.AddMoodletScore(selfTags.Count, (-selfTags.Count - 1) * 2, 0);
+                        var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.Refuse, Memory_Attitude.Hate, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultDiscover"));
+                        memInst2.AddMoodletScore(selfTags.Count, (-selfTags.Count - 1) * 2, 0);
+                        var mem = this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" }, Stats.MemoryLength * 10);
                     }
                 }
 
@@ -1404,7 +1399,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);
         Stats.RemoveStatusByStringMatch("chara_status_sleep_deprived");
 
-        this.Memory.AddEntry_Custom(new List<string>() { "forbidMerge" }, new List<string>(), -1, false, LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_sleep_begin"), Memory_Attitude.None, Memory_Response.None);
+        var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_sleep_begin"));
+        this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" });
     }
 
     /// <summary>

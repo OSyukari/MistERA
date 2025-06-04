@@ -217,6 +217,20 @@ public static class Utility
         }
     }
 
+    public static bool AreMemoryTagsMergeable(List<string> newTags, List<string> lastTags)
+    {
+        if (newTags.Contains("forbidMerge") || lastTags.Contains("forbidMerge")) return false;
+        var returnVal = true;
+
+        returnVal = (newTags.Contains("timestop") == lastTags.Contains("timestop")) && returnVal;
+        returnVal = (newTags.Contains("sleeping") == lastTags.Contains("sleeping")) && returnVal;
+        returnVal = (newTags.Contains("unconscious") == lastTags.Contains("unconscious")) && returnVal;
+
+        returnVal = !(newTags.Contains("sex") && lastTags.Contains("safe")) && returnVal;
+
+        return returnVal || newTags.Contains("mergeWithAll") || lastTags.Contains("mergeWithAll");
+    }
+
     static Regex regex_eventKeyword = new Regex(@"\$[a-zA-Z\._]+\$");
     /// <summary>
     /// This will auto run dictionary query parse on string s
@@ -1664,7 +1678,9 @@ public static class EventUtility
 
                     return true;
                 } else return false;
-            default: return false;
+            case Event.EventEntry.Options.ExecutionType.AddMemoryEntry:
+                return true;
+            default: return true;
 
         }
     }

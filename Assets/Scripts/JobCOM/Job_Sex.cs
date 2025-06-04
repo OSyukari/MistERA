@@ -28,6 +28,7 @@ public class Job_Sex_Group : Job
     /// Used for serializer. DO NOT CALL THIS MANUALLY!!!!
     /// </summary>
     public Job_Sex_Group():base() { }
+    [JsonIgnore] public override bool MemoryEntrySoftMerge { get { return true; } }
     public Job_Sex_Group(List<int> actorRefID, Room_Instance ri, bool immediateUndress = true)
     {
         Debug.Log("new sex job group initialized with actors ["+String.Join(",",actorRefID)+"]");
@@ -148,7 +149,6 @@ public class Job_Sex_Group : Job
         if (!actorJoinTime.ContainsKey((int)charaRef))
         {
             actorJoinTime.Add(charaRef, scr_System_Time.current.getCurrentTime());
-            scr_System_CampaignManager.current.FindInstanceByID(charaRef).EndOngoingMemory(actorJoinTime[charaRef], "initSex");
         }
         c.ChangeCurrentJob(this);
 
@@ -199,7 +199,6 @@ public class Job_Sex_Group : Job
         {
 
             var chara = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
-            chara.EndOngoingMemory(actorJoinTime[charaRef]);
             this.actorJoinTime.Remove(charaRef);
             chara.ChangeCurrentJob(null);
         }

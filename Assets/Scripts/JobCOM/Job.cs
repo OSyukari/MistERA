@@ -25,6 +25,7 @@ public interface I_Disposable
 [System.Serializable]
 public class Job : IDisposable, I_Disposable
 {
+    [JsonIgnore] public virtual bool MemoryEntrySoftMerge { get { return false; } }
     [JsonIgnore] public virtual string DisplayName
     {
         get
@@ -404,7 +405,7 @@ public class Job : IDisposable, I_Disposable
         var returnVal = new List<ActionPackage>();
         foreach(var ap in ExecutingPackages)
         {
-            if(ap.Duration <= 0) continue;
+            if(ap.Duration < 2) continue;
             if(ap.actorRefs.Contains(actorRef)) continue;
             if(!ap.AllowJoining) continue;
             returnVal.Add(ap);
@@ -578,7 +579,7 @@ public class Job : IDisposable, I_Disposable
     public virtual void PostUpdateTime()
     {
         //Debug.Log("PostUpdateTime for job " + this.jobRefID);
-        actorJobComplete.Clear();
+        actorJobComplete.RemoveAll(x => !this.actorRefID.Contains(x));
         for ( int i = packages_previous.Count -1; i >= 0; i--)
         {
             // Duration 0 meaning they just run, meaning
