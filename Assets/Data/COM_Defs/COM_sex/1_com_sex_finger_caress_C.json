@@ -20,7 +20,7 @@
                             "BodyTags":["clit"],
                             "minRevealingScore":2,
                             "requireConscious":false,
-                            "requireAction":false
+                            "requireAction": false
                         }
                     }
                 },

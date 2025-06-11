@@ -13,7 +13,7 @@
                     "receiverCount":1,
                     "req_Receivers":{
                         "requireConscious":false,
-                        "requireAction":false
+                        "requireAction": false
                     }
                 }
             },
@@ -32,7 +32,7 @@
                     "receiverCount":1,
                     "req_Receivers":{
                         "requireConscious":false,
-                        "requireAction":false
+                        "requireAction": false
                     }
                 }
             },
@@ -51,7 +51,7 @@
                     "receiverCount":1,
                     "req_Receivers":{
                         "requireConscious":false,
-                        "requireAction":false
+                        "requireAction": false
                     }
                 }
             },
@@ -85,7 +85,7 @@
                     "receiverCount":1,
                     "req_Receivers":{
                         "requireConscious":false,
-                        "requireAction":false
+                        "requireAction": false
                     }
                 }
             },
@@ -104,7 +104,7 @@
                     "receiverCount":1,
                     "req_Receivers":{
                         "requireConscious":false,
-                        "requireAction":false
+                        "requireAction": false
                     }
                 }
             },

@@ -707,24 +707,16 @@ public class StatsManager
     public void AddOrModStatus(string s, float modSeverity = 0f, int modDuration = -1, float severityCap = -1f)
     {
         if (s == null || s == "" || s.Length < 1) return;
-        Status_Instance instance = this.StatusInstances.Find(x => x.ID == s);
-        if (instance != null && instance.BaseRef.constant && modSeverity == 0f && modDuration == -1) return;
-
-        if (instance != null)
+        Status_Instance instance = GetStatusByStringMatch(s);// this.StatusInstances.Find(x => x.ID == s);
+        if (instance != null && instance.BaseRef.constant && modSeverity == 0f)
         {
-            if (instance.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
-            {
-                if (AfterClimax != null && AfterClimax.Severity < 0)
-                {
-                    //Debug.LogError("MATH MIN ["+Math.Abs(afterClimax.Severity).ToString()+"] ["+ modSeverity.ToString() + "]");
-                    AfterClimax.SeverityAdd(Math.Min(Math.Abs(AfterClimax.Severity), modSeverity), severityCap);
-                    pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex, 1);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.LogError($"ERROR modding constant statusInstance {s} with null severity");
+            return;
+        }
+        else if (instance != null)
+        {
 
-                    //if (modSeverity> 0) AddOrModStatus(s, Math.Min(Math.Abs(afterClimax.Severity)) modSeverity - difference, modDuration);
-                }
-            }
-
-            if (s == "chara_status_sexual_climax_after")
+            if (instance == AfterClimax)
             {
                 consecutiveClimaxCount += 1;
                 //Debug.LogError("SETTING CURRENTLYCLIMAXED TO TRUE");
@@ -732,6 +724,13 @@ public class StatsManager
                 //else currentlyClimaxed += 1;
                 if (Climaxing.Severity < 1) Climaxing.SeverityAdd(2, severityCap);
                 else Climaxing.SeverityAdd(1, severityCap);
+            }
+            else if (instance.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex && AfterClimax != null && AfterClimax.Severity < 0)
+            {
+                
+                //Debug.LogError("MATH MIN ["+Math.Abs(afterClimax.Severity).ToString()+"] ["+ modSeverity.ToString() + "]");
+                AfterClimax.SeverityAdd(Math.Min(Math.Abs(AfterClimax.Severity), modSeverity), severityCap);
+                pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex, 1);
             }
 
             //Debug.LogError("Stimulating status " + s + " with severityCap at " + severityCap);
@@ -760,8 +759,7 @@ public class StatsManager
         this.modifiers_temporary.Clear();
         foreach (var i in statusInstancesEx) i.ClearCache(true);
 
-        //RefreshAllStats();
-       
+        RefreshAllStats();
     }
 
     protected void AddStatus(string s, float initialSeverity = 0f, int durationMinute = -1)

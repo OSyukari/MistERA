@@ -40,7 +40,15 @@ public class Job_Sex_Group : Job
         this.parentRoomID = ri.RefID;
     }
 
+    public override void RemovePackage(ActionPackage ap, bool logRemove = false)
+    {
+        base.RemovePackage(ap);
+        if (logRemove)
+        {
+            LogMessage_Begin_Replace(ap, null);
+        }
 
+    }
     protected override List<COM> UpdateAllUsableCOMs()
     {
         return scr_System_Serializer.current.index_COM.list.FindAll(x => x.comTags.Contains("sex"));

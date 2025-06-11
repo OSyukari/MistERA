@@ -318,9 +318,19 @@ public class EvaluationPackage
             */
 
         int r1, r2;
-        CalculateWillingness(true, Doer, p.Master, out r1, isThreat);
-        CalculateWillingness(true, Doer, Receiver, out r2, isThreat);
-        requestRate = Math.Max(r1, r2);
+        Modifiers m1 = new Modifiers(), m2 = new Modifiers();
+        CalculateWillingness(true, Doer, p.Master, out r1, m1, isThreat);
+        CalculateWillingness(true, Doer, Receiver, out r2, m2, isThreat);
+        if (r2 >= r1)
+        {
+            this.modifiers.MergeModifiers(m2);
+            requestRate = r2;
+        }
+        else
+        {
+            this.modifiers.MergeModifiers(m1);
+            requestRate = r1;
+        }
         if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Request rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + "] Doer->Master[" + r1 + "] Doer->Receiver[" + r2 + "] final[" + requestRate + "]");
         //if (requestRate == 95 && (p.Master == null || p.Master == doer)) requestRate = 100;  // if no master involved, skip)
 
@@ -344,7 +354,7 @@ public class EvaluationPackage
     /// <param name="target"></param>
     /// <param name="rateValue"></param>
     /// <param name="isThreat"></param>
-    protected void CalculateWillingness(bool isDoer, Character_Trainable self, Character_Trainable target, out int rateValue , bool isThreat = false)
+    protected void CalculateWillingness(bool isDoer, Character_Trainable self, Character_Trainable target, out int rateValue , Modifiers mod, bool isThreat = false)
     {
         int _responseRate = 100;
 
@@ -367,13 +377,13 @@ public class EvaluationPackage
 
         if (rel != null)
         {
-            AddModifier(self.RefID, "Obedience", ((int)rel.Obedience(null) - (int)RelationshipObedienceType.Normal) * 5);
+            mod.AddModifier(self.RefID, "Obedience", ((int)rel.Obedience(null) - (int)RelationshipObedienceType.Normal) * 5);
             baseValue -= ((int)rel.Obedience(null) - (int)RelationshipObedienceType.Normal) * 5;
         }
 
         if (self.Stats.Mood != null && Math.Abs( self.Stats.Mood.Severity) >= 1)
         {
-            AddModifier(self.RefID, "Mood", (int)self.Stats.Mood.Severity * 5);
+            mod.AddModifier(self.RefID, "Mood", (int)self.Stats.Mood.Severity * 5);
             baseValue -= (int)self.Stats.Mood.Severity;
         }
 
@@ -381,7 +391,7 @@ public class EvaluationPackage
 
         if (extraCOMTags.Contains("safe") && rel != null)
         {
-            AddModifier(self.RefID, "[Safe]", 2);
+            mod.AddModifier(self.RefID, "[Safe]", 2);
             baseValue -= 2;
         }
 
@@ -392,7 +402,7 @@ public class EvaluationPackage
             {
                 if (self.Stats.Lust.Severity > 0)
                 {
-                    AddModifier(self.RefID, "[Lust]", 0);
+                    mod.AddModifier(self.RefID, "[Lust]", 0);
                     baseValue *= (0.5f * self.Stats.Lust.Severity);
                 }
                 else baseValue *= (1 + 1.5f * (Math.Abs(self.Stats.Lust.Severity) + 1));
@@ -402,7 +412,7 @@ public class EvaluationPackage
             {
                 if (self.Stats.Lust.Severity > 0)
                 {
-                    AddModifier(self.RefID, "[Lust]", 0);
+                    mod.AddModifier(self.RefID, "[Lust]", 0);
                     baseValue *= (0.5f * self.Stats.Lust.Severity);
                 }
                 else baseValue *= (1 + 1.0f * (Math.Abs(self.Stats.Lust.Severity) + 1));
@@ -412,7 +422,7 @@ public class EvaluationPackage
             {
                 if (self.Stats.Lust.Severity > 0)
                 {
-                    AddModifier(self.RefID, "[Lust]", 0);
+                    mod.AddModifier(self.RefID, "[Lust]", 0);
                     baseValue *= (0.5f * self.Stats.Lust.Severity);
                 }
                 else baseValue *= (1 + 0.5f * (Math.Abs(self.Stats.Lust.Severity) + 1));
@@ -427,40 +437,48 @@ public class EvaluationPackage
         // If self is in party with target chara, add bonus
         if (target != null && target.RefID == 0 && scr_System_CampaignManager.current.PlayerPartyMembers.Contains(self.RefID))
         {   // party members shouldnt include player himself right ?
-            AddModifier(self.RefID, "In same party!", 2);
+            mod.AddModifier(self.RefID, "In same party!", 2);
             baseValue -= 2;
         }
 
         if (extraCOMTags.Contains("job") && p.job.FactionOwner != null && self.FactionManager.Factions.Contains(p.job.FactionOwner) && (target == null || target.FactionManager.Factions.Contains(p.job.FactionOwner)))
         {
-            AddModifier(self.RefID, "Helping Work", 2);
+            mod.AddModifier(self.RefID, "Helping Work", 2);
             baseValue -= 2;
         }
         if (self.isAnimal)
         {
-            AddModifier(self.RefID, "is Animal", 10);
+            mod.AddModifier(self.RefID, "is Animal", 10);
             baseValue -= 10;
         }
         if (self.isMale && target != null && target.isFemale)
         {
-            AddModifier(self.RefID, "horny", 10);
+            mod.AddModifier(self.RefID, "horny", 10);
             baseValue -= 10;
+        }
+
+        var blacklistMatch = self.Memory.MatchBlacklist(this);
+        if (blacklistMatch > 0)
+        {
+            //Debug.LogError($"blacklist match {blacklistMatch}");
+            mod.AddModifier(self.RefID, "recent refusal", -10*blacklistMatch);
+            baseValue += 10*blacklistMatch;
         }
 
         float consciousness = self.Stats.Consciousness.Severity;
         if (self.isTimeStopped)
         {
-            AddModifier(self.RefID, "Timestopped!", 0);
+            mod.AddModifier(self.RefID, "Timestopped!", 0);
             _responseRate = self == Receiver ? 100 : 0;
         }
         else if (self.Climaxing)
         {
-            AddModifier(self.RefID, "Climaxing!", 0);
+            mod.AddModifier(self.RefID, "Climaxing!", 0);
             _responseRate = self == Receiver ? 100 : 0;
         }
         else if (self.Stats.isConsciousnessUnconscious)
         {
-            AddModifier(self.RefID, $"%%comLogs_causes_unconscious%%1 value {self.Stats.Consciousness.Severity}", 0);
+            mod.AddModifier(self.RefID, $"%%comLogs_causes_unconscious%%1 value {self.Stats.Consciousness.Severity}", 0);
 
             if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = 100;
             else if (self == Doer && !targetCOM.requirements.requirement.req_Doers.requireConscious) _responseRate = 100;
@@ -471,7 +489,7 @@ public class EvaluationPackage
             int consciousPenalty = Math.Clamp((100 - (int)consciousness * 100) * 10, 0, 100);
             // if unconscious return success rate max
             //else
-            AddModifier(self.RefID, "%%comLogs_causes_reduced_consciousness%%", 0);
+            mod.AddModifier(self.RefID, "%%comLogs_causes_reduced_consciousness%%", 0);
             if (50 + 5 * (average - baseValue) + consciousPenalty >= 100)
             {
                 if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = 100;
@@ -487,7 +505,7 @@ public class EvaluationPackage
             }
         }else if (self.isRestrained || self.isImprisoned)
         {
-            AddModifier(self.RefID, "Restrained", 0);
+            mod.AddModifier(self.RefID, "Restrained", 0);
             _responseRate = 100;
         }
         else
@@ -501,9 +519,10 @@ public class EvaluationPackage
 
         if (false && extraCOMTags.Contains("debug_refuse") && self.RefID > 0)
         {
-            AddModifier(self.RefID, "Debug Refusal", 0);
+            mod.AddModifier(self.RefID, "Debug Refusal", 0);
             _responseRate = 0;
         }
+
         
         rateValue = _responseRate;
     } 
@@ -524,11 +543,23 @@ public class EvaluationPackage
         if (Receiver != null)
         {
             int r1, r2;
+            Modifiers m1 = new Modifiers(), m2 = new Modifiers();
             //CalculateAcceptance(ref receiver, ref p.Master, out r1, isThreat);
             //CalculateAcceptance(ref receiver, ref doer, out r2, isThreat);
-            CalculateWillingness(false, Receiver,  p.Master, out r1, isThreat);
-            CalculateWillingness(false, Receiver, Doer, out r2, isThreat);
-            responseRate = Math.Max(r1, r2);
+            CalculateWillingness(false, Receiver,  p.Master, out r1, m1, isThreat);
+            CalculateWillingness(false, Receiver, Doer, out r2, m2, isThreat);
+
+            if (r2 >= r1)
+            {
+                this.modifiers.MergeModifiers(m2);
+                responseRate = r2;
+            }
+            else
+            {
+                this.modifiers.MergeModifiers(m1);
+                responseRate = r1;
+            }
+
             if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Response rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + "] Receiver->Master[" + r1 + "] Receiver->Doer[" + r2 + "] final["+ responseRate + "]");
 
         }
@@ -783,11 +814,9 @@ public class EvaluationPackage
                 string s = LocalizeDictionary.Instance.Index.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
                 Utility.StringReplace(entry.body.Owner, ref s);
                 this.m.AddMessage(entry.body.Owner.RefID, s);
-
-                //entry.body.Owner.Memory.AddEntry_Custom(new List<string>() { "mergeWithAll", "important" } , new List<string>(), entry.targetRef, false, entry.body.FirstExperienceDesc, Memory_Attitude.None, Memory_Response.None);
                 
-                var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>(), "", -1, -1, false, Memory_Response.Refuse, Memory_Attitude.Hate, entry.body.FirstExperienceDesc);
-                var mem = entry.body.Owner.Memory.AddEntry(memInst2, new List<string>() { "mergeWithAll", "important" }, -2);
+                var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Refuse, Memory_Attitude.Hate, entry.body.FirstExperienceDesc);
+                var mem = entry.body.Owner.Memory.AddEntry(memInst2, new List<string>() { "important" }, -2, true);
             }
         }
         logExps.Clear();
@@ -1041,6 +1070,14 @@ public class EvaluationPackage
             return list;
         }
 
+        public void MergeModifiers(Modifiers m)
+        {
+            foreach(var kvp_i in m.modifiers)
+            {
+                foreach (var j in kvp_i.Value) AddModifier(kvp_i.Key, j.Key, j.Value);
+            }
+        }
+
         public void Clear()
         {
             this.modifiers.Clear();
@@ -1113,7 +1150,7 @@ public class EvaluationPackage
 
         //if (fucker != null && fucker_att != Memory_Attitude.None && logMessage) fucker.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, internal_fucked.Owner.RefID, com, VariantID, true, null, fucker.canAct ? Memory_Response.Success : Memory_Response.Accept, fucker_att, fucker.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
 
-        Debug.Log("Fuck_3 final interaction result fuckerPleasure["+fuckerPleasure+"] initA["+attitude_doer.ToString()+"] endA["+fucker_att.ToString()+"] fuckedPleasure["+fuckedPleasure+ "] initA["+attitude_receiver.ToString()+"] endA[" + fucked_att.ToString()+"]");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Sex) Debug.Log("Fuck_3 final interaction result fuckerPleasure["+fuckerPleasure+"] initA["+attitude_doer.ToString()+"] endA["+fucker_att.ToString()+"] fuckedPleasure["+fuckedPleasure+ "] initA["+attitude_receiver.ToString()+"] endA[" + fucked_att.ToString()+"]");
         //attitude_receiver = fucked_att;
         //attitude_doer = fucker_att;
         return true;
@@ -1266,7 +1303,7 @@ public class EvaluationPackage
         }
 
         s.Add("Final Resolution :" + (fucker == null ? "" : "Fucker " + fucker.Owner.FirstName + " pleasure [" + fucker.Owner.Stats.SexStimulation.Severity + "]") + " Fucked " + fucked.Owner.FirstName + " pleasure [" + fucked.Owner.Stats.SexStimulation.Severity + "]");
-        Debug.Log(String.Join("\n",s));
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Sex) Debug.Log(String.Join("\n",s));
 
         //message.AddMessage(s);
 

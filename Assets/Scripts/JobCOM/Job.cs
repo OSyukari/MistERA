@@ -153,6 +153,12 @@ public class Job : IDisposable, I_Disposable
     }
 
 
+    protected string cache_jobDescString = "";
+    protected virtual string JobDescString { get
+        {
+            return cache_jobDescString;
+        } }
+
     public virtual string GetJobDescription(int charaRef)
     {
 
@@ -198,6 +204,7 @@ public class Job : IDisposable, I_Disposable
             else actorRefIDStorage.Add(charaRef, new COM_Match(priorityCOMID, priorityCOMTag));
             //Debug.Log("Job Add Actor " + charaRef + " result " + String.Join("|", actorRefID));
         }
+        actorJobComplete.Remove(charaRef);
     }
 
     [System.Serializable]
@@ -254,6 +261,7 @@ public class Job : IDisposable, I_Disposable
                 packages_previous.Remove(p);
             }
         }
+        actorJobComplete.Remove(charaRef);
     }
 
     [JsonIgnore] public int RefID { get { return jobRefID; } }
@@ -427,7 +435,7 @@ public class Job : IDisposable, I_Disposable
         return scr_System_CampaignManager.GetExistingPackages2(c, this.ActivePackages, checkUnexecuted, checkExecuted, checkMaster, checkDeleted);
     }
 
-    public void RemovePackage(ActionPackage ap)
+    public virtual void RemovePackage(ActionPackage ap, bool logRemove = false)
     {
         this.packages_previous.Remove(ap);
         this.packages_current.Remove(ap);

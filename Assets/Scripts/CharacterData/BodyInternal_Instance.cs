@@ -56,7 +56,6 @@ public class BodyInternal_Instance
     public bool NotifySexExperience(string targetName, string comName, List<string> comtags, List<string> targetBodyTag)
     {
         //if (date == "") date = scr_System_Time.current.getCurrentTime().ToLongTimeString();
-        comtags.Add("mergeWithAll");
         //Owner.Memory.AddEntry_Custom(ownerTags, comtags, targetRef, false, null, Memory_Attitude.None, Memory_Response.None);
        // Owner.Memory.AddEntry_COM(ownerTags, comtags, targetRef, comBase, variantID, false, description, response, attitude);
         //var tempString = description + " Lost " + DisplayName + " virginity in " + com + " with " + targetName;

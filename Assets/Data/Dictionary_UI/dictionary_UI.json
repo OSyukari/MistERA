@@ -29,6 +29,7 @@
                 "ui_entry_memory_description_cumOnto": "对$target$$cum_verb$了$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
                 "ui_entry_memory_description_climax": "绝顶了$elem1$次||1",
                 "ui_entry_memory_description_climax_keyworded": "$part$强绝顶$elem1$次||1",
+                "ui_entry_memory_withRoomName": "在$roomname$$desc$",
                 "ui_entry_memory_sleep_begin": "在$room$睡觉",
                 "ui_entry_memory_sleep_end": "睡醒了",
                 "ui_currentSexJob_swapTargets": "< 交换对象 >",

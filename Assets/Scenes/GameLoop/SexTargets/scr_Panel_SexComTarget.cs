@@ -540,7 +540,8 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
 
         public void OnClickButton()
         {
-            job.CurrentPackages.Remove(ap);
+            //job.CurrentPackages.Remove(ap);
+            job.RemovePackage(ap, true);
             COMmanager.notifyActorsChange();
             parent.removeAP();  // let parent take care of self removal
         }

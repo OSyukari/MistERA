@@ -20,7 +20,7 @@
                             "BodyTags":["breast"],
                             "minRevealingScore":2,
                             "requireConscious":false,
-                            "requireAction":false
+                            "requireAction": false
                         }
                     }
                 },
@@ -36,7 +36,7 @@
                                     "BodyTags":["breast","nipple"],
                                     "minRevealingScore":1,
                                     "requireConscious":false,
-                                    "requireAction":false
+                                    "requireAction": false
                                 }
                             },
                             "requireExisting":{ "requireCOMID":"com_sex_finger_caress_B" } 
@@ -52,7 +52,7 @@
                                     "BodyTags":["breast","nipple"],
                                     "minRevealingScore":1,
                                     "requireConscious":false,
-                                    "requireAction":false
+                                    "requireAction": false
                                 }
                             },
                             "requireExisting":{ "requireCOMID":"com_sex_finger_caress_B" } 
@@ -68,7 +68,7 @@
                                     "BodyTags":["breast","nipple"],
                                     "minRevealingScore":1,
                                     "requireConscious":false,
-                                    "requireAction":false
+                                    "requireAction": false
                                 }
                             },
                             "requireExisting":{ "requireCOMID":"com_sex_finger_caress_B" } 
@@ -85,7 +85,7 @@
                                     "BodyTags":["breast","nipple"],
                                     "minRevealingScore":1,
                                     "requireConscious":false,
-                                    "requireAction":false
+                                    "requireAction": false
                                 }
                             },
                             "requireExisting":{ "requireCOMID":"com_sex_finger_caress_B" } 
@@ -102,7 +102,7 @@
                                     "BodyTags":["breast","nipple"],
                                     "minRevealingScore":1,
                                     "requireConscious":false,
-                                    "requireAction":false
+                                    "requireAction": false
                                 }
                             },
                             "requireExisting":{ "requireCOMID":"com_sex_finger_caress_B" } 
@@ -119,7 +119,7 @@
                                     "BodyTags":["breast","nipple"],
                                     "minRevealingScore":1,
                                     "requireConscious":false,
-                                    "requireAction":false
+                                    "requireAction": false
                                 }
                             },
                             "requireExisting":{ "requireCOMID":"com_sex_finger_caress_B" } 

@@ -16,7 +16,7 @@
                     "req_Receivers":{ 
                         "BodyTags":["lower"],
                         "requireConscious":false,
-                        "requireAction":false
+                        "requireAction": false
                      }
                 }
             },
@@ -57,7 +57,7 @@
                     "req_Doers":{ "BodyTags":["arm"] },
                     "req_Receivers":{ "BodyTags":["lower"],
                         "requireConscious":false,
-                        "requireAction":false
+                        "requireAction": false
                     },
                     "doerCount":1,
                     "receiverCount":1
@@ -100,7 +100,7 @@
                     "req_Doers":{ "BodyTags":["arm"] },
                     "req_Receivers":{ "BodyTags":["leg"],
                         "requireConscious":false,
-                        "requireAction":false
+                        "requireAction": false
                     },
                     "doerCount":1,
                     "receiverCount":1
@@ -141,7 +141,7 @@
                     "req_Doers":{ "BodyTags":["arm"] },
                     "req_Receivers":{ "BodyTags":["torso"],
                         "requireConscious":false,
-                        "requireAction":false
+                        "requireAction": false
                     },
                     "doerCount":1,
                     "receiverCount":1
@@ -181,7 +181,7 @@
                     "req_Doers":{ "BodyTags":["arm"] },
                     "req_Receivers":{ "BodyTags":["torso"],
                         "requireConscious":false,
-                        "requireAction":false },
+                        "requireAction": false },
                     "doerCount":1,
                     "receiverCount":1
                 }
@@ -220,7 +220,7 @@
                     "req_Doers":{ "BodyTags":["arm"] , "minRevealingScore":1},
                     "req_Receivers":{ "BodyTags":["arm"] , "minRevealingScore":1,
                         "requireConscious":false,
-                        "requireAction":false },
+                        "requireAction": false },
                     "doerCount":1,
                     "receiverCount":1
                 }
@@ -245,7 +245,7 @@
                     "req_Doers":{ "BodyTags":["arm"] , "minRevealingScore":1},
                     "req_Receivers":{ "BodyTags":["feet"] , "minRevealingScore":1,
                         "requireConscious":false,
-                        "requireAction":false },
+                        "requireAction": false },
                     "doerCount":1,
                     "receiverCount":1
                 }
@@ -269,7 +269,7 @@
                     "req_Doers":{ "BodyTags":["arm"], "minRevealingScore":1 },
                     "req_Receivers":{ "BodyTags":["head"] , "minRevealingScore":1,
                         "requireConscious":false,
-                        "requireAction":false },
+                        "requireAction": false },
                     "doerCount":1,
                     "receiverCount":1
                 }

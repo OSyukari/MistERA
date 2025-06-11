@@ -461,12 +461,12 @@ public class Manageable : I_Disposable
         else return new List<Job_CharaCOM>();
     }
 
-    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true)
+    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false)
     {
         //Debug.Log("Begin getvalidRecreation");
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
-        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", tag))
+        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", tag, checkBlacklist))
         {
             ss += $" found no valid [{tag}] instances offered by Furnitures from chara[" + chara.FirstName + "] currenthour[" + currentHour + "]";
             if (s != null) s.Add(ss);
@@ -513,7 +513,7 @@ public class Manageable : I_Disposable
         string ss = " (" + ID + ")";
         if (!this.mealHours.Contains(currentHour)) return new List<Job_Furniture>();
 
-        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", "food_meal"))
+        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", "food_meal",false))
         {
             ss += " found no valid [food_meal] instances offered by Furnitures";
             if (s != null) s.Add(ss);
@@ -536,7 +536,7 @@ public class Manageable : I_Disposable
     {
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
-        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "com_furniture_sleep"))
+        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "com_furniture_sleep","", false))
         {
             ss += " found no valid [com_furniture_sleep] instances offered by Furnitures";
             if (s != null) s.Add(ss);
@@ -665,7 +665,7 @@ public class Manageable : I_Disposable
 
         if (targetCOM.comTags.Contains("job") && allowJobPostSearch)
         {
-            if (!TryFindValidJobInstances(out possibleJobs, chara, comID))
+            if (!TryFindValidJobInstances(out possibleJobs, chara, comID, false))
             {
                 ss += " found no valid ["+comID+ "] instances offered by Furnitures";
                 if(s != null) s.Add(ss);
@@ -674,7 +674,7 @@ public class Manageable : I_Disposable
         }
         else if (allowNonJobPostSearch)
         {
-            if (!TryFindValidNonJobInstances(out possibleJobs, chara, comID))
+            if (!TryFindValidNonJobInstances(out possibleJobs, chara, comID,"", false))
             {
                 ss += " found no valid ["+comID+"] instances offered by Furnitures";
                 if (s != null) s.Add(ss);
@@ -702,7 +702,7 @@ public class Manageable : I_Disposable
         }
     }
 
-    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, List<string> s = null)
+    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, List<string> s = null, bool checkBlacklist = false)
     {
         string ss = " (" + ID + ")";
         if (GetSchedule(chara).Get(currentHour).comIDs.Count < 1)
@@ -729,7 +729,7 @@ public class Manageable : I_Disposable
         // chara job is null, try give job
         // first find a valid instance of job
         List<Job_Furniture> possibleJobs;
-        if (!TryFindValidJobInstances(out possibleJobs, chara, GetSchedule(chara).Get(currentHour)))
+        if (!TryFindValidJobInstances(out possibleJobs, chara, GetSchedule(chara).Get(currentHour), checkBlacklist))
         {
             ss += " found no valid jobinstances offered by Furnitures";
             if (s != null) s.Add(ss);
@@ -762,7 +762,7 @@ public class Manageable : I_Disposable
         return false;
     }
 
-    protected bool TryFindValidNonJobInstances(out List<Job_Furniture> list, Character_Trainable c, string comID = "", string comTag = "")
+    protected bool TryFindValidNonJobInstances(out List<Job_Furniture> list, Character_Trainable c, string comID = "", string comTag = "", bool checkBlacklist = false)
     {
         list = new List<Job_Furniture>();
         foreach (var key in nonjobPosts.Keys)
@@ -773,7 +773,12 @@ public class Manageable : I_Disposable
 
             foreach (var post in nonjobPosts[key])
             {
-                if (post.ValidateActor(c, key) && 
+                if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, comID))
+                {
+                    Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
+                    continue;
+                }
+                else if (post.ValidateActor(c, key) && 
                     (!post.ParentRoom.isRoomPrivate || managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID)) &&
                     (!post.ParentRoom.isRoomPrison || c.isImprisoned) &&
                     (!c.isImprisoned || post.ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID).RefID)) list.Add(post);
@@ -785,7 +790,7 @@ public class Manageable : I_Disposable
         return list.Count > 0;
     }
 
-    protected bool TryFindValidJobInstances(out List<Job_Furniture> list, Character_Trainable c, HourlySchedule schedule)
+    protected bool TryFindValidJobInstances(out List<Job_Furniture> list, Character_Trainable c, HourlySchedule schedule, bool checkBlacklist)
     {
         var rnd = schedule.getRandCOM;
         if (rnd == null)
@@ -793,10 +798,10 @@ public class Manageable : I_Disposable
             list = new List<Job_Furniture>();
             return false;
         }
-        else return TryFindValidJobInstances(out list, c, rnd.ID);
+        else return TryFindValidJobInstances(out list, c, rnd.ID, checkBlacklist);
     }
 
-    protected bool TryFindValidJobInstances(out List<Job_Furniture> list, Character_Trainable c, string comID)
+    protected bool TryFindValidJobInstances(out List<Job_Furniture> list, Character_Trainable c, string comID, bool checkBlacklist)
     {
         list = new List<Job_Furniture>();
         COM targetCOM = HasJobWithCOM(comID);
@@ -806,8 +811,13 @@ public class Manageable : I_Disposable
         foreach (var post in jobPosts[targetCOM])
         {
             //post.RefreshValidJobCOMs();
-            if (post.ValidateActor(c, targetCOM) &&
-                    (!c.isImprisoned || post.ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID).RefID)) list.Add(post);
+            if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, comID))
+            {
+                Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
+                continue;
+            }
+            else if (post.ValidateActor(c, targetCOM) &&
+                (!c.isImprisoned || post.ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID).RefID)) list.Add(post);
         }
 
         //list = jobPosts[targetCOM];

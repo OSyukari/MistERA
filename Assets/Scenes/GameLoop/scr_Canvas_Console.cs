@@ -16,6 +16,7 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
     public scr_HoverableText targetName, targetCurrentJob;
     public scr_HoverableText currentRoom;
+    public scr_HoverableText blacklist;
 
     protected void Update()
     {
@@ -95,6 +96,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         targetName.SetText("CurrentTarget: " + (CurrentTarget == null ? "null" : CurrentTarget.RefID + " " + CurrentTarget.FullName));
         targetCurrentJob.SetText("CurrentJob: " + (CurrentTarget.CurrentJob == null ? "null" : CurrentTarget.CurrentJob.RefID + " " + CurrentTarget.CurrentJob.DisplayName + " " + (CurrentTarget.CurrentJob.ParentRoom == null ? "nullRoom" : CurrentTarget.CurrentJob.ParentRoom.RefID + " " + CurrentTarget.CurrentJob.ParentRoom.DisplayName)));
         currentRoom.SetText("CurrentRoom: " + (room == null ? "null" : room.RefID + " " + room.DisplayName));
+
+        blacklist.SetText($"Blacklist: {CurrentTarget.Memory.PrintBlacklist()}");
     }
 
     [SerializeField] public Character_Trainable CurrentTarget = null;

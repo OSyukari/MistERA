@@ -104,7 +104,7 @@
             "comTags":["action","interaction","initSex"],
             "requirements":{
                 "requirement":{ 
-                    "req_Receivers":{ "requireConscious":false, "requireAction":false } }
+                    "req_Receivers":{ "requireConscious":false, "requireAction": false } }
             },
             "variants":[
                 {
@@ -115,20 +115,24 @@
                             "req_Receivers":{ "requireMovement":true, "requireUnrestrained":true } 
                         }
                     },
-                    "displayName":"com_interaction_initiateSex_displayName_1"
+                    "displayName":"com_interaction_initiateSex_displayName_1",
+                    "description_doer_1_n":"comDescription_1_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_1_receiver_passive"
                 },
                 {
                     "requirements":{
                         "requirement":{ "doerCount":1, "receiverCount":1 }
                     },
-                    "displayName":"com_interaction_initiateSex_displayName_2"
+                    "displayName":"com_interaction_initiateSex_displayName_2",
+                    "description_doer_1_n":"comDescription_1_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_1_receiver_passive"
                 },
                 {
                     "requirements":{
                         "requirement":
                         { 
                             "doerCount":1, "receiverCount":1 ,
-                            "req_Receivers":{ "requireAction":false }
+                            "req_Receivers":{ "requireAction": false }
                         }
                     },
                     "displayName":"com_interaction_initiateSex_displayName_3"
@@ -138,7 +142,7 @@
                         "requirement":
                         { 
                             "doerCount":1, "receiverCount":1 ,
-                            "req_Receivers":{ "requireConscious":false, "requireAction":false }
+                            "req_Receivers":{ "requireConscious":false, "requireAction": false }
                         }
                     },
                     "displayName":"com_interaction_initiateSex_displayName_4"
@@ -151,20 +155,24 @@
                             "req_Receivers":{ "requireMovement":true, "requireUnrestrained":true } 
                         }
                     },
-                    "displayName":"com_interaction_initiateSex_displayName_5"
+                    "displayName":"com_interaction_initiateSex_displayName_5",
+                    "description_doer_1_n":"comDescription_n_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_n_receiver_passive"
                 },
                 {
                     "requirements":{
                         "requirement":{ "doerCount":99, "receiverCount":99 }
                     },
-                    "displayName":"com_interaction_initiateSex_displayName_6"
+                    "displayName":"com_interaction_initiateSex_displayName_6",
+                    "description_doer_1_n":"comDescription_n_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_n_receiver_passive"
                 },
                 {
                     "requirements":{
                         "requirement":
                         { 
                             "doerCount":99, "receiverCount":99 ,
-                            "req_Receivers":{ "requireAction":false }
+                            "req_Receivers":{ "requireAction": false }
                         }
                     },
                     "displayName":"com_interaction_initiateSex_displayName_7"
@@ -174,7 +182,7 @@
                         "requirement":
                         { 
                             "doerCount":99, "receiverCount":99 ,
-                            "req_Receivers":{ "requireConscious":false, "requireAction":false }
+                            "req_Receivers":{ "requireConscious":false, "requireAction": false }
                         }
                     },
                     "displayName":"com_interaction_initiateSex_displayName_8"
@@ -198,7 +206,7 @@
             "comTags":["action","endSex","NonInteraction"],
             "requirements":{
                 "requirement":{ 
-                    "req_Receivers":{ "requireConscious":false, "requireAction":false } 
+                    "req_Receivers":{ "requireConscious":false, "requireAction": false } 
                 }
             },
             "variants":[
@@ -223,7 +231,7 @@
                         "requirement":
                         { 
                             "doerCount":1, "receiverCount":1 ,
-                            "req_Receivers":{ "requireAction":false }
+                            "req_Receivers":{ "requireAction": false }
                         }
                     },
                     "displayName":"com_interaction_endOngoingSex_displayName_3"
@@ -233,7 +241,7 @@
                         "requirement":
                         { 
                             "doerCount":1, "receiverCount":1 ,
-                            "req_Receivers":{ "requireConscious":false, "requireAction":false }
+                            "req_Receivers":{ "requireConscious":false, "requireAction": false }
                         }
                     },
                     "displayName":"com_interaction_endOngoingSex_displayName_4"
@@ -259,7 +267,7 @@
                         "requirement":
                         { 
                             "doerCount":99, "receiverCount":99 ,
-                            "req_Receivers":{ "requireAction":false }
+                            "req_Receivers":{ "requireAction": false }
                         }
                     },
                     "displayName":"com_interaction_endOngoingSex_displayName_7"
@@ -269,7 +277,7 @@
                         "requirement":
                         { 
                             "doerCount":99, "receiverCount":99 ,
-                            "req_Receivers":{ "requireConscious":false, "requireAction":false }
+                            "req_Receivers":{ "requireConscious":false, "requireAction": false }
                         }
                     },
                     "displayName":"com_interaction_endOngoingSex_displayName_8"

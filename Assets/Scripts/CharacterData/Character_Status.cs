@@ -357,7 +357,9 @@ public class Status_Instance : StatusInstance
         else maxed = false;
 
         severity = (float) Math.Round(severity, 2);
-        if (severity < 0.01) severity = 0;
+        if (Math.Abs( severity) < 0.01) severity = 0;
+
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.Log($"{Owner.FirstName} addstatus {this.baseID} {f} min {min} max {max} externalcap {externalCap} final {severity}");
 
         return this.SeverityIndex != initialS;
     }

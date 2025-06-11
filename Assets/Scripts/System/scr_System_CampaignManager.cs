@@ -215,10 +215,6 @@ public class scr_System_CampaignManager : MonoBehaviour
             //Debug.Log("Log_TrySetChara true " + refID);
             Observer_LogsCharaChange?.Invoke(refID);
         }
-        else
-        {
-            //Debug.Log("Log_TrySetChara false " + refID);
-        }
     }
     public void Log_TryClearChar(bool isAnimating)
     {
@@ -1070,7 +1066,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         */
         //Observer_UpdateNotice?.Invoke(false);
         Map.SerializationRebuilt();
-
+        Map.UpdateRoomForceGreeting();
         ColdLoad = false;
         UpdateScene();
         scr_System_Time.current.UpdateTime(0, 0, 0, 0, true);

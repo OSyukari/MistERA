@@ -99,7 +99,7 @@ public class EventManager
     public void Remove(EventInstance ev)
     {
         this.activeEvents.Remove(ev);
-        updateHandler.FlushCollectedLogs(true, false, true);
+        if (!updateHandler.Updating) updateHandler.FlushCollectedLogs(true, false, true);
         Run();
     }
 

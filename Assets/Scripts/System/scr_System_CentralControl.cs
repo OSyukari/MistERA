@@ -41,6 +41,8 @@ public class DebugLogSettings
     public bool DLog_Memory = false;
     public bool DLog_JoinAP = false;
     public bool DLog_Relationships = false;
+    public bool DLog_Status = false;
+    public bool DLog_Sex = false;
 }
 
 public class scr_System_CentralControl : MonoBehaviour

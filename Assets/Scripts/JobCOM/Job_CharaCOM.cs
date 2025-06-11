@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
+using System.Linq;
 
 [System.Serializable]
 public class Job_CharaCOM : Job
@@ -167,12 +168,20 @@ public class Job_CharaCOM : Job
         
     }
 
-
     public override string GetJobDescription(int charaRef)
     {
         List<string> names = new List<string>();
         foreach (var i in GetLastInteractedActorRefs(Owner.RefID)) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
-        return "interacting with " + String.Join(",",names);
+
+        List<ActionPackage> ps = packages_previous.FindAll(x => x.actorRefs.Contains(charaRef));
+        //if (p == null) p = packages_previous.Find(x => x.actorRefs.Contains(charaRef));
+        List<string> tags = new List<string>();
+        foreach(var p in ps) tags.AddRange(p.ComTags);
+        tags = tags.Distinct().ToList();
+        if (tags.Contains("unsafe")) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_charaCOM_unsafe").Replace("$target$", String.Join(",",names));
+        else if (tags.Contains("safe")) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_charaCOM_touch").Replace("$target$", String.Join(",", names));
+        else return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_charaCOM").Replace("$target$", String.Join(",", names));
     }
+
 }
 

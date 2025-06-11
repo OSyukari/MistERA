@@ -226,7 +226,10 @@ public static class Utility
         returnVal = (newTags.Contains("sleeping") == lastTags.Contains("sleeping")) && returnVal;
         returnVal = (newTags.Contains("unconscious") == lastTags.Contains("unconscious")) && returnVal;
 
-        returnVal = !(newTags.Contains("sex") && lastTags.Contains("safe")) && returnVal;
+        returnVal = (newTags.Contains("safe") == lastTags.Contains("safe")) && returnVal;
+        returnVal = (newTags.Contains("unsafe") == lastTags.Contains("unsafe")) && returnVal;
+        returnVal = (newTags.Contains("sex") == lastTags.Contains("sex")) && returnVal;
+        //returnVal = !(newTags.Contains("sex") && lastTags.Contains("safe")) && returnVal;
 
         return returnVal || newTags.Contains("mergeWithAll") || lastTags.Contains("mergeWithAll");
     }

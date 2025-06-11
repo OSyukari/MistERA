@@ -618,7 +618,12 @@ public class COM: I_SerializationCallbackReceiver
     public class COM_Variant
     {
         //[NonSerialized] private int ownerIndex = -1;
-
+        public string description_doer_1_0 = "";
+        public string description_doer_n_0 = "";
+        public string description_doer_1_n = "";
+        public string description_doer_n_n = "";
+        public string description_receiver_n_1 = "";
+        public string description_receiver_n_n = "";
         public string displayName = "";
 
         // (-1) equals use Base.
@@ -707,53 +712,26 @@ public class COM: I_SerializationCallbackReceiver
             {
                 doers.AddRange(receivers);
                 receivers.Clear();
+                isDoer = doers.Contains(charaRef);
                // Debug.Log($"COM {this.displayName} treat receiver as doer, setting list |{String.Join(" ", doers)}|{String.Join(" ", receivers)}| ");
-            }else
-            {
-
-              //  Debug.Log($"COM {this.displayName} setting list |{String.Join(" ", doers)}|{String.Join(" ", receivers)}| ");
             }
 
-            if (this.requirements.requirement.receiverCount < 1)
+            bool isReceiverActive = this.requirements.requirement.req_Receivers.requireAction;
+
+            if (isDoer && doers.Count == 1)
             {
-
-                if (this.requirements.requirement.doerCount < 2) baseDesc = "comDescription_1_0_doer";
-                else baseDesc = "comDescription_n_0_doer";
-
+                if (receivers.Count < 1) baseDesc = description_doer_1_0 != "" ? description_doer_1_0 : "comDescription_1_0_doer";
+                else baseDesc = description_doer_1_n != "" ? description_doer_1_n : isReceiverActive ? "comDescription_1_n_doer_active" : "comDescription_1_n_doer_passive";
             }
-            else{
-
-                bool isReceiverActive = this.requirements.requirement.req_Receivers.requireAction;
-                bool multDoer = this.requirements.requirement.doerCount > 1;
-                bool multReceiver = this.requirements.requirement.receiverCount > 1;
-
-                if (isDoer)
-                {
-                    if (isReceiverActive)
-                    {
-                        if (multDoer) baseDesc = "comDescription_n_n_doer_active";
-                        else baseDesc = "comDescription_1_n_doer_active";
-                    }
-                    else
-                    {
-                        if (multDoer) baseDesc = "comDescription_n_n_doer_passive";
-                        else baseDesc = "comDescription_1_n_doer_passive";
-                    }
-                }
-                else
-                {
-                    if (isReceiverActive)
-                    {
-                        if (multReceiver) baseDesc = "comDescription_n_n_receiver_active";
-                        else baseDesc = "comDescription_n_1_receiver_active";
-                    }
-                    else
-                    {
-                        if (multReceiver) baseDesc = "comDescription_n_n_receiver_passive";
-                        else baseDesc = "comDescription_n_1_receiver_passive";
-                    }
-                }
-                
+            else if (isDoer && doers.Count > 1)
+            {
+                if (receivers.Count < 1) baseDesc = description_doer_n_0 != "" ? description_doer_n_0 : "comDescription_n_0_doer";
+                else  baseDesc = description_doer_n_n != "" ? description_doer_n_n : isReceiverActive ? "comDescription_n_n_doer_active" : "comDescription_n_n_doer_passive";
+            }
+            else if (!isDoer && receivers.Count > 0)
+            {
+                if (receivers.Count < 2) baseDesc = description_receiver_n_1 != "" ? description_receiver_n_1 : isReceiverActive ? "comDescription_n_1_receiver_active": "comDescription_n_1_receiver_passive";
+                else baseDesc = description_receiver_n_n != "" ? description_receiver_n_n : isReceiverActive ? "comDescription_n_n_receiver_active": "comDescription_n_n_receiver_passive";
             }
 
             Utility.GetActorNames(doers, out List<string> names_doers, out List<string> names_doers_other, charaRef);
@@ -761,17 +739,18 @@ public class COM: I_SerializationCallbackReceiver
 
             baseDesc = scr_System_Serializer.current.Dictionary.QueryThenParse(baseDesc)
                 .Replace("$comdesc$", scr_System_Serializer.current.Dictionary.QueryThenParse(this.displayName))
-                .Replace("$room$",roomName)
+                //.Replace("$room$",roomName)
                 .Replace("$other_doers$", String.Join(",", names_doers_other))
                 .Replace("$doers$", String.Join(",", names_doers))
                 .Replace("$receivers$", String.Join(",", names_receiver))
                 .Replace("$other_receivers$", String.Join(",", names_receiver_other));
 
+            /*
             if (withSelfDescription)
             {
                 baseDesc = baseDesc.Replace("$self$", scr_System_CampaignManager.current.FindInstanceByID(charaRef).FirstName);
             }else baseDesc = baseDesc.Replace("$self$", "");
-
+            */
             return baseDesc;
         }
 

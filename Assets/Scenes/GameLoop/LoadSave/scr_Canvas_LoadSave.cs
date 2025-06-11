@@ -96,7 +96,7 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
         scr_SelectableText button2 = box.saveDelete;
 
         button2.optionID = button1.optionID + 1;
-        button2.Initialize(this, new ButtonValidator_DeleteSave(this, file, button2));
+        button2.Initialize(this, new ButtonValidator_DeleteSave(this, file, button2, box));
 
         buttonsByID.Add(button2.optionID, button2);
         validatorsByID.Add(button2.optionID, button2.Validator);
@@ -175,18 +175,20 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
         new scr_Canvas_LoadSave parent;
         FileInfo file;
         scr_SelectableText text;
-        public ButtonValidator_DeleteSave(scr_Canvas_LoadSave parent, FileInfo file, scr_SelectableText text) : base(parent)
+        scr_SaveRect parentRect;
+        public ButtonValidator_DeleteSave(scr_Canvas_LoadSave parent, FileInfo file, scr_SelectableText text, scr_SaveRect parentRect) : base(parent)
         {
             this.parent = parent;
             this.file = file;
             this.text = text;
+            this.parentRect = parentRect;
         }
 
         public override bool IsButtonValid()
         {
             if (!File.Exists(file.FullName))
             {
-                text.gameObject.SetActive(false);
+                parentRect.gameObject.SetActive(false);
                 return false;
             }
             else

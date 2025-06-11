@@ -385,6 +385,11 @@
                 "chara_currentjob_sex": "做爱中",
                 "chara_currentjob_none": "暂无",
 
+                "job_desc_refuseOnly":"拒绝了$jobdesc$",
+                "chara_currentjob_charaCOM_unsafe":"与$target$亲密接触",
+                "chara_currentjob_charaCOM_touch":"与$target$肢体接触",
+                "chara_currentjob_charaCOM":"与$target$互动",
+
                 "event_onNightAssaultFailed_jobD": "$color_error_begin$由于$chara$拒绝了全部指令，互动被解除了$color_error_end$",
 
                 "memory_onNightAssaultFailed": "熟睡时被$target$侵犯了",

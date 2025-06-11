@@ -379,10 +379,10 @@ public class Character_Body
             }
 
 
-            List<string> climaxTags = new List<string>() { "mergeWithAll" };
+            List<string> climaxTags = new List<string>();
             Utility.GetActorTag(ref climaxTags, Owner);
 
-            int climaxDebuff = -50;
+            int climaxDebuff = 0;
             foreach (var part in this.Internals)
             {
 
@@ -444,13 +444,13 @@ public class Character_Body
                             //container.Owner.Memory.AddEntry_Custom(containerTags, selfTag, part.Owner.RefID, false, desc, Memory_Attitude.None, Memory_Response.None);
 
                             var memInst2 = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.None, Memory_Attitude.None, desc);
-                            container.Owner.Memory.AddEntry(memInst2, containerTags);
+                            container.Owner.Memory.AddEntry(memInst2, containerTags, -1, true);
 
 
                             //part.Owner.Memory.AddEntry_Custom(selfTag, containerTags, container.Owner.RefID, true, desc2, Memory_Attitude.Like, Memory_Response.None);
 
                             var memInst3 = new MemInstance(new List<int>() { container.Owner.RefID }, containerTags, "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc2);
-                            part.Owner.Memory.AddEntry(memInst3, selfTag);
+                            part.Owner.Memory.AddEntry(memInst3, selfTag, -1, true);
 
                             cumKeywords = scr_System_Serializer.current.Dictionary.QueryThenParse("experience_sex_cumtainer").Replace("$amount$", cumAmount.ToString()).Replace("$partname$",container.DisplayNameFull);
                         }
@@ -464,12 +464,12 @@ public class Character_Body
 
                             //part.Owner.Memory.AddEntry_Custom(selfTag, null, part.Owner.RefID, true, desc, Memory_Attitude.Like, Memory_Response.None);
 
-                            var memInst4 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc);
-                            part.Owner.Memory.AddEntry(memInst4, selfTag);
+                            var memInst4 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>() { "" }, "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc);
+                            part.Owner.Memory.AddEntry(memInst4, selfTag, -1, true);
 
                             cumKeywords = scr_System_Serializer.current.Dictionary.QueryThenParse("experience_sex_cum").Replace("$amount$", cumAmount.ToString());
                         }
-                        climaxDebuff -= 120;
+                        climaxDebuff -= 200;
                         //climaxKeywords.Add("Cum(" + (container != null? container.DisplayName + ":"+ cum.GetComp_Ingestible().amount+"ml" + ":"+container.Owner.FirstName : cum.GetComp_Ingestible().amount+"ml") + ")");
 
                         var desc1 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
@@ -477,49 +477,54 @@ public class Character_Body
                         //part.Owner.Memory.AddEntry_Custom(selfTag, null, part.Owner.RefID, true, desc1, Memory_Attitude.Like, Memory_Response.None);
 
                         var memInst5 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc1);
-                        part.Owner.Memory.AddEntry(memInst5, selfTag);
+                        part.Owner.Memory.AddEntry(memInst5, selfTag, -1, true);
 
                         Utility.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());
 
                     }
                     else
                     {
-                        climaxDebuff -= 30;
+                        climaxDebuff -= 50;
 
                         var desc1 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
                         //part.Owner.Memory.AddEntry_Custom(selfTag, null, part.Owner.RefID, true, desc1, Memory_Attitude.Like, Memory_Response.None);
 
                         var memInst6 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc1);
-                        part.Owner.Memory.AddEntry(memInst6, selfTag);
+                        part.Owner.Memory.AddEntry(memInst6, selfTag, -1, true);
 
                         Utility.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());
                     }
                 }
             }
 
-            //Debug.LogError("Body CheckClimax Owner["+Owner.FirstName"]")
-            
-            Owner.Stats.AddOrModStatus("chara_status_sexual_climax_after", climaxDebuff);
-            if (climaxKeywords.Length > 0)
+
+            if (climaxDebuff != 0 && climaxKeywords.Length > 0) 
             {
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.Log($"Adding climax status on {Owner.FirstName} debuffstrength {climaxDebuff}");
+
+                Owner.Stats.AddOrModStatus("chara_status_sexual_climax_after", climaxDebuff);
+
                 var disassemble = climaxKeywords.Split("||");
                 climaxKeywords = scr_System_Serializer.current.Dictionary.QueryThenParse(disassemble[0])
                     .Replace("$sensitivity$", disassemble[1])
                     .Replace("$count$", scr_System_Serializer.current.Dictionary.QueryThenParse(disassemble[0] + "_" + disassemble[2]));
+
+                string s = Owner.FirstName + ":" + climaxKeywords + (cumKeywords.Length > 0 ? "/" + cumKeywords : "");
+                scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
             }
+            /*
             else
             {
-                var desc12 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_climax");
+                //var desc12 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_climax");
                 //Owner.Memory.AddEntry_Custom(climaxTags, null, Owner.RefID, true, desc12, Memory_Attitude.Like, Memory_Response.None);
-                climaxKeywords = scr_System_Serializer.current.Dictionary.QueryThenParse("experience_sex_climax");
+                //climaxKeywords = scr_System_Serializer.current.Dictionary.QueryThenParse("experience_sex_climax");
 
-                var memInst6 = new MemInstance(new List<int>() { Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc12);
-                Owner.Memory.AddEntry(memInst6, climaxTags);
-            }
+                //var memInst6 = new MemInstance(new List<int>() { Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc12);
+                //Owner.Memory.AddEntry(memInst6, climaxTags, -1, true);
+            }*/
 
 
-            string s = Owner.FirstName + ":" + climaxKeywords + (cumKeywords.Length > 0 ? "/"+ cumKeywords : "");
-            scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
+
         }
     }
 

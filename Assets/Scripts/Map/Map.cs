@@ -295,7 +295,15 @@ public class Map_Instance
         return ActiveFloorRefIDs.Contains(GetFloorByRoomRefID(FindRoomByChara(charaRef).RefID).refID);
     }
 
-    private void UpdateRoom(KeyValuePair<int, List<int>> iii)
+    public void UpdateRoomForceGreeting()
+    {
+        foreach (var i in roomCharaRef)
+        {
+            UpdateRoom(i, true);
+        }
+    }
+
+    private void UpdateRoom(KeyValuePair<int, List<int>> iii, bool forceGreeting = false)
     {
         var charaInRoom = iii.Value;
         // if(Rooms.ContainsKey(iii.Key) && iii.Value.Count > 0) Debug.Log("roomCharaRef " + Rooms[iii.Key].DisplayName + " and charaRefs " + String.Join("|", iii.Value));
@@ -367,7 +375,7 @@ public class Map_Instance
 
                     isDirty = isDirty || (xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume || dirtyCharaRef.Contains(charaInRoom[y]);
                     //bool isSeeing = dirtyCharaAPRef.Contains(charaInRoom[x]) || dirtyCharaAPRef.Contains(charaInRoom[y]) || ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume);
-                    if (isDirty && !(scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[x]) && scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[y])))
+                    if ((forceGreeting || isDirty) && !(scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[x]) && scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[y])))
                     {
                         xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "Greeting");
                         //yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "Greeting");

@@ -629,6 +629,7 @@ public class Job_Furniture : Job
 
     }
 
+
     [System.Serializable]
     public abstract class JobContainer : IDisposable, I_Disposable
     {

@@ -43,6 +43,7 @@ public class MemoryManager
         this.owner = c;
 
         foreach (var i in Entries) i.ReEstablishParent(c);
+        UpdateBlacklist();
     }
 
     public MemoryManager()
@@ -56,9 +57,13 @@ public class MemoryManager
 
     public void Tick(TimeSpan t)
     {
-        ClearCache();
-
-        foreach (var entry in entries.Values) entry.Tick(t);
+        // ClearCache();
+        bool clearcache = false;
+        foreach (var entry in entries.Values)
+        {
+            clearcache = entry.Tick(t) || clearcache;
+        }
+        if (clearcache) ClearCache();
     }
 
 
@@ -81,14 +86,79 @@ public class MemoryManager
         else i = Math.Max(min, i + memValue);
     }
 
+    [NonSerialized][JsonIgnore] public List<MemBlacklist> Blacklist = new List<MemBlacklist>();
+
     /// <summary>
-    /// 
+    /// Return true if blacklist match roomref and comid, use for searching job only.
+    /// </summary>
+    /// <param name="ap"></param>
+    /// <returns></returns>
+    public bool MatchBlacklist(int roomRef, string comID)
+    {
+        if (comID == "") return false;
+        if (roomRef == -1) return false;
+        foreach(var b in Blacklist)
+        {
+            if (b.comID == "" || b.roomRef == -1) continue;
+            else if (b.comID == comID && b.roomRef == roomRef) return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Return count of blacklist match if Owner is receiver and recently refused<br/>
+    /// Match by doerRef and by targetCOM
+    /// </summary>
+    /// <param name="ep"></param>
+    /// <returns></returns>
+    public int MatchBlacklist(EvaluationPackage ep)
+    {
+        if (!ep.Package.receiver.Contains(Owner)) return 0;
+        int count = 0;
+        foreach(var b in Blacklist)
+        {
+            if (b.targets.Count < 1 || ep.Package.DoerRefs.Count < 1 || !Utility.ListContainsLoose(b.targets, ep.Package.DoerRefs)) continue;
+            else if (ep.targetCOM == null || b.targetCOM == null) continue;
+
+            if (ep.targetCOM == b.targetCOM || (ep.targetCOM.comTags.Contains("initSex") && b.targetCOM.comTags.Contains("initSex"))) count += b.count;
+            else continue;
+        }
+        return count;
+    }
+
+    protected void UpdateBlacklist()
+    {
+        Blacklist.Clear();
+        for (int i = entries.Count - 1; i >= 0; i--)
+        {
+            if (Entries[i].Duration == 0) continue;
+
+            Entries[i].FillBlacklist(Blacklist);
+            if (!Entries[i].isRefuseOnly) break;
+        }
+    }
+
+    public string PrintBlacklist()
+    {
+        List<string> s1 = new List<string>();
+        foreach (var i in Blacklist) s1.Add($"{i.roomRef} {i.comID} {String.Join(" ", i.targets)} x{i.count}");
+        return String.Join(" | ", s1);
+    }
+
+    /// <summary>
+    /// Listing all recent [overrideMemoryCount] memory adjustment from newest to oldest<br/>
+    /// Older memory adjustment intensity will be reduced by newer if newer has high opposite intensity
     /// </summary>
     /// <param name="overrideMemoryCount">How many memory entry are factored into statMod calculation</param>
     /// <returns></returns>
     public List<Stat_Modifier> GetRecentMemoryStatMods(int overrideMemoryCount = -1)
     {
+
         if (overrideMemoryCount == -1) overrideMemoryCount = Owner.Stats.MemoryEntryCount;
+        List<int> rm_lust = new List<int>();
+        List<int> rm_mood = new List<int>();
+        List<int> rm_stress = new List<int>();
+
         if (recentMemoryCache == null)
         {
             overrideMemoryCount = Math.Min(overrideMemoryCount, entries.Count);
@@ -98,31 +168,54 @@ public class MemoryManager
                 if (overrideMemoryCount < 1) break;
                 if (Entries[i].Duration == 0) continue;
                 overrideMemoryCount -= 1;
-                //            if (entries[i].Duration)
-                recentMemoryCache.Add(Entries[i].Mod_Lust);
-                recentMemoryCache.Add(Entries[i].Mod_Mood);
-                recentMemoryCache.Add(Entries[i].Mod_Stress);
+
+                AddMoodlet(ref rm_lust, Entries[i].Mod_Lust);
+                AddMoodlet(ref rm_mood, Entries[i].Mod_Mood);
+                AddMoodlet(ref rm_stress, Entries[i].Mod_Stress);
             }
-            /*
-            for (int i = 0; i < overrideMemoryCount && entries.Count - 1 - i >= 0; i++)
-            {
-                if (Entries[i].Duration == 0)
-                {
-                    overrideMemoryCount++;
-                    continue;
-                }
-                int ii = entries.Count - 1 - i;
-                //            if (entries[i].Duration)
-                recentMemoryCache.Add(Entries[ii].Mod_Lust);
-                recentMemoryCache.Add(Entries[ii].Mod_Mood);
-                recentMemoryCache.Add(Entries[ii].Mod_Stress);
-            }
-            */
         }
 
         return recentMemoryCache;
     }
     List<Stat_Modifier> recentMemoryCache = null;
+
+
+    protected void AddMoodlet(ref List<int> compareList, Stat_Modifier statmod)
+    {
+        if (statmod.valueType != "number") return;
+        if (int.TryParse(statmod.valueString, out int modvalue))
+        {
+            var oppCount = 0;
+            var newVal = 0;
+            if (modvalue > 0)
+            {
+                oppCount = compareList.FindAll(x => x < -modvalue).Count;
+                newVal = Math.Max(0, modvalue - oppCount);
+            }
+            else //modvalue < 0
+            {
+                oppCount = compareList.FindAll(x => x > -modvalue).Count;
+                newVal = Math.Min(0, modvalue + oppCount);
+            }
+
+            if (newVal == modvalue) recentMemoryCache.Add(statmod);
+            else recentMemoryCache.Add(duplicateMoodlet(statmod, newVal));
+            compareList.Add(newVal);
+        }
+        else return;
+        
+    }
+    protected Stat_Modifier duplicateMoodlet(Stat_Modifier statmod, int value)
+    {
+        var newstuff = new Stat_Modifier();
+        newstuff.statID = statmod.statID;
+        newstuff.modKey = statmod.modKey;
+        newstuff.type = statmod.type;
+        newstuff.valueType = statmod.valueType;
+        newstuff.valueString = value.ToString();
+        //newstuff.SetValueTypeAndString("number", value)
+        return newstuff;
+    }
 
     public int GetMemoryAdjustment(EvaluationPackage.Modifiers modifiers, int targetRef, COM com, List<string> tags = null, bool requireConsciousness = true)
     {
@@ -190,6 +283,8 @@ public class MemoryManager
     {
         if (recentMemoryCache != null) recentMemoryCache.Clear();
         recentMemoryCache = null;
+        Owner.Stats.RefreshAllStats();
+        UpdateBlacklist();
     }
 
 
@@ -204,46 +299,36 @@ public class MemoryManager
     /// <param name="duration"></param>
     /// <returns></returns>
     /// 
-    public Memory_Entry AddEntry(MemInstance memInstance, List<string> selfTags, int duration = -1)
+    public Memory_Entry AddEntry(MemInstance memInstance, List<string> selfTags, int duration = -1, bool mergeWithAll = false)
     {
-        ClearCache();
+       // ClearCache();
 
         var roomRef = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID).RefID;
         Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance);
+        entry.MergeWithAll = mergeWithAll;
 
         if (this.Last == null || !this.Last.TryMergeWith(entry))
         {
             this.entries.Add(entry.StartTime.Ticks, entry);
+            ClearCache();
             return entry;
         }
-        else return this.Last;
-
-    }
-    public Memory_Entry AddEntry(string description, List<int> targets, List<string> selfTags, List<string> targetTags, int duration = -1, Memory_Response response = Memory_Response.Accept, Memory_Attitude attitude = Memory_Attitude.Neutral)
-    {
-        ClearCache();
-
-        var roomRef = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID).RefID;
-
-        MemInstance memInstance = new MemInstance(targets, targetTags, "", -1, -1, false, response, attitude, description);
-        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance);
-
-        if (this.Last == null || !this.Last.TryMergeWith(entry))
+        else
         {
-            this.entries.Add(entry.StartTime.Ticks, entry);
-            return entry;
+            ClearCache();
+            return this.Last;
         }
-        else return this.Last;
     }
+
     /// <summary>
     /// Duration == -2 -> permanent. <br/> Duration == -1 -> default
     /// </summary>
     /// <param name="ep"></param>
     /// <param name="duration"></param>
     /// <returns></returns>
-    public Memory_Entry AddEntry(EvaluationPackage ep, int duration = -1)
+    public Memory_Entry AddEntry(EvaluationPackage ep, int duration = -1, bool mergeWithAll = false)
     {
-        ClearCache();
+
 
         List<string> selfTags, targetTags;
         Memory_Attitude attitude;
@@ -273,6 +358,7 @@ public class MemoryManager
         }
         else
         {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Memory) Debug.LogError($"Memory manager addentry EP error: {Owner.FirstName} not in ep");
             return null;
         }
         var memDuration = selfTags.Contains("important") || duration < -1 ? -2 : duration != -1 ? duration : Owner.Stats.MemoryLength;
@@ -285,12 +371,29 @@ public class MemoryManager
         MemInstance memInstance = new MemInstance(targets, targetTags, ep.targetCOM == null ? "" : ep.targetCOM.ID, ep.VariantID, ep.Master == null ? -1 : ep.Master.RefID, isDoer, ep.Response, attitude, description);
         Memory_Entry entry = new Memory_Entry(Owner, job, roomRef, selfTags, memInstance, jobDesc, memDuration);
 
+        if (ep.targetCOM != null && (ep.targetCOM.comTags.Contains("initSex") || ep.targetCOM.comTags.Contains("endSex")))
+        {
+            entry.MergeWithAll = true;
+            entry.entryDescription = memInstance.description;
+        }
+        else
+        {
+            entry.MergeWithAll = mergeWithAll;
+        }
+
         if (this.Last == null || !this.Last.TryMergeWith(entry))
         {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Memory) Debug.Log("memory new entry");
             this.entries.Add(entry.StartTime.Ticks, entry);
+            ClearCache();
             return entry;
         }
-        else return this.Last;
+        else
+        {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Memory) Debug.Log("memory merge last");
+            ClearCache();
+            return this.Last;
+        }
     }
 }
 

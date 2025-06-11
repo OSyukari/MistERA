@@ -34,7 +34,12 @@ public enum AP_Status
 [System.Serializable]
 public abstract class ActionPackage
 {
-
+    string cache_refusedResponse = "";
+    string RefuseResponse { get
+        {
+            if (cache_refusedResponse == "") cache_refusedResponse = LocalizeDictionary.Instance.Index.QueryThenParse("ap_Description_refuse");
+            return cache_refusedResponse;
+        } }
     [JsonIgnore] public virtual bool isTemporaryAP { get { return false; } }
     protected Character_Trainable master_cached = null;
     [JsonIgnore] public Character_Trainable Master { get
@@ -188,25 +193,30 @@ public abstract class ActionPackage
     [JsonIgnore] public virtual string DisplayName { get {
             //if (targetCOM != null && targetCOM.comTags.Contains("food_meal")) Debug.LogError($"mealcom name {targetCOM.DisplayName(0)}, ismealcom ? {(targetCOM is COM_TakeMeal)}");
             return targetCOM != null ? (COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName()):" - "; } }
-     protected string DescriptionText(bool isDoer, int charaRef)
+     protected string DescriptionText(bool isDoer, int charaRef, bool withRoomName = false)
     {
         if (targetCOM == null || COMVariantID < 0) return "";
 
-        var roomName = this.RoomKey != -1 ? scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey).DisplayName : "";
+        var roomName = this.RoomKey != -1 && withRoomName ? scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey).DisplayName : "";
 
-        string s = targetCOM.GetVariantDescription(COMVariantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
-
-        return s;
+        string s =  targetCOM.GetVariantDescription(COMVariantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
+        bool refused = false;
+        foreach(var ep in packages)
+        {
+            if (ep.ReceiverRef == charaRef && ep.DoerRef != charaRef && ep.Response < Memory_Response.Accept) refused = true;
+        }
+        if (!refused) return s;
+        else return RefuseResponse.Replace("$comdesc$", s);
     }
 
     public string DescriptionText()
     {
         return doer[0].FirstName + this.job.GetJobDescription(doer[0].RefID);
     }
-    public string DescriptionText(int charaRef)
+    public string DescriptionText(int charaRef, bool withRoomName = false)
     {
-        if (this.DoerRefs.Contains(charaRef)) return DescriptionText(true, charaRef);
-        else if (this.receiverRefs.Contains(charaRef)) return DescriptionText(false, charaRef);
+        if (this.DoerRefs.Contains(charaRef)) return DescriptionText(true, charaRef, withRoomName);
+        else if (this.receiverRefs.Contains(charaRef)) return DescriptionText(false, charaRef, withRoomName);
         else return "chara does not belong in this AP";
     }
 

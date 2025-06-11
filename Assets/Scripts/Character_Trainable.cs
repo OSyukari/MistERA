@@ -283,7 +283,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 Debug.Log(FirstName + " Comparevalue currentClimaxCount [" + this.Stats.ConsecutiveClimaxCount + "] [" + operand + "] [" + value + "]");
                 return Utility.CompareValue(this.Stats.ConsecutiveClimaxCount, operand, value); ;
             case "isUnconscious": // check chara sleeping or unconscious
-                Debug.Log(FirstName + " Comparevalue isUnconscious [" + this.Stats.isConsciousnessUnconscious + "] [" + operand + "] [" + value + "]");
+                //Debug.Log(FirstName + " Comparevalue isUnconscious [" + this.Stats.isConsciousnessUnconscious + "] [" + operand + "] [" + value + "]");
                 return Utility.CompareValue(this.Stats.isConsciousnessUnconscious, operand, value);
             case "isTimestopped": // check if chara can act in timestop and if currently timestopped
                // bool isTimestopped = scr_System_Time.current.timeStop && !this.CanActInTimeStop;
@@ -839,7 +839,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 // at this point we know the previous job can be break
                 //foreach (Manageable faction in FactionManager.Factions)
                 //{   // get closest schedule job
-                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Jobs(this, currentHour, s);
+                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Jobs(this, currentHour, s, true);
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
@@ -866,7 +866,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 //foreach (Manageable faction in FactionManager.HomeFactions)
                 //{
-                possibleResting.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "rest", s));
+                possibleResting.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "rest", s, false, true, true));
                //     break;
                 //}
 
@@ -933,7 +933,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 //foreach (Manageable faction in FactionManager.HomeFactions)
                 //{
-               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true, false));
+               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true, false, true));
                 //    break;
                 //}
 

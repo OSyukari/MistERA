@@ -36,23 +36,25 @@ public enum  Memory_Response
 public class Memory_Entry
 {
     public DateTime StartTime = DateTime.MinValue;
-
+    [JsonIgnore][NonSerialized] public bool MergeWithAll = false;
     public DateTime EndTime = DateTime.MinValue;
     [JsonIgnore] public string PrintTimeStart { get { return StartTime.ToShortTimeString(); } }
     [JsonIgnore] public string PrintTimeStartAndEnd { get { return StartTime.ToShortTimeString() + (EndTime == StartTime ? "" : "\n- " + EndTime.ToShortTimeString()); } }
     [JsonIgnore] public string PrintTimeEndToStart { get { return (EndTime == StartTime ? "" :  EndTime.ToShortTimeString() + "\n- ")+ StartTime.ToShortTimeString(); } }
 
-   // [JsonIgnore] public bool isSexMemory { get { return this.Tags.Contains("sex"); } }
-   // [JsonIgnore] public bool isSexTouchMemory { get { return !isSexMemory && ( this.Tags.Contains("service") || this.Tags.Contains("unsafe") ); } }
-  //  [JsonIgnore] public bool isTouchMemory { get { return !isSexTouchMemory && this.Tags.Contains("touch") ; } }
+    // [JsonIgnore] public bool isSexMemory { get { return this.Tags.Contains("sex"); } }
+    // [JsonIgnore] public bool isSexTouchMemory { get { return !isSexMemory && ( this.Tags.Contains("service") || this.Tags.Contains("unsafe") ); } }
+    //  [JsonIgnore] public bool isTouchMemory { get { return !isSexTouchMemory && this.Tags.Contains("touch") ; } }
 
-  //  [JsonIgnore] public bool isOnlyRefuseMemory { get { return this.interactions.Find(x => x.response != Memory_Response.Refuse) == null; } }
-    [SerializeField] [JsonProperty] List<string> selfTags = new List<string>(), targetTags = new List<string>();
+    //  [JsonIgnore] public bool isOnlyRefuseMemory { get { return this.interactions.Find(x => x.response != Memory_Response.Refuse) == null; } }
+    [SerializeField][JsonProperty] List<string> selfTags = new List<string>();
+    List<string> targetTags = new List<string>();
 
     public void ReEstablishParent(Character_Trainable c)
     {
         this.ownerRef = c.RefID;
-        this.owner = c;
+        this.owner = c; 
+        InternalUpdate();
     }
 
     protected int ownerRef = -1;
@@ -125,6 +127,21 @@ public class Memory_Entry
 
     [SerializeField][JsonProperty] protected List<MemInstance> interactions = new List<MemInstance>();
 
+    public void FillBlacklist(List<MemBlacklist> Blacklist)
+    {
+        foreach(var i in this.interactions)
+        {
+            if (i.response == Memory_Response.Refuse)
+            {
+                // in case of memory merge contains both accept and refuse, skip it
+                if (this.interactions.Find(x => x.isSimilar(i) && x.response > Memory_Response.Refuse) != null) continue;
+                var lists = Blacklist.Find(x => x.comID == i.comID && x.roomRef == this.roomRef && Utility.ListEquals(i.targets, x.targets));
+                if (lists != null) lists.count += i.stackCount;
+                else Blacklist.Add(new MemBlacklist(this.roomRef, i));
+            }
+        }
+    }
+
     public Memory_Entry()
     {
 
@@ -185,6 +202,7 @@ public class Memory_Entry
     public bool softMerge = false;
     public int jobRefID = -1;
     public string entryDescription = "";
+
     public Memory_Entry(Character_Trainable c, Job job, int roomRef, List<string> selfTags, MemInstance mem, string entryDescription = "", int duration = -1) : this()
     {
         int comTime = mem == null || mem.comID == "" ? 0 : scr_System_Serializer.current.index_COM.GetByID(mem.comID).TimeScale;
@@ -205,25 +223,78 @@ public class Memory_Entry
         InternalUpdate();
     }
 
-    public bool CanMergeWith(Memory_Entry other)
+    protected bool CanMergeWith(Memory_Entry other)
     {
-        if (this.ownerRef != other.ownerRef) return false;
-        if (this.roomRef != other.roomRef) return false;
-        if (!Utility.AreMemoryTagsMergeable(selfTags, other.selfTags)) return false;
-        if (jobRefID != -1 && other.jobRefID != -1 && jobRefID != other.jobRefID) return false;
-        if (this.entryDescription != "" && other.entryDescription != "" && this.entryDescription != other.entryDescription) return false;
-        if (!softMerge)
+        if (this.ownerRef != other.ownerRef)
         {
-            // forbid merge if start time is 1 hour ago
-            if ((this.EndTime - other.StartTime).TotalMinutes > 60) return false;
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, ownerRef not mergeable |{ownerRef}|-|{other.ownerRef}|");
+            return false;
+        }
+        if (this.roomRef != other.roomRef)
+        {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, tags not roomRef |{roomRef}|-|{other.roomRef}|");
+            return false;
+        }
 
-            foreach (var j in other.interactions)
+        if (other.Tags.Contains("initSex")) return false;
+        
+        else if (MergeWithAll || other.MergeWithAll)
+        {
+            return true;
+        }
+        else
+        {
+            if (jobRefID != -1 && other.jobRefID != -1 && jobRefID != other.jobRefID)
             {
-                bool merged = false;
-                foreach (var i in interactions) if (i.canMergeWith(j)) merged = true;
-                if (!merged) return false;
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, jobref not identical |{jobRefID}|-|{other.jobRefID}|");
+                return false;
+            }
+
+            if (!Utility.AreMemoryTagsMergeable(selfTags, other.selfTags))
+            {
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, tags not mergeable |{String.Join(" ", selfTags)}|-|{String.Join(" ", other.selfTags)}|");
+                return false;
+            }
+            if (this.entryDescription != "" && other.entryDescription != "" && this.entryDescription != other.entryDescription)
+            {
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, description not identical |{entryDescription}|-|{other.entryDescription}|");
+                return false;
+            }
+            if (this.softMerge != other.softMerge)
+            {
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, softMerge not identical |{softMerge}|-|{other.softMerge}|");
+                return false;
+            }
+
+            if (!softMerge)
+            {
+                // forbid merge if start time is 1 hour ago
+                if ((other.EndTime - this.StartTime).TotalMinutes > 61) return false;
+
+                foreach (var j in other.interactions)
+                {
+                    bool merged = false;
+                    foreach (var i in interactions) if (i.canMergeWith(j)) merged = true;
+                    if (!merged) return false;
+                }
+            }
+            else // softmerge
+            {
+                // allow not refuseonly to merge with all
+                // if refuseonly then only merge with other refuseonly 
+                if (this.isRefuseOnly && !other.isRefuseOnly)
+                {
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, softMerge isRefuseOnly |{isRefuseOnly}|-|{other.isRefuseOnly}|");
+                    return false;
+                }
+                if (!Utility.AreMemoryTagsMergeable(targetTags, other.targetTags))
+                {
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, softMerge targettags |{String.Join(" ", targetTags)}|-|{String.Join(" ", other.targetTags)}|");
+                    return false;
+                }
             }
         }
+
         return true;
     }
 
@@ -233,10 +304,30 @@ public class Memory_Entry
 
         foreach (var j in other.interactions)
         {
-            foreach (var i in interactions) if (i.TryMergeWith(j)) break; 
+            bool merged = false;
+            foreach (var i in this.interactions)
+            {
+                if (i.TryMergeWith(j))
+                {
+
+                    merged = true;
+                    break;
+                }
+            }
+            if (!merged) this.interactions.Add(j);
+            j.tags.Remove("mergeWithAll");
         }
 
         this.EndTime = other.EndTime;
+        other.selfTags.Remove("mergeWithAll");
+        this.selfTags.AddRange(other.selfTags);
+        this.selfTags = this.selfTags.Distinct().ToList();
+
+        this.jobRefID = !MergeWithAll && this.jobRefID != -1 ? this.jobRefID : other.jobRefID != -1 ? other.jobRefID : -1;
+        this.entryDescription = this.entryDescription != "" ? this.entryDescription : other.entryDescription != "" ? other.entryDescription : "";
+
+        this.MergeWithAll = false;
+
         if (this.duration < 0 || other.duration < 0) this.duration = -1;
         else this.duration = Math.Max(this.duration, other.duration);
 
@@ -274,22 +365,37 @@ public class Memory_Entry
         
         }
      */
+    [JsonIgnore] [NonSerialized] public bool isRefuseOnly = false;
+
+
+    List<MemInstance> Actions = new List<MemInstance>();
     protected void InternalUpdate()
     {
+        isRefuseOnly = interactions.Count > 0;
+        Actions.Clear();
         targetRefs = null;
         targets = null;
         targetTags.Clear();
         memInstanceDescriptionCache = new List<string>();
-        foreach(var j in this.interactions) memInstanceDescriptionCache.Add(j.Print());
 
+        cache_lust = null; cache_mood = null; cache_stress = null;
         cache_score = 0; cache_acceptCount = 0; cache_refuseCount = 0;
         int maxLust = 0, minLust = 0, maxMood = 0, minMood = 0, maxStress = 0, minStress = 0;
+
         foreach (var i in interactions)
         {
+            memInstanceDescriptionCache.Add(i.Print());
+
+            isRefuseOnly = i.response == Memory_Response.Refuse && isRefuseOnly;
+
             float iLust = i.Lust, iMood = i.Mood, iStress = i.Stress;
             scoreMod_Lust += iLust;
             scoreMod_Mood += iMood;
             scoreMod_Stress += iStress;
+
+            cache_score += i.AttitudeScore(Owner);
+            if (i.response == Memory_Response.Refuse) cache_refuseCount++;
+            else cache_acceptCount++;
 
             maxLust = Math.Max(maxLust, (int)iLust);
             minLust = Math.Min(minLust, (int)iLust);
@@ -300,12 +406,16 @@ public class Memory_Entry
 
             targetTags.AddRange(i.tags);
             targetTags = targetTags.Distinct().ToList();
+
+            if (i.isAction) Actions.Add(i);
             // EvaluateSingle(Owner, i, ref cache_score, ref cache_acceptCount, ref cache_refuseCount);
         }
 
         scoreMod_Lust = Math.Max(Math.Min(scoreMod_Lust, maxLust), minLust);
         scoreMod_Mood = Math.Max(Math.Min(scoreMod_Lust, maxMood), minMood);
         scoreMod_Stress = Math.Max(Math.Min(scoreMod_Lust, maxStress), minStress);
+
+        MergeWithAll = MergeWithAll || (targetTags.Contains("initSex") && !targetTags.Contains("endSex"));
 
         isEvaluationCached = true;
     }
@@ -425,10 +535,17 @@ public class Memory_Entry
             return "Relevant Tags:\n[" + String.Join(" ", selfTags) + "]\n[" + String.Join(",",targetTags)+"]";
         } }
 
-    public void Tick(TimeSpan t)
+    /// <summary>
+    /// return true if duration after tick == 0
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    public bool Tick(TimeSpan t)
     {
         if (Tags.Contains("important")) duration = -1;
         else if (duration > 0) duration = Math.Max(duration - t.Minutes, 0);
+
+        return duration == 0;
     }
 
 
@@ -449,8 +566,6 @@ public class Memory_Entry
     private Stat_Modifier cache_lust = null, cache_stress = null, cache_mood = null;
     [JsonIgnore] public Stat_Modifier Mod_Lust { get
         {
-            if (!isEvaluationCached || cache_lust == null) InternalUpdate();
-
             var value = scoreMod_Lust;
 
             if ((Tags.Contains("sex") || Tags.Contains("massage") || Tags.Contains("touch")) && !Tags.Contains("safe"))
@@ -467,8 +582,6 @@ public class Memory_Entry
     {
         get
         {
-            if (!isEvaluationCached || cache_stress == null) InternalUpdate();
-
             var value = scoreMod_Stress;
 
             if (Tags.Contains("job"))
@@ -501,13 +614,13 @@ public class Memory_Entry
         return newstuff;
     }
 
+
+
     protected float scoreMod_Mood = 0, scoreMod_Stress = 0, scoreMod_Lust = 0;
     [JsonIgnore] public Stat_Modifier Mod_Mood
     {
         get
         {
-            if (!isEvaluationCached || cache_mood == null) InternalUpdate();
-
             var value = scoreMod_Mood + cache_score;
             // Good COM Result increase mood. Bad result decrease Mood.
 
@@ -524,9 +637,21 @@ public class Memory_Entry
         //bool printed = true;
         if (withTimeStamp) s += StartTime.ToShortTimeString() + ": ";
 
-        if (this.entryDescription != "") return entryDescription;
-        else if (MemInstanceDescriptions.Count > 0) return MemInstanceDescriptions[0];
-        else return "Error no stuff";
+        string body = "";
+
+        if (Actions.Count == 1) body = Actions[0].Print();
+        else if (isRefuseOnly && this.entryDescription != "") body = LocalizeDictionary.Instance.Index.QueryThenParse("job_desc_refuseOnly").Replace("$jobdesc$", entryDescription);
+        else if (this.entryDescription != "") body = entryDescription;
+        else if (Actions.Count > 0) body = Actions[0].Print();
+        else body = "Error no stuff";
+
+        if (withRoomName)
+        {
+            var roomname = this.roomRef == -1 ? "unknown" : scr_System_CampaignManager.current.Map.GetRoomByRef(roomRef).DisplayName;
+            return LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_withRoomName").Replace("$desc$", body).Replace("$roomname$", roomname);
+        } else return body;
+
+
         /*
         if (isSexMemory)
         {   // dont care about actual interaction count, lob everything inside
@@ -609,7 +734,6 @@ public class Memory_Entry
     {
         int returnVal = 0;
         bool addNumber = false;
-        if (!isEvaluationCached) InternalUpdate();
 
         string s1 = "", s2 = "";
 
@@ -685,7 +809,6 @@ public class Memory_Entry
     {
         get
         {
-            if (memInstanceDescriptionCache == null) InternalUpdate();
             return memInstanceDescriptionCache;
         }
     }
@@ -705,6 +828,29 @@ public class Memory_Entry
     }
 }
 
+public class MemBlacklist
+{
+    public List<int> targets = new List<int>();
+    public string comID = "";
+    public int roomRef = -1;
+    public int count = 1;
+    public MemBlacklist(int roomRef, MemInstance instance)
+    {
+        this.roomRef = roomRef;
+        this.targets = instance.targets;
+        this.comID = instance.comID;
+        this.count = instance.stackCount;
+    }
+
+    protected COM cacheCOM = null;
+    public COM targetCOM { get
+        {
+            if (this.cacheCOM == null && this.comID != "") this.cacheCOM = scr_System_Serializer.current.MasterList.COMs.GetByID(this.comID);
+            return this.cacheCOM;
+        } }
+}
+
+
 [System.Serializable]
 public class MemInstance
 {
@@ -718,6 +864,21 @@ public class MemInstance
     public int stackCount = 1;
     public Memory_Response response = Memory_Response.None;
     public string description = "";
+
+    /// <summary>
+    /// match similarity except: attitude, stackcount, response, description
+    /// </summary>
+    /// <param name="inst"></param>
+    /// <returns></returns>
+    public bool isSimilar(MemInstance inst)
+    {
+        return Utility.ListEquals(targets, inst.targets) &&
+            Utility.ListEquals(tags, inst.tags) && 
+            comID == inst.comID && masterRef == inst.masterRef && isDoer == inst.isDoer;
+    }
+
+    [JsonIgnore]
+    public bool isAction { get { return this.comID != ""; } }
     [JsonIgnore]
     public Memory_Attitude Attitude
     {
@@ -729,7 +890,16 @@ public class MemInstance
 
     public string Print()
     {
-        return stackCount > 1 ? $"{this.description} x{stackCount}" : this.description;
+        List<string> dscs = this.description.Split("||").ToList();
+        string dsc = dscs.Count > 0 ? dscs[0] : "";
+
+        for(int i = 1; i < dscs.Count; i++)
+        {
+            var keyword = "$elem" + i.ToString("N0") + "$";
+            dsc = dsc.Replace(keyword, dscs[i]);
+        }
+
+        return stackCount > 1 ? $"{dsc} x{stackCount}" : dsc;
     }
     public MemInstance()
     {
@@ -745,7 +915,7 @@ public class MemInstance
         this.masterRef = masterRef;
         this.isDoer = isDoer;
         this.attitude = attitude == Memory_Attitude.None ? (int)Memory_Attitude.Neutral : (int)attitude;
-        this.response = response;
+        this.response = response > Memory_Response.Accept ? Memory_Response.Accept : response;
         this.description = description;
         //Debug.LogError($"new MemInstance, [{String.Join("|", this.targets)}] [{comID}] [{comVariantID}] [{masterRef}] [{isDoer}] [{this.attitude}] [{this.response}]");
     }
@@ -771,7 +941,12 @@ public class MemInstance
         if (this.comID != mem.comID) return false;
         //if (this.comVariantID != mem.comVariantID) return false;
         if (this.response != mem.response) return false;
-        if (this.description != mem.description) return false;
+        
+        List<string> descSplit = this.description.Split("||").ToList();
+        List<string> otherSplit = mem.description.Split("||").ToList();
+
+        if (descSplit.Count != otherSplit.Count) return false;
+        else if (descSplit.Count > 0 && descSplit[0] != otherSplit[0]) return false;
         return true;
     }
 
@@ -785,6 +960,22 @@ public class MemInstance
 
         this.attitude += mem.attitude;
         this.stackCount += mem.stackCount;
+
+        List<string> descSplit = this.description.Split("||").ToList();
+        List<string> otherSplit = mem.description.Split("||").ToList();
+
+        for(int i = 1; i < descSplit.Count && i < otherSplit.Count; i++)
+        {
+            if (int.TryParse(descSplit[i], out int selfCount) && int.TryParse(otherSplit[i], out int otherCount))
+            {
+                descSplit[i] = (selfCount + otherCount).ToString();
+            }
+            else
+            {
+                Debug.LogError($"MemInstance merge description error, failed to int.parse {descSplit[i]} or {otherSplit[i]} to int");
+            }
+        }
+
         return true;
     }
 
@@ -796,6 +987,7 @@ public class MemInstance
     public int AttitudeScore(Character_Trainable owner)
     {
         int score = 0;
+        /*
         switch (response)
         {
             case Memory_Response.Refuse: score -= 1; break;
@@ -803,10 +995,11 @@ public class MemInstance
             case Memory_Response.CriticalFailure: score -= 2; break;
             case Memory_Response.CriticalSuccess: score += 2; break;
             default: break;
-        }
+        }*/
 
         if (Attitude > Memory_Attitude.None) score += (Attitude - Memory_Attitude.Neutral);
 
         return score;
     }
 }
+
