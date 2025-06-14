@@ -23,20 +23,37 @@ public class ActionPackage_Sex : ActionPackage
         ReInitializeCOM(job, targetCOM, doer, receiver, masterRef);
     }
 
-    new protected void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
+    protected override void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
     {
         base.ReInitializeCOM(job, targetCOM, doer, receiver, masterRef);
         toggleRepeat = true;
+        Debug.LogError("sexap reinitCOM, setting togglerepeat to true");
     }
     public override void RepeatReset(bool resetRequest = false)
     {
 
         base.RepeatReset(resetRequest);
+        this.extraCOMTags.Remove("justWokenUp");
         this.isStrongPenetration = false;
         // reset 
 
     }
 
+    [JsonIgnore]
+    public override bool PackageRepeat
+    {
+        get
+        {
+            return toggleRepeat;
+            // return !this.extraCOMTags.Contains("norepeat") && toggleRepeat;
+        }
+        set
+        {
+            Debug.LogError("APsex set repeat to false!!");
+            toggleRepeat = value;
+            this.tooltip = new List<string>();
+        }
+    }
     [JsonIgnore] public override bool LeftAlign
     {
         get
@@ -75,6 +92,7 @@ public class ActionPackage_Sex : ActionPackage
         copy.toggleRepeat = this.toggleRepeat;
         copy.LoggedBegin = this.LoggedBegin;
         copy.duration = this.duration;
+        Debug.LogError($"copy sexAP, target togglerepeat? {copy.toggleRepeat}");
         return copy;
     }
 }

@@ -330,6 +330,10 @@ public class Event : I_SerializationCallbackReceiver
         public class Options
         {
             public string option = "";
+            /// <summary>
+            /// if tooltip key exist as a key in AppendStrings, then take content from appendstring as tooltip
+            /// </summary>
+            public string tooltip = "";
 
             public List<Condition> Conditions = new List<Condition>();
             public List<CharaCondition> self_chara_conditions = new List<CharaCondition>();
@@ -391,6 +395,10 @@ public class Event : I_SerializationCallbackReceiver
                 ModStatusValue,
                 WakeUp,
                 ExecuteCallback,
+                /// <summary>
+                /// [callbackKey]
+                /// </summary>
+                ExistCallbackID,
                 FlushLogs,
                 FlushAppendStrings,
                 AddMemoryEntry,

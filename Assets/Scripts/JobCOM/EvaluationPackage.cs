@@ -108,6 +108,26 @@ public class EvaluationPackage
         return "["+(this.Package == null ? "?" : this.Package.Duration) +"]"+ (this.Doer == null ? "null" : this.Doer.FirstName) + "|" + (this.targetCOM == null ? "notCOM" : this.targetCOM.DisplayName(this.VariantID)) + "|" + (this.Receiver == null ? "null" : this.Receiver.FirstName);
     }
 
+    protected List<int> actorRefs = null;
+    [JsonIgnore]
+    public List<int> ActorRefs
+    {
+        get
+        {
+            if (actorRefs == null)
+            {
+                actorRefs = new List<int>();
+
+                actorRefs.Add(DoerRef);
+                actorRefs.Add(ReceiverRef);
+                actorRefs.AddRange(additionalActorRefs);
+                actorRefs = actorRefs.Distinct().ToList();
+                actorRefs.Remove(-1);
+            }
+            return actorRefs;
+        }
+    }
+
     protected List<Character_Trainable> actors = null;
     [JsonIgnore] public List<Character_Trainable> Actors { get { 
             if (actors == null)
@@ -256,6 +276,21 @@ public class EvaluationPackage
         if (receiver != "") this.injectedReceiverTags.Add(receiver);
     }
 
+    public void NotifyInterrupt()
+    {
+        var responseCache = this.response;
+        this.response = Memory_Response.None;
+        if (this.Doer != null)
+        {
+            var m = this.Doer.Memory.AddEntry(this);
+        }
+        if (this.Receiver != null && this.Receiver != this.Doer)
+        {
+            this.Receiver.Memory.AddEntry(this);
+        }
+        this.response = responseCache;
+    }
+
     public bool Evaluate(bool reset = false)
     {
         this.tooltip.Clear();
@@ -357,6 +392,7 @@ public class EvaluationPackage
     protected void CalculateWillingness(bool isDoer, Character_Trainable self, Character_Trainable target, out int rateValue , Modifiers mod, bool isThreat = false)
     {
         int _responseRate = 100;
+        isThreat = Receiver == self && Package.isForced;
 
         if (self == null || self.RefID == 0 || target == null || target.RefID == self.RefID)
         {
@@ -377,8 +413,15 @@ public class EvaluationPackage
 
         if (rel != null)
         {
-            mod.AddModifier(self.RefID, "Obedience", ((int)rel.Obedience(null) - (int)RelationshipObedienceType.Normal) * 5);
-            baseValue -= ((int)rel.Obedience(null) - (int)RelationshipObedienceType.Normal) * 5;
+            var modvalue = ((int)rel.Obedience(null) - (int)RelationshipObedienceType.Normal) * 5;
+            if (isThreat)
+            {
+                modvalue *= 2;
+                mod.AddModifier(self.RefID, "[Threat]", 0);
+            }
+
+            mod.AddModifier(self.RefID, "Obedience", modvalue);
+            baseValue -= modvalue;
         }
 
         if (self.Stats.Mood != null && Math.Abs( self.Stats.Mood.Severity) >= 1)
@@ -458,7 +501,7 @@ public class EvaluationPackage
         }
 
         var blacklistMatch = self.Memory.MatchBlacklist(this);
-        if (blacklistMatch > 0)
+        if (!isThreat && blacklistMatch > 0)
         {
             //Debug.LogError($"blacklist match {blacklistMatch}");
             mod.AddModifier(self.RefID, "recent refusal", -10*blacklistMatch);
@@ -580,8 +623,11 @@ public class EvaluationPackage
 
     }
 
+    /*
     protected void CalculateAcceptance(ref Character_Trainable self, ref Character_Trainable target, out int rateValue, bool isThreat = false)
     {
+        isThreat = Receiver == self && Package.isForced;
+
         if (target == null || self == target)
         {
             rateValue = 100;
@@ -668,7 +714,7 @@ public class EvaluationPackage
                 rateValue = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
             }
         }
-    }
+    }*/
 
 
     /// <summary>
@@ -715,8 +761,10 @@ public class EvaluationPackage
             float average = 50f;
             float consciousness = self.Stats.Consciousness.Severity;
 
-            if (self.Stats.Mood !=null && self.Stats.Mood.Severity > 0) average += (rel.Goodwill / 10 - rel.Badwill / 20);
-            else if (self.Stats.Mood != null && self.Stats.Mood.Severity < 0) average += (rel.Goodwill / 20 - rel.Badwill / 10);
+            bool forced = Receiver == self && Package.isForced;
+
+            if (!forced && self.Stats.Mood !=null && self.Stats.Mood.Severity > 0) average += (rel.Goodwill / 10 - rel.Badwill / 20);
+            else if (forced || (self.Stats.Mood != null && self.Stats.Mood.Severity < 0)) average += (rel.Goodwill / 20 - rel.Badwill / 10);
             else average += (rel.Goodwill / 20 - rel.Badwill / 20);
 
             // lower consciousness (100 to 0) higher is penalty (0 to 100)
@@ -1401,7 +1449,7 @@ public class EvaluationPackage
     }
 
 
-    public List<DelayedExpLogging> logExps = new List<DelayedExpLogging>();
+    [JsonIgnore] public List<DelayedExpLogging> logExps = new List<DelayedExpLogging>();
     public class DelayedExpLogging
     {
         public BodyInternal_Instance body;

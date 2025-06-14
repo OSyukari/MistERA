@@ -48,7 +48,7 @@ public class SkillManager
 {
 
     [SerializeField][JsonProperty] protected Dictionary<string, int> experienceLogs = new Dictionary<string, int>();
-    [SerializeField][JsonProperty] protected Dictionary<string, int> experienceLogs_currentRound = new Dictionary<string, int>();
+    protected Dictionary<string, int> experienceLogs_currentRound = new Dictionary<string, int>();
     public List<string> ExperiencesToString()
     {
         var newDict = experienceLogs.Concat(debug_experienceLogs).GroupBy(p => p.Key).ToDictionary(g => g.Key, g => (g.Count() > 1 ? g.First().Value + g.Last().Value : g.Last().Value));
@@ -231,7 +231,7 @@ public class SkillManager
             else if (!this.skills.ContainsKey(sk.ID)) this.skills.Add(sk.ID, sk.Instantiate());
         }
 
-        foreach(var sk in this.skills.Values) sk.ReEstablishParent(Owner);
+        foreach(var sk in this.skills) sk.Value.ReEstablishParent(Owner, sk.Key);
     }
 }
 
@@ -260,14 +260,14 @@ public class SkillInstance
         }
     }
 
-    public void ReEstablishParent(Character_Trainable owner)
+    public void ReEstablishParent(Character_Trainable owner, string skillID)
     {
+        this.baseSkillID = skillID;
         this.owner = owner;
         this.ownerRefID = owner.RefID;
     }
 
-    [SerializeField]
-    [JsonProperty]
+
     protected string baseSkillID = "";
     protected CharaSkill _base = null;
     [JsonIgnore] public CharaSkill BaseRef { get

@@ -176,11 +176,11 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="refID"></param>
     /// <param name="s"></param>
     /// <param name="animate"></param>
-    public void AddLog(int refID, string s, bool animate = false, bool rightAlign = false)
+    public void AddLog(int refID, string s, bool animate = false, bool rightAlign = false, string tooltip = "")
     {
         if (s.Length < 1) return;
         var chara = scr_System_CampaignManager.current.FindInstanceByID(refID);
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, animate, rightAlign), animate);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, animate, rightAlign), animate);
         //ChangeCurrentViewMode(ViewMode.View_Logs);
     }
 
@@ -191,10 +191,10 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="parent"></param>
     /// <param name="line"></param>
     /// <param name="animate"></param>
-    public void AddLog_Line(EventInstance instance, string line, bool animate = true)
+    public void AddLog_Line(EventInstance instance, string line, string tooltip, bool animate = true)
     {
         // here we need to process line into translated
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(null, line, animate, false), animate);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(null, line, tooltip, animate, false), animate);
     }
 
     public void AddLog_Question(EventInstance parent, Event.EventEntry.EventEntry_Question question, bool animate = true) 
@@ -293,6 +293,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="p"></param>
     public void Register(ActionPackage p, bool avoidConflict = false, bool ignoreConflict = false)
     {
+        if (p == null) Debug.LogError("campaignmanager registerAP null");
         if (!registeredPackagesByRoom.ContainsKey(p.RoomKey)) registeredPackagesByRoom.Add(p.RoomKey, new List<ActionPackage>() { p });
         else
         {
@@ -310,17 +311,18 @@ public class scr_System_CampaignManager : MonoBehaviour
                     }
                     if (currentP.PackagePriority > p.PackagePriority)
                     {
-                        p.paused = true;
+                        p.NotifyInterrupted();
                         Debug.Log("CM RegisterAP: Package [" + p.DisplayName + " " + p.PackagePriority + "] is not getting registered (set to paused) due to not having at least equal priority than [" + currentP.DisplayName + " " + currentP.PackagePriority + "]");
                         return;
                     }
                     else
                     {
-                        Debug.Log("CM RegisterAP: [" + currentP.DisplayName + " " + currentP.PackagePriority + "] is being set to paused due to conflict with [" + p.DisplayName + " " + p.PackagePriority + "] and failed priority check.");
+                        Debug.LogError("CM RegisterAP: [" + currentP.DisplayName + " " + currentP.PackagePriority + "] is being set to paused due to conflict with [" + p.DisplayName + " " + p.PackagePriority + "] and failed priority check.");
                         p.job.LogMessage_Begin_Replace(registeredPackagesByRoom[p.RoomKey][i], p);
 
-                        registeredPackagesByRoom[p.RoomKey][i].paused = true;
+                        registeredPackagesByRoom[p.RoomKey][i].NotifyInterrupted();
                         registeredPackagesByRoom[p.RoomKey].RemoveAt(i);
+
                     }
                 }
             }
@@ -512,12 +514,17 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void ToggleTimeStop()
     {
         //ClearLogs();
+        if (scr_UpdateHandler.current.Lock)
+        {
+            Debug.LogError($"Error ToggleTimeStop, system currently locked in update");
+            return;
+        }
         scr_System_Time.current.ToggleTimeStop();
 
         string s = "";
         if (scr_System_Time.current.TimeStop) s = "TIMESTOP!";
         else s = "TIMESTOP ended.";
-
+        
         FreeUpdate(-1, s);
 
     }
@@ -747,6 +754,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void ChangeCurrentViewMode(ViewMode vm, bool lockView = false)
     {
+        if (vm == ViewMode.View_Room) Debug.Log("changevm");
         // if update lock, allow only setting to logs
         if (scr_UpdateHandler.current.Animating && vm != ViewMode.View_Logs)
         {

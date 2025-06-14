@@ -167,6 +167,7 @@ public class MemoryManager
             {
                 if (overrideMemoryCount < 1) break;
                 if (Entries[i].Duration == 0) continue;
+                else if (Entries[i].selfTags.Contains("unconscious")) continue;
                 overrideMemoryCount -= 1;
 
                 AddMoodlet(ref rm_lust, Entries[i].Mod_Lust);
@@ -304,12 +305,12 @@ public class MemoryManager
        // ClearCache();
 
         var roomRef = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID).RefID;
-        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance);
+        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance, "", duration);
         entry.MergeWithAll = mergeWithAll;
 
         if (this.Last == null || !this.Last.TryMergeWith(entry))
         {
-            this.entries.Add(entry.StartTime.Ticks, entry);
+            this.entries.Add(entry.EndTime.Ticks, entry);
             ClearCache();
             return entry;
         }
@@ -370,6 +371,7 @@ public class MemoryManager
 
         MemInstance memInstance = new MemInstance(targets, targetTags, ep.targetCOM == null ? "" : ep.targetCOM.ID, ep.VariantID, ep.Master == null ? -1 : ep.Master.RefID, isDoer, ep.Response, attitude, description);
         Memory_Entry entry = new Memory_Entry(Owner, job, roomRef, selfTags, memInstance, jobDesc, memDuration);
+        entry.StartTime = ep.Package.StartTime;
 
         if (ep.targetCOM != null && (ep.targetCOM.comTags.Contains("initSex") || ep.targetCOM.comTags.Contains("endSex")))
         {
@@ -384,7 +386,7 @@ public class MemoryManager
         if (this.Last == null || !this.Last.TryMergeWith(entry))
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Memory) Debug.Log("memory new entry");
-            this.entries.Add(entry.StartTime.Ticks, entry);
+            this.entries.Add(entry.EndTime.Ticks, entry);
             ClearCache();
             return entry;
         }

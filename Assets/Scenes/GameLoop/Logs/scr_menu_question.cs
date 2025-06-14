@@ -125,6 +125,12 @@ public class scr_menu_question : scr_Menu
             var tooltip2 = scr_System_Serializer.current.Dictionary.QueryThenParse(tooltip1, tooltip1);
             if (tooltip2 != tooltip1) this.tooltip += tooltip2;
 
+            if (option.tooltip != "")
+            {
+                if (instance.AppendStrings.ContainsKey(option.tooltip)) tooltip += (this.tooltip.Length > 0 ? "\n" : "") + String.Join("\n", instance.AppendStrings[option.tooltip]);
+                else tooltip += (this.tooltip.Length > 0 ? "\n" : "") + option.tooltip;
+            }
+
             if (option.isDefaultCancel) this.tooltip += (this.tooltip.Length > 0 ? "\n":"") + scr_System_Serializer.current.Dictionary.QueryThenParse("event_isDefaultCancel_tooltip");
         }
 

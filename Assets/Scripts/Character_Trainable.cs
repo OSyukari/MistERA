@@ -5,9 +5,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.IO;
 using System.Collections;
-using System.Net.Mime;
-using Cysharp.Threading.Tasks;
-using UnityEditorInternal;
 
 public enum Humanoid_GenderAppearance
 {
@@ -1209,7 +1206,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             {
 
                 var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_sleep_end"));
-                this.Memory.AddEntry(memInst, new List<string>() { "forbidMerge" });
+                var memEntry = this.Memory.AddEntry(memInst, new List<string>() { "forbidMerge" });
+                memEntry.entryDescription = memInst.description;
                 // re-check every AP
                 Utility.GetAPsFrom(this, out List<ActionPackage> aps);
 
@@ -1283,23 +1281,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 {
                     if (job is Job_Sex_Group)
                     {
-     
+                        var message = LocalizeDictionary.Instance.Index.QueryThenParse("event_onNightAssaultFailed_jobD").Replace("$chara$", this.FirstName);
+                        Utility.StringReplace(ref message);
+                        (job as Job_Sex_Group).FlagActorLeave(this.RefID, message);
                     }
                     callbacks.Add(job.NotifyDescriptionsOutOfUpdate);
-                    if (job == this.InteractionJob) continue;
-                    else if (job.GetExistingPackages(this, true, true, true, false).Count < 1)
-                    {
-                       // Debug.LogError($"Actor wakeup call, Job {job.DisplayName} no longer has any active package for {FirstName}, try unregistering");
-                        job.RemoveActor(this.RefID);
-                        if (job is Job_Sex_Group && job.actorRefID.Count < 2)
-                        {
-                            //Debug.LogError("is sex job, need special handling");
-                            var message = LocalizeDictionary.Instance.Index.QueryThenParse("event_onNightAssaultFailed_jobD").Replace("$chara$", this.FirstName);
-                            Utility.StringReplace(ref message);
-
-                            (job as Job_Sex_Group).EndJob(message);
-                        }
-                    }
                 }
 
                 var selfTags = new List<string>();
@@ -1346,9 +1332,19 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Trust, -30, logger);
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Fear, 30, logger);
 
-                    var memInst2 = new MemInstance(new List<int>() { randRel.TargetID }, new List<string>(), "", -1, -1, true, Memory_Response.Refuse, Memory_Attitude.Hate, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultFailed").Replace("$target$", randRel.Target.firstName));
-                    memInst2.AddMoodletScore(-2, -4, 0);
-                    var mem = this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" }, Stats.MemoryLength * 10);
+
+                    memInst.ResetInternal(Memory_Response.Refuse, Memory_Attitude.Hate);
+                    memInst.targets = new List<int>() { randRel.TargetID };
+                    memInst.description = LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultFailed").Replace("$target$", randRel.Target.FirstName);
+                    memInst.AddMoodletScore(-2, -4, 0);
+
+                    memEntry.entryDescription = memInst.description;
+                    memEntry.Duration = Stats.MemoryLength * 10;
+                    memEntry.ReEstablishParent(this);
+
+                    var memInst_2 = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultCaught").Replace("$target$", randRel.Owner.FirstName));
+                    var memEntry_2 = randRel.Target.Memory.AddEntry(memInst_2, new List<string>() { "forbidMerge" });
+                    memEntry_2.entryDescription = memInst_2.description;
                 }
                 else
                 {
@@ -1361,9 +1357,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     // add moodlet
                     if (selfTags.Count > 0)
                     {
-                        var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.Refuse, Memory_Attitude.Hate, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultDiscover"));
-                        memInst2.AddMoodletScore(selfTags.Count, (-selfTags.Count - 1) * 2, 0);
-                        var mem = this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" }, Stats.MemoryLength * 10);
+                        
+                        // var mem = this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" }, Stats.MemoryLength * 10);
+                        memInst.ResetInternal(Memory_Response.Refuse, Memory_Attitude.Hate);
+                        memInst.description = LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultDiscover");
+                        memInst.AddMoodletScore(selfTags.Count, (-selfTags.Count - 1) * 2, 0);
+
+                        memEntry.entryDescription = memInst.description;
+                        memEntry.Duration = Stats.MemoryLength * 10;
+                        memEntry.ReEstablishParent(this);
                     }
                 }
 
@@ -1575,7 +1577,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         scr_UpdateHandler.current.Observer_PostUpdateTime_EventEnd += PostEvent;
     }
 
-    protected void PostEvent()
+    protected void PostEvent(bool eventhandler_active)
     {
 
     }

@@ -173,7 +173,7 @@ public class Job : IDisposable, I_Disposable
 
         p = packages_previous.Find(x => x.actorRefs.Contains(charaRef));
 
-        if (p == null) return "idling";
+        if (p == null) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_idling");
         else
         {
             string s = p.DescriptionText(charaRef );
@@ -604,14 +604,14 @@ public class Job : IDisposable, I_Disposable
 
                 if (packages_previous[i].PackageRepeat)
                 {
-                    //Debug.Log("readding package " + packages_previous[i].DisplayName);
+                    Debug.Log("readding package " + packages_previous[i].DisplayName);
                     packages_previous[i].RepeatReset(false);
                     packages_current.Add(packages_previous[i]);
                     packages_previous.RemoveAt(i);
                 }
                 else
                 {
-                    //Debug.Log("deleting package " + packages_previous[i].DisplayName);
+                    Debug.Log("deleting package " + packages_previous[i].DisplayName);
                     //PackageRemoval(packages_previous[i]);
                     if (!packages_previous[i].isTemporaryAP)
                     {
@@ -661,6 +661,15 @@ public class Job : IDisposable, I_Disposable
             if (isPlayerCOM) scr_System_CampaignManager.current.SetDisplayCOM(ap, scr_System_CampaignManager.displayAP_Reason.isPlayerCOM);
             foreach(int actorref in packages[i].actorRefs) AddActor(actorref);
         }
+    }
+
+    //inject without conflict detection
+    public void InjectPackage(ActionPackage ap)
+    {
+        this.packages_previous.Add(ap);
+        foreach (int actorref in ap.actorRefs) AddActor(actorref);
+         scr_System_CampaignManager.current.Register(ap, false);
+        Debug.Log($"Injectpackage {ap.DisplayName}, repeat? {ap.PackageRepeat}");
     }
 
     public virtual void NotifyRefusal(COM com, int fromRefID)

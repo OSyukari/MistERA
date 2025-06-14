@@ -161,6 +161,8 @@
                 "charaDetail_panel_skills": "技能",
                 "charaDetail_panel_experiences": "经验",
                 "charaDetail_panel_bodyexp": "身体数据",
+                "charaDetail_panel_logs": "行动记录",
+                "charaDetail_panel_equipments": "装备",
                 "charaDetail_tooltip_canMovePortrait": "可通过鼠标左键拖拽和滚轮缩放调整角色图像的默认位置",
                 "comLogs_causes_previousLogs_positive": "<link=\"$linkTooltip$\">前回互动$amount$</link>",
                 "comLogs_causes_previousLogs_negative": "<link=\"$linkTooltip$\">前回互动$amount$</link>",
@@ -451,7 +453,13 @@
 
                 "ui_map_floor_roomsList":"房间列表",
                 "ui_map_floor_charaInRoom":"房间内成员",
-                "ui_map_floorList":"楼层列表"
+                "ui_map_floorList":"楼层列表",
+
+                "ui_update_elapsedTime":"经过$count$分钟",
+                "ui_movement_leavesRoom":"$self$离开了$room$",
+                "ui_movement_entersRoom":"$self$进入了$room$",
+                "ui_movement_playerEntersRoom":"进入了$room$",
+                "ui_movement_charaInRoom":"房间内成员：$names$"
 
 
             }

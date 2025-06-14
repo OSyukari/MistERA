@@ -44,6 +44,16 @@ public class Job_Furniture : Job
         //Debug.Log("Job Add Actor " + charaRef + " result " + String.Join("|", actorRefID));
     }
 
+    public override void RemoveActor(int charaRef)
+    {
+        foreach(var p in packages_previous)
+        {
+            if (p.Duration == 0) continue;  // package is ticked and should be naturally removed, let it
+            if (p.actorRefs.Contains(charaRef)) p.NotifyInterrupted();
+        }
+        base.RemoveActor(charaRef);
+    }
+
     [JsonIgnore] public override string DisplayName
     {
         get

@@ -95,7 +95,7 @@ public class scr_UpdateHandler : MonoBehaviour
         if (!saveHolder.isValid) Debug.LogError("LoadSave error did not re-inject file path.");
         else LoadSaveFile(saveHolder.InnerFile, unloadCanvas);
     }
-    public void LoadSaveFile(SaveFile save, bool unloadCanvas = true)
+    protected void LoadSaveFile(SaveFile save, bool unloadCanvas = true)
     {
         NotifySL(true);
         if (unloadCanvas) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
@@ -156,7 +156,7 @@ public class scr_UpdateHandler : MonoBehaviour
     public event Action Observer_PostUpdateTime_1;
     public event Action Observer_PostUpdateTime_2;
     public event Action Observer_PostUpdateTime_3;
-    public event Action Observer_PostUpdateTime_EventEnd;
+    public event Action<bool> Observer_PostUpdateTime_EventEnd;
     //public event Action Observer_PostUpdateTime_4;
     public event Action<bool> Observer_LogsSingleStepUpdate;
     public event Action<EventStatus, bool> Observer_EventStatus;
@@ -178,12 +178,13 @@ public class scr_UpdateHandler : MonoBehaviour
         // Updatetime is used to register loop count in minutes
         // totalUpdateTime is used when loop finishes and print value.
         // tldr, totalUpdateTime is the update duration count, and we should filter command logging based on this value.
-        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime)))
+        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || init))
         {
             if (EventHandler.Active)
             {
                 Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
-            }else StartCoroutine(SingleUpdate());
+            }
+            else StartCoroutine(SingleUpdate());
         }
         else if (updateUI) NotifyLogsSingleUpdate();
     }
@@ -221,9 +222,13 @@ public class scr_UpdateHandler : MonoBehaviour
     public ExperienceLog exp = new ExperienceLog();
 
     protected System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
-
+    protected bool CallbackResumeUpdate = false;
     protected int firstLoopCounter = 2;
     public bool isFirstUpdate { get { return firstLoopCounter > 0; } }
+
+    string cache_elapsedTime = "";
+    string ElapsedTime { get { if (cache_elapsedTime == "") cache_elapsedTime = LocalizeDictionary.Instance.Index.QueryThenParse("ui_update_elapsedTime");
+        return cache_elapsedTime;} }
     private IEnumerator SingleUpdate()
     {
         //Debug.Log("Singleupdate : start");
@@ -244,7 +249,7 @@ public class scr_UpdateHandler : MonoBehaviour
 
             if (EventHandler.Active && !EventHandler.Waiting)
             {
-                ExecuteEventCallbacks(false);
+                ExecuteEventCallbacks(CallbackResumeUpdate);
                 yield return null;
             }
             else if (EventHandler.Active && EventHandler.Waiting) break;
@@ -350,7 +355,7 @@ public class scr_UpdateHandler : MonoBehaviour
         if (timeStop) totalUpdateTime = 0;
 
 
-        cnManager.AddLog(-1000, "<align=\"right\">" + "(" + (loopCount) + " Minutes) " + scr_System_Time.current.getCurrentTime().ToString() + "</align>", false, false);
+        cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.pref.TextColor_disabled)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", false, false, scr_System_Time.current.getCurrentTime().ToString());
 
         /*
         List<string> names = new List<string>();
@@ -382,7 +387,21 @@ public class scr_UpdateHandler : MonoBehaviour
             EventHandler.Run(false, true);
         }
 
-        ExecuteEventCallbacks(false);
+        ExecuteEventCallbacks(CallbackResumeUpdate);
+    }
+
+    public void DeferredUpdateCall(int intref, string text)
+    {
+        if (!Updating)
+        {
+            scr_System_CampaignManager.current.FreeUpdate(intref, text);
+        }
+    }
+
+    public void ToggleCallbackUpdate()
+    {
+        this.halted = true;
+        this.CallbackResumeUpdate = true;
     }
 
     public void AddEventCallback(Action e)
@@ -392,17 +411,30 @@ public class scr_UpdateHandler : MonoBehaviour
     protected List<Action> eventCallbacks = new List<Action>();
     protected void ExecuteEventCallbacks(bool autoResumeUpdate)
     {
+        FlushCollectedLogs(true, true, false);
         //Debug.LogError("execute callbacks!");
-        foreach (var e in eventCallbacks)
+        var loopCount = 100;
+        while(loopCount > 0 && eventCallbacks.Count > 0)
         {
-            e.Invoke();
+            eventCallbacks[0].Invoke();
+            eventCallbacks.RemoveAt(0);
+            loopCount--;
         }
-        eventCallbacks.Clear();
-        Observer_PostUpdateTime_EventEnd?.Invoke();
+        if (loopCount < 1) Debug.LogError("Eventcallback stack exceed 100, forced exit");
+
+        Debug.Log($"invoking Observer_PostUpdateTime_EventEnd, stillupdating? {this.EventHandler.Active}");
+        Observer_PostUpdateTime_EventEnd?.Invoke(this.EventHandler.Active);
+        FlushCollectedLogs(true, true, false);
         var bo = cnManager.ExistPlayerPackage(out var a, out var b, true);
         //if (!Updating) Debug.LogError($"ExecuteEventCallbacks end, {!EventHandler.Active} {halted} {bo}");
-        if (autoResumeUpdate && !EventHandler.Active && halted && bo) StartUpdate(false);
+        if (autoResumeUpdate)
+        {
+            Debug.LogError($"execute event callbacks, autoresumeupdate {autoResumeUpdate}, {!EventHandler.Active} {halted} {bo}");
+            if (!EventHandler.Active && halted && bo) StartUpdate(false);
+        }
+        this.CallbackResumeUpdate = false;
     }
+
 
 
     List<string> message_begin = new List<string>(), message_end = new List<string>();

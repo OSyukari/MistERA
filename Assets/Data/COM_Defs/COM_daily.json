@@ -292,6 +292,34 @@
             "description_begin":{ "Entries":[{"texts":[""]}], "keepLooking":false }
         }
     ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "default":
+            {
+                "com_interaction_initiateSex": "邀请性交",
+                "com_interaction_initiateSex_displayName_1": "推倒",
+                "com_interaction_initiateSex_displayName_2": "强奸",
+                "com_interaction_initiateSex_displayName_3": "时停奸",
+                "com_interaction_initiateSex_displayName_4": "睡眠奸",
+                "com_interaction_initiateSex_displayName_5": "群P",
+                "com_interaction_initiateSex_displayName_6": "轮奸",
+                "com_interaction_initiateSex_displayName_7": "时停轮奸",
+                "com_interaction_initiateSex_displayName_8": "睡眠轮奸",
+                "com_interaction_endOngoingSex": "结束性交",
+                "com_interaction_endOngoingSex_displayName_1": "结束做爱",
+                "com_interaction_endOngoingSex_displayName_2": "结束强奸",
+                "com_interaction_endOngoingSex_displayName_3": "结束时奸",
+                "com_interaction_endOngoingSex_displayName_4": "结束眠奸",
+                "com_interaction_endOngoingSex_displayName_5": "结束群P",
+                "com_interaction_endOngoingSex_displayName_6": "结束轮奸",
+                "com_interaction_endOngoingSex_displayName_7": "结束时奸",
+                "com_interaction_endOngoingSex_displayName_8": "结束眠奸"
+
+            }
+        }
     }
     
 }

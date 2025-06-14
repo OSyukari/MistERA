@@ -1371,12 +1371,12 @@ public static class EventUtility
 #endif
         // display line
 
-        if (owner.isVisible)
+        if (owner.isVisible && block.line != "")
         {
             var content = Utility.ParseEventEntry(owner, block.line);
             // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
             // but on execute they are consistent
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, content, false));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, content,"", false));
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
 
@@ -1596,11 +1596,20 @@ public static class EventUtility
             case Event.EventEntry.Options.ExecutionType.WakeUp:
                 owner.Self.WakeUp(true);
                 return true;
+            case Event.EventEntry.Options.ExecutionType.ExistCallbackID:
+                var execKeyID = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
+                if (!owner.FunctionCalls.ContainsKey(execKeyID) || owner.FunctionCalls[execKeyID].Count < 1) return false;
+                else return true;
             case Event.EventEntry.Options.ExecutionType.ExecuteCallback:
                 var execKey = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
                 if (!owner.FunctionCalls.ContainsKey(execKey))
                 {
                     Debug.LogError($"cannot find key [{execKey}] in ExecuteCallback");
+                    return false;
+                }
+                else if (owner.FunctionCalls[execKey].Count < 1)
+                {
+                    Debug.LogError($" [{execKey}] in ExecuteCallback has no registered functioncalls");
                     return false;
                 }
                 else

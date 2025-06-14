@@ -373,7 +373,12 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         public override bool IsButtonValid()
         {
-            if (parent.path != null && parent.path.ToList().Find(x=>x.Source == room.RefID || x.Target == room.RefID) != null)
+            if (scr_System_CampaignManager.current.CurrentRoom == room)
+            {
+                this.text.Toggle(true, true);
+                return true;
+            }
+            else if (parent.path != null && parent.path.ToList().Find(x => x.Source == room.RefID || x.Target == room.RefID) != null)
             {
                 this.text.Toggle(true, false);
                 this.tooltip = ttip + "\nTravel Cost: " + (parent.pathCost).ToString() + " minutes";

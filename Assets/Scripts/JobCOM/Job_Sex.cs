@@ -38,6 +38,8 @@ public class Job_Sex_Group : Job
         undress = immediateUndress;
         this.parentRoomRef = ri;
         this.parentRoomID = ri.RefID;
+
+        scr_UpdateHandler.current.Observer_PostUpdateTime_EventEnd += OnEventResolve;
     }
 
     public override void RemovePackage(ActionPackage ap, bool logRemove = false)
@@ -69,8 +71,50 @@ public class Job_Sex_Group : Job
         forceFucking.AddRange(refID);
     }
 
+    [SerializeField]
+    [JsonProperty]
+    protected Dictionary<int, string> allowActorExit = new Dictionary<int, string>();
+
+    /// <summary>
+    /// this listens to event resolve
+    /// </summary>
+    /// <param name="actorID"></param>
+    /// <param name="reason"></param>
+    public void FlagActorLeave(int actorID, string reason = "")
+    {
+        this.allowActorExit[actorID] = reason;
+    }
+
+    protected void OnEventResolve(bool eventhandler_active)
+    {
+        if (eventhandler_active) return;
+        bool active = false;
+        foreach(var i in allowActorExit)
+        {
+            if (!this.actorRefID.Contains(i.Key)) continue;
+            var chara = scr_System_CampaignManager.current.FindInstanceByID(i.Key);
+            if (GetExistingPackages(chara, true, true, true, false).Count < 1)
+            {
+                active = true;
+                RemoveActor(i.Key);
+                Debug.Log($"OnEventResolve actor {chara.FirstName} exit, reason |{i.Value}|");
+                if (i.Value != "") this.messages_after.Add(i.Value);
+            }
+        }
+
+        if (this.actorRefID.Count < 2)
+        {
+            this.EndJob(Utility.WrapTextColor("job ended due to actor count < 2", scr_System_CentralControl.current.pref.TextColor_disabled));
+        }
+
+    }
+
+    protected bool ended = false;
+
     public void EndJob(string appendAfterMsg = "")
     {
+        if (ended) return;
+        ended = true;
         var newList = actorRefID.ToList();
 
         //for (int i = actorRefID.Count - 1; i >= 0; i--)
@@ -85,10 +129,16 @@ public class Job_Sex_Group : Job
         this.actorJoinTime.Clear();
         this.actorRefID.Clear();
         this.forceFucking.Clear();
-        this.packages_current.Clear();
-        this.packages_previous.Clear();
+        //this.packages_current.Clear();
+        foreach (var p in this.packages_previous) p.MarkForDelete();
+        //this.packages_previous.Clear();
+
 
         if (appendAfterMsg != "") this.messages_after.Add(appendAfterMsg);
+
+        Debug.Log($"sex job end, updating? {scr_UpdateHandler.current.Updating}");
+        if (!scr_UpdateHandler.current.Updating) this.NotifyDescriptionsOutOfUpdate();
+        //else this.NotifyDescriptionsOutOfUpdate
     }
 
     [JsonIgnore] public override List<int> actorRefID
@@ -149,6 +199,7 @@ public class Job_Sex_Group : Job
 
     public override void AddActor(int charaRef, string priorityCOMID = "", string priorityCOMTag = "")
     {
+        //allowActorExit.Remove(charaRef);
         if (actorRefID.Contains(charaRef)) return;  // prevent infinite loop
 
         //Debug.LogError("JOBSEX ADDACTOR " + charaRef);
@@ -211,7 +262,6 @@ public class Job_Sex_Group : Job
             chara.ChangeCurrentJob(null);
         }
         base.RemoveActor(charaRef);
-
         //Observer_JobUpdate?.Invoke(true);
     }
 
@@ -229,6 +279,7 @@ public class Job_Sex_Group : Job
     public override void AddPackage(List<ActionPackage> packages, bool isPlayerCOM = false)
     {
         //Debug.Log("JobSex adding packages.");
+
         string s = "Old Packages\n";
         foreach (ActionPackage p in packages_current)
         {
@@ -243,6 +294,8 @@ public class Job_Sex_Group : Job
         bool replaced = false;
         for (int i = packages.Count - 1; i >= 0; i--)
         {
+            //foreach(var ii in packages[i].actorRefs) this.allowActorExit.Remove(ii);
+
             if (packages[i] is ActionPackage_Sex)
             {
                 var p = packages[i] as ActionPackage_Sex;
@@ -273,7 +326,7 @@ public class Job_Sex_Group : Job
                             replaced = true;
                             packages_current[ii].LoggedBegin = true;
 
-                            packages_current[ii].SetPackageRepeat(false);
+                            packages_current[ii].PackageRepeat = false;
                             packages_current[ii].DisablePackage();
                             packages_previous.Add(packages_current[ii]);
                             packages_current.RemoveAt(ii);
@@ -289,7 +342,7 @@ public class Job_Sex_Group : Job
                             packages_previous[ii].LoggedBegin = true;
 
 
-                            packages_previous[ii].SetPackageRepeat(false);
+                            packages_current[ii].PackageRepeat = false;
                             packages_previous[ii].DisablePackage();
                             scr_System_CampaignManager.current.Unregister(packages_previous[ii]);
                             //packages_previous.Add(packages_current[ii]);
@@ -314,7 +367,7 @@ public class Job_Sex_Group : Job
                 {
                     if (Utility.DetectConflict(p, packages_current[ii]))
                     {   // leave the conflict package in previous to use for COM text selection purposes.
-                        packages_current[ii].SetPackageRepeat(false);
+                        packages_current[ii].PackageRepeat = false;
                         packages_current[ii].DisablePackage();
                         packages_previous.Add(packages_current[ii]);
                         packages_current.RemoveAt(ii);
@@ -481,7 +534,7 @@ public class Job_Sex_Group : Job
                 }
                 else
                 {
-                    newP.SetPackageRepeat(false);
+                    newP.PackageRepeat = false;
                     AddPackage(new List<ActionPackage>() { newP });
                     SetForced(new List<int>() { c.RefID });
                     return true;

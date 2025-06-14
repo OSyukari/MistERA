@@ -47,7 +47,7 @@ public class Memory_Entry
     //  [JsonIgnore] public bool isTouchMemory { get { return !isSexTouchMemory && this.Tags.Contains("touch") ; } }
 
     //  [JsonIgnore] public bool isOnlyRefuseMemory { get { return this.interactions.Find(x => x.response != Memory_Response.Refuse) == null; } }
-    [SerializeField][JsonProperty] List<string> selfTags = new List<string>();
+    [SerializeField][JsonProperty] public List<string> selfTags = new List<string>();
     List<string> targetTags = new List<string>();
 
     public void ReEstablishParent(Character_Trainable c)
@@ -123,7 +123,7 @@ public class Memory_Entry
 
 
     [SerializeField][JsonProperty] protected int duration = -1;
-    [JsonIgnore] public int Duration { get { return duration; } }
+    [JsonIgnore] public int Duration { get { return duration; } set { this.duration = value; } }
 
     [SerializeField][JsonProperty] protected List<MemInstance> interactions = new List<MemInstance>();
 
@@ -131,7 +131,7 @@ public class Memory_Entry
     {
         foreach(var i in this.interactions)
         {
-            if (i.response == Memory_Response.Refuse)
+            if (i.response <= Memory_Response.Refuse)
             {
                 // in case of memory merge contains both accept and refuse, skip it
                 if (this.interactions.Find(x => x.isSimilar(i) && x.response > Memory_Response.Refuse) != null) continue;
@@ -212,7 +212,7 @@ public class Memory_Entry
         this.ownerRef = c.RefID;
         this.interactions.Add(mem);
 
-        this.duration = duration; 
+        this.duration = selfTags.Contains("important") ? -1 : duration < -1 ? -2 : Owner.Stats.MemoryLength; 
         this.roomRef = roomRef;
         this.selfTags.AddRange(selfTags);
         this.selfTags = selfTags.Distinct().ToList();
@@ -225,6 +225,11 @@ public class Memory_Entry
 
     protected bool CanMergeWith(Memory_Entry other)
     {
+        if ( this.EndTime.Ticks == other.EndTime.Ticks)
+        {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge, same endtime tick merge|");
+            return true;
+        }
         if (this.ownerRef != other.ownerRef)
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, ownerRef not mergeable |{ownerRef}|-|{other.ownerRef}|");
@@ -240,7 +245,7 @@ public class Memory_Entry
         
         else if (MergeWithAll || other.MergeWithAll)
         {
-            return true;
+            return !selfTags.Contains("forbidMerge") && !other.selfTags.Contains("forbidMerge");
         }
         else
         {
@@ -329,6 +334,7 @@ public class Memory_Entry
         this.MergeWithAll = false;
 
         if (this.duration < 0 || other.duration < 0) this.duration = -1;
+        else if (this.selfTags.Contains("important")) this.duration = -1;
         else this.duration = Math.Max(this.duration, other.duration);
 
         // update description, stat calculation, etc
@@ -377,7 +383,9 @@ public class Memory_Entry
         targets = null;
         targetTags.Clear();
         memInstanceDescriptionCache = new List<string>();
-
+        scoreMod_Lust = 0f;
+        scoreMod_Mood = 0f;
+        scoreMod_Stress = 0f;
         cache_lust = null; cache_mood = null; cache_stress = null;
         cache_score = 0; cache_acceptCount = 0; cache_refuseCount = 0;
         int maxLust = 0, minLust = 0, maxMood = 0, minMood = 0, maxStress = 0, minStress = 0;
@@ -386,34 +394,37 @@ public class Memory_Entry
         {
             memInstanceDescriptionCache.Add(i.Print());
 
-            isRefuseOnly = i.response == Memory_Response.Refuse && isRefuseOnly;
+            isRefuseOnly = i.response <= Memory_Response.Refuse && isRefuseOnly;
 
-            float iLust = i.Lust, iMood = i.Mood, iStress = i.Stress;
-            scoreMod_Lust += iLust;
-            scoreMod_Mood += iMood;
-            scoreMod_Stress += iStress;
+            int iLust = i.Lust, iMood = i.Mood, iStress = i.Stress;
+
 
             cache_score += i.AttitudeScore(Owner);
             if (i.response == Memory_Response.Refuse) cache_refuseCount++;
             else cache_acceptCount++;
 
-            maxLust = Math.Max(maxLust, (int)iLust);
-            minLust = Math.Min(minLust, (int)iLust);
-            maxMood = Math.Max(maxMood, (int)iMood);
-            minMood = Math.Min(minMood, (int)iMood);
-            maxStress = Math.Max(maxStress, (int)iStress);
-            minStress = Math.Min(minStress, (int)iStress);
+            maxLust = Math.Max(maxLust, iLust);
+            minLust = Math.Min(minLust, iLust);
+            maxMood = Math.Max(maxMood, iMood);
+            minMood = Math.Min(minMood, iMood);
+            maxStress = Math.Max(maxStress, iStress);
+            minStress = Math.Min(minStress, iStress);
 
             targetTags.AddRange(i.tags);
             targetTags = targetTags.Distinct().ToList();
 
             if (i.isAction) Actions.Add(i);
+
+            //Debug.Log($"memory merge with {i.description}, Mood|{scoreMod_Mood}+{iMood} {maxMood} {minMood}| Stress|{scoreMod_Stress}+{iStress} {maxStress} {minStress}| Lust|{scoreMod_Lust}+{iLust} {maxLust} {minLust}|");
             // EvaluateSingle(Owner, i, ref cache_score, ref cache_acceptCount, ref cache_refuseCount);
+            scoreMod_Lust += iLust * i.stackCount;
+            scoreMod_Mood += iMood * i.stackCount;
+            scoreMod_Stress += iStress * i.stackCount;
         }
 
         scoreMod_Lust = Math.Max(Math.Min(scoreMod_Lust, maxLust), minLust);
-        scoreMod_Mood = Math.Max(Math.Min(scoreMod_Lust, maxMood), minMood);
-        scoreMod_Stress = Math.Max(Math.Min(scoreMod_Lust, maxStress), minStress);
+        scoreMod_Mood = Math.Max(Math.Min(scoreMod_Mood, maxMood), minMood);
+        scoreMod_Stress = Math.Max(Math.Min(scoreMod_Stress, maxStress), minStress);
 
         MergeWithAll = MergeWithAll || (targetTags.Contains("initSex") && !targetTags.Contains("endSex"));
 
@@ -567,12 +578,6 @@ public class Memory_Entry
     [JsonIgnore] public Stat_Modifier Mod_Lust { get
         {
             var value = scoreMod_Lust;
-
-            if ((Tags.Contains("sex") || Tags.Contains("massage") || Tags.Contains("touch")) && !Tags.Contains("safe"))
-            {
-                if (cache_score > 0) value += 1;
-            }
-
             if (cache_lust == null) cache_lust = initMoodlet("chara_status_lust");
             cache_lust.SetValueTypeAndString("number", value.ToString());
 
@@ -583,20 +588,6 @@ public class Memory_Entry
         get
         {
             var value = scoreMod_Stress;
-
-            if (Tags.Contains("job"))
-            {   // if work related, increase stress
-                value -= 1;
-                // if bad result increase more stress
-                if (cache_score < 0) value -= 1;
-            }
-
-
-            if (Tags.Contains("recreation"))
-            {   // if recreation related, as long as its not bad, decrease stress
-                if (cache_score >= 0) value += 1;
-            }
-
             if (cache_stress == null) cache_stress = initMoodlet("chara_status_stress");
             cache_stress.SetValueTypeAndString("number", value.ToString());
 
@@ -608,7 +599,7 @@ public class Memory_Entry
     {
         var newstuff = new Stat_Modifier();
         newstuff.statID = statID;
-        newstuff.modKey = "Memory_"+ StartTime.Ticks;
+        newstuff.modKey = "Memory_"+ EndTime.Ticks;
         newstuff.type = Stat_Modifier.StatMod_Type.addBase;
         //newstuff.SetValueTypeAndString("number", value)
         return newstuff;
@@ -621,7 +612,7 @@ public class Memory_Entry
     {
         get
         {
-            var value = scoreMod_Mood + cache_score;
+            var value = scoreMod_Mood;
             // Good COM Result increase mood. Bad result decrease Mood.
 
             if (cache_mood == null) cache_mood = initMoodlet("chara_status_mood");
@@ -639,10 +630,11 @@ public class Memory_Entry
 
         string body = "";
 
-        if (Actions.Count == 1) body = Actions[0].Print();
-        else if (isRefuseOnly && this.entryDescription != "") body = LocalizeDictionary.Instance.Index.QueryThenParse("job_desc_refuseOnly").Replace("$jobdesc$", entryDescription);
+
+        if (isRefuseOnly && this.entryDescription != "") body = LocalizeDictionary.Instance.Index.QueryThenParse("job_desc_refuseOnly").Replace("$jobdesc$", entryDescription); 
         else if (this.entryDescription != "") body = entryDescription;
         else if (Actions.Count > 0) body = Actions[0].Print();
+        else if (this.MemInstanceDescriptions != null && this.MemInstanceDescriptions.Count > 0) body = MemInstanceDescriptions[0];
         else body = "Error no stuff";
 
         if (withRoomName)
@@ -819,6 +811,7 @@ public class Memory_Entry
         box.memText.SetText(ToString(true));
 
         List<string> additional = new List<string>();
+        additional.Add(entryDescription);
         if (Tags.Count > 0) additional.Add(PrintTags);
         additional.AddRange(MemInstanceDescriptions);
         additional.Add("Statmod: Check" + cache_score.ToString("+0;-#") + " Mood"+Utility.StatValue(Mod_Mood, null).ToString("+0;-#")+" Stress"+Utility.StatValue(Mod_Stress, null).ToString("+0;-#")+" Lust"+Utility.StatValue(Mod_Lust, null).ToString("+0;-#"));
@@ -920,10 +913,42 @@ public class MemInstance
         //Debug.LogError($"new MemInstance, [{String.Join("|", this.targets)}] [{comID}] [{comVariantID}] [{masterRef}] [{isDoer}] [{this.attitude}] [{this.response}]");
     }
 
+    public void ResetInternal(Memory_Response response, Memory_Attitude attitude)
+    {
+        this.attitude = attitude == Memory_Attitude.None ? (int)Memory_Attitude.Neutral : (int)attitude;
+        this.response = response > Memory_Response.Accept ? Memory_Response.Accept : response;
+    }
 
-    public float Mood { get { return modMood; } }
-    public float Stress { get { return modStress; } }
-    public float Lust { get { return modLust; } }
+
+
+    [JsonIgnore] public int Mood {
+        get
+        {
+            var value = modMood + (float)Attitude - (float)Memory_Attitude.Neutral;
+            return (int)value; } }
+
+    [JsonIgnore] public int Stress {
+        get
+        {
+            var value = modStress;
+            if (tags.Contains("job"))
+            {
+                value -= 1;
+                if (Attitude < Memory_Attitude.Neutral) value -= 1;
+            }
+            if (tags.Contains("recreation"))
+            {   // if recreation related, as long as its not bad, decrease stress
+                if (Attitude >= Memory_Attitude.Neutral) value += 1;
+            }
+            return (int)value;
+        } }
+    [JsonIgnore] public int Lust {
+        get
+        {
+            var value = modLust;
+            if (Attitude > Memory_Attitude.Neutral && (tags.Contains("sex") || tags.Contains("massage") || tags.Contains("touch")) && !tags.Contains("safe")) value += 1;
+            return (int)value;
+        } }
 
     [SerializeField][JsonProperty] protected float modMood = 0, modStress = 0, modLust = 0;
     public void AddMoodletScore(float modMood, float modStress, float modLust)
@@ -953,6 +978,8 @@ public class MemInstance
     public bool TryMergeWith(in MemInstance mem)
     {
         if (!canMergeWith(mem)) return false;
+
+        this.tags.AddRange(mem.tags);
 
         this.modLust += mem.modLust;
         this.modMood += mem.modMood;
@@ -987,15 +1014,15 @@ public class MemInstance
     public int AttitudeScore(Character_Trainable owner)
     {
         int score = 0;
-        /*
+        
         switch (response)
         {
             case Memory_Response.Refuse: score -= 1; break;
-            case Memory_Response.Success: score += 1; break;
+            //case Memory_Response.Success: score += 1; break;
             case Memory_Response.CriticalFailure: score -= 2; break;
             case Memory_Response.CriticalSuccess: score += 2; break;
             default: break;
-        }*/
+        }
 
         if (Attitude > Memory_Attitude.None) score += (Attitude - Memory_Attitude.Neutral);
 

@@ -1,0 +1,127 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "OnAPRefuse",
+                "SelfValidator":{
+                    "chara_conditions":[
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+    {
+        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+        "_comment":"silent branch player/npc split",
+        "options":[
+            {   
+                "self_chara_conditions":[
+                    {"parameters":["excludePlayer"]}
+                ],
+                "target_chara_conditions":{
+                    "evTarget":[
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "option": "npc branch",
+                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_npc_ops"]} ] 
+            },
+            {      
+                "self_chara_conditions":[
+                    {"parameters":["isPlayer"]}
+                ],
+                "target_chara_conditions":{
+                    "evTarget":[
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "option": "player branch",
+                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
+            },
+            {      
+                "option": "silent fail branch",
+                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_end"]} ] 
+            }
+        ],
+        "isLast": true
+    },
+    {
+        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+        "_comment":"npc handling, check auto push but default cancel",
+        "label": "br_npc_ops",
+        "options":[
+            {   
+                "option": "branch where there is callbacks",
+                "Results": [ { "Type":"ExistCallbackID", "arguments":["apCallback"]},
+                             { "Type":"JumpToLabel", "arguments":["","br_push"]} ] 
+            },
+            {   
+                "option": "silent branch event, this shouldnt be displayed",
+                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_end"]} ] 
+            }
+        ]
+    },
+    {
+        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+        "label":"br_choice",
+        "question":"event_OnAPRefuse_ev01",
+        "options":[
+            {   
+                "option": "event_OnAPRefuse_ev01_op1",
+                "tooltip":"apTooltip",
+                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_push"]} ] 
+            },
+            {   
+                "option": "event_OnAPRefuse_ev01_op2", "isDefaultCancel":true,
+                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_end"]} ] 
+            }
+        ]
+    },
+    {
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+        "label": "br_end",
+        "isLast": true,
+        "line": "event_OnAPRefuse_ev02"
+    },
+    {
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+        "label": "br_push",
+        "line": "event_OnAPRefuse_ev03",
+        "nextEntryLabel":"br_push_ops"
+    },
+    {
+        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+        "_comment":"execute callbacks (push), in case of player, add callbacks depending on option. in case of npc, predetermined callbacks.",
+        "label": "br_push_ops",
+        "options":[
+            {                   
+                "option": "pushing execution event, register ap as per requirement, and let  this shouldnt be displayed",
+                "Results": [ { "Type":"ExecuteCallback", "arguments":["apCallback"]},
+                             { "Type":"JumpToLabel", "arguments":["","end"]} ] 
+            }
+        ]
+    },
+    {
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+        "label": "end",
+        "isLast": true,
+        "line": ""
+    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "default":
+            {
+                "event_OnAPRefuse_ev01":"$evTarget.name$拒绝了$self.name$的提案",
+                "event_OnAPRefuse_ev01_op1":"强行要求",
+                "event_OnAPRefuse_ev01_op2":"什么都不做",
+                "event_OnAPRefuse_ev02":"$self.name$决定尊重$evTarget.name$的意见",
+                "event_OnAPRefuse_ev03":"$self.name$决定向$evTarget.name$施压"
+            }
+        }
+    }
+}

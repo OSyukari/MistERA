@@ -151,7 +151,13 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
     }
 
     public string replaceText = "";
-
+    public string Text
+    {
+        get
+        {
+            return this.GetComponent<TMP_Text>().text;
+        }
+    }
     public void SetText(string text, bool leadingSpace = false, string link = "")
     {
         if (this.m_TextMeshPro == null || this.m_TextMeshPro.text == null)

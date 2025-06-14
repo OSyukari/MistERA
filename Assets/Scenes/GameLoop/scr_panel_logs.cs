@@ -80,7 +80,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         }
         else
         {
-            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
+            //scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
         }
     }
 
@@ -182,7 +182,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
     public RectTransform LogsList;
     public RectTransform prefab_LogEntry, prefab_SeparationEntry;
-    public TMP_Text prefab_LogLine;
+    public scr_HoverableText prefab_LogLine;
     public scr_menu_question prefab_question;
 
 

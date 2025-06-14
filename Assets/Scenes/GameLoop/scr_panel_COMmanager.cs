@@ -62,7 +62,7 @@ public class scr_panel_COMmanager : scr_Menu
 
     private void OnPlayerJobChange(int i, Job j)
     {
-        if (j is Job_Sex_Group )
+        if (j is Job_Sex_Group && !scr_UpdateHandler.current.Lock)
         {
             ChangeCurrentTab(COMTabs.Sex);
 
@@ -1162,7 +1162,7 @@ public class scr_panel_COMmanager : scr_Menu
             // modify cachedAP doers and receivers
             cachedAP.ResetRequest(package.DoerRefs, package.ReceiverRefs, package.masterRef);
             // need to reset EP. Re-request should trigger EP rebuild on next update
-
+            if (cachedAP.paused) scr_System_CampaignManager.current.Register(cachedAP, false);
             scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
         }
     }

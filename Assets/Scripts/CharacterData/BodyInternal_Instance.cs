@@ -59,11 +59,11 @@ public class BodyInternal_Instance
         //Owner.Memory.AddEntry_Custom(ownerTags, comtags, targetRef, false, null, Memory_Attitude.None, Memory_Response.None);
        // Owner.Memory.AddEntry_COM(ownerTags, comtags, targetRef, comBase, variantID, false, description, response, attitude);
         //var tempString = description + " Lost " + DisplayName + " virginity in " + com + " with " + targetName;
-        this.lastExperience = Owner.Memory.Last.StartTime.Ticks;
+        this.lastExperience = Owner.Memory.Last.EndTime.Ticks;
         this.lastExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName); ;
 
     
-        if (this.firstExperience == 0 && this.Base.firstExperienceDesc != "" && (targetBodyTag != null && Utility.ListContainsLoose(targetBodyTag, this.Base.virginityLossTags) || Utility.ListContainsLoose(comtags, this.Base.virginityLossTags)))
+        if (this.firstExperience == 0 && this.Base.firstExperienceDesc != "" && targetBodyTag != null && Utility.ListContainsLoose(targetBodyTag, this.Base.virginityLossTags))// || Utility.ListContainsLoose(comtags, this.Base.virginityLossTags)))
         {
             this.firstExperience = lastExperience;
             this.firstExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);

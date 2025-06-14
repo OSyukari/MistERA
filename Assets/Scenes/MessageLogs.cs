@@ -47,12 +47,12 @@ public class MessageLogManager
         this.currentPortrait = null;
     }
 
-    public MessageLog AddLog(PortraitManager refID, string s, bool animate = false, bool rA = false)
+    public MessageLog AddLog(PortraitManager refID, string s, string tooltip, bool animate = false, bool rA = false)
     {
         if (s.Length < 1) return null;
 
         List<string> splitted = s.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
-        Message_Text log = new Message_Text(refID);
+        Message_Text log = new Message_Text(refID, null, tooltip);
         foreach (string ss in splitted) if (ss.Length > 0) log.AddMessage(ss, rA);
 
         return AddLog(log, animate);
@@ -93,6 +93,7 @@ public class Message_Text : MessageLog
     }
     public string Header = "";
     private string causes = "";
+    protected string tooltip = "";
 
     public List<Message> Messages = new List<Message>();
 
@@ -154,9 +155,10 @@ public class Message_Text : MessageLog
         if (s.Length > 0) Messages.Add(new Message(s, rA));
     }
 
-    public Message_Text(PortraitManager portraitRefID, List<Message> messages = null, DateTime time = default, EventInstance parentEvent = null ):base(portraitRefID, time, parentEvent)
+    public Message_Text(PortraitManager portraitRefID, List<Message> messages = null, string tooltip = "",  DateTime time = default, EventInstance parentEvent = null ):base(portraitRefID, time, parentEvent)
     {
         this.Messages = new List<Message>();
+        this.tooltip = tooltip;
     }
 
     /// <summary>
@@ -183,11 +185,10 @@ public class Message_Text : MessageLog
     }
 
     scr_MessageLogBox selfBox = null;
-    TMP_Text currentLine = null;
-    public void Draw(scr_MessageLogBox box, TMP_Text linePrefab)
+    scr_HoverableText currentLine = null;
+    public void Draw(scr_MessageLogBox box, scr_HoverableText linePrefab)
     {
         this.Draw();
-
         this.selfBox = box;
         this.prefab_LogLine = linePrefab;
 
@@ -198,7 +199,7 @@ public class Message_Text : MessageLog
 
 
     List<string> msg = new List<string>();
-    protected TMP_Text prefab_LogLine;
+    protected scr_HoverableText prefab_LogLine;
 
     public override void Animate()
     {
@@ -208,11 +209,13 @@ public class Message_Text : MessageLog
             lines.RemoveAt(0);
             currentLine = UnityEngine.Object.Instantiate(prefab_LogLine);
             currentLine.transform.SetParent(selfBox.transform, false);
+            if (this.tooltip != "") currentLine.SetExternalTooltip(tooltip);
         }
 
         while (msg.Count > 0 && currentLine != null)
         {
-            currentLine.text += (currentLine.text.Length > 0 ? "\n" : "") + msg[0];
+            var inner = currentLine.Text;
+            currentLine.SetText((inner.Length > 0 ? inner + "\n" : "") + msg[0]);// += (currentLine.text.Length > 0 ? "\n" : "") + msg[0];
             msg.RemoveAt(0);
         }
 

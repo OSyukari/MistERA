@@ -384,6 +384,8 @@
                 "chara_currentjob_sex_rape": "被强奸中",
                 "chara_currentjob_sex": "做爱中",
                 "chara_currentjob_none": "暂无",
+                "chara_currentjob_idling": "发呆中",
+                "chara_currentjob_free": "自由时间",
 
                 "job_desc_refuseOnly":"拒绝了$jobdesc$",
                 "chara_currentjob_charaCOM_unsafe":"与$target$亲密接触",
@@ -392,8 +394,10 @@
 
                 "event_onNightAssaultFailed_jobD": "$color_error_begin$由于$chara$拒绝了全部指令，互动被解除了$color_error_end$",
 
+                "memory_onNightAssaultCaught": "眠奸$target$时被发现了",
                 "memory_onNightAssaultFailed": "熟睡时被$target$侵犯了",
                 "memory_onNightAssaultDiscover": "醒来后发现在熟睡时有被人动手动脚的痕迹",
+                "memory_interrupted": "$comDesc$，被中止了",
 
                 "messagelog_lose_first_experience": "$color_error_begin$$firstname$失去了$bodypart$初体验$color_error_end$"
             }

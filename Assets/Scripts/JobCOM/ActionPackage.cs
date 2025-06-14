@@ -215,11 +215,15 @@ public abstract class ActionPackage
     }
     public string DescriptionText(int charaRef, bool withRoomName = false)
     {
-        if (this.DoerRefs.Contains(charaRef)) return DescriptionText(true, charaRef, withRoomName);
-        else if (this.receiverRefs.Contains(charaRef)) return DescriptionText(false, charaRef, withRoomName);
-        else return "chara does not belong in this AP";
-    }
+        string basedesc = "";
+        if (this.DoerRefs.Contains(charaRef)) basedesc = DescriptionText(true, charaRef, withRoomName);
+        else if (this.ReceiverRefs.Contains(charaRef)) basedesc = DescriptionText(false, charaRef, withRoomName);
+        else return basedesc;
 
+        if (this.Duration > 0 && paused && basedesc != "") return LocalizeDictionary.Instance.Index.QueryThenParse("memory_interrupted").Replace("$comDesc$", basedesc);
+        else return basedesc;
+    }
+    public DateTime StartTime = DateTime.MinValue;
     protected int jobRefID = -1;
     protected Job job_cached = null;
     [JsonIgnore] public Job job { get {
@@ -233,7 +237,12 @@ public abstract class ActionPackage
     {
         this.extraCOMTags.AddRange(extratags);
     }
+    public void AddExtraCOMTag(string extratag)
+    {
+        this.extraCOMTags.Add(extratag);
+    }
 
+    [JsonIgnore] public bool isForced { get { return this.extraCOMTags.Contains("forced"); } }
     [JsonIgnore] public virtual bool isPlayerRelatedPackage
     {
         get { return (actorRefs != null && actorRefs.Contains(0)) || (DoerRefs != null && DoerRefs.Contains(0)) || (ReceiverRefs != null && ReceiverRefs.Contains(0)); }
@@ -270,6 +279,21 @@ public abstract class ActionPackage
     [SerializeField][JsonProperty] protected int duration;
     [JsonProperty] public bool paused = false;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public virtual void NotifyInterrupted()
+    {
+        this.paused = true;
+
+
+        foreach (var ep in this.packages)
+        {
+            ep.NotifyInterrupt();
+
+        }
+    }
+
     public ActionPackage() { }
     public ActionPackage(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1)
     {
@@ -283,7 +307,7 @@ public abstract class ActionPackage
     /// <param name="targetCOM"></param>
     /// <param name="doer"></param>
     /// <param name="receiver"></param>
-    protected void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
+    protected virtual void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
     {
 
         if (tooltip == null) tooltip = new List<string>();
@@ -319,15 +343,15 @@ public abstract class ActionPackage
         get
         {
             return toggleRepeat;
-           // return !this.extraCOMTags.Contains("norepeat") && toggleRepeat;
+            // return !this.extraCOMTags.Contains("norepeat") && toggleRepeat;
+        }
+        set
+        {
+            toggleRepeat = value;
+            this.tooltip = new List<string>();
         }
     }
     [SerializeField][JsonProperty] protected bool toggleRepeat = false;
-    public void SetPackageRepeat(bool value)
-    {
-        toggleRepeat = value;
-        this.tooltip = new List<string>();
-    }
 
     /// <summary>
     /// Set Duration to 0, making it eligible for removal in Job.PostUpdateTime
@@ -394,6 +418,8 @@ public abstract class ActionPackage
 
         if (!timeStop && !allUnconscious)
         {   
+            if (!Ticked) StartTime = scr_System_Time.current.getCurrentTime() - TimeSpan.FromMinutes(tickDuration);
+
             if (targetCOM != null && duration == this.targetCOM.TimeScale && targetCOM.comTags.Contains("sleep"))
             {
                 //Debug.LogError("AP START WITH TAG SLEEP CHECKING IF SHOULD SLEEP");
@@ -424,6 +450,7 @@ public abstract class ActionPackage
 
             if (!requested && !Request())
             {
+                // refuse!
                 duration = 0;
                 //Debug.LogError("Actor Refused Package "+DisplayName);
                     
@@ -716,10 +743,12 @@ public abstract class ActionPackage
     /// </summary>
 
     [JsonIgnore] protected int requestRate = 0;
+    [JsonIgnore] public int RequestRate { get { return requestRate; } }
 
     [JsonIgnore] protected int responseRate = 0;
     //public int ResponseRate { get { return responseRate; } }
-
+    [JsonIgnore] public int ResponseRate { get { return responseRate; } }
+    [JsonIgnore] public int SuccessRate { get { return Math.Min(requestRate, responseRate); } }
     [JsonIgnore] protected int attitudeRate_pos = 0;
     //public int AttitudeRate_Pos { get { return attitudeRate_pos; } }
 
@@ -1076,6 +1105,9 @@ public abstract class ActionPackage
                 }
             }
         }
+        else if (!isForced) SendRefuseEvent();
+
+        
 
         // init or end train
         if (targetCOM != null && executeSuccessful)
@@ -1167,6 +1199,51 @@ public abstract class ActionPackage
 
                 }*/
             }
+        }
+    }
+
+
+    protected void SendRefuseEvent()
+    {
+        Debug.LogError($"Sending refuse event for package {this.DisplayName}, doercount {this.doer.Count}, isupdating? {scr_UpdateHandler.current.Updating}");
+        if (this.doer.Count == 1 && this.receiver.Count > 0)
+        {
+            var refuseEV = new EventInstance(this.doer[0], "OnAPRefuse", "");
+            var appends = new List<string>();
+            var callbacks = new List<Action>();
+            refuseEV.FunctionCalls.Add("apCallback", callbacks);
+            refuseEV.AppendStrings.Add("apTooltip", appends);
+            refuseEV.Targets.Add("evTarget", this.receiver);
+
+            scr_UpdateHandler.current.EventHandler.StartEvent(refuseEV, false);
+            ActionPackage forceAP = this.Copy();
+            forceAP.ReInitializeCOM(this.job, this.targetCOM, this.DoerRefs, this.ReceiverRefs, this.masterRef, true);
+            //forceAP.ResetRequest(forceAP.doerRefs, forceAP.receiverRefs, forceAP.masterRef, true);
+            forceAP.RepeatReset(true);
+            forceAP.AddExtraCOMTag("forced");
+            Debug.Log($"adding force AP, isrepeat? {forceAP.PackageRepeat}");
+            if (forceAP.Validate())
+            {
+                MemInstance pressured = new MemInstance(new List<int>() { doer[0].RefID }, new List<string>(), "", -1, -1, false, Memory_Response.None, Memory_Attitude.None, "pressured by " + doer[0].FirstName);
+                pressured.AddMoodletScore(-1, -1, 0);
+                appends.Add(forceAP.GetSuccessRateString());
+                if (doer[0] == scr_System_CampaignManager.current.Player || forceAP.SuccessRate >= 65)
+                {
+                    foreach (var c in forceAP.receiver)
+                    {
+                        callbacks.Add(() => c.Memory.AddEntry(pressured, new List<string>() { "forced" }, -1, true));
+                    }
+                    callbacks.Add(() => doer[0].ChangeCurrentJob(job));
+                    callbacks.Add(() => job.InjectPackage( forceAP ));
+                    if (doer[0] == scr_System_CampaignManager.current.Player) callbacks.Add(() => scr_UpdateHandler.current.ToggleCallbackUpdate());
+                }
+            }// else do not add callback
+            appends.AddRange(forceAP.tooltip);
+
+        }
+        else
+        {
+            Debug.LogError($"Doercount {this.doer.Count} exceeding 1, abort launch");
         }
     }
 

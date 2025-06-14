@@ -64,6 +64,9 @@ public class scr_System_Time : MonoBehaviour
         this.startDate = obj.startDate;
         this.currentDate = obj.currentDate;
         this.timeStop = obj.timeStop;
+
+        _hour = -1;
+        _day = -1;
     }
 
 

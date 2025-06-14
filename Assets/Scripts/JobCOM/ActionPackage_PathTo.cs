@@ -190,13 +190,13 @@ public class ActionPackage_PathTo : ActionPackage
             var pc = path[0];
             if (!moved) moved = true;
 
-            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" +Doer.FirstName + " leaves room  " + scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName+ "</align>", true);
+            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" +LocalizeDictionary.Instance.Index.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$",scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName)+ "</align>", true);
                 
             scr_System_CampaignManager.current.MoveCharacterTo(doerRef, pc.Target);
             if ((int)pc.Tag.Cost > 0 && doerRef == 0)
             {
                 Room_Instance room = scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target);
-                string s = "Entering room " + room.DisplayName;
+                string s = LocalizeDictionary.Instance.Index.QueryThenParse("ui_movement_playerEntersRoom").Replace("$room$", room.DisplayName);
                 string s2 = "";
                 bool askBreak = false;
                 //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
@@ -211,14 +211,14 @@ public class ActionPackage_PathTo : ActionPackage
                     //scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName + " is in room" + room.DisplayName + ", currently " + c.GetJobDescription(), true);
                 }
 
-                scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.pref.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Length > 0 ? "\ncurrently in room :"+s2:""), true);
+                scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.pref.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Length > 0 ? $"\n{LocalizeDictionary.Instance.Index.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", s2)}":""), true);
                 if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)
                 {
 
                 }
 
             }
-            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" + Doer.FirstName + " enters room " + scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target).DisplayName + "</align>", true);
+            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" + LocalizeDictionary.Instance.Index.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target).DisplayName) + "</align>", true);
 
             this.PathPop();
             if (duration > 0) break;

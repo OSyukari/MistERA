@@ -124,7 +124,7 @@ public class scr_panel_TargetInfo : scr_Menu
             if (nextHour >= 24) nextHour -= 24;
             var nextHourJob = chara.FactionManager.CurrentJobPost(nextHour);
             Manageable faction = chara.FactionManager.CurrentJobScheduleFaction(nextHour);
-            nextHourJobDesc.text = (nextHourJob == null || nextHourJob.Name == "") ? "free time" : nextHourJob.Name + (faction != null ? "(" + chara.FactionManager.CurrentJobScheduleFaction(nextHour).ID + ")" : "") ;
+            nextHourJobDesc.text = (nextHourJob == null || nextHourJob.Name == "") ? LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_free") : nextHourJob.Name + (faction != null ? "(" + chara.FactionManager.CurrentJobScheduleFaction(nextHour).FactionDisplayName + ")" : "") ;
 
             /*
             foreach(var i in managedEquipRefs) DestroyCOMButton(i);
