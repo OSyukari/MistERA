@@ -67,6 +67,17 @@ public class Memory_Entry
             return owner;
         }
     }
+    /// <summary>
+    /// if tags count < 1, return true. else, check every one
+    /// </summary>
+    /// <param name="tags"></param>
+    /// <returns></returns>
+    public bool HasInteractionWithTags(List<string> tags)
+    {
+        if (tags.Count < 1) return true;
+        foreach (var i in this.interactions) if (Utility.ListContainsStrict(i.tags, tags)) return true;
+        return false;
+    }
 
     protected List<int> targetRefs = null;
     [JsonIgnore] public List<int> TargetRefs { get { 

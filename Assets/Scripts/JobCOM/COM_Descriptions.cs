@@ -83,12 +83,12 @@ public class COM_Descriptions
                 public string target = "";
                 public string evpTag = "";
                 public string statID = "";
-                public string operand = "";
+                public LogicalOperand operand = LogicalOperand.none;
                 public string value = "";
 
                 public bool Validate(ref EvaluationPackage evp)
                 {
-                    if (target == "" && statID == "" && operand == "" && value == "") return true;
+                    if (target == "" && statID == "" && operand == LogicalOperand.none && value == "") return true;
 
                     Character_Trainable targ = (target == "receiver" ? evp.Receiver : (target == "doer" ? evp.Doer : null));
                     if (targ == null)

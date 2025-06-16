@@ -93,18 +93,17 @@ public class MemoryManager
     /// </summary>
     /// <param name="ap"></param>
     /// <returns></returns>
-    public bool MatchBlacklist(int roomRef, string comID)
+    public bool MatchBlacklist(int roomRef, List<string> availableComID)
     {
-        if (comID == "") return false;
+        if (availableComID.Count < 1) return false;
         if (roomRef == -1) return false;
-        foreach(var b in Blacklist)
+        foreach (var b in Blacklist)
         {
             if (b.comID == "" || b.roomRef == -1) continue;
-            else if (b.comID == comID && b.roomRef == roomRef) return true;
+            else if (availableComID.Contains(b.comID) && b.roomRef == roomRef) return true;
         }
         return false;
     }
-
     /// <summary>
     /// Return count of blacklist match if Owner is receiver and recently refused<br/>
     /// Match by doerRef and by targetCOM
@@ -179,6 +178,23 @@ public class MemoryManager
         return recentMemoryCache;
     }
     List<Stat_Modifier> recentMemoryCache = null;
+
+
+    public List<Memory_Entry> GetAllMemoryMatch(List<string> selfTags, List<string> targetTags, int minuteRollback)
+    {
+        var endtime = scr_System_Time.current.getCurrentTime() - TimeSpan.FromMinutes(minuteRollback);
+        var results = new List<Memory_Entry>();
+        var keys = this.entries.Keys;
+        for(int i = keys.Count - 1; i >= 0; i--)
+        {
+            var key = keys[i];
+            if (entries[key].EndTime < endtime) break;
+            if (selfTags.Count > 0 && !Utility.ListContainsStrict(entries[key].selfTags, selfTags)) continue;
+            if (targetTags.Count > 0 && !entries[key].HasInteractionWithTags(targetTags)) continue;
+            results.Add(entries[key]);
+        }
+        return results;
+    }
 
 
     protected void AddMoodlet(ref List<int> compareList, Stat_Modifier statmod)

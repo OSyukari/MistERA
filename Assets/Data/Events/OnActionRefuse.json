@@ -116,7 +116,7 @@
         {
             "default":
             {
-                "event_OnAPRefuse_ev01":"$evTarget.name$拒绝了$self.name$的提案",
+                "event_OnAPRefuse_ev01":"$evTarget.name$拒绝了$self.name$$com_variant_name$的请求",
                 "event_OnAPRefuse_ev01_op1":"强行要求",
                 "event_OnAPRefuse_ev01_op2":"什么都不做",
                 "event_OnAPRefuse_ev02":"$self.name$决定尊重$evTarget.name$的意见",

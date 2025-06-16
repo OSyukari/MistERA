@@ -236,7 +236,9 @@ public static class Utility
 
     static Regex regex_eventKeyword = new Regex(@"\$[a-zA-Z\._]+\$");
     /// <summary>
-    /// This will auto run dictionary query parse on string s
+    /// This will auto run dictionary query parse on string s<br/>
+    /// - Will replace _scopetarget_.name/room<br/>
+    /// - will replace _instance_appendstringkey_
     /// </summary>
     /// <param name="owner"></param>
     /// <param name="s"></param>
@@ -284,6 +286,13 @@ public static class Utility
                 if (!error) newString = newString.Replace(match.Value, String.Join(separator, collect));
             }
         }
+
+        foreach(var appendStringkey in owner.AppendStrings)
+        {
+            if (appendStringkey.Value.Count < 1) continue;
+            newString = newString.Replace($"${appendStringkey.Key}$", String.Join(",", appendStringkey.Value));
+        }
+
         return newString;
     }
 
@@ -361,7 +370,7 @@ public static class Utility
         return L2.Count() == 0 || L2.Except(L1).Count() != L2.Count();
     }
 
-    public static bool CompareValue(bool value1, string operand, string value2)
+    public static bool CompareValue(bool value1, LogicalOperand operand, string value2)
     {
         //Debug.LogError("Comparevalue climaxed ["+value1+"] ["+operand+"] ["+value2+"]");
         bool value;
@@ -372,14 +381,14 @@ public static class Utility
         }
 
         // modify invalid operands into valid ones
-        if (operand == "gte" || operand == "lte") operand = "eq";
-        else if (operand == "gt" || operand == "lt") operand = "neq";
+        if (operand == LogicalOperand.gte || operand == LogicalOperand.lte) operand = LogicalOperand.eq;
+        else if (operand == LogicalOperand.gt || operand == LogicalOperand.lt) operand = LogicalOperand.neq;
 
         switch (operand)
         {
-            case "eq":
+            case LogicalOperand.eq:
                 return value1 == value;
-            case "neq":
+            case LogicalOperand.neq:
                 return value1 != value;
             default:
                 Debug.LogError("CompareValue (boolean) Error: invalid operand");
@@ -994,8 +1003,8 @@ public static class Utility
         {
             tags.Add(tag.ToString());
         }
-        if (c.isTimeStopped) tags.Add("timestop");
-        else if (scr_System_Time.current.TimeResume && !c.CanActInTimeStop) tags.Add("timeResume");
+        if (scr_System_Time.current.TimeResume && !c.CanActInTimeStop) tags.Add("timeResume"); 
+        else if(c.isTimeStopped) tags.Add("timestop");
         if (c.isSleeping) {
             tags.Add("sleeping");
             tags.Add("unconscious");
@@ -1690,8 +1699,6 @@ public static class EventUtility
 
                     return true;
                 } else return false;
-            case Event.EventEntry.Options.ExecutionType.AddMemoryEntry:
-                return true;
             default: return true;
 
         }

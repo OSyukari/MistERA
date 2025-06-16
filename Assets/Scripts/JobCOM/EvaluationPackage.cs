@@ -740,7 +740,7 @@ public class EvaluationPackage
             attitudeRate_pos = 0;
             return;
         }
-        else if (scr_System_Time.current.TimeStop && !self.CanActInTimeStop)
+        else if (self.isTimeStopped)
         {
             attitudeRate_neg = 100;
             attitudeRate_pos = 0;
@@ -858,6 +858,7 @@ public class EvaluationPackage
         {
             if (entry.body.NotifySexExperience(entry.targetName, entry.comName, entry.comtags, entry.targetBodytags))
             {
+                Debug.LogError($"FirstExperience {entry.body.DisplayNameFull}");
                 // first experience loss
                 string s = LocalizeDictionary.Instance.Index.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
                 Utility.StringReplace(entry.body.Owner, ref s);
@@ -865,6 +866,11 @@ public class EvaluationPackage
                 
                 var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Refuse, Memory_Attitude.Hate, entry.body.FirstExperienceDesc);
                 var mem = entry.body.Owner.Memory.AddEntry(memInst2, new List<string>() { "important" }, -2, true);
+            }
+            else
+            {
+                Debug.LogError($"FirstExperience match failed on {entry.body.DisplayNameFull}");
+
             }
         }
         logExps.Clear();
@@ -1402,7 +1408,7 @@ public class EvaluationPackage
 
         //if (sourceBody != null) tags.AddRange(sourceBody.Base.tags);
         logExps.Add(new DelayedExpLogging( body, source.RefID,  sourceBody == null ? source.FirstName : sourceBody.DisplayNameFull, com.ID, com.DisplayName(variantID), 
-                                ownerTags, sourceBody == null ? null : sourceBody.Base.tags ));
+                                targetCOM.comTags, sourceBody == null ? null : sourceBody.Base.tags ));
 
         body.Stimulate(ref ownerTags, ref pleasureTotal,ref pleasure,ref pain);
 

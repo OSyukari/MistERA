@@ -184,6 +184,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         //ChangeCurrentViewMode(ViewMode.View_Logs);
     }
 
+    public void NotifyEventEnd()
+    {
+        this.Map.NotifyEventEnd();
+    }
 
     /// <summary>
     /// For now, line does not register parent instance, as there is no need, it does not catch a response
@@ -522,7 +526,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         scr_System_Time.current.ToggleTimeStop();
 
         string s = "";
-        if (scr_System_Time.current.TimeStop) s = "TIMESTOP!";
+        if (!scr_System_Time.current.NotTimetop) s = "TIMESTOP!";
         else s = "TIMESTOP ended.";
         
         FreeUpdate(-1, s);
@@ -754,7 +758,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void ChangeCurrentViewMode(ViewMode vm, bool lockView = false)
     {
-        if (vm == ViewMode.View_Room) Debug.Log("changevm");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_UIChange && vm == ViewMode.View_Room) Debug.Log("changevm");
         // if update lock, allow only setting to logs
         if (scr_UpdateHandler.current.Animating && vm != ViewMode.View_Logs)
         {

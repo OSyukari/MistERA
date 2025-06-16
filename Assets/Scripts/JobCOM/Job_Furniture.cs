@@ -337,16 +337,32 @@ public class Job_Furniture : Job
                     var ev = new EventInstance(c, "RequestJoin", "");
                     ev.Self = c;
                     ev.Targets.Add("evTarget", new List<Character_Trainable>() { scr_System_CampaignManager.current.Player });
+
+                    var addMems = new List<Action>();
+                    ev.FunctionCalls.Add("OnRefusedJoin", addMems);
+                    string desc = $"failed to join {pl2.DescriptionText()}";
+                    var mem = new MemInstance(pl2.actorRefs, pl2.ComTags, pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
+                    addMems.Add(() => c.Memory.AddEntry(mem, new List<string>()));
+                    addMems.Add(() => c.ChangeCurrentJob(null));
+                    addMems.Add(() => Debug.LogError($"changing {c.FirstName} job to null"));
+
                     scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
                     actorJobComplete.Add(c.RefID);
                     return true;
                 }
-                else
+                else if( pl2.JoinAP(c))
                 {
-                    pl2.JoinAP(c);
                     ss += "join existing pkg " + pl2.DescriptionText(c.RefID);
                     if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");
                     return true;
+                }
+                else
+                {
+                    // failed to join npc package
+                    string desc = $"failed to join {pl2.DescriptionText()}";
+                    var mem = new MemInstance(pl2.actorRefs, pl2.ComTags, pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
+                    c.Memory.AddEntry(mem, new List<string>());
+                    return false;
                 }
 
             }

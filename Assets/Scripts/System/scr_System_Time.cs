@@ -82,13 +82,26 @@ public class scr_System_Time : MonoBehaviour
     public TimestopState timeStop = TimestopState.normal;
     public void ToggleTimeStop()
     {
-        if (timeStop != TimestopState.timestop) timeStop = TimestopState.timestop;
-        else timeStop = TimestopState.resuming_preupdate;
+
+        if (timeStop != TimestopState.timestop)
+        {
+            timeStop = TimestopState.timestop;
+            //scr_UpdateHandler.current.EventHandler.StartEvent(timestop, true);
+        }
+        else
+        {
+            timeStop = TimestopState.resuming_preupdate;
+        }
         UpdateTime(0, 0, 0, 0, true);
     }
 
-    public bool TimeStop { get { return timeStop == TimestopState.timestop;} }
-    public bool TimeResume { get { return !TimeStop && timeStop != TimestopState.normal; } }
+    public bool NotTimetop { get { return timeStop != TimestopState.timestop; } }
+    /// <summary>
+    /// LOOSE TIMESTOP CHECK, WILL RETURN TRUE EVEN DURING 'RESUMING'
+    /// </summary>
+    public bool TimeStop { get { return timeStop != TimestopState.normal; } }
+    public bool TimeStopStrict { get { return timeStop == TimestopState.timestop; } }
+    public bool TimeResume { get { return timeStop < TimestopState.timestop && timeStop > TimestopState.normal; } }
 
     public void initializeTime(int initYear = 1980, int initMonth = 08, int initDay = 29, int initHour = 7, int initMinute = 0, int initSecond = 0)
     {
@@ -110,7 +123,12 @@ public class scr_System_Time : MonoBehaviour
     void Start()
     {
         //initializeTime();
+
+
+
     }
+
+
 
     public event Action<TimeSpan> Observer_globalTime;
     /// <summary>
@@ -171,13 +189,12 @@ public class scr_System_Time : MonoBehaviour
 
         int timescale = 1;
 
-        if (timeStop == TimestopState.timestop)
+        if (timeStop != TimestopState.normal)
         {
             UpdateMinute(0);
         }
         else
         {
-            if (timeStop > 0) timeStop -= timescale;
             for (int i = 0; i < counter_minutes; i += timescale)
             {
                 

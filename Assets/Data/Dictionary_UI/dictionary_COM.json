@@ -13,6 +13,7 @@
                 "ep_Description_abort": "$doer$停止了$comdesc$$receiver$",
                 "ep_Description_refuse": "拒绝了$comdesc$",
                 "ap_Description_refuse": "拒绝了$comdesc$",
+                "ap_Description_refused": "$comdesc$被拒绝了",
                 "comDescription_1_0_doer": "$comdesc$",
                 "comDescription_n_0_doer": "和$other_doers$$comdesc$",
                 "comDescription_1_n_doer_active": "与$receivers$$comdesc$",

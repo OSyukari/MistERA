@@ -236,6 +236,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return !this.Stats.isConsciousnessUnconscious && !isTimeStopped;
         }
     }
+    [JsonIgnore]
+    public bool canActInResume
+    {
+        get
+        {
+            return !this.Stats.isConsciousnessUnconscious && (scr_System_Time.current.NotTimetop || CanActInTimeStop);
+        }
+    }
     public bool hasStatKeyword(string statKeyword)
     {
         if (statKeyword == "") return true;
@@ -261,7 +269,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Stats.PreUpdateTimeTick();
     }
 
-    public bool CompareStatValue(string statID, string operand, string value)
+    public bool CompareStatValue(string statID, LogicalOperand operand, string value)
     {
         switch (statID)
         {
@@ -278,7 +286,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             case "currentClimaxCount": // check chara consecutive climax count. how ? 
                 //Debug.LogError("Checking ConsecutiveClimaxCount on " + FirstName + " value is " + this.Status.ConsecutiveClimaxCount);
                 Debug.Log(FirstName + " Comparevalue currentClimaxCount [" + this.Stats.ConsecutiveClimaxCount + "] [" + operand + "] [" + value + "]");
-                return Utility.CompareValue(this.Stats.ConsecutiveClimaxCount, operand, value); ;
+                if (int.TryParse(value, out int cliamxCount))
+                {
+                    return Utility.CompareValue(this.Stats.ConsecutiveClimaxCount, operand, cliamxCount); ;
+                }
+                else
+                {
+                    Debug.LogError($"failed to parse currentClimaxCount target value {value}");
+                    return false;
+                }
             case "isUnconscious": // check chara sleeping or unconscious
                 //Debug.Log(FirstName + " Comparevalue isUnconscious [" + this.Stats.isConsciousnessUnconscious + "] [" + operand + "] [" + value + "]");
                 return Utility.CompareValue(this.Stats.isConsciousnessUnconscious, operand, value);
@@ -294,10 +310,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             case "isFatigued":  // check if chara can act but currently low on stamina
                 return false;
 
-            default:return false;
+            default:
+                Debug.LogError("Unrecognized operand " + operand);
+                return false;
         }
     }
-
 
     private void PostUpdateTime2()
     {

@@ -43,6 +43,7 @@ public class DebugLogSettings
     public bool DLog_Relationships = false;
     public bool DLog_Status = false;
     public bool DLog_Sex = false;
+    public bool DLog_UIChange = false;
 }
 
 public class scr_System_CentralControl : MonoBehaviour

@@ -401,7 +401,6 @@ public class Event : I_SerializationCallbackReceiver
                 ExistCallbackID,
                 FlushLogs,
                 FlushAppendStrings,
-                AddMemoryEntry,
                 /// <summary>
                 /// [] <br/>
                 /// will also interrupt all existing Job and AP (that's a given)

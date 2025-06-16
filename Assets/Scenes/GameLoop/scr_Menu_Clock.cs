@@ -43,8 +43,8 @@ public class scr_Menu_Clock : MonoBehaviour
     {
         currentUpdate = scr_System_Time.current.getCurrentTime();
 
-        if (scr_System_Time.current.TimeStop) hour_minute.text = timestop;
-        else hour_minute.text = currentUpdate.Hour.ToString("D2") + ":" + currentUpdate.Minute.ToString("D2");
+        if (scr_System_Time.current.NotTimetop) hour_minute.text = currentUpdate.Hour.ToString("D2") + ":" + currentUpdate.Minute.ToString("D2");
+        else hour_minute.text = timestop;
 
         if (currentUpdate.Hour < 3) quadran.text = midnight;
         else if (currentUpdate.Hour < 6) quadran.text = earlymorning;

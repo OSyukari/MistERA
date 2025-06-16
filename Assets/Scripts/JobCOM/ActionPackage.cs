@@ -40,6 +40,15 @@ public abstract class ActionPackage
             if (cache_refusedResponse == "") cache_refusedResponse = LocalizeDictionary.Instance.Index.QueryThenParse("ap_Description_refuse");
             return cache_refusedResponse;
         } }
+    string cache_refusedByResponse = "";
+    string RefusedResponse
+    {
+        get
+        {
+            if (cache_refusedByResponse == "") cache_refusedByResponse = LocalizeDictionary.Instance.Index.QueryThenParse("ap_Description_refused");
+            return cache_refusedByResponse;
+        }
+    }
     [JsonIgnore] public virtual bool isTemporaryAP { get { return false; } }
     protected Character_Trainable master_cached = null;
     [JsonIgnore] public Character_Trainable Master { get
@@ -203,9 +212,11 @@ public abstract class ActionPackage
         bool refused = false;
         foreach(var ep in packages)
         {
-            if (ep.ReceiverRef == charaRef && ep.DoerRef != charaRef && ep.Response < Memory_Response.Accept) refused = true;
+            if (ep.ActorRefs.Contains(charaRef) && ep.Response < Memory_Response.Accept) refused = true;
+            //if (ep.ReceiverRef == charaRef && ep.DoerRef != charaRef && ep.Response < Memory_Response.Accept) refused = true;
         }
         if (!refused) return s;
+        else if (isDoer) return RefusedResponse.Replace("$comdesc$", s);
         else return RefuseResponse.Replace("$comdesc$", s);
     }
 
@@ -1210,10 +1221,12 @@ public abstract class ActionPackage
         {
             var refuseEV = new EventInstance(this.doer[0], "OnAPRefuse", "");
             var appends = new List<string>();
+            var description = new List<string>();
             var callbacks = new List<Action>();
             refuseEV.FunctionCalls.Add("apCallback", callbacks);
             refuseEV.AppendStrings.Add("apTooltip", appends);
             refuseEV.Targets.Add("evTarget", this.receiver);
+            refuseEV.AppendStrings.Add("com_variant_name", description);
 
             scr_UpdateHandler.current.EventHandler.StartEvent(refuseEV, false);
             ActionPackage forceAP = this.Copy();
@@ -1224,6 +1237,7 @@ public abstract class ActionPackage
             Debug.Log($"adding force AP, isrepeat? {forceAP.PackageRepeat}");
             if (forceAP.Validate())
             {
+                description.Add(forceAP.targetCOM.DisplayName(forceAP.COMVariantID));
                 MemInstance pressured = new MemInstance(new List<int>() { doer[0].RefID }, new List<string>(), "", -1, -1, false, Memory_Response.None, Memory_Attitude.None, "pressured by " + doer[0].FirstName);
                 pressured.AddMoodletScore(-1, -1, 0);
                 appends.Add(forceAP.GetSuccessRateString());

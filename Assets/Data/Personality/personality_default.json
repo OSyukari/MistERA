@@ -1029,6 +1029,81 @@
     },
 
     {
+        "ID": "OnTimestopEnd",
+        "_comment":"This triggers on Map.UpdateRoom charaTimestopped resume, this will replace Greeting calls",
+        "variants":[
+            {
+                "requirements": [ { "requireSelfAction":false, "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop", "climax"] } } ],
+                "selfEventCall":"OnTimestopEnd_Climax"
+            },
+            {
+                "requirements": [ { "requireSelfAction":true,  "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop", "pain"] } } ],
+                "selfEventCall":"OnTimestopEnd_Pain"
+            },
+            {
+                "requirements": [ { "requireSelfAction":true,  "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop", "cum"] } } ],
+                "selfEventCall":"OnTimestopEnd_Cum"
+            },
+            {
+                "requirements": [ { "requireSelfAction":false,  "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop"] } } ],
+                "responses":[ "($self$) 完全没察觉到被做了什么" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "requireSelfAction":false } ],
+                "responses":[],
+                "selfEventCall":"Greeting"
+            }
+        ]
+    },
+    {
+        "ID": "OnTimestopEnd_Climax",
+        "_comment":"make variant for climax intensity",
+        "variants":[
+            {
+                "requirements": [ { "requireSelfAction":false, "selfTags":["sleeping"] } ],
+                "responses":[ "($self$) 在熟睡中迎来了绝顶" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "requireSelfAction":true } ],
+                "responses":[ "($self$) 在时停解除的瞬间迎来了绝顶" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "requireSelfAction":true,  "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop", "cum"] } } ],
+                "selfEventCall":"OnTimestopEnd_Cum"
+            }
+        ]
+    },
+    {
+        "ID": "OnTimestopEnd_Cum",
+        "_comment":"This triggers when OnTimestopEnd has detected anything unusual",
+        "variants":[
+            {
+                "responses":[ "($self$) 察觉到了身上的精液，面色变得惨白" ]
+            }
+        ]
+    },
+    {
+        "ID": "OnTimestopEnd_Pain",
+        "_comment":"This triggers when OnTimestopEnd has detected anything unusual",
+        "variants":[
+            {
+                "requirements": [ { "requireSelfAction":true,  "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop", "cum"] } } ],
+                "responses":[ "($self$) 察觉到了身上的痛楚" ],
+                "keepLooking":true
+            },
+            {
+                "requirements": [ { "requireSelfAction":true,  "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop", "cum"] } } ],
+                "selfEventCall":"OnTimestopEnd_Cum"
+            }
+        ]
+    },
+
+
+
+    {
         "ID": "Descriptor",
         "_comment":"Event trigger. This event trigger contains description text for self. This will not fire if Target is not player",
         "variants":[

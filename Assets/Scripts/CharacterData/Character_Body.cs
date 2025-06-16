@@ -371,7 +371,8 @@ public class Character_Body
         if (Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold) 
         {
             // forbid climax if timestopped
-            if (scr_System_Time.current.TimeStop && !Owner.CanActInTimeStop) return;
+            // BUT!! ALLOW CLIMAX DURING RESUME
+            if (scr_System_Time.current.TimeStopStrict && !Owner.CanActInTimeStop) return;
             if (Owner.Climaxing) return;
             if (Owner.CurrentJob != null && Owner.CurrentJob is Job_Sex_Group)
             {

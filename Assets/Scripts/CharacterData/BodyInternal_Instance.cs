@@ -60,20 +60,30 @@ public class BodyInternal_Instance
        // Owner.Memory.AddEntry_COM(ownerTags, comtags, targetRef, comBase, variantID, false, description, response, attitude);
         //var tempString = description + " Lost " + DisplayName + " virginity in " + com + " with " + targetName;
         this.lastExperience = Owner.Memory.Last.EndTime.Ticks;
-        this.lastExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName); ;
+        this.lastExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName);
 
-    
-        if (this.firstExperience == 0 && this.Base.firstExperienceDesc != "" && targetBodyTag != null && Utility.ListContainsLoose(targetBodyTag, this.Base.virginityLossTags))// || Utility.ListContainsLoose(comtags, this.Base.virginityLossTags)))
+        if (this.firstExperience != 0 || this.Base.firstExperienceDesc == "" || this.Base.virginityLossTags.Count < 1)
         {
+            return false;
+        }
+
+        if (targetBodyTag != null && Utility.ListContainsLoose(targetBodyTag, this.Base.virginityLossTags))
+        {
+            Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on targetBodytags {String.Join(" ", targetBodyTag)}");
             this.firstExperience = lastExperience;
             this.firstExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
-            //     description + " Lost " + DisplayName + " virginity in " + com + " with " + targetName; 
-            // Owner.Memory.AddEntry_Custom(ownerTags, comtags, targetRef, false, firstExpDesc, Memory_Attitude.None, Memory_Response.None);
-            //Owner.Memory.AddEntry_COM(ownerTags, comtags, targetRef, comBase, variantID, false, firstExpDesc, response, attitude);
+            return true;
+        }
+        else if (Utility.ListContainsLoose(comtags, this.Base.virginityLossTags))
+        {
+            Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on comtags {String.Join(" ", comtags)}");
+            this.firstExperience = lastExperience;
+            this.firstExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
             return true;
         }
         else
         {
+           
             return false;
             //Debug.LogError("Checking virginity loss with tags [" + String.Join(",", ownerTags) + "][" + String.Join(",", comtags) + "] with baseTags [" + String.Join(",", this.Base.virginityLossTags) + "]");
         }

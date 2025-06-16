@@ -171,7 +171,7 @@ public class Job_CharaCOM : Job
     public override string GetJobDescription(int charaRef)
     {
         List<string> names = new List<string>();
-        foreach (var i in GetLastInteractedActorRefs(Owner.RefID)) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
+        foreach (var i in GetLastInteractedActorRefs(charaRef)) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
 
         List<ActionPackage> ps = packages_previous.FindAll(x => x.actorRefs.Contains(charaRef));
         //if (p == null) p = packages_previous.Find(x => x.actorRefs.Contains(charaRef));

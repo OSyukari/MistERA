@@ -16,7 +16,6 @@
                 "ui_entry_memory_description": "$refused$$ordered_by$$with_targets$$com$$multiple_counts$",
                 "ui_entry_memory_description_with_targets": "与$targets$",
                 "ui_entry_memory_description_by_targets": "被$targets$",
-                "ui_entry_memory_description_refused": "拒绝了",
                 "ui_entry_memory_description_ordered_by": "听从$master$的指令",
                 "ui_entry_memory_description_multiple_counts": "了$counts$次",
                 "ui_entry_memory_description_cum_vagina_humanoid_base": "中出",

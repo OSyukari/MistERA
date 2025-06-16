@@ -42,7 +42,12 @@ public class Map_Instance
             BuildPath();
         }
     }
-
+    public void NotifyEventEnd()
+    {
+        Debug.Log($"Map NotifyEventEnd, dirtyAP {String.Join(",",dirtyCharaAPRef)} dirtyChara {String.Join(",", dirtyCharaRef)}");
+        this.dirtyCharaAPRef.Clear();
+        this.dirtyCharaRef.Clear();
+    }
     public void AddMapTemplate(string mapTemplateID, string factionOverride = "", bool disablePlayerInit = false, bool disableCharaInstantiation = false)
     {
         if (mapTemplateID != "")
@@ -372,10 +377,12 @@ public class Map_Instance
                     /*
                     Prioritise self or target.
                      */
-
-                    isDirty = isDirty || (xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume || dirtyCharaRef.Contains(charaInRoom[y]);
-                    //bool isSeeing = dirtyCharaAPRef.Contains(charaInRoom[x]) || dirtyCharaAPRef.Contains(charaInRoom[y]) || ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume);
-                    if ((forceGreeting || isDirty) && !(scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[x]) && scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[y])))
+                    isDirty = isDirty || dirtyCharaRef.Contains(charaInRoom[y]);
+                    if ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume)
+                    {
+                        xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "OnTimestopEnd");
+                    }
+                    else if ((forceGreeting || isDirty) && !(scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[x]) && scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[y])))
                     {
                         xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "Greeting");
                         //yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "Greeting");
@@ -407,11 +414,6 @@ public class Map_Instance
         //JobHandle handle = default;
         //handle = job.ScheduleByRef(roomCharaRef.Keys.Count, 64);
         //handle.Complete();
-
-
-        dirtyCharaRef.Clear();
-        dirtyCharaAPRef.Clear();
-
         //Debug.Log("UpdateAllRooms complete after " + (DateTime.Now - time).TotalNanoseconds+"ms");
     }
 

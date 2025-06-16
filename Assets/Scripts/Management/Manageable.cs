@@ -773,7 +773,7 @@ public class Manageable : I_Disposable
 
             foreach (var post in nonjobPosts[key])
             {
-                if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, comID))
+                if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
                 {
                     Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                     continue;
@@ -811,7 +811,7 @@ public class Manageable : I_Disposable
         foreach (var post in jobPosts[targetCOM])
         {
             //post.RefreshValidJobCOMs();
-            if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, comID))
+            if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
             {
                 Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                 continue;

@@ -178,13 +178,27 @@ public class scr_UpdateHandler : MonoBehaviour
         // Updatetime is used to register loop count in minutes
         // totalUpdateTime is used when loop finishes and print value.
         // tldr, totalUpdateTime is the update duration count, and we should filter command logging based on this value.
-        if (!Updating && (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime) || init))
+        if (!Updating && cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime))
         {
             if (EventHandler.Active)
             {
                 Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
             }
             else StartCoroutine(SingleUpdate());
+        }
+        else if (!Updating && init)
+        {
+            if (EventHandler.Active)
+            {
+                Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
+            }
+            else
+            {
+                updateTime = 1;
+                totalUpdateTime = 1;
+                StartCoroutine(SingleUpdate());
+            }
+
         }
         else if (updateUI) NotifyLogsSingleUpdate();
     }
@@ -244,6 +258,7 @@ public class scr_UpdateHandler : MonoBehaviour
         //Debug.Log($"Singleupdate : eventhandler end, updatetime? {updateTime}");
         //NotifyLogsSingleUpdate();
         //var copy = updateTime;
+        bool timestop = scr_System_Time.current.TimeStop;
         while (updateTime > 0 && !EventHandler.Waiting)  // updatetime can be 0 if there is no player package
         {   // if indeed 0 updatetime, then none of the below preupdate postupdate will be called.
 
@@ -273,7 +288,8 @@ public class scr_UpdateHandler : MonoBehaviour
             cnManager.FreeUpdateOneStep(ref totalUpdateTime, ref updateTime);
 
             updateTime -= 1;
-            scr_System_Time.current.UpdateTime(0, 0, 1, 0, true);   // if timestop then the value dont really matter
+
+            scr_System_Time.current.UpdateTime(0, 0, timestop ? 0 : 1, 0, true);   // if timestop then the value dont really matter
 
             if (checkResults.Count > 0) cnManager.AddLog(-1, String.Join("\n", checkResults), false);
             checkResults.Clear();
@@ -294,11 +310,13 @@ public class scr_UpdateHandler : MonoBehaviour
             //cnManager.ClearLogs(true);
             if (EventHandler.Active) EventHandler.Run(false, true);
 
+            if (scr_System_Time.current.TimeResume) scr_System_Time.current.timeStop = TimestopState.normal;
+
             yield return new WaitForSecondsRealtime(0.001f);
             //yield return 
         }
 
-
+        loopCount = timestop ? 0 : loopCount;
 
         if (cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime2, false))
         {   // continuous update
@@ -424,6 +442,7 @@ public class scr_UpdateHandler : MonoBehaviour
 
         Debug.Log($"invoking Observer_PostUpdateTime_EventEnd, stillupdating? {this.EventHandler.Active}");
         Observer_PostUpdateTime_EventEnd?.Invoke(this.EventHandler.Active);
+        scr_System_CampaignManager.current.NotifyEventEnd();
         FlushCollectedLogs(true, true, false);
         var bo = cnManager.ExistPlayerPackage(out var a, out var b, true);
         //if (!Updating) Debug.LogError($"ExecuteEventCallbacks end, {!EventHandler.Active} {halted} {bo}");

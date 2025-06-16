@@ -1345,16 +1345,21 @@ else */
                     tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
                     //text.SetText(package.DisplayName);
 
-                    if (package.Validate() && ((job is not Job_Furniture) || job.ExecutingPackages.Count < 1))
+                    if (!package.Validate())
+                    {
+                        returnVal = false;
+                        tooltip += "package did not pass internal validation\n";
+                    }
+                    else if (job is Job_Furniture && job.ExecutingPackages.FindAll(x=>!x.isTemporaryAP).Count > 0)
+                    {
+                        returnVal = false;
+                        tooltip += "target furniture cannot accept new packages\n";
+                    }
+                    else
                     {
                         returnVal = returnVal && true;
                         tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost [" + package.ResourceCost + "]\n";
                         tooltip += package.GetSuccessRateString();
-                    }
-                    else
-                    {
-                        returnVal = false;
-                        tooltip += "package did not pass internal validation\n";
                     }
                     package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
                     tooltip += "\n" + String.Join("\n", package.tooltip);

@@ -354,12 +354,20 @@ public class Character_Personality
 
                 List<string> returnV = new List<string>();
 
+                if (responses.Count > 0)
+                {
+                    var result = scr_System_Serializer.current.Dictionary.QueryThenParse(responses[Utility.GetRandIndexFromListCount(responses.Count)]);
+                    result = result.Replace("$self$", rel.Owner.FirstName).Replace("$target$", rel.Target.FirstName);
+                    if (ep != null) result = result.Replace("$epDescription$", ep.Description_Ongoing);
+                    returnV.Add(result);
+                    returnV.RemoveAll(x => x == "");
+                }
+
                 if (selfEventCall != "")
                 {                    
                    // Debug.Log("selfEventCall "+selfEventCall);
-                    var sss = rel.Owner.Relationships.Personality.GetKOJOMessage(selfEventCall, rel);
+                    var sss = rel.Owner.Relationships.Personality.GetKOJOMessage(selfEventCall, rel, selfTags, targetTags);
                     if(sss.Length > 0)  returnV.Add(sss);
-                    
                 }
 
                 if (responses.Count < 1) return String.Join("\n", returnV);
@@ -374,12 +382,6 @@ public class Character_Personality
                     if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log(rel.Owner.FirstName + " kojo text skipped, no display");
                     return String.Join("\n", returnV);
                 }
-
-                var result = scr_System_Serializer.current.Dictionary.QueryThenParse(responses[Utility.GetRandIndexFromListCount(responses.Count)]);
-                result = result.Replace("$self$", rel.Owner.FirstName).Replace("$target$", rel.Target.FirstName);
-                if (ep != null) result = result.Replace("$epDescription$", ep.Description_Ongoing);
-                returnV.Add(result);
-                returnV.RemoveAll(x => x == "");
 
                 return String.Join("\n", returnV);
             }
@@ -429,6 +431,8 @@ public class Character_Personality
                 public int variantID = -1;
                 public RequireKojoVariable requireKojoVariable = new RequireKojoVariable();
                 public RequireStatusValue requireSelfStatusValue = new RequireStatusValue();
+                public RequireStatValue requireSelfStatValue = new RequireStatValue();
+                public RequireMemory requireSelfMemory = new RequireMemory();
 
 
                 public bool Validate(RelationshipManager.Character_Relationship rel, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
@@ -476,15 +480,17 @@ public class Character_Personality
                         else if (targetBaseID == "PLAYER" && target != scr_System_CampaignManager.current.Player) return false;
                         else if (targetBaseID != "PLAYER" && target.BaseID != this.targetBaseID) return false;
                     }    
-                    if (requireSelfAction && (self == null || !self.canAct)) return false;
-                    if (requireTargetAction && (target == null || !target.canAct)) return false;
+                    if (requireSelfAction && (self == null || !self.canActInResume)) return false;
+                    if (requireTargetAction && (target == null || !target.canActInResume)) return false;
                     //if (selfTags.Count < this.selfTags.Count) return false;
                     if (this.selfTags.Count > 0 && !Utility.ListContainsStrict(selfTags, this.selfTags)) return false;
                     //if (targetTags.Count < this.targetTags.Count) return false;
                     if (this.targetTags.Count > 0 && !Utility.ListContainsStrict(targetTags, this.targetTags)) return false;
                     if (this.variantID > -1 && (ep == null || ep.VariantID != this.variantID)) return false;
                     if (this.requireKojoVariable != null && this.requireKojoVariable.isValid && rel != null && !this.requireKojoVariable.Validate(rel)) return false;
+                    if (this.requireSelfStatValue != null && this.requireSelfStatValue.isValid && rel != null && !this.requireSelfStatValue.Validate(rel.Owner)) return false;
                     if (this.requireSelfStatusValue != null && this.requireSelfStatusValue.isValid && rel != null && !this.requireSelfStatusValue.Validate(rel.Owner)) return false;
+                    if (this.requireSelfMemory != null && this.requireSelfMemory.isValid && rel != null && !this.requireSelfMemory.Validate(rel.Owner)) return false;
                     return true;
 
                 }
@@ -493,6 +499,35 @@ public class Character_Personality
                     //var v = 
                     //if (!v && (rel.ownerRefID == 0 || rel.TargetID == 0)) Debug.LogError("failed validation");
                     return Validate(rel.Owner, rel.Target, selfTags, targetTags, ep, rel);
+                }
+
+                [System.Serializable]
+                public class RequireMemory
+                {
+                    public int minuteRollback = 0;
+                    public List<string> selfTags = new List<string>();
+                    public List<string> targetTags  = new List<string>();
+                    [JsonIgnore] public bool isValid { get { return minuteRollback > 0 && (selfTags.Count > 0 || targetTags.Count > 0); } }
+                    public bool Validate(Character_Trainable chara)
+                    {
+                        List<Memory_Entry> list = chara.Memory.GetAllMemoryMatch(selfTags, targetTags, minuteRollback);
+                        return list.Count > 0;
+                    }
+
+                }
+
+                [System.Serializable]
+                public class RequireStatValue
+                {
+                    public string statID = "";
+                    public LogicalOperand operand = LogicalOperand.none;
+                    public string value = "";
+                    [JsonIgnore] public bool isValid { get { return this.statID != "" && operand != LogicalOperand.none && value != ""; } }
+                    public bool Validate(Character_Trainable chara)
+                    {
+                        return chara.CompareStatValue(statID, operand, value);
+                    }
+
                 }
 
                 [System.Serializable]

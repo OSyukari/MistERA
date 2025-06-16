@@ -68,7 +68,7 @@
                         "options":[
                             {   
                                 "option": "silent branch event, this shouldnt be displayed",
-                                "Results": [ { "Type":"AddMemoryEntry", "arguments":["evTarget", ""]},
+                                "Results": [ { "Type":"ExecuteCallback", "arguments":["OnRefusedJoin"]},
                                              { "Type":"JumpToLabel", "arguments":["","br_refuse"]} ] 
                             }
                         ]
