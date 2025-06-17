@@ -613,14 +613,14 @@ public class Job : IDisposable, I_Disposable
 
                 if (packages_previous[i].PackageRepeat)
                 {
-                    Debug.Log("readding package " + packages_previous[i].DisplayName);
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("readding package " + packages_previous[i].DisplayName);
                     packages_previous[i].RepeatReset(false);
                     packages_current.Add(packages_previous[i]);
                     packages_previous.RemoveAt(i);
                 }
                 else
                 {
-                    Debug.Log("deleting package " + packages_previous[i].DisplayName);
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("deleting package " + packages_previous[i].DisplayName);
                     //PackageRemoval(packages_previous[i]);
                     if (!packages_previous[i].isTemporaryAP)
                     {

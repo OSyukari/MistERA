@@ -27,7 +27,7 @@ public class ActionPackage_Sex : ActionPackage
     {
         base.ReInitializeCOM(job, targetCOM, doer, receiver, masterRef);
         toggleRepeat = job is Job_Sex_Group ? true : false;
-        Debug.LogError("sexap reinitCOM, setting togglerepeat to true");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log($"sexap reinitCOM, setting togglerepeat to {toggleRepeat}");
     }
     public override void RepeatReset(bool resetRequest = false)
     {
@@ -92,7 +92,7 @@ public class ActionPackage_Sex : ActionPackage
         copy.toggleRepeat = this.toggleRepeat;
         copy.LoggedBegin = this.LoggedBegin;
         copy.duration = this.duration;
-        Debug.LogError($"copy sexAP, target togglerepeat? {copy.toggleRepeat}");
+        //Debug.LogError($"copy sexAP, target togglerepeat? {copy.toggleRepeat}");
         return copy;
     }
 }

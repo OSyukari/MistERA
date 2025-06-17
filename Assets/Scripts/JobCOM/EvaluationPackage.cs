@@ -858,7 +858,7 @@ public class EvaluationPackage
         {
             if (entry.body.NotifySexExperience(entry.targetName, entry.comName, entry.comtags, entry.targetBodytags))
             {
-                Debug.LogError($"FirstExperience {entry.body.DisplayNameFull}");
+                //Debug.LogError($"FirstExperience {entry.body.DisplayNameFull}");
                 // first experience loss
                 string s = LocalizeDictionary.Instance.Index.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
                 Utility.StringReplace(entry.body.Owner, ref s);
@@ -869,7 +869,7 @@ public class EvaluationPackage
             }
             else
             {
-                Debug.LogError($"FirstExperience match failed on {entry.body.DisplayNameFull}");
+                //Debug.LogError($"FirstExperience match failed on {entry.body.DisplayNameFull}");
 
             }
         }
