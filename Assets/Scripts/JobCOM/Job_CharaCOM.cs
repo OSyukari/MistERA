@@ -178,9 +178,9 @@ public class Job_CharaCOM : Job
         List<string> tags = new List<string>();
         foreach(var p in ps) tags.AddRange(p.ComTags);
         tags = tags.Distinct().ToList();
-        if (tags.Contains("unsafe")) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_charaCOM_unsafe").Replace("$target$", String.Join(",",names));
-        else if (tags.Contains("safe")) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_charaCOM_touch").Replace("$target$", String.Join(",", names));
-        else return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_charaCOM").Replace("$target$", String.Join(",", names));
+        if (tags.Contains("unsafe")) return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM_unsafe").Replace("$target$", String.Join(",",names));
+        else if (tags.Contains("safe")) return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM_touch").Replace("$target$", String.Join(",", names));
+        else return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM").Replace("$target$", String.Join(",", names));
     }
 
 }

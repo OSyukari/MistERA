@@ -60,7 +60,7 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
     {
         var link = "stats_base_" + this.stat_base_string;
         var valueMod = FinalValue() - BaseValue;
-        var str = scr_System_Serializer.current.Dictionary.Query(link);
+        var str = LocalizeDictionary.QueryThenParse(link);
 
         text.SetText(str + " " + this.BaseValue + (valueMod != 0 ? (valueMod).ToString("+0;-#") : ""), false, link+"_tooltip");
         text.SetExternalTooltip(ModStrings());

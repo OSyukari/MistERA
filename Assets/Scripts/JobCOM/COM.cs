@@ -5,10 +5,10 @@ using Newtonsoft.Json;
 using System.Linq;
 
 [System.Serializable]
-public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable
+public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable, I_RemoveElemByTag
 {
     public List<COM> list = new List<COM>();
-    public List<COM> LIST { get { return ID_Dictionary.Values.ToList(); } }
+    [JsonIgnore] public List<COM> LIST { get { return ID_Dictionary.Values.ToList(); } }
     public void MergeWith(I_IndexMergeable list) {
         var l = list as Index_COM;
         if (l == null) return;
@@ -47,10 +47,10 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         return returnVal; }
 
     Dictionary<string, COM> ID_Dictionary = new Dictionary<string, COM>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> messages)
     {
 
-        Debug.Log("Index_COM : registering ID with list length [" + list.Count + "]");
+        messages.Add("Index_COM : registering ID with list length [" + list.Count + "]");
         foreach (COM s in list)
         {
             //Debug.Log("serializing com id "+s.ID);
@@ -148,15 +148,24 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
             }
         }
 
-        string s = "COM late initialize Generated RecipeCOMs:\n";
+        string s = $"COM late initialize Generated RecipeCOMs count {newCOMs.Count}:\n";
 
         foreach (var i in newCOMs)
         {
-            //scr_System_tooltipDictionary.current.AddEntry(i.ID, i.tooltip);
-            s += i.ID + " ";
-            i.OnAfterDeserialize();
-            list.Add(i);
-            ID_Dictionary.Add(i.ID, i);
+            if (ID_Dictionary.ContainsKey(i.ID))
+            {
+                // silent fail
+                if (!scr_System_CentralControl.current.isSafeMode) Debug.LogError($"Error in RECIPECOM lateInit, {i.ID} already serialized");
+
+            }
+            else
+            {
+                //scr_System_tooltipDictionary.current.AddEntry(i.ID, i.tooltip);
+                s += i.ID + "\n";
+                i.OnAfterDeserialize();
+                list.Add(i);
+                ID_Dictionary.Add(i.ID, i);
+            }
         }
 
         Debug.Log(s);
@@ -184,6 +193,11 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         //Debug.Log($"com getbytags {String.Join("|", tags)} return {String.Join("|", names)}");
         return coms;
     }
+
+    public void RemoveElemByTag(string tag)
+    {
+        this.list.RemoveAll(x=>x.comTags.Contains(tag));
+    }
 }
 
 [System.Serializable]
@@ -205,36 +219,33 @@ public class COM: I_SerializationCallbackReceiver
 
     public bool COMRepeat = false;
     public bool HideWhenInvalid = false;
-    public string ID;
+    public string ID = "";
 
     public string tooltip = "";
     public string displayName = "";
     public bool VariantDoNotReadRequirement = false;
 
     public List<COM_Variant> variants = new List<COM_Variant>();
-    public List<string> conflictCOMIDs = new List<string>();
-    public bool isInteraction { get { return comTags.Contains("interaction") || comTags.Contains("sex"); } }
+    //public List<string> conflictCOMIDs = new List<string>();
+    [JsonIgnore] public bool isInteraction { get { return comTags.Contains("interaction") || comTags.Contains("sex"); } }
 
     public Acceptance AcceptanceCheck = new Acceptance();
     public Difficulty DifficultyCheck = new Difficulty();
     [JsonIgnore] public int baseD20Check { get { return DifficultyCheck.baseD20Check; } }
     [JsonIgnore] public int baseAcceptanceValue { get { return AcceptanceCheck.baseAcceptanceValue; } }
 
-    public int moodModValue = 0;
-    public int stressModValue = 0;
-    public int lustModValue = 0;
+    //public int moodModValue = 0, stressModValue = 0, lustModValue = 0;
 
-    [SerializeField] public List<string> comTags = new List<string>();
+    public List<string> comTags = new List<string>();
 
-    public bool isSexCOM { get { return comTags.Contains("sex"); } }
-    public bool isUnsafe { get { return comTags.Contains("unsafe"); } }
-    public bool isTouchCOM { get { return !isSexCOM && comTags.Contains("touch"); } }
+    [JsonIgnore] public bool isSexCOM { get { return comTags.Contains("sex"); } }
+    [JsonIgnore] public bool isUnsafe { get { return comTags.Contains("unsafe"); } }
+    [JsonIgnore] public bool isTouchCOM { get { return !isSexCOM && comTags.Contains("touch"); } }
 
     [SerializeField][JsonProperty] protected int timeScale = 0;
-    public int TimeScale { get { return timeScale; } }
+    [JsonIgnore] public int TimeScale { get { return timeScale; } }
 
-    [SerializeField] public List<DerivedStatMod> doerStatMod = new List<DerivedStatMod>();
-    [SerializeField] public List<DerivedStatMod> receiverStatMod = new List<DerivedStatMod>();
+    //public List<DerivedStatMod> doerStatMod = new List<DerivedStatMod>(), receiverStatMod = new List<DerivedStatMod>();
 
     public COM_Requirements requirements = new COM_Requirements();
 
@@ -337,7 +348,7 @@ public class COM: I_SerializationCallbackReceiver
         return true;
     }
 
-    public bool countDoerAsReceiver = false;
+    //public bool countDoerAsReceiver = false;
     /*
         public bool IsActorValid(int doerRefID, int receiverRefID = -1)
         {
@@ -370,19 +381,19 @@ public class COM: I_SerializationCallbackReceiver
     public virtual string DisplayName(List<int> doerRefIDs, List<int> receiverRefIDs = null, bool excludeRequireExisting = false)
     {
         int index = GetValidVariant(doerRefIDs, receiverRefIDs, excludeRequireExisting);
-        if (index < 0) return scr_System_Serializer.current.Dictionary.QueryThenParse(this.displayName);
-        else return scr_System_Serializer.current.Dictionary.QueryThenParse(variants[index].displayName);
+        if (index < 0) return LocalizeDictionary.QueryThenParse(this.displayName);
+        else return LocalizeDictionary.QueryThenParse(variants[index].displayName);
     }
 
     public virtual string DisplayName(int index = -1)
     {
-        if (index < 0 || index >= variants.Count) return scr_System_Serializer.current.Dictionary.QueryThenParse(this.displayName);
-        else return scr_System_Serializer.current.Dictionary.QueryThenParse(variants[index].displayName);
+        if (index < 0 || index >= variants.Count) return LocalizeDictionary.QueryThenParse(this.displayName);
+        else return LocalizeDictionary.QueryThenParse(variants[index].displayName);
     }
 
-    public bool isJobCOM { get { return !isSleepCOM && comTags.Contains("job"); } }
-    public bool isSleepCOM { get { return ID == "com_furniture_sleep"; } }
-    public bool isRecreationCOM { get { return !isSleepCOM && !isJobCOM; } }
+    [JsonIgnore] public bool isJobCOM { get { return !isSleepCOM && comTags.Contains("job"); } }
+    [JsonIgnore] public bool isSleepCOM { get { return ID == "com_furniture_sleep"; } }
+    [JsonIgnore] public bool isRecreationCOM { get { return !isSleepCOM && !isJobCOM; } }
 
     public int GetValidVariant(List<Character_Trainable> doers, List<Character_Trainable> receivers, bool excludeRequireExisting = false)
     {
@@ -599,6 +610,7 @@ public class COM: I_SerializationCallbackReceiver
 
     }
 
+    [JsonIgnore]
     public bool hasFactionReq
     {
         get
@@ -737,8 +749,8 @@ public class COM: I_SerializationCallbackReceiver
             Utility.GetActorNames(doers, out List<string> names_doers, out List<string> names_doers_other, charaRef);
             Utility.GetActorNames(receivers, out List<string> names_receiver, out List<string> names_receiver_other, charaRef);
 
-            baseDesc = scr_System_Serializer.current.Dictionary.QueryThenParse(baseDesc)
-                .Replace("$comdesc$", scr_System_Serializer.current.Dictionary.QueryThenParse(this.displayName))
+            baseDesc = LocalizeDictionary.QueryThenParse(baseDesc)
+                .Replace("$comdesc$", LocalizeDictionary.QueryThenParse(this.displayName))
                 //.Replace("$room$",roomName)
                 .Replace("$other_doers$", String.Join(",", names_doers_other))
                 .Replace("$doers$", String.Join(",", names_doers))

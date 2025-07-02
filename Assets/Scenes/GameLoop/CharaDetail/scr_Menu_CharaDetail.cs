@@ -6,11 +6,11 @@ using System.IO;
 using TMPro;
 using UnityEngine.EventSystems;
 using System;
-using static Unity.Burst.Intrinsics.X86.Avx;
 
 public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 {
-    public RectTransform panel_basicInfo, panel_equip, panel_relation, panel_manage, panel_records;
+    public RectTransform panel_basicInfo, panel_equip, panel_relation, panel_records;
+    public List<RectTransform> panel_basicInfo_extras;
 
     public scr_SpineLoader spineLoader;
     int chara_refID = -1;
@@ -24,6 +24,9 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     public ScrollRect pictureRect;
     public Scrollbar scrollbar_horizontal, scrollbar_vertical;
 #pragma warning restore CS0436 // Type conflicts with imported type
+
+
+    public ptDownTracker portraitTracker;
     public void InitializeWithArgument(int refID)
     {
         chara_refID = refID;
@@ -34,10 +37,9 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         {
             //Debug.Log("Loading Chara Portrait "+chara.FirstName);
             currentPortrait = chara.PortraitManager.GetValidPortrait();
-            currentPortrait.DrawPortrait(this);
+           // StartCoroutine( currentPortrait.DrawPortrait(this));
+           portraitTracker.SetRectPosition(currentPortrait);
 
-            if (spineRect != null) spineLoader.NotifyChange(spineRect);
-            else spineLoader.NotifyChange(picture.rectTransform);
         }
         else
         {
@@ -60,7 +62,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         this.currentTab = panel_basicInfo;
 
     }
-    public RectTransform spineRect { get { return spineLoader.getLoaderRect; } }
 
     public override void Initialize()
     {
@@ -72,17 +73,23 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             switch (button.optionID)
             {
                 case 1:  // basic info tab
-                    button.Initialize(this, new button_ChangeTab(this, button, panel_basicInfo, InitializeBasicInfo, UnInitializeBasicInfo)); break;
+                    button.Initialize(this, new button_ChangeTab(this, button, panel_basicInfo, InitializeBasicInfo, UnInitializeBasicInfo, panel_basicInfo_extras)); break;
                 //case 2:   // health status tab
                     //button.Initialize(this, new button_ChangeTab(this, button, panel_health, InitializeHealth)); break;
                 case 3:   // equipment tab
                     button.Initialize(this, new button_ChangeTab(this, button, panel_equip, InitializeEquipment)); break;
                 case 4:   // relationship tab
                     button.Initialize(this, new button_ChangeTab(this, button, panel_relation, InitializeRelationship)); break;
-                case 5:   // manage tab
-                    button.Initialize(this, new button_ChangeTab(this, button, panel_manage, InitializeJobs)); break;
+               // case 5:   // manage tab
+                    //button.Initialize(this, new button_ChangeTab(this, button, panel_manage, InitializeJobs)); break;
                 case 6:  // sex records tab
-                    button.Initialize(this, new button_ChangeTab(this, button, panel_records, InitializeSexRecords)); break;
+                    if (scr_System_CentralControl.current.isSafeMode)
+                    {
+                        panel_records.gameObject.SetActive(false);
+                        button.gameObject.SetActive(false);
+                    }
+                    else button.Initialize(this, new button_ChangeTab(this, button, panel_records, InitializeSexRecords)); 
+                    break;
                 //case 7:
                 //    button.Initialize(this, new button_ChangeTab(this, button, panel_memories, InitializeMemories));break;
                 case 9999: // exit
@@ -147,9 +154,9 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         pictureRect.horizontal = true;
         pictureRect.vertical = true;
         scrollbar_horizontal.interactable = true;
-       // scrollbar_horizontal.GetComponent<Image>().color = scr_System_CentralControl.current.pref.TextColor_neutral;
+       // scrollbar_horizontal.GetComponent<Image>().color = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral;
         scrollbar_vertical.interactable = true;
-        //scrollbar_vertical.GetComponent<Image>().color = scr_System_CentralControl.current.pref.TextColor_neutral;
+        //scrollbar_vertical.GetComponent<Image>().color = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral;
 
         if (initialized_basicInfo) return;
         else initialized_basicInfo = true;
@@ -167,9 +174,9 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         pictureRect.horizontal = false;
         pictureRect.vertical = false;
         scrollbar_horizontal.interactable = false;
-        //scrollbar_horizontal.GetComponent<Image>().color = scr_System_CentralControl.current.pref.TextColor_transparent;
+        //scrollbar_horizontal.GetComponent<Image>().color = scr_System_CentralControl.current.DisplaySetting.TextColor_transparent;
         scrollbar_vertical.interactable = false;
-        //scrollbar_vertical.GetComponent<Image>().color = scr_System_CentralControl.current.pref.TextColor_transparent;
+        //scrollbar_vertical.GetComponent<Image>().color = scr_System_CentralControl.current.DisplaySetting.TextColor_transparent;
     }
 
 
@@ -177,7 +184,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     public TextMeshProUGUI textBox, linkBox, buttonBox;
     public RectTransform tab_equip_bodyPart, tab_equip_equipmentsList, tab_equip_prefab_equipment;
     public RectTransform prefab_BodyInstanceGear;
-
+    public initScript_Equip initScript_Equip;
     public delegate void Initializer();
 
     private bool initialized_equip = false;
@@ -185,6 +192,10 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     {
         if (initialized_equip) return;
         else initialized_equip = true;
+
+        initScript_Equip.InitializeData(chara);
+
+        bool safeMode = scr_System_CentralControl.current.isSafeMode;
 
         foreach (BodyPart_Instance b in chara.Body.Body)
         {
@@ -196,26 +207,28 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
             foreach (BodyPartEquipSlot slot in b.availableSlots)
             {
-
                 RectTransform box = Instantiate(tab_equip_prefab_equipment);
                 box.SetParent(childRect, false);
 
-                if (slot != BodyPartEquipSlot.None) AddBox(textBox, box, scr_System_Serializer.current.Dictionary.Query("equip_slot_"+Utility.GetEnumString(typeof(BodyPartEquipSlot), slot)));
+                if (slot != BodyPartEquipSlot.None) AddBox(textBox, box, LocalizeDictionary.QueryThenParse("equip_slot_"+Utility.GetEnumString(typeof(BodyPartEquipSlot), slot)));
 
                 int score = b.GetRevealingScore(BodyEquipLayer.Skin);
-                if (score > 1 && !scr_System_CampaignManager.current.XrayMode && !scr_System_CampaignManager.current.DebugMode)
-                {
-                    AddBox(textBox, box, "(" + score + ")");
-                    //AddBox(textBox, box, " ??? ");
-                }
-                else
-                {
-                    int i = b.GetEquip(BodyEquipLayer.Skin, slot);
-                    //if (i > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName + "[" + score + "]");
-                    if (i > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName);
-                    else AddBox(textBox, box, " - ");
-                }
 
+                if (!safeMode)
+                {
+                    if (score > 1 && !scr_System_CampaignManager.current.XrayMode && !scr_System_CampaignManager.current.DebugMode)
+                    {
+                        AddBox(textBox, box, "(" + score + ")");
+                        //AddBox(textBox, box, " ??? ");
+                    }
+                    else
+                    {
+                        int i = b.GetEquip(BodyEquipLayer.Skin, slot);
+                        //if (i > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName + "[" + score + "]");
+                        if (i > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName);
+                        else AddBox(textBox, box, " - ");
+                    }
+                }
 
                 int j = b.GetEquip(BodyEquipLayer.Inner, slot);
                 if (j > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(j).DisplayName);
@@ -232,15 +245,17 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
             }
 
-            foreach(BodyInternal_Instance ins in b.internals)
+            if (safeMode) continue;
+            
+            foreach (BodyInternal_Instance ins in b.internals)
             {
-                foreach(BodyPartEquipSlot slot in ins.availableSlots)
+                foreach (BodyPartEquipSlot slot in ins.availableSlots)
                 {
                     bool hasEquip = false;
                     RectTransform box = Instantiate(tab_equip_prefab_equipment);
                     box.SetParent(childRect, false);
 
-                    if (slot != BodyPartEquipSlot.None) AddBox(textBox, box, scr_System_Serializer.current.Dictionary.Query("equip_slot_" + Utility.GetEnumString(typeof(BodyPartEquipSlot), slot)));
+                    if (slot != BodyPartEquipSlot.None) AddBox(textBox, box, LocalizeDictionary.QueryThenParse("equip_slot_" + Utility.GetEnumString(typeof(BodyPartEquipSlot), slot)));
 
                     int score = b.GetRevealingScore(BodyEquipLayer.Skin);
                     if (score > 1 && !scr_System_CampaignManager.current.XrayMode)
@@ -283,6 +298,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                         }
                         else AddBox(textBox, box, " ");
 
+                        AddBox(textBox, box, " ");
                     }
 
 
@@ -292,18 +308,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         }
     }
 
-    public initScript_Jobs initScript_job;
-    private bool initialized_jobs = false;
-    private void InitializeJobs()
-    {
-        if (initialized_jobs) return;
-        else initialized_jobs = true;
-
-        initScript_job.InitializeData(this.chara);
-
-    }
-
-
+    public initScript_Relations initScript_relations;
 
     public RectTransform boxMemoriesList;
     public scr_memoryBox prefab_MemoryEntry;
@@ -317,13 +322,23 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         if (initialized_relation) return;
         else initialized_relation = true;
 
+        initScript_relations.InitializeData(this.chara);
+
+        bool safe = scr_System_CentralControl.current.isSafeMode;
+
         //listRelationship = new List<RectTransform>();
         foreach (RelationshipManager.Character_Relationship rel in chara.Relationships.Relationships)
         {
             RectTransform rect = Instantiate(prefab_boxRelationship);
             rect.SetParent(boxRelationshipList, false);
             listRelationship.Add(rect);
-            UI_Utility.Draw(rel, rect.GetComponent<scr_box_relationship>());
+            var scrbox = rect.GetComponent<scr_box_relationship>();
+            UI_Utility.Draw(rel, scrbox);
+
+            if (safe)
+            {
+                scrbox.desireBox.gameObject.SetActive(false);
+            }
         }
 
         for (int i = chara.Memory.Entries.Count - 1; i >= 0; i--)// Memory_Entry mem in chara.MemoryManager.entries)
@@ -338,8 +353,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         }
     }
 
-
-    public RectTransform boxInternalsList, boxStatusList;
     public RectTransform prefab_panel_BodyDetail;
     Dictionary<BodyInternal_Instance, scr_Panel_BodyDetail> internalDictionary = new Dictionary<BodyInternal_Instance, scr_Panel_BodyDetail>();
     Dictionary<int, BodyInternal_Instance> internalIndex = new Dictionary<int, BodyInternal_Instance>();
@@ -415,6 +428,8 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
     protected void SaveImageTransform()
     {
+        //Debug.LogError("fail saving image transform");
+        /*
         if (currentPortrait != null)
         {
             if (currentPortrait is PortraitManager.CharaPortrait_Spine && spineRect != null)
@@ -431,7 +446,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                 (float)Math.Round(picture.rectTransform.anchoredPosition.y , 3),
                 (float)Math.Round(picture.rectTransform.localScale.x, 3));
             }
-        }
+        }*/
     }
 
     public scr_SelectableText prefab_Button;
@@ -506,14 +521,15 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         scr_SelectableText text;
         Initializer init;
         Initializer uninit;
-        public button_ChangeTab(scr_Menu_CharaDetail parent, scr_SelectableText text, RectTransform target, Initializer init = null, Initializer uninit = null) : base(parent)
+        List<RectTransform> extras;
+        public button_ChangeTab(scr_Menu_CharaDetail parent, scr_SelectableText text, RectTransform target, Initializer init = null, Initializer uninit = null, List<RectTransform> extras = null) : base(parent)
         {
             this.parent = parent;
             this.text = text;
             this.target = target;
             this.init = init;
             this.uninit = uninit;
-
+            this.extras = extras;
             this.text.GetComponent<scr_PointerEnterNotifier>().Initialize(parent, text.optionID);
         }
 
@@ -525,6 +541,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             {
                 text.Toggle(true, false);
                 target.gameObject.SetActive(false);
+                if (extras != null) foreach (var i in extras) i.gameObject.SetActive(false);
                 //foreach (scr_SelectableText s in filters) if (!parent.currentTab_Filters.Contains(s)) s.gameObject.SetActive(false);
                 if (uninit != null) uninit();
 
@@ -533,6 +550,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             {
                 text.Toggle(true, true);
                 target.gameObject.SetActive(true);
+                if (extras != null) foreach (var i in extras) i.gameObject.SetActive(true);
                 //foreach (scr_SelectableText s in filters) s.gameObject.SetActive(true);
                 //if (init != null) init();
 
@@ -600,7 +618,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             this.text.showBrackets = false;
             innerText = this.sk.DisplayName;
             text.disableColor = text.baseColor;
-            skillTooltip = scr_System_Serializer.current.Dictionary.QueryThenParse(sk.BaseRef.ID + "_tooltip");
+            skillTooltip = LocalizeDictionary.QueryThenParse(sk.BaseRef.ID + "_tooltip");
             
         }
         string innerText, skillTooltip;
@@ -631,5 +649,4 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     {
         base.ValidateAll();
     }
-
 }

@@ -153,11 +153,11 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
             this.targetFaction = targetFaction;
             this.button = button;
 
-            add = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_add");
-            add_tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_add_tooltip");
-            remove = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_remove");
-            remove_tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_remove_tooltip");
-            remove_error1 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_linkStatus_remove_error1");
+            add = LocalizeDictionary.QueryThenParse("ui_management_linkStatus_add");
+            add_tooltip = LocalizeDictionary.QueryThenParse("ui_management_linkStatus_add_tooltip");
+            remove = LocalizeDictionary.QueryThenParse("ui_management_linkStatus_remove");
+            remove_tooltip = LocalizeDictionary.QueryThenParse("ui_management_linkStatus_remove_tooltip");
+            remove_error1 = LocalizeDictionary.QueryThenParse("ui_management_linkStatus_remove_error1");
         }
 
         public override bool IsButtonValid()

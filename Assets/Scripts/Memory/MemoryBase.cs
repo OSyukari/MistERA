@@ -25,6 +25,7 @@ public enum  Memory_Response
 {
     None,
     Refuse,
+    Interrupted,
     Accept,
     CriticalFailure,
     Failure,
@@ -142,7 +143,7 @@ public class Memory_Entry
     {
         foreach(var i in this.interactions)
         {
-            if (i.response <= Memory_Response.Refuse)
+            if (i.response < Memory_Response.Accept)
             {
                 // in case of memory merge contains both accept and refuse, skip it
                 if (this.interactions.Find(x => x.isSimilar(i) && x.response > Memory_Response.Refuse) != null) continue;
@@ -642,7 +643,7 @@ public class Memory_Entry
         string body = "";
 
 
-        if (isRefuseOnly && this.entryDescription != "") body = LocalizeDictionary.Instance.Index.QueryThenParse("job_desc_refuseOnly").Replace("$jobdesc$", entryDescription); 
+        if (isRefuseOnly && this.entryDescription != "") body = LocalizeDictionary.QueryThenParse("job_desc_refuseOnly").Replace("$jobdesc$", entryDescription); 
         else if (this.entryDescription != "") body = entryDescription;
         else if (Actions.Count > 0) body = Actions[0].Print();
         else if (this.MemInstanceDescriptions != null && this.MemInstanceDescriptions.Count > 0) body = MemInstanceDescriptions[0];
@@ -651,7 +652,7 @@ public class Memory_Entry
         if (withRoomName)
         {
             var roomname = this.roomRef == -1 ? "unknown" : scr_System_CampaignManager.current.Map.GetRoomByRef(roomRef).DisplayName;
-            return LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_withRoomName").Replace("$desc$", body).Replace("$roomname$", roomname);
+            return LocalizeDictionary.QueryThenParse("ui_entry_memory_withRoomName").Replace("$desc$", body).Replace("$roomname$", roomname);
         } else return body;
 
 
@@ -745,8 +746,8 @@ public class Memory_Entry
         {
             returnVal += cache_score_2;
 
-            if (cache_score_2 > 0) s1 = scr_System_Serializer.current.Dictionary.Query("comLogs_causes_previousLogs_positive").Replace("$amount$", (cache_score_2).ToString("+0;-#")).Replace("$linkTooltip$", "comLogs_tooltip_goodOutcome");
-            else if (cache_score_2 < 0) s1 = scr_System_Serializer.current.Dictionary.Query("comLogs_causes_previousLogs_negative").Replace("$amount$", (cache_score_2).ToString("+0;-#")).Replace("$linkTooltip$", "comLogs_tooltip_badOutcome");
+            if (cache_score_2 > 0) s1 = LocalizeDictionary.QueryThenParse("comLogs_causes_previousLogs_positive").Replace("$amount$", (cache_score_2).ToString("+0;-#")).Replace("$linkTooltip$", "comLogs_tooltip_goodOutcome");
+            else if (cache_score_2 < 0) s1 = LocalizeDictionary.QueryThenParse("comLogs_causes_previousLogs_negative").Replace("$amount$", (cache_score_2).ToString("+0;-#")).Replace("$linkTooltip$", "comLogs_tooltip_badOutcome");
 
             if (addNumber) modifiers.AddModifier(ownerRef, s1, cache_score_2);
             else modifiers.AddModifier(ownerRef, s1, 0);
@@ -757,7 +758,7 @@ public class Memory_Entry
             var difference = -(cache_refuseCount - cache_acceptCount + 1);
             returnVal += difference;
 
-            s2 = scr_System_Serializer.current.Dictionary.Query("comLogs_causes_previousLogs_negative").Replace("$amount$", (difference).ToString("+0;-#")).Replace("$linkTooltip$", "comLogs_tooltip_repeatedRefusal");
+            s2 = LocalizeDictionary.QueryThenParse("comLogs_causes_previousLogs_negative").Replace("$amount$", (difference).ToString("+0;-#")).Replace("$linkTooltip$", "comLogs_tooltip_repeatedRefusal");
 
             if (addNumber) modifiers.AddModifier(ownerRef, s2, difference);
             else modifiers.AddModifier(ownerRef, s2, 0);
@@ -773,7 +774,7 @@ public class Memory_Entry
     /*
     private string makeSingleMemInstanceDescription(Tuple<string, int, string, bool, int, bool> Key, int Value)
     {
-        string ss = scr_System_Serializer.current.Dictionary.QueryThenParse(dictionaryKeyword);
+        string ss = LocalizeDictionary.QueryThenParse(dictionaryKeyword);
         var names = new List<string>();
         var refIDs = Key.Item3.Split(',');
 
@@ -786,8 +787,8 @@ public class Memory_Entry
         }
         else
         {
-            if (targetcom.variants[Key.Item2].requirements.requirement.req_Receivers.requireAction) ss = ss.Replace("$with_targets$", scr_System_Serializer.current.Dictionary.QueryThenParse(dictionaryKeyword + "_with_targets").Replace("$targets$", String.Join(",", names)));
-            else  ss = ss.Replace("$with_targets$", scr_System_Serializer.current.Dictionary.QueryThenParse(dictionaryKeyword + "_by_targets").Replace("$targets$", String.Join(",", names)));
+            if (targetcom.variants[Key.Item2].requirements.requirement.req_Receivers.requireAction) ss = ss.Replace("$with_targets$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_with_targets").Replace("$targets$", String.Join(",", names)));
+            else  ss = ss.Replace("$with_targets$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_by_targets").Replace("$targets$", String.Join(",", names)));
         }
         
 
@@ -795,13 +796,13 @@ public class Memory_Entry
 
         ss = ss.Replace("$com$", targetcom.DisplayName(Key.Item2));
 
-        if (Value > 1) ss = ss.Replace("$multiple_counts$", scr_System_Serializer.current.Dictionary.QueryThenParse(dictionaryKeyword + "_multiple_counts").Replace("$counts$", Value.ToString()));
+        if (Value > 1) ss = ss.Replace("$multiple_counts$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_multiple_counts").Replace("$counts$", Value.ToString()));
         else ss = ss.Replace("$multiple_counts$", "");
 
         if (Key.Item6 == true) ss = ss.Replace("$refused$", "");
-        else ss = ss.Replace("$refused$", scr_System_Serializer.current.Dictionary.QueryThenParse(dictionaryKeyword + "_refused"));
+        else ss = ss.Replace("$refused$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_refused"));
 
-        if (Key.Item5 >= 0 && Key.Item5 != ownerRef && !refIDs.Contains(Key.Item5.ToString())) ss = ss.Replace("$ordered_by$", scr_System_Serializer.current.Dictionary.QueryThenParse(dictionaryKeyword + "_ordered_by").Replace("$master$", scr_System_CampaignManager.current.FindInstanceByID(Key.Item5).FirstName));
+        if (Key.Item5 >= 0 && Key.Item5 != ownerRef && !refIDs.Contains(Key.Item5.ToString())) ss = ss.Replace("$ordered_by$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_ordered_by").Replace("$master$", scr_System_CampaignManager.current.FindInstanceByID(Key.Item5).FirstName));
         else ss = ss.Replace("$ordered_by$", "");
 
         return ss;

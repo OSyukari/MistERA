@@ -432,7 +432,7 @@ public class Character_Factions
 
         if(extraDebug) s.Add("Required Sleep hours [" + sleepHours + "]");
 
-        if (consecutiveRestHour < sleepHours) s.Add(Utility.WrapTextColor("Does not have enough freetime for a full rest", scr_System_CentralControl.current.pref.TextColor_conflict) );
+        if (consecutiveRestHour < sleepHours) s.Add(Utility.WrapTextColor("Does not have enough freetime for a full rest", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color) );
         else if (extraDebug) s.Add("Max Consecutive free hours [" + consecutiveRestHour + "] listMax ["+ listMax+ "] indexOflistMax [" + Array.IndexOf(consecutiveSleepHours, consecutiveSleepHours.Max()).ToString() + "]");
         if (extraDebug) s.Add("\n"+String.Join(" ", consecutiveSleepHours));
 

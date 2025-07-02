@@ -122,7 +122,7 @@ public class scr_menu_question : scr_Menu
             this.option = option;
 
             var tooltip1 = option.option + "_tooltip";
-            var tooltip2 = scr_System_Serializer.current.Dictionary.QueryThenParse(tooltip1, tooltip1);
+            var tooltip2 = LocalizeDictionary.QueryThenParse(tooltip1, tooltip1);
             if (tooltip2 != tooltip1) this.tooltip += tooltip2;
 
             if (option.tooltip != "")
@@ -131,7 +131,7 @@ public class scr_menu_question : scr_Menu
                 else tooltip += (this.tooltip.Length > 0 ? "\n" : "") + option.tooltip;
             }
 
-            if (option.isDefaultCancel) this.tooltip += (this.tooltip.Length > 0 ? "\n":"") + scr_System_Serializer.current.Dictionary.QueryThenParse("event_isDefaultCancel_tooltip");
+            if (option.isDefaultCancel) this.tooltip += (this.tooltip.Length > 0 ? "\n":"") + LocalizeDictionary.QueryThenParse("event_isDefaultCancel_tooltip");
         }
 
         public override bool IsButtonValid()

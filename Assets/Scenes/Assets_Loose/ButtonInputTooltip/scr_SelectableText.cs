@@ -54,11 +54,11 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
             text = GetComponent<TextMeshProUGUI>();
             // parent does not exist at this moment ?
 
-            baseColor = scr_System_CentralControl.current.pref.TextColor_neutral;
-            hoverColor = scr_System_CentralControl.current.pref.TextColor_hover;
-            disableColor = scr_System_CentralControl.current.pref.TextColor_disabled;
-            errorColor = scr_System_CentralControl.current.pref.TextColor_conflict;
-            toggleColor = scr_System_CentralControl.current.pref.TextColor_toggle;
+            baseColor = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
+            hoverColor = scr_System_CentralControl.current.DisplaySetting.TextColor_hover.Color;
+            disableColor = scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color;
+            errorColor = scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color;
+            toggleColor = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;
         }
     }
 
@@ -110,8 +110,8 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void Validate()
     {
         if (!initialized) Awake();
-        this.text.text = scr_System_Serializer.current.Dictionary.QueryThenParse(this.text.text);
-        //this.text.text = scr_System_Serializer.current.Dictionary.QueryThenParse(this.text.text);
+        this.text.text = LocalizeDictionary.QueryThenParse(this.text.text);
+        //this.text.text = LocalizeDictionary.QueryThenParse(this.text.text);
 
         if (validator != null)
         {
@@ -162,7 +162,7 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
     public void SetText(string s, bool newLine = false)
     {
-        s = scr_System_Serializer.current.Dictionary.QueryThenParse(s);
+        s = LocalizeDictionary.QueryThenParse(s);
         this.Text.text = "<link=" + (linkText.Length > 0 ? linkText : "") + ">" + (leadingSpace ? " " : "") + ((showOptionID) ? "[" + optionID + "] " + s : (showBrackets?"[":"") + s + (showBrackets ? "]" : "")) + "</link>"+(newLine ? "\n ":"");
     }
     /// <summary>
@@ -203,7 +203,7 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (parent == null || v == null) Debug.Log("button.initialize failed cuz parent["+parent+"] or validator["+ v+"] buttonID "+this.optionID);
         this.validator = v;
         this.parent = parent;
-        this.Text.text = this.replaceText != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse(replaceText) : scr_System_Serializer.current.Dictionary.QueryThenParse(this.Text.text);
+        this.Text.text = this.replaceText != "" ? LocalizeDictionary.QueryThenParse(replaceText) : LocalizeDictionary.QueryThenParse(this.Text.text);
         this.Text.text = "<link=" + (linkText.Length > 0?linkText:"") + ">" + (leadingSpace ? " " : "") + ((showOptionID) ? "["+optionID+"] "+this.Text.text : (showBrackets ? "[" : "") + this.Text.text+ (showBrackets ? "]" : "")) + "</link>";
    
         

@@ -226,7 +226,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         SetBirthday(c.Birthday);
 
         personality.text = "Personality - unimplemented";//c.Personality.DisplayName;
-        bodyType.text = c.Template.BodyType.ToString();
+       // bodyType.text = c.Template.BodyType.ToString();
 
         //Debug.Log("character sensitivity a [" + c.getSensitivity_A().ID + "] b [" + c.getSensitivity_B().ID + "] c [" + c.getSensitivity_C().ID + "] m [" + c.getSensitivity_M().ID + "] v [" + c.getSensitivity_V().ID + "]");
 
@@ -364,7 +364,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
     protected void SetGenderAppearance(Humanoid_GenderAppearance app)
     {
-        c.Template.GenderAppearance_Set(app,true,false);
+       // c.Template.GenderAppearance_Set(app,true,false);
         gender.text = "<link=tooltip_GenderAppearance_" + c.Template.Appearance.ToString() + "><u>" + c.Template.Appearance.ToString() + "</u></link>";
     }
 
@@ -941,6 +941,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         mod_psy.text = (Character.Stats.Psyche.GetStatMod()).ToString("+0;-#");
         mod_will.text = (Character.Stats.Willpower.GetStatMod()).ToString("+0;-#");
 
+        /*
 
         RefreshTraitText(ref sensitivity_a, Character.Template.Sensitivity_A);
         RefreshTraitText(ref sensitivity_b, Character.Template.Sensitivity_B);
@@ -952,7 +953,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         RefreshTraitText(ref size_b, Character.Template.Size_B);
         RefreshTraitText(ref size_p, Character.Template.Size_P);
         RefreshTraitText(ref size_v, Character.Template.Size_V);
-
+        */
         RefreshAllSkills();
         RefreshAllDerivedStats();
     }
@@ -1189,11 +1190,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_B.GetPreviousInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Sensitivity_B.GetPreviousInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetPreviousInGroup();
+            //parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetPreviousInGroup();
         }
     }
     class ButtonValidator_selectSensitivity_B_right : ButtonValidator, I_ButtonClickable
@@ -1206,11 +1208,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_B.GetNextInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Sensitivity_B.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetNextInGroup();
+            //parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetNextInGroup();
         }
     }
     class ButtonValidator_selectSensitivity_M_left : ButtonValidator, I_ButtonClickable
@@ -1223,11 +1226,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_M.GetPreviousInGroup() != null);
+            return false;
+            // return (parent.Character.Template.Sensitivity_M.GetPreviousInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetPreviousInGroup();
+            //parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetPreviousInGroup();
         }
     }
     class ButtonValidator_selectSensitivity_M_right : ButtonValidator, I_ButtonClickable
@@ -1240,11 +1244,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_M.GetNextInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Sensitivity_M.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetNextInGroup();
+            //parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetNextInGroup();
         }
     }
     class ButtonValidator_selectSensitivity_C_left : ButtonValidator, I_ButtonClickable
@@ -1257,11 +1262,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_C.GetPreviousInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Sensitivity_C.GetPreviousInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetPreviousInGroup();
+            //parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetPreviousInGroup();
         }
     }
     class ButtonValidator_selectSensitivity_C_right : ButtonValidator, I_ButtonClickable
@@ -1274,11 +1280,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_C.GetNextInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Sensitivity_C.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetNextInGroup();
+            //parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetNextInGroup();
         }
     }
     class ButtonValidator_selectSensitivity_V_left : ButtonValidator, I_ButtonClickable
@@ -1291,11 +1298,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_V.GetPreviousInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Sensitivity_V.GetPreviousInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetPreviousInGroup();
+            //parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetPreviousInGroup();
         }
     }
     class ButtonValidator_selectSensitivity_V_right : ButtonValidator, I_ButtonClickable
@@ -1308,11 +1316,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_V.GetNextInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Sensitivity_V.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetNextInGroup();
+            //parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetNextInGroup();
         }
     }
     class ButtonValidator_selectSensitivity_A_left : ButtonValidator, I_ButtonClickable
@@ -1325,11 +1334,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_A.GetPreviousInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Sensitivity_A.GetPreviousInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetPreviousInGroup();
+            //parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetPreviousInGroup();
         }
     }
     class ButtonValidator_selectSensitivity_A_right : ButtonValidator, I_ButtonClickable
@@ -1342,12 +1352,13 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Sensitivity_A.GetNextInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Sensitivity_A.GetNextInGroup() != null);
         }
 
         public void OnClickButton()
         {
-            parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetNextInGroup();
+            //parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetNextInGroup();
         }
     }
 
@@ -1363,11 +1374,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Size_B.GetPreviousInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Size_B.GetPreviousInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetPreviousInGroup();
+            //parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetPreviousInGroup();
         }
     }
     class ButtonValidator_selectSize_B_right : ButtonValidator, I_ButtonClickable
@@ -1380,12 +1392,13 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Size_B.GetNextInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Size_B.GetNextInGroup() != null);
         }
 
         public void OnClickButton()
         {
-            parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetNextInGroup();
+            //parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetNextInGroup();
         }
     }
     class ButtonValidator_selectSize_P_left : ButtonValidator, I_ButtonClickable
@@ -1398,11 +1411,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Size_P.GetPreviousInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Size_P.GetPreviousInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetPreviousInGroup();
+            //parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetPreviousInGroup();
         }
     }
     class ButtonValidator_selectSize_P_right : ButtonValidator, I_ButtonClickable
@@ -1415,12 +1429,13 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Size_P.GetNextInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Size_P.GetNextInGroup() != null);
         }
 
         public void OnClickButton()
         {
-            parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetNextInGroup();
+            //parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetNextInGroup();
         }
     }
     class ButtonValidator_selectSize_V_left : ButtonValidator, I_ButtonClickable
@@ -1433,11 +1448,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Size_V.GetPreviousInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Size_V.GetPreviousInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetPreviousInGroup();
+            //parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetPreviousInGroup();
         }
     }
     class ButtonValidator_selectSize_V_right : ButtonValidator, I_ButtonClickable
@@ -1450,12 +1466,13 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Size_V.GetNextInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Size_V.GetNextInGroup() != null);
         }
 
         public void OnClickButton()
         {
-            parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetNextInGroup();
+            //parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetNextInGroup();
         }
     }
     class ButtonValidator_selectSize_A_left : ButtonValidator, I_ButtonClickable
@@ -1468,11 +1485,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Size_A.GetPreviousInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Size_A.GetPreviousInGroup() != null);
         }
         public void OnClickButton()
         {
-            parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetPreviousInGroup();
+            //parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetPreviousInGroup();
         }
     }
     class ButtonValidator_selectSize_A_right : ButtonValidator, I_ButtonClickable
@@ -1485,12 +1503,13 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return (parent.Character.Template.Size_A.GetNextInGroup() != null);
+            return false;
+            //return (parent.Character.Template.Size_A.GetNextInGroup() != null);
         }
 
         public void OnClickButton()
         {
-            parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetNextInGroup();
+            //parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetNextInGroup();
         }
     }
 

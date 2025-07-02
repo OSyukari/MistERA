@@ -187,12 +187,15 @@ public class Job_Furniture : Job
     public List<ActionPackage> MakePackagesJoinable(Character_Trainable c)
     {
         List<ActionPackage> pkgs = new List<ActionPackage>();
+
         foreach(var pkg in this.ActivePackages)
         {
             if (pkg.Duration <= 1) continue;
             if (pkg.actorRefs.Contains(c.RefID)) continue;
+            if (pkg.isPaused) continue;
+            if (pkg.isTemporaryAP) continue;
             if (!pkg.AllowJoining) continue;
-            if (actorRefID.Contains(c.RefID) && !actorRefIDStorage[c.RefID].Match(pkg.targetCOM))
+            if (actorRefIDStorage.ContainsKey(c.RefID) && !actorRefIDStorage[c.RefID].Match(pkg.targetCOM))
             {
                 //Debug.LogError($"{c.FirstName} try join: actor registered for |{actorRefIDStorage[c.RefID].comID}|{actorRefIDStorage[c.RefID].tag}| does not match {pkg.DisplayName}");
                 continue;
@@ -206,7 +209,7 @@ public class Job_Furniture : Job
 
             var newpkg = pkg.Copy();
             if (newpkg.canJoinAP(c, out var a, out var b) < 0) continue;
-            pkgs.Add(pkg);
+            else pkgs.Add(pkg);
         }
         return pkgs;
     }
@@ -342,6 +345,9 @@ public class Job_Furniture : Job
                     ev.FunctionCalls.Add("OnRefusedJoin", addMems);
                     string desc = $"failed to join {pl2.DescriptionText()}";
                     var mem = new MemInstance(pl2.actorRefs, pl2.ComTags, pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
+#if UNITY_EDITOR
+                    addMems.Add(() => Debug.LogError($"OnRefuseJoin fired on {c.FirstName} for job {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}"));
+#endif
                     addMems.Add(() => c.Memory.AddEntry(mem, new List<string>()));
                     addMems.Add(() => c.ChangeCurrentJob(null));
                     addMems.Add(() => Debug.LogError($"changing {c.FirstName} job to null"));

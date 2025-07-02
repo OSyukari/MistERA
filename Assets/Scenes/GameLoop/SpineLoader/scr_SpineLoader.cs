@@ -58,7 +58,7 @@ public class scr_SpineLoader : MonoBehaviour
     public SpineLoader spineLoader;
     TextAsset spineLoader_skeletonJSON;
 
-    Dictionary<string, SpineLoader> loaders = new Dictionary<string, SpineLoader>();
+    SpineLoader spineLoader_previous = null;
     /// <summary>
     /// PATH VALUES WILL HAVE APPLICATION_DATAPATH APPENDED TO IT 
     /// </summary>
@@ -67,32 +67,34 @@ public class scr_SpineLoader : MonoBehaviour
     /// <param name="skeletonJSON_path"></param>
     /// <param name="skeletonScale"></param>
     /// <param name="idleAnimName"></param>
-    public void SetBase(List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, float skeletonScale, string idleAnimName = "idle", string touchAnimName = "action")
+    public IEnumerator SetBase(List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName = "idle", string touchAnimName = "action")
     {
-        var version = scr_System_CentralControl.GetSkelVersion(skeletonJSON_path);
+
+        TextAsset ta = null;
+        yield return AssetsLoader.LoadTextCoroutine(skeletonJSON_path, text => ta = text);
+
+        var version = "";
+        if (ta.text.Contains("4.0.")) version = "4.0";
+        else if (ta.text.Contains("4.1.")) version = "4.1";
+        else if (ta.text.Contains("4.2.")) version = "4.2";
+
         // this need full path
-        if (spineLoader != null && spineLoader.Version == version)
+        if (spineLoader != null && (spineLoader.Version != version || spineLoader.atlasPath != atlasJSON_path || spineLoader.skeletonPath != skeletonJSON_path))
         {   // then call this one
-
+            spineLoader_previous = spineLoader;
+            
+            spineLoader = scr_System_CentralControl.current.GetSpineLoader(version);
         }
-        else
+        else if (spineLoader == null) spineLoader = scr_System_CentralControl.current.GetSpineLoader(version);
+
+        yield return spineLoader.Initialize(materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, touchAnimName);
+
+        if (spineLoader_previous != null)
         {
-            if(spineLoader != null)
-            {
-                if(!loaders.ContainsValue(spineLoader)) loaders.Add(spineLoader.Version, spineLoader);
-                spineLoader.gameObject.SetActive(false);
-                spineLoader = null;
-
-            }
-
-            if (!loaders.ContainsKey(version)) loaders.Add(version, scr_System_CentralControl.current.GetSpineLoader(skeletonJSON_path));
-            spineLoader = loaders[version];
+            spineLoader_previous.gameObject.SetActive(false);
+            UnityEngine.Object.Destroy(spineLoader_previous.gameObject);
+            spineLoader_previous = null;
         }
-
-        spineLoader.Initialize(Utility.ResourcesPath, materialTexturePath, atlasJSON_path, skeletonJSON_path, skeletonScale, idleAnimName, touchAnimName);
-        spineLoader.MatchWithBound();
-
-       // NotifyChange(spineLoader.transform);
     }
 
     public void NotifyChange(RectTransform targetRect)

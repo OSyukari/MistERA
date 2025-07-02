@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using Newtonsoft.Json;
 
 [System.Serializable]
 public enum BodyEquipLayer

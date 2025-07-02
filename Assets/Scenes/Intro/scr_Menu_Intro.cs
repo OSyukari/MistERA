@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.IO;
 using System;
+using System.Linq;
 
 public abstract class scr_Menu : MonoBehaviour
 {
@@ -30,7 +31,7 @@ public abstract class scr_Menu : MonoBehaviour
     }
 
     protected ButtonValidator_AlwaysTrue button_alwaysValid;
-    public scr_Canvas_tooltipHandler tooltip = null;
+    [HideInInspector] public scr_Canvas_tooltipHandler tooltip = null;
     public abstract void Notify(int optionID);
 
     protected virtual void Start()
@@ -51,8 +52,8 @@ public abstract class scr_Menu : MonoBehaviour
         this.buttonsByID = new Dictionary<int, scr_SelectableText>();
         validatorsByID = new Dictionary<int, ButtonValidator>();
 
-        foreach(Image i in background_solid) i.color = scr_System_CentralControl.current.pref.BackgroundColor_Opaque;
-        foreach (Image i in background_transparent) i.color = scr_System_CentralControl.current.pref.BackgroundColor_Transparent;
+        foreach(Image i in background_solid) i.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Opaque.Color;
+        foreach (Image i in background_transparent) i.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
 
     }
 
@@ -170,6 +171,7 @@ public class scr_Menu_Intro : scr_Menu
         button_alwaysValid = new ButtonValidator_AlwaysTrue(this);
     }
     public RectTransform prefab_Canvas_LoadSave;
+    public scr_HoverableText currentLanguage;
     public override void Initialize()
     {
         base.Initialize();
@@ -191,6 +193,10 @@ public class scr_Menu_Intro : scr_Menu
                     break;
                 case 5:
                     button.Initialize(this, new ButtonValidator_HoverMessage(this, button));break;
+                case 10:
+                    button.Initialize(this, new ButtonValidator_ToggleLanguage(this, button, true)); break;
+                case 11:
+                    button.Initialize(this, new ButtonValidator_ToggleLanguage(this, button, false)); break;
                 case -1:break;
                 default:
                     button.Initialize(this, button_alwaysValid);
@@ -204,15 +210,33 @@ public class scr_Menu_Intro : scr_Menu
 
         }
         // build all presetList
+
+
         ValidateAll();
 
     }
+
+    public override void ValidateAll()
+    {
+        base.ValidateAll();
+
+        if (Reload)
+        {
+            scr_System_SceneManager.current.ReloadScene(GlobalValues.IntroScene);
+        }
+    }
+
 
     protected override void Start()
     {
         base.Start();
 
         version.SetText(Application.version);
+
+        var lang = LocalizeDictionary.QueryThenParse("language_is");
+        var lang2 = LocalizeDictionary.QueryThenParse(scr_System_CentralControl.current.Language);
+        Debug.Log($"query {lang} {lang2}");
+        this.currentLanguage.SetText(lang.Replace("$key$", lang2));
     }
     public class ButtonValidator_Load : ButtonValidator, I_ButtonClickable
     {
@@ -222,13 +246,13 @@ public class scr_Menu_Intro : scr_Menu
         {
             this.parent = parent;
             this.text = text.GetComponent<scr_HoverableText>();
-            errorMSG = scr_System_Serializer.current.Dictionary.Query("tooltip_cannotLoadSave");
+            errorMSG = LocalizeDictionary.QueryThenParse("tooltip_cannotLoadSave");
         }
         string errorMSG;
         public override bool IsButtonValid()
         {
             this.tooltip = "";
-            if (!Directory.Exists(Utility.GetSavePath_Save()))
+            if (!Directory.Exists(scr_System_Serializer.SavePath))
             {
                 this.tooltip = errorMSG;
                 return false;
@@ -302,7 +326,7 @@ public class scr_Menu_Intro : scr_Menu
 
             }
         }
-
+        ValidateAll();
     }
 
     public class ButtonValidator_HasSaveFiletoLoad : ButtonValidator
@@ -326,24 +350,25 @@ public class scr_Menu_Intro : scr_Menu
 
                 // D:/Unity/EraDivers/Assets
                 state = ButtonValidator_States.Invalid;
-                tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("tooltip_cannotLoadSave");
+                tooltip = LocalizeDictionary.QueryThenParse("tooltip_cannotLoadSave");
                 return false;
             }
         }
     }
 
+    public bool Reload = false;
 
     public class ButtonValidator_HoverMessage : ButtonValidator, I_ButtonClickable
     {
         new scr_Menu_Intro parent;
         scr_SelectableText button;
-        string copied = scr_System_Serializer.current.Dictionary.QueryThenParse("intro_message_4");
+        string copied = LocalizeDictionary.QueryThenParse("intro_message_4");
         public ButtonValidator_HoverMessage(scr_Menu_Intro parent, scr_SelectableText button) : base(parent)
         {
             this.parent = parent;
             this.button = button;
-            this.tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("intro_message_3")
-                                        .Replace("$link$", Utility.bugReport);
+            if (scr_System_CentralControl.current.isSafeMode) this.tooltip = LocalizeDictionary.QueryThenParse("intro_message_3_safe");
+            else this.tooltip = LocalizeDictionary.QueryThenParse("intro_message_3").Replace("$link$", Utility.bugReport);
         }
 
         public override bool IsButtonValid()
@@ -353,9 +378,54 @@ public class scr_Menu_Intro : scr_Menu
 
         public void OnClickButton()
         {
-            GUIUtility.systemCopyBuffer = Utility.bugReport;
-            button.SetText(copied);
+            if (!scr_System_CentralControl.current.isSafeMode)
+            {
+                GUIUtility.systemCopyBuffer = Utility.bugReport;
+                button.SetText(copied);
+            }
         }
     }
 
+    class ButtonValidator_ToggleLanguage: ButtonValidator, I_ButtonClickable
+    {
+        new scr_Menu_Intro parent;
+        scr_SelectableText button;
+        bool toggleLeft;
+        public ButtonValidator_ToggleLanguage(scr_Menu_Intro parent, scr_SelectableText button, bool toggleLeft = false) : base(parent)
+        {
+            this.parent = parent;
+            this.button = button;
+            this.toggleLeft = toggleLeft;
+            keys = LocalizeDictionary.Instance.Index.Languages;
+        }
+
+        bool initialized = false;
+        List<string> keys;
+
+        public override bool IsButtonValid()
+        {
+            return keys.Count > 1;
+        }
+
+        public void OnClickButton()
+        {
+            string current = LocalizeDictionary.Instance.Index.cachedLang;
+            int next = 0;
+            if (toggleLeft)
+            {
+                next = keys.IndexOf(current) - 1;
+                if (next < 0) next = keys.Count - 1;
+            }
+            else
+            {
+                next = keys.IndexOf(current) + 1;
+                if (next >= keys.Count) next = 0;
+            }
+
+            scr_System_CentralControl.current.Language = keys[next];
+            //centertext.SetText(titleText.Replace("$key$", LocalizeDictionary.QueryThenParse(scr_System_CentralControl.current.Language)));
+            parent.Reload = true;
+
+        }
+    }
 }

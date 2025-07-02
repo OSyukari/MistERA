@@ -54,9 +54,9 @@ public class Character_Origin_Index : I_IndexHasID, I_NeedLateInitialize, I_Inde
         }
     }
 
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> message)
     {
-        Debug.Log("Character_Origin_Index : registering ID with list length [" + list.Count + "]");
+        message.Add("Character_Origin_Index : registering ID with list length [" + list.Count + "]");
 
         var ids = new Dictionary<string, Character_Origin>();
         foreach (var i in list) ids.Add(i.ID, i);
@@ -102,11 +102,11 @@ public class Character_Origin
     public string[] disallowRace_ID = new string[0];
     public string[] disallowRaceTemplate_ID = new string[0];
 
-    public Humanoid_Race ForceRace = null;
-    public Humanoid_RaceTemplate ForceRaceTemplate = null;
-    public List<Character_Origin_startingOption> AvailableOptions = new List<Character_Origin_startingOption>();
-    public List<Humanoid_Race> DisallowRace = new List<Humanoid_Race>();
-    public List<Humanoid_RaceTemplate> DisallowRaceTemplate = new List<Humanoid_RaceTemplate>();
+    [JsonIgnore][NonSerialized] public Humanoid_Race ForceRace = null;
+    [JsonIgnore][NonSerialized] public Humanoid_RaceTemplate ForceRaceTemplate = null;
+    [JsonIgnore][NonSerialized] public List<Character_Origin_startingOption> AvailableOptions = new List<Character_Origin_startingOption>();
+    [JsonIgnore][NonSerialized] public List<Humanoid_Race> DisallowRace = new List<Humanoid_Race>();
+    [JsonIgnore][NonSerialized] public List<Humanoid_RaceTemplate> DisallowRaceTemplate = new List<Humanoid_RaceTemplate>();
 }
 
 [System.Serializable]
@@ -127,9 +127,9 @@ public class Character_Origin_startingOption_Index : I_IndexHasID, I_IndexMergea
         }
     }
 
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
-        Debug.Log("Character_Origin_startingOption_Index : registering ID with list length [" + list.Count + "]");
+        s.Add("Character_Origin_startingOption_Index : registering ID with list length [" + list.Count + "]");
         var ids = new Dictionary<string, Character_Origin_startingOption>();
         foreach (var i in list) ids.Add(i.ID, i);
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Character_Origin_startingOption>(ids);
@@ -166,7 +166,7 @@ public class Character_Origin_startingOption
 {
     public string ID = "";
     [SerializeField][JsonProperty] protected string displayname = "";
-    [JsonProperty] public string DisplayName { get { return LocalizeDictionary.Instance.Index.QueryThenParse(ID, displayname); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayname); } }
     [SerializeField][JsonProperty] protected string tooltip = "";
-    [JsonProperty] public string Tooltip { get { return LocalizeDictionary.Instance.Index.QueryThenParse(ID + "_tooltip", tooltip); } }
+    [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
 }

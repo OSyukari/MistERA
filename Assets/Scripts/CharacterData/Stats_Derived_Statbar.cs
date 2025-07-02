@@ -10,9 +10,9 @@ public class Stats_Derived_Extended_Index : I_IndexHasID, I_IndexMergeable
     public List<Stats_Derived_Extended> list = new List<Stats_Derived_Extended>();
 
     Dictionary<string, Stats_Derived_Extended> ID_Dictionary = new Dictionary<string, Stats_Derived_Extended>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
-        Debug.Log("Stats_Derived_Extended_Index : registering ID with list length [" + list.Count + "]");
+        s.Add("Stats_Derived_Extended_Index : registering ID with list length [" + list.Count + "]");
 
         foreach (Stats_Derived_Extended o in list) ID_Dictionary.Add(o.ID, o);
     }
@@ -41,7 +41,7 @@ public class Stats_Derived_Extended
     [SerializeField][JsonProperty] protected List<object> eventTriggers = null;
 
     [JsonIgnore] public string ID { get { return id; } }
-    [JsonIgnore] public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(id); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(id); } }
     [JsonIgnore] public string Tooltip { get { return tooltip; } }
     [JsonIgnore] public string StatKeyword { get { return statKeyword; } }
 

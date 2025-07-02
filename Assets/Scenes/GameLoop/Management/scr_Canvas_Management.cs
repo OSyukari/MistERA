@@ -51,10 +51,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     protected override void Awake()
     {
         base.Awake();
-        homef = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_home_nameplate");
-        workf = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_work_nameplate");
-        otherf = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_others_nameplate");
-        charaLocAP = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_jobs_currentInfo");
+        homef = LocalizeDictionary.QueryThenParse("management_faction_home_nameplate");
+        workf = LocalizeDictionary.QueryThenParse("management_faction_work_nameplate");
+        otherf = LocalizeDictionary.QueryThenParse("management_faction_others_nameplate");
+        charaLocAP = LocalizeDictionary.QueryThenParse("ui_management_jobs_currentInfo");
         this.m_Canvas.overrideSorting = true;
         factions = new List<Manageable>();
         button_alwaysValid = new ButtonValidator_AlwaysTrue(this);
@@ -363,7 +363,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         currentChara = c;
 
         chara_fullname.text = c.FullName;
-        charaGender.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(currentChara.Appearance.ToString()));
+        charaGender.SetText(LocalizeDictionary.QueryThenParse(currentChara.Appearance.ToString()));
         chara_Race.SetText(currentChara.Race.DisplayName, false, currentChara.Race.ID + "_tooltip");
         chara_RaceTemplate.SetText(currentChara.RaceTemplate.DisplayName, false, currentChara.RaceTemplate.ID + "_tooltip");
 
@@ -748,7 +748,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
         public override bool IsButtonValid()
         {
-            this.text.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(order.orderType.ToString()));
+            this.text.SetText(LocalizeDictionary.QueryThenParse(order.orderType.ToString()));
             return true;
         }
         public void OnClickButton()
@@ -812,9 +812,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             this.parentRect = parentRect;
             this.warning = warning;
            // this.tooltip = "Delete This Order\nThis functionality is currently disabled";
-            this.conflictColor = scr_System_CentralControl.current.pref.TextColor_conflict;
-            alert_hours = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_missingHours");
-            alert_items = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_missingResource");
+            this.conflictColor = scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color;
+            alert_hours = LocalizeDictionary.QueryThenParse("ui_management_production_missingHours");
+            alert_items = LocalizeDictionary.QueryThenParse("ui_management_production_missingResource");
         }
 
         public override bool IsButtonValid()
@@ -944,7 +944,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     if (c_com != null) strs.Add(c_com.DisplayName());
                     else Debug.LogError($"CANNOT FIND WORK PRESET COMMAND {cid}");
                 }
-                description.text = scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_description_desc")
+                description.text = LocalizeDictionary.QueryThenParse("management_jobpost_description_desc")
                     .Replace("$description$", String.Join(",", strs))
                     .Replace("$hour$", preset.activeHours.Count.ToString())
                     .Replace("$payout$", preset.PrintPayout)
@@ -1367,7 +1367,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
         public override bool IsButtonValid()
         {
-            this.text.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(order.orderType.ToString()));
+            this.text.SetText(LocalizeDictionary.QueryThenParse(order.orderType.ToString()));
             return true;
         }
         public void OnClickButton()
@@ -1431,9 +1431,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             this.parentRect = parentRect;
             this.warning = warning;
             // this.tooltip = "Delete This Order\nThis functionality is currently disabled";
-            this.conflictColor = scr_System_CentralControl.current.pref.TextColor_conflict;
-            alert_hours = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_missingHours");
-            alert_items = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_missingResource");
+            this.conflictColor = scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color;
+            alert_hours = LocalizeDictionary.QueryThenParse("ui_management_production_missingHours");
+            alert_items = LocalizeDictionary.QueryThenParse("ui_management_production_missingResource");
         }
 
         public override bool IsButtonValid()

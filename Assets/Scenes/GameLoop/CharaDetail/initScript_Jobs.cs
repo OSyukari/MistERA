@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class initScript_Jobs : MonoBehaviour
+public class initScript_Relations : MonoBehaviour
 {
     public scr_SelectableText homeFaction, homeFactionTemp;
 
-    public RectTransform workFactionBox;
-    public RectTransform workFactionsPrefab;
+    //public RectTransform workFactionBox, workFactionsPrefab;
     public TMP_Text workFactionsNameList;
 
     public void InitializeData(Character_Trainable c)
@@ -20,7 +19,7 @@ public class initScript_Jobs : MonoBehaviour
 
 
         string s = "";
-        foreach(var i in c.FactionManager.WorkFactions)
+        foreach (var i in c.FactionManager.WorkFactions)
         {
             s += i.FactionDisplayName + "  ";
         }

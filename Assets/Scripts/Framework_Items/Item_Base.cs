@@ -6,10 +6,10 @@ using System.Linq;
 using Newtonsoft.Json;
 
 [System.Serializable]
-public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable, I_SerializationCallbackReceiver
+public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable, I_SerializationCallbackReceiver, I_RemoveElemByTag, I_RemoveNSFW
 {
     [SerializeField][JsonProperty] protected List<Item_Base> list = new List<Item_Base>();
-    public List<Item_Base> List { get { return this.ID_Dictionary.Values.ToList(); } }
+    [JsonIgnore] public List<Item_Base> List { get { return this.ID_Dictionary.Values.ToList(); } }
     public void MergeWith(I_IndexMergeable list){
         var l = list as Index_Item_Base;
         if (l == null) return;
@@ -21,9 +21,9 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
     }
 
     Dictionary<string, Item_Base> ID_Dictionary = new Dictionary<string, Item_Base>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
-        Debug.Log("Index_Item_Base : registering ID with list length [" + list.Count + "]");
+        s.Add("Index_Item_Base : registering ID with list length [" + list.Count + "]");
 
         foreach (Item_Base o in this.list)
         {
@@ -39,6 +39,8 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
     {
         // generate packaged item def for each package_able food item
         List<Item_Base> newItems = new List<Item_Base>();
+
+        /* Packaging items, not used right now */
         foreach(var item in this.list)
         {
             // if item can be packaged
@@ -79,7 +81,7 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
             newItems.Add(newItem);
         }
 
-        foreach(var i in newItems)
+        foreach (var i in newItems)
         {
             list.Add(i);
             ID_Dictionary.Add(i.id, i);
@@ -97,6 +99,15 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
             else list[i].OnAfterDeserialize();
         }
     }
+
+    public void RemoveElemByTag(string tag)
+    {
+        this.list.RemoveAll(x => x.Tags.Contains(tag));
+    }
+    public void RemoveNSFW()
+    {
+        this.list.RemoveAll(x => x.Equippable && x.GetCompTemplateByID("ItemComponent_Equippable").comp_Equippable.equipLayer == BodyEquipLayer.Skin);
+    }
 }
 
 
@@ -109,7 +120,7 @@ public class Item_Base
     [JsonIgnore] public string ID { get { return id; } }
 
     public string displayName = "";
-    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.Instance.Index.QueryThenParse(id, displayName); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(id, displayName); } }
 
     public string tooltip = "";
     [JsonIgnore]
@@ -121,7 +132,7 @@ public class Item_Base
             {
                 var compTooltips = new List<string>();
                 foreach (var comp in this.itemComps_Template) if (comp.Tooltip.Length > 0) compTooltips.Add(comp.Tooltip);
-                _tooltipCache = LocalizeDictionary.Instance.Index.QueryThenParse(id + "_tooltip", tooltip) + (compTooltips.Count > 0 ? "\n\n"+ String.Join("\n", compTooltips) : "");
+                _tooltipCache = LocalizeDictionary.QueryThenParse(id + "_tooltip", tooltip) + (compTooltips.Count > 0 ? "\n\n"+ String.Join("\n", compTooltips) : "");
             }
             return _tooltipCache;
         }
@@ -129,13 +140,13 @@ public class Item_Base
 
     string _tooltipCache = "";
 
-    public bool noDisplay = false;
+    //public bool noDisplay = false;
     public float value = 0;
     /*
     [NonSerialized] private List<ItemComponent_Base> itemComps = new List<ItemComponent_Base>();
     public List<ItemComponent_Base> ItemComps { get { return itemComps; } }
     */
-    public bool canBePackaged = false;
+    [JsonIgnore][NonSerialized] public bool canBePackaged = false;
     public int cleanlinessMod = 0;
     public List<string> Tags = new List<string>();
     public ItemComponentTemplate GetCompTemplateByID(string id)
@@ -143,6 +154,7 @@ public class Item_Base
         return itemComps_Template.Find(x => x.compType == id);
     }
 
+    /*
     public List<string> givesJobID = new List<string>();
     [JsonIgnore] public List<string> GivesJobID { get { return givesJobID; } }
     [JsonIgnore]
@@ -153,7 +165,7 @@ public class Item_Base
             if (givesJobID.Count < 1 || (givesJobID.Count == 1 && givesJobID[0] == "")) return false;
             else return true;
         }
-    }
+    }*/
 
     public List<ItemComponentTemplate> itemComps_Template = new List<ItemComponentTemplate>();
 

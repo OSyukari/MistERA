@@ -283,7 +283,7 @@ namespace TMPro.Examples
                     // Command handler list of eligible commands, each menu repopulate commands
 
                     // string query = scr_System_tooltipDictionary.current.FindEntry(linkInfo.GetLinkID() as string);
-                    string query = scr_System_Serializer.current.Dictionary.QueryThenParse(linkInfo.GetLinkID() as string);
+                    string query = LocalizeDictionary.QueryThenParse(linkInfo.GetLinkID() as string);
                     if (query != null)
                     {
                         

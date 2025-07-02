@@ -44,7 +44,7 @@ public class scr_MenuCanvas_NewGame : scr_Menu
         if (c == null)
         {
             c = null;
-            playerName.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(playerNameButton.replaceText));
+            playerName.SetText(LocalizeDictionary.QueryThenParse(playerNameButton.replaceText));
         }
         else
         {

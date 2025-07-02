@@ -113,33 +113,38 @@ public class PortraitManager
         public List<PortraitVariant> Variants = new List<PortraitVariant>();
 
         public virtual bool isValid() { return false; }
-        public virtual void DrawIcon(scr_CharIconBox iconBox)
+        public virtual IEnumerator DrawIcon(scr_CharIconBox iconBox)
         {
             iconBox.picture.sprite = SpriteAsset.transparent;
+            yield break;
         }
-        public virtual void DrawPortrait(scr_CharPortraitBox portraitBox)
+        public virtual IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox)
         {
             portraitBox.picture.gameObject.SetActive(true);
+            if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
             //portraitBox.spineLoader.gameObject.SetActive(false);
             portraitBox.picture.sprite = SpriteAsset.transparent;
+            yield break;
         }
-        public virtual void DrawPortrait(scr_Menu_CharaDetail movablePortraitBox)
+        /*
+        public virtual IEnumerator DrawPortrait(scr_Menu_CharaDetail movablePortraitBox)
         {
             //Debug.LogError("BaseDrawportrait claled");
             movablePortraitBox.picture.gameObject.SetActive(true);
-            movablePortraitBox.spineLoader.gameObject.SetActive(false);
+            if (movablePortraitBox.spineRect != null) movablePortraitBox.spineRect.gameObject.SetActive(false);
 
             movablePortraitBox.picture.sprite = SpriteAsset.transparent;
-        }
+            yield break;
+        }*/
 
         public virtual void SetPortraitOffsets(float offsetX, float offsetY, float offsetSize)
         {
-            Debug.LogError("Base Portrait setoffset called");
+            //Debug.LogError("Base Portrait setoffset called");
         }
 
         public virtual void Click()
         {
-            //Debug.Log("Portrait Clicked on "+Owner.Owner.FirstName);
+            Debug.Log("Portrait Clicked on "+Owner.Owner.FirstName);
         }
 
         // More internal condition validation with shared portrait position data
@@ -170,56 +175,23 @@ public class PortraitManager
         }
 
         public override bool isValid() { return !Disable; }
-        public override void DrawIcon(scr_CharIconBox iconBox)
+        public override IEnumerator DrawIcon(scr_CharIconBox iconBox)
         {
             var drawImg = IconPath;
             if (drawImg == "") drawImg = PortraitPath;  // if no icon but have portrait then draw portrait using icon offset
 
-            if (drawImg == "") base.DrawIcon(iconBox);  // no fallback, draw transparent
+            if (drawImg == "") yield return base.DrawIcon(iconBox);  // no fallback, draw transparent
             else
             {
-                iconBox.picture.sprite = scr_System_CentralControl.current.LoadCachedSprite(drawImg);
+                Texture2D loaded = null;
+                yield return AssetsLoader.LoadTextureCoroutine(drawImg, texture => loaded = texture);
+
+                iconBox.picture.sprite = scr_System_CentralControl.current.GetSprite(loaded);
 
                 iconBox.picture.SetNativeSize();
                 iconBox.picture.rectTransform.anchoredPosition = new Vector2(icon_offset_x, icon_offset_y);
                 iconBox.picture.rectTransform.localScale = new Vector3(icon_offset_size, icon_offset_size, icon_offset_size);
-                /*
-                // RESIZE IMAGE TO FIT MINIMUM
-                float resize = 0.0f;
-                bool resiz = false;
-                var targetSizeX = pictureBox.sizeDelta.x;
-                var targetSizeY = pictureBox.sizeDelta.y;
-
-                image.SetNativeSize();
-                //Debug.Log("image resize targetX [" + targetSizeX + "] targetY[" + targetSizeY + "] imageX ["+image.rectTransform.sizeDelta.x+"] imageY ["+ image.rectTransform.sizeDelta.y+"]");
-                float x = image.rectTransform.sizeDelta.x * image.transform.localScale.x;
-                float y = image.rectTransform.sizeDelta.y * image.transform.localScale.y;
-
-                if (x + 0.01f < targetSizeX || y + 0.01f < targetSizeY)
-                {
-                    resize = Mathf.Max(targetSizeX / (x + 0.01f), targetSizeY / (y + 0.01f));
-                    resiz = true;
-                }
-                else if ((x - 0.01f) > targetSizeX || (y - 0.01f) > targetSizeY)
-                {
-                    resize = Mathf.Max(targetSizeX / (x - 0.01f), targetSizeY / (y - 0.01f));
-                    resiz = true;
-                }
-
-                if (resiz)
-                {
-                    //Debug.Log("UpdateImage: resize localX " + aaBox.localScale.x + "*" + resize + " localY " + aaBox.localScale.y + "*" + resize + " localZ " + aaBox.localScale.z + "*" + resize);
-                    image.transform.localScale = new Vector3(resize, resize, resize);
-                }*/
-                /*
-                var resize = (iconBox.picture.rectTransform.sizeDelta.x > 145 || iconBox.picture.rectTransform.sizeDelta.y > 150);
-                if (resize)
-                {
-                    var targScale = Math.Max(145 / iconBox.picture.rectTransform.sizeDelta.x, 145 / iconBox.picture.rectTransform.sizeDelta.y);
-                    iconBox.picture.rectTransform.localScale = new Vector3(targScale, targScale, targScale);
-                }*/
             }
-
         }
 
         [JsonIgnore] public string IconPath
@@ -243,30 +215,37 @@ public class PortraitManager
                 return portrait_path;
             } }
 
-        public override void DrawPortrait(scr_CharPortraitBox portraitBox)
+        public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox)
         {
-            portraitBox.picture.gameObject.SetActive(true);
+
             //portraitBox.spineLoader.gameObject.SetActive(false);
 
 
             //Debug.Log("image drawportrait " + this.PortraitPath);
             if (this.PortraitPath == "")
             {
-                base.DrawPortrait(portraitBox);
+                yield return base.DrawPortrait(portraitBox);
             }
             else
             {
-                portraitBox.picture.sprite = scr_System_CentralControl.current.LoadCachedSprite(PortraitPath);
-                portraitBox.picture.SetNativeSize();
+                Texture2D loaded = null;
+                yield return AssetsLoader.LoadTextureCoroutine(PortraitPath, texture => loaded = texture);
 
-                portraitBox.picture.rectTransform.anchoredPosition = new Vector2(portrait_offset_x , portrait_offset_y);
-                portraitBox.picture.rectTransform.localScale = new Vector3(portrait_offset_size, portrait_offset_size, portrait_offset_size);
+                portraitBox.picture.gameObject.SetActive(true);
+                if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
+
+                var sprite = scr_System_CentralControl.current.GetSprite(loaded);
+
+                portraitBox.picture.sprite = sprite;
+                portraitBox.UpdateAnchor(this);
+                //portraitBox.UpdateAnchor(this, portrait_offset_x, portrait_offset_y, portrait_offset_size);
             }
         }
 
-        public override void DrawPortrait(scr_Menu_CharaDetail movablePortraitBox)
-        {
-            movablePortraitBox.picture.gameObject.SetActive(true);
+        /*
+        public override IEnumerator DrawPortrait(scr_Menu_CharaDetail movablePortraitBox)
+        {        
+
             //movablePortraitBox.spineLoader.gameObject.SetActive(false);
 
             if (this.PortraitPath == "")
@@ -275,16 +254,24 @@ public class PortraitManager
             }
             else
             {
-                movablePortraitBox.picture.sprite = scr_System_CentralControl.current.LoadCachedSprite(PortraitPath);
+                Texture2D loaded = null;
+                yield return AssetsLoader.LoadTextureCoroutine(PortraitPath, texture => loaded = texture);
+
+                movablePortraitBox.picture.gameObject.SetActive(true);
+                if (movablePortraitBox.spineRect != null) movablePortraitBox.spineRect.gameObject.SetActive(false);
+
+                var sprite = scr_System_CentralControl.current.GetSprite(loaded);
+
+                movablePortraitBox.picture.sprite = sprite;
                 movablePortraitBox.picture.SetNativeSize();
 
                 movablePortraitBox.picture.rectTransform.anchoredPosition = new Vector2(portrait_offset_x, portrait_offset_y );
                 movablePortraitBox.picture.rectTransform.localScale = new Vector3(portrait_offset_size, portrait_offset_size, portrait_offset_size);
 
-            }
-        }
+            }*
+    }*/
 
-        public override void SetPortraitOffsets(float offsetX, float offsetY, float offsetSize)
+    public override void SetPortraitOffsets(float offsetX, float offsetY, float offsetSize)
         {
             this.portrait_offset_x = offsetX;
             this.portrait_offset_y = offsetY;
@@ -296,58 +283,48 @@ public class PortraitManager
     [System.Serializable]
     public class CharaPortrait_Spine : CharaPortrait
     {   // do not allow multiple transparent image layering -> should use spine instead.
-        public List<string> materialTexturePaths;
-        public string atlasJSON_path;
-        public string skeletonJSON_path;
-        public float skeletonScale;
-        public string idleAnimName;
+        public List<string> materialTexturePaths = new List<string>();
+        public string atlasJSON_path = "";
+        public string skeletonJSON_path = "";
+        //public float skeletonScale;
+        public string idleAnimName = "";
 
-        public string icon_path;
+        public string icon_path = "";
+        public bool straightAlpha = false;
         public CharaPortrait_Spine()
         {
 
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="icon_path">Still use a static image icon display</param>
-        /// <param name="materialTexturePath"></param>
-        /// <param name="atlasJSON_path"></param>
-        /// <param name="skeletonJSON_path"></param>
-        /// <param name="skeletonScale"></param>
-        /// <param name="idleAnimName"></param>
-        public CharaPortrait_Spine(string icon_path, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, float skeletonScale, string idleAnimName)
-        {
-            this.materialTexturePaths = materialTexturePath;
-            this.atlasJSON_path = atlasJSON_path;
-            this.skeletonJSON_path = skeletonJSON_path;
-            this.skeletonScale = skeletonScale;
-            this.idleAnimName = idleAnimName;
+        /*
+                public CharaPortrait_Spine(string icon_path, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, float skeletonScale, string idleAnimName)
+                {
+                    this.materialTexturePaths = materialTexturePath;
+                    this.atlasJSON_path = atlasJSON_path;
+                    this.skeletonJSON_path = skeletonJSON_path;
+                    //this.skeletonScale = skeletonScale;
+                    this.idleAnimName = idleAnimName;
 
 
-            portrait_offset_x = 0;
-            portrait_offset_y = 0;
-            portrait_offset_size = 1;
+                    portrait_offset_x = 0;
+                    portrait_offset_y = 0;
+                    portrait_offset_size = 1;
 
-            icon_offset_x = 0;
-            icon_offset_y = 0;
-            icon_offset_size = 1;
-        }
+                    icon_offset_x = 0;
+                    icon_offset_y = 0;
+                    icon_offset_size = 1;
+                }*/
 
         public override bool isValid() { return !Disable; }
-        public override void DrawIcon(scr_CharIconBox iconBox)
+        public override IEnumerator DrawIcon(scr_CharIconBox iconBox)
         {
-            if (IconPath == "") base.DrawIcon(iconBox);
+            if (IconPath == "") yield return base.DrawIcon(iconBox);
             else
             {
-                iconBox.picture.sprite = scr_System_CentralControl.current.LoadCachedSprite(IconPath);
-                /*
-                var resize = (iconBox.picture.rectTransform.sizeDelta.x > 145 || iconBox.picture.rectTransform.sizeDelta.y > 150);
-                if (resize)
-                {
-                    var targScale = Math.Max(145 / iconBox.picture.rectTransform.sizeDelta.x, 145 / iconBox.picture.rectTransform.sizeDelta.y);
-                    iconBox.picture.rectTransform.localScale = new Vector3(targScale, targScale, targScale);
-                }*/
+                Texture2D loaded = null;
+                yield return AssetsLoader.LoadTextureCoroutine(IconPath, texture => loaded = texture);
+
+                iconBox.picture.sprite = scr_System_CentralControl.current.GetSprite(loaded);
+
                 iconBox.picture.SetNativeSize();
                 iconBox.picture.rectTransform.anchoredPosition = new Vector2(icon_offset_x, icon_offset_y);
                 iconBox.picture.rectTransform.localScale = new Vector3(icon_offset_size, icon_offset_size, icon_offset_size);
@@ -380,13 +357,12 @@ public class PortraitManager
             }
         }
 
-        public override void DrawPortrait(scr_CharPortraitBox portraitBox)
+        public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox)
         {
             if (this.PortraitAnimName == "")
             {
                 //portraitBox.spineLoader.gameObject.SetActive(false);
-                portraitBox.picture.gameObject.SetActive(true);
-                base.DrawPortrait(portraitBox);
+                yield return base.DrawPortrait(portraitBox);
 
             }
             else
@@ -396,22 +372,24 @@ public class PortraitManager
 
                 //portraitBox.pictureRect.content = portraitBox.spineRect;
                 //portraitBox.spineLoader.gameObject.SetActive(true);
-
-                portraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, skeletonScale, PortraitAnimName);
-                if (portraitBox.spineRect == null) return;
-                portraitBox.picture.gameObject.SetActive(false);
-                portraitBox.spineRect.gameObject.SetActive(false);
-                portraitBox.spineLoader.gameObject.SetActive(true);
+                yield return portraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, PortraitAnimName );
                 portraitBox.spineRect.gameObject.SetActive(true);
+                portraitBox.picture.gameObject.SetActive(false);
 
                 portraitBox.spineRect.SetParent(portraitBox.spineLoader.transform, false);
-                portraitBox.spineLoader.spineLoader.MatchWithBound();
-                portraitBox.spineRect.anchoredPosition = new Vector2(portrait_offset_x, portrait_offset_y);
-                portraitBox.spineRect.localScale = new Vector3(portrait_offset_size, portrait_offset_size, portrait_offset_size);
+                portraitBox.UpdateAnchor(this);
+                //portraitBox.spineLoader.spineLoader.MatchWithBound();
+                // portraitBox.spineRect.anchoredPosition = new Vector2(portrait_offset_x, portrait_offset_y);
+                // portraitBox.spineRect.localScale = new Vector3(portrait_offset_size, portrait_offset_size, portrait_offset_size);
+                // portraitBox.picture.rectTransform.localScale = new Vector3(portrait_offset_size, portrait_offset_size, portrait_offset_size);
+                // portraitBox.picture.rectTransform.localPosition = new Vector3(portrait_offset_x, portrait_offset_y, 0);
+
+                // portraitBox.UpdateAnchor(this, portrait_offset_x, portrait_offset_y, portrait_offset_size);
             }
         }
 
-        public override void DrawPortrait(scr_Menu_CharaDetail movablePortraitBox)
+        /*
+        public override IEnumerator DrawPortrait(scr_Menu_CharaDetail movablePortraitBox)
         {
             if (this.PortraitAnimName == "")
             {
@@ -420,23 +398,29 @@ public class PortraitManager
                 //movablePortraitBox.spineLoader.gameObject.SetActive(false);
 
                 movablePortraitBox.picture.sprite = SpriteAsset.transparent;
+                yield break;
             }
             else
             {
                 //Debug.LogError($"PortraitAnimation name {PortraitAnimName}");
 
-                movablePortraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, skeletonScale, PortraitAnimName);
+                yield return movablePortraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, PortraitAnimName);
                 movablePortraitBox.pictureRect.content = movablePortraitBox.spineRect;
+                movablePortraitBox.spineRect.gameObject.SetActive(true);
                 movablePortraitBox.picture.gameObject.SetActive(false);
 
+                Debug.Log($"Drawportrait is null {movablePortraitBox.spineRect == null} {movablePortraitBox.spineLoader == null} ");
                 movablePortraitBox.spineRect.SetParent(movablePortraitBox.spineLoader.transform, false);
-                movablePortraitBox.spineLoader.spineLoader.MatchWithBound();
-                movablePortraitBox.spineRect.anchoredPosition = new Vector2(portrait_offset_x , portrait_offset_y );
+              //  movablePortraitBox.spineLoader.spineLoader.MatchWithBound();
+               // movablePortraitBox.spineRect.anchoredPosition = new Vector2(portrait_offset_x , portrait_offset_y );
+               // movablePortraitBox.spineRect.localScale = new Vector3(portrait_offset_size, portrait_offset_size, portrait_offset_size);
+
                 movablePortraitBox.spineRect.localScale = new Vector3(portrait_offset_size, portrait_offset_size, portrait_offset_size);
+                movablePortraitBox.spineRect.localPosition = new Vector3(portrait_offset_x, portrait_offset_y, 0);
 
             }
 
-        }
+        }*/
 
         public override void SetPortraitOffsets(float offsetX, float offsetY, float offsetSize)
         {

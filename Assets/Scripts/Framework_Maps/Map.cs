@@ -10,9 +10,9 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable
     public List<MapPlan> list = new List<MapPlan>();
 
     Dictionary<string, MapPlan> ID_Dictionary = new Dictionary<string, MapPlan>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> message)
     {
-        Debug.Log("Index_MapPlan : registering ID with list length [" + list.Count + "]");
+        message.Add("Index_MapPlan : registering ID with list length [" + list.Count + "]");
 
         foreach (MapPlan o in this.list)
         {

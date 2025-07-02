@@ -38,7 +38,7 @@ public class initScript_basicInfo : MonoBehaviour
 
         fullName.SetText(chara.FullName, false);
         //Debug.LogError("Query gender data on string " + chara.Appearance.ToString());
-        gender.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse( chara.Appearance.ToString()), false);
+        gender.SetText(LocalizeDictionary.QueryThenParse( chara.Appearance.ToString()), false);
         race.SetText(chara.Race.DisplayName, false, chara.Race.ID + "_tooltip");
         raceTemplate.SetText(chara.RaceTemplate.DisplayName, false, chara.RaceTemplate.ID+"_tooltip");
         factionStatus.SetText(chara.FactionManager.CurrentlyActiveFactionStatus);
@@ -129,6 +129,11 @@ public class initScript_basicInfo : MonoBehaviour
             UI_Utility.Draw(i, link);
             link.GetComponent<RectTransform>().SetParent(statusGrid, false);
             //box.GetComponent<TMP_Text>().text = i.BaseRef.displayName + " : severity["+i.Severity + "] duration["+i.duration+"] displayName[" + i.SeverityDisplayName+"]";
+        }
+
+        if (scr_System_CentralControl.current.isSafeMode)
+        {
+            lust.gameObject.SetActive(false);
         }
         //if (ii == 0) statusGrid.transform.GetChild(0).gameObject.SetActive(true);
         //else statusGrid.transform.GetChild(0).gameObject.SetActive(false);

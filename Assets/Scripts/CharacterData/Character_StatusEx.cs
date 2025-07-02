@@ -21,9 +21,9 @@ public class Index_StatusEx : I_IndexHasID, I_IndexMergeable
     }
     public StatusEx_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
     Dictionary<string, StatusEx_Base> ID_Dictionary = new Dictionary<string, StatusEx_Base>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
-        Debug.Log("Index_StatusEx : registering ID with list length [" + list.Count + "]");
+        s.Add("Index_StatusEx : registering ID with list length [" + list.Count + "]");
 
         foreach (StatusEx_Base o in this.list)
         {
@@ -38,7 +38,7 @@ public class StatusEx_Base
 {
     public string statusID = "";
     [SerializeField][JsonProperty] protected string displayName = "";
-    [JsonIgnore] public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(statusID, displayName); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(statusID, displayName); } }
     public bool noDisplay = false;
     public bool constant = false;
     public string stringFormat = "N1";

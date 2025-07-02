@@ -55,6 +55,9 @@ public static class Utility
         } }
 
 
+    public static Color32 UI_SelfColor = new Color32(45, 54, 255, 80);
+    public static Color32 UI_HostileColor = new Color32(255, 0, 52, 80);
+
     public static Unity.Mathematics.Random Random = new Unity.Mathematics.Random(74);
 
     public static bool SHIFT { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
@@ -246,7 +249,7 @@ public static class Utility
     /// <returns></returns>
     public static string ParseEventEntry(EventInstance owner, string s, string separator = ",")
     {
-        var newString = scr_System_Serializer.current.Dictionary.QueryThenParse( s);
+        var newString = LocalizeDictionary.QueryThenParse( s);
         newString = newString.Replace("$currentTime$", scr_System_Time.current.getCurrentTime().ToString());
 
         MatchCollection matches = regex_eventKeyword.Matches(newString);
@@ -330,9 +333,10 @@ public static class Utility
         return bestStat;
     }
 
+
     public static bool isClickBelowDragThreshold(PointerEventData eventData)
     {
-        float delta = scr_System_CentralControl.current.pref.ClickDragForgiveness;
+        float delta = scr_System_CentralControl.current.DisplaySetting.ClickDragForgiveness;
         var a = eventData.position;
         var b = eventData.pressPosition;
         if (Mathf.Abs( a.x - b.x ) < delta && Mathf.Abs(a.y - b.y) < delta) return true;
@@ -552,11 +556,6 @@ public static class Utility
         return ListContainsStrict(L2, L1) && ListContainsStrict(L1, L2);
     }
 
-    public static string getSaveRootPath()
-    {
-        return Application.dataPath;
-    }
-
     public static DateTime GetCampaignTime()
     {
         return new DateTime(1980, 08, 29, 6, 0, 0);
@@ -761,7 +760,7 @@ public static class Utility
 
     public static void StringReplace(ref string s)
     {
-        s = s.Replace("$color_error_begin$", $"<color={Utility.HexCOLOR(scr_System_CentralControl.current.pref.TextColor_conflict)}>")
+        s = s.Replace("$color_error_begin$", $"<color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color)}>")
             .Replace("$color_error_end$", "</color>");
     }
 
@@ -787,22 +786,22 @@ public static class Utility
             if (s.Contains("$doer.firstname$")) { s = s.Replace("$doer.firstname$", evp.Doer.FirstName); doerReplaced = true; }
             if (s.Contains("$doer$")) { s = s.Replace("$doer$", evp.Doer.FirstName); doerReplaced = true; }
 
-            s = s.Replace("$doer.p$", scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_penis"));
-            s = s.Replace("$doer.v$", scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_vagina"));
+            s = s.Replace("$doer.p$", LocalizeDictionary.QueryThenParse("bodyPart_internal_penis"));
+            s = s.Replace("$doer.v$", LocalizeDictionary.QueryThenParse("bodyPart_internal_vagina"));
 
         }
 
         if (evp.Receiver != null)
         {
-            if(doerReplaced && evp.Doer != null && evp.Doer.RefID == evp.Receiver.RefID)s = s.Replace("$receiver.firstname$", scr_System_Serializer.current.Dictionary.QueryThenParse("Self"));
+            if(doerReplaced && evp.Doer != null && evp.Doer.RefID == evp.Receiver.RefID)s = s.Replace("$receiver.firstname$", LocalizeDictionary.QueryThenParse("Self"));
             else s = s.Replace("$receiver.firstname$", evp.Receiver.FirstName);
 
-            s = s.Replace("$receiver.p$", scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_penis"));
-            s = s.Replace("$receiver.v$", scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_vagina"));
+            s = s.Replace("$receiver.p$", LocalizeDictionary.QueryThenParse("bodyPart_internal_penis"));
+            s = s.Replace("$receiver.v$", LocalizeDictionary.QueryThenParse("bodyPart_internal_vagina"));
         }else if (evp.DoerTargetTag.Contains("masturbate") && evp.Doer != null)
         {
             //Debug.Log("doer masturbating");
-            if (doerReplaced) s = s.Replace("$receiver.firstname$", scr_System_Serializer.current.Dictionary.QueryThenParse("Self"));
+            if (doerReplaced) s = s.Replace("$receiver.firstname$", LocalizeDictionary.QueryThenParse("Self"));
             else s = s.Replace("$receiver.firstname$", evp.Doer.FirstName);
         }
         
@@ -824,16 +823,6 @@ public static class Utility
     private static void MacroExecute(int command, bool skip = false){
         // do command
         Debug.Log("MacroExecute : [" + command + "] do skip [" + skip + "]");
-    }
-
-    public static string GetSavePath_Preset()
-    {
-        return Application.dataPath + "/Presets/";
-    }
-
-    public static string GetSavePath_Save()
-    {
-        return Application.dataPath + "/Save/";
     }
 
     public static void LoadSprite(Texture2D SpriteTexture, Image image)

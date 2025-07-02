@@ -12,7 +12,7 @@ public class scr_memoryBox : MonoBehaviour
     public Image image;
     private void Awake()
     {
-        image.color = scr_System_CentralControl.current.pref.BackgroundColor_Transparent;
+        image.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
     }
 
 }

@@ -53,7 +53,7 @@ public class scr_Canvas_Helper : scr_Menu, IPointerClickHandler
             var button = Instantiate(prefab_notifierText);
             button.optionID = i;
             button.Initialize(this, new ButtonValidator_HelperEntry(this, button));
-            button.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(HelperEntries[i]));
+            button.SetText(LocalizeDictionary.QueryThenParse(HelperEntries[i]));
             button.GetComponent<scr_PointerEnterNotifier>().Initialize(this, button.optionID);
             button.transform.SetParent(entryList, false);
 
@@ -63,7 +63,7 @@ public class scr_Canvas_Helper : scr_Menu, IPointerClickHandler
     }
     public void LoadHelperText(int i)
     {
-        textArea.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(HelperEntries[i] + "_content"));
+        textArea.SetText(LocalizeDictionary.QueryThenParse(HelperEntries[i] + "_content"));
     }
     public void OnPointerClick(PointerEventData eventData)
     {

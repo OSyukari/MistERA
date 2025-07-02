@@ -8,7 +8,7 @@ using UnityEditor;
 using Newtonsoft.Json.Linq;
 
 [System.Serializable]
-public class Index_CharaSkills : I_IndexMergeable, I_IndexHasID
+public class Index_CharaSkills : I_IndexMergeable, I_IndexHasID, I_RemoveElemByTag
 {
     public List<CharaSkill> list = new List<CharaSkill>();
 
@@ -21,13 +21,18 @@ public class Index_CharaSkills : I_IndexMergeable, I_IndexHasID
     }
     public CharaSkill GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
     Dictionary<string, CharaSkill> ID_Dictionary = new Dictionary<string, CharaSkill>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
         foreach (CharaSkill o in this.list)
         {
             ID_Dictionary.Add(o.ID, o);
         }
-        Debug.Log("Index_CharaSkills initialized with " + list.Count + " elements");
+        s.Add("Index_CharaSkills initialized with " + list.Count + " elements");
+    }
+
+    public void RemoveElemByTag(string tag)
+    {
+        this.list.RemoveAll(x => x.tags.Contains(tag));
     }
 }
 
@@ -55,10 +60,10 @@ public class SkillManager
         var list = new List<string>();
         foreach (var i in newDict)
         {
-            var baseSkill = scr_System_Serializer.current.GetByNameOrID_ExperienceBase(i.Key);
-            string append = baseSkill == null ? "" : baseSkill.DisplayAmountString;
+            //var baseSkill = null;// scr_System_Serializer.current.GetByNameOrID_ExperienceBase(i.Key);
+            // string append = baseSkill == null ? "" : baseSkill.DisplayAmountString;
 
-            list.Add(scr_System_Serializer.current.Dictionary.QueryThenParse(i.Key) + ": " + i.Value + append);
+            list.Add(LocalizeDictionary.QueryThenParse(i.Key) + ": " + i.Value);// + append);
         }
         return list;
     }
@@ -241,8 +246,8 @@ public class SkillInstance
 {
     [JsonIgnore] public string DisplayName { 
         get {
-            if (!BaseRef.hasGenderVariant) return scr_System_Serializer.current.Dictionary.QueryThenParse(BaseRef.ID);
-            else return scr_System_Serializer.current.Dictionary.QueryThenParse(BaseRef.ID+"_"+scr_System_CentralControl.current.GetGenderSimple(Owner).ToString());
+            if (!BaseRef.hasGenderVariant) return LocalizeDictionary.QueryThenParse(BaseRef.ID);
+            else return LocalizeDictionary.QueryThenParse(BaseRef.ID+"_"+scr_System_CentralControl.current.GetGenderSimple(Owner).ToString());
     } }
     [JsonIgnore] public string DisplayNameFull { get { return DisplayName+": "+currentLevel; } }
     protected int ownerRefID = -1;
@@ -354,6 +359,7 @@ public class SkillInstance
 public class CharaSkill
 {
     public string ID = "";
+    public List<string> tags = new List<string>();
     public bool hasGenderVariant = false;
     public Require requirements = null;
     public bool allowAutoUpgrade = true;
@@ -453,7 +459,7 @@ public class CharaSkill
                 {
                     if (!c.Body.HasBodyTag(i))
                     {
-                        c2.Add("<color=" + scr_System_CentralControl.current.pref.HexColor_conflict + ">" + i + "</color>");
+                        c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + i + "</color>");
                         returnValue = false;
                     }
                     else c2.Add(i);
@@ -468,7 +474,7 @@ public class CharaSkill
                 {
                     if (!c.hasStatKeyword(i))
                     {
-                        c2.Add("<color=" + scr_System_CentralControl.current.pref.HexColor_conflict + ">" + i + "</color>");
+                        c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + i + "</color>");
                         returnValue = false;
                     }
                     else c2.Add(i);
@@ -484,7 +490,7 @@ public class CharaSkill
 
                     if (!Utility.CompareValue(c.Skills.GetExperienceLevel(i.experienceID), i.operand, i.value))
                     {
-                        c2.Add("<color=" + scr_System_CentralControl.current.pref.HexColor_conflict + ">" + i.Tooltip + "</color>");
+                        c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + i.Tooltip + "</color>");
                         returnValue = false;
                     }
                     else c2.Add(i.Tooltip);
@@ -497,7 +503,7 @@ public class CharaSkill
                 c2.Clear();
                 if (!scr_System_CentralControl.current.GetGender(c).Contains(requireGender))
                 {
-                    c2.Add("<color=" + scr_System_CentralControl.current.pref.HexColor_conflict + ">" + requireGender.ToString() + "</color>");
+                    c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + requireGender.ToString() + "</color>");
                     returnValue= false;
                 }
                 else c2.Add(requireGender.ToString());
@@ -511,7 +517,7 @@ public class CharaSkill
                 foreach (var i in requireSumExperiences.experienceIDs) sumValue += c.Skills.GetExperienceLevel(i);
                 if (!Utility.CompareValue(sumValue, requireSumExperiences.operand, requireSumExperiences.value))
                 {
-                    c2.Add("<color=" + scr_System_CentralControl.current.pref.HexColor_conflict + ">" + requireSumExperiences.Tooltip + "</color> (currently "+sumValue+")");
+                    c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + requireSumExperiences.Tooltip + "</color> (currently "+sumValue+")");
                     returnValue = false;
                 }
                 else c2.Add(requireSumExperiences.Tooltip+" (currently "+sumValue+")");
@@ -531,7 +537,7 @@ public class CharaSkill
             [JsonIgnore] public bool isValid { get { return experienceID != "" && operand != LogicalOperand.none; } }
             [JsonIgnore] public string Tooltip { get
                 {
-                    return scr_System_Serializer.current.Dictionary.QueryThenParse(experienceID)+" values must be "+ scr_System_Serializer.current.Dictionary.QueryThenParse(operand.ToString())+" "+value;
+                    return LocalizeDictionary.QueryThenParse(experienceID)+" values must be "+ LocalizeDictionary.QueryThenParse(operand.ToString())+" "+value;
                 } }
 
             public bool WipeExperienceOnLevelUp = false;
@@ -563,9 +569,9 @@ public class CharaSkill
                 {
                     //Debug.Log("expIDs " + String.Join("|", experienceIDs));
                     List<string> allNames = new List<string>();
-                    foreach (var i in experienceIDs) allNames.Add(scr_System_Serializer.current.Dictionary.QueryThenParse(i));
+                    foreach (var i in experienceIDs) allNames.Add(LocalizeDictionary.QueryThenParse(i));
                     //Debug.Log("expIDs " + String.Join("|", allNames));
-                    return String.Join(",",allNames) + " sum must be " + scr_System_Serializer.current.Dictionary.QueryThenParse(operand.ToString()) + " " + value;
+                    return String.Join(",",allNames) + " sum must be " + LocalizeDictionary.QueryThenParse(operand.ToString()) + " " + value;
                 }
             }
         }

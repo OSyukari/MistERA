@@ -127,6 +127,8 @@ public class Character_Body
 
         foreach (string s in newbody)
         {
+            if (body.Find(x => x.Base.ID == s) != null) continue;
+           // Debug.LogError($"{Owner.FirstName} body addmissing on {s}");
             BodyPart_Instance b = new BodyPart_Instance();
             b.Initialize(s, Owner);
             /*
@@ -423,9 +425,9 @@ public class Character_Body
 
                             string key = "ui_entry_memory_description_cum_";
                             // ADDLOG CUM FOR RECEIVER
-                            var desc = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_creampie");
+                            var desc = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_creampie");
                             desc = desc.Replace("$target$", part.Owner.FirstName)
-                                        .Replace("$cum_verb$", scr_System_Serializer.current.Dictionary.QueryThenParse(key + container.Base.ID))
+                                        .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
                                         .Replace("$amount$", cum.GetComp_Ingestible().amount.ToString("N0"));
 
 
@@ -437,46 +439,42 @@ public class Character_Body
                             Utility.CheckExperienceGainNoStimulate(container.Owner, cum.GetComp_Ingestible().amount, false, containerTags, new List<string>());
 
                             // ADDLOG CUM FOR SHOOTER
-                            var desc2 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_cumOnto");
+                            var desc2 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_cumOnto");
                             desc2 = desc2.Replace("$target$", container.Owner.FirstName)
-                                        .Replace("$cum_verb$", scr_System_Serializer.current.Dictionary.QueryThenParse(key + container.Base.ID))
+                                        .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
                                         .Replace("$amount$", cum.GetComp_Ingestible().amount.ToString("N0"));
 
-                            //container.Owner.Memory.AddEntry_Custom(containerTags, selfTag, part.Owner.RefID, false, desc, Memory_Attitude.None, Memory_Response.None);
-
+                            
                             var memInst2 = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.None, Memory_Attitude.None, desc);
                             container.Owner.Memory.AddEntry(memInst2, containerTags, -1, true);
 
 
-                            //part.Owner.Memory.AddEntry_Custom(selfTag, containerTags, container.Owner.RefID, true, desc2, Memory_Attitude.Like, Memory_Response.None);
-
+                            
                             var memInst3 = new MemInstance(new List<int>() { container.Owner.RefID }, containerTags, "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc2);
                             part.Owner.Memory.AddEntry(memInst3, selfTag, -1, true);
 
-                            cumKeywords = scr_System_Serializer.current.Dictionary.QueryThenParse("experience_sex_cumtainer").Replace("$amount$", cumAmount.ToString()).Replace("$partname$",container.DisplayNameFull);
+                            cumKeywords = LocalizeDictionary.QueryThenParse("experience_sex_cumtainer").Replace("$amount$", cumAmount.ToString()).Replace("$partname$",container.DisplayNameFull);
                         }
                         else
                         {   // cum on ground
                             scr_System_CampaignManager.current.Map.FindRoomByChara(ownerRefID).AddItem(cum);
 
                             // ADDLOG CUM FOR SHOOTER
-                            var desc = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_cum");
+                            var desc = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_cum");
                             desc = desc .Replace("$amount$", cum.GetComp_Ingestible().amount.ToString("N0"));
 
-                            //part.Owner.Memory.AddEntry_Custom(selfTag, null, part.Owner.RefID, true, desc, Memory_Attitude.Like, Memory_Response.None);
-
+                            
                             var memInst4 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>() { "" }, "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc);
                             part.Owner.Memory.AddEntry(memInst4, selfTag, -1, true);
 
-                            cumKeywords = scr_System_Serializer.current.Dictionary.QueryThenParse("experience_sex_cum").Replace("$amount$", cumAmount.ToString());
+                            cumKeywords = LocalizeDictionary.QueryThenParse("experience_sex_cum").Replace("$amount$", cumAmount.ToString());
                         }
                         climaxDebuff -= 200;
                         //climaxKeywords.Add("Cum(" + (container != null? container.DisplayName + ":"+ cum.GetComp_Ingestible().amount+"ml" + ":"+container.Owner.FirstName : cum.GetComp_Ingestible().amount+"ml") + ")");
 
-                        var desc1 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
+                        var desc1 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
 
-                        //part.Owner.Memory.AddEntry_Custom(selfTag, null, part.Owner.RefID, true, desc1, Memory_Attitude.Like, Memory_Response.None);
-
+                        
                         var memInst5 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst5, selfTag, -1, true);
 
@@ -487,9 +485,8 @@ public class Character_Body
                     {
                         climaxDebuff -= 50;
 
-                        var desc1 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
-                        //part.Owner.Memory.AddEntry_Custom(selfTag, null, part.Owner.RefID, true, desc1, Memory_Attitude.Like, Memory_Response.None);
-
+                        var desc1 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
+                        
                         var memInst6 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst6, selfTag, -1, true);
 
@@ -506,25 +503,13 @@ public class Character_Body
                 Owner.Stats.AddOrModStatus("chara_status_sexual_climax_after", climaxDebuff);
 
                 var disassemble = climaxKeywords.Split("||");
-                climaxKeywords = scr_System_Serializer.current.Dictionary.QueryThenParse(disassemble[0])
+                climaxKeywords = LocalizeDictionary.QueryThenParse(disassemble[0])
                     .Replace("$sensitivity$", disassemble[1])
-                    .Replace("$count$", scr_System_Serializer.current.Dictionary.QueryThenParse(disassemble[0] + "_" + disassemble[2]));
+                    .Replace("$count$", LocalizeDictionary.QueryThenParse(disassemble[0] + "_" + disassemble[2]));
 
                 string s = Owner.FirstName + ":" + climaxKeywords + (cumKeywords.Length > 0 ? "/" + cumKeywords : "");
                 scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
             }
-            /*
-            else
-            {
-                //var desc12 = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_entry_memory_description_climax");
-                //Owner.Memory.AddEntry_Custom(climaxTags, null, Owner.RefID, true, desc12, Memory_Attitude.Like, Memory_Response.None);
-                //climaxKeywords = scr_System_Serializer.current.Dictionary.QueryThenParse("experience_sex_climax");
-
-                //var memInst6 = new MemInstance(new List<int>() { Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc12);
-                //Owner.Memory.AddEntry(memInst6, climaxTags, -1, true);
-            }*/
-
-
 
         }
     }

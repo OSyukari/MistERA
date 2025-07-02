@@ -139,7 +139,7 @@ public class Manageable : I_Disposable
 
     [JsonIgnore] public string FactionDisplayName { get
         {
-            return scr_System_Serializer.current.Dictionary.QueryThenParse("factionName_" + ID);
+            return LocalizeDictionary.QueryThenParse("factionName_" + ID);
         } }
 
     [NonSerialized] protected List<Character_Trainable> managedChara = null;
@@ -315,11 +315,11 @@ public class Manageable : I_Disposable
 
     protected void InitScript()
     {
-        jobInfo = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_jobPostDesc");
-        jobAssigned = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_jobAssigned");
-        jobReqByOrder = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_jobReqByOrder");
-        jobReqByMaintenance = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_jobReqByMaintenance");
-        jobAlert = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_production_jobAlert");
+        jobInfo = LocalizeDictionary.QueryThenParse("ui_management_production_jobPostDesc");
+        jobAssigned = LocalizeDictionary.QueryThenParse("ui_management_production_jobAssigned");
+        jobReqByOrder = LocalizeDictionary.QueryThenParse("ui_management_production_jobReqByOrder");
+        jobReqByMaintenance = LocalizeDictionary.QueryThenParse("ui_management_production_jobReqByMaintenance");
+        jobAlert = LocalizeDictionary.QueryThenParse("ui_management_production_jobAlert");
 
         nonjobPosts = new Dictionary<COM, List<Job_Furniture>>();
         jobPosts = new Dictionary<COM, List<Job_Furniture>>();
@@ -333,12 +333,12 @@ public class Manageable : I_Disposable
         scr_System_Time.current.Observer_globalTime_5min += OnTimeUpdate5;
         scr_System_Time.current.Observer_globalTime_Hours += OnHourUpdate;
 
-        socialStatus_manager = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_socialStatus_manager");
-        socialStatus_member = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_socialStatus_member");
-        socialStatus_visitor = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_socialStatus_visitor");
-        socialStatus_prisoner = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_socialStatus_prisoner");
+        socialStatus_manager = LocalizeDictionary.QueryThenParse("management_faction_socialStatus_manager");
+        socialStatus_member = LocalizeDictionary.QueryThenParse("management_faction_socialStatus_member");
+        socialStatus_visitor = LocalizeDictionary.QueryThenParse("management_faction_socialStatus_visitor");
+        socialStatus_prisoner = LocalizeDictionary.QueryThenParse("management_faction_socialStatus_prisoner");
 
-        socialStatus_baseString = scr_System_Serializer.current.Dictionary.QueryThenParse("management_faction_socialStatus_baseString");
+        socialStatus_baseString = LocalizeDictionary.QueryThenParse("management_faction_socialStatus_baseString");
     }
 
     public Job_Schedule GetSchedule(Character_Trainable c)
@@ -441,20 +441,22 @@ public class Manageable : I_Disposable
         craftUntilCount
     }
 
-    public List<Job_CharaCOM> GetValidCharaCOM(Character_Trainable chara, List<string> s, bool restrainedOnly = true)
+    public List<Job_CharaCOM> GetValidCharaCOMByTag(Character_Trainable chara, string tag,  ref string ss, bool restrainedOnly = true)
     {
         List<Job_CharaCOM> possibleJobs = new List<Job_CharaCOM>();
         foreach (var i in managedChara)
         {
             if (i.RefID != chara.RefID &&
                 ( scr_System_CentralControl.current.CanInteractWith(chara.RefID, i.RefID) ) &&
-                (!restrainedOnly || i.isImprisoned || i.isRestrained))
+                (!restrainedOnly || i.isImprisoned || i.isRestrained) &&
+                (i.InteractionJob.HasAvailableCOMwithCOMTags (new List<string>() { tag  }))
+                )
             {
                 possibleJobs.Add(i.InteractionJob);
             }
         }
 
-        if (GetValidPaths(ref possibleJobs, chara, s))
+        if (GetValidPaths(ref possibleJobs, chara, ref ss))
         {
             return possibleJobs;
         }
@@ -466,6 +468,7 @@ public class Manageable : I_Disposable
         //Debug.Log("Begin getvalidRecreation");
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
+        if (scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
         if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", tag, checkBlacklist))
         {
             ss += $" found no valid [{tag}] instances offered by Furnitures from chara[" + chara.FirstName + "] currenthour[" + currentHour + "]";
@@ -486,8 +489,8 @@ public class Manageable : I_Disposable
         }
 
 
-
-        if (GetValidPaths(ref possibleJobs, chara, s, !shortestPathOnly))
+        bool result = GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
+        if (GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly))
         {
             //Debug.Log("GetValidPaths success after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
             return possibleJobs;
@@ -527,7 +530,7 @@ public class Manageable : I_Disposable
         }
         else
         {
-            if (GetValidPaths(ref possibleJobs, chara, s)) return possibleJobs;
+            if (GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
             else return new List<Job_Furniture>();
         }
     }
@@ -550,13 +553,15 @@ public class Manageable : I_Disposable
         }
         else
         {
-            if (GetValidPaths(ref possibleJobs, chara, s)) return possibleJobs;
+            bool result = GetValidPaths(ref possibleJobs, chara, ref ss);
+            s.Add(ss);
+            if (result) return possibleJobs;
             else return new List<Job_Furniture>();
         }
     }
 
     
-    protected bool GetValidPaths(ref List<Job_CharaCOM> possibleJobs, Character_Trainable chara, List<string> s = null, bool randInsteadofShortest = false)
+    protected bool GetValidPaths(ref List<Job_CharaCOM> possibleJobs, Character_Trainable chara, ref string s, bool randInsteadofShortest = false)
     {
         string ss = "";
         List<int> rooms = new List<int>();
@@ -581,7 +586,7 @@ public class Manageable : I_Disposable
                 var a = scr_System_CampaignManager.current.Map.FindRoomByChara(chara.RefID);
                 var b = possibleJobs[0].ParentRoom;
                 ss += " found no pathable job instances from [" + a.RefID + " " + a.DisplayName + "] to [" + b.RefID + " " + b.DisplayName + "]";
-                if (s != null) s.Add(ss);
+                if (s != null) s += ss;
             }
         }
         
@@ -594,14 +599,14 @@ public class Manageable : I_Disposable
         else
         {
             ss += " possibleJobs.Count <= 0";
-            if (s != null) s.Add(ss);
+            if (s != null) s += ss;
             return false;
         }
     }
 
 
 
-    protected bool GetValidPaths(ref List<Job_Furniture> possibleJobs, Character_Trainable chara, List<string> s = null, bool randInsteadofShortest = false)
+    protected bool GetValidPaths(ref List<Job_Furniture> possibleJobs, Character_Trainable chara, ref string s, bool randInsteadofShortest = false)
     {
         string ss = "";
 
@@ -642,14 +647,14 @@ public class Manageable : I_Disposable
                 var a = scr_System_CampaignManager.current.Map.FindRoomByChara(chara.RefID);
                 var b = possibleJobs[randIndex].ParentRoom;
                 ss += " found no pathable job instances from ["+ a.RefID + " "+a.DisplayName + "] to ["+ b.RefID + " "+ b.DisplayName+ "]";
-                if (s != null) s.Add(ss);
+                if (s != null) s += ss;
                 return false;
             }
         }
         else
         {
             ss += " possibleJobs.Count <= 0";
-            if (s != null) s.Add(ss);
+            if (s != null) s += ss;
             return false;
         }
     }
@@ -697,12 +702,12 @@ public class Manageable : I_Disposable
         }
         else
         {
-            if (GetValidPaths(ref possibleJobs, chara, s)) return possibleJobs;
+            if (GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
             else return null;
         }
     }
 
-    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, List<string> s = null, bool checkBlacklist = false)
+    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s, bool checkBlacklist = false)
     {
         string ss = " (" + ID + ")";
         if (GetSchedule(chara).Get(currentHour).comIDs.Count < 1)
@@ -713,7 +718,7 @@ public class Manageable : I_Disposable
             {
                 ss += ", last job still ongoing " + " descriptions: " + chara.GetJobDescription();
             }
-            if(s != null) s.Add(ss);
+            if (s != null) s += ss;
             return null;
         }
         /*
@@ -732,17 +737,17 @@ public class Manageable : I_Disposable
         if (!TryFindValidJobInstances(out possibleJobs, chara, GetSchedule(chara).Get(currentHour), checkBlacklist))
         {
             ss += " found no valid jobinstances offered by Furnitures";
-            if (s != null) s.Add(ss);
+            if (s != null) s += ss;
             return null;
         }
         else if (!TryValidateAllInstances(ref possibleJobs, chara))
         {
             ss += " cannot pass validate check for any of the offered [" + GetSchedule(chara).Get(currentHour).Name + "] job instances";
-            if (s != null) s.Add(ss);
+            if (s != null) s += ss;
             return null;
         }
         else {
-            if (GetValidPaths(ref possibleJobs, chara, s)) return possibleJobs;
+            if (GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
             else return null;
         }
 
@@ -775,7 +780,7 @@ public class Manageable : I_Disposable
             {
                 if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
                 {
-                    Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                     continue;
                 }
                 else if (post.ValidateActor(c, key) && 
@@ -1537,7 +1542,7 @@ public class Manageable : I_Disposable
             {
                 if(cache_name == "")
                 {
-                    if (this.jobID.Length > 0) cache_name = scr_System_Serializer.current.Dictionary.QueryThenParse(this.jobID);
+                    if (this.jobID.Length > 0) cache_name = LocalizeDictionary.QueryThenParse(this.jobID);
                     else if (this.COMs.Count > 0)
                     {
                         var temp = new List<string>();
@@ -1713,7 +1718,7 @@ public class Manageable : I_Disposable
             }
             else
             {
-                warning = Utility.WrapTextColor($"transaction Source[{FactionOwner.FactionDisplayName}] Target[{TargetFaction.FactionDisplayName}] Content[{Display}] Failed", scr_System_CentralControl.current.pref.TextColor_conflict);
+                warning = Utility.WrapTextColor($"transaction Source[{FactionOwner.FactionDisplayName}] Target[{TargetFaction.FactionDisplayName}] Content[{Display}] Failed", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
                 return false;
             }
         }
@@ -2045,7 +2050,7 @@ public class Manageable : I_Disposable
     string pricelabel = "";
     public string GetPricingLabel(ItemEntry entry, bool isExport)
     {
-        if (pricelabel == "") pricelabel = scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_currency");
+        if (pricelabel == "") pricelabel = LocalizeDictionary.QueryThenParse("management_jobpost_payout_currency");
         var value = GetPrice(entry, isExport);
         if (value == 0) return "-";
         else return pricelabel.Replace("$count$", value.ToString()).Replace("$item$", Currency.DisplayName);
@@ -2125,7 +2130,7 @@ public class Manageable : I_Disposable
 
         [JsonIgnore] public string Name { get
             {
-                return scr_System_Serializer.current.Dictionary.QueryThenParse(jobPostID);
+                return LocalizeDictionary.QueryThenParse(jobPostID);
             } }
         public string jobPostID = "";
         public List<string> workCommands = new List<string>();
@@ -2202,7 +2207,7 @@ public class Manageable : I_Disposable
 
         public void AddManageReport(string s, bool isError = false)
         {
-            this.manageLogs.Add(isError? Utility.WrapTextColor( s, scr_System_CentralControl.current.pref.TextColor_conflict): s );
+            this.manageLogs.Add(isError? Utility.WrapTextColor( s, scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color): s );
             this.manageError = isError || manageError;
         }
 
@@ -2222,10 +2227,10 @@ public class Manageable : I_Disposable
         public void Initialize()
         {
             initialized = true;
-            msg_manageSuccess = scr_System_Serializer.current.Dictionary.QueryThenParse("msg_manageSuccess");
-            msg_manageFailure = Utility.WrapTextColor(scr_System_Serializer.current.Dictionary.QueryThenParse("msg_manageFailure"), scr_System_CentralControl.current.pref.TextColor_conflict);
-            msg_tradeFailure = Utility.WrapTextColor(scr_System_Serializer.current.Dictionary.QueryThenParse("msg_tradeFailure"), scr_System_CentralControl.current.pref.TextColor_conflict);
-            msg_tradeSuccess = scr_System_Serializer.current.Dictionary.QueryThenParse("msg_tradeSuccess");
+            msg_manageSuccess = LocalizeDictionary.QueryThenParse("msg_manageSuccess");
+            msg_manageFailure = Utility.WrapTextColor(LocalizeDictionary.QueryThenParse("msg_manageFailure"), scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
+            msg_tradeFailure = Utility.WrapTextColor(LocalizeDictionary.QueryThenParse("msg_tradeFailure"), scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
+            msg_tradeSuccess = LocalizeDictionary.QueryThenParse("msg_tradeSuccess");
         }
     }
 }

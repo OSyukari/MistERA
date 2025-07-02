@@ -124,7 +124,7 @@ public class RelationshipManager
     [JsonIgnore] public int Corruption { get { return _Corruption; } }
     public int _Pride = 100;
     [JsonIgnore] public int Pride { get { return _Pride; } }
-    public RelationshipManager(Character_Trainable c):this()
+    public RelationshipManager (Character_Trainable c):this()
     {
         ReEstablishParent(c);
         this._personalityID = c.Template.personalityID;
@@ -159,7 +159,7 @@ public class RelationshipManager
         if(triggerEventID != "")
         {
             var msg = this.Personality.GetKOJOMessage(triggerEventID, selfEPs, targetEPs, rel);
-            if (msg.Length > 0) Debug.Log("["+Owner.FirstName+"] -> ["+c.FirstName+"] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
+            if (msg.Length > 0 && scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("["+Owner.FirstName+"] -> ["+c.FirstName+"] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
             if (msg.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
             {
                 msg = msg.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
@@ -244,7 +244,7 @@ public class RelationshipManager
         if (chara == null) return null;
         if (chara.RefID < 0) return null;
 
-        var targetBaseID = chara.RefID == 0 ? "PLAYER" : chara.BaseID;
+        var targetBaseID = chara.RefID == scr_System_CampaignManager.current.Player.RefID ? "PLAYER" : chara.BaseID;
         if(Owner.Template != null)
         {
             var template = Owner.Template.initialRelationship.Find(x => x.baseID == targetBaseID);
@@ -293,7 +293,7 @@ public class RelationshipManager
             bool lowPride = Manager.Pride <= 50 && (100-Manager.Pride > Fear);
             bool highFear = !lowPride && Trust <= Fear_Raw;
             string append = lowPride ? "_Low" : highFear ? "_Fear" : "_High";
-            return scr_System_Serializer.current.Dictionary.QueryThenParse("relationship_obedience_" + ((int)Obedience(tooltip)).ToString() + append);
+            return LocalizeDictionary.QueryThenParse("relationship_obedience_" + ((int)Obedience(tooltip)).ToString() + append);
             
         }
 
@@ -321,7 +321,7 @@ public class RelationshipManager
             bool highDesire = Desire >= (Goodwill_Raw + Badwill_Raw) / 2;
 
             string append = highDesire ? "_High" : "_Low";
-            return scr_System_Serializer.current.Dictionary.QueryThenParse("relationship_attitude_" + ((int)Attitude(tooltip)).ToString() + append);
+            return LocalizeDictionary.QueryThenParse("relationship_attitude_" + ((int)Attitude(tooltip)).ToString() + append);
         }
 
         protected RelationshipManager _manager = null;
@@ -534,7 +534,7 @@ public class RelationshipManager
             this.ownerRefID = manager.ownerRef;
             this._owner = manager.Owner;
             this._manager = manager;
-            relationText = scr_System_Serializer.current.Dictionary.QueryThenParse("UI_chara_relationship_text");
+            relationText = LocalizeDictionary.QueryThenParse("UI_chara_relationship_text");
         }
         public Character_Relationship(RelationshipManager manager, int targetRefID, presetRelationship template, string overrideCallName = "", string forceBaseID = "")
         {
@@ -675,8 +675,8 @@ public class RelationshipType
 
     protected string parseDisplayName(Character_Trainable c, string s)
     {
-        if (hasGenderVariant) return scr_System_Serializer.current.Dictionary.QueryThenParse(s + "_" + scr_System_CentralControl.current.GetGenderSimple(c).ToString(), s + "_" + scr_System_CentralControl.current.GetGenderSimple(c).ToString());
-        else return scr_System_Serializer.current.Dictionary.QueryThenParse(s);
+        if (hasGenderVariant) return LocalizeDictionary.QueryThenParse(s + "_" + scr_System_CentralControl.current.GetGenderSimple(c).ToString(), s + "_" + scr_System_CentralControl.current.GetGenderSimple(c).ToString());
+        else return LocalizeDictionary.QueryThenParse(s);
     }
 
     [System.Serializable]
@@ -719,9 +719,9 @@ public class Index_RelationshipTypes: I_IndexHasID, I_IndexMergeable
     }
 
     Dictionary<string, RelationshipType> ID_Dictionary = new Dictionary<string, RelationshipType>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
-        Debug.Log("Index_Status : registering ID with list length bio[" + list_biological.Count + "] personal[" + list_personal.Count + "] social[" + list_social.Count + "]");
+        s.Add("Index_Status : registering ID with list length bio[" + list_biological.Count + "] personal[" + list_personal.Count + "] social[" + list_social.Count + "]");
 
         var ids = new Dictionary<string, RelationshipType>();
         foreach (var i in List) ids.Add(i.ID, i);

@@ -56,9 +56,9 @@ public class Index_Status:I_IndexHasID, I_SerializationCallbackReceiver, I_Index
     }
     public Status_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
     Dictionary<string, Status_Base> ID_Dictionary = new Dictionary<string, Status_Base>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
-        Debug.Log("Index_Status : registering ID with list length [" + list.Count + "]");
+        s.Add("Index_Status : registering ID with list length [" + list.Count + "]");
 
         foreach (Status_Base o in this.list)
         {
@@ -401,8 +401,8 @@ public class Status_Instance : StatusInstance
                 float value = Utility.StatValue(mod, Owner);
                 if (MathF.Abs(value) > float.Epsilon)
                 {
-                    if (MathF.Abs(value) < 1) s.Add(scr_System_Serializer.current.Dictionary.QueryThenParse(mod.statID) + (value*100).ToString("+0;-#")+"%");
-                    else  s.Add(scr_System_Serializer.current.Dictionary.QueryThenParse(mod.statID) + value.ToString("+0;-#"));
+                    if (MathF.Abs(value) < 1) s.Add(LocalizeDictionary.QueryThenParse(mod.statID) + (value*100).ToString("+0;-#")+"%");
+                    else  s.Add(LocalizeDictionary.QueryThenParse(mod.statID) + value.ToString("+0;-#"));
                 }
             }
             return s;

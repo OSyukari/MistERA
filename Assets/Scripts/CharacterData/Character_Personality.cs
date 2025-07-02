@@ -8,14 +8,14 @@ using System.Linq;
 using static Character_Personality.ResponseEntry.Variant;
 
 [System.Serializable]
-public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize
+public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize, I_RemoveElemByTag
 {
     public List<Character_Personality> list = new List<Character_Personality>();
 
     Dictionary<string, Character_Personality> ID_Dictionary = new Dictionary<string, Character_Personality>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> messages)
     {
-        Debug.Log("Character_Personality_Index : registering ID with list length [" + list.Count+ "]") ;
+        messages.Add("Character_Personality_Index : registering ID with list length [" + list.Count+ "]") ;
 
         foreach (Character_Personality o in this.list)
         {
@@ -42,6 +42,11 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
         {
             p.CacheEntries();
         }
+    }
+
+    public void RemoveElemByTag(string tag)
+    {
+        foreach (var i in list) i.RemoveEntriesIDContaining(tag);
     }
 }
 
@@ -86,6 +91,13 @@ public class Character_Personality
     // Responses
     [SerializeField][JsonProperty] private List<ResponseEntry> entries_list;
     Dictionary<string, ResponseEntry> entries = new Dictionary<string, ResponseEntry>();
+
+    public void RemoveEntriesIDContaining(string str)
+    {
+        this.entries_list.RemoveAll(x => x.ID.Contains(str, StringComparison.InvariantCultureIgnoreCase));
+        this.entries_list.RemoveAll(x => x.tags.Contains(str));
+        foreach (var i in entries_list) i.RemoveVariantsByTag(str);
+    }
 
     public Character_Personality()
     {
@@ -190,6 +202,7 @@ public class Character_Personality
         /// ID could either be comID or eventID
         /// </summary>
         public string ID = "";
+        public List<string> tags = new List<string>();
         public List<Variant> variants = new List<Variant>();
         public bool interruptSelfJob = false;
         public bool interruptTargetJob = false;
@@ -292,6 +305,10 @@ public class Character_Personality
             return str;
         }
 
+        public void RemoveVariantsByTag(string tag)
+        {
+            this.variants.RemoveAll(x=>x.tags.Contains(tag));
+        }
         public string GetResponse(RelationshipManager.Character_Relationship rel, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
         {
             if (!Validate(rel.Owner, rel.Target)) return "";
@@ -341,6 +358,7 @@ public class Character_Personality
         [System.Serializable]
         public class Variant
         {
+            public List<string> tags = new List<string>();
             public List<Requirement> requirements = new List<Requirement>();
             public List<string> responses = new List<string>();
             public List<Results> results = new List<Results>();
@@ -356,7 +374,7 @@ public class Character_Personality
 
                 if (responses.Count > 0)
                 {
-                    var result = scr_System_Serializer.current.Dictionary.QueryThenParse(responses[Utility.GetRandIndexFromListCount(responses.Count)]);
+                    var result = LocalizeDictionary.QueryThenParse(responses[Utility.GetRandIndexFromListCount(responses.Count)]);
                     result = result.Replace("$self$", rel.Owner.FirstName).Replace("$target$", rel.Target.FirstName);
                     if (ep != null) result = result.Replace("$epDescription$", ep.Description_Ongoing);
                     returnV.Add(result);

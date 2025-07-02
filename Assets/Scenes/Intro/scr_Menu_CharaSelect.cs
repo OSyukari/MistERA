@@ -63,14 +63,11 @@ public class scr_Menu_CharaSelect : scr_Menu
 
        // Debug.Log("RefreshPresets! Listing All Validators [" + String.Join("|", validatorsByID.Keys) + "]");
 
-        if (Directory.Exists(Utility.GetSavePath_Preset()))
+        foreach(var preset in scr_System_Serializer.current.MasterList.Character_Bases.baseCharacters)
         {
-            DirectoryInfo d = new DirectoryInfo(Utility.GetSavePath_Preset());
-            foreach (var file in d.GetFiles("*.json"))
-            {
-                BuildSinglePreset(file);
-            }
+            if (preset.playable) BuildSinglePreset(preset);
         }
+
     }
 
     protected override void Awake()
@@ -122,62 +119,57 @@ public class scr_Menu_CharaSelect : scr_Menu
         //charEditor.InitializeWithArgument(c);
     }
 
-    private void BuildSinglePreset(FileInfo file)
+    private void BuildSinglePreset(Character_SerializableBase file)
     {
        // Debug.Log("BuildSinglePreset fileinfo [" + file + "]");
-        if (dictionary_presetID_path.ContainsKey(file.Name))
+
+        if (buttonsByID == null || validatorsByID == null)
         {
-           // Debug.Log("already contain key");
+            Debug.LogError("one of the lists are null");
         }
-        else
-        {
-            if (buttonsByID == null || validatorsByID == null)
-            {
-                Debug.LogError("one of the lists are null");
-            }
 
-            int i = PresetID;
-            dictionary_presetID_path.Add(file.Name, i);
+        int i = PresetID;
+        dictionary_presetID_path.Add(file.baseID, i);
 
-            RectTransform text = Instantiate(prefab_text_linkbutton);
-            text.SetParent(panel_EditPreset_list, false);
-            scr_SelectableText button = text.GetComponent<scr_SelectableText>();
-            button.optionID = i;
-            button.Initialize(this, new ButtonValidator_selectPreset(this, file.Name));
-            button.SetText(file.Name);
+        RectTransform text = Instantiate(prefab_text_linkbutton);
+        text.SetParent(panel_EditPreset_list, false);
+        scr_SelectableText button = text.GetComponent<scr_SelectableText>();
+        button.optionID = i;
+        button.Initialize(this, new ButtonValidator_selectPreset(this, file));
+        button.SetText(file.baseID);
 
-            buttonsByID.Add(button.optionID, button);
-            validatorsByID.Add(button.optionID, button.Validator);
+        buttonsByID.Add(button.optionID, button);
+        validatorsByID.Add(button.optionID, button.Validator);
 
-            //Debug.Log("ButtonCreated "+button.optionID+", isButton? " + (button.Validator is I_ButtonClickable) + " isButtonInDict? " + (validatorsByID[button.optionID] is I_ButtonClickable));
-            //button.Validate();
+        //Debug.Log("ButtonCreated "+button.optionID+", isButton? " + (button.Validator is I_ButtonClickable) + " isButtonInDict? " + (validatorsByID[button.optionID] is I_ButtonClickable));
+        //button.Validate();
 
-            int j = PresetID;
-            RectTransform text2 = Instantiate(prefab_text_linkbutton);
-            text2.SetParent(panel_EditPreset_edit, false);
-            scr_SelectableText button2 = text2.GetComponent<scr_SelectableText>();
-            button2.optionID = j;
-            button2.Initialize(this, new ButtonValidator_editPreset(this, file.Name));
-            button2.SetText("Edit");
+        int j = PresetID;
+        RectTransform text2 = Instantiate(prefab_text_linkbutton);
+        text2.SetParent(panel_EditPreset_edit, false);
+        scr_SelectableText button2 = text2.GetComponent<scr_SelectableText>();
+        button2.optionID = j;
+        button2.Initialize(this, new ButtonValidator_editPreset(this, file));
+        button2.SetText("Edit");
 
-            buttonsByID.Add(button2.optionID, button2);
-            validatorsByID.Add(button2.optionID, button2.Validator);
-            //button2.Validate();
+        buttonsByID.Add(button2.optionID, button2);
+        validatorsByID.Add(button2.optionID, button2.Validator);
+        //button2.Validate();
 
-            int k = PresetID;
-            RectTransform text3 = Instantiate(prefab_text_linkbutton);
-            text3.SetParent(panel_EditPreset_delete, false);
-            scr_SelectableText button3 = text3.GetComponent<scr_SelectableText>();
-            button3.optionID = k;
-            button3.Initialize(this, new ButtonValidator_deletePreset(this, file.Name));
-            button3.SetText("Delete");
+        int k = PresetID;
+        RectTransform text3 = Instantiate(prefab_text_linkbutton);
+        text3.SetParent(panel_EditPreset_delete, false);
+        scr_SelectableText button3 = text3.GetComponent<scr_SelectableText>();
+        button3.optionID = k;
+        button3.Initialize(this, new ButtonValidator_deletePreset(this, file));
+        button3.SetText("Delete");
 
-            buttonsByID.Add(button3.optionID, button3);
-            validatorsByID.Add(button3.optionID, button3.Validator);
+        buttonsByID.Add(button3.optionID, button3);
+        validatorsByID.Add(button3.optionID, button3.Validator);
             //button3.Validate();
 
             //Debug.Log("Build complete");
-        }
+        
     }
 
     //ContentSizeFitter fitter;
@@ -216,14 +208,13 @@ public class scr_Menu_CharaSelect : scr_Menu
 
     public class ButtonValidator_selectPreset : ButtonValidator, I_ButtonClickable
     {
-        string filename;
         new scr_Menu_CharaSelect parent;
         Character_Trainable c;
-        public ButtonValidator_selectPreset(scr_Menu parent, string filename) : base(parent)
+        public ButtonValidator_selectPreset(scr_Menu parent, Character_SerializableBase filename) : base(parent)
         {
             this.parent = parent as scr_Menu_CharaSelect;
-            this.filename = filename;
-            c = scr_System_Serializer.current.LoadPresetJSON(filename);
+ 
+            c = scr_System_Serializer.current.MasterList.Character_Bases.GetChara(filename.baseID);
         }
 
        // public override bool Clickable { get { return true; } }
@@ -259,35 +250,33 @@ public class scr_Menu_CharaSelect : scr_Menu
     public class ButtonValidator_editPreset : ButtonValidator, I_ButtonClickable
     {
         //public override bool Clickable { get { return true; } }
-        string filename;
         new scr_Menu_CharaSelect parent;
-        public ButtonValidator_editPreset(scr_Menu parent, string filename) : base(parent)
+        public ButtonValidator_editPreset(scr_Menu parent, Character_SerializableBase filename) : base(parent)
         {
             this.parent = parent as scr_Menu_CharaSelect;
-            this.filename = filename;
         }
 
         public override bool IsButtonValid()
         {
             return false;
 
-            return File.Exists(Utility.GetSavePath_Preset() + filename);
+            //return File.Exists(Utility.GetSavePath_Preset() + filename);
         }
 
         public void OnClickButton()
         {
-            Debug.Log("Attempt deserealize JSON [" + filename + "]");
-            Character_Trainable c = scr_System_Serializer.current.LoadPresetJSON(filename);
-            parent.OpenCharacterEditor(c);
+            //Debug.Log("Attempt deserealize JSON [" + filename + "]");
+           // Character_Trainable c = scr_System_Serializer.current.LoadPresetJSON(filename);
+           // parent.OpenCharacterEditor(c);
         }
     }
 
     public class ButtonValidator_deletePreset : ButtonValidator, I_ButtonClickable
     {
-       // public override bool Clickable { get { return true; } }
-        string filename;
+        // public override bool Clickable { get { return true; } }
+        Character_SerializableBase filename;
         new scr_Menu_CharaSelect parent;
-        public ButtonValidator_deletePreset(scr_Menu parent, string filename) : base(parent)
+        public ButtonValidator_deletePreset(scr_Menu parent, Character_SerializableBase filename) : base(parent)
         {
             this.parent = parent as scr_Menu_CharaSelect;
             this.filename = filename;
@@ -296,12 +285,12 @@ public class scr_Menu_CharaSelect : scr_Menu
         public override bool IsButtonValid()
         {
             return false;
-            return File.Exists(Utility.GetSavePath_Preset() + filename);
+          //  return File.Exists(Utility.GetSavePath_Preset() + filename);
         }
 
         public void OnClickButton()
         {
-            File.Delete(Utility.GetSavePath_Preset() + filename);
+            File.Delete($"{scr_System_Serializer.PresetPath}/{filename.baseID}");
         }
     }
 

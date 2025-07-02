@@ -37,7 +37,7 @@ public abstract class ActionPackage
     string cache_refusedResponse = "";
     string RefuseResponse { get
         {
-            if (cache_refusedResponse == "") cache_refusedResponse = LocalizeDictionary.Instance.Index.QueryThenParse("ap_Description_refuse");
+            if (cache_refusedResponse == "") cache_refusedResponse = LocalizeDictionary.QueryThenParse("ap_Description_refuse");
             return cache_refusedResponse;
         } }
     string cache_refusedByResponse = "";
@@ -45,8 +45,17 @@ public abstract class ActionPackage
     {
         get
         {
-            if (cache_refusedByResponse == "") cache_refusedByResponse = LocalizeDictionary.Instance.Index.QueryThenParse("ap_Description_refused");
+            if (cache_refusedByResponse == "") cache_refusedByResponse = LocalizeDictionary.QueryThenParse("ap_Description_refused");
             return cache_refusedByResponse;
+        }
+    }
+    string cache_interruptedResponse = "";
+    string InterruptedResponse
+    {
+        get
+        {
+            if (cache_interruptedResponse == "") cache_interruptedResponse = LocalizeDictionary.QueryThenParse("ap_Description_interrupted");
+            return cache_interruptedResponse;
         }
     }
     [JsonIgnore] public virtual bool isTemporaryAP { get { return false; } }
@@ -58,6 +67,7 @@ public abstract class ActionPackage
         } }
 
     [JsonIgnore] public virtual string JoinAPDescriptorKey { get { return "ActionPackage_join";  } }
+    [JsonIgnore] public virtual string JoinAPDescriptorKeyEX { get { return "ActionPackage_joinEX"; } }
 
     public int masterRef = -1;
     /// <summary>
@@ -128,11 +138,15 @@ public abstract class ActionPackage
 
     [JsonIgnore] public virtual List<int> ReceiverRefs { get { return receiverRefs; } }
 
+    List<int> _actorRefs = null;
     [JsonIgnore] public virtual List<int> actorRefs { get {
-            var v = new List<int>();
-            v.AddRange(DoerRefs);
-            v.AddRange(ReceiverRefs);
-            return v;
+            if (_actorRefs == null)
+            {
+                _actorRefs = new List<int>();
+                _actorRefs.AddRange(doerRefs);
+                _actorRefs.AddRange(receiverRefs);
+            }
+            return _actorRefs;
         } }
 
     [JsonIgnore] protected int roomKey = -1;
@@ -173,7 +187,7 @@ public abstract class ActionPackage
     {
         doers = new List<int>();
         receivers = new List<int>();
-
+        Debug.LogError("Error calling canJoinAP on default APs");
         return -1;
     }
 
@@ -186,12 +200,29 @@ public abstract class ActionPackage
     {
         var variantID = canJoinAP(c, out var doers1, out var receivers1);
         if (variantID >= 0)
-        { 
-            c.ChangeCurrentJob(this.job);
+        {
+            List<string> before = new List<string>();
+            List<string> after = new List<string>();
+
+            foreach(var p in packages)
+            {
+                before.Add($"EP: [{(p.Doer == null ? "null" : p.Doer.FirstName)} {(p.Doer == null ? "" : this.actorRefs.Contains(p.Doer.RefID))}] - [{(p.Receiver == null ? "null" : p.Receiver.FirstName)} {(p.Receiver == null ? "" : this.actorRefs.Contains(p.Receiver.RefID))}] by [{(p.Master == null ? "null" : p.Master.FirstName)} {(p.Master == null ? "" : this.actorRefs.Contains(p.Master.RefID))}]");
+            }
+
+            c.ChangeCurrentJob(this.job, this.targetCOMID);
             this.ResetRequest(doers1, receivers1, this.masterRef);
             this.validVariant = variantID;
 
-            return Request();
+            bool result = Request(true);
+
+            foreach (var p in packages)
+            {
+                after.Add($"EP: [{(p.Doer == null ? "null" : p.Doer.FirstName)} {(p.Doer == null ? "" : this.actorRefs.Contains(p.Doer.RefID))}] - [{(p.Receiver == null ? "null" : p.Receiver.FirstName)} {(p.Receiver == null ? "" : this.actorRefs.Contains(p.Receiver.RefID))}] by [{(p.Master == null ? "null" : p.Master.FirstName)} {(p.Master == null ? "" : this.actorRefs.Contains(p.Master.RefID))}]");
+            }
+
+            if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"JoinEP Result {result}\n--Before--\n{String.Join("\n", before)}\n--After--\n{String.Join("\n", after)}");
+
+            return result;
         }
         else return false;
     }
@@ -210,12 +241,18 @@ public abstract class ActionPackage
 
         string s =  targetCOM.GetVariantDescription(COMVariantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
         bool refused = false;
+        bool interrupted = false;
         foreach(var ep in packages)
         {
-            if (ep.ActorRefs.Contains(charaRef) && ep.Response < Memory_Response.Accept) refused = true;
+            if (ep.ActorRefs.Contains(charaRef))
+            {
+                refused = ep.Response <= Memory_Response.Refuse;
+                interrupted = ep.Response == Memory_Response.Interrupted;
+            }
             //if (ep.ReceiverRef == charaRef && ep.DoerRef != charaRef && ep.Response < Memory_Response.Accept) refused = true;
         }
-        if (!refused) return s;
+        if (!refused && !interrupted) return s;
+        else if (interrupted) return InterruptedResponse.Replace("$comdesc$", s);
         else if (isDoer) return RefusedResponse.Replace("$comdesc$", s);
         else return RefuseResponse.Replace("$comdesc$", s);
     }
@@ -231,7 +268,7 @@ public abstract class ActionPackage
         else if (this.ReceiverRefs.Contains(charaRef)) basedesc = DescriptionText(false, charaRef, withRoomName);
         else return basedesc;
 
-        if (this.Duration > 0 && paused && basedesc != "") return LocalizeDictionary.Instance.Index.QueryThenParse("memory_interrupted").Replace("$comDesc$", basedesc);
+        if (this.Duration > 0 && isPaused && basedesc != "") return LocalizeDictionary.QueryThenParse("memory_interrupted").Replace("$comDesc$", basedesc);
         else return basedesc;
     }
     public DateTime StartTime = DateTime.MinValue;
@@ -288,19 +325,52 @@ public abstract class ActionPackage
     }
 
     [SerializeField][JsonProperty] protected int duration;
-    [JsonProperty] public bool paused = false;
+    [JsonProperty] protected bool paused = false;
+    [JsonProperty] public int pausedTick = 0;
+    [JsonIgnore] public bool isPaused { get { return paused; } set { paused = value; if (!paused) pausedTick = 0; } }
+
+
 
     /// <summary>
     /// 
     /// </summary>
     public virtual void NotifyInterrupted()
     {
-        this.paused = true;
-
+        this.isPaused = true;
+        if (isTemporaryAP)
+        {
+            List<string> names = new List<string>();
+            foreach (var i in actorRefs) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
+            Debug.LogError($"NotifyInterrupted on TemporyAP for actors [{String.Join("|", names)}] skipping EP notify");
+            return;
+        }
+        Dictionary<Character_Trainable, List<EvaluationPackage>> interruptedActors = new Dictionary<Character_Trainable, List<EvaluationPackage>>();
 
         foreach (var ep in this.packages)
         {
-            ep.NotifyInterrupt();
+            if (ep.Doer != null)
+            {
+                if (!interruptedActors.ContainsKey(ep.Doer)) interruptedActors.Add(ep.Doer, new List<EvaluationPackage>());
+                interruptedActors[ep.Doer].Add(ep);
+            }
+            if (ep.Receiver != null)
+            {
+                if (!interruptedActors.ContainsKey(ep.Receiver)) interruptedActors.Add(ep.Receiver, new List<EvaluationPackage>());
+                interruptedActors[ep.Receiver].Add(ep);
+            }
+            if (ep.Master != null)
+            {
+                if (!interruptedActors.ContainsKey(ep.Master)) interruptedActors.Add(ep.Master, new List<EvaluationPackage>());
+                interruptedActors[ep.Master].Add(ep);
+            }
+        }
+        foreach(var actor in interruptedActors.Keys)
+        {
+            var list = interruptedActors[actor].Distinct().ToList();
+            foreach(var ep in list)
+            {
+                actor.Memory.AddEntry(ep, -1, false, true);
+            }
 
         }
     }
@@ -472,18 +542,19 @@ public abstract class ActionPackage
             else
             {
 
-                if (receiver.Count > 0)
+                if (receiver.Count > 0 && duration > 0)
                 {
                     string s = "Package "+DisplayName+" accepted : ";
                     foreach (var rc in receiver)
                     {
-                        if (!(this.job is Job_CharaCOM) && rc.CurrentJobRefID != this.job.RefID)
+                        if (!(this.job is Job_CharaCOM) && rc.CurrentJob != this.job)
                         {
                             string s2 = "";
                             foreach (var allusablep in job.allusableCOMs) s2 += allusablep.ID + " ";
                             s += " Changing " + rc.FirstName + "'s job to [" + String.Join(" ", job.allusableCOMStrings) + "] comIDs ["+s2+"]";
 
-                            rc.ChangeCurrentJob(job);
+                            rc.ChangeCurrentJob(job);   // THIS IS BAD!
+                            Debug.LogError($"WARNING CHARA {rc.FirstName} JOIN JOB {this.DisplayName} THROUGH TICK!");
                         }
 
                         if (rc.RefID > 0 && duration == this.targetCOM.TimeScale && targetCOM.comTags.Contains("sleep"))
@@ -855,19 +926,76 @@ public abstract class ActionPackage
         receiver.Remove(-1);
         if (doer != null && doer.Contains(0)) receiver.Remove(0);
 
-        doerRefs = new List<int>(doer);
-        receiverRefs = new List<int>(receiver);
-
+        this.doerRefs = new List<int>();
+        this.doerRefs.AddRange(doer);
         this.doer_cache = null;
-        this.receiver_cache = null;
-        this.master_cached = null;
 
+        this.receiverRefs = new List<int>();
+        this.receiverRefs.AddRange(receiver);
+        this.receiver_cache = null;
+
+        this.master_cached = null;
         this.masterRef = masterRef;
+
+        _actorRefs = null;
+        //actorRefs
     }
     [SerializeField][JsonProperty] protected bool requestAccepted = false;
     //Dictionary<int, Dictionary<string, int>> result_stats;
 
     //Dictionary<int, Dictionary<string, int>> result_experiences;
+
+    protected void RemakePackages()
+    {
+        //result_stats = new Dictionary<int, Dictionary<string, int>>();
+        //result_experiences = new Dictionary<int, Dictionary<string, int>>();
+        packages.Clear();
+        if (targetCOM.requirements.TreatReceiverAsDoer)
+        {
+            var tempArr = new List<Character_Trainable>();
+            tempArr.AddRange(doer);
+            tempArr.AddRange(receiver);
+
+            foreach (var chara in doer) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
+            foreach (var chara in receiver) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
+        }
+        else if (doer.Count < 2 && receiver.Count < 2)
+        {
+            packages.Add(new EvaluationPackage(doer[0], receiver.Count > 0 ? receiver[0] : null, this.targetCOM, this));
+        }
+        else if (receiver.Count < 1)
+        {
+            // random match doer and receivers
+
+            foreach (Character_Trainable temp_doer in doer)
+            {
+                packages.Add(new EvaluationPackage(temp_doer, null, this.targetCOM, this));
+            }
+
+        }
+        else
+        {
+            // random match doer and receivers
+
+            List<Character_Trainable> temp_doers = new List<Character_Trainable>(doer);
+            List<Character_Trainable> temp_receivers = new List<Character_Trainable>(receiver);
+
+            Character_Trainable temp_doer, temp_receiver;
+
+            while (temp_doers.Count > 0 && temp_receivers.Count > 0)
+            {
+                temp_doer = temp_doers[Utility.GetRandIndexFromListCount(temp_doers.Count)];
+                temp_doers.Remove(temp_doer);
+                //c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
+
+                temp_receiver = temp_receivers[Utility.GetRandIndexFromListCount(temp_receivers.Count)];
+                temp_receivers.Remove(temp_receiver);
+
+                packages.Add(new EvaluationPackage(temp_doer, temp_receiver, this.targetCOM, this));
+
+            }
+        }
+    }
 
     /// <summary>
     /// Make actual EP and evaluate every single one. If any fail, then return false <br/>
@@ -879,62 +1007,8 @@ public abstract class ActionPackage
     {
         requested = true;
 
-        if (rebuildPackage)
-        {
-            //result_stats = new Dictionary<int, Dictionary<string, int>>();
-            //result_experiences = new Dictionary<int, Dictionary<string, int>>();
-            packages.Clear();
-            if (targetCOM.requirements.TreatReceiverAsDoer)
-            {
-                var tempArr = new List<Character_Trainable>();
-                tempArr.AddRange(doer);
-                tempArr.AddRange(receiver);
-
-                foreach (var chara in doer) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
-                foreach (var chara in receiver) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
-            }
-            else if (doer.Count < 2 && receiver.Count < 2)
-            {
-                packages.Add(new EvaluationPackage(doer[0], receiver.Count > 0 ? receiver[0] : null, this.targetCOM, this));
-            }
-            else if (receiver.Count < 1)
-            {
-                // random match doer and receivers
-
-                foreach (Character_Trainable temp_doer in doer)
-                {
-                    packages.Add(new EvaluationPackage(temp_doer, null, this.targetCOM, this));
-                }
-
-            }
-            else
-            {
-                // random match doer and receivers
-
-                List<Character_Trainable> temp_doers = new List<Character_Trainable>(doer);
-                List<Character_Trainable> temp_receivers = new List<Character_Trainable>(receiver);
-
-                Character_Trainable temp_doer, temp_receiver;
-
-                while (temp_doers.Count > 0 && temp_receivers.Count > 0)
-                {
-                    temp_doer = temp_doers[Utility.GetRandIndexFromListCount(temp_doers.Count)];
-                    temp_doers.Remove(temp_doer);
-                    //c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
-
-                    temp_receiver = temp_receivers[Utility.GetRandIndexFromListCount(temp_receivers.Count)];
-                    temp_receivers.Remove(temp_receiver);
-
-                    packages.Add(new EvaluationPackage(temp_doer, temp_receiver, this.targetCOM, this));
-
-                }
-            }
-        }
-        else
-        {
-
-        }
-
+        if (rebuildPackage) RemakePackages();
+        
         bool returnVal = true;
 
         bool displayCheckResult = false;
@@ -1123,7 +1197,44 @@ public abstract class ActionPackage
         // init or end train
         if (targetCOM != null && executeSuccessful)
         {
-            if (targetCOM.comTags.Contains("initSex"))
+            if (targetCOM.comTags.Contains("beginCombatSim"))
+            {
+                // first, check if target is already in combat, if true, end it and return (cuz 15 min already passed and stuck inside it
+                bool ongoing = false;
+                foreach (var i in this.actorRefs)
+                {
+                    if (scr_System_CampaignManager.current.isInCombat(i))
+                    {
+                        ongoing = true;
+                        scr_System_CampaignManager.current.EndOngoingCombat(i);
+                    }
+                }
+
+                // need to lock all involved actors inside current job
+
+                bool includePlayer = this.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID);
+                if (ongoing)
+                {
+                    //Debug.LogError($"Detected ongoing combat instance, force exit");
+                }
+                else if (!includePlayer)
+                {
+                    //Debug.LogError($"Starting combat simulation without player, force quit.");
+                }
+                else
+                {
+                    //this.duration = 15;
+                    var allChara = this.actorRefs; 
+                    var names = new List<string>();
+                    foreach (var i in allChara) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
+                    Debug.Log($"Starting combat with {String.Join(",", names)}, includeplayer? {includePlayer}");
+
+                    var playerRef = scr_System_CampaignManager.current.Player;
+                    scr_System_CampaignManager.current.QueueCombatSimulation(playerRef, this.actorRefs.FindAll(x=>x != playerRef.RefID));
+
+                }
+            }
+            else if (targetCOM.comTags.Contains("initSex"))
             {
                 Job_Sex_Group existingJob = null;
 

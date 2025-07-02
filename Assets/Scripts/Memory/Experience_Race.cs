@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class Sexperience_Race : Sexperience_Instance
 {
 
@@ -18,3 +19,4 @@ public class Sexperience_Race : Sexperience_Instance
     public bool hasGenderVariant = false;
 
 }
+*/

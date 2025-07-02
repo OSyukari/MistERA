@@ -3,13 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
-
 using Newtonsoft.Json;
+
 
 public class scr_System_Serializer : MonoBehaviour
 {
-    protected string DataPath_Local = "/Data/";
     //private Dictionary<Type, string> DataPath;
+    string _datapath = "";
+    public static string DataPath
+    {
+        get
+        {
+            if (current._datapath == "") current._datapath = Directory.GetParent(Application.dataPath).FullName + "/Data";
+            return current._datapath;
+        }
+    }
+
+    string _savePath = "";
+    public static string SavePath
+    {
+        get
+        {
+            if (current._savePath == "") current._savePath = Directory.GetParent(Application.dataPath).FullName + "/Save";
+            return current._savePath;
+        }
+    }
+
+    string _presetPath = "";
+    public static string PresetPath
+    {
+        get
+        {
+            if (current._presetPath == "") current._presetPath = Directory.GetParent(Application.dataPath).FullName + "/Presets";
+            return current._presetPath;
+        }
+    }
 
 
     public MasterList MasterList;
@@ -36,15 +64,149 @@ public class scr_System_Serializer : MonoBehaviour
         sensitivityClass_statusID_LookUp = new Dictionary<string, string>();
     }
 
+    public Dictionary<string, string> ShortFileAddress = new Dictionary<string, string>();
+    public string GetFullPath(string p)
+    {
+        return ShortFileAddress.ContainsKey(p) ? ShortFileAddress[p] : p;
+    }
+    private void BuildAddressables(bool safeMode)
+    {
+       // var settings = AddressableAssetSettingsDefaultObject.Settings;
+
+        List<string> skippedFiles = new List<string>();
+        List<string> loadedFiles = new List<string>();
+        string path = DataPath;
+        if (!Directory.Exists(path)) { Debug.LogError($"Error in LoadDefs, path [{path}] do not exist"); return; }
+
+        DirectoryInfo d = new DirectoryInfo(path);
+        int appDataLen = d.Parent.Parent.FullName.Length + 1;
+
+        foreach (var file in d.GetFiles("*.*", SearchOption.AllDirectories))
+        {   // all files must be index_com files
+            if (file.Extension == ".meta" || file.Extension == ".json") continue;
+
+            bool skipped = false;
+            if (safeMode)
+            {
+                foreach (var s in nsfwKeywords)
+                {
+                    if (file.Name.Contains(s, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        skipped = true;
+                        skippedFiles.Add($"Skipping file {file.Name} due to safeMode toggle");
+                        break;
+                    }
+                }
+            }
+            if (skipped) continue;
+            string filepath = $"{file.Directory.Name}/{file.Name}";
+            //string guidPath = file.FullName.Remove(0, appDataLen).Replace("\\","/");
+
+            //Debug.Log($"Reading json file {file.Name} into {filepath}, guid {guidPath}");
+            /*
+            var asset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(guidPath);
+            if (asset == null)
+            {
+                Debug.LogError($"alert asset do not exist at {guidPath}");
+                continue;
+            }
+            
+            var guid = AssetDatabase.AssetPathToGUID(guidPath);
+            if (string.IsNullOrEmpty(guid))
+            {
+                Debug.LogError($"alert null guid for {guidPath}");
+                continue;
+            }*/
+
+            ShortFileAddress.Add(filepath, file.FullName);
+
+            //var entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
+            //entry.address = filepath;
+            loadedFiles.Add($"Reading json file {file.FullName} into {filepath}");
+            //Debug.Log($"reading directory {file.Name} in {file.FullName} in {file.DirectoryName} in {file.DirectoryName}");
+        }
+       // AssetDatabase.SaveAssets();
+        Debug.Log($"BuildAddressables Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}");
+
+    }
+
     private void Start()
     {
+        // build addressable
+        BuildAddressables(scr_System_CentralControl.current.isSafeMode);
+
         // before master dictionary load, central control player pref must exist to check language
-        LoadDefs(true);
+        LoadDefs(scr_System_CentralControl.current.isSafeMode);
+
         // parkour every file
-
         LoadCharactersFoldersJSON();
+        LoadCharactersPresetsJSON();
 
+#if UNITY_EDITOR
+        if (scr_System_CentralControl.current.isSafeMode)
+        {   // update safelist
+            SafeList.InitializeLists();
+
+            SafeList.MergeWith(MasterList);
+
+            MasterList = SafeList;
+            CharaOrigins.Instance.Humanoid_Race_Index = SafeList.humanoid_Races;
+            CharaOrigins.Instance.Origins_Index = SafeList.Character_Origins;
+            CharaOrigins.Instance.StartingOption_Index = SafeList.Character_Origin_StartingOptions;
+            CharaOrigins.Instance.RaceTemplateIndex = SafeList.humanoid_RaceTemplates;
+            CharaOrigins.Instance.BodyPartIndex = SafeList.BodyPartBases;
+            CharaOrigins.Instance.Traits = SafeList.Traits_Groups;
+            Masterlist_Items.Instance.Index = SafeList.Items;
+            LocalizeDictionary.Instance.Index = SafeList.Dictionary;
+
+            SafeList.RemoveNSFW();
+        }
+
+        // update untranslated list
+        Dictionary_Index untranslated = new Dictionary_Index();
+        var baseDict = LocalizeDictionary.Instance.Index.Entries["zh-cn"];
+        foreach (var language in LocalizeDictionary.Instance.Index.Languages)
+        {
+            if (language == "zh-cn") continue;
+            var currentLib = LocalizeDictionary.Instance.Index.Entries[language];
+            var currentTarget = untranslated.Entries[language];
+            foreach (var key in baseDict.Keys)
+            {
+                if (!currentLib.ContainsKey(key)) currentTarget.Add(key, baseDict[key]);
+            }
+        }
+
+        string untransDictPath = Application.dataPath + "/untranslatedDict.json";
+
+        var s2 = JsonConvert.SerializeObject(untranslated, formatting: Formatting.Indented, Utility.SerializerSettings);
+        if (File.Exists(untransDictPath)) File.Delete(untransDictPath);
+
+        FileInfo untransDict = new System.IO.FileInfo(untransDictPath);
+        untransDict.Directory.Create();
+        File.WriteAllText(untransDict.FullName, s2);
+        Debug.Log($"creating/updating untranslated Dictionary in {untransDictPath}");
+#endif
         MasterList.Initialize();
+
+#if UNITY_EDITOR
+
+        if (scr_System_CentralControl.current.isSafeMode)
+        {
+            MasterList.RemoveNonExisting();
+
+            string safeListpath = Application.dataPath + " /safeMasterList.json";
+            var s = JsonConvert.SerializeObject(SafeList, formatting: Formatting.Indented, Utility.SerializerSettings);
+            if (File.Exists(safeListpath)) File.Delete(safeListpath);
+
+            FileInfo safeFile = new System.IO.FileInfo(safeListpath);
+            safeFile.Directory.Create();
+            File.WriteAllText(safeFile.FullName, s);
+            Debug.Log($"creating/updating safeList in {safeListpath}");
+        }
+
+#endif
+
+        scr_System_CentralControl.current.NotifyLoadComplete();
     }
 
 
@@ -77,24 +239,20 @@ public class scr_System_Serializer : MonoBehaviour
     public void SavePresetJSON(Character_Trainable obj)
     {
         string s = JsonUtility.ToJson(obj);
-        if (!Directory.Exists(Utility.GetSavePath_Preset())) Directory.CreateDirectory(Application.dataPath + "/Presets/");
-        System.IO.File.WriteAllText(Utility.GetSavePath_Preset()+ obj.FirstName+((obj.MiddleName.Length < 1)? " " : " "+obj.MiddleName+" ")+obj.LastName+".json", s);
+        if (!Directory.Exists(PresetPath)) Directory.CreateDirectory(PresetPath);
+        System.IO.File.WriteAllText($"{ PresetPath}/{ obj.FirstName}{ ((obj.MiddleName.Length < 1) ? " " : " " + obj.MiddleName + " ")}{ obj.LastName}.json", s);
     }
 
-    public Character_Trainable LoadPresetJSON(string filename)
+    protected void LoadCharactersFoldersJSON()
     {
-        //Debug.Log("Loading JSON preset " + Utility.GetSavePath_Preset() + filename);
-        return scr_System_CentralControl.current.LoadCharaData(Utility.GetSavePath_Preset() + filename);
-    }
+        List<string> skippedFiles = new List<string>();
+        List<string> loadedFiles = new List<string>();
 
+        var newIndex = MasterList.Character_Bases;
+        var newIndex2 = MasterList.CharacterTemplates;
+        string path = DataPath;
 
-    public void LoadCharactersFoldersJSON()
-    {
-
-        var newIndex = new Character_Base_Index();
-        var newIndex2 = new Character_Trainable_SerializableTemplate_Index();
-        //string path = Application.dataPath + "/Data/Characters/";
-        string path = Application.dataPath + DataPath_Local;
+        bool safeMode = scr_System_CentralControl.current.isSafeMode;
         if (Directory.Exists(path))
         {
             DirectoryInfo d = new DirectoryInfo(path);
@@ -102,45 +260,147 @@ public class scr_System_Serializer : MonoBehaviour
             //foreach (var file in d.GetFiles("*.json"))
             foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
             {
-                var i = JsonConvert.DeserializeObject<Character_Trainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
-                if (i == null || i.BaseID == null) continue;
-                newIndex.baseCharacters.Add(i);
-                i.FileLocation = file.FullName;
+                if (safeMode)
+                {
+                    bool skipped = false;
+                    foreach (var s in nsfwKeywords)
+                    {
+                        if (file.Name.Contains(s, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            skipped = true;
+                            skippedFiles.Add($"Skipping file {file.Name} due to safeMode toggle");
+                            break;
+                        }
+                    }
+                    if (skipped) continue;
 
-                Character_Trainable_SerializableTemplate ii = JsonConvert.DeserializeObject<Character_Trainable_SerializableTemplate>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
-                ii.FileLocation = file.FullName;
-                newIndex2.list.Add(ii);
+                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    if (i == null || i.baseID == null || i.baseID.Length < 1) continue;
+                    newIndex.baseCharacters.Add(i);
+
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    newIndex2.list.Add(ii);
+                }
+                else
+                {
+                    var i = JsonConvert.DeserializeObject<Character_SerializableTrainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    if (i == null || i.baseID == null || i.baseID.Length < 1) continue;
+                    newIndex.baseCharacters.Add(i);
+
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    newIndex2.list.Add(ii);
+                }
+                loadedFiles.Add($"Reading json file {file.FullName}");
+
             }
         }
 
+        Debug.Log($"LoadCharactersFoldersJSON Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}");
         //Debug.Log("Adding "+newIndex.baseCharacters.Count+" characters to masterlist");
-        MasterList.Character_Bases = newIndex;
-        MasterList.CharacterTemplates = newIndex2;
     }
 
-    protected void LoadDefs(bool val = true)
+    protected void LoadCharactersPresetsJSON()
     {
-        string path = Application.dataPath + DataPath_Local;
-        MasterList = new MasterList();
-        MasterList.InitializeLists(true);
+
+        List<string> skippedFiles = new List<string>();
+        List<string> loadedFiles = new List<string>();
+
+
+        var newIndex = MasterList.Character_Bases;
+        var newIndex2 = MasterList.CharacterTemplates;
+        string path = PresetPath;
+
+        bool safeMode = scr_System_CentralControl.current.isSafeMode;
         if (Directory.Exists(path))
         {
             DirectoryInfo d = new DirectoryInfo(path);
+
+            //foreach (var file in d.GetFiles("*.json"))
             foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
-            {   // all files must be index_com files
-                MasterList l = JsonConvert.DeserializeObject<MasterList>(File.ReadAllText(file.FullName),Utility.SerializerSettings);
-                if (l != null)
+            {
+                if (safeMode)
                 {
-                    MasterList.MergeWith(l);
-                    //Debug.Log($"Reading json file {file.FullName}");
+                    bool skipped = false;
+                    foreach (var s in nsfwKeywords)
+                    {
+                        if (file.Name.Contains(s, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            skipped = true;
+                            skippedFiles.Add($"Skipping file {file.Name} due to safeMode toggle");
+                            break;
+                        }
+                    }
+                    if (skipped) continue;
+
+                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    if (i == null) continue;
+                    if (i.baseID == "" || i.baseID.Length < 1) i.baseID = file.Name;
+                    newIndex.baseCharacters.Add(i);
+
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    if (ii.baseID == "" || ii.baseID.Length < 1) ii.baseID = file.Name;
+                    newIndex2.list.Add(ii);
                 }
+                else
+                {
+                    var i = JsonConvert.DeserializeObject<Character_SerializableTrainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    if (i == null) continue;
+                    if (i.baseID == "" || i.baseID.Length < 1) i.baseID = file.Name;
+                    newIndex.baseCharacters.Add(i);
+
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    if (ii.baseID == "" || ii.baseID.Length < 1) ii.baseID = file.Name;
+                    newIndex2.list.Add(ii);
+                }
+                loadedFiles.Add($"Reading json file {file.FullName}");
+
             }
         }
+
+        Debug.Log($"LoadCharactersPresetsJSON Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}");
+        //Debug.Log("Adding "+newIndex.baseCharacters.Count+" characters to masterlist");
+    }
+
+    MasterList SafeList = new MasterList();
+
+    protected void LoadDefs(bool safeMode)
+    {
+        List<string> skippedFiles = new List<string>();
+        List<string> loadedFiles = new List<string>();
+        string path = DataPath;
+        MasterList = new MasterList();
+        MasterList.InitializeLists(true);
+        if (!Directory.Exists(path)) { Debug.LogError($"Error in LoadDefs, path [{path}] do not exist"); return; }
+        
+        DirectoryInfo d = new DirectoryInfo(path);
+        foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
+        {   // all files must be index_com files
+            bool skipped = false;
+            if (safeMode)
+            {
+                foreach(var s in nsfwKeywords) 
+                {
+                    if (file.Name.Contains(s, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        skipped = true;
+                        skippedFiles.Add($"Skipping file {file.Name} due to safeMode toggle");
+                        break;
+                    }
+                }
+            }
+            if (skipped) continue;
+            //Debug.Log($"reading directory {file.Name} in {file.FullName} in {file.DirectoryName} in {file.DirectoryName}");
+            MasterList l = JsonConvert.DeserializeObject<MasterList>(File.ReadAllText(file.FullName),Utility.SerializerSettings);
+            if (l != null)
+            {
+                MasterList.MergeWith(l);
+                loadedFiles.Add($"Reading json file {file.FullName}");
+            }
+        }
+        Debug.Log($"LoadDefs Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}");
     }
   
-    
-
-    
+    public List<string> nsfwKeywords = new List<string>() { "nsfw", "unsafe", "sex", "initSex", "endSex", "massage", "do_not_use" };
 
     public Traits GetByNameOrID_Traits(string name_or_id)
     {
@@ -218,10 +478,6 @@ public class scr_System_Serializer : MonoBehaviour
         return MasterList.StatEXs.GetByID(name_or_id);
     }
 
-    public Sexperience_Base GetByNameOrID_ExperienceBase(string name_or_id)
-    {
-        return MasterList.Sexperiences.GetByID(name_or_id);
-    }
 }
 
 
@@ -241,9 +497,9 @@ public class Skills_Index : I_IndexHasID, I_IndexMergeable
     }
 
     Dictionary<string, Skills_Full> ID_Dictionary = new Dictionary<string, Skills_Full>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> messages)
     {
-        Debug.Log("Skills_Index : registering ID with list length [" + list.Count + "]");
+        messages.Add("Skills_Index : registering ID with list length [" + list.Count + "]");
 
         foreach (Skills_Full o in this.list)
         {

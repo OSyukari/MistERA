@@ -20,9 +20,9 @@ public class Stats_Derived_Base_Index : I_IndexHasID, I_IndexMergeable
     }
 
     Dictionary<string, Stats_Derived_Base> ID_Dictionary = new Dictionary<string, Stats_Derived_Base>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> messages)
     {
-        Debug.Log("Stats_Derived_Base_Index : registering ID with list length [" + list.Count + "]");
+        messages.Add("Stats_Derived_Base_Index : registering ID with list length [" + list.Count + "]");
         foreach (Stats_Derived_Base o in list) ID_Dictionary.Add(o.ID, o);
     }
     public Stats_Derived_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
@@ -41,8 +41,8 @@ public class Stats_Derived_Base
     [SerializeField][JsonProperty] protected string tooltip = "";
 
     [JsonIgnore] public string ID { get { return id; } }
-    [JsonIgnore] public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(id, displayName); } }
-    [JsonIgnore] public string Tooltip { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(id+"_tooltip", tooltip); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(id, displayName); } }
+    [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(id+"_tooltip", tooltip); } }
     [JsonIgnore] public string StatKeyword { get { return statKeyword; } }
     //[NonSerialized] protected Dictionary<string, StatsManager.ModStorage> StoredModifiers = new Dictionary<string, StatsManager.ModStorage>();
 

@@ -44,14 +44,14 @@ public class BodyPart_Instance
         basePointer = scr_System_Serializer.current.GetByNameOrID_BodyPart_Base(baseID);
         foreach (string s in Base.internalID)
         {
-            if (s.Length <= 0) return;
+            if (s.Length < 1) continue;
             BodyInternal_Instance inter = new BodyInternal_Instance();
-            inter.Initialize(s, this.Owner);
-            if ((inter.hasTag("vagina") || inter.hasTag("womb") || inter.hasTag("urethra")) && Owner.Template.Size_V.ID == "trait_Size_V_none") { }
-            else if (inter.hasTag("anus") && Owner.Template.Size_A.ID == "trait_Size_A_none") { }
-            else if (inter.hasTag("penis") && Owner.Template.Size_P.ID == "trait_Size_P_none") { }
-            else if (inter.hasTag("clit") && Owner.Template.Size_P.ID != "trait_Size_P_none") { }
-            else if (inter.hasTag("breast") && Owner.Template.Size_B.ID == "trait_Size_B_none") { }
+            if (!inter.Initialize(s, this.Owner)) continue;
+            else if ((inter.hasTag("vagina") || inter.hasTag("womb") || inter.hasTag("urethra")) && !Owner.Template.isFemale) { }
+            //else if (inter.hasTag("anus") && Owner.Template.Size_A.ID == "trait_Size_A_none") { }
+            else if (inter.hasTag("penis") && !Owner.Template.isMale) { }
+            else if (inter.hasTag("clit") && Owner.Template.isMale) { }
+            else if (inter.hasTag("breast") && !Owner.Template.isMale) { }
             else
             {
                 this.internals.Add(inter);
@@ -59,11 +59,17 @@ public class BodyPart_Instance
         }
 
         contentsIndex = new Dictionary<string, int>();
+
         foreach (BodyEquipLayer i in equipLayers)
         {
             foreach (BodyPartEquipSlot j in availableSlots)
             {
-                contentsIndex.Add(i.ToString()+"||"+j.ToString(), -1);
+                var key = i.ToString() + "||" + j.ToString();
+                if (!contentsIndex.ContainsKey(key)) contentsIndex.Add(key, -1);
+                else
+                {
+                    Debug.LogError($"{c.FirstName} error in initializing bodypartInstance {baseID}, duplicate equipslot key {key} in {String.Join("|",equipLayers)} {String.Join("|", availableSlots)}");
+                }
             }
         }
     }

@@ -10,13 +10,13 @@ public class CampaignSettings
 {
     public string ID = "";
     [SerializeField][JsonProperty] protected string displayName;
-    [JsonIgnore] public string DisplayName{get{ return scr_System_Serializer.current.Dictionary.QueryThenParse(ID);}}
+    [JsonIgnore] public string DisplayName{get{ return LocalizeDictionary.QueryThenParse(ID);}}
     [SerializeField][JsonProperty] protected string tooltip;
-    [JsonIgnore] public string Tooltip { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(ID+"_tooltip"); } }
+    [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID+"_tooltip"); } }
     public bool isAvailable = true;
     public string requireOriginID = "";
     public List<CampaignSettings_ExtraOptions> extraOptions = new List<CampaignSettings_ExtraOptions>();
-
+    public List<string> tags = new List<string>();
     public CampaignSettings_ExtraOptions GetPreviousOption(CampaignSettings_ExtraOptions ex)
     {
         if (extraOptions.Contains(ex))
@@ -51,10 +51,11 @@ public class CampaignSettings
 public class CampaignSettings_ExtraOptions
 {
     public string ID = "";
-    [SerializeField][JsonProperty] protected string displayName;
-    public string DisplayName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(ID, displayName); } }
-    [SerializeField][JsonProperty] protected string tooltip;
-    public string Tooltip { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
+    [SerializeField][JsonProperty] protected string displayName = "";
+    public List<string> tags = new List<string> ();
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
+    [SerializeField][JsonProperty] protected string tooltip = "";
+    [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
     public List<CampaignSettings_Initializer> initializers = new List<CampaignSettings_Initializer>();
 
 }
@@ -62,7 +63,7 @@ public class CampaignSettings_ExtraOptions
 
 
 [System.Serializable]
-public class Index_CampaignSetting: I_IndexHasID, I_IndexMergeable
+public class Index_CampaignSetting: I_IndexHasID, I_IndexMergeable, I_RemoveElemByTag
 {
     [SerializeField][JsonProperty] protected List<CampaignSettings> list = new List<CampaignSettings>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, CampaignSettings> _List;
@@ -76,6 +77,7 @@ public class Index_CampaignSetting: I_IndexHasID, I_IndexMergeable
         {
             this.list.AddRange(l.list);
         }
+        this.list.RemoveAll(x => !x.isAvailable);
     }
 
 
@@ -122,9 +124,9 @@ public class Index_CampaignSetting: I_IndexHasID, I_IndexMergeable
     }
 
     //Dictionary<string, CampaignSettings> ID_Dictionary = new Dictionary<string, CampaignSettings>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
-        Debug.Log("Index_CampaignSetting : registering ID with list length [" + list.Count + "]");
+        s.Add("Index_CampaignSetting : registering ID with list length [" + list.Count + "]");
 
         var ids = new Dictionary<string, CampaignSettings>();
         foreach (var i in list) ids.Add(i.ID, i);
@@ -137,6 +139,10 @@ public class Index_CampaignSetting: I_IndexHasID, I_IndexMergeable
         return null;
     }
 
-
+    public void RemoveElemByTag(string tag)
+    {
+        list.RemoveAll(x=>x.tags.Contains(tag));
+        foreach (var camp in list) camp.extraOptions.RemoveAll(x => x.tags.Contains(tag));
+    }
 }
 

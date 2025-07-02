@@ -2,6 +2,8 @@ using UnityEngine;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
+using NUnit.Framework;
 
 public interface I_IndexMergeable
 {
@@ -9,7 +11,7 @@ public interface I_IndexMergeable
 }
 public interface I_IndexHasID
 {
-    public void RegisterAllID();
+    public void RegisterAllID(List<string> messages);
 }
 
 public interface I_NeedLateInitialize
@@ -22,6 +24,19 @@ public interface I_SerializationCallbackReceiver
     public void OnAfterDeserialize();
 }
 
+public interface I_RemoveElemByTag
+{
+    public void RemoveElemByTag(string tag);
+}
+public interface I_RemoveNSFW
+{
+    public void RemoveNSFW();
+}
+
+public  interface I_RemoveNonExisting
+{
+    public void RemoveNonExisting();
+}
 public interface SpineAssetHandler
 {
     public void LoadSpineJSON(string materialTexturePath, string atlasJSON_path, string skeletonJSON_path, out Texture2D spineLoader_Texture, out TextAsset spineLoader_atlasJSON, out TextAsset spineLoader_skeletonJSON);

@@ -145,7 +145,7 @@ public class scr_System_SceneManager : MonoBehaviour
         if (path != null) UnloadScene(SceneManager.GetSceneByPath(path));
     }
 
-    public void UnloadScene(Scene scene)
+    protected void UnloadScene(Scene scene)
     {
         if (SceneManager.sceneCount > 1 && scene_list.Contains(scene.path))
         {
@@ -153,6 +153,18 @@ public class scr_System_SceneManager : MonoBehaviour
             SceneManager.UnloadSceneAsync(scene.buildIndex);
         }
     }
+
+   /// <summary>
+   /// First unload target scene, then load target scene
+   /// </summary>
+   /// <param name="path"></param>
+    public void ReloadScene(string path)
+    {
+        UnloadScene(path);
+        LoadScene(path);
+    }
+
+
 
 }
 

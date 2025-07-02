@@ -5,6 +5,6 @@ using UnityEngine;
 public class scr_Gender_demoChara : MonoBehaviour
 {
 
-    public Character_Trainable.CharaTemplate Template;
+    public CharaTemplate Template;
 
 }

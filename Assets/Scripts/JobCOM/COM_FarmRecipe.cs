@@ -50,7 +50,7 @@ public class COM_FarmRecipe : COM
 
     public override string DisplayName(List<int> doerRefIDs, List<int> receiverRefIDs = null, bool excludeRequireExisting = false)
     {
-        if (comp != null) return baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting).Replace("$name$", scr_System_Serializer.current.Dictionary.QueryThenParse( comp.yieldItemID));
+        if (comp != null) return baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting).Replace("$name$", LocalizeDictionary.QueryThenParse( comp.yieldItemID));
         else return base.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting);
     }
 
@@ -58,7 +58,7 @@ public class COM_FarmRecipe : COM
     {
         //return baseCOM.DisplayName(index).Replace("$name$", comp.yieldItemID);
 
-        if (comp != null) return baseCOM.DisplayName(index).Replace("$name$", scr_System_Serializer.current.Dictionary.QueryThenParse(comp.yieldItemID));
+        if (comp != null) return baseCOM.DisplayName(index).Replace("$name$", LocalizeDictionary.QueryThenParse(comp.yieldItemID));
         else return base.DisplayName(index);
     }
 

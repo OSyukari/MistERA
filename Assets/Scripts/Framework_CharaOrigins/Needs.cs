@@ -13,10 +13,10 @@ public class Needs
     /// </summary>
     public string ID = "";
     [SerializeField][JsonProperty] protected string displayName = "";
-    public string DisplayName { get { return LocalizeDictionary.Instance.Index.QueryThenParse(ID, displayName); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
 
     [SerializeField][JsonProperty] protected string tooltip = "";
-    public string Tooltip { get { return LocalizeDictionary.Instance.Index.QueryThenParse(ID + "_tooltip", tooltip); } }
+    [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
 
     // In order of tag priority
     public string consumeItemByTag = "";

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 public class MasterList
 {
     protected ArrayList list = null;
-    public ArrayList List
+    [JsonIgnore] public ArrayList List
     {
         get
         {
@@ -24,7 +24,7 @@ public class MasterList
                 list.Add(Floors);
                 list.Add(MapPlans);
                 list.Add(StatusEXs);
-                list.Add(Sexperiences);
+           //     list.Add(Sexperiences);
                 list.Add(StatEXs);
 
                 list.Add(Experiences);
@@ -43,18 +43,19 @@ public class MasterList
                 list.Add(COMs);
                 list.Add(Furnitures);
                 list.Add(Events);
+                list.Add(Character_Bases);
             }
             return list;
         }
     }
     public Traits_Group_Index Traits_Groups = new Traits_Group_Index();
-    public Index_Sexperiences Sexperiences = null;
+   // public Index_Sexperiences Sexperiences = null;
     public Index_BodyPartBase BodyPartBases = new Index_BodyPartBase();
     public Stats_Derived_Base_Index Stats_Derived_Bases = null;
     //public Character_BaseID_Index Character_BaseIDs = null;
     public Index_Floor_Base Floors = null;
     public Index_MapPlan MapPlans = null;
-    public Character_Base_Index Character_Bases = null;
+    public Character_Base_Index Character_Bases = new Character_Base_Index();
     public Index_StatusEx StatusEXs = null;
     public Stats_Derived_Extended_Index StatEXs = null;
 
@@ -67,7 +68,7 @@ public class MasterList
     public Humanoid_RaceTemplate_Index humanoid_RaceTemplates = new Humanoid_RaceTemplate_Index();
     public Index_CampaignSetting CampaignSettings = null;
     public Index_CharaSkills Skills = null;
-    public Character_Trainable_SerializableTemplate_Index CharacterTemplates = null;
+    public Character_Trainable_SerializableTemplate_Index CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
     public Character_Personality_Index Character_Personalities = null;
     public Index_COM COMs = new Index_COM();
     public Index_Item_Base Items = new Index_Item_Base();
@@ -80,30 +81,36 @@ public class MasterList
         if (initCoreList)
         {
             this.Items = Masterlist_Items.Instance.Index;
-
             this.Dictionary = LocalizeDictionary.Instance.Index;
-
             this.humanoid_Races = CharaOrigins.Instance.Humanoid_Race_Index;
             this.Character_Origins = CharaOrigins.Instance.Origins_Index;
             this.Character_Origin_StartingOptions = CharaOrigins.Instance.StartingOption_Index;
             this.humanoid_RaceTemplates = CharaOrigins.Instance.RaceTemplateIndex;
             this.BodyPartBases = CharaOrigins.Instance.BodyPartIndex;
             this.Traits_Groups = CharaOrigins.Instance.Traits;
-
+        }
+        else
+        {
+            this.Items = new Index_Item_Base();
+            this.Dictionary = new Dictionary_Index();
+            this.humanoid_Races = new Humanoid_Race_Index();
+            this.Character_Origins = new Character_Origin_Index();
+            this.Character_Origin_StartingOptions = new Character_Origin_startingOption_Index();
+            this.humanoid_RaceTemplates = new Humanoid_RaceTemplate_Index();
+            this.BodyPartBases = new Index_BodyPartBase();
+            this.Traits_Groups = new Traits_Group_Index();
         }
         this.Experiences = new Index_Experiences();
         this.Stats_Derived_Bases = new Stats_Derived_Base_Index();
-        this.Character_Bases = new Character_Base_Index();
         this.Floors = new Index_Floor_Base();
         this.MapPlans = new Index_MapPlan();
         this.StatusEXs = new Index_StatusEx();
         this.StatEXs = new Stats_Derived_Extended_Index();
-        this.Sexperiences = new Index_Sexperiences();
+       // this.Sexperiences = new Index_Sexperiences();
         this.RelationshipTypes = new Index_RelationshipTypes();
         this.CampaignSettings = new Index_CampaignSetting();
         this.Skills = new Index_CharaSkills();
         this.Status = new Index_Status();
-        this.CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
         this.Character_Personalities = new Character_Personality_Index();
         this.Furnitures = new Index_FurnitureBase();
         this.Events = new Index_Events();
@@ -126,16 +133,49 @@ public class MasterList
     }
     public void Initialize()
     {
+        List<string> registerMsg = new List<string>();
 
         foreach (object l in List)
         {
             if (l is I_SerializationCallbackReceiver) (l as I_SerializationCallbackReceiver).OnAfterDeserialize();
-            if (l is I_IndexHasID) (l as I_IndexHasID).RegisterAllID();
+            if (l is I_IndexHasID) (l as I_IndexHasID).RegisterAllID(registerMsg);
         }
 
         foreach (object l in List)
         {
             if (l is I_NeedLateInitialize) (l as I_NeedLateInitialize).LateInitialize();
+        }
+
+        Debug.Log($"Serializer Report:\n{String.Join("\n", registerMsg)}");
+    }
+
+    public void RemoveElementWithTag(string tag)
+    {
+        foreach (object l in List)
+        {
+            if (l is I_RemoveElemByTag) (l as I_RemoveElemByTag).RemoveElemByTag(tag);
+        }
+    }
+    public void RemoveNSFW()
+    {
+        foreach (object l in List)
+        {
+            if (l is I_RemoveNSFW) (l as I_RemoveNSFW).RemoveNSFW();
+        }
+
+        foreach(var keyword in scr_System_Serializer.current.nsfwKeywords)
+        {
+            RemoveElementWithTag (keyword);
+        }
+
+        Traits_Groups = null;
+    }
+
+    public void RemoveNonExisting()
+    {
+        foreach(object l in List)
+        {
+            if (l is I_RemoveNonExisting) (l as I_RemoveNonExisting).RemoveNonExisting();
         }
     }
 }

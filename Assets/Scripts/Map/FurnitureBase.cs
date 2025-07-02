@@ -11,7 +11,7 @@ public class FurnitureBase
     public string displayName = "";
     [JsonIgnore] public string DisplayName { get
         {
-            return scr_System_Serializer.current.Dictionary.QueryThenParse(ID, displayName);
+            return LocalizeDictionary.QueryThenParse(ID, displayName);
         } }
     // recipe
     public float furnitureSize = 0f;
@@ -31,10 +31,7 @@ public class FurnitureBase
 
     public void OnAfterDeserialize()
     {
-        for(int i = 2; i <= furnitureSize; i++)
-        {
-            this.givesJob.AddRange(givesJob);
-        }
+
     }
 
     public void OnBeforeSerialize()
@@ -157,9 +154,9 @@ public class Index_FurnitureBase : I_IndexHasID, I_IndexMergeable, I_Serializati
 {
     public List<FurnitureBase> list = new List<FurnitureBase>();
     Dictionary<string, FurnitureBase> ID_Dictionary = new Dictionary<string, FurnitureBase>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
-        Debug.Log("Index_FurnitureBase : registering ID with list length [" + list.Count + "]");
+        s.Add("Index_FurnitureBase : registering ID with list length [" + list.Count + "]");
 
         foreach (FurnitureBase o in this.list)
         {

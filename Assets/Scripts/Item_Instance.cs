@@ -64,7 +64,7 @@ public class Item_Instance : IDisposable, I_Disposable
     {
         get
         {
-            if (nameOverwrite != "") return scr_System_Serializer.current.Dictionary.QueryThenParse(nameOverwrite);
+            if (nameOverwrite != "") return LocalizeDictionary.QueryThenParse(nameOverwrite);
             else return Parent.DisplayName;
         }
     }
@@ -78,8 +78,8 @@ public class Item_Instance : IDisposable, I_Disposable
     public string Print()
     {
         if (this._cache_printfull == "") this._cache_printfull = isCurrency ?
-                          scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_currency")
-                        : scr_System_Serializer.current.Dictionary.QueryThenParse("management_jobpost_payout_item");
+                          LocalizeDictionary.QueryThenParse("management_jobpost_payout_currency")
+                        : LocalizeDictionary.QueryThenParse("management_jobpost_payout_item");
 
 
         return this._cache_printfull.Replace("$item$", DisplayName).Replace("$count$", CountString);

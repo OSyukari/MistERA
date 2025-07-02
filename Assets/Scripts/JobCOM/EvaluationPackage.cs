@@ -276,21 +276,6 @@ public class EvaluationPackage
         if (receiver != "") this.injectedReceiverTags.Add(receiver);
     }
 
-    public void NotifyInterrupt()
-    {
-        var responseCache = this.response;
-        this.response = Memory_Response.None;
-        if (this.Doer != null)
-        {
-            var m = this.Doer.Memory.AddEntry(this);
-        }
-        if (this.Receiver != null && this.Receiver != this.Doer)
-        {
-            this.Receiver.Memory.AddEntry(this);
-        }
-        this.response = responseCache;
-    }
-
     public bool Evaluate(bool reset = false)
     {
         this.tooltip.Clear();
@@ -860,7 +845,7 @@ public class EvaluationPackage
             {
                 //Debug.LogError($"FirstExperience {entry.body.DisplayNameFull}");
                 // first experience loss
-                string s = LocalizeDictionary.Instance.Index.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
+                string s = LocalizeDictionary.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
                 Utility.StringReplace(entry.body.Owner, ref s);
                 this.m.AddMessage(entry.body.Owner.RefID, s);
                 
@@ -978,6 +963,11 @@ public class EvaluationPackage
 
     public List<string> tooltip = new List<string>();
 
+    public void NotifyInterrupt()
+    {
+        this.response = Memory_Response.Interrupted;
+    }
+
     protected bool TryRespond(bool recalculateRate = false)
     {
         /// <summary>
@@ -1020,7 +1010,7 @@ public class EvaluationPackage
 
     private void AddModifier(int charaRef, string key, int count)
     {
-        key = scr_System_Serializer.current.Dictionary.Parse(key);
+        key = LocalizeDictionary.QueryThenParse(key);
         modifiers.AddModifier(charaRef, key, count);
     }
 
@@ -1617,7 +1607,7 @@ public class ExperienceLog
             if (kvp_refID.Value.Count > 0)
             {
                 string s = "Stats(" + scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + "): ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + scr_System_Serializer.current.Dictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
                 lines.Add(s);
             }
         }
@@ -1627,7 +1617,7 @@ public class ExperienceLog
             if (kvp_refID.Value.Count > 0)
             {
                 string s = "Relations(" + scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + "): ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + scr_System_Serializer.current.Dictionary.QueryThenParse("relationship_"+ ((RelationshipScoreType) kvp.Key).ToString().ToLower())   + "" + kvp.Value.ToString("+0;-#") + " ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse("relationship_"+ ((RelationshipScoreType) kvp.Key).ToString().ToLower())   + "" + kvp.Value.ToString("+0;-#") + " ";
                 lines.Add(s);
             }
         }
@@ -1637,7 +1627,7 @@ public class ExperienceLog
             if (kvp_refID.Value.Count > 0)
             {
                 string s = "Experiences(" + scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + "): ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + scr_System_Serializer.current.Dictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
                 lines.Add(s);
             }
         }

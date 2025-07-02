@@ -17,7 +17,7 @@ public class Room_Instance: IDisposable, I_Disposable
     [JsonIgnore] public int RefID { get { return refID; } }
     [JsonIgnore] protected string displayName { get
         {
-            if (Base != null) return scr_System_Serializer.current.Dictionary.QueryThenParse(Base.displayName, scr_System_Serializer.current.Dictionary.QueryThenParse(Base.ID, Base.ID));
+            if (Base != null) return LocalizeDictionary.QueryThenParse(Base.displayName, LocalizeDictionary.QueryThenParse(Base.ID, Base.ID));
             else return "room";
         } }
 
@@ -32,7 +32,7 @@ public class Room_Instance: IDisposable, I_Disposable
             {
                 if (isRoomPrison)
                 {
-                    _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_prison") + " (" + displayName + ")";
+                    _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_prison") + " (" + displayName + ")";
                 }
                 else if (isRoomPrivate)
                 {
@@ -45,22 +45,22 @@ public class Room_Instance: IDisposable, I_Disposable
                     else if (OwnerNames.Count > 2)
                     {
                         var owners = String.Join(",", OwnerNames);
-                        _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_privateroom_more").Replace("$owners$", owners) + " (" + displayName + ")";
+                        _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_more").Replace("$owners$", owners) + " (" + displayName + ")";
                     }
                     else if (OwnerNames.Count > 1)
                     {
                         //Debug.LogError("RoomDisplaynameCond11");
-                        _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_privateroom_2").Replace("$owner1$", OwnerNames[0]).Replace("$owner2$", OwnerNames[1]) + " (" + displayName + ")";
+                        _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_2").Replace("$owner1$", OwnerNames[0]).Replace("$owner2$", OwnerNames[1]) + " (" + displayName + ")";
                     }
                     else if (OwnerNames.Count > 0)
                     {
                         //Debug.LogError("RoomDisplaynameCond11");
-                        _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_privateroom_1").Replace("$owner$", OwnerNames[0]) + " (" + displayName + ")";
+                        _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_1").Replace("$owner$", OwnerNames[0]) + " (" + displayName + ")";
                     }
                     else
                     {
                         //Debug.LogError("RoomDisplaynameCond12");
-                        _displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_map_roomName_privateroom_0") + " (" + displayName + ")";
+                        _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_0") + " (" + displayName + ")";
                     }
                 }
                 else
@@ -148,9 +148,10 @@ public class Room_Instance: IDisposable, I_Disposable
     {
         get
         {
-            string names = "";
-            foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names += " " + kvp.Key.DisplayName + (kvp.Value > 1 ? "x" + kvp.Value : "") ;
-            return names != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$",names) : "";
+            string multiples = LocalizeDictionary.QueryThenParse("ui_entry_multipleCount");
+            List<string> names = new List<string>();
+            foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names.Add(kvp.Value > 1 ? multiples.Replace("$item$", kvp.Key.DisplayName).Replace("$count$", kvp.Value.ToString()) : kvp.Key.DisplayName);
+            return names.Count > 0 ? LocalizeDictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", String.Join(LocalizeDictionary.QueryThenParse("ui_entry_separator"), names)) : "";
         }
     }
 
@@ -159,9 +160,10 @@ public class Room_Instance: IDisposable, I_Disposable
     {
         get
         {
-            string names = "";
-            foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names += "  <link="+kvp.Key.ID + "_tooltip" + ">" + kvp.Key.DisplayName + (kvp.Value > 1 ? "x" + kvp.Value : "") + "</link>";
-            return names != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", names) : "";
+            string multiples = LocalizeDictionary.QueryThenParse("ui_entry_multipleCount");
+            List<string> names = new List<string>();
+            foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names.Add("<link="+kvp.Key.ID + "_tooltip" + ">" + (kvp.Value > 1 ? multiples.Replace("$item$", kvp.Key.DisplayName).Replace("$count$", kvp.Value.ToString()) : kvp.Key.DisplayName) + "</link>");
+            return names.Count > 0 ? LocalizeDictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", String.Join(LocalizeDictionary.QueryThenParse("ui_entry_separator"), names)) : "";
         }
     }
     /// <summary>

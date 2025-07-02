@@ -221,9 +221,9 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
     public scr_Traits_Group GetGroupByID(string id) { return ID_Dictionary1.ContainsKey(id) ? ID_Dictionary1[id] : null; }
     public Traits GetTraitByID(string id) { return ID_Dictionary2.ContainsKey(id) ? ID_Dictionary2[id] : null; }
 
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> messages)
     {
-        Debug.Log("Traits_Group_Index : registering ID with list length [" + traits_All.Count + "]");
+        messages.Add("Traits_Group_Index : registering ID with list length [" + traits_All.Count + "]");
 
         foreach (List<scr_Traits_Group> o in traits_All)
         {

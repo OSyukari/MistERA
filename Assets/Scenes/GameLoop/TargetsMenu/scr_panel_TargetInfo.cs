@@ -27,7 +27,7 @@ public class scr_panel_TargetInfo : scr_Menu
 
     protected override void Start()
     {
-        //update = 0.0f;
+        //update = 0.0f;        
         //image_bg = this.GetComponent<Image>();
         //parentBox1.gameObject.SetActive(false);
         //parentBox2.gameObject.SetActive(false);
@@ -124,7 +124,7 @@ public class scr_panel_TargetInfo : scr_Menu
             if (nextHour >= 24) nextHour -= 24;
             var nextHourJob = chara.FactionManager.CurrentJobPost(nextHour);
             Manageable faction = chara.FactionManager.CurrentJobScheduleFaction(nextHour);
-            nextHourJobDesc.text = (nextHourJob == null || nextHourJob.Name == "") ? LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_free") : nextHourJob.Name + (faction != null ? "(" + chara.FactionManager.CurrentJobScheduleFaction(nextHour).FactionDisplayName + ")" : "") ;
+            nextHourJobDesc.text = (nextHourJob == null || nextHourJob.Name == "") ? LocalizeDictionary.QueryThenParse("chara_currentjob_free") : nextHourJob.Name + (faction != null ? "(" + chara.FactionManager.CurrentJobScheduleFaction(nextHour).FactionDisplayName + ")" : "") ;
 
             /*
             foreach(var i in managedEquipRefs) DestroyCOMButton(i);
@@ -138,6 +138,11 @@ public class scr_panel_TargetInfo : scr_Menu
 
             foreach(var i in managedEquipRefs) MakeCOMButton(Grid_UnequipSingles, prefab_equippedItem, chara.RefID, i);
             */
+
+            if (scr_System_CentralControl.current.isSafeMode)
+            {
+                lustBox.gameObject.SetActive(false);
+            }
         }
         else
         {

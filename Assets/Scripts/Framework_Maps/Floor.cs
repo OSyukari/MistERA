@@ -85,9 +85,9 @@ public class Index_Floor_Base : I_IndexHasID, I_IndexMergeable, I_SerializationC
     public List<Floor_Base> list = new List<Floor_Base>();
     public Floor_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
     Dictionary<string, Floor_Base> ID_Dictionary = new Dictionary<string, Floor_Base>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> messages)
     {
-        Debug.Log("Index_Floor_Base : registering ID with list length [" + list.Count + "]");
+        messages.Add("Index_Floor_Base : registering ID with list length [" + list.Count + "]");
 
         foreach (Floor_Base o in this.list)
         {

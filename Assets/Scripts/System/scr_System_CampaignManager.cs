@@ -3,7 +3,6 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 [System.Serializable]
 public class scr_System_CampaignManager_Serializable
@@ -20,7 +19,6 @@ public class scr_System_CampaignManager_Serializable
     public int CurrentRoomRef;
     public Dictionary<int, Character_Trainable> Characters;
     public Dictionary<int, Item_Instance> Items;
-
     public string campaignSettingID;
     // LogsManager? dont need serializing, logs are throwaway lines anyway
 }
@@ -30,6 +28,12 @@ public class scr_System_CampaignManager_Serializable
 
 public class scr_System_CampaignManager : MonoBehaviour
 {
+
+    public Action<PortraitManager.CharaPortrait> Observer_UpdateCurrentTargetAnchor;
+    public void UpdateCurrentTargetAnchor(PortraitManager.CharaPortrait p)
+    {
+        Observer_UpdateCurrentTargetAnchor?.Invoke(p);
+    }
     // Singleton
     public static scr_System_CampaignManager current;
     private void Awake()
@@ -305,23 +309,23 @@ public class scr_System_CampaignManager : MonoBehaviour
             for (int i = registeredPackagesByRoom[p.RoomKey].Count - 1; i >= 0; i--)
             {
                 var currentP = registeredPackagesByRoom[p.RoomKey][i];
-                if (!ignoreConflict && Utility.DetectConflict(currentP, p))
+                if (!ignoreConflict && currentP.Duration > 0 && Utility.DetectConflict(currentP, p))
                 {
-                    Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + "] [" + p.COMVariantID + "] avoidConflict?[" + (avoidConflict) + "]");
+                    //Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + "] [" + p.COMVariantID + "] avoidConflict?[" + (avoidConflict) + "]");
                     if (avoidConflict)
                     {
-                        Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + "] [" + p.COMVariantID + "] avoidConflict?[" + (avoidConflict) + "], skipping");
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + "] [" + p.COMVariantID + "] avoidConflict?[" + (avoidConflict) + "], skipping");
                         return;
                     }
                     if (currentP.PackagePriority > p.PackagePriority)
                     {
                         p.NotifyInterrupted();
-                        Debug.Log("CM RegisterAP: Package [" + p.DisplayName + " " + p.PackagePriority + "] is not getting registered (set to paused) due to not having at least equal priority than [" + currentP.DisplayName + " " + currentP.PackagePriority + "]");
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("CM RegisterAP: Package [" + p.DisplayName + " " + p.PackagePriority + "] is not getting registered (set to paused) due to not having at least equal priority than [" + currentP.DisplayName + " " + currentP.PackagePriority + "]");
                         return;
                     }
                     else
                     {
-                        Debug.LogError("CM RegisterAP: [" + currentP.DisplayName + " " + currentP.PackagePriority + "] is being set to paused due to conflict with [" + p.DisplayName + " " + p.PackagePriority + "] and failed priority check.");
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.LogError($"CM RegisterAP: [{currentP.DisplayName} {currentP.PackagePriority}] (remain {currentP.Duration}) is being set to paused due to conflict with [{p.DisplayName} {p.PackagePriority}] and failed priority check.");
                         p.job.LogMessage_Begin_Replace(registeredPackagesByRoom[p.RoomKey][i], p);
 
                         registeredPackagesByRoom[p.RoomKey][i].NotifyInterrupted();
@@ -330,10 +334,10 @@ public class scr_System_CampaignManager : MonoBehaviour
                     }
                 }
             }
-            if (p.paused)
+            if (p.isPaused)
             {
-                Debug.Log("CM RegisterAP: resuming package [" + p.DisplayName + "]");
-                p.paused = false;
+                if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("CM RegisterAP: resuming package [" + p.DisplayName + "]");
+                p.isPaused = false;
             }
             registeredPackagesByRoom[p.RoomKey].Add(p);
         }
@@ -686,10 +690,9 @@ public class scr_System_CampaignManager : MonoBehaviour
                             updateTime = 0;
                         }
 
-                        if(p != null && roomKey != -1 && !executedPackagesByRoom.ContainsKey(p)) executedPackagesByRoom.Add(p, roomKey);
+                        if (p != null && roomKey != -1 && !executedPackagesByRoom.ContainsKey(p)) executedPackagesByRoom.Add(p, roomKey);
                         kvpair_list.Value.Remove(p);// (p);
                             
-                        
                         //kvpair_list.Value.RemoveAt(i);
 
                     }
@@ -700,6 +703,10 @@ public class scr_System_CampaignManager : MonoBehaviour
                         kvpair_list.Value.Remove(p);// (p);
                         detachedAPs.Add(p);
                         
+                    }
+                    else if (!p.isTemporaryAP)
+                    {
+                        Debug.LogError($"package ticked and duration reset to {p.Duration}");
                     }
                 }
             }
@@ -725,7 +732,10 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     
 
-    
+    public bool isPackageExecuted(ActionPackage p)
+    {
+        return this.executedPackagesByRoom.ContainsKey(p);
+    }
 
     public int Register(Job j, int forceRefID = -1)
     {
@@ -764,6 +774,11 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             Debug.LogError($"ChangeCurrentViewMode to {vm}, error, still animating");
             return;
+        }
+        else if (!scr_UpdateHandler.current.Updating && Combat.PlayerCombatInstance != null)
+        {
+            viewMode = ViewMode.View_Combat;
+            Observer_CurrentViewMode?.Invoke(viewMode, lockView);
         }
         else if (viewMode == ViewMode.View_Logs && vm == ViewMode.View_Room && ExistPlayerPackage(out int a, out int b, false)) scr_UpdateHandler.current.StartUpdate(true);
         else
@@ -925,6 +940,29 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     string CurrentCampaignID;
     Room_Instance debugRoom;
+
+    [SerializeField]
+    [JsonProperty]
+    protected int statisRoomID = -1;
+    Room_Instance _statisRoom = null;
+
+    [JsonIgnore]
+    public Room_Instance StatisRoom { get
+        {
+            if (_statisRoom == null) {
+                if (statisRoomID == -1)
+                {
+                    _statisRoom = Register(new Room_Instance(null, null));
+                    statisRoomID = _statisRoom.RefID;
+                }
+                else
+                {
+                    _statisRoom = scr_System_CampaignManager.current.Map.GetRoomByRef(statisRoomID);
+                }
+            } 
+            return _statisRoom;
+        } }
+
     public void StartCampaign(CampaignSettings camp, CampaignSettings_ExtraOptions camp_ex, Character_Trainable main, Character_Trainable sub = null)
     {
         // Debug.Log("3d8 " + Utility.Dice(1, 8) + " " + Utility.Dice(1, 8) + " " + Utility.Dice(1, 8));
@@ -947,16 +985,6 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (sub != null) sub = InstantiateCharacter(sub, debugRoom);
 
         party = new Party();
-        //party.AddToParty(main);
-
-
-        //currentRoom.Add(main.RefID);
-        //charaLocation.Add(main.RefID, debugRoom.RefID);
-        //if (sub != null) currentRoom.Add(sub.RefID);
-        //if (sub != null) charaLocation.Add(sub.RefID, debugRoom.RefID);
-
-
-
 
         scr_System_Time.current.initializeTime();
 
@@ -990,7 +1018,6 @@ public class scr_System_CampaignManager : MonoBehaviour
                 }
                 else if (ini.initClass == "campaign_init_playerPortrait")
                 {
-                    //Debug.Log(ini.initArguments[0]);
                     PortraitManager.CharaPortrait cm = JsonConvert.DeserializeObject<PortraitManager.CharaPortrait>(ini.initArguments[0], Utility.SerializerSettings);
                     Player.PortraitManager.Prepend(cm);
 
@@ -1347,10 +1374,11 @@ public class scr_System_CampaignManager : MonoBehaviour
         //Debug.LogError("Adding charaRef "+c.RefID +" to roomRef "+room.RefID);
         //Debug.Log("CampaignManager: Instantiate character baseID [" + c.baseID + "] with refID [" + c.RefID + "] registered to room ["+room.RefID+"]");
 
-        foreach(Character_Trainable.CharaTemplate.presetInventory p in c.Template.initialInventory)
+        foreach(CharaTemplate.presetInventory p in c.Template.initialInventory)
         {
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
             //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
+            if (i == null) continue;
             if (!c.EquipItem(i.RefID, false)) Debug.LogError($"error equipping {i.DisplayName} on {c.FirstName}");
         }
         return c;
@@ -1369,14 +1397,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         //Debug.Log("CampaignManager: Instantiate request for ID [" + ID + "]");
 
         string path = ID;
-        var chara = scr_System_Serializer.current.index_Characters_Bases.GetTemplateFromBaseID(ID);
+        var chara = scr_System_Serializer.current.index_Characters_Bases.GetChara(ID);
 
-        Character_Trainable template = scr_System_CentralControl.current.LoadCharaData(chara.FileLocation);
+        //Character_Trainable template = scr_System_CentralControl.current.LoadCharaData(chara.FileLocation);
 
-        if (template != null && map.HasRoomWithRef(room.RefID))
+        if (chara != null && map.HasRoomWithRef(room.RefID))
         {
-            return InstantiateCharacter(template, room, forceRefID);
-            //return InstantiateCharacter(Application.dataPath + path, room, forceRefID);
+            return InstantiateCharacter(chara, room, forceRefID);
         }
         else
         {
@@ -1416,6 +1443,49 @@ public class scr_System_CampaignManager : MonoBehaviour
             deletedRefIDs.Add(i.UnregisterItem());
         }
     }
+
+    public CombatManager Combat = new CombatManager();
+
+    public bool isInCombat(int charaRef)
+    {
+        return Combat.isCharaInCombat(charaRef);
+    }
+
+    public void EndOngoingCombat(int charRef)
+    {
+        Combat.EndOngoingCombatWith(charRef);
+    }
+
+    public menu_combatSim prefab_Simulation;
+    public void QueueCombatSimulation(Character_Trainable self, List<int> teammates)
+    {
+
+        EventInstance simEvent = new EventInstance(self, "CombatSimulation", "");
+
+        List<Character_Trainable> team = new List<Character_Trainable>();
+        simEvent.Targets.Add("teammates", team);
+        foreach (var i in teammates) if (i != self.RefID) team.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
+
+        var teamWhole = new List<int>(teammates);
+        teamWhole.Add(self.RefID);
+
+        simEvent.FunctionCalls.Add("startCombat", new List<Action>() { () => StartCombatSimulation(teamWhole) });
+
+        scr_UpdateHandler.current.EventHandler.StartEvent(simEvent, false);
+
+    }
+    protected void StartCombatSimulation(List<int> self, Action successCallback = null, Action failCallback = null)
+    {
+        // open up combat selection UI, and ui call startcombat proper
+        menu_combatSim detail = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_Simulation.GetComponent<RectTransform>()).GetComponent<menu_combatSim>();
+        detail.InitializeWithArgument(self, successCallback, failCallback);
+
+    }
+
+    public void StartCombat(TeamComposition teamA, TeamComposition teamB)
+    {
+        Combat.StartCombat(teamA, teamB);
+    }
 }
 
 public static class WorldManager
@@ -1425,7 +1495,7 @@ public static class WorldManager
         var baseItem = scr_System_Serializer.current.GetByNameOrID_Item_Base(parentID);
         if (baseItem == null)
         {
-            Debug.LogError($"worldmanager instantiate error cannot find baseitem {parentID}");
+            if (!scr_System_CentralControl.current.isSafeMode) Debug.LogError($"worldmanager instantiate error cannot find baseitem {parentID}");
             return null;
         }
         Item_Instance i = new Item_Instance(parentID, nameOverwrite);
@@ -1456,6 +1526,13 @@ public static class WorldManager
                 list.Add(fp.refID, fp);
                 if (initialRefID == -1) initialRefID = fp.refID;
                 fp.RegisterMapTemplate(map.ID, initialRefID);
+            }
+            else
+            {
+#if UNITY_EDITOR
+                Debug.LogError($"Instantiate MapPlan Error, Cannot find Floor {fpi.ID}");
+#endif
+                continue;
             }
         }
 
@@ -1517,7 +1594,7 @@ public static class WorldManager
                 {
                     if (id == "PLAYER")
                     {
-                        org.AddToFaction(0, Manageable_GuestStatus.Manager);
+                        org.AddToFaction(scr_System_CampaignManager.current.Player.RefID, Manageable_GuestStatus.Manager);
                         if (scr_System_CampaignManager.current.Player.FactionManager.Faction_Home == null) scr_System_CampaignManager.current.Player.FactionManager.SetHomeFaction(org.ID, true);
                         else scr_System_CampaignManager.current.Player.FactionManager.AddWorkFaction(org.ID, true);
                     }
@@ -1607,7 +1684,9 @@ public static class WorldManager
                     }
                     else
                     {
+#if UNITY_EDITOR
                         Debug.LogError("map_init_placeChara, error room not found.");
+#endif
                     }
                 }
                 else

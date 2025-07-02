@@ -71,7 +71,6 @@ public class ButtonValidator_AlwaysFalse : ButtonValidator
     public override bool IsButtonValid()
     {
         state = ButtonValidator_States.Invalid;
-        tooltip = "This feature is currently on cutting floor.";
         return false;
     }
 }

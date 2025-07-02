@@ -49,4 +49,6 @@ public class Masterlist_Items : MonoBehaviour
     {
         return FarmRecipe.Find(x => x.compHarvestible_UID == key);
     }
+
+    public static Item_Base GetByID(string id) { return Instance.Index.GetByID(id); }
 }

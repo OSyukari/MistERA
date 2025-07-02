@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
-
+/*
 [System.Serializable]
 public class Index_Sexperiences : I_IndexHasID, I_IndexMergeable
 {
     public List<Sexperience_Base> list = new List<Sexperience_Base>();
 
     Dictionary<string, Sexperience_Base> ID_Dictionary = new Dictionary<string, Sexperience_Base>();
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> messages)
     {
-        Debug.Log("Index_Sexperiences : registering ID with list length [" + list.Count +"]");
+        messages.Add("Index_Sexperiences : registering ID with list length [" + list.Count +"]");
 
         foreach (Sexperience_Base o in this.list)
         {
@@ -119,6 +119,7 @@ public class Sexperience_Base
 
 }
 
+
 [System.Serializable]
 public class Sexperience_Instance
 {
@@ -147,9 +148,9 @@ public class Sexperience_Instance
     {
         if (Base.hasGenderVariant)
         {
-            if (c.isFemale) return scr_System_Serializer.current.Dictionary.Query(Base.ID + "_DisplayName_Female");
-            else return scr_System_Serializer.current.Dictionary.Query(Base.ID + "_DisplayName_Male");
-        }else return scr_System_Serializer.current.Dictionary.Query(Base.ID + "_DisplayName");
+            if (c.isFemale) return LocalizeDictionary.QueryThenParse(Base.ID + "_DisplayName_Female");
+            else return LocalizeDictionary.QueryThenParse(Base.ID + "_DisplayName_Male");
+        }else return LocalizeDictionary.QueryThenParse(Base.ID + "_DisplayName");
     }
 
     public virtual bool Validate(Character_Trainable self, List<string> comTags, Character_Trainable target, bool isDoer)
@@ -161,10 +162,10 @@ public class Sexperience_Instance
     {
         if (Base.hasGenderVariant)
         {
-            if (c.isFemale) return scr_System_Serializer.current.Dictionary.Query(Base.ID + "_Climax_DisplayName_Female");
-            else return scr_System_Serializer.current.Dictionary.Query(Base.ID + "_Climax_DisplayName_Male");
+            if (c.isFemale) return LocalizeDictionary.QueryThenParse(Base.ID + "_Climax_DisplayName_Female");
+            else return LocalizeDictionary.QueryThenParse(Base.ID + "_Climax_DisplayName_Male");
         }
-        else return scr_System_Serializer.current.Dictionary.Query(Base.ID+ "_Climax_DisplayName");
+        else return LocalizeDictionary.QueryThenParse(Base.ID+ "_Climax_DisplayName");
     }
 
     public void Add(int value, bool isClimax)
@@ -187,14 +188,14 @@ public class Sexperience_Instance
 
         if (Base.hasGenderVariant)
         {
-            if (c.isFemale) return scr_System_Serializer.current.Dictionary.Query(Base.ID + "_RankDisplayName_Female");
-            else return scr_System_Serializer.current.Dictionary.Query(Base.ID + "_RankDisplayName_Male");
+            if (c.isFemale) return LocalizeDictionary.QueryThenParse(Base.ID + "_RankDisplayName_Female");
+            else return LocalizeDictionary.QueryThenParse(Base.ID + "_RankDisplayName_Male");
         }
-        else return scr_System_Serializer.current.Dictionary.Query(Base.ID + "_RankDisplayName");
+        else return LocalizeDictionary.QueryThenParse(Base.ID + "_RankDisplayName");
         
     }
 
-}
+}*/
 
 
 
@@ -203,6 +204,7 @@ public class ExperienceClass
 {
     public string ExperienceID = "";
     public string DisplayAmountString = "";
+    public List<string> tags = new List<string>();
     public bool CountTotal = false;
     public bool ApplyToDoer = true;
     public bool ApplyToReceiver = true;
@@ -213,7 +215,7 @@ public class ExperienceClass
 }
 
 [System.Serializable]
-public class Index_Experiences : I_IndexMergeable, I_IndexHasID
+public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_RemoveElemByTag
 {
     [SerializeField][JsonProperty] protected List<ExperienceClass> list = new List<ExperienceClass>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, ExperienceClass> _List;
@@ -229,9 +231,9 @@ public class Index_Experiences : I_IndexMergeable, I_IndexHasID
         }
     }
 
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> messages)
     {
-        Debug.Log("Registering Experiences with count " + list.Count);
+        messages.Add("Registering Experiences with count " + list.Count);
 
         var ids = new Dictionary<string, ExperienceClass>();
         foreach(var i in list) ids.Add(i.ExperienceID, i);
@@ -242,6 +244,11 @@ public class Index_Experiences : I_IndexMergeable, I_IndexHasID
     {
         if(_List.TryGetValue(id, out ExperienceClass result)) return result;
         return null;
+    }
+
+    public void RemoveElemByTag(string tag)
+    {
+        this.list.RemoveAll(x => x.tags.Contains(tag));
     }
 
 }

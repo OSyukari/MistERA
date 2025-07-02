@@ -55,12 +55,8 @@ public class BodyInternal_Instance
 
     public bool NotifySexExperience(string targetName, string comName, List<string> comtags, List<string> targetBodyTag)
     {
-        //if (date == "") date = scr_System_Time.current.getCurrentTime().ToLongTimeString();
-        //Owner.Memory.AddEntry_Custom(ownerTags, comtags, targetRef, false, null, Memory_Attitude.None, Memory_Response.None);
-       // Owner.Memory.AddEntry_COM(ownerTags, comtags, targetRef, comBase, variantID, false, description, response, attitude);
-        //var tempString = description + " Lost " + DisplayName + " virginity in " + com + " with " + targetName;
         this.lastExperience = Owner.Memory.Last.EndTime.Ticks;
-        this.lastExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName);
+        this.lastExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName);
 
         if (this.firstExperience != 0 || this.Base.firstExperienceDesc == "" || this.Base.virginityLossTags.Count < 1)
         {
@@ -71,14 +67,14 @@ public class BodyInternal_Instance
         {
             Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on targetBodytags {String.Join(" ", targetBodyTag)}");
             this.firstExperience = lastExperience;
-            this.firstExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            this.firstExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
             return true;
         }
         else if (Utility.ListContainsLoose(comtags, this.Base.virginityLossTags))
         {
             Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on comtags {String.Join(" ", comtags)}");
             this.firstExperience = lastExperience;
-            this.firstExpDesc = scr_System_Serializer.current.Dictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            this.firstExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
             return true;
         }
         else
@@ -94,7 +90,7 @@ public class BodyInternal_Instance
         if (Base.firstExperienceDesc == "") box.SetText("");    // this organ does not register first experience at all
 
 
-        if (firstExpDesc == "") box.SetText(scr_System_Serializer.current.Dictionary.QueryThenParse(Base.firstExperienceDesc)); 
+        if (firstExpDesc == "") box.SetText(LocalizeDictionary.QueryThenParse(Base.firstExperienceDesc)); 
         else box.SetText(firstExpDesc);
 
         if (FirstExperience != null) box.SetExternalTooltip(FirstExperience.ToString(false, true, true));
@@ -210,13 +206,13 @@ public class BodyInternal_Instance
         this.owner = c;
         this.ownerRefID = c.RefID;
     }
-    public void Initialize(string baseID, Character_Trainable c)
+    public bool Initialize(string baseID, Character_Trainable c)
     {
         this.baseID = baseID;
         ReEstablishParent(c);
 
         basePointer = scr_System_Serializer.current.GetByNameOrID_BodyInternal_Base(baseID);
-
+        if (basePointer == null) return false;
         this.experiences = new Sexperience();
 
         orifice_depth = basePointer.depthRatio == 0 ? 0 : Utility.RandVariation(Owner.Height, 0.1f) * basePointer.depthRatio;
@@ -231,6 +227,7 @@ public class BodyInternal_Instance
                 contentsIndex.Add(i.ToString()+"||"+j.ToString(), -1);
             }
         }
+        return true;
     }
 
     [JsonIgnore] public Ranking Rank_Depth

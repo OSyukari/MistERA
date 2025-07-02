@@ -23,7 +23,7 @@ public class ItemComponentTemplate_Craftable_Recipe
 
     string _displayname = "";
     [JsonIgnore] public string DisplayName { get { 
-            if (_displayname == "") _displayname = LocalizeDictionary.Instance.Index.QueryThenParse("tag_"+jobKeyword)+": "+ Masterlist_Items.Instance.Index.GetByID(outputItemBaseID).DisplayName + " x" + outputAmount;
+            if (_displayname == "") _displayname = LocalizeDictionary.QueryThenParse("tag_"+jobKeyword)+": "+ Masterlist_Items.Instance.Index.GetByID(outputItemBaseID).DisplayName + " x" + outputAmount;
             return _displayname;
         } }
 
@@ -42,7 +42,7 @@ public class ItemComponentTemplate_Craftable_Recipe
             {
                 var itemreqs = new List<string>();
                 foreach (var i in itemRequirements) itemreqs.Add(i.Print);
-                _tooltip = LocalizeDictionary.Instance.Index.QueryThenParse("ui_recipe_tooltip")
+                _tooltip = LocalizeDictionary.QueryThenParse("ui_recipe_tooltip")
                                         .Replace("$time$", workAmount.ToString())
                                         .Replace("$skillreqs$", "TODO")
                                         .Replace("$itemreqs$", itemreqs.Count > 0 ? String.Join(" ", itemreqs) : "none")

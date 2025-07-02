@@ -318,8 +318,9 @@ public class MemoryManager
     /// 
     public Memory_Entry AddEntry(MemInstance memInstance, List<string> selfTags, int duration = -1, bool mergeWithAll = false)
     {
-       // ClearCache();
+        // ClearCache();
 
+        if (memInstance.response == Memory_Response.None) Debug.LogError($"Logging Null response memory on {Owner.FirstName} about {memInstance.description}");
         var roomRef = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID).RefID;
         Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance, "", duration);
         entry.MergeWithAll = mergeWithAll;
@@ -343,7 +344,7 @@ public class MemoryManager
     /// <param name="ep"></param>
     /// <param name="duration"></param>
     /// <returns></returns>
-    public Memory_Entry AddEntry(EvaluationPackage ep, int duration = -1, bool mergeWithAll = false)
+    public Memory_Entry AddEntry(EvaluationPackage ep, int duration = -1, bool mergeWithAll = false, bool interrupted = false)
     {
 
 
@@ -385,7 +386,9 @@ public class MemoryManager
         var roomRef = ep == null || ep.Package == null ? -1 : ep.Package.RoomKey;
         var jobDesc = ep == null || ep.Package == null || ep.Package.job == null || !ep.job.MemoryEntrySoftMerge ? "" : ep.Package.job.GetJobDescription(Owner.RefID);
 
-        MemInstance memInstance = new MemInstance(targets, targetTags, ep.targetCOM == null ? "" : ep.targetCOM.ID, ep.VariantID, ep.Master == null ? -1 : ep.Master.RefID, isDoer, ep.Response, attitude, description);
+        MemInstance memInstance = new MemInstance(targets, targetTags, ep.targetCOM == null ? "" : ep.targetCOM.ID, ep.VariantID, ep.Master == null ? -1 : ep.Master.RefID, isDoer, interrupted ? Memory_Response.Interrupted : ep.Response, attitude, description);
+        if (memInstance.response == Memory_Response.None) Debug.LogError($"Logging Null response memory on {Owner.FirstName} about {memInstance.description}");
+
         Memory_Entry entry = new Memory_Entry(Owner, job, roomRef, selfTags, memInstance, jobDesc, memDuration);
         entry.StartTime = ep.Package.StartTime;
 

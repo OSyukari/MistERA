@@ -12,16 +12,16 @@ using Spine;
 using Spine.Unity;
 using UnityEditor;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using Cysharp.Threading.Tasks;
 using System.Text;
-
+using System.Threading.Tasks;
 
 
 [System.Serializable]
 public class scr_System_CentralControl_Serializable
 {
-    public UserPrefs UserPref;
+    public ContentSettings ContentSettings;
+    public DisplaySettings DisplaySettings;
     public DebugLogSettings DebugLogPref;
 }
 
@@ -41,6 +41,7 @@ public class DebugLogSettings
     public bool DLog_Memory = false;
     public bool DLog_JoinAP = false;
     public bool DLog_Relationships = false;
+    public bool DLog_APConflict = false;
     public bool DLog_Status = false;
     public bool DLog_Sex = false;
     public bool DLog_AP = false;
@@ -49,20 +50,52 @@ public class DebugLogSettings
 
 public class scr_System_CentralControl : MonoBehaviour
 {
+
+
+
     // Singleton
     public static scr_System_CentralControl current;
-    [SerializeField] protected UserPrefs prefsCache = null;
+    [SerializeField] protected ContentSettings _content = null;
     [SerializeField] protected DebugLogSettings _logPrefs = null;
     public DebugLogSettings LogPrefs { get
         {
             if(_logPrefs == null) _logPrefs = new DebugLogSettings();
             return _logPrefs;
         } }
-    public UserPrefs pref { get
+
+    private bool cachedSafeMode = false;
+    public bool _SafeMode = false;
+    [JsonIgnore]
+    public bool isSafeMode { get
         {
-            if (prefsCache == null) prefsCache = new UserPrefs();
-            return prefsCache;
+#if UNITY_EDITOR
+            return _SafeMode;
+#else
+            if (!cachedSafeMode)
+            {
+                cachedSafeMode = true;
+                var numbers = Application.version.Split('-');
+                _SafeMode = numbers[0].Contains(".s", StringComparison.InvariantCultureIgnoreCase);
+            }
+            return _SafeMode;
+#endif
+        }
+    }
+    public ContentSettings ContentSetting { get
+        {
+            if (isSafeMode) return null;
+            if (_content == null && !isSafeMode) _content = new ContentSettings();
+            return _content;
         } }
+
+    [SerializeField] protected DisplaySettings _display = null;
+    public DisplaySettings DisplaySetting { get
+        {
+            if (_display == null) _display = new DisplaySettings();
+            return (_display);
+        } }
+
+
     private void Awake()
     {
         if (current == null)
@@ -75,10 +108,7 @@ public class scr_System_CentralControl : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
-        //pref = new UserPrefs();
-        //Initialize();
-        // too early, other System script hasnt run yet
-        //Debug.Log("Persistent datat path: " + application.dataPath);
+
         string filePath = Application.dataPath + "/UserPrefs.json";
         FileInfo file = new System.IO.FileInfo(filePath);
         if (!File.Exists(filePath))
@@ -93,10 +123,30 @@ public class scr_System_CentralControl : MonoBehaviour
             scr_System_CentralControl_Serializable s = JsonConvert.DeserializeObject<scr_System_CentralControl_Serializable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
             LoadSerializable(s);
         }
-        
     }
 
-    public string Language { get { return "default"; } }
+    public bool DisplayNSFW { get { return !isSafeMode && ContentSetting.SexMode > Sex_Mode.disabled && ContentSetting.SexPresenceMode > Sex_Presence_Mode.minimal; } }
+
+
+   // public Material spineSkel_40, spineSkel_41, spineSkel_42;
+
+    public string Language { 
+
+        get { return DisplaySetting.Language; }
+        set
+        {
+            if (LocalizeDictionary.Instance.Index.Entries.ContainsKey(value))
+            {
+                DisplaySetting.Language = value;
+                LocalizeDictionary.Instance.Index.cachedLang = value;
+                scr_System_CentralControl.current.SaveUserPref();
+            }
+            else
+            {
+                Debug.LogError($"Error dictionary does not contain target language key {value}");
+            }
+        }
+    }
     public void SaveUserPref()
     {
         string filePath = Application.dataPath + "/UserPrefs.json";
@@ -113,50 +163,25 @@ public class scr_System_CentralControl : MonoBehaviour
     protected void LoadSerializable(scr_System_CentralControl_Serializable obj)
     {
         this._logPrefs = obj.DebugLogPref;
-        this.prefsCache = obj.UserPref;
+        this._content = obj.ContentSettings;
+        this._display = obj.DisplaySettings;
     }
 
     protected scr_System_CentralControl_Serializable GetSerializable()
     {
         var obj = new scr_System_CentralControl_Serializable();
-        obj.UserPref = pref;
+        obj.ContentSettings = ContentSetting == null ? _content : ContentSetting;
+        obj.DisplaySettings = DisplaySetting;
         obj.DebugLogPref = LogPrefs;
         return obj;
     }
 
-    public void LoadSpineJSON(string materialTexturePath, string atlasJSON_path, string skeletonJSON_path, out Texture2D spineLoader_Texture, out TextAsset spineLoader_atlasJSON, out TextAsset spineLoader_skeletonJSON)
-    {
-        spineLoader_atlasJSON = Resources.Load<TextAsset>(atlasJSON_path);
-        spineLoader_skeletonJSON = Resources.Load<TextAsset>(skeletonJSON_path);
-        spineLoader_Texture = LoadCachedTexture(materialTexturePath);
-        spineLoader_Texture.name = Path.GetFileNameWithoutExtension(materialTexturePath);
-    }
-
-    public TextAsset LoadResourcesTextAssets(string materialTexturePath)
-    {
-        return Resources.Load<TextAsset>( materialTexturePath);
-    }
-
-    /// <summary>
-    /// Get the Skeleton asset version.
-    /// </summary>
-    /// <param name="skelPath"></param>
-    /// <returns>Skeleton asset version.</returns>
-    public static string GetSkelVersion(string skelPath)
-    {
-        TextAsset ta = scr_System_CentralControl.current.LoadResourcesTextAssets(skelPath);
-        if (ta.text.Contains("4.0.")) return "4.0";
-        else if (ta.text.Contains("4.1.")) return "4.1";
-        else if (ta.text.Contains("4.2.")) return "4.2";
-        else return "";
-    }
-
     public SpineLoader spine40, spine41, spine42;
 
-    public SpineLoader GetSpineLoader(string skelPath)
+    public SpineLoader GetSpineLoader(string version)
     {
         //Debug.Log("Getting spine loader version " + GetSkelVersion(skelPath));
-        switch (GetSkelVersion(skelPath))
+        switch (version)
         {
             case "4.0": return Instantiate(spine40);
             case "4.1": return Instantiate(spine41);
@@ -170,14 +195,19 @@ public class scr_System_CentralControl : MonoBehaviour
     {
         scr_System_Time.current.Observer_globalTime_Hours += OnHourUpdate;
         scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate;
-        scr_System_SceneManager.current.Initialize();   // load menu_intro
 
     }
 
+    // Called by Serializer
+    public void NotifyLoadComplete()
+    {
+        LocalizeDictionary.Instance.Index.cachedLang = DisplaySetting.Language;
+        scr_System_SceneManager.current.Initialize();   // load menu_intro
+    }
 
     private void OnDayUpdate(int dt)
     {
-        // if loaded texture count less than 30 then dont do anything
+        // if loaded texture count less than 30 then dont do 100
         var order = textureUseCounter.OrderByDescending(x => x.Value).ToList();
         if (order.Count >= 30 && order[order.Count - 1].Value < 0)
         {
@@ -202,115 +232,31 @@ public class scr_System_CentralControl : MonoBehaviour
 
     public int PortraitCacheHour = 48;
 
-    protected void AddSpriteCache(string path)
+    public Sprite GetSprite(Texture2D tex)
     {
-        //Debug.Log("AddSpriteCache " + path);
-        AddTextureCache(path);
-        if (!Sprites.ContainsKey(path)) Sprites.Add(path, LoadSprite(SpriteTextures[path]));
+        if (!this.texSprites.ContainsKey(tex)) this.texSprites.Add(tex, Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 100.0f));
+        this.textureUseCounter[tex] = PortraitCacheHour;
+        return texSprites[tex];
     }
-    protected void AddTextureCache(string path)
-    {
-        //Debug.Log("AddTextureCache " + path);
-        if (!textureUseCounter.ContainsKey(path)) textureUseCounter.Add(path, PortraitCacheHour);
-        if (!SpriteTextures.ContainsKey(path)) SpriteTextures.Add(path, LoadTexture(path));
-    }
+
 
     public Character_Trainable LoadCharaData(string path)
     {
         var chara = JsonConvert.DeserializeObject<Character_Trainable>(File.ReadAllText(path), Utility.SerializerSettings);
-        if(chara != null) chara.FileLocation = path;
+        if (chara != null && chara.BaseID == "") chara.BaseID = path;
         return chara;
     }
 
-    protected void UnloadTextureCache(string path)
+    protected void UnloadTextureCache(Texture2D path)
     {
-        Debug.Log("UnloadTextureCache " + path);
-
-        if (Sprites.ContainsKey(path))
-        {
-            Sprite spr = Sprites[path];
-            Sprites.Remove(path);
-            Destroy(spr);
-        }  
-
-        if (SpriteTextures.ContainsKey(path))
-        {
-            Texture2D tex = SpriteTextures[path];
-            SpriteTextures.Remove(path);
-            Destroy(tex);
-        }
-
+        if (texSprites.ContainsKey(path)) texSprites.Remove(path);
         if (textureUseCounter.ContainsKey(path)) textureUseCounter.Remove(path);
     }
 
-    Dictionary<string, int> textureUseCounter = new Dictionary<string, int>();
-    Dictionary<string, Texture2D> SpriteTextures = new Dictionary<string, Texture2D>();
-    Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
-
-    private Sprite LoadSprite(Texture2D tex)
-    {
-        return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 100.0f);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="path">Application.dataPath+"/" WILL BE PREPEND TO PATH PARAM WHEN LOADING TEXTURE FILE</param>
-    /// <returns></returns>
-    public Sprite LoadCachedSprite(string path)
-    {
-        if (path == null || path.Length < 1) return SpriteAsset.transparent;
-
-        if (!Sprites.ContainsKey(path)) AddSpriteCache(path);
-
-        textureUseCounter[path] = PortraitCacheHour;
-        return Sprites[path];
-        
-    }
-
-    public Texture2D LoadCachedTexture(string path)
-    {
-        if (path == null || path.Length < 1) return Texture2D.whiteTexture;
-
-        if (!SpriteTextures.ContainsKey(path)) AddTextureCache(path);
-
-        textureUseCounter[path] = PortraitCacheHour;
-        return SpriteTextures[path];
-
-    }
-
-
-
-    private Texture2D LoadTexture(string FilePath)
-    {
-
-        // Load a PNG or JPG file from disk to a Texture2D
-        // Returns null if load fails
-
-        Texture2D Tex2D;
-        byte[] FileData;
-
-        var tex = Resources.Load<Texture2D>(FilePath);
-        if (tex != null)
-        {
-            //Debug.Log("Loaded Resource texture " + FilePath);
-            return tex;
-        }
-        else if (File.Exists(Application.dataPath + "/" + FilePath))
-        {
-            //Debug.Log("Loaded new texture " + Application.dataPath + "/" + FilePath);
-            FileData = File.ReadAllBytes(Application.dataPath + "/" + FilePath);
-            Tex2D = new Texture2D(2, 2);           // Create new "empty" texture
-            if (Tex2D.LoadImage(FileData))           // Load the imagedata into the texture (size is set automatically)
-                return Tex2D;                 // If data = readable -> return texture
-        }
-
-        Debug.Log("Loaded texture failed " + FilePath);
-        return null;                     // Return null if load failed
-        
-
-
-    }
+    Dictionary<Texture2D, int> textureUseCounter = new Dictionary<Texture2D, int>();
+    //Dictionary<string, Texture2D> SpriteTextures = new Dictionary<string, Texture2D>();
+    //Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
+    Dictionary<Texture2D, Sprite> texSprites = new Dictionary<Texture2D, Sprite>();
 
     private void Initialize()
     {
@@ -319,14 +265,14 @@ public class scr_System_CentralControl : MonoBehaviour
     }
 
 
-    public Color32 Color_neutral { get { return pref.TextColor_neutral; } }
-    public Color32 Color_hover { get { return pref.TextColor_hover; } }
+    public Color32 Color_neutral { get { return DisplaySetting.TextColor_neutral.Color; } }
+    public Color32 Color_hover { get { return DisplaySetting.TextColor_hover.Color; } }
 
     public bool adult
     {
         get
         {
-            if (pref.adultContent) return true;
+            if (!isSafeMode && ContentSetting.adultContent) return true;
             else return false;
         }
     }
@@ -335,7 +281,7 @@ public class scr_System_CentralControl : MonoBehaviour
     {
         get
         {
-            if (pref.adultContent) return true;
+            if (!isSafeMode && ContentSetting.adultContent) return true;
             else return false;
         }
     }
@@ -349,8 +295,8 @@ public class scr_System_CentralControl : MonoBehaviour
     {
         get
         {
-            if (!pref.adultContent) return XRay_Mode.disabled;
-            else return pref.adultContent_xray;
+            if (isSafeMode || !ContentSetting.adultContent) return XRay_Mode.disabled;
+            else return ContentSetting.adultContent_xray;
         }
     }
 
@@ -363,66 +309,75 @@ public class scr_System_CentralControl : MonoBehaviour
 
     public bool isMale(Character_Trainable c)
     {
+        if (isSafeMode) return c.Appearance == Humanoid_GenderAppearance.Male;
         if (c.Body == null) return false;
+
         bool hasP = c.Body.HasBodyTag("penis");
         bool hasV = c.Body.HasBodyTag("vagina");
 
-        bool cond1 = (pref.Male_Appearance == Gender_App_Condition.male_only && c.Appearance == Humanoid_GenderAppearance.Male)
-    || (pref.Male_Appearance == Gender_App_Condition.male_or_ambi && c.Appearance != Humanoid_GenderAppearance.Female)
-    || (pref.Male_Appearance == Gender_App_Condition.dont_care);
-        bool cond2 = (pref.Male_Penis == Gender_Condition.require && hasP)
-            || (pref.Male_Penis == Gender_Condition.forbid && !hasP)
-            || (pref.Male_Penis == Gender_Condition.dont_care);
-        bool cond3 = (pref.Male_Vagina == Gender_Condition.require && hasV)
-            || (pref.Male_Vagina == Gender_Condition.forbid && !hasV)
-            || (pref.Male_Vagina == Gender_Condition.dont_care);
+        bool cond1 = (ContentSetting.Male_Appearance == Gender_App_Condition.male_only && c.Appearance == Humanoid_GenderAppearance.Male)
+    || (ContentSetting.Male_Appearance == Gender_App_Condition.male_or_ambi && c.Appearance != Humanoid_GenderAppearance.Female)
+    || (ContentSetting.Male_Appearance == Gender_App_Condition.dont_care);
+        bool cond2 = (ContentSetting.Male_Penis == Gender_Condition.require && hasP)
+            || (ContentSetting.Male_Penis == Gender_Condition.forbid && !hasP)
+            || (ContentSetting.Male_Penis == Gender_Condition.dont_care);
+        bool cond3 = (ContentSetting.Male_Vagina == Gender_Condition.require && hasV)
+            || (ContentSetting.Male_Vagina == Gender_Condition.forbid && !hasV)
+            || (ContentSetting.Male_Vagina == Gender_Condition.dont_care);
         return cond1 && cond2 & cond3;
     }
 
-    public bool isMale(Character_Trainable.CharaTemplate c)
+    public bool isMale(CharaTemplate c)
     {
-        bool cond1 = (pref.Male_Appearance == Gender_App_Condition.male_only && c.Appearance == Humanoid_GenderAppearance.Male)
-    || (pref.Male_Appearance == Gender_App_Condition.male_or_ambi && c.Appearance != Humanoid_GenderAppearance.Female)
-    || (pref.Male_Appearance == Gender_App_Condition.dont_care);
-        bool cond2 = (pref.Male_Penis == Gender_Condition.require && c.Size_P.ID != "trait_Size_P_none")
-            || (pref.Male_Penis == Gender_Condition.forbid && c.Size_P.ID == "trait_Size_P_none")
-            || (pref.Male_Penis == Gender_Condition.dont_care);
-        bool cond3 = (pref.Male_Vagina == Gender_Condition.require && c.Size_V.ID != "trait_Size_V_none")
-            || (pref.Male_Vagina == Gender_Condition.forbid && c.Size_V.ID == "trait_Size_V_none")
-            || (pref.Male_Vagina == Gender_Condition.dont_care);
+        if (isSafeMode) return false;
+
+        bool cond1 = (ContentSetting.Male_Appearance == Gender_App_Condition.male_only && c.Appearance == Humanoid_GenderAppearance.Male)
+    || (ContentSetting.Male_Appearance == Gender_App_Condition.male_or_ambi && c.Appearance != Humanoid_GenderAppearance.Female)
+    || (ContentSetting.Male_Appearance == Gender_App_Condition.dont_care);
+        bool cond2 = (ContentSetting.Male_Penis == Gender_Condition.require && c.isMale)
+            || (ContentSetting.Male_Penis == Gender_Condition.forbid && !c.isMale)
+            || (ContentSetting.Male_Penis == Gender_Condition.dont_care);
+        bool cond3 = (ContentSetting.Male_Vagina == Gender_Condition.require && c.isFemale)
+            || (ContentSetting.Male_Vagina == Gender_Condition.forbid && !c.isFemale)
+            || (ContentSetting.Male_Vagina == Gender_Condition.dont_care);
         return cond1 && cond2 & cond3;
     }
 
     public bool isFemale(Character_Trainable c)
     {
+        if (isSafeMode) return c.Appearance == Humanoid_GenderAppearance.Female;
+
         if (c.Body == null) return false;
         bool hasP = c.Body.HasBodyTag("penis");
         bool hasV = c.Body.HasBodyTag("vagina");
 
-        bool cond1 = (pref.Female_Appearance == Gender_App_Condition.female_only && c.Appearance == Humanoid_GenderAppearance.Female)
-    || (pref.Female_Appearance == Gender_App_Condition.female_or_ambi && c.Appearance != Humanoid_GenderAppearance.Male)
-    || (pref.Female_Appearance == Gender_App_Condition.dont_care);
-        bool cond2 = (pref.Female_Penis == Gender_Condition.require && hasP)
-            || (pref.Female_Penis == Gender_Condition.forbid && !hasP)
-            || (pref.Female_Penis == Gender_Condition.dont_care);
-        bool cond3 = (pref.Female_Vagina == Gender_Condition.require && hasV)
-            || (pref.Female_Vagina == Gender_Condition.forbid && !hasV)
-            || (pref.Female_Vagina == Gender_Condition.dont_care);
+        bool cond1 = (ContentSetting.Female_Appearance == Gender_App_Condition.female_only && c.Appearance == Humanoid_GenderAppearance.Female)
+    || (ContentSetting.Female_Appearance == Gender_App_Condition.female_or_ambi && c.Appearance != Humanoid_GenderAppearance.Male)
+    || (ContentSetting.Female_Appearance == Gender_App_Condition.dont_care);
+        bool cond2 = (ContentSetting.Female_Penis == Gender_Condition.require && hasP)
+            || (ContentSetting.Female_Penis == Gender_Condition.forbid && !hasP)
+            || (ContentSetting.Female_Penis == Gender_Condition.dont_care);
+        bool cond3 = (ContentSetting.Female_Vagina == Gender_Condition.require && hasV)
+            || (ContentSetting.Female_Vagina == Gender_Condition.forbid && !hasV)
+            || (ContentSetting.Female_Vagina == Gender_Condition.dont_care);
         return cond1 && cond2 & cond3;
     }
 
 
-    public bool isFemale(Character_Trainable.CharaTemplate c)
+    public bool isFemale(CharaTemplate c)
     {
-        bool cond1 = (pref.Female_Appearance == Gender_App_Condition.female_only && c.Appearance == Humanoid_GenderAppearance.Female)
-    || (pref.Female_Appearance == Gender_App_Condition.female_or_ambi && c.Appearance != Humanoid_GenderAppearance.Male)
-    || (pref.Female_Appearance == Gender_App_Condition.dont_care);
-        bool cond2 = (pref.Female_Penis == Gender_Condition.require && c.Size_P.ID != "trait_Size_P_none")
-            || (pref.Female_Penis == Gender_Condition.forbid && c.Size_P.ID == "trait_Size_P_none")
-            || (pref.Female_Penis == Gender_Condition.dont_care);
-        bool cond3 = (pref.Female_Vagina == Gender_Condition.require && c.Size_V.ID != "trait_Size_V_none")
-            || (pref.Female_Vagina == Gender_Condition.forbid && c.Size_V.ID == "trait_Size_V_none")
-            || (pref.Female_Vagina == Gender_Condition.dont_care);
+        if (isSafeMode) return false;
+        // template calls should never be executed when safemode -> this whole menu shouldnt show at all
+
+        bool cond1 = (ContentSetting.Female_Appearance == Gender_App_Condition.female_only && c.Appearance == Humanoid_GenderAppearance.Female)
+    || (ContentSetting.Female_Appearance == Gender_App_Condition.female_or_ambi && c.Appearance != Humanoid_GenderAppearance.Male)
+    || (ContentSetting.Female_Appearance == Gender_App_Condition.dont_care);
+        bool cond2 = (ContentSetting.Female_Penis == Gender_Condition.require && c.isMale)
+            || (ContentSetting.Female_Penis == Gender_Condition.forbid && !c.isMale)
+            || (ContentSetting.Female_Penis == Gender_Condition.dont_care);
+        bool cond3 = (ContentSetting.Female_Vagina == Gender_Condition.require && c.isFemale)
+            || (ContentSetting.Female_Vagina == Gender_Condition.forbid && !c.isFemale)
+            || (ContentSetting.Female_Vagina == Gender_Condition.dont_care);
         return cond1 && cond2 & cond3;
     }
 
@@ -437,6 +392,8 @@ public class scr_System_CentralControl : MonoBehaviour
     public List<string> allusedConsoleCommands = new List<string>();
     public InteractionGenderType GetGenderSimple(Character_Trainable c)
     {
+        if (scr_System_CentralControl.current.isSafeMode) return InteractionGenderType.none;
+
         List<InteractionGenderType> complexResult = GetGender(c);
         if (complexResult.Contains(InteractionGenderType.male)) return InteractionGenderType.male;
         else if (complexResult.Contains(InteractionGenderType.female)) return InteractionGenderType.female;
@@ -445,9 +402,11 @@ public class scr_System_CentralControl : MonoBehaviour
 
     public List<InteractionGenderType> GetGender(Character_Trainable c)
     {
+        if (scr_System_CentralControl.current.isSafeMode) return new List<InteractionGenderType>();
+
         var result = new List<InteractionGenderType>();
 
-        if (scr_System_CentralControl.current.pref.GenderPriority == Gender_Priority.female_first)
+        if (scr_System_CentralControl.current.ContentSetting.GenderPriority == Gender_Priority.female_first)
         {
             if (isFemale(c)) result.Add( InteractionGenderType.female);
             else if (isMale(c)) result.Add(InteractionGenderType.male);
@@ -469,9 +428,11 @@ public class scr_System_CentralControl : MonoBehaviour
         return result;
     }
 
-    public InteractionGenderType GetGenderSimple(Character_Trainable.CharaTemplate c)
+    public InteractionGenderType GetGenderSimple(CharaTemplate c)
     {
-        if (scr_System_CentralControl.current.pref.GenderPriority == Gender_Priority.female_first)
+        if (scr_System_CentralControl.current.isSafeMode) return InteractionGenderType.none;
+
+        if (scr_System_CentralControl.current.ContentSetting.GenderPriority == Gender_Priority.female_first)
         {
             if (isFemale(c)) return InteractionGenderType.female;
             else if (isMale(c)) return InteractionGenderType.male;
@@ -520,35 +481,35 @@ public class scr_System_CentralControl : MonoBehaviour
 
         if (doerGender == InteractionGenderType.animal)
         {
-            if (receiverGender == InteractionGenderType.male) value = scr_System_CentralControl.current.pref.creature_on_male.value;
-            else if (receiverGender == InteractionGenderType.female) value = scr_System_CentralControl.current.pref.creature_on_female.value;
-            else if (receiverGender == InteractionGenderType.ambi) value = scr_System_CentralControl.current.pref.creature_on_ambi.value;
-            else if (receiverGender == InteractionGenderType.animal) value = scr_System_CentralControl.current.pref.creature_on_creature.value;
-            else if (receiverGender == InteractionGenderType.corpse) value = scr_System_CentralControl.current.pref.creature_on_necro.value;
+            if (receiverGender == InteractionGenderType.male) value = scr_System_CentralControl.current.ContentSetting.creature_on_male.value;
+            else if (receiverGender == InteractionGenderType.female) value = scr_System_CentralControl.current.ContentSetting.creature_on_female.value;
+            else if (receiverGender == InteractionGenderType.ambi) value = scr_System_CentralControl.current.ContentSetting.creature_on_ambi.value;
+            else if (receiverGender == InteractionGenderType.animal) value = scr_System_CentralControl.current.ContentSetting.creature_on_creature.value;
+            else if (receiverGender == InteractionGenderType.corpse) value = scr_System_CentralControl.current.ContentSetting.creature_on_necro.value;
         }
         else if (doerGender == InteractionGenderType.male)
         {
-            if (receiverGender == InteractionGenderType.male) value = scr_System_CentralControl.current.pref.male_on_male.value;
-            else if (receiverGender == InteractionGenderType.female) value = scr_System_CentralControl.current.pref.male_on_female.value;
-            else if (receiverGender == InteractionGenderType.ambi) value = scr_System_CentralControl.current.pref.male_on_ambi.value;
-            else if (receiverGender == InteractionGenderType.animal) value = scr_System_CentralControl.current.pref.male_on_creature.value;
-            else if (receiverGender == InteractionGenderType.corpse) value = scr_System_CentralControl.current.pref.male_on_necro.value;
+            if (receiverGender == InteractionGenderType.male) value = scr_System_CentralControl.current.ContentSetting.male_on_male.value;
+            else if (receiverGender == InteractionGenderType.female) value = scr_System_CentralControl.current.ContentSetting.male_on_female.value;
+            else if (receiverGender == InteractionGenderType.ambi) value = scr_System_CentralControl.current.ContentSetting.male_on_ambi.value;
+            else if (receiverGender == InteractionGenderType.animal) value = scr_System_CentralControl.current.ContentSetting.male_on_creature.value;
+            else if (receiverGender == InteractionGenderType.corpse) value = scr_System_CentralControl.current.ContentSetting.male_on_necro.value;
         }
         else if (doerGender == InteractionGenderType.female)
         {
-            if (receiverGender == InteractionGenderType.male) value = scr_System_CentralControl.current.pref.female_on_male.value;
-            else if (receiverGender == InteractionGenderType.female)  value = scr_System_CentralControl.current.pref.female_on_female.value;
-            else if (receiverGender == InteractionGenderType.ambi) value = scr_System_CentralControl.current.pref.female_on_ambi.value;
-            else if (receiverGender == InteractionGenderType.animal) value = scr_System_CentralControl.current.pref.female_on_creature.value;
-            else if (receiverGender == InteractionGenderType.corpse) value = scr_System_CentralControl.current.pref.female_on_necro.value;
+            if (receiverGender == InteractionGenderType.male) value = scr_System_CentralControl.current.ContentSetting.female_on_male.value;
+            else if (receiverGender == InteractionGenderType.female)  value = scr_System_CentralControl.current.ContentSetting.female_on_female.value;
+            else if (receiverGender == InteractionGenderType.ambi) value = scr_System_CentralControl.current.ContentSetting.female_on_ambi.value;
+            else if (receiverGender == InteractionGenderType.animal) value = scr_System_CentralControl.current.ContentSetting.female_on_creature.value;
+            else if (receiverGender == InteractionGenderType.corpse) value = scr_System_CentralControl.current.ContentSetting.female_on_necro.value;
         }
         else if (doerGender == InteractionGenderType.ambi)
         {
-            if (receiverGender == InteractionGenderType.male)  value = scr_System_CentralControl.current.pref.ambi_on_male.value;
-            else if (receiverGender == InteractionGenderType.female) value = scr_System_CentralControl.current.pref.ambi_on_female.value;
-            else if (receiverGender == InteractionGenderType.ambi) value = scr_System_CentralControl.current.pref.ambi_on_ambi.value;
-            else if (receiverGender == InteractionGenderType.animal) value = scr_System_CentralControl.current.pref.ambi_on_creature.value;
-            else if (receiverGender == InteractionGenderType.corpse) value = scr_System_CentralControl.current.pref.ambi_on_necro.value;
+            if (receiverGender == InteractionGenderType.male)  value = scr_System_CentralControl.current.ContentSetting.ambi_on_male.value;
+            else if (receiverGender == InteractionGenderType.female) value = scr_System_CentralControl.current.ContentSetting.ambi_on_female.value;
+            else if (receiverGender == InteractionGenderType.ambi) value = scr_System_CentralControl.current.ContentSetting.ambi_on_ambi.value;
+            else if (receiverGender == InteractionGenderType.animal) value = scr_System_CentralControl.current.ContentSetting.ambi_on_creature.value;
+            else if (receiverGender == InteractionGenderType.corpse) value = scr_System_CentralControl.current.ContentSetting.ambi_on_necro.value;
         }
 
         return value;
@@ -585,7 +546,7 @@ public class scr_System_CentralControl : MonoBehaviour
         var save = new SaveFile(true);
         string s = JsonConvert.SerializeObject(save, Formatting.Indented, Utility.SerializerSettings);
 
-        FileInfo file = new System.IO.FileInfo(Utility.GetSavePath_Save() + fileName + ".json");
+        FileInfo file = new System.IO.FileInfo($"{scr_System_Serializer.SavePath}/{fileName}.json");
         file.Directory.Create();
         File.WriteAllText(file.FullName, s);
 
@@ -635,7 +596,9 @@ public class SaveFileHolder
 public class SaveFile
 {
     public string Version;
+    public string Language;
     public string SaveDescription;
+    public bool SafeMode;
     public scr_System_Time_Serializable Time;
     public scr_System_CampaignManager_Serializable Campaign;
     public Index_RelationshipTypes RelationshipTypes = null;
@@ -649,13 +612,15 @@ public class SaveFile
         this.Time = scr_System_Time.current.GetSerializable();
         this.Campaign = scr_System_CampaignManager.current.GetSerializable();
         this.Version = Application.version;
-        this.SaveDescription = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_load_fileDescription")
+        this.Language = LocalizeDictionary.Instance.Index.cachedLang;
+        this.SaveDescription = LocalizeDictionary.QueryThenParse("ui_load_fileDescription")
                 .Replace("$days$", Time.ElapesedTime.Days.ToString())
                 .Replace("$hours$", Time.currentDate.TimeOfDay.Hours.ToString("D2"))
                 .Replace("$minutes$", Time.currentDate.TimeOfDay.Minutes.ToString("D2"))
                 .Replace("$playerName$", scr_System_CampaignManager.current.Player.FullName)
                 .Replace("$floor$", playerFloor.displayName)
                 .Replace("$room$", playerRoom.DisplayName);
+        this.SafeMode = scr_System_CentralControl.current.isSafeMode;
     }
     public void LoadSave()
     {   // external call to updatehandler notifySL
@@ -665,28 +630,32 @@ public class SaveFile
 
 }
 
-
 [System.Serializable]
-public class UserPrefs{
+public class DisplaySettings
+{
+
+    public string Language = "zh-cn";
+    public ColorSetting BackgroundColor_Opaque = new ColorSetting(49, 77, 121, 255);
+    public ColorSetting BackgroundColor_Transparent = new ColorSetting(0, 0, 0, 174);
+
+    public ColorSetting TextColor_neutral = new ColorSetting(255, 255, 255, 255);
+    public ColorSetting TextColor_hover = new ColorSetting(255, 235, 4, 255);
+    public ColorSetting TextColor_toggle = new ColorSetting(0, 255, 255, 255);
+    public ColorSetting TextColor_disabled = new ColorSetting(128, 128, 128, 255);
+    public ColorSetting TextColor_conflict = new ColorSetting(255, 0, 0, 255);
+    public ColorSetting TextColor_maxed = new ColorSetting(120, 0, 128, 255);
+
+    [NonSerialized][JsonIgnore] public Color32 TextColor_transparent = new Color32(0, 0, 0, 0);
 
     public int MaxLogCount = 50;
     public int ClickDragForgiveness = 100;
 
-    //public bool verboseLogging = true;
+    public BoolSetting displayPlayerPortraitInLogs = new BoolSetting(true, "displayPlayerPortraitInLogs");
+}
 
-    public Color32 BackgroundColor_Opaque = new Color32(49,77,121,255);
-    public Color32 BackgroundColor_Transparent = new Color32(0, 0, 0, 174);
-
-    public Color32 TextColor_neutral = new Color32(255, 255, 255, 255);
-    public Color32 TextColor_hover = new Color32(255, 235, 4, 255);
-    public Color32 TextColor_toggle = new Color32(0, 255, 255, 255);
-    public Color32 TextColor_disabled = new Color32(128,128,128, 255);
-    public Color32 TextColor_conflict = new Color32(255, 0, 0, 255);
-    public string HexColor_conflict = $"#{255:X2}{0:X2}{0:X2}{255:X2}";
-    public Color32 TextColor_maxed = new Color32(120, 0, 128, 255);
-
-    public Color32 TextColor_transparent = new Color32(0, 0, 0, 0);
-
+[System.Serializable]
+public class ContentSettings
+{
 
     public EnumSetting sex_mode = new EnumSetting((int)Sex_Mode.enabled, typeof(Sex_Mode));
     [JsonIgnore] public Sex_Mode SexMode { get { return (Sex_Mode)sex_mode.enumValue; } }
@@ -762,8 +731,58 @@ public class UserPrefs{
     public EnumSetting _adultContent_xray = new EnumSetting((int)XRay_Mode.widget_first, typeof(XRay_Mode));
     [JsonIgnore] public XRay_Mode adultContent_xray { get { return (XRay_Mode)_adultContent_xray.enumValue; } }
 
-    public BoolSetting displayPlayerPortraitInLogs =  new BoolSetting( true, "displayPlayerPortraitInLogs"); 
 }
+
+
+[System.Serializable]
+public class ColorSetting
+{
+    public byte r, g, b, a;
+    public ColorSetting(byte r, byte g, byte b, byte a)
+    {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
+
+    public void SetColor(float r, float g, float b, float a)
+    {
+        this.r = Convert.ToByte((int)r);
+        this.g = Convert.ToByte((int)g);
+        this.b = Convert.ToByte((int)b);
+        this.a = Convert.ToByte((int)a);
+        initialized = false;
+    }
+
+    bool initialized = false;
+    Color32 _cache = new Color32();
+    [JsonIgnore] public Color32 Color { get
+        {
+            if (!initialized)
+            {
+                initialized = true;
+                _cache = new Color32(r, g, b, a);
+            }
+            return _cache;
+        }
+        set
+        {
+            this.r = value.r;
+            this.g = value.g;
+            this.b = value.b;
+            this.a = value.a;
+            initialized = false;
+        }
+    }
+
+    [JsonIgnore] public string Hex { get
+        {
+            return $"#{r:X2}{g:X2}{b:X2}{a:X2}";
+} }
+}
+
+
 
 [System.Serializable]
 public class BoolSetting
@@ -843,7 +862,8 @@ public enum InteractionGenderType
 public enum ViewMode
 {
     View_Logs,
-    View_Room
+    View_Room,
+    View_Combat
     //View_Map
 }
 
@@ -955,7 +975,7 @@ public static class DataPath
 
     
 }
-
+/*
 public static class XraySpritePath
 {
     public static string widget_ass0 = "/Images/SSE_iWant_SLWidget/apropos2/ass0.png";
@@ -1076,7 +1096,7 @@ public static class XraySprite
         return null;                     // Return null if load failed
 
     }
-}
+}*/
 
 public static class SpriteAsset
 {

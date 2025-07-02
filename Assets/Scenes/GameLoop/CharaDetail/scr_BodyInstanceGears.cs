@@ -13,7 +13,7 @@ public class scr_BodyInstanceGears : MonoBehaviour
     public RectTransform Instantiate(string s)
     {
         //bodyInstance.text = s;
-        self_backgroundImage.color = scr_System_CentralControl.current.pref.BackgroundColor_Transparent;
+        self_backgroundImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
         return this.gearTab;
     }
 }

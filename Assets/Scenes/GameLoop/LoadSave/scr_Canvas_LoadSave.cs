@@ -62,9 +62,9 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
     protected void BuildSaveButtons()
     {
 
-        if (Directory.Exists(Utility.GetSavePath_Save()))
+        if (Directory.Exists(scr_System_Serializer.SavePath))
         {
-            DirectoryInfo d = new DirectoryInfo(Utility.GetSavePath_Save());
+            DirectoryInfo d = new DirectoryInfo(scr_System_Serializer.SavePath);
             foreach (var file in d.GetFiles("*.json"))
             {
                 BuildSingleButton(file);
@@ -158,8 +158,18 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
                 text.gameObject.SetActive(false);
                 return false;
             }
+            else if (!scr_UpdateHandler.current.CanLoadSave(s))
+            {
+                tooltip = "savefile cannot be loaded due to missing data, or version mismatch";
+                return false;
+            }
             else
             {
+                if (LocalizeDictionary.Instance.Index.cachedLang == s.InnerFile.Language)
+                {
+                    tooltip = Utility.WrapTextColor("savefile is in another language, unforseen errors might occur", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
+                    
+                }
                 return true;
             }
         }

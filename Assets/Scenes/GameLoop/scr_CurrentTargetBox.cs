@@ -49,7 +49,7 @@ public class scr_CurrentTargetBox : MonoBehaviour, IPointerEnterHandler, IPointe
         chara = scr_System_CampaignManager.current.FindInstanceByID(chara_refID) as Character_Trainable;
         if (chara != null)
         {
-            if (scr_System_CentralControl.current.pref.icon_display == Icon_Display_Mode.Picture)
+            if (scr_System_CentralControl.current.ContentSetting.icon_display == Icon_Display_Mode.Picture)
             {
                 if (chara.portraitPath != "" && chara.defaultIcon != "") Initialize("", chara.portraitPath + chara.defaultIcon);
                 else Initialize("", DataPath.icon_default);
@@ -89,13 +89,6 @@ public class scr_CurrentTargetBox : MonoBehaviour, IPointerEnterHandler, IPointe
 
     }
 
-
-    private void loadSprite(string path, Image image)
-    {
-        Texture2D SpriteTexture = LoadTexture(Application.dataPath + "/" + path);
-        Sprite NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), 100.0f);
-        image.sprite = NewSprite;
-    }
 
 
     private void Initialize(string target, string targetAlt = "")

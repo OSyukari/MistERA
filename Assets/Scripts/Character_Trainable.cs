@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.IO;
 using System.Collections;
+using System.Linq;
 
 public enum Humanoid_GenderAppearance
 {
@@ -20,53 +21,7 @@ public enum Character_BodyType
     CBBE_3BA
 }
 
-[System.Serializable]
-public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable
-{
-    public List<Character_Trainable_SerializableTemplate> list = new List<Character_Trainable_SerializableTemplate>();
 
-    public void MergeWith(I_IndexMergeable list)
-    {
-        var l = list as Character_Trainable_SerializableTemplate_Index;
-        if (l == null) return;
-        else if (l.list == null) return;
-        else
-        {
-            this.list.AddRange(l.list);
-        }
-    }
-
-    public Character_Trainable.CharaTemplate GetByCharaFilePath(string path)
-    {
-        var findresult = this.list.Find(x => x.FileLocation == path);
-        if (findresult != null) return findresult.Template;
-        else
-        {   // try re-serialize from filepath, mainly for player chara where they're serialized via preset system and not chara system
-            if (!File.Exists(path)) 
-            {
-                return null;
-            }
-            Character_Trainable_SerializableTemplate template = JsonConvert.DeserializeObject<Character_Trainable_SerializableTemplate>(File.ReadAllText(path), Utility.SerializerSettings);
-            if(template == null) return null;
-            this.list.Add(template);
-            return template.Template;
-
-        }
-    }
-    public Character_Trainable.CharaTemplate GetByCharaBaseID(string baseID)
-    {
-        var findresult = this.list.Find(x => x.baseID == baseID);
-        return findresult == null ? null : findresult.Template;
-    }
-}
-
-[System.Serializable]
-public class Character_Trainable_SerializableTemplate
-{
-    public string FileLocation = "";
-    public string baseID = "";
-    public Character_Trainable.CharaTemplate Template = null;
-}
 
 
 
@@ -176,7 +131,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     /// <summary>
     /// This field is empty in chara data, if chara data is re-deserealized then this field need to be manually copied
     /// </summary>
-    public string FileLocation = "";
     [SerializeField][JsonProperty] protected string baseID = "";
     [JsonIgnore] public string BaseID { get { return baseID; } set { this.baseID = value; } }
     [SerializeField][JsonProperty] protected int referenceID = -1;
@@ -195,6 +149,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public void InitializeWithRefID(int refID)
     {
+        
         this.referenceID = refID;
 
         this.Appearance = Template.Appearance;
@@ -318,7 +273,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     private void PostUpdateTime2()
     {
-        this.Body.CheckClimax();
+        if (!scr_System_CentralControl.current.isSafeMode) this.Body.CheckClimax();
     }
 
     private void PostUpdateTime3()
@@ -424,30 +379,51 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
     }
 
-    protected CharaTemplate _template = null;
+    protected CharaSafeTemplate _templateS = null;
+    protected CharaTrainableTemplate _template = null;
     [JsonIgnore] public CharaTemplate Template
     { get {
-            if(_template == null)
+            if(_template == null && _templateS == null)
             {
                 //Debug.Log("Fetching Template data |" + this.BaseID + "|" + this.FileLocation+"|");
-                if(this.BaseID != "" && this.BaseID != "PLAYER")
+                if (this.BaseID != "")
                 {
-                    _template = scr_System_Serializer.current.MasterList.CharacterTemplates.GetByCharaBaseID(BaseID);
+                    if (scr_System_CentralControl.current.isSafeMode) _templateS = scr_System_Serializer.current.MasterList.CharacterTemplates.GetByCharaBaseID(BaseID) as CharaSafeTemplate;
+                    else _template = scr_System_Serializer.current.MasterList.CharacterTemplates.GetByCharaBaseID(BaseID) as CharaTrainableTemplate;
                   //  Debug.Log("Fetching template for " + this.BaseID+", result exist? "+ (_template != null));
-                }else if (this.FileLocation.Length > 0)
-                {
-                    _template = scr_System_Serializer.current.MasterList.CharacterTemplates.GetByCharaFilePath(FileLocation);
-                   // Debug.Log("Fetching template for " + this.RefID + " with filepath "+this.FileLocation+", result exist? " + (_template != null));
                 }
                 else
                 {
-                    this._template = new CharaTemplate();
-                    this._template.GenderAppearance_Set(Humanoid_GenderAppearance.Female, true, true);
+
+                    if (scr_System_CentralControl.current.isSafeMode) _templateS = new CharaSafeTemplate();
+                    else
+                    {
+                        this._template = new CharaTrainableTemplate();
+                        this._template.GenderAppearance_Set(Humanoid_GenderAppearance.Female, true, true);
+                    }
                     Debug.LogError("Instantiating new Template for " + this.RefID);
                 }
             }
-            return _template;
-    } }
+            return _template == null ? _templateS : _template;
+    }
+        set
+        {
+            if (value == null)
+            {
+                this._template = null;
+                this._templateS = null;
+            }
+            else if (scr_System_CentralControl.current.isSafeMode) {
+                this._templateS = value as CharaSafeTemplate;
+                this._template = null;
+            }
+            else
+            {
+                this._templateS = null;
+                this._template = value as CharaTrainableTemplate;
+            }
+        }
+    }
 
     public Character_Trainable()
     {
@@ -458,12 +434,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         //Stats = new StatsManager(this);
         this.birthday = Utility.GetCampaignTime().AddYears(-Age);
 
-        InitializeAllTraits();
-        InitializeAllSkills();
-    }
-    public Character_Trainable(Character_Trainable.CharaTemplate template) : this(true)
-    {
-        this._template = template;
         InitializeAllTraits();
         InitializeAllSkills();
     }
@@ -503,14 +473,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.lastName = lastName;
         this.nameDisplayFormat = displayFormat;
     }
-    [JsonIgnore] public string FirstName { get { return scr_System_Serializer.current.Dictionary.QueryThenParse(firstName, firstName); } set { firstName = value; } }
-    [JsonIgnore] public string MiddleName { get { return middleName == "" ? "" : scr_System_Serializer.current.Dictionary.QueryThenParse(middleName, middleName); } set { middleName = value; } }
-    [JsonIgnore] public string LastName { get { return lastName == "" ? "" : scr_System_Serializer.current.Dictionary.QueryThenParse(lastName, lastName); } set { lastName = value; } }
+    [JsonIgnore] public string FirstName { get { return LocalizeDictionary.QueryThenParse(firstName, firstName); } set { firstName = value; } }
+    [JsonIgnore] public string MiddleName { get { return middleName == "" ? "" : LocalizeDictionary.QueryThenParse(middleName, middleName); } set { middleName = value; } }
+    [JsonIgnore] public string LastName { get { return lastName == "" ? "" : LocalizeDictionary.QueryThenParse(lastName, lastName); } set { lastName = value; } }
 
     [JsonIgnore] public string FullNameID { get { return baseID+"_"+referenceID; } }
     [JsonIgnore] public string FullName { get {
             //Debug.LogError(nameDisplayFormat);
-            return scr_System_Serializer.current.Dictionary.QueryThenParse(nameDisplayFormat)
+            return LocalizeDictionary.QueryThenParse(nameDisplayFormat)
                 .Replace("$lastName$", LastName).Replace(" $middleName$", MiddleName == "" ? "" : " "+MiddleName).Replace("$firstName$", FirstName);
         } }
 
@@ -538,9 +508,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public Humanoid_GenderAppearance Appearance;
 
-    [JsonIgnore] public bool isMale { get { return scr_System_CentralControl.current.GetGender(this).Contains(InteractionGenderType.male); } }
+    [JsonIgnore] public bool isMale { get { return scr_System_CentralControl.current.isSafeMode ? Appearance == Humanoid_GenderAppearance.Male : scr_System_CentralControl.current.GetGender(this).Contains(InteractionGenderType.male); } }
 
-    [JsonIgnore] public bool isFemale { get { return scr_System_CentralControl.current.GetGender(this).Contains(InteractionGenderType.female); } }
+    [JsonIgnore] public bool isFemale { get { return scr_System_CentralControl.current.isSafeMode ? Appearance == Humanoid_GenderAppearance.Female : scr_System_CentralControl.current.GetGender(this).Contains(InteractionGenderType.female); } }
 
     [JsonIgnore] public bool isAnimal { get { return this.Race.ID.Contains("beast"); } }
     [JsonIgnore] public bool isDead { get { return false; } }
@@ -551,40 +521,22 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonIgnore] public Job CurrentJob { 
         get { 
             if (currentJobRefID == -1) return null;
-            if (currentJobPointer == null) currentJobPointer = scr_System_CampaignManager.current.FindJobInstanceByID(currentJobRefID);
-            /*if(currentJobPointer.ParentRoom != null && currentJobPointer.ParentRoom.RefID != scr_System_CampaignManager.current.Map.FindRoomByChara(RefID).RefID)
-            {
-                currentJobRefID = -1;
-                currentJobPointer = null;
-                Debug.Log("Resetting job pointer for chara " + FirstName + " due to no longer in same room with job");
-            }*/
-            return currentJobPointer; } }
+            else if (currentJobPointer == null) currentJobPointer = scr_System_CampaignManager.current.FindJobInstanceByID(currentJobRefID);
+            return currentJobPointer; }
+    }
 
 
     [SerializeField] [JsonProperty] protected List<int> activeJobRefs = new List<int>();
     public void ChangeCurrentJob(Job job = null, string targetCOMid = "", string targetCOMTag = "")
     {
         this._cachedJobDescription = "";
-        //Debug.Log("Changing " + FirstName + "'s job from "+(CurrentJob == null?"null":CurrentJob.DisplayName)+" to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings)));
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("Changing " + FirstName + "'s job from " + (CurrentJob == null ? "null" : CurrentJob.DisplayName) + " to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings)));
         if (this.CurrentJob != null && (job == null || CurrentJob.RefID != job.RefID)) CurrentJob.RemoveActor(RefID);
 
-        if (job == null)
-        {
-            //if (this.CurrentJob != null) CurrentJob.RemoveActor(RefID);
-            // reset to empty;
-            currentJobRefID = -1;
-            this.currentJobPointer = null;
-            // can look for new job
+        this.currentJobPointer = job;
+        this.currentJobRefID = job == null ? -1 : job.RefID;
+        if (job != null) job.AddActor(RefID, targetCOMid, targetCOMTag);
 
-        }
-        else
-        {
-            currentJobRefID = job.RefID;
-            currentJobPointer = job;
-            job.AddActor(RefID, targetCOMid, targetCOMTag);
-            // fetch new actionpackage from job
-           // CurrentJob.UpdateActorPackage(this, out string ss);
-        }
         if (RefID == 0) scr_System_CampaignManager.current.NotifyPlayerJobChange(job == null? -1:job.RefID, job);
     }
 
@@ -646,10 +598,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public void TryGetJob(int currentHour, List<string> s)
     {
+        bool resetJob = false;
 
         if (RefID == 0)
         {
-            if(CurrentJob != null && CurrentJob.hasActorCompletedJob(0)) ChangeCurrentJob(null);
+            if (CurrentJob != null && CurrentJob.hasActorCompletedJob(0)) ChangeCurrentJob(null);
             return;
         }
 
@@ -664,7 +617,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (!hasPackage)
             {
                 ss += $" || Job cannot give valid package, releasing from |{CurrentJob.RefID}|";
-                ChangeCurrentJob(null);
+                resetJob = true;
             }
             // release from job
         }
@@ -675,14 +628,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if(s != null) s.Add(ss);
             return;
         }
-        if (CurrentJob != null)
+        if (CurrentJob != null && !resetJob)
         {
             ss += "already have a job " + CurrentJob.RefID + " with " + (CurrentJob.allusableCOMStrings.Count > 5 ? CurrentJob.allusableCOMStrings.Count + " coms" : " coms[" + String.Join(", ", CurrentJob.allusableCOMStrings) + "]") + " in room " + scr_System_CampaignManager.current.GetCharaRoomInstance(RefID).DisplayName + " descriptions: " + GetJobDescription();
-            if(s != null) s.Add(ss);
             if (!CurrentJob.CanBeInterrupted ||
                 CurrentJob.actorRefID.Contains(scr_System_CampaignManager.current.Player.RefID) ||
                 CurrentJob.isPlayerRelatedJob)
             {
+
+                if (s != null) s.Add(ss);
                 return;
             } 
         }
@@ -756,111 +710,141 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }*/
 
 
-        // can sleep, should sleep, hasSleepPlan
-        if (shouldSleep)
-        {   // if current schedule is sleep then go to sleep
 
-            if (CurrentJob != null && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("sleep")) != null)
-            {   // if already using a furniture that allows sleep, then its a valid one, return
-                return;
-            }
-
-            // chara should go back home to sleep
-            List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Sleep(this, currentHour, s);
-            if (possibleJobs != null && possibleJobs.Count > 0)
-            {
-                Job job = possibleJobs[0];
-                ss += "Changing job to sleep " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                if (s != null) s.Add(ss);
-                ChangeCurrentJob(job, "com_furniture_sleep");
-                return;
-            }
-            //}
-        }
 
         // Redress check
         if (shouldRedress)
         {
             //Debug.LogError(FirstName + " should redress");
-            if (CurrentJob != null && (CurrentJob.hasActivePackge(RefID, "com_furniture_restroom_fix") || (CurrentJob.allusableCOMs.Find(x=>x.ID == "com_furniture_restroom_fix")!=null && CurrentJob.hasActivePathing(RefID))))
+            if (CurrentJob != null && !resetJob && (CurrentJob.hasActivePackge(RefID, "com_furniture_restroom_fix") || (CurrentJob.allusableCOMs.Find(x=>x.ID == "com_furniture_restroom_fix")!=null && CurrentJob.hasActivePathing(RefID))))
             {   // if current is of same type as schedule, dont do anything. 
                 //Debug.LogError(FirstName + " should redress, current job has related COM");
+
+                if (s != null) s.Add(ss);
                 return;
             }
-            else
+            else if (FactionManager.CurrentLocaleFaction != null)
             {   // get closest schedule job from current location
                 List<Job_Furniture> possibleJobs = FactionManager.CurrentLocaleFaction.GetValidJobsByCOMID(this, "com_furniture_restroom_fix", s);
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
                     ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                    if(s != null) s.Add(ss);
                     ChangeCurrentJob(job, "com_furniture_restroom_fix");
+
+                    if (s != null) s.Add(ss);
                     return;
                 }
                 //}
             }
         }
 
+        /// if previous almost over (time less than half and time less than 15min)
+        /// if still in pathing
+        bool tryFinishJob = false;
+        if (CurrentJob != null && !resetJob)
+        {   // if current job is not pathing and less than 15 min then keep doing it
+            List<ActionPackage> p = CurrentJob.ActivePackages.FindAll(x => x.actorRefs.Contains(RefID));
 
+            bool allInterrupted = p.Count > 0 && p.Find(x=>!x.isPaused) == null;
+            tryFinishJob = p.Count > 0 && !allInterrupted;
+            foreach (var package in p)
+            {
+                //if (package is ActionPackage_PathTo || (package.Duration > 10 && package.targetCOM.comTags.Contains("recreation"))) tryFinishJobUrgent = false;
+                if (package is ActionPackage_PathTo) tryFinishJob = false;
+            }
+            if (allInterrupted)
+            {
+                s.Add(", aborting current job due to interrupt");
+                resetJob = true;
+            }
+            else if (tryFinishJob) 
+            {
+                if (s != null) s.Add(ss);
+                return;
+            }
+        }
+
+        // can sleep, should sleep, hasSleepPlan
+        if (shouldSleep)
+        {   // if current schedule is sleep then go to sleep
+
+            if (CurrentJob != null && !resetJob && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("sleep")) != null)
+            {   // if already using a furniture that allows sleep, then its a valid one, return
+
+                if (s != null) s.Add(ss);
+                return;
+            }
+            else if (FactionManager.CurrentlyActiveFaction != null)
+            {
+                // chara should go back home to sleep
+                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Sleep(this, currentHour, s);
+                if (possibleJobs != null && possibleJobs.Count > 0)
+                {
+                    Job job = possibleJobs[0];
+                    ss += "Changing job to sleep " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+                    ChangeCurrentJob(job, "com_furniture_sleep");
+
+                    if (s != null) s.Add(ss);
+                    return;
+                }
+            }
+        }
 
         // temporarily disable eat cuz need to restrict food hours in faction management
         if (canEat)
         {   // try get food
-            if (CurrentJob != null && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("food_meal")) != null)
+            if (CurrentJob != null && !resetJob && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("food_meal")) != null)
             {   // if already eating (dont care if it's pathing or executing)
-                return;
-            }
 
-            // allow checking during work hour
-
-            List<Job_Furniture> possibleJobs = FactionManager.CurrentLocaleFaction.GetValidJobs_Meal(this, currentHour, s);
-            if (possibleJobs != null && possibleJobs.Count > 0)
-            {
-                Job job = possibleJobs[0];
-                ss += "Changing job to eating " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                 if (s != null) s.Add(ss);
-                ChangeCurrentJob(job, "", "food_meal");
                 return;
             }
+            else if (FactionManager.CurrentLocaleFaction != null)
+            {
+                // allow checking during work hour
+
+                List<Job_Furniture> possibleJobs = FactionManager.CurrentLocaleFaction.GetValidJobs_Meal(this, currentHour, s);
+                if (possibleJobs != null && possibleJobs.Count > 0)
+                {
+                    Job job = possibleJobs[0];
+                    ss += "Changing job to eating " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+                    ChangeCurrentJob(job, "", "food_meal");
+
+                    if (s != null) s.Add(ss);
+                    return;
+                }
+            }
+
             //}
         }
-
-        /// if previous almost over (time less than half and time less than 15min)
-        /// if still in pathing
-
-        if (CurrentJob != null)
-        {   // if current job is not pathing and less than 15 min then keep doing it
-            List<ActionPackage> p = CurrentJob.ActivePackages.FindAll(x => x.actorRefs.Contains(RefID));
-            bool tryFinishJob = true;
-            foreach (var package in p) if (package is ActionPackage_PathTo || package.Duration > 10 || package.targetCOM.comTags.Contains("recreation")) tryFinishJob = false;
-            if (tryFinishJob) return;
-        }
-
 
         if (currentScheduleCOM != null && currentScheduleCOM.ID != "com_furniture_sleep")
         {   // if current schedule has available job (exclude sleep)
 
             // first get command by ID, if command 
             // first check if chara is already doing related job == currentjob exist
-            if (CurrentJob != null && (CurrentJob.hasActivePackge(RefID, currentScheduleCOM.ID) || (CurrentJob.allusableCOMs.Contains(currentScheduleCOM) && CurrentJob.hasActivePathing(RefID))))
+            if (CurrentJob != null && !resetJob && (CurrentJob.hasActivePackge(RefID, currentScheduleCOM.ID) || (CurrentJob.allusableCOMs.Contains(currentScheduleCOM) && CurrentJob.hasActivePathing(RefID))))
             {   // if current is of same type as schedule, dont do anything. 
+
+                if (s != null) s.Add(ss);
                 return;
             }
-            else
+            else if (FactionManager.CurrentlyActiveFaction != null)
             {   // current job is null, or current job is not schedule
 
                 // at this point we know the previous job can be break
                 //foreach (Manageable faction in FactionManager.Factions)
                 //{   // get closest schedule job
-                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Jobs(this, currentHour, s, true);
+                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Jobs(this, currentHour, ref ss, true);
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
                     var targetID = ((job == null || currentScheduleCOM == null) ? "" : currentScheduleCOM.ID);
                     ss += "Changing job to faction "+ FactionManager.CurrentlyActiveFaction.FactionDisplayName+"" + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                    if(s != null) s.Add(ss);
                     ChangeCurrentJob(job, targetID);
+
+                    if (s != null) s.Add(ss);
                     return;
                 }
                // }
@@ -873,8 +857,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
         if (shouldRest)
         {
-            if (CurrentJob != null && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("rest")) != null) return;
-            else
+            if (CurrentJob != null && !resetJob && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("rest")) != null) 
+            {
+
+                if (s != null) s.Add(ss);
+                return;
+            }
+            else if (FactionManager.CurrentlyActiveFaction != null)
             {
                 List<Job_Furniture> possibleResting = new List<Job_Furniture>();
 
@@ -887,46 +876,55 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 if (possibleResting.Count > 0)
                 {
                     Job job = possibleResting[Utility.GetRandIndexFromListCount(possibleResting.Count)];
-                    ss += "Changing job to resting job " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $" |{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                    if (s != null) s.Add(ss);
+                    ss += "| Changing job to resting job " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $" |{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                     ChangeCurrentJob(job, "", "rest");
+                    if (CurrentJob != job) Debug.LogError($"Error in changing job from {(CurrentJob == null ? "null" : CurrentJob.RefID)} to {(job == null ? "null" : job.RefID)}");
+                    if (s != null) s.Add(ss);
                     return;
                 }
             }
         }
 
 
-        if (isAnimal)
+        if (isAnimal && !scr_System_CentralControl.current.isSafeMode)
         {        // try find interaction job (rape job)
-            if (CurrentJob != null)
+            if (CurrentJob != null && !resetJob)
             {
                 //Debug.LogError("Animal find job, current job is not null");
                 if (CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("sex")) != null)
                 {
                     Debug.Log("Animal find job, current job is not null: Animal current job has sex, abort");
+
+                    if (s != null) s.Add(ss);
                     return;
                 }
                 else if (CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("initSex")) != null)
                 {
                     Debug.Log("Animal find job, current job is not null: Animal current job has initsex, abort");
+
+                    if (s != null) s.Add(ss);
+                    return;
+                }
+            }else if (FactionManager.CurrentlyActiveFaction != null)
+            {
+                //Debug.LogError("Animal looking for new target");
+                List<Job_CharaCOM> possibletargets = new List<Job_CharaCOM>();
+
+                //foreach (Manageable faction in FactionManager.HomeFactions)
+                possibletargets.AddRange(FactionManager.CurrentlyActiveFaction.GetValidCharaCOMByTag(this, "initSex",  ref ss));
+
+                if (possibletargets.Count > 0)
+                {
+                    Job job = possibletargets[Utility.GetRandIndexFromListCount(possibletargets.Count)];
+                    ss += "Changing job to having sex with " + (job == null ? "NULL" : "interaction |" + (job == null ? "null" : job.RefID) + "| in room[" + job.ParentRoom.DisplayName + "]");
+                    //Debug.LogError("Animal fucking ");
+                    ChangeCurrentJob(job, "com_interaction_initiateSex");
+
+                    if (s != null) s.Add(ss);
                     return;
                 }
             }
-            //Debug.LogError("Animal looking for new target");
-            List<Job_CharaCOM> possibletargets = new List<Job_CharaCOM>();
 
-            //foreach (Manageable faction in FactionManager.HomeFactions)
-            possibletargets.AddRange(FactionManager.CurrentlyActiveFaction.GetValidCharaCOM(this, s));
-
-            if (possibletargets.Count > 0)
-            {
-                Job job = possibletargets[Utility.GetRandIndexFromListCount(possibletargets.Count)];
-                ss += "Changing job to having sex with " + (job == null ? "NULL" : "interaction |"+(job == null ? "null" : job.RefID)+"| in room[" + job.ParentRoom.DisplayName + "]");
-                //Debug.LogError("Animal fucking ");
-                if(s != null) s.Add(ss);
-                ChangeCurrentJob(job, "com_interaction_initiateSex");
-                return;
-            }
             
         }
         else
@@ -934,14 +932,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             // if still no job, set to look for recreation
             // need to find : is there location restriction ? search currently at ?
             // include search : character currently at + home faction
-            if (CurrentJob != null && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("recreation")) != null)
+            if (CurrentJob != null && !resetJob && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("recreation")) != null)
             {
                 // already set to a recreation job
 
                 // but, job might not have active package
+
+                if (s != null) s.Add(ss);
                 return;
             }
-            else
+            else if (FactionManager.CurrentlyActiveFaction != null)
             {
                 List<Job_Furniture> possibleRecreations = new List<Job_Furniture>();
 
@@ -955,8 +955,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 {
                     Job job = possibleRecreations[Utility.GetRandIndexFromListCount(possibleRecreations.Count)];
                     ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                    if(s != null) s.Add(ss);
+                
                     ChangeCurrentJob(job,"","recreation");
+
+                    if (s != null) s.Add(ss);
                     return;
                 }
             }
@@ -1107,11 +1109,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         if(_cachedJobDescription == "")
         {
             
-            if (this.isSleeping) _cachedJobDescription = scr_System_Serializer.current.Dictionary.QueryThenParse("chara_currentjob_sleeping");
-            else if (this.Stats.isConsciousnessUnconscious) _cachedJobDescription = scr_System_Serializer.current.Dictionary.QueryThenParse("chara_currentjob_unconscious");
+            if (this.isSleeping) _cachedJobDescription = LocalizeDictionary.QueryThenParse("chara_currentjob_sleeping");
+            else if (this.Stats.isConsciousnessUnconscious) _cachedJobDescription = LocalizeDictionary.QueryThenParse("chara_currentjob_unconscious");
             else if (this.InteractionJob != null && this.InteractionJob.isActive) _cachedJobDescription = this.InteractionJob.GetJobDescription(RefID);
             else if (this.CurrentJob != null) _cachedJobDescription = this.CurrentJob.GetJobDescription(RefID);
-            else _cachedJobDescription = scr_System_Serializer.current.Dictionary.QueryThenParse("chara_currentjob_none"); ;
+            else _cachedJobDescription = LocalizeDictionary.QueryThenParse("chara_currentjob_none"); ;
         }
         return _cachedJobDescription;
     }
@@ -1222,7 +1224,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (!this.Stats.isConsciousnessUnconscious)
             {
 
-                var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_sleep_end"));
+                var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_end"));
                 var memEntry = this.Memory.AddEntry(memInst, new List<string>() { "forbidMerge" });
                 memEntry.entryDescription = memInst.description;
                 // re-check every AP
@@ -1298,7 +1300,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 {
                     if (job is Job_Sex_Group)
                     {
-                        var message = LocalizeDictionary.Instance.Index.QueryThenParse("event_onNightAssaultFailed_jobD").Replace("$chara$", this.FirstName);
+                        var message = LocalizeDictionary.QueryThenParse("event_onNightAssaultFailed_jobD").Replace("$chara$", this.FirstName);
                         Utility.StringReplace(ref message);
                         (job as Job_Sex_Group).FlagActorLeave(this.RefID, message);
                     }
@@ -1352,14 +1354,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                     memInst.ResetInternal(Memory_Response.Refuse, Memory_Attitude.Hate);
                     memInst.targets = new List<int>() { randRel.TargetID };
-                    memInst.description = LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultFailed").Replace("$target$", randRel.Target.FirstName);
+                    memInst.description = LocalizeDictionary.QueryThenParse("memory_onNightAssaultFailed").Replace("$target$", randRel.Target.FirstName);
                     memInst.AddMoodletScore(-2, -4, 0);
 
                     memEntry.entryDescription = memInst.description;
                     memEntry.Duration = Stats.MemoryLength * 10;
                     memEntry.ReEstablishParent(this);
 
-                    var memInst_2 = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultCaught").Replace("$target$", randRel.Owner.FirstName));
+                    var memInst_2 = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("memory_onNightAssaultCaught").Replace("$target$", randRel.Owner.FirstName));
                     var memEntry_2 = randRel.Target.Memory.AddEntry(memInst_2, new List<string>() { "forbidMerge" });
                     memEntry_2.entryDescription = memInst_2.description;
                 }
@@ -1375,9 +1377,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     if (selfTags.Count > 0)
                     {
                         
-                        // var mem = this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" }, Stats.MemoryLength * 10);
                         memInst.ResetInternal(Memory_Response.Refuse, Memory_Attitude.Hate);
-                        memInst.description = LocalizeDictionary.Instance.Index.QueryThenParse("memory_onNightAssaultDiscover");
+                        memInst.description = LocalizeDictionary.QueryThenParse("memory_onNightAssaultDiscover");
                         memInst.AddMoodletScore(selfTags.Count, (-selfTags.Count - 1) * 2, 0);
 
                         memEntry.entryDescription = memInst.description;
@@ -1418,7 +1419,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);
         Stats.RemoveStatusByStringMatch("chara_status_sleep_deprived");
 
-        var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.Instance.Index.QueryThenParse("ui_entry_memory_sleep_begin"));
+        var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_begin"));
         this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" });
     }
 
@@ -1626,167 +1627,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
 
 
-    [System.Serializable]
-    public class CharaTemplate
-    {
-        public Humanoid_GenderAppearance Appearance = Humanoid_GenderAppearance.Female;
-        public Character_BodyType BodyType = Character_BodyType.Default;
-        public int stat_STR = 10, stat_CON = 10, stat_PSY = 10, stat_WIL = 10;
-
-        public string personalityID = "personality_default";
-
-        [SerializeField][JsonProperty] private string sensitivity_B = "trait_Sensitivity_B_default";
-        [SerializeField][JsonProperty] private string sensitivity_M = "trait_Sensitivity_M_default";
-        [SerializeField][JsonProperty] private string sensitivity_C = "trait_Sensitivity_C_default";
-        [SerializeField][JsonProperty] private string sensitivity_V = "trait_Sensitivity_V_default";
-        [SerializeField][JsonProperty] private string sensitivity_A = "trait_Sensitivity_A_default";
-
-        [SerializeField][JsonProperty] private string size_B = "trait_Size_B_none";
-        [SerializeField][JsonProperty] private string size_P = "trait_Size_P_none";
-        [SerializeField][JsonProperty] private string size_V = "trait_Size_V_none";
-        [SerializeField][JsonProperty] private string size_A = "trait_Size_A_none";
-
-        public List<RelationshipManager.presetRelationship> initialRelationship = new List<RelationshipManager.presetRelationship>();
-        public List<presetInventory> initialInventory = new List<presetInventory>();
-
-        public List<Skills> Skills = new List<Skills>();
-
-        public int Height = 163;
-
-        public CharaTemplate() {  }
-
-        public void GenderAppearance_Set(Humanoid_GenderAppearance app, bool forceDefaultGenital = false, bool forceDefaultSensitivity = false)
-        {
-            this.Appearance = app;
-            if (forceDefaultGenital)
-            {
-                switch (app)
-                {
-                    case Humanoid_GenderAppearance.Male:
-                        Size_P = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_P").getNeutralinGroup();
-                        Size_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_B").entries[1];
-                        Size_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_V").entries[0];
-                        Size_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_A").getNeutralinGroup();
-                        break;
-                    case Humanoid_GenderAppearance.Female:
-                        Size_P = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_P").entries[0];
-                        Size_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_B").getNeutralinGroup();
-                        Size_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_V").getNeutralinGroup();
-                        Size_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_A").getNeutralinGroup();
-                        break;
-                    case Humanoid_GenderAppearance.Ambiguous:
-                        Size_P = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_P").getNeutralinGroup();
-                        Size_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_B").getNeutralinGroup();
-                        Size_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_V").getNeutralinGroup();
-                        Size_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_A").getNeutralinGroup();
-                        break;
-                    //case Humanoid_GenderAppearance.Inhuman:
-                    default:
-                        Size_P = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_P").entries[0];
-                        Size_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_B").entries[0];
-                        Size_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_V").entries[0];
-                        Size_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_A").entries[0];
-                        break;
-                }
-            }
-
-            if (forceDefaultSensitivity)
-            {
-                Sensitivity_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_B").getNeutralinGroup();
-                Sensitivity_M = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_M").getNeutralinGroup();
-                Sensitivity_C = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_C").getNeutralinGroup();
-                Sensitivity_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_V").getNeutralinGroup();
-                Sensitivity_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_A").getNeutralinGroup();
-            }
-
-
-        }
-
-        [System.Serializable]
-        public class presetInventory
-        {
-            public string ID = "";
-            public string nameOverwrite = "";
-        }
-
-        [JsonIgnore]
-        public bool isMale
-        {
-            get
-            {
-                if (this.Size_P.ID != "trait_Size_P_none") return true;
-                else return false;
-            }
-        }
-
-        [JsonIgnore]
-        public bool isFemale
-        {
-            get
-            {
-                if (this.Size_V.ID != "trait_Size_V_none") return true;
-                else return false;
-            }
-        }
-
-
-        [JsonIgnore]
-        public Traits Sensitivity_B
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_B); }
-            set { sensitivity_B = value.ID; }
-        }
-        [JsonIgnore]
-        public Traits Sensitivity_M
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_M); }
-            set { sensitivity_M = value.ID; }
-        }
-        [JsonIgnore]
-        public Traits Sensitivity_C
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_C); }
-            set { sensitivity_C = value.ID; }
-        }
-        [JsonIgnore]
-        public Traits Sensitivity_V
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_V); }
-            set { sensitivity_V = value.ID; }
-        }
-        [JsonIgnore]
-        public Traits Sensitivity_A
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_A); }
-            set { sensitivity_A = value.ID; }
-        }
-
-
-        [JsonIgnore]
-        public Traits Size_B
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_B); }
-            set { size_B = value.ID; }
-        }
-        [JsonIgnore]
-        public Traits Size_P
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_P); }
-            set { size_P = value.ID; }
-        }
-        [JsonIgnore]
-        public Traits Size_V
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_V); }
-            set { size_V = value.ID; }
-        }
-        [JsonIgnore]
-        public Traits Size_A
-        {
-            get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_A); }
-            set { size_A = value.ID; }
-        }
-    }
+    
 
 
     [JsonIgnore] public bool Debug_ForceDeepSleep = false;
@@ -1803,46 +1644,65 @@ public class Character_BaseID_Index
 
 
 [System.Serializable]
-public class Character_Base_Index : I_IndexMergeable, I_IndexHasID
+public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonExisting, I_RemoveNSFW
 {
-    public List<Character_Trainable> baseCharacters = new List<Character_Trainable>();
+    public List<Character_SerializableBase> baseCharacters = new List<Character_SerializableBase>();
 
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Character_Base_Index;
-        if (l == null) return;
-        else if (l.baseCharacters == null) return;
-        else
-        {
-            string s = "";
-            foreach (var i in baseCharacters) s += i.BaseID + " | ";
-            s += "+++";
-            foreach (var i in l.baseCharacters) s += i.BaseID + " | ";
-            Debug.Log("Merging with " + s);
-            this.baseCharacters.AddRange(l.baseCharacters);
-        }
+        if (l == null || l.baseCharacters == null) return;
+
+        string s = "";
+        foreach (var i in baseCharacters) s += i.baseID + " | ";
+        s += "+++";
+        foreach (var i in l.baseCharacters) s += i.baseID + " | ";
+        //Debug.Log("Merging with " + s);
+        this.baseCharacters.AddRange(l.baseCharacters);
+        this.baseCharacters.RemoveAll(x => x.baseID == null || x.baseID.Length < 1);
+        
     }
 
-    public Character_Trainable GetTemplateFromBaseID(string ID)
+    Dictionary <string, Character_SerializableBase> ID_Dictionary = new Dictionary<string, Character_SerializableBase>();
+    public void RegisterAllID(List<string> s)
     {
-        //Debug.Log("Character_Base_Index : finding ID ["+ID+"] in list length [" + baseCharacters.Count + "]");
-        foreach(var i in this.baseCharacters)
+        s.Add("Character_Base_Index : registering ID with list length [" + baseCharacters.Count + "]");
+        foreach (Character_SerializableBase o in this.baseCharacters)
         {
-            if (i.BaseID == ID) return i;
+            if (!ID_Dictionary.ContainsKey(o.baseID)) ID_Dictionary[o.baseID] = o;
+            else Debug.LogError($"Error registering allID in Character_Base_Index, {o.baseID} already registered");
         }
-        Debug.LogError("Cannot find id " + ID);
-        return null;
     }
 
-    Dictionary <string, Character_Trainable> ID_Dictionary = new Dictionary<string, Character_Trainable>();
-    public void RegisterAllID()
+    public Character_SerializableBase GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+
+    public Character_Trainable GetChara(string id)
     {
-        //Debug.Log("Character_Base_Index : registering ID with list length [" + baseCharacters.Count + "]");
-        foreach (Character_Trainable o in this.baseCharacters)
+        var template = GetByID(id);
+        if (template == null) return null;
+        var str = JsonConvert.SerializeObject(template, Utility.SerializerSettings);
+        var chara = JsonConvert.DeserializeObject<Character_Trainable>(str, Utility.SerializerSettings);
+        chara.Template = null;
+        return chara;
+    }
+
+    public void RemoveNonExisting()
+    {
+        Debug.Log($"CALLING RemoveNonExisting on {baseCharacters.Count} instances");
+        foreach (var c in baseCharacters)
         {
-            ID_Dictionary.Add(o.BaseID, o);
+            c.PurgeNonExistingData();
         }
     }
 
-    public Character_Trainable GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+    public void RemoveNSFW()
+    {
+        foreach(var c in baseCharacters)
+        {
+            foreach(var p in c.Portrait.portraitPriorityList)
+            {
+                p.Variants = null;
+            }
+        }
+    }
 }

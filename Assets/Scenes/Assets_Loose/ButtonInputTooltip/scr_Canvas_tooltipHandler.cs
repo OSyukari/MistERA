@@ -79,7 +79,7 @@ public class scr_Canvas_tooltipHandler : MonoBehaviour
         if (text.Length < 1) return;
         else if (text == "\n") return;
         //m_TextPopup_RectTransform.gameObject.SetActive(true);
-        m_TextPopup_TMPComponent.text += scr_System_Serializer.current.Dictionary.Parse(text);
+        m_TextPopup_TMPComponent.text += LocalizeDictionary.QueryThenParse(text);
 
         x_offset = 15.0f;
         y_offset = -15.0f;

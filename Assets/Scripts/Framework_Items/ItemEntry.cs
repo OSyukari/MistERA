@@ -58,10 +58,10 @@ public class ItemEntry
                 var item = Masterlist_Items.Instance.Index.GetByID(this.itemID);
                 if (item == null) return "null";
                 var basestr = (item.Tags.Contains("item_money") ?
-                            LocalizeDictionary.Instance.Index.QueryThenParse("management_jobpost_payout_currency") :
-                            LocalizeDictionary.Instance.Index.QueryThenParse("management_jobpost_payout_item"));
+                            LocalizeDictionary.QueryThenParse("management_jobpost_payout_currency") :
+                            LocalizeDictionary.QueryThenParse("management_jobpost_payout_item"));
 
-                _cache = basestr.Replace("$item$", this.itemNameOverwrite != "" ? LocalizeDictionary.Instance.Index.QueryThenParse(this.itemNameOverwrite) : LocalizeDictionary.Instance.Index.QueryThenParse(this.itemID))
+                _cache = basestr.Replace("$item$", this.itemNameOverwrite != "" ? LocalizeDictionary.QueryThenParse(this.itemNameOverwrite) : LocalizeDictionary.QueryThenParse(this.itemID))
                                      .Replace("$count$", count);
             }
             return _cache;

@@ -24,13 +24,13 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
 
     public void Awake()
     {
-        baseColor = scr_System_CentralControl.current.pref.TextColor_neutral;
-        disableColor = scr_System_CentralControl.current.pref.TextColor_disabled;
-        highlightColor = scr_System_CentralControl.current.pref.TextColor_toggle;
-        conflictColor = scr_System_CentralControl.current.pref.TextColor_conflict;
-        desc_personal = scr_System_Serializer.current.Dictionary.QueryThenParse("management_schedule_box_freetime");
-        desc = scr_System_Serializer.current.Dictionary.QueryThenParse("management_schedule_box_description");
-        desc_noplan = scr_System_Serializer.current.Dictionary.QueryThenParse("management_schedule_box_none");
+        baseColor = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
+        disableColor = scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color;
+        highlightColor = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;
+        conflictColor = scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color;
+        desc_personal = LocalizeDictionary.QueryThenParse("management_schedule_box_freetime");
+        desc = LocalizeDictionary.QueryThenParse("management_schedule_box_description");
+        desc_noplan = LocalizeDictionary.QueryThenParse("management_schedule_box_none");
     }
 
     public void Refresh()

@@ -16,7 +16,7 @@ public class BodyInternal_Base
 
 
     [SerializeField][JsonProperty] private string displayName = "";
-    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.Instance.Index.Parse(displayName); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(displayName); } }
 
     public List<string> internalID = new List<string>();
 

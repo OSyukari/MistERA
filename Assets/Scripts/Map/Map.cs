@@ -44,7 +44,7 @@ public class Map_Instance
     }
     public void NotifyEventEnd()
     {
-        Debug.Log($"Map NotifyEventEnd, dirtyAP {String.Join(",",dirtyCharaAPRef)} dirtyChara {String.Join(",", dirtyCharaRef)}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Map NotifyEventEnd, dirtyAP {String.Join(",",dirtyCharaAPRef)} dirtyChara {String.Join(",", dirtyCharaRef)}");
         this.dirtyCharaAPRef.Clear();
         this.dirtyCharaRef.Clear();
     }
@@ -248,6 +248,8 @@ public class Map_Instance
     /// Value - roomInstance
     /// </summary>
     [JsonIgnore] protected Dictionary<int, Room_Instance> Rooms;
+
+    // Orphaned room will NOT be updated 
     [JsonProperty] protected Dictionary<int, Room_Instance> rooms_orphans;
     /// <summary>
     /// Key - floorRefID
@@ -297,7 +299,8 @@ public class Map_Instance
 
     public bool IsCharaInActiveFloors(int charaRef)
     {
-        return ActiveFloorRefIDs.Contains(GetFloorByRoomRefID(FindRoomByChara(charaRef).RefID).refID);
+        var floor = GetFloorByRoomRefID(FindRoomByChara(charaRef).RefID);
+        return floor == null ? false : ActiveFloorRefIDs.Contains(floor.refID);
     }
 
     public void UpdateRoomForceGreeting()

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
-public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerExitHandler
+public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     public RectTransform child;
     public bool inside = false;
@@ -50,12 +50,12 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
     {
         if (sexJob != null && vm != ViewMode.View_Room)
         {
-            image_bg.raycastTarget = false;
+            //image_bg.raycastTarget = false;
             turnOff();
         }
         else if (sexJob != null && vm == ViewMode.View_Room)
         {
-            image_bg.raycastTarget = true;
+            //image_bg.raycastTarget = true;
             turnOn(sexJob);
         }
     }
@@ -65,7 +65,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         sexJob = scr_System_CampaignManager.current.Player.CurrentJob as Job_Sex_Group;
         if (sexJob == null)
         {
-            image_bg.raycastTarget = false;
+            //image_bg.raycastTarget = false;
             turnOff();
 
             List<int> ints = new List<int>();
@@ -97,7 +97,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         }
         else
         {
-            image_bg.raycastTarget = true;
+            //image_bg.raycastTarget = true;
             turnOn(sexJob);
             ValidateAll();
         }
@@ -154,7 +154,14 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
             ValidateAll();
         }
     }
-
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room && sexJob == null && scr_System_CampaignManager.current.CurrentTarget != null)
+        {
+            //Debug.Log("click!");
+            scr_System_CampaignManager.current.CurrentTarget.PortraitManager.Click();
+        }
+    }
     public void removeAP()
     {
         turnOn(sexJob);
@@ -357,6 +364,8 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         // build all presetList
         ValidateAll();
     }
+
+
 
     public scr_panel_COMmanager COMmanager;
     public RectTransform prefab_Canvas_charaDetail;

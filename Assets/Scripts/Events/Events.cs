@@ -267,22 +267,22 @@ public class Event : I_SerializationCallbackReceiver
     [System.Serializable]
     public abstract class EventEntry
     {
-        public virtual string Name { get { return label; } }
+        [JsonIgnore] public virtual string Name { get { return label; } }
 
         public string label = "";
         public bool isLast = false;
         public string nextEventID = "";
         public string nextEntryLabel = "";
 
-        public List<Query> queries = new List<Query>();
-        public List<Condition> conditions = new List<Condition>();
+        //public List<Query> queries = new List<Query>();
+        //public List<Condition> conditions = new List<Condition>();
 
         public bool isValid { get
             {
                 // execute every query
                 // check every condition
                 //
-                foreach(var cond in conditions) if (!cond.isValid()) return false;
+                //foreach(var cond in conditions) if (!cond.isValid()) return false;
                 return true;
             } }
 
@@ -494,12 +494,12 @@ public class Index_Events : I_IndexMergeable, I_IndexHasID,  I_SerializationCall
     public void OnAfterDeserialize()
     {
         foreach (var i in list) i.OnAfterDeserialize();
-        Debug.Log($"Successfully serialized {this.list.Count} events");
     }
 
-    public void RegisterAllID()
+    public void RegisterAllID(List<string> s)
     {
-        foreach(var i in list) ID_Dictionary.Add(i.ID, i);
+        s.Add($"Index_Events : registering eventIDs with list length [{ list.Count }]");
+        foreach (var i in list) ID_Dictionary.Add(i.ID, i);
     }
 
     public Event GetByID(string ID)

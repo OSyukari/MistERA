@@ -182,23 +182,23 @@ public class Job : IDisposable, I_Disposable
 
         p = packages_previous.Find(x => x.actorRefs.Contains(charaRef));
 
-        if (p == null) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_idling");
+        if (p == null) return LocalizeDictionary.QueryThenParse("chara_currentjob_idling");
         else
         {
             string s = p.DescriptionText(charaRef );
-            if (s == "") return p.DisplayName + scr_System_Serializer.current.Dictionary.Query("comDescription_remainingtime").Replace("$minute$", p.Duration.ToString());
-            else return s + scr_System_Serializer.current.Dictionary.Query("comDescription_remainingtime").Replace("$minute$", p.Duration.ToString());
+            if (s == "") return p.DisplayName + LocalizeDictionary.QueryThenParse("comDescription_remainingtime").Replace("$minute$", p.Duration.ToString());
+            else return s + LocalizeDictionary.QueryThenParse("comDescription_remainingtime").Replace("$minute$", p.Duration.ToString());
         }
     }
 
     public Job()
     {
-        ep_begin = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_start");
-        ep_ongoing = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_ongoing");
-        ep_abort = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_abort");
-        ep_refuse = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_refuse");
-        ep_prep = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_preparing");
-        ep_replace = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_replace");
+        ep_begin = LocalizeDictionary.QueryThenParse("ep_Description_start");
+        ep_ongoing = LocalizeDictionary.QueryThenParse("ep_Description_ongoing");
+        ep_abort = LocalizeDictionary.QueryThenParse("ep_Description_abort");
+        ep_refuse = LocalizeDictionary.QueryThenParse("ep_Description_refuse");
+        ep_prep = LocalizeDictionary.QueryThenParse("ep_Description_preparing");
+        ep_replace = LocalizeDictionary.QueryThenParse("ep_Description_replace");
     }
 
     public virtual void AddActor(int charaRef, string priorityCOMID = "", string priorityCOMTag = "")
@@ -212,6 +212,10 @@ public class Job : IDisposable, I_Disposable
             }
             else actorRefIDStorage.Add(charaRef, new COM_Match(priorityCOMID, priorityCOMTag));
             //Debug.Log("Job Add Actor " + charaRef + " result " + String.Join("|", actorRefID));
+        }
+        else
+        {
+            actorRefIDStorage[charaRef] = new COM_Match(priorityCOMID, priorityCOMTag);
         }
         actorJobComplete.Remove(charaRef);
     }
@@ -620,6 +624,7 @@ public class Job : IDisposable, I_Disposable
                 }
                 else
                 {
+                    var message = "deleting package " + packages_previous[i].DisplayName;
                     if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("deleting package " + packages_previous[i].DisplayName);
                     //PackageRemoval(packages_previous[i]);
                     if (!packages_previous[i].isTemporaryAP)
@@ -712,13 +717,27 @@ public class Job : IDisposable, I_Disposable
         for (var i = packages_previous.Count - 1; i >= 0; i--)
         {
             var package = packages_previous[i];
-            if (package.paused)
+            if (package.isPaused)
             {
-                if (package.Validate()) scr_System_CampaignManager.current.Register(package, avoidConflict);
+                if (package.Validate())
+                {
+                    scr_System_CampaignManager.current.Register(package, avoidConflict);
+                    if (package.isPaused) package.pausedTick += 1;
+                    if (package.isPaused && package.pausedTick > 3)
+                    {
+                        packages_previous.RemoveAt(i);
+                        Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to failing 3 times reregistration");
+                        package.NotifyInterrupted();
+                        this.actorJobComplete.AddRange(package.actorRefs);
+
+                    }
+                }
                 else
                 {
-                    Debug.Log("Job ReRegister: paused AP ["+package.DisplayName+"] is getting removed due to no longer passing internal validation check");
+                    Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to no longer passing internal validation check");
+                    package.NotifyInterrupted();
                     packages_previous.RemoveAt(i);
+                    this.actorJobComplete.AddRange(package.actorRefs);
                 }
             }
         }
@@ -892,7 +911,7 @@ public class Job : IDisposable, I_Disposable
         foreach (ActionPackage p in this.packages_previous)
         {
             p.ReEstablishParent(this);
-            if (p.paused) continue;
+            if (p.isPaused) continue;
             if (p.Duration < 1) continue;
             scr_System_CampaignManager.current.Register(p, true, true);
         }
@@ -904,12 +923,12 @@ public class Job : IDisposable, I_Disposable
 
         this.exp = new ExperienceLog();
         //PostUpdateTime();
-        ep_begin = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_start");
-        ep_ongoing = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_ongoing");
-        ep_abort = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_abort");
-        ep_refuse = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_refuse");
-        ep_prep = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_preparing");
-        ep_replace = scr_System_Serializer.current.Dictionary.QueryThenParse("ep_Description_replace");
+        ep_begin = LocalizeDictionary.QueryThenParse("ep_Description_start");
+        ep_ongoing = LocalizeDictionary.QueryThenParse("ep_Description_ongoing");
+        ep_abort = LocalizeDictionary.QueryThenParse("ep_Description_abort");
+        ep_refuse = LocalizeDictionary.QueryThenParse("ep_Description_refuse");
+        ep_prep = LocalizeDictionary.QueryThenParse("ep_Description_preparing");
+        ep_replace = LocalizeDictionary.QueryThenParse("ep_Description_replace");
     }
 
     [JsonIgnore] public string ep_begin, ep_ongoing, ep_abort, ep_refuse, ep_prep, ep_replace;

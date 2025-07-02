@@ -60,7 +60,7 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
             linkInfo = m_TextMeshPro.textInfo.linkInfo[linkIndex];
            // tooltip = scr_System_tooltipDictionary.current.FindEntry(linkInfo.GetLinkID() as string);
-            tooltip = scr_System_Serializer.current.Dictionary.QueryThenParse(linkInfo.GetLinkID() as string);
+            tooltip = LocalizeDictionary.QueryThenParse(linkInfo.GetLinkID() as string);
             //Debug.Log("OnPointerEnter, linkIndex [" + linkIndex + "] linkInfo[" + linkInfo + "] tooltip[" + tooltip + "]");
             if (button) tooltip_custom = button.GetCustomTooltip();
             else tooltip_custom = null;
@@ -100,7 +100,7 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         this.m_TextMeshPro = GetComponent<TextMeshProUGUI>();
         this.button = GetComponent<scr_SelectableText>();
-        if (this.GetComponent<scr_SelectableText>() == null) this.m_TextMeshPro.text = replaceText != "" ? scr_System_Serializer.current.Dictionary.QueryThenParse(replaceText) : scr_System_Serializer.current.Dictionary.QueryThenParse(this.m_TextMeshPro.text);
+        if (this.GetComponent<scr_SelectableText>() == null) this.m_TextMeshPro.text = replaceText != "" ? LocalizeDictionary.QueryThenParse(replaceText) : LocalizeDictionary.QueryThenParse(this.m_TextMeshPro.text);
         this.m_TextMeshPro.font = scr_System_CentralControl.current.Font;
         this.m_TextMeshPro.UpdateFontAsset();
 
@@ -165,7 +165,7 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
             return;
         }
         if (text == null) text = "";
-        text = scr_System_Serializer.current.Dictionary.QueryThenParse(text);
+        text = LocalizeDictionary.QueryThenParse(text);
         //Debug.LogError(text);
         //if (link == "" || link == "trait_neutral" || link.Length < 1)
         //{

@@ -104,7 +104,7 @@ public class Job_Sex_Group : Job
 
         if (this.actorRefID.Count < 2)
         {
-            this.EndJob(Utility.WrapTextColor("job ended due to actor count < 2", scr_System_CentralControl.current.pref.TextColor_disabled));
+            this.EndJob(Utility.WrapTextColor("job ended due to actor count < 2", scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
         }
 
     }
@@ -157,10 +157,10 @@ public class Job_Sex_Group : Job
         if (actorRefID.Contains(charaRef))
         {
             Character_Trainable C = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
-            if (C.isTimeStopped) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_sex_timestop");
-            else if (C.isSleeping) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_sex_sleeping");
-            else if (false) return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_sex_rape");
-            else return LocalizeDictionary.Instance.Index.QueryThenParse("chara_currentjob_sex");
+            if (C.isTimeStopped) return LocalizeDictionary.QueryThenParse("chara_currentjob_sex_timestop");
+            else if (C.isSleeping) return LocalizeDictionary.QueryThenParse("chara_currentjob_sex_sleeping");
+            else if (false) return LocalizeDictionary.QueryThenParse("chara_currentjob_sex_rape");
+            else return LocalizeDictionary.QueryThenParse("chara_currentjob_sex");
         }
         else
         {

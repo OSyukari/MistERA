@@ -54,7 +54,7 @@ public class Floor_Instance : IDisposable, I_Disposable
     [SerializeField][JsonProperty] public int refID = -1;
 
     [SerializeField][JsonProperty] private string nameOverwrite = "";
-    [JsonIgnore] public string displayName { get { if (nameOverwrite != "") return scr_System_Serializer.current.Dictionary.QueryThenParse(nameOverwrite);
+    [JsonIgnore] public string displayName { get { if (nameOverwrite != "") return LocalizeDictionary.QueryThenParse(nameOverwrite);
             return this.FloorBase.displayName;
         } }
 
@@ -148,7 +148,6 @@ public class Floor_Instance : IDisposable, I_Disposable
 
     [JsonIgnore] public float ImageWidth { get { return FloorBase.floorWidth; } }
     [JsonIgnore] public float ImageHeight { get { return FloorBase.floorHeight; } }
-    [JsonIgnore] private string imagePath { get { return Application.dataPath + "/" + FloorBase.imagePath; } }
 
     private Texture2D LoadTexture(string FilePath)
     {

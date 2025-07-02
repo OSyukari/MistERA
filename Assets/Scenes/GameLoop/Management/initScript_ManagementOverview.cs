@@ -16,10 +16,10 @@ public class initScript_ManagementOverview : MonoBehaviour
     string factionPop, factionRes, factionPopTooltip, currentlyOutside;
     private void Awake()
     {
-        factionPop = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_topbar_population");
-        factionRes = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_topbar_resources");
-        factionPopTooltip = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_line_populationMaintenance");
-        currentlyOutside = scr_System_Serializer.current.Dictionary.QueryThenParse("ui_management_line_currentlyOutside");
+        factionPop = LocalizeDictionary.QueryThenParse("ui_management_topbar_population");
+        factionRes = LocalizeDictionary.QueryThenParse("ui_management_topbar_resources");
+        factionPopTooltip = LocalizeDictionary.QueryThenParse("ui_management_line_populationMaintenance");
+        currentlyOutside = LocalizeDictionary.QueryThenParse("ui_management_line_currentlyOutside");
     }
 
     public scr_HoverableText report_managementResult, report_tradeResults, report_currentlyOutsideFaction;
@@ -56,7 +56,7 @@ public class initScript_ManagementOverview : MonoBehaviour
         List<string> s_chara = new List<string>();
         foreach (KeyValuePair<string, int> kvp in m.GetMaintenanceCost_Chara)
         {
-            s_chara.Add(scr_System_Serializer.current.Dictionary.QueryThenParse("tag_" + kvp.Key) + " " + kvp.Value.ToString("+0;-#"));
+            s_chara.Add(LocalizeDictionary.QueryThenParse("tag_" + kvp.Key) + " " + kvp.Value.ToString("+0;-#"));
         }
         factionPopMaintenance.text = factionPopTooltip.Replace("$costs$", String.Join(" | ", s_chara));
 
@@ -65,7 +65,7 @@ public class initScript_ManagementOverview : MonoBehaviour
         foreach (KeyValuePair<string, List<int>> kvp in m.GetMaintenanceCost_Total)
         {
             string s = kvp.Key;
-            string ss = scr_System_Serializer.current.Dictionary.QueryThenParse("tag_" + s);
+            string ss = LocalizeDictionary.QueryThenParse("tag_" + s);
             int initial = 0;
             int plus = 0;
             int total = 0;
@@ -91,10 +91,9 @@ public class initScript_ManagementOverview : MonoBehaviour
                 //if (i != 0) val += i.ToString("+0;-#");
             }
 
-            string cHex = scr_System_CentralControl.current.pref.HexColor_conflict;
             if (total < 0)
             {
-                values.Add(ss + ":" + "<color=" + cHex + ">" + initial.ToString() + plus.ToString("+0;-#") + "</color>");
+                values.Add(ss + ":" + "<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + initial.ToString() + plus.ToString("+0;-#") + "</color>");
             }
             else
             {

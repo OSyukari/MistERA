@@ -577,7 +577,7 @@ public class StatsManager
 
     }
 
-    [JsonIgnore] protected bool hasSexualStimulation { get { return pauseXMinAfterMod_Sex > 0 || SexStimulation.Severity != 0 ; } }
+    [JsonIgnore] protected bool hasSexualStimulation { get { return pauseXMinAfterMod_Sex > 0 || (SexStimulation != null && SexStimulation.Severity != 0) ; } }
 
     [SerializeField][JsonProperty] protected int consecutiveClimaxCount = 0;
     [JsonIgnore] public int ConsecutiveClimaxCount { get { return consecutiveClimaxCount; } }

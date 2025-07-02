@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 public class ActionPackage_ProductionOrder : ActionPackage
 {
     [JsonIgnore] public override string JoinAPDescriptorKey { get { return "ActionPackage_ProductionOrder_join"; } }
+    [JsonIgnore] public override string JoinAPDescriptorKeyEX { get { return "ActionPackage_ProductionOrder_joinEX"; } }
     [SerializeField][JsonProperty] private string orderRecipeUID = "";
     private Manageable.ProductionOrder order_cache = null;
     private Manageable.ProductionOrder order
@@ -47,7 +48,7 @@ public class ActionPackage_ProductionOrder : ActionPackage
         get 
         { 
             if(displayNameCache == ""){
-                displayNameCache = scr_System_Serializer.current.Dictionary.QueryThenParse("ActionPackage_ProductionOrder_displayName").Replace("$orderName$", scr_System_Serializer.current.GetByNameOrID_Item_Base(order.Recipe.outputItemBaseID).DisplayName);
+                displayNameCache = LocalizeDictionary.QueryThenParse("ActionPackage_ProductionOrder_displayName").Replace("$orderName$", scr_System_Serializer.current.GetByNameOrID_Item_Base(order.Recipe.outputItemBaseID).DisplayName);
             }
             return displayNameCache; 
     }

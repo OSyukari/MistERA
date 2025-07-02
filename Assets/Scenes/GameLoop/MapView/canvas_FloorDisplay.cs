@@ -176,6 +176,61 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         }
     }
 
+    Coroutine CO = null;
+
+    IEnumerator LoadFloorTex(Floor_Instance floornew = null)
+    {
+        floor = floornew;
+        // wipe previous
+        foreach (var button in currentFloorIDs)
+        {
+            if (noDestroyList.Contains(button)) continue;
+            var validator = this.validatorsByID[button];
+
+            this.buttonsByID.Remove(button);
+            this.validatorsByID.Remove(button);
+
+            validator.Destroy();
+        }
+        currentFloorIDs.Clear();
+        Utility.DestroyAllChildrenFrom(ref roomList);
+        var pictureRect = picture.rectTransform;
+        Utility.DestroyAllChildrenFrom(ref pictureRect);
+
+        Texture2D texture = null;
+        yield return AssetsLoader.LoadTextureCoroutine(floor.FloorBase.imagePath, tex => texture = tex);
+
+        picture.sprite = scr_System_CentralControl.current.GetSprite(texture);
+        var scale = floor.FloorBase.resize;
+        picture.rectTransform.localScale = new Vector3(scale, scale, scale);
+        floorName.text = floor.displayName;
+
+        foreach (Room_Instance ri in floor.rooms)
+        {
+            if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode()) * 2))
+            {
+                addBtn(prefab_roomButton, picture.rectTransform, ri, false, false);
+                addBtn(prefab_roomButton, roomList, ri, true, true);
+
+            }
+            else
+            {
+                //Debug.Log("scr_Panel_Map OnEnable skipping redraw for room [" + ri.displayName + "]");
+            }
+
+            if (scr_System_CampaignManager.current.Map.floorDoorQuickSearch.ContainsKey(ri.RefID))
+            {
+                //Debug.Log("scr_Panel_Map searching room with floor exit found match ["+ri.displayName+"]");
+                int i = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
+                Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
+                var j = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(i);
+                addExit(prefab_roomButton, picture.rectTransform, exit, j);
+            }
+        }
+
+        ValidateAll();
+    }
+
     public void LoadFloor(Floor_Instance floornew = null)
     {
         if (this.floor == null) InitFloorList();
@@ -183,55 +238,19 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         if (floornew == null) Debug.LogError("canvas_RoomDisplay ATTEMPTING TO DISPLAY NONEXISTENT ROOM");
         if (floor != floornew)
         {
-            floor = floornew;
-            // wipe previous
-            foreach(var button in currentFloorIDs)
-            {
-                if (noDestroyList.Contains(button)) continue;
-                var validator = this.validatorsByID[button];
-
-                this.buttonsByID.Remove(button);
-                this.validatorsByID.Remove(button);
-
-                validator.Destroy();
-            }
-            currentFloorIDs.Clear();
-            Utility.DestroyAllChildrenFrom(ref roomList);
-            var pictureRect = picture.rectTransform;
-            Utility.DestroyAllChildrenFrom(ref pictureRect);
-
-
             // create new
-
-            picture.sprite = scr_System_CentralControl.current.LoadCachedSprite(floor.FloorBase.imagePath);
-            var scale = floor.FloorBase.resize;
-            picture.rectTransform.localScale = new Vector3(scale, scale, scale);
-            floorName.text = floor.displayName;
-
-            foreach (Room_Instance ri in floor.rooms)
+            if (CO != null)
             {
-                if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode()) * 2))
-                {
-                    addBtn(prefab_roomButton, picture.rectTransform, ri, false, false);
-                    addBtn(prefab_roomButton, roomList, ri, true, true);
-
-                }
-                else
-                {
-                    //Debug.Log("scr_Panel_Map OnEnable skipping redraw for room [" + ri.displayName + "]");
-                }
-
-                if (scr_System_CampaignManager.current.Map.floorDoorQuickSearch.ContainsKey(ri.RefID))
-                {
-                    //Debug.Log("scr_Panel_Map searching room with floor exit found match ["+ri.displayName+"]");
-                    int i = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
-                    Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
-                    var j = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(i);
-                    addExit(prefab_roomButton, picture.rectTransform, exit, j);
-                }
+                StopCoroutine(CO);
+                CO = null;
             }
+            CO = StartCoroutine(LoadFloorTex(floornew));
         }
-        ValidateAll();
+        else
+        {
+            ValidateAll();
+        }
+
     }
 
 
@@ -294,19 +313,6 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     Texture2D SpriteTexture = null;
     Sprite NewSprite;
 
-    /*
-    private void loadSprite(string path, Image image)
-    {
-        if (path == null || path.Length < 1) path = DataPath.portrait_default;
-        SpriteTexture = LoadTexture(Application.dataPath + "/" + path);
-        //Debug.Log("loadSprite " + Application.dataPath + "/" + path);
-        NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), 100.0f);
-        image.sprite = NewSprite;
-
-        image.transform.rotation = Quaternion.identity;
-        image.transform.Rotate(new Vector3(0, 0, scr_System_CampaignManager.current.Map.z_rotation));
-    }
-    */
     public void NotifyMove()
     {
         this.Notify(-9999);

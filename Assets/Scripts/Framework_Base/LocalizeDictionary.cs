@@ -16,9 +16,12 @@ public class LocalizeDictionary : MonoBehaviour
     }
     public static LocalizeDictionary Instance { get; private set; }
 
-    public SortedDictionary<string, SortedDictionary<string, string>> Entries = null;
-
     public Dictionary_Index Index = new Dictionary_Index();
+
+    public static string QueryThenParse(string ID, string fallback = "")
+    {
+        return Instance.Index.QueryThenParse(ID, fallback);
+    }
 }
 
 
@@ -26,71 +29,37 @@ public class LocalizeDictionary : MonoBehaviour
 public class Dictionary_Index : I_IndexMergeable
 {
 
+    [HideInInspector][JsonIgnore][NonSerialized] 
+    public List<string> Languages = new List<string>()
+    {
+        "zh-cn",
+        "en-us"
+    };
 
     public SortedDictionary<string, SortedDictionary<string, string>> Entries = null;
 
     public Dictionary_Index()
     {
         Entries = new SortedDictionary<string, SortedDictionary<string, string>>();
-        Entries.Add("default", new SortedDictionary<string, string>());
+        Entries.Add(defaultLang, new SortedDictionary<string, string>());
+        foreach(var key in Languages) Entries.Add(key, new SortedDictionary<string, string>());
 
     }
-    public void SetLang(string lang)
-    {
-        this.cachedLang = lang;
-    }
-    public string cachedLang = "default";
+    protected string defaultLang = "default";
+    [JsonIgnore][NonSerialized] public string cachedLang = "zh-cn";
 
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Dictionary_Index;
-        if (l == null) return;
-        else if (l.Entries == null) return;
-        else
+        if (l == null || l.Entries == null) return;
+        
+        foreach (var entry in l.Entries)
         {
-            foreach (var entry in l.Entries)
-            {
-                if (!this.Entries.ContainsKey(entry.Key)) this.Entries.Add(entry.Key, new SortedDictionary<string, string>());
-                var tempdic = this.Entries[entry.Key].Concat(entry.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                this.Entries[entry.Key] = new SortedDictionary<string, string>(tempdic);
-            }
+            //if (!this.Entries.ContainsKey(entry.Key)) this.Entries.Add(entry.Key, new SortedDictionary<string, string>());
+            var tempdic = this.Entries[entry.Key].Concat(entry.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            this.Entries[entry.Key] = new SortedDictionary<string, string>(tempdic);
         }
-    }
-
-    private SortedDictionary<string, string> _currentDict = null;
-    protected SortedDictionary<string, string> currentDict
-    {
-        get
-        {
-            if (Entries.ContainsKey(cachedLang)) return Entries[cachedLang];
-            else return null;
-            /*
-            if (cachedLang != "" && cachedLang == scr_System_CentralControl.current.Language)
-            {
-                // nothing happens
-            }
-            else if (scr_System_CentralControl.current == null)
-            {
-                Debug.LogError($"Central control null");
-                cachedLang = "default";
-                _currentDict = Entries["default"];
-            }
-            else if (Entries.ContainsKey(scr_System_CentralControl.current.Language))
-            {
-
-                _currentDict = Entries[scr_System_CentralControl.current.Language];
-
-
-            }
-            else
-            {
-                Debug.LogError($"DICTIONARY MISSING LANGUAGE FOR {scr_System_CentralControl.current.Language}");
-                return null;
-            }
-            return _currentDict;
-            */
-
-        }
+        
     }
 
     /// <summary>
@@ -98,9 +67,9 @@ public class Dictionary_Index : I_IndexMergeable
     /// </summary>
     /// <param name="ID"></param>
     /// <returns></returns>
-    public string Query(string ID)
+    protected string Query(string ID)
     {
-        return currentDict == null ? "ERROR Dictionary NULL" : (currentDict.ContainsKey(ID) ? currentDict[ID] : ID);
+        return Entries[cachedLang].ContainsKey(ID) ? Entries[cachedLang][ID] : Entries[defaultLang].ContainsKey(ID) ? Entries[defaultLang][ID]: ID;
     }
 
     /// <summary>
@@ -122,7 +91,7 @@ public class Dictionary_Index : I_IndexMergeable
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
-    public string Parse(string s)
+    protected string Parse(string s)
     {
         bool Stop = false;
         int counter = 0;

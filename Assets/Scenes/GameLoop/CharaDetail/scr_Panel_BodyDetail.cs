@@ -19,7 +19,7 @@ public class scr_Panel_BodyDetail : MonoBehaviour
 
     protected void Awake()
     {
-        selfImage.color = scr_System_CentralControl.current.pref.BackgroundColor_Transparent;
+        selfImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
     }
     public void InitializeWithArgument(scr_Menu_CharaDetail parent, int referenceIndex)
     {
@@ -88,13 +88,13 @@ public class scr_Panel_BodyDetail : MonoBehaviour
 
         //this.mostExp.gameObject.SetActive(false);
     }
-
+    /*
     private void LoadImage()
     {
         if (instance.hasTag("vagina")) LoadSprite(XraySprite.widget_vag1);
         else if (instance.hasTag("anus")) LoadSprite(XraySprite.widget_ass1);
         else if (instance.hasTag("mouth")) LoadSprite(XraySprite.widget_oral1);
-    }
+    }*/
 
     private void LoadSprite(Texture2D texture)
     {
