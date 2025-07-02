@@ -1,0 +1,134 @@
+{
+    "COMs":{
+        "list":[
+        {
+            "ID":"com_interaction_waste_time",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_interaction_waste_time_displayName",
+            "timeScale":1,
+            "comTags": [
+                "action",
+                "player"
+            ],
+            "requirements":{
+                "requirement":{
+                    "treatReceiverAsDoer":true ,
+                    "req_Doers":{ "allowNPC":false }
+                }
+            },
+            "results": 
+            { "results_character":
+                [
+                    { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"1" } }
+                ]
+            },
+            "variants":[
+                {
+                    "requirements":{ "requirement":{ "doerCount":1 } },
+                    "displayName":"com_interaction_waste_time_displayName"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":0 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_interaction_talk",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_interaction_talk_displayName_1",
+            "timeScale":5,
+            "comTags":["interaction","canbeignored"],
+            "requirements":
+            { 
+                "_comment":"all interaction commands have a default interaction Energy cost that'll get added when executing package. Costs are deduced even if COM request failed.",
+                "_commen2":"interaction or not is getting detected on execution and it depends on doer and receiver state",
+                "requirement": { "doerCount":1 }
+            },
+            "variants":[
+                {
+                    "requirements":{ 
+                        "requirement":{ "receiverCount":1 }
+                    },
+                    "displayName":"com_interaction_talk_displayName_1"
+                },
+                {
+                    "requirements":{
+                        "requirement":{ "receiverCount":9 }
+                    },
+                    "displayName":"com_interaction_talk_displayName_2"
+                }
+            ],
+            "results": 
+            { "results_character":
+                [
+                    { 
+                        "entry_conditions": {  "applyToDoer":true, "applyToReceiver":true, "attitudeGTE":4 }, 
+                        "entry_results": { "type":"statMod_EN", "value":"3" } 
+                    }
+                ]
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":10 },
+            "DifficultyCheck":{ "baseD20Check":10 },
+            "description_begin": {
+                "Entries": [
+                    {
+                        "keepLooking": false,
+                        "texts": [
+                            "$doer.firstname$和$receiver.firstname$有一搭沒一搭地閒聊著",
+                            "$doer.firstname$和$receiver.firstname$閒聊的很開心",
+                            "$doer.firstname$：所以我跟你說啊，那個……"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"com_interaction_hello",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"打招呼",
+            "timeScale":5,
+            "comTags":["interaction","do_not_use"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1
+                }
+            }
+        },
+        {
+            "ID": "com_furniture_combat_sim",
+            "ActionPackageClass": "ActionPackage_Interaction",
+            "displayName": "combat simulation",
+            "timeScale": 1,
+            "comTags": [
+                "furniture",
+                "beginCombatSim"
+            ],
+            "requirements":{  
+                "requirement":{ 
+                    "treatReceiverAsDoer": true 
+                }  },
+            "variants": [
+                {
+                    "requirements": {
+                        "requirement": {
+                            "doerCount": 1
+                        }
+                    },
+                    "displayName": "combat simulation"
+                }
+            ],
+
+            "AcceptanceCheck": {
+                "baseAcceptanceValue": 0
+            },
+            "DifficultyCheck": {
+                "baseD20Check": 0
+            },
+
+            "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在模拟战"]}], "keepLooking":false },
+            "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始模拟战"]}], "keepLooking":false }
+        }
+    ]
+    }
+    
+}

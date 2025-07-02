@@ -1,0 +1,78 @@
+
+          {
+    "baseID": "Campaign1_Char_Kayoko",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+                
+                "portrait_offset_x": -48.855,
+                "portrait_offset_y": -341.414,
+                "portrait_offset_size": 0.55,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.8,
+
+                "icon_path":"Kayoko/Kayoko_Ark_Uniform_Icon.png",
+                "_comment":"utnapishtim uniform",
+                "_comment2":"kayoko_spr default, CH0086_spr kimono, CH0239_spr dress",
+
+                "straightAlpha":true,
+                "materialTexturePaths":["Kayoko/NP0118_spr.png"],
+                "atlasJSON_path":"Kayoko/NP0118_spr.atlas",
+                "skeletonJSON_path":"Kayoko/NP0118_spr.skel",
+                "idleAnimName":"Idle_01"
+
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 16,
+      "stat_CON": 14,
+      "stat_PSY": 8,
+      "stat_WIL": 14,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_B",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":157,
+      "initialRelationship":[
+            {
+                "baseID":"PLAYER",
+                "initialPersonalRelationship":"relationship_mentor",
+                "initialPersonalRelationship_isA":false
+            }
+        ],
+      "initialInventory":[
+            { "ID":"clothing_bluearchive_Navigator_Hat" },
+            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Coat", "nameOverwrite":"clothing_bluearchive_Navigator_ShortCoat" },
+            { "ID":"clothing_bluearchive_Navigator_Glove" },
+            { "ID":"clothing_bluearchive_Navigator_Boot" },
+            { "ID":"clothing_skin_socks" },
+            { "ID":"clothing_skin_panty" },
+            { "ID":"clothing_skin_necklace", "nameOverwrite":"clothing_skin_neckribbon" },
+            { "ID":"clothing_skin_earring" },
+            { "ID":"clothing_skin_bra" }
+        ],
+      "Skills": null
+    },
+    "firstName": "Campaign1_Char_Kayoko_FirstName",
+    "middleName": "",
+    "lastName": "Campaign1_Char_Kayoko_LastName",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_KivotosStudent",
+    "race": "humanRace_demon",
+    "raceTemplate": "humanRaceAddon_Kivotos_Gehenna",
+    "startingGift": "charOriginGift_none"
+  }
+    

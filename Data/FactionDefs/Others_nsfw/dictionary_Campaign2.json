@@ -1,0 +1,32 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "Campaign2_Chara_couple1_Female_FirstName":"莫妮卡",
+                "Campaign2_Chara_couple1_Male_FirstName":"止本",
+        
+        
+        
+                "creature_animal_pig":"猪",
+                "creature_animal_horse":"马",
+                "creature_animal_warg":"座狼",
+                "creature_humanoid_goblin":"哥布林"
+            },
+            "en-us":
+            {
+                "Campaign2_Chara_couple1_Female_FirstName":"Monica",
+                "Campaign2_Chara_couple1_Male_FirstName":"Yamemoto",
+        
+    
+        
+                "creature_animal_pig":"Pig",
+                "creature_animal_horse":"Horse",
+                "creature_animal_warg":"Warg",
+                "creature_humanoid_goblin":"Goblin"
+            }
+        }
+    }
+}

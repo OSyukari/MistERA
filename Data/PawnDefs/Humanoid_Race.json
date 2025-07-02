@@ -1,0 +1,174 @@
+{
+    "humanoid_Races":
+    {
+        "list": [
+        {
+            "ID": "humanRace_human",
+            "displayName": "Human",
+            "tooltip": "Standard Human",
+            "bodyPartRoot":"head_humanoid_base",
+            "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
+            "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","stress","mood","lust","physical","memory"],
+            "_comment2":"provide new template for basevalue",
+            "needs":[
+                {
+                    "ID":"food",
+                    "displayName":"food need",
+                    "tooltip":"tooltip",
+                    "statusDebuffID": "chara_status_malnourished",
+                    "consumeItemByTag": "food_meal",
+                    "requiresStatKeyword": "hunger",
+                    "overwritesNeedsIDs": []
+                }
+            ]
+        },
+        {
+            "ID": "humanRace_elf",
+            "displayName": "Elf",
+            "tooltip": "Pointy ear, slim, blessed with incredible lifespan.\nElves have innate affinity to magic: PSY modifier is added to daily MP recovery, and MP amount is doubled.\nSTR-1 PSY+2 WIL-1",
+            "bodyPartRoot":"head_humanoid_base",
+            "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","stress","mood","lust","physical","memory"],
+            "stat_modifiers": [
+                {
+                    "statID":"Strength",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"-1"
+                    ,
+                    "_comment":"if setBase and setMult is unspecified, default setBase is 0 and setMult is 1.0"
+                },
+                {
+                    "statID":"Psyche",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"2"
+                },
+                {
+                    "statID":"Willpower",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"-1"
+                },
+                {
+                    "statID":"stats_derived_mp_dailyRecovery",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"getStatMod", "valueString":"Psyche"
+                },
+                {
+                    "statID":"stats_derived_mp_max",
+                    "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"1"
+                }
+            ],
+            "needs":[
+                {
+                    "ID":"food",
+                    "displayName":"food need",
+                    "tooltip":"tooltip",
+                    "statusDebuffID": "chara_status_malnourished",
+                    "consumeItemByTag": "food_meal",
+                    "requiresStatKeyword": "hunger",
+                    "overwritesNeedsIDs": []
+                }
+            ]
+        },
+        {
+            "ID": "humanRace_angel",
+            "displayName": "Angel",
+            "tooltip": "",
+            "bodyPartRoot":"head_humanoid_base",
+            "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","stress","mood","lust","physical","memory"],
+            "stat_modifiers": [
+                {
+                    "statID":"Psyche",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"-1"
+                },
+                {
+                    "statID":"Willpower",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                }
+            ],
+            "needs":[
+                {
+                    "ID":"food",
+                    "displayName":"food need",
+                    "tooltip":"tooltip",
+                    "statusDebuffID": "chara_status_malnourished",
+                    "consumeItemByTag": "food_meal",
+                    "requiresStatKeyword": "hunger",
+                    "overwritesNeedsIDs": []
+                }
+            ]
+        },
+        {
+            "ID": "humanRace_demon",
+            "displayName": "Demon",
+            "tooltip": "Powerful, but comes at the cost of lessened self preservation instinct.\nSTR+2 CON-1 WIL-1",
+            "bodyPartRoot":"head_humanoid_base",
+            "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","stress","mood","lust","physical","memory"],
+            "stat_modifiers": [
+                {
+                    "statID":"Strength",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"2"
+                },
+                {
+                    "statID":"Constitution",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"-1"
+                },
+                {
+                    "statID":"Willpower",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"-1"
+                }
+            ],
+            "needs":[
+                {
+                    "ID":"food",
+                    "displayName":"food need",
+                    "tooltip":"tooltip",
+                    "statusDebuffID": "chara_status_malnourished",
+                    "consumeItemByTag": "food_meal",
+                    "requiresStatKeyword": "hunger",
+                    "overwritesNeedsIDs": []
+                }
+            ]
+        },
+        {
+            "ID": "humanRace_beastkin_cat",
+            "displayName": "Beastkin - Cat",
+            "tooltip": "Nimble, agile, but somewhat disinterested toward others.\nCON+1 PSY-1",
+            "bodyPartRoot":"head_humanoid_base",
+            "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","stress","mood","lust","physical","memory"],
+            "stat_modifiers": [
+                {
+                    "statID":"Constitution",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                },
+                {
+                    "statID":"Psyche",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"-1"
+                }
+            ],
+            "needs":[
+                {
+                    "ID":"food",
+                    "displayName":"food need",
+                    "tooltip":"tooltip",
+                    "statusDebuffID": "chara_status_malnourished",
+                    "consumeItemByTag": "food_meal",
+                    "requiresStatKeyword": "hunger",
+                    "overwritesNeedsIDs": []
+                }
+            ]
+        },
+        {
+            "ID": "humanRace_android_complex",
+            "displayName": "Android",
+            "tooltip": "manufactured humanoid machines, usually built with the intention to fill a designated role.",
+            "bodyPartRoot":"head_humanoid_base",
+            "addStatsKeyword":["hp","energy","stamina","physical","memory"],
+            "stat_modifiers": []
+        },
+        {
+            "ID": "humanRace_android_simple",
+            "displayName": "Android",
+            "tooltip": "manufactured humanoid machines, usually built with the intention to fill a designated role.",
+            "bodyPartRoot":"head_android_base",
+            "addStatsKeyword":["hp","energy","stamina","physical","memory"],
+            "stat_modifiers": []
+        }
+    ]
+    }
+    
+}

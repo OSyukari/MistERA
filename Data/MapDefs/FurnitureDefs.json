@@ -1,0 +1,362 @@
+{
+    "Furnitures":{
+        "list":[
+        {
+            "ID":"furniture_bed_single",
+            "displayName":"单人床",
+            "recipe":[],
+            "furnitureSize":2.0,
+            "givesJob":
+            [ { "comTags":["furniture","bed"] } ]
+        },
+        {
+            "ID":"furniture_bed_single_bunk",
+            "displayName":"单人上下床",
+            "recipe":[],
+            "furnitureSize":2.5,
+            "givesJob":
+            [ { "comTags":["furniture","bed"] } ]
+        },
+        {
+            "ID":"furniture_bed_double",
+            "displayName":"双人床",
+            "recipe":[],
+            "furnitureSize":3,
+            "givesJob":
+            [ { "comTags":["furniture","bed"] }]
+        },
+        {
+            "ID":"furniture_bed_queen",
+            "displayName":"大型床",
+            "recipe":[],
+            "furnitureSize":4,
+            "givesJob":
+            [ { "comTags":["furniture","bed"] } ]
+        },
+        {
+            "ID":"furniture_bed_king",
+            "displayName":"特大床",
+            "recipe":[],
+            "furnitureSize":5,
+            "givesJob":
+            [ { "comTags":["furniture","bed"] }]
+        },
+        {
+            "ID":"furniture_sofa_3",
+            "displayName":"长沙发",
+            "recipe":[],
+            "furnitureSize":4,
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+        },
+        {
+            "ID":"furniture_sofa_1",
+            "displayName":"沙发",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob":
+            [ { "comID":["com_furniture_takingBreak"] } ]
+        },
+        {
+            "ID":"furniture_TV_flatscreen",
+            "displayName":"平面电视",
+            "recipe":[],
+            "furnitureSize":4,
+            "givesJob": [ { "comTags":["furniture","TV"] } ]
+        },
+        {
+            "ID":"furniture_marker_cleaning",
+            "displayName":"扫除marker",
+            "noDisplay":true,
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob":
+            [ { "comID":["com_job_cleaning"] } ]
+        },
+        {
+            "ID":"furniture_marker_getmeal",
+            "displayName":"用餐marker",
+            "noDisplay":true,
+            "recipe":[],
+            "furnitureSize":0,
+            "givesJob": [ { "comTags":["furniture","food_meal"] } ]
+        },
+        {
+            "ID":"furniture_galley",
+            "displayName":"厨房",
+            "recipe":[],
+            "furnitureSize":3,
+            "givesJob":
+            [ { "comTags":["furniture","production_cooking"] } ]
+        },
+        {
+            "ID":"furniture_stove",
+            "displayName":"炉灶",
+            "recipe":[],
+            "furnitureSize":2,
+            "givesJob":
+            [ { "comTags":["furniture","cooking"] } ]
+        },
+        {
+            "ID":"furniture_shower",
+            "displayName":"淋浴",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob":
+            [ { "comTags":["furniture","shower"] } ]
+        },
+        {
+            "ID":"furniture_bathtub",
+            "displayName":"浴缸",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob":
+            [ { "comTags":["furniture","shower"] } ]
+        },
+        {
+            "ID":"furniture_bathroom_set",
+            "displayName":"卫生间",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [ { "comTags":["furniture","bathroom"] },
+            { "comID":["com_furniture_restroom_fix"] } ]
+        },
+        {
+            "ID":"furniture_toilet_shower_set",
+            "displayName":"卫生单间",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob":
+            [ { "comTags":["furniture","bathroom"] },
+            { "comTags":["furniture","shower"] },
+            { "comID":["com_furniture_restroom_fix"] } ]
+        },
+        {
+            "ID":"furniture_table_1_chair_1",
+            "displayName":"单人桌椅",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+        },
+        {
+            "ID":"furniture_dining_table_10",
+            "displayName":"长餐桌",
+            "recipe":[],
+            "furnitureSize":10,
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+        },
+        {
+            "ID":"furniture_cafe_table_2",
+            "displayName":"咖啡桌",
+            "recipe":[],
+            "furnitureSize":2,
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+        },
+        {
+            "ID":"furniture_round_table_4",
+            "displayName":"圆桌",
+            "recipe":[],
+            "furnitureSize":4,
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+        },
+        {
+            "ID":"furniture_piano",
+            "displayName":"钢琴",
+            "recipe":[],
+            "furnitureSize":1
+        },
+        {
+            "ID":"furniture_computer_terminal",
+            "displayName":"终端",
+            "recipe":[],
+            "furnitureSize":1
+        },
+        {
+            "ID":"furniture_bookshelves",
+            "displayName":"书架",
+            "recipe":[],
+            "furnitureSize":1
+        },
+        {
+            "ID":"furniture_hydroponics",
+            "displayName":"水培舱",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [  { "comTags":["furniture","farm_cultivate_crop"] },
+                            { "comTags":["furniture","farm_maintain"] }]
+        },
+        {
+            "ID":"furniture_workbench_engineering",
+            "displayName":"工程制造台",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [  { "comTags":["furniture","production_engineering"] },
+                            { "comTags":["furniture","research_engineering"] } ]
+        },
+        {
+            "ID":"furniture_carniculture_pod",
+            "displayName":"肉类培育槽",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [  { "comTags":["furniture","farm_cultivate_meat"] },
+                            { "comTags":["furniture","farm_maintain"] }]
+        },
+        {
+            "ID":"furniture_research_biochem",
+            "displayName":"生物化学研究室",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [ { "comTags":["furniture","research_biochemistry"] } ]
+        },
+        {
+            "ID":"furniture_research_physics",
+            "displayName":"物理研究室",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [ { "comTags":["furniture","research_physics"] } ]
+        },
+        {
+            "ID":"furniture_workbench_chemistry",
+            "displayName":"化学制造台",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [ { "comTags":["furniture","production_chemistry"] } ]
+        },
+        {
+            "ID":"furniture_cryopod",
+            "displayName":"冷冻休眠舱",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob":
+            [ { "comTags":["furniture","cryo"] } ]
+        },
+        {
+            "ID":"furniture_hospital_bed",
+            "displayName":"医疗床",
+            "recipe":[],
+            "furnitureSize":1
+        },
+        {
+            "ID":"furniture_shooting_range_spot",
+            "displayName":"靶场射击点",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [ { "comTags":["furniture","training_shooting"] } ]
+        },
+        {
+            "ID":"furniture_arena_spot",
+            "displayName":"擂台",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob": [ { "comID":["com_furniture_combat_sim"] },
+                { "comTags":["furniture","training_melee"] } ]
+        },
+        {
+            "ID":"furniture_prison_containment_spot",
+            "displayName":"收容单间",
+            "recipe":[],
+            "furnitureSize":1,
+            "givesJob":
+            [ { "comTags":["furniture","prison"] }]
+        },
+        {
+            "ID":"furniture_prison_containment_spot_2",
+            "displayName":"收容双人间",
+            "recipe":[],
+            "furnitureSize":2,
+            "givesJob":
+            [ { "comTags":["furniture","prison"] }]
+        }
+        
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"furniture_bed_single":"单人床",
+"furniture_bed_single_bunk":"单人上下床",
+"furniture_bed_double":"双人床",
+"furniture_bed_queen":"大型床",
+"furniture_bed_king":"特大床",
+"furniture_sofa_3":"长沙发",
+"furniture_sofa_1":"沙发",
+"furniture_TV_flatscreen":"平面电视",
+"furniture_marker_cleaning":"扫除marker",
+"furniture_marker_getmeal":"用餐marker",
+"furniture_galley":"厨房",
+"furniture_stove":"炉灶",
+"furniture_shower":"淋浴",
+
+"furniture_bathtub":"浴缸",
+"furniture_bathroom_set":"卫生间",
+"furniture_toilet_shower_set":"卫生单间",
+"furniture_table_1_chair_1":"单人桌椅",
+"furniture_dining_table_10":"长餐桌",
+"furniture_cafe_table_2":"咖啡桌",
+"furniture_round_table_4":"圆桌",
+"furniture_piano":"钢琴",
+
+"furniture_computer_terminal":"终端",
+"furniture_bookshelves":"书架",
+"furniture_hydroponics":"水培舱",
+"furniture_workbench_engineering":"工程制造台",
+"furniture_carniculture_pod":"肉类培育槽",
+"furniture_research_biochem":"生化研究室",
+"furniture_research_physics":"物理研究室",
+"furniture_workbench_chemistry":"化学制造台",
+
+"furniture_cryopod":"冷冻休眠舱",
+"furniture_hospital_bed":"医疗床",
+"furniture_shooting_range_spot":"靶场射击点",
+"furniture_arena_spot":"擂台",
+"furniture_prison_containment_spot":"收容单间",
+"furniture_prison_containment_spot_2":"收容双人间"
+            },
+            "en-us":
+            {
+"furniture_bed_single": "Single Bed",
+"furniture_bed_single_bunk": "Bunk Bed",
+"furniture_bed_double": "Double Bed",
+"furniture_bed_queen": "Queen-Size Bed",
+"furniture_bed_king": "King-Size Bed",
+"furniture_sofa_3": "Couch",
+"furniture_sofa_1": "Sofa",
+"furniture_TV_flatscreen": "Flat Screen TV",
+"furniture_marker_cleaning": "Cleaning Marker",
+"furniture_marker_getmeal": "Dining Marker",
+"furniture_galley": "Galley",
+"furniture_stove": "Stove",
+"furniture_shower": "Shower",
+
+  "furniture_bathtub": "Bathtub",
+  "furniture_bathroom_set": "Bathroom Set",
+  "furniture_toilet_shower_set": "Toilet and Shower Stall",
+  "furniture_table_1_chair_1": "Single Table and Chair",
+  "furniture_dining_table_10": "Long Dining Table",
+  "furniture_cafe_table_2": "Coffee Table",
+  "furniture_round_table_4": "Round Table",
+  "furniture_piano": "Piano",
+
+  "furniture_computer_terminal": "Computer Terminal",
+  "furniture_bookshelves": "Bookshelves",
+  "furniture_hydroponics": "Hydroponics Pod",
+  "furniture_workbench_engineering": "Engineering Workbench",
+  "furniture_carniculture_pod": "Meat Cultivation Pod",
+  "furniture_research_biochem": "Biochemical Research Lab",
+  "furniture_research_physics": "Physics Research Lab",
+  "furniture_workbench_chemistry": "Chemical Manufacturing Bench",
+
+  "furniture_cryopod": "Cryo Pod",
+  "furniture_hospital_bed": "Hospital Bed",
+  "furniture_shooting_range_spot": "Shooting Range Spot",
+  "furniture_arena_spot": "Arena Spot",
+  "furniture_prison_containment_spot": "Prison Cell (Single)",
+  "furniture_prison_containment_spot_2": "Prison Cell (Double)"
+
+            }
+        }
+    }
+    
+}

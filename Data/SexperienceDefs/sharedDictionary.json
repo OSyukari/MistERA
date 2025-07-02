@@ -1,0 +1,37 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "skill_expansion_tooltip1": "该技能每等级增加对应部位的尺寸和深度",
+                "skill_addiction_cum": "精液中毒",
+                "skill_addiction_cum_tooltip": "%%notimplemented%%",
+                "skill_addiction_masturbation": "自慰中毒",
+                "skill_addiction_masturbation_tooltip": "%%notimplemented%%",
+                "skill_addiction_sex": "性交中毒",
+                "skill_addiction_sex_tooltip": "%%notimplemented%%",
+                "skill_addiction_bestiality": "兽奸中毒",
+                "skill_addiction_bestiality_tooltip": "%%notimplemented%%",
+                "skill_addiction_homosexual_male": "BL中毒",
+                "skill_addiction_homosexual_male_tooltip": "%%notimplemented%%",
+                "skill_addiction_homosexual_female": "百合中毒",
+                "skill_addiction_homosexual_female_tooltip": "%%notimplemented%%",
+                "skill_addiction_raped": "被奸中毒",
+                "skill_addiction_raped_tooltip": "%%notimplemented%%",
+                "skill_addiction_prostitution": "卖春中毒",
+                "skill_addiction_prostitution_tooltip": "%%notimplemented%%",
+                "skill_addiction_hypnosis": "催眠中毒",
+                "skill_addiction_hypnosis_tooltip": "%%notimplemented%%",
+                "skill_addiction_milking": "喷乳中毒",
+                "skill_addiction_milking_tooltip": "%%notimplemented%%",
+
+                "skill_sensitivity_tooltip1": "该技能每等级增加对应部位的敏感度上限，略微增加对应部位的快感和苦痛获取",
+                "skill_sensitivity_tooltip2": "该技能每等级增加对应部位的尺寸包容度（不增加实际尺寸）"
+            }
+        }
+    }
+        
+    
+}

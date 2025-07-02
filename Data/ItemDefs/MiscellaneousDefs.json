@@ -1,0 +1,16 @@
+{
+    "Items":{
+"list":
+[
+    {
+        "id":"currency_JPY",
+        "displayName":"JPY",
+        "tooltip":"Currency in circulation in limited area.",
+        "Tags":["item_money"],
+        "value":1,
+        "itemComps_Template":[]
+    }
+
+]
+    }
+}

@@ -1,0 +1,108 @@
+{
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"com_sex_oral_P_balls",
+                "ActionPackageClass":"ActionPackage_Sex",
+                "displayName":"com_sex_oral_P_balls_displayName_1",
+                "timeScale":3,
+                "comTags":["sex","service"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["mouth"],
+                            "minRevealingScore":1,
+                            "cost_ST": 1
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["testicle"],
+                            "minRevealingScore":1,
+                            "requireConscious":false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "variants":[
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_balls_displayName_1"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_balls_displayName_2"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_balls_displayName_3"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_balls_displayName_4"
+                    }
+                ],
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "$doer.firstname$正在舔弄着$receiver.firstname$的睾丸" ]
+                        }
+                    ]
+                },
+                "descriptions_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "$receiver.firstname$的睾丸被从$doer.firstname$的口中解放出来" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "$receiver.firstname$的肉棒在$doer.firstname$舌头的敦促下射出了精液" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": ["$doer.firstname$将头埋到了$receiver.firstname$股间，张开嘴贴上了$receiver.firstname$的睾丸"]
+                        }
+                    ]
+                    
+                }
+            }
+        ]
+    }
+}

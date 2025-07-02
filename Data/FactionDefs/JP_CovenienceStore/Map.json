@@ -1,0 +1,152 @@
+{
+    "Floors":
+    {
+        "list":[
+            {
+                "ID":"floor_jp_convenience_store",
+                "imagePath":"SunMart/floorplan.png",
+                "floorWidth":638.0,
+                "floorHeight":500.0,
+                "resize":1.75,
+                "mapExit":"store_1F_entrance",
+                "exits":[
+                    {
+                        "ID":"South",
+                        "connectedRoom":"store_1F_entrance",
+                        "offsetY":-350.0
+                    }
+                ],
+                "rooms":[
+                    {
+                        "ID":"store_2F_canteen",
+                        "displayName":"2F Canteen",
+                        "offsetX":-241.2,
+                        "offsetY":44.5,
+                        "connects": [ { "ID":"store_2F_hallway", "cost":1.0 } ],
+                        "furnitureIDs":["furniture_galley","furniture_round_table_4","furniture_marker_getmeal"],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_2F_toilet_ex",
+                        "displayName":"2F Large Toilet??",
+                        "offsetX":-238.9,
+                        "offsetY":103.9,
+                        "connects": [ { "ID":"store_2F_hallway", "cost":1.0  }],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_shower"],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_2F_toilet",
+                        "displayName":"2F Toilet",
+                        "offsetX":-239.8,
+                        "offsetY":154,
+                        "connects": [ { "ID":"store_2F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_shower"],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_office",
+                        "displayName":"Office",
+                        "offsetX":135,
+                        "offsetY":67.8,
+                        "connects": [ { "ID":"store_1F_storage", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_bed_single",
+                                        "furniture_table_1_chair_1"],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_kitchen",
+                        "displayName":"Kitchen",
+                        "offsetX":144.4,
+                        "offsetY":129.1,
+                        "connects": [ { "ID":"store_1F_storage", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_galley"],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_storage",
+                        "displayName":"Storage",
+                        "offsetX":245.2,
+                        "offsetY":124.7,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_marker_jp_convenience_store_storageCleaning"],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_parking",
+                        "displayName":"Parking",
+                        "offsetX":217.5,
+                        "offsetY":-72.7,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_shopping_1",
+                        "displayName":"Shop Area 1",
+                        "offsetX":-23.8,
+                        "offsetY":-67.3,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_shopping_2",
+                        "displayName":"Shop Area 2",
+                        "offsetX":-23.8,
+                        "offsetY":107.2,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_counter",
+                        "displayName":"Counter",
+                        "offsetX":-28.6,
+                        "offsetY":-179.9,
+                        "connects": [ { "ID":"store_1F_shopping_1", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_marker_jp_convenience_store_frontDesk"],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_entrance",
+                        "displayName":"Entrance",
+                        "offsetX":-149.8,
+                        "offsetY":-228.9,
+                        "connects": [ { "ID":"store_1F_counter", "cost":1.0  },
+                                      { "ID":"store_1F_parking", "cost":4.0  }  ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_postOffice",
+                        "displayName":"Post Office",
+                        "offsetX":-215.3,
+                        "offsetY":-114.4,
+                        "connects": [ { "ID":"store_1F_entrance", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_2F_hallway",
+                        "displayName":"2F Hallway",
+                        "offsetX":-281.2,
+                        "offsetY":24.5,
+                        "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"SunMart/interior.png"
+                    },
+                    {
+                        "ID":"store_1F_hallway",
+                        "displayName":"1F Hallway",
+                        "offsetX":80.5,
+                        "offsetY":19.7,
+                        "connects": [ { "ID":"store_2F_hallway", "cost":1.0  } ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"SunMart/interior.png"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,172 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "campaign_starfarers":"星之旅人",
+        "campaign_starfarers_tooltip":"为了方便熟悉游戏机制而设计的小型剧本。\n限制：玩家角色起源必须是%%charOrigin_TraveleracrossGates%%，角色初始礼物不会生效。\n\n此剧本为碧蓝档案同人",
+        "campaign1_start_default":"老师",
+        "campaign1_start_default_tooltip":"以碧蓝档案的老师身份，与%%factionName_Utnapishtim%%的领航员们一同开始游戏。\n身为老师，玩家有义务管理%%factionName_Utnapishtim%%阵营，有义务维护学生们的身心健康。\n限制：玩家不可参与战斗（未实装），不可做出越界的举止（未实装）\n玩家的立绘和名字会被更改",
+        
+        "campaign1_start_student":"（未实装）学生",
+        "campaign1_start_student_tooltip":"（未实装）以奇沃托斯的学生身份，与生命守护者的领航员们一同开始游戏。\n身为学生，玩家可以参与战斗。\n限制：玩家的种族模板会被改为--学生模板--\n--学生模板--：--模板描述--",
+        "campaign1_start_debug":"（未实装）debug",
+        "campaign1_start_debug_tooltip":"（未实装）Start with extra debug NPC in party",
+
+        "factionName_Utnapishtim":"生命守护者",
+
+        "Campaign1_player_firstname":"老师",
+        "Campaign1_player_middlename":"",
+        "Campaign1_player_lastname":"",
+        "Campaign1_player_nameDisplayFormat":"%%chara_fullname_firstToLast%%",
+
+        "Campaign1_Char_Himari_FirstName":"日鞠",
+        "Campaign1_Char_Himari_LastName":"明星",
+
+        "Campaign1_Char_Ako_FirstName":"亚子",
+        "Campaign1_Char_Ako_LastName":"天雨",
+
+        "Campaign1_Char_Yuuka_FirstName":"优香",
+        "Campaign1_Char_Yuuka_LastName":"早濑",
+
+        "Campaign1_Char_Ayumu_FirstName":"步",
+        "Campaign1_Char_Ayumu_LastName":"岩柜",
+
+        "Campaign1_Char_Rin_FirstName":"琳",
+        "Campaign1_Char_Rin_LastName":"七神",
+
+        "Campaign1_Char_Ayane_FirstName":"绫音",
+        "Campaign1_Char_Ayane_LastName":"奥空",
+
+        "Campaign1_Char_Momoka_FirstName":"桃香",
+        "Campaign1_Char_Momoka_LastName":"由良木",
+
+        "Campaign1_Char_Hanako_FirstName":"花子",
+        "Campaign1_Char_Hanako_LastName":"浦和",
+
+        "Campaign1_Char_Kayoko_FirstName":"佳代子",
+        "Campaign1_Char_Kayoko_LastName":"鬼方",
+
+        "humanRaceAddon_Kivotos_Trinity":"圣三一学生",
+        "humanRaceAddon_Kivotos_Trinity_tooltip":"%%tooltip_kivotos_halo_effect%%",
+        "humanRaceAddon_Kivotos_Gehenna":"格黑那学生",
+        "humanRaceAddon_Kivotos_Gehenna_tooltip":"%%tooltip_kivotos_halo_effect%%",
+        "humanRaceAddon_Kivotos_Millenium":"千年学生",
+        "humanRaceAddon_Kivotos_Millenium_tooltip":"%%tooltip_kivotos_halo_effect%%",
+        "humanRaceAddon_Kivotos_GSC":"联邦学生会学生",
+        "humanRaceAddon_Kivotos_GSC_tooltip":"%%tooltip_kivotos_halo_effect%%",
+        "humanRaceAddon_Kivotos_Abydos":"阿拜多斯学生",
+        "humanRaceAddon_Kivotos_Abydos_tooltip":"%%tooltip_kivotos_halo_effect%%",
+
+        "tooltip_kivotos_halo_effect":"光环：MP不会自然回复，获得等同于MP上限/2的全类型伤害减免。\n上述效果未实装",
+
+        "map_hallway":"走廊",
+        "map_singleSuite":"单人套房",
+        "map_singleRoom":"单人房",
+        "map_doubleRoom":"双人房",
+        "map_execSuite":"商务套房",
+        "map_storeroom":"仓库",
+
+        "map_prisoncell_single":"单人牢房",
+        "map_prisoncell_double":"双人牢房",
+
+        "campaign1_map_utnapishtim_bridge":"%%factionName_Utnapishtim%%舰桥",
+        "campaign1_map_utnapishtim_living":"%%factionName_Utnapishtim%%居住区",
+        "campaign1_map_utnapishtim_faming":"%%factionName_Utnapishtim%%农业区",
+        "campaign1_map_utnapishtim_medical":"%%factionName_Utnapishtim%%医疗区",
+
+        "Campaign1_86_Lerche_firstname":"蕾尔赫",
+        "humanRaceAddon_Android_Sirin":"西琳",
+        "humanRaceAddon_Android_Sirin_tooltip":"作为轻量且能被批量生产的战斗仿生人，%%humanRaceAddon_Android_Sirin%%尽管也复刻了人类的大脑结构，但只在外观上做到了人形，一动起来就会透露出不自然感。\n作为轻量化的代价，%%humanRaceAddon_Android_Sirin%%的持续作战能力较低。\nCON-2 基础服从度+2",
+        
+        "humanRace_android_complex":"高等仿生人",
+        "humanRace_android_complex_tooltip":"%%humanRace_android_simple_tooltip%%\n相较通常仿生人，高等仿生人在更多方面贴近人类，相对的维护需求也更高。",
+        "humanRace_android_simple":"仿生人",
+        "humanRace_android_simple_tooltip":"被制造的人形机械，它们的存在意义常为填补某些特定需求。\n大部分仿生人没有维生需求。"
+            },
+            
+            "en-us":
+            {
+                "campaign_starfarers":"Starfarers",
+        "campaign_starfarers_tooltip":"A small scenario designed to help familiarize you with the game mechanics.\nRestrictions: The player character's origin must be %%charOrigin_TraveleracrossGates%%, and the character's initial gifts will not take effect.\n\nThis scenario is a parody of Blue Archive.",
+        "campaign1_start_default":"Sensei",
+        "campaign1_start_default_tooltip":"Start the game as the Sensei from Blue Archive, along with the navigators of %%factionName_Utnapishtim%%.\nAs Sensei, the player need to to manage %%factionName_Utnapishtim%% faction and maintain the physical and mental wellbeing of all students.\nRestrictions: The player cannot participate in combat (not yet implemented).\nThe player's portrait and name will be altered.",
+        
+        "factionName_Utnapishtim":"Utnapishtim",
+
+        "Campaign1_player_firstname":"Sensei",
+        "Campaign1_player_middlename":"",
+        "Campaign1_player_lastname":"",
+        "Campaign1_player_nameDisplayFormat":"%%chara_fullname_firstToLast%%",
+
+        "Campaign1_Char_Himari_FirstName":"Himari",
+        "Campaign1_Char_Himari_LastName":"Akeboshi",
+
+        "Campaign1_Char_Ako_FirstName":"Ako",
+        "Campaign1_Char_Ako_LastName":"Amau",
+
+        "Campaign1_Char_Yuuka_FirstName":"Yuuka",
+        "Campaign1_Char_Yuuka_LastName":"Hayase",
+
+        "Campaign1_Char_Ayumu_FirstName":"Ayumu",
+        "Campaign1_Char_Ayumu_LastName":"Iwabisu",
+
+        "Campaign1_Char_Rin_FirstName":"Rin",
+        "Campaign1_Char_Rin_LastName":"Nanagami",
+
+        "Campaign1_Char_Ayane_FirstName":"Ayane",
+        "Campaign1_Char_Ayane_LastName":"Okusora",
+
+        "Campaign1_Char_Momoka_FirstName":"Momoka",
+        "Campaign1_Char_Momoka_LastName":"Yuragi",
+
+        "Campaign1_Char_Hanako_FirstName":"Hanako",
+        "Campaign1_Char_Hanako_LastName":"Urawa",
+
+        "Campaign1_Char_Kayoko_FirstName":"Kayoko",
+        "Campaign1_Char_Kayoko_LastName":"Onikata",
+
+        "humanRaceAddon_Kivotos_Trinity":"Trinity Student",
+        "humanRaceAddon_Kivotos_Trinity_tooltip":"%%tooltip_kivotos_halo_effect%%",
+        "humanRaceAddon_Kivotos_Gehenna":"Gehenna Student",
+        "humanRaceAddon_Kivotos_Gehenna_tooltip":"%%tooltip_kivotos_halo_effect%%",
+        "humanRaceAddon_Kivotos_Millenium":"Trinity Student",
+        "humanRaceAddon_Kivotos_Millenium_tooltip":"%%tooltip_kivotos_halo_effect%%",
+        "humanRaceAddon_Kivotos_GSC":"GSC Student",
+        "humanRaceAddon_Kivotos_GSC_tooltip":"%%tooltip_kivotos_halo_effect%%",
+        "humanRaceAddon_Kivotos_Abydos":"Abydos Student",
+        "humanRaceAddon_Kivotos_Abydos_tooltip":"%%tooltip_kivotos_halo_effect%%",
+
+        "tooltip_kivotos_halo_effect":"Halo: MP will not regenerate naturally, gain all-type damage reduction equal to MP cap / 2. \nThe aforementioned effects are not implemented.",
+
+        "map_hallway": "Hallway",
+        "map_singleSuite": "Single Suite",
+        "map_singleRoom": "Single Room",
+        "map_doubleRoom": "Double Room",
+        "map_execSuite": "Executive Suite",
+        "map_storeroom": "Storeroom",
+
+  "map_prisoncell_single": "Single Prison Cell",
+  "map_prisoncell_double": "Double Prison Cell",
+
+  "campaign1_map_utnapishtim_bridge": "%%factionName_Utnapishtim%% Bridge",
+  "campaign1_map_utnapishtim_living": "%%factionName_Utnapishtim%% Living Quarters",
+  "campaign1_map_utnapishtim_faming": "%%factionName_Utnapishtim%% Agricultural Zone",
+  "campaign1_map_utnapishtim_medical": "%%factionName_Utnapishtim%% Medical Bay",
+
+  "Campaign1_86_Lerche_firstname": "Lerche",
+  "humanRaceAddon_Android_Sirin": "Sirin",
+  "humanRaceAddon_Android_Sirin_tooltip": "As a lightweight combat android that can be mass-produced, %%humanRaceAddon_Android_Sirin%%, despite replicating the human brain structure, only achieves a human-like appearance, revealing an unnaturalness in movement. \nAs a trade-off for being lightweight, the sustained combat capability of %%humanRaceAddon_Android_Sirin%% is low.\nCON-2, Base Obedience +2",
+  
+  "humanRace_android_complex": "Advanced Android",
+  "humanRace_android_complex_tooltip": "%%humanRace_android_simple_tooltip%%\nCompared to ordinary androids, advanced androids are closer to humans in more ways, and require relatively more maintenance.",
+  "humanRace_android_simple": "Android",
+  "humanRace_android_simple_tooltip": "Humanoid machine created to fulfill specific needs.\nMost androids do not have daily needs."
+
+
+            }
+        }
+    }
+}

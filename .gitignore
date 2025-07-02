@@ -11,6 +11,9 @@
 !README.md
 !ci/*
 
+!Data/
+
+
 !Assets/
 Assets/*
 !Assets/Data
@@ -18,6 +21,10 @@ Assets/*
 !Assets/Scenes
 
 
+*.webp
+*.png
+*.skel
+*.atlas
 *.mat
 *.shader
 *.txt

@@ -1,0 +1,76 @@
+
+{
+  "baseID": "Campaign1_Char_Hanako",
+  "Portrait":{
+      "portraitPriorityList":[
+        {
+            "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+            "portrait_offset_x": 23.299,
+            "portrait_offset_y": -380.19,
+                "portrait_offset_size": 0.55,
+
+            "icon_offset_x":0.0,
+            "icon_offset_y":0.0,
+            "icon_offset_size":0.8,
+
+            "icon_path":"Hanako/Hanako_Ark_Uniform_Icon.png",
+            "_comment":"utnapishtim uniform",
+            "_comment2":"hanako_spr default, CH0209_spr swim 22, NP0003_spr sport, NP0004_spr swim, NP0151_spr swim 2",
+
+            "straightAlpha":true,
+            "materialTexturePaths":["Hanako/NP0110_spr.png"],
+            "atlasJSON_path":"Hanako/NP0110_spr.atlas",
+            "skeletonJSON_path":"Hanako/NP0110_spr.skel",
+            "idleAnimName":"Idle_01"
+
+        }
+      ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "BodyType": "Default",
+    "stat_STR": 10,
+    "stat_CON": 12,
+    "stat_PSY": 14,
+    "stat_WIL": 16,
+    "personalityID": "personality_default",
+    "sensitivity_B": "trait_Sensitivity_B_default",
+    "sensitivity_M": "trait_Sensitivity_M_default",
+    "sensitivity_C": "trait_Sensitivity_C_default",
+    "sensitivity_V": "trait_Sensitivity_V_default",
+    "sensitivity_A": "trait_Sensitivity_A_default",
+    "size_B": "trait_Size_B_E",
+    "size_P": "trait_Size_P_none",
+    "size_V": "trait_Size_V_1",
+    "size_A": "trait_Size_A_1",
+    "Height":161,
+    "initialRelationship":[
+          {
+              "baseID":"PLAYER",
+              "initialPersonalRelationship":"relationship_mentor",
+              "initialPersonalRelationship_isA":false
+          }
+      ],
+    "initialInventory":[
+          { "ID":"clothing_bluearchive_Navigator_Hat" },
+          { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_Minidress" },
+          { "ID":"clothing_bluearchive_Navigator_Cape" },
+          { "ID":"clothing_bluearchive_Navigator_Glove" },
+          { "ID":"clothing_bluearchive_Navigator_Boot", "nameOverwrite":"clothing_bluearchive_Navigator_HeelBoot" },
+          { "ID":"clothing_skin_socks" },
+          { "ID":"clothing_skin_panty" },
+          { "ID":"clothing_inner_hair_ribbon" },
+          { "ID":"clothing_skin_bra" }
+      ],
+    "Skills": null
+  },
+  "firstName": "Campaign1_Char_Hanako_FirstName",
+  "middleName": "",
+  "lastName": "Campaign1_Char_Hanako_LastName",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_KivotosStudent",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_Kivotos_Millenium",
+  "startingGift": "charOriginGift_none"
+}

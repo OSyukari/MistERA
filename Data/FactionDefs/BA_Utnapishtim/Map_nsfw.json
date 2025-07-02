@@ -1,0 +1,302 @@
+{
+    "Floors":{
+        "list":
+        [
+            {
+                "ID":"floor_stockasset_medbay",
+                "imagePath":"ShipGenerator/stockasset_medbay.png",
+                "floorWidth":800.0,
+                "floorHeight":800.0,
+                "exits":[
+                    {
+                        "ID":"North",
+                        "connectedRoom": "medbay_hallway_1",
+                        "offsetY":450.0
+                    },
+                    {
+                        "ID":"South",
+                        "connectedRoom": "medbay_hallway_4",
+                        "offsetY":-450.0
+                    },
+                    {
+                        "ID":"East",
+                        "connectedRoom": "medbay_hallway_2",
+                        "offsetX":500.0
+                    },
+                    {
+                        "ID":"West",
+                        "connectedRoom": "medbay_hallway_3",
+                        "offsetX":-500.0
+                    }
+                ],
+                "rooms":[
+                    {
+                        "ID":"medbay_hallway_1",
+                        "displayName":"map_hallway",
+                        "offsetX":-242.9,
+                        "offsetY":228.3,
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                    },
+                    {
+                        "ID":"medbay_hallway_2",
+                        "displayName":"map_hallway",
+                        "offsetX":256,
+                        "offsetY":228.3,
+                        "connects": 
+                        [ { "ID":"medbay_hallway_1", "cost":1.0  } ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                    },
+                    {
+                        "ID":"medbay_hallway_3",
+                        "displayName":"map_hallway",
+                        "offsetX":-281,
+                        "offsetY":-205,
+                        "connects": 
+                        [ { "ID":"medbay_hallway_1", "cost":1.0  } ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                    },
+                    {
+                        "ID":"medbay_hallway_4",
+                        "displayName":"map_hallway",
+                        "offsetX":297,
+                        "offsetY":-205,
+                        "connects": 
+                        [ { "ID":"medbay_hallway_2", "cost":1.0  },
+                        { "ID":"medbay_hallway_3", "cost":1.0  } ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                    },
+                    {
+                        "ID":"medbay_pharmacy",
+                        "displayName":"Pharmacy",
+                        "offsetX":-328.7,
+                        "offsetY":-125,
+                        "connects": 
+                        [ { "ID":"medbay_hallway_3", "cost":1.0 } ],
+                        "furnitureIDs":["furniture_workbench_chemistry","furniture_computer_terminal","furniture_table_1_chair_1"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Lab.jpg"
+                    },
+                    {
+                        "ID":"medbay_med_exam_1",
+                        "displayName":"Examination Room 1",
+                        "offsetX":-328.7,
+                        "offsetY":-23,
+                        "connects": 
+                        [ { "ID":"medbay_hallway_3", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_round_table_4","furniture_hospital_bed"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Infirmary.jpg"
+                    },
+                    {
+                        "ID":"medbay_med_exam_2",
+                        "displayName":"Examination Room 2",
+                        "offsetX":-328.7,
+                        "offsetY":61.1,
+                        "connects": 
+                        [ { "ID":"medbay_hallway_3", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_round_table_4","furniture_hospital_bed"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Infirmary.jpg"
+                    },
+                    {
+                        "ID":"medbay_cryo",
+                        "displayName":"Cryo",
+                        "offsetX":-328.7,
+                        "offsetY":142.4,
+                        "connects": 
+                        [ { "ID":"medbay_hallway_3", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_cryopod","furniture_cryopod","furniture_cryopod"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg"
+                    },
+                    {
+                        "ID":"medbay_shooting_range",
+                        "displayName":"Range 1",
+                        "offsetX":226,
+                        "offsetY":-272,
+                        "connects":
+                        [ { "ID":"medbay_hallway_4", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_shooting_range_spot","furniture_shooting_range_spot",
+                        "furniture_shooting_range_spot","furniture_shooting_range_spot",
+                        "furniture_table_1_chair_1","furniture_table_1_chair_1" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_ShootingRange.jpg"
+                    },
+                    {
+                        "ID":"medbay_dojo_arena",
+                        "displayName":"Arena",
+                        "offsetY":-85,
+                        "connects":
+                        [ { "ID":"medbay_hallway_3", "cost":1.0  },
+                        { "ID":"medbay_hallway_4", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_arena_spot","furniture_arena_spot" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Gym.jpg"
+                    },
+                    {
+                        "ID":"medbay_changing_room",
+                        "displayName":"Changing Room",
+                        "offsetX":334,
+                        "offsetY":-85,
+                        "connects":
+                        [ { "ID":"medbay_hallway_4", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_shower"
+                                    ,"furniture_bathroom_set","furniture_shower" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg"
+                    },
+                    {
+                        "ID":"medbay_life_support",
+                        "displayName":"Life Support",
+                        "offsetY":350,
+                        "connects":
+                        [ { "ID":"medbay_hallway_1", "cost":1.0  },
+                        { "ID":"medbay_hallway_2", "cost":1.0  } ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_SpecialOperationRoom.jpg"
+                    },
+                    {
+                        "ID":"medbay_lab",
+                        "displayName":"Laboratory",
+                        "offsetX":-328,
+                        "offsetY":329,
+                        "connects":
+                        [ { "ID":"medbay_hallway_1", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_research_physics"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_SpecialOperationRoom.jpg"
+                    },
+                    {
+                        "ID":"medbay_security_office",
+                        "displayName":"Security Office",
+                        "offsetX":341,
+                        "offsetY":329,
+                        "connects":
+                        [ { "ID":"medbay_hallway_2", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_computer_terminal","furniture_computer_terminal","furniture_computer_terminal"
+                                ,"furniture_bathroom_set","furniture_shower" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_KohshinjoRoom.jpg"
+                    },
+                    {
+                        "ID":"medbay_decontamination",
+                        "displayName":"Decontamination",
+                        "offsetX":168,
+                        "offsetY":130,
+                        "connects":
+                        [ { "ID":"medbay_hallway_2", "cost":2.0  },
+                        { "ID":"medbay_isolation_office", "cost":2.0  }],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor2.jpg"
+                    },
+                    {
+                        "ID":"medbay_isolation_office",
+                        "displayName":"Isolation Office",
+                        "offsetX":125,
+                        "offsetY":79,
+                        "furnitureIDs":["furniture_computer_terminal", "furniture_table_1_chair_1" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_InterrogationRoom.jpg"
+                    },
+                    {
+                        "ID":"medbay_isolation_room_1",
+                        "displayName":"Isolation",
+                        "offsetX":-61,
+                        "offsetY":79,
+                        "connects":
+                        [ { "ID":"medbay_isolation_office", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_toilet_shower_set",
+                                        "furniture_prison_containment_spot_2",
+                                        "furniture_prison_containment_spot_2",
+                                        "furniture_prison_containment_spot_2",
+                                        "furniture_prison_containment_spot_2",
+                                        "furniture_prison_containment_spot",
+                                        "furniture_prison_containment_spot",
+                                        "furniture_prison_containment_spot"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Prison.jpg"
+                    },
+                    {
+                        "ID":"medbay_isolation_room_2",
+                        "displayName":"Isolation",
+                        "offsetX":311,
+                        "offsetY":79,
+                        "connects":
+                        [ { "ID":"medbay_isolation_office", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_toilet_shower_set",
+                                        "furniture_prison_containment_spot_2",
+                                        "furniture_prison_containment_spot_2",
+                                        "furniture_prison_containment_spot_2",
+                                        "furniture_prison_containment_spot_2",
+                                        "furniture_prison_containment_spot",
+                                        "furniture_prison_containment_spot",
+                                        "furniture_prison_containment_spot" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Prison.jpg"
+                    },
+                    {
+                        "ID":"medbay_isolation_operation_room",
+                        "displayName":"Operation Room",
+                        "offsetX":105,
+                        "offsetY":227,
+                        "connects":
+                        [ { "ID":"medbay_isolation_office", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_computer_terminal", "furniture_hospital_bed", "furniture_hospital_bed" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_InSideTank.jpg"
+                    },
+                    {
+                        "ID":"medbay_isolation_storage",
+                        "displayName":"Storage",
+                        "offsetY":227,
+                        "connects":
+                        [ { "ID":"medbay_isolation_operation_room", "cost":1.0  } ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Warehouse.jpg"
+                    },
+                    {
+                        "ID":"medbay_isolation_morgue",
+                        "displayName":"Morgue",
+                        "offsetX":-97,
+                        "offsetY":227,
+                        "connects":
+                        [ { "ID":"medbay_isolation_storage", "cost":1.0  },
+                        { "ID":"medbay_hallway_1", "cost":2.0  } ],
+                        "furnitureIDs":["furniture_bathroom_set", "furniture_table_1_chair_1" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Warehouse.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"medbay_pharmacy":"药房",
+"medbay_med_exam_1":"诊疗室",
+"medbay_med_exam_2":"诊疗室",
+"medbay_cryo":"冷冻休眠",
+"medbay_shooting_range":"靶场",
+"medbay_dojo_arena":"道场",
+"medbay_changing_room":"更衣室",
+"medbay_life_support":"维生系统",
+"medbay_lab":"实验室",
+"medbay_security_office":"警卫室",
+"medbay_decontamination":"除菌室",
+"medbay_isolation_office":"隔离区警卫室",
+"medbay_isolation_room_1":"群体隔离间",
+"medbay_isolation_room_2":"双人隔离间",
+"medbay_isolation_operation_room":"隔离间手术室",
+"medbay_isolation_storage":"隔离间储物室",
+"medbay_isolation_morgue":"隔离间停尸房"
+            },
+            "en-us":
+            {
+"medbay_pharmacy": "Pharmacy",
+"medbay_med_exam_1": "Examination Room",
+"medbay_med_exam_2": "Examination Room",
+"medbay_cryo": "Cryo Sleep",
+"medbay_shooting_range": "Shooting Range",
+"medbay_dojo_arena": "Dojo",
+"medbay_changing_room": "Changing Room",
+"medbay_life_support": "Life Support",
+"medbay_lab": "Laboratory",
+"medbay_security_office": "Security Office",
+"medbay_decontamination": "Decontamination Room",
+"medbay_isolation_office": "Isolation Ward Security Office",
+"medbay_isolation_room_1": "Group Isolation Room",
+"medbay_isolation_room_2": "Double Isolation Room",
+"medbay_isolation_operation_room": "Isolation Ward Operating Room",
+"medbay_isolation_storage": "Isolation Ward Storage Room",
+"medbay_isolation_morgue": "Isolation Ward Morgue"
+            }
+        }
+    }
+}

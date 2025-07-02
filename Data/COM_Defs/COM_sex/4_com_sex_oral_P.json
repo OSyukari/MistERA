@@ -1,0 +1,152 @@
+{
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"com_sex_oral_P",
+                "ActionPackageClass":"ActionPackage_Sex",
+                "displayName":"com_sex_oral_P_displayName_1",
+                "timeScale":3,
+                "comTags":["sex","service","penetration"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["mouth"],
+                            "minRevealingScore":1,
+                            "cost_ST": 2
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["penis"],
+                            "minRevealingScore":1,
+                            "requireConscious":false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "variants":[
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_1_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_2_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_3_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_4_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_1"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_2"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_3"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_4"
+                    }
+                ],
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "$doer.firstname$正在吮吸着$receiver.firstname$的肉棒" ]
+                        }
+                    ]
+                },
+                "descriptions_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "$doer.firstname$将$receiver.firstname$的肉棒从嘴里解放出来" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "$receiver.firstname$的肉棒抖动着将精液射入了$doer.firstname$的口中" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": ["$doer.firstname$张大了嘴，将$receiver.firstname$的肉棒吞入了口中"]
+                        }
+                    ]
+                    
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,622 @@
+{
+    "COMs": {
+        "list": [
+            {
+                "ID": "com_job_production_cooking",
+                "ActionPackageClass": "ActionPackage_ProductionOrder",
+                "displayName": "com_job_production_cooking_displayName",
+                "timeScale": 30,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "production_cooking"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    },
+                    "requireFactionExisting": {
+                        "jobKeyword": "production_cooking"
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_production_cooking_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 2,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_production_cooking_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_production_chemistry",
+                "ActionPackageClass": "ActionPackage_ProductionOrder",
+                "displayName": "com_job_production_chemistry_displayName",
+                "timeScale": 30,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "production_chemistry"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer":true
+                    },
+                    "requireFactionExisting": {
+                        "jobKeyword": "production_chemistry"
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_production_chemistry_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_production_chemistry_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_production_engineering",
+                "ActionPackageClass": "ActionPackage_ProductionOrder",
+                "displayName": "com_job_production_engineering_displayName",
+                "timeScale": 30,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "production_engineering"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer":true
+                    },
+                    "requireFactionExisting": {
+                        "jobKeyword": "production_engineering"
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_production_engineering_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_production_engineering_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_research_engineering",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_job_research_engineering_displayName",
+                "timeScale": 30,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "research_engineering"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer":true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 15
+                                }
+                            }
+                        },
+                        "displayName": "com_job_research_engineering_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_research_engineering_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_research_physics",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_job_research_physics_displayName",
+                "timeScale": 30,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "research_physics"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer":true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 15
+                                }
+                            }
+                        },
+                        "displayName": "com_job_research_physics_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_research_physics_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_research_biochemistry",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_job_research_biochemistry_displayName",
+                "timeScale": 30,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "research_biochemistry"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer":true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 15
+                                }
+                            }
+                        },
+                        "displayName": "com_job_research_biochemistry_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_research_biochemistry_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_training_shooting",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_job_training_shooting_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "training_shooting"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer":true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 20,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_training_shooting_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_training_shooting_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_training_melee",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_job_training_melee_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "training_melee"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer":true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 15,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_training_melee_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_training_melee_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_farm_maintain",
+                "COMRepeat": true,
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_job_farm_maintain_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "farm_maintain"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    },
+                    "requireContaining": {
+                        "requireContentExist": true,
+                        "requireCanMaintain": true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 15,
+                                    "cost_EN": 15
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_maintain_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_maintain_displayName_2"
+                    }
+                ],
+                "results": {
+                    "results_jobContainer": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "ResetMaintenance": true
+                            }
+                        }
+                    ]
+                },
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_farm_remove",
+                "COMRepeat": true,
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_job_farm_remove_displayName_1",
+                "timeScale": 90,
+                "comTags": [
+                    "job",
+                    "furniture",
+                    "farm_maintain"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    },
+                    "requireContaining": {
+                        "requireContentExist": true,
+                        "allowPlanting": [
+                            ""
+                        ]
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 45
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_remove_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 30
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_remove_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_farm_cultivate_crop",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "COMRepeat": true,
+                "displayName": "com_job_farm_cultivate_crop_displayName",
+                "timeScale": 120,
+                "comTags": [
+                    "job",
+                    "furniture"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    },
+                    "requireContaining": {
+                        "requireContentAbsent": true,
+                        "allowPlanting": [
+                            "farm_cultivate_crop"
+                        ]
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 90
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_cultivate_crop_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 60
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_cultivate_crop_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            },
+            {
+                "ID": "com_job_farm_cultivate_meat",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "COMRepeat": true,
+                "HideWhenInvalid": true,
+                "displayName": "com_job_farm_cultivate_meat_displayName",
+                "timeScale": 90,
+                "comTags": [
+                    "job",
+                    "furniture"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    },
+                    "requireContaining": {
+                        "requireContentAbsent": true,
+                        "allowPlanting": [
+                            "farm_cultivate_meat"
+                        ]
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 40
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_cultivate_meat_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 20
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_cultivate_meat_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                }
+            }
+        ]
+    }
+}

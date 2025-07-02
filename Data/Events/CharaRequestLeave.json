@@ -1,0 +1,136 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "RequestLeave_PrivateAction",
+                "SelfValidator":{
+                    "chara_conditions":[
+                        {"parameters":["isRoomOwner","true"]},
+                        {"parameters":["canMove","true"]}
+                    ],
+                    "room_conditions":[
+                        { "parameters":["isRoomPrivate"] },
+                        { "parameters":["hasExit"] }
+                    ]
+                },
+                "TargetValidators":
+                [
+                    {
+                        "refkey":"targets",
+                        "baseScope":"AllCharaInSelfRoom_ExcludeSelf",
+                        "minTargetCount":1,
+                        "chara_conditions":[
+                            {"parameters":["isRoomOwner","false"]},
+                            {"parameters":["canMove","true"]}
+                        ]
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options":[
+                            {   "option": "silent branch event, this shouldnt be displayed",
+                                "Results": [ { "Type":"StartEvent", "arguments":["targets","CharaLeaveRoom","","requestFrom"]} ] 
+                            }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "CharaLeaveRoom",
+                "SelfValidator":{
+                    "room_conditions":[
+                        { "parameters":["hasExit"] }
+                    ]
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "question":"event_CharaLeaveRoom_ev01",
+                        "options":[
+                            {   "option": "event_CharaLeaveRoom_ev01_op1", "isDefaultCancel":true, 
+                                "Results":  [  { "Type":"JumpToLabel", "arguments":["","select1"] }  ] 
+                            },
+                            { "option": "event_CharaLeaveRoom_ev01_op2", 
+                                "Results":  [  { "Type":"JumpToLabel", "arguments":["","end2"] }  ] 
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end2",
+                        "isLast": true,
+                        "line": "event_CharaLeaveRoom_ev02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "select1",
+                        "options":[
+                            {   
+                                "self_chara_conditions":[ { "parameters":["canLeave","true"] } ],
+                                "option": "silent branch for successful interrupt of all jobs",
+                                "Results": [ 
+                                    { "Type": "InterruptAP" , "arguments":["self", "true", ""]}, 
+                                    { "Type": "JumpToLabel", "arguments":["","end3"] }
+                                ] 
+                            },
+                            {   
+                                "option": "silent branch for failed interrupt and force exit",
+                                "Results": [ { "Type":"JumpToLabel", "arguments":["","end4"] } ] 
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end4",
+                        "line": "event_CharaLeaveRoom_ev04",
+                        "isLast": true
+                    },
+                                        {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end3",
+                        "line": "event_CharaLeaveRoom_ev03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options":[
+                            {   
+                                "option": "silent branch after successful interrupts",
+                                "Results": [ 
+                                    { "Type": "LeaveRoom"}, 
+                                    { "Type": "FlushLogs" }
+                                ] 
+                            }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "en-us":
+            {
+                "event_CharaLeaveRoom_ev01":"$requestFrom.name$ asks $self.name$ to leave $self.room_name$",
+                "event_CharaLeaveRoom_ev01_op1":"Accept",
+                "event_CharaLeaveRoom_ev01_op2":"Refuse",
+                "event_CharaLeaveRoom_ev03":"$self.name$ left $self.room_name$",
+                "event_CharaLeaveRoom_ev02":"$self.name$ refuses to leave",
+                "event_CharaLeaveRoom_ev04":"$self.name$ was unable to leave $self.room_name$ due to current job cannot be interrupted."
+            },
+            "zh-cn":
+            {
+                "event_CharaLeaveRoom_ev01":"$requestFrom.name$请求$self.name$离开$self.room_name$",
+                "event_CharaLeaveRoom_ev01_op1":"接受",
+                "event_CharaLeaveRoom_ev01_op2":"拒绝",
+                "event_CharaLeaveRoom_ev03":"$self.name$离开了$self.room_name$",
+                "event_CharaLeaveRoom_ev02":"$self.name$拒绝离开",
+                "event_CharaLeaveRoom_ev04":"由于当前的工作不可被中断，$self.name$没能离开$self.room_name$"
+            }
+        }
+    }
+}

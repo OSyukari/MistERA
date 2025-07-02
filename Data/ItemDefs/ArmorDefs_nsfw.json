@@ -1,0 +1,148 @@
+{
+    "Items":{
+        "list":[
+        {
+            "id":"clothing_inner_killerheels",
+            "displayName":"Killer Heels",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":"Feet",
+                        "equipLayer":"Inner",
+                        "equipCount":2,
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+
+        {
+            "id":"clothing_skin_bra",
+            "displayName":"Bra",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":"Torso",
+                        "equipLayer":"Skin",
+                        "partialUndress":
+                        [
+                            {
+                                "displayName":"鬆開胸罩",
+                                "statusID":"chara_status_undress_top_skin_bra"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_panty",
+            "displayName":"Panty",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":"Lower",
+                        "equipLayer":"Skin",
+                        "partialUndress":
+                        [
+                            {
+                                "displayName":"掀開内褲",
+                                "statusID":"chara_status_undress_lower_skin_panty"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+
+        {
+            "id":"clothing_skin_panty_opencrotch",
+            "displayName":"Open crotch pants",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":"Lower",
+                        "equipLayer":"Skin",
+                        "revealing":"SeeThrough",
+                        "coverSlot":["Leg"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_stocking",
+            "displayName":"Stocking",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":"Feet",
+                        "equipLayer":"Skin",
+                        "equipCount":2,
+                        "revealing":"SeeThrough",
+                        "coverSlot":["Leg"]
+                    }
+                }
+            ]
+        },
+
+
+        {
+            "id":"clothing_skin_nipple_piercing",
+            "displayName":"Nipple Piercing",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":"Breasts",
+                        "equipLayer":"Skin",
+                        "revealing":"Erotic"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_clit_piercing",
+            "displayName":"Clit Piercing",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":"Clitoris",
+                        "equipLayer":"Skin",
+                        "revealing":"Erotic"
+                    }
+                }
+            ]
+        }
+        
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+        "clothing_inner_killerheels":"高跟鞋",
+        "clothing_skin_clit_piercing":"阴蒂穿环",
+        "clothing_skin_nipple_piercing":"乳头穿环",
+        "clothing_skin_stocking":"丝袜",
+        "clothing_skin_stocking_pantyhose":"连裤袜",
+        "clothing_skin_bra":"胸罩",
+        "clothing_skin_panty":"内裤",
+        "clothing_skin_panty_opencrotch":"开裆裤"
+            },
+            "en-us":
+            {
+        "clothing_skin_panty": "Panties"
+
+            }
+        }
+    }
+    
+}

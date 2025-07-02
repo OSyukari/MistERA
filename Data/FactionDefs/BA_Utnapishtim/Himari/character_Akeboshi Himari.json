@@ -1,0 +1,81 @@
+{
+    "baseID": "Campaign1_Char_Himari",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": 16.817,
+                "portrait_offset_y": -318.858,
+                "portrait_offset_size": 0.55,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.8,
+
+                "icon_path":"Himari/Himari_Ark_Uniform_Icon.png",
+                "_comment":"utnapishtim uniform",
+                "_comment2":"CH0159_spr default, NP0161_spr winter",
+
+                "straightAlpha":true,
+                "materialTexturePaths":["Himari/NP0112_spr.png"],
+                "atlasJSON_path":"Himari/NP0112_spr.atlas",
+                "skeletonJSON_path":"Himari/NP0112_spr.skel",
+                "idleAnimName":"Idle_01"
+
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 8,
+      "stat_CON": 7,
+      "stat_PSY": 16,
+      "stat_WIL": 14,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_sensitive",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_A",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":162,
+      "initialRelationship":[
+            {
+                "baseID":"PLAYER",
+                "initialPersonalRelationship":"relationship_mentor",
+                "initialPersonalRelationship_isA":false
+            },
+            {
+                "baseID":"Campaign1_Char_Yuuka",
+                "initialPersonalRelationship":"relationship_bff"
+            }
+        ],
+      "initialInventory":[
+            { "ID":"clothing_bluearchive_Navigator_Hat" },
+            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Coat", "nameOverwrite":"clothing_bluearchive_Navigator_ShortCoat" },
+            { "ID":"clothing_bluearchive_Navigator_Glove" },
+            { "ID":"clothing_bluearchive_Navigator_Boot" },
+            { "ID":"clothing_skin_hair_hairpin" },
+            { "ID":"clothing_inner_hair_ribbon" },
+            { "ID":"clothing_skin_bra" },
+            { "ID":"clothing_skin_socks" },
+            { "ID":"clothing_skin_panty_opencrotch" },
+            { "ID":"clothing_outer_blanket_lower" }
+        ],
+      "Skills": null
+    },
+    "firstName": "Campaign1_Char_Himari_FirstName",
+    "middleName": "",
+    "lastName": "Campaign1_Char_Himari_LastName",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_KivotosStudent",
+    "race": "humanRace_elf",
+    "raceTemplate": "humanRaceAddon_Kivotos_Millenium",
+    "startingGift": "charOriginGift_none"
+}

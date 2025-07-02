@@ -1,0 +1,208 @@
+{
+    "RelationshipTypes":
+    {
+        "list_biological":[
+            {
+                "ID":"relationship_parent",
+                "displayName":"relationship_parent_displayName",
+                "DisplayName_A_is_to_B":"relationship_parent_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_parent_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "_comment":"trust|fear|good|bad|lust",
+                "RelationshipModA":[100,0,100,0,0],
+                "RelationshipModB":[100,100,100,100,0]
+            },
+            {
+                "ID":"relationship_sibling",
+                "displayName":"relationship_sibling_displayName",
+                "DisplayName_A_is_to_B":"relationship_sibling_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_sibling_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "RelationshipModA":[100,0,100,100,0],
+                "RelationshipModB":[100,0,100,100,0]
+            },
+            {
+                "ID":"relationship_stepparent",
+                "displayName":"relationship_stepparent_displayName",
+                "DisplayName_A_is_to_B":"relationship_stepparent_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_stepparent_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "RelationshipModA":[0,0,50,0,0],
+                "RelationshipModB":[-50,50,0,50,0]
+            }
+        ],
+        "list_social":
+        [
+            {
+                "ID":"relationship_colleague",
+                "displayName":"relationship_colleague_displayName",
+                "isEqualRelationship":true,
+                "Requirements":[ ],
+                "RelationshipMod":[20,0,0,0,0]
+            },
+            {
+                "ID":"relationship_subordinate",
+                "displayName":"relationship_subordinate_displayName",
+                "DisplayName_A_is_to_B":"relationship_subordinate_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_subordinate_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "Requirements":[ ],
+                "RelationshipModA":[10,0,0,0,0],
+                "RelationshipModB":[20,0,0,0,0]
+            }
+        ],
+        "list_personal":[
+            {
+                "ID":"relationship_couple",
+                "displayName":"relationship_couple_displayName",
+                "isEqualRelationship":true,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "RelationshipMod":[20,20,20,20,100]
+            },
+            {
+                "ID":"relationship_marriage",
+                "displayName":"relationship_marriage_displayName",
+                "isEqualRelationship":true,
+                "hasGenderVariant":true,
+                "Requirements":[ ],
+                "RelationshipMod":[50,25,50,25,50]
+            },
+            {
+                "ID":"relationship_friend",
+                "displayName":"relationship_friend_displayName",
+                "isEqualRelationship":true,
+                "Requirements":[ ],
+                "RelationshipMod":[20,0,20,0,0]
+            },
+            {
+                "ID":"relationship_bff",
+                "displayName":"relationship_bff_displayName",
+                "isEqualRelationship":true,
+                "Requirements":[ ],
+                "RelationshipMod":[100,0,100,0,0]
+            },
+            {
+                "ID":"relationship_mentor",
+                "displayName":"relationship_mentor_displayName",
+                "DisplayName_A_is_to_B":"relationship_mentor_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_mentor_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "Requirements":[ ],
+                "_comment":"trust|fear|good|bad|lust",
+                "RelationshipModA":[0,0,0,0,0],
+                "RelationshipModB":[30,0,0,0,0]
+            },
+            {
+                "ID":"relationship_servant",
+                "displayName":"relationship_servant_displayName",
+                "DisplayName_A_is_to_B":"relationship_servant_displayName_A_is_to_B",
+                "DisplayName_B_is_to_A":"relationship_servant_displayName_B_is_to_A",
+                "isEqualRelationship":false,
+                "Requirements":[ ],
+                "RelationshipModA":[0,0,0,0,50],
+                "RelationshipModB":[50,50,0,50,0]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                
+                "relationship_couple_displayName": "恋人",
+                "relationship_couple_displayName_male": "男朋友",
+                "relationship_couple_displayName_female": "女朋友",
+                "relationship_friend_displayName": "好友",
+                "relationship_bff_displayName": "挚友",
+                "relationship_colleague_displayName": "同僚",
+                "relationship_marriage_displayName": "婚姻",
+                "relationship_marriage_displayName_male": "丈夫",
+                "relationship_marriage_displayName_female": "妻子",
+                "relationship_servant": "主仆",
+                "relationship_servant_displayName_A_is_to_B": "主人",
+                "relationship_servant_displayName_B_is_to_A": "仆人",
+                "relationship_subordinate_displayName": "工作",
+                "relationship_subordinate_displayName_A_is_to_B": "上司",
+                "relationship_subordinate_displayName_B_is_to_A": "下属",
+                "relationship_mentor_displayName": "师徒",
+                "relationship_mentor_displayName_A_is_to_B": "导师",
+                "relationship_mentor_displayName_B_is_to_A": "学生",
+                "relationship_parent_displayName": "家人",
+                "relationship_parent_displayName_A_is_to_B": "父母",
+                "relationship_parent_displayName_A_is_to_B_male": "父亲",
+                "relationship_parent_displayName_A_is_to_B_Female": "母亲",
+                "relationship_parent_displayName_B_is_to_A": "子女",
+                "relationship_parent_displayName_B_is_to_A_male": "儿子",
+                "relationship_parent_displayName_B_is_to_A_Female": "女儿",
+                "relationship_sibling_displayName": "家人",
+                "relationship_sibling_displayName_A_is_to_B": "哥哥姐姐",
+                "relationship_sibling_displayName_A_is_to_B_male": "哥哥",
+                "relationship_sibling_displayName_A_is_to_B_female": "姐姐",
+                "relationship_sibling_displayName_B_is_to_A": "弟妹",
+                "relationship_sibling_displayName_B_is_to_A_male": "弟弟",
+                "relationship_sibling_displayName_B_is_to_A_female": "妹妹",
+                "relationship_stepparent_displayName": "家人",
+                "relationship_stepparent_displayName_A_is_to_B": "继父母",
+                "relationship_stepparent_displayName_A_is_to_B_male": "继父",
+                "relationship_stepparent_displayName_A_is_to_B_female": "继母",
+                "relationship_stepparent_displayName_B_is_to_A": "继子女",
+                "relationship_stepparent_displayName_B_is_to_A_male": "继子",
+                "relationship_stepparent_displayName_B_is_to_A_female": "继女"
+
+            },
+            "en-us":
+            {
+                
+                "relationship_couple_displayName": "Couple",
+                "relationship_couple_displayName_male": "Boyfriend",
+                "relationship_couple_displayName_female": "Girlfriend",
+                "relationship_friend_displayName": "Friend",
+                "relationship_bff_displayName": "Best Friend",
+                "relationship_colleague_displayName": "Colleague",
+                "relationship_marriage_displayName": "Marriage",
+                "relationship_marriage_displayName_male": "Husband",
+                "relationship_marriage_displayName_female": "Wife",
+                "relationship_servant": "Master and Servant",
+                "relationship_servant_displayName_A_is_to_B": "Master",
+                "relationship_servant_displayName_B_is_to_A": "Servant",
+                "relationship_subordinate_displayName": "Work",
+                "relationship_subordinate_displayName_A_is_to_B": "Superior",
+                "relationship_subordinate_displayName_B_is_to_A": "Subordinate",
+                "relationship_mentor_displayName": "Mentor and Student",
+                "relationship_mentor_displayName_A_is_to_B": "Mentor",
+                "relationship_mentor_displayName_B_is_to_A": "Student",
+                "relationship_parent_displayName": "Family",
+                "relationship_parent_displayName_A_is_to_B": "Parents",
+                "relationship_parent_displayName_A_is_to_B_male": "Father",
+                "relationship_parent_displayName_A_is_to_B_Female": "Mother",
+                "relationship_parent_displayName_B_is_to_A": "Children",
+                "relationship_parent_displayName_B_is_to_A_male": "Son",
+                "relationship_parent_displayName_B_is_to_A_Female": "Daughter",
+                "relationship_sibling_displayName": "Family",
+                "relationship_sibling_displayName_A_is_to_B": "Older Sibling",
+                "relationship_sibling_displayName_A_is_to_B_male": "Older Brother",
+                "relationship_sibling_displayName_A_is_to_B_female": "Older Sister",
+                "relationship_sibling_displayName_B_is_to_A": "Younger Sibling",
+                "relationship_sibling_displayName_B_is_to_A_male": "Younger Brother",
+                "relationship_sibling_displayName_B_is_to_A_female": "Younger Sister",
+                "relationship_stepparent_displayName": "Family",
+                "relationship_stepparent_displayName_A_is_to_B": "Stepparents",
+                "relationship_stepparent_displayName_A_is_to_B_male": "Stepfather",
+                "relationship_stepparent_displayName_A_is_to_B_female": "Stepmother",
+                "relationship_stepparent_displayName_B_is_to_A": "Stepchildren",
+                "relationship_stepparent_displayName_B_is_to_A_male": "Stepson",
+                "relationship_stepparent_displayName_B_is_to_A_female": "Stepdaughter"
+
+            }
+        }
+    }
+}

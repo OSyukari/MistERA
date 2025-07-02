@@ -1,0 +1,31 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                
+        "Campaign1_Nikke_Rapi_firstname":"拉毗",
+        "Campaign1_Nikke_Anis_firstname":"阿妮斯",
+        "Campaign1_Nikke_Neon_firstname":"尼恩",
+        
+        "humanRaceAddon_Android_Nikke":"妮姬",
+        "humanRaceAddon_Android_Nikke_tooltip":"为了容纳人类思维，在制作上更贴近人类外观的仿生人。\n尽管战力远超常人，%%humanRaceAddon_Android_Nikke%%仍需要与正常人类相似的生活环境，以此维持自身的精神安定。\nSTR+10 CON+10 基础服从度+1"
+            },
+            
+            "en-us":
+            {
+        
+  "Campaign1_Nikke_Rapi_firstname": "Rapi",
+  "Campaign1_Nikke_Anis_firstname": "Anis",
+  "Campaign1_Nikke_Neon_firstname": "Neon",
+
+  "humanRaceAddon_Android_Nikke": "Nikke",
+  "humanRaceAddon_Android_Nikke_tooltip": "An android created to be closer to the human appearance in order to accommodate human thought.\nAlthough their combat power far exceeds that of ordinary people, %%humanRaceAddon_Android_Nikke%% still require a living environment similar to that of normal humans in order to maintain their mental stability.\nSTR+10, CON+10, Base Obedience +1"
+  
+
+            }
+        }
+    }
+}

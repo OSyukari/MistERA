@@ -1,0 +1,287 @@
+{
+    "COMs":
+    {
+    "list":[
+        {
+            "ID":"com_touch_butt",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_butt_displayName_2",
+            "timeScale":2,
+            "comTags":["touch","massage"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Doers":{ "BodyTags":["arm"] },
+                    "req_Receivers":{ 
+                        "BodyTags":["lower"],
+                        "requireConscious":false,
+                        "requireAction": false
+                     }
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{
+                        "requirement":{
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":2 }
+                        }
+                    },
+
+                    "displayName":"com_touch_butt_displayName_1"
+                },
+                {
+                    "requirements":{
+                        "requirement":{
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":4 }
+                        }
+                    },
+                    "displayName":"com_touch_butt_displayName_2"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_abdomen",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_abdomen_displayName_2",
+            "timeScale":2,
+            "comTags":["touch","massage"],
+            "requirements":
+            {
+                "requirement":
+                {
+                    "req_Doers":{ "BodyTags":["arm"] },
+                    "req_Receivers":{ "BodyTags":["lower"],
+                        "requireConscious":false,
+                        "requireAction": false
+                    },
+                    "doerCount":1,
+                    "receiverCount":1
+                }
+            },
+            "variants":[
+                {
+                    "requirements":
+                    {
+                        "requirement":
+                        {
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":2 }
+                        }
+                    },
+                    "displayName":"com_touch_abdomen_displayName_1"
+                },
+                {
+                    "requirements":{
+                        "requirement":{
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":4 }
+                        }
+                    },
+
+                    "displayName":"com_touch_abdomen_displayName_2"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_thigh",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_thigh_displayName_2",
+            "timeScale":2,
+            "comTags":["touch","massage"],
+            "requirements":{
+                "requirement":{
+                    "req_Doers":{ "BodyTags":["arm"] },
+                    "req_Receivers":{ "BodyTags":["leg"],
+                        "requireConscious":false,
+                        "requireAction": false
+                    },
+                    "doerCount":1,
+                    "receiverCount":1
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{
+                        "requirement":{
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":2 }
+                        }
+                    },
+                    "displayName":"com_touch_thigh_displayName_1"
+                },
+                {
+                    "requirements":{
+                        "requirement":{
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":4 }
+                        }
+                    },
+
+                    "displayName":"com_touch_thigh_displayName_2"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_back",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_back_displayName_2",
+            "timeScale":2,
+            "comTags":["touch","massage"],
+            "requirements":{
+                "requirement":{
+                    "req_Doers":{ "BodyTags":["arm"] },
+                    "req_Receivers":{ "BodyTags":["torso"],
+                        "requireConscious":false,
+                        "requireAction": false
+                    },
+                    "doerCount":1,
+                    "receiverCount":1
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{
+                        "requirement":{
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":2 }
+                        }
+                    },
+                    "displayName":"com_touch_back_displayName_1"
+                },
+                {
+                    "requirements":{
+                        "requirement":{
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":4 }
+                        }
+                    },
+                    "displayName":"com_touch_back_displayName_2"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_shoulders",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_shoulders_displayName_2",
+            "timeScale":2,
+            "comTags":["touch","massage"],
+            "requirements":{
+                "requirement":{
+                    "req_Doers":{ "BodyTags":["arm"] },
+                    "req_Receivers":{ "BodyTags":["torso"],
+                        "requireConscious":false,
+                        "requireAction": false },
+                    "doerCount":1,
+                    "receiverCount":1
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{
+                        "requirement":{
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":2 }
+                        }
+                    },
+                    "displayName":"com_touch_shoulders_displayName_1"
+                },
+                {
+                    "requirements":{
+                        "requirement":{
+                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Receivers":{ "minRevealingScore":4 }
+                        }
+                    },
+                    "displayName":"com_touch_shoulders_displayName_2"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_fingers",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_fingers_displayName_1",
+            "timeScale":2,
+            "comTags":["touch","massage"],
+            "requirements":{
+                "requirement":{
+                    "req_Doers":{ "BodyTags":["arm"] , "minRevealingScore":1},
+                    "req_Receivers":{ "BodyTags":["arm"] , "minRevealingScore":1,
+                        "requireConscious":false,
+                        "requireAction": false },
+                    "doerCount":1,
+                    "receiverCount":1
+                }
+            },
+            "variants":[
+                {
+                    "displayName":"com_touch_fingers_displayName_1"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_foot_toes",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_foot_toes_displayName_1",
+            "timeScale":2,
+            "comTags":["touch","massage"],
+            "requirements":{
+                "requirement":{
+                    "receiverBodyTags":[""],
+                    "req_Doers":{ "BodyTags":["arm"] , "minRevealingScore":1},
+                    "req_Receivers":{ "BodyTags":["feet"] , "minRevealingScore":1,
+                        "requireConscious":false,
+                        "requireAction": false },
+                    "doerCount":1,
+                    "receiverCount":1
+                }
+            },
+            "variants":[
+                {
+                    "displayName":"com_touch_foot_toes_displayName_1"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_ears",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_ears_displayName_1",
+            "timeScale":2,
+            "comTags":["touch","massage"],
+            "requirements":{
+                "requirement":{
+                    "req_Doers":{ "BodyTags":["arm"], "minRevealingScore":1 },
+                    "req_Receivers":{ "BodyTags":["head"] , "minRevealingScore":1,
+                        "requireConscious":false,
+                        "requireAction": false },
+                    "doerCount":1,
+                    "receiverCount":1
+                }
+            },
+            "variants":[
+                {
+                    "displayName":"com_touch_ears_displayName_1"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        }
+
+    ]
+}}

@@ -1,0 +1,126 @@
+{   
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "currency_JPY": "日元",
+                "currency_JPY_tooltip": "在部分地区流通的货币",
+
+                "factionName_jp_convenience_store_SunMart":"SunMart便利店",
+
+                "jp_convenience_store_frontDesk_displayName_1":"前台接待",
+                "jp_convenience_store_frontDesk_displayName_2":"一同前台接待",
+
+                "jp_convenience_store_clerk_morning":"兼职 清晨",
+                "jp_convenience_store_clerk_afternoon":"兼职 午后",
+                "jp_convenience_store_clerk_midnight":"兼职 午夜",
+
+                "furniture_marker_jp_convenience_store_frontDesk":"收银台",
+
+
+                "consumable_onigiri":"饭团",
+                "consumable_onigiri_tooltip":"制作简单，但无法保存很久",
+
+                "consumable_instant_ramen":"泡面",
+                "consumable_instant_ramen_tooltip":"虽然不健康，但能保存很久",
+
+                "consumable_bento_box":"便当盒",
+                "consumable_bento_box_tooltip":"现做的便当盒，无法保存很久",
+
+                "raw_rice":"生米（1g）",
+                "raw_rice_tooltip":"用来制作其他食物的材料",
+
+                "consumable_alcohol_beer":"罐装啤酒",
+                "consumable_alcohol_beer_tooltip":"350ml，只喝一罐的话很难醉",
+
+                "consumable_alcohol_wine":"红酒",
+                "consumable_alcohol_wine_tooltip":"375ml玻璃杯装，一杯能让大多数人有醉意",
+
+                "jp_convenience_store_rice_bag_5kg":"生米（5kg）",
+                "jp_convenience_store_pyroxene_4800":"%%currency_pyroxene%% x4800",
+
+                "consumable_drug_sleepingpill":"非处方安眠药",
+                "consumable_drug_sleepingpill_tooltip":"效果一般，副作用较久",
+
+                "jp_convenience_store_otcsleepingpills_6pack":"%%consumable_drug_sleepingpill%%（6粒装）",
+                "jp_convenience_store_beer_6pack":"%%consumable_alcohol_beer%%（6罐装）",
+
+                "store_2F_canteen":"员工食堂",
+                "store_2F_toilet_ex":"多功能厕所",
+                "store_2F_toilet":"员工厕所",
+                "store_1F_office":"办公室",
+                "store_1F_kitchen":"厨房",
+                "store_1F_storage":"仓库",
+                "store_1F_parking":"停车场",
+                "store_1F_shopping_1":"购物区1",
+                "store_1F_shopping_2":"购物区2",
+                "store_1F_counter":"结账区",
+                "store_1F_entrance":"入口",
+                "store_1F_postOffice":"邮局",
+                "store_2F_hallway":"2楼走廊",
+                "store_1F_hallway":"1楼走廊"
+            },
+            "en-us": {
+                
+  "currency_JPY": "Japanese Yen",
+  "currency_JPY_tooltip": "Currency circulating in some regions.",
+
+  "factionName_jp_convenience_store_SunMart": "SunMart Convenience Store",
+
+  "jp_convenience_store_frontDesk_displayName_1": "Reception Work",
+  "jp_convenience_store_frontDesk_displayName_2": "Reception Work",
+
+  "jp_convenience_store_clerk_morning": "Part-time, Morning",
+  "jp_convenience_store_clerk_afternoon": "Part-time, Afternoon",
+  "jp_convenience_store_clerk_midnight": "Part-time, Midnight",
+
+  "furniture_marker_jp_convenience_store_frontDesk": "Cash Register",
+
+
+  "consumable_onigiri": "Onigiri (Rice Ball)",
+  "consumable_onigiri_tooltip": "Easy to make, but doesn't last long.",
+
+  "consumable_instant_ramen": "Instant Ramen",
+  "consumable_instant_ramen_tooltip": "Unhealthy, but can be preserved for a long time.",
+
+  "consumable_bento_box": "Bento Box",
+  "consumable_bento_box_tooltip": "Freshly made bento box, doesn't last for long.",
+
+  "raw_rice": "Raw Rice (1g)",
+  "raw_rice_tooltip": "Material used to make other foods.",
+
+  "consumable_alcohol_beer": "Canned Beer",
+  "consumable_alcohol_beer_tooltip": "350ml, hard to get drunk with just one can.",
+
+  "consumable_alcohol_wine": "Red Wine",
+  "consumable_alcohol_wine_tooltip": "375ml glass, one glass can make most people tipsy.",
+
+  "jp_convenience_store_rice_bag_5kg": "Raw Rice (5kg)",
+  "jp_convenience_store_pyroxene_4800": "%%currency_pyroxene%% x4800",
+
+  "consumable_drug_sleepingpill": "Over-the-Counter Sleeping Pill",
+  "consumable_drug_sleepingpill_tooltip": "Moderate effect, longer lasting side effects.",
+
+                "jp_convenience_store_otcsleepingpills_6pack":"%%consumable_drug_sleepingpill%% (6-pack)",
+                "jp_convenience_store_beer_6pack":"%%consumable_alcohol_beer%% (6-pack)",
+
+  "store_2F_canteen": "Employee Canteen",
+  "store_2F_toilet_ex": "Multipurpose Toilet",
+  "store_2F_toilet": "Employee Toilet",
+  "store_1F_office": "Office",
+  "store_1F_kitchen": "Kitchen",
+  "store_1F_storage": "Storage",
+  "store_1F_parking": "Parking Lot",
+  "store_1F_shopping_1": "Shopping Area 1",
+  "store_1F_shopping_2": "Shopping Area 2",
+  "store_1F_counter": "Checkout Area",
+  "store_1F_entrance": "Entrance",
+  "store_1F_postOffice": "Post Office",
+  "store_2F_hallway": "2nd Floor Hallway",
+  "store_1F_hallway": "1st Floor Hallway"
+            }
+        }
+    }
+}

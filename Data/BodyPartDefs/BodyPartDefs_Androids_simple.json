@@ -1,0 +1,85 @@
+{
+    "BodyPartBases":
+    {
+        "BodyPart_Base": 
+        [
+            {
+                "id": "head_android_base",
+                "displayName":"%%bodyPart_base_head%%",
+                "tooltip":"An {0}'s head.",
+                "AvailableSlots":["Hair", "Face", "Eyes"],
+                "childID":["torso_android_base"],
+                "internalID":["mouth_android_base"],
+                "tags":["head"],
+                "sortOrder":0
+            },
+            {
+                "id": "torso_android_base",
+                "displayName":"%%bodyPart_base_torso%%",
+                "tooltip":"An {0}'s upper body.",
+                "AvailableSlots":["Neck","Torso"],
+                "childID":["arm_android_base", "arm_android_base", "lower_android_base"],
+                "internalID":[],
+                "tags":["torso"],
+                "sortOrder":1
+            },
+            {
+                "id": "arm_android_base",
+                "displayName":"%%bodyPart_base_arm%%",
+                "tooltip":"An {0}'s arm.",
+                "AvailableSlots":["Hand"],
+                "tags":["arm"],
+                "sortOrder":2
+            },
+            {
+                "id": "lower_android_base",
+                "displayName":"%%bodyPart_base_lower%%",
+                "tooltip":"An {0}'s lower body.",
+                "AvailableSlots":["Lower"],
+                "childID":["leg_android_base","leg_android_base"],
+                "internalID":[],
+                "tags":["lower"],
+                "sortOrder":3
+            },
+            {
+                "id": "leg_android_base",
+                "displayName":"%%bodyPart_base_leg%%",
+                "tooltip":"An {0}'s leg.",
+                "AvailableSlots":["Leg"],
+                "childID":["feet_android_base"],
+                "tags":["leg"],
+                "sortOrder":4
+            },
+            {
+                "id": "feet_android_base",
+                "displayName":"%%bodyPart_base_feet%%",
+                "tooltip":"An {0}'s feet.",
+                "AvailableSlots":["Feet"],
+                "tags":["feet"],
+                "sortOrder":5
+            }
+        ],
+        "BodyInternal_Base": 
+        [
+            {
+                "id": "mouth_android_base",
+                "displayName":"%%bodyPart_internal_mouth%%",
+                "tooltip":"An {0}'s mouth.",
+                "AvailableSlots":["Mouth"],
+                "equipLayers":["Skin"],
+                "tags":["mouth","internal"],
+                "tag_directionIn":"ext",
+                "tag_directionOut":"ext",
+                "sensitivityClassString":"M",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_M",
+                "sortOrder":0,
+                "sizeRatio":0.1,
+                "depthRatio":0.05,
+                "volumeRatio":0.2,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
+                "virginityLossTags":["internal", "external"]
+            }
+        ]
+    }
+    
+}

@@ -1,0 +1,232 @@
+{
+    "COMs":{
+        "list":[
+        {
+            "ID":"com_interaction_initiateSex",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_interaction_initiateSex",
+            "timeScale":1,
+            "VariantDoNotReadRequirement":true,
+            "HideWhenInvalid":true,
+            "comTags":["action","interaction","initSex"],
+            "requirements":{
+                "requirement":{ 
+                    "req_Receivers":{ "requireConscious":false, "requireAction": false } }
+            },
+            "variants":[
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":1, "receiverCount":1,
+                            "req_Receivers":{ "requireMovement":true, "requireUnrestrained":true } 
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_1",
+                    "description_doer_1_n":"comDescription_1_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_1_receiver_passive"
+                },
+                {
+                    "requirements":{
+                        "requirement":{ "doerCount":1, "receiverCount":1 }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_2",
+                    "description_doer_1_n":"comDescription_1_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_1_receiver_passive"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":1, "receiverCount":1 ,
+                            "req_Receivers":{ "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_3"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":1, "receiverCount":1 ,
+                            "req_Receivers":{ "requireConscious":false, "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_4"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":99, "receiverCount":99 ,
+                            "req_Receivers":{ "requireMovement":true, "requireUnrestrained":true } 
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_5",
+                    "description_doer_1_n":"comDescription_n_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_n_receiver_passive"
+                },
+                {
+                    "requirements":{
+                        "requirement":{ "doerCount":99, "receiverCount":99 }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_6",
+                    "description_doer_1_n":"comDescription_n_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_n_receiver_passive"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":99, "receiverCount":99 ,
+                            "req_Receivers":{ "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_7"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":99, "receiverCount":99 ,
+                            "req_Receivers":{ "requireConscious":false, "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_8"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+            "DifficultyCheck":{ "baseD20Check":0 },
+
+            "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false },
+            "description_after":{ "Entries":[{"texts":[""]}], "keepLooking":false },
+            "descriptions_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
+            "description_begin":{ "Entries":[{"texts":["$doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false }
+        },
+        {
+            "ID":"com_interaction_endOngoingSex",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_interaction_endOngoingSex",
+            "timeScale":1,
+            "VariantDoNotReadRequirement":true,
+            "HideWhenInvalid":true,
+            "comTags":["action","endSex","NonInteraction"],
+            "requirements":{
+                "requirement":{ 
+                    "req_Receivers":{ "requireConscious":false, "requireAction": false } 
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":1, "receiverCount":1,
+                            "req_Receivers":{ "requireMovement":true, "requireUnrestrained":true } 
+                        }
+                    },
+                    "displayName":"com_interaction_endOngoingSex_displayName_1"
+                },
+                {
+                    "requirements":{
+                        "requirement":{ "doerCount":1, "receiverCount":1 }
+                    },
+                    "displayName":"com_interaction_endOngoingSex_displayName_2"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":1, "receiverCount":1 ,
+                            "req_Receivers":{ "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_endOngoingSex_displayName_3"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":1, "receiverCount":1 ,
+                            "req_Receivers":{ "requireConscious":false, "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_endOngoingSex_displayName_4"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":99, "receiverCount":99 ,
+                            "req_Receivers":{ "requireMovement":true, "requireUnrestrained":true } 
+                        }
+                    },
+                    "displayName":"com_interaction_endOngoingSex_displayName_5"
+                },
+                {
+                    "requirements":{
+                        "requirement":{ "doerCount":99, "receiverCount":99 }
+                    },
+                    "displayName":"com_interaction_endOngoingSex_displayName_6"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":99, "receiverCount":99 ,
+                            "req_Receivers":{ "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_endOngoingSex_displayName_7"
+                },
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":99, "receiverCount":99 ,
+                            "req_Receivers":{ "requireConscious":false, "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_endOngoingSex_displayName_8"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":0 },
+            "DifficultyCheck":{ "baseD20Check":0 },
+
+            "description_ongoing":{ "Entries":[{"texts":[""]}], "keepLooking":false },
+            "description_after":{ "Entries":[{"texts":[""]}], "keepLooking":false },
+            "descriptions_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
+            "description_begin":{ "Entries":[{"texts":[""]}], "keepLooking":false }
+        }
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_interaction_initiateSex": "邀请性交",
+                "com_interaction_initiateSex_displayName_1": "推倒",
+                "com_interaction_initiateSex_displayName_2": "强奸",
+                "com_interaction_initiateSex_displayName_3": "时停奸",
+                "com_interaction_initiateSex_displayName_4": "睡眠奸",
+                "com_interaction_initiateSex_displayName_5": "群P",
+                "com_interaction_initiateSex_displayName_6": "轮奸",
+                "com_interaction_initiateSex_displayName_7": "时停轮奸",
+                "com_interaction_initiateSex_displayName_8": "睡眠轮奸",
+                "com_interaction_endOngoingSex": "结束性交",
+                "com_interaction_endOngoingSex_displayName_1": "结束做爱",
+                "com_interaction_endOngoingSex_displayName_2": "结束强奸",
+                "com_interaction_endOngoingSex_displayName_3": "结束时奸",
+                "com_interaction_endOngoingSex_displayName_4": "结束眠奸",
+                "com_interaction_endOngoingSex_displayName_5": "结束群P",
+                "com_interaction_endOngoingSex_displayName_6": "结束轮奸",
+                "com_interaction_endOngoingSex_displayName_7": "结束时奸",
+                "com_interaction_endOngoingSex_displayName_8": "结束眠奸"
+
+            }
+        }
+    }
+    
+}

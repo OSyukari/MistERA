@@ -1,0 +1,50 @@
+
+{
+    "baseID": "creature_animal_warg",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                
+                "portrait_offset_x": -10.774,
+                "portrait_offset_y": -13.98499,
+                "portrait_offset_size": 1.47,
+                
+                "icon_offset_x":29.2,
+                "icon_offset_y":-34.3,
+                "icon_offset_size":0.4,
+
+                "portrait_path":"EraFL/warg01.png",
+                "icon_path":"EraFL/warg01.png"
+            }
+        ]
+    },
+    "Template":{
+        "Appearance": "Male",
+        "BodyType": "Default",
+        "stat_STR": 16,
+        "stat_CON": 18,
+        "stat_PSY": 3,
+        "stat_WIL": 7,
+        "Height":130,
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_AAA",
+        "size_P": "trait_Size_P_big",
+        "size_V": "trait_Size_V_none",
+        "size_A": "trait_Size_A_1",
+        "initialRelationship":[
+        ]
+    },
+    "firstName": "creature_animal_warg",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "creature_beastRace_pig",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

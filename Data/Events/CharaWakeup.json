@@ -1,0 +1,59 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "QueuedWakeupEvent",
+                "SelfValidator":{
+                    "chara_conditions":[ { "parameters":["isSleeping"] } ]
+                },
+                "events": [
+                    {
+                        "$type":"Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options":[
+                            {
+                                "option": "silent branch event, this shouldnt be displayed",
+                                "Results": [ { "Type": "WakeUp" } ]
+                            }
+                        ],
+                        "isLast" :true
+                    }
+                ]
+            },
+            {
+                "ID": "OnCharaWakeUp",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_OnCharaWakeUp_ev01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options":[
+                            {
+                                "option": "silent branch event, this shouldnt be displayed...unless",
+                                "Results": [ { "Type": "FlushAppendStrings", "arguments":["onWakeUp"]  },
+                                             { "Type": "ExecuteCallback", "arguments":["jobCallback"] },
+                                             { "Type": "FlushLogs" } ]
+                            }
+                        ],
+                        "isLast" :true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "event_OnCharaWakeUp_ev01":"（$currentTime$）$self.name$醒来了"
+            },
+            "en-us":
+            {
+                "event_OnCharaWakeUp_ev01":"($currentTime$) $self.name$ wakes up"
+            }
+        }
+    }
+}

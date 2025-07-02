@@ -1,0 +1,206 @@
+{
+    "humanoid_Races":
+    {
+        "list": [
+            {
+                "ID": "creature_beastRace_pig",
+                "displayName": "Pig",
+                "tooltip": "Pig. Eat anything.",
+                "bodyPartRoot":"head_beast_base",
+                "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
+                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","lust","physical"],
+                "_comment2":"provide new template for basevalue",
+                "needs":[
+                    {
+                        "ID":"food",
+                        "displayName":"food need",
+                        "tooltip":"tooltip",
+                        "statusDebuffID": "chara_status_malnourished",
+                        "consumeItemByTag": "food_meal",
+                        "requiresStatKeyword": "hunger",
+                        "overwritesNeedsIDs": []
+                    }
+                ]
+            },
+            {
+                "ID": "creature_beastRace_horse",
+                "displayName": "Horse",
+                "tooltip": "Strong, sturdy, somewhat docile.",
+                "bodyPartRoot":"head_beast_base",
+                "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
+                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","lust","physical"],
+                "_comment2":"provide new template for basevalue",
+                "needs":[
+                    {
+                        "ID":"food",
+                        "displayName":"food need",
+                        "tooltip":"tooltip",
+                        "statusDebuffID": "chara_status_malnourished",
+                        "consumeItemByTag": "food_meal",
+                        "requiresStatKeyword": "hunger",
+                        "overwritesNeedsIDs": []
+                    }
+                ]
+            },
+            {
+                "ID": "creature_beastRace_warg",
+                "displayName": "Warg",
+                "tooltip": "Not as large as a horse, but much more agressive.",
+                "bodyPartRoot":"head_beast_base",
+                "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
+                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","lust","physical"],
+                "_comment2":"provide new template for basevalue",
+                "needs":[
+                    {
+                        "ID":"food",
+                        "displayName":"food need",
+                        "tooltip":"tooltip",
+                        "statusDebuffID": "chara_status_malnourished",
+                        "consumeItemByTag": "food_meal",
+                        "requiresStatKeyword": "hunger",
+                        "overwritesNeedsIDs": []
+                    }
+                ]
+            },
+            {
+                "ID": "creature_humanoid_goblin",
+                "displayName": "Goblin",
+                "tooltip": "Tiny yet numerous, always lurking, they shall not be underestimated.",
+                "bodyPartRoot":"head_humanoid_base",
+                "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
+                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","stress","lust","physical","memory"],
+                "_comment2":"provide new template for basevalue",
+                "needs":[
+                    {
+                        "ID":"food",
+                        "displayName":"food need",
+                        "tooltip":"tooltip",
+                        "statusDebuffID": "chara_status_malnourished",
+                        "consumeItemByTag": "food_meal",
+                        "requiresStatKeyword": "hunger",
+                        "overwritesNeedsIDs": []
+                    }
+                ]
+            }
+        ]
+    },
+    "BodyPartBases":
+    {
+        "BodyPart_Base":
+        [
+            {
+                "id": "head_beast_base",
+                "displayName":"%%bodyPart_base_head%%",
+                "tooltip":"An {0}'s head.",
+                "AvailableSlots":["Hair", "Face", "Eyes"],
+                "childID":["body_beast_base"],
+                "internalID":["mouth_beast_base"],
+                "tags":["head"],
+                "sortOrder":0
+            },
+            {
+                "id": "body_beast_base",
+                "displayName":"",
+                "tooltip":"An {0}'s body.",
+                "AvailableSlots":["Neck","Torso"],
+                "childID":["frontleg_beast_base", "frontleg_beast_base", "hindleg_beast_base","hindleg_beast_base"],
+                "internalID":["stomach_beast_base","anus_beast_base","penis_beast_base","guts_beast_base"],
+                "tags":["torso","lower"],
+                "sortOrder":1
+            },
+            {
+                "id": "frontleg_beast_base",
+                "displayName":"",
+                "tooltip":"An {0}'s leg.",
+                "AvailableSlots":["Leg"],
+                "tags":["leg"],
+                "sortOrder":2
+            },
+            {
+                "id": "hindleg_beast_base",
+                "displayName":"",
+                "tooltip":"An {0}'s leg.",
+                "AvailableSlots":["Leg"],
+                "tags":["leg"],
+                "sortOrder":3
+            }
+        ],
+        "BodyInternal_Base":
+        [
+            {
+                "id": "mouth_beast_base",
+                "displayName":"%%bodyPart_internal_mouth%%",
+                "tooltip":"An {0}'s mouth.",
+                "AvailableSlots":["Mouth"],
+                "equipLayers":["Skin"],
+                "tags":["mouth","internal","penetration"],
+                "tag_directionIn":"ext",
+                "tag_directionOut":"stomach",
+                "sensitivityClassString":"M",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_M",
+                "sortOrder":0,
+                "sizeRatio":0.1,
+                "depthRatio":0.05,
+                "volumeRatio":0.2,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin_silent%%",
+                "virginityLossTags":["internal", "external"]
+            },
+            {
+                "id": "stomach_beast_base",
+                "displayName":"%%bodyPart_internal_stomach%%",
+                "tooltip":"An {0}'s stomach.",
+                "tags":["stomach","internal"],
+                "tag_directionIn":"mouth",
+                "tag_directionOut":"guts",
+                "sortOrder":1,
+                "volumeRatio":12,
+                "depthRatio":0.4
+            },
+            {
+                "id": "penis_beast_base",
+                "displayName":"%%bodyPart_internal_penis%%",
+                "tooltip":"An {0}'s penis.",
+                "equipLayers":["Skin"],
+                "tags":["nsfw","penis","testicle","external"],
+                "sensitivityClassString":"C",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
+                "sortOrder":7,
+                "sizeRatio":0.2,
+                "depthRatio":0.2,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
+                "virginityLossTags":["penetration"]
+            },
+            {
+                "id": "guts_beast_base",
+                "displayName":"%%bodyPart_internal_guts%%",
+                "tooltip":"An {0}'s guts.",
+                "tags":["nsfw","guts","internal"],
+                "tag_directionIn":"stomach",
+                "tag_directionOut":"anus",
+                "volumeRatio":20,
+                "depthRatio":2.5,
+                "sortOrder":8
+            },
+            {
+                "id": "anus_beast_base",
+                "displayName":"%%bodyPart_internal_anus%%",
+                "tooltip":"An {0}'s anus.",
+                "AvailableSlots":["Anus"],
+                "equipLayers":["Skin"],
+                "tags":["nsfw","anus","internal","arousalExpansion"],
+                "tag_directionIn":"guts",
+                "tag_directionOut":"ext",
+                "sensitivityClassString":"A",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_A",
+                "needLubrication":true,
+                "sizeRatio":0.02,
+                "volumeRatio":2,
+                "depthRatio":0.1,
+                "sortOrder":9,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
+                "virginityLossTags":["penetration"]
+            }
+        ]
+    }
+    
+}

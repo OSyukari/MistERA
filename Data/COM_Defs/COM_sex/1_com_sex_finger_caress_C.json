@@ -1,0 +1,109 @@
+{
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"com_sex_finger_caress_C",
+                "ActionPackageClass":"ActionPackage_Sex",
+                "displayName":"com_sex_finger_caress_C_displayName_3",
+                "timeScale":3,
+                "comTags":["sex","service"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["arm"],
+                            "minRevealingScore":1,
+                            "cost_ST": 1
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["clit"],
+                            "minRevealingScore":2,
+                            "requireConscious":false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "variants":
+                [
+                    {
+                        "requirements":{
+                            "requirement":{ "doerCount":1, "receiverCount":0 }
+                        },
+                        "displayName":"com_sex_finger_caress_C_displayName_1"
+                    },{
+                        "requirements":{
+                            "requirement":{ "doerCount":99, "receiverCount":0 }
+                        },
+                        "displayName":"com_sex_finger_caress_C_displayName_2"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{ "doerCount":1, "receiverCount":1 }
+                        },
+                        "displayName":"com_sex_finger_caress_C_displayName_3"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{ "doerCount":1, "receiverCount":99 }
+                        },
+                        "displayName":"com_sex_finger_caress_C_displayName_4"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{ "doerCount":99, "receiverCount":1 }
+                        },
+                        "displayName":"com_sex_finger_caress_C_displayName_5"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{ "doerCount":99, "receiverCount":99 }
+                        },
+                        "displayName":"com_sex_finger_caress_C_displayName_6"
+                    }
+                ],
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "$doer.firstname$正在愛撫$receiver.firstname$的阴蒂" ]
+                        }
+                    ]
+                },
+                "descriptions_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "$doer.firstname$的手从$receiver.firstname$的阴蒂上抽离开来" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "$receiver.firstname$的阴蒂由于高潮凸起来" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
+                            "keepLooking":true,
+                            "texts": ["$doer.firstname$的手指捏拿住了$receiver.firstname$的阴蒂，开始有规律地揉搓着"]
+                        }
+                    ]
+                    
+                }
+            }
+        ]
+    }
+}

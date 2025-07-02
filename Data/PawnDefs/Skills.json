@@ -1,0 +1,121 @@
+{
+    "__Skills":
+    {
+"list":
+    [
+        {
+            "id": "skill_shooting",
+            "displayName":"Shooting",
+            "tooltip":"Use of ranged weapons.",
+            "keyAttribute": 0,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_stealth",
+            "displayName":"Stealth",
+            "tooltip":"Hide one's trace. Works against opponent's perception skill.",
+            "keyAttribute": 0,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_survival",
+            "displayName":"Survival",
+            "tooltip":"Finding food in the wilds, survival instinct, hunch.",
+            "keyAttribute": 0,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_athletics",
+            "displayName":"Athletics",
+            "tooltip":"Movement in difficult terrains, parkour, maintaining balance.",
+            "keyAttribute": 1,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_melee",
+            "displayName":"Melee",
+            "tooltip":"Close range combat capability.",
+            "keyAttribute": 1,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_construction",
+            "displayName":"Construction",
+            "tooltip":"Construction",
+            "keyAttribute": 1,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_plants",
+            "displayName":"Plants",
+            "tooltip":"Plants",
+            "keyAttribute": 1,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_art",
+            "displayName":"Art",
+            "tooltip":"Painting, writing, music.",
+            "keyAttribute": 2,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_medicine",
+            "displayName":"Medicine",
+            "tooltip":"Knowledge of medical arts.",
+            "keyAttribute": 2,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_cooking",
+            "displayName":"Cooking",
+            "tooltip":"Knowledge on culinary arts.",
+            "keyAttribute": 2,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_engineering",
+            "displayName":"Engineering",
+            "tooltip":"Knowledge on manufacturing and dismantling. Precision crafting.",
+            "keyAttribute": 2,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_science",
+            "displayName":"Science",
+            "tooltip":"Knowledge on general science and physics.",
+            "keyAttribute": 2,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_spellcraft",
+            "displayName":"Spellcraft",
+            "tooltip":"Knowledge on spells, allows more use with MP.",
+            "keyAttribute": 2,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_animal",
+            "displayName":"Animal",
+            "tooltip":"Dealing, handling wildlifes.",
+            "keyAttribute": 3,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_perception",
+            "displayName":"Perception",
+            "tooltip":"Ability to notice whats hidden.\nWorks against opponent's stealth score.",
+            "keyAttribute": 3,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }, 
+        {
+            "id": "skill_social",
+            "displayName":"Social",
+            "tooltip":"Ability to deal with others of its kind.",
+            "keyAttribute": 3,
+            "expThreshold": [0,10,20,30,40,50,60,70,80,90]
+        }
+    ]
+    }
+    
+}
