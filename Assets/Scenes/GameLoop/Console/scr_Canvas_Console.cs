@@ -20,7 +20,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
     protected void Update()
     {
-        if (Input.GetKeyDown(KeyCode.BackQuote))
+        if (!isActive) return;
+        if (Input.GetKeyDown(KeyCode.BackQuote) )
         {
             ToggleDisplay();
         }
@@ -83,9 +84,14 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
             }
 
         }
+
+        isActive = !scr_System_CentralControl.current.isSafeMode;
+
        // consoleCount = scr_System_CentralControl.current.allusedConsoleCommands.Count;
         // https://discussions.unity.com/t/submit-inputfield-when-enter-is-clicked/124549/8
     }
+
+    public bool isActive = false;
 
     protected void ActivateUI()
     {

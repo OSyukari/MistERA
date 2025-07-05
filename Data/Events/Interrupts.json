@@ -73,7 +73,7 @@
         {
             "zh-cn":
             {
-                "event_OnEnterRoom_interrupt_ev01":"$self.name$在进入$self.room_name$时遇到了$targets.name$",
+                "event_OnEnterRoom_interrupt_ev01":"在$self.room_name$遇到了$targets.name$",
                 "event_OnEnterRoom_interrupt_ev01_op1":"继续移动",
                 "event_OnEnterRoom_interrupt_ev01_op2":"在此停下",
                 "event_OnEnterRoom_interrupt_ev02":"$self.name$停下了脚步",
@@ -82,7 +82,7 @@
             },
             "en-us":
             {
-                "event_OnEnterRoom_interrupt_ev01":"$self.name$ has encountered $targets.name$ when entering $self.room_name$",
+                "event_OnEnterRoom_interrupt_ev01":"$targets.name$ are in $self.room_name$",
                 "event_OnEnterRoom_interrupt_ev01_op1":"Keep Moving",
                 "event_OnEnterRoom_interrupt_ev01_op2":"Stop Here",
                 "event_OnEnterRoom_interrupt_ev02":"$self.name$ stops moving.",

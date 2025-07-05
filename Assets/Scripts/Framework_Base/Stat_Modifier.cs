@@ -5,6 +5,17 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
+
+[System.Serializable]
+public enum Stat_Modifier_Type
+{
+    none,
+    number,
+    getStatusValue,
+    getStatValue,
+    getStatMod
+}
+
 [System.Serializable]
 public class Stat_Modifier
 {
@@ -43,15 +54,32 @@ public class Stat_Modifier
     public bool isPermanent = true;
     public int tick = -1;
 
-    public string valueType = "";
+    public Stat_Modifier_Type valueType = Stat_Modifier_Type.none;
     public string valueString = "";
+
+    bool init = false;
+
+    /// <summary>
+    /// this assumes valuetype is number
+    /// </summary>
+    [JsonIgnore]
+    public float ValueFloat { get
+        {
+            if (!init)
+            {
+                init = true;
+                _valueFloat = float.Parse(valueString);
+            }
+            return _valueFloat;
+        } }
+    float _valueFloat = 0f;
 
     /// <summary>
     /// Only use this when creating statMod by script
     /// </summary>
     /// <param name="vType"></param>
     /// <param name="vString"></param>
-    public void SetValueTypeAndString(string vType, string vString)
+    public void SetValueTypeAndString(Stat_Modifier_Type vType, string vString)
     {
         //if (statID == "chara_status_stress") Debug.LogError($"Setvaluetypeandstring on {statID} {modKey} {type} {vType} {vString}");
         this.valueType = vType;
@@ -61,8 +89,8 @@ public class Stat_Modifier
     private void CheckAccess(bool isStatEx, bool isStatDerived)
     {
         
-        if (valueType == "number" || valueType == "getStatusValue") targetClass = AccessClass.unrestricted;
-        else if (valueType == "getStatValue" || valueType == "getStatMod"){
+        if (valueType == Stat_Modifier_Type.number || valueType == Stat_Modifier_Type.getStatusValue) targetClass = AccessClass.unrestricted;
+        else if (valueType == Stat_Modifier_Type.getStatValue || valueType == Stat_Modifier_Type.getStatMod){
             if (valueString == "Strength" || valueString == "Constitution" || valueString == "Psyche" || valueString == "Willpower")
             {
                 targetClass = AccessClass.statbase;

@@ -171,7 +171,7 @@ public class scr_Menu_Intro : scr_Menu
         button_alwaysValid = new ButtonValidator_AlwaysTrue(this);
     }
     public RectTransform prefab_Canvas_LoadSave;
-    public scr_HoverableText currentLanguage;
+    public scr_HoverableText currentLanguage, author;
     public override void Initialize()
     {
         base.Initialize();
@@ -235,8 +235,12 @@ public class scr_Menu_Intro : scr_Menu
 
         var lang = LocalizeDictionary.QueryThenParse("language_is");
         var lang2 = LocalizeDictionary.QueryThenParse(scr_System_CentralControl.current.Language);
-        Debug.Log($"query {lang} {lang2}");
+        //Debug.Log($"query {lang} {lang2}");
         this.currentLanguage.SetText(lang.Replace("$key$", lang2));
+        if (scr_System_CentralControl.current.isSafeMode)
+        {
+            author.gameObject.SetActive(false);
+        }
     }
     public class ButtonValidator_Load : ButtonValidator, I_ButtonClickable
     {

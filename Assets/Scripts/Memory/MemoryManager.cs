@@ -199,7 +199,7 @@ public class MemoryManager
 
     protected void AddMoodlet(ref List<int> compareList, Stat_Modifier statmod)
     {
-        if (statmod.valueType != "number") return;
+        if (statmod.valueType != Stat_Modifier_Type.number) return;
         if (int.TryParse(statmod.valueString, out int modvalue))
         {
             var oppCount = 0;
@@ -319,8 +319,9 @@ public class MemoryManager
     public Memory_Entry AddEntry(MemInstance memInstance, List<string> selfTags, int duration = -1, bool mergeWithAll = false)
     {
         // ClearCache();
-
+#if UNITY_EDITOR
         if (memInstance.response == Memory_Response.None) Debug.LogError($"Logging Null response memory on {Owner.FirstName} about {memInstance.description}");
+#endif
         var roomRef = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID).RefID;
         Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance, "", duration);
         entry.MergeWithAll = mergeWithAll;
@@ -354,6 +355,13 @@ public class MemoryManager
         foreach(var i in ep.Actors) if (i != Owner) targets.Add(i.RefID);
         bool isDoer = false;
         string description = ep.Package.DescriptionText(Owner.RefID);
+
+#if UNITY_EDITOR
+        if (false && ep.Package.targetCOM is COM_FarmRecipe)
+        {
+            Debug.LogError($"adding farm recipe description {description}");
+        }
+#endif
 
         if (ep.Doer == Owner)
         {

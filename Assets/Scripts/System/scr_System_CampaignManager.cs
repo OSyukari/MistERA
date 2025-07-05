@@ -380,7 +380,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public bool isCharaVisibleToPlayer(int charaRefID)
     {
-        return Map.FindRoomByChara(charaRefID) == Map.FindRoomByChara(Player.RefID);//.RefID == currentRoomRef;
+        return Map.IsBothCharaInSameRoom(charaRefID, Player.RefID);// Map.FindRoomByChara(charaRefID) == Map.FindRoomByChara();//.RefID == currentRoomRef;
     }
 
     public void NotifyUpdateHandlerExist()
@@ -443,19 +443,30 @@ public class scr_System_CampaignManager : MonoBehaviour
         updateTime = 0;
 
         //string s = "ExistPlayerPackage : ";
+        var status = scr_System_CampaignManager.current.Player.Stats.GetStatusByStringMatch("chara_status_sleeping");
 
-        foreach(var p in GetExistingPackages(scr_System_CampaignManager.current.Player, checkUnexecuted, true, true))
+        if (Player.isSleeping && status != null && status.duration > 0 && status.Severity > 0)
         {
-            //if (p.Duration < 1) continue;
-            //if (!checkUnexecuted && !p.Ticked) continue;
-            // if (p.actorRefs.Contains(0) || p.masterRef == 0)
-            //{
-            //s += p.DisplayName + "[" + p.Duration + "] ";
-            if (p.Duration < 1) continue;
+            updateTime = status.duration;
             returnVal = true;
-            updateTime = Math.Max(updateTime, p.Duration);
-            //}
         }
+        else
+        {
+            foreach (var p in GetExistingPackages(scr_System_CampaignManager.current.Player, checkUnexecuted, true, true))
+            {
+                //if (p.Duration < 1) continue;
+                //if (!checkUnexecuted && !p.Ticked) continue;
+                // if (p.actorRefs.Contains(0) || p.masterRef == 0)
+                //{
+                //s += p.DisplayName + "[" + p.Duration + "] ";
+                if (p.Duration < 1) continue;
+                returnVal = true;
+                updateTime = Math.Max(updateTime, p.Duration);
+                //}
+            }
+        }
+
+
 
         totalUpdateTime = updateTime;
         //Debug.Log(s);
@@ -632,13 +643,15 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (registeredPackagesByRoom.Count < 1) Debug.LogError("CampaignManager FreeUpdate called but no package in list");
         else
         {
+            /*
             string s = "CampaignManager FreeUpdate\n";
             foreach (var list in registeredPackagesByRoom.Values)
             {
                 foreach (var element in list) s += element.DisplayName + " ";
                 s += "\n";
             }
-            //Debug.Log(s);
+            Debug.Log(s);
+            */
         }
 
         int updateDuration = 1;
@@ -798,6 +811,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     private int currentTarget = -1;
     public event Action<int> Observer_CurrentTarget;
+    public event Action<int> Observer_CurrentTargetEX;
 
     public event Action<bool> Observer_LogsClear;
 
@@ -879,6 +893,17 @@ public class scr_System_CampaignManager : MonoBehaviour
     public Character_Trainable CurrentTarget { get { if (currentTarget >= 0) return this.FindInstanceByID(currentTarget);
             else return this.FindInstanceByID(0);
         } }
+
+    Character_Trainable _currentTargetEX = null;
+    public Character_Trainable CurrentTargetEX { 
+        get { return _currentTargetEX; }
+        set
+        {
+            if (value == null) _currentTargetEX = CurrentTarget;
+            else _currentTargetEX = value;
+            Observer_CurrentTargetEX?.Invoke(_currentTargetEX.RefID);
+        }
+    }
 
 
     [SerializeField][JsonProperty] int currentRoomRef = -1;
@@ -1328,6 +1353,15 @@ public class scr_System_CampaignManager : MonoBehaviour
                 // do we break team if timestop ?
                 //charaLocation[i] = targetRoomRef; // move party members
                 MoveCharacterTo(i, targetRoomRef);
+                var teammate = FindInstanceByID(i);
+
+                if (teammate.CurrentJob != null)
+                {
+#if UNITY_EDITOR
+                    Debug.Log($"Teammate {teammate.FirstName} still has ongoing job on moving room, force exiting");
+#endif
+                    teammate.ChangeCurrentJob(null);
+                }
             }
             ChangeCurrentRoom(Map.GetRoomByRef(targetRoomRef));
             //UpdateScene();
@@ -1424,7 +1458,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     [NonSerialized] public bool debug_xray = false;
 
-    private bool debugMode = true;
+    private bool debugMode = false;
     public bool DebugMode { get { return debugMode; } set { debugMode = value; } }
 
     protected int deterministicThreshold = 65;

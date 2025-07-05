@@ -29,7 +29,18 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":0 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":0 },
+            "description_begin":
+            {
+                "Entries":[ 
+                    {
+                        "keepLooking":true,
+                        "texts": ["com_interaction_waste_time_begin_1"]
+                    }
+                ]
+                
+            }
+
         },
         {
             "ID":"com_interaction_talk",
@@ -73,25 +84,12 @@
                     {
                         "keepLooking": false,
                         "texts": [
-                            "$doer.firstname$和$receiver.firstname$有一搭沒一搭地閒聊著",
-                            "$doer.firstname$和$receiver.firstname$閒聊的很開心",
-                            "$doer.firstname$：所以我跟你說啊，那個……"
+                            "com_interaction_talk_begin_1",
+                            "com_interaction_talk_begin_2",
+                            "com_interaction_talk_begin_3"
                         ]
                     }
                 ]
-            }
-        },
-        {
-            "ID":"com_interaction_hello",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"打招呼",
-            "timeScale":5,
-            "comTags":["interaction","do_not_use"],
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":1
-                }
             }
         },
         {
@@ -129,6 +127,37 @@
             "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始模拟战"]}], "keepLooking":false }
         }
     ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_interaction_waste_time": "玩家限定，NPC不可执行。跟NPC组队时请请先解散NPC",
+                "com_interaction_waste_time_displayName": "什么都不做",
+                "com_interaction_waste_time_begin_1": "$doer.firstname$什么都没做",
+
+                "com_interaction_talk_begin_1": "$doer.firstname$有一搭没一搭地和$receiver.firstname$聊了起来",
+                "com_interaction_talk_begin_2": "$doer.firstname$漫不经心地和$receiver.firstname$聊了起来",
+                "com_interaction_talk_begin_3": "$doer.firstname$随意地和$receiver.firstname$聊着天",
+                "com_interaction_talk_displayName_1": "闲聊",
+                "com_interaction_talk_displayName_2": "大家一起闲聊"
+                
+            },
+            "en-us":
+            {
+                "com_interaction_waste_time": "Player only, cannot be performed by NPC. Will require dismissing any teammate before being allowed to perform this action.",
+                "com_interaction_waste_time_displayName": "Do Nothing",
+                "com_interaction_waste_time_begin_1": "$doer.firstname$ stands around and do nothing",
+
+                "com_interaction_talk_begin_1": "$doer.firstname$ started chatting with $receiver.firstname$ without much focus",
+                "com_interaction_talk_begin_2": "$doer.firstname$ started chatting with $receiver.firstname$ nonchalantly",
+                "com_interaction_talk_begin_3": "$doer.firstname$ casually chatted with $receiver.firstname$",
+                "com_interaction_talk_displayName_1": "Chat",
+                "com_interaction_talk_displayName_2": "Chat"
+            }
+        }
     }
     
 }

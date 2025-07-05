@@ -620,19 +620,16 @@ public class Job : IDisposable, I_Disposable
                     if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("readding package " + packages_previous[i].DisplayName);
                     packages_previous[i].RepeatReset(false);
                     packages_current.Add(packages_previous[i]);
-                    packages_previous.RemoveAt(i);
                 }
                 else
                 {
-                    var message = "deleting package " + packages_previous[i].DisplayName;
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("deleting package " + packages_previous[i].DisplayName);
+                   // var message = "deleting package " + packages_previous[i].DisplayName;
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("deleting package " + packages_previous[i].DisplayName + $" for {String.Join("|",packages_previous[i].actorRefs)}");
                     //PackageRemoval(packages_previous[i]);
-                    if (!packages_previous[i].isTemporaryAP)
-                    {
-                        actorJobComplete.AddRange(packages_previous[i].actorRefs);
-                    }
-                    packages_previous.RemoveAt(i);
+                    if (!packages_previous[i].isTemporaryAP) actorJobComplete.AddRange(packages_previous[i].actorRefs);
+                    
                 }
+                packages_previous.RemoveAt(i);
             }
         }
 
@@ -722,7 +719,7 @@ public class Job : IDisposable, I_Disposable
                 if (package.Validate())
                 {
                     scr_System_CampaignManager.current.Register(package, avoidConflict);
-                    if (package.isPaused) package.pausedTick += 1;
+                    if (package.isPaused && !package.isTimeStopped) package.pausedTick += 1;
                     if (package.isPaused && package.pausedTick > 3)
                     {
                         packages_previous.RemoveAt(i);
@@ -752,6 +749,7 @@ public class Job : IDisposable, I_Disposable
     public void LogMessage_Begin(EvaluationPackage ep)
     {
         if (ep == null) return;
+        if (!isVisibleToPlayer) return;
         if (ep.skipLogging || ep.Package.LoggedBegin) return;
         if (ep.Doer.isTimeStopped) return;
         var s = ep.Description_Begin;
@@ -766,11 +764,11 @@ public class Job : IDisposable, I_Disposable
     public void LogMessage_Kojo(EvaluationPackage ep)
     {
         if (ep == null) return;
-        if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName +", tags: ["+String.Join("|",ep.DoerSelfTag)+"] -> ["+String.Join("|", ep.ReceiverTargetTag) + "]");
+        if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName +", tags: ["+String.Join("|",ep.DoerSelfTag)+"] -> ["+String.Join("|", ep.ReceiverTargetTag) + $"], epStatus [{ep.Response}]");
         var s = ep.Doer == null ? "" : ep.Doer.Relationships.GetKOJOMessage(true, ep);
         var s2 = ep.Receiver == null ? "" : ep.Receiver.Relationships.GetKOJOMessage(false, ep);
         var rel = ep.Receiver != null && ep.Doer != null ? ep.Receiver.Relationships.FindRelationshipWith(ep.Doer) : null;
-        var s3 = rel == null ? "" : ep.Receiver.isSleeping ? ep.Receiver.Relationships.Personality.GetKOJOMessage("DisruptSleep", rel) : "";
+        var s3 = rel == null ? "" : ep.Receiver.isSleeping ? ep.Receiver.Relationships.Personality.GetKOJOMessage("DisruptSleep", rel).Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID)) : "";
         //var s2 = "Kojo Message triggered for " + ep.Receiver.FirstName + ", tags: [" + String.Join("|", ep.ReceiverSelfTag) + "] -> [" + String.Join("|", ep.DoerTargetTag) + "]";
 
         /* filter by :
@@ -797,10 +795,16 @@ public class Job : IDisposable, I_Disposable
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents && (s.Length > 0 || s2.Length > 0 || s3.Length > 0)) Debug.Log($"Kojo Message logged: [{s}] [{s2}] [{s3}]");
     }
 
+    /// <summary>
+    /// This is getting disabled
+    /// </summary>
+    /// <param name="ep"></param>
     public void LogMessage_Begin_CheckResult(EvaluationPackage ep)
     {
+        return;
         if (ep == null) return;
         if (ep.skipLogging) return;
+        if (!isVisibleToPlayer) return;
         var s = "("+ep.Doer.FirstName+(ep.Receiver == null ? "": " -> "+ep.Receiver.FirstName)+") "+ ep.targetCOM.DisplayName(ep.VariantID) + ": " + (ep.Response > Memory_Response.Refuse ? (ep.ReceiverAttitude > Memory_Attitude.None ? ep.ReceiverAttitude.ToString() : ep.DoerAttitude.ToString()) : ep.Response.ToString());
 
         if (ep.Package != null && !ep.Package.LeftAlign) s = "<align=\"right\">" +s+ "</align>";
@@ -812,6 +816,7 @@ public class Job : IDisposable, I_Disposable
     {
         if (ep == null) return;
         if (ep.skipLogging || ep.Package.LoggedBegin) return;
+        if (!isVisibleToPlayer) return;
         if (ep.Doer.isTimeStopped) return;
         if (ep.Response >= Memory_Response.Accept) return;
 
@@ -828,6 +833,7 @@ public class Job : IDisposable, I_Disposable
     public void LogMessage_Begin_Ongoing(EvaluationPackage ep)
     {
         if (ep == null) return;
+        if (!isVisibleToPlayer) return;
         if (ep.skipLogging || ep.Package.LoggedBegin) return;
         if (ep.Doer.isTimeStopped) return;
         var s = ep.Description_Ongoing;
@@ -839,6 +845,7 @@ public class Job : IDisposable, I_Disposable
     {
         // Im not sure if this triggers at all, let's keep it for a while if it doesnt then delete
         //Debug.Log("LogMessage_Begin_Replace");
+        if (!isVisibleToPlayer) return;
         foreach(var ep in aprevious.ListEP)
         {
             var s1 = ep.Description_Remove;
@@ -852,6 +859,7 @@ public class Job : IDisposable, I_Disposable
     public void LogMessage_Begin_Abort(EvaluationPackage ep)
     {
         if (ep == null) return;
+        if (!isVisibleToPlayer) return;
         if (ep.skipLogging || ep.Package.LoggedBegin) return;
         if (ep.Doer.isTimeStopped) return;
 
@@ -868,6 +876,7 @@ public class Job : IDisposable, I_Disposable
         //List<Character_Trainable> actors, string s
         //.Actors, ep.Description_Ongoing
         if (ep == null) return;
+        if (!isVisibleToPlayer) return;
         //if (ep.Doer.isTimeStopped) return;
         if (ep.skipLogging) return;
         var s = ep.Description_Ongoing;
@@ -877,8 +886,16 @@ public class Job : IDisposable, I_Disposable
     public void LogMessage_After(EvaluationPackage ep)
     {
         if (ep == null) return;
+        if (!isVisibleToPlayer) return;
         if (ep.skipLogging) return;
         var s = ep.Description_After;
+
+        var pOrderPackage = ep.Package as ActionPackage_ProductionOrder;
+
+        if (pOrderPackage != null && pOrderPackage.order != null && pOrderPackage.order.Recipe != null && pOrderPackage.order.Recipe.OutputItem != null)
+        {
+            s = s.Replace("$item$", pOrderPackage.order.Recipe.OutputItem.DisplayName);
+        }
 
         if (s.Length > 0) messages_after.Add(s);
         /*

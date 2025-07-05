@@ -68,7 +68,7 @@
             "displayName":"扫除marker",
             "noDisplay":true,
             "recipe":[],
-            "furnitureSize":1,
+            "furnitureSize":2,
             "givesJob":
             [ { "comID":["com_job_cleaning"] } ]
         },

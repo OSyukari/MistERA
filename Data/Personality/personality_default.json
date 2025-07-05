@@ -662,39 +662,6 @@
             { "responses":[ "($self$) 正面位V口上文"] }
         ]
     },
-
-
-
-    {
-        "ID": "com_job_cleaning",
-        "variants":
-        [
-            { 
-                "responses":
-                [ 
-                    "($self$) 扫除工作 口上文1",
-                    "($self$) 扫除工作 口上文2",
-                    "($self$) 扫除工作 口上文3"
-                ] 
-            }
-        ]
-    },
-
-    {
-        "ID": "com_interaction_talk",
-        "variants":
-        [
-            { 
-                "responses":
-                [ 
-                    "($self$) 交谈 口上文1",
-                    "($self$) 交谈 口上文2",
-                    "($self$) 交谈 口上文3"
-                ] 
-            }
-        ]
-    },
-
     {
         "ID": "com_interaction_initiateSex",
         "tags":["nsfw"],
@@ -725,108 +692,106 @@
                 ] 
             }
         ]
-    },
-
+    },  
     {
-        "ID": "com_furniture_sleep",
-        "_comments":"this will never get triggered by NPCs in current version...",
+        "ID": "com_job_farm_maintain",
         "variants":
         [
-            { 
-                "responses":
-                [ 
-                    "($self$) 睡眠 口上文1",
-                    "($self$) 睡眠 口上文2",
-                    "($self$) 睡眠 口上文3"
-                ] 
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "_comment":"failure variant",
+                "responses":[ "kojo_default_com_job_farm_cultivate_crop_refuse_1", "kojo_default_com_job_farm_cultivate_crop_refuse_2" ]
+            },
+            {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "_comment":"great success variant",
+                "responses":[ "kojo_default_com_job_farm_maintain_accept_success_1" ]
+            },
+            {   "requirements": [ { "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[ "kojo_default_com_job_farm_maintain_accept_failure_1" ]
             }
         ]
-    },
-
+    },  
     {
         "ID": "com_furniture_takingBreak",
         "variants":
         [
-            { 
-                "responses":
-                [ 
-                    "($self$) 休息 口上文1",
-                    "($self$) 休息 口上文2",
-                    "($self$) 休息 口上文3"
-                ] 
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "_comment":"failure variant",
+                "responses":[   "kojo_default_com_furniture_takingBreak_refuse_1", 
+                                "kojo_default_com_furniture_takingBreak_refuse_2" ]
+            },
+            {   "requirements": [ { "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[   "kojo_default_com_furniture_takingBreak_accept_success_1",
+                                "kojo_default_com_furniture_takingBreak_accept_success_2",
+                                "kojo_default_com_furniture_takingBreak_accept_success_3" ,
+                                "kojo_default_com_furniture_takingBreak_accept_success_4"  ]
             }
         ]
     },
-
     {
         "ID": "com_furniture_playVideoGames",
+        "interruptSelfJob":true,
         "variants":
         [
-            { 
-                "responses":
-                [ 
-                    "($self$) 打游戏 口上文1",
-                    "($self$) 打游戏 口上文2",
-                    "($self$) 打游戏 口上文3"
-                ] 
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "_comment":"failure variant",
+                "responses":[ "kojo_default_com_furniture_playVideoGames_refuse_1", "kojo_default_com_furniture_playVideoGames_refuse_2" ]
+            },
+            {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "_comment":"great success variant",
+                "responses":[ "kojo_default_com_furniture_playVideoGames_accept_success_1", "kojo_default_com_furniture_playVideoGames_accept_success_2" ]
+            },
+            {   "requirements": [ { "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[ "kojo_default_com_furniture_playVideoGames_accept_failure_1", "kojo_default_com_furniture_playVideoGames_accept_failure_2" ]
             }
         ]
     },
-
     {
         "ID": "com_furniture_watchVideo",
+        "interruptSelfJob":true,
         "variants":
         [
-            { 
-                "responses":
-                [ 
-                    "($self$) 观看影片 口上文1",
-                    "($self$) 观看影片 口上文2",
-                    "($self$) 观看影片 口上文3"
-                ] 
-            }
-        ]
-    },
-
-    {
-        "ID": "com_furniture_takeShower",
-        "variants":
-        [
-            { 
-                "responses":
-                [ 
-                    "($self$) 洗澡 口上文1",
-                    "($self$) 洗澡 口上文2",
-                    "($self$) 洗澡 口上文3"
-                ] 
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "_comment":"failure variant",
+                "responses":[ "kojo_default_com_furniture_watchVideo_refuse_1" ]
+            },
+            {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "_comment":"great success variant",
+                "responses":[ "kojo_default_com_furniture_watchVideo_accept_success_1", "kojo_default_com_furniture_watchVideo_accept_success_2" ]
+            },
+            {   "requirements": [ { "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[ "kojo_default_com_furniture_watchVideo_accept_failure_1" ]
             }
         ]
     },
     {
-        "ID": "com_furniture_restroom_fix",
+        "ID": "com_interaction_talk",
         "variants":
         [
-            { 
-                "responses":
-                [ 
-                    "($self$) 整理服饰 口上文1",
-                    "($self$) 整理服饰 口上文2",
-                    "($self$) 整理服饰 口上文3"
-                ] 
+            {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "_comment":"great success variant",
+                "responses":[ "kojo_default_com_interaction_talk_accept_success_1", "kojo_default_com_interaction_talk_accept_success_2" ]
+            },
+            {   "requirements": [ { "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[ "kojo_default_com_interaction_talk_accept_failure_1", "kojo_default_com_interaction_talk_accept_failure_2", "kojo_default_com_interaction_talk_accept_failure_3"]
             }
         ]
     },
     {
-        "ID": "com_job_study",
+        "ID": "com_job_farm_cultivate_crop",
         "variants":
         [
-            { 
-                "responses":
-                [ 
-                    "($self$) 学习 口上文1",
-                    "($self$) 学习 口上文2",
-                    "($self$) 学习 口上文3"
-                ] 
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "_comment":"failure variant",
+                "responses":[ "kojo_default_com_job_farm_cultivate_crop_refuse_1", "kojo_default_com_job_farm_cultivate_crop_refuse_2" ]
+            },
+            {   "requirements": [ { "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[ "kojo_default_com_job_farm_cultivate_crop_accept_failure_2", "kojo_default_com_job_farm_cultivate_crop_accept_failure_1" ]
             }
         ]
     },
@@ -834,32 +799,33 @@
         "ID": "com_job_production_cooking",
         "variants":
         [
-            { 
-                "responses":
-                [ 
-                    "($self$) 下厨 口上文1",
-                    "($self$) 下厨 口上文2",
-                    "($self$) 下厨 口上文3"
-                ] 
+            {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "_comment":"great success variant",
+                "responses":[ "kojo_default_com_job_production_cooking_accept_success_1", "kojo_default_com_job_production_cooking_accept_success_2" ]
+            },
+            {   "requirements": [ { "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[ "kojo_default_com_job_production_cooking_accept_failure_1" ]
             }
         ]
     },
     {
-        "ID": "com_job_farm_maintain",
+        "ID": "com_job_cleaning",
         "variants":
         [
-            { 
-                "responses":
-                [ 
-                    "($self$) 打理农场 口上文1",
-                    "($self$) 打理农场 口上文2",
-                    "($self$) 打理农场 口上文3"
-                ] 
+            {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "_comment":"great success variant",
+                "responses":[ "kojo_default_com_job_cleaning_accept_success_1" ]
+            },
+            {   "requirements": [ { "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[ "kojo_default_com_job_cleaning_accept_failure_1", "kojo_default_com_job_cleaning_accept_failure_2" ]
             }
         ]
     },
     {
         "ID": "com_touch_cheek",
+        "tags":["nsfw"],
         "variants":
         [
             { 
@@ -876,18 +842,58 @@
         "ID": "com_touch_head",
         "variants":
         [
+            {
+                "tags":["nsfw"],
+                "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+                "responses":[ "($self$) 时停中 摸头 口上文" ]
+            },
+            {
+                "tags":["nsfw"],
+                "requirements": [ { "requireSelfAction":false, "selfTags":["sleeping"] } ],
+                "responses":[ "($self$) 睡眠中 摸头 口上文" ]
+            },
+            {   "requirements": [ {  "requireEPFailure":true } ],
+                "_comment":"refuse variant",
+                "responses":[ "kojo_default_com_touch_head_refuse_1", "kojo_default_com_touch_head_refuse_2" ]
+            },
+            {   "requirements": [ {  "requireEPSuccessGTE":"Success" } ],
+                "_comment":"great success variant",
+                "responses":[ "kojo_default_com_touch_head_accept_success_1", "kojo_default_com_touch_head_accept_success_2" ]
+            },
+            {   
+                "requirements": [ {  "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[ "kojo_default_com_touch_head_accept_failure_1", "kojo_default_com_touch_head_accept_failure_2", "kojo_default_com_touch_head_accept_failure_3" ]
+            }
+        ]
+    },
+    {
+        "ID": "com_sex_finger_caress_C",
+        "tags":["nsfw"],
+        "_comment":"variants should be ordered in descending priority.",
+        "variants":[
+            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
+            },
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "responses":[ "($self$) 指令失败拒绝口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "responses":[ "($self$) 玩家专用 刚睡醒时的 C抚摸口上文" ]
+            },
+            {
+                "requirements": [ { "targetBaseID":"PLAYER"  } ],
+                "responses":[ "($self$) 玩家专用 C抚摸口上文" ]
+            },
             { 
-                "responses":
-                [ 
-                    "($self$) 摸头 口上文1",
-                    "($self$) 摸头 口上文2",
-                    "($self$) 摸头 口上文3"
-                ] 
+                "responses":[ "($self$) C抚摸口上文" ] 
             }
         ]
     },
     {
         "ID": "com_touch_hair",
+        "tags":["nsfw"],
         "variants":
         [
             { 
@@ -902,6 +908,7 @@
     },
     {
         "ID": "com_touch_sleeponthigh_ask",
+        "tags":["nsfw"],
         "variants":
         [
             { 
@@ -916,6 +923,7 @@
     },
     {
         "ID": "com_touch_hug",
+        "tags":["nsfw"],
         "variants":
         [
             { 
@@ -930,6 +938,7 @@
     },
     {
         "ID": "com_touch_sleeponthigh_give",
+        "tags":["nsfw"],
         "variants":
         [
             { 
@@ -1065,20 +1074,19 @@
 
     {
         "ID": "OnTimestopEnd",
+        "tags":["nsfw"],
         "_comment":"This triggers on Map.UpdateRoom charaTimestopped resume, this will replace Greeting calls",
         "variants":[
             {
-                "tags":["nsfw"],
                 "requirements": [ { "requireSelfAction":false, "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop", "climax"] } } ],
                 "selfEventCall":"OnTimestopEnd_Climax"
             },
             {
-                "tags":["nsfw"],
                 "requirements": [ { "requireSelfAction":true,  "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop", "pain"] } } ],
                 "selfEventCall":"OnTimestopEnd_Pain"
             },
             {
-                "tags":["nsfw"],
+
                 "requirements": [ { "requireSelfAction":true,  "requireSelfMemory": { "minuteRollback":1, "selfTags":["timestop", "cum"] } } ],
                 "selfEventCall":"OnTimestopEnd_Cum"
             },
@@ -1152,17 +1160,21 @@
 
     {
         "ID": "Descriptor",
+        "tags":["nsfw"],
         "_comment":"Event trigger. This event trigger contains description text for self. This will not fire if Target is not player",
         "variants":[
             {
+                "tags":["nsfw"],
                 "requirements": [ { "requireSelfAction":false, "selfTags":["sleeping"] } ],
                 "responses":[ "($self$) 正在房间里睡觉的$self$完全没注意到靠近的$target$" ]
             },
             {
+                "tags":["nsfw"],
                 "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
                 "responses":[ "($self$) $target$遇到了被时停的$self$" ]
             },
             {
+                "tags":["nsfw"],
                 "requirements": [ { "selfTags":["fixingClothes"] } ],
                 "responses":[ "($self$) 触发了$target$撞见$self$整理衣物的口上" ]
             },
@@ -1199,17 +1211,19 @@
         "ID": "Greeting",
         "_comment":"Event trigger. Fires when Self change location, when Target enters room, when Timestop resume, when character regain consciousness",
         "interruptSelfJob":true,
+        "debugLogging":true,
         "interruptTargetJob":true,
         "variants":[
             {
-                "requirements": [ { "targetBaseID":"PLAYER", "requireSelfAction":false } ],
+                "requirements": [ { "targetBaseID":"PLAYER", "requireSelfAction":false, "requireTargetAction":true } ],
                 "responses":[ ],
                 "selfEventCall":"Descriptor",
                 "keepLooking":true
             },
             {
-                "requirements": [ { "targetBaseID":"PLAYER", "requireKojoVariable":{"isDailyVariable":false, "variableID":"firstMeeting", "checkExistOnly":true, "value":0 } } ],
+                "requirements": [ { "targetBaseID":"PLAYER", "requireKojoVariable":{"isDailyVariable":false, "variableID":"ALWAYSFALSE", "checkExistOnly":true, "value":1 } } ],
                 "responses":[ "($self$) $target$触发了$self$的角色导入口上" ],
+                "_comment":"this will never met requirement. disabled for now.",
                 "results":[ { "modifyKojoVariables":{ "isDailyVariable":false, "variableID":"firstMeeting", "isSetValue":false, "value":1 } },
                             { "modifyKojoVariables":{ "isDailyVariable":true, "variableID":"dailyGreeting", "isSetValue":false, "value":1 } } ]
             },
@@ -1221,7 +1235,7 @@
             },
             {
                 "requirements": [ { "requireKojoVariable":{"isDailyVariable":true, "variableID":"dailyGreeting", "checkExistOnly":true, "value":0 } } ],
-                "responses":[ "($self$) 触发了$self$每日第一次向$target$打招呼的口上" ],
+                "responses":[ "kojo_default_event_greeting_04" ],
                 "results":[ { "modifyKojoVariables":{ "isDailyVariable":true, "variableID":"dailyGreeting", "isSetValue":false, "value":1 } } ],
                 "keepLooking":true
             }
@@ -1234,15 +1248,21 @@
         [
             {
                 "tags":["nsfw"],
+                "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping","timestop"] } ],
+                "responses":[ "<color=#373737>($self$) 时停中的$self$对$epDescription$一点反应也没有</color>" ]
+            },
+            {
+                "tags":["nsfw"],
                 "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping", "pain"],
                                     "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"gte", "value":1.9 } } ],
                 "responses":[ "<color=#373737>($self$) 熟睡中的$self$被$epDescription$造成的痛楚干扰到</color>" ],
                 "results":[ { "modifyStatusValue":{ "statusID":"chara_status_sleeping","value":-0.1 } } ]
             },
             {
+                "tags":["nsfw"],
                 "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping"],
                                     "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"gte", "value":1.9 } } ],
-                "responses":[ "<color=#373737>($self$) 熟睡中的$self$对$epDescription$没有任何反应</color>" ]
+                "responses":[ "kojo_default_event_disruptsleep_03" ]
             },     
             {
                 "tags":["nsfw"],
@@ -1259,9 +1279,10 @@
                 "results":[ { "modifyStatusValue":{ "statusID":"chara_status_sleeping","value":-0.1 } } ]
             },
             {
+                "tags":["nsfw"],
                 "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping"],
                                     "requireSelfStatusValue":{ "statusID":"chara_status_sleeping", "operand":"gte", "value":0.9 } } ],
-                "responses":[ "<color=#373737>($self$) 睡梦中的$self$对$epDescription$没有任何反应</color>" ]
+                "responses":[ "kojo_default_event_disruptsleep_06" ]
             },   
             {
                 "tags":["nsfw"],
@@ -1271,7 +1292,7 @@
             },
             {
                 "requirements": [ { "requireSelfAction":false,  "selfTags":["sleeping"] } ],
-                "responses":[ "<color=#373737>($self$) 浅眠中的$self$被$epDescription$的动静干扰到</color>" ],
+                "responses":[ "kojo_default_event_disruptsleep_08" ],
                 "results":[ { "modifyStatusValue":{ "statusID":"chara_status_sleeping","value":-0.1 } } ]
             }
         ]
@@ -1294,22 +1315,22 @@
             {
                 "_comment":"interrupt does not check self AP, selftags will mostly be [], so to remedy this, this response will trigger an event with eventInstance.Self == target, and inject self as argument, letting the event take care of validating everything",
                 "requirements": [ { "targetTags":["privacy"], "requireSelfAction":false, "requireTargetAction":true, "requireEPSuccess":false } ],
-                "responses":[ "($self$) $self$看到$target$$epDescription$</color>" ],
+                "responses":[ "kojo_default_event_interrupt_02" ],
                 "results":[{"launchEvent":{"eventID":"RequestLeave_PrivateAction","eventLabel":"","reverseTargets":true}}]
             },
             {
                 "requirements": [ { "requireTargetAction":false, "targetTags":["unsafe"] } ],
                 "hideWhenNotFocused":false,
-                "responses":[ "<color=#373737>($self$) $self$撞见$epDescription$ (unsafe interrupt)</color>" ]
+                "responses":[ "kojo_default_event_interrupt_01" ]
             },
             {
                 "requirements": [ { "targetTags":["job"] } ],
-                "responses":[ "<color=#373737>($self$) $self$撞见$target$$epDescription$ (join interrupt)</color>" ],
+                "responses":[ "kojo_default_event_interrupt_02" ],
                 "results":[{"launchEvent":{"eventID":"RequestJoin","eventLabel":"","reverseTargets":false,"targetKeyword":"evTarget"}}]
             },
             {
                 "requirements": [ { "selfTags":["job"] ,"targetTags":["recreation"] } ],
-                "responses":[ "<color=#373737>($self$) 工作中的$self$撞见$target$$epDescription$ (disrupt interrupt)</color>" ]
+                "responses":[ "kojo_default_event_interrupt_03" ]
             }
         ]
     },
@@ -1404,5 +1425,134 @@
                 ]
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"kojo_default_com_touch_head_refuse_1":"\"哎…这样不太好吧？\" $self$有些为难地皱了皱眉。",
+"kojo_default_com_touch_head_refuse_2":"\"等等！今天发型可是特意弄的，别乱摸！\" $self$连忙后退一步，躲开了$target$伸过来的手。",
+"kojo_default_com_touch_head_accept_failure_1":"\"……好吧。\" $self$勉强挤出一个笑容，任由$target$摸着自己的头",
+"kojo_default_com_touch_head_accept_failure_2":"\"……算了，随便你吧。\" $self$叹了口气，放弃了抵抗。",
+"kojo_default_com_touch_head_accept_failure_3":"$self$默默地忍受着头上的触碰，身体却因触碰而绷紧。",
+"kojo_default_com_touch_head_accept_success_1":"\"这样…感觉还不错。\" $self$轻声说道",
+"kojo_default_com_touch_head_accept_success_2":"$self$没有说话，只是微微垂下眼帘，嘴角露出一丝不易察觉的微笑",
+
+"kojo_default_com_job_farm_cultivate_crop_refuse_1":"$self$：\"种田啊…… 要不你找个更有经验的？\"",
+"kojo_default_com_job_farm_cultivate_crop_refuse_2":"$self$：\"一起种田？ 还是算了吧, 我怕我会拖你后腿\"",
+"kojo_default_com_job_farm_cultivate_crop_accept_failure_1":"\"这苗是不是埋得太浅了点？\" $self$看着歪歪扭扭的幼苗，忍不住皱起了眉头",
+"kojo_default_com_job_farm_cultivate_crop_accept_failure_2":"\"……算了，就这样吧，反正能长出来就行。\" $self$看着参差不齐的田地叹了口气",
+"kojo_default_com_job_farm_maintain_accept_success_1":"$self$ 一边哼着歌，一边认真地给作物浇水施肥。",
+"kojo_default_com_job_farm_maintain_accept_failure_1":"$self$：\"完了，刚才除草的时候，不小心把菜苗也拔掉了！\" ",
+
+"kojo_default_com_job_production_cooking_accept_failure_1":"$self$：“完了，盐放太多了！要不还是吃泡面吧……” ",
+"kojo_default_com_job_production_cooking_accept_success_1":"$self$：“呼…总算按着菜谱一步一步做出来了” ",
+"kojo_default_com_job_production_cooking_accept_success_2":"$self$：“完成了！嗯，至少外观是对的……希望味道别太奇怪。”",
+
+"kojo_default_com_job_cleaning_accept_failure_1":"$self$在吸尘的时候不小心把某些重要的资料吸进去了！",
+"kojo_default_com_job_cleaning_accept_failure_2":"$self$在整理桌子的时候不小心打翻了水杯！",
+"kojo_default_com_job_cleaning_accept_success_1":"$self$看着整洁的房间，满意地点了点头。",
+
+"kojo_default_event_greeting_04":"$self$今天第一次问候$target$",
+
+"kojo_default_event_disruptsleep_03":"<color=#373737>熟睡中的$self$对$epDescription$没有任何反应</color>",
+"kojo_default_event_disruptsleep_06":"<color=#373737>睡眠中的$self$对$epDescription$没有任何反应</color>",
+"kojo_default_event_disruptsleep_08":"<color=#373737>浅眠中的$self$被$epDescription$的动静干扰到</color>",
+
+"kojo_default_com_furniture_playVideoGames_refuse_1":"$self$：\"抱歉，我现在没什么心情玩游戏\"",
+"kojo_default_com_furniture_playVideoGames_refuse_2":"$self$：\"你玩吧，我今天就不參加了。\"",
+"kojo_default_com_furniture_playVideoGames_accept_failure_1":"\"唉……又输了\" $self$把手柄扔到一旁。\"",
+"kojo_default_com_furniture_playVideoGames_accept_failure_2":"$self$：\"这个游戏……不太适合我。\"",
+"kojo_default_com_furniture_playVideoGames_accept_success_1":"$self$：\"这比我想象中好玩多了！\"",
+"kojo_default_com_furniture_playVideoGames_accept_success_2":"$self$：\"你挺厉害的嘛！下次我一定赢回来！\"",
+
+"kojo_default_com_interaction_talk_accept_failure_1":"\"嗯……是啊，挺好的。\"$self$说着却目光飘忽，明显没在听。",
+"kojo_default_com_interaction_talk_accept_failure_2":"\"所以……你到底想说什么？\"$self$微微歪头，语气中带着一丝不耐。",
+"kojo_default_com_interaction_talk_accept_failure_3":"\"嗯……大概吧。\"$self$含糊地回应，看起来只是想快点结束话题。",
+"kojo_default_com_interaction_talk_accept_success_1":"\"真的假的？太搞笑了吧！\"$self$笑出声来",
+"kojo_default_com_interaction_talk_accept_success_2":"$self$：\"「你讲得挺有意思的，不继续了吗？\"",
+
+"kojo_default_com_furniture_watchVideo_refuse_1":"$self$：「我现在不太想看东西。」",
+"kojo_default_com_furniture_watchVideo_accept_failure_1":"「……这半小时真是浪费人生。」$self$一脸精疲力尽。",
+"kojo_default_com_furniture_watchVideo_accept_success_1":"「这部影片意外地不错哎！」$self$露出灿烂的笑容",
+"kojo_default_com_furniture_watchVideo_accept_success_2":"「好久没笑得这么开心了。」 $self$边笑边擦眼角的泪水",
+
+"kojo_default_com_furniture_takingBreak_refuse_1":"$self$：「我不累，你先休息吧。」",
+"kojo_default_com_furniture_takingBreak_refuse_2":"$self$：「我没事，坐着反而让我心烦。」",
+"kojo_default_com_furniture_takingBreak_accept_success_1":"$self$轻轻滑动解锁手机屏幕，然后单手随意地刷着内容。",
+"kojo_default_com_furniture_takingBreak_accept_success_2":"$self$从小包装里抓了点脆零食放进嘴里。",
+"kojo_default_com_furniture_takingBreak_accept_success_3":"$self$解开耳机线，戴上后轻轻点着头跟着节奏。",
+"kojo_default_com_furniture_takingBreak_accept_success_4":"$self$慢慢地抿了一口咖啡，然后双手静静地握着杯子。",
+
+"kojo_default_event_interrupt_01":"<color=#373737>$self$看到$epDescription$</color>",
+"kojo_default_event_interrupt_02":"<color=#373737>$self$看到$target$$epDescription$</color>",
+"kojo_default_event_interrupt_03":"<color=#373737>工作中的$self$看到$target$$epDescription$</color>"
+            },
+            "en-us":
+            {
+"kojo_default_com_touch_head_refuse_1":"\"Uh…isn't this a little inappropriate?\" $self$ frowned slightly, looking troubled.",
+"kojo_default_com_touch_head_refuse_2":"\"Wait! I spent time doing my hair today, don't mess it up!\" $self$ quickly took a step back, dodging $target$'s outstretched hand",
+"kojo_default_com_touch_head_accept_failure_1":"\"…Alright.\" $self$ forced a smile, letting $target$ pat their head",
+"kojo_default_com_touch_head_accept_failure_2":"\"…whatever, do as you please.\" $self$ sighed, giving up resisting.",
+"kojo_default_com_touch_head_accept_failure_3":"$self$ silently endured the touch on their head, but their body tensed up to the touch",
+"kojo_default_com_touch_head_accept_success_1":"\"This… feels quite nice.\" $self$ said softly",
+"kojo_default_com_touch_head_accept_success_2":"$self$ didn't say anything, but lowered their eyelids slightly, a faint smile appearing at the corner of their lips",
+
+
+"kojo_default_com_job_farm_cultivate_crop_refuse_1":"$self$: \"Planting crops, huh... why don't you find someone more experienced to work with?\"",
+"kojo_default_com_job_farm_cultivate_crop_refuse_2":"$self$: \"Planting crops together? Let's not do that, I'll probably be holding you back.\"",
+"kojo_default_com_job_farm_cultivate_crop_accept_failure_1":"\"isn't this seedling buried a little too shallow?\" $self$ couldn't help but frown looking at the crooked seedling",
+"kojo_default_com_job_farm_cultivate_crop_accept_failure_2":"\"…whatever, let's just leave it like this, it'll grow just fine... hopefully.\" $self$ sighed, looking at the uneven field",
+"kojo_default_com_job_farm_maintain_accept_success_1":"$self$ hummed a song as they carefully watered and fertilized the crops.",
+"kojo_default_com_job_farm_maintain_accept_failure_1":"$self$: \"Oops, I accidentally pulled out the vegetable seedlings thinking they were weeds!\"",
+
+"kojo_default_com_job_production_cooking_accept_failure_1":"$self$: \"God no, I put too much salt! I should probably serve instant noodles instead...\"",
+"kojo_default_com_job_production_cooking_accept_success_1":"$self$: \"Phew… finally made it step by step according to the recipe。\"",
+"kojo_default_com_job_production_cooking_accept_success_2":"$self$: \"Finished! Hmm, at least it has the right looks… hope it also taste right.\" ",
+
+"kojo_default_com_job_cleaning_accept_failure_1":"$self$ accidentally sucked up some important documents with the vacuum cleaner!",
+"kojo_default_com_job_cleaning_accept_failure_2":"$self$ knocked over a glass of water while cleaning the desk!",
+"kojo_default_com_job_cleaning_accept_success_1":"$self$ looked at the tidied up room and nodded in satisfaction.",
+
+"kojo_default_event_greeting_04":"$self$ greets $target$ for the first time today.",
+
+"kojo_default_event_disruptsleep_03":"<color=#373737>($self$) 熟睡中的$self$对$epDescription$没有任何反应</color>",
+"kojo_default_event_disruptsleep_06":"<color=#373737>($self$) 睡眠中的$self$对$epDescription$没有任何反应</color>",
+"kojo_default_event_disruptsleep_08":"<color=#373737>$self$, lightly asleep, is disturbed by the noise of $epDescription$</color>",
+
+"kojo_default_com_furniture_playVideoGames_refuse_1":"$self$: \"Sorry, I'm not really in the mood for games right now.\"",
+"kojo_default_com_furniture_playVideoGames_refuse_2":"$self$: \"You go ahead. I'll pass today.\"",
+"kojo_default_com_furniture_playVideoGames_accept_failure_1":"\"Ugh… I can't believe I lost again\" $self$ tosses the controller to the side",
+"kojo_default_com_furniture_playVideoGames_accept_failure_2":"$self$: \"That was… rough. Not really my kind of game.\"",
+"kojo_default_com_furniture_playVideoGames_accept_success_1":"$self$: \"That was way more fun than I expected!\"",
+"kojo_default_com_furniture_playVideoGames_accept_success_2":"$self$: \"You're pretty good at this! I'll get you next time.\"",
+
+"kojo_default_com_interaction_talk_accept_failure_1":"\"Uh-huh… yeah. Sounds great.\" $self$ glances at something else mid-conversation, clearly tuned out.",
+"kojo_default_com_interaction_talk_accept_failure_2":"\"Is there a point to this, or…?\" $self$ tilts her head slightly, impatience creeping into her tone.",
+"kojo_default_com_interaction_talk_accept_failure_3":"\"Mmm… I guess.\" $self$ replies vaguely, clearly just trying to end the topic.",
+"kojo_default_com_interaction_talk_accept_success_1":"\"Wait, seriously? That’s hilarious.\" $self$ laughs out loud",
+"kojo_default_com_interaction_talk_accept_success_2":"$self$: \"You’ve got good stories. Not gonna keep going?\"",
+
+"kojo_default_com_furniture_watchVideo_refuse_1":"$self$: “Not really feeling like watching anything right now.”",
+"kojo_default_com_furniture_watchVideo_accept_failure_1":"“...That was 30 minutes of my life I’m not getting back.”  $self$ looks utterly drained.",
+"kojo_default_com_furniture_watchVideo_accept_success_1":"“Okay, that was actually really good!” $self$ smiles brightly",
+"kojo_default_com_furniture_watchVideo_accept_success_2":"“I haven’t laughed that hard in ages.” $self$ wipes away a tear",
+
+"kojo_default_com_furniture_takingBreak_refuse_1":"$self$: “I’m not tired. You go ahead.”",
+"kojo_default_com_furniture_takingBreak_refuse_2":"$self$: “I’m fine. Sitting still just makes me restless.”",
+"kojo_default_com_furniture_takingBreak_accept_success_1":"$self$ unlocks her cellphone screen with a flick, then idly scrolls with one thumb.",
+"kojo_default_com_furniture_takingBreak_accept_success_2":"$self$ pulls something crunchy from a small pack and pops it into her mouth without looking.",
+"kojo_default_com_furniture_takingBreak_accept_success_3":"$self$ untangles her earbuds and slips them in, nodding slightly to the beat.",
+"kojo_default_com_furniture_takingBreak_accept_success_4":"$self$ takes a long sip from her cup, then quietly holds it with both hands.",
+
+
+"kojo_default_event_interrupt_01":"<color=#373737>$self$ sees $epDescription$</color>",
+"kojo_default_event_interrupt_02":"<color=#373737>$self$ sees $target$ $epDescription$</color>",
+"kojo_default_event_interrupt_03":"<color=#373737>While working, $self$ sees $target$ $epDescription$</color>"
+
+            }
+        }
     }
 }

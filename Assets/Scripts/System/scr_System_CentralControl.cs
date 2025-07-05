@@ -46,6 +46,7 @@ public class DebugLogSettings
     public bool DLog_Sex = false;
     public bool DLog_AP = false;
     public bool DLog_UIChange = false;
+    public bool DLog_Interrupt = false;
 }
 
 public class scr_System_CentralControl : MonoBehaviour
@@ -580,6 +581,8 @@ public class SaveFileHolder
 {
     public string Version;
     public string SaveDescription;
+    public string Language;
+    public bool SafeMode;
 
     public string FilePath = "";
 
@@ -601,7 +604,6 @@ public class SaveFile
     public bool SafeMode;
     public scr_System_Time_Serializable Time;
     public scr_System_CampaignManager_Serializable Campaign;
-    public Index_RelationshipTypes RelationshipTypes = null;
 
     public SaveFile() { }
     public SaveFile(bool createNew)

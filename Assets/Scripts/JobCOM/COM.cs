@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Linq;
 
 [System.Serializable]
-public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable, I_RemoveElemByTag
+public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable, I_RemoveElemByTag, I_RemoveNSFW
 {
     public List<COM> list = new List<COM>();
     [JsonIgnore] public List<COM> LIST { get { return ID_Dictionary.Values.ToList(); } }
@@ -25,12 +25,18 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         {
             if (list[i].comTags.Contains("do_not_use")) {
                 list.RemoveAt(i);
+                continue;
             }
             
             else if (list[i].comTags.Contains("sex") && !(list[i] is COM_Sex))
             {
                 var serializedParent = JsonConvert.SerializeObject(list[i], Utility.SerializerSettings);
                 list[i] = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, Utility.SerializerSettings);
+            }
+            else if (list[i] is COM_TakeMeal || list[i] is COM_Character_Insert || list[i] is COM_Character_Remove || list[i] is COM_FarmRecipe || list[i].ID.Contains("_noSex", StringComparison.InvariantCultureIgnoreCase))
+            {
+                list.RemoveAt(i);
+                continue;
             }
 
             list[i].OnAfterDeserialize();
@@ -105,8 +111,9 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                     //if (newCOMs.Find(x => x.ID == newCOM3.ID) == null) newCOMs.Add(newCOM3);
                 }
                 else if (list[i].requirements.requireContaining.allowPlanting.Count == 1 && list[i].requirements.requireContaining.allowPlanting[0] == "")
-                {
-                    //Debug.Log("initializing remove plant com [" + list[i].ID + "]");
+                {   // this is a special case just to handle/initialize com_job_farm_remove
+
+                   // Debug.Log("initializing remove plant com [" + list[i].ID + "]");
                     var serializedParent = JsonConvert.SerializeObject(list[i], Utility.SerializerSettings);
                     COM_FarmRecipe newCOM = JsonConvert.DeserializeObject<COM_FarmRecipe>(serializedParent, Utility.SerializerSettings);
                     newCOM.InitializeRecipe(null);
@@ -148,27 +155,25 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
             }
         }
 
-        string s = $"COM late initialize Generated RecipeCOMs count {newCOMs.Count}:\n";
+        List<string> generatedCOMs = new List<string>();
+        List<string> conflictCOMs = new List<string>();
 
         foreach (var i in newCOMs)
         {
             if (ID_Dictionary.ContainsKey(i.ID))
             {
-                // silent fail
-                if (!scr_System_CentralControl.current.isSafeMode) Debug.LogError($"Error in RECIPECOM lateInit, {i.ID} already serialized");
-
+                conflictCOMs.Add(i.ID);
             }
             else
             {
-                //scr_System_tooltipDictionary.current.AddEntry(i.ID, i.tooltip);
-                s += i.ID + "\n";
+                generatedCOMs.Add(i.ID);
                 i.OnAfterDeserialize();
                 list.Add(i);
                 ID_Dictionary.Add(i.ID, i);
             }
         }
 
-        Debug.Log(s);
+        Debug.Log($"COM late initialize Generated RecipeCOMs count {generatedCOMs.Count}, conflict count {conflictCOMs.Count}\n{String.Join(" | ",generatedCOMs)}\n{String.Join(" | ", conflictCOMs)}");
         //list.AddRange(newCOMs);
 
         /*
@@ -197,6 +202,20 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
     public void RemoveElemByTag(string tag)
     {
         this.list.RemoveAll(x=>x.comTags.Contains(tag));
+    }
+
+    public void RemoveNSFW()
+    {
+        for(int i = list.Count - 1; i >= 0; i--)
+        {
+            var c = list[i];
+            if (c.comTags.Contains("touch"))
+            {
+                 if( !c.comTags.Contains("safe"))  list.RemoveAt(i);
+                 else c.HideWhenInvalid = true;
+            }
+        }
+
     }
 }
 
@@ -254,7 +273,7 @@ public class COM: I_SerializationCallbackReceiver
     public COM_Descriptions description_ongoing = new COM_Descriptions();
     public COM_Descriptions description_after = new COM_Descriptions();
 
-    public string GetDescription_Begin(EvaluationPackage evp, int variantID)
+    public virtual string GetDescription_Begin(EvaluationPackage evp, int variantID)
     {
         //Debug.LogError("GetDescription_Begin with variantID " + variantID);
         if (variantID == -1) return description_begin.GetText(ref evp);
@@ -262,21 +281,21 @@ public class COM: I_SerializationCallbackReceiver
         else return variants[variantID].GetDescription_Begin(this, evp);
     }
 
-    public string GetDescription_Remove(EvaluationPackage evp, int variantID)
+    public virtual string GetDescription_Remove(EvaluationPackage evp, int variantID)
     {
         if (variantID == -1) return descriptions_remove.GetText(ref evp);
         else if (variantID >= variants.Count) return "GetDescription_Remove ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Remove(this, evp);
     }
 
-    public string GetDescription_Ongoing(EvaluationPackage evp, int variantID)
+    public virtual string GetDescription_Ongoing(EvaluationPackage evp, int variantID)
     {
         if (variantID == -1) return description_ongoing.GetText(ref evp);
         else if (variantID >= variants.Count) return "GetDescription_Ongoing ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Ongoing(this, evp);
     }
 
-    public string GetDescription_After(EvaluationPackage evp, int variantID)
+    public virtual string GetDescription_After(EvaluationPackage evp, int variantID)
     {
         if (variantID == -1) return description_after.GetText(ref evp);
         else if (variantID >= variants.Count) return "GetDescription_After ERROR variantID out of bound";
@@ -385,10 +404,17 @@ public class COM: I_SerializationCallbackReceiver
         else return LocalizeDictionary.QueryThenParse(variants[index].displayName);
     }
 
+    Dictionary<int, string> _cachedDisplayNames = new Dictionary<int, string>();
+
     public virtual string DisplayName(int index = -1)
     {
-        if (index < 0 || index >= variants.Count) return LocalizeDictionary.QueryThenParse(this.displayName);
-        else return LocalizeDictionary.QueryThenParse(variants[index].displayName);
+        if (_cachedDisplayNames.TryGetValue(index, out var name)) return name;
+        else
+        {
+            var n = index < 0 || index >= variants.Count ? LocalizeDictionary.QueryThenParse(this.displayName) : LocalizeDictionary.QueryThenParse(variants[index].displayName);
+            _cachedDisplayNames.TryAdd(index, n);
+            return n;
+        }
     }
 
     [JsonIgnore] public bool isJobCOM { get { return !isSleepCOM && comTags.Contains("job"); } }
@@ -450,7 +476,9 @@ public class COM: I_SerializationCallbackReceiver
         {
             foreach (var i in receiverRefIDs)
             {
-                if (scr_System_CampaignManager.current.FindInstanceByID(i).CurrentJob is Job_Sex_Group)
+                var receiver = scr_System_CampaignManager.current.FindInstanceByID(i);
+                if (receiver == null) return -1;
+                else if (receiver.CurrentJob is Job_Sex_Group)
                 {
                     tooltip.Add("Command GetValidVariant invalid: not allowed during sex");
                     return -1;

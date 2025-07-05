@@ -1,0 +1,60 @@
+{
+    "COMs":{
+        "list":[
+{
+    "ID":"com_touch_head",
+    "ActionPackageClass":"ActionPackage_Interaction",
+    "displayName":"com_touch_head_displayName",
+    "timeScale":2,
+    "comTags":["touch", "safe","canbeignored"],
+    "requirements":{
+        "requirement":{
+            "doerCount":1,
+            "receiverCount":1,
+            "req_Receivers":{
+                "requireConscious":false,
+                "requireAction": false
+            }
+        }
+    },
+    "AcceptanceCheck":{ "baseAcceptanceValue":15 },
+    "DifficultyCheck":{ "baseD20Check":0 },
+    "description_begin":
+    {
+        "Entries":[ 
+            {
+                "keepLooking":true,
+                "texts": ["com_touch_head_begin_1", "com_touch_head_begin_2", "com_touch_head_begin_3"]
+            }
+        ]
+        
+    }
+}
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_touch_head_displayName": "摸头",
+                "com_touch_head_displayName_1": "摸头",
+                "com_touch_head_begin_1":"$doer.firstname$伸出手，轻轻地拍了拍$receiver.firstname$的头以示鼓励。",
+                "com_touch_head_begin_2":"$doer.firstname$脸上带着微笑，亲昵地抬手揉了揉$receiver.firstname$的头发",
+                "com_touch_head_begin_3":"$doer.firstname$忍不住抬手轻轻地摸了摸$receiver.firstname$的头。"
+                
+            },
+            "en-us":
+            {
+                "com_touch_head_displayName": "Pat head",
+                "com_touch_head_displayName_1": "Pat head",
+                "com_touch_head_begin_1":"$doer.firstname$ reached out and gently patted $receiver.firstname$'s head to show encouragement.",
+                "com_touch_head_begin_2":"$doer.firstname$'s face was filled with a smile, raised their hand and affectionately ruffled $receiver.firstname$'s hair",
+                "com_touch_head_begin_3":"$doer.firstname$ couldn't help but raise their hand to gently touch $receiver.firstname$'s head."
+
+            }
+        }
+    }
+    
+}

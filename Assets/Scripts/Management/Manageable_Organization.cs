@@ -28,7 +28,7 @@ public class Manageable_HomeFaction : Manageable
     {
 
     }
-    public Manageable_HomeFaction(string id, int sleepHour = 23):base(id)
+    public Manageable_HomeFaction(string id, int sleepHour = 22):base(id)
     {
         this.Inventory = new FactionInventory(this, new List<string>() { "food_meal" });
         this.sharedSleepHour = sleepHour;

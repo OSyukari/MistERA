@@ -16,6 +16,8 @@ public enum Memory_Attitude
     Love
 }
 
+[System.Serializable]
+
 /// <summary>
 /// Response None = action did not happen in the first place <br/>
 /// Response Refuse = proposal happened, refused by receiver <br/>
@@ -389,7 +391,6 @@ public class Memory_Entry
     List<MemInstance> Actions = new List<MemInstance>();
     protected void InternalUpdate()
     {
-        isRefuseOnly = interactions.Count > 0;
         Actions.Clear();
         targetRefs = null;
         targets = null;
@@ -406,14 +407,12 @@ public class Memory_Entry
         {
             memInstanceDescriptionCache.Add(i.Print());
 
-            isRefuseOnly = i.response <= Memory_Response.Refuse && isRefuseOnly;
-
+            if (i.response != Memory_Response.Refuse)cache_acceptCount++;
+            else cache_refuseCount++;
             int iLust = i.Lust, iMood = i.Mood, iStress = i.Stress;
 
 
             cache_score += i.AttitudeScore(Owner);
-            if (i.response == Memory_Response.Refuse) cache_refuseCount++;
-            else cache_acceptCount++;
 
             maxLust = Math.Max(maxLust, iLust);
             minLust = Math.Min(minLust, iLust);
@@ -441,6 +440,8 @@ public class Memory_Entry
         MergeWithAll = MergeWithAll || (targetTags.Contains("initSex") && !targetTags.Contains("endSex"));
 
         isEvaluationCached = true;
+
+        isRefuseOnly = cache_refuseCount > cache_acceptCount && cache_acceptCount == 0;
     }
 
     [SerializeField][JsonProperty] protected int roomRef = -1;
@@ -591,7 +592,7 @@ public class Memory_Entry
         {
             var value = scoreMod_Lust;
             if (cache_lust == null) cache_lust = initMoodlet("chara_status_lust");
-            cache_lust.SetValueTypeAndString("number", value.ToString());
+            cache_lust.SetValueTypeAndString(Stat_Modifier_Type.number, value.ToString());
 
             return cache_lust;
         } }
@@ -601,7 +602,7 @@ public class Memory_Entry
         {
             var value = scoreMod_Stress;
             if (cache_stress == null) cache_stress = initMoodlet("chara_status_stress");
-            cache_stress.SetValueTypeAndString("number", value.ToString());
+            cache_stress.SetValueTypeAndString(Stat_Modifier_Type.number, value.ToString());
 
             return cache_stress;
         }
@@ -628,7 +629,7 @@ public class Memory_Entry
             // Good COM Result increase mood. Bad result decrease Mood.
 
             if (cache_mood == null) cache_mood = initMoodlet("chara_status_mood");
-            cache_mood.SetValueTypeAndString("number", value.ToString());
+            cache_mood.SetValueTypeAndString(Stat_Modifier_Type.number, value.ToString());
 
             return cache_mood;
         }

@@ -341,27 +341,27 @@ public class Map_Instance
 
             // check interrupt
             var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(iii.Key, true) : dirtyCharaAPRef;
-            //Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
             //if (xx.RefID != 0)
             //{
                 // only check interrupt if not player
                 // these are all ap that chara could react to
-                foreach (var i in checkInterruptAPs)
-                {
-                    if (i.RoomKey != iii.Key) continue;// { Debug.LogError("dirtychararef roomkey inequal [" + i.RoomKey + "] [" + iii.Key + "]"); continue; }
-                    if (i.actorRefs.Contains(charaInRoom[x])) continue;//{ Debug.LogError("dirtychararef actorref contains [" + String.Join("|", i.actorRefs) + "] [" + charaInRoom[x] + "]"); continue; }
-                    if (xx.CurrentJob != null && i.job != null && i.job.RefID == xx.CurrentJobRefID) continue;//{ Debug.LogError("dirtychararef currentjob identical [" + i.job.DisplayName + "]"); continue; }
-                    if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
-                    if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
+            foreach (var i in checkInterruptAPs)
+            {
+                if (i.RoomKey != iii.Key) continue;// { Debug.LogError("dirtychararef roomkey inequal [" + i.RoomKey + "] [" + iii.Key + "]"); continue; }
+                if (i.actorRefs.Contains(charaInRoom[x])) continue;//{ Debug.LogError("dirtychararef actorref contains [" + String.Join("|", i.actorRefs) + "] [" + charaInRoom[x] + "]"); continue; }
+                if (xx.CurrentJob != null && i.job != null && i.job.RefID == xx.CurrentJobRefID) continue;//{ Debug.LogError("dirtychararef currentjob identical [" + i.job.DisplayName + "]"); continue; }
+                if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
+                if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
 
-                   // Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
-                    if (xx.Relationships.CheckInterrupt(i, selfTags) && xx.RefID != 0)
-                    {
-                        interrupted = true;
-                        ignoreList.AddRange(i.actorRefs);
-                    }
-                    //interrupted = xx.Relationships.CheckInterrupt(i, selfTags) || interrupted;
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
+                if (xx.Relationships.CheckInterrupt(i, selfTags) && xx.RefID != 0)
+                {
+                    interrupted = true;
+                    ignoreList.AddRange(i.actorRefs);
                 }
+                //interrupted = xx.Relationships.CheckInterrupt(i, selfTags) || interrupted;
+            }
            // }
 
 
@@ -407,7 +407,21 @@ public class Map_Instance
         //var time = DateTime.Now;
         // List<int> dirtyCharaRefNew = new List<int>();
 
-        foreach(var i in roomCharaRef)
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt)
+        {
+            List<string> names = new List<string>(), names2 = new List<string>();
+            foreach(var i in dirtyCharaRef)
+            {
+                names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
+            }
+            foreach(var i in dirtyCharaAPRef)
+            {
+                names2.Add(i.DisplayName);
+            }
+            Debug.Log($"UpdateAllRoom, check interrupt\nDirtyCharaRefs: {String.Join("|",names)}\nDirtyAPRefs: {String.Join("|", names2)}");
+        }
+
+        foreach (var i in roomCharaRef)
         {
             UpdateRoom(i);
         }
@@ -417,7 +431,9 @@ public class Map_Instance
         //JobHandle handle = default;
         //handle = job.ScheduleByRef(roomCharaRef.Keys.Count, 64);
         //handle.Complete();
-        //Debug.Log("UpdateAllRooms complete after " + (DateTime.Now - time).TotalNanoseconds+"ms");
+#if UNITY_EDITOR
+        if(scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log("UpdateAllRooms complete");
+#endif
     }
 
     public Room_Instance GetRoomByRef(int roomRef)

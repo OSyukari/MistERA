@@ -25,6 +25,7 @@ public class Item_Instance : IDisposable, I_Disposable
     public void SetCount(int count) { this.count = count; }
     [SerializeField][JsonProperty] protected int count;
     [JsonIgnore] public int Count { get { return count - markTokenUsed; } }
+    [JsonIgnore] public int InnerCount { get { return count; } }
 
     public bool canStackWith(Item_Instance item)
     {

@@ -1,9 +1,67 @@
 {
+    "StatusEXs":{
+        "list":[
+        {
+            "statusID":"chara_status_mood",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "constant":true,
+            "variationMode":
+                { "variationType":"statModifiers", "value": 0, "stringData":"capMod" }
+            ,
+            "variants":[
+                { "displayName":"chara_status_mood_m2",     "threshold":-3.0 },
+                { "displayName":"chara_status_mood_m2",     "threshold":-1.9 },
+                { "displayName":"chara_status_mood_m1",     "threshold":-0.9 }, 
+                { "displayName":"chara_status_mood_0",     "threshold":0.9 }, 
+                { "displayName":"chara_status_mood_1",   "threshold":1.9 },
+                { "displayName":"chara_status_mood_2",     "threshold":2.9 },
+                { "displayName":"chara_status_mood_2",     "threshold":3.0 }
+            ]
+        },
+        {
+            "statusID":"chara_status_stress",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "constant":true,
+            "variationMode":
+                { "variationType":"statModifiers", "value": 0, "stringData":"capMod" }
+            ,
+            "variants":[
+                { "displayName":"chara_status_stress_m2",     "threshold":-3.0 },
+                { "displayName":"chara_status_stress_m2",     "threshold":-1.9 },
+                { "displayName":"chara_status_stress_m1",     "threshold":-0.9 },
+                { "displayName":"chara_status_stress_0",     "threshold":0.9 },
+                { "displayName":"chara_status_stress_0",     "threshold":1.9 },
+                { "displayName":"chara_status_stress_1",     "threshold":2.9 },
+                { "displayName":"chara_status_stress_1",     "threshold":3.0 }
+            ]
+        },
+        {
+            "statusID":"chara_status_consciousness",
+            "noDisplay":false,
+            "stringFormat":"P0",
+            "constant":true,
+            "variationMode":
+                {
+                    "variationType":"statModifiers",
+                    "value":1
+                }
+            ,
+            "variants":[
+                { "displayName":"chara_status_consciousness_m4", "tags":["consciousness_unconscious"], "threshold":0.1 },
+                { "displayName":"chara_status_consciousness_m3", "tags":["consciousness_unconscious"], "threshold":0.4 },
+                { "displayName":"chara_status_consciousness_m2", "tags":["consciousness_reduced"], "threshold":0.7 },
+                { "displayName":"chara_status_consciousness_m1", "threshold":0.9 },
+                { "displayName":"chara_status_consciousness_0", "displayable":false, "threshold":1.0 }
+            ]
+        }
+    ]
+    },
     "Status":{
         "list":[
         {
             "statusID":"chara_status_alcohol",
-            "displayName":"酒精",
             "variationMode": { 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
@@ -13,15 +71,15 @@
             } ,
             "variants":[
                 {
-                    "displayName":"",
+                    "displayable":false,  
                     "threshold":0
                 },
                 {
-                    "displayName":"清醒",
+                    "displayName":"chara_status_alcohol_0",
                     "threshold":19
                 },
                 {
-                    "displayName":"微醉",
+                    "displayName":"chara_status_alcohol_1",
                     "threshold":39,
                     "stat_modifiers":[
                         {
@@ -39,7 +97,7 @@
                     ]
                 },
                 {
-                    "displayName":"酒醉",
+                    "displayName":"chara_status_alcohol_2",
                     "threshold":59,
                     "stat_modifiers":[
                         {
@@ -57,7 +115,7 @@
                     ]
                 },
                 {
-                    "displayName":"烂醉",
+                    "displayName":"chara_status_alcohol_3",
                     "threshold":79,
                     "stat_modifiers":[
                         {
@@ -83,7 +141,7 @@
                     ]
                 },
                 {
-                    "displayName":"人事不省",
+                    "displayName":"chara_status_alcohol_4",
                     "threshold":200,
                     "stat_modifiers":[
                         {
@@ -109,7 +167,7 @@
                     ]
                 },
                 {
-                    "displayName":"酒精中毒",
+                    "displayName":"chara_status_alcohol_5",
                     "threshold":500,
                     "stat_modifiers":[
                         {
@@ -133,32 +191,30 @@
             "displayName":"Analgesic Status",
             "variants":[
                 {
-                    "displayName":"",
+                    "displayable":false,  
                     "threshold":25
                 },
                 {
-                    "displayName":"麻醉：弱",
+                    "displayName":"chara_status_analgesic_1",
                     "threshold":50
                 },
                 {
-                    "displayName":"麻醉：中",
+                    "displayName":"chara_status_analgesic_2",
                     "threshold":75
                 },
                 {
-                    "displayName":"麻醉：强",
+                    "displayName":"chara_status_analgesic_3",
                     "threshold":100
                 }
             ]
         },
         {
             "statusID":"chara_status_cryosleep",
-            "displayName":"冷冻睡眠",
             "variants":[
                 {
-                    "displayName":"", "threshold":0
+                    "displayable":false,  "threshold":0
                 },
                 {
-                    "displayName":"冷冻睡眠",
                     "threshold":0.1,
                     "stat_modifiers":[
                         {
@@ -171,13 +227,11 @@
         },
         {
             "statusID":"chara_status_fatigue",
-            "displayName":"疲劳",
             "variants":[
                 {
-                    "displayName":"", "threshold":0
+                    "displayable":false,   "threshold":0
                 },
                 {
-                    "displayName":"疲劳",
                     "threshold":0.9,
                     "stat_modifiers":[
                         {
@@ -187,7 +241,7 @@
                     ]
                 },
                 {
-                    "displayName":"极度疲劳",
+                    "displayName":"chara_status_fatigue_2",
                     "threshold":1.9,
                     "stat_modifiers":[
                         {
@@ -200,7 +254,7 @@
         },
         {
             "statusID":"chara_status_sleeping",
-            "displayName":"Sleep Status",
+            "stringFormat":"N1",
             "allowNaturalRemoval":false,
             "variationMode": { 
                 "baselineVariation":{
@@ -219,7 +273,7 @@
             "_comments2":"hardcoded Fullrest effect on status expire removal, status removal tied to scripted event triggers",
             "variants":[
                 {
-                    "displayName":"刚醒来",
+                    "displayName":"chara_status_sleeping_0",
                     "threshold":0,
                     "allowRemoval":true,
                     "stat_modifiers":[
@@ -230,7 +284,7 @@
                     ]
                 },
                 {
-                    "displayName":"浅眠",
+                    "displayName":"chara_status_sleeping_1",
                     "threshold":0.9,
                     "stat_modifiers":[
                         {
@@ -240,7 +294,7 @@
                     ]
                 },
                 {
-                    "displayName":"睡眠中",
+                    "displayName":"chara_status_sleeping_2",
                     "threshold":1.9,
                     "stat_modifiers":[
                         {
@@ -250,7 +304,7 @@
                     ]
                 },
                 {
-                    "displayName":"深眠",
+                    "displayName":"chara_status_sleeping_3",
                     "threshold":9999,
                     "stat_modifiers":[
                         {
@@ -263,16 +317,14 @@
         },
         {
             "statusID":"chara_status_sleep_deprived",
-            "displayName":"Sleep Deprived",
             "variationMode": {  } ,
             "_comments":"status gained when sleep is disrupted or insufficient, it will go away when character sleep (hardcoded interaction)",
             "variants":[
                 {
-                    "displayName":"",
+                    "displayable":false,  
                     "threshold":0
                 },
                 {
-                    "displayName":"睡眠不足",
                     "threshold":9999,
                     "stat_modifiers":[
                         {
@@ -289,7 +341,6 @@
         },
         {
             "statusID":"chara_status_malnourished",
-            "displayName":"Lacking food",
             "variationMode": { 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
@@ -300,11 +351,11 @@
             "_comments":"hardcoded status with duration set to 24 hours ticking down.",
             "variants":[
                 {
-                    "displayName":"",
+                    "displayable":false,  
                     "threshold":0
                 },
                 {
-                    "displayName":"饥饿",
+
                     "threshold":9999,
                     "stat_modifiers":[
                         {
@@ -316,6 +367,119 @@
             ]
         }
     ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+
+"chara_status_consciousness": "意识",
+"chara_status_consciousness_0": "%%chara_status_consciousness%%：清醒",
+"chara_status_consciousness_m1": "%%chara_status_consciousness%%：不集中",
+"chara_status_consciousness_m2": "%%chara_status_consciousness%%：涣散",
+"chara_status_consciousness_m3": "%%chara_status_consciousness%%：睡眠",
+"chara_status_consciousness_m4": "%%chara_status_consciousness%%：昏迷",
+"chara_status_consciousness_tooltip": "角色的清醒程度\n意识低于70%的时候角色会处于意识低下，更难做出理智判断\n低于30%时角色昏迷",
+
+"chara_status_stress": "压力",
+"chara_status_stress_0": "%%chara_status_stress%%：平静",
+"chara_status_stress_1": "%%chara_status_stress%%：放松",
+"chara_status_stress_m1": "%%chara_status_stress%%：紧张",
+"chara_status_stress_m2": "%%chara_status_stress%%：界限",
+"chara_status_stress_tooltip": "影响角色的恐惧数值，低压力时恐惧取半或更低，高压力时取全数值或更高\n高压力时好意和厌恶数值都取更高\n%%statsEX_capModded%%",
+
+"chara_status_mood": "心情",
+"chara_status_mood_0": "%%chara_status_mood%%：普通",
+"chara_status_mood_1": "%%chara_status_mood%%：好",
+"chara_status_mood_2": "%%chara_status_mood%%：绝佳",
+"chara_status_mood_m1": "%%chara_status_mood%%：糟糕",
+"chara_status_mood_m2": "%%chara_status_mood%%：极恶",
+"chara_status_mood_tooltip": "影响执行指令时角色的初始态度\n心情好时厌恶数值取半或更低，心情差时好意数值取半或更低\n%%statsEX_capModded%%",
+
+"chara_status_alcohol":"酒精",
+"chara_status_alcohol_0":"%%chara_status_alcohol%%：清醒",
+"chara_status_alcohol_1":"%%chara_status_alcohol%%：微醉",
+"chara_status_alcohol_2":"%%chara_status_alcohol%%：酒醉",
+"chara_status_alcohol_3":"%%chara_status_alcohol%%：烂醉",
+"chara_status_alcohol_4":"人事不省",
+"chara_status_alcohol_5":"酒精中毒",
+
+"chara_status_malnourished":"饥饿",
+"chara_status_sleep_deprived":"睡眠不足",
+
+"chara_status_sleeping":"",
+"chara_status_sleeping_0":"刚醒来",
+"chara_status_sleeping_1":"浅眠",
+"chara_status_sleeping_2":"睡眠",
+"chara_status_sleeping_3":"深眠",
+
+"chara_status_fatigue":"疲劳",
+"chara_status_fatigue_2":"%%chara_status_fatigue%%：重度",
+
+"chara_status_cryosleep":"冷冻睡眠",
+
+"chara_status_analgesic":"麻醉",
+"chara_status_analgesic_1":"%%chara_status_analgesic%%：弱",
+"chara_status_analgesic_2":"%%chara_status_analgesic%%：中",
+"chara_status_analgesic_3":"%%chara_status_analgesic%%：强"
+
+            },
+            "en-us":
+            {
+
+"chara_status_mood": "Mood",
+"chara_status_mood_0": "Normal Mood",
+"chara_status_mood_1": "Good Mood",
+"chara_status_mood_2": "Excellent Mood",
+"chara_status_mood_m1": "Bad Mood",
+"chara_status_mood_m2": "Terrible Mood",
+"chara_status_mood_tooltip": "Influences the character's initial attitude when executing commands.\nWhen in a good mood, aversion values are halved or lower; when in a bad mood, goodwill values are halved or lower.\n%%statsEX_capModded%%",
+
+"chara_status_stress": "Stress",
+"chara_status_stress_0": "Calm",
+"chara_status_stress_1": "Relaxed",
+"chara_status_stress_m1": "Tense",
+"chara_status_stress_m2": "Stressed",
+"chara_status_stress_tooltip": "Influences the character's fear value. At low stress, fear is halved or lower; at high stress, the full value or higher is taken.\nGoodwill and aversion values are both higher at high stress.\n%%statsEX_capModded%%",
+
+"chara_status_consciousness": "Consciousness",
+"chara_status_consciousness_0": "Awake",
+"chara_status_consciousness_m1": "Unfocused",
+"chara_status_consciousness_m2": "Low Consciousness",
+"chara_status_consciousness_m3": "Asleep",
+"chara_status_consciousness_m4": "Unconscious",
+"chara_status_consciousness_tooltip": "The character's level of consciousness.\nWhen consciousness is below 70%, the character will be in a state of reduced awareness, making it more difficult to make rational judgments.\nBelow 30%, the character is unconscious.",
+
+"chara_status_alcohol":"Alcohol",
+"chara_status_alcohol_0":"Sober",
+"chara_status_alcohol_1":"Slightly Drunk",
+"chara_status_alcohol_2":"Drunk",
+"chara_status_alcohol_3":"Wasted",
+"chara_status_alcohol_4":"Unconscious",
+"chara_status_alcohol_5":"Alcohol Poisoning",
+
+"chara_status_malnourished":"Hungry",
+"chara_status_sleep_deprived":"Sleep Deprived",
+
+"chara_status_sleeping":"",
+"chara_status_sleeping_0":"Just Woke Up",
+"chara_status_sleeping_1":"Light Sleep",
+"chara_status_sleeping_2":"Sleeping",
+"chara_status_sleeping_3":"Deep Sleep",
+
+"chara_status_fatigue":"Fatigue",
+"chara_status_fatigue_2":"%%chara_status_fatigue%%: Severe",
+
+"chara_status_cryosleep":"Cryosleep",
+
+"chara_status_analgesic":"Analgesic",
+"chara_status_analgesic_1":"%%chara_status_analgesic%%: Weak",
+"chara_status_analgesic_2":"%%chara_status_analgesic%%: Medium",
+"chara_status_analgesic_3":"%%chara_status_analgesic%%: Strong"
+            }
+        }
     }
     
 }

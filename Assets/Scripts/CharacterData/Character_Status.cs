@@ -72,10 +72,24 @@ public class Index_Status:I_IndexHasID, I_SerializationCallbackReceiver, I_Index
 public class Status_Base
 {
     public string statusID = "";
-    public string displayName = "";
+
+    string _displayNameCache = string.Empty;
+    [JsonIgnore]
+    public string DisplayName
+    {
+        get
+        {
+            if (_displayNameCache == string.Empty) _displayNameCache = LocalizeDictionary.QueryThenParse(statusID, statusID);
+            return _displayNameCache;
+        }
+    }
     public bool noDisplay = false;
     public bool constant = false;
     public bool allowNaturalRemoval = true;
+    public string stringFormat = "N1";
+
+
+
     [JsonIgnore]
     public bool isValid
     {
@@ -91,11 +105,23 @@ public class Status_Base
     [System.Serializable]
     public class Variant
     {
-        public string displayName = "";
+        [SerializeField][JsonProperty] protected string displayName = "";
+        public bool displayable = true;
         public bool allowRemoval = false;
         public float threshold = -1;
         public List<string> tags = new List<string>();
         public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
+
+        string _displayNameCache = string.Empty;
+        [JsonIgnore]
+        public string DisplayName
+        {
+            get
+            {
+                if (_displayNameCache == string.Empty) _displayNameCache = LocalizeDictionary.QueryThenParse(displayName, displayName);
+                return _displayNameCache;
+            }
+        }
 
         [JsonIgnore] public bool allowRemove
         {
@@ -247,9 +273,22 @@ public class Status_Instance : StatusInstance
     protected Status_Base baseRef = null;
     [JsonIgnore] public string SeverityDisplayName 
     { 
-        get {  return BaseRef.variants[SeverityIndex].displayName;  } 
+       // get {  return BaseRef.variants[SeverityIndex].displayName;  }
+        get
+        {
+            var variant = BaseRef.variants[SeverityIndex];
+            return variant.displayable && variant.DisplayName != "" ? variant.DisplayName : this.BaseRef.DisplayName;
+        }
     }
 
+    [JsonIgnore]
+    public bool SeverityDisplayable
+    {
+        get
+        {
+            return BaseRef.variants[SeverityIndex].displayable;
+        }
+    }
     /// <summary>
     /// Return true if status current severity falls into removable threshold
     /// </summary>

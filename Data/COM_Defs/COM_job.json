@@ -2,6 +2,53 @@
     "COMs": {
         "list": [
             {
+                "ID":"com_job_cleaning",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"com_job_cleaning_displayName_1",
+                "timeScale":15,
+                "comTags":["job","production_cleaning"],
+                "requirements":{
+                    "requirement":{ "doerCount":1, "req_Doers": { "cost_ST": 5 }, "req_Receivers":{"cost_ST": 5} },
+                    "requireRoomExisting":
+                    {
+                        "requiresItem":
+                        [
+                            {"itemTag":"trash","minimumCount":1}
+                        ]
+                    }
+                },
+                "variants":[
+                    {
+                        "requirements":{"requirement":{ "receiverCount":0 }},
+                        "displayName":"com_job_cleaning_displayName_1"
+                    },
+                    {
+                        "requirements":{"requirement":{ "receiverCount":1 }},
+                        "displayName":"com_job_cleaning_displayName_2"
+                    }
+                ],
+                "results": 
+                { 
+                    "results_room":
+                    [
+                        { "entry_results":{  "moveItem":{ "itemTag":"trash", "maxCount":5}  } }
+                    ]
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": [  "com_job_cleaning_begin_1", "com_job_cleaning_begin_2",
+                                        "com_job_cleaning_begin_3"   ]
+                        }
+                    ]
+                    
+                }
+            },
+            {
                 "ID": "com_job_production_cooking",
                 "ActionPackageClass": "ActionPackage_ProductionOrder",
                 "displayName": "com_job_production_cooking_displayName",
@@ -50,6 +97,26 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts":[ "com_job_production_cooking_after_1" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": [  "com_job_production_cooking_begin_1",
+                                        "com_job_production_cooking_begin_2"    ]
+                        }
+                    ]
+                    
                 }
             },
             {
@@ -60,7 +127,7 @@
                 "comTags": [
                     "job",
                     "furniture",
-                    "production_chemistry"
+                    "production_chemistry", "do_not_use"
                 ],
                 "requirements": {
                     "requirement": {
@@ -101,6 +168,27 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts":[ "com_job_production_chemistry_after_1" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": [  "com_job_production_chemistry_begin_1",
+                                        "com_job_production_chemistry_begin_2"   ,
+                                        "com_job_production_chemistry_begin_3"   ]
+                        }
+                    ]
+                    
                 }
             },
             {
@@ -111,7 +199,7 @@
                 "comTags": [
                     "job",
                     "furniture",
-                    "production_engineering"
+                    "production_engineering", "do_not_use"
                 ],
                 "requirements": {
                     "requirement": {
@@ -162,7 +250,7 @@
                 "comTags": [
                     "job",
                     "furniture",
-                    "research_engineering"
+                    "research_engineering", "do_not_use"
                 ],
                 "requirements": {
                     "requirement": {
@@ -210,7 +298,7 @@
                 "comTags": [
                     "job",
                     "furniture",
-                    "research_physics"
+                    "research_physics", "do_not_use"
                 ],
                 "requirements": {
                     "requirement": {
@@ -258,7 +346,7 @@
                 "comTags": [
                     "job",
                     "furniture",
-                    "research_biochemistry"
+                    "research_biochemistry", "do_not_use"
                 ],
                 "requirements": {
                     "requirement": {
@@ -306,7 +394,8 @@
                 "comTags": [
                     "job",
                     "furniture",
-                    "training_shooting"
+                    "training_shooting",
+                    "do_not_use"
                 ],
                 "requirements": {
                     "requirement": {
@@ -344,6 +433,16 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": ["com_job_training_shooting_begin_1","com_job_training_shooting_begin_2","com_job_training_shooting_begin_3"]
+                        }
+                    ]
+                    
                 }
             },
             {
@@ -354,7 +453,8 @@
                 "comTags": [
                     "job",
                     "furniture",
-                    "training_melee"
+                    "training_melee",
+                    "do_not_use"
                 ],
                 "requirements": {
                     "requirement": {
@@ -392,6 +492,16 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": ["com_job_training_melee_begin_1","com_job_training_melee_begin_2"]
+                        }
+                    ]
+                    
                 }
             },
             {
@@ -457,6 +567,16 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": ["com_job_farm_maintain_begin_1","com_job_farm_maintain_begin_2","com_job_farm_maintain_begin_3"]
+                        }
+                    ]
+                    
                 }
             },
             {
@@ -506,10 +626,29 @@
                     }
                 ],
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 10
+                    "baseAcceptanceValue": 5
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts":[ "com_job_farm_remove_after_1" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": [  "com_job_farm_remove_begin_1"   ]
+                        }
+                    ]
+                    
                 }
             },
             {
@@ -562,6 +701,18 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": [  "com_job_farm_cultivate_crop_begin_1", 
+                                        "com_job_farm_cultivate_crop_begin_2",
+                                        "com_job_farm_cultivate_crop_begin_3"   ]
+                        }
+                    ]
+                    
                 }
             },
             {
@@ -573,7 +724,8 @@
                 "timeScale": 90,
                 "comTags": [
                     "job",
-                    "furniture"
+                    "furniture",
+                    "do_not_use"
                 ],
                 "requirements": {
                     "requirement": {
@@ -615,8 +767,176 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": [  "com_job_farm_cultivate_meat_begin_1", 
+                                        "com_job_farm_cultivate_meat_begin_2",
+                                        "com_job_farm_cultivate_meat_begin_3"   ]
+                        }
+                    ]
+                    
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+
+
+"com_job_farm_cultivate_crop_displayName": "种植植物",
+"com_job_farm_cultivate_crop_displayName_1": "种植$name$",
+"com_job_farm_cultivate_crop_displayName_2": "二人一起种植$name$",
+"com_job_farm_cultivate_crop_displayName_3": "三人一起种植$name$",
+"com_job_farm_cultivate_crop_begin_1": "$doer.firstname$拿起$name$幼苗，小心地将其放入育苗盆中，并覆盖上土壤。",
+"com_job_farm_cultivate_crop_begin_2": "$doer.firstname$在育苗架上摆放好一个个育苗盆，开始了新一批$name$的种植。",
+"com_job_farm_cultivate_crop_begin_3": "$doer.firstname$在室内种植区，精心挑选着健康的$name$幼苗，并按照规划进行种植。",
+
+
+
+"com_job_farm_cultivate_meat_displayName": "养殖肉类",
+"com_job_farm_cultivate_meat_displayName_1": "养殖$name$",
+"com_job_farm_cultivate_meat_displayName_2": "一起养殖$name$",
+"com_job_farm_cultivate_meat_begin_1": "$doer.firstname$提着饲料，走到饲养区域，开始给圈养的$name$进行喂食",
+"com_job_farm_cultivate_meat_begin_2": "$doer.firstname$仔细检查着养殖环境，清理粪便，更换饮水，确保$name$健康生长",
+"com_job_farm_cultivate_meat_begin_3": "$doer.firstname$按照规定，将营养液添加到饲料中，为圈养的$name$提供生长所需的营养",
+
+"com_job_cleaning": "只有房间内有%%tag_trash%%时才可以执行，指令结束时移除房间内的%%tag_trash%%道具",
+"com_job_cleaning_displayName_1": "扫除",
+"com_job_cleaning_displayName_2": "一起扫除",
+"com_job_cleaning_displayName_3": "全员一起扫除",
+"com_job_cleaning_begin_1": "$doer.firstname$ 拿起抹布和清洁剂，开始擦拭房间里的各个角落",
+"com_job_cleaning_begin_2": "$doer.firstname$ 推出了吸尘器，开始仔细地清理房间的地面",
+"com_job_cleaning_begin_3": "$doer.firstname$ 拿起除尘掸，掸去家具上的灰尘，然后用清洁剂擦拭表面",
+"com_job_player_hourlywork_displayName_1": "（玩家限定）文书工作",
+"com_job_player_hourlywork_displayName_2": "一同文书工作",
+"com_job_production_cooking_displayName": "制造：下厨",
+"com_job_production_cooking_displayName_1": "下厨",
+"com_job_production_cooking_displayName_2": "一起下厨",
+"com_job_production_cooking_begin_1": "$doer.firstname$开始准备晚餐的食材。",
+"com_job_production_cooking_begin_2": "$doer.firstname$打开炉灶开始了烹饪。",
+"com_job_production_cooking_after_1": "$doer.firstname$做出了$item$",
+"com_job_production_chemistry_displayName": "制造：化学",
+"com_job_production_chemistry_displayName_1": "制造化学",
+"com_job_production_chemistry_displayName_2": "一起制造化学",
+"com_job_production_chemistry_begin_1": "$doer.firstname$戴上防护眼镜，小心翼翼地将各种试剂混合在一起，开始了配制。",
+"com_job_production_chemistry_begin_2": "$doer.firstname$在实验台前忙碌着，精密地控制着各种仪器，开始了精细的制作。",
+"com_job_production_chemistry_begin_3": "$doer.firstname$将各种原料放入容器，仔细地调整着温度和时间，开始了漫长的制作过程。",
+"com_job_production_chemistry_after_1": "$doer.firstname$做出了$item$",
+"com_job_production_engineering_displayName": "制造：工程",
+"com_job_production_engineering_displayName_1": "制造工程",
+"com_job_production_engineering_displayName_2": "一起制造工程",
+"com_job_research_engineering_displayName": "研究：工程",
+"com_job_research_engineering_displayName_1": "研究工程",
+"com_job_research_engineering_displayName_2": "一起研究工程",
+"com_job_research_physics_displayName": "研究：物理",
+"com_job_research_physics_displayName_1": "研究物理",
+"com_job_research_physics_displayName_2": "一起研究物理",
+"com_job_research_biochemistry_displayName": "研究：生化",
+"com_job_research_biochemistry_displayName_1": "研究生化",
+"com_job_research_biochemistry_displayName_2": "一起研究生化",
+"com_job_training_shooting_displayName_1": "射击训练",
+"com_job_training_shooting_displayName_2": "一起射击训练",
+"com_job_training_shooting_begin_1": "$doer.firstname$站到射击位置，戴上耳罩，举起手中的武器，开始了今天的训练",
+"com_job_training_shooting_begin_2": "$doer.firstname$调整呼吸，瞄准靶心，扣动扳机，开始了精准射击的练习",
+"com_job_training_shooting_begin_3": "$doer.firstname$在射击场上，反复练习着各种射击姿势，提高自己的射击水平",
+"com_job_training_melee_displayName_1": "格斗训练",
+"com_job_training_melee_displayName_2": "一起格斗训练",
+"com_job_training_melee_begin_1": "$doer.firstname$站在训练场中央，深吸一口气，摆出格斗姿势，开始了今天的近身格斗训练",
+"com_job_training_melee_begin_2": "$doer.firstname$反复练习着各种进攻和防御的动作，提升自己的格斗能力",
+"com_job_farm_maintain_displayName_1": "打理农场",
+"com_job_farm_maintain_displayName_2": "一起打理农场",
+"com_job_farm_maintain_begin_1": "$doer.firstname$拎起水桶，细心地为田地里的作物浇水，确保它们能茁壮成长",
+"com_job_farm_maintain_begin_2": "$doer.firstname$弯下腰，仔细地巡视着每一株植物，清除掉那些有害的杂草和虫子",
+"com_job_farm_maintain_begin_3": "$doer.firstname$在田地里忙碌着，修剪枝叶，松动土壤，为农作物的生长创造良好的环境",
+"com_job_farm_remove_displayName_1": "移除作物",
+"com_job_farm_remove_displayName_2": "二人一起移除作物",
+"com_job_farm_remove_displayName_3": "三人一起移除作物",
+"com_job_farm_remove_begin_1": "$doer.firstname$开始移除安置在此的对象。",
+"com_job_farm_remove_after_1": "$doer.firstname$移除了指定对象"
+
+
+                
+            },
+            "en-us":
+            {
+
+"com_job_farm_cultivate_crop_begin_1": "$doer.firstname$ picked up the $name$ seedling, carefully placed it into the seedling pot, and covered it with soil",
+"com_job_farm_cultivate_crop_begin_2": "$doer.firstname$ arranged the seedling pots on the seedling rack, and began planting a new batch of $name$",
+"com_job_farm_cultivate_crop_begin_3": "$doer.firstname$ in the indoor growing area, carefully selected healthy $name$ seedlings and planted them according to the plan",
+
+"com_job_farm_cultivate_meat_begin_1": "$doer.firstname$ carried the feed and walked to the raising area, starting to feed the enclosed $name$",
+"com_job_farm_cultivate_meat_begin_2": "$doer.firstname$ carefully checked the breeding environment, cleaned up feces, changed the drinking water, and ensured that the $name$ grew healthily",
+"com_job_farm_cultivate_meat_begin_3": "$doer.firstname$ according to regulations, added nutrient solution to the feed, providing the enclosed $name$ with the nutrients needed for growth",
+
+"com_job_cleaning": "Can only be performed when there is %%tag_trash%% in room, will remove all %%tag_trash%% on command completion.",
+"com_job_cleaning_displayName_1": "Cleaning",
+"com_job_cleaning_displayName_2": "Cleaning",
+"com_job_cleaning_displayName_3": "Cleaning",
+"com_job_cleaning_begin_1": "$doer.firstname$ picked up the rag and cleaning agent, and began to wipe every corner of the room",
+"com_job_cleaning_begin_2": "$doer.firstname$ rolled out the vacuum cleaner and began to carefully clean the floor of the room",
+"com_job_cleaning_begin_3": "$doer.firstname$ picked up the duster, dusted the furniture, and then wiped the surfaces with cleaning agent",
+"com_job_player_hourlywork_displayName_1": "(Player only) Do paperworks",
+"com_job_player_hourlywork_displayName_2": "Do paperworks",
+"com_job_production_cooking_displayName": "Production: Cooking",
+"com_job_production_cooking_displayName_1": "Cooking",
+"com_job_production_cooking_displayName_2": "Cooking",
+"com_job_production_cooking_begin_1": "$doer.firstname$ began preparing the ingredients for the meal.",
+"com_job_production_cooking_begin_2": "$doer.firstname$ turned on the stove, and began cooking",
+"com_job_production_cooking_after_1": "$doer.firstname$ finished making $item$",
+"com_job_production_chemistry_displayName": "Production: Chemistry",
+"com_job_production_chemistry_displayName_1": "Craft chemicals",
+"com_job_production_chemistry_displayName_2": "Craft chemicals",
+"com_job_production_chemistry_begin_1": "$doer.firstname$ put on protective goggles and carefully mixed various reagents together, beginning the preparation process.",
+"com_job_production_chemistry_begin_2": "$doer.firstname$ was busy at the lab bench, precisely controlling various instruments, beginning the delicate crafting process.",
+"com_job_production_chemistry_begin_3": "$doer.firstname$ placed various raw materials into a container, carefully adjusting the temperature and time, beginning the long crafting process.",
+"com_job_production_chemistry_after_1": "$doer.firstname$ finished making $item$",
+"com_job_production_engineering_displayName": "Production: Engineering",
+"com_job_production_engineering_displayName_1": "Craft engineering",
+"com_job_production_engineering_displayName_2": "Craft engineering",
+"com_job_research_engineering_displayName": "Research: Engineering",
+"com_job_research_engineering_displayName_1": "Research engineering",
+"com_job_research_engineering_displayName_2": "Research engineering",
+"com_job_research_physics_displayName": "Research physics",
+"com_job_research_physics_displayName_1": "Research physics",
+"com_job_research_physics_displayName_2": "Research physics",
+"com_job_research_biochemistry_displayName": "Research biochemistry",
+"com_job_research_biochemistry_displayName_1": "Research biochemistry",
+"com_job_research_biochemistry_displayName_2": "Research biochemistry",
+"com_job_training_shooting_displayName_1": "Firearm training",
+"com_job_training_shooting_displayName_2": "Firearm training",
+"com_job_training_shooting_begin_1": "$doer.firstname$ stood at the firing position, put on ear protection, raised the weapon in their hand, and began today's training.",
+"com_job_training_shooting_begin_2": "$doer.firstname$ adjusted their breathing, aimed at the bullseye, pulled the trigger, and began practicing precision shooting.",
+"com_job_training_shooting_begin_3": "$doer.firstname$ repeatedly practiced various shooting stances on the shooting range to improve their shooting skills.",
+"com_job_training_melee_displayName_1": "CQC training",
+"com_job_training_melee_displayName_2": "CQC training",
+"com_job_training_melee_begin_1": "$doer.firstname$ stood in the center of the training ground, took a deep breath, adopted a fighting stance, and began today's close-quarters combat training.",
+"com_job_training_melee_begin_2": "$doer.firstname$ repeatedly practiced various offensive and defensive movements to improve their fighting ability.",
+"com_job_farm_maintain_displayName_1": "Maintain farm",
+"com_job_farm_maintain_displayName_2": "Maintain farm",
+"com_job_farm_maintain_begin_1": "$doer.firstname$ picked up the water bucket and carefully watered the crops in the field, ensuring they could grow strong and healthy.",
+"com_job_farm_maintain_begin_2": "$doer.firstname$ bent down and carefully inspected each plant, removing harmful weeds and bugs.",
+"com_job_farm_maintain_begin_3": "$doer.firstname$ was busy in the field, pruning branches and loosening the soil, creating a good environment for the growth of the crops.",
+"com_job_farm_remove_displayName_1": "Remove crop",
+"com_job_farm_remove_displayName_2": "Remove crop",
+"com_job_farm_remove_displayName_3": "Remove crop",
+"com_job_farm_remove_begin_1": "$doer.firstname$ starts removing target from the cultivation area.",
+"com_job_farm_remove_after_1": "$doer.firstname$ successfully removed target.",
+"com_job_farm_cultivate_crop_displayName": "Plant crop",
+"com_job_farm_cultivate_crop_displayName_1": "Plant $name$",
+"com_job_farm_cultivate_crop_displayName_2": "Plant $name$",
+"com_job_farm_cultivate_crop_displayName_3": "Plant $name$",
+"com_job_farm_cultivate_meat_displayName": "Grow meat",
+"com_job_farm_cultivate_meat_displayName_1": "Grow $name$",
+"com_job_farm_cultivate_meat_displayName_2": "Grow $name$"
+            }
+        }
     }
 }

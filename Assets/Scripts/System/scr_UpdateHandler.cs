@@ -43,6 +43,8 @@ public class scr_UpdateHandler : MonoBehaviour
         }
     }
 
+    public bool TempLongCOMFix = true;
+
     bool _animating = false;
     public bool Animating
     {
@@ -98,7 +100,7 @@ public class scr_UpdateHandler : MonoBehaviour
 
     public bool CanLoadSave(SaveFileHolder save)
     {
-        return save.isValid && save.InnerFile.SafeMode == scr_System_CentralControl.current.isSafeMode;
+        return save.isValid && save.SafeMode == scr_System_CentralControl.current.isSafeMode;
     }
     protected void LoadSaveFile(SaveFile save, bool unloadCanvas = true)
     {
@@ -187,20 +189,27 @@ public class scr_UpdateHandler : MonoBehaviour
         {
             if (EventHandler.Active)
             {
-                Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
             }
-            else StartCoroutine(SingleUpdate());
+            else
+            {
+
+                if(scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"UpdateHandler PlayerPackage Update duration {updateTime} {totalUpdateTime}");
+
+                StartCoroutine(SingleUpdate());
+            }
         }
         else if (!Updating && init)
         {
             if (EventHandler.Active)
             {
-                Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
             }
             else
             {
                 updateTime = 1;
                 totalUpdateTime = 1;
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"UpdateHandler ForceUpdate duration {updateTime}  {totalUpdateTime}");
                 StartCoroutine(SingleUpdate());
             }
 
@@ -246,6 +255,8 @@ public class scr_UpdateHandler : MonoBehaviour
     public bool isFirstUpdate { get { return firstLoopCounter > 0; } }
 
     float waitTime = 0.001f;
+    
+
 
     string cache_elapsedTime = "";
     string ElapsedTime { get { if (cache_elapsedTime == "") cache_elapsedTime = LocalizeDictionary.QueryThenParse("ui_update_elapsedTime");
@@ -266,6 +277,9 @@ public class scr_UpdateHandler : MonoBehaviour
         //NotifyLogsSingleUpdate();
         //var copy = updateTime;
         bool timestop = scr_System_Time.current.TimeStop;
+
+        WaitForSeconds wait = new WaitForSeconds(waitTime);
+
         while (updateTime > 0 && !EventHandler.Waiting)  // updatetime can be 0 if there is no player package
         {   // if indeed 0 updatetime, then none of the below preupdate postupdate will be called.
 
@@ -275,8 +289,11 @@ public class scr_UpdateHandler : MonoBehaviour
                 yield return null;
             }
             else if (EventHandler.Active && EventHandler.Waiting) break;
+            else if (firstLoopCounter != 2)
+            {
+                scr_System_CampaignManager.current.NotifyEventEnd();
+            }
 
-            
             halted = false;
             loopCount++;
             //var time = Clock ? Utility.ReinitStopWatch(stopWatch) : TimeSpan.Zero;
@@ -317,10 +334,26 @@ public class scr_UpdateHandler : MonoBehaviour
             //cnManager.ClearLogs(true);
             if (EventHandler.Active) EventHandler.Run(false, true);
 
-            if (scr_System_Time.current.TimeResume) scr_System_Time.current.timeStop = TimestopState.normal;
 
-            yield return new WaitForSecondsRealtime(waitTime);
+            scr_System_Time.current.NotifyTimeResumeEnd();
+           // if (scr_System_Time.current.TimeResume) scr_System_Time.current.timeStop = TimestopState.normal;
+
+            yield return wait;
+            //yield return new WaitForSecondsRealtime(waitTime);
             //yield return 
+#if UNITY_EDITOR
+            if (TempLongCOMFix && loopCount >= 180)
+            {
+                Debug.Log($"Temporarily break update loop after {loopCount}");
+                break;
+            }
+#else
+            if (loopCount >= 180)
+            {
+                Debug.Log($"Temporarily break update loop after {loopCount}");
+                break;
+            }
+#endif
         }
 
         loopCount = timestop ? 0 : loopCount;
@@ -342,28 +375,28 @@ public class scr_UpdateHandler : MonoBehaviour
         //playerJob = cnManager.Player.CurrentJob;
 
         // begin job message
-        if (false && playerJob != null) cnManager.AddLog(-1, playerJob.MessagesBefore);
+        if (false && playerJob != null) cnManager.AddLog(-1, playerJob.MessagesBefore, halted);
 
-        cnManager.AddLog(-1, String.Join("\n", message_begin));
-        cnManager.AddLog(-1, String.Join("\n", message_ongoing));
+        cnManager.AddLog(-1, String.Join("\n", message_begin), halted);
+        cnManager.AddLog(-1, String.Join("\n", message_ongoing), halted);
 
         message_begin.Clear();
         message_ongoing.Clear();
 
         foreach(var kvp in kojoMsgDictionary)
         {
-            cnManager.AddLog(kvp.Key, kvp.Value);
+            cnManager.AddLog(kvp.Key, kvp.Value, halted);
         }
 
         kojoMsgDictionary.Clear();
 
         // all climax ? need to filter out who worth displaying
-        cnManager.AddLog(-1, String.Join("\n", currentRoundClimax));
+        cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), halted);
 
         currentRoundClimax.Clear();
         // after job message
-        if (false && playerJob != null) cnManager.AddLog(-1, playerJob.MessagesAfter);
-        cnManager.AddLog(-1, String.Join("\n", message_end));
+        if (false && playerJob != null) cnManager.AddLog(-1, playerJob.MessagesAfter, halted);
+        cnManager.AddLog(-1, String.Join("\n", message_end), halted);
 
         message_end.Clear();
 
@@ -374,13 +407,13 @@ public class scr_UpdateHandler : MonoBehaviour
             //Debug.Log("Merging with ActiveJob "+job.RefID+" " + job.DisplayName);
             this.exp.MergeWith(job.exp);
         }
-        cnManager.AddLog(-1, exp.PrintContent());
+        cnManager.AddLog(-1, exp.PrintContent(), halted);
         exp.Clear();
 
         if (timeStop) totalUpdateTime = 0;
 
 
-        cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", false, false, scr_System_Time.current.getCurrentTime().ToString());
+        cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", false, true, scr_System_Time.current.getCurrentTime().ToString());
 
         /*
         List<string> names = new List<string>();
@@ -408,11 +441,12 @@ public class scr_UpdateHandler : MonoBehaviour
 
 #if UNITY_EDITOR
             if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError($"EVENTHANDLER ACTIVE, running... is Updating? {Updating}");
-#endif 
+#endif
             EventHandler.Run(false, true);
         }
 
         ExecuteEventCallbacks(CallbackResumeUpdate);
+        NotifyLogsSingleUpdate(CallbackResumeUpdate);
     }
 
     public void DeferredUpdateCall(int intref, string text)
@@ -483,6 +517,7 @@ public class scr_UpdateHandler : MonoBehaviour
     public Dictionary<int, string> kojoMsgDictionary = new Dictionary<int, string>();
     public void AppendKojoMessage(int charaRefID, string s)
     {
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"AppendKojoMessage: {s}");
         if (!kojoMsgDictionary.ContainsKey(charaRefID)) kojoMsgDictionary.Add(charaRefID, s);
         else kojoMsgDictionary[charaRefID] += "\n" + s;
     }
@@ -498,7 +533,7 @@ public class scr_UpdateHandler : MonoBehaviour
         if (flushOut)
         {
             if (checkResults.Count > 0) cnManager.AddLog(-1, String.Join("\n", checkResults), false);
-            cnManager.AddLog(-1, exp.PrintContent());
+            cnManager.AddLog(-1, exp.PrintContent(), true);
             if (message_begin.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_begin), true);
             if (firstLoop && message_ongoing.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_ongoing), true);
 

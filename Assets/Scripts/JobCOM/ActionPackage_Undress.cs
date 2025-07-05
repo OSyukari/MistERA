@@ -28,6 +28,7 @@ public class ActionPackage_Undress : ActionPackage
     }
     public ActionPackage_Undress() : base()
     {
+
     }
 
     public ActionPackage_Undress(Job job, int doerRef, BodyEquipLayer layer = BodyEquipLayer.None, Revealing includeRating = Revealing.Erotic, int duration = 5) : this()
@@ -134,7 +135,9 @@ public class ActionPackage_Undress : ActionPackage
         if (c != null)
         {   if (targetLayer == BodyEquipLayer.None) c.Undress(targetLayer, includeRating, true);
             else c.UndressAll(targetLayer, includeRating, true);
+            c.NotifyConsciousClothingChange(targetLayer);
         }
+        executeSuccessful = true;
     }
 
     [SerializeField]

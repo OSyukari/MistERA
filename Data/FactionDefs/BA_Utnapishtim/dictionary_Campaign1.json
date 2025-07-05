@@ -6,9 +6,9 @@
             "zh-cn":
             {
                 "campaign_starfarers":"星之旅人",
-        "campaign_starfarers_tooltip":"为了方便熟悉游戏机制而设计的小型剧本。\n限制：玩家角色起源必须是%%charOrigin_TraveleracrossGates%%，角色初始礼物不会生效。\n\n此剧本为碧蓝档案同人",
+        "campaign_starfarers_tooltip":"为了方便熟悉游戏机制而设计的小型剧本。\n\n此剧本为碧蓝档案同人",
         "campaign1_start_default":"老师",
-        "campaign1_start_default_tooltip":"以碧蓝档案的老师身份，与%%factionName_Utnapishtim%%的领航员们一同开始游戏。\n身为老师，玩家有义务管理%%factionName_Utnapishtim%%阵营，有义务维护学生们的身心健康。\n限制：玩家不可参与战斗（未实装），不可做出越界的举止（未实装）\n玩家的立绘和名字会被更改",
+        "campaign1_start_default_tooltip":"以碧蓝档案的老师身份，与%%factionName_Utnapishtim%%的领航员们一同开始游戏。\n身为老师，玩家有义务管理%%factionName_Utnapishtim%%阵营，有义务维护学生们的身心健康。\n限制：玩家不可参与战斗（未实装）\n玩家的立绘和名字会被更改",
         
         "campaign1_start_student":"（未实装）学生",
         "campaign1_start_student_tooltip":"（未实装）以奇沃托斯的学生身份，与生命守护者的领航员们一同开始游戏。\n身为学生，玩家可以参与战斗。\n限制：玩家的种族模板会被改为--学生模板--\n--学生模板--：--模板描述--",
@@ -90,7 +90,7 @@
             "en-us":
             {
                 "campaign_starfarers":"Starfarers",
-        "campaign_starfarers_tooltip":"A small scenario designed to help familiarize you with the game mechanics.\nRestrictions: The player character's origin must be %%charOrigin_TraveleracrossGates%%, and the character's initial gifts will not take effect.\n\nThis scenario is a parody of Blue Archive.",
+        "campaign_starfarers_tooltip":"A small scenario designed to help familiarize you with the game mechanics.\n\nThis scenario is a parody of Blue Archive.",
         "campaign1_start_default":"Sensei",
         "campaign1_start_default_tooltip":"Start the game as the Sensei from Blue Archive, along with the navigators of %%factionName_Utnapishtim%%.\nAs Sensei, the player need to to manage %%factionName_Utnapishtim%% faction and maintain the physical and mental wellbeing of all students.\nRestrictions: The player cannot participate in combat (not yet implemented).\nThe player's portrait and name will be altered.",
         

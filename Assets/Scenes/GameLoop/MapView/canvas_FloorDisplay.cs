@@ -50,7 +50,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         currentFloorIDs.Add(btn.optionID);
     }
 
-    private void addBtn(RectTransform prefab, RectTransform parent, Room_Instance ri, bool extraOffset = false, bool displayCharaName = false)
+    private void addBtn(RectTransform prefab, RectTransform parent, Room_Instance ri, bool extraOffset = false, bool displayCharaName = false, bool ignorePathToggle = false)
     {
         RectTransform r2 = Instantiate(prefab);
         r2.SetParent(parent, false);
@@ -67,7 +67,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         if (displayCharaName)
         {
-            btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn));
+            btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn, false, ignorePathToggle));
             List<int> list = scr_System_CampaignManager.current.CharaInRoom(ri.RefID);
             List<string> names = new List<string>();
             foreach (int i in list)  if (i != 0) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
@@ -80,7 +80,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         }
         else
         {
-            btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn, true));
+            btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn, true, ignorePathToggle));
             btn.SetText(tempRefID.ToString());
         }
 
@@ -209,8 +209,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         {
             if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode()) * 2))
             {
-                addBtn(prefab_roomButton, picture.rectTransform, ri, false, false);
-                addBtn(prefab_roomButton, roomList, ri, true, true);
+                addBtn(prefab_roomButton, picture.rectTransform, ri, false, false, false);
+                addBtn(prefab_roomButton, roomList, ri, true, true, true);
 
             }
             else
@@ -278,38 +278,6 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     RectTransform selfRect;
 
-
-    /*
-    private void readTXT(string path, TextMeshProUGUI box)
-    {
-        var sr = new StreamReader(Application.dataPath + "/" + path);
-        var fileContents = sr.ReadToEnd();
-        sr.Close();
-        box.text = fileContents;
-    }
-    */
-
-    /*
-    private Texture2D LoadTexture(string FilePath)
-    {
-
-        // Load a PNG or JPG file from disk to a Texture2D
-        // Returns null if load fails
-
-        Texture2D Tex2D;
-        byte[] FileData;
-
-        if (File.Exists(FilePath))
-        {
-            FileData = File.ReadAllBytes(FilePath);
-            Tex2D = new Texture2D(2, 2);           // Create new "empty" texture
-            if (Tex2D.LoadImage(FileData))           // Load the imagedata into the texture (size is set automatically)
-                return Tex2D;                 // If data = readable -> return texture
-        }
-        return null;                     // Return null if load failed
-    }
-    */
-
     Texture2D SpriteTexture = null;
     Sprite NewSprite;
 
@@ -340,14 +308,16 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         Job playerJob { get { return scr_System_CampaignManager.current.Player.InteractionJob;} }
 
         int roomRef = -1;
+        bool ignorePathToggle;
         new canvas_RoomDisplay parent;
 
         string ttip = "";
-        public ButtonValidator_MoveRoom(canvas_RoomDisplay parent, Room_Instance room, scr_SelectableText text, bool attachHover = false) : base(parent)
+        public ButtonValidator_MoveRoom(canvas_RoomDisplay parent, Room_Instance room, scr_SelectableText text, bool attachHover = false, bool ignorePathToggle = false) : base(parent)
         {
             this.roomRef = room.RefID;
             this.text = text;
             this.parent = parent;
+            this.ignorePathToggle = ignorePathToggle;
 
             text.AttachOnHoverEnter(OnHoverEnter);
             text.AttachOnHoverExit(OnHoverExit);
@@ -398,7 +368,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             }
             else // parent path not null and current room not in path
             {
-                return false;
+                return ignorePathToggle;
             }
         }
 

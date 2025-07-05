@@ -3,6 +3,97 @@
     {
     "list":[
         {
+            "ID":"com_touch_cheek",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_cheek_displayName",
+            "timeScale":2,
+            "comTags":["touch", "canbeignored"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_hair",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_hair_displayName",
+            "timeScale":2,
+            "comTags":["touch", "canbeignored"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_sleeponthigh_ask",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_sleeponthigh_ask_displayName",
+            "timeScale":5,
+            "comTags":["touch"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1
+                }
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_hug",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_hug_displayName",
+            "timeScale":2,
+            "comTags":["touch"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
+            "ID":"com_touch_sleeponthigh_give",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_sleeponthigh_give_displayName",
+            "timeScale":5,
+            "comTags":["touch"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
+            "DifficultyCheck":{ "baseD20Check":0 }
+        },
+        {
             "ID":"com_touch_butt",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_butt_displayName_2",
@@ -284,4 +375,7 @@
         }
 
     ]
-}}
+}
+
+
+}

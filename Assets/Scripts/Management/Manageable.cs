@@ -553,9 +553,7 @@ public class Manageable : I_Disposable
         }
         else
         {
-            bool result = GetValidPaths(ref possibleJobs, chara, ref ss);
-            s.Add(ss);
-            if (result) return possibleJobs;
+            if (GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
             else return new List<Job_Furniture>();
         }
     }
@@ -1838,7 +1836,6 @@ public class Manageable : I_Disposable
                 targetInventory.AddItem(item);
             }
         }
-
 
         [JsonIgnore] public Item_Base RecipeItem { get { return scr_System_Serializer.current.GetByNameOrID_Item_Base(Recipe.outputItemBaseID); } }
 

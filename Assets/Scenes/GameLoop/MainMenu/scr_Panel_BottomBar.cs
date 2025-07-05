@@ -389,7 +389,7 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public void OnClickButton()
         {
-            scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_HelperGuide, parent.m_Canvas.GetComponent<RectTransform>());
+            var rect = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_HelperGuide, parent.m_Canvas.GetComponent<RectTransform>());
         }
     }
 

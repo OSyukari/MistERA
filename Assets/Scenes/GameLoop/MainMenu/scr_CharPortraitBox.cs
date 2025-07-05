@@ -18,6 +18,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     public RectTransform box_ovum;
 
     public bool isCurrentTargetBox = false;
+    public bool isCurrentTargetEXBox = false;
 
     // Start is called before the first frame update
 
@@ -30,6 +31,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             scr_System_CampaignManager.current.Observer_CurrentViewMode += OnVMChange;
             scr_System_CampaignManager.current.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
         }
+        if (isCurrentTargetEXBox) scr_System_CampaignManager.current.Observer_CurrentTargetEX += ReadCurrentChar;
     }
 
     bool firstInit = true;
@@ -63,7 +65,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void ReadCurrentChar(int id)
     {
-        Debug.Log("ReadCurrentChar");
+       // Debug.Log("ReadCurrentChar");
         if (id == -1) return;
         else if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Logs) return;
         else CheckCharaChange(id);

@@ -105,7 +105,18 @@ public class EvaluationPackage
 
     public override string ToString()
     {
-        return "["+(this.Package == null ? "?" : this.Package.Duration) +"]"+ (this.Doer == null ? "null" : this.Doer.FirstName) + "|" + (this.targetCOM == null ? "notCOM" : this.targetCOM.DisplayName(this.VariantID)) + "|" + (this.Receiver == null ? "null" : this.Receiver.FirstName);
+        var sb = new System.Text.StringBuilder(); // preallocate capacity
+
+        sb.Append('[')
+          .Append(this.Package == null ? "?" : this.Package.Duration)
+          .Append("]")
+          .Append(this.Doer == null ? "null" : this.Doer.FirstName)
+          .Append('|')
+          .Append(this.targetCOM == null ? "notCOM" : this.targetCOM.DisplayName(this.VariantID))
+          .Append('|')
+          .Append(this.Receiver == null ? "null": this.Receiver.FirstName);
+
+        return sb.ToString();
     }
 
     protected List<int> actorRefs = null;
@@ -181,12 +192,15 @@ public class EvaluationPackage
     [SerializeField][JsonProperty] List<string> injectedCOMTags = new List<string>();
     [SerializeField][JsonProperty] List<string> injectedReceiverTags = new List<string>();
 
+    List<string> _doerSelfTag = new List<string>();
+
     [JsonIgnore] public List<string> DoerSelfTag { get
         {
             List<string> tags = new List<string>();
             if (this.receiverRef == -1 || receiverRef == doerRef) return DoerTargetTag;
             else return extraDoerTags.Concat(injectedDoerTags).Distinct().ToList(); ;
         } }
+
     [JsonIgnore] public List<string> ReceiverTargetTag
     {
         get
@@ -194,13 +208,35 @@ public class EvaluationPackage
             return Enumerable.Concat(targetCOM == null? new List<string>() : targetCOM.comTags, extraCOMTags).Concat(extraReceiverTags).Concat(injectedReceiverTags).Concat(injectedCOMTags).Distinct().ToList();
         }
     }
+
+    List<string> _doerTargetTag = new List<string>();
+    COM _doerCOM = null;
     [JsonIgnore] public List<string> DoerTargetTag
     {
         get
         {
-            return Enumerable.Concat(targetCOM == null ? new List<string>() : targetCOM.comTags, extraCOMTags).Concat(extraDoerTags).Concat(injectedDoerTags).Concat(injectedCOMTags).Distinct().ToList();
+            if (_doerCOM != targetCOM) 
+            {
+                _doerCOM = targetCOM;
+                HashSet<string> tagSet = new();
+
+                //_doerTargetTag = Enumerable.Concat(targetCOM == null ? new List<string>() : targetCOM.comTags, extraCOMTags).Concat(extraDoerTags).Concat(injectedDoerTags).Concat(injectedCOMTags).Distinct().ToList();
+                if (targetCOM != null)
+                {
+                    foreach (var tag in targetCOM.comTags) tagSet.Add(tag);
+                }
+
+                foreach (var tag in extraCOMTags) tagSet.Add(tag);
+                foreach (var tag in extraDoerTags) tagSet.Add(tag);
+                foreach (var tag in injectedDoerTags) tagSet.Add(tag);
+                foreach (var tag in injectedCOMTags) tagSet.Add(tag);
+
+                _doerTargetTag = new List<string>(tagSet);
+            }
+            return _doerTargetTag;
         }
     }
+
     [JsonIgnore] public List<string> ReceiverSelfTag { get
         {
             return extraReceiverTags.Concat(injectedReceiverTags).Distinct().ToList(); ;
@@ -417,7 +453,7 @@ public class EvaluationPackage
 
         //Debug.Log("Dice expectedAverage[" + (int) ((diceMax + diceMin) / 2) + "] + ["+ (isThreat ? (rel.Trust + rel.Fear) / 10 : rel.Trust / 10) + "]");
 
-        if (extraCOMTags.Contains("safe") && rel != null)
+        if (!scr_System_CentralControl.current.isSafeMode && extraCOMTags.Contains("safe") && rel != null)
         {
             mod.AddModifier(self.RefID, "[Safe]", 2);
             baseValue -= 2;
@@ -914,21 +950,17 @@ public class EvaluationPackage
             return s;
         } }
 
-    [JsonIgnore] public string CheckResults
-    {   // obsolete, we want both individually
-        get
-        {
-            Debug.Log("Getting EP CheckResult, doer["+(Doer == null?"null":Doer.FirstName)+"] result["+checkResults_doer+"] receiver["+(Receiver == null?"null":Receiver.FirstName)+"] result["+checkResults_receiver+"]");
-            if (response == Memory_Response.None || Receiver == null) return checkResults_doer;
-            else return checkResults_receiver;
-        }
-    }
-
     /// <summary>
     /// rewritten on RollRequest()
     /// </summary>
     [SerializeField][JsonProperty] public string checkResults_doer = "";
+    [SerializeField][JsonProperty] public string checkResults_doer_short = "";
     [SerializeField][JsonProperty] public string checkResults_receiver = "";
+    [SerializeField][JsonProperty] public string checkResults_receiver_short = "";
+
+    string diceroll_autosuccess = LocalizeDictionary.QueryThenParse("ui_diceroll_autosuccess");
+    string diceroll_success = LocalizeDictionary.QueryThenParse("ui_diceroll_success");
+    string diceroll_failure = LocalizeDictionary.QueryThenParse("ui_diceroll_failure");
 
     /// <summary>
     /// Internal method. Run after data initialized. 
@@ -952,6 +984,8 @@ public class EvaluationPackage
 
         List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID);
         checkResults_doer = Doer.FirstName + ": " + (mods.Count > 0 ? String.Join(" + ", modifiers.GetModifiersByRefID(Doer.RefID)) + " = ": "") + (requestRate >= 100 ? "automatic success" : diceroll + " <= " + requestRate + " "+(returnVal ?  "Success":"Failure") +" " +"("+attitude_doer + ")");
+        checkResults_doer_short = $"{Doer.FirstName}: ({requestRate}%) => {(requestRate >= 100 ? diceroll_autosuccess : (returnVal ? diceroll_success : diceroll_failure))}";
+
         return returnVal;
     }
 
@@ -1033,6 +1067,7 @@ public class EvaluationPackage
             // display player option menu to decide accept or refuse
             returnVal = true;
             checkResults_receiver = "";
+            checkResults_receiver_short = "";
             attitude_receiver = Memory_Attitude.None;
         }  
         else
@@ -1046,6 +1081,9 @@ public class EvaluationPackage
             RollAttitude(ref attitudeRate_pos_receiver, ref attitudeRate_neg_receiver, ref attitude_receiver);
             List<string> mods = modifiers.GetModifiersByRefID(Receiver.RefID);
             checkResults_receiver = Receiver.FirstName + ": " + (mods.Count > 0 ? String.Join(" + ", mods) + " = " : "") + (responseRate >= 100 ? "automatic success" : diceroll + " <= " + responseRate + " " + (returnVal ? "Success" : "Failure"))  + " " + "(" + attitude_receiver + ")";
+            checkResults_receiver_short = $"{Receiver.FirstName}: ({responseRate}%) => {(responseRate >= 100 ? diceroll_autosuccess : (returnVal ? diceroll_success : diceroll_failure))}";
+
+
         }
         return returnVal;
     }
@@ -1606,18 +1644,21 @@ public class ExperienceLog
         {
             if (kvp_refID.Value.Count > 0)
             {
-                string s = "Stats(" + scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + "): ";
+                string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
                 foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
                 lines.Add(s);
             }
         }
 
+        // Only player character related relationship increase is logged
         foreach (var kvp_refID in RelationLog)
         {
             if (kvp_refID.Value.Count > 0)
             {
-                string s = "Relations(" + scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + "): ";
+                string s =  scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
                 foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse("relationship_"+ ((RelationshipScoreType) kvp.Key).ToString().ToLower())   + "" + kvp.Value.ToString("+0;-#") + " ";
+                s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
                 lines.Add(s);
             }
         }
@@ -1626,8 +1667,9 @@ public class ExperienceLog
         {
             if (kvp_refID.Value.Count > 0)
             {
-                string s = "Experiences(" + scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + "): ";
+                string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
                 foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
                 lines.Add(s);
             }
         }

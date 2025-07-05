@@ -11,12 +11,33 @@ public class scr_menu_question : scr_Menu
 
     public scr_HoverableText Text;
     public GridLayoutGroup Grid;
+
+    public CanvasGroup SelfGroup;
+    public Image SelfImage;
+
     float preferredLen = 0;
 
     RectTransform self;
 
     scr_panel_logs logs;
-    public bool Active = true;
+    bool _active = true;
+    public bool Active 
+    { 
+        get
+        {
+            return _active;
+        }
+        set
+        {
+            _active = value;
+            if (!_active)
+            {
+                SelfImage.color = scr_System_CentralControl.current.DisplaySetting.TextColor_transparent;
+                SelfGroup.blocksRaycasts = false;
+                SelfGroup.interactable = false;
+            }
+        }
+    }
     public void InitializeWithArgs(Canvas mainCanvas, EventInstance instance, Event.EventEntry.EventEntry_Question query, scr_panel_logs logs)
     {
         // Initialize();
@@ -24,6 +45,7 @@ public class scr_menu_question : scr_Menu
         SetCanvas(mainCanvas, true);
         this.Text.SetText(Utility.ParseEventEntry(instance, query.question));
         self = this.GetComponent<RectTransform>();
+        SelfImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
         foreach (var option in query.options)
         {
             var button = Instantiate(prefab_text_linkbutton).GetComponent<scr_SelectableText>();
@@ -36,6 +58,8 @@ public class scr_menu_question : scr_Menu
         //Grid.cellSize = new Vector2(Grid.cellSize.x, (float)Math.Min(self.rect.width * 0.9, preferredLen));
         ValidateAll();
         scr_UpdateHandler.current.InvokeEventStatus(EventStatus.waiting, true);
+        
+
         if (defaultCancel != null && logs != null) logs.Observer_OnClick += OnClick;
     }
 

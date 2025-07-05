@@ -61,12 +61,19 @@ public class RelationshipManager
         else targetList[key] += value;
     }
 
-    [SerializeField][JsonProperty] protected Dictionary<int, Character_Relationship> relationships = null;
-    [JsonIgnore] public List<Character_Relationship> Relationships { get { if (relationships == null) relationships = new Dictionary<int, Character_Relationship>();
-            var list = relationships.Values.Where(x=>x.displayable).ToList();
+    [SerializeField][JsonProperty] protected Dictionary<int, Character_Relationship> relationships = new Dictionary<int, Character_Relationship>();
+
+    [JsonIgnore]
+    public List<Character_Relationship> Relationships
+    {
+        get
+        {
+            if (relationships == null) relationships = new Dictionary<int, Character_Relationship>();
+            var list = relationships.Values.Where(x => x.displayable).ToList();
             list.Sort(SortRelationship);
             return list;
-        } }
+        }
+    }
 
     [JsonIgnore]public List<Character_Relationship> SexRelationships
     {
@@ -151,7 +158,7 @@ public class RelationshipManager
         foreach (var i in targetEPs) s += i.targetCOM.ID + "_";
         //Debug.Log("NotifyMeeting between " + Owner.FirstName + " and " + c.FirstName+"\n"+s);
 
-        var rel = (this.Relationships != null && relationships.ContainsKey(c.RefID)) ? relationships[c.RefID] : FindRelationshipWith(c);
+        var rel = (relationships.ContainsKey(c.RefID)) ? relationships[c.RefID] : FindRelationshipWith(c);
 
         //Utility.GetEventTagsFrom(Owner, c, out List<string> selfTags, out List<string> targetTags ,out List<EvaluationPackage> selfEPs);
         //Utility.GetEPsFrom(owner, c, out List<EvaluationPackage> selfEPs, out List<EvaluationPackage> targetEPs);
@@ -193,7 +200,7 @@ public class RelationshipManager
         this.ownerRef = c.RefID;
         this.owner = c;
 
-        if (relationships != null) foreach (var i in relationships.Values) i.ReEstablishParent(this);
+        foreach (var i in relationships.Values) i.ReEstablishParent(this);
     }
 
     public void IncreaseRelationshipWith(int targetRef, RelationshipScoreType relID, float amount, ExperienceLog exp = null)
@@ -217,7 +224,7 @@ public class RelationshipManager
     public Character_Relationship FindRelationshipWith(Character_Trainable chara)
     {   // allow relationship with oneself
         if (chara == null || chara.RefID < 0) return null;
-        if (Relationships != null && relationships.ContainsKey(chara.RefID)) return relationships[chara.RefID];
+        if (relationships.TryGetValue(chara.RefID, out var rel)) return rel;
         else return MakeRelationshipWith(chara);
     }
 
@@ -235,7 +242,7 @@ public class RelationshipManager
     public Character_Relationship FindRelationshipWith(int charaRef)
     {
         if (charaRef < 0 || charaRef == Owner.RefID) return null;
-        if (Relationships != null && relationships.ContainsKey(charaRef)) return relationships[charaRef];
+        if (relationships.TryGetValue(charaRef, out var rel)) return rel;
         else return MakeRelationshipWith(scr_System_CampaignManager.current.FindInstanceByID(charaRef));
     }
 

@@ -45,7 +45,8 @@ public class COM_Descriptions
         // if textOptions exists, then 
         public List<string> texts = new List<string>();
 
-        public List<Description_Entry> Entries = null;
+
+        public List<Description_Entry> Entries = new List<Description_Entry>();
 
         [System.Serializable]
         public class COMDesc_Conditions
@@ -133,6 +134,15 @@ public class COM_Descriptions
 
         }
 
+        Dictionary<int, string> _texts = new Dictionary<int, string>();
+
+        public void AppendToText(string suffix)
+        {
+            for (int i = texts.Count - 1; i >= 0; i--) texts[i] += suffix;
+            foreach (var entry in this.Entries) entry.AppendToText(suffix);
+        }
+
+
         public bool GetValidText(ref List<string> list, ref EvaluationPackage evp)
         {
             //Debug.LogError("GetValidText options [" + String.Join("\n", texts) + "]");
@@ -142,11 +152,15 @@ public class COM_Descriptions
                 // first add text to list
                 if (texts.Count > 0)
                 {// meaning we do add text here
-                    string s = texts[Utility.GetRandIndexFromListCount(texts.Count)];
+                    var randIndex = Utility.GetRandIndexFromListCount(texts.Count);
 
-                    // Replace string inside s!!!
-
-                    list.Add(s);
+                    if (_texts.TryGetValue(randIndex, out string value)) list.Add(value);
+                    else
+                    {
+                        var s2 = LocalizeDictionary.QueryThenParse(texts[randIndex]);
+                        _texts.Add(randIndex, s2);
+                        list.Add(s2);
+                    }
                 }
 
                 if (Entries != null && Entries.Count > 0)

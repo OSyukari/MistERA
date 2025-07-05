@@ -166,17 +166,27 @@ public class scr_panel_TargetInfo : scr_Menu
         {
             DestroyImmediate(StatusBox.transform.GetChild(0).gameObject);
         }
-        foreach( var si in chara.Stats.StatusInstances_Displayable)
+
+        foreach (var si in chara.Stats.statusInstancesEx_Displayable)
         {
-            if (si.SeverityDisplayName != "")
-            {
-                RectTransform box = Instantiate(prefab_text_link);
-                box.SetParent(StatusBox, false);
 
-                UI_Utility.Draw(si, box.GetComponent<scr_HoverableText>());
+            RectTransform box = Instantiate(prefab_text_link);
+            box.SetParent(StatusBox, false);
 
-               //text.text = si.BaseRef.displayName + ":" + si.SeverityDisplayName;
-            }
+            si.Draw(box.GetComponent<scr_HoverableText>());// UI_Utility.Draw(si, 
+
+            //text.text = si.BaseRef.displayName + ":" + si.SeverityDisplayName;
+        }
+
+        foreach ( var si in chara.Stats.StatusInstances_Displayable)
+        {
+
+            RectTransform box = Instantiate(prefab_text_link);
+            box.SetParent(StatusBox, false);
+
+            UI_Utility.Draw(si, box.GetComponent<scr_HoverableText>());
+
+            //text.text = si.BaseRef.displayName + ":" + si.SeverityDisplayName;
         }
     }
 

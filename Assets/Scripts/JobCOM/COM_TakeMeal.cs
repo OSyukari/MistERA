@@ -41,6 +41,12 @@ public class COM_TakeMeal : COM
         this.results.results_character.Add(res);
     }
 
+    public override string GetDescription_Begin(EvaluationPackage evp, int variantID)
+    {
+        var s = base.GetDescription_Begin(evp, variantID);
+        return Replace(s);
+    }
+
     public override string GetVariantDescription(int variantID, bool isDoer, int charaRef, string roomName, List<int> DoerRefs, List<int> ReceiverRefs, int masterRef)
     {
         var s = base.GetVariantDescription(variantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);

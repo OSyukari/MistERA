@@ -266,7 +266,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     /////// CHARA TAB
 
     public RectTransform Tab_Jobs;
-    public TMP_Text chara_fullname, charaGender;
+    public TMP_Text chara_fullname, charaGender, charaGenderSeparator;
     public scr_HoverableText chara_Race, chara_RaceTemplate;
     public scr_SelectableText chara_HomeFaction, chara_TempHomeFaction;
     public TMP_Text chara_location_ap;
@@ -359,11 +359,24 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         Utility.DestroyAllChildrenFrom(ref list_factionWork);
         Utility.DestroyAllChildrenFrom(ref list_CharaNeeds);
 
+        bool safe = scr_System_CentralControl.current.isSafeMode;
+
         // set current
         currentChara = c;
 
         chara_fullname.text = c.FullName;
-        charaGender.SetText(LocalizeDictionary.QueryThenParse(currentChara.Appearance.ToString()));
+        if (safe)
+        {
+            charaGenderSeparator.gameObject.SetActive(false);
+            charaGender.gameObject.SetActive(false);
+        }
+        else
+        {
+            charaGenderSeparator.gameObject.SetActive(true);
+            charaGender.gameObject.SetActive(true);
+            charaGender.SetText(LocalizeDictionary.QueryThenParse(currentChara.Appearance.ToString()));
+
+        }
         chara_Race.SetText(currentChara.Race.DisplayName, false, currentChara.Race.ID + "_tooltip");
         chara_RaceTemplate.SetText(currentChara.RaceTemplate.DisplayName, false, currentChara.RaceTemplate.ID + "_tooltip");
 

@@ -12,7 +12,7 @@ public class ActionPackage_ProductionOrder : ActionPackage
     [JsonIgnore] public override string JoinAPDescriptorKeyEX { get { return "ActionPackage_ProductionOrder_joinEX"; } }
     [SerializeField][JsonProperty] private string orderRecipeUID = "";
     private Manageable.ProductionOrder order_cache = null;
-    private Manageable.ProductionOrder order
+    [JsonIgnore] public Manageable.ProductionOrder order
     {
         get
         {

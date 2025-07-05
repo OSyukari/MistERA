@@ -98,7 +98,7 @@ public class Event : I_SerializationCallbackReceiver
 
             var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
 
-            var debug = true;
+            var debug = scr_System_CentralControl.current.LogPrefs.DLog_Events;
 
             switch(parameters[0])
             {

@@ -23,6 +23,13 @@ public class ActionPackage_Interaction : ActionPackage
 
     }
 
+    protected override bool PreEvaluate()
+    {
+        base.PreEvaluate();
+
+        return isValid;
+    }
+
     public override int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers)
     {
         var tempPackage = this.Copy();

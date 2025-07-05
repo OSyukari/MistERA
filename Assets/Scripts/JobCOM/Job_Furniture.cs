@@ -308,7 +308,7 @@ public class Job_Furniture : Job
             AddPackage(new List<ActionPackage>() { package });
             return true;
         }
-        else if (desiredCOM != null && desiredCOM.requirements.clothingRequirement < BodyEquipLayer.Outer && c.NeedUndress(desiredCOM.requirements.clothingRequirement + 1, Revealing.Erotic))
+        else if (desiredCOM != null && desiredCOM.requirements.clothingRequirement < BodyEquipLayer.Outer && c.NeedUndress(desiredCOM.requirements.clothingRequirement, Revealing.Erotic))
         {
             ActionPackage_Undress package = new ActionPackage_Undress(this, c.RefID, desiredCOM.requirements.clothingRequirement, Revealing.Erotic);
             if (!package.Validate())
@@ -334,7 +334,8 @@ public class Job_Furniture : Job
             
             if (pl2 != null)
             {
-                if (pl2.DoerRefs.Contains(scr_System_CampaignManager.current.Player.RefID)) {
+                if (pl2.DoerRefs.Contains(scr_System_CampaignManager.current.Player.RefID)) 
+                {
                     ss += "try join player existing pkg " + pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID);
                     if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.LogError($"{c.FirstName} try join player {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}");
                     var ev = new EventInstance(c, "RequestJoin", "");
@@ -359,6 +360,15 @@ public class Job_Furniture : Job
                 else if( pl2.JoinAP(c))
                 {
                     ss += "join existing pkg " + pl2.DescriptionText(c.RefID);
+
+                    // make an event that skip straight to join print since joining is already handled
+                    var ev = new EventInstance(c, "RequestJoin", "br_join");
+                    ev.Self = c;
+                    var tActors = new List<Character_Trainable>();
+                    foreach (var a in pl2.actorRefs) if (a != c.RefID) tActors.Add(scr_System_CampaignManager.current.FindInstanceByID(a));
+                    ev.Targets.Add("evTarget", tActors);
+                    scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+
                     if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");
                     return true;
                 }
@@ -477,7 +487,7 @@ public class Job_Furniture : Job
         public int currentGrowth = 0;
 
         public int maintenanceCooldown = -1;
-        [JsonIgnore] public override string DisplayName { get { return (HasContent ? targetCrop.yieldItemID : " - "); } }
+        [JsonIgnore] public override string DisplayName { get { return (HasContent ? LocalizeDictionary.QueryThenParse( targetCrop.yieldItemID ) : " - "); } }
 
         public override void DisposeInternal()
         {
@@ -504,11 +514,12 @@ public class Job_Furniture : Job
             else maintenanceCooldown = -1;
         }
 
+        string _tooltipCache = string.Empty;
         [JsonIgnore] public override string Tooltip { get
             {
                 if (targetCrop == null) return "";
-                //double percent = (currentGrowth / targetCrop.maxGrowth);
-                return "Current Growth : "+ ((double)currentGrowth / targetCrop.maxGrowth).ToString("#0.#%")+", harvest in "+ ((int) ((targetCrop.harvestThreshold - currentGrowth)/(1*scr_System_CampaignManager.current.GlobalTimeScale)/60/24)) +" days" ;
+                if (_tooltipCache == string.Empty) _tooltipCache = LocalizeDictionary.QueryThenParse("ui_furniture_container_cropStatus");
+                return _tooltipCache.Replace("$growth$", ((double)currentGrowth / targetCrop.maxGrowth).ToString("#0.#%")).Replace("$days$", ((int)((targetCrop.harvestThreshold - currentGrowth) / (1 * scr_System_CampaignManager.current.GlobalTimeScale) / 60 / 24)).ToString("N1"));
             } }
 
 

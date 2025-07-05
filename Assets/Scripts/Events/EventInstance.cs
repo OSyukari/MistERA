@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum EventStatus
@@ -27,9 +28,19 @@ public class EventInstance
     {
         get
         {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"EventInstance {(Self == null ? "null" : Self.FirstName)} {this.Name} isVisible? {Self == null} {Self == scr_System_CampaignManager.current.Player} {scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID)}");
             return Self == null || Self == scr_System_CampaignManager.current.Player || scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID);
         }
     }
+
+    public bool isPlayerRelated
+    { get
+        {
+            var playerRef = scr_System_CampaignManager.current.Player;
+            if (Self == null || Self == playerRef) return true;
+            foreach (var list in this.Targets.Values) if (list.Any(x => x == playerRef)) return true;
+            return false;
+        } }
 
     protected int targetRef = -1;
     protected Character_Trainable _self = null;
@@ -43,8 +54,9 @@ public class EventInstance
             _self = value;
             if (value != null) targetRef = value.RefID;
         }
-    
     }
+
+
 
     public Dictionary<string, List<Action>> FunctionCalls = new Dictionary<string, List<Action>>();
     public Dictionary<string, List<Character_Trainable>> Targets = new Dictionary<string, List<Character_Trainable>>();
@@ -99,7 +111,7 @@ public class EventInstance
                 nextEntry = nextEvent.GetEntryWithLabel(label);
                 if (nextEntry == null) this.Clear($"EventInstance {eventID} cannot find next entry label {label}");
             }
-            else if (currentEntry != null && currentEntry.isLast) this.Clear($"EventInstance {eventID} islast");
+            else if (currentEntry != null && currentEntry.isLast) this.Clear();
             else
             {
                 nextEntry = nextEvent.GetEntryAfter(currentEntry);
@@ -154,7 +166,9 @@ public class EventInstance
         nextEntry = null;
         currentEvent = null;
         nextEvent = null;
-        if (errorMsg != "") Debug.LogError(errorMsg);
+#if UNITY_EDITOR
+        if (errorMsg != "" && scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError(errorMsg);
+#endif
         updateHandler.EventHandler.Remove(this);
     }
 

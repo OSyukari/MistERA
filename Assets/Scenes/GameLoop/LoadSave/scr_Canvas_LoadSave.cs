@@ -165,7 +165,7 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
             }
             else
             {
-                if (LocalizeDictionary.Instance.Index.cachedLang == s.InnerFile.Language)
+                if (LocalizeDictionary.Instance.Index.cachedLang != s.Language)
                 {
                     tooltip = Utility.WrapTextColor("savefile is in another language, unforseen errors might occur", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
                     

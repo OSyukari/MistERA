@@ -129,7 +129,7 @@
                 "event_RequestJoin_Job_ev01_op1":"Accept",
                 "event_RequestJoin_Job_ev01_op2":"Refuse",
                 "event_RequestJoin_Job_ev02":"$evTarget.name$ refused $self.name$'s proposition",
-                "event_RequestJoin_Job_ev03":"$self.name$ joined $evTarget.name$'s action",
+                "event_RequestJoin_Job_ev03":"$self.name$ joined $evTarget.name$'s ongoing activity",
                 "event_RequestJoin_Job_ev04":"Action interrupted due to $evTarget.name$'s action cannot be joined"
             }
         }

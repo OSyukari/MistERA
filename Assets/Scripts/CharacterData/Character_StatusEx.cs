@@ -37,8 +37,13 @@ public class Index_StatusEx : I_IndexHasID, I_IndexMergeable
 public class StatusEx_Base
 {
     public string statusID = "";
-    [SerializeField][JsonProperty] protected string displayName = "";
-    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(statusID, displayName); } }
+
+    string _displayNameCache = string.Empty;
+    [JsonIgnore] public string DisplayName { 
+        get {
+            if (_displayNameCache == string.Empty) _displayNameCache = LocalizeDictionary.QueryThenParse(statusID, statusID);
+            return _displayNameCache; } }
+
     public bool noDisplay = false;
     public bool constant = false;
     public string stringFormat = "N1";
@@ -57,10 +62,16 @@ public class StatusEx_Base
     [System.Serializable]
     public class Variant
     {
-        public string displayName = "";
+        [SerializeField][JsonProperty] public string displayName = "";
+
+        string _displayNameCache = string.Empty;
+        [JsonIgnore] public string DisplayName { get {
+                if (_displayNameCache == string.Empty) _displayNameCache = LocalizeDictionary.QueryThenParse(displayName, displayName);
+                return _displayNameCache; } }
         public float threshold = 0;
         public List<string> tags = new List<string>();
         public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
+        public bool displayable = true;
     }
 
     [System.Serializable]
@@ -169,14 +180,7 @@ public class StatusEx_Instance : I_CacheValues
 
     public void Draw(scr_HoverableText text)
     {
-        string svrt = Severity.ToString(BaseRef.stringFormat);
-        string data = (BaseRef.DisplayName == "" ? "" : BaseRef.DisplayName);
-        if (SeverityDisplayName != "")
-        {
-            if (data == "") data += SeverityDisplayName;
-            else data += (": " + SeverityDisplayName);
-        }
-        data += ("(" + svrt + ")");
+        string data = $"{SeverityDisplayName}({Severity.ToString(BaseRef.stringFormat)})";
         text.SetText(data, false, baseRef.statusID+"_tooltip");
         text.SetExternalTooltip(String.Join("\n",ModString));
     }
@@ -261,8 +265,16 @@ public class StatusEx_Instance : I_CacheValues
 
     [JsonIgnore] public string SeverityDisplayName
     {
-        get { return BaseRef.variants[SeverityIndex].displayName; }
+        get {
+            var variant = BaseRef.variants[SeverityIndex];
+            return variant.displayable && variant.displayName != "" ? variant.DisplayName : this.BaseRef.DisplayName; }
     }
+
+    [JsonIgnore] public bool SeverityDisplayable
+    { get
+        {
+            return BaseRef.variants[SeverityIndex].displayable;
+        } }
 
     [JsonIgnore] public List<string> Tags { get { return this.BaseRef.variants[SeverityIndex].tags; } }
 

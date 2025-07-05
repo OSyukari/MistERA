@@ -7,7 +7,7 @@ using System;
 public class initScript_basicInfo : MonoBehaviour
 {
 
-    public scr_HoverableText fullName, gender, race, raceTemplate, factionStatus;
+    public scr_HoverableText fullName, gender, genderfollowup, race, raceTemplate, factionStatus;
     public scr_HoverableText hp, mp, st, en;
     public scr_HoverableText mood, stress, lust; // statusex instance
     // consciousness fatigue sexstimulation
@@ -36,9 +36,21 @@ public class initScript_basicInfo : MonoBehaviour
     {
         if (chara == null) return;
 
+        bool safe = scr_System_CentralControl.current.isSafeMode;
+
         fullName.SetText(chara.FullName, false);
         //Debug.LogError("Query gender data on string " + chara.Appearance.ToString());
-        gender.SetText(LocalizeDictionary.QueryThenParse( chara.Appearance.ToString()), false);
+        if (safe)
+        {
+            genderfollowup.gameObject.SetActive(false);
+            gender.gameObject.SetActive(false);
+        }
+        else
+        {
+            genderfollowup.gameObject.SetActive(true);
+            gender.gameObject.SetActive(true);
+            gender.SetText(LocalizeDictionary.QueryThenParse(chara.Appearance.ToString()), false);
+        }
         race.SetText(chara.Race.DisplayName, false, chara.Race.ID + "_tooltip");
         raceTemplate.SetText(chara.RaceTemplate.DisplayName, false, chara.RaceTemplate.ID+"_tooltip");
         factionStatus.SetText(chara.FactionManager.CurrentlyActiveFactionStatus);

@@ -14,11 +14,21 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
     public scr_SpineLoader spineLoader;
     int chara_refID = -1;
+    Character_Trainable _chara;
     Character_Trainable chara { get
         {
             if (chara_refID < 0) return null;
-            else return scr_System_CampaignManager.current.FindInstanceByID(chara_refID);
-        } }
+            else if (_chara == null )
+            {
+                _chara = scr_System_CampaignManager.current.FindInstanceByID(chara_refID);
+            }
+            return _chara;
+        } set
+        {
+            _chara = value;
+            chara_refID = _chara.RefID;
+        }
+    }
     public Image picture;
 #pragma warning disable CS0436 // Type conflicts with imported type
     public ScrollRect pictureRect;
@@ -30,6 +40,8 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     public void InitializeWithArgument(int refID)
     {
         chara_refID = refID;
+        scr_System_CampaignManager.current.CurrentTargetEX = chara;
+
         if (!initialized) Initialize();
         //pictureRect.onValueChanged.AddListener(OnPictureRectChange);
 
@@ -67,6 +79,8 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     {
         base.Initialize();
 
+        bool safe = scr_System_CentralControl.current.isSafeMode;
+
         foreach (scr_SelectableText button in GetComponentsInChildren<scr_SelectableText>(true))
         {
            // Debug.Log("Button " + button + " " + button.optionID);
@@ -77,7 +91,9 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                 //case 2:   // health status tab
                     //button.Initialize(this, new button_ChangeTab(this, button, panel_health, InitializeHealth)); break;
                 case 3:   // equipment tab
-                    button.Initialize(this, new button_ChangeTab(this, button, panel_equip, InitializeEquipment)); break;
+                    if (safe) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new button_ChangeTab(this, button, panel_equip, InitializeEquipment)); 
+                    break;
                 case 4:   // relationship tab
                     button.Initialize(this, new button_ChangeTab(this, button, panel_relation, InitializeRelationship)); break;
                // case 5:   // manage tab
@@ -145,7 +161,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
 
     public RectTransform tab_basicInfo_statGrid;
-
+    public initScript_basicInfo initScript_BasicInfo;
     bool initialized_basicInfo = false;
     private void InitializeBasicInfo()
     {
@@ -161,12 +177,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         if (initialized_basicInfo) return;
         else initialized_basicInfo = true;
 
-        // get initializer script
-        var initScript = panel_basicInfo.GetComponentInChildren<initScript_basicInfo>(true);
-        if (initScript != null)
-        {
-            initScript.InitData(chara);
-        }
+        initScript_BasicInfo.InitData(chara);
     }
 
     private void UnInitializeBasicInfo()

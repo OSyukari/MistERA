@@ -290,6 +290,8 @@
 "com_special_timestop_begin": "时间停止",
 "com_special_timestop_end": "结束时停",
 
+"ui_furniture_container_cropStatus": "生长: $growth$, $days$日后可收获",
+
 "helper_messageTitle": "指南",
 
 "helper_AIRoutine_guide": "NPC行为逻辑",
@@ -331,8 +333,12 @@
 "ui_update_elapsedTime":"经过$count$分钟",
 "ui_movement_leavesRoom":"$self$离开了$room$",
 "ui_movement_entersRoom":"$self$进入了$room$",
-"ui_movement_playerEntersRoom":"进入了$room$",
-"ui_movement_charaInRoom":"房间内成员：$names$"
+"ui_movement_playerEntersRoom":"<align=\"center\">进入了$room$</align>",
+"ui_movement_charaInRoom":"<align=\"center\">房间内成员：$names$</align>",
+
+"ui_diceroll_autosuccess":"自动成功",
+"ui_diceroll_success":"成功",
+"ui_diceroll_failure":"失败"
 
             },
             "en-us": {
@@ -355,6 +361,8 @@
 "ui_entry_memory_description_multiple_counts": "$counts$ times",
 "ui_entry_separator": ", ",
 "ui_entry_multipleCount": "$item$ x$count$",
+
+"ui_furniture_container_cropStatus": "Growth: $growth$, harvest in $days$ days",
 
 "ui_entry_memory_withRoomName": "$desc$ in $roomname$",
 "ui_entry_memory_sleep_begin": "sleeping in $room$",
@@ -657,8 +665,12 @@
 "ui_update_elapsedTime":"elapsed time: $count$ minutes",
 "ui_movement_leavesRoom":"$self$ leaves $room$",
 "ui_movement_entersRoom":"$self$ enters $room$",
-"ui_movement_playerEntersRoom":"Entering $room$",
-"ui_movement_charaInRoom":"Chara in room: $names$"
+"ui_movement_playerEntersRoom":"<align=\"center\">Entering $room$</align>",
+"ui_movement_charaInRoom":"<align=\"center\">Chara in room: $names$</align>",
+
+"ui_diceroll_autosuccess":"Automatic Success",
+"ui_diceroll_success":"Success",
+"ui_diceroll_failure":"Failure"
 
 
             }

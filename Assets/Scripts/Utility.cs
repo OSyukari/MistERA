@@ -16,6 +16,7 @@ using static Stats_Derived_Extended;
 using QuikGraph.Algorithms.Search;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 public static class Utility
 {                                               //  F      E      D      C      B      A      S    
@@ -369,8 +370,8 @@ public static class Utility
     /// <returns></returns>
     public static bool ListContainsLoose(List<string> L1, List<string> L2)
     {
-        L1 = L1.Distinct().ToList();
-        L2 = L2.Distinct().ToList();
+        L1 = Distinct(L1);
+        L2 = Distinct(L2);
         return L2.Count() == 0 || L2.Except(L1).Count() != L2.Count();
     }
 
@@ -514,9 +515,17 @@ public static class Utility
     /// <returns></returns>
     public static bool ListContainsStrict(List<string> L1, List<string> L2)
     {
-        L1 = L1.Distinct().ToList();
-        L2 = L2.Distinct().ToList();
-        return L2.Except(L1).Count() == 0 && L2.Count <= L1.Count;
+        // Use HashSet to de-duplicate L1
+        HashSet<string> setL1 = new(L1);
+        HashSet<string> seen = new();
+
+        foreach (var item in L2)
+        {
+            if (!seen.Add(item)) continue; // skip duplicates in L2
+            if (!setL1.Contains(item)) return false;
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -978,11 +987,25 @@ public static class Utility
             GetActorTag(ref extraTargetTags, b);
             // if a cannot act then a cannot react then it doesnt make sense to add target gender experience
         }
-        ownerTags = ownerTags.Distinct().ToList();
-        extraComTags = extraComTags.Distinct().ToList();
-        extraTargetTags = extraTargetTags.Distinct().ToList();
+        ownerTags = Distinct(ownerTags);
+        extraComTags = Distinct(extraComTags);
+        extraTargetTags = Distinct(extraTargetTags);
 
         if (extraTargetTags.Contains("timestop") || extraTargetTags.Contains("sleeping") || extraTargetTags.Contains("unconscious")) extraComTags.Remove("service");
+    }
+
+    public static List<string> Distinct(List<string> input)
+    {
+        HashSet<string> seen = new();
+        List<string> result = new(input.Count); // pre-allocate for efficiency
+
+        foreach (var str in input)
+        {
+            if (seen.Add(str))
+                result.Add(str);
+        }
+
+        return result;
     }
 
     public static void GetActorTag(ref List<string> tags, Character_Trainable c)
@@ -1172,6 +1195,17 @@ public static class Utility
                     Debug.LogError($"parse console command {parsed[0]} error");
                 }
                 break;
+            case "setCurrentHour":
+                if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int targetHour))
+                {
+                    var advanceHour = (targetHour - scr_System_Time.current.getCurrentTime().Hour) % 24;
+                    scr_System_Time.current.UpdateTime(0, advanceHour, 0);
+                }
+                else
+                {
+                    Debug.LogError($"parse console command {parsed[0]} error");
+                }
+                break;
 
         }
 
@@ -1197,7 +1231,7 @@ public static class Utility
 
 
 
-    public static float ParseStatMods(object source, Character_Trainable c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, List<string> stringResults = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false )
+    public static float _ParseStatMods(object source, Character_Trainable c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, List<string> stringResults = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false )
     {
 
 
@@ -1313,14 +1347,144 @@ public static class Utility
 
     }
 
+    public static float ParseStatMods(object source, Character_Trainable c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, List<string> stringResults = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false)
+    {
+
+
+        string sourceID = string.Empty;
+        var statsExtList = scr_System_Serializer.current.index_StatsExtended.list;
+        var statsDerivedList = scr_System_Serializer.current.index_StatsDerived.list;
+
+        foreach (var modifier in list)
+        {
+            // baseValue do not allow GetValue to prevent recursive calls
+            // if (modifier.ValueType != "number") continue;
+            // this filter is done in statmanager getmodifier stage
+
+            bool isStatEx = statsExtList.Any(x => x.ID == modifier.valueString);
+            bool isStatDerived = statsDerivedList.Any(x => x.ID == modifier.valueString);
+
+            switch (source)
+            {
+                case null:
+                    Debug.LogError("source is null");
+                    continue;
+
+                case Stats_Base statsBase:
+                    sourceID = statsBase.ID;
+                    if (!isValidQuery(isStatEx, isStatDerived, modifier, statsBase)) continue;
+                    break;
+
+                case Stats_Derived_Base derivedBase:
+                    sourceID = derivedBase.ID;
+                    if (!isValidQuery(isStatEx, isStatDerived, modifier, derivedBase)) continue;
+                    break;
+
+                case Stats_Derived_Extended_Instance extended:
+                    sourceID = extended.ID;
+                    if (!isValidQuery(isStatEx, isStatDerived, modifier, extended)) continue;
+                    break;
+
+                case StatusEx_Instance statusEx:
+                    sourceID = statusEx.BaseRef.statusID;
+                    if (!isValidQuery(isStatEx, isStatDerived, modifier, statusEx)) continue;
+                    break;
+
+                default:
+                    Debug.LogError("source is of unknown type");
+                    continue;
+            }
+
+            if (!storage.TryGetValue(modifier.modKey, out var entry))
+            {
+                entry = new StatsManager.ModStorage(1);
+                storage.Add(modifier.modKey, entry);
+            }
+
+            float value = Utility.StatValue(modifier, c); // avoid calling this 4x
+            switch (modifier.type)
+            {
+                case Stat_Modifier.StatMod_Type.setBase:
+                    entry.baseValue = value;
+                    break;
+                case Stat_Modifier.StatMod_Type.setMult:
+                    entry.baseMult = value;
+                    break;
+                case Stat_Modifier.StatMod_Type.addMult:
+                    entry.addMult += value;
+                    break;
+                case Stat_Modifier.StatMod_Type.addBase:
+                    entry.addValue += value;
+                    break;
+            }
+        }
+
+        //ModStorage baseMod = modifiers["baseValue"];
+        //ModStorage finalMod = modifiers["finalMod"];
+        if (capModded)
+        {
+            valueCeiling = 0f;
+            valueFloor = 0f;
+        }
+
+        float mods = 0f;
+        StatsManager.ModStorage finalMod = null;
+        StringBuilder sb = stringResults != null ? new StringBuilder(64) : null;
+
+        foreach (var kvp in storage)
+        {
+            if (kvp.Key == "finalMod")
+            {
+                finalMod = kvp.Value;
+                continue;
+            }
+
+            float v = (kvp.Value.baseValue + kvp.Value.addValue) * (kvp.Value.baseMult + kvp.Value.addMult);
+            mods += v;
+
+            if (capModded)
+            {
+                valueCeiling = Math.Max(v, valueCeiling);
+                valueFloor = Math.Min(v, valueFloor);
+            }
+
+            if (sb != null)
+            {
+                sb.Clear();
+                sb.Append(kvp.Key)
+                  .Append(" (").Append(kvp.Value.baseValue)
+                  .Append("+").Append(kvp.Value.addValue)
+                  .Append(")*(").Append(kvp.Value.baseMult)
+                  .Append("+").Append(kvp.Value.addMult).Append(")");
+                stringResults.Add(sb.ToString());
+            }
+        }
+
+        if (finalMod != null)
+        {
+            if (sb != null)
+            {
+                sb.Clear();
+                sb.Append("finalMod * (")
+                  .Append(finalMod.baseMult).Append(" + ").Append(finalMod.addMult)
+                  .Append(") (").Append(finalMod.baseValue).Append("+").Append(finalMod.addValue).Append(")");
+                stringResults.Add(sb.ToString());
+            }
+
+            mods = mods * (finalMod.baseMult + finalMod.addMult) + (finalMod.baseValue + finalMod.addValue);
+        }
+
+        return Mathf.Clamp(mods, valueFloor, valueCeiling);
+    }
+
     public static float StatValue(Stat_Modifier modifier, Character_Trainable chara)
     {
-        if (chara == null && modifier.valueType != "number") Debug.LogError("STATModifier.Value() ALERT: chara parameter is allowed to be null ONLY if valueType is not number");
+        if (chara == null && modifier.valueType != Stat_Modifier_Type.number) Debug.LogError("STATModifier.Value() ALERT: chara parameter is allowed to be null ONLY if valueType is not number");
         switch (modifier.valueType)
         {
-            case "getStatValue":
+            case Stat_Modifier_Type.getStatValue:
                 return chara.Stats.GetStatValue(modifier.valueString);
-            case "getStatMod":
+            case Stat_Modifier_Type.getStatMod:
                 switch (modifier.valueString)
                 {
                     case "Strength": return chara.Stats.Strength.GetStatMod();
@@ -1329,11 +1493,9 @@ public static class Utility
                     case "Willpower": return chara.Stats.Willpower.GetStatMod();
                 }
                 break;
-            case "number":
-                if (float.TryParse(modifier.valueString, out float result)) { return result; }
-                else Debug.LogError("Error float tryparse");
-                break;
-            case "getStatusValue":
+            case Stat_Modifier_Type.number:
+                return modifier.ValueFloat;
+            case Stat_Modifier_Type.getStatusValue:
                 //Debug.Log("Getting status value");
                 var i = chara.Stats.GetStatusByStringMatch(modifier.valueString);
                 return i == null ? 0 : i.Severity;
@@ -1369,12 +1531,15 @@ public static class EventUtility
 #endif
         // display line
 
+
         if (owner.isVisible && block.line != "")
         {
+            bool rA = !owner.isPlayerRelated;
             var content = Utility.ParseEventEntry(owner, block.line);
+            if (rA) content = $"<align=\"right\">{content}</align>";
             // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
             // but on execute they are consistent
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, content,"", false));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, rA ? $"<align=\"right\">{content}</align>" : content, "", false));
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
 

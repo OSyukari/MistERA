@@ -450,11 +450,13 @@ public class StatsManager
     }
 
 
-    [SerializeField][JsonProperty] private int pauseXMinAfterMod_Sex = 0;
+    [SerializeField][JsonProperty] private int pauseXMinAfterMod = 0;
 
 
     public void PreUpdateTimeTick()
     {
+        bool timestopped = Owner.isTimeStopped;
+        if (timestopped) return;
         for (int i = StatusInstances.Count - 1; i >= 0; i--)
         {
             if (!StatusInstances[i].BaseRef.constant) StatusInstances[i].elapsedTime += 1;
@@ -476,6 +478,7 @@ public class StatsManager
         foreach (var i in list_statsDerived) i.ClearCache();
         */
 
+
         bool refresh = false;
 
         for (int i = StatusInstances.Count - 1; i >= 0; i--)
@@ -484,7 +487,7 @@ public class StatsManager
 
             if (StatusInstances[i].BaseRef.variationMode.pauseXMinAfterMod > 0)
             {
-                StatusInstances[i].pauseXMinAfterMod += pauseXMinAfterMod_Sex;
+                StatusInstances[i].pauseXMinAfterMod += pauseXMinAfterMod;
             }
 
             if (StatusInstances[i].pauseXMinAfterMod > 0)
@@ -558,14 +561,14 @@ public class StatsManager
                         refresh = true;
 
                     }
-                    else if (curr.hasRandomVariation)
+                    else if (curr.hasRandomVariation && time > 0)
                     {
                         refresh = true;
                     }
                 }
             }
         }
-        pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex - t.Minutes, 0);
+        pauseXMinAfterMod = Math.Max(pauseXMinAfterMod - t.Minutes, 0);
         if (!hasSexualStimulation) consecutiveClimaxCount = 0;
 
         //Debug.LogError("Setting CurrentlyCliaxed to false");
@@ -577,7 +580,7 @@ public class StatsManager
 
     }
 
-    [JsonIgnore] protected bool hasSexualStimulation { get { return pauseXMinAfterMod_Sex > 0 || (SexStimulation != null && SexStimulation.Severity != 0) ; } }
+    [JsonIgnore] protected bool hasSexualStimulation { get { return pauseXMinAfterMod > 0 || (SexStimulation != null && SexStimulation.Severity != 0) ; } }
 
     [SerializeField][JsonProperty] protected int consecutiveClimaxCount = 0;
     [JsonIgnore] public int ConsecutiveClimaxCount { get { return consecutiveClimaxCount; } }
@@ -640,7 +643,7 @@ public class StatsManager
             foreach(StatusEx_Instance i in statusInstancesEx)
             {
                 if (i.BaseRef.noDisplay) continue;
-                if (i.SeverityDisplayName == "") continue;
+                if (!i.SeverityDisplayable) continue;
                 list.Add(i);
             }
             return list;
@@ -663,7 +666,7 @@ public class StatsManager
             foreach (Status_Instance i in StatusInstances)
             {
                 if (i.BaseRef.noDisplay) continue;
-                if (i.SeverityDisplayName == "") continue;
+                if (!i.SeverityDisplayable) continue;
                 list.Add(i);
             }
             return list;
@@ -730,7 +733,7 @@ public class StatsManager
                 
                 //Debug.LogError("MATH MIN ["+Math.Abs(afterClimax.Severity).ToString()+"] ["+ modSeverity.ToString() + "]");
                 AfterClimax.SeverityAdd(Math.Min(Math.Abs(AfterClimax.Severity), modSeverity), severityCap);
-                pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex, 1);
+                pauseXMinAfterMod = Math.Max(pauseXMinAfterMod, 1);
             }
 
             //Debug.LogError("Stimulating status " + s + " with severityCap at " + severityCap);
@@ -740,7 +743,7 @@ public class StatsManager
             instance.pauseXMinAfterMod = instance.BaseRef.variationMode.pauseXMinAfterMod;
             if (instance.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
             {
-                pauseXMinAfterMod_Sex = Math.Max(pauseXMinAfterMod_Sex, instance.BaseRef.variationMode.pauseXMinAfterMod);
+                pauseXMinAfterMod = Math.Max(pauseXMinAfterMod, instance.BaseRef.variationMode.pauseXMinAfterMod);
                 //foreach (var inst in instances) if (inst.BaseRef.variationMode.variationType == Status_Base.Status_Variation_Type.sex) inst.pauseXMinAfterMod = inst.BaseRef.variationMode.pauseXMinAfterMod;
             }
         }

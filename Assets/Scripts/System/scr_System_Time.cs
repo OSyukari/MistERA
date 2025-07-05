@@ -95,6 +95,10 @@ public class scr_System_Time : MonoBehaviour
         UpdateTime(0, 0, 0, 0, true);
     }
 
+    public void NotifyTimeResumeEnd()
+    {
+        if (this.TimeResume) this.timeStop = TimestopState.normal;
+    }
     public bool NotTimetop { get { return timeStop != TimestopState.timestop; } }
     /// <summary>
     /// LOOSE TIMESTOP CHECK, WILL RETURN TRUE EVEN DURING 'RESUMING'
@@ -129,7 +133,9 @@ public class scr_System_Time : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// This update timespan already takes care of timestop calculation
+    /// </summary>
     public event Action<TimeSpan> Observer_globalTime;
     /// <summary>
     /// Day update happens after Hours update

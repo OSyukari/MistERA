@@ -145,6 +145,7 @@ public class Job_CharaCOM : Job
     {
         get
         {
+            return packages_previous.Count > 0;
             return (packages_current.Count > 0 || packages_previous.Count > 0);
         }
     }
@@ -159,6 +160,17 @@ public class Job_CharaCOM : Job
             updatePrep = false;
         }
     }*/
+
+    public override void PostUpdateTime()
+    {
+        int prevCount = this.packages_previous.Count;
+        base.PostUpdateTime();
+        if (this.packages_previous.Count != prevCount)
+        {
+            Owner.NotifyJobStateChange();
+        }
+        //Debug.Log($"{Owner.FirstName} Characom postupdate {prevCount} {this.packages_previous.Count} isActive? {this.isActive} lastInteracted {GetLastInteractedActorRefs(Owner.RefID).Count}");
+    }
 
     public override void PreUpdateTime(int currentMinute)
     {
@@ -177,7 +189,7 @@ public class Job_CharaCOM : Job
         //if (p == null) p = packages_previous.Find(x => x.actorRefs.Contains(charaRef));
         List<string> tags = new List<string>();
         foreach(var p in ps) tags.AddRange(p.ComTags);
-        tags = tags.Distinct().ToList();
+        tags = Utility.Distinct(tags);//.Distinct().ToList();
         if (tags.Contains("unsafe")) return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM_unsafe").Replace("$target$", String.Join(",",names));
         else if (tags.Contains("safe")) return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM_touch").Replace("$target$", String.Join(",", names));
         else return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM").Replace("$target$", String.Join(",", names));

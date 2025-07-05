@@ -246,7 +246,7 @@ public abstract class ActionPackage
         {
             if (ep.ActorRefs.Contains(charaRef))
             {
-                refused = ep.Response <= Memory_Response.Refuse;
+                refused = ep.Response == Memory_Response.Refuse;
                 interrupted = ep.Response == Memory_Response.Interrupted;
             }
             //if (ep.ReceiverRef == charaRef && ep.DoerRef != charaRef && ep.Response < Memory_Response.Accept) refused = true;
@@ -324,10 +324,23 @@ public abstract class ActionPackage
         }
     }
 
+    [JsonIgnore] public bool isTimeStopped { get
+        {
+            if (!scr_System_Time.current.TimeStopStrict) return false;
+            else if (this.doer.Any(x => !x.isTimeStopped)) return false;
+            return true;
+        } }
+
     [SerializeField][JsonProperty] protected int duration;
     [JsonProperty] protected bool paused = false;
     [JsonProperty] public int pausedTick = 0;
-    [JsonIgnore] public bool isPaused { get { return paused; } set { paused = value; if (!paused) pausedTick = 0; } }
+    [JsonIgnore] public bool isPaused { get { return paused; } set { 
+            paused = value; if (!paused)
+            {
+                pausedTick = 0;
+                foreach (var d in this.doer) d.NotifyJobStateChange();
+            }
+        } }
 
 
 
@@ -341,7 +354,9 @@ public abstract class ActionPackage
         {
             List<string> names = new List<string>();
             foreach (var i in actorRefs) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
+#if UNITY_EDITOR
             Debug.LogError($"NotifyInterrupted on TemporyAP for actors [{String.Join("|", names)}] skipping EP notify");
+#endif
             return;
         }
         Dictionary<Character_Trainable, List<EvaluationPackage>> interruptedActors = new Dictionary<Character_Trainable, List<EvaluationPackage>>();
@@ -492,40 +507,21 @@ public abstract class ActionPackage
             allUnconscious = allUnconscious && c.Stats.isConsciousnessUnconscious;
         }
 
-        if (!timeStop && allUnconscious && targetCOM != null && !targetCOM.comTags.Contains("sleep"))
+        if (!timeStop && allUnconscious && targetCOM != null && !targetCOM.comTags.Contains("sleep") && this.duration > 0)
         {
-            Debug.LogError("Alert All DOERS Unconscious on job (without sleep tag) " + targetCOM.DisplayName(COMVariantID) +" in room "+ (job.ParentRoom != null ? job.ParentRoom.DisplayName : ""));
+            Debug.LogError("Alert All DOERS Unconscious on job (without sleep tag) " + targetCOM.DisplayName(COMVariantID) +$" remaintime {this.Duration} in room "+ (job.ParentRoom != null ? job.ParentRoom.DisplayName : ""));
         }
 
         if (!timeStop && !allUnconscious)
         {   
             if (!Ticked) StartTime = scr_System_Time.current.getCurrentTime() - TimeSpan.FromMinutes(tickDuration);
 
-            if (targetCOM != null && duration == this.targetCOM.TimeScale && targetCOM.comTags.Contains("sleep"))
+            this.duration = Math.Max(0, this.duration - tickDuration);
+            if (this.isPaused)
             {
-                //Debug.LogError("AP START WITH TAG SLEEP CHECKING IF SHOULD SLEEP");
-                foreach (var c in doer)
-                {
-                    if (c.shouldSleep && c.RefID > 0 && !c.Stats.isSleeping)
-                    {
-                        //Debug.LogError($"{c.FirstName} is going to sleep");
-                        c.Sleep();
-
-                        //Debug.Log("ADDING SLEEP TO " + c.FirstName);
-                    }
-                    
-                }
-                //if (c.canSleep) 
-                // this.duration += 1;
-                this.duration = tickDuration + 1;
+                Debug.LogError($"Tick on paused AP {this.DisplayName}, unpausing");
+                this.isPaused = false;
             }
-            else
-            {
-                // timeStop and allUnconscious will cause Tick to stop ticking.
-                this.duration = Math.Max(0, this.duration - tickDuration);
-            }
-
-
             Ticked = true;
             // if refused, cut short the whole thing
 
@@ -556,18 +552,9 @@ public abstract class ActionPackage
                             rc.ChangeCurrentJob(job);   // THIS IS BAD!
                             Debug.LogError($"WARNING CHARA {rc.FirstName} JOIN JOB {this.DisplayName} THROUGH TICK!");
                         }
-
-                        if (rc.RefID > 0 && duration == this.targetCOM.TimeScale && targetCOM.comTags.Contains("sleep"))
-                        {
-                            Debug.LogError($"{rc.FirstName} is being set to sleep");
-                            rc.Sleep();
-                            // if (rc.canSleep) 
-
-                        }
                     }
                 }
             }
-            
         }
        
         if (duration <= 0)
@@ -1035,8 +1022,17 @@ public abstract class ActionPackage
                 else if (ep.Receiver != null && (ep.Receiver.RefID == 0 || ep.Receiver.RefID == scr_System_CampaignManager.current.CurrentTargetRef)) rightAlign = false;
                 if (ep.Actors.Find(x => x.RefID == 0) != null && ep.Actors.Count < 2) continue; // skip player alone package
 
-                if (ep.Doer != null && ep.Doer.RefID != 0) checkResults.Add("("+title + ") " + ep.checkResults_doer);
-                if (ep.Receiver != null && ep.Receiver.RefID != 0 && (ep.Doer == null || ep.Doer.RefID != ep.Receiver.RefID)) checkResults.Add("("+title + ") " + ep.checkResults_receiver);
+                if (scr_System_CampaignManager.current.DebugMode)
+                {
+                    if (ep.Doer != null && ep.Doer.RefID != 0) checkResults.Add("(" + title + ") " + ep.checkResults_doer_short);
+                    if (ep.Receiver != null && ep.Receiver.RefID != 0 && (ep.Doer == null || ep.Doer.RefID != ep.Receiver.RefID)) checkResults.Add("(" + title + ") " + ep.checkResults_receiver_short);
+                }
+                else
+                {
+                    if (ep.Doer != null && ep.Doer.RefID != 0) checkResults.Add("(" + title + ") " + ep.checkResults_doer_short);
+                    if (ep.Receiver != null && ep.Receiver.RefID != 0 && (ep.Doer == null || ep.Doer.RefID != ep.Receiver.RefID)) checkResults.Add("(" + title + ") " + ep.checkResults_receiver_short);
+                }
+
             }
             if (rightAlign)
             {
@@ -1320,6 +1316,36 @@ public abstract class ActionPackage
                     Debug.LogError("endSex called but doer [" + evp.Doer.FirstName + "] current job is not sex");
 
                 }*/
+            }
+            else if (targetCOM.comTags.Contains("sleep"))
+            {
+                foreach (var c in doer)
+                {
+                    if (c.hasSleepNeed && !c.Stats.isSleeping)// && c.RefID > 0)
+                    {
+                        Debug.Log($"{c.FirstName} is going to sleep, current command {targetCOM.DisplayName(COMVariantID)}");
+                        c.Sleep();
+
+                        //Debug.Log("ADDING SLEEP TO " + c.FirstName);
+                    }
+                    else
+                    {
+                        Debug.LogError($"{c.FirstName} sleep error, either already sleeping or cannot sleep");
+                    }
+                }
+                foreach (var c in receiver)
+                {
+                    if (c.hasSleepNeed && !c.Stats.isSleeping)
+                    {
+
+                        c.Sleep();
+                        Debug.Log($"{c.FirstName} is being set to sleep, current command {targetCOM.DisplayName(COMVariantID)}");
+                    }
+                    else
+                    {
+                        Debug.LogError($"{c.FirstName} sleep error, either already sleeping or cannot sleep");
+                    }
+                }
             }
         }
     }

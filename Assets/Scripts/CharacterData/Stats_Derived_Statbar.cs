@@ -160,11 +160,15 @@ public class Stats_Derived_Extended_Instance
     public void Increment(float amount)
     {
         maxValueStat = null;
-        var mxVal = MaxValue;
-        if (value + amount < mxVal && value + amount > 0) value += amount;
-        else if (value + amount >= mxVal) value = mxVal;
-        else if (value + amount <= 0f) value = 0f;
-        else Debug.Log("Derived Stat [" + this.parentID + "] Increment value error");
+        if (amount < 0)
+        {   // if deduction, skip checking maxvalue because its costly
+            value = Math.Max(0f, value + amount);
+        }
+        else
+        {
+            var mxVal = MaxValue;
+            value = Math.Min(mxVal, value + amount);
+        }
     }
 
     [JsonIgnore] public float ValuePercentile

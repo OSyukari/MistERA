@@ -312,6 +312,7 @@ public class scr_panel_COMmanager : scr_Menu
         filters_sextouch.AddRange(filters_Touch);
 
         filterState = new Dictionary<COMFilter, bool>();
+        filterState.Add(COMFilter.Debug, false);
         this.buttonsByID = new Dictionary<int, scr_SelectableText>();
         validatorsByID = new Dictionary<int, ButtonValidator>();
         indexCOM = new Dictionary<string, int>();
@@ -344,32 +345,89 @@ public class scr_panel_COMmanager : scr_Menu
 
 
 
-                case -6400: button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button,COMTabs.Interaction, panel_InteractionCOMs, filters_Interact)); break;
-                case -6401: button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Sex, panel_SexCOMs, filters_sextouch, Box_UndressCOMs)); break;
-                case -6402: button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Inventory, panel_InventoryCOMs, filters_Inventory)); break;
-                case -6403: button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Combat, panel_CombatCOMs, filters_Combat)); break;
+                case -6400: button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Interaction, panel_InteractionCOMs, filters_Interact)); break;
 
+                case -6401:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Sex, panel_SexCOMs, filters_sextouch, Box_UndressCOMs)); 
+                    break;
+                case -6402:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Inventory, panel_InventoryCOMs, filters_Inventory)); 
+                    break;
+                case -6403:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Combat, panel_CombatCOMs, filters_Combat)); 
+                    break;
                 case -6500: button.Initialize(this, new ButtonValidator_ChangeDebugFilter(this, COMFilter.Debug, button)); break;
                 case -6511: button.Initialize(this, new ButtonValidator_ChangeDeterministicRollsFilter(this, COMFilter.DeterministicRolls, button)); break;
-                case -6509: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Touch, button)); break;
-                case -6510: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Service, button)); break;
-                case -6501: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Oral, button)); break;
-                case -6502: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Breast, button)); break;
-                case -6503: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Vaginal, button)); break;
-                case -6504: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Anal, button)); break;
-                case -6505: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Inv_Ingest, button)); break;
-                case -6506: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Inv_Equip, button)); break;
+                case -6509:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Touch, button)); 
+                    break;
+                case -6510:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Service, button)); 
+                    break;
+                case -6501:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Oral, button)); 
+                    break;
+                case -6502:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Breast, button));
+                    break;
+                case -6503:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Vaginal, button));
+                    break;
+                case -6504:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Anal, button));
+                    break;
+                case -6505:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Inv_Ingest, button));
+                    break;
+                case -6506:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Inv_Equip, button)); 
+                    break;
                 case -6507: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Act_Room, button)); break;
                 case -6508: button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Act_Work, button)); break;
 
-                case -6600: button.Initialize(this, new ButtonValidator_FixClothes(this, button, true)); break;
-                case -6601: button.Initialize(this, new ButtonValidator_RedressLayers(this, button, true, 1)); break;
-                case -6602: button.Initialize(this, new ButtonValidator_UndressLayers(this, button, true, 1)); break;
-                case -6603: button.Initialize(this, new ButtonValidator_UndressAll(this, button, true, 1)); break;
-                case -6700: button.Initialize(this, new ButtonValidator_FixClothes(this, button, false)); break;
-                case -6701: button.Initialize(this, new ButtonValidator_RedressLayers(this, button, false, 1)); break;
-                case -6702: button.Initialize(this, new ButtonValidator_UndressLayers(this, button, false, 1)); break;
-                case -6703: button.Initialize(this, new ButtonValidator_UndressAll(this, button, false, 1)); break;
+                case -6600:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_FixClothes(this, button, true)); 
+                    break;
+                case -6601:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_RedressLayers(this, button, true, 1)); 
+                    break;
+                case -6602:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_UndressLayers(this, button, true, 1)); 
+                    break;
+                case -6603:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_UndressAll(this, button, true, 1));
+                    break;
+                case -6700:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_FixClothes(this, button, false));
+                    break;
+                case -6701:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_RedressLayers(this, button, false, 1)); 
+                    break;
+                case -6702:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_UndressLayers(this, button, false, 1)); 
+                    break;
+                case -6703:
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_UndressAll(this, button, false, 1)); 
+                    break;
 
                 //case -7400: button.Initialize(this, new ButtonValidator_InitSexDebug(this, button)); break;
                 //case 7401: //hypnos;
@@ -377,7 +435,9 @@ public class scr_panel_COMmanager : scr_Menu
                 //case -7408://skip day
                  //   button.Initialize(this, new ButtonValidator_AlwaysTrue(this)); break;
                 case -7402: //timestop
-                    button.Initialize(this, new ButtonValidator_DebugTimeStop(this, button)); break;
+                    if (safeMode) button.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_DebugTimeStop(this, button)); 
+                    break;
                 case -7403: //xray
 #if UNITY_EDITOR
                     button.Initialize(this, new ButtonValidator_ToggleXrayDebug(this, button));
@@ -594,7 +654,7 @@ public class scr_panel_COMmanager : scr_Menu
     }
 
     public RectTransform panel_InteractionCOMs, panel_SexCOMs, panel_InventoryCOMs, panel_CombatCOMs;
-    public RectTransform Box_SexCOMs, Box_InteractionCOMs, Box_UndressCOMs, Box_FurnitureCOMs, Box_FurnitureCOMsList, Box_TouchCOMs, Box_MassageCOMs, Box_ServiceCOMs, buttonPrefab_COM, Box_InitiateSex;
+    public RectTransform Box_SexCOMs, Box_InteractionCOMs, Box_UndressCOMs, Box_FurnitureCOMs, Box_FurnitureCOMsList, Box_TouchCOMs, Box_SpecialCOMs, Box_MassageCOMs, Box_ServiceCOMs, buttonPrefab_COM, Box_InitiateSex;
     public RectTransform Box_Filters;
     public List<scr_SelectableText> filters_Sex, filters_Touch, filters_Interact, filters_Inventory, filters_Combat;
 
@@ -1204,18 +1264,25 @@ public class scr_panel_COMmanager : scr_Menu
 
 
                 //    tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
-                    //text.SetText(package.DisplayName);
+                //text.SetText(package.DisplayName);
 
-                    if (package.Validate())
+                    if (!package.Validate())
+                    {
+                        returnVal = false;
+                        tooltip += "package did not pass internal validation\n";
+
+
+                    }
+                    else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
+                    {
+                        returnVal = false;
+                        tooltip += $"Cannot sleep right now.";
+                    }
+                    else
                     {
                         returnVal = returnVal && true;
                         tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost [" + package.ResourceCost + "]\n";
                         tooltip += package.GetSuccessRateString();
-                    }
-                    else
-                    {
-                        returnVal = false;
-                        tooltip += "package did not pass internal validation\n";
                     }
                     package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
                     tooltip += "\n" + String.Join("\n", package.tooltip);
@@ -1445,8 +1512,15 @@ else */
                     }
                     else if (package is ActionPackage_Interaction || package is ActionPackage_ProductionOrder)
                     {
-                        var doers = new List<int>(cachedDoers);
-                        var receivers = new List<int>(cachedReceivers);
+                        var doers = new List<int>();
+                        var receivers = new List<int>();
+#if UNITY_EDITOR
+                        if (false)
+                        {
+                            if (cachedDoers.Count > 0) Debug.LogError($"COMMANAGER resetCOM cachedDoers [{String.Join("|", cachedDoers)}]");
+                            if (cachedReceivers.Count > 0) Debug.LogError($"COMMANAGER resetCOM cachedReceivers [{String.Join("|", cachedReceivers)}]");
+                        }
+#endif
                         List<int> targets = new List<int>();
                         var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
                         if (currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
@@ -1468,7 +1542,7 @@ else */
                     }
 
 
-                    tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
+                    tooltip += "doer [" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
                     //text.SetText(package.DisplayName);
 
                     if (!package.Validate())
@@ -1481,6 +1555,11 @@ else */
                         returnVal = false;
                         tooltip += "target furniture cannot accept new packages\n";
                     }
+                    else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
+                    {
+                        returnVal = false;
+                        tooltip += $"Cannot sleep right now.";
+                    }
                     else
                     {
                         returnVal = returnVal && true;
@@ -1488,8 +1567,10 @@ else */
                         tooltip += package.GetSuccessRateString();
                     }
                     package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
-                    tooltip += "\n" + String.Join("\n", package.tooltip);
 
+#if UNITY_EDITOR
+                    tooltip += "\n" + String.Join("\n", package.tooltip);
+#endif
                     if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
                 }
                 else
@@ -1616,6 +1697,21 @@ else */
 
         }
     }
+
+    protected override void Start()
+    {
+        base.Start();
+        if (scr_System_CentralControl.current.isSafeMode)
+        {
+            Box_SpecialCOMs.gameObject.SetActive(false);
+            Box_TouchCOMs.SetParent(panel_InteractionCOMs, false);
+            Box_TouchCOMs.SetSiblingIndex(4);
+            panel_SexCOMs.gameObject.SetActive(false);
+            panel_InventoryCOMs.gameObject.SetActive(false);
+            panel_CombatCOMs.gameObject.SetActive(false);
+        }
+    }
+
     public class ButtonValidator_InitSexDebug : ButtonValidator, I_ButtonClickable
     {
         new scr_panel_COMmanager parent;
@@ -1875,8 +1971,10 @@ else */
             invite_off = LocalizeDictionary.QueryThenParse("comManager_com_follow_stop");
             carry = LocalizeDictionary.QueryThenParse("comManager_com_followCarry_request");
             carry_off = LocalizeDictionary.QueryThenParse("comManager_com_followCarry_stop");
+            isSafe = scr_System_CentralControl.current.isSafeMode;
         }
 
+        bool isSafe = true;
         string invite, invite_off, carry, carry_off;
 
         public override bool IsButtonValid()
@@ -1895,6 +1993,16 @@ else */
                 {
                     if (!targ.canAct) this.text.SetText(carry_off);
                     else this.text.SetText(invite_off);
+                }
+                else if (isSafe)
+                {
+                    this.text.SetText(invite);
+                    if (!targ.canAct)
+                    {
+                        this.tooltip = "target cannot act";
+                        return false;
+                    }
+                    return true;
                 }
                 else
                 {
@@ -1964,6 +2072,8 @@ else */
         List<scr_SelectableText> filters;
         RectTransform targetCOMs_extra;
 
+        bool permanentDeactivate = false;
+
         public ButtonValidator_ChangeCOMTab(scr_panel_COMmanager parent, scr_SelectableText text, COMTabs target, RectTransform targetCOMs, List<scr_SelectableText> filters, RectTransform targetCOMs_Extra = null) : base(parent)
         {
             this.target = target;
@@ -1974,11 +2084,20 @@ else */
             this.targetCOMs_extra = targetCOMs_Extra;
             //text.toggleColor = text.baseColor;
             //text.baseColor = text.disableColor;
+            if (scr_System_CentralControl.current.isSafeMode && target != COMTabs.Interaction)
+            {
+                permanentDeactivate = true;
+                this.text.Text.text = "";
+            }
         }
 
         public override bool IsButtonValid()
         {
-            if (parent.currentTab == target) text.Toggle(true, true);
+            if (permanentDeactivate)
+            { 
+
+            }
+            else if (parent.currentTab == target) text.Toggle(true, true);
             else text.Toggle(true, false);
 
             if (parent.currentTab != target)
@@ -1998,6 +2117,8 @@ else */
                 if (!parent.currentTab_Filters.Contains(s)) s.gameObject.SetActive(false);
                 else s.gameObject.SetActive(true);
             }
+
+            if (permanentDeactivate) return false;
 
             switch (target)
             { 
