@@ -120,6 +120,13 @@ public class scr_Menu_Combat : scr_Menu
             rect.Load(c);
         }
 
+        foreach(var actor in currentActiveCombat.teamB.Actors)
+        {
+            var rect = Instantiate(prefab_Actor);
+            rect.SelfRect.SetParent(charaList_teamB, false);
+            var c = scr_System_CampaignManager.current.FindInstanceByID(actor);
+            rect.Load(c);
+        }
         // for self team, draw selectable action button
         // on click, swap panel
     }

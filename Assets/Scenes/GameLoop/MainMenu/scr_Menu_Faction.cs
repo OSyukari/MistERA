@@ -47,6 +47,13 @@ public class scr_Menu_Faction : MonoBehaviour
     int previousHour = -1, currentHour = -1;
     Character_Trainable player;
 
+    Dictionary<string, string> _cachedTagRefTable = new Dictionary<string, string>();
+    private string GetTagString(string tag)
+    {
+        if (!_cachedTagRefTable.ContainsKey(tag)) _cachedTagRefTable.Add(tag, LocalizeDictionary.QueryThenParse("tag_" + tag));
+        return _cachedTagRefTable[tag];
+    }
+
     private void refreshFaction()
     {
         //Debug.Log("CAMPAIGNMANAGER NOTIFY UPDATE -> refreshFaction");
@@ -72,7 +79,7 @@ public class scr_Menu_Faction : MonoBehaviour
         List<string> s_chara = new List<string>();
         foreach(KeyValuePair<string,int> kvp in costChara)
         {
-            s_chara.Add(LocalizeDictionary.QueryThenParse("tag_"+ kvp.Key)+ " "+kvp.Value.ToString("+0;-#"));
+            s_chara.Add($"{GetTagString(kvp.Key)} {kvp.Value.ToString("+0;-#")}");
         }
         List<string> s_order = new List<string>();
 
@@ -94,7 +101,7 @@ public class scr_Menu_Faction : MonoBehaviour
         foreach (KeyValuePair<string, List<int>> kvp in targetFaction.GetMaintenanceCost_Total)
         {
             string s = kvp.Key;
-            string ss = LocalizeDictionary.QueryThenParse("tag_" + s);
+            string ss = GetTagString(s);// LocalizeDictionary.QueryThenParse("tag_" + s);
             int initial = 0;
             int plus = 0;
             int total = 0;

@@ -193,21 +193,21 @@ public class StatusEx_Instance : I_CacheValues
             var first = BaseRef.variants[0];
             var last = BaseRef.variants[BaseRef.variants.Count - 1];
 
-            return Math.Max(first.threshold, Math.Min(last.threshold, cached_value.Item1 + DebugSeverityMod));
+            return Math.Max(first.threshold, Math.Min(last.threshold, cached_value.FinalValue + DebugSeverityMod));
         }
     }
 
-    [JsonIgnore] public List<string> ModString
+    [JsonIgnore] public string ModString
     {
         get
         {
             if (cached_value == null) ClearCache();
-            return cached_value.Item2;
+            return cached_value.Print();
         }
     }
 
 
-    private Tuple<float, List<string>> cached_value = null;
+    private StatRecord cached_value = null;
 
 
     public float SeverityPrevious = 0f;
@@ -233,7 +233,9 @@ public class StatusEx_Instance : I_CacheValues
                 i += inst.Severity;
                 s.Add(inst.ID + " " + inst.Severity);
             }
-            cached_value = new Tuple<float, List<string>>(i, s);
+            cached_value = new StatRecord();
+            cached_value.SetValue(i, 0f);
+            cached_value.SetExternalTooltip(s);
         }
         else if (this.BaseRef.variationMode.variationType == StatusEx_Base.Status_Variation_Type.statModifiers)
         {
@@ -248,18 +250,21 @@ public class StatusEx_Instance : I_CacheValues
             var list = new List<Stat_Modifier>();
             list.AddRange(modifiers);
 
-                
+
             //if (list.Count > 0) Debug.LogError("statEx varStatModifier count "+list.Count);
 
-            List<string> tempList = new List<string>();
-            tempList.Add("initial value " + severity);
+            var tempList = new StatRecord();
+          //  tempList.Add("initial value " + severity);
 
             float finalResult;
+
 
             if (this.baseRef.variationMode.stringData == "capMod") finalResult = Utility.ParseStatMods(this, Owner, StoredModifiers, list, tempList, -999, 999, true);
             else finalResult = Utility.ParseStatMods(this, Owner, StoredModifiers, list, tempList, -999, 999);
 
-            cached_value = new Tuple<float, List<string>> (initialValue+finalResult, tempList);
+            tempList.SetValue(finalResult, initialValue);
+
+            cached_value = tempList;
         }
     }
 

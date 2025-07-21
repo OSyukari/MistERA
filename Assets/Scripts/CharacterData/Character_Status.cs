@@ -437,11 +437,13 @@ public class Status_Instance : StatusInstance
             List<string> s = new List<string>();
             foreach (var mod in SeverityMods)
             {
+                if (mod._cachedDisplay == string.Empty) mod._cachedDisplay = LocalizeDictionary.QueryThenParse(mod.statID);
+
                 float value = Utility.StatValue(mod, Owner);
                 if (MathF.Abs(value) > float.Epsilon)
                 {
-                    if (MathF.Abs(value) < 1) s.Add(LocalizeDictionary.QueryThenParse(mod.statID) + (value*100).ToString("+0;-#")+"%");
-                    else  s.Add(LocalizeDictionary.QueryThenParse(mod.statID) + value.ToString("+0;-#"));
+                    if (MathF.Abs(value) < 1) s.Add(mod._cachedDisplay + (value*100).ToString("+0;-#")+"%");
+                    else  s.Add(mod._cachedDisplay + value.ToString("+0;-#"));
                 }
             }
             return s;

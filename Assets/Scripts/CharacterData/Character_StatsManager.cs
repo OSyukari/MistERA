@@ -813,6 +813,7 @@ public class StatsManager
     [System.Serializable]
     public class ModStorage
     {
+        public string modKey = string.Empty;
         public float baseValue = 0.0f;
         public float baseMult = 1.0f;
         public float addValue = 0.0f;

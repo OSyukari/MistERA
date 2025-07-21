@@ -228,8 +228,7 @@ public class MemoryManager
         newstuff.statID = statmod.statID;
         newstuff.modKey = statmod.modKey;
         newstuff.type = statmod.type;
-        newstuff.valueType = statmod.valueType;
-        newstuff.valueString = value.ToString();
+        newstuff.SetValueTypeAndString(statmod.valueType, value.ToString());
         //newstuff.SetValueTypeAndString("number", value)
         return newstuff;
     }

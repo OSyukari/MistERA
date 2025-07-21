@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
+using System.Linq;
 
 public class scr_panel_PlayerInfo : MonoBehaviour
 {
@@ -17,6 +18,11 @@ public class scr_panel_PlayerInfo : MonoBehaviour
         scr_System_CampaignManager.current.Observer_UpdateNotice += RefreshUpdateNotice;
         scr_UpdateHandler.current.Observer_PostUpdateTime_3 += PostUpdate;
         //Refresh();
+
+        while (StatusBox.transform.childCount > 0)
+        {
+            DestroyImmediate(StatusBox.transform.GetChild(0).gameObject);
+        }
 
         Refresh();
     }
@@ -80,8 +86,37 @@ public class scr_panel_PlayerInfo : MonoBehaviour
 
     public RectTransform StatusBox;
     public RectTransform prefab_text_link;
+
+    Dictionary<Status_Instance, scr_HoverableText> trackedStatus = new Dictionary<Status_Instance, scr_HoverableText>();
+
     private void RefreshStatusBox()
     {
+        var displayables = Chara.Stats.StatusInstances_Displayable;
+
+        var tracked = trackedStatus.Keys.ToList();
+
+        var removed = tracked.Except(displayables);
+        var added = displayables.Except(tracked);
+
+        foreach (var r in removed)
+        {
+            trackedStatus.Remove(r);
+            DestroyImmediate(trackedStatus[r].gameObject);
+        }
+
+        foreach(var a in added)
+        {
+            RectTransform box = Instantiate(prefab_text_link);
+            box.SetParent(StatusBox, false);
+            trackedStatus.Add(a, box.GetComponent<scr_HoverableText>());
+        }
+
+        foreach(var si in trackedStatus)
+        {
+            UI_Utility.Draw(si.Key, si.Value);
+        }
+        /*
+
         while (StatusBox.transform.childCount > 0)
         {
             DestroyImmediate(StatusBox.transform.GetChild(0).gameObject);
@@ -94,7 +129,7 @@ public class scr_panel_PlayerInfo : MonoBehaviour
                 box.SetParent(StatusBox, false);
                 UI_Utility.Draw(si, box.GetComponent<scr_HoverableText>());
             }
-        }
+        }*/
     }
 
 }

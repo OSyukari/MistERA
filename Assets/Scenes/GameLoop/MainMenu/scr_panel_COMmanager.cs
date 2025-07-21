@@ -1284,9 +1284,10 @@ public class scr_panel_COMmanager : scr_Menu
                         tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost [" + package.ResourceCost + "]\n";
                         tooltip += package.GetSuccessRateString();
                     }
+#if UNITY_EDITOR
                     package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
                     tooltip += "\n" + String.Join("\n", package.tooltip);
-
+#endif
                     if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
                 }
             }

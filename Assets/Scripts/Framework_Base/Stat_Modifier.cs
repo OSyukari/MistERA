@@ -40,6 +40,10 @@ public class Stat_Modifier
     }
 
     public string statID = "";
+    /// <summary>
+    /// Used for external caching
+    /// </summary>
+    [NonSerialized][JsonIgnore] public string _cachedDisplay = string.Empty;
 
     // baseValue, finalMod, conflicting mod source
     public string modKey = "";
@@ -85,6 +89,15 @@ public class Stat_Modifier
         this.valueType = vType;
         this.valueString = vString;
     }
+
+
+    /// <summary>
+    /// Used by Utility ParseStatMods. <br/>
+    /// to reduce dependency cycle, these should be exposed and allow external rw.
+    /// </summary>
+    [NonSerialized][JsonIgnore] 
+    public bool initialized = false, _isStatEX = false, _isStatDerived = false;
+   
 
     private void CheckAccess(bool isStatEx, bool isStatDerived)
     {

@@ -1617,19 +1617,15 @@ public class ExperienceLog
     {
 
         //bool clearedBeforePrint = false;
-        foreach (KeyValuePair<int, Dictionary<string, int>> kvp in ExpLog)
-        {
-            //if (kvp.Value.Count > 0) clearedBeforePrint = true;
-            kvp.Value.Clear();
-        }
+        //foreach (KeyValuePair<int, Dictionary<string, int>> kvp in ExpLog) kvp.Value.Clear();
         ExpLog.Clear();
 
         //if(clearedBeforePrint) Debug.LogError("EVP Explog cleared before print ? ");
 
-        foreach (KeyValuePair<int, Dictionary<int, int>> kvp in RelationLog) kvp.Value.Clear();
+        //foreach (KeyValuePair<int, Dictionary<int, int>> kvp in RelationLog) kvp.Value.Clear();
         RelationLog.Clear();
 
-        foreach (KeyValuePair<int, Dictionary<string, int>> kvp in StatLog) kvp.Value.Clear();
+        //foreach (KeyValuePair<int, Dictionary<string, int>> kvp in StatLog) kvp.Value.Clear();
         StatLog.Clear();
 
         MessageLog.Clear();

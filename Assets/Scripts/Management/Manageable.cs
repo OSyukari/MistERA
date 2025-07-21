@@ -137,9 +137,11 @@ public class Manageable : I_Disposable
         }
     }
 
+    string _cachedDisplayName = string.Empty;
     [JsonIgnore] public string FactionDisplayName { get
         {
-            return LocalizeDictionary.QueryThenParse("factionName_" + ID);
+            if (_cachedDisplayName == string.Empty) _cachedDisplayName = LocalizeDictionary.QueryThenParse("factionName_" + ID);
+            return _cachedDisplayName;
         } }
 
     [NonSerialized] protected List<Character_Trainable> managedChara = null;

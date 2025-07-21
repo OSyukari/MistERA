@@ -515,6 +515,7 @@ public class Map_Instance
     [SerializeField][JsonProperty] protected Dictionary<int, int> charaRoomRef = new Dictionary<int, int>();
     [JsonIgnore] protected Dictionary<int, List<int>> roomCharaRef = null;
     Func<TaggedEdge<int, Door_Instance>, double> edgeCost = entry => entry.Tag.Cost;
+    Func<int, double> heuristic = value => 0f;
     public IEnumerable<TaggedEdge<int, Door_Instance>> Findpath(int charaRefID, int toRoomRefID, int roomRefID = -1)
     {
 
@@ -551,8 +552,10 @@ public class Map_Instance
         //TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = null;
         //Task t = Task.Run(() => tryGetPaths = graph.ShortestPathsDijkstra(edgeCost, roomRef));
 
-    //    t.Wait();
-        TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graph.ShortestPathsDijkstra(edgeCost, roomRefID);
+        //    t.Wait();
+        //graph.ShortestPathsAStar(edgeCost, heuristic, roomRefID);
+        //TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graph.ShortestPathsDijkstra(edgeCost, roomRefID);
+        TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graph.ShortestPathsAStar(edgeCost, heuristic, roomRefID);
         if (tryGetPaths(toRoomRefID, out IEnumerable<TaggedEdge<int, Door_Instance>> path))
         {
             return path;

@@ -46,7 +46,7 @@ public class Stats_Derived_Base
     [JsonIgnore] public string StatKeyword { get { return statKeyword; } }
     //[NonSerialized] protected Dictionary<string, StatsManager.ModStorage> StoredModifiers = new Dictionary<string, StatsManager.ModStorage>();
 
-    public float GetFinalValue(Character_Trainable c, List<string> contextKeys, List<string> modStrings = null)
+    public float GetFinalValue(Character_Trainable c, List<string> contextKeys, StatRecord modStrings = null)
     {
         //var keys = new Tuple<string, List<string>>(ID, contextKeys);
         // collect valuebase from struct
@@ -141,26 +141,26 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
     {
         cached_values.Clear();
     }
-    [NonSerialized] private Dictionary<List<string>, Tuple<float, List<string>>> cached_values = new Dictionary<List<string>, Tuple<float, List<string>>>();
+    [NonSerialized] private Dictionary<List<string>, StatRecord> cached_values = new Dictionary<List<string>, StatRecord>();
 
     public string ModStrings(List<string> contextKeys = null, string joinSymbol = "\n")
     {
         var key = contextKeys == null ? new List<string>() : contextKeys;
         if (!cached_values.ContainsKey(key)) GetValue(key);
-        return String.Join(joinSymbol, cached_values[key].Item2);
+        return String.Join(joinSymbol, cached_values[key].Print());
     }
 
     public float FinalValue(List<string> contextKeys = null)
     {
         var key = contextKeys == null ? new List<string>() : contextKeys;
         if (!cached_values.ContainsKey(key)) GetValue(key);
-        return cached_values[key].Item1 + debugValue;
+        return cached_values[key].FinalValue + debugValue;
     }
     protected void GetValue(List<string> contextKeys)
     {
-        var modStrings = new List<string>();
+        var modStrings = new StatRecord();
         var value = Parent.GetFinalValue(Owner, contextKeys, modStrings);
-        cached_values.Add(contextKeys, new Tuple<float, List<string>>(value, modStrings));
+        cached_values.Add(contextKeys, modStrings);
     }
 
     public void ReEstablishParent(Character_Trainable c)

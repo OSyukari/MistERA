@@ -282,7 +282,8 @@ public class RelationshipManager
             int fearLevel = (int)( Fear / 50);
             int prideLevel = Math.Max((int)((100 - Manager.Pride) / 50),0);
             int baseline = (int)Owner.Stats.GetStatValue("stats_derived_baselineObedience");
-            if (tooltip != null)
+
+            if (scr_System_CampaignManager.current.DebugMode && tooltip != null)
             {
                 tooltip.Add("neutral[" + (int)RelationshipObedienceType.Normal + "] + trust[" + trustLevel + "] + fear[" + fearLevel + "] + pride["+prideLevel+"]");
                 tooltip.Add("Trust:" + Trust_Raw.ToString("N1")+"|"+Trust.ToString("N1"));
@@ -310,15 +311,20 @@ public class RelationshipManager
             int pos = (int)(Goodwill / 50);
             int neg = (int)(Badwill / 50);
             int des = (int)(Desire / 50);
-            if (tooltip != null)
+
+            if (scr_System_CampaignManager.current.DebugMode && tooltip != null)
             {
                 tooltip.Add("neutral["+ (int)RelationshipAttitudeType.Neutral + "] + goodwill["+ pos + "] + badwill["+ neg + "] + desire["+ des + "]");
                 tooltip.Add("Goodwill:" + Goodwill_Raw.ToString("N1") + "|"+Goodwill_Mult.ToString("N1") + "|"+Goodwill.ToString("N1"));
                 tooltip.Add("Badwill:" + Badwill_Raw.ToString("N1") + "|" + Badwill_Mult.ToString("N1") + "|" + Badwill.ToString("N1"));
                 tooltip.Add("Fear:" + Fear_Raw.ToString("N1") + "|" + Fear_Mult.ToString("N1") + "|" + Fear.ToString("N1"));
-                tooltip.Add("Desire:" + Desire_Raw.ToString("N1") + "|" + Desire_Div.ToString("N1") + "|" + Desire_Mult.ToString("N1")+"|" + Desire.ToString("N1"));
-                tooltip.Add("Corruption:" + Manager.Corruption);
+                if (!scr_System_CentralControl.current.isSafeMode)
+                {
+                    tooltip.Add("Desire:" + Desire_Raw.ToString("N1") + "|" + Desire_Div.ToString("N1") + "|" + Desire_Mult.ToString("N1") + "|" + Desire.ToString("N1"));
+                    tooltip.Add("Corruption:" + Manager.Corruption);
+                }
             }
+
             return (RelationshipAttitudeType)Math.Min(Math.Max((int)RelationshipAttitudeType.Neutral + pos - neg + des, 0), 5);
             
         }

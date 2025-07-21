@@ -171,7 +171,7 @@ public class scr_System_CentralControl : MonoBehaviour
     protected scr_System_CentralControl_Serializable GetSerializable()
     {
         var obj = new scr_System_CentralControl_Serializable();
-        obj.ContentSettings = ContentSetting == null ? _content : ContentSetting;
+        obj.ContentSettings = isSafeMode ? null : ContentSetting;
         obj.DisplaySettings = DisplaySetting;
         obj.DebugLogPref = LogPrefs;
         return obj;

@@ -497,10 +497,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonIgnore] public string LastName { get { return lastName == "" ? "" : LocalizeDictionary.QueryThenParse(lastName, lastName); } set { lastName = value; } }
 
     [JsonIgnore] public string FullNameID { get { return baseID+"_"+referenceID; } }
+
+    string _cachedFullName = "";
+
     [JsonIgnore] public string FullName { get {
+            if (_cachedFullName == "") _cachedFullName = LocalizeDictionary.QueryThenParse(nameDisplayFormat)
+                                                            .Replace("$lastName$", LastName)
+                                                            .Replace(" $middleName$", MiddleName == "" ? "" : " " + MiddleName)
+                                                            .Replace("$firstName$", FirstName);
             //Debug.LogError(nameDisplayFormat);
-            return LocalizeDictionary.QueryThenParse(nameDisplayFormat)
-                .Replace("$lastName$", LastName).Replace(" $middleName$", MiddleName == "" ? "" : " "+MiddleName).Replace("$firstName$", FirstName);
+            return _cachedFullName;
         } }
 
     [SerializeField][JsonProperty] private string origin = "charOrigin_EmissaryoftheTower";

@@ -158,14 +158,14 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
             return this.GetComponent<TMP_Text>().text;
         }
     }
-    public void SetText(string text, bool leadingSpace = false, string link = "")
+    public void SetText(string text, bool leadingSpace = false, string link = "", bool dictParse = false)
     {
         if (this.m_TextMeshPro == null || this.m_TextMeshPro.text == null)
         {
             return;
         }
         if (text == null) text = "";
-        text = LocalizeDictionary.QueryThenParse(text);
+        if (dictParse) text = LocalizeDictionary.QueryThenParse(text);
         //Debug.LogError(text);
         //if (link == "" || link == "trait_neutral" || link.Length < 1)
         //{

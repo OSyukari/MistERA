@@ -120,7 +120,10 @@ public class Stats_Derived_Extended_Instance
         } }
 
     [JsonIgnore] public string ID { get { return Parent.ID; } }
-    [JsonIgnore] public string DisplayName { get { return Parent.DisplayName; } }
+    string _cachedDisplayName = string.Empty;
+    [JsonIgnore] public string DisplayName { get {
+            if (_cachedDisplayName == string.Empty) _cachedDisplayName = Parent.DisplayName;
+            return _cachedDisplayName; } }
     [JsonIgnore] public string Tooltip { get { return Parent.Tooltip; } }
 
     public void Draw(scr_HoverableText text)

@@ -3,7 +3,7 @@
         "list":[
 {
     "ID":"sword_horizontalSlash",
-    "keyword":"sword",
+
     "_comment":"evasion speed instant increase should have a time-based limit on its effective time",
     "components:":
     [
@@ -18,7 +18,7 @@
 },         
 {
     "ID":"base_backstep",
-    "keyword":"evasion",
+
     "_comment":"evasion speed instant increase should have a time-based limit on its effective time",
     "components:":
     [
@@ -30,6 +30,12 @@
 
         }
     ]
+},         
+{
+    "ID":"base_idle_debug",
+
+    "_comment":"evasion speed instant increase should have a time-based limit on its effective time",
+    "components:": [  ]
 }
         ]
     }

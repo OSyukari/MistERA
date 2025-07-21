@@ -27,6 +27,9 @@ public class MasterList
            //     list.Add(Sexperiences);
                 list.Add(StatEXs);
 
+                list.Add(CombatActions);
+                list.Add(CombatActionPresets);
+
                 list.Add(Experiences);
                 list.Add(Traits_Groups);
                 list.Add(Character_Origin_StartingOptions);
@@ -75,6 +78,8 @@ public class MasterList
     public Dictionary_Index Dictionary = new Dictionary_Index();
     public Index_FurnitureBase Furnitures = null;
     public Index_Events Events = null;
+    public Index_CombatActions CombatActions = null;
+    public Index_CombatActionPresets CombatActionPresets = null;
 
     public void InitializeLists(bool initCoreList = false)
     {
@@ -114,6 +119,8 @@ public class MasterList
         this.Character_Personalities = new Character_Personality_Index();
         this.Furnitures = new Index_FurnitureBase();
         this.Events = new Index_Events();
+        this.CombatActions = new Index_CombatActions();
+        this.CombatActionPresets = new Index_CombatActionPresets();
     }
 
     public void MergeWith(MasterList list)

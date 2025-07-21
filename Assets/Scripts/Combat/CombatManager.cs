@@ -37,6 +37,34 @@ public class TeamComposition
 }
 
 [System.Serializable]
+public class CombatStats
+{
+    /// <summary>
+    /// Key: charaRefID, value: stat
+    /// </summary>
+    public Dictionary<int, CharaStats> Stats = new Dictionary<int, CharaStats>();
+
+    public CombatStats()
+    {
+
+    }
+
+    /// <summary>
+    /// Create copy using input stats
+    /// </summary>
+    /// <param name="old"></param>
+    public CombatStats(CombatStats old)
+    {
+        this.Stats = new Dictionary<int, CharaStats>();
+        foreach (var kvp in old.Stats)
+        {
+            this.Stats.Add(kvp.Key, kvp.Value.Copy());
+        }
+    }
+
+}
+
+[System.Serializable]
 public class CombatInstance
 {
 
@@ -45,17 +73,23 @@ public class CombatInstance
     public TeamComposition teamA = new TeamComposition();
     public TeamComposition teamB = new TeamComposition();
 
+    public int roundMaxAction = 2;
+
     public CombatInstance(TeamComposition teamA, TeamComposition teamB, bool allowRetreat = true)
     {
         this.allowRetreat = allowRetreat;
         this.teamA = teamA;
         this.teamB = teamB;
 
-        foreach (var i in teamA.Actors) InitialStats.Add(i, new CombatStats(i));
-        foreach (var i in teamB.Actors) InitialStats.Add(i, new CombatStats(i));
+        InitialStats = new CombatStats();
+
+        foreach (var i in teamA.Actors) InitialStats.Stats.Add(i, new CharaStats(i));
+        foreach (var i in teamB.Actors) InitialStats.Stats.Add(i, new CharaStats(i));
     }
 
-    public Dictionary<int, CombatStats> InitialStats = new Dictionary<int, CombatStats>();
+    public CombatStats InitialStats = new CombatStats();
+    public CombatStats FinalStats = null;
+    //public Dictionary<int, CharaStats> InitialStats = new Dictionary<int, CharaStats>();
 
     public bool hasActor(int refid)
     {
@@ -72,14 +106,123 @@ public class CombatInstance
     /// <summary>
     /// auto-execute one round of combat
     /// </summary>
-    public void AutoResolve()
+    public void TurnStart()
     {
-        if (isPlayerInstance) return;
+        Actions.Clear();
+
+        // first, decide every action for every enemy target
+
+        // default action count to 2
+
+        foreach (var chara in teamB.Actors)
+        {
+            var combatAI = scr_System_Serializer.current.MasterList.CombatActionPresets.GetByID("preset_debug_idle");
+            var c = scr_System_CampaignManager.current.FindInstanceByID(chara);
+            
+            AddPreset(c, combatAI);
+        }
+
+        //https://stackoverflow.com/questions/3309188/how-to-sort-a-listt-by-a-property-in-the-object
+        //objListOrder.Sort((x, y) => x.OrderDate.CompareTo(y.OrderDate)); Sort method
+
+        if (!isPlayerInstance)
+        {   // decide action for teamA
+
+
+  
+        }
+
+    } 
+    /// <summary>
+    /// 1st index is round action count (1st action/2nd action/...)<br/>
+    /// 2nd index is action speed order
+    /// </summary>
+    List<List<CombatActionInstance>> Actions = new List<List<CombatActionInstance>>();
+
+
+    protected void AddAction(int index, CombatAction action, Character_Trainable c, bool immediateUpdate = true)
+    {
+        var actionInstance = new CombatActionInstance(c, null, action, null);
+        // get valid target for actionInstance
+        // validate here
+
+        // if not valid, return
+
+        // else
+        if (index >= Actions.Count)
+        {
+            for (int i = Actions.Count; i < index; i++)
+            {
+                Actions.Add(new List<CombatActionInstance>());
+            }
+        }
+
+        var list = Actions[index];
+        int insertIndex = -1;
+        for(int i = 0; i < list.Count; i++)
+        {
+            var act = list[i];
+            if (!CombatUtility.IsFasterThan(act, actionInstance)) { continue; }
+            insertIndex = i;
+            list.Insert(i, actionInstance);
+        }
+
+        if (insertIndex == -1)
+        {
+            insertIndex = list.Count;
+            list.Add(actionInstance);
+        }
+
+        if (immediateUpdate) Recalculate();
+    }
+
+    protected void Recalculate()
+    {
+        // update all
+        for (int i = 0; i < Actions.Count; i++)
+        {
+            var currentList = Actions[i];
+            for (int j = 0; j < currentList.Count; j++)
+            {
+                currentList[j].ApplyMods(InitialStats);
+            }
+        }
+    }
+
+    protected void AddPreset(Character_Trainable c, CombatActionPreset preset)
+    {
+        if (!CombatUtility.ValidatePreset(c, preset))
+        {
+            Debug.LogError($"CombatInstance Error, {c.FirstName} invalid combat preset {preset.ID}");
+            return;
+        }
+        var action = preset.Actions;
+        for(int i = 0; i < action.Count; i ++)
+        {
+            AddAction(i, action[i], c, false);
+        }
+        Recalculate();
     }
 
     // Play: foreach chara in teamB, get all available action and decide on optimal moves
     // how do i define action ?
 
+    protected CombatActionInstance SelectAction(int refID)
+    {
+        var chara = scr_System_CampaignManager.current.FindInstanceByID(refID);
+        return SelectAction(chara);
+    }
+
+    protected CombatActionInstance SelectAction(Character_Trainable c)
+    {
+        var list = CombatUtility.GetAvailableActions(c);
+        if (list.Count < 1) return null;
+        var result = new CombatActionInstance();
+        result.ownerRef = c;
+        result.sourceRef = null;
+        result.actionRef = scr_System_Serializer.current.MasterList.CombatActions.GetByID("base_idle_debug");
+        return result;
+    }
 
     /*  
      *  list of all actions in chronological order
@@ -113,7 +256,6 @@ public class CombatInstance
             make this the default
      */
 
-    public List<string> actions;
     /*
      *  Need a way to quickly lookup how many active actions per actor, and track all their counter moves
         In UI, need to draw button foreach action
@@ -125,22 +267,23 @@ public class CombatInstance
     //  if not, then it will not influence previous, only what follows
 
 
+
 }
 
 [System.Serializable]
-public class CombatStats
+public class CharaStats
 {
-    [SerializeField][JsonProperty] protected int refID = -1;
+    [SerializeField][JsonProperty] public int refID = -1;
     protected Character_Trainable c = null;
     [JsonIgnore] 
     public Character_Trainable Chara { get { 
             if (c == null && this.refID != -1) c = scr_System_CampaignManager.current.FindInstanceByID(refID); 
             return c; } }
-    public CombatStats()
+    public CharaStats()
     {
 
     }
-    public CombatStats(int refid)
+    public CharaStats(int refid)
     {
         this.refID = refid;
         if (Chara == null) Debug.LogError($"Error creating combat, chara null with refid {this.refID}");
@@ -166,7 +309,13 @@ public class CombatStats
 
     public Dictionary<string, float> Stats = new Dictionary<string, float>();
 
-
+    public CharaStats Copy()
+    {
+        var copy = new CharaStats();
+        copy.refID = this.refID;
+        copy.Stats = new Dictionary<string, float>(this.Stats);
+        return copy;
+    }
 }
 
 

@@ -17,6 +17,7 @@ using QuikGraph.Algorithms.Search;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Microsoft.Extensions.ObjectPool;
 
 public static class Utility
 {                                               //  F      E      D      C      B      A      S    
@@ -1347,7 +1348,28 @@ public static class Utility
 
     }
 
-    public static float ParseStatMods(object source, Character_Trainable c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, List<string> stringResults = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false)
+    public static bool Stat_Modifier_isStatEx(Stat_Modifier mod)
+    {
+        if (!mod.initialized)
+        {
+            mod.initialized = true;
+            mod._isStatEX = scr_System_Serializer.current.index_StatsExtended.list.Any(x => x.ID == mod.valueString);
+            mod._isStatDerived = scr_System_Serializer.current.index_StatsDerived.list.Any(x => x.ID == mod.valueString);
+        }
+        return mod._isStatEX;
+    }
+    public static bool Stat_Modifier_isStatDerived(Stat_Modifier mod)
+    {
+        if (!mod.initialized)
+        {
+            mod.initialized = true;
+        }
+        return mod._isStatDerived;
+    }
+
+    public static ObjectPool<StringBuilder> StringBuilderPool = new DefaultObjectPoolProvider().CreateStringBuilderPool(); 
+
+    public static float ParseStatMods(object source, Character_Trainable c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, StatRecord record = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false)
     {
 
 
@@ -1361,8 +1383,12 @@ public static class Utility
             // if (modifier.ValueType != "number") continue;
             // this filter is done in statmanager getmodifier stage
 
-            bool isStatEx = statsExtList.Any(x => x.ID == modifier.valueString);
-            bool isStatDerived = statsDerivedList.Any(x => x.ID == modifier.valueString);
+            if (!modifier.initialized)
+            {
+                modifier.initialized = true;
+                modifier._isStatEX = statsExtList.Any(x => x.ID == modifier.valueString);
+                modifier._isStatDerived = statsDerivedList.Any(x => x.ID == modifier.valueString);
+            }
 
             switch (source)
             {
@@ -1372,22 +1398,22 @@ public static class Utility
 
                 case Stats_Base statsBase:
                     sourceID = statsBase.ID;
-                    if (!isValidQuery(isStatEx, isStatDerived, modifier, statsBase)) continue;
+                    if (!isValidQuery(modifier._isStatEX, modifier._isStatDerived, modifier, statsBase)) continue;
                     break;
 
                 case Stats_Derived_Base derivedBase:
                     sourceID = derivedBase.ID;
-                    if (!isValidQuery(isStatEx, isStatDerived, modifier, derivedBase)) continue;
+                    if (!isValidQuery(modifier._isStatEX, modifier._isStatDerived, modifier, derivedBase)) continue;
                     break;
 
                 case Stats_Derived_Extended_Instance extended:
                     sourceID = extended.ID;
-                    if (!isValidQuery(isStatEx, isStatDerived, modifier, extended)) continue;
+                    if (!isValidQuery(modifier._isStatEX, modifier._isStatDerived, modifier, extended)) continue;
                     break;
 
                 case StatusEx_Instance statusEx:
                     sourceID = statusEx.BaseRef.statusID;
-                    if (!isValidQuery(isStatEx, isStatDerived, modifier, statusEx)) continue;
+                    if (!isValidQuery(modifier._isStatEX, modifier._isStatDerived, modifier, statusEx)) continue;
                     break;
 
                 default:
@@ -1429,7 +1455,7 @@ public static class Utility
 
         float mods = 0f;
         StatsManager.ModStorage finalMod = null;
-        StringBuilder sb = stringResults != null ? new StringBuilder(64) : null;
+
 
         foreach (var kvp in storage)
         {
@@ -1448,34 +1474,22 @@ public static class Utility
                 valueFloor = Math.Min(v, valueFloor);
             }
 
-            if (sb != null)
-            {
-                sb.Clear();
-                sb.Append(kvp.Key)
-                  .Append(" (").Append(kvp.Value.baseValue)
-                  .Append("+").Append(kvp.Value.addValue)
-                  .Append(")*(").Append(kvp.Value.baseMult)
-                  .Append("+").Append(kvp.Value.addMult).Append(")");
-                stringResults.Add(sb.ToString());
-            }
+            if (record != null) record.AddEntry(kvp.Key, kvp.Value);
         }
+
 
         if (finalMod != null)
         {
-            if (sb != null)
-            {
-                sb.Clear();
-                sb.Append("finalMod * (")
-                  .Append(finalMod.baseMult).Append(" + ").Append(finalMod.addMult)
-                  .Append(") (").Append(finalMod.baseValue).Append("+").Append(finalMod.addValue).Append(")");
-                stringResults.Add(sb.ToString());
-            }
-
+            if (record != null) record.AddEntry(string.Empty, finalMod);
             mods = mods * (finalMod.baseMult + finalMod.addMult) + (finalMod.baseValue + finalMod.addValue);
         }
 
-        return Mathf.Clamp(mods, valueFloor, valueCeiling);
+        var final = Mathf.Clamp(mods, valueFloor, valueCeiling);
+        if (record != null) record.SetValue(final);// .value = final;
+        return final;
     }
+
+    
 
     public static float StatValue(Stat_Modifier modifier, Character_Trainable chara)
     {

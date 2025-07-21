@@ -6,6 +6,7 @@ using System.Xml;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Text;
 
 public interface I_CacheValues
 {
@@ -49,10 +50,10 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
         this.cached_values.Clear();
     }
 
-    private Dictionary<List<string>, Tuple<float, List<string>>> cached_values_cache = null;
-    private Dictionary<List<string>, Tuple<float, List<string>>> cached_values { get
+    private Dictionary<List<string>, StatRecord> cached_values_cache = null;
+    private Dictionary<List<string>, StatRecord> cached_values { get
         {
-            if (cached_values_cache == null) cached_values_cache = new Dictionary<List<string>, Tuple<float, List<string>>>();
+            if (cached_values_cache == null) cached_values_cache = new Dictionary<List<string>, StatRecord>();
             return cached_values_cache;
         } }
 
@@ -81,25 +82,25 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
     {
         var key = contextKeys == null ? new List<string>() : contextKeys;
         if (!cached_values.ContainsKey(key)) GetValue(key);
-        return String.Join(joinSymbol, cached_values[key].Item2);
+        return String.Join(joinSymbol, cached_values[key].Print());
     }
     [JsonIgnore] public int BaseValue { get { return value_base; } }
     public float FinalValue(List<string> contextKeys = null)
     {
         var key = contextKeys == null ? new List<string>() : contextKeys;
         if (!cached_values.ContainsKey(key)) GetValue(key);
-        return cached_values[key].Item1;
+        return cached_values[key].FinalValue;
     }
 
     protected void GetValue(List<string> contextKeys)
     {
-        var strings = new List<string>();
+        var strings = new StatRecord();
         StoredModifiers.Clear();
         StoredModifiers.Add("baseValue", new StatsManager.ModStorage(1, value_base));
         StoredModifiers.Add("finalMod", new StatsManager.ModStorage(1, 0));
         var list = Parent.GetModifiers(this, stat_base_string, contextKeys);
         var finalResult = Utility.ParseStatMods(this, this.Owner, StoredModifiers, list, strings);
-        cached_values.Add(contextKeys, new Tuple<float, List<string>>(finalResult, strings));
+        cached_values.Add(contextKeys, strings);
     }
 
 
@@ -112,4 +113,60 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
         return (int)FinalValue(contextKeys) / 2 - 5;
     }
 
+}
+
+public class StatRecord
+{
+    float basevalue = 0f;
+    float value = 0f;
+
+    public void SetValue(float val, float baseV = 0f)
+    {
+        this.value = val;
+        this.basevalue = baseV;
+    }
+
+    public float FinalValue { get { return basevalue + value; } }
+
+    public List<StatsManager.ModStorage> storages = new List<StatsManager.ModStorage>();
+    public List<string> extraTooltip = new List<string>();
+    public void AddEntry(string a, StatsManager.ModStorage b)
+    {
+        if (b.modKey == string.Empty) b.modKey = a;
+        this.storages.Add(b);
+    }
+
+    public void SetExternalTooltip(List<string> s)
+    {
+        this.extraTooltip = s;
+    }
+
+    public string Print()
+    {
+        StringBuilder sb = storages.Count > 0 ? Utility.StringBuilderPool.Get() : null;
+        if (sb != null)
+        {
+            foreach (var mod in storages)
+            {
+                if (mod.modKey == string.Empty)
+                {
+                    sb.Append("finalMod * (")
+                      .Append(mod.baseMult).Append(" + ").Append(mod.addMult)
+                      .Append(") (").Append(mod.baseValue).Append('+').Append(mod.addValue).Append(')')
+                      .AppendLine();
+                }
+                else
+                {
+                    sb.Append(mod.modKey)
+                        .Append(" (").Append(mod.baseValue)
+                        .Append('+').Append(mod.addValue)
+                        .Append(")*(").Append(mod.baseMult)
+                        .Append('+').Append(mod.addMult).Append(')')
+                        .AppendLine();
+                }
+            }
+        }
+
+        return $"{(sb != null ? sb.ToString() : "")}{(sb != null && this.extraTooltip.Count > 0 ? "\n" : "")}{String.Join("\n", this.extraTooltip)}";
+    }
 }

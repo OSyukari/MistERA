@@ -1187,6 +1187,14 @@ public class scr_System_CampaignManager : MonoBehaviour
         else return null;
     }
 
+    public List<Item_Instance> GetAllEquippedItemsFrom(Character_Trainable c)
+    {
+        var list = c.EquippedItemRefs;
+        var results = new List<Item_Instance>(list.Count);
+        foreach(var i in list) if (Index_ItemReferenceID.TryGetValue(i, out var item)) results.Add(item);
+        return results;
+    }
+
     public Job FindJobInstanceByID(int id)
     {
         if (id < 0) return null;
