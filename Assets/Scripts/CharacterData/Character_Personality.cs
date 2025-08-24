@@ -186,7 +186,7 @@ public class Character_Personality
         var yy = rel.Target;
         if (xx == null || yy == null) return "";
 
-        Utility.GetEPsFrom(xx, yy, out List<EvaluationPackage> xxEPs, out List<EvaluationPackage> yyEPs);
+        UtilityEX.GetEPsFrom(xx, yy, out List<EvaluationPackage> xxEPs, out List<EvaluationPackage> yyEPs);
 
         return entries[eventID].GetResponse(rel, xxEPs, yyEPs);
     }
@@ -378,7 +378,7 @@ public class Character_Personality
                 if (ss != "") return ss;
             }
 
-            Utility.GetInteractionTagsFrom(rel.Owner, rel.Target, null, -1, ref sTags, ref tTags, ref tTags);
+            UtilityEX.GetInteractionTagsFrom(rel.Owner, rel.Target, null, -1, ref sTags, ref tTags, ref tTags);
             return GetResponse(rel, sTags, tTags, null);
         }
 
@@ -410,7 +410,7 @@ public class Character_Personality
                 string result = "";
                 if (responses.Count > 0)
                 {
-                    result = LocalizeDictionary.QueryThenParse(responses[Utility.GetRandIndexFromListCount(responses.Count)]);
+                    result = LocalizeDictionary.QueryThenParse(Utility.GetRandomElement(responses));
                     result = result.Replace("$self$", rel.Owner.FirstName).Replace("$target$", rel.Target.FirstName);
                 }
 
@@ -514,7 +514,7 @@ public class Character_Personality
                         if (Validate(rel, sTags, tTags, ep)) return true;
                     }
 
-                    Utility.GetInteractionTagsFrom(rel.Owner, rel.Target, null, -1, ref sTags, ref tTags, ref tTags);
+                    UtilityEX.GetInteractionTagsFrom(rel.Owner, rel.Target, null, -1, ref sTags, ref tTags, ref tTags);
                     return Validate(rel, sTags, tTags, null);
                 }
 
@@ -605,7 +605,7 @@ public class Character_Personality
                     {
                         var status = chara.Stats.GetStatusByStringMatch(statusID);
                         if (checkExistOnly) return status != null;
-                        else return status != null && Utility.CompareValue(chara.Stats.GetStatusByStringMatch(statusID).Severity, operand, value);
+                        else return status != null && UtilityEX.CompareValue(chara.Stats.GetStatusByStringMatch(statusID).Severity, operand, value);
                     }
                 }
 
@@ -622,7 +622,7 @@ public class Character_Personality
                     public bool Validate(RelationshipManager.Character_Relationship rel)
                     {
                         if (checkExistOnly) return (rel.Owner.Relationships.GetKojoVariableExist(isDailyVariable, rel, variableID) == (value != 0));
-                        else return Utility.CompareValue(rel.Owner.Relationships.GetKojoVariable(isDailyVariable, rel, variableID), operand, value);
+                        else return UtilityEX.CompareValue(rel.Owner.Relationships.GetKojoVariable(isDailyVariable, rel, variableID), operand, value);
 
                     }
                 }

@@ -115,7 +115,7 @@ public class scr_Canvas_Helper : scr_Menu, IPointerClickHandler
         // if click outside box
         if (eventData.rawPointerPress.GetComponent<scr_Canvas_Helper>() != null) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
         // inside box
-        else if (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
+        else if (eventData.button == PointerEventData.InputButton.Right && UtilityEX.isClickBelowDragThreshold(eventData)) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
     }
 
     public override void Notify(int optionID)

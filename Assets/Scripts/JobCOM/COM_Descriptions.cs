@@ -152,7 +152,7 @@ public class COM_Descriptions
                 // first add text to list
                 if (texts.Count > 0)
                 {// meaning we do add text here
-                    var randIndex = Utility.GetRandIndexFromListCount(texts.Count);
+                    var randIndex = Utility.GetRandIndexFromListCount(texts);
 
                     if (_texts.TryGetValue(randIndex, out string value)) list.Add(value);
                     else

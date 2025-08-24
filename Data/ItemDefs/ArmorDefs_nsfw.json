@@ -8,9 +8,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Feet",
+                        "equipSlot":["Feet"],
                         "equipLayer":"Inner",
-                        "equipCount":2,
+                        "coverSlot":["Feet"],
                         "revealing":"ShapeReveal"
                     }
                 }
@@ -24,15 +24,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Torso",
-                        "equipLayer":"Skin",
-                        "partialUndress":
-                        [
-                            {
-                                "displayName":"鬆開胸罩",
-                                "statusID":"chara_status_undress_top_skin_bra"
-                            }
-                        ]
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Skin"
                     }
                 }
             ]
@@ -44,15 +37,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Lower",
-                        "equipLayer":"Skin",
-                        "partialUndress":
-                        [
-                            {
-                                "displayName":"掀開内褲",
-                                "statusID":"chara_status_undress_lower_skin_panty"
-                            }
-                        ]
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Skin"
                     }
                 }
             ]
@@ -65,10 +51,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Lower",
+                        "equipSlot":["Lower"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough",
-                        "coverSlot":["Leg"]
+                        "coverSlot":["Leg","Leg"]
                     }
                 }
             ]
@@ -80,11 +66,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Feet",
+                        "equipSlot":["Feet","Leg"],
                         "equipLayer":"Skin",
-                        "equipCount":2,
                         "revealing":"SeeThrough",
-                        "coverSlot":["Leg"]
+                        "coverSlot":["Feet","Leg"]
                     }
                 }
             ]
@@ -98,7 +83,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Breasts",
+                        "equipSlot":["Nipples"],
                         "equipLayer":"Skin",
                         "revealing":"Erotic"
                     }
@@ -112,7 +97,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Clitoris",
+                        "equipSlot":["Clitoris"],
                         "equipLayer":"Skin",
                         "revealing":"Erotic"
                     }

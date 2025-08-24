@@ -18,45 +18,52 @@
                 "displayName":"%%bodyPart_base_torso%%",
                 "tooltip":"An {0}'s upper body.",
                 "AvailableSlots":["Neck","Torso"],
-                "childID":["arm_android_base", "arm_android_base", "lower_android_base"],
+                "childID":["lower_android_base", "arm_android_base_L", "arm_android_base_R"],
                 "internalID":[],
                 "tags":["torso"],
                 "sortOrder":1
             },
             {
-                "id": "arm_android_base",
+                "id": "arm_android_base_L",
                 "displayName":"%%bodyPart_base_arm%%",
                 "tooltip":"An {0}'s arm.",
-                "AvailableSlots":["Hand"],
+                "AvailableSlots":["Hand","Arm"],
                 "tags":["arm"],
                 "sortOrder":2
+            },
+            {
+                "id": "arm_android_base_R",
+                "displayName":"%%bodyPart_base_arm%%",
+                "tooltip":"An {0}'s arm.",
+                "AvailableSlots":["Hand","Arm"],
+                "tags":["arm"],
+                "sortOrder":3
             },
             {
                 "id": "lower_android_base",
                 "displayName":"%%bodyPart_base_lower%%",
                 "tooltip":"An {0}'s lower body.",
                 "AvailableSlots":["Lower"],
-                "childID":["leg_android_base","leg_android_base"],
+                "childID":["leg_android_base_L","leg_android_base_R"],
                 "internalID":[],
                 "tags":["lower"],
-                "sortOrder":3
-            },
-            {
-                "id": "leg_android_base",
-                "displayName":"%%bodyPart_base_leg%%",
-                "tooltip":"An {0}'s leg.",
-                "AvailableSlots":["Leg"],
-                "childID":["feet_android_base"],
-                "tags":["leg"],
                 "sortOrder":4
             },
             {
-                "id": "feet_android_base",
-                "displayName":"%%bodyPart_base_feet%%",
-                "tooltip":"An {0}'s feet.",
-                "AvailableSlots":["Feet"],
-                "tags":["feet"],
+                "id": "leg_android_base_L",
+                "displayName":"%%bodyPart_base_leg%%",
+                "tooltip":"An {0}'s leg.",
+                "AvailableSlots":["Leg","Feet"],
+                "tags":["leg","feet"],
                 "sortOrder":5
+            },
+            {
+                "id": "leg_android_base_R",
+                "displayName":"%%bodyPart_base_leg%%",
+                "tooltip":"An {0}'s leg.",
+                "AvailableSlots":["Leg","Feet"],
+                "tags":["leg","feet"],
+                "sortOrder":6
             }
         ],
         "BodyInternal_Base": 

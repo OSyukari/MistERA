@@ -151,7 +151,6 @@ public class RelationshipManager
         if (c == null || c.RefID < 0) return;
         if (Owner.RefID == 0) return;
 
-
         string s = "selfEPs: ";
         foreach (var i in selfEPs) s += i.targetCOM.ID+"_";
         s += "\nTargetEPs";
@@ -239,6 +238,11 @@ public class RelationshipManager
         else return this.Personality.GetKOJOMessage(isDoer, ep, rel);
     }
 
+    public bool ExistRelationship(int charaRef)
+    {
+        return relationships.ContainsKey(charaRef);// (charaRef, out var rel)) return rel;
+    }
+
     public Character_Relationship FindRelationshipWith(int charaRef)
     {
         if (charaRef < 0 || charaRef == Owner.RefID) return null;
@@ -251,7 +255,17 @@ public class RelationshipManager
         if (chara == null) return null;
         if (chara.RefID < 0) return null;
 
-        var targetBaseID = chara.RefID == scr_System_CampaignManager.current.Player.RefID ? "PLAYER" : chara.BaseID;
+        var targetBaseID = "";
+        if (chara.RefID == scr_System_CampaignManager.current.Player.RefID)
+        {
+            targetBaseID = "PLAYER";
+            Owner.CallName = "";
+        }
+        else
+        {
+            targetBaseID = chara.BaseID;
+        }
+
         if(Owner.Template != null)
         {
             var template = Owner.Template.initialRelationship.Find(x => x.baseID == targetBaseID);

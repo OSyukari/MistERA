@@ -269,7 +269,7 @@ public class Memory_Entry
                 return false;
             }
 
-            if (!Utility.AreMemoryTagsMergeable(selfTags, other.selfTags))
+            if (!UtilityEX.AreMemoryTagsMergeable(selfTags, other.selfTags))
             {
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, tags not mergeable |{String.Join(" ", selfTags)}|-|{String.Join(" ", other.selfTags)}|");
                 return false;
@@ -306,7 +306,7 @@ public class Memory_Entry
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, softMerge isRefuseOnly |{isRefuseOnly}|-|{other.isRefuseOnly}|");
                     return false;
                 }
-                if (!Utility.AreMemoryTagsMergeable(targetTags, other.targetTags))
+                if (!UtilityEX.AreMemoryTagsMergeable(targetTags, other.targetTags))
                 {
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge error, softMerge targettags |{String.Join(" ", targetTags)}|-|{String.Join(" ", other.targetTags)}|");
                     return false;
@@ -827,7 +827,7 @@ public class Memory_Entry
         additional.Add(entryDescription);
         if (Tags.Count > 0) additional.Add(PrintTags);
         additional.AddRange(MemInstanceDescriptions);
-        additional.Add("Statmod: Check" + cache_score.ToString("+0;-#") + " Mood"+Utility.StatValue(Mod_Mood, null).ToString("+0;-#")+" Stress"+Utility.StatValue(Mod_Stress, null).ToString("+0;-#")+" Lust"+Utility.StatValue(Mod_Lust, null).ToString("+0;-#"));
+        additional.Add("Statmod: Check" + cache_score.ToString("+0;-#") + " Mood"+ UtilityEX.StatValue(Mod_Mood, null).ToString("+0;-#")+" Stress"+ UtilityEX.StatValue(Mod_Stress, null).ToString("+0;-#")+" Lust"+ UtilityEX.StatValue(Mod_Lust, null).ToString("+0;-#"));
 
         if (scr_System_CampaignManager.current.DebugMode) additional.Add("Internal Duration " + Duration);
         box.memText.SetExternalTooltip(String.Join("\n", additional));

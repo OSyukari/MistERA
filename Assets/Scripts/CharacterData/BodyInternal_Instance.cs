@@ -42,6 +42,7 @@ public class BodyInternal_Instance
             return cache_firstEXP;
         } 
     }
+
     [JsonIgnore] public Memory_Entry LastExperience { get 
         {
             if (lastExperience == 0) return null;
@@ -239,36 +240,36 @@ public class BodyInternal_Instance
             // 3 6 9 12 15 18 21
             if (hasTag("vagina"))
             {
-                foreach (float f in Utility.Ranking_V_depth)
+                foreach (float f in UtilityEX.Ranking_V_depth)
                 {
-                    if (orifice_depth >= f) previous = (Ranking)Array.IndexOf(Utility.Ranking_V_depth, f);
+                    if (orifice_depth >= f) previous = (Ranking)Array.IndexOf(UtilityEX.Ranking_V_depth, f);
                     else return previous;
                 }
                 return previous;
             }
             else if (hasTag("penis"))
             {
-                foreach (float f in Utility.Ranking_P_depth)
+                foreach (float f in UtilityEX.Ranking_P_depth)
                 {
-                    if (orifice_depth >= f) previous = (Ranking)Array.IndexOf(Utility.Ranking_P_depth, f);
+                    if (orifice_depth >= f) previous = (Ranking)Array.IndexOf(UtilityEX.Ranking_P_depth, f);
                     else return previous;
                 }
                 return previous;
             }
             else if (hasTag("anus"))
             {
-                foreach (float f in Utility.Ranking_A_depth)
+                foreach (float f in UtilityEX.Ranking_A_depth)
                 {
-                    if (orifice_depth >= f) previous = (Ranking)Array.IndexOf(Utility.Ranking_A_depth, f);
+                    if (orifice_depth >= f) previous = (Ranking)Array.IndexOf(UtilityEX.Ranking_A_depth, f);
                     else return previous;
                 }
                 return previous;
             }
             else if (hasTag("mouth"))
             {
-                foreach (float f in Utility.Ranking_M_depth)
+                foreach (float f in UtilityEX.Ranking_M_depth)
                 {
-                    if (orifice_depth >= f) previous = (Ranking)Array.IndexOf(Utility.Ranking_M_depth, f);
+                    if (orifice_depth >= f) previous = (Ranking)Array.IndexOf(UtilityEX.Ranking_M_depth, f);
                     else return previous;
                 }
                 return previous;
@@ -289,36 +290,36 @@ public class BodyInternal_Instance
             // 3 6 9 12 15 18 21
             if (hasTag("vagina"))
             {
-                foreach (float f in Utility.Ranking_V_size)
+                foreach (float f in UtilityEX.Ranking_V_size)
                 {
-                    if (orifice_size >= f) previous = (Ranking)Array.IndexOf(Utility.Ranking_V_size, f);
+                    if (orifice_size >= f) previous = (Ranking)Array.IndexOf(UtilityEX.Ranking_V_size, f);
                     else return previous;
                 }
                 return previous;
             }
             else if (hasTag("penis"))
             {
-                foreach (float f in Utility.Ranking_P_size)
+                foreach (float f in UtilityEX.Ranking_P_size)
                 {
-                    if (orifice_size >= f) previous = (Ranking)Array.IndexOf(Utility.Ranking_P_size, f);
+                    if (orifice_size >= f) previous = (Ranking)Array.IndexOf(UtilityEX.Ranking_P_size, f);
                     else return previous;
                 }
                 return previous;
             }
             else if (hasTag("anus"))
             {
-                foreach (float f in Utility.Ranking_A_size)
+                foreach (float f in UtilityEX.Ranking_A_size)
                 {
-                    if (orifice_size >= f) previous = (Ranking)Array.IndexOf(Utility.Ranking_A_size, f);
+                    if (orifice_size >= f) previous = (Ranking)Array.IndexOf(UtilityEX.Ranking_A_size, f);
                     else return previous;
                 }
                 return previous;
             }
             else if (hasTag("mouth"))
             {
-                foreach (float f in Utility.Ranking_M_size)
+                foreach (float f in UtilityEX.Ranking_M_size)
                 {
-                    if (orifice_size >= f) previous = (Ranking)Array.IndexOf(Utility.Ranking_M_size, f);
+                    if (orifice_size >= f) previous = (Ranking)Array.IndexOf(UtilityEX.Ranking_M_size, f);
                     else return previous;
                 }
                 return previous;
@@ -574,7 +575,7 @@ public class BodyInternal_Instance
             }
         }
 
-        Utility.ApplyOnConsume(this, comp.OnUseEffects);
+        UtilityEX.ApplyOnConsume(this, comp.OnUseEffects);
 
         if (i.Stackable)
         {
@@ -594,7 +595,7 @@ public class BodyInternal_Instance
         ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method = comp.ingestMethod.Find(x => this.hasTag(x.bodyTags));
 
         //if (!contain.ContainsKey(kvp.Key)) DigestDelays.Add(kvp.Key, Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
-        this.ContainedRefs_Delays.Add(i.RefID, Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
+        this.ContainedRefs_Delays.Add(i.RefID, (int)Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
         contains_cache = null;
     }
 
@@ -678,58 +679,88 @@ public class BodyInternal_Instance
     /// <param name="itemRefID"></param>
     /// <param name="forceEquip"></param>
     /// <returns></returns>
-    public int EquipItem(int itemRefID, bool forceEquip = false)
+    public bool EquipItem(Item_Instance item, ref List<BodyPartEquipSlot> slots, bool forceEquip = false)
     {
-        Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
+        var comp = item.GetComp_Equippable();
+        bool equipped = false;
 
-        if (item != null)
+        for (int i = slots.Count - 1; i >= 0; i--)
         {
-            ItemComponent_Equippable comp = item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
-            if (comp != null)
+            var slot = slots[i];
+            string Tuple = comp.equipLayer.ToString() + "||" + slot.ToString();
+            /// CODE START
+            if (contentsIndex.ContainsKey(Tuple))
             {
-                string Tuple = comp.equipLayer.ToString()+"||"+comp.equipSlot.ToString();
-                /// CODE START
-                if (contentsIndex.ContainsKey(Tuple))
+                if (contentsIndex[Tuple] == -1)
                 {
-                    if (contentsIndex[Tuple] == -1)
-                    {
-                        contentsIndex[Tuple] = itemRefID;
-#if UNITY_EDITOR
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"{Owner.FirstName} successfully equipped {item.DisplayName} at {DisplayName}");
-#endif
-                        return 0;
-                    }
-                    else if (contentsIndex[Tuple] != -1 && forceEquip == true)
-                    {
-                        int returnval = contentsIndex[Tuple];
-                        contentsIndex[Tuple] = itemRefID;
+                    contentsIndex[Tuple] = item.RefID;
+                    // equip success
+                    equipped = true;
+                    slots.Remove(slot);
+                }
+                else if (contentsIndex[Tuple] != -1 && contentsIndex[Tuple] != item.RefID && forceEquip == true)
+                {
+                    var returnVal = contentsIndex[Tuple];
+                    contentsIndex[Tuple] = item.RefID;
 
-                        Owner.UnequipItem(returnval);
-                        var unequipped = scr_System_CampaignManager.current.FindItemInstanceByID(returnval);
-#if UNITY_EDITOR
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"{Owner.FirstName} successfully equipped {item.DisplayName} at {DisplayName}, unequipping item {unequipped.DisplayName}");
-#endif
-                        return returnval;
-                    }
+                    Owner.UnequipItem(returnVal);
+                    // replace equipped
+                    equipped = true;
+                    slots.Remove(slot);
+                }
+            }
+            /// CODE END
+        }
+        return equipped;
+    }
+
+    public bool EquipItem(Item_Instance item, bool forceEquip = false)
+    {
+        var comp = item.GetComp_Equippable();
+        bool equipped = false;
+        bool unequip = false;
+
+        foreach(var slot in comp.equipSlot)
+        {
+            string Tuple = comp.equipLayer.ToString() + "||" + slot.ToString();
+            /// CODE START
+            if (contentsIndex.ContainsKey(Tuple))
+            {
+                if (contentsIndex[Tuple] == -1)
+                {
+                    contentsIndex[Tuple] = item.RefID;
+                    // equip success
+                    equipped = true;
+                }
+                else if (contentsIndex[Tuple] == item.RefID)
+                {
+                    // do nothing
                 }
                 else
                 {
-#if UNITY_EDITOR
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.LogError($"bodypart {DisplayName} does not contain index {Tuple} in {String.Join(",", contentsIndex.Keys)}");
-#endif
+                    var returnVal = contentsIndex[Tuple];
+                    contentsIndex[Tuple] = item.RefID;
+
+                    Owner.UnequipItem(returnVal);
+                    // replace equipped
+                    equipped = true;
                 }
-                /// CODE END
             }
             else
             {
-                Debug.LogError($"Equipitem {item.DisplayName} failed on {Owner.FirstName} {DisplayName}, target item does not have equip comp");
+                if (equipped) unequip = true;
+                equipped = false;
             }
+            /// CODE END
         }
-        else
+
+        if (unequip)
         {
-            Debug.LogError($"Equipitem {itemRefID} failed on {Owner.FirstName} {DisplayName}, target item cannot be found");
+            UnequipItem(item.RefID);
+            equipped = false;
         }
-        return -1;
+
+        return equipped;
     }
 
     public int EquipItemDirect(int itemRefID, BodyPartEquipSlot slot, BodyEquipLayer layer)

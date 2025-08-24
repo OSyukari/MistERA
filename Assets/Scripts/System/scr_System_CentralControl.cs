@@ -109,21 +109,6 @@ public class scr_System_CentralControl : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
-
-        string filePath = Application.dataPath + "/UserPrefs.json";
-        FileInfo file = new System.IO.FileInfo(filePath);
-        if (!File.Exists(filePath))
-        {
-            var prefFile = GetSerializable();
-            string s = JsonConvert.SerializeObject(prefFile, Formatting.Indented, Utility.SerializerSettings);
-            file.Directory.Create();
-            File.WriteAllText(file.FullName, s);
-        }
-        else
-        {
-            scr_System_CentralControl_Serializable s = JsonConvert.DeserializeObject<scr_System_CentralControl_Serializable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
-            LoadSerializable(s);
-        }
     }
 
     public bool DisplayNSFW { get { return !isSafeMode && ContentSetting.SexMode > Sex_Mode.disabled && ContentSetting.SexPresenceMode > Sex_Presence_Mode.minimal; } }
@@ -140,6 +125,7 @@ public class scr_System_CentralControl : MonoBehaviour
             {
                 DisplaySetting.Language = value;
                 LocalizeDictionary.Instance.Index.cachedLang = value;
+                LocalizeDictionary.ClearCache();
                 scr_System_CentralControl.current.SaveUserPref();
             }
             else
@@ -153,7 +139,7 @@ public class scr_System_CentralControl : MonoBehaviour
         string filePath = Application.dataPath + "/UserPrefs.json";
         FileInfo file = new System.IO.FileInfo(filePath);
         var prefFile = GetSerializable();
-        string s = JsonConvert.SerializeObject(prefFile, Formatting.Indented, Utility.SerializerSettings);
+        string s = JsonConvert.SerializeObject(prefFile, Formatting.Indented, UtilityEX.SerializerSettings);
         file.Directory.Create();
         File.WriteAllText(file.FullName, s);
     }
@@ -197,6 +183,22 @@ public class scr_System_CentralControl : MonoBehaviour
         scr_System_Time.current.Observer_globalTime_Hours += OnHourUpdate;
         scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate;
 
+
+
+        string filePath = Application.dataPath + "/UserPrefs.json";
+        FileInfo file = new System.IO.FileInfo(filePath);
+        if (!File.Exists(filePath))
+        {
+            var prefFile = GetSerializable();
+            string s = JsonConvert.SerializeObject(prefFile, Formatting.Indented, UtilityEX.SerializerSettings);
+            file.Directory.Create();
+            File.WriteAllText(file.FullName, s);
+        }
+        else
+        {
+            scr_System_CentralControl_Serializable s = JsonConvert.DeserializeObject<scr_System_CentralControl_Serializable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+            LoadSerializable(s);
+        }
     }
 
     // Called by Serializer
@@ -238,14 +240,6 @@ public class scr_System_CentralControl : MonoBehaviour
         if (!this.texSprites.ContainsKey(tex)) this.texSprites.Add(tex, Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 100.0f));
         this.textureUseCounter[tex] = PortraitCacheHour;
         return texSprites[tex];
-    }
-
-
-    public Character_Trainable LoadCharaData(string path)
-    {
-        var chara = JsonConvert.DeserializeObject<Character_Trainable>(File.ReadAllText(path), Utility.SerializerSettings);
-        if (chara != null && chara.BaseID == "") chara.BaseID = path;
-        return chara;
     }
 
     protected void UnloadTextureCache(Texture2D path)
@@ -545,7 +539,7 @@ public class scr_System_CentralControl : MonoBehaviour
         var time = DateTime.Now;
         var fileName = time.Year+"-"+time.Month.ToString("D2")+"-"+time.Day.ToString("D2") + " "+time.Hour.ToString("D2") + "H "+time.Minute.ToString("D2") +"M " + time.Second.ToString("D2") + "S";
         var save = new SaveFile(true);
-        string s = JsonConvert.SerializeObject(save, Formatting.Indented, Utility.SerializerSettings);
+        string s = JsonConvert.SerializeObject(save, Formatting.Indented, UtilityEX.SerializerSettings);
 
         FileInfo file = new System.IO.FileInfo($"{scr_System_Serializer.SavePath}/{fileName}.json");
         file.Directory.Create();
@@ -565,7 +559,7 @@ public class scr_System_CentralControl : MonoBehaviour
             Debug.LogError("QuickLoad path invalid");
             return;
         }
-        SaveFile save = JsonConvert.DeserializeObject<SaveFile>(File.ReadAllText(path), Utility.SerializerSettings);
+        SaveFile save = JsonConvert.DeserializeObject<SaveFile>(File.ReadAllText(path), UtilityEX.SerializerSettings);
 
         save.LoadSave();
 
@@ -587,7 +581,7 @@ public class SaveFileHolder
     public string FilePath = "";
 
     [JsonIgnore] public SaveFile InnerFile{get{
-        return JsonConvert.DeserializeObject<SaveFile>(File.ReadAllText(FilePath), Utility.SerializerSettings);
+        return JsonConvert.DeserializeObject<SaveFile>(File.ReadAllText(FilePath), UtilityEX.SerializerSettings);
     }}
 
     [JsonIgnore] public bool isValid{get{ return FilePath != ""; }}

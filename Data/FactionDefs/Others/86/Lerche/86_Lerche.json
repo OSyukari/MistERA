@@ -59,6 +59,7 @@
     "firstName": "Campaign1_86_Lerche_firstname",
     "middleName": "",
     "lastName": "",
+    "title":"Sirin",
     "nameDisplayFormat": "chara_fullname_firstToLast",
     "origin": "charOrigin_none",
     "race": "humanRace_android_simple",

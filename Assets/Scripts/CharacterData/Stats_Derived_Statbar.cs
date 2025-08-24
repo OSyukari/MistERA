@@ -45,7 +45,7 @@ public class Stats_Derived_Extended
     [JsonIgnore] public string Tooltip { get { return tooltip; } }
     [JsonIgnore] public string StatKeyword { get { return statKeyword; } }
 
-    public Stats_Derived_Extended_Instance Instantiate(Character_Trainable c)
+    public Stats_Derived_Extended_Instance Instantiate(I_StatsManager c)
     {
         return new Stats_Derived_Extended_Instance(this, c);
     }
@@ -61,7 +61,7 @@ public class Stats_Derived_Extended
         //return 0f;
     }
 
-    public Stats_Derived_Instance GetDerivedStat(Character_Trainable c)
+    public Stats_Derived_Instance GetDerivedStat(I_StatsManager c)
     {
         if (maxValue == null)
         {
@@ -91,12 +91,12 @@ public class Stats_Derived_Extended
             return 0f;
         }
 
-        public Stats_Derived_Instance GetDerivedStat(Character_Trainable c)
+        public Stats_Derived_Instance GetDerivedStat(I_StatsManager c)
         {
             switch (valueType)
             {
                 case "getStatValue":
-                    return c.Stats.GetDerivedStat(valueString);
+                    return c.GetDerivedStat(valueString);
                 default: break;
             }
             Debug.LogError("Error GetDerivedStat in Stats_Derived_Extended");
@@ -120,7 +120,7 @@ public class Stats_Derived_Extended_Instance
         } }
 
     [JsonIgnore] public string ID { get { return Parent.ID; } }
-    string _cachedDisplayName = string.Empty;
+    [JsonIgnore] public string _cachedDisplayName = string.Empty;
     [JsonIgnore] public string DisplayName { get {
             if (_cachedDisplayName == string.Empty) _cachedDisplayName = Parent.DisplayName;
             return _cachedDisplayName; } }
@@ -133,11 +133,21 @@ public class Stats_Derived_Extended_Instance
         text.SetExternalTooltip(MaxValueStat.ModStrings());
     }
 
-    protected int ownerRef = -1;
-    private Character_Trainable owner = null;
-    [JsonIgnore] public Character_Trainable Owner { get { if (owner == null) owner = scr_System_CampaignManager.current.FindInstanceByID(ownerRef);
+    private I_StatsManager owner = null;
+    [JsonIgnore] public I_StatsManager Owner { get {
             return owner;
         } }
+
+
+
+    public Stats_Derived_Extended_Instance Copy(I_StatsManager newParent)
+    {
+        var instance = new Stats_Derived_Extended_Instance(parent, newParent);
+        instance.SetValue(this.value);
+        instance._cachedDisplayName = this._cachedDisplayName;
+
+        return instance;
+    }
 
     public Stats_Derived_Extended_Instance()
     {
@@ -148,16 +158,15 @@ public class Stats_Derived_Extended_Instance
     /// </summary>
     /// <param name="statBase"></param>
     /// <param name="c"></param>
-    public Stats_Derived_Extended_Instance(Stats_Derived_Extended statBase, Character_Trainable c)
+    public Stats_Derived_Extended_Instance(Stats_Derived_Extended statBase, I_StatsManager c)
     {
         parentID = statBase.ID;
         parent = statBase;
         ReEstablishParent(c);
     }
 
-    public void ReEstablishParent(Character_Trainable c)
+    public void ReEstablishParent(I_StatsManager c)
     {
-        ownerRef = c.RefID;
         owner = c;
     }
     public void Increment(float amount)
@@ -210,13 +219,17 @@ public class Stats_Derived_Extended_Instance
 
     public void Restore(float amount)
     {
-        this.value = Math.Max(0, Math.Min(MaxValue, this.value + amount));
+        this.value = Math.Clamp(this.value + amount, 0, MaxValue);
     }
 
     public void RestorePercent(float percent)
     {
-        this.value = Math.Max(0, Math.Min(MaxValue, this.value + MaxValue * percent));
+        this.value = Math.Clamp(this.value + MaxValue * percent, 0, MaxValue);
     }
 
+    public void SetValue(float value)
+    {
+        this.value = value;
+    }
 }
 

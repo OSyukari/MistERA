@@ -130,83 +130,94 @@ public class scr_System_Serializer : MonoBehaviour
 
     }
 
+
+    bool initialized = false;
+    private void Update()
+    {
+        if (!initialized)
+        {
+            initialized = true;
+            BuildAddressables(scr_System_CentralControl.current.isSafeMode);
+
+            // before master dictionary load, central control player pref must exist to check language
+            LoadDefs(scr_System_CentralControl.current.isSafeMode);
+
+            // parkour every file
+            LoadCharactersFoldersJSON();
+            LoadCharactersPresetsJSON();
+
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.isSafeMode)
+            {   // update safelist
+                SafeList.InitializeLists();
+
+                SafeList.MergeWith(MasterList);
+
+                MasterList = SafeList;
+                CharaOrigins.Instance.Humanoid_Race_Index = SafeList.humanoid_Races;
+                CharaOrigins.Instance.Origins_Index = SafeList.Character_Origins;
+                CharaOrigins.Instance.StartingOption_Index = SafeList.Character_Origin_StartingOptions;
+                CharaOrigins.Instance.RaceTemplateIndex = SafeList.humanoid_RaceTemplates;
+                CharaOrigins.Instance.BodyPartIndex = SafeList.BodyPartBases;
+                CharaOrigins.Instance.Traits = SafeList.Traits_Groups;
+                Masterlist_Items.Instance.Index = SafeList.Items;
+                LocalizeDictionary.Instance.Index = SafeList.Dictionary;
+
+                SafeList.RemoveNSFW();
+            }
+
+            // update untranslated list
+            Dictionary_Index untranslated = new Dictionary_Index();
+            var baseDict = LocalizeDictionary.Instance.Index.Entries["zh-cn"];
+            foreach (var language in LocalizeDictionary.Instance.Index.Languages)
+            {
+                if (language == "zh-cn") continue;
+                var currentLib = LocalizeDictionary.Instance.Index.Entries[language];
+                var currentTarget = untranslated.Entries[language];
+                foreach (var key in baseDict.Keys)
+                {
+                    if (!currentLib.ContainsKey(key)) currentTarget.Add(key, baseDict[key]);
+                }
+            }
+
+            string untransDictPath = Application.dataPath + "/untranslatedDict.json";
+
+            var s2 = JsonConvert.SerializeObject(untranslated, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
+            if (File.Exists(untransDictPath)) File.Delete(untransDictPath);
+
+            FileInfo untransDict = new System.IO.FileInfo(untransDictPath);
+            untransDict.Directory.Create();
+            File.WriteAllText(untransDict.FullName, s2);
+            Debug.Log($"creating/updating untranslated Dictionary in {untransDictPath}");
+#endif
+            MasterList.Initialize();
+
+#if UNITY_EDITOR
+
+            if (scr_System_CentralControl.current.isSafeMode)
+            {
+                MasterList.RemoveNonExisting();
+
+                string safeListpath = Application.dataPath + " /safeMasterList.json";
+                var s = JsonConvert.SerializeObject(SafeList, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
+                if (File.Exists(safeListpath)) File.Delete(safeListpath);
+
+                FileInfo safeFile = new System.IO.FileInfo(safeListpath);
+                safeFile.Directory.Create();
+                File.WriteAllText(safeFile.FullName, s);
+                Debug.Log($"creating/updating safeList in {safeListpath}");
+            }
+
+#endif
+
+            scr_System_CentralControl.current.NotifyLoadComplete();
+        }
+    }
+
     private void Start()
     {
         // build addressable
-        BuildAddressables(scr_System_CentralControl.current.isSafeMode);
-
-        // before master dictionary load, central control player pref must exist to check language
-        LoadDefs(scr_System_CentralControl.current.isSafeMode);
-
-        // parkour every file
-        LoadCharactersFoldersJSON();
-        LoadCharactersPresetsJSON();
-
-#if UNITY_EDITOR
-        if (scr_System_CentralControl.current.isSafeMode)
-        {   // update safelist
-            SafeList.InitializeLists();
-
-            SafeList.MergeWith(MasterList);
-
-            MasterList = SafeList;
-            CharaOrigins.Instance.Humanoid_Race_Index = SafeList.humanoid_Races;
-            CharaOrigins.Instance.Origins_Index = SafeList.Character_Origins;
-            CharaOrigins.Instance.StartingOption_Index = SafeList.Character_Origin_StartingOptions;
-            CharaOrigins.Instance.RaceTemplateIndex = SafeList.humanoid_RaceTemplates;
-            CharaOrigins.Instance.BodyPartIndex = SafeList.BodyPartBases;
-            CharaOrigins.Instance.Traits = SafeList.Traits_Groups;
-            Masterlist_Items.Instance.Index = SafeList.Items;
-            LocalizeDictionary.Instance.Index = SafeList.Dictionary;
-
-            SafeList.RemoveNSFW();
-        }
-
-        // update untranslated list
-        Dictionary_Index untranslated = new Dictionary_Index();
-        var baseDict = LocalizeDictionary.Instance.Index.Entries["zh-cn"];
-        foreach (var language in LocalizeDictionary.Instance.Index.Languages)
-        {
-            if (language == "zh-cn") continue;
-            var currentLib = LocalizeDictionary.Instance.Index.Entries[language];
-            var currentTarget = untranslated.Entries[language];
-            foreach (var key in baseDict.Keys)
-            {
-                if (!currentLib.ContainsKey(key)) currentTarget.Add(key, baseDict[key]);
-            }
-        }
-
-        string untransDictPath = Application.dataPath + "/untranslatedDict.json";
-
-        var s2 = JsonConvert.SerializeObject(untranslated, formatting: Formatting.Indented, Utility.SerializerSettings);
-        if (File.Exists(untransDictPath)) File.Delete(untransDictPath);
-
-        FileInfo untransDict = new System.IO.FileInfo(untransDictPath);
-        untransDict.Directory.Create();
-        File.WriteAllText(untransDict.FullName, s2);
-        Debug.Log($"creating/updating untranslated Dictionary in {untransDictPath}");
-#endif
-        MasterList.Initialize();
-
-#if UNITY_EDITOR
-
-        if (scr_System_CentralControl.current.isSafeMode)
-        {
-            MasterList.RemoveNonExisting();
-
-            string safeListpath = Application.dataPath + " /safeMasterList.json";
-            var s = JsonConvert.SerializeObject(SafeList, formatting: Formatting.Indented, Utility.SerializerSettings);
-            if (File.Exists(safeListpath)) File.Delete(safeListpath);
-
-            FileInfo safeFile = new System.IO.FileInfo(safeListpath);
-            safeFile.Directory.Create();
-            File.WriteAllText(safeFile.FullName, s);
-            Debug.Log($"creating/updating safeList in {safeListpath}");
-        }
-
-#endif
-
-        scr_System_CentralControl.current.NotifyLoadComplete();
+        
     }
 
 
@@ -274,20 +285,20 @@ public class scr_System_Serializer : MonoBehaviour
                     }
                     if (skipped) continue;
 
-                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
                     if (i == null || i.baseID == null || i.baseID.Length < 1) continue;
                     newIndex.baseCharacters.Add(i);
 
-                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
                     newIndex2.list.Add(ii);
                 }
                 else
                 {
-                    var i = JsonConvert.DeserializeObject<Character_SerializableTrainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    var i = JsonConvert.DeserializeObject<Character_SerializableTrainable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
                     if (i == null || i.baseID == null || i.baseID.Length < 1) continue;
                     newIndex.baseCharacters.Add(i);
 
-                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
                     newIndex2.list.Add(ii);
                 }
                 loadedFiles.Add($"Reading json file {file.FullName}");
@@ -332,23 +343,23 @@ public class scr_System_Serializer : MonoBehaviour
                     }
                     if (skipped) continue;
 
-                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
                     if (i == null) continue;
                     if (i.baseID == "" || i.baseID.Length < 1) i.baseID = file.Name;
                     newIndex.baseCharacters.Add(i);
 
-                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
                     if (ii.baseID == "" || ii.baseID.Length < 1) ii.baseID = file.Name;
                     newIndex2.list.Add(ii);
                 }
                 else
                 {
-                    var i = JsonConvert.DeserializeObject<Character_SerializableTrainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    var i = JsonConvert.DeserializeObject<Character_SerializableTrainable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
                     if (i == null) continue;
                     if (i.baseID == "" || i.baseID.Length < 1) i.baseID = file.Name;
                     newIndex.baseCharacters.Add(i);
 
-                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
                     if (ii.baseID == "" || ii.baseID.Length < 1) ii.baseID = file.Name;
                     newIndex2.list.Add(ii);
                 }
@@ -390,7 +401,7 @@ public class scr_System_Serializer : MonoBehaviour
             }
             if (skipped) continue;
             //Debug.Log($"reading directory {file.Name} in {file.FullName} in {file.DirectoryName} in {file.DirectoryName}");
-            MasterList l = JsonConvert.DeserializeObject<MasterList>(File.ReadAllText(file.FullName),Utility.SerializerSettings);
+            MasterList l = JsonConvert.DeserializeObject<MasterList>(File.ReadAllText(file.FullName),UtilityEX.SerializerSettings);
             if (l != null)
             {
                 MasterList.MergeWith(l);
@@ -476,6 +487,40 @@ public class scr_System_Serializer : MonoBehaviour
     public Stats_Derived_Extended GetByNameOrID_StatusEx(string name_or_id)
     {
         return MasterList.StatEXs.GetByID(name_or_id);
+    }
+
+    Dictionary<Item_Base, List<CombatAction>> _CachedCombatActions_Item = new Dictionary<Item_Base, List<CombatAction>>();
+    public List<CombatAction> GetCombatActions(Item_Base item)
+    {
+        if (_CachedCombatActions_Item.ContainsKey(item)) return _CachedCombatActions_Item[item];
+
+        var results = new List<CombatAction>();
+        foreach (var entry in MasterList.CombatActions.list)
+        {
+            if (entry.itemRequirement == null) continue;
+            if (!entry.itemRequirement.isActive) continue;
+            if (entry.itemRequirement.Validate(item)) results.Add(entry);
+        }
+
+        _CachedCombatActions_Item.Add(item, results);
+        return results;
+    }
+
+    Dictionary<BodyPart_Base, List<CombatAction>> _CachedCombatActions_Part = new Dictionary<BodyPart_Base, List<CombatAction>>();
+    public List<CombatAction> GetCombatActions(BodyPart_Base part)
+    {
+        if (_CachedCombatActions_Part.ContainsKey(part)) return _CachedCombatActions_Part[part];
+
+        var results = new List<CombatAction>();
+        foreach (var entry in MasterList.CombatActions.list)
+        {
+            if (entry.itemRequirement == null) continue;
+            if (!entry.itemRequirement.isActive) continue;
+            if (entry.itemRequirement.Validate(part.tags)) results.Add(entry);
+        }
+
+        _CachedCombatActions_Part.Add(part, results);
+        return results;
     }
 
 }

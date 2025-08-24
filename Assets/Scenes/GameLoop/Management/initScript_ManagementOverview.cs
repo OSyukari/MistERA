@@ -102,7 +102,7 @@ public class initScript_ManagementOverview : MonoBehaviour
 
         }
 
-        Utility.DestroyAllChildrenFrom(ref linkedFactionGrid);
+        Utility.DestroyAllChildrenFrom( linkedFactionGrid);
         if (m.ConnectedFactions.Count < 1)
         {
             TMP_Text c_name = Instantiate(prefab_factionEntry);

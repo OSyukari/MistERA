@@ -10,15 +10,22 @@ using System.Linq;
 
 public class menu_combatSim : scr_Menu, IPointerClickHandler
 {
+    public List<string> combatSimTargets = new List<string>();
+    public List<string> randomWeaponLists = new List<string>();
 
     TeamComposition teamA = null;
     TeamComposition teamB = null;
 
+    public scr_HoverableText DummyNames;
     public RectTransform playerTeamList;
     System.Action successCallback;
     System.Action failCallback;
+
+    CombatManager combatManager;
+
     public void InitializeWithArgument(List<int> actors, System.Action successCallback = null, System.Action failCallback = null)
     {
+        combatManager = scr_System_CampaignManager.current.Combat;
         if (!initialized) Initialize();
 
         this.successCallback = successCallback;
@@ -31,9 +38,11 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
         if (actors.Contains(playerRef)) teamA.support.Add(playerRef);
 
         teamB = new TeamComposition();
-        teamB.frontline = new List<int>() { scr_System_CampaignManager.current.Combat.Dummy.RefID };
+        teamB.frontline = new List<int>();
 
-        Utility.DestroyAllChildrenFrom(ref playerTeamList);
+        SetCombatSimTargets(0);
+        
+        Utility.DestroyAllChildrenFrom( playerTeamList);
 
         foreach(var actorRef in teamA.Actors)
         {
@@ -53,17 +62,15 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
 
     public scr_teamComp prefab_line;
 
-    protected void MakeCharaLine(int charaRef)
+    protected void MakeCharaLine(Character_Trainable c)
     {
-        var c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
-
         var Line = Instantiate(prefab_line);
 
         Line.GetComponent<RectTransform>().SetParent(playerTeamList, false);
         Line.charaName.SetText(c.FirstName);
 
-        RegisterBtn(Line.btn_frontline, new Button_selectTeam(this, Line.btn_frontline,charaRef, ref teamA.frontline));
-        RegisterBtn(Line.btn_support, new Button_selectTeam(this, Line.btn_support, charaRef, ref teamA.support));
+        RegisterBtn(Line.btn_frontline, new Button_selectTeam(this, Line.btn_frontline,c.RefID, ref teamA.frontline));
+        RegisterBtn(Line.btn_support, new Button_selectTeam(this, Line.btn_support, c.RefID, ref teamA.support));
 
 
     }
@@ -104,6 +111,12 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
             // Debug.Log("Button " + button + " " + button.optionID);
             switch (button.optionID)
             {
+                case 9996:
+                    button.Initialize(this, new Button_toggleDummy(this, button, true));
+                    break;
+                case 9997:
+                    button.Initialize(this, new Button_toggleDummy(this, button, false));
+                    break;
                 case 9998:
                     button.Initialize(this, new Button_StartCombat(this, button));
                     break;
@@ -130,7 +143,7 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         // if click outside box
-        if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)))
+        if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && UtilityEX.isClickBelowDragThreshold(eventData)))
         {
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();
         }
@@ -168,14 +181,18 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
     {
         new menu_combatSim parent;
         scr_SelectableText button;
+        List<string> a, b;
         public Button_StartCombat(menu_combatSim parent, scr_SelectableText button) : base(parent)
         {
             this.parent = parent;
             this.button = button;
+            a = new List<string>();
+            b = new List<string>();
         }
 
         public override bool IsButtonValid()
         {
+            this.tooltip = "";
             if (parent.teamA == null || parent.teamA.Actors.Count < 1)
             {
                 this.tooltip = "teamA is empty";
@@ -197,18 +214,91 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
                 return false;
             }
 
-            return true;
+            a.Clear();
+            b.Clear();
+            bool hasweapon_a = true;
+            foreach (var i in parent.teamA.Actors)
+            {
+                a.Add(i.FirstName);
+                hasweapon_a = hasweapon_a && !i.Inventory.HasWeapon();
+            }
+            foreach (var i in parent.teamB.Actors) b.Add(i.CallName);
 
+
+            this.tooltip = LocalizeDictionary.QueryThenParse("ui_combatSim_starting")
+                .Replace("$names_a$", String.Join("|", a))
+                .Replace("$names_b$", String.Join("|", b));// $"Starting Combat between {} and {String.Join("|", b)}\n";
+
+            if (!hasweapon_a)
+            {
+                this.tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_combatSim_randWeapon")}";
+            }
+            return true;
+        }
+
+        protected void OnEnd()
+        {
+            foreach(var i in parent.teamA.Actors) i.Stats.HP.RestoreMax();
+            foreach (var i in parent.teamB.Actors) i.Stats.HP.RestoreMax();
         }
 
         public void OnClickButton()
         {
             if (parent.successCallback != null) parent.successCallback.Invoke();
-            scr_System_CampaignManager.current.StartCombat(parent.teamA, parent.teamB);
+
+            foreach(var i in parent.teamA.Actors)
+            {
+                if (!i.Inventory.HasWeapon())
+                {
+                    var weapon = WorldManager.Instantiate(Utility.GetRandomElement(parent.randomWeaponLists));
+                    i.Inventory.AddItem(weapon);
+                }
+            }
+            
+            scr_System_CampaignManager.current.StartCombat(parent.teamA, parent.teamB, OnEnd);
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();
         }
     }
 
+    public int CurrentDummy = 0;
+    protected void SetCombatSimTargets(int i)
+    {
+        if (i < 0) i = this.combatSimTargets.Count - 1;
+        else if (i >= this.combatSimTargets.Count) i = 0;
+        CurrentDummy = i;
+
+        var nextTarget = this.combatSimTargets[CurrentDummy];
+        SetCombatSimTargets(nextTarget);
+
+    }
+
+    protected void SetCombatSimTargets(string nextTarget)
+    {
+        //Debug.Log($"getting combat dummy {nextTarget}");
+        teamB.Clear();
+        var team = scr_System_Serializer.current.MasterList.Encounters.GetByID(nextTarget);
+        var tooltips = new List<string>();  
+        foreach(var name in team.frontline)
+        {
+            var chara = scr_System_CampaignManager.current.Combat.GetCombatDummy(name);
+            teamB.frontline.Add(chara.RefID);
+            List<string> inv = new List<string>();
+            foreach (var i in chara.Inventory.Contents) inv.Add(i.Print());
+            tooltips.Add($"{chara.CallName} {chara.BaseID}: {String.Join("|", inv)}");
+        }
+        foreach (var name in team.support)
+        {
+            var chara = scr_System_CampaignManager.current.Combat.GetCombatDummy(name);
+            teamB.support.Add(chara.RefID);
+            List<string> inv = new List<string>();
+            foreach (var i in chara.Inventory.Contents) inv.Add(i.Print());
+            tooltips.Add($"{chara.CallName} {chara.BaseID}: {String.Join("|", inv)}");
+        }
+        DummyNames.SetText(team.Name);
+        DummyNames.SetExternalTooltip(String.Join("\n", tooltips));
+
+        ValidateAll();
+    }
 
     public class Button_selectTeam : ButtonValidator, I_ButtonClickable
     {
@@ -241,6 +331,28 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             parent.ChangeCharaTeam(ref team, charaRef);
+        }
+    }
+
+    public class Button_toggleDummy : ButtonValidator, I_ButtonClickable
+    {
+        new menu_combatSim parent;
+        scr_SelectableText button;
+        bool prev;
+        public Button_toggleDummy(menu_combatSim parent, scr_SelectableText button, bool prev) : base(parent)
+        {
+            this.parent = parent;
+            this.button = button;
+            this.prev = prev;
+        }
+        public override bool IsButtonValid()
+        {
+            return parent.combatSimTargets.Count > 1;
+        }
+
+        public void OnClickButton()
+        {
+            parent.SetCombatSimTargets(prev ? parent.CurrentDummy - 1 : parent.CurrentDummy + 1);
         }
     }
 }

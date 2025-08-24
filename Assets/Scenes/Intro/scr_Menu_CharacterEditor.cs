@@ -714,10 +714,10 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                     SetStartingGift(this.Character.Origin.availableOptionsID[currentStartingOptionIndex]);
                     break;
                 case 121:   //reroll once
-                    stat = Utility.RollStat();
+                    stat = UtilityEX.RollStat();
                     break;
                 case 122:   //reroll 10
-                    stat = Utility.RollStatRepeat(10);
+                    stat = UtilityEX.RollStatRepeat(10);
                     break;
                 case 123:   //maxvalues
                     stat = new int[4] { 18, 18, 18, 18 };

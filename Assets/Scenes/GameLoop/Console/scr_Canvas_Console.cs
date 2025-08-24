@@ -115,7 +115,7 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
     public void ParseConsoleCommand(string command)
     {
-        Utility.ParseConsoleCommand(command);
+        UtilityEX.ParseConsoleCommand(command);
         ToggleDisplay(true);
     }
 
@@ -152,7 +152,7 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         // if click outside box
-        if (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)) ToggleDisplay(true);
+        if (eventData.button == PointerEventData.InputButton.Right && UtilityEX.isClickBelowDragThreshold(eventData)) ToggleDisplay(true);
     }
 
 

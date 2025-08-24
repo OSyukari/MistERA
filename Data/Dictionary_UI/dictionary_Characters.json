@@ -93,6 +93,7 @@
                 "equip_slot_None": "-",
                 "equip_slot_Hand": "手",
                 "equip_slot_Hair": "头",
+                "equip_slot_Arm": "臂",
                 "equip_slot_Face": "脸",
                 "equip_slot_Eyes": "眼",
                 "equip_slot_Neck": "脖",
@@ -245,6 +246,7 @@
 
                 "equip_slot_None": "-",
                 "equip_slot_Hand": "Hand",
+                "equip_slot_Arm": "Arm",
                 "equip_slot_Hair": "Hair",
                 "equip_slot_Face": "Face",
                 "equip_slot_Eyes": "Eyes",

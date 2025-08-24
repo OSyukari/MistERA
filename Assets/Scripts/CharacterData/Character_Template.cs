@@ -10,11 +10,30 @@ using Cysharp.Threading.Tasks;
 
 
 [System.Serializable]
-public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable, I_RemoveNonExisting
+public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonExisting
 {
 
     public List<CharaSerializableTemplate_Base> list = new List<CharaSerializableTemplate_Base>();
 
+    Dictionary<string, CharaSerializableTemplate_Base> ID_Dictionary = new Dictionary<string, CharaSerializableTemplate_Base>();
+    Dictionary<string, CharaTemplateGenerator> Gen_Dictionary = new Dictionary<string, CharaTemplateGenerator>();
+    public CharaSerializableTemplate_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+
+    public void RegisterGeneratorTemplate(string id, CharaTemplateGenerator gen)
+    {
+        this.Gen_Dictionary.Add(id, gen);
+    }
+    public void RegisterAllID(List<string> s)
+    {
+        s.Add("Index_CombatActions : registering ID with list length [" + list.Count + "]");
+
+        foreach (var o in this.list)
+        {
+            // if (o.isValid)
+            ID_Dictionary.TryAdd(o.baseID, o);
+        }
+
+    }
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Character_Trainable_SerializableTemplate_Index;
@@ -27,8 +46,15 @@ public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable, 
 
     public CharaTemplate GetByCharaBaseID(string baseID)
     {
-        var findresult = this.list.Find(x => x.baseID == baseID);
-        return findresult == null ? null : findresult.GetTemplate;
+        if (Gen_Dictionary.ContainsKey(baseID))
+        {
+            return Gen_Dictionary[baseID].Get;
+        }
+        else
+        {
+            var findresult = GetByID(baseID);
+            return findresult == null ? null : findresult.GetTemplate;
+        }
     }
 
     public void RemoveNonExisting()
@@ -55,7 +81,24 @@ public abstract class CharaSerializableTemplate_Base
 public class CharaSerializableTemplate_Safe : CharaSerializableTemplate_Base
 {
     public CharaSafeTemplate Template = null;
-    public override CharaTemplate GetTemplate { get { return Template; } set { Template = value as CharaSafeTemplate; } }
+    public override CharaTemplate GetTemplate 
+    { 
+        get {
+            var randTemplate = this.Generator == null ? null : this.Generator.Get;
+            if (randTemplate != null) return randTemplate as CharaSafeTemplate;
+            else return Template; } 
+        set {
+            if (this.Generator != null)
+            {
+                Debug.LogError("ERROR CANNOT SET RANDOM GENERATOR TEMPLATE");
+            }
+            else
+            {
+                Template = value as CharaSafeTemplate;
+            }
+        } 
+    }
+    public CharaTemplateGenerator Generator = null;
     public override void PurgeNonExistingData()
     {
       //  Debug.Log($"CALLING override METHOD PurgeNonExistingData Character_SerializableSafe with entries {(Template == null ? "null" : Template.initialInventory.Count)}");
@@ -76,7 +119,27 @@ public class CharaSerializableTemplate_Safe : CharaSerializableTemplate_Base
 public class CharaSerializableTemplate_Trainable : CharaSerializableTemplate_Base
 {
     public CharaTrainableTemplate Template = null;
-    public override CharaTemplate GetTemplate { get { return Template; } set { Template = value as CharaTrainableTemplate; } }
+    public override CharaTemplate GetTemplate
+    {
+        get
+        {
+            var randTemplate = this.Generator == null ? null : this.Generator.Get;
+            if (randTemplate != null) return randTemplate as CharaTrainableTemplate;
+            else return Template;
+        }
+        set
+        {
+            if (this.Generator != null)
+            {
+                Debug.LogError("ERROR CANNOT SET RANDOM GENERATOR TEMPLATE");
+            }
+            else
+            {
+                Template = value as CharaTrainableTemplate;
+            }
+        }
+    }
+    public CharaTemplateGenerator Generator = null;
     public override void PurgeNonExistingData()
     {
       //  Debug.Log($"CALLING override METHOD PurgeNonExistingData Character_SerializableSafe with entries {(Template == null ? "null" : Template.initialInventory.Count)}");
@@ -92,7 +155,10 @@ public class CharaSerializableTemplate_Trainable : CharaSerializableTemplate_Bas
 
         }
     }
+
 }
+
+
 
 [System.Serializable]
 public abstract class CharaTemplate
@@ -118,13 +184,16 @@ public abstract class CharaTemplate
     public List<RelationshipManager.presetRelationship> initialRelationship = new List<RelationshipManager.presetRelationship>();
     public List<presetInventory> initialInventory = new List<presetInventory>();
 
+    public abstract CharaTemplate Copy();
 
-    [System.Serializable]
-    public class presetInventory
-    {
-        public string ID = "";
-        public string nameOverwrite = "";
-    }
+    public abstract void SetGender(Humanoid_GenderAppearance gender);
+}
+
+[System.Serializable]
+public class presetInventory
+{
+    public string ID = "";
+    public string nameOverwrite = "";
 }
 
 [System.Serializable]
@@ -151,6 +220,28 @@ public class CharaSafeTemplate : CharaTemplate
             return Appearance == Humanoid_GenderAppearance.Female;
         }
     }
+
+    public override CharaTemplate Copy()
+    {
+        var newInstance = new CharaSafeTemplate();
+        newInstance.Appearance = Appearance;
+        newInstance.Skills = new List<Skills>();
+        if (this.Skills != null) newInstance.Skills.AddRange(this.Skills);
+        newInstance.Height = Height;
+        newInstance.stat_STR = stat_STR;
+        newInstance.stat_CON = stat_CON;
+        newInstance.stat_PSY = stat_PSY;
+        newInstance.stat_WIL = stat_WIL;
+        newInstance.personalityID = personalityID;
+        newInstance.initialInventory = new List<presetInventory>(initialInventory);
+        newInstance.initialRelationship = new List<RelationshipManager.presetRelationship>(initialRelationship);
+        return newInstance;
+    }
+
+    public override void SetGender(Humanoid_GenderAppearance gender)
+    {
+        Appearance = gender;
+    }
 }
 
 [System.Serializable]
@@ -172,7 +263,10 @@ public class CharaTrainableTemplate : CharaTemplate
     [SerializeField][JsonProperty] private string size_V = "trait_Size_V_none";
     [SerializeField][JsonProperty] private string size_A = "trait_Size_A_none";
 
-
+    public override void SetGender(Humanoid_GenderAppearance gender)
+    {
+        GenderAppearance_Set(gender, true, true);
+    }
     public void GenderAppearance_Set(Humanoid_GenderAppearance app, bool forceDefaultGenital = false, bool forceDefaultSensitivity = false)
     {
         this.Appearance = app;
@@ -294,5 +388,27 @@ public class CharaTrainableTemplate : CharaTemplate
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_A); }
         set { size_A = value.ID; }
+    }
+
+
+    public override CharaTemplate Copy()
+    {
+        var newInstance = new CharaTrainableTemplate();
+        newInstance.Appearance = Appearance;
+        newInstance.Skills = new List<Skills>();
+        if (this.Skills != null) newInstance.Skills.AddRange(this.Skills);
+        newInstance.Height = Height;
+        newInstance.stat_STR = stat_STR;
+        newInstance.stat_CON = stat_CON;
+        newInstance.stat_PSY = stat_PSY;
+        newInstance.stat_WIL = stat_WIL;
+        newInstance.personalityID = personalityID;
+        newInstance.initialInventory = new List<presetInventory>(initialInventory);
+        newInstance.initialRelationship = new List<RelationshipManager.presetRelationship>(initialRelationship);
+        newInstance.BodyType = BodyType;
+
+
+
+        return newInstance;
     }
 }

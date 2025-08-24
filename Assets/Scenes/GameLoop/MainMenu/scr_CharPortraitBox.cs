@@ -59,14 +59,16 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         //Debug.Log("ReadCurrentChar");
         if (id == null) return;
+        else if (!this.gameObject.activeInHierarchy) return;
         else if (scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Logs) return;
         else CheckCharaChange(id);
     }
 
     private void ReadCurrentChar(int id)
     {
-       // Debug.Log("ReadCurrentChar");
+        // Debug.Log("ReadCurrentChar");
         if (id == -1) return;
+        else if (!this.gameObject.activeInHierarchy) return;
         else if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Logs) return;
         else CheckCharaChange(id);
         
@@ -181,7 +183,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         if (portrait != null) portrait.Click();
 
         /*
-        if (eventData.button == PointerEventData.InputButton.Left && Utility.isClickBelowDragThreshold(eventData) && this.chara != null)
+        if (eventData.button == PointerEventData.InputButton.Left && UtilityEX.isClickBelowDragThreshold(eventData) && this.chara != null)
         {
             //Debug.Log("Mouse Click on [" + this.chara.baseID + "] refID [" + chara.referenceID + "]");
 

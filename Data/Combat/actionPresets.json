@@ -4,7 +4,8 @@
         "list":[
 {
     "ID":"preset_debug_idle",
-    "actions":["base_idle_debug", "base_idle_debug"]
+    "forbidUseInRandom":true,
+    "actions":["base_observe", "base_observe"]
 }
         ]
     }

@@ -221,6 +221,37 @@ public class FactionInventory : Inventory
 public class CharacterInventory : Inventory
 {
 
+    Dictionary<Item_Instance, List<CombatAction>> _combatActions = null;
+    [JsonIgnore]
+    public Dictionary<Item_Instance, List<CombatAction>> CombatActions
+    { get
+        {
+            if (_combatActions == null)
+            {
+                _combatActions = new Dictionary<Item_Instance, List<CombatAction>>();
+                foreach(var i in this.Contents)
+                {
+                   // Debug.Log($"CombatActions {i.DisplayName} isWeapon? {i.Comp_Weapon != null}");
+                    if (i.Comp_Weapon == null) continue;
+                    _combatActions.Add(i, i.CombatActions);
+                }
+            }
+            return _combatActions;
+        } }
+
+
+    public override bool AddItem(Item_Instance item)
+    {
+        if (item.Comp_Weapon != null) _combatActions = null;
+        return base.AddItem(item);
+    }
+
+    public override void Remove(Item_Instance item)
+    {
+        if (item.Comp_Weapon != null) _combatActions = null;
+        base.Remove(item);
+    }
+
     private Character_Trainable ownerCache = null;
     [JsonIgnore]
     public Character_Trainable FactionOwner
@@ -357,6 +388,15 @@ public class Inventory
         if (entry.itemID == "" || count == 0) return true;
         if (GetItemCount(entry.itemID) < entry.itemCount * count) return false;
         return true;
+    }
+
+    public bool HasWeapon()
+    {
+        foreach (var i in this.Contents)
+        {
+            if (i.Comp_Weapon != null && i.CombatActions.Count > 0) return true;
+        }
+        return false;
     }
 
     public bool Contains(Item_Instance item)

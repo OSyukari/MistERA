@@ -40,11 +40,11 @@ public class ItemComponentTemplate
     // ItemComponent_Equippable
     public ItemComponentTemplate_Equippable comp_Equippable = null;
     // ItemComponent_Armor
-    public float health;
-    public float hardness;
+    public ItemComponentTemplate_Defense comp_Defense = null;
     // add armor as tag for equippable, check destructible tag
     // get health and hardness from it
     // how do we calculate armor penetration
+    public ItemComponentTemplate_Weapon comp_Weapon = null;
 
 
 
@@ -70,6 +70,11 @@ public class ItemComponentTemplate
                 return new ItemComponent_Degradable(parent);
             case "ItemComponent_Ingestible":
                 return new ItemComponent_Ingestible(parent);
+            case "ItemComponent_Weapon":
+                return new ItemComponent_Weapon(parent);
+            case "ItemComponent_Defense":
+                return new ItemComponent_Defense(parent);
+
             default:
                 return null;
 

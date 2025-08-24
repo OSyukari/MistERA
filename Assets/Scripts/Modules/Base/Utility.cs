@@ -1,0 +1,206 @@
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using System.Linq;
+using System.Threading;
+
+public static class Utility
+{
+    public static string WrapTextColor(string text, Color32 c)
+    {
+        return $"<color={HexCOLOR(c)}>{text}</color>";
+    }
+    public static string HexCOLOR(Color32 c)
+    {
+        return $"#{c.r:X2}{c.g:X2}{c.b:X2}{c.a:X2}"; ;
+    }
+    public static string GetEnumString(System.Type type, object value)
+    {
+        return System.Enum.GetName(type, value);
+    }
+
+
+    /// <summary>
+    /// Provides a thread-safe, thread-static System.Random instance for each thread.
+    /// Lazily initializes a new instance with a thread-specific seed if null.
+    /// </summary>
+    public static System.Random Random
+    {
+        get
+        {
+            if (_random == null)
+                _random = new System.Random(Environment.TickCount ^ Thread.CurrentThread.ManagedThreadId);
+            return _random;
+        }
+    }
+
+    // Thread-static backing field for Random
+    [ThreadStatic]
+    private static System.Random _random;
+
+    public static void Shuffle<T>(List<T> list, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = random.Next(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
+    }
+
+    public static float RandVariation(float baseNumber, float maxVariation, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        float min = baseNumber - maxVariation;
+        float max = baseNumber + maxVariation;
+        return min + (float)(random.NextDouble() * (max - min));
+    }
+    public static int Dice(int count, int face, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        int total = 0;
+        for (int i = 0; i < count; i++)
+        {
+            total += random.Next(1, face + 1); // inclusive min, exclusive max
+        }
+        return total;
+    }
+    public static List<T> Distinct<T>(List<T> input, IEqualityComparer<T> comparer = null)
+    {
+        if (input == null)
+            return new List<T>();
+
+        comparer = comparer ?? EqualityComparer<T>.Default;
+        HashSet<T> seen = new(comparer);
+        List<T> result = new(Math.Min(input.Count, 16)); // Conservative pre-allocation
+
+        foreach (var item in input)
+        {
+            if (seen.Add(item))
+                result.Add(item);
+        }
+
+        return result;
+    }
+
+    public static T GetRandomElement<T>(List<T> list)
+    {
+        if (list == null || list.Count == 0)
+            return default;
+
+        int index = Random.Next(0, list.Count); // range: [0, Count - 1]
+        return list[index];
+    }
+
+    public static int GetRandIndexFromListCount<T>(List<T> list)
+    {
+        if (list == null) return 0;
+        return Random.Next(0, list.Count);
+    }
+
+    /// <summary>
+    /// Check if L2 contain at least 1 element of L1. Also return true if L2 is empty
+    /// </summary>
+    /// <returns></returns>
+    public static bool ListContainsLoose<T>(List<T> L1, List<T> L2, IEqualityComparer<T> comparer = null)
+    {
+        if (L2 == null || L2.Count == 0)
+            return true;
+        if (L1 == null)
+            return false;
+
+        comparer = comparer ?? EqualityComparer<T>.Default;
+
+        var distinctL1 = Distinct(L1, comparer);
+        var distinctL2 = Distinct(L2, comparer);
+
+        return !distinctL2.Except(distinctL1, comparer).Any();
+    }
+
+    /// <summary>
+    /// Check if L2 is contained in L1
+    /// </summary>
+    /// <returns></returns>
+    public static bool ListContainsStrict<T>(List<T> L1, List<T> L2, IEqualityComparer<T> comparer = null)
+    {
+        if (L2 == null || L2.Count == 0)
+            return true;
+        if (L1 == null)
+            return false;
+
+        comparer = comparer ?? EqualityComparer<T>.Default;
+
+        HashSet<T> setL1 = new(L1, comparer);
+        HashSet<T> seen = new(comparer);
+
+        foreach (var item in L2)
+        {
+            if (!seen.Add(item))
+                continue;
+            if (!setL1.Contains(item))
+                return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Contains List.Distinct() which may interfere with equality comparison ?
+    /// </summary>
+    /// <param name="L1"></param>
+    /// <param name="L2"></param>
+    /// <returns></returns>
+    public static bool ListEquals<T>(List<T> L1, List<T> L2, IEqualityComparer<T> comparer = null)
+    {
+        if (L1 == null || L1.Count == 0)
+            return L2 == null || L2.Count == 0;
+        if (L2 == null || L2.Count == 0)
+            return false;
+
+        comparer = comparer ?? EqualityComparer<T>.Default;
+
+        HashSet<T> setL1 = new(L1, comparer);
+        HashSet<T> setL2 = new(L2, comparer);
+
+        return setL1.SetEquals(setL2);
+    }
+
+    public static void DestroyAllChildrenFrom(RectTransform rect, int startFromIndex = 0, bool useDestroyImmediate = false)
+    {
+        if (rect == null)
+            return;
+
+        if (startFromIndex < 0)
+            startFromIndex = 0;
+
+        for (int i = rect.transform.childCount - 1; i >= startFromIndex; i--)
+        {
+            var child = rect.transform.GetChild(i);
+            if (useDestroyImmediate)
+                UnityEngine.Object.DestroyImmediate(child.gameObject);
+            else
+                UnityEngine.Object.Destroy(child.gameObject);
+        }
+    }
+}
+
+/// <summary>
+/// Grok<br/>
+/// Custom Types: If T is a Unity type (e.g., GameObject), ensure the comparer handles object lifetime (e.g., checks for null or destroyed objects). Example:
+/// </summary>
+public class GameObjectComparer : IEqualityComparer<GameObject>
+{
+    public bool Equals(GameObject x, GameObject y)
+    {
+        if (ReferenceEquals(x, null) || ReferenceEquals(y, null))
+            return false;
+        if (ReferenceEquals(x, y))
+            return true;
+        return x.name == y.name;
+    }
+
+    public int GetHashCode(GameObject obj)
+    {
+        return obj != null ? obj.name.GetHashCode() : 0;
+    }
+}

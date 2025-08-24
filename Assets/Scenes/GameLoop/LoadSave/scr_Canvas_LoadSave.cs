@@ -128,7 +128,7 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
         // if click outside box
         if (eventData.rawPointerPress.GetComponent<scr_Canvas_LoadSave>() != null) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
         // inside box
-        else if (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
+        else if (eventData.button == PointerEventData.InputButton.Right && UtilityEX.isClickBelowDragThreshold(eventData)) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
     }
 
     protected class ButtonValidator_LoadSave : ButtonValidator, I_ButtonClickable
@@ -144,8 +144,9 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
             this.file = file;
             this.text = text;
 
-            s = JsonConvert.DeserializeObject<SaveFileHolder>(File.ReadAllText(file.FullName), Utility.SerializerSettings);
-            s.FilePath = file.FullName;
+            s = UtilityEX.ReadSaveHolder(file);
+            //s = JsonConvert.DeserializeObject<SaveFileHolder>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+            //s.FilePath = file.FullName;
             this.text.SetText(s.SaveDescription.Replace("$filename$", file.Name));
         }
 

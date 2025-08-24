@@ -16,7 +16,7 @@ public class scr_menu_AddProductionOrder : scr_Menu, IPointerClickHandler
         if (!initialized) Initialize();
 
         this.faction = targetFaction;
-        Utility.DestroyAllChildrenFrom(ref recipeList);
+        Utility.DestroyAllChildrenFrom( recipeList);
 
         foreach(var recipe in Masterlist_Items.Instance.CraftingRecipe.Values)
         {
@@ -124,13 +124,13 @@ public class scr_menu_AddProductionOrder : scr_Menu, IPointerClickHandler
         }*/
         //Debug.LogError("CANVAS MANAGEMENT ONDESTROY");
         scr_System_CampaignManager.current.NotifyUpdate();
-
+         
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         // if click outside box
-        if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)))
+        if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && UtilityEX.isClickBelowDragThreshold(eventData)))
         {
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();
         }

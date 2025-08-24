@@ -22,6 +22,20 @@ public class Item_Instance : IDisposable, I_Disposable
     {
         this.count += count;
     }
+
+    //[JsonIgnore]
+    //List<CombatAction> _cachedCombatActions = null;
+
+
+    [JsonIgnore]
+    public List<CombatAction> CombatActions 
+    {
+        get
+        {
+            return scr_System_Serializer.current.GetCombatActions(this.Base);
+        }
+    }
+
     public void SetCount(int count) { this.count = count; }
     [SerializeField][JsonProperty] protected int count;
     [JsonIgnore] public int Count { get { return count - markTokenUsed; } }
@@ -122,6 +136,28 @@ public class Item_Instance : IDisposable, I_Disposable
 
     public ItemComponent_Equippable GetComp_Equippable() { return GetComp("ItemComponent_Equippable") as ItemComponent_Equippable; }
 
+    ItemComponent_Defense _defense = null;
+    [JsonIgnore]
+    public ItemComponent_Defense Comp_Defense { get {
+            if (_defense == null)
+            {
+                _defense = GetComp("ItemComponent_Defense") as ItemComponent_Defense;
+            }
+            return _defense;
+        } }
+    ItemComponent_Weapon _weapon = null;
+    [JsonIgnore]
+    public ItemComponent_Weapon Comp_Weapon
+    {
+        get
+        {
+            if (_weapon == null)
+            {
+                _weapon = GetComp("ItemComponent_Weapon") as ItemComponent_Weapon;
+            }
+            return _weapon;
+        }
+    }
     public ItemComponent_Base GetComp(string name)
     {
         return this.Comps.Find(x=>x.CompType == name);

@@ -4,13 +4,61 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
+public interface I_StatsManager
+{
+    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null);
+    public List<Stat_Modifier> GetModifiers(Stats_Base obj, string statID, List<string> contexts = null);
+    public List<Stat_Modifier> GetModifiers(StatusEx_Instance obj, string statID, List<string> contexts = null);
+
+    /// <summary>
+    /// Owner should not be publicly accessible <br/>
+    /// being public means child could call to owner.stats and this will not fly when using a combatstatsmanager copy
+    /// </summary>
+    /// <returns></returns>
+    public string OwnerName();
+    public bool hasStatKeyword(string statKeyword);
+    public float GetStatValue(string statID, List<string> contexts = null);
+    public Stats_Base Strength { get; }
+    public Stats_Base Constitution { get; }
+    public Stats_Base Psyche { get; }
+    public Stats_Base Willpower { get; }
+    public Status_Instance GetStatusByStringMatch(string s);
+    public Stats_Derived_Instance GetDerivedStat(string statID);
+    public List<Status_Instance> FindStatusByID(string statID);
+
+    [JsonIgnore] public Stats_Derived_Extended_Instance HP { get; }
+    [JsonIgnore] public Stats_Derived_Extended_Instance MP { get; }
+    [JsonIgnore] public Stats_Derived_Extended_Instance Stamina { get; }
+    [JsonIgnore] public Stats_Derived_Extended_Instance Energy { get ; }
+
+    public void RestoreAll();
+
+}
+
 [System.Serializable]
-public class StatsManager
+public class StatsManager : I_StatsManager
 {
 
+    public List<Status_Instance> FindStatusByID(string statID)
+    {
+        return this.StatusInstances.FindAll(x => x.ID.Contains(statID));
+    }
+
+    public CombatStatManager MakeCombatHandler()
+    {
+        var handler = new CombatStatManager(Owner, this);
+        return handler;
+    }
+
+    List<string> _cachedStatKeywords = null;
+    public bool hasStatKeyword(string statKeyword)
+    {
+        return Owner.hasStatKeyword(statKeyword);
+    }
 
     protected Character_Trainable owner = null;
-    [JsonIgnore] public Character_Trainable Owner
+
+    [JsonIgnore] protected Character_Trainable Owner
     {
         get
         {
@@ -65,16 +113,15 @@ public class StatsManager
     public void ReEstablishParent(Character_Trainable chara)
     {
         this.owner = chara;
-        ownerRefID = chara.RefID;
 
-        this.Strength.ReEstablishParent(Owner);
-        this.Constitution.ReEstablishParent(Owner);
-        this.Psyche.ReEstablishParent(Owner);
-        this.Willpower.ReEstablishParent(Owner);
+        this.Strength.ReEstablishParent(this);
+        this.Constitution.ReEstablishParent(this);
+        this.Psyche.ReEstablishParent(this);
+        this.Willpower.ReEstablishParent(this);
 
-        if (this.StatusInstances != null) foreach (var i in StatusInstances) i.ReEstablishParent(chara);
-        foreach (var i in list_statsExtended) i.ReEstablishParent(chara);
-        if (this.statusInstancesEx != null) foreach (var i in _statusInstancesEx) i.ReEstablishParent(chara);
+        if (this.StatusInstances != null) foreach (var i in StatusInstances) i.ReEstablishParent(chara.Stats);
+        foreach (var i in list_statsExtended) i.ReEstablishParent(chara.Stats);
+        if (this.statusInstancesEx != null) foreach (var i in _statusInstancesEx) i.ReEstablishParent(chara.Stats);
 
         this.RefreshAllStats(true);
     }
@@ -88,11 +135,11 @@ public class StatsManager
         ReEstablishParent(chara);
         
         //RefreshAllStats();
-        if (chara.RefID > -1) InitializeWithID(chara.RefID);
+        if (chara.RefID > -1) InitializeWithID(chara);
     }
-    public void InitializeWithID(int refID, int str = 10, int con = 10, int psy = 10, int wil = 10)
+    public void InitializeWithID(Character_Trainable ownerRef, int str = 10, int con = 10, int psy = 10, int wil = 10)
     {
-        this.ownerRefID = refID;
+        this.owner = ownerRef;;
         //generate all stat_derived_extended
 
         //Debug.LogError("Initializing ID "+ownerRefID);
@@ -104,12 +151,12 @@ public class StatsManager
         foreach (var statusEX in scr_System_Serializer.current.index_StatusEX.list)
         {
             //Debug.Log("adding statusEx " + statusEX.statusID + " to chara " + Owner.FullName+" on list isNull? "+(statusInstancesEx == null));
-            statusInstancesEx.Add(statusEX.Instantiate(refID));
+            statusInstancesEx.Add(statusEX.Instantiate(this));
         }
 
         foreach(var status in scr_System_Serializer.current.index_Status.list)
         {
-            if (status.constant) StatusInstances.Add(status.Instantiate(refID));
+            if (status.constant) StatusInstances.Add(status.Instantiate(this));
         }
 
         if (Strength == null) Debug.LogError("Strength null");
@@ -147,10 +194,9 @@ public class StatsManager
 
 
         // clear cache
-        if (cached_values == null) cached_values = new Dictionary<Tuple<string, List<string>>, float>();
-        else cached_values.Clear();
 
-        if (this.ownerRefID == -1) return;
+
+        if (this.Owner == null) return;
 
         if (resetPermanentStatCache)
         {
@@ -182,10 +228,14 @@ public class StatsManager
 
         foreach (var i in list_statsDerived) i.ClearCache();
 
-        // force refresh Status
-        foreach (var status in StatusInstances)
+        // add missing statEX
+        foreach (var statEX in scr_System_Serializer.current.index_StatsExtended.list)
         {
-
+            if (Owner.hasStatKeyword(statEX.StatKeyword) && StatsExtended.Find(x => x.ID == statEX.ID) == null)
+            {
+                var newstat = statEX.Instantiate(this);
+                StatsExtended.Add(newstat);
+            }
         }
 
         // remove invalid statEX
@@ -195,21 +245,11 @@ public class StatsManager
             {
                 StatsExtended.RemoveAt(i);
             }
-        }
-
-        // add missing statEX
-        foreach (var statEX in scr_System_Serializer.current.index_StatsExtended.list)
-        {
-            if (Owner.hasStatKeyword(statEX.StatKeyword) && StatsExtended.Find(x => x.ID == statEX.ID) == null)
-            {
-                var newstat = statEX.Instantiate(Owner);
-                StatsExtended.Add(newstat);
+            else
+            {   // force refresh StatsEx value to keep it valid
+                StatsExtended[i].Restore(0f);
             }
-
         }
-
-        // force refresh StatsEx value to keep it valid
-        foreach (var statex in this.StatsExtended) statex.Restore(0f);
 
         foreach (var ex in this.statusInstancesEx) ex.ClearCache();
         needsList_cache = null;
@@ -283,7 +323,9 @@ public class StatsManager
     }
 
     protected List<Stat_Modifier> modifiers = new List<Stat_Modifier>();
+    public List<Stat_Modifier> Modifiers { get { return this.modifiers; } }
     protected List<Stat_Modifier> modifiers_temporary = new List<Stat_Modifier>();
+    public List<Stat_Modifier> Modifiers_Temporary { get { return this.modifiers_temporary; } }
 
     public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null)
     {
@@ -299,7 +341,7 @@ public class StatsManager
         return GetModifiers(statID, contexts, true, true);
     }
 
-    private List<Stat_Modifier> GetModifiers(string statID, List<string> contexts = null, bool checkStatusInstance = true, bool checkMemory = true)
+    protected List<Stat_Modifier> GetModifiers(string statID, List<string> contexts = null, bool checkStatusInstance = true, bool checkMemory = true)
     {
         List<Stat_Modifier> list = new List<Stat_Modifier>();
         foreach (var mod in modifiers)
@@ -351,7 +393,7 @@ public class StatsManager
     /// <summary>
     /// Dictionary<Tuple<statID, contexts>, value>
     /// </summary>
-    protected Dictionary<Tuple<string, List<string>>, float> cached_values = null;
+
 
     /// <summary>
     /// On Every Stat add/removal, clear cache to force recalculation next time
@@ -371,7 +413,6 @@ public class StatsManager
 
             modifiers.Add(mod_instance);
         }
-        cached_values.Clear();
     }
 
     /// <summary>
@@ -388,8 +429,6 @@ public class StatsManager
     public float GetStatValue(string statID, List<string> contexts = null)
     {
         //if (contexts == null) contexts = new List<string>();   
-        //if (cached_values == null) cached_values = new Dictionary<string, float>>();
-        //if (!cached_values.ContainsKey(statID)) cached_values.Add(statID, 0f);
         if (contexts != null)
         {
             contexts = contexts.Distinct().ToList();
@@ -397,18 +436,11 @@ public class StatsManager
         }
 
         // Catch Stat Base
-        if (statID == "Strength" || statID == "Constitution" || statID == "Psyche" || statID == "Willpower")
-        {
+        if      (statID == Strength.ID) return Strength.FinalValue(contexts);
+        else if (statID == Constitution.ID) return Constitution.FinalValue(contexts);
+        else if (statID == Psyche.ID) return Psyche.FinalValue(contexts);
+        else if (statID == Willpower.ID) return Willpower.FinalValue(contexts);
 
-            switch (statID)
-            {
-                case "Strength": return Strength.FinalValue(contexts);
-                case "Constitution": return Constitution.FinalValue(contexts);
-                case "Psyche": return Psyche.FinalValue(contexts);
-                case "Willpower": return Willpower.FinalValue(contexts);
-            }
-            //Debug.Log("GetStatValue request for chara[" + Owner.FirstName + "] on statBase [" + statID + "] with result [" + value + "]");
-        }
 
         // Catch Stat Derived
         Stats_Derived_Base statDerived = scr_System_Serializer.current.GetByNameOrID_StatsDerivedBase(statID);
@@ -499,7 +531,7 @@ public class StatsManager
 
             if (StatusInstances[i].pauseXMinAfterMod == 0 && time > 0 && StatusInstances[i].Decay != 0)
             {
-                var decay = StatusInstances[i].BaseRef.variationMode.baselineVariation.Decay(Owner, StatusInstances[i].Severity);
+                var decay = StatusInstances[i].BaseRef.variationMode.baselineVariation.Decay(this, StatusInstances[i].Severity);
                 if (decay != 0)
                 {
                     StatusInstances[i].SeverityAdd(decay * time);
@@ -770,13 +802,19 @@ public class StatsManager
         Status_Base target = scr_System_Serializer.current.GetByNameOrID_Status_Base(s);
         if (target != null)
         {
-            Status_Instance si = target.Instantiate(ownerRefID, initialSeverity, durationMinute);
+            Status_Instance si = target.Instantiate(this, initialSeverity, durationMinute);
             this.StatusInstances.Add(si);
 
             if (si.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex) foreach (var inst in StatusInstances) if (inst.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex) inst.pauseXMinAfterMod = inst.BaseRef.variationMode.pauseXMinAfterMod;
         }
         else Debug.LogError("AddStatus Failed cuz target status ["+s+"] unfound");
     }
+
+    public string OwnerName()
+    {
+        return this.Owner.FirstName;
+    }
+
     [JsonIgnore] public StatusEx_Instance Lust
     {
         get

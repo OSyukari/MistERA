@@ -1,0 +1,77 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"ActionResultString_None":" - ",
+"ActionResultString_Success":"成功",
+"ActionResultString_Failure":"失败",
+"ActionResultString_Miss":"未命中",
+"ActionResultString_Blocked":"未击穿",
+"ActionResultString_Hit":"击中",
+
+"ActionResult_tooltip_weaponInCooldown":"武器 $weapon$ 不可被使用，剩余冷却轮数 $count$",
+"ActionResult_tooltip_insufficientReach":"射程 $reach$ 低于双方距离 $distance$",
+"ActionResult_tooltip_insufficientTracking":"追踪 $tracking$ 低于对象闪避 $evasion$",
+
+"ActionResult_tooltip_damageConversion":"基础伤害 $str$ x $mult$ 武器倍率，最终伤害 $final$ $types$",
+"ActionResult_tooltip_unsupportedWeapon":"使用的武器不支持该动作种类",
+
+"ActionResult_tooltip_moveTo":"$self$移动到了$loc$",
+"ActionResult_tooltip_moveBack":"$self$退后到了$loc$",
+"ActionResult_tooltip_moveBackFail":"$self$已经不能再后退了",
+"ActionResult_tooltip_moveCooldown":"$self$在移动中让$weapon$CD降低了$count$",
+"ActionResult_tooltip_changeWeapon":"$self$将使用中的$prev$替换成了$last$（$prev$冷却时间$cooldown$）",
+
+"ActionResult_tooltip_targetPart":"命中对象$part$",
+"ActionResult_tooltip_pierceDef":"贯穿了$armor$ 剩余伤害 $amount$",
+"ActionResult_tooltip_bypassDef":"击破了$armor$ 剩余伤害 $amount$",
+"ActionResult_tooltip_blockedDef":"攻击被$armor$挡下了",
+"ActionResult_tooltip_receiveDamage":"$self$受到了伤害 体势$posturedmg$ HP$hpdmg$",
+"ActionResult_tooltip_postureBreak":"$self$的体势被击破了！",
+"ActionResult_tooltip_postureRecover":"$self$的体势恢复了",
+"ActionResult_tooltip_cannotAct_lowHP":"$self$由于HP不足无法行动",
+"ActionResult_tooltip_cannotAct_postureBreak":"$self$由于体势崩坏无法行动",
+
+"ui_combatSim_starting":"开始 $names_a$ 与 $names_b$ 之间的模拟战斗",
+"ui_combatSim_randWeapon":"队伍中没有武器的成员会随机获得一把武器",
+"ui_combatAction_tooltip":"词条：$kwds$\n速度$speed$ $mov$ 体势$pos$ 闪避$evasion$$target$",
+"ui_combatAction_tooltip_reqTarget":"需要目标",
+"ui_combatAction_tooltip_attack":"追踪$tracking$ 射程$range$ 基础伤害$str$\n伤害类型 $types$",
+"ui_combatAction_tooltip_movpos":"前进$mov$",
+"ui_combatAction_tooltip_movneg":"后撤$mov$",
+"ui_combatAction_tooltip_condSpeedMod":"前一个动作持有 $conditions$ 词条时 速度$value$",
+"ui_combatAction_tooltip_itemReq":"需求道具词条 $kwds$",
+
+"MoveType_None":"无",
+"MoveType_Swing":"挥砍",
+"MoveType_Thrust":"突刺",
+
+"DamageType_None":"无",
+"DamageType_Untyped":"无类型",
+"DamageType_Pierce":"贯穿",
+"DamageType_Blunt":"冲击",
+"DamageType_Slash":"斩裂",
+
+"combat_turnEnd_defeat":"战斗失败 我方无可战斗人员",
+"combat_turnEnd_victory":"战斗胜利",
+"combat_turnEnd_timeLimit":"战斗结束 到达战斗轮数上限",
+
+"ui_combatSim_title":"模拟战斗",
+"ui_combatSim_teammembers":"队伍成员",
+"ui_combatSim_teamcomp":"阵容分配",
+"ui_combatSim_targetselect":"战斗对象选择",
+"ui_combatSim_start":"开始模拟战",
+
+"ui_teamcomp_frontline":"前排",
+"ui_teamcomp_support":"辅助"
+            },
+            "en-us":
+            {
+
+            }
+        }
+    }
+}

@@ -47,6 +47,8 @@ public class MasterList
                 list.Add(Furnitures);
                 list.Add(Events);
                 list.Add(Character_Bases);
+                list.Add(CharGenTemplates);
+                list.Add(Encounters);
             }
             return list;
         }
@@ -54,32 +56,34 @@ public class MasterList
     public Traits_Group_Index Traits_Groups = new Traits_Group_Index();
    // public Index_Sexperiences Sexperiences = null;
     public Index_BodyPartBase BodyPartBases = new Index_BodyPartBase();
-    public Stats_Derived_Base_Index Stats_Derived_Bases = null;
+    public Stats_Derived_Base_Index Stats_Derived_Bases = new Stats_Derived_Base_Index();
     //public Character_BaseID_Index Character_BaseIDs = null;
-    public Index_Floor_Base Floors = null;
-    public Index_MapPlan MapPlans = null;
+    public Index_Floor_Base Floors = new Index_Floor_Base();
+    public Index_MapPlan MapPlans = new Index_MapPlan();
     public Character_Base_Index Character_Bases = new Character_Base_Index();
-    public Index_StatusEx StatusEXs = null;
-    public Stats_Derived_Extended_Index StatEXs = null;
+    public Index_StatusEx StatusEXs = new Index_StatusEx();
+    public Stats_Derived_Extended_Index StatEXs = new Stats_Derived_Extended_Index();
 
     public Index_Status Status = new Index_Status();
     public Index_Experiences Experiences = new Index_Experiences();
     public Character_Origin_Index Character_Origins = new Character_Origin_Index();
     public Character_Origin_startingOption_Index Character_Origin_StartingOptions = new Character_Origin_startingOption_Index();
-    public Index_RelationshipTypes RelationshipTypes = null;
+    public Index_RelationshipTypes RelationshipTypes = new Index_RelationshipTypes();
     public Humanoid_Race_Index humanoid_Races = new Humanoid_Race_Index();
     public Humanoid_RaceTemplate_Index humanoid_RaceTemplates = new Humanoid_RaceTemplate_Index();
-    public Index_CampaignSetting CampaignSettings = null;
-    public Index_CharaSkills Skills = null;
+    public Index_CampaignSetting CampaignSettings = new Index_CampaignSetting();
+    public Index_CharaSkills Skills = new Index_CharaSkills();
     public Character_Trainable_SerializableTemplate_Index CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
-    public Character_Personality_Index Character_Personalities = null;
+    public Character_Personality_Index Character_Personalities = new Character_Personality_Index();
     public Index_COM COMs = new Index_COM();
     public Index_Item_Base Items = new Index_Item_Base();
     public Dictionary_Index Dictionary = new Dictionary_Index();
-    public Index_FurnitureBase Furnitures = null;
-    public Index_Events Events = null;
-    public Index_CombatActions CombatActions = null;
-    public Index_CombatActionPresets CombatActionPresets = null;
+    public Index_FurnitureBase Furnitures = new Index_FurnitureBase();
+    public Index_Events Events = new Index_Events();
+    public Index_CombatActions CombatActions = new Index_CombatActions();
+    public Index_CombatActionPresets CombatActionPresets = new Index_CombatActionPresets();
+    public Index_CharGenTemplates CharGenTemplates = new Index_CharGenTemplates();
+    public Index_EncounterGen Encounters = new Index_EncounterGen();
 
     public void InitializeLists(bool initCoreList = false)
     {
@@ -105,22 +109,6 @@ public class MasterList
             this.BodyPartBases = new Index_BodyPartBase();
             this.Traits_Groups = new Traits_Group_Index();
         }
-        this.Experiences = new Index_Experiences();
-        this.Stats_Derived_Bases = new Stats_Derived_Base_Index();
-        this.Floors = new Index_Floor_Base();
-        this.MapPlans = new Index_MapPlan();
-        this.StatusEXs = new Index_StatusEx();
-        this.StatEXs = new Stats_Derived_Extended_Index();
-       // this.Sexperiences = new Index_Sexperiences();
-        this.RelationshipTypes = new Index_RelationshipTypes();
-        this.CampaignSettings = new Index_CampaignSetting();
-        this.Skills = new Index_CharaSkills();
-        this.Status = new Index_Status();
-        this.Character_Personalities = new Character_Personality_Index();
-        this.Furnitures = new Index_FurnitureBase();
-        this.Events = new Index_Events();
-        this.CombatActions = new Index_CombatActions();
-        this.CombatActionPresets = new Index_CombatActionPresets();
     }
 
     public void MergeWith(MasterList list)

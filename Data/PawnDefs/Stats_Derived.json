@@ -1,4 +1,51 @@
-{
+{"StatEXs":
+    {
+        "list":
+    [
+
+        {
+            "id":"stats_derived_extended_hp",
+            "displayName":"Health",
+            "tooltip":"Health Point.\nIf this reaches 0, character will become unconscious\nIf it reaches negative Constitution score, character dies.\nTemporary injury will decrese score, permanent injury will decrease maximum.\nMaximum score is 10 + CON Modifier + others.\nNaturally recovers during sleep.",
+            "statKeyword":"hp",
+            "maxValue":{ "valueType":"getStatValue", "valueString":"stats_derived_hp_max" }
+        },
+        {
+            "id":"stats_derived_extended_mp",
+            "displayName":"Mana",
+            "statKeyword":"mp",
+            "tooltip":"Mana Point, required for casting spells.\nMaximum score is 0 + PSY Modifier + others.\nNaturally recovers during sleep or rest.",
+            "maxValue":{ "valueType":"getStatValue", "valueString":"stats_derived_mp_max" }
+        },
+        {
+            "id":"stats_derived_extended_energy",
+            "displayName":"Energy",
+            "statKeyword":"energy",
+            "tooltip":"Energy, consumed when performing mental activity.\nFormula: WIL Score * 10 + others\nNaturally recovers during sleep or rest.\nWhen value falls below Stress Threshold, character's Mood will decrease by 1 step\nWhen value reaches 0, character's Mood will decrease by 2 step",
+            "maxValue":{ "valueType":"getStatValue", "valueString":"stats_derived_energy_max" }
+        },
+        {
+            "id":"stats_derived_extended_stamina",
+            "displayName":"Stamina",
+            "statKeyword":"stamina",
+            "tooltip":"Stamina, consumed when performing physical activity.\nCalculation: CON Score * 10 + others\nNaturally recovers during sleep.\nWhen value falls below Fatigue Threshold, character will become Fatigued (increase stamina expenditure).\nWhen value reaches 0, character will become Exhausted (decrease stamina recovery).",
+            "maxValue":{ "valueType":"getStatValue", "valueString":"stats_derived_stamina_max" },
+            "eventTriggers":
+            [
+                {
+                    "type":"valuePercentile",
+                    "argument":"lte 0.5",
+                    "result": { "type":"setStatus", "valueType":"number", "valueString":"chara_status_fatigue", "severity":"1.0" }
+                },
+                {
+                    "type":"valuePercentile",
+                    "argument":"lte 0.1",
+                    "result": { "type":"setStatus", "valueType":"number", "valueString":"chara_status_fatigue", "severity":"2.0" }
+                }
+            ]
+        }
+    ]
+    },
     "Stats_Derived_Bases":
     {
         "list":
@@ -139,6 +186,18 @@
                 "statKeyword":"stamina",
                 "tooltip":"When current stamina is below this percentage threshold, character will become fatigued.\nDefault value is 0.4 (40%).",
                 "valueBase":{ "baseValue_value":0.4, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":1.0 }
+            },
+            {
+                "id": "stats_derived_evasionBase",
+                "displayName":"Base Evasion",
+                "tooltip":"Base evasion stat. During combat, most actions will modify this statvalue.",
+                "valueBase":{ "baseValue_value":0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":-9999, "valueCeiling":9999 }
+            },
+            {
+                "id": "stats_derived_speedMods",
+                "displayName":"Speed",
+                "tooltip":"Speed modifier applied by combat actions",
+                "valueBase":{ "baseValue_value":0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":-9999, "valueCeiling":9999 }
             },
             {
                 "id": "stats_derived_foodConsumption",

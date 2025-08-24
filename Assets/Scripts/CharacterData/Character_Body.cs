@@ -10,6 +10,42 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class Character_Body
 {
+
+    List<CombatAction> _alwaysValidActions = null;
+    [JsonIgnore]
+    public List<CombatAction> AlwaysValidActions
+    { get
+        {
+            if (_alwaysValidActions == null)
+            {
+                _alwaysValidActions = new List<CombatAction>();
+                foreach (var entry in scr_System_Serializer.current.MasterList.CombatActions.AllActions)
+                {
+                    if (entry.itemRequirement != null && entry.itemRequirement.isActive) continue;
+                    if (_alwaysValidActions.Contains(entry)) continue;
+                    _alwaysValidActions.Add(entry);
+                }
+                //Debug.Log($"Initializing alwaysvalidactions, dict count {scr_System_Serializer.current.MasterList.CombatActions.AllActions.Count} self count {_alwaysValidActions.Count}");
+            }
+            return _alwaysValidActions;
+        } }
+
+    [JsonIgnore]
+    public Dictionary<Item_Instance, List<CombatAction>> CombatActions
+    { get
+        {
+            var list = new Dictionary<Item_Instance, List<CombatAction>>();
+            foreach(var i in this.Body)
+            {
+                foreach(var kvp in i.CombatActions)
+                {
+                    if (list.ContainsKey(kvp.Key)) continue;
+                    list.Add(kvp.Key, kvp.Value);
+                }
+            }
+            return list;
+        } }
+
     public void UpdateTimeMinute(TimeSpan t)
     {
         foreach (BodyInternal_Instance i in Internals) i.UpdateTimeMinute(t);
@@ -159,60 +195,43 @@ public class Character_Body
         foreach (var i in body) i.ReEstablishParent(Owner);
     }
 
-    public List<int> EquipItem(int itemRefID, int count = 1, bool forceEquip = false)
+    public bool EquipItem(int itemRefID, int count = 1, bool forceEquip = false)
     {
-        int j = -1;
-        int k = 0;
-        List<int> list = new List<int>();
-        foreach (BodyPart_Instance i in Body)
+        Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
+        if (item == null) return false;
+
+        var comp = item.GetComp_Equippable();
+        if (comp == null) return false;
+        
+        //Debug.Log($"Equipping {item.DisplayName} on {Owner.FirstName} with slots [{String.Join("|", comp.equipSlot)}]");
+        bool equipped = false;
+        foreach (BodyPart_Instance part in Body)
         {
-#if UNITY_EDITOR
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"trying equipping item {itemRefID} on bodypart {i.DisplayName}");
-#endif
-            j = i.EquipItem(itemRefID, forceEquip);
-            if (j > -1)
+            if (part.EquipItem(item, forceEquip))
             {
-                list.Add(j);
-                k++;
+                equipped = true;
+                break;
             }
-            if (k == count) break;
         }
 
-        list = list.Distinct().ToList();
-        list.Remove(0);
-
-        if (list.Exists(x => x == -1)) Debug.Log("Error equipping [" + Owner.FirstName + "] with [" + itemRefID + "], return value [" + list.ToString() + "]");
+        if (equipped)
+        {
+            var slots = new List<BodyPartEquipSlot>(comp.coverSlot);
+            if (slots.Count > 0)
+            {
+                foreach (var part in Body)
+                {
+                    if (part.EquipItem(item, ref slots, forceEquip) && slots.Count < 1) break;
+                }
+            }
+            if (comp != null && comp.statModifiers.Count > 0) Owner.Stats.RefreshAllStats(true);
+            return true;
+        }
         else
         {
-            Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
-            ItemComponent_Equippable comp = item != null ? item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable : null;
-            if (comp != null && comp.statModifiers.Count > 0) Owner.Stats.RefreshAllStats(true);
-        }
-        /// what the fuck is below code doing ???
-        /*
-        Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
-
-        if (item != null)
-        {
-            ItemComponent_Equippable comp = item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
-            if (comp != null)
-            {
-                foreach (BodyPartEquipSlot s in comp.coverSlot)
-                {
-                    foreach (BodyPart_Instance i in Body)
-                    {
-                        //Debug.Log("EQUIPPING COVER SLOT " + s + " " + comp.equipLayer);
-                        list.AddRange(i.EquipItemDirect(itemRefID, s, comp.equipLayer));
-                    }
-                }
-                if (comp.statModifiers.Count > 0) Owner.Stats.RefreshAllStats(true);
-            }
+            return false;
         }
         
-
-        list = list.Distinct().ToList();
-        list.Remove((int)0);*/
-        return list;
     }
 
     [SerializeField][JsonProperty] protected bool Climax = false;
@@ -269,7 +288,9 @@ public class Character_Body
             }
             else
             {
-                internals[Utility.GetRandIndexFromListCount(internals.Count)].Ingest(i);
+                var randInternal = Utility.GetRandomElement(internals);
+                if (randInternal == null) return false;
+                randInternal.Ingest(i);
                 if (i.Tags.Contains("food_meal")) Owner.NotifyFoodConsume(i);
                 return true;
             }
@@ -340,14 +361,14 @@ public class Character_Body
     {
         List<BodyInternal_Instance> l = Internals.FindAll(x => x.hasTag(tag));
         if (l.Count == 0) return null;
-        return l[Utility.GetRandIndexFromListCount(l.Count)];
+        return Utility.GetRandomElement(l);
     }
 
     public BodyInternal_Instance GetRandomInternalWithBaseID(string baseID)
     {
         List<BodyInternal_Instance> l = Internals.FindAll(x => x.baseID == baseID);
         if (l.Count == 0) return null;
-        return l[Utility.GetRandIndexFromListCount(l.Count)];
+        return Utility.GetRandomElement(l);
     }
 
 
@@ -383,7 +404,7 @@ public class Character_Body
 
 
             List<string> climaxTags = new List<string>();
-            Utility.GetActorTag(ref climaxTags, Owner);
+            UtilityEX.GetActorTag(ref climaxTags, Owner);
 
             int climaxDebuff = 0;
             foreach (var part in this.Internals)
@@ -416,8 +437,8 @@ public class Character_Body
                         List<BodyInternal_Instance> possiblecontainers = part.LastInteactedRefs.FindAll(x=>x.canContain);
                         List<BodyInternal_Instance> possibleEmptyContainers = possiblecontainers.FindAll(x => !x.containsOverCapacity);
 
-                        BodyInternal_Instance container = (possibleEmptyContainers.Count > 0 ? possibleEmptyContainers[Utility.GetRandIndexFromListCount(possibleEmptyContainers.Count)]
-                                        : (possiblecontainers.Count > 0 ? possiblecontainers[Utility.GetRandIndexFromListCount(possiblecontainers.Count)] : null));
+                        BodyInternal_Instance container = (possibleEmptyContainers.Count > 0 ? Utility.GetRandomElement(possibleEmptyContainers)
+                                        : (possiblecontainers.Count > 0 ? Utility.GetRandomElement(possiblecontainers) : null));
 
                         if (container != null)
                         {   // if valid bodyinternal container exist : Fucker != null && Fucker.canContain
@@ -433,10 +454,10 @@ public class Character_Body
 
                             List<string> containerTags = new List<string>(container.Base.tags) {};
                             containerTags.Add("cum");
-                            Utility.GetActorTag(ref containerTags, container.Owner);
+                            UtilityEX.GetActorTag(ref containerTags, container.Owner);
                             if (container.Sensitivity != "") containerTags.Add(container.Sensitivity);
 
-                            Utility.CheckExperienceGainNoStimulate(container.Owner, cum.GetComp_Ingestible().amount, false, containerTags, new List<string>());
+                            UtilityEX.CheckExperienceGainNoStimulate(container.Owner, cum.GetComp_Ingestible().amount, false, containerTags, new List<string>());
 
                             // ADDLOG CUM FOR SHOOTER
                             var desc2 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_cumOnto");
@@ -478,7 +499,7 @@ public class Character_Body
                         var memInst5 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst5, selfTag, -1, true);
 
-                        Utility.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());
+                        UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());
 
                     }
                     else
@@ -490,7 +511,7 @@ public class Character_Body
                         var memInst6 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst6, selfTag, -1, true);
 
-                        Utility.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());
+                        UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());
                     }
                 }
             }

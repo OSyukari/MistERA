@@ -100,8 +100,9 @@ public class scr_panel_PlayerInfo : MonoBehaviour
 
         foreach (var r in removed)
         {
+            var obj = trackedStatus[r];
             trackedStatus.Remove(r);
-            DestroyImmediate(trackedStatus[r].gameObject);
+            DestroyImmediate(obj.gameObject);
         }
 
         foreach(var a in added)

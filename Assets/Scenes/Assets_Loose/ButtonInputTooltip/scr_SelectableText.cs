@@ -12,6 +12,17 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     protected scr_Menu parent;
 
+
+    RectTransform _selfRect = null;
+    public RectTransform SelfRect
+    {
+        get
+        {
+            if (_selfRect == null) _selfRect = GetComponent<RectTransform>();
+            return _selfRect;
+        }
+    }
+
     public bool isButtonToggle = false;
     private bool isToggled = false;
     public bool IsToggled{ get{ return isToggled; } }
@@ -53,7 +64,6 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
             initialized = true;
             text = GetComponent<TextMeshProUGUI>();
             // parent does not exist at this moment ?
-
             baseColor = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
             hoverColor = scr_System_CentralControl.current.DisplaySetting.TextColor_hover.Color;
             disableColor = scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color;

@@ -193,9 +193,9 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             validator.Destroy();
         }
         currentFloorIDs.Clear();
-        Utility.DestroyAllChildrenFrom(ref roomList);
+        Utility.DestroyAllChildrenFrom( roomList);
         var pictureRect = picture.rectTransform;
-        Utility.DestroyAllChildrenFrom(ref pictureRect);
+        Utility.DestroyAllChildrenFrom( pictureRect);
 
         Texture2D texture = null;
         yield return AssetsLoader.LoadTextureCoroutine(floor.FloorBase.imagePath, tex => texture = tex);

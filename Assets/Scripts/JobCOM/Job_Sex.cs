@@ -313,14 +313,14 @@ public class Job_Sex_Group : Job
                 {
                     for (int ii = packages_current.Count - 1; ii >= 0; ii--)
                     {
-                        if (Utility.ArePackagesEqual(p, packages_current[ii]))
+                        if (UtilityEX.ArePackagesEqual(p, packages_current[ii]))
                         {
                             // queueing identical package, second package will require re-validation and thats not desired behavior
                             // keep the first one, do edit, and disable it.
                             if (p.targetCOM.variants[p.COMVariantID].setForce) (packages_current[ii] as ActionPackage_Sex).isStrongPenetration = true;
                             p.DisablePackage();                            
                         }
-                        else if (Utility.DetectConflict(p, packages_current[ii]))
+                        else if (UtilityEX.DetectConflict(p, packages_current[ii]))
                         {   // leave the conflict package in previous to use for COM text selection purposes.
                             foreach (var ep in packages_current[ii].ListEP) LogMessage_Begin_Abort(ep);
                             replaced = true;
@@ -335,7 +335,7 @@ public class Job_Sex_Group : Job
 
                     for (int ii = packages_previous.Count - 1; ii >= 0; ii--)
                     {
-                        if (packages_previous[ii].Duration > 0 && Utility.DetectConflict(p, packages_previous[ii]))
+                        if (packages_previous[ii].Duration > 0 && UtilityEX.DetectConflict(p, packages_previous[ii]))
                         {   // leave the conflict package in previous to use for COM text selection purposes.
                             foreach (var ep in packages_previous[ii].ListEP) LogMessage_Begin_Abort(ep);
                             replaced = true;
@@ -365,7 +365,7 @@ public class Job_Sex_Group : Job
                 var p = packages[i] as ActionPackage_Undress;
                 for (int ii = packages_current.Count - 1; ii >= 0; ii--)
                 {
-                    if (Utility.DetectConflict(p, packages_current[ii]))
+                    if (UtilityEX.DetectConflict(p, packages_current[ii]))
                     {   // leave the conflict package in previous to use for COM text selection purposes.
                         packages_current[ii].PackageRepeat = false;
                         packages_current[ii].DisablePackage();
@@ -518,13 +518,13 @@ public class Job_Sex_Group : Job
                     }
 
                 }
-                var randomTarget = validTarget[Utility.GetRandIndexFromListCount(validTarget.Count)];
+                var randomTarget = Utility.GetRandomElement(validTarget);
 
                 
                 // random find penis related
                 var listAll = this.allusableCOMs.FindAll(x => x.requirements.requirement.doerBodyTags.Contains("penis"));
 
-                COM randomCOM = listAll[Utility.GetRandIndexFromListCount(listAll.Count)];
+                COM randomCOM = Utility.GetRandomElement(listAll);
 
                 ActionPackage_Sex newP = new ActionPackage_Sex(this, randomCOM, new List<int>() { c.RefID }, new List<int>() { randomTarget }, c.RefID);
                 if (!newP.Validate())

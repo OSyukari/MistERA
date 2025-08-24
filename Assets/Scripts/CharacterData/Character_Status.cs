@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
-using System.Runtime.InteropServices;
 
 [System.Serializable]
 public enum StatusTags
@@ -23,247 +22,37 @@ public enum RandomSample
     elapsedMinute
 }
 
-[System.Serializable]
-public class Index_Status:I_IndexHasID, I_SerializationCallbackReceiver, I_IndexMergeable
-{
-    public List<Status_Base> list = new List<Status_Base>();
 
-    public void MergeWith(I_IndexMergeable list){
-        var l = list as Index_Status;
-        if (l == null) return;
-        else if (l.list == null) return;
-        else
+[System.Serializable]
+public class Status_Instance
+{
+    [SerializeField][JsonProperty] protected string baseID;
+    [JsonIgnore] public string ID { get { return baseID; } }
+
+    public int duration = -1;
+
+
+    [SerializeField][JsonProperty] protected float severity;
+    public int pauseXMinAfterMod = 0;
+
+    protected I_StatsManager owner = null;
+    [JsonIgnore]
+    public I_StatsManager Owner
+    {
+        get
         {
-            this.list.AddRange(l.list);
+            return owner;
         }
     }
 
-
+    public void ReEstablishParent(I_StatsManager Owner)
+    {
+        this.owner = Owner;
+    }
     public void OnAfterDeserialize()
     {
-        // register all sex status to sensitivity data
-        // dictionary "C" -> "chara_status_sexual_C" for quick lookup and alter status when sex
-
-
-        foreach (var i in list)
-        {
-            if (i.variationMode.SensitivityKeyword.Length > 0)
-            {
-                scr_System_Serializer.current.AddSensitivityStatus(i.variationMode.SensitivityKeyword, i.statusID);
-            }
-        }
 
     }
-    public Status_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
-    Dictionary<string, Status_Base> ID_Dictionary = new Dictionary<string, Status_Base>();
-    public void RegisterAllID(List<string> s)
-    {
-        s.Add("Index_Status : registering ID with list length [" + list.Count + "]");
-
-        foreach (Status_Base o in this.list)
-        {
-            if (o.isValid) ID_Dictionary.Add(o.statusID, o);
-        }
-    }
-
-}
-
-[System.Serializable]
-public class Status_Base
-{
-    public string statusID = "";
-
-    string _displayNameCache = string.Empty;
-    [JsonIgnore]
-    public string DisplayName
-    {
-        get
-        {
-            if (_displayNameCache == string.Empty) _displayNameCache = LocalizeDictionary.QueryThenParse(statusID, statusID);
-            return _displayNameCache;
-        }
-    }
-    public bool noDisplay = false;
-    public bool constant = false;
-    public bool allowNaturalRemoval = true;
-    public string stringFormat = "N1";
-
-
-
-    [JsonIgnore]
-    public bool isValid
-    {
-        get
-        {
-            if (this.statusID != "") return true;
-            return false;
-        }
-    }
-
-    public List<Variant> variants = new List<Variant>();
-
-    [System.Serializable]
-    public class Variant
-    {
-        [SerializeField][JsonProperty] protected string displayName = "";
-        public bool displayable = true;
-        public bool allowRemoval = false;
-        public float threshold = -1;
-        public List<string> tags = new List<string>();
-        public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
-
-        string _displayNameCache = string.Empty;
-        [JsonIgnore]
-        public string DisplayName
-        {
-            get
-            {
-                if (_displayNameCache == string.Empty) _displayNameCache = LocalizeDictionary.QueryThenParse(displayName, displayName);
-                return _displayNameCache;
-            }
-        }
-
-        [JsonIgnore] public bool allowRemove
-        {
-            get
-            {
-                return allowRemoval || displayName == "";
-            }
-        }
-    }
-    public Variations variationMode = new Variations();
-
-    [System.Serializable]
-    public class RandomVariation
-    {
-
-        public virtual float Variation(int elapsed = 0)
-        {
-            return 0;
-        }
-    }
-
-    [System.Serializable]
-    public class RandomVariation_Sine : RandomVariation
-    {
-        public RandomSample baseSample = RandomSample.None;
-        public float cycleLen = 0;
-        public float intensityMod = 1;
-
-        public override float Variation(int elapsed = 0)
-        {
-            return (float) Utility.SineSample(cycleLen, baseSample, elapsed) * intensityMod;
-        }
-    }
-
-    [System.Serializable]
-    public class RandomVariation_Sex : RandomVariation
-    {
-        public string sensitivityKeyword = "";
-        public int pauseXMinAfterMod = 0;
-
-    }
-
-    [System.Serializable]
-    public class BaselineVariation
-    {
-        public virtual float Decay(Character_Trainable c, float value)
-        {
-            return 0;
-        }
-    }
-    [System.Serializable]
-    public class BaselineVariation_Linear : BaselineVariation
-    {
-        public string statID = "";
-        public float baseValue = 0;
-        public float decaySpeed = 0;
-        public override float Decay(Character_Trainable c, float value)
-        {
-            if (decaySpeed == 0) return 0;
-            var targetValue = statID == "" ? baseValue : c.Stats.GetDerivedStat(statID).FinalValue();
-            var diff = (targetValue - value);
-            if (diff == 0) return 0;
-            var abs = Math.Abs(decaySpeed);
-            return diff >= abs ? abs : diff <= -abs ? -abs : 0;
-            //var lerpStep = Math.Abs( decaySpeed/(targetValue - value));
-            //return (float) Unity.Mathematics.math.lerp(value, targetValue, lerpStep) - value;
-        }
-    }
-
-    [System.Serializable]
-    public class Variations
-    {
-        public RandomVariation randomVariation = new RandomVariation();
-        public BaselineVariation baselineVariation = new BaselineVariation();
-        //public int pauseXMinAfterMod = 0;
-        //public float value = 0;
-        //public List<Variation_Conditions> conditions = new List<Variation_Conditions>();
-
-        [JsonIgnore]
-        public int pauseXMinAfterMod 
-        { get {
-                if (randomVariation is not RandomVariation_Sex) return 0;
-                else return (randomVariation as RandomVariation_Sex).pauseXMinAfterMod;
-                
-        } }
-
-        [JsonIgnore]
-        public string SensitivityKeyword
-        {
-            get
-            {
-                if (randomVariation is not RandomVariation_Sex) return "";
-                else return (randomVariation as RandomVariation_Sex).sensitivityKeyword;
-            }
-        }
-
-
-        [System.Serializable]
-        public class Variation_Conditions
-        {
-            public string statID = "";
-            public float percentage_below = -1f;
-            public float percentage_above = 2f;
-
-            public bool Validate(Character_Trainable c)
-            {
-                bool returnValue = true;
-                
-                switch (statID)
-                {
-                    case "Stat_ST":
-                        returnValue = returnValue && (percentage_below < 0f || (c.Stats.Stamina.ValuePercentile) <= percentage_below);
-                        returnValue = returnValue && (percentage_above > 1f || (c.Stats.Stamina.ValuePercentile) <= percentage_above);
-                        break;
-
-
-                    default:
-                        returnValue = false;
-                        break;
-                }
-                return returnValue;
-            }
-        }
-
-        public float Validate(Character_Trainable c)
-        {
-            float i = 0;
-            //foreach (var cond in conditions) if (cond.Validate(c)) i += value;
-            return i;
-        }
-    }
-
-    public Status_Instance Instantiate(int refID, float severity = 0f, int duration = -1)
-    {
-        return new Status_Instance(this, refID, severity, duration);
-    }
-}
-
-[System.Serializable]
-public class Status_Instance : StatusInstance
-{
-
     public bool maxed = false;
     public void FlagMaxed()
     {
@@ -310,7 +99,7 @@ public class Status_Instance : StatusInstance
             return BaseRef.variants.Count - 1;
         } }
 
-    [JsonIgnore] public override float Severity
+    [JsonIgnore] public float Severity
     {
         get
         {
@@ -378,7 +167,7 @@ public class Status_Instance : StatusInstance
     public bool SeverityAdd(float f, float externalCap = -1)
     {
         if (Math.Abs(f) < float.Epsilon) return false;
-        if (!this.BaseRef.allowNaturalRemoval && this.BaseRef.statusID == "chara_status_sleeping" && this.Owner.Debug_ForceDeepSleep) return false;
+       // if (!this.BaseRef.allowNaturalRemoval && this.BaseRef.statusID == "chara_status_sleeping" && this.Owner.Debug_ForceDeepSleep) return false;
 
         var initialS = this.SeverityIndex;
 
@@ -398,7 +187,7 @@ public class Status_Instance : StatusInstance
         severity = (float) Math.Round(severity, 2);
         if (Math.Abs( severity) < 0.01) severity = 0;
 
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.Log($"{Owner.FirstName} addstatus {this.baseID} {f} min {min} max {max} externalcap {externalCap} final {severity}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.Log($"{Owner.OwnerName()} addstatus {this.baseID} {f} min {min} max {max} externalcap {externalCap} final {severity}");
 
         return this.SeverityIndex != initialS;
     }
@@ -412,12 +201,29 @@ public class Status_Instance : StatusInstance
         }
     }
 
-    public Status_Instance():base()
+    public Status_Instance Copy(I_StatsManager newParent)
+    {
+        var copy = new Status_Instance(this.baseRef, newParent, this.severity, duration);
+        copy.elapsedTime = this.elapsedTime;
+        copy.maxed = this.maxed;
+        copy.pauseXMinAfterMod = this.pauseXMinAfterMod;
+
+        return copy;
+    }
+
+    public Status_Instance()
     {
 
     }
-    public Status_Instance(Status_Base baseStatus, int refID, float initialSeverity = 0f, int duration = -1) : base(baseStatus, refID, initialSeverity, duration)
+    public Status_Instance(Status_Base baseStatus, I_StatsManager owner, float initialSeverity = 0f, int duration = -1)
     {
+        this.owner = owner;
+        this.baseID = baseStatus.statusID;
+        this.baseRef = baseStatus;
+        this.duration = duration;
+        if (initialSeverity < 0.001f && initialSeverity > -0.001f) this.severity = Math.Clamp(0f, 0, 0);
+        else this.severity = initialSeverity;
+
         this.pauseXMinAfterMod = BaseRef.variationMode.pauseXMinAfterMod;
     }
 
@@ -439,7 +245,7 @@ public class Status_Instance : StatusInstance
             {
                 if (mod._cachedDisplay == string.Empty) mod._cachedDisplay = LocalizeDictionary.QueryThenParse(mod.statID);
 
-                float value = Utility.StatValue(mod, Owner);
+                float value = UtilityEX.StatValue(mod, Owner);
                 if (MathF.Abs(value) > float.Epsilon)
                 {
                     if (MathF.Abs(value) < 1) s.Add(mod._cachedDisplay + (value*100).ToString("+0;-#")+"%");

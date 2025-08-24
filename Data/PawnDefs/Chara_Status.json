@@ -6,8 +6,9 @@
             "noDisplay":true,
             "stringFormat":"N0",
             "constant":true,
+            "capModded":true,
             "variationMode":
-                { "variationType":"statModifiers", "value": 0, "stringData":"capMod" }
+                { "variationType":"statModifiers", "value": 0 }
             ,
             "variants":[
                 { "displayName":"chara_status_mood_m2",     "threshold":-3.0 },
@@ -24,8 +25,9 @@
             "noDisplay":true,
             "stringFormat":"N0",
             "constant":true,
+            "capModded":true,
             "variationMode":
-                { "variationType":"statModifiers", "value": 0, "stringData":"capMod" }
+                { "variationType":"statModifiers", "value": 0 }
             ,
             "variants":[
                 { "displayName":"chara_status_stress_m2",     "threshold":-3.0 },

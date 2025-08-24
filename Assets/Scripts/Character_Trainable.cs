@@ -161,7 +161,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
 
         this.Memory = new MemoryManager(this);
-        this.Stats.InitializeWithID(refID, Template.stat_STR, Template.stat_CON, Template.stat_PSY, Template.stat_WIL);
+        this.Stats.InitializeWithID(this, Template.stat_STR, Template.stat_CON, Template.stat_PSY, Template.stat_WIL);
 
         //this.sexLogManager = new SexLogManager(refID);
         ReEstablishObservers();
@@ -231,19 +231,19 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             case "hasPenisPiercing":
                 return false;
             case "canAct":
-                return Utility.CompareValue(canAct, operand, value);
+                return UtilityEX.CompareValue(canAct, operand, value);
             case "isInEstrus":  // check chara status depending on menstruation cycle, or if chara is drugged
                 Debug.Log(FirstName + " Comparevalue isInEstrus [" + false + "] [" + operand + "] [" + value + "]");
-                return Utility.CompareValue(false, operand, value);
+                return UtilityEX.CompareValue(false, operand, value);
             case "climaxed":    // check if chara has climaxed in current postupdatetime
                // Debug.LogError(FirstName + " Comparevalue climaxed [" + this.Climaxing + "] [" + operand + "] [" + value + "]");
-                return Utility.CompareValue(this.Climaxing, operand, value); ;
+                return UtilityEX.CompareValue(this.Climaxing, operand, value); ;
             case "currentClimaxCount": // check chara consecutive climax count. how ? 
                 //Debug.LogError("Checking ConsecutiveClimaxCount on " + FirstName + " value is " + this.Status.ConsecutiveClimaxCount);
                 Debug.Log(FirstName + " Comparevalue currentClimaxCount [" + this.Stats.ConsecutiveClimaxCount + "] [" + operand + "] [" + value + "]");
                 if (int.TryParse(value, out int cliamxCount))
                 {
-                    return Utility.CompareValue(this.Stats.ConsecutiveClimaxCount, operand, cliamxCount); ;
+                    return UtilityEX.CompareValue(this.Stats.ConsecutiveClimaxCount, operand, cliamxCount); ;
                 }
                 else
                 {
@@ -252,15 +252,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 }
             case "isUnconscious": // check chara sleeping or unconscious
                 //Debug.Log(FirstName + " Comparevalue isUnconscious [" + this.Stats.isConsciousnessUnconscious + "] [" + operand + "] [" + value + "]");
-                return Utility.CompareValue(this.Stats.isConsciousnessUnconscious, operand, value);
+                return UtilityEX.CompareValue(this.Stats.isConsciousnessUnconscious, operand, value);
             case "isTimestopped": // check if chara can act in timestop and if currently timestopped
                // bool isTimestopped = scr_System_Time.current.timeStop && !this.CanActInTimeStop;
                 //Debug.LogError(FirstName+" Comparevalue isTimestopped [" + isTimeStopped + "] [" + operand + "] [" + value + "]");
-                return Utility.CompareValue(isTimeStopped, operand, value);
+                return UtilityEX.CompareValue(isTimeStopped, operand, value);
 
             case "isCumReady":  // check if chara is currently over cum threshold
                // Debug.Log(FirstName + " Comparevalue isCumReady [" + (Stats.SexStimulation.Severity >= Stats.CumThreshold) + "] [" + operand + "] [" + value + "]");
-                return Utility.CompareValue(Body.isClimaxing(true), operand, value);
+                return UtilityEX.CompareValue(Body.isClimaxing(true), operand, value);
 
             case "isFatigued":  // check if chara can act but currently low on stamina
                 return false;
@@ -434,7 +434,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     public Character_Trainable(bool InitializeNew)
     {
         //Stats = new StatsManager(this);
-        this.birthday = Utility.GetCampaignTime().AddYears(-Age);
+        this.birthday = UtilityEX.GetCampaignTime().AddYears(-Age);
 
         InitializeAllTraits();
         InitializeAllSkills();
@@ -466,8 +466,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public MemoryManager Memory = null;
 
-    [SerializeField][JsonProperty] protected string firstName = "Jane", middleName = "", lastName = "Doe";
-    [SerializeField][JsonProperty] protected string nameDisplayFormat = "chara_fullname_firstToLast";
+    [SerializeField][JsonProperty] protected string firstName = "Jane", middleName = "", lastName = "Doe", title = "";
+    [SerializeField][JsonProperty] public string nameDisplayFormat = "chara_fullname_firstToLast";
 
     public void SetName(string firstName, string middleName, string lastName, string displayFormat){
         this.FirstName = firstName;
@@ -493,10 +493,41 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             firstName = value;
         } 
     }
+
+    string _callName = string.Empty;
+    [JsonIgnore] public string CallName { get
+        {
+            if (_callName == string.Empty)
+            {
+                _callName = Relationships.ExistRelationship(scr_System_CampaignManager.current.Player.RefID) ? FirstName : Title == "" ? FirstName : Title;
+            }
+            return _callName;
+        } set
+        {
+            _callName = string.Empty;
+        }
+    }
+
     [JsonIgnore] public string MiddleName { get { return middleName == "" ? "" : LocalizeDictionary.QueryThenParse(middleName, middleName); } set { middleName = value; } }
     [JsonIgnore] public string LastName { get { return lastName == "" ? "" : LocalizeDictionary.QueryThenParse(lastName, lastName); } set { lastName = value; } }
 
     [JsonIgnore] public string FullNameID { get { return baseID+"_"+referenceID; } }
+
+    string _title = string.Empty;
+    [JsonIgnore] public string Title { get {
+            if (title == "") return "";
+            if (_title == string.Empty)
+            {
+                _title = LocalizeDictionary.QueryThenParse(title, title);
+            }
+            return _title;
+        }
+        set
+        {
+            this.title = value;
+            _title = string.Empty;
+        }
+    }
 
     string _cachedFullName = "";
 
@@ -922,7 +953,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 if (possibleResting.Count > 0)
                 {
-                    Job job = possibleResting[Utility.GetRandIndexFromListCount(possibleResting.Count)];
+                    Job job = Utility.GetRandomElement(possibleResting);
                     if (log) ss += "| Changing job to resting job " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $" |{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                     ChangeCurrentJob(job, "", "rest");
                     if (CurrentJob != job) Debug.LogError($"Error in changing job from {(CurrentJob == null ? "null" : CurrentJob.RefID)} to {(job == null ? "null" : job.RefID)}");
@@ -962,7 +993,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 if (possibletargets.Count > 0)
                 {
-                    Job job = possibletargets[Utility.GetRandIndexFromListCount(possibletargets.Count)];
+                    Job job = Utility.GetRandomElement(possibletargets);
                     if (log) ss += "Changing job to having sex with " + (job == null ? "NULL" : "interaction |" + (job == null ? "null" : job.RefID) + "| in room[" + job.ParentRoom.DisplayName + "]");
                     //Debug.LogError("Animal fucking ");
                     ChangeCurrentJob(job, "com_interaction_initiateSex");
@@ -1000,7 +1031,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 if (possibleRecreations.Count > 0)
                 {
-                    Job job = possibleRecreations[Utility.GetRandIndexFromListCount(possibleRecreations.Count)];
+                    Job job = Utility.GetRandomElement(possibleRecreations);
                     if (log) ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                 
                     ChangeCurrentJob(job,"","recreation");
@@ -1250,8 +1281,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (comp != null)
             {
                 //Stats.RefreshAllStats(true);
-                var list = Body.EquipItem(itemRefID, comp.equipCount, forceEquip);
-                return !list.Contains(-1);
+                return Body.EquipItem(itemRefID, comp.equipCount, forceEquip);
             }
             else
             {
@@ -1295,7 +1325,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 var memEntry = this.Memory.AddEntry(memInst, new List<string>() { "forbidMerge" });
                 memEntry.entryDescription = memInst.description;
                 // re-check every AP
-                Utility.GetAPsFrom(this, out List<ActionPackage> aps);
+                UtilityEX.GetAPsFrom(this, out List<ActionPackage> aps);
 
                 var wakeupEV = new EventInstance(this, "OnCharaWakeUp", "");
                 var callbacks = new List<Action>();
@@ -1368,7 +1398,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     if (job is Job_Sex_Group)
                     {
                         var message = LocalizeDictionary.QueryThenParse("event_onNightAssaultFailed_jobD").Replace("$chara$", this.FirstName);
-                        Utility.StringReplace(ref message);
+                        UtilityEX.StringReplace(ref message);
                         (job as Job_Sex_Group).FlagActorLeave(this.RefID, message);
                     }
                     callbacks.Add(job.NotifyDescriptionsOutOfUpdate);
@@ -1400,14 +1430,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 if (accepted.Count >= 1)
                 {
-                    var randRel = accepted[Utility.GetRandIndexFromListCount(accepted.Count)];
+                    var randRel = Utility.GetRandomElement(accepted);
                     var message = this.Relationships.Personality.GetKOJOMessage("OnNightAssaultSuccess", randRel, selfTags, new List<string>());
                     Debug.Log($"({FirstName}) detected night assault accept count {accepted.Count}, random select {randRel.TargetName}, message {message}");
                     appends.Add(message);
                 }
                 else if (refused.Count >= 1)
                 {
-                    var randRel = refused[Utility.GetRandIndexFromListCount(refused.Count)];
+                    var randRel = Utility.GetRandomElement(refused);
                     var message = this.Relationships.Personality.GetKOJOMessage("OnNightAssaultFailure", randRel, selfTags, new List<string>());
                     Debug.Log($"({FirstName}) detected night assault accept count {accepted.Count}, random select {randRel.TargetName}, message {message}");
                     appends.Add(message);
@@ -1456,8 +1486,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     {
                         memInst.ResetInternal(Memory_Response.Accept, Memory_Attitude.Neutral);
                     }
-
-                    Debug.LogError($"{FirstName} wakes up naturally, trying to breaking from lingering job");
+#if UNITY_EDITOR
+                    Debug.Log($"{FirstName} wakes up naturally, trying to breaking from lingering job");
+#endif
                     this.ChangeCurrentJob(null);
                 }
 
@@ -1751,12 +1782,17 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
 
     public Character_SerializableBase GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
 
+    /// <summary>
+    /// Return a new serialized copy of [id] character with wiped template data
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public Character_Trainable GetChara(string id)
     {
         var template = GetByID(id);
         if (template == null) return null;
-        var str = JsonConvert.SerializeObject(template, Utility.SerializerSettings);
-        var chara = JsonConvert.DeserializeObject<Character_Trainable>(str, Utility.SerializerSettings);
+        var str = JsonConvert.SerializeObject(template, UtilityEX.SerializerSettings);
+        var chara = JsonConvert.DeserializeObject<Character_Trainable>(str, UtilityEX.SerializerSettings);
         chara.Template = null;
         return chara;
     }

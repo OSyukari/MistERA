@@ -372,7 +372,7 @@ public class scr_Menu_Intro : scr_Menu
             this.parent = parent;
             this.button = button;
             if (scr_System_CentralControl.current.isSafeMode) this.tooltip = LocalizeDictionary.QueryThenParse("intro_message_3_safe");
-            else this.tooltip = LocalizeDictionary.QueryThenParse("intro_message_3").Replace("$link$", Utility.bugReport);
+            else this.tooltip = LocalizeDictionary.QueryThenParse("intro_message_3").Replace("$link$", UtilityEX.bugReport);
         }
 
         public override bool IsButtonValid()
@@ -384,7 +384,7 @@ public class scr_Menu_Intro : scr_Menu
         {
             if (!scr_System_CentralControl.current.isSafeMode)
             {
-                GUIUtility.systemCopyBuffer = Utility.bugReport;
+                GUIUtility.systemCopyBuffer = UtilityEX.bugReport;
                 button.SetText(copied);
             }
         }

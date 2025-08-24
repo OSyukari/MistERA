@@ -971,11 +971,11 @@ public abstract class ActionPackage
 
             while (temp_doers.Count > 0 && temp_receivers.Count > 0)
             {
-                temp_doer = temp_doers[Utility.GetRandIndexFromListCount(temp_doers.Count)];
+                temp_doer = Utility.GetRandomElement(temp_doers);
                 temp_doers.Remove(temp_doer);
                 //c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
 
-                temp_receiver = temp_receivers[Utility.GetRandIndexFromListCount(temp_receivers.Count)];
+                temp_receiver = Utility.GetRandomElement(temp_receivers);
                 temp_receivers.Remove(temp_receiver);
 
                 packages.Add(new EvaluationPackage(temp_doer, temp_receiver, this.targetCOM, this));

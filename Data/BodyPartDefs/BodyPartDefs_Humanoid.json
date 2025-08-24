@@ -18,45 +18,52 @@
                 "displayName":"%%bodyPart_base_torso%%",
                 "tooltip":"An {0}'s upper body.",
                 "AvailableSlots":["Neck","Torso"],
-                "childID":["arm_humanoid_base", "arm_humanoid_base", "lower_humanoid_base"],
+                "childID":["lower_humanoid_base", "arm_humanoid_base_L", "arm_humanoid_base_R"],
                 "internalID":["stomach_humanoid_base","breasts_humanoid_base"],
                 "tags":["torso"],
                 "sortOrder":1
             },
             {
-                "id": "arm_humanoid_base",
+                "id": "arm_humanoid_base_L",
                 "displayName":"%%bodyPart_base_arm%%",
                 "tooltip":"An {0}'s arm.",
-                "AvailableSlots":["Hand"],
+                "AvailableSlots":["Hand","Arm"],
                 "tags":["arm"],
                 "sortOrder":2
+            },
+            {
+                "id": "arm_humanoid_base_R",
+                "displayName":"%%bodyPart_base_arm%%",
+                "tooltip":"An {0}'s arm.",
+                "AvailableSlots":["Hand","Arm"],
+                "tags":["arm"],
+                "sortOrder":3
             },
             {
                 "id": "lower_humanoid_base",
                 "displayName":"%%bodyPart_base_lower%%",
                 "tooltip":"An {0}'s lower body.",
                 "AvailableSlots":["Lower"],
-                "childID":["leg_humanoid_base","leg_humanoid_base"],
+                "childID":["leg_humanoid_base_L","leg_humanoid_base_R"],
                 "internalID":["anus_humanoid_base","guts_humanoid_base","penis_humanoid_base","vagina_humanoid_base","womb_humanoid_base","clit_humanoid_base"],
                 "tags":["lower"],
-                "sortOrder":3
-            },
-            {
-                "id": "leg_humanoid_base",
-                "displayName":"%%bodyPart_base_leg%%",
-                "tooltip":"An {0}'s leg.",
-                "AvailableSlots":["Leg"],
-                "childID":["feet_humanoid_base"],
-                "tags":["leg"],
                 "sortOrder":4
             },
             {
-                "id": "feet_humanoid_base",
-                "displayName":"%%bodyPart_base_feet%%",
-                "tooltip":"An {0}'s feet.",
-                "AvailableSlots":["Feet"],
-                "tags":["feet"],
+                "id": "leg_humanoid_base_L",
+                "displayName":"%%bodyPart_base_leg%%",
+                "tooltip":"An {0}'s leg.",
+                "AvailableSlots":["Leg","Feet"],
+                "tags":["leg","feet"],
                 "sortOrder":5
+            },
+            {
+                "id": "leg_humanoid_base_R",
+                "displayName":"%%bodyPart_base_leg%%",
+                "tooltip":"An {0}'s leg.",
+                "AvailableSlots":["Leg","Feet"],
+                "tags":["leg","feet"],
+                "sortOrder":6
             }
         ],
         "BodyInternal_Base": 
@@ -94,7 +101,7 @@
                 "id": "breasts_humanoid_base",
                 "displayName":"%%bodyPart_internal_breasts%%",
                 "tooltip":"An {0}'s breast.",
-                "AvailableSlots":["Breasts"],
+                "AvailableSlots":["Nipples"],
                 "equipLayers":["Skin"],
                 "tags":["nsfw","breast","nipple"],
                 "sensitivityClassString":"B",

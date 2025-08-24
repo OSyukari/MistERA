@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
+
 [System.Serializable]
 public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable, I_SerializationCallbackReceiver, I_RemoveElemByTag, I_RemoveNSFW
 {
@@ -32,6 +33,7 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
         }
     }
     public Item_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+
     /// <summary>
     /// this should run after all calls to appendlist
     /// </summary>
@@ -40,45 +42,52 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
         // generate packaged item def for each package_able food item
         List<Item_Base> newItems = new List<Item_Base>();
 
-        /* Packaging items, not used right now */
         foreach(var item in this.list)
         {
+
+            if (item.isValid)
+
+            /* Packaging items, not used right now */
             // if item can be packaged
-            if (!item.canBePackaged) continue;
-            //continue;
-            
-            var serializedParent = JsonConvert.SerializeObject(item, Masterlist_Items.Instance.SerializerSettings);
-            Item_Base newItem = JsonConvert.DeserializeObject<Item_Base>(serializedParent, Masterlist_Items.Instance.SerializerSettings);
-            newItem.canBePackaged = false;
-            newItem.id = item.ID + "_packaged";
-            newItem.tooltip = "Packaged " + newItem.displayName + ", unpack to get the original item.";
-            newItem.displayName = "(pacakged)"+ newItem.displayName;
-            if (newItem.Tags.Contains("food_meal")) {
-                newItem.Tags.Remove("food_meal");
-                newItem.Tags.Add("food_meal_packaged");
-            }
-            
-            for (int i = newItem.itemComps_Template.Count -1; i >= 0; i--)
+            if (item.canBePackaged)
             {
-                // update every recipe output item to new item
-                if (newItem.itemComps_Template[i].compType == "ItemComponent_Craftable")
+                //continue;
+
+                var serializedParent = JsonConvert.SerializeObject(item, Masterlist_Items.Instance.SerializerSettings);
+                Item_Base newItem = JsonConvert.DeserializeObject<Item_Base>(serializedParent, Masterlist_Items.Instance.SerializerSettings);
+                newItem.canBePackaged = false;
+                newItem.id = item.ID + "_packaged";
+                newItem.tooltip = "Packaged " + newItem.displayName + ", unpack to get the original item.";
+                newItem.displayName = "(pacakged)" + newItem.displayName;
+                if (newItem.Tags.Contains("food_meal"))
                 {
-                    foreach(var recipe in newItem.itemComps_Template[i].comp_Craftable.recipes)
-                    {
-                        if (recipe.outputItemBaseID == item.ID) recipe.outputItemBaseID = newItem.ID;
-                    }
-                    //
-                    Masterlist_Items.Instance.AddCraftingRecipe(newItem.itemComps_Template[i].comp_Craftable.recipes);
-                }
-                else if (newItem.itemComps_Template[i].compType == "ItemComponent_Degradable")
-                {
-                    newItem.itemComps_Template.RemoveAt(i);
-                    continue;
+                    newItem.Tags.Remove("food_meal");
+                    newItem.Tags.Add("food_meal_packaged");
                 }
 
+                for (int i = newItem.itemComps_Template.Count - 1; i >= 0; i--)
+                {
+                    // update every recipe output item to new item
+                    if (newItem.itemComps_Template[i].compType == "ItemComponent_Craftable")
+                    {
+                        foreach (var recipe in newItem.itemComps_Template[i].comp_Craftable.recipes)
+                        {
+                            if (recipe.outputItemBaseID == item.ID) recipe.outputItemBaseID = newItem.ID;
+                        }
+                        //
+                        Masterlist_Items.Instance.AddCraftingRecipe(newItem.itemComps_Template[i].comp_Craftable.recipes);
+                    }
+                    else if (newItem.itemComps_Template[i].compType == "ItemComponent_Degradable")
+                    {
+                        newItem.itemComps_Template.RemoveAt(i);
+                        continue;
+                    }
+
+                }
+
+                newItems.Add(newItem);
             }
 
-            newItems.Add(newItem);
         }
 
         foreach (var i in newItems)
@@ -139,6 +148,8 @@ public class Item_Base
     }
 
     string _tooltipCache = "";
+
+
 
     //public bool noDisplay = false;
     public float value = 0;
@@ -237,6 +248,12 @@ public class Item_Base
             
             return valid; 
         } }
+
+    [JsonIgnore]
+    public bool isWeapon { get
+        {
+            return itemComps_Template.Exists(x => x.compType == "ItemComponent_Weapon");
+        } }
     /*
     [SerializeField] float beauty = 0f;
     public float Beauty { get { return beauty; } }
@@ -289,12 +306,69 @@ public class ItemComponent_SerializedData
 
 }
 
+[System.Serializable]
+public enum MoveType
+{
+    None,
+    Swing, Thrust
+}
 
+[System.Serializable]
 public enum DamageType
 {
-    Untyped,
+    None, Untyped,
     Pierce, Blunt, Slash,
     Heat, Cold, Chemical
 }
 
+[System.Serializable]
+public class AttackInstance
+{
+    public MoveType moveType = MoveType.None;
+    public List<DamageType> damageTypes;
+    public float damageAmount;
 
+    [JsonIgnore]
+    public List<string> attackSpecs = new List<string>();
+}
+
+
+[System.Serializable]
+public class ItemRequirement
+{
+    public List<string> requireTags = new List<string>();
+
+    [JsonIgnore] public bool isActive { get { return requireTags.Count > 0; } }
+
+    public bool Validate(Item_Base item)
+    {
+        return Utility.ListContainsStrict(item.Tags,requireTags);
+    }
+    public bool Validate(List<string> tags)
+    {
+        return Utility.ListContainsStrict(tags, requireTags);
+    }
+
+    public bool Merge(ItemRequirement req)
+    {
+        if (this.requireTags.Count == 0 && req.requireTags.Count != 0) return false;
+        if (this.requireTags.Count != 0 && req.requireTags.Count == 0) return false;
+        if (Utility.ListContainsStrict(this.requireTags, req.requireTags)) return true;
+        else if (Utility.ListContainsStrict(req.requireTags, this.requireTags))
+        {
+            this.requireTags.AddRange(req.requireTags);
+            this.requireTags = this.requireTags.Distinct().ToList();
+            return true;
+        }
+        return false;
+    }
+
+    [JsonIgnore]
+    public string Tooltip
+    {
+        get
+        {
+            return LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_itemReq").Replace("$kwds$", String.Join("|", requireTags));
+        }
+    }
+}

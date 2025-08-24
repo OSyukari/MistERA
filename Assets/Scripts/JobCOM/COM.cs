@@ -30,8 +30,8 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
             
             else if (list[i].comTags.Contains("sex") && !(list[i] is COM_Sex))
             {
-                var serializedParent = JsonConvert.SerializeObject(list[i], Utility.SerializerSettings);
-                list[i] = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, Utility.SerializerSettings);
+                var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
+                list[i] = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, UtilityEX.SerializerSettings);
             }
             else if (list[i] is COM_TakeMeal || list[i] is COM_Character_Insert || list[i] is COM_Character_Remove || list[i] is COM_FarmRecipe || list[i].ID.Contains("_noSex", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -82,8 +82,8 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 {
                     if (item.Tags.Contains("food_meal"))
                     {
-                        var serializedParent = JsonConvert.SerializeObject(list[i], Utility.SerializerSettings);
-                        COM_TakeMeal newCOM1 = JsonConvert.DeserializeObject<COM_TakeMeal>(serializedParent, Utility.SerializerSettings);
+                        var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
+                        COM_TakeMeal newCOM1 = JsonConvert.DeserializeObject<COM_TakeMeal>(serializedParent, UtilityEX.SerializerSettings);
                         newCOM1.Initialize(list[i], item);
 
                         if (newCOMs.Find(x => x.ID == newCOM1.ID) == null) newCOMs.Add(newCOM1);
@@ -97,9 +97,9 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 if (list[i].requirements.requireContaining.allowPlanting.Contains("character_trainable"))
                 {
 
-                    var serializedParent = JsonConvert.SerializeObject(list[i], Utility.SerializerSettings);
-                    COM_Character_Insert newCOM1 = JsonConvert.DeserializeObject<COM_Character_Insert>(serializedParent, Utility.SerializerSettings);
-                    COM_Character_Remove newCOM2 = JsonConvert.DeserializeObject<COM_Character_Remove>(serializedParent, Utility.SerializerSettings);
+                    var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
+                    COM_Character_Insert newCOM1 = JsonConvert.DeserializeObject<COM_Character_Insert>(serializedParent, UtilityEX.SerializerSettings);
+                    COM_Character_Remove newCOM2 = JsonConvert.DeserializeObject<COM_Character_Remove>(serializedParent, UtilityEX.SerializerSettings);
                     // COM_FarmRecipe rcp = new COM_FarmRecipe(list[i], recipe);
                     newCOM1.Initialize();
                     newCOM2.Initialize();
@@ -114,8 +114,8 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 {   // this is a special case just to handle/initialize com_job_farm_remove
 
                    // Debug.Log("initializing remove plant com [" + list[i].ID + "]");
-                    var serializedParent = JsonConvert.SerializeObject(list[i], Utility.SerializerSettings);
-                    COM_FarmRecipe newCOM = JsonConvert.DeserializeObject<COM_FarmRecipe>(serializedParent, Utility.SerializerSettings);
+                    var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
+                    COM_FarmRecipe newCOM = JsonConvert.DeserializeObject<COM_FarmRecipe>(serializedParent, UtilityEX.SerializerSettings);
                     newCOM.InitializeRecipe(null);
                     list[i] = newCOM;
                     // COM_FarmRecipe rcp = new COM_FarmRecipe(list[i], recipe);
@@ -127,8 +127,8 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                         if (list[i].requirements.requireContaining.allowPlanting.Contains(recipe.growType))
                         {
                             // make new variant with recipe
-                            var serializedParent = JsonConvert.SerializeObject(list[i], Utility.SerializerSettings);
-                            COM_FarmRecipe newCOM = JsonConvert.DeserializeObject<COM_FarmRecipe>(serializedParent, Utility.SerializerSettings);
+                            var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
+                            COM_FarmRecipe newCOM = JsonConvert.DeserializeObject<COM_FarmRecipe>(serializedParent, UtilityEX.SerializerSettings);
                             newCOM.InitializeRecipe(recipe);
 
                             // COM_FarmRecipe rcp = new COM_FarmRecipe(list[i], recipe);
@@ -146,8 +146,8 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
 
             if (list[i].comTags.Contains("sex") && (list[i].comTags.Contains("service") || list[i].comTags.Contains("nosexvariant")))
             {
-                var serializedParent = JsonConvert.SerializeObject(list[i], Utility.SerializerSettings);
-                var newCOM = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, Utility.SerializerSettings);
+                var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
+                var newCOM = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, UtilityEX.SerializerSettings);
                 newCOM.comTags.Remove("sex");
                 newCOM.requirements.requirement.req_Receivers.requireAbsentJobwithCOMTag.Add("sex");
                 newCOM.ID += "_noSex";
@@ -774,8 +774,8 @@ public class COM: I_SerializationCallbackReceiver
                 else baseDesc = description_receiver_n_n != "" ? description_receiver_n_n : isReceiverActive ? "comDescription_n_n_receiver_active": "comDescription_n_n_receiver_passive";
             }
 
-            Utility.GetActorNames(doers, out List<string> names_doers, out List<string> names_doers_other, charaRef);
-            Utility.GetActorNames(receivers, out List<string> names_receiver, out List<string> names_receiver_other, charaRef);
+            UtilityEX.GetActorNames(doers, out List<string> names_doers, out List<string> names_doers_other, charaRef);
+            UtilityEX.GetActorNames(receivers, out List<string> names_receiver, out List<string> names_receiver_other, charaRef);
 
             baseDesc = LocalizeDictionary.QueryThenParse(baseDesc)
                 .Replace("$comdesc$", LocalizeDictionary.QueryThenParse(this.displayName))

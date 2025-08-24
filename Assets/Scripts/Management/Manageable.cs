@@ -566,7 +566,7 @@ public class Manageable : I_Disposable
         string ss = "";
         List<int> rooms = new List<int>();
         foreach (var x in possibleJobs) rooms.Add(x.ParentRoom.RefID);
-        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPaths(chara.RefID, rooms, randInsteadofShortest);
+        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsParallel(chara.RefID, rooms, randInsteadofShortest);
         var list = sortedList.Count > 0 ? sortedList.First().Value : new Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>() ;
         possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
 
@@ -612,7 +612,7 @@ public class Manageable : I_Disposable
 
         List<int> rooms = new List<int>();
         foreach (var x in possibleJobs) rooms.Add(x.ParentRoom.RefID);
-        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPaths(chara.RefID, rooms, randInsteadofShortest);
+        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsParallel(chara.RefID, rooms, randInsteadofShortest);
 
         Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>> list = null;
         if (!randInsteadofShortest)
@@ -622,7 +622,7 @@ public class Manageable : I_Disposable
         }
         else if (randInsteadofShortest && sortedList.Count > 0)
         {
-            var randIndex = sortedList.Keys.ToList()[Utility.GetRandIndexFromListCount(sortedList.Count)];
+            var randIndex = Utility.GetRandomElement(sortedList.Keys.ToList());
             list = sortedList[randIndex];
             possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
             //Debug.LogError($"GetValidPaths randInsteadofShortest first[{sortedList.First().Key}] chosen[{randIndex}]");
@@ -636,16 +636,16 @@ public class Manageable : I_Disposable
         if (possibleJobs.Count > 0)
         {
             // just in case thing is not pathable
-            int randIndex = Utility.GetRandIndexFromListCount(possibleJobs.Count);
-            IEnumerable<TaggedEdge<int, Door_Instance>> path = list[possibleJobs[randIndex].ParentRoom.RefID];
-            if (path != null || scr_System_CampaignManager.current.Map.FindRoomByChara(chara.RefID).RefID == possibleJobs[randIndex].ParentRoom.RefID)
+            var randJob = Utility.GetRandomElement(possibleJobs);
+            IEnumerable<TaggedEdge<int, Door_Instance>> path = list[randJob.ParentRoom.RefID];
+            if (path != null || scr_System_CampaignManager.current.Map.FindRoomByChara(chara.RefID).RefID == randJob.ParentRoom.RefID)
             {
                 return true;
             }
             else
             {
                 var a = scr_System_CampaignManager.current.Map.FindRoomByChara(chara.RefID);
-                var b = possibleJobs[randIndex].ParentRoom;
+                var b = randJob.ParentRoom;
                 ss += " found no pathable job instances from ["+ a.RefID + " "+a.DisplayName + "] to ["+ b.RefID + " "+ b.DisplayName+ "]";
                 if (s != null) s += ss;
                 return false;
@@ -1561,8 +1561,7 @@ public class Manageable : I_Disposable
             get
             {
                 if (!isActive) return null;
-                int i = COMs.Count;
-                return COMs[Utility.GetRandIndexFromListCount(i)];
+                return Utility.GetRandomElement(COMs);//
             }
         }
 
@@ -2081,7 +2080,7 @@ public class Manageable : I_Disposable
                     _cache = new Dictionary<string, ItemEntry>();
                     foreach(var entry in entries)
                     {
-                        foreach(var content in Utility.GetContent(entry))
+                        foreach(var content in UtilityEX.GetContent(entry))
                         {
                             var key = content.itemID + "|" + content.itemNameOverwrite + "|" + content.itemCount;
                             if (!_cache.ContainsKey(key)) _cache.Add(key, content);

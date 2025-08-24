@@ -105,7 +105,7 @@ public class initScript_basicInfo : MonoBehaviour
         // get stats grid
         foreach (var statDerived in chara.Stats.list_statsDerived)
         {
-            if (!statDerived.Parent.isValidStatFor(chara)) continue;
+            if (!statDerived.Parent.isValidStatFor(chara.Stats)) continue;
             if (statDerived.Parent.noDisplay) continue;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
             UI_Utility.Draw(statDerived, link);

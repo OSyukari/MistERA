@@ -47,7 +47,8 @@ public class StatusEx_Base
     public bool noDisplay = false;
     public bool constant = false;
     public string stringFormat = "N1";
-
+    public bool allowOvercap = true;
+    public bool capModded = false;
     [JsonIgnore] public bool isValid
     {
         get
@@ -102,15 +103,15 @@ public class StatusEx_Base
             public float percentage_below = -1f;
             public float percentage_above = 2f;
 
-            public bool Validate(Character_Trainable c)
+            public bool Validate(StatsManager stats)
             {
                 bool returnValue = true;
                 
                 switch (statID)
                 {
                     case "Stat_ST":
-                        returnValue = returnValue && (percentage_below < 0f || (c.Stats.Stamina.ValuePercentile) <= percentage_below);
-                        returnValue = returnValue && (percentage_above > 1f || (c.Stats.Stamina.ValuePercentile) <= percentage_above);
+                        returnValue = returnValue && (percentage_below < 0f || (stats.Stamina.ValuePercentile) <= percentage_below);
+                        returnValue = returnValue && (percentage_above > 1f || (stats.Stamina.ValuePercentile) <= percentage_above);
                         break;
 
 
@@ -122,17 +123,18 @@ public class StatusEx_Base
             }
         }
 
+        /*
         public float Validate(Character_Trainable c)
         {
             float i = 0;
             //foreach (var cond in conditions) if (cond.Validate(c)) i += value;
             return i;
-        }
+        }*/
     }
 
-    public StatusEx_Instance Instantiate(int refID, float severity = 0f, int duration = -1)
+    public StatusEx_Instance Instantiate(StatsManager owner, float severity = 0f, int duration = -1)
     {
-        return new StatusEx_Instance(this, refID, severity, duration);
+        return new StatusEx_Instance(this, owner, severity, duration);
     }
 }
 
@@ -145,26 +147,19 @@ public class StatusEx_Instance : I_CacheValues
 
     public int duration = -1;
 
-    public void ReEstablishParent(Character_Trainable c)
+    public void ReEstablishParent(I_StatsManager stats)
     {
-        owner = c;
-        ownerRef = c.RefID;
+
         cached_value = null;
+
+        this.owner = stats;
     }
 
     [SerializeField][JsonProperty] protected float severity = 0;
     public int pauseXMinAfterMod = 0;
 
-    protected int ownerRef = -1;
-    protected Character_Trainable owner = null;
-    [JsonIgnore] public Character_Trainable Owner
-    {
-        get
-        {
-            if (owner == null && ownerRef > -1) owner = scr_System_CampaignManager.current.FindInstanceByID(ownerRef);
-            return owner;
-        }
-    }
+    protected I_StatsManager owner;
+
 
     protected StatusEx_Base baseRef = null;
     [JsonIgnore] public StatusEx_Base BaseRef
@@ -227,7 +222,7 @@ public class StatusEx_Instance : I_CacheValues
             float i = severity;
             List<string> s = new List<string>();
             s.Add("initial value "+severity);
-            List<Status_Instance> listSI = Owner.Stats.StatusInstances.FindAll(x => x.ID.Contains(BaseRef.variationMode.stringData));
+            List<Status_Instance> listSI = owner.FindStatusByID(BaseRef.variationMode.stringData);
             foreach (var inst in listSI)
             {
                 i += inst.Severity;
@@ -246,7 +241,7 @@ public class StatusEx_Instance : I_CacheValues
             severity = initialValue;
             StoredModifiers.Clear();
 
-            var modifiers = Owner.Stats.GetModifiers(this, BaseRef.statusID);
+            var modifiers = owner.GetModifiers(this, BaseRef.statusID);
             var list = new List<Stat_Modifier>();
             list.AddRange(modifiers);
 
@@ -259,8 +254,7 @@ public class StatusEx_Instance : I_CacheValues
             float finalResult;
 
 
-            if (this.baseRef.variationMode.stringData == "capMod") finalResult = Utility.ParseStatMods(this, Owner, StoredModifiers, list, tempList, -999, 999, true);
-            else finalResult = Utility.ParseStatMods(this, Owner, StoredModifiers, list, tempList, -999, 999);
+            finalResult = UtilityEX.ParseStatMods(this, owner, StoredModifiers, list, tempList, -999, 999, this.BaseRef.capModded, this.BaseRef.allowOvercap);
 
             tempList.SetValue(finalResult, initialValue);
 
@@ -301,9 +295,10 @@ public class StatusEx_Instance : I_CacheValues
     {
 
     }
-    public StatusEx_Instance(StatusEx_Base baseStatus, int refID, float initialSeverity = 0f, int duration = -1)
+    public StatusEx_Instance(StatusEx_Base baseStatus, I_StatsManager owner, float initialSeverity = 0f, int duration = -1)
     {
-        this.ownerRef = refID;
+        this.owner = owner;
+        this.baseRef = baseStatus;
         this.baseID = baseStatus.statusID;
         this.duration = duration;
         if (Mathf.Abs(initialSeverity) < float.Epsilon) this.severity = 0f;
@@ -312,6 +307,13 @@ public class StatusEx_Instance : I_CacheValues
         //ClearCache();
         cached_value = null;
     }
+    public StatusEx_Instance Copy(I_StatsManager newOwner)
+    {
+        var newInstance = new StatusEx_Instance(this.baseRef, newOwner, this.severity, this.duration);
+        newInstance.DebugSeverityMod = this.DebugSeverityMod;
+        return newInstance;
+    }
+
 
     [JsonIgnore] public List<Stat_Modifier> SeverityModifiers
     {

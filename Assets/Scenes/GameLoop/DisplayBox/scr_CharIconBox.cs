@@ -330,7 +330,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
         else
         {
-            if (image.sprite == null || image.sprite.texture != SpriteTexture) Utility.LoadSprite(SpriteTexture, image);
+            if (image.sprite == null || image.sprite.texture != SpriteTexture) UtilityEX.LoadSprite(SpriteTexture, image);
         }
         image.SetNativeSize();
 

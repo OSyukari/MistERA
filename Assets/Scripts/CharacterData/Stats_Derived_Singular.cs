@@ -40,13 +40,15 @@ public class Stats_Derived_Base
     [SerializeField][JsonProperty] protected string displayName = "";
     [SerializeField][JsonProperty] protected string tooltip = "";
 
+    public bool allowOvercap = true;
+
     [JsonIgnore] public string ID { get { return id; } }
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(id, displayName); } }
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(id+"_tooltip", tooltip); } }
     [JsonIgnore] public string StatKeyword { get { return statKeyword; } }
     //[NonSerialized] protected Dictionary<string, StatsManager.ModStorage> StoredModifiers = new Dictionary<string, StatsManager.ModStorage>();
 
-    public float GetFinalValue(Character_Trainable c, List<string> contextKeys, StatRecord modStrings = null)
+    public float GetFinalValue(I_StatsManager Stats, List<string> contextKeys, StatRecord modStrings = null)
     {
         //var keys = new Tuple<string, List<string>>(ID, contextKeys);
         // collect valuebase from struct
@@ -57,7 +59,7 @@ public class Stats_Derived_Base
         Dictionary<string, StatsManager.ModStorage> StoredModifiers = new Dictionary<string, StatsManager.ModStorage>();
         var list = new List<Stat_Modifier>();
         list.AddRange(valueCalculations);
-        list.AddRange(c.Stats.GetModifiers(this, ID, null));
+        list.AddRange(Stats.GetModifiers(this, ID, null));
 
         if (!StoredModifiers.ContainsKey("baseValue")) StoredModifiers.Add("baseValue", null);
         if (!StoredModifiers.ContainsKey("finalMod")) StoredModifiers.Add("finalMod", null);
@@ -65,7 +67,7 @@ public class Stats_Derived_Base
         StoredModifiers["baseValue"] = new StatsManager.ModStorage(valueBase.baseValue_mult, valueBase.baseValue_value);
         StoredModifiers["finalMod"] = new StatsManager.ModStorage(valueBase.finalMod_mult, valueBase.finalMod_value);
 
-        return Utility.ParseStatMods(this, c, StoredModifiers, list, modStrings, valueBase.valueFloor, valueBase.valueCeiling);
+        return UtilityEX.ParseStatMods(this, Stats, StoredModifiers, list, modStrings, valueBase.valueFloor, valueBase.valueCeiling, false, this.allowOvercap);
     }
 
 
@@ -90,18 +92,18 @@ public class Stats_Derived_Base
 
     }
 
-    public Stats_Derived_Instance Instantiate(StatsManager parent)
+    public Stats_Derived_Instance Instantiate(I_StatsManager parent)
     {
-        if (!isValidStatFor(parent.Owner))
+        if (!isValidStatFor(parent))
         {
-            Debug.LogError("adding invalid statDerived for " + parent.Owner.FullName);
+            Debug.LogError("adding invalid statDerived for " + parent.OwnerName());
         }
         return new Stats_Derived_Instance(this, parent);
     }
 
-    public bool isValidStatFor(Character_Trainable chara)
+    public bool isValidStatFor(I_StatsManager stats)
     {
-        return chara.hasStatKeyword(StatKeyword);
+        return stats.hasStatKeyword(StatKeyword);
     }
 }
 
@@ -114,11 +116,10 @@ public interface I_StatsDisplayable
 [System.Serializable]
 public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
 {
-    [SerializeField] protected int ownerRefID = -1;
-    [NonSerialized] protected Character_Trainable owner = null;
-    public Character_Trainable Owner { get
+
+    protected I_StatsManager owner = null;
+    public I_StatsManager Owner { get
         {
-            if (owner == null) owner = scr_System_CampaignManager.current.FindInstanceByID(ownerRefID);
             return owner;
         } }
 
@@ -131,9 +132,9 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         } }
     [SerializeField] protected string parentString = "";
 
-    public Stats_Derived_Instance(Stats_Derived_Base baseStat, StatsManager parent)
+    public Stats_Derived_Instance(Stats_Derived_Base baseStat, I_StatsManager parent)
     {
-        ReEstablishParent(parent.Owner);
+        ReEstablishParent(parent);
         this.parent = baseStat;
         this.parentString = baseStat.ID;
     }
@@ -142,7 +143,10 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         cached_values.Clear();
     }
     [NonSerialized] private Dictionary<List<string>, StatRecord> cached_values = new Dictionary<List<string>, StatRecord>();
-
+    public List<Stat_Modifier> GetModifiers(I_StatsManager Stats, List<string> contexts = null)
+    {
+        return Stats.GetModifiers(Parent, ID, contexts);
+    }
     public string ModStrings(List<string> contextKeys = null, string joinSymbol = "\n")
     {
         var key = contextKeys == null ? new List<string>() : contextKeys;
@@ -163,10 +167,9 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         cached_values.Add(contextKeys, modStrings);
     }
 
-    public void ReEstablishParent(Character_Trainable c)
+    public void ReEstablishParent(I_StatsManager c)
     {
         this.owner = c;
-        this.ownerRefID = c.RefID;
     }
 
     int debugValue = 0;

@@ -7,8 +7,9 @@
             "noDisplay":true,
             "stringFormat":"N0",
             "constant":true,
+            "capModded":true,
             "variationMode":
-                { "variationType":"statModifiers", "value": 0, "stringData":"capMod"  }
+                { "variationType":"statModifiers", "value": 0  }
             ,
             "variants":[
                 { "displayName":"chara_status_lust_satisfied",     "threshold":-3.0 },
@@ -103,8 +104,9 @@
             "constant":true,
             "stringFormat":"N0",
             "noDisplay":false,
+            "capModded":true,
             "variationMode":
-            { "variationType":"statModifiers", "value": 0, "stringData":"capMod" },
+            { "variationType":"statModifiers", "value": 0 },
             "variants":[
                 {
                     "displayable":false,  

@@ -78,7 +78,7 @@ public class Job : IDisposable, I_Disposable
             if (s != null)
             {
                 var list = s.Match(this);
-                return list.Count < 1 ? null : list[Utility.GetRandIndexFromListCount(list.Count)];
+                return list.Count < 1 ? null : Utility.GetRandomElement(list);
             }
         }
         
@@ -519,7 +519,7 @@ public class Job : IDisposable, I_Disposable
         if (ap.Duration == -1)
         {   // disabled
             // check if there is a identical package 
-            if (packages_previous.FindAll(x => Utility.ArePackagesEqual(x, ap)).Count > 1)
+            if (packages_previous.FindAll(x => UtilityEX.ArePackagesEqual(x, ap)).Count > 1)
             {
                 //                    continue;
             }
@@ -661,7 +661,7 @@ public class Job : IDisposable, I_Disposable
             for (int ii = packages_current.Count - 1; ii >= 0; ii--)
             {
                 p2 = packages_current[ii];
-                if (Utility.DetectConflict(p1, p2))
+                if (UtilityEX.DetectConflict(p1, p2))
                 {
 
                     packages_current.RemoveAt(ii);

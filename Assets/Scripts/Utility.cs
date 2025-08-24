@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -7,19 +6,14 @@ using System.Text.RegularExpressions;
 using UnityEngine.UI;
 using System.Linq;
 using Newtonsoft.Json;
-using Unity;
 using UnityEngine.EventSystems;
-using UnityEditor;
-using Unity.Jobs;
 using static scr_panel_COMmanager;
 using static Stats_Derived_Extended;
-using QuikGraph.Algorithms.Search;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Extensions.ObjectPool;
 
-public static class Utility
+public static class UtilityEX
 {                                               //  F      E      D      C      B      A      S    
     public static float[] Ranking_V_depth = {  0f, 5.0f,  7.0f,  9.0f, 11.0f, 13.0f, 15.0f };
                                   //length      //  F      E      D      C      B      A      S  
@@ -60,28 +54,73 @@ public static class Utility
     public static Color32 UI_SelfColor = new Color32(45, 54, 255, 80);
     public static Color32 UI_HostileColor = new Color32(255, 0, 52, 80);
 
-    public static Unity.Mathematics.Random Random = new Unity.Mathematics.Random(74);
+
 
     public static bool SHIFT { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
 
     public static string bugReport = "https://discord.gg/XK6vm4xPh5";
 
-    public static JsonSerializerSettings SerializerSettings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto ,
-                            Converters = new JsonConverter[] { new JSON_SO_Converter<Character_Trainable>() }
+    public static JsonSerializerSettings SerializerSettings = 
+        new JsonSerializerSettings() { 
+            TypeNameHandling = TypeNameHandling.Auto ,
+            Converters = new JsonConverter[] { new JSON_SO_Converter<Character_Trainable>() }
     };
 
-    public static string WrapTextColor(string text, Color32 c)
+    public static SaveFileHolder ReadSaveHolder(FileInfo file)
     {
-        return $"<color={HexCOLOR(c)}>{text}</color>";
-    }
-    public static string HexCOLOR(Color32 c)
-    {
-        return $"#{c.r:X2}{c.g:X2}{c.b:X2}{c.a:X2}"; ;
+       using (var sr = new StreamReader(file.FullName))
+            using (var reader = new JsonTextReader(sr))
+        {
+            string _version = string.Empty, _desc = string.Empty, _lang = string.Empty, _path = file.FullName;
+            bool _safe = false, _readSafe = false;
+
+
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    switch (reader.Value.ToString())
+                    {
+                        case "Version":
+                            reader.Read();
+                            _version = reader.Value?.ToString();
+                            break;
+                        case "SaveDescription":
+                            reader.Read();
+                            _desc = reader.Value?.ToString();
+                            break;
+                        case "Language":
+                            reader.Read();
+                            _lang = reader.Value?.ToString();
+                            break;
+                        case "SafeMode":
+                            reader.Read();
+                            if (reader.TokenType == JsonToken.Boolean) {
+                                _safe = (bool) reader.Value;
+                            }
+                            else
+                            {
+                                _safe = true;
+                            }
+                            _readSafe = true;
+                            break;
+                    }
+                    if (_version != string.Empty && _desc != string.Empty && _lang != string.Empty && _readSafe) break;
+                }
+            }
+
+            var holder = new SaveFileHolder();
+            holder.Version = _version;
+            holder.Language = _lang;
+            holder.SaveDescription = _desc;
+            holder.FilePath = _path;
+            holder.SafeMode = _safe;
+            return holder;
+        }
     }
 
-    public static string GetEnumString(System.Type type, object value) {
-        return System.Enum.GetName(type, value);
-    }
+
 
     public static List<ItemEntry> GetContent(MapPlan.SalesInventoryInit inv)
     {
@@ -148,40 +187,13 @@ public static class Utility
         }
     }
 
-    public static float RandVariation(float baseNumber, float maxVariation)
-    {
-        return baseNumber + Random.NextFloat(baseNumber - maxVariation, baseNumber+maxVariation);
-    }
-
-
-    public static int RandVariation(int baseNumber, int maxVariation)
-    {
-        return baseNumber + Random.NextInt(baseNumber - maxVariation, baseNumber+maxVariation);
-    }
 
     public static void CheckExperienceGainNoStimulate(Character_Trainable a, float amount, bool isDoer, List<string> selfTags, List<string> comTags, ExperienceLog m = null)
     {
         if (a == null) return;
         a.Skills.CheckExperienceGain(selfTags, comTags, amount, isDoer, m);
     }
-    public static int Dice(int count, int face)
-    {
-        int counter = 0;
-        for (int i = 0; i < count; i++)
-        {
-            counter += Random.NextInt(1,face+1);
-        }
-        return counter;
-    }
-    public static int Dice(int count, int maxVal, int minVal)
-    {
-        int counter = 0;
-        for (int i = 0; i < count; i++)
-        {
-            counter += Random.NextInt(minVal, maxVal);
-        }
-        return counter;
-    }
+
 
     public static bool MatchAPbyType(ActionPackage ap, string type)
     {
@@ -313,7 +325,7 @@ public static class Utility
     public static int[] RollStat()
     {
         int[] stat = new int[4]; 
-        stat[0] = Dice(3, 6); stat[1] = Dice(3, 6); stat[2] = Dice(3, 6); stat[3] = Dice(3, 6);
+        stat[0] = Utility.Dice(3, 6); stat[1] = Utility.Dice(3, 6); stat[2] = Utility.Dice(3, 6); stat[3] = Utility.Dice(3, 6);
         return stat;
     }
 
@@ -348,33 +360,7 @@ public static class Utility
     private static CultureInfo ciPointer = new CultureInfo("en-us");
     public static CultureInfo CultureInfo { get { return ciPointer; } }
 
-    /// <summary>
-    /// Check if L2 contain at least 1 element of L1. Also return true if L2 is empty
-    /// </summary>
-    /// <returns></returns>
-    public static bool ListContainsLoose(List<int> L1, List<int> L2)
-    {
-        return L2.Count() == 0 || L2.Except(L1).Count() != L2.Count();
-    }
-    /// <summary>
-    /// Check if L2 contain at least 1 element of L1. Also return true if L2 is empty
-    /// </summary>
-    /// <returns></returns>
-    public static bool ListContainsLoose(List<COM> L1, List<COM> L2)
-    {
-        return L2.Count() == 0 || L2.Except(L1).Count() != L2.Count();
-    }
 
-    /// <summary>
-    /// Check if L2 contain at least 1 element of L1. Also return true if L2 is empty
-    /// </summary>
-    /// <returns></returns>
-    public static bool ListContainsLoose(List<string> L1, List<string> L2)
-    {
-        L1 = Distinct(L1);
-        L2 = Distinct(L2);
-        return L2.Count() == 0 || L2.Except(L1).Count() != L2.Count();
-    }
 
     public static bool CompareValue(bool value1, LogicalOperand operand, string value2)
     {
@@ -498,72 +484,6 @@ public static class Utility
                 Debug.LogError("CompareValue (int) Error: invalid operand");
                 return false;
         }
-    }
-
-    /// <summary>
-    /// Check if L2 is contained in L1
-    /// </summary>
-    /// <returns></returns>
-    public static bool ListContainsStrict(List<int> L1, List<int> L2)
-    {
-        L1 = L1.Distinct().ToList();
-        L2 = L2.Distinct().ToList();
-        return L2.Except(L1).Count() == 0;
-    }
-    /// <summary>
-    /// Check if L2 is contained in L1
-    /// </summary>
-    /// <returns></returns>
-    public static bool ListContainsStrict(List<string> L1, List<string> L2)
-    {
-        // Use HashSet to de-duplicate L1
-        HashSet<string> setL1 = new(L1);
-        HashSet<string> seen = new();
-
-        foreach (var item in L2)
-        {
-            if (!seen.Add(item)) continue; // skip duplicates in L2
-            if (!setL1.Contains(item)) return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// Contains List.Distinct() which may interfere with equality comparison ?
-    /// </summary>
-    /// <param name="L1"></param>
-    /// <param name="L2"></param>
-    /// <returns></returns>
-    public static bool ListEquals(List<int> L1, List<int> L2)
-    {
-        bool empty_L1 = (L1 == null || L1.Count < 1);
-        bool empty_L2 = (L2 == null || L2.Count < 1);
-        if (empty_L1 && empty_L2) return true;
-        if (empty_L1 || empty_L2) return false;
-
-        L1 = L1.Distinct().ToList();
-        L2 = L2.Distinct().ToList();
-        return ListContainsStrict(L2, L1) && ListContainsStrict(L1, L2);
-    }
-
-    /// <summary>
-    /// Contains List.Distinct() which may interfere with equality comparison ?
-    /// will return TRUE in case of null =? new List()
-    /// </summary>
-    /// <param name="L1"></param>
-    /// <param name="L2"></param>
-    /// <returns></returns>
-    public static bool ListEquals(List<string> L1, List<string> L2)
-    {
-        bool empty_L1 = (L1 == null || L1.Count < 1);
-        bool empty_L2 = (L2 == null || L2.Count < 1);
-        if (empty_L1 && empty_L2) return true;
-        if (empty_L1 || empty_L2) return false;
-
-        L1 = L1.Distinct().ToList();
-        L2 = L2.Distinct().ToList();
-        return ListContainsStrict(L2, L1) && ListContainsStrict(L1, L2);
     }
 
     public static DateTime GetCampaignTime()
@@ -858,27 +778,7 @@ public static class Utility
         stamp = stopwatch.Elapsed;
         return ns.ToString("0.0000")+"ms";
     }
-
-
-    public static int GetRandIndexFromListCount(int ListCount)
-    {
-        if (ListCount == 0)
-        {
-            Debug.LogError("GetRandIndexFromListCount received 0 as ListCount, please fix this!"); return -1;
-        }
-        else if (ListCount == 1) return 0;
-        else return scr_System_CentralControl.current.random.Next(0, ListCount);
-    }
-
-    
-    public static void DestroyAllChildrenFrom(ref RectTransform rect, int startFromIndex = 0)
-    {
-        while (rect.transform.childCount > startFromIndex)
-        {
-            UnityEngine.Object.DestroyImmediate(rect.transform.GetChild(startFromIndex).gameObject);
-        }
-    }
-  
+      
     public static void GetEventTagsFrom(Character_Trainable a, Character_Trainable b, out List<string> ownerTags, out List<string> targetTags, out List<ActionPackage> ownerAPs)
     {
         // collect all
@@ -988,26 +888,13 @@ public static class Utility
             GetActorTag(ref extraTargetTags, b);
             // if a cannot act then a cannot react then it doesnt make sense to add target gender experience
         }
-        ownerTags = Distinct(ownerTags);
-        extraComTags = Distinct(extraComTags);
-        extraTargetTags = Distinct(extraTargetTags);
+        ownerTags = Utility.Distinct(ownerTags);
+        extraComTags = Utility.Distinct(extraComTags);
+        extraTargetTags = Utility.Distinct(extraTargetTags);
 
         if (extraTargetTags.Contains("timestop") || extraTargetTags.Contains("sleeping") || extraTargetTags.Contains("unconscious")) extraComTags.Remove("service");
     }
 
-    public static List<string> Distinct(List<string> input)
-    {
-        HashSet<string> seen = new();
-        List<string> result = new(input.Count); // pre-allocate for efficiency
-
-        foreach (var str in input)
-        {
-            if (seen.Add(str))
-                result.Add(str);
-        }
-
-        return result;
-    }
 
     public static void GetActorTag(ref List<string> tags, Character_Trainable c)
     {
@@ -1207,6 +1094,44 @@ public static class Utility
                     Debug.LogError($"parse console command {parsed[0]} error");
                 }
                 break;
+            case "addItem":
+                if (parsed.Count() >= 4 && int.TryParse(parsed[1], out int addItemToRef) && int.TryParse(parsed[3], out int addItemCount))
+                {
+                    var chara = scr_System_CampaignManager.current.FindInstanceByID(addItemToRef);
+                    var item = Masterlist_Items.GetByID(parsed[2]);
+                    if (item != null && chara != null) 
+                    {
+                        for(int i = 0; i < addItemCount; i++)
+                        {
+                            var itemInstance = WorldManager.Instantiate(parsed[2], "", addItemCount);
+                            chara.Inventory.AddItem(itemInstance);
+                        }
+                    }
+                }
+                break;
+            case "spawnChara":
+                if (parsed.Count() >= 2)
+                {
+                    if (scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction == null)
+                    {
+                        Debug.LogError("cannot find relevant player facton to add");
+                        break;
+                    }
+                    if (!scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction.ManagedRefs.Contains(0))
+                    {
+                        Debug.LogError("can only be used when player is in a player-managed faction");
+                        break;
+                    }
+
+                    var c = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(parsed[1], scr_System_CampaignManager.current.CurrentRoom);
+                    scr_System_CampaignManager.current.party.AddToParty(c);
+
+                    var addTofaction = scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction;
+
+                    c.FactionManager.SetTempHomeFaction(addTofaction.ID);
+                }
+                break;
+
 
         }
 
@@ -1232,7 +1157,7 @@ public static class Utility
 
 
 
-    public static float _ParseStatMods(object source, Character_Trainable c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, List<string> stringResults = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false )
+    public static float _ParseStatMods(object source, StatsManager c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, List<string> stringResults = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false )
     {
 
 
@@ -1290,16 +1215,16 @@ public static class Utility
             switch (modifier.type)
             {
                 case Stat_Modifier.StatMod_Type.setBase:
-                    storage[modifier.modKey].baseValue = Utility.StatValue(modifier, c);
+                    storage[modifier.modKey].baseValue = UtilityEX.StatValue(modifier, c);
                     break;
                 case Stat_Modifier.StatMod_Type.setMult:
-                    storage[modifier.modKey].baseMult = Utility.StatValue(modifier, c);
+                    storage[modifier.modKey].baseMult = UtilityEX.StatValue(modifier, c);
                     break;
                 case Stat_Modifier.StatMod_Type.addMult:
-                    storage[modifier.modKey].addMult += Utility.StatValue(modifier, c);
+                    storage[modifier.modKey].addMult += UtilityEX.StatValue(modifier, c);
                     break;
                 case Stat_Modifier.StatMod_Type.addBase:
-                    storage[modifier.modKey].addValue += Utility.StatValue(modifier, c);
+                    storage[modifier.modKey].addValue += UtilityEX.StatValue(modifier, c);
                     break;
             }
         }
@@ -1369,7 +1294,20 @@ public static class Utility
 
     public static ObjectPool<StringBuilder> StringBuilderPool = new DefaultObjectPoolProvider().CreateStringBuilderPool(); 
 
-    public static float ParseStatMods(object source, Character_Trainable c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, StatRecord record = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="stats"></param>
+    /// <param name="storage"></param>
+    /// <param name="list"></param>
+    /// <param name="record"></param>
+    /// <param name="valueFloor"></param>
+    /// <param name="valueCeiling"></param>
+    /// <param name="capModded">Restrict valueFloor and valueCeiling to the max magnitude of every single mod, used for mood related.</param>
+    /// <param name="allowOvercap">Allow value calculation to ge above min or max cap during calculation stage, will only take effect if capModded == false<br/>true: will only clamp value after all calculations<br/>false: will clamp after every step</param>
+    /// <returns></returns>
+    public static float ParseStatMods(object source, I_StatsManager stats, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, StatRecord record = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false, bool allowOvercap = true)
     {
 
 
@@ -1427,7 +1365,7 @@ public static class Utility
                 storage.Add(modifier.modKey, entry);
             }
 
-            float value = Utility.StatValue(modifier, c); // avoid calling this 4x
+            float value = UtilityEX.StatValue(modifier, stats); // avoid calling this 4x
             switch (modifier.type)
             {
                 case Stat_Modifier.StatMod_Type.setBase:
@@ -1468,10 +1406,15 @@ public static class Utility
             float v = (kvp.Value.baseValue + kvp.Value.addValue) * (kvp.Value.baseMult + kvp.Value.addMult);
             mods += v;
 
+
             if (capModded)
             {
                 valueCeiling = Math.Max(v, valueCeiling);
                 valueFloor = Math.Min(v, valueFloor);
+            }
+            else if (!allowOvercap)
+            {
+                mods = Mathf.Clamp(mods, valueFloor, valueCeiling);
             }
 
             if (record != null) record.AddEntry(kvp.Key, kvp.Value);
@@ -1491,27 +1434,27 @@ public static class Utility
 
     
 
-    public static float StatValue(Stat_Modifier modifier, Character_Trainable chara)
+    public static float StatValue(Stat_Modifier modifier, I_StatsManager Stats)
     {
-        if (chara == null && modifier.valueType != Stat_Modifier_Type.number) Debug.LogError("STATModifier.Value() ALERT: chara parameter is allowed to be null ONLY if valueType is not number");
+        if (Stats == null && modifier.valueType != Stat_Modifier_Type.number) Debug.LogError("STATModifier.Value() ALERT: chara parameter is allowed to be null ONLY if valueType is not number");
         switch (modifier.valueType)
         {
             case Stat_Modifier_Type.getStatValue:
-                return chara.Stats.GetStatValue(modifier.valueString);
+                return Stats.GetStatValue(modifier.valueString);
             case Stat_Modifier_Type.getStatMod:
                 switch (modifier.valueString)
                 {
-                    case "Strength": return chara.Stats.Strength.GetStatMod();
-                    case "Constitution": return chara.Stats.Constitution.GetStatMod();
-                    case "Psyche": return chara.Stats.Psyche.GetStatMod();
-                    case "Willpower": return chara.Stats.Willpower.GetStatMod();
+                    case "Strength": return Stats.Strength.GetStatMod();
+                    case "Constitution": return Stats.Constitution.GetStatMod();
+                    case "Psyche": return Stats.Psyche.GetStatMod();
+                    case "Willpower": return Stats.Willpower.GetStatMod();
                 }
                 break;
             case Stat_Modifier_Type.number:
                 return modifier.ValueFloat;
             case Stat_Modifier_Type.getStatusValue:
                 //Debug.Log("Getting status value");
-                var i = chara.Stats.GetStatusByStringMatch(modifier.valueString);
+                var i = Stats.GetStatusByStringMatch(modifier.valueString);
                 return i == null ? 0 : i.Severity;
             default:
                 Debug.LogError("StatModifier Parse error, unrecognized valuetype");
@@ -1549,7 +1492,7 @@ public static class EventUtility
         if (owner.isVisible && block.line != "")
         {
             bool rA = !owner.isPlayerRelated;
-            var content = Utility.ParseEventEntry(owner, block.line);
+            var content = UtilityEX.ParseEventEntry(owner, block.line);
             if (rA) content = $"<align=\"right\">{content}</align>";
             // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
             // but on execute they are consistent
@@ -1661,7 +1604,7 @@ public static class EventUtility
                 if (exec.arguments.Count >= 2)
                 {
                     var targetList = owner.Targets[exec.arguments[0]];
-                    var target = targetList.Count < 1 ? null : targetList[Utility.GetRandIndexFromListCount(targetList.Count)];
+                    var target = targetList.Count < 1 ? null : Utility.GetRandomElement(targetList);
                     var targetJob = target == null ? null : target.CurrentJob;
                     var packages = targetJob == null ? new List<ActionPackage>() : targetJob.GetExistingPackages(target, false, false, false).FindAll(x=> x.AllowJoining && (exec.arguments[1] == "" || x.ComTags.Contains(exec.arguments[1])));
                     if (packages.Count < 1)
@@ -1671,7 +1614,7 @@ public static class EventUtility
                     }
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
 
-                    var randpackage = packages[Utility.GetRandIndexFromListCount(packages.Count)];
+                    var randpackage = Utility.GetRandomElement(packages);
                     return randpackage.JoinAP(owner.Self);
                 }
                 else
@@ -1702,7 +1645,7 @@ public static class EventUtility
                         var joblists = new List<Job>();
                         queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
                         //Debug.Log($"found relevant package {queryPackages.Count}");
-                        if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, exec.arguments[2]));
+                        if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => UtilityEX.MatchAPbyType(x, exec.arguments[2]));
 #if UNITY_EDITOR
                         if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count}");
 #endif
@@ -1744,7 +1687,7 @@ public static class EventUtility
                                 var joblists = new List<Job>();
 
                                 queryPackages = scr_System_CampaignManager.current.GetExistingPackages(chara, true, true, true);
-                                if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => Utility.MatchAPbyType(x, exec.arguments[2]));
+                                if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => UtilityEX.MatchAPbyType(x, exec.arguments[2]));
 #if UNITY_EDITOR
                                 if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count} on {chara.FirstName}");
 #endif
@@ -1786,7 +1729,7 @@ public static class EventUtility
                 }
                 else if (owner.FunctionCalls[execKey].Count < 1)
                 {
-                    Debug.LogError($" [{execKey}] in ExecuteCallback has no registered functioncalls");
+                    //Debug.Log($" [{execKey}] in ExecuteCallback has no registered functioncalls");
                     return false;
                 }
                 else

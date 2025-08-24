@@ -1,0 +1,58 @@
+{
+    "baseID": "nikke_product_12",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": 27.25434,
+                "portrait_offset_y": -792.4255,
+                "portrait_offset_size": 0.55,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":1.0,
+
+
+                "icon_path":"Templates/si_c303_00_s.png",
+
+                "materialTexturePaths":["c303/c303_00.png"],
+                "atlasJSON_path":"c303/c303_00.atlas",
+                "skeletonJSON_path":"c303/c303_00.skel",
+                "idleAnimName":"idle"
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 14,
+      "stat_CON": 18,
+      "stat_PSY": 12,
+      "stat_WIL": 12,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_A",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":145,
+      "initialRelationship":[        ],
+      "initialInventory":[        ],
+      "Skills": null
+    },
+    "firstName": "",
+    "middleName": "",
+    "lastName": "",
+    "title":"Product 12",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "humanRace_android_complex",
+    "raceTemplate": "humanRaceAddon_Android_Nikke",
+    "startingGift": "charOriginGift_none"
+}
+    

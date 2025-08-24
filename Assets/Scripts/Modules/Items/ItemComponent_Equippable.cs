@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class ItemComponentTemplate_Equippable : I_ItemComponentTemplate_Comp
 {
-    public BodyPartEquipSlot equipSlot = BodyPartEquipSlot.None;
+    public List<BodyPartEquipSlot> equipSlot = new List<BodyPartEquipSlot>();
     public List<BodyPartEquipSlot> coverSlot = new List<BodyPartEquipSlot>();
     public BodyEquipLayer equipLayer = BodyEquipLayer.None;
     public Revealing revealing = Revealing.NonRevealing;
@@ -27,7 +27,7 @@ public class ItemComponentTemplate_Equippable : I_ItemComponentTemplate_Comp
         errorMsg = "";
         if (equipLayer == BodyEquipLayer.None) errorMsg += "ItemComponentTemplate_Equippable: component is invalid, missing equipLayer data\n";
         
-        if (equipSlot == BodyPartEquipSlot.None) errorMsg += "ItemComponentTemplate_Equippable: component is invalid, missing equipSlot data\n";
+        if (equipSlot.Count < 1) errorMsg += "ItemComponentTemplate_Equippable: component is invalid, missing equipSlot data\n";
         
         if (errorMsg == "") return true;
         else return false;
@@ -49,7 +49,7 @@ public class ItemComponent_Equippable : ItemComponent_Base
     {
         get
         {
-            return $"Equippable on {equipLayer}, requires Slot {equipSlot} {coverSlot}";
+            return $"Equippable on {equipLayer}, requires Slot {String.Join("|",equipSlot)}";
         }
     }
     public ItemComponent_Equippable()
@@ -67,7 +67,7 @@ public class ItemComponent_Equippable : ItemComponent_Base
         return false;
     }
 
-    [JsonIgnore] public BodyPartEquipSlot equipSlot { get { return CompTemplate.comp_Equippable.equipSlot; } }
+    [JsonIgnore] public List<BodyPartEquipSlot> equipSlot { get { return CompTemplate.comp_Equippable.equipSlot; } }
     [JsonIgnore] public List<BodyPartEquipSlot> coverSlot { get { return CompTemplate.comp_Equippable.coverSlot; } }
     [JsonIgnore] public BodyEquipLayer equipLayer { get { return CompTemplate.comp_Equippable.equipLayer; } }
     [JsonIgnore] public Revealing revealing { get { return CompTemplate.comp_Equippable.revealing; } }

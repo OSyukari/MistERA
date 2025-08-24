@@ -1,0 +1,59 @@
+{
+    "baseID": "BD2_rigenette",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": 1.509969,
+                "portrait_offset_y": -119.6971,
+                "portrait_offset_size": 1.15,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":1.0,
+              "straightAlpha": true,
+
+
+                "icon_path":"Templates/illust_inven_char103401_33.png",
+
+                "materialTexturePaths":["char103401/char103401.png"],
+                "atlasJSON_path":"char103401/char103401.atlas",
+                "skeletonJSON_path":"char103401/char103401.skel",
+                "idleAnimName":"idle"
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 14,
+      "stat_CON": 18,
+      "stat_PSY": 12,
+      "stat_WIL": 12,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_A",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":145,
+      "initialRelationship":[        ],
+      "initialInventory":[        ],
+      "Skills": null
+    },
+    "firstName": "Rigenette",
+    "middleName": "",
+    "lastName": "",
+    "title":"Little Hunter",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}
+    

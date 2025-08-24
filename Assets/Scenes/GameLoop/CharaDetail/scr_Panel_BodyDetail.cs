@@ -98,7 +98,7 @@ public class scr_Panel_BodyDetail : MonoBehaviour
 
     private void LoadSprite(Texture2D texture)
     {
-        if (image.sprite == null || image.sprite.texture != texture) Utility.LoadSprite(texture, image);
+        if (image.sprite == null || image.sprite.texture != texture) UtilityEX.LoadSprite(texture, image);
     }
 
     public Image image;

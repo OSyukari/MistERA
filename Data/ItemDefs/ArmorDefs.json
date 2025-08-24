@@ -8,7 +8,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hair",
+                        "equipSlot":["Hair"],
                         "revealing":"Armored",
                         "equipLayer":"Outer"
                     }
@@ -21,7 +21,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Torso",
+                        "equipSlot":["Torso"],
                         "revealing":"Armored",
                         "equipLayer":"Outer"
                     }
@@ -34,10 +34,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hand",
+                        "equipSlot":["Hand"],
                         "revealing":"Armored",
                         "equipLayer":"Outer",
-                        "equipCount":2
+                        "coverSlot":["Hand"]
                     }
                 }
             ]
@@ -48,28 +48,52 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Feet",
+                        "equipSlot":["Feet"],
                         "revealing":"Armored",
                         "equipLayer":"Outer",
-                        "equipCount":2
+                        "coverSlot":["Feet"]
                     }
                 }
             ]
+        },
+{
+    "id":"clothing_outer_suit",
+    "displayName":"Suit",
+    "itemComps_Template":[
+        {
+            "compType":"ItemComponent_Equippable",
+            "comp_Equippable": {
+                "equipSlot":["Torso"],
+                "equipLayer":"Outer"
+            }
+        }
+    ]
+},
+{
+    "id":"clothing_outer_longcoat",
+    "displayName":"Long Coat",
+    "itemComps_Template":[
+        {
+            "compType":"ItemComponent_Equippable",
+            "comp_Equippable": {
+                "equipSlot":["Torso"],
+                "equipLayer":"Outer",
+                "coverSlot":["Neck","Arm","Arm"]
+            }
         },
         {
-            "id":"clothing_outer_suit",
-            "displayName":"Suit",
-            "itemComps_Template":[
-                {
-                    "compType":"ItemComponent_Equippable",
-                    "comp_Equippable": {
-                        "equipSlot":"Torso",
-                        "coverSlot":["Lower"],
-                        "equipLayer":"Outer"
-                    }
-                }
-            ]
-        },
+            "compType":"ItemComponent_Defense",
+            "comp_Defense": {
+                "integrity":5,
+                "armorLayers":
+                [
+                    { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":2 },
+                    { "applyToDamageTypes":["Blunt"], "damageReductionValue":1 }
+                ]
+            }
+        }
+    ]
+},
         {
             "id":"clothing_outer_hat",
             "displayName":"Hat",
@@ -77,10 +101,20 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hair",
+                        "equipSlot":["Hair"],
                         "equipLayer":"Outer"
                     }
-                }
+                },
+        {
+            "compType":"ItemComponent_Defense",
+            "comp_Defense": {
+                "integrity":2,
+                "armorLayers":
+                [
+                    { "applyToDamageTypes":["Blunt"], "damageReductionValue":1 }
+                ]
+            }
+        }
             ]
         },
         {
@@ -90,7 +124,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Lower",
+                        "equipSlot":["Lower"],
                         "equipLayer":"Outer",
                         "revealing":"SeeThrough"
                     }
@@ -104,7 +138,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hand",
+                        "equipSlot":["Hand"],
                         "equipLayer":"Outer"
                     }
                 }
@@ -117,10 +151,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hand",
+                        "equipSlot":["Hand"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough",
-                        "equipCount":2
+                        "coverSlot":["Hand"]
                     }
                 }
             ]
@@ -132,7 +166,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Lower",
+                        "equipSlot":["Lower"],
                         "equipLayer":"Outer",
                         "allowHalfDressed":true,
                         "coverSlot":["Leg"]
@@ -147,10 +181,21 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Torso",
-                        "equipLayer":"Inner"
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Arm","Arm"]
                     }
-                }
+                },
+        {
+            "compType":"ItemComponent_Defense",
+            "comp_Defense": {
+                "integrity":4,
+                "armorLayers":
+                [
+                    { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":1 }
+                ]
+            }
+        }
             ]
         },
         {
@@ -160,10 +205,21 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Lower",
-                        "equipLayer":"Inner"
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Leg","Leg"]
                     }
-                }
+                },
+        {
+            "compType":"ItemComponent_Defense",
+            "comp_Defense": {
+                "integrity":3,
+                "armorLayers":
+                [
+                    { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":1 }
+                ]
+            }
+        }
             ]
         },
         {
@@ -173,7 +229,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Lower",
+                        "equipSlot":["Lower"],
                         "equipLayer":"Inner",
                         "revealing":"ShapeReveal"
                     }
@@ -187,7 +243,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hair",
+                        "equipSlot":["Hair"],
                         "equipLayer":"Inner",
                         "revealing":"SeeThrough"
                     }
@@ -201,11 +257,21 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hand",
+                        "equipSlot":["Hand"],
                         "equipLayer":"Inner",
-                        "equipCount":2
+                        "coverSlot":["Hand"]
                     }
-                }
+                },
+        {
+            "compType":"ItemComponent_Defense",
+            "comp_Defense": {
+                "integrity":3,
+                "armorLayers":
+                [
+                    { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":1 }
+                ]
+            }
+        }
             ]
         },
         {
@@ -215,30 +281,65 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hand",
+                        "equipSlot":["Hand"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough",
-                        "equipCount":2
+                        "coverSlot":["Hand"]
                     }
                 }
             ]
+        },
+{
+    "id":"clothing_inner_shoes",
+    "displayName":"Shoes",
+    "itemComps_Template":[
+        {
+            "compType":"ItemComponent_Equippable",
+            "comp_Equippable": {
+                "equipSlot":["Feet"],
+                "equipLayer":"Inner",
+                "coverSlot":["Feet"],
+                "revealing":"ShapeReveal"
+            }
         },
         {
-            "id":"clothing_inner_shoes",
-            "displayName":"Shoes",
-            "itemComps_Template":[
-                {
-                    "compType":"ItemComponent_Equippable",
-                    "comp_Equippable": {
-                        "equipSlot":"Feet",
-                        "equipLayer":"Inner",
-                        "equipCount":2,
-                        "revealing":"ShapeReveal"
-                    }
-                }
-            ]
+            "compType":"ItemComponent_Defense",
+            "comp_Defense": {
+                "integrity":4,
+                "armorLayers":
+                [
+                    { "applyToDamageTypes":["Slash"], "damageReductionValue":2 },
+                    { "applyToDamageTypes":["Pierce","Blunt"], "damageReductionValue":1 }
+                ]
+            }
+        }
+    ]
+},
+{
+    "id":"clothing_inner_boots",
+    "displayName":"Boots",
+    "itemComps_Template":[
+        {
+            "compType":"ItemComponent_Equippable",
+            "comp_Equippable": {
+                "equipSlot":["Feet"],
+                "equipLayer":"Inner",
+                "coverSlot":["Feet"]
+            }
         },
-
+        {
+            "compType":"ItemComponent_Defense",
+            "comp_Defense": {
+                "integrity":4,
+                "armorLayers":
+                [
+                    { "applyToDamageTypes":["Slash"], "damageReductionValue":2 },
+                    { "applyToDamageTypes":["Pierce","Blunt"], "damageReductionValue":1 }
+                ]
+            }
+        }
+    ]
+},
         {
             "id":"clothing_inner_hair_ribbon",
             "displayName":"Hair Ribbon",
@@ -246,7 +347,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hair",
+                        "equipSlot":["Hair"],
                         "equipLayer":"Inner",
                         "revealing":"SeeThrough"
                     }
@@ -260,7 +361,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hair",
+                        "equipSlot":["Hair"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough"
                     }
@@ -274,7 +375,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Neck",
+                        "equipSlot":["Neck"],
                         "equipLayer":"Inner",
                         "revealing":"SeeThrough"
                     }
@@ -288,7 +389,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Neck",
+                        "equipSlot":["Neck"],
                         "equipLayer":"Inner",
                         "revealing":"SeeThrough"
                     }
@@ -302,7 +403,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Face",
+                        "equipSlot":["Face"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough"
                     }
@@ -316,7 +417,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Eyes",
+                        "equipSlot":["Eyes"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough"
                     }
@@ -331,7 +432,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hand",
+                        "equipSlot":["Hand"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough"
                     }
@@ -346,7 +447,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Neck",
+                        "equipSlot":["Neck"],
                         "equipLayer":"Outer",
                         "revealing":"SeeThrough"
                     }
@@ -361,9 +462,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Feet",
+                        "equipSlot":["Feet"],
                         "equipLayer":"Skin",
-                        "equipCount":2,
+                        "coverSlot":["Feet"],
                         "revealing":"ShapeReveal"
                     }
                 }
@@ -376,7 +477,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Neck",
+                        "equipSlot":["Neck"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough"
                     }
@@ -391,7 +492,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Torso",
+                        "equipSlot":["Torso"],
                         "equipLayer":"Inner",
                         "allowHalfDressed":true,
                         "coverSlot":["Lower"],
@@ -413,9 +514,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Feet",
+                        "equipSlot":["Feet"],
                         "equipLayer":"Inner",
-                        "equipCount":2,
+                        "coverSlot":["Feet"],
                         "stat_modifiers":[
                             {
                                 "statID":"Constitution",
@@ -433,7 +534,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Neck",
+                        "equipSlot":["Neck"],
                         "equipLayer":"Outer",
                         "revealing":"SeeThrough"
                     }
@@ -447,7 +548,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hair",
+                        "equipSlot":["Hair"],
                         "equipLayer":"Outer",
                         "revealing":"SeeThrough",
                         "stat_modifiers":[
@@ -471,7 +572,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Torso",
+                        "equipSlot":["Torso"],
                         "equipLayer":"Outer"
                     }
                 }
@@ -484,7 +585,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Torso",
+                        "equipSlot":["Torso"],
                         "equipLayer":"Outer",
                         "coverSlot":["Lower"]
                     }
@@ -498,9 +599,9 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":"Hand",
+                        "equipSlot":["Hand"],
                         "equipLayer":"Inner",
-                        "equipCount":2,
+                        "coverSlot":["Hand"],
                         "revealing":"ShapeReveal"
                     }
                 }
@@ -515,6 +616,8 @@
         {
             "zh-cn":
             {
+        "clothing_inner_boots":"靴子",
+        "clothing_outer_longcoat":"大衣",
         "clothing_bluearchive_Navigator_Hat":"帽子",
         "clothing_bluearchive_Navigator_Dress":"连衣裙",
         "clothing_bluearchive_Navigator_SleevelessMinidress":"无袖迷你连衣裙",
@@ -550,6 +653,8 @@
             },
             "en-us":
             {
+        "clothing_inner_boots": "Boots",
+        "clothing_outer_longcoat": "Long Coat",
         "clothing_bluearchive_Navigator_Hat": "Hat",
         "clothing_bluearchive_Navigator_Dress": "Dress",
         "clothing_bluearchive_Navigator_SleevelessMinidress": "Sleeveless Minidress",

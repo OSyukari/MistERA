@@ -1,41 +1,37 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class ActionEntry : MonoBehaviour
 {
 
+    public RectTransform SelfRect;
 
     public bool isHostile = false;
     public HorizontalLayoutGroup selfLayout;
-    public RectTransform block_Self;
-    public RectTransform block_icon;
-    public RectTransform block_blank;
+    public scr_HoverableText Name, Action, Result;
     public Image selfImage;
+    public scr_HoverableText additionalText;
 
-    protected void Awake()
+    string s = "";
+    public void Initialize(CombatActionInstance inst)
     {
-        //selfLayout = this.GetComponent<HorizontalLayoutGroup>();
-        //selfImage = this.GetComponent<Image>();
-    }
-    public void Initialize()
-    {
-        if (isHostile) selfImage.color = Utility.UI_HostileColor;
-        else selfImage.color = Utility.UI_SelfColor;
-    }
+        if (isHostile) selfImage.color = UtilityEX.UI_HostileColor;
+        else selfImage.color = UtilityEX.UI_SelfColor;
 
-    public void NotifyChange(scr_Menu_Combat.CombatUI mode)
-    {
-        if (!this.gameObject.activeInHierarchy) return;
-        switch(mode)
-        {
-            case scr_Menu_Combat.CombatUI.Overview:
-                selfLayout.reverseArrangement = isHostile;
-                block_blank.gameObject.SetActive(true);
-                break;
-            case scr_Menu_Combat.CombatUI.SkillSelect:
-                selfLayout.reverseArrangement = false;
-                block_blank.gameObject.SetActive(false);
-                break;
-        }
+        Name.SetText(inst.Handler.GetName(inst.ownerRef));
+
+        Action.SetText(inst.Description);
+
+        s = $"BaseSpeed: {inst.BaseSpeed}, Final Speed: {inst.Speed}";
+        s += $"\nPrevious [{(inst.action_previous == null ? " - " : inst.action_previous.actionRef.Name)}]";
+        s += $"\nSelf Prev [{(inst.self_action_previous == null ? " - " : inst.self_action_previous.actionRef.Name)}]";
+
+        Action.SetExternalTooltip(s);
+
+        Result.SetText($"{inst.ResultString}");
+        Result.SetExternalTooltip($"{inst.ResultTooltip}");
+
+        additionalText.SetText(inst.FinalResult);
     }
 }

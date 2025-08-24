@@ -12,7 +12,7 @@ public enum BodyPartEquipSlot
 {
     None,
     // External
-    Hand,
+    Hand, Arm,
     Hair, Face, Eyes,
     Torso, Neck,
     Lower,

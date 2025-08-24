@@ -1,0 +1,266 @@
+{
+    "Items":{
+        "list":[
+        {
+            "id":"weapon_village_cutlass",
+            "displayName":"Cutlass",
+            "Tags":["blade","thrust","one_handed","village"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Weapon", 
+                    "comp_Weapon": 
+                    {
+                        "DamageTypes":
+                        {
+                            "Swing":   {"targetDamageTypes":["Slash"],"convertRatio":1},
+                            "Thrust":    {"targetDamageTypes":["Pierce"],"convertRatio":0.7}
+                        }
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":-1,
+                        "armorLayers":[
+                            { "applyToDamageTypes":["Untyped"], "damageReductionValue":10 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"weapon_village_cleaver",
+            "displayName":"Cleaver",
+            "Tags":["blade","one_handed","village"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Weapon", 
+                    "comp_Weapon": 
+                    {
+                        "DamageTypes":
+                        {
+                            "Swing":   {"targetDamageTypes":["Slash"],"convertRatio":0.6},
+                            "Thrust":    {"targetDamageTypes":["Blunt"],"convertRatio":0.2}
+                        }
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":-1,
+                        "armorLayers":[
+                            { "applyToDamageTypes":["Untyped"], "damageReductionValue":10 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"weapon_village_scythe",
+            "displayName":"Cleaver",
+            "Tags":["blade","one_handed","village"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Weapon", 
+                    "comp_Weapon": 
+                    {
+                        "DiceCount":1,
+                        "Dice":4,
+                        "DamageTypes":
+                        {
+                            "Swing":   {"targetDamageTypes":["Slash", "Pierce"],"convertRatio":0.5},
+                            "Thrust":    {"targetDamageTypes":["Blunt"],"convertRatio":0.2}
+                        }
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":-1,
+                        "armorLayers":[
+                            { "applyToDamageTypes":["Untyped"], "damageReductionValue":10 }
+                        ]
+                    }
+                }
+            ]
+        }
+        
+    ]
+    },
+    "CombatActions":{
+        "list":[
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    "tags":["right"], "strength":6, "moveType":"Swing",
+    "ID":"village_swing_right_light",
+    "_comment":"faster if previous is left",
+    "tracking":3,
+    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "speedMods":[
+        {
+            "requireTags":["left"],
+            "Value": 1
+        }
+    ]
+},         
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    
+    "ID":"village_swing_left_light",
+    "tags":["left"], "strength":6,"tracking":3,  "moveType":"Swing",
+    "_comment":"faster if previous is right",
+    "speedMods":[
+        {
+            "requireTags":["right"],
+            "Value": 1
+        }
+    ],
+    "itemRequirement":{ "requireTags":["one_handed","village"] }
+    
+},         
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    "ID":"village_thrust_forward",
+    "PostureMod":-1, "tracking":1,
+    "tags":["thrust"], "strength":5, "moveType":"Thrust",
+    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "_comment":"longer attack reach and move forward, thrust move decrease self posture",
+    "speedMod":2
+},                 
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    "ID":"village_thrust_heavy_forward",
+    "PostureMod":-3, "tracking":0, "range":1,
+    "tags":["thrust"], "strength":7, "moveType":"Thrust",
+    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "_comment":"if previous action has movement, will get back the speed mod",
+    "speedMods":[
+        {   
+            "requireTags":["movement"],
+            "Value": 2
+        }
+    ]
+},         
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    "ID":"village_swing_right_heavy",
+    "tags":["right"], "speedMod":-2, "tracking":2, "strength":8, "PostureMod":1,"moveType":"Swing",
+    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "speedMods":[ { "requireTags":["left"], "Value": 1 } ],
+    "_comment":"faster if previous left, stronger pierce"
+},              
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    "ID":"village_swing_right_heavy_followup",
+    "tags":["right"], "speedMod":-2,  "tracking":2, "strength":8, "PostureMod":1, "moveType":"Swing",
+    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "speedMods":[
+        { "requireTags":["left"], "Value": 1 }
+    ],
+    "_comment":"faster if previous left, stronger pierce, followup into left heavy slash"
+},       
+        
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    
+    "ID":"village_swing_up_heavy",
+    "speedMod":-2,  "strength":9, "tracking":1, "moveType":"Swing", "PostureMod":1,
+    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "components:": [  ]
+},                        
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    
+    "ID":"village_swing_left_heavy_followup",
+    "tags":["left"],  "strength":8, "tracking":2, "moveType":"Swing",
+    "speedMod":-2, "PostureMod":1,
+    "speedMods":[
+        {
+            "requireTags":["right"],
+            "Value": 1
+        }
+    ],
+    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "_comment":"followup into right heavy slash",
+    "components:": [  ]
+}
+        ]
+    },
+    "CombatActionPresets":
+    {
+        "list":[
+{
+    "ID":"preset_village_slash_4hitCombo",
+    "actions":["village_swing_right_light", "village_swing_left_light", "village_thrust_forward","village_swing_right_heavy"]
+},
+{
+    "ID":"preset_village_slash_2hit_followup_Combo",
+    "actions":["village_swing_right_heavy", "village_swing_left_heavy_followup"]
+},
+{
+    "ID":"preset_village_slash_forward",
+    "actions":["move_base_forward", "village_swing_up_heavy"]
+},
+{
+    "ID":"preset_village_slash_forward_light",
+    "actions":["move_base_forward", "village_swing_right_light"]
+},
+{
+    "ID":"preset_village_slash_forward_followup",
+    "actions":["move_base_forward", "village_swing_right_heavy_followup"]
+},
+{
+    "ID":"preset_village_thrust_2hit_forward",
+    "actions":["village_thrust_forward", "village_thrust_forward","base_observe"]
+},
+{
+    "ID":"preset_village_thrust_1hit",
+    "actions":["village_thrust_forward","base_observe"]
+},
+{
+    "ID":"preset_village_thrust_lunge_1hit",
+    "actions":["move_base_forward","village_thrust_forward"]
+},
+{
+    "ID":"preset_village_blunt_1hit_right",
+    "actions":["village_swing_right_light","base_observe"]
+},
+{
+    "ID":"preset_village_blunt_1hit_left",
+    "actions":["village_swing_left_light","base_observe"]
+},
+{
+    "ID":"preset_village_blunt_4hit_backpedal",
+    "actions":["village_swing_right_light","base_observe"]
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"weapon_village_cutlass":"军刀",
+"weapon_village_cleaver":"砍刀",
+"weapon_village_scythe":"镰刀",
+
+"village_swing_right_light":"右横斩",
+"village_swing_right_heavy":"重右横斩",
+"village_swing_right_heavy_followup":"重右横斩+",
+"village_swing_left_light":"左横斩",
+"village_swing_left_heavy_followup":"重左横斩+",
+"village_swing_up_heavy":"重纵斩",
+"village_thrust_forward":"突刺",
+"village_thrust_heavy_forward":"重突刺"
+            },
+            "en-us":
+            {
+"weapon_village_cutlass":"Cutlass",
+"weapon_village_cleaver":"Cleaver",
+"weapon_village_scythe":"Scythe"
+
+            }
+        }
+    }
+}

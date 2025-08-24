@@ -137,7 +137,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         if(inventoryList.gameObject.activeInHierarchy)
         {
-            Utility.DestroyAllChildrenFrom(ref inventoryList);
+            Utility.DestroyAllChildrenFrom( inventoryList);
             foreach (var entry in CurrentFaction.Inventory.ContentsPrintable)
             {
                 var text = Instantiate(prefab_text_link).GetComponent<scr_HoverableText>();
@@ -356,8 +356,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public void SetCurrentChara(Character_Trainable c)
     {
         // destroy previous
-        Utility.DestroyAllChildrenFrom(ref list_factionWork);
-        Utility.DestroyAllChildrenFrom(ref list_CharaNeeds);
+        Utility.DestroyAllChildrenFrom( list_factionWork);
+        Utility.DestroyAllChildrenFrom( list_CharaNeeds);
 
         bool safe = scr_System_CentralControl.current.isSafeMode;
 
@@ -543,7 +543,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         // if click outside box
-        if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)))
+        if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && UtilityEX.isClickBelowDragThreshold(eventData)))
         {
             if (chara_scheduleCOMboxes[0].gameObject.activeInHierarchy)
             {
@@ -740,8 +740,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            if (Utility.SHIFT) order.AddCount(100);
-            else if (Utility.CTRL) order.AddCount(10);
+            if (UtilityEX.SHIFT) order.AddCount(100);
+            else if (UtilityEX.CTRL) order.AddCount(10);
             else order.AddCount(1);
             //text.text = order.Count.ToString();
             //expectedWork.text = ((int)Math.Ceiling(order.Count * order.Recipe.workAmount / 60f)).ToString();
@@ -798,8 +798,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             //parent.currentFaction.AddProductionOrder(order.Recipe, -1);
-            if (Utility.SHIFT) order.AddCount(-100);
-            else if (Utility.CTRL) order.AddCount(-10);
+            if (UtilityEX.SHIFT) order.AddCount(-100);
+            else if (UtilityEX.CTRL) order.AddCount(-10);
             else order.AddCount(-1);
 
             //expectedWork.text = ((int) Math.Ceiling( order.Count * order.Recipe.workAmount / 60f)).ToString();
@@ -1359,8 +1359,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            if (Utility.SHIFT) order.AddCount(100);
-            else if (Utility.CTRL) order.AddCount(10);
+            if (UtilityEX.SHIFT) order.AddCount(100);
+            else if (UtilityEX.CTRL) order.AddCount(10);
             else order.AddCount(1);
             //text.text = order.Count.ToString();
             //expectedWork.text = ((int)Math.Ceiling(order.Count * order.Recipe.workAmount / 60f)).ToString();
@@ -1417,8 +1417,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             //parent.currentFaction.AddProductionOrder(order.Recipe, -1);
-            if (Utility.SHIFT) order.AddCount(-100);
-            else if (Utility.CTRL) order.AddCount(-10);
+            if (UtilityEX.SHIFT) order.AddCount(-100);
+            else if (UtilityEX.CTRL) order.AddCount(-10);
             else order.AddCount(-1);
 
             //expectedWork.text = ((int) Math.Ceiling( order.Count * order.Recipe.workAmount / 60f)).ToString();

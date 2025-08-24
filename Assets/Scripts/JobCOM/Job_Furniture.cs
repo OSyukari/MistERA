@@ -328,8 +328,8 @@ public class Job_Furniture : Job
             var list1 = MakePackages(c);
             var list2 = MakePackagesJoinable(c);
 
-            var pl1 = list1.Count > 0 ? list1[Utility.GetRandIndexFromListCount(list1.Count)] : null;
-            var pl2 = list2.Count > 0 ? list2[Utility.GetRandIndexFromListCount(list2.Count)] : null;
+            var pl1 = list1.Count > 0 ? Utility.GetRandomElement(list1) : null;
+            var pl2 = list2.Count > 0 ? Utility.GetRandomElement(list2) : null;
 
             
             if (pl2 != null)
@@ -739,7 +739,7 @@ public class Job_Furniture : Job
 
             for (int ii = packages_current.Count - 1; ii >= 0; ii--)
             {
-                if (Utility.DetectConflict(packages_current[ii], packages[i]))
+                if (UtilityEX.DetectConflict(packages_current[ii], packages[i]))
                 {
                     if (isPlayerPackage) packages_current.RemoveAt(ii);
                     else conflict = true;

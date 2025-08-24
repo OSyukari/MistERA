@@ -10,6 +10,7 @@ using UnityEngine;
 [System.Serializable]
 public abstract class ItemComponent_Base
 {
+    [JsonIgnore] public int parentItemInstanceRef = -1;
     [JsonIgnore] public virtual string CompType { get { return "ItemComponent_Base"; } }
     [JsonIgnore] public virtual string Tooltip
     {

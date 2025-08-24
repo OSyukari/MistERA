@@ -1,0 +1,19 @@
+{
+"CharGenTemplates":
+    {
+        "list":[
+            {
+                "ID":"BD2_random_3star_female",
+                "targetBaseIDs":[   "BD2_beatrice", "BD2_lydia",    "BD2_rigenette",
+                                    "BD2_maria",    "BD2_arines",   "BD2_emma",
+                                    "BD2_ingrid",   "BD2_cynthia",  "BD2_julie"],
+                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
+                "useNameGen":true, "nameGen_firstName":"english",
+                "Appearance":"Female",
+                "inventoryOverride":[
+                    {"ID":"weapon_village_scythe","nameOverwrite":""}
+                ]
+            }
+        ]
+    }
+}

@@ -246,7 +246,7 @@
             "ID":"furniture_arena_spot",
             "displayName":"擂台",
             "recipe":[],
-            "furnitureSize":1,
+            "furnitureSize":0,
             "givesJob": [ { "comID":["com_furniture_combat_sim"] },
                 { "comTags":["furniture","training_melee"] } ]
         },

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Unity;
-using UnityEditor.Build;
 using UnityEngine;
 
 [System.Serializable]
@@ -32,139 +31,236 @@ public class Index_CombatActions : I_IndexHasID, I_IndexMergeable
         foreach (CombatAction o in this.list)
         {
            // if (o.isValid)
-           ID_Dictionary.TryAdd(o.ID, o);
-        }
+           if (!ID_Dictionary.TryAdd(o.ID, o))
+            {
+                Debug.LogError($"duplicate combataction ID {o.ID}");
 
+            }
+
+            // add missing tags
+            if (o.Movement != 0 || o.Evasion != 0) o.tags.Add("movement");
+        }
+        // purge identical
+        list = ID_Dictionary.Values.ToList();
     }
+
+    public List<CombatAction> AllActions
+    { get
+        {
+            return ID_Dictionary.Values.ToList();
+        } }
 }
 
 
 /// <summary>
-/// This class is instantiated on-runtime by character action manager
+/// Used for choosing icon
 /// </summary>
-public class CombatActionInstance
+[System.Serializable]
+public enum ActionType
 {
-    // Self
-    public Character_Trainable ownerRef = null;
-    public Item_Instance sourceRef = null;
-    public CombatAction actionRef = null;
+    None,
+    Attack,
+    Movement,
+    Block,
+    Cover
+}
 
-    // Targets
-    public Character_Trainable targetRef = null;
+[System.Serializable]
+public class CombatAction_Attack : CombatAction
+{
+    [JsonIgnore] public override bool requireTarget { get { return true; } }
+    // all form of attack behavior that requires one or multiple target
+    public float tracking = 0f;
+    public int range = 0;
+    public int strength = 0;
+    public MoveType moveType = MoveType.None;
 
-    public CombatActionInstance() { }
-    public CombatActionInstance(Character_Trainable ownerRef, Item_Instance sourceRef, CombatAction actionRef, Character_Trainable targetRef)
+    string _tooltip = string.Empty;
+    [JsonIgnore]
+    public override string Tooltip
     {
-        this.ownerRef = ownerRef;
-        this.sourceRef = sourceRef;
-        this.actionRef = actionRef;
-        this.targetRef = targetRef;
-    }
-
-    // list of component in action : attack / defense / counter
-    public bool Validate()
-    {
-        if (ownerRef == null) return false;
-        if (actionRef == null) return false;
-        //var itemTag = actionRef.itemRequirement.isActive;
-        if (CombatUtility.Validate(actionRef, sourceRef)) return false;
-        return true;
-    }
-
-
-    float _cachedSpeed = 0f;
-    bool _cached = false;
-    public void ResetCache()
-    {
-        _cached = false;
-    }
-    public float Speed { get
+        get
         {
-            if (!_cached) {
-                _cached = true;
-                _cachedSpeed = 0f + actionRef.speedMod;
-            } 
-            return _cachedSpeed;
-        } }
+            if (_tooltip == string.Empty)
+            {
+                _tooltip = LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip")
+                    .Replace("$kwds$", String.Join("|", tags))
+                    .Replace("$speed$", speedMod.ToString("+0;-#"))
+                    .Replace("$mov$", Movement == 0 ? "" : Movement > 0 ? LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_movpos").Replace("$mov$", $"{Movement}") : LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_movneg").Replace("$mov$", $"{-Movement}"))
+                    .Replace("$pos$", PostureMod.ToString("+0;-#"))
+                    .Replace("$evasion$", $"{Evasion}")
+                    .Replace("$target$", requireTarget ? "\n" + LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_reqTarget") : "");
+                _tooltip += "\n" + LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_attack")
+                    .Replace("$tracking$", $"{tracking}")
+                    .Replace("$range$", $"{range}")
+                    .Replace("$str$", $"{strength}")
+                    .Replace("$types$", LocalizeDictionary.QueryThenParse($"MoveType_{moveType}"));
+                //if (itemRequirement.isActive) _tooltip += $"\n{itemRequirement.Tooltip}";
+                foreach (var i in speedMods) _tooltip += $"\n{i.Tooltip}";
+            }
+            return _tooltip;
+        }
+    }
+}
+[System.Serializable]
+public class CombatAction_Defense : CombatAction
+{
+    // block/guard/evade/cover all in one
+    // shared behavior: lingering defensive action
 
-    public bool ApplyMods(CombatStats stats)
+    // Cover
+    /// <summary>
+    /// If this action uses external defense, then fill Defense
+    /// </summary>
+    public ItemComponent_Defense Defense = null;
+
+    /// <summary>
+    /// If this action uses character's existing equipment (weapon/armor) as defense
+    /// </summary>
+    public List<string> redirectKeyword = new List<string>();
+
+
+    string _tooltip = string.Empty;
+    [JsonIgnore]
+    public override string Tooltip
     {
-        // apply self mods to stats, add to a separate list that will be wiped clean on new insert
-
-        return true;
+        get
+        {
+            if (_tooltip == string.Empty)
+            {
+                _tooltip = LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip")
+                    .Replace("$kwds$", String.Join("|", tags))
+                    .Replace("$speed$", speedMod.ToString("+0;-#"))
+                    .Replace("$mov$", Movement == 0 ? "" : Movement > 0 ? LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_movpos").Replace("$mov$", $"{Movement}") : LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_movneg").Replace("$mov$", $"{-Movement}"))
+                    .Replace("$pos$", PostureMod.ToString("+0;-#"))
+                    .Replace("$evasion$", Evasion.ToString("+0;-#"))
+                    .Replace("$target$", requireTarget ? "\n"+LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_reqTarget") : "");
+                //if (itemRequirement.isActive) _tooltip += $"\n{itemRequirement.Tooltip}";
+                foreach (var i in speedMods) _tooltip += $"\n{i.Tooltip}";
+            }
+            return _tooltip;
+        }
     }
 }
 
-
 [System.Serializable]
-public class CombatAction
+public abstract class CombatAction
 {
-    public string ID = "";
+    public List<string> tags = new List<string>();
 
+    [JsonIgnore] public virtual bool requireTarget { get { return this.Movement > 0; } }
+    public string ID = "";
+    string _name = string.Empty;
+    [JsonIgnore]
+    public string Name
+    {
+        get
+        {
+            if (_name == string.Empty) _name = LocalizeDictionary.QueryThenParse(this.ID);
+            return _name;
+        }
+    }
+    protected ActionType ActionType = ActionType.None;
+    public bool HideInSelect = false;
+
+    /// <summary>
+    /// Base action speed mod
+    /// </summary>
+    public int speedMod = 0;
+    /// <summary>
+    /// Conditional speed mod
+    /// </summary>
+    public List<ConditionalSpeedMods> speedMods = new List<ConditionalSpeedMods>();
+
+    [JsonIgnore]
+    public abstract string Tooltip { get; }
+
+    public int Movement = 0;
+    public int Evasion = 0;
+    public int PostureMod = 0;
+    /// <summary>
+    /// 
+    /// </summary>
+    [System.Serializable]
+    public class ConditionalSpeedMods
+    {
+        public List<string> requireTags = new List<string>();
+
+
+        [System.Serializable]
+        public class Condition
+        {
+
+        }
+
+        public float Value = 0f;
+
+        [JsonIgnore]
+        public string Tooltip
+        { get
+            {
+                return LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_condSpeedMod")
+                    .Replace("$conditions$", String.Join("|", requireTags))
+                    .Replace("$value$", Value.ToString("+0;-#"));
+            } }
+
+    }
 
     public Requirement requirement = new Requirement();
 
-    /*
-     action itself does not have type
-    action leaves a lingering defensive/trigger component and that component is either
-    - a lingering defensive component, either block/parry or on-hit-evade
-    - a lingering action trigger that on call inserts a new action in queue
-     */
-
-    /* Insert new Instance procedure
-     action check self is valid,
-    1. check if previous has followup restriction, if true and self does not match => invalid
-    2. check if self has previous restriction
-    3. if all pass, goto Handling Effect types
-     */
+    [System.Serializable]
+    public class Requirement
+    {
+        // combo conditions
+        public string requirePrecede = "";
 
 
-    /* Handling Effect types (after checking isvalid)
-     * 1. On use
-     *    get previous action, calculate statmod according to it, and add statmod to current self registry
-     *    ex.: speedup self if previous matches specific keyword
-     * 2. Add self to registry
-     *    Notify all other previous registered [lingering trigger] of self, see if there is trigger launch
-     *    Notify in speed order
-     *    - Counter might trigger and insert a new action, and that new action might be inserted before this one.
-     *    
-    - on successful execute (depend on type of action)
-        attack: 
-     
-
-    allow comp to affect self or opponent, store scoping inside of comp definition
-     */
+    }
+    public ItemRequirement itemRequirement = new ItemRequirement();
 
 
+/* 
+* [s]A single action can have both attack and defense component[/s]
+* No, this will lead to action economy in the gutter
+* instead, allow swords to counter with defensive move
+* sword strikes allow corresponding defend move with much higher speed
+* and player choose to do a defense move might break followup combo so it remains a choice not free of cost
+*/
 
-    /* inside each component, check previous. self effect if previous satisfy tag then accel speedmod
-     * 
-     * foreach action, specific effects that resolve on success execution
-     * - attack: on success (hit target) apply (damage) / on blocked / on miss
-     * - defense: on success block apply / on failed block apply / on no interaction
-     * - counter: on trigger
-     */
+    public Trigger trigger = new Trigger();
 
-    // main action comp
-    // action should not get multiple action as this is not part of action economy
-    // goal is 
-    public List<CombatActionComponent> effects_self = new List<CombatActionComponent> ();
-    public List<CombatActionComponent> effects_opponentTeam = new List<CombatActionComponent> ();
-    public List<CombatActionComponent> effects_allyTeam = new List<CombatActionComponent> ();
+    [System.Serializable]
+    public class Trigger
+    {
+        public bool isValid
+        {
+            get { return false; }
+        }
+    }
 
-    // targeting conditions
-    public List<CombatActionComponent> effects_target = new List<CombatActionComponent>();
-
-
-    public int speedMod = 0;
-
-    // instead of implementing defense and evasion as action comp,
-    // implement as lingering effect
-    // and indicate this is evasion from action description
-    public List<string> lingeringEffects = new List<string>();
+/*
+* Action have a modifier on passive defense.
+* While this action is the last action, all attack will go though defense modified by this action
+* -> Attack move tend to reduce movement
+* -> Defense move will modify passive defense (evasion/movement) 
+*    or add another layer of defense (use weapon to guard/use armor to tank/get cover)
+*/
 
 
-    //[JsonIgnore] public bool isImmediateAction { get { return components.Count > 0 || components.Any(x=>x  is CombatActionComponent_Attack); } }
+/* 
+* foreach action, specific effects that resolve on success execution
+* - attack: on success (hit target) apply (damage) / on blocked / on miss
+* - defense: on success block apply / on failed block apply / on no interaction
+* - counter: on trigger
+*/
+
+/*
+Should there be team-wide buff ? No
+let backrow support character use teamwide buff
+frontline fighters should use their action on direct actions, tie buff into action
+as such, support will have less action. so, make them more meaningful.
+then, frontline doesnt need to confirm kill, can let frontline be tank
+*/
 
 
     // condition check for immediate reaction
@@ -174,128 +270,4 @@ public class CombatAction
     public string followupKeyword = "";
 
 
-    // movement pre-req for use
-    // must satisfy req before being able to equip action
-    // (?)
-
-
-
-    [System.Serializable]
-    public class ItemRequirement
-    {
-        public string requireTag = "";
-
-        [JsonIgnore] public bool isActive { get { return requireTag != ""; } }
-    }
-
-
-    [System.Serializable]
-    public class Requirement
-    {    
-        // combo conditions
-        public string requirePrecede = "";
-
-        public ItemRequirement itemRequirement = new ItemRequirement();
-
-    }
-}
-
-public static class CombatUtility
-{
-    public static bool Validate(CombatAction a, Item_Instance i, string injectTag = "")
-    {
-        if (!a.requirement.itemRequirement.isActive) return true;
-        var tag = injectTag != "" ? injectTag : a.requirement.itemRequirement.requireTag;
-        if (tag != "" && (i == null || !i.Tags.Contains(tag))) return false;
-        return true;
-    }
-
-    public static List<CombatAction> GetAvailableActions(Character_Trainable c)
-    {
-        var results = new List<CombatAction>();
-        var equippedItems = scr_System_CampaignManager.current.GetAllEquippedItemsFrom(c);
-        foreach(var entry in scr_System_Serializer.current.MasterList.CombatActions.list)
-        {
-            bool found = true;
-            if (entry.requirement.itemRequirement != null && entry.requirement.itemRequirement.isActive && entry.requirement.itemRequirement.requireTag != "")
-            {
-                found = false;
-                var itemKeyword = entry.requirement.itemRequirement.requireTag;
-
-                foreach (var item in equippedItems) {
-                    if (Validate(entry, item, itemKeyword)) { found = true; break; }
-                }
-                if (found) continue;
-            }
-
-            if (found) results.Add(entry);
-        }
-
-        return results;
-    }
-
-    public static bool ValidatePreset(Character_Trainable c, CombatActionPreset p)
-    {
-        var available = GetAvailableActions(c);
-        var actions = p.Actions;
-        for (int index = 0; index < actions.Count; index++)
-        {
-            if (!available.Contains(actions[index])) return false;
-            // verify if previous act in list satisfy 'followup' condition
-
-        }
-        return true;
-    } 
-
-    /// <summary>
-    /// Return true if b should replace a in action speed index
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public static bool IsFasterThan(CombatActionInstance a, CombatActionInstance b)
-    {
-        if (b.Speed != a.Speed) return b.Speed > a.Speed;
-        Debug.LogError($"Error in action speed calculation, both actions have same speed value {b.Speed}, returning true");
-        return true;
-    }
-}
-
-[System.Serializable]
-public class CombatActionComponent
-{
-    [JsonIgnore]
-    public virtual bool isImmediateAction { get { return true; } }
-}
-[System.Serializable]
-public class CombatActionComponent_Attack : CombatActionComponent
-{
-    public string target;
-
-    // enemy damaging stuff
-    public string baseDamage, damageType;
-    public string baseTracking, effectiveDistance;
-
-    public int speedMod = 0;
-    public int distanceMod = 0;
-
-    [JsonIgnore]
-    public override bool isImmediateAction { get { return true; } }
-
-}
-
-[System.Serializable]
-public class CombatActionComponent_Defense : CombatActionComponent
-{   // defense & evasion
-
-    // defense action poise and defend against keyword
-    public string baseStrength = "";
-    public string defendKeyword = "";
-
-    // evasive action movement
-    public int speedMod = 0;
-    public int distanceMod = 0;
-
-    [JsonIgnore]
-    public override bool isImmediateAction { get { return false; } }
 }

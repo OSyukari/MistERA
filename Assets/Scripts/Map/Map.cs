@@ -11,7 +11,8 @@ using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 using System.Threading.Tasks;
-
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 
 [System.Serializable]
 public class Map_Instance
@@ -118,7 +119,7 @@ public class Map_Instance
     public Floor_Instance GetFloorByRoomRefID(int roomRefID)
     {
         if (rooms_orphans.ContainsKey(roomRefID)) return null;
-        if (this.roomFloorRef.ContainsKey(roomRefID)) return floors[roomFloorRef[roomRefID]];
+        if (this.roomFloorRef_Immutable.ContainsKey(roomRefID)) return floors[roomFloorRef_Immutable[roomRefID]];
         else
         {
             foreach (var floor in Floors)
@@ -127,6 +128,7 @@ public class Map_Instance
                 if (rm != null)
                 {
                     this.roomFloorRef.Add(roomRefID, floor.refID);
+                    roomFloorRef_Immutable = new ReadOnlyDictionary<int, int>(roomFloorRef);
                     return floor;
                 }
             }
@@ -160,6 +162,8 @@ public class Map_Instance
 
 
     AdjacencyGraph<int, TaggedEdge<int, Door_Instance>> graph = null;
+    ArrayAdjacencyGraph<int, TaggedEdge<int, Door_Instance>> graphImmutable = null;
+
     private void BuildPath()
     {
         graph = new AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>();
@@ -237,6 +241,8 @@ public class Map_Instance
             }
             
         }
+
+        graphImmutable = graph.ToArrayAdjacencyGraph();
         /*
          https://github.com/KeRNeLith/QuikGraph/wiki/Creating-Graphs
 
@@ -266,6 +272,7 @@ public class Map_Instance
     /// Value - floorRefID
     /// </summary>
     [JsonIgnore] protected Dictionary<int, int> roomFloorRef;
+    [JsonIgnore] protected ReadOnlyDictionary<int, int> roomFloorRef_Immutable;
 
     public bool IsBothCharaInSameRoom(int a, int b)
     {
@@ -329,7 +336,7 @@ public class Map_Instance
         for (int x = 0; x < charaInRoom.Count; x++)
         {
             var xx = scr_System_CampaignManager.current.FindInstanceByID(charaInRoom[x]);
-            Utility.GetEPsFrom(xx, out List<EvaluationPackage> xxEPs);
+            UtilityEX.GetEPsFrom(xx, out List<EvaluationPackage> xxEPs);
 
             bool interrupted = false;
             bool isDirty = dirtyCharaRef.Contains(charaInRoom[x]);
@@ -375,7 +382,7 @@ public class Map_Instance
                     var yy = scr_System_CampaignManager.current.FindInstanceByID(charaInRoom[y]);
                     if (xx == null || yy == null) continue;
 
-                    Utility.GetEPsFrom(yy, out List<EvaluationPackage> yyEPs);
+                    UtilityEX.GetEPsFrom(yy, out List<EvaluationPackage> yyEPs);
 
                     /*
                     Prioritise self or target.
@@ -478,6 +485,7 @@ public class Map_Instance
 
             //Debug.LogError("AddRoom to map [" + room.RefID + "] [" + (floor == null ? "null" : floor.refID) + "]");
         }
+        roomFloorRef_Immutable = new ReadOnlyDictionary<int, int>(roomFloorRef);
     }
 
     public void MoveCharaTo(int charaRef, int roomRef)
@@ -516,6 +524,39 @@ public class Map_Instance
     [JsonIgnore] protected Dictionary<int, List<int>> roomCharaRef = null;
     Func<TaggedEdge<int, Door_Instance>, double> edgeCost = entry => entry.Tag.Cost;
     Func<int, double> heuristic = value => 0f;
+
+    protected IEnumerable<TaggedEdge<int, Door_Instance>> Findpath(Room_Instance roomRef, Room_Instance targetRoom, bool imprisoned)
+    {
+        if (roomRef == null || targetRoom == null)
+        {
+            //Debug.LogError("Campaign manager findpath null either chararoom null or targetroom null");
+            return null;
+        }
+        if (imprisoned && roomRef != targetRoom)
+        {
+            return null;
+        }
+        if (roomFloorRef_Immutable == null || !roomFloorRef_Immutable.ContainsKey(roomRef.RefID) || !roomFloorRef_Immutable.ContainsKey(targetRoom.RefID))
+        {
+            //Debug.LogError("Findpath Error roomRef null or does not contain both keys [" + roomRef.RefID + "] [" + targetRoom.RefID + "]");
+           // Debug.LogError("roomFloorRef status: " + String.Join("|", roomFloorRef_Immutable.Keys));
+            return null;
+        }
+        else if (graphImmutable == null)
+        {
+            //Debug.LogError("FINDPATH ERROR GRAPH NULL");
+            return null;
+        }
+        int chara_floorRef = roomFloorRef_Immutable[roomRef.RefID];
+        int target_floorRef = roomFloorRef_Immutable[targetRoom.RefID];
+        TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graphImmutable.ShortestPathsAStar(edgeCost, heuristic, roomRef.RefID);
+        if (tryGetPaths(targetRoom.RefID, out IEnumerable<TaggedEdge<int, Door_Instance>> path))
+        {
+            return path;
+        }
+        else return null;
+    }
+
     public IEnumerable<TaggedEdge<int, Door_Instance>> Findpath(int charaRefID, int toRoomRefID, int roomRefID = -1)
     {
 
@@ -533,18 +574,18 @@ public class Map_Instance
             return null;
         }
 
-        if ( roomFloorRef == null || !roomFloorRef.ContainsKey(roomRefID) || !roomFloorRef.ContainsKey(toRoomRefID))
+        if ( roomFloorRef_Immutable == null || !roomFloorRef_Immutable.ContainsKey(roomRefID) || !roomFloorRef_Immutable.ContainsKey(toRoomRefID))
         {
             Debug.LogError("Findpath Error roomRef null or does not contain both keys ["+roomRef+"] ["+toRoomRefID+"]");
-            Debug.LogError("roomFloorRef status: " + String.Join("|", roomFloorRef.Keys));
+            Debug.LogError("roomFloorRef status: " + String.Join("|", roomFloorRef_Immutable.Keys));
             return null;
-        }else if (graph == null)
+        }else if (graphImmutable == null)
         {
             Debug.LogError("FINDPATH ERROR GRAPH NULL");
             return null;
         }
-        int chara_floorRef = roomFloorRef[roomRefID];
-        int target_floorRef = roomFloorRef[toRoomRefID];
+        int chara_floorRef = roomFloorRef_Immutable[roomRefID];
+        int target_floorRef = roomFloorRef_Immutable[toRoomRefID];
 
         //if (chara_floorRef == target_floorRef) return FindFloorByRefID(roomRef).Findpath(charaRefID, roomRef, toRoomRefID);
         //else
@@ -555,7 +596,7 @@ public class Map_Instance
         //    t.Wait();
         //graph.ShortestPathsAStar(edgeCost, heuristic, roomRefID);
         //TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graph.ShortestPathsDijkstra(edgeCost, roomRefID);
-        TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graph.ShortestPathsAStar(edgeCost, heuristic, roomRefID);
+        TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graphImmutable.ShortestPathsAStar(edgeCost, heuristic, roomRefID);
         if (tryGetPaths(toRoomRefID, out IEnumerable<TaggedEdge<int, Door_Instance>> path))
         {
             return path;
@@ -579,10 +620,11 @@ public class Map_Instance
             pathCost = 0f;
         }
 
+        
         public void Execute(int index)
         {
-            pathfindResult = mi.Findpath(charaRefID, targetRoomID, charaRoomRefID);
-            if (pathfindResult != null) foreach (TaggedEdge<int, Door_Instance> e in pathfindResult) pathCost += e.Tag.Cost;
+           // pathfindResult = mi.Findpath(graphRef. charaRefID, targetRoomID, charaRoomRefID);
+          //  if (pathfindResult != null) foreach (TaggedEdge<int, Door_Instance> e in pathfindResult) pathCost += e.Tag.Cost;
         }
     }
 
@@ -597,7 +639,7 @@ public class Map_Instance
         var roomRefID = FindRoomByChara(charaRefID).RefID;
         var roomFloorRef = GetFloorByRoomRefID(roomRefID);
         var roomsInSameFloor = targetRooms.FindAll(x => roomFloorRef != null && GetFloorByRoomRefID(x) == roomFloorRef);
-        
+
         foreach (var target in roomsInSameFloor)
         {   // first check rooms in same floor, if we have a value then dont check others
             var path = Findpath(charaRefID, target, roomRefID);
@@ -625,6 +667,73 @@ public class Map_Instance
         }
 
         return resultsHolder;
+    }
+
+    public SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> FilterValidPathsParallel(int charaRefID, List<int> targetRooms, bool alwaysGetDifferentFloors = false)
+    {
+
+        targetRooms = targetRooms.Distinct().ToList();
+        // cost, roomref, path
+        var resultsHolder = new ConcurrentDictionary<int, ConcurrentDictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>>();
+
+        var roomRef = FindRoomByChara(charaRefID);
+        var roomFloorRef = GetFloorByRoomRefID(roomRef.RefID);
+
+        var roomRefsInSameFloor = targetRooms.FindAll(x => roomFloorRef != null && GetFloorByRoomRefID(x) == roomFloorRef);
+        var roomsInSameFloor = new List<Room_Instance>();
+        foreach (var i in roomRefsInSameFloor) roomsInSameFloor.Add(GetRoomByRef(i));
+
+        bool imprisoned = scr_System_CampaignManager.current.FindInstanceByID(charaRefID).isImprisoned;
+
+        
+        Parallel.ForEach(roomsInSameFloor, target =>
+        {
+            var path = Findpath(roomRef, target, imprisoned);
+            if (path == null && roomRef != target) return;
+
+            float x_cost = 0f;
+            if (path != null) foreach (var e in path) x_cost += e.Tag.Cost;
+
+            int key = (int)x_cost;
+
+            var roomDict = resultsHolder.GetOrAdd(key, _ => new ConcurrentDictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>());
+            roomDict.TryAdd(target.RefID, path);
+        });
+
+        if (!alwaysGetDifferentFloors && resultsHolder.Count > 0)
+        {
+            // Convert to regular dictionary
+            return resultsHolder.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.ToDictionary(p => p.Key, p => p.Value)
+            ).ToSortedDictionary();
+        }
+
+        var roomRefsInDifferentFloor = targetRooms.FindAll(x => !roomRefsInSameFloor.Contains(x));
+        var roomsInDifferentFloor = new List<Room_Instance>();
+        foreach (var i in roomRefsInDifferentFloor) roomsInDifferentFloor.Add(GetRoomByRef(i));
+
+        
+        Parallel.ForEach(roomsInDifferentFloor, target =>
+        {
+            var path = Findpath(roomRef, target, imprisoned);
+            if (path == null && roomRef != target) return;
+
+            float x_cost = 0f;
+            if (path != null)
+                foreach (var e in path) x_cost += e.Tag.Cost;
+
+            int key = (int)x_cost;
+
+            var roomDict = resultsHolder.GetOrAdd(key, _ => new ConcurrentDictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>());
+            roomDict.TryAdd(target.RefID, path);
+        });
+
+        // Convert to regular dictionary
+        return resultsHolder.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.ToDictionary(p => p.Key, p => p.Value)
+        ).ToSortedDictionary();
     }
 
     /// <summary>
@@ -720,7 +829,11 @@ public class Map_Instance
     {
         if (cost == null) return false;
         var edge = new TaggedEdge<int, Door_Instance>(from, to, cost);
-        if (graph.Edges.ToList().Find(x=>x.Source == from && x.Target == to) == null) graph.AddVerticesAndEdge(edge);
+        if (graph.Edges.ToList().Find(x => x.Source == from && x.Target == to) == null)
+        {
+            graph.AddVerticesAndEdge(edge);
+            graphImmutable = graph.ToArrayAdjacencyGraph();
+        }
         return true;
     }
 
@@ -731,6 +844,7 @@ public class Map_Instance
         else
         {
             graph.RemoveEdge(target);
+            graphImmutable = graph.ToArrayAdjacencyGraph();
             return target.Tag;
         }
     }
@@ -762,3 +876,10 @@ public class Map_Instance
     }
 }
 
+public static class DictionaryExtensions
+{
+    public static SortedDictionary<TKey, TValue> ToSortedDictionary<TKey, TValue>(this IDictionary<TKey, TValue> dict)
+    {
+        return new SortedDictionary<TKey, TValue>(dict);
+    }
+}

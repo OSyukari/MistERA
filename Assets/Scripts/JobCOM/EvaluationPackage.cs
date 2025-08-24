@@ -335,7 +335,7 @@ public class EvaluationPackage
         extraCOMTags = new List<string>();
         extraReceiverTags = new List<string>();
 
-        Utility.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+        UtilityEX.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
 
         CalculateRequestRate();
         CalculateResponseRate();
@@ -831,7 +831,7 @@ public class EvaluationPackage
         extraDoerTags = new List<string>();
         extraCOMTags = new List<string>();
         extraReceiverTags = new List<string>();
-        Utility.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+        UtilityEX.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
 
         if (response == Memory_Response.None || response == Memory_Response.Refuse)
         {// doer unwilling
@@ -866,8 +866,8 @@ public class EvaluationPackage
                 Doer.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, Receiver == null ? Doer.RefID : Receiver.RefID, targetCOM, VariantID, true, null, Memory_Response.Accept, attitude_doer, Doer.Stats.MemoryLength, p.masterRef);
                 if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, Memory_Response.Accept, attitude_receiver, Receiver.Stats.MemoryLength, p.masterRef);
                 */
-                Utility.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag,  m);
-                Utility.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m);
+                UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag,  m);
+                UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m);
             }
 
             //apply results later cuz results require COM attitude end
@@ -882,7 +882,7 @@ public class EvaluationPackage
                 //Debug.LogError($"FirstExperience {entry.body.DisplayNameFull}");
                 // first experience loss
                 string s = LocalizeDictionary.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
-                Utility.StringReplace(entry.body.Owner, ref s);
+                UtilityEX.StringReplace(entry.body.Owner, ref s);
                 this.m.AddMessage(entry.body.Owner.RefID, s);
                 
                 var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Refuse, Memory_Attitude.Hate, entry.body.FirstExperienceDesc);
@@ -927,26 +927,26 @@ public class EvaluationPackage
     [JsonIgnore] public string Description_Begin { get {
             string s = targetCOM.variants[VariantID].GetDescription_Begin(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_begin);
-            Utility.StringReplace(this, ref s);
+            UtilityEX.StringReplace(this, ref s);
             return s; } }
     [JsonIgnore] public string Description_Ongoing { get { 
             string s = targetCOM.variants[VariantID].GetDescription_Ongoing(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_ongoing);
-            Utility.StringReplace(this, ref s);
+            UtilityEX.StringReplace(this, ref s);
             return s;
     } }
 
     [JsonIgnore] public string Description_Remove { get { 
             string s = targetCOM.variants[VariantID].GetDescription_Remove(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_abort);
-            Utility.StringReplace(this, ref s);
+            UtilityEX.StringReplace(this, ref s);
             return s;
 
         } }
     [JsonIgnore] public string Description_After { get { 
             string s = targetCOM.variants[VariantID].GetDescription_After(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", "");
-            Utility.StringReplace(this, ref s);
+            UtilityEX.StringReplace(this, ref s);
             return s;
         } }
 
@@ -1109,8 +1109,8 @@ public class EvaluationPackage
         {
             //if (doer != receiver) receiver.AddSexLogOngoing(doer.RefID, receiver.RefID, com.ID, 1);
             // if doing to self then always accept. 
-            BodyInternal_Instance doerBody = doer.Body.GetRandomInternalWithTag(com.requirements.requirement.doerBodyTags[Utility.GetRandIndexFromListCount(com.requirements.requirement.doerBodyTags.Count)]);
-            BodyInternal_Instance receiverBody = receiver.Body.GetRandomInternalWithTag(com.requirements.requirement.receiverBodyTags[Utility.GetRandIndexFromListCount(com.requirements.requirement.receiverBodyTags.Count)]);
+            BodyInternal_Instance doerBody = doer.Body.GetRandomInternalWithTag(Utility.GetRandomElement(com.requirements.requirement.doerBodyTags));
+            BodyInternal_Instance receiverBody = receiver.Body.GetRandomInternalWithTag(Utility.GetRandomElement(com.requirements.requirement.receiverBodyTags));
 
             List<BodyInternal_Instance> receiverList = new List<BodyInternal_Instance>();
             List<BodyInternal_Instance> doerList = new List<BodyInternal_Instance>();
@@ -1212,10 +1212,10 @@ public class EvaluationPackage
             List<string> newlist2 = isReceiverFucked ? DoerSelfTag : ReceiverSelfTag;
 
             if (internal_fucked != null && internal_fucked.canBeStimulated) Stimulate(isReceiverFucked ? false : true, ref newlist1, targetCOM, VariantID, ref fuckedPleasure, internal_fucked, fucker, baseStrength, internal_fucker);
-            else Utility.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m);
+            else UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m);
 
             if (internal_fucker != null && internal_fucker.canBeStimulated) Stimulate(isReceiverFucked ? true : false, ref newlist2, targetCOM, VariantID, ref fuckerPleasure, internal_fucker, internal_fucked.Owner, baseStrength, internal_fucked);
-            else Utility.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, m);
+            else UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, m);
         }
 
         Memory_Attitude fucked_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + (int)(fuckedPleasure / 5)));

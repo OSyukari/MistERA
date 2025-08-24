@@ -15,7 +15,7 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
         if (!initialized) Initialize();
 
         this.sourceFaction = sourceFaction;
-        Utility.DestroyAllChildrenFrom(ref factionList);
+        Utility.DestroyAllChildrenFrom( factionList);
 
         foreach (var faction in scr_System_CampaignManager.current.Factions)
         {
@@ -130,7 +130,7 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         // if click outside box
-        if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)))
+        if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && UtilityEX.isClickBelowDragThreshold(eventData)))
         {
 
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();

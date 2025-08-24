@@ -18,9 +18,18 @@ public class LocalizeDictionary : MonoBehaviour
 
     public Dictionary_Index Index = new Dictionary_Index();
 
+    static Dictionary<string, string> _cacheResult = new Dictionary<string, string>();
+
     public static string QueryThenParse(string ID, string fallback = "")
     {
-        return Instance.Index.QueryThenParse(ID, fallback);
+        if (_cacheResult.ContainsKey(ID)) return _cacheResult[ID];
+        var result = Instance.Index.QueryThenParse(ID, fallback);
+        _cacheResult[ID] = result;
+        return result;
+    }
+    public static void ClearCache()
+    {
+        _cacheResult.Clear();
     }
 }
 

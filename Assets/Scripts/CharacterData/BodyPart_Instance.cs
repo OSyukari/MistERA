@@ -26,6 +26,31 @@ public class BodyPart_Instance
 
     }
 
+    Dictionary<Item_Instance, List<CombatAction>> _combatActions = null;
+
+    [JsonIgnore]
+    public Dictionary<Item_Instance, List<CombatAction>> CombatActions { get
+        {
+            if (_combatActions == null)
+            {
+                _combatActions = new Dictionary<Item_Instance, List<CombatAction>>();
+                if (this.equipLayers.Contains(BodyEquipLayer.Outer))
+                {
+                    foreach (var slot in this.availableSlots)
+                    {
+                        var refID = this.GetEquip(BodyEquipLayer.Outer, slot);
+                        if (refID == -1) continue;
+                        var item = scr_System_CampaignManager.current.FindItemInstanceByID(refID);
+                        if (item == null) continue;
+
+                        if (!_combatActions.ContainsKey(item)) _combatActions.Add(item, new List<CombatAction>());
+                        _combatActions[item].AddRange(scr_System_Serializer.current.GetCombatActions(this.Base));
+                    }
+                }
+            }
+            return _combatActions;
+        } }
+
 
     public void ReEstablishParent(Character_Trainable c)
     {
@@ -51,14 +76,12 @@ public class BodyPart_Instance
             //else if (inter.hasTag("anus") && Owner.Template.Size_A.ID == "trait_Size_A_none") { }
             else if (inter.hasTag("penis") && !Owner.Template.isMale) { }
             else if (inter.hasTag("clit") && Owner.Template.isMale) { }
-            else if (inter.hasTag("breast") && !Owner.Template.isMale) { }
+            else if (inter.hasTag("breast") && !Owner.Template.isFemale) { }
             else
             {
                 this.internals.Add(inter);
             }
         }
-
-        contentsIndex = new Dictionary<string, int>();
 
         foreach (BodyEquipLayer i in equipLayers)
         {
@@ -135,8 +158,21 @@ public class BodyPart_Instance
             return v;
         } }
 
+    List<Item_Instance> _equippedItems;
+    [JsonIgnore] 
+    public List<Item_Instance> EquippedItems { get
+        {
+            if (_equippedItems == null)
+            {
+                _equippedItems = new List<Item_Instance>();
+                foreach (var i in EquippedRefIDs) _equippedItems.Add(scr_System_CampaignManager.current.FindItemInstanceByID(i));
+            }
+            return _equippedItems;
+        } }
+
     //List<Item_Instance> equippedItems;
-    [SerializeField][JsonProperty] Dictionary<string, int> contentsIndex;
+    [SerializeField][JsonProperty] Dictionary<string, int> contentsIndex = new Dictionary<string, int>();
+
 
     /// <summary>
     /// Return -1 fail, return 0 success return 1+ swapped gear
@@ -144,102 +180,124 @@ public class BodyPart_Instance
     /// <param name="itemRefID"></param>
     /// <param name="forceEquip"></param>
     /// <returns></returns>
-    public int EquipItem(int itemRefID, bool forceEquip = false)
+    public bool EquipItem(Item_Instance item, ref List<BodyPartEquipSlot> slots, bool forceEquip = false)
     {
-        Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
+        var comp = item.GetComp_Equippable();
+        bool equipped = false;
+       // Debug.Log($"Equipping {String.Join(" ", slots)} + {comp.equipLayer} on {this.DisplayName}, allIndex [{String.Join(",", contentsIndex.Keys)}]");
 
-        if (item != null)
+        for (int i = slots.Count - 1; i >= 0; i--)
         {
-            ItemComponent_Equippable comp = item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
-            if (comp != null)
+            var slot = slots[i];
+            string Tuple = comp.equipLayer.ToString() + "||" + slot.ToString();
+
+            /// CODE START
+            if (contentsIndex.ContainsKey(Tuple))
             {
-
-                string Tuple = comp.equipLayer.ToString() + "||" + comp.equipSlot.ToString();
-                /// CODE START
-                if (contentsIndex.ContainsKey(Tuple))
+                if (contentsIndex[Tuple] == -1)
                 {
-                    if (contentsIndex[Tuple] == -1)
-                    {
-                        contentsIndex[Tuple] = itemRefID;
-                        // equip success
-#if UNITY_EDITOR
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"{Owner.FirstName} successfully equipped {item.DisplayName} at {DisplayName}");
-#endif
-                        return 0;
-                    }
-                    else if (contentsIndex[Tuple] != -1 && forceEquip == true)
-                    {
-                        int returnval = contentsIndex[Tuple];
-                        contentsIndex[Tuple] = itemRefID;
+                    contentsIndex[Tuple] = item.RefID;
+                    // equip success
+                    ClearEquipCache();
+                    equipped = true;
+                    slots.RemoveAt(i);
+                }
+                else if (contentsIndex[Tuple] != -1 && contentsIndex[Tuple] != item.RefID && forceEquip == true)
+                {
+                    var returnVal = contentsIndex[Tuple];
+                    contentsIndex[Tuple] = item.RefID;
 
-                        Owner.UnequipItem(returnval);
-                        var unequipped = scr_System_CampaignManager.current.FindItemInstanceByID(returnval);
-                        // replace equipped
-#if UNITY_EDITOR
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.Log($"{Owner.FirstName} successfully equipped {item.DisplayName} at {DisplayName}, unequipping item {unequipped.DisplayName}");
-#endif
-                        return returnval;
-                    }
+                    Owner.UnequipItem(returnVal);
+                    ClearEquipCache();
+                    // replace equipped
+                    equipped = true;
+                    slots.RemoveAt(i);
+                }
+            }
+        }
+
+        foreach (BodyInternal_Instance i in this.internals)
+        {
+            equipped = i.EquipItem(item, ref slots, forceEquip) || equipped;
+        }
+        if (equipped) ClearEquipCache();
+        return equipped;
+    }
+
+    /// <summary>
+    /// If equip midway fail will unequip self
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="forceEquip"></param>
+    /// <returns></returns>
+    public bool EquipItem(Item_Instance item, bool forceEquip = false)
+    {
+        var comp = item.GetComp_Equippable();
+        bool equipped = false;
+        bool unequip = false;
+        // Debug.Log($"Equipping {String.Join(" ", slots)} + {comp.equipLayer} on {this.DisplayName}, allIndex [{String.Join(",", contentsIndex.Keys)}]");
+
+        // prevalidate
+        foreach(var slot in comp.equipSlot)
+        {
+            string Tuple = comp.equipLayer.ToString() + "||" + slot.ToString();
+
+            /// CODE START
+            if (contentsIndex.ContainsKey(Tuple))
+            {
+                if (contentsIndex[Tuple] == -1)
+                {
+                    contentsIndex[Tuple] = item.RefID;
+                    // equip success
+                    ClearEquipCache();
+                    equipped = true;
+                }
+                else if (contentsIndex[Tuple] == item.RefID)
+                {
+                    // do nothing
                 }
                 else
                 {
-#if UNITY_EDITOR
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.LogError($"bodypart {DisplayName} does not contain index {Tuple} in {String.Join(",", contentsIndex.Keys)}, checking childrens");
-#endif
-                    // equip failed ask next
-                    foreach (BodyInternal_Instance i in this.internals)
-                    {
-#if UNITY_EDITOR
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Equipping) Debug.LogError($"trying equip item on children {i.DisplayName}");
-#endif
-                        int j = i.EquipItem(itemRefID, forceEquip);
-                        if (j > -1) return j;
-                    }
+                    var returnVal = contentsIndex[Tuple];
+                    contentsIndex[Tuple] = item.RefID;
+
+                    Owner.UnequipItem(returnVal);
+                    ClearEquipCache();
+                    // replace equipped
+                    equipped = true;
                 }
-                /// CODE END
             }
             else
             {
-                Debug.LogError($"{Owner.FirstName} failed equipping {item.DisplayName}, cannot find item equippable comp");
+                if (equipped) unequip = true;
+                equipped = false;
             }
         }
-        else
+        
+        if (unequip)
         {
-            Debug.LogError($"{Owner.FirstName} failed equipping {itemRefID}, cannot find item by ref");
+            UnequipItem(item.RefID);
+            equipped = false;
         }
-        return -1;
+
+        if (!equipped)
+        {
+            foreach (BodyInternal_Instance i in this.internals)
+            {
+                equipped = i.EquipItem(item, forceEquip);
+                if (equipped) break;
+            }
+        }
+
+
+        if (equipped) ClearEquipCache();
+        return equipped;
     }
 
-    public List<int> EquipItemDirect(int itemRefID, BodyPartEquipSlot slot, BodyEquipLayer layer)
+    protected void ClearEquipCache()
     {
-        List<int> list = new List<int>();
-        int returnval = -1;
-
-        string Tuple = layer.ToString() + "||" + slot.ToString();
-        if (contentsIndex.ContainsKey(Tuple))
-        {
-            if (contentsIndex[Tuple] == -1)
-            {
-                contentsIndex[Tuple] = itemRefID;
-            }
-            else
-            {
-                returnval = contentsIndex[Tuple];
-                contentsIndex[Tuple] = itemRefID;
-
-                Owner.UnequipItem(returnval);
-
-
-                list.Add(returnval);
-            }
-
-        }
-        foreach (BodyInternal_Instance i in this.internals)
-        {
-            //list.Add(i.EquipItemDirect(itemRefID, slot, layer));
-        }
-
-        return list;
+        _equippedItems = null;
+        _combatActions = null;
     }
 
     public bool UnequipItem(int itemRefID)
@@ -267,7 +325,12 @@ public class BodyPart_Instance
             //returnVal = true;
         }
 
-        if (returnVal) return returnVal;
+
+        if (returnVal)
+        {
+            ClearEquipCache();
+            return returnVal;
+        }
 
         foreach (BodyInternal_Instance i in this.internals)
         {
@@ -288,12 +351,34 @@ public class BodyPart_Instance
         return false;
     }
 
+    public bool TryGetEquip(out int value, BodyEquipLayer i, BodyPartEquipSlot j)
+    {
+        value = GetEquip(i, j);
+        return value != -1;
+    }
+
     public int GetEquip(BodyEquipLayer i, BodyPartEquipSlot j)
     {
 
         string Tuple = i.ToString() + "||" + j.ToString();
         if (contentsIndex.ContainsKey(Tuple)) return contentsIndex[Tuple];
         else return -1;
+    }
+
+    public Item_Instance GetRandArmor(BodyPartEquipSlot slot)
+    {
+        int itemID = -1;
+        if (TryGetEquip(out itemID, BodyEquipLayer.Outer, slot))
+        {
+            var item = scr_System_CampaignManager.current.FindItemInstanceByID(itemID);
+            if (item.Comp_Defense != null) return item;
+        }
+        if (TryGetEquip(out itemID, BodyEquipLayer.Inner, slot))
+        {
+            var item = scr_System_CampaignManager.current.FindItemInstanceByID(itemID);
+            if (item.Comp_Defense != null) return item;
+        }
+        return null;
     }
 
     public int GetRevealingScore(BodyEquipLayer layer)

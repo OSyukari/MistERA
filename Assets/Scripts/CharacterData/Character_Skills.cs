@@ -344,7 +344,7 @@ public class SkillInstance
             List<string> s = new List<string>();
             foreach(var i in this.GetStatMods())
             {
-                s.Add(i.statID+"-"+i.modKey+"-"+i.type+"-"+ Utility.StatValue(i, Owner));
+                s.Add(i.statID+"-"+i.modKey+"-"+i.type+"-"+ UtilityEX.StatValue(i, Owner.Stats));
             }
             //Debug.Log("Refreshing all stats "+String.Join("|",s));
             Owner.Stats.RefreshAllStats(true);
@@ -488,7 +488,7 @@ public class CharaSkill
                 {
                     if (!i.isValid) continue;
 
-                    if (!Utility.CompareValue(c.Skills.GetExperienceLevel(i.experienceID), i.operand, i.value))
+                    if (!UtilityEX.CompareValue(c.Skills.GetExperienceLevel(i.experienceID), i.operand, i.value))
                     {
                         c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + i.Tooltip + "</color>");
                         returnValue = false;
@@ -515,7 +515,7 @@ public class CharaSkill
                 c2.Clear();
                 int sumValue = 0;
                 foreach (var i in requireSumExperiences.experienceIDs) sumValue += c.Skills.GetExperienceLevel(i);
-                if (!Utility.CompareValue(sumValue, requireSumExperiences.operand, requireSumExperiences.value))
+                if (!UtilityEX.CompareValue(sumValue, requireSumExperiences.operand, requireSumExperiences.value))
                 {
                     c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + requireSumExperiences.Tooltip + "</color> (currently "+sumValue+")");
                     returnValue = false;

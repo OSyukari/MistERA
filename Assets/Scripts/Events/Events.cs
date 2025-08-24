@@ -119,7 +119,7 @@ public class Event : I_SerializationCallbackReceiver
                         bool arg3 = parameters.Count >= 4 && bool.TryParse(parameters[3], out bool _b) ? bool.Parse(parameters[3]) : false;
                         var packages = scr_System_CampaignManager.current.GetExistingPackages(c, arg2, arg3, false);
                         //Debug.Log($"found relevant package {packages.Count}");
-                        var results = packages.FindAll(x => Utility.MatchAPbyType(x, parameters[1]));
+                        var results = packages.FindAll(x => UtilityEX.MatchAPbyType(x, parameters[1]));
                         return results.Count > 0;
                     }
                 case "isConscious":
@@ -132,13 +132,13 @@ public class Event : I_SerializationCallbackReceiver
                 case "isRoomOwner":
                     if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool isRoomOwner))
                     {
-                        return room != null && Utility.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, isRoomOwner);
+                        return room != null && UtilityEX.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, isRoomOwner);
                     }
                     else return false;
                 case "canMove":
                     if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool canMove))
                     {
-                        return Utility.CompareValue(c.canMove, LogicalOperand.eq, canMove);
+                        return UtilityEX.CompareValue(c.canMove, LogicalOperand.eq, canMove);
                     }
                     else return false;
                 case "hasJoinableAP":
@@ -148,7 +148,7 @@ public class Event : I_SerializationCallbackReceiver
                     if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool isWorkingOnJob))
                     {
                         if (debug) Debug.Log($"isWorkingOnJob {c.FirstName} {c.isWorkingOnJob} eq {isWorkingOnJob}");
-                        return Utility.CompareValue(c.isWorkingOnJob, LogicalOperand.eq, isWorkingOnJob);
+                        return UtilityEX.CompareValue(c.isWorkingOnJob, LogicalOperand.eq, isWorkingOnJob);
                     }
                     else
                     {
@@ -162,7 +162,7 @@ public class Event : I_SerializationCallbackReceiver
                     if (parameters.Count >= 2 && bool.TryParse(parameters[1], out bool canLeave))
                     {
                         if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"checking {c.FirstName} canleave {c.canLeave}, currentjob {c.CurrentJobRefID} ");
-                        return Utility.CompareValue(c.canLeave, LogicalOperand.eq, canLeave);
+                        return UtilityEX.CompareValue(c.canLeave, LogicalOperand.eq, canLeave);
                     }
                     else
                     {

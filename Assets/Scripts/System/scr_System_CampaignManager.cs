@@ -17,6 +17,7 @@ public class scr_System_CampaignManager_Serializable
     public Map_Instance Map;
     public Party Party;
     public int CurrentRoomRef;
+    public CombatManager Combat;
     public Dictionary<int, Character_Trainable> Characters;
     public Dictionary<int, Item_Instance> Items;
     public string campaignSettingID;
@@ -96,6 +97,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.Items = Index_ItemReferenceID;
         obj.Party = party;
         obj.Map = map;
+        obj.Combat = this.Combat;
         obj.Characters = this.Index_referenceID;
         obj.campaignSettingID = CurrentCampaignID;
 
@@ -155,6 +157,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         // now rebuild full map data
         map.SerializationRebuilt();
         
+        if (obj.Combat != null) this.Combat = obj.Combat;
 
         Index_referenceID = obj.Characters;
         foreach (var i in Index_referenceID) i.Value.OnAfterDeserialize();
@@ -309,7 +312,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             for (int i = registeredPackagesByRoom[p.RoomKey].Count - 1; i >= 0; i--)
             {
                 var currentP = registeredPackagesByRoom[p.RoomKey][i];
-                if (!ignoreConflict && currentP.Duration > 0 && Utility.DetectConflict(currentP, p))
+                if (!ignoreConflict && currentP.Duration > 0 && UtilityEX.DetectConflict(currentP, p))
                 {
                     //Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + "] [" + p.COMVariantID + "] avoidConflict?[" + (avoidConflict) + "]");
                     if (avoidConflict)
@@ -349,7 +352,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (debug) Debug.Log("Unregistering AP " + p.DisplayName);
         if (!registeredPackagesByRoom.ContainsKey(p.RoomKey)) return;
         //if (p.targetCOM.comTags.Contains("character_trainable") && p.Duration > -1) return;
-        var possibleTargets = registeredPackagesByRoom[p.RoomKey].FindAll(x => Utility.ArePackagesEqual(x, p));
+        var possibleTargets = registeredPackagesByRoom[p.RoomKey].FindAll(x => UtilityEX.ArePackagesEqual(x, p));
         if (possibleTargets.Count > 0)
         {
             if (debug) Debug.Log("Unregistering AP " + p.DisplayName + ", found " + possibleTargets.Count + " matching AP");
@@ -1043,7 +1046,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 }
                 else if (ini.initClass == "campaign_init_playerPortrait")
                 {
-                    PortraitManager.CharaPortrait cm = JsonConvert.DeserializeObject<PortraitManager.CharaPortrait>(ini.initArguments[0], Utility.SerializerSettings);
+                    PortraitManager.CharaPortrait cm = JsonConvert.DeserializeObject<PortraitManager.CharaPortrait>(ini.initArguments[0], UtilityEX.SerializerSettings);
                     Player.PortraitManager.Prepend(cm);
 
                 }
@@ -1416,32 +1419,51 @@ public class scr_System_CampaignManager : MonoBehaviour
         //Debug.LogError("Adding charaRef "+c.RefID +" to roomRef "+room.RefID);
         //Debug.Log("CampaignManager: Instantiate character baseID [" + c.baseID + "] with refID [" + c.RefID + "] registered to room ["+room.RefID+"]");
 
-        foreach(CharaTemplate.presetInventory p in c.Template.initialInventory)
+        foreach(presetInventory p in c.Template.initialInventory)
         {
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
             //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
             if (i == null) continue;
-            if (!c.EquipItem(i.RefID, false)) Debug.LogError($"error equipping {i.DisplayName} on {c.FirstName}");
+            if (i.GetComp_Equippable() == null)
+            {   // add to inv
+                c.Inventory.AddItem(i);
+            }
+            else
+            {   // is equippable
+                if (!c.EquipItem(i.RefID, false))
+                {//
+                    Debug.LogError($"error equipping {i.DisplayName} on {c.FirstName}");
+                }
+            }
+
         }
         return c;
     }
 
-    public Character_Trainable InstantiateCharacter(string jsonFilePath, Room_Instance room, int forceRefID = -1){
-
-        Character_Trainable c = scr_System_CentralControl.current.LoadCharaData(jsonFilePath);
-
-        return InstantiateCharacter(c, room, forceRefID);
-
+    protected Character_Trainable GetCharaTemplate(string ID)
+    {
+        var genTemplate = scr_System_Serializer.current.MasterList.CharGenTemplates.GetByID(ID);
+        if (genTemplate != null && genTemplate.TargetBaseID != "")
+        {
+            Debug.Log($"CampaignManager: Instantiate request for [{ID}] found genTemplate, generating instead [{genTemplate.TargetBaseID}]");
+            var template = GetCharaTemplate(genTemplate.TargetBaseID);
+            template.BaseID = ID;
+            if (genTemplate.title != "") template.Title = genTemplate.title;
+            if (genTemplate.useNameGen)
+            {
+                scr_System_Serializer.current.MasterList.CharGenTemplates.GenerateNamesFor(template, genTemplate.Appearance, genTemplate.nameGen_firstName, genTemplate.nameGen_middleName, genTemplate.nameGen_lastName, genTemplate.nameDisplayFormat);
+            }
+            return template;
+            // operate on template
+            //return template
+        }
+        return scr_System_Serializer.current.index_Characters_Bases.GetChara(ID);
     }
 
     public Character_Trainable InstantiateCharacter_FromBaseID(string ID, Room_Instance room, int forceRefID = -1)
     {
-        //Debug.Log("CampaignManager: Instantiate request for ID [" + ID + "]");
-
-        string path = ID;
-        var chara = scr_System_Serializer.current.index_Characters_Bases.GetChara(ID);
-
-        //Character_Trainable template = scr_System_CentralControl.current.LoadCharaData(chara.FileLocation);
+        Debug.Log($"CampaignManager: Instantiate request for ID [{ID}]");
+        Character_Trainable chara = GetCharaTemplate(ID);
 
         if (chara != null && map.HasRoomWithRef(room.RefID))
         {
@@ -1450,12 +1472,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         else
         {
             string s = "InstantiateCharacter error";
-            if (path == null) s += "\ncharacter path null";
             if (!map.HasRoomWithRef(room.RefID)) s += "\nmap has no ref with roomRef " + room.RefID;
             Debug.LogError(s);
 
         }
-
         return null;
     }
 
@@ -1524,9 +1544,9 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
-    public void StartCombat(TeamComposition teamA, TeamComposition teamB)
+    public void StartCombat(TeamComposition teamA, TeamComposition teamB, Action OnCombatEnd = null)
     {
-        Combat.StartCombat(teamA, teamB);
+        Combat.StartCombat(teamA, teamB, OnCombatEnd);
     }
 }
 

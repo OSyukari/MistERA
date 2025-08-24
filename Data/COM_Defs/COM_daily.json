@@ -112,7 +112,15 @@
                             "doerCount": 1
                         }
                     },
-                    "displayName": "combat simulation"
+                    "displayName": "com_furniture_combat_sim_displayName_1"
+                },
+                {
+                    "requirements": {
+                        "requirement": {
+                            "doerCount": 99
+                        }
+                    },
+                    "displayName": "com_furniture_combat_sim_displayName_2"
                 }
             ],
 
@@ -142,7 +150,9 @@
                 "com_interaction_talk_begin_2": "$doer.firstname$漫不经心地和$receiver.firstname$聊了起来",
                 "com_interaction_talk_begin_3": "$doer.firstname$随意地和$receiver.firstname$聊着天",
                 "com_interaction_talk_displayName_1": "闲聊",
-                "com_interaction_talk_displayName_2": "大家一起闲聊"
+                "com_interaction_talk_displayName_2": "大家一起闲聊",
+                "com_furniture_combat_sim_displayName_1":"模拟战斗",
+                "com_furniture_combat_sim_displayName_2":"一同模拟战斗"
                 
             },
             "en-us":

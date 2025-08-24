@@ -1,0 +1,47 @@
+{
+"CharGenTemplates":
+    {
+        "list":[
+            {
+                "ID":"nikke_random_idoll",
+                "targetBaseIDs":["nikke_idoll_ocean","nikke_idoll_flower","nikke_idoll_sun"],
+                "str_var":2,"con_var":2, "psy_var":2, "wil_var":2,
+                "useNameGen":true, "nameGen_firstName":"japanese",
+                "Appearance":"Female",
+                "inventoryOverride":[
+
+                ]
+            },
+            {
+                "ID":"nikke_random_product",
+                "targetBaseIDs":["nikke_product_08","nikke_product_12","nikke_product_23"],
+                "str_var":2,"con_var":2, "psy_var":2, "wil_var":2,
+                "useNameGen":true, "nameGen_firstName":"japanese",
+                "Appearance":"Female",
+                "inventoryOverride":[
+
+                ]
+            },
+            {
+                "ID":"nikke_random_soldier",
+                "targetBaseIDs":["nikke_soldier_fa","nikke_soldier_eg","nikke_soldier_ow"],
+                "str_var":2,"con_var":2, "psy_var":2, "wil_var":2,
+                "useNameGen":true, "nameGen_firstName":"japanese",
+                "Appearance":"Female",
+                "inventoryOverride":[
+
+                ]
+            },
+            {
+                "ID":"nikke_random",
+                "targetBaseIDs":["nikke_random_idoll","nikke_random_product","nikke_random_soldier"],
+                "str_var":2,"con_var":2, "psy_var":2, "wil_var":2,
+                "useNameGen":true, "nameGen_firstName":"japanese",
+                "Appearance":"Female",
+                "inventoryOverride":[
+
+                ]
+            }
+        ]
+    }
+}

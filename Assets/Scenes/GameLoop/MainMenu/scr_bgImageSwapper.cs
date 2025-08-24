@@ -23,6 +23,7 @@ public class scr_bgImageSwapper : MonoBehaviour
     private void OnRoomChange(int updateSequence, Room_Instance room)
     {
         if (updateSequence != 0) return;
+        if (!this.gameObject.activeInHierarchy) return;
         if (room.Base.roomImagePath != "")
         {
             image.color = activeColor;

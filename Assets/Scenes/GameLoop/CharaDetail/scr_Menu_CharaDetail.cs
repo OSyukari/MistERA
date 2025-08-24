@@ -515,7 +515,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         // if click outside box
         if (eventData.rawPointerPress.GetComponent<scr_Menu_CharaDetail>() != null) unload = true;
         // inside box
-        else if (eventData.button == PointerEventData.InputButton.Right && Utility.isClickBelowDragThreshold(eventData)) unload = true;
+        else if (eventData.button == PointerEventData.InputButton.Right && UtilityEX.isClickBelowDragThreshold(eventData)) unload = true;
         //Debug.Log("scr_Menu_CharaDetail: OnPointerClick! Data["+eventData.pointerPress+"] rawData["+ eventData.rawPointerPress + "]");
 
         if (unload)

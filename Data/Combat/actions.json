@@ -2,41 +2,58 @@
     "CombatActions":{
         "list":[
 {
-    "ID":"sword_horizontalSlash",
-
-    "_comment":"evasion speed instant increase should have a time-based limit on its effective time",
-    "components:":
-    [
-        {
-            "type":"attack",
-            "baseDamage":3,
-            "damageType":"slash",
-            "keywords":[""]
-
-        }
-    ]
-},         
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    
+    "ID":"base_evade",
+    "Evasion":5,
+    "PostureMod":-1,
+    "_comment":"evasion speed instant increase should have a time-based limit on its effective time"
+},                    
 {
-    "ID":"base_backstep",
-
-    "_comment":"evasion speed instant increase should have a time-based limit on its effective time",
-    "components:":
-    [
-        {
-            "type":"attack",
-            "baseDamage":3,
-            "damageType":"slash",
-            "keywords":[""]
-
-        }
-    ]
-},         
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    "ID":"base_observe",
+    "HideInSelect":true,
+    "PostureMod":2,
+    "_comment":"used by AI as empty action holder"
+},     
 {
-    "ID":"base_idle_debug",
-
-    "_comment":"evasion speed instant increase should have a time-based limit on its effective time",
-    "components:": [  ]
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    "ID":"move_base_forward",
+    "Evasion": 1,
+    "_comment":"move closer to enemy",
+    "Movement": 1
+},     
+{
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    "ID":"move_base_backward",
+    "Evasion": 1,
+    "_comment":"retreat toward self backline",
+    "Movement": -1
+},   
+{
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    "ID":"base_posture_broken",
+    "HideInSelect":true,
+    "_comment":"empty action"
 }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"base_evade":"回避",
+"base_posture_broken":"体势崩坏",
+"base_observe":"观察",
+"move_base_forward":"前进",
+"move_base_backward":"后撤"
+            },
+            "en-us":
+            {
+"base_backstep":"Backstep"
+            }
+        }
     }
 }

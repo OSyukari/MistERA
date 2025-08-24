@@ -21,27 +21,27 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
     [SerializeField][JsonProperty] protected string stat_base_string = "";
     [JsonIgnore] public string ID { get { return stat_base_string; } }
 
-    protected StatsManager parentCache = null;
-    [JsonIgnore] public StatsManager Parent { get {
-            if (parentCache != null) return parentCache;
-            if (Owner == null) return null;
-            return Owner.Stats;
+    protected I_StatsManager parentCache = null;
+    [JsonIgnore] public I_StatsManager Parent { get {
+            return parentCache;
         } }
 
-    protected int ownerRefID = -1;
-    protected Character_Trainable owner = null;
-    [JsonIgnore] public Character_Trainable Owner { get { if (owner == null && ownerRefID > -1) owner = scr_System_CampaignManager.current.FindInstanceByID(ownerRefID); return owner; } }
+    public Stats_Base Copy(I_StatsManager newParent)
+    {
+        var result = new Stats_Base(newParent, this.stat_base_string);
+        result.SetValue(this.BaseValue);
+        return result;
+    }
+
 
     public Stats_Base() { }
-    public void ReEstablishParent(Character_Trainable c)
+    public void ReEstablishParent(I_StatsManager owner)
     {
-        this.ownerRefID = c.RefID;
-        this.owner = c;
+        parentCache = owner;
     }
-    public Stats_Base(StatsManager parent, string statID)
+    public Stats_Base(I_StatsManager parent, string statID)
     {
-        parentCache = parent;
-        if (parent.Owner != null) ReEstablishParent(parent.Owner);
+        ReEstablishParent(parent);
         stat_base_string = statID;
     }
 
@@ -99,7 +99,7 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
         StoredModifiers.Add("baseValue", new StatsManager.ModStorage(1, value_base));
         StoredModifiers.Add("finalMod", new StatsManager.ModStorage(1, 0));
         var list = Parent.GetModifiers(this, stat_base_string, contextKeys);
-        var finalResult = Utility.ParseStatMods(this, this.Owner, StoredModifiers, list, strings);
+        var finalResult = UtilityEX.ParseStatMods(this, Parent, StoredModifiers, list, strings);
         cached_values.Add(contextKeys, strings);
     }
 
@@ -143,7 +143,7 @@ public class StatRecord
 
     public string Print()
     {
-        StringBuilder sb = storages.Count > 0 ? Utility.StringBuilderPool.Get() : null;
+        StringBuilder sb = storages.Count > 0 ? UtilityEX.StringBuilderPool.Get() : null;
         if (sb != null)
         {
             foreach (var mod in storages)

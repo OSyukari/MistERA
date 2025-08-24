@@ -342,13 +342,13 @@ public class scr_UpdateHandler : MonoBehaviour
             //yield return new WaitForSecondsRealtime(waitTime);
             //yield return 
 #if UNITY_EDITOR
-            if (TempLongCOMFix && loopCount >= 180)
+            if (TempLongCOMFix && loopCount >= 240)
             {
                 Debug.Log($"Temporarily break update loop after {loopCount}");
                 break;
             }
 #else
-            if (loopCount >= 180)
+            if (loopCount >= 240)
             {
                 Debug.Log($"Temporarily break update loop after {loopCount}");
                 break;

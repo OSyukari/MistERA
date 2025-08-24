@@ -24,7 +24,7 @@ public class COM_Sex : COM
         foreach (int id in doerRefIDs)
         {
             Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(id);
-            string tag = (doerTag == null || doerTag.Count < 1) ? requirements.requirement.doerBodyTags[Utility.GetRandIndexFromListCount(requirements.requirement.doerBodyTags.Count)] : doerTag[Utility.GetRandIndexFromListCount(doerTag.Count)];
+            string tag = (doerTag == null || doerTag.Count < 1) ? Utility.GetRandomElement(requirements.requirement.doerBodyTags) : Utility.GetRandomElement(doerTag);
             //Debug.LogError("ValidateActorLength before 1st doer "+c.FullName+" with tags "+tag+" and with body count "+c.Body.Body.Count+" and internals "+c.Body.Internals.Count);
             BodyInternal_Instance doer = c.Body.GetRandomInternalWithTag(tag);
             //Debug.LogError("ValidateActorLength after 1st doer, instance "+(doer == null?"null":doer.baseID));
@@ -60,7 +60,7 @@ public class COM_Sex : COM
         foreach (int id in receiverRefIDs)
         {
             //Debug.LogError("ValidateActorLength before 1st receiver");
-            BodyInternal_Instance receiver = scr_System_CampaignManager.current.FindInstanceByID(id).Body.GetRandomInternalWithTag( (receiverTag == null || receiverTag.Count < 1) ? requirements.requirement.receiverBodyTags[Utility.GetRandIndexFromListCount(requirements.requirement.receiverBodyTags.Count)] : receiverTag[Utility.GetRandIndexFromListCount(receiverTag.Count)]);
+            BodyInternal_Instance receiver = scr_System_CampaignManager.current.FindInstanceByID(id).Body.GetRandomInternalWithTag( (receiverTag == null || receiverTag.Count < 1) ? Utility.GetRandomElement(requirements.requirement.receiverBodyTags) : Utility.GetRandomElement(receiverTag));
             //Debug.LogError("ValidateActorLength after 1st receiver");
 
             if (receiver == null)
@@ -117,7 +117,7 @@ public class COM_Sex : COM
 
         foreach (Character_Trainable c in doers)
         {
-            var ii = c.Body.GetRandomInternalWithTag(requirements.requirement.doerBodyTags[Utility.GetRandIndexFromListCount(requirements.requirement.doerBodyTags.Count)]);
+            var ii = c.Body.GetRandomInternalWithTag(Utility.GetRandomElement(requirements.requirement.doerBodyTags));
             if (ii == null) continue;
             if (ii.CurrentDepth > doer_depth) doer_depth = ii.CurrentDepth;
             if (ii.CurrentSize > doer_size) doer_size = ii.CurrentSize;
@@ -130,7 +130,7 @@ public class COM_Sex : COM
             // masturbate
             foreach (Character_Trainable c in doers)
             {
-                var ii = c.Body.GetRandomInternalWithTag(requirements.requirement.receiverBodyTags[Utility.GetRandIndexFromListCount(requirements.requirement.receiverBodyTags.Count)]);
+                var ii = c.Body.GetRandomInternalWithTag(Utility.GetRandomElement(requirements.requirement.receiverBodyTags));
                 if (ii == null) continue;
                 if (ii.CurrentDepth < receiver_depth) receiver_depth = ii.CurrentDepth;
                 if (ii.CurrentSize < receiver_size) receiver_size = ii.CurrentSize;
@@ -140,7 +140,7 @@ public class COM_Sex : COM
         {
             foreach (Character_Trainable c in receivers)
             {
-                var ii = c.Body.GetRandomInternalWithTag(requirements.requirement.receiverBodyTags[Utility.GetRandIndexFromListCount(requirements.requirement.receiverBodyTags.Count)]);
+                var ii = c.Body.GetRandomInternalWithTag(Utility.GetRandomElement(requirements.requirement.receiverBodyTags));
                 if (ii == null) continue;
                 if (ii.CurrentDepth < receiver_depth) receiver_depth = ii.CurrentDepth;
                 if (ii.CurrentSize < receiver_size) receiver_size = ii.CurrentSize;
