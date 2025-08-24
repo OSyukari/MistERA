@@ -12,7 +12,6 @@
 !ci/*
 
 !Data/
-!Demo/*.png
 
 !Assets/
 Assets/*
@@ -63,3 +62,6 @@ Assets/*
 *.mdb
 *.opendb
 *.VC.db
+
+
+!Demo/*.png
