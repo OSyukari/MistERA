@@ -27,8 +27,10 @@
 
 "ActionResult_tooltip_targetPart":"命中对象$part$",
 "ActionResult_tooltip_pierceDef":"贯穿了$armor$ 剩余伤害 $amount$",
+"ActionResult_tooltip_ignoreDef":"无视了$armor$",
 "ActionResult_tooltip_bypassDef":"击破了$armor$ 剩余伤害 $amount$",
 "ActionResult_tooltip_blockedDef":"攻击被$armor$挡下了",
+"ActionResult_tooltip_defense":"$self$ 开始 $name$",
 "ActionResult_tooltip_receiveDamage":"$self$受到了伤害 体势$posturedmg$ HP$hpdmg$",
 "ActionResult_tooltip_postureBreak":"$self$的体势被击破了！",
 "ActionResult_tooltip_postureRecover":"$self$的体势恢复了",

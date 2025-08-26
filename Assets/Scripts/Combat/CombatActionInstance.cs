@@ -9,20 +9,23 @@ public class DefenseStats
 
     public string Name = string.Empty;
     public ItemComponent_Defense Comp = null;
+    public List<string> applyToKeywords = new List<string>();
 
-    public bool isValid { get { return Comp != null && Name != null; } }
+    public bool isValid { get { return Comp != null && Name != null && Name != string.Empty; } }
     /// <summary>
     /// Will only set lingeringDefense when existing is null (first set) or new is null (reset)
     /// </summary>
     /// <param name="name"></param>
     /// <param name="def"></param>
-    public void Set(string name, ItemComponent_Defense def)
+    public void Set(string name, ItemComponent_Defense def, List<string> applyTo = null)
     {
-        if (Comp == null || def == null)
-        {
-            Name = name;
-            Comp = def;
-        }
+        
+        Name = name;
+        Comp = def;
+        applyToKeywords.Clear();
+        if (applyTo != null) applyToKeywords.AddRange(applyTo);
+        Debug.Log($"Setting lingering defense to {Name}");
+        
     }
     /// <summary>
     /// If bypassed, return with no change. Else, deduce atkpwr accordingly and return whether attack has power left.
@@ -35,22 +38,50 @@ public class DefenseStats
         if (!isValid) return true;
         if (Comp == null) return true;
         if (atk.damageTypes.Count < 1) return true;
+
+        //atk damagetype use the more advantageous one
+        ItemComponentTemplate_Defense.Defense comp = null;
         foreach(var i in Comp.ArmorLayers)
         {
-            if (Utility.ListContainsLoose(i.applyToDamageTypes, atk.damageTypes))
-            {
-                atk.damageAmount = Math.Max(0, atk.damageAmount - i.damageReductionValue);
-                return atk.damageAmount >= 1;
-            }
+            if (!Utility.ListContainsLoose(atk.damageTypes, i.applyToDamageTypes)) continue;
+            comp = comp == null ? i : i.damageReductionValue < comp.damageReductionValue ? i : comp;
         }
-        return true;
+
+        if (comp != null)
+        {
+            Debug.Log($"reducing damage types {atk.damageAmount} {String.Join("|", atk.damageTypes)} by {String.Join("|", comp.applyToDamageTypes)} to {atk.damageAmount - comp.damageReductionValue}");
+            atk.damageAmount = Math.Max(0, atk.damageAmount - comp.damageReductionValue);
+         //   return atk.damageAmount >= 1;
+        }
+       // else { }
+
+        return atk.damageAmount >= 1;
     }
     public bool Pierce(AttackInstance atk)
     {
         if (!isValid) return true;
         if (Comp == null) return true;
         if (Comp.Integrity == -1) return false;
-        return atk.damageAmount >= Comp.Integrity;
+        if (atk.damageAmount >= Comp.Integrity) return true;
+        if (atk.damageTypes.Count > 0)
+        {
+            var dtypes = new List<DamageType>(atk.damageTypes);
+            foreach (var i in Comp.ArmorLayers)
+            {
+                dtypes.RemoveAll(x => i.applyToDamageTypes.Contains(x));
+                if (dtypes.Count < 1) break;
+            }
+            return dtypes.Count > 0;
+        }
+        else return false;
+
+    }
+    public bool IgnoredBy(AttackInstance atk)
+    {
+        if (!isValid) return true;
+        if (applyToKeywords.Count < 1) return false;
+        if (Utility.ListContainsStrict(atk.attackSpecs, applyToKeywords)) return false;
+        return true;
     }
 }
 
@@ -265,19 +296,25 @@ public class CombatActionInstance
             selfStats.ModPosture(this.actionRef.PostureMod, false);
         }
 
+        if (this.sourceRef != null && this.sourceRef.Comp_Weapon != null)
+        {
+            Handler.LogLastUsedWeapon(ownerRef, sourceRef, this);
+        }
+
         if (this.actionRef is CombatAction_Attack)
         {   //if attack, check enemy defense comp (regardless of enemy defensive action)
 
             selfStats.Evasion = this.actionRef.Evasion;
 
             var attack = this.actionRef as CombatAction_Attack;
-            if (attack != null) Handler.LogLastUsedWeapon(ownerRef, sourceRef, this);
+            //if (attack != null) Handler.LogLastUsedWeapon(ownerRef, sourceRef, this);
 
             var targetSpecs = Handler.ActorStats[targetRef.RefID];
             var weapon = sourceRef == null ? null : sourceRef.Comp_Weapon;
             var atk = new AttackInstance();
             atk.moveType = attack.moveType;
             atk.damageAmount = attack.strength;
+            atk.attackSpecs.AddRange(actionRef.tags);
 
             string attackDefs = "";
             List<string> pierceDef = new List<string>();
@@ -328,7 +365,14 @@ public class CombatActionInstance
             //2. self piercing vs enemy defense (block/cover) -> hit/block
             foreach (var def in targetSpecs.GetDefenses(this, isPrecalc))
             {
-                if (isPrecalc)
+                if (!def.isValid) continue;
+                else if (def.IgnoredBy(atk))
+                {
+                    pierceDef.Add(LocalizeDictionary.QueryThenParse("ActionResult_tooltip_ignoreDef")
+                        .Replace("$armor$", def.Name));
+                    continue;
+                }
+                else if (isPrecalc)
                 {
                     blocked = true;
                     pierceDef.Add($"Blocked by [{def.Name}]");
@@ -379,19 +423,34 @@ public class CombatActionInstance
             // handler actorstats should be able to find this actionref defense component when attacked
             //Handler.
             var defense = this.actionRef as CombatAction_Defense;
-            lingeringDefense.Set(string.Empty, null);
 
-            if (defense.Defense != null)
-            {
+           // if (defense.Defense != null && sourceRef != null && sourceRef.Comp_Defense != null)
+           // {
                 // setup cover
-                lingeringDefense.Set(defense.ID, defense.Defense);
-            }
-            else if (defense.redirectKeyword.Count > 0 && sourceRef != null)
+          //      lingeringDefense.Set(defense.ID, sourceRef.Comp_Defense);
+          //  }
+            
+            if (defense.redirectKeyword.Count > 0 && sourceRef != null && sourceRef.Comp_Defense != null)
             {
                 // find existing equip and set it as lingering defense
-                lingeringDefense.Set(sourceRef.DisplayName, sourceRef.Comp_Defense);
+
+                lingeringDefense.Set($"{sourceRef.DisplayName} {actionRef.Name}", sourceRef.Comp_Defense, defense.redirectKeyword.Count > 0 ? defense.redirectKeyword : null);
             }
-            SetResult(ActionResult.Success, "");
+            else if (defense.redirectKeyword.Count > 0 && sourceRef != null && sourceRef.Comp_Weapon != null && sourceRef.Comp_Weapon.Defense != null)
+            {
+                // find existing equip and set it as lingering defense
+                lingeringDefense.Set($"{sourceRef.DisplayName} {actionRef.Name}", sourceRef.Comp_Weapon.Defense, defense.redirectKeyword.Count > 0 ? defense.redirectKeyword : null);
+            }
+            else
+            {
+                lingeringDefense.Set(string.Empty, null);
+            }
+            var s = LocalizeDictionary.QueryThenParse("ActionResult_tooltip_defense")
+                .Replace("$self$", this.ownerRef.FirstName)
+                .Replace("$name$", lingeringDefense.Name);
+
+            if (!isPrecalc && lingeringDefense.isValid) finalResults.Add(s);
+            SetResult(ActionResult.Success, s);
             //SetResult(ActionResult.None, $"Setting up defense [{lingeringDefense.Name}]");
         }
         // movement

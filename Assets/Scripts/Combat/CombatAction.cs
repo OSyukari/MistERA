@@ -112,7 +112,7 @@ public class CombatAction_Defense : CombatAction
     /// <summary>
     /// If this action uses external defense, then fill Defense
     /// </summary>
-    public ItemComponent_Defense Defense = null;
+    public ItemComponentTemplate_Defense Defense = null;
 
     /// <summary>
     /// If this action uses character's existing equipment (weapon/armor) as defense

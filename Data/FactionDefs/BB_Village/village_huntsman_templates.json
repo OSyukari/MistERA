@@ -60,6 +60,11 @@
                 "ID":"village_encounter_villager_patrol_1",
                 "frontline":["village_huntsman_scythe","village_huntsman_cutlass","village_huntsman_cleaver"],
                 "support":[]
+            },
+            {
+                "ID":"village_encounter_villager_patrol_2",
+                "frontline":["village_huntsman_scythe"],
+                "support":[]
             }
         ]
     },
@@ -70,6 +75,7 @@
             "zh-cn":
             {
 "village_encounter_villager_patrol_1":"村民巡逻队1",
+"village_encounter_villager_patrol_2":"村民巡逻队2",
 "village_mob":"发狂的村民",
 "village_huntsman_scythe":"%%village_mob%%",
 "village_huntsman_cutlass":"%%village_mob%%",

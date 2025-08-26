@@ -503,12 +503,13 @@ public class CombatStatManager : I_StatsManager
     {
         var result  =new List<DefenseStats>();
         var handler = source.Handler;
-        var lastAction_target = handler.LastActions.ContainsKey(source.targetRef.RefID) ? handler.LastActions[source.targetRef.RefID] : null;
+        var lastAction_target = handler.LastActionsOngoing.ContainsKey(source.targetRef.RefID) ? handler.LastActionsOngoing[source.targetRef.RefID] : null;
 
         // get cover / get active defense (both of them are activated by actions, so only one exist)
         // get active defense (weapon block)
-        if (lastAction_target != null && lastAction_target.lingeringDefense.isValid)
+        if (lastAction_target != null && lastAction_target.lingeringDefense.isValid && !handler.ActorStats[source.ownerRef.RefID].isPostureBroken)
         {
+            //Debug.Log($"lingering defense {lastAction_target.lingeringDefense.Name} found");
             result.Add(lastAction_target.lingeringDefense);
         }
         // spell effect constant defense goes here        

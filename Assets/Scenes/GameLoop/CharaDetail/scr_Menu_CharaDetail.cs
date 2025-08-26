@@ -225,28 +225,25 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
                 int score = b.GetRevealingScore(BodyEquipLayer.Skin);
 
+                Item_Instance skin, inner, outer;
+
                 if (!safeMode)
                 {
-                    if (score > 1 && !scr_System_CampaignManager.current.XrayMode && !scr_System_CampaignManager.current.DebugMode)
-                    {
-                        AddBox(textBox, box, "(" + score + ")");
-                        //AddBox(textBox, box, " ??? ");
-                    }
-                    else
-                    {
-                        int i = b.GetEquip(BodyEquipLayer.Skin, slot);
-                        //if (i > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName + "[" + score + "]");
-                        if (i > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName);
-                        else AddBox(textBox, box, " - ");
-                    }
+                    if (score > 1 
+                        && !scr_System_CampaignManager.current.XrayMode 
+                        && !scr_System_CampaignManager.current.DebugMode) AddBox(textBox, box, "(" + score + ")");
+                    else if (b.TryGetEquip(out skin, BodyEquipLayer.Skin, slot)) AddBox(buttonBox, box, skin.DisplayName);
+                    else if (b.TryGetCover(out skin, BodyEquipLayer.Skin, slot)) AddBox(buttonBox, box, skin.DisplayName, true);
+                    else AddBox(textBox, box, " - ");
+                    
                 }
 
-                int j = b.GetEquip(BodyEquipLayer.Inner, slot);
-                if (j > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(j).DisplayName);
+                if (        b.TryGetEquip(out inner, BodyEquipLayer.Inner, slot)) AddBox(buttonBox, box, inner.DisplayName);
+                else if (   b.TryGetCover(out inner, BodyEquipLayer.Inner, slot)) AddBox(buttonBox, box, inner.DisplayName, true);
                 else AddBox(textBox, box, " - ");
 
-                int k = b.GetEquip(BodyEquipLayer.Outer, slot);
-                if (k > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(k).DisplayName);
+                if (        b.TryGetEquip(out outer, BodyEquipLayer.Outer, slot)) AddBox(buttonBox, box, outer.DisplayName);
+                else if (   b.TryGetCover(out outer, BodyEquipLayer.Outer, slot)) AddBox(buttonBox, box, outer.DisplayName, true);
                 else AddBox(textBox, box, " - ");
 
 
@@ -476,11 +473,15 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     }
 
 
-    private void AddBox(TextMeshProUGUI box_prefab, RectTransform parent, string content)
+    private void AddBox(TextMeshProUGUI box_prefab, RectTransform parent, string content, bool dimColor = false)
     {
         TextMeshProUGUI text = Instantiate(box_prefab);
         text.text = content;
         text.GetComponent<RectTransform>().SetParent(parent, false);
+        if (dimColor)
+        {
+            text.color = scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color;
+        }
     }
 
     protected override void OnDestroy()

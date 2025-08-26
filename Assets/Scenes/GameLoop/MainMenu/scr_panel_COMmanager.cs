@@ -770,8 +770,14 @@ public class scr_panel_COMmanager : scr_Menu
                 if (j is Job_CharaCOM)
                 {
                     Job_CharaCOM jobChara = j as Job_CharaCOM;
+                    /*
+                    if (currentTarget == null || jobChara.targetActorRef != currentTarget.RefID)
+                    {
+                        trackedJobRefs.Remove(jobRef);
+                        continue;
+                    }*/
 
-                   // Debug.Log("Making Chara Job ");
+                    // Debug.Log("Making Chara Job ");
                     foreach (COM c in jobChara.allusableCOMs)
                     {
                         //Debug.Log("Making Chara COM " + c.ID);
@@ -1604,6 +1610,7 @@ else */
 
             }
 
+            tooltip += $"\nJobRef {jobRefID}";
 
             if (returnVal) display = display && true;
             else if (!(com.HideWhenInvalid || hidingOverride)) display = display && true;
@@ -2124,8 +2131,7 @@ else */
             switch (target)
             { 
                 case COMTabs.Interaction:
-                    if (scr_System_CampaignManager.current.CurrentTargetRef > 0) text.SetText("%%comManager_tab_interact%%");
-                    else text.SetText("%%comManager_tab_act%%");
+                    text.SetText("%%comManager_tab_act%%");
                     break;
                 case COMTabs.Sex:
                     if (scr_System_CampaignManager.current.displaySex) text.SetText("%%comManager_tab_sex%%");

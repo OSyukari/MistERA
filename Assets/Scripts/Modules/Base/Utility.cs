@@ -111,10 +111,15 @@ public static class Utility
 
         comparer = comparer ?? EqualityComparer<T>.Default;
 
-        var distinctL1 = Distinct(L1, comparer);
-        var distinctL2 = Distinct(L2, comparer);
-
-        return !distinctL2.Except(distinctL1, comparer).Any();
+        var distinctL1 = new HashSet<T>(L1, comparer); 
+        foreach (var item in L2)
+        {
+            if (distinctL1.Contains(item))
+                return true;
+        }
+        return false;
+        //return !distinctL2.Except(distinctL1, comparer).Any();
+        //return distinctL2.Any(item => distinctL1.Contains(item, comparer));
     }
 
     /// <summary>

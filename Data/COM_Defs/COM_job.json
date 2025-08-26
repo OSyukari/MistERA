@@ -586,9 +586,7 @@
                 "displayName": "com_job_farm_remove_displayName_1",
                 "timeScale": 90,
                 "comTags": [
-                    "job",
-                    "furniture",
-                    "farm_maintain"
+                    "furniture"
                 ],
                 "requirements": {
                     "requirement": {
@@ -658,7 +656,6 @@
                 "displayName": "com_job_farm_cultivate_crop_displayName",
                 "timeScale": 120,
                 "comTags": [
-                    "job",
                     "furniture"
                 ],
                 "requirements": {
@@ -723,9 +720,7 @@
                 "displayName": "com_job_farm_cultivate_meat_displayName",
                 "timeScale": 90,
                 "comTags": [
-                    "job",
-                    "furniture",
-                    "do_not_use"
+                    "furniture"
                 ],
                 "requirements": {
                     "requirement": {

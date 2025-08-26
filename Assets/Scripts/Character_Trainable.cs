@@ -585,6 +585,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [SerializeField] [JsonProperty] protected List<int> activeJobRefs = new List<int>();
     public void ChangeCurrentJob(Job job = null, string targetCOMid = "", string targetCOMTag = "")
     {
+        if (this.RefID == scr_System_CampaignManager.current.Player.RefID)
+        {
+            Debug.Log($"Changing player job from {(CurrentJob == null ? "null": CurrentJob.DisplayName+"_"+ CurrentJob.RefID)} to {(job == null ? "null" : job.DisplayName + "_" + job.RefID)}");
+        }
         this._cachedJobDescription = string.Empty;
         if (job != null && job == this.InteractionJob)
         {
@@ -1575,9 +1579,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             {
                 foreach (BodyPartEquipSlot slot in instance.availableSlots)
                 {
-                    int i = instance.GetEquip(layer, slot);
-                    if (i <= 0) continue;
-                    UnequipItem(i, (int)RevealingFilter, unequipArmor, unequipLocked);
+                    if (instance.TryGetEquip(out var item, layer, slot)) UnequipItem(item.RefID, (int)RevealingFilter, unequipArmor, unequipLocked);
                 }
 
             }

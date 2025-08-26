@@ -3,25 +3,40 @@
         "list":[
         {
             "id":"clothing_outer_head_helmet",
-            "displayName":"Hemlet",
+            "displayName":"Armor Hemlet",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
                         "equipSlot":["Hair"],
                         "revealing":"Armored",
-                        "equipLayer":"Outer"
+                        "equipLayer":"Outer",
+                        "coverSlot":["Face", "Eyes"]
                     }
                 }
             ]
         },{
             "id":"clothing_outer_breastplate",
-            "displayName":"Breastplate",
+            "displayName":"Armor Chestplate",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
+                        "revealing":"Armored",
+                        "equipLayer":"Outer",
+                        "coverSlot":["Neck"]
+                    }
+                }
+            ]
+        },{
+            "id":"clothing_outer_waistplate",
+            "displayName":"Armor Waistplate",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
                         "revealing":"Armored",
                         "equipLayer":"Outer"
                     }
@@ -29,29 +44,29 @@
             ]
         },{
             "id":"clothing_outer_gauntlet",
-            "displayName":"Gauntlet",
+            "displayName":"Armor Gauntlet",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":["Hand"],
+                        "equipSlot":["Hand","Arm"],
                         "revealing":"Armored",
                         "equipLayer":"Outer",
-                        "coverSlot":["Hand"]
+                        "coverSlot":["Hand","Arm"]
                     }
                 }
             ]
         },{
             "id":"clothing_outer_boots",
-            "displayName":"Boots",
+            "displayName":"Armor Boots",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
-                        "equipSlot":["Feet"],
+                        "equipSlot":["Feet", "Leg"],
                         "revealing":"Armored",
                         "equipLayer":"Outer",
-                        "coverSlot":["Feet"]
+                        "coverSlot":["Feet", "Leg"]
                     }
                 }
             ]
@@ -64,7 +79,8 @@
             "compType":"ItemComponent_Equippable",
             "comp_Equippable": {
                 "equipSlot":["Torso"],
-                "equipLayer":"Outer"
+                "equipLayer":"Outer",
+                "coverSlot":["Arm","Arm"]
             }
         }
     ]
@@ -139,7 +155,8 @@
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
                         "equipSlot":["Hand"],
-                        "equipLayer":"Outer"
+                        "equipLayer":"Outer",
+                        "coverSlot":["Hand"]
                     }
                 }
             ]
@@ -169,7 +186,7 @@
                         "equipSlot":["Lower"],
                         "equipLayer":"Outer",
                         "allowHalfDressed":true,
-                        "coverSlot":["Leg"]
+                        "coverSlot":["Leg","Leg"]
                     }
                 }
             ]

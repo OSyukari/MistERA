@@ -8,6 +8,14 @@ using System.Linq;
 [System.Serializable]
 public class ItemComponentTemplate_Weapon
 {
+    /// <summary>
+    /// Used in defense comp calculation
+    /// </summary>
+    public int Mass = 0;
+    /// <summary>
+    /// Provide speedmod and is indicator of how suitable it is as a weapon
+    /// </summary>
+    public int Balance = 0;
     public Dictionary<MoveType, DamageTypeValidator> DamageTypes = new Dictionary<MoveType, DamageTypeValidator>();
     [System.Serializable]
     public class DamageTypeValidator
@@ -92,6 +100,30 @@ public class ItemComponent_Weapon : ItemComponent_Base
             tooltip = LocalizeDictionary.QueryThenParse("ActionResult_tooltip_unsupportedWeapon");
             atk.damageTypes = new List<DamageType>();
             return false;
+        }
+    }
+
+
+    ItemComponentTemplate_Defense _defense;
+    ItemComponentTemplate _template;
+    ItemComponent_Defense _defenseComp;
+    [JsonIgnore]
+    public ItemComponent_Defense Defense
+    {
+        get
+        {
+            if (_defenseComp == null && this.Comp.Mass > 0)
+            {
+                _defense = new ItemComponentTemplate_Defense();
+                _defense.armorLayers.Add(new ItemComponentTemplate_Defense.Defense(DamageType.Slash, Comp.Mass));
+                _defense.armorLayers.Add(new ItemComponentTemplate_Defense.Defense(DamageType.Pierce, (int)Math.Ceiling((float)Comp.Mass / 2)));
+                _defense.armorLayers.Add(new ItemComponentTemplate_Defense.Defense(DamageType.Blunt, (int)Math.Ceiling((double)Comp.Mass / 5)));
+                _template = new ItemComponentTemplate();
+                _template.comp_Defense = _defense;
+                _defenseComp = new ItemComponent_Defense();
+                _defenseComp.CompTemplate = _template;
+            }
+            return _defenseComp;
         }
     }
 }

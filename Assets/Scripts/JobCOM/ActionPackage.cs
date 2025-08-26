@@ -1295,6 +1295,8 @@ public abstract class ActionPackage
                 }
                 var existingJob = job as Job_Sex_Group;
                 if (existingJob != null) existingJob.EndJob();
+
+                
                 /*
                 var doerCurrentJob = evp.Doer.CurrentJob;
                 var receiverCurrentJob = evp.Receiver == null ? null : evp.Receiver.CurrentJob;
@@ -1346,6 +1348,17 @@ public abstract class ActionPackage
                         Debug.LogError($"{c.FirstName} sleep error, either already sleeping or cannot sleep");
                     }
                 }
+            }
+        }
+
+        if (targetCOM != null && targetCOM.ExitJobOnExecution)
+        {
+            var skipRef = job is Job_CharaCOM ? (job as Job_CharaCOM).targetActorRef : -1;
+
+            foreach (var chara in job.actorRefID)
+            {
+                if (chara == skipRef) continue;
+                scr_System_CampaignManager.current.FindInstanceByID(chara).ChangeCurrentJob(null);
             }
         }
     }

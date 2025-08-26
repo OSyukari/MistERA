@@ -93,6 +93,8 @@ public class BodyPart_Instance
                 {
                     Debug.LogError($"{c.FirstName} error in initializing bodypartInstance {baseID}, duplicate equipslot key {key} in {String.Join("|",equipLayers)} {String.Join("|", availableSlots)}");
                 }
+                if (!coversIndex.ContainsKey(key)) coversIndex.Add(key, -1);
+
             }
         }
     }
@@ -155,6 +157,7 @@ public class BodyPart_Instance
         {
             var v = contentsIndex.Values.ToList();
             v.RemoveAll(x => x == -1);
+            v = v.Distinct().ToList();
             return v;
         } }
 
@@ -171,6 +174,7 @@ public class BodyPart_Instance
         } }
 
     //List<Item_Instance> equippedItems;
+    [SerializeField][JsonProperty] Dictionary<string, int> coversIndex = new Dictionary<string, int>();
     [SerializeField][JsonProperty] Dictionary<string, int> contentsIndex = new Dictionary<string, int>();
 
 
@@ -192,20 +196,22 @@ public class BodyPart_Instance
             string Tuple = comp.equipLayer.ToString() + "||" + slot.ToString();
 
             /// CODE START
-            if (contentsIndex.ContainsKey(Tuple))
+            if (coversIndex.ContainsKey(Tuple))
             {
-                if (contentsIndex[Tuple] == -1)
+                //cannot equip same item into its main slot and cover slot -> both shoes equipped on same slot
+                if (contentsIndex.ContainsKey(Tuple) && contentsIndex[Tuple] == item.RefID) continue;
+                else if (coversIndex[Tuple] == -1)
                 {
-                    contentsIndex[Tuple] = item.RefID;
+                    coversIndex[Tuple] = item.RefID;
                     // equip success
                     ClearEquipCache();
                     equipped = true;
                     slots.RemoveAt(i);
                 }
-                else if (contentsIndex[Tuple] != -1 && contentsIndex[Tuple] != item.RefID && forceEquip == true)
+                else if (coversIndex[Tuple] != -1 && coversIndex[Tuple] != item.RefID && forceEquip == true)
                 {
-                    var returnVal = contentsIndex[Tuple];
-                    contentsIndex[Tuple] = item.RefID;
+                    var returnVal = coversIndex[Tuple];
+                    coversIndex[Tuple] = item.RefID;
 
                     Owner.UnequipItem(returnVal);
                     ClearEquipCache();
@@ -303,28 +309,32 @@ public class BodyPart_Instance
     public bool UnequipItem(int itemRefID)
     {
         bool returnVal = false;
-        List<string> removeList = new List<string>();
         /// CODE START
         if (contentsIndex.ContainsValue(itemRefID))
         {
-            foreach (var pair in contentsIndex)
+            var list = contentsIndex.Keys.ToList();
+            foreach (var key in list)
             {
-                if (pair.Value == itemRefID)
+                if (contentsIndex[key] == itemRefID)
                 {
-                    removeList.Add(pair.Key);
-                    //contentsIndex[pair.Key] = -1;
-                    //equippedRefIDs.Remove(itemRefID);
                     returnVal = true;
+                    contentsIndex[key] = -1;
                 }
             }
         }
 
-        foreach(var i in removeList)
+        if (coversIndex.ContainsValue(itemRefID))
         {
-            contentsIndex[i] = -1;
-            //returnVal = true;
+            var list = coversIndex.Keys.ToList();
+            foreach (var key in list)
+            {
+                if (coversIndex[key] == itemRefID)
+                {
+                    returnVal = true;
+                    coversIndex[key] = -1;
+                }
+            }
         }
-
 
         if (returnVal)
         {
@@ -332,11 +342,7 @@ public class BodyPart_Instance
             return returnVal;
         }
 
-        foreach (BodyInternal_Instance i in this.internals)
-        {
-            returnVal = i.UnequipItem(itemRefID) || returnVal;
-        }
-        /// CODE END
+        foreach (BodyInternal_Instance i in this.internals) returnVal = i.UnequipItem(itemRefID) || returnVal;
         return returnVal;
     }
 
@@ -351,13 +357,27 @@ public class BodyPart_Instance
         return false;
     }
 
-    public bool TryGetEquip(out int value, BodyEquipLayer i, BodyPartEquipSlot j)
+    public bool TryGetEquip(out Item_Instance value, BodyEquipLayer i, BodyPartEquipSlot j)
     {
-        value = GetEquip(i, j);
-        return value != -1;
+        value = null;
+        var v = GetEquip(i, j);
+        if (v != -1) value = scr_System_CampaignManager.current.FindItemInstanceByID(v);
+        return value != null;
     }
-
-    public int GetEquip(BodyEquipLayer i, BodyPartEquipSlot j)
+    public bool TryGetCover(out Item_Instance value, BodyEquipLayer i, BodyPartEquipSlot j)
+    {
+        value = null;
+        var v = GetCover(i, j);
+        if (v != -1) value = scr_System_CampaignManager.current.FindItemInstanceByID(v);
+        return value != null;
+    }
+    protected int GetCover(BodyEquipLayer i, BodyPartEquipSlot j)
+    {
+        string Tuple = i.ToString() + "||" + j.ToString();
+        if (coversIndex.ContainsKey(Tuple)) return coversIndex[Tuple];
+        else return -1;
+    }
+    protected int GetEquip(BodyEquipLayer i, BodyPartEquipSlot j)
     {
 
         string Tuple = i.ToString() + "||" + j.ToString();
@@ -367,17 +387,11 @@ public class BodyPart_Instance
 
     public Item_Instance GetRandArmor(BodyPartEquipSlot slot)
     {
-        int itemID = -1;
-        if (TryGetEquip(out itemID, BodyEquipLayer.Outer, slot))
-        {
-            var item = scr_System_CampaignManager.current.FindItemInstanceByID(itemID);
-            if (item.Comp_Defense != null) return item;
-        }
-        if (TryGetEquip(out itemID, BodyEquipLayer.Inner, slot))
-        {
-            var item = scr_System_CampaignManager.current.FindItemInstanceByID(itemID);
-            if (item.Comp_Defense != null) return item;
-        }
+        Item_Instance item;
+        if (TryGetEquip(out item, BodyEquipLayer.Outer, slot) && item.Comp_Defense != null) return item;
+        if (TryGetCover(out item, BodyEquipLayer.Outer, slot) && item.Comp_Defense != null) return item;
+        if (TryGetEquip(out item, BodyEquipLayer.Inner, slot) && item.Comp_Defense != null) return item;
+        if (TryGetCover(out item, BodyEquipLayer.Inner, slot) && item.Comp_Defense != null) return item;
         return null;
     }
 
@@ -411,9 +425,10 @@ public class BodyPart_Instance
         {
 
             string Tuple = layer.ToString() + "||" + slot.ToString();
-            if (contentsIndex.ContainsKey(Tuple) && contentsIndex[Tuple] > 0)
-                score += (int)(scr_System_CampaignManager.current.FindItemInstanceByID(contentsIndex[Tuple]).GetComp("ItemComponent_Equippable") as ItemComponent_Equippable).revealing;
-
+            if (contentsIndex.TryGetValue(Tuple, out var content) && content > 0)
+                score += (int)(scr_System_CampaignManager.current.FindItemInstanceByID(content).GetComp("ItemComponent_Equippable") as ItemComponent_Equippable).revealing;
+            if (coversIndex.TryGetValue(Tuple, out var cover) && cover > 0)
+                score += (int)(scr_System_CampaignManager.current.FindItemInstanceByID(cover).GetComp("ItemComponent_Equippable") as ItemComponent_Equippable).revealing;
         }
         return score;
     }

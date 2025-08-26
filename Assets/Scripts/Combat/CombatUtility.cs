@@ -119,7 +119,7 @@ public static class CombatUtility
     {
         //if (defense.Defense == null) return true;
         if (defense.redirectKeyword.Count < 1) return true;
-        else return item != null && Utility.ListContainsStrict(item.Tags, defense.redirectKeyword);
+        else return item != null;// && Utility.ListContainsStrict(item.Tags, defense.redirectKeyword);
     }
 
     public static bool ValidateItem(HashSet<string> h_body, HashSet<string> h_equip, List<string> keywords)
@@ -174,12 +174,14 @@ public static class CombatUtility
     }
 
     /// <summary>
+    /// U N I M P L E M E N T E D 
     /// Actually returns a list of items instead of a list of comp... since comp cant backtrace to parent.
     /// </summary>
     /// <param name="keywords">Must not be empty and contains at least 1 element</param>
     /// <param name="list"></param>
     public static void GetValidDefenseComps(BodyPart_Instance from, List<string> keywords, ref List<Item_Instance> list)
     {
+        /*
         if (keywords.Count < 1) return;
         var h_body = new HashSet<string>(from.Base.tags);
         foreach (var i in from.EquippedItems)
@@ -198,7 +200,7 @@ public static class CombatUtility
                 }
             }
             if (isValid) list.Add(i);
-        }
+        }*/
     }
 
     public static string GetDamageTypeString(List<DamageType> types, bool initialsOnly, string separator = "")

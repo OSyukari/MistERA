@@ -20,11 +20,16 @@ public class ItemComponentTemplate_Defense
     {
         public List<DamageType> applyToDamageTypes = new List<DamageType>();
         public int damageReductionValue = 0;
+
+        public Defense() { }
+        public Defense(DamageType dtype, int damageReductionValue)
+        {
+            this.applyToDamageTypes.Add(dtype);
+            this.damageReductionValue = damageReductionValue;
+        }
     }
 
     public List<Defense> armorLayers = new List<Defense>();
-
-
 }
 
 

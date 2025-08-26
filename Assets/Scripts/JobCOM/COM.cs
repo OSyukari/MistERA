@@ -244,6 +244,8 @@ public class COM: I_SerializationCallbackReceiver
     public string displayName = "";
     public bool VariantDoNotReadRequirement = false;
 
+    public bool ExitJobOnExecution = false;
+
     public List<COM_Variant> variants = new List<COM_Variant>();
     //public List<string> conflictCOMIDs = new List<string>();
     [JsonIgnore] public bool isInteraction { get { return comTags.Contains("interaction") || comTags.Contains("sex"); } }

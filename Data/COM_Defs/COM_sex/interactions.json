@@ -111,6 +111,7 @@
             "VariantDoNotReadRequirement":true,
             "HideWhenInvalid":true,
             "comTags":["action","endSex","NonInteraction"],
+            "ExitJobOnExecution":true,
             "requirements":{
                 "requirement":{ 
                     "req_Receivers":{ "requireConscious":false, "requireAction": false } 

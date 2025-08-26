@@ -46,12 +46,16 @@ public abstract class ItemComponent_Base
     }
 
     [JsonIgnore] protected ItemComponentTemplate compTemplate = null;
-    [JsonIgnore] protected virtual ItemComponentTemplate CompTemplate
+    [JsonIgnore] public virtual ItemComponentTemplate CompTemplate
     {
         get
         {
             if (compTemplate == null) compTemplate = Parent.GetCompTemplateByID(CompType);
             return compTemplate;
+        }
+        set
+        {
+            this.compTemplate = value;
         }
     }
 

@@ -28,7 +28,7 @@ public abstract class SpineLoader : MonoBehaviour
     {
         // Destroy(spineLoader_Texture);
 #if UNITY_EDITOR
-        Debug.Log("OnDestroy called on SpineLoader!");
+       // Debug.Log("OnDestroy called on SpineLoader!");
 #endif
     }
     public virtual void MatchWithBound()
