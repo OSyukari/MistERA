@@ -10,7 +10,7 @@ public class DefenseStats
     public string Name = string.Empty;
     public ItemComponent_Defense Comp = null;
     public List<string> applyToKeywords = new List<string>();
-
+    
     public bool isValid { get { return Comp != null && Name != null && Name != string.Empty; } }
     /// <summary>
     /// Will only set lingeringDefense when existing is null (first set) or new is null (reset)
@@ -24,7 +24,7 @@ public class DefenseStats
         Comp = def;
         applyToKeywords.Clear();
         if (applyTo != null) applyToKeywords.AddRange(applyTo);
-        Debug.Log($"Setting lingering defense to {Name}");
+        //Debug.Log($"Setting lingering defense to {Name}");
         
     }
     /// <summary>
@@ -98,7 +98,7 @@ public class CombatActionInstance
             return list;
         } }
     public bool isEOTAction = false;
-
+    public bool isCounter = false;
     // Handler
     [NonSerialized] public CombatInstance Handler = null;
 
@@ -107,7 +107,9 @@ public class CombatActionInstance
     [NonSerialized] public Item_Instance sourceRef = null;
     public CombatAction actionRef = null;
 
-
+    // SnapshotData
+    public AttackInstance Attack = null;
+    public int Distance = -1;
     public string ActionRefTooltip
     { get
         {
@@ -118,8 +120,8 @@ public class CombatActionInstance
     public DefenseStats lingeringDefense = new DefenseStats();
 
     // Handler Inject Info
-    protected int RoundIndex = 0;
-    public float BaseSpeed = 0f;
+    public int RoundIndex = 0;
+    public int BaseSpeed = 0;
 
     // Targets
     public Character_Trainable targetRef = null;
@@ -137,6 +139,7 @@ public class CombatActionInstance
     [NonSerialized] public CombatActionInstance self_action_previous = null;
     [NonSerialized] public CombatActionInstance self_action_next = null;
 
+    
     List<string> finalResults = new List<string>();
     public void AddFinalMessage(string s)
     {
@@ -144,18 +147,26 @@ public class CombatActionInstance
     }
     public string FinalResult { get { return String.Join("\n", finalResults); } }
 
-    public void ResetPointers()
+
+    public bool Hidden = false;
+    public void ResetPointers(bool fullreset = false)
     {
         this.action_next = null;
         this.action_previous = null;
         this.self_action_next = null;
         this.self_action_previous = null;
         this._cached = false;
+        this.Hidden = false;
+        if (fullreset)
+        {
+            this.triggered = false;
+            this.reacted = false;
+        }
     }
 
     public string Description { get
         {
-            return $"{(isEOTAction ? "EX" : this.ActionSlotIndex+1)}: {(sourceRef == null ? "" : $"{sourceRef.DisplayName} ")} {(actionRef == null ? " - " : actionRef.Name)}{(targetRef == null ? "" : $" -> {Handler.GetName(targetRef)}")}";
+            return $"{(isEOTAction||isCounter ? "EX" : this.ActionSlotIndex+1)}: {(sourceRef == null ? "" : $"{sourceRef.DisplayName} ")} {(isCounter ? LocalizeDictionary.QueryThenParse("combat_action_counter") :"")}{(actionRef == null ? " - " : actionRef.Name)}{(targetRef == null ? "" : $" -> {Handler.GetName(targetRef)}")}";
         } }
 
 
@@ -248,13 +259,14 @@ public class CombatActionInstance
 
         // first check HP
         var selfStats = this.Handler.ActorStats[ownerRef.RefID];
-        if (selfStats.HP.Value < 1)
+        if (!selfStats.CanAct)
         {
             string s = LocalizeDictionary.QueryThenParse("ActionResult_tooltip_cannotAct_lowHP")
                 .Replace("$self$", Handler.GetName(ownerRef.RefID));
             // cannot act
             if (!isPrecalc) finalResults.Add(s);
             SetResult(ActionResult.Failure, s);
+            Hidden = true;
             return;
         }
         else if (selfStats.PostureStatus == CombatStatManager.PostureState.Broken)
@@ -289,11 +301,22 @@ public class CombatActionInstance
         if (this.actionRef.Movement != 0)
         {
             Handler.Move(this, this.actionRef.Movement, ownerRef, targetRef, isPrecalc);
-            selfStats.ModPosture(Math.Abs(this.actionRef.Movement), false);
+
+            if (!isPrecalc)
+            {
+                var modvalue = Math.Abs(this.actionRef.Movement);
+                selfStats.ModPosture(modvalue, false);
+                finalResults.Add(LocalizeDictionary.QueryThenParse("ActionResult_tooltip_postureMod_mov")
+                    .Replace("$self$", Handler.GetName(ownerRef.RefID))
+                    .Replace("$amount$", modvalue.ToString("+0;-#")));
+            }
         }
-        if (this.actionRef.PostureMod != 0)
+        if (this.actionRef.PostureMod != 0 && !isPrecalc)
         {
             selfStats.ModPosture(this.actionRef.PostureMod, false);
+            finalResults.Add(LocalizeDictionary.QueryThenParse("ActionResult_tooltip_postureMod")
+                .Replace("$self$", Handler.GetName(ownerRef.RefID))
+                .Replace("$amount$", this.actionRef.PostureMod.ToString("+0;-#")));
         }
 
         if (this.sourceRef != null && this.sourceRef.Comp_Weapon != null)
@@ -306,26 +329,45 @@ public class CombatActionInstance
 
             selfStats.Evasion = this.actionRef.Evasion;
 
-            var attack = this.actionRef as CombatAction_Attack;
-            //if (attack != null) Handler.LogLastUsedWeapon(ownerRef, sourceRef, this);
-
             var targetSpecs = Handler.ActorStats[targetRef.RefID];
             var weapon = sourceRef == null ? null : sourceRef.Comp_Weapon;
-            var atk = new AttackInstance();
-            atk.moveType = attack.moveType;
-            atk.damageAmount = attack.strength;
-            atk.attackSpecs.AddRange(actionRef.tags);
+
+
+            if (!isPrecalc && targetSpecs != null && targetSpecs.isPostureBroken && weapon != null && weapon.Comp.ExecutionMove != "")
+            {
+                var exec = scr_System_Serializer.current.MasterList.CombatActions.GetByID(weapon.Comp.ExecutionMove);
+                if (exec != null)
+                {
+                    var newact = new CombatActionInstance(this.Handler, this.ownerRef, this.sourceRef, exec, this.targetRef, this.BaseSpeed, this.RoundIndex, this.ActionSlotIndex, this.isEOTAction);
+                    if (newact.Validate())
+                    {
+                        var ss = LocalizeDictionary.QueryThenParse("ActionResult_tooltip_attackExecution")
+                            .Replace("$name$", this.targetRef.CallName)
+                            .Replace("$exec$", exec.Name);
+                        finalResults.Add(ss);
+                        this.actionRef = exec;
+                    }
+                }
+            }
+
+            var attack = this.actionRef as CombatAction_Attack;
+            //if (attack != null) Handler.LogLastUsedWeapon(ownerRef, sourceRef, this);
+            Attack = new AttackInstance();
+            Attack.moveType = attack.moveType;
+            Attack.damageAmount = attack.strength;
+            Attack.tracking = CombatUtility.FinalTracking(attack, self_action_previous);// attack.tracking + (action_previous == null ? 0 : attack.extraMods.GetValue(CombatUtility.TrackingKey, action_previous.Tags));
+            Attack.attackSpecs.AddRange(actionRef.tags);
 
             string attackDefs = "";
             List<string> pierceDef = new List<string>();
             if (weapon != null)
             {
-                bool damage = weapon.DealDamage(atk, out var ttip);
-                if (!damage) atk.damageAmount = 0;
+                bool damage = weapon.DealDamage(Attack, out var ttip);
+                if (!damage) Attack.damageAmount = 0;
                 attackDefs += ttip;
             }
 
-
+            Distance = this.targetRef != null ? Handler.GetCombatDistance(this.ownerRef, this.targetRef, isPrecalc) : 0;
             // maybe recalculate attack power using user stats
             // first check if weapon can be used
             if (sourceRef != null && Handler.isWeaponInCooldown(sourceRef, out int round))
@@ -338,26 +380,31 @@ public class CombatActionInstance
                 SetResult(ActionResult.Failure, s);
                 return;
             }
-            else if (attack.range >= 0 && Handler.GetCombatDistance(this.ownerRef, this.targetRef) > attack.range)
+            else if (attack.range >= 0 && Distance > attack.range)
             {
                 // check range / out of distance
                 var s = LocalizeDictionary.QueryThenParse("ActionResult_tooltip_insufficientReach")
                     .Replace("$reach$",$"{attack.range}")
-                    .Replace("$distance$", $"{Handler.GetCombatDistance(this.ownerRef, this.targetRef)}");
+                    .Replace("$distance$", $"{Distance}");
                 if (!isPrecalc) finalResults.Add(s);
                 SetResult(ActionResult.Miss, s);
                 return;
             }
             //1. self tracking vs enemy movement (evasion) -> hit/evaded/miss
-            else if (targetSpecs.Evade(attack.tracking))
+            else if (targetSpecs.Evade(Attack.tracking))
             {
                 //    - miss (no movement)
                 //    - evaded (has movement)
                 var s = LocalizeDictionary.QueryThenParse("ActionResult_tooltip_insufficientTracking")
-                    .Replace("$tracking$", $"{attack.tracking}")
+                    .Replace("$tracking$", $"{Attack.tracking}")
                     .Replace("$evasion$", $"{targetSpecs.Evasion_Pre}");
                 if (!isPrecalc) finalResults.Add(s);
                 SetResult(ActionResult.Miss, s);
+                return;
+            }
+            else if (attack.strength < 1 && Attack.damageAmount < 1)
+            {   // does not check for damage, immediate success
+                SetResult(ActionResult.Success,"");
                 return;
             }
 
@@ -366,7 +413,7 @@ public class CombatActionInstance
             foreach (var def in targetSpecs.GetDefenses(this, isPrecalc))
             {
                 if (!def.isValid) continue;
-                else if (def.IgnoredBy(atk))
+                else if (def.IgnoredBy(Attack))
                 {
                     pierceDef.Add(LocalizeDictionary.QueryThenParse("ActionResult_tooltip_ignoreDef")
                         .Replace("$armor$", def.Name));
@@ -377,18 +424,18 @@ public class CombatActionInstance
                     blocked = true;
                     pierceDef.Add($"Blocked by [{def.Name}]");
                 }
-                else if (def.Pierce(atk))
+                else if (def.Pierce(Attack))
                 {
                     pierceDef.Add(LocalizeDictionary.QueryThenParse("ActionResult_tooltip_pierceDef")
                         .Replace("$armor$", def.Name)
-                        .Replace("$amount$", $"{atk.damageAmount}"));
+                        .Replace("$amount$", $"{Attack.damageAmount}"));
                     //pierceDef.Add($"Pierced through [{def.Name}], remaining pwr [{atk.damageAmount}]");
                 }
-                else if (def.Bypass(atk))
+                else if (def.Bypass(Attack))
                 {
                     pierceDef.Add(LocalizeDictionary.QueryThenParse("ActionResult_tooltip_bypassDef")
                         .Replace("$armor$", def.Name)
-                        .Replace("$amount$", $"{atk.damageAmount}"));
+                        .Replace("$amount$", $"{Attack.damageAmount}"));
                     //pierceDef.Add($"Went though [{def.Name}], remaining pwr [{atk.damageAmount}]");
                 }
                 else
@@ -406,12 +453,13 @@ public class CombatActionInstance
                 finalResults.AddRange(pierceDef);
             }
 
-            if (blocked || (!isPrecalc && atk.damageAmount < 1)) SetResult(ActionResult.Blocked, $"{String.Join("\n", attackDefs)}\n{String.Join("\n",pierceDef)}");
+            if (blocked || (!isPrecalc && Attack.damageAmount < 1)) SetResult(ActionResult.Blocked, $"{String.Join("\n", attackDefs)}\n{String.Join("\n",pierceDef)}");
             else SetResult(ActionResult.Hit, $"{String.Join("\n", attackDefs)}\n{String.Join("\n", pierceDef)}");
 
-            if (!isPrecalc && atk.damageAmount >= 1)
+            if (!isPrecalc && Attack.damageAmount >= 1)
             {
-                Handler.Damage(this,ownerRef, targetRef, atk.damageAmount);
+                Handler.Damage(this,ownerRef, targetRef, Attack.damageAmount);
+                // check combat end
             }
         }
         else if (this.actionRef is CombatAction_Defense)
@@ -532,21 +580,18 @@ public class CombatActionInstance
 
                 if (self_action_previous == null)
                 {
-                    self_action_previous = previous == null || previous.BaseSpeed > this.BaseSpeed ? previous : null;
+                    self_action_previous = previous == null || previous.ActionSlotIndex < this.ActionSlotIndex ? previous : null;
                 }
                 var usingMods = new List<Stat_Modifier>();
                 var stats = Handler.ActorStats[this.ownerRef.RefID];
 
                 // base speed
-                _cachedSpeed = BaseSpeed + actionRef.speedMod;
+                _cachedSpeed = BaseSpeed + actionRef.speedMod + (sourceRef == null || sourceRef.Comp_Weapon == null ? 0 : sourceRef.Comp_Weapon.Comp.Balance);
 
                 // previous action conditional
                 if (self_action_previous != null)
                 {
-                    foreach (var mod in this.actionRef.speedMods)
-                    {
-                        if (self_action_previous.isValidTarget(mod)) _cachedSpeed += mod.Value;
-                    }
+                    _cachedSpeed += actionRef.extraMods.GetValue(CombatUtility.SpeedKey, self_action_previous.Tags);
                 }
 
                 // in-combat mods applied by allies or enemy
@@ -554,32 +599,6 @@ public class CombatActionInstance
             }
             return _cachedSpeed;
         }
-    }
-
-    /// <summary>
-    /// return true if this action (as the previous action) triggers next action's speed mod
-    /// </summary>
-    /// <param name="mod"></param>
-    /// <returns></returns>
-    public bool isValidTarget(CombatAction.ConditionalSpeedMods mod)
-    {
-        if (mod.requireTags.Count < 1) return true;
-        var kwds = this.Tags;
-        return Utility.ListContainsStrict(kwds, mod.requireTags);
-    }
-
-    /// <summary>
-    /// return true if this action (as the previous action) triggers th
-    /// </summary>
-    /// <param name="trigger"></param>
-    /// <returns></returns>
-    public bool isValidTarget(CombatActionInstance source)
-    {
-        if (this.reacted) return false;
-        var trigger = this.actionRef.trigger;
-        if (!trigger.isValid) return false;
-        // TODO
-        return true;
     }
 
     /// <summary>
@@ -598,16 +617,29 @@ public class CombatActionInstance
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    public bool TryReactTo(CombatActionInstance instance, out CombatActionInstance triggered)
+    public bool TryReactTo(CombatActionInstance instance, out CombatActionInstance triggered, bool isPrecalc)
     {
-        if (!this.triggered && !Handler.ActorStats[this.ownerRef.RefID].isPostureBroken && CombatUtility.CanReactTo(this, instance))
+
+        triggered = null;
+        // Debug.Log($"{this.ownerRef.CallName}{this.actionRef.Name} TryReactTo {instance.ownerRef.CallName}{instance.actionRef.Name}");
+        if (!Handler.ActorStats[this.ownerRef.RefID].CanAct) return false;
+        if (!Handler.ActorStats[this.ownerRef.RefID].isPostureBroken && this.CanReactTo(instance, isPrecalc, out var counter))
         {
             this.triggered = true;
+            //Debug.Log($"{this.actionRef.Name} triggered!");
             // if there is trigger and can trigger
             // flag self triggered to prevent infinite trigger loop
             // TODO
-            triggered = null;
 
+
+            triggered = new CombatActionInstance(this.Handler, this.ownerRef, this.sourceRef, counter, instance.ownerRef, instance.BaseSpeed, instance.RoundIndex, instance.ActionSlotIndex, false);
+            triggered.isCounter = true;
+            if (triggered.Validate()) return true;
+            else
+            {
+                Debug.Log($"{this.actionRef.Name} triggered action failed validation");
+                return false;
+            }
         }
         else
         {
@@ -616,4 +648,34 @@ public class CombatActionInstance
         return triggered != null;
     }
 
+    protected bool CanReactTo(CombatActionInstance instance, bool isPrecalc, out CombatAction counter)
+    {
+        counter = null;
+        var a = this.ownerRef;
+        var b = instance.ownerRef;
+        bool isInSameTeam = Handler.teamA.hasActor(a.RefID) == Handler.teamA.hasActor(b.RefID);
+        if (this.triggered) return false;
+        if (instance.reacted) return false;
+        var trigger = this.actionRef.Reaction;
+        if (!trigger.isValid) return false;
+        if (isInSameTeam && !trigger.TriggerConditions.targetFriendly) return false;
+        if (!isInSameTeam && !trigger.TriggerConditions.targetHostile) return false;
+
+        if (trigger.CounterMoves.Count < 2) counter = scr_System_Serializer.current.MasterList.CombatActions.GetByID(trigger.CounterMoves[0]);
+        else
+        {
+            int key = (int)instance.Speed % trigger.CounterMoves.Count;
+            counter = scr_System_Serializer.current.MasterList.CombatActions.GetByID(trigger.CounterMoves[key]);
+        }
+        if (counter == null) return false;
+        var i = trigger.TriggerConditions;
+        if (!i.isActive) return false;
+       
+        if (i.MaxRange > -1 && Handler.GetCombatDistance(ownerRef, instance.ownerRef, isPrecalc) > i.MaxRange) return false;
+        if (i.MaxEvasion > -1 && Handler.ActorStats[targetRef.RefID].Evasion > i.MaxEvasion) return false;
+        if (i.requireTags.Count > 0 && !Utility.ListContainsStrict(instance.Tags, i.requireTags)) return false;
+        
+        return true;
+
+    }
 }

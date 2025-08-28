@@ -62,7 +62,8 @@
             { "ID":"clothing_skin_panty" },
             { "ID":"clothing_skin_contactlens" },
             { "ID":"clothing_skin_hair_hairpin" },
-            { "ID":"clothing_skin_bra" }
+            { "ID":"clothing_skin_bra" },
+            { "ID":"firearm_handgun" }
         ],
       "Skills": null
     },   

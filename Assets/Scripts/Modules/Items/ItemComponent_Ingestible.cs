@@ -51,13 +51,21 @@ public class ItemComponentTemplate_Ingestible
 public class ItemComponent_Ingestible : ItemComponent_Base
 {
     [JsonIgnore] public override string CompType { get { return "ItemComponent_Ingestible"; } }
+    string _tooltip = null;
     [JsonIgnore] public override string Tooltip
     {
         get
         {
-            string s = "";
-            foreach (ItemComponentTemplate_Ingestible.Ingestible_IngestMethod i in this.ingestMethod) s += String.Join(" ", i.bodyTags);
-            return $"Ingestible, amount {amount}" + " ingest methods [" + s + "]";
+            if (_tooltip == null)
+            {
+                string s = "";
+                foreach (ItemComponentTemplate_Ingestible.Ingestible_IngestMethod i in this.ingestMethod) s += String.Join(" ", i.bodyTags);
+                _tooltip = LocalizeDictionary.QueryThenParse("ItemComponent_Ingestible_tooltip")
+                    .Replace("$amount$", $"{amount}")
+                    .Replace("$methods$", s); //$" Ingestible, amount {amount}" + " ingest methods [" + s + "]";
+            }
+            return _tooltip;
+
         }
     }
 

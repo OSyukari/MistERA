@@ -30,6 +30,8 @@ public class ItemComponentTemplate_Weapon
             atk.damageAmount *= convertRatio;
         }
     }
+
+    public string ExecutionMove = "";
 }
 
 
@@ -43,14 +45,33 @@ public class ItemComponentTemplate_Weapon
 public class ItemComponent_Weapon : ItemComponent_Base
 {
     [JsonIgnore] public override string CompType { get { return "ItemComponent_Weapon"; } }
+    string _tooltip = null;
     [JsonIgnore]
     public override string Tooltip
     {
         get
         {
-            var template = this.CompTemplate.comp_Weapon;
-            List<string> s = new List<string>();
-            return $"is weapon.";
+            if (_tooltip == null)
+            {
+                var template = this.CompTemplate.comp_Weapon;
+                List<string> s = new List<string>();
+                s.Add(LocalizeDictionary.QueryThenParse("ItemComponent_Weapon_tooltip")
+                    .Replace("$balance$", $"{template.Balance}")
+                    .Replace("$mass$", $"{template.Mass}"));
+                foreach(var kvp in template.DamageTypes)
+                {
+                    s.Add(LocalizeDictionary.QueryThenParse("ItemComponent_Weapon_tooltip_dtypes")
+                    .Replace("$move$", $"{kvp.Key}")
+                    .Replace("$mult$", $"{kvp.Value.convertRatio}")
+                    .Replace("$dtypes$", $"{String.Join("|", kvp.Value.targetDamageTypes)}"));
+                }
+                if (this.Defense != null)
+                {
+                    s.Add(this.Defense.Tooltip);
+                }
+                _tooltip = String.Join("\n", s);
+            }
+            return _tooltip;
         }
     }
 

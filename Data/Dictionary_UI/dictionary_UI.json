@@ -322,7 +322,6 @@
 "msg_tradeSuccess":"全部贸易订单都顺利结算",
 "msg_tradeFailure":"部分订单没能结算",
 
-"ui_recipe_tooltip":"耗时：$time$分钟\n技能需求：$skillreqs$\n道具消耗：$itemreqs$\n\n$basetooltip$",
 
 "ui_map_floor_roomsList":"房间列表",
 "ui_map_floor_charaInRoom":"房间内成员",
@@ -651,8 +650,6 @@
 
 "msg_tradeSuccess":"All trade orders completed",
 "msg_tradeFailure":"Some trade orders failed to complete",
-
-"ui_recipe_tooltip":"Time Cost: $time$ minutes\nSkill Requirement: $skillreqs$\nItem Requirement: $itemreqs$\n\n$basetooltip$",
 
 "ui_map_floor_roomsList":"Room List",
 "ui_map_floor_charaInRoom":"Chara in Room",

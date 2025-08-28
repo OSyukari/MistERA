@@ -64,8 +64,22 @@ public class Item_Instance : IDisposable, I_Disposable
     [JsonIgnore] public string Tooltip { get { 
             
             List<string> compTooltips = new List<string>();
-            foreach(var c in Comps) compTooltips.Add(c.Tooltip);
-            return Parent.Tooltip + (compTooltips.Count > 0 ? "\n\n"+String.Join("\n",compTooltips) : ""); } }
+            foreach (var c in Comps)
+            {
+                var cc = c.Tooltip;
+                if (c is ItemComponent_Weapon)
+                {
+                    var template = (c as ItemComponent_Weapon).Comp;
+                    var execMove = template.ExecutionMove == "" ? null : Masterlist_Items.GetByID(template.ExecutionMove);
+                    var execName = execMove == null ? "" : LocalizeDictionary.QueryThenParse("ItemComponent_Weapon_tooltip_execution").Replace("$name$", execMove.DisplayName);
+                    cc.Replace("$execution$", execName);
+                }
+                compTooltips.Add(c.Tooltip);
+            }
+            return LocalizeDictionary.QueryThenParse("Item_Instance_Tooltip")
+                .Replace("$tags$", String.Join("|", this.Tags))
+                .Replace("$parent$", Parent.Tooltip)
+                .Replace("$comps$", compTooltips.Count > 0 ? String.Join("\n\n", compTooltips) : ""); } }
     [JsonIgnore] public bool Stackable { get { return Parent.Stackable && this.compInstances.Count < 1; } }
     [JsonIgnore] public int Cleanliness { get { return Parent.cleanlinessMod; } }
     [JsonIgnore] public bool isTrash { get { return Parent.Tags.Contains("trash"); } }

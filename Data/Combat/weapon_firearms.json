@@ -1,0 +1,92 @@
+{
+    "Items":{
+        "list":[
+        {
+            "id":"firearm_handgun",
+            "displayName":"firearm_handgun",
+            "Tags":["firearm","one_handed"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Weapon", 
+                    "comp_Weapon": 
+                    {
+                        "Mass":5,
+                        "Balance":-2,
+                        "DamageTypes":
+                        {
+                            "Gunshot":   {"targetDamageTypes":["Pierce"],"convertRatio":0.7}
+                        },
+                        "ExecutionMove":"firearm_execution_headshot"
+                    }
+                }
+            ]
+        }
+        
+    ]
+    },
+    "CombatActions":{
+        "list":[      
+{
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    
+    "ID":"firearm_aiming_handgun",
+    "tags":["aiming"], "PostureMod":1,
+    "itemRequirement":{ "requireTags":["firearm"] }
+    
+},         
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    "ID":"firearm_attack_standardbullet",
+    "tracking":0, "range":1,
+    "tags":["handgun"], "strength":10, "moveType":"Gunshot",
+    "extraMods":{
+        "mods":
+        {
+            "combat_stat_tracking":[ { "requireTags":["aiming"], "Value":5 } , { "requireTags":["handgun"], "Value":-2 }]
+        }
+    },
+    "itemRequirement":{ "requireTags":["firearm"] },
+    "speedMod":10
+},         
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    "ID":"firearm_execution_headshot",
+    "tracking":-10, "range":1,
+    "tags":["handgun"], "strength":20, "moveType":"Gunshot",
+    "extraMods":{
+        "mods":
+        {
+            "combat_stat_tracking":[ { "requireTags":["aiming"], "Value":5 } , { "requireTags":["handgun"], "Value":-2 }]
+        }
+    },
+    "itemRequirement":{ "requireTags":["firearm"] },
+    "speedMod":10
+}
+        ]
+    },
+    "CombatActionPresets":
+    {
+        "list":[
+
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"firearm_handgun":"手枪",
+"firearm_handgun_tooltip":"暂未实装弹药和装填系统",
+"firearm_aiming_handgun":"瞄准",
+"firearm_execution_headshot":"爆头",
+"firearm_attack_standardbullet":"射击（通常弹）"
+            },
+            "en-us":
+            {
+
+
+            }
+        }
+    }
+}

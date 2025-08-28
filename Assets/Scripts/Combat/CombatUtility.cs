@@ -20,24 +20,25 @@ public static class CombatUtility
         return true;
     }
 
+    public static string SpeedKey = "combat_stat_speed";
+    public static string TrackingKey = "combat_stat_tracking";
+    public static string PostureKey = "combat_stat_posture";
+    public static string EvasionKey = "combat_stat_evasion";
+    public static string MovementKey = "combat_stat_movement";
+    public static string RangeKey = "combat_stat_range";
+    public static string StrengthKey = "combat_stat_strength";
 
+    public static float FinalTracking(CombatAction_Attack act, CombatActionInstance prev)
+    {
+        return act.tracking + (prev == null ? 0 : act.extraMods.GetValue(TrackingKey, prev.Tags));
+    }
 
     public static bool ValidateTarget(CombatAction a, Character_Trainable target)
     {
         return true;
     }
 
-    /// <summary>
-    /// TODO
-    /// </summary>
-    /// <param name="source">source action that triggers the script</param>
-    /// <param name="target">action that might be able to be triggered</param>
-    /// <returns></returns>
-    public static bool CanReactTo(CombatActionInstance source, CombatActionInstance target)
-    {
-        if (source.triggered) return false;
-        return target.isValidTarget(source);
-    }
+
     public static List<CombatAction> GetAvailableActions(Character_Trainable c)
     {
         var results = new List<CombatAction>();

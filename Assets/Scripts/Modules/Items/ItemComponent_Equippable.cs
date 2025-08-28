@@ -45,11 +45,22 @@ public class ItemComponentTemplate_Equippable : I_ItemComponentTemplate_Comp
 public class ItemComponent_Equippable : ItemComponent_Base
 {
     [JsonIgnore] public override string CompType { get { return "ItemComponent_Equippable"; } }
+    string _tooltip = null;
     [JsonIgnore] public override string Tooltip
     {
         get
         {
-            return $"Equippable on {equipLayer}, requires Slot {String.Join("|",equipSlot)}";
+            if (_tooltip == null)
+            {
+                _tooltip = LocalizeDictionary.QueryThenParse("ItemComponent_Equippable_tooltip")
+                    .Replace("$layer$", $"{equipLayer}")
+                    .Replace("$slots$", String.Join("|", equipSlot))
+                    .Replace("$covers$", coverSlot.Count > 0 ?
+                        LocalizeDictionary.QueryThenParse("ItemComponent_Equippable_tooltip_covers")
+                    .Replace("$layer$", $"{equipLayer}")
+                    .Replace("$covers$", String.Join("|", coverSlot)) : "");
+            }
+            return _tooltip;
         }
     }
     public ItemComponent_Equippable()

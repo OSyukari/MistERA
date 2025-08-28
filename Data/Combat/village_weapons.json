@@ -72,12 +72,12 @@
     "ID":"village_swing_horizontal_light",
     "tags":["horizontal"], "strength":6,"tracking":3,  "moveType":"Swing",
     "_comment":"faster if previous is right",
-    "speedMods":[
+    "extraMods":{
+        "mods":
         {
-            "requireTags":["horizontal"],
-            "Value": 1
+            "combat_stat_speed":[ { "requireTags":["horizontal"], "Value":1 } ]
         }
-    ],
+    },
     "itemRequirement":{ "requireTags":["one_handed","village"] }
     
 },         
@@ -97,30 +97,40 @@
     "tags":["thrust"], "strength":7, "moveType":"Thrust",
     "itemRequirement":{ "requireTags":["one_handed","village"] },
     "_comment":"if previous action has movement, will get back the speed mod",
-    "speedMods":[
-        {   
-            "requireTags":["movement"],
-            "Value": 2
+    "extraMods":{
+        "mods":
+        {
+            "combat_stat_speed":[ { "requireTags":["movement"], "Value":2 } ]
         }
-    ]
+    }
 },         
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
     "ID":"village_swing_horizontal_heavy",
     "tags":["horizontal"], "speedMod":-2, "tracking":2, "strength":8, "PostureMod":1,"moveType":"Swing",
     "itemRequirement":{ "requireTags":["one_handed","village"] },
-    "speedMods":[ { "requireTags":["horizontal"], "Value": 1 } ],
-    "_comment":"faster if previous left, stronger pierce"
+    "extraMods":{
+        "mods":
+        {
+            "combat_stat_speed":[ { "requireTags":["horizontal"], "Value":1 } ]
+        }
+    }
 },              
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
     "ID":"village_swing_horizontal_heavy_followup",
     "tags":["horizontal"], "speedMod":-2,  "tracking":2, "strength":8, "PostureMod":1, "moveType":"Swing",
     "itemRequirement":{ "requireTags":["one_handed","village"] },
-    "speedMods":[
-        { "requireTags":["horizontal"], "Value": 1 }
-    ],
-    "_comment":"faster if previous left, stronger pierce, followup into left heavy slash"
+    "extraMods":{
+        "mods":
+        {
+            "combat_stat_speed":[ { "requireTags":["horizontal"], "Value":1 } ]
+        }
+    },
+    "Reaction":{
+        "CounterMoves":["village_swing_horizontal_heavy"],
+        "TriggerConditions": { "MaxEvasion":1, "MaxRange":0 }
+    }
 },       
         
 {
@@ -138,8 +148,7 @@
     "tags":["guard"], 
     "speedMod":2, "PostureMod":2,
     "redirectKeyword":["horizontal"],
-    "itemRequirement":{ "requireTags":["one_handed","village"] },
-    "_comment":"followup into right heavy slash"
+    "itemRequirement":{ "requireTags":["one_handed","village"] }
 },                                             
 {
     "$type":"CombatAction_Defense, Assembly-CSharp",
@@ -148,8 +157,16 @@
     "tags":["guard"], 
     "speedMod":2, "PostureMod":2,
     "redirectKeyword":["vertical_up"],
-    "itemRequirement":{ "requireTags":["one_handed","village"] },
-    "_comment":"followup into right heavy slash"
+    "itemRequirement":{ "requireTags":["one_handed","village"] }
+},                                             
+{
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    
+    "ID":"village_block_thrust",
+    "tags":["guard"], 
+    "speedMod":2, "PostureMod":2,
+    "redirectKeyword":["thrust"],
+    "itemRequirement":{ "requireTags":["one_handed","village"] }
 }
         ]
     },
@@ -186,19 +203,11 @@
 },
 {
     "ID":"preset_village_thrust_lunge_1hit",
-    "actions":["move_base_forward","village_thrust_forward"]
-},
-{
-    "ID":"preset_village_blunt_1hit_right",
-    "actions":["village_swing_horizontal_light","base_observe"]
-},
-{
-    "ID":"preset_village_blunt_1hit_left",
-    "actions":["village_swing_horizontal_light","base_observe"]
+    "actions":["move_base_forward","village_thrust_heavy_forward"]
 },
 {
     "ID":"preset_village_blunt_4hit_backpedal",
-    "actions":["village_swing_horizontal_light","base_observe"]
+    "actions":["village_swing_horizontal_light","village_swing_horizontal_light","move_base_backward","village_swing_horizontal_light","village_swing_horizontal_light"]
 }
         ]
     },
@@ -214,6 +223,7 @@
 
 "village_block_horizontal":"中段防御",
 "village_block_vertical":"上段防御",
+"village_block_thrust":"突刺防御",
 
 "village_swing_horizontal_light":"横斩",
 "village_swing_horizontal_heavy":"重横斩",

@@ -42,7 +42,7 @@ public class ItemComponentTemplate_Craftable_Recipe
             {
                 var itemreqs = new List<string>();
                 foreach (var i in itemRequirements) itemreqs.Add(i.Print);
-                _tooltip = LocalizeDictionary.QueryThenParse("ui_recipe_tooltip")
+                _tooltip = LocalizeDictionary.QueryThenParse("ItemComponentTemplate_Craftable_Recipe_tooltip")
                                         .Replace("$time$", workAmount.ToString())
                                         .Replace("$skillreqs$", "TODO")
                                         .Replace("$itemreqs$", itemreqs.Count > 0 ? String.Join(" ", itemreqs) : "none")

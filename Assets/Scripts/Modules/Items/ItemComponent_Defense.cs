@@ -15,6 +15,7 @@ public class ItemComponentTemplate_Defense
     }
     public int integrity = -1;
 
+
     [System.Serializable]
     public class Defense
     {
@@ -43,15 +44,23 @@ public class ItemComponentTemplate_Defense
 public class ItemComponent_Defense : ItemComponent_Base
 {
     [JsonIgnore] public override string CompType { get { return "ItemComponent_Defense"; } }
+    string _tooltip = null;
     [JsonIgnore]
     public override string Tooltip
     {
         get
         {
-            var template = this.CompTemplate.comp_Defense;
-            List<string> s = new List<string>();
-            foreach (ItemComponentTemplate_Defense.Defense i in template.armorLayers) s.Add($"{i.damageReductionValue}/{String.Join("", i.applyToDamageTypes)}");
-            return $"{String.Join(" | ", s)}\n{(template.isBreakable ? $"Integrity: [{template.integrity}]" : "non-breakable")}";
+            if (_tooltip == null)
+            {
+                var template = this.CompTemplate.comp_Defense;
+                List<string> s = new List<string>();
+                foreach (ItemComponentTemplate_Defense.Defense i in template.armorLayers) s.Add($"{i.damageReductionValue}/{String.Join("", i.applyToDamageTypes)}");
+                _tooltip = LocalizeDictionary.QueryThenParse("ItemComponent_Defense_tooltip")
+                    .Replace("$layers$", String.Join(" | ", s))
+                    .Replace("$pierce$", template.isBreakable ? LocalizeDictionary.QueryThenParse("ItemComponent_Defense_tooltip_integrity").Replace("$value$", $"{template.integrity}")
+                                                                : LocalizeDictionary.QueryThenParse("ItemComponent_Defense_tooltip_integrity_max"));
+            }
+            return _tooltip;
         }
     }
 

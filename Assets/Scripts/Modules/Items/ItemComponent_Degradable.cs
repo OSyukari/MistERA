@@ -30,7 +30,8 @@ public class ItemComponent_Degradable : ItemComponent_Base
     {
         get
         {
-            return $"Lasts for {minuteCounter} minutes";
+            return LocalizeDictionary.QueryThenParse("ItemComponent_Degradable_tooltip")
+                .Replace("$minutes$", $"{minuteCounter}");
         }
     }
     public override bool canMergeWith(ItemComponent_Base other)

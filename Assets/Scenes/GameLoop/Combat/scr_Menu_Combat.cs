@@ -268,6 +268,7 @@ public class scr_Menu_Combat : scr_Menu
     public Dictionary<int, scr_prefab_actortab> actorTabs = new Dictionary<int, scr_prefab_actortab>();
 
     string _turnCount = string.Empty;
+    int turnCount = -1;
     private void OnInstanceUpdate()
     {
         if (CurrentMode == CombatUI.SkillSelect) return;
@@ -298,15 +299,26 @@ public class scr_Menu_Combat : scr_Menu
         Utility.DestroyAllChildrenFrom(InTurn_Actions);
         Utility.DestroyAllChildrenFrom(EOT_Actions, 1);
 
-        foreach (var i in actorTabs.Values) i.UpdateContent(currentActiveCombat);
+        bool resetOverride = currentActiveCombat.CurrentRound != turnCount;
+
+        foreach (var i in actorTabs.Values)
+        {
+            if (resetOverride) i.overrideCount = 2;
+            i.UpdateContent(currentActiveCombat);
+        }
+
+        turnCount = currentActiveCombat.CurrentRound;
 
         var act = currentActiveCombat.RoundActions(currentActiveCombat.CurrentRound);
         while (act != null)
         {
-            ActionEntry entry = Instantiate(prefab_ActionEntry);
-            entry.SelfRect.SetParent(InTurn_Actions, false);
-            entry.isHostile = currentActiveCombat.teamB.hasActor(act.ownerRef.RefID);
-            entry.Initialize(act);
+            if (!act.Hidden)
+            {
+                ActionEntry entry = Instantiate(prefab_ActionEntry);
+                entry.SelfRect.SetParent(InTurn_Actions, false);
+                entry.isHostile = currentActiveCombat.teamB.hasActor(act.ownerRef.RefID);
+                entry.Initialize(act);
+            }
             act = act.Next ;
         }
         var eot = currentActiveCombat.RoundEndActions(currentActiveCombat.CurrentRound);
@@ -431,6 +443,7 @@ public class scr_Menu_Combat : scr_Menu
 
         public override bool IsButtonValid()
         {
+            if (parent.currentActiveCombat != null && parent.currentActiveCombat.Ongoing && parent.currentActiveCombat.TurnEnded) return false;
             if (!tab.CanModCount()) return false;
             if (reduce) return tab.overrideCount > 2;
             else return tab.overrideCount < parent.currentActiveCombat.roundMaxAction;
@@ -480,6 +493,7 @@ public class scr_Menu_Combat : scr_Menu
 
         public override bool IsButtonValid()
         {
+            if (parent.currentActiveCombat != null && parent.currentActiveCombat.Ongoing && parent.currentActiveCombat.TurnEnded) return false;
             if (index < 2 || index < displayIndex)
             {
                 text.gameObject.SetActive(true);
@@ -531,6 +545,8 @@ public class scr_Menu_Combat : scr_Menu
 
         public override bool IsButtonValid()
         {
+            if (parent.currentActiveCombat != null && parent.currentActiveCombat.Ongoing && parent.currentActiveCombat.TurnEnded) return false;
+            
             if (instance.roundMaxAction > 2 && instance.ActorStats[c.RefID].CanPush && (instance.MaxActionsByCharaRef(c.RefID) < 3)
                 && ((teamA && instance.roundMaxAction_B > 2) || instance.roundMaxAction_A > 2))
             {

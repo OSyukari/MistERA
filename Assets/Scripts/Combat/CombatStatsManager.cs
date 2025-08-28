@@ -107,10 +107,10 @@ public class CombatStatManager : I_StatsManager
     /// <param name="value"></param>
     /// <param name="isAttack"></param>
     /// <returns></returns>
-    public bool ModPosture(float value, bool isAttack)
+    public bool ModPosture(int value, bool isAttack)
     {
         _posture = Math.Clamp((int)(_posture + value), 0, this.MaxPosture);
-        if (_posture <= 0 && isAttack && value < 0 && !isPostureBroken)
+        if (_posture <= 0 && isAttack && value <= 0 && !isPostureBroken)
         {
             PostureStatus = PostureState.Broken;
             this.Evasion = 0;
@@ -118,6 +118,12 @@ public class CombatStatManager : I_StatsManager
         }
         return false;
     }
+
+    public bool CanAct
+    { get
+        {
+            return this.HP.Value >= 1;
+        } }
 
     public bool isPostureBroken
     {

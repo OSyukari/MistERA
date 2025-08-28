@@ -310,7 +310,8 @@ public class ItemComponent_SerializedData
 public enum MoveType
 {
     None,
-    Swing, Thrust
+    Swing, Thrust,
+    Gunshot
 }
 
 [System.Serializable]
@@ -327,6 +328,7 @@ public class AttackInstance
     public MoveType moveType = MoveType.None;
     public List<DamageType> damageTypes;
     public float damageAmount;
+    public float tracking;
 
     [JsonIgnore]
     public List<string> attackSpecs = new List<string>();

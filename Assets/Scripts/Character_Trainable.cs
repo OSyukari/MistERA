@@ -1095,7 +1095,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonIgnore] public bool isUndressed { get { return canRedress; } }
     [JsonIgnore] public bool canRedress { get
         {
-            return this.Inventory.Contents.Count > 0;
+            return this.Inventory.Contents.Any(x=>x.GetComp_Equippable() != null);
         } }
     [JsonIgnore] public bool shouldRedress { 
         get {

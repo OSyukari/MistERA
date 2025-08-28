@@ -61,7 +61,8 @@
           { "ID":"clothing_skin_socks" },
           { "ID":"clothing_skin_panty" },
           { "ID":"clothing_inner_hair_ribbon" },
-          { "ID":"clothing_skin_bra" }
+          { "ID":"clothing_skin_bra" },
+            { "ID":"firearm_handgun" }
       ],
     "Skills": null
   },

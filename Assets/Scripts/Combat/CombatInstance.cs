@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine.UIElements;
+using QuikGraph.Algorithms.Search;
 
 [System.Serializable]
 public enum BattlefieldZone
@@ -81,8 +82,20 @@ public class CombatInstance
         this.teamA = teamA;
         this.teamB = teamB;
         dummyRef = scr_System_CampaignManager.current.Combat.Dummy;
-        foreach (var i in teamA.Actors) if (!ActorStats.TryAdd(i.RefID, i.Stats.MakeCombatHandler())) Debug.LogError($"CombatInstance Failed to add actorRef {i} for teamA, possibly duplcate");
-        foreach (var i in teamB.Actors) if (!ActorStats.TryAdd(i.RefID, i.Stats.MakeCombatHandler())) Debug.LogError($"CombatInstance Failed to add actorRef {i} for teamB, possibly duplcate");
+        foreach (var i in teamA.Actors) 
+        { 
+            if (!ActorStats.TryAdd(i.RefID, i.Stats.MakeCombatHandler())) Debug.LogError($"CombatInstance Failed to add actorRef {i} for teamA, possibly duplcate"); 
+        }
+        foreach (var i in teamB.Actors) 
+        { 
+            if (!ActorStats.TryAdd(i.RefID, i.Stats.MakeCombatHandler())) Debug.LogError($"CombatInstance Failed to add actorRef {i} for teamB, possibly duplcate"); 
+        }
+
+        foreach(var kvp in ActorStats)
+        {
+            kvp.Value.RecoverPosture(true);
+            PostureStorage[kvp.Key] = kvp.Value.Posture;
+        }
 
         foreach (var i in teamA.frontline) ActorPositions.Add(i, BattlefieldZone.A_frontline);
         foreach (var i in teamA.support) ActorPositions.Add(i, BattlefieldZone.A_backline);
@@ -169,9 +182,10 @@ public class CombatInstance
         if (!_cachedStrings.ContainsKey(str)) _cachedStrings.Add(str, LocalizeDictionary.QueryThenParse(str));
         return _cachedStrings[str];
     }
-    public int GetCombatDistance(Character_Trainable a, Character_Trainable b)
+    public int GetCombatDistance(Character_Trainable a, Character_Trainable b, bool isPrecalc)
     {
-        if (CurrentPositions.TryGetValue(a.RefID, out var apos) && CurrentPositions.TryGetValue(b.RefID, out var bpos))
+        var list = isPrecalc ? CurrentPositions : ActorPositions;
+        if (list.TryGetValue(a.RefID, out var apos) && list.TryGetValue(b.RefID, out var bpos))
         {
             return Math.Abs(apos - bpos);
         }
@@ -223,12 +237,6 @@ public class CombatInstance
         foreach (var kvp in ActorStats)
         {
             //if (kvp.Key == dummyRef.RefID) kvp.Value.RestoreAll();
-
-            if (!PostureStorage.ContainsKey(kvp.Key))
-            {
-                kvp.Value.RecoverPosture(true);
-                PostureStorage.Add(kvp.Key, kvp.Value.Posture);
-            }
             if (kvp.Value.CanPush && kvp.Value.isPostureBroken)
             {
                 kvp.Value.RecoverPosture(true);
@@ -281,6 +289,31 @@ public class CombatInstance
         else TurnResolve();
     }
 
+    protected bool CheckCombatEnd()
+    {
+        if (!Ongoing) return true;
+
+        bool continueA = false;
+        foreach (var actor in teamA.ActorRefs) continueA = continueA || ActorStats[actor].HP.Value > 0;
+        bool continueB = false;
+        foreach (var actor in teamB.ActorRefs) continueB = continueB || ActorStats[actor].HP.Value > 0;
+
+
+        if (!continueA)
+        {
+            TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_defeat"));
+            Result = CombatResult.Defeat;
+            return true;
+        }
+        else if (!continueB)
+        {
+            TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_victory"));
+            Result = CombatResult.Victory;
+            return true;
+        }
+        else return false;
+    }
+
     protected void TurnResolve()
     {
         // TODO
@@ -289,21 +322,9 @@ public class CombatInstance
 
         //foreach (var stats in this.ActorStats.Values) stats.Reset(this);
 
-        bool continueA = false;
-        foreach(var actor in teamA.ActorRefs) continueA = continueA || ActorStats[actor].HP.Value > 0;
-        bool continueB = false;
-        foreach (var actor in teamB.ActorRefs) continueB = continueB || ActorStats[actor].HP.Value > 0;
-        
-
-        if (!continueA)
+        if (CheckCombatEnd())
         {
-            TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_defeat"));
-            Result = CombatResult.Defeat;
-        }
-        else if (!continueB)
-        {
-            TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_victory"));
-            Result = CombatResult.Victory;
+            // inside
         }
         else if (!Ongoing || CurrentRound+1 >= TurnLimit)
         {
@@ -393,11 +414,10 @@ public class CombatInstance
         if (immediateRefresh) RefreshOngoing();
     }
 
-    public List<CombatActionInstance> ActionsByCharaRef(int refID, bool excludeEOT = true)
+    public List<CombatActionInstance> ActionsByCharaRef(int refID, bool excludeEOT = true, bool excludeCounter = true)
     {
         var list = ActionsByChara.ContainsKey(refID) ? ActionsByChara[refID] : new List<CombatActionInstance>();
-        if (excludeEOT) return list.FindAll(x => !x.isEOTAction);
-        else return list;
+        return list.FindAll(x => (excludeEOT ? !x.isEOTAction : true) && (excludeCounter ? !x.isCounter : true));
     }
     /// <summary>
     /// Return the max action slot index + 1 of chara
@@ -510,6 +530,10 @@ public class CombatInstance
             WeaponCooldowns.Add(i.Key, i.Value.Copy());
         }
         var copyList = new List<CombatActionInstance>(ActionsOngoing);
+        foreach(var i in copyList)
+        {
+            i.ResetPointers(true);
+        }
         var triggers = new List<CombatActionInstance>();
 
         CombatActionInstance fastest = null;
@@ -526,15 +550,12 @@ public class CombatInstance
         while (copyList.Count > 0 || triggers.Count > 0)
         {
             fastest = null;
-            // Sortedlist sort float ascending, so smaller value first and large value last
+
+            // first check if there is reacted
             foreach (var i in copyList)
             {
                 i.ResetPointers();
-                if (fastest == null || CombatUtility.IsFasterThan(fastest, i))
-                {
-                    //Debug.Log("faster!");
-                    fastest = i;
-                }
+                if (i.reacted) fastest = i;
             }
             foreach (var i in triggers)
             {
@@ -542,30 +563,47 @@ public class CombatInstance
                 if (fastest == null || CombatUtility.IsFasterThan(fastest, i))
                 {
                     //Debug.Log("faster!"); 
-                    fastest = i; }
+                    fastest = i;
+                }
+            }
+            if (fastest == null)
+            {
+                // Sortedlist sort float ascending, so smaller value first and large value last
+                foreach (var i in copyList)
+                {
+                    i.ResetPointers();
+                    if (fastest == null || CombatUtility.IsFasterThan(fastest, i))
+                    {
+                        //Debug.Log("faster!");
+                        fastest = i;
+                    }
+                }
             }
 
             if (fastest == null)
             {
-                Debug.LogError("empty actions breaking from refresh");
+                Debug.Log("empty actions breaking from refresh");
                 break;
             }
 
             // first check every other action react
-            if (!fastest.reacted)
+            if (!fastest.reacted && ActorStats[fastest.ownerRef.RefID].CanAct)
             {
-                fastest.reacted = true;
                 bool newlyInsert = false;
                 foreach (var i in this.LastActionsOngoing.Values)
                 {
                     if (i.ownerRef == fastest.ownerRef) continue;
-                    if (i.TryReactTo(fastest, out var insert) && insert != null)
+                    if (i.RoundIndex != fastest.RoundIndex) continue;   // cannot let current round react pointer contaminate last round data
+                    if (i.TryReactTo(fastest, out var insert, isPrecalc) && insert != null)
                     {
+                        //Debug.Log($"adding trigger move {insert.actionRef.Name}");
                         newlyInsert = true;
                         // insert reaction
                         triggers.Add(insert);
                     }
                 }
+
+                fastest.reacted = true;
                 // Redo speed calculation but with new reactions
                 if (newlyInsert) continue;
                 // no new insert, flag reacted and proceed
@@ -578,6 +616,7 @@ public class CombatInstance
 
             AppendAction(fastest, false, isPrecalc);
             Observer_SnapshotUpdate?.Invoke(fastest);
+            if (!Ongoing) break;
         }
 
         roundMaxAction = 2;
@@ -648,6 +687,8 @@ public class CombatInstance
             counters.Remove(fastest);
             fastest.ResetPointers();
             AppendAction(fastest, true, isPrecalc);
+            Observer_SnapshotUpdate?.Invoke(fastest);
+            if (!Ongoing) break;
         }
 
         // for each actor check if they need counter move
@@ -791,6 +832,7 @@ public class CombatInstance
         if (ActorStats[target.RefID].HP.Value != stat.HP.Value) Debug.LogError($"COMBAT ERROR INCONSISTENCY DETECTED IN {target.FirstName} receiving {amount} damage, current HP at {stat.HP.Value} combatCopy {ActorStats[target.RefID].HP.Value}");
         // damaging hp already reduces posture max
         //PostureDamage(target, amount, source != target);
+        CheckCombatEnd();
     }
 
     /// <summary>
@@ -801,7 +843,7 @@ public class CombatInstance
     /// <param name="damage">should be a negative value</param>
     /// <param name="allowBreak"></param>
     /// <returns></returns>
-    protected bool PostureDamage(Character_Trainable target, float damage, out float posDamage, bool allowBreak = true)
+    protected bool PostureDamage(Character_Trainable target, float damage, out int posDamage, bool allowBreak = true)
     {
         if (damage > 0)
         {
@@ -810,7 +852,7 @@ public class CombatInstance
             return false;
         }
         var stat = ActorStats[target.RefID];
-        posDamage =  Math.Max(-stat.Posture, Mathf.Floor( damage * 3 / 4));
+        posDamage =  (int)Math.Max(-stat.Posture, Mathf.Floor( damage * 3 / 4));
         return stat.ModPosture(posDamage, allowBreak);
     }
 
@@ -834,7 +876,7 @@ public class CombatInstance
         Utility.Shuffle(possibleTargets);
         target = possibleTargets.Count() < 1 ? null : possibleTargets.First();
 
-        int distance = GetCombatDistance(c, target);
+        int distance = GetCombatDistance(c, target, false);
 
         var Stats = ActorStats[c.RefID];
 
@@ -910,6 +952,8 @@ public class CombatInstance
 
     protected void RandomPreset(Character_Trainable c, bool isTeamB)
     {
+        if (!ActorStats[c.RefID].CanAct) return;
+
         CombatActionPreset preset = GetValidPreset(c, isTeamB, out Character_Trainable target, out List<Item_Instance> items);
         if (preset == null)
         {

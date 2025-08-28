@@ -35,11 +35,12 @@ public class actionData_Action : MonoBehaviour
         action_speed.SetText(_speed.Replace("$name$", instance == null || instance.actionRef == null ? " - " : $"{instance.BaseSpeed}{(instance.Speed - instance.BaseSpeed).ToString("+0;-#")}"));
 
         var attack = instance == null || instance.actionRef == null ? null : instance.actionRef as CombatAction_Attack;
-        action_tracking.SetText(_tracking.Replace("$tracking$", attack == null ? " - " : $"{attack.tracking}")
+        var atkInstance = instance == null || instance.actionRef == null ? null : instance.Attack;
+        action_tracking.SetText(_tracking.Replace("$tracking$", attack == null ? " - " : $"{atkInstance.tracking}")
                 .Replace("$mov$", instance == null || instance.targetRef == null ? " - " : $"{instance.Handler.ActorStats[instance.targetRef.RefID].Evasion_Pre}"));
 
         action_distance.SetText(_distance.Replace("$range$", attack == null ? " - " : $"{attack.range}")
-            .Replace("$distance$", attack == null || instance.targetRef == null ? " - " : $"{instance.Handler.GetCombatDistance(instance.ownerRef, instance.targetRef)}"));
+            .Replace("$distance$", attack == null || instance.targetRef == null ? " - " : $"{instance.Distance}"));
 
         if (instance == null)
         {

@@ -75,7 +75,8 @@
         { "ID":"clothing_skin_earring" },
         { "ID":"clothing_outer_wristcuff_single" },
         { "ID":"clothing_skin_clit_piercing" },
-        { "ID":"clothing_skin_nipple_piercing" }
+        { "ID":"clothing_skin_nipple_piercing" },
+            { "ID":"firearm_handgun" }
     ],
       "Skills": null
     },

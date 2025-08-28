@@ -96,7 +96,11 @@ public class CombatAction_Attack : CombatAction
                     .Replace("$str$", $"{strength}")
                     .Replace("$types$", LocalizeDictionary.QueryThenParse($"MoveType_{moveType}"));
                 //if (itemRequirement.isActive) _tooltip += $"\n{itemRequirement.Tooltip}";
-                foreach (var i in speedMods) _tooltip += $"\n{i.Tooltip}";
+                _tooltip += $"\n{extraMods.Tooltip}";
+                if (this.Reaction.isValid)
+                {
+                    _tooltip += $"\n\n{this.Reaction.Tooltip}";
+                }
             }
             return _tooltip;
         }
@@ -136,7 +140,7 @@ public class CombatAction_Defense : CombatAction
                     .Replace("$evasion$", Evasion.ToString("+0;-#"))
                     .Replace("$target$", requireTarget ? "\n"+LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_reqTarget") : "");
                 //if (itemRequirement.isActive) _tooltip += $"\n{itemRequirement.Tooltip}";
-                foreach (var i in speedMods) _tooltip += $"\n{i.Tooltip}";
+                _tooltip += $"\n{extraMods.Tooltip}";
             }
             return _tooltip;
         }
@@ -164,13 +168,10 @@ public abstract class CombatAction
     public bool HideInSelect = false;
 
     /// <summary>
-    /// Base action speed mod
+    /// Base action speed mod. For CAIs, use CAI.Speed
     /// </summary>
     public int speedMod = 0;
-    /// <summary>
-    /// Conditional speed mod
-    /// </summary>
-    public List<ConditionalSpeedMods> speedMods = new List<ConditionalSpeedMods>();
+    public ConditionalMod extraMods = new ConditionalMod();
 
     [JsonIgnore]
     public abstract string Tooltip { get; }
@@ -178,32 +179,51 @@ public abstract class CombatAction
     public int Movement = 0;
     public int Evasion = 0;
     public int PostureMod = 0;
-    /// <summary>
-    /// 
-    /// </summary>
+
+
     [System.Serializable]
-    public class ConditionalSpeedMods
+    public class ConditionalMod
     {
-        public List<string> requireTags = new List<string>();
-
-
-        [System.Serializable]
-        public class Condition
+        public Dictionary<string, List<ConditionalMods>> mods = new Dictionary<string, List<ConditionalMods>>();
+        public float GetValue(string key, List<string> tags)
         {
-
+            var final = 0f;
+            if (this.mods.TryGetValue(key, out var mods))
+            {
+                foreach (var mod in mods)
+                {
+                    if (mod.requireTags.Count < 1 || Utility.ListContainsStrict(tags, mod.requireTags)) final += mod.Value;
+                }
+            }
+            return final;
         }
 
-        public float Value = 0f;
+        [System.Serializable]
+        public class ConditionalMods
+        {
+            public List<string> requireTags = new List<string>();
+            public float Value = 0f;
+        }
 
         [JsonIgnore]
         public string Tooltip
-        { get
+        {
+            get
             {
-                return LocalizeDictionary.QueryThenParse("ui_combatAction_tooltip_condSpeedMod")
-                    .Replace("$conditions$", String.Join("|", requireTags))
-                    .Replace("$value$", Value.ToString("+0;-#"));
-            } }
-
+                var s = new List<string>();
+                foreach (var mod in this.mods)
+                {
+                    foreach(var md in mod.Value)
+                    {
+                        s.Add(LocalizeDictionary.QueryThenParse($"ui_combatAction_tooltip_condMod")
+                            .Replace("$attribute$", LocalizeDictionary.QueryThenParse(mod.Key))
+                            .Replace("$conditions$", String.Join("|", md.requireTags))
+                            .Replace("$value$", md.Value.ToString("+0;-#")));
+                    }
+                }
+                return String.Join("\n", s);
+            }
+        }
     }
 
     public Requirement requirement = new Requirement();
@@ -213,7 +233,6 @@ public abstract class CombatAction
     {
         // combo conditions
         public string requirePrecede = "";
-
 
     }
     public ItemRequirement itemRequirement = new ItemRequirement();
@@ -227,14 +246,63 @@ public abstract class CombatAction
 * and player choose to do a defense move might break followup combo so it remains a choice not free of cost
 */
 
-    public Trigger trigger = new Trigger();
+    public CounterAction Reaction = new CounterAction();
 
     [System.Serializable]
-    public class Trigger
+    public class CounterAction
     {
+        [JsonIgnore]
         public bool isValid
         {
-            get { return false; }
+            get { return CounterMoves.Count > 0 && TriggerConditions.isActive; }
+        }
+        public List<string> CounterMoves = new List<string>();
+        public Conditions TriggerConditions = new Conditions();
+
+        [System.Serializable]
+        public class Conditions
+        {
+            public int MaxEvasion = -1;
+            public int MaxRange = -1;
+            public List<string> requireTags = new List<string>();
+            public bool targetHostile = true;
+            public bool targetFriendly = false;
+
+            [JsonIgnore]
+            public bool isActive
+            {
+                get
+                {
+                    return MaxRange > -1 || requireTags.Count > 0 || MaxEvasion > -1;
+                }
+            }
+        }
+
+        string _tooltip = null;
+        public string Tooltip
+        {
+            get
+            {
+                if (_tooltip == null)
+                {
+                    var conditions = new List<string>();
+                    if (TriggerConditions.MaxRange > -1) conditions.Add(LocalizeDictionary.QueryThenParse("ui_counterAction_tooltip_maxRange").Replace("$value$", $"{TriggerConditions.MaxRange}"));
+                    if (TriggerConditions.MaxEvasion > -1) conditions.Add(LocalizeDictionary.QueryThenParse("ui_counterAction_tooltip_maxEvasion").Replace("$value$", $"{TriggerConditions.MaxEvasion}"));
+                    if (TriggerConditions.requireTags.Count > 0) conditions.Add(LocalizeDictionary.QueryThenParse("ui_counterAction_tooltip_requireTags").Replace("$kwds$", $"{String.Join("|", TriggerConditions.requireTags)}"));
+
+                    var names = new List<string>();
+                    foreach (string name in CounterMoves)
+                    {
+                        var vvv = scr_System_Serializer.current.MasterList.CombatActions.GetByID(name);
+                        if (vvv != null) names.Add(vvv.Name);
+                    }
+
+                    _tooltip = LocalizeDictionary.QueryThenParse("ui_counterAction_tooltip")
+                        .Replace("$conditions$", String.Join(" ", conditions))
+                        .Replace("$counters$", String.Join("/", names));
+                }
+                return _tooltip;
+            }
         }
     }
 

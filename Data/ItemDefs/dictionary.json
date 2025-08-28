@@ -1,0 +1,28 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"Item_Instance_Tooltip":"类型：$tags$\n\n$parent$\n\n$comps$",
+"ItemComponent_Weapon_tooltip":"平衡$balance$ 尺寸$mass$ $execution$",
+"ItemComponent_Weapon_tooltip_execution":"处决动作：$name$",
+"ItemComponent_Weapon_tooltip_dtypes":"$move$动作倍率 x$mult$ $dtypes$",
+"ItemComponent_Defense_tooltip":"防御性能 $layers$ $pierce$",
+"ItemComponent_Defense_tooltip_integrity":"击穿伤害阈值 $value$",
+"ItemComponent_Defense_tooltip_integrity_max":"无法被击穿",
+"ItemComponent_Ingestible_tooltip":"可食用 摄入量$amount$ 摄入方式 $methods$",
+"ItemComponent_Equippable_tooltip":"可装备栏位 $layer$ 的 $slots$\n$covers$",
+"ItemComponent_Equippable_tooltip_covers":"额外覆盖 $layer$ 的 $covers$",
+"ItemComponent_Degradable_tooltip":"将于$minutes$分钟后消失",
+
+"ItemComponentTemplate_Craftable_Recipe_tooltip":"耗时：$time$分钟\n技能需求：$skillreqs$\n道具消耗：$itemreqs$\n\n$basetooltip$"
+            },
+            "en-us":
+            {
+"ItemComponentTemplate_Craftable_Recipe_tooltip":"Time Cost: $time$ minutes\nSkill Requirement: $skillreqs$\nItem Requirement: $itemreqs$\n\n$basetooltip$"
+            }
+        }
+    }
+}

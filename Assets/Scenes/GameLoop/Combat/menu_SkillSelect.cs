@@ -139,12 +139,12 @@ public class menu_SkillSelect : scr_Menu, IPointerClickHandler
     protected void MakeItemRect(Item_Instance item, List<CombatAction> actions)
     {
         if (actions.Count < 1 || !actions.Any(x => !x.HideInSelect)) return;
-        var displayName = item.DisplayName;
 
         //Debug.Log($"MakeItemRect {displayName}");
         ItemActions box = Instantiate(prefab_ItemActions);
         box.SelfRect.SetParent(SkillsRect, false);
-        box.Title.SetText(displayName);
+        box.Title.SetText(item.DisplayName);
+        box.Title.SetExternalTooltip(item.Tooltip);
 
         //Utility.DestroyAllChildrenFrom(box.ActionsRect);
         foreach(var action in actions)
@@ -313,7 +313,7 @@ public class menu_SkillSelect : scr_Menu, IPointerClickHandler
     CombatActionInstance currentInstance;
     protected void SetSkill(CombatActionInstance instance)
     {
-        Debug.Log($"setskill {(instance == null ? "null" : instance.Description)} isEOT {instance.isEOTAction} == {isEOTAction}");
+       // Debug.Log($"setskill {(instance == null ? "null" : instance.Description)} isEOT {(instance == null ? false: instance.isEOTAction)} == {isEOTAction}");
         currentInstance = instance;
         //if (instance == null) Debug.LogError("setting null skill");
         UpdateActionInstance();
@@ -396,10 +396,13 @@ public class menu_SkillSelect : scr_Menu, IPointerClickHandler
         var act = Combat.RoundActions(RoundIndex);
         while (act != null && counter > 0)
         {
-            ActionEntry entry = Instantiate(prefab_ActionEntry);
-            entry.SelfRect.SetParent(InTurn_Actions, false);
-            entry.isHostile = Combat.teamB.hasActor(act.ownerRef.RefID);
-            entry.Initialize(act);
+            if (!act.Hidden)
+            {
+                ActionEntry entry = Instantiate(prefab_ActionEntry);
+                entry.SelfRect.SetParent(InTurn_Actions, false);
+                entry.isHostile = Combat.teamB.hasActor(act.ownerRef.RefID);
+                entry.Initialize(act);
+            }
             act = act.Next;
            // counter--;
         }
