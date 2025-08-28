@@ -35,6 +35,33 @@
     "ID":"base_posture_broken",
     "HideInSelect":true,
     "_comment":"empty action"
+},                                             
+{
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    
+    "ID":"block_horizontal",
+    "tags":["guard"], 
+    "speedMod":2, "PostureMod":2,
+    "redirectKeyword":["horizontal"],
+    "itemRequirement":{ "requireTags":["one_handed"] }
+},                                             
+{
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    
+    "ID":"block_vertical",
+    "tags":["guard"], 
+    "speedMod":2, "PostureMod":2,
+    "redirectKeyword":["vertical_up"],
+    "itemRequirement":{ "requireTags":["one_handed"] }
+},                                             
+{
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    
+    "ID":"block_thrust",
+    "tags":["guard"], 
+    "speedMod":2, "PostureMod":2,
+    "redirectKeyword":["thrust"],
+    "itemRequirement":{ "requireTags":["one_handed"] }
 }
         ]
     },
@@ -48,7 +75,11 @@
 "base_posture_broken":"体势崩坏",
 "base_observe":"观察",
 "move_base_forward":"前进",
-"move_base_backward":"后撤"
+"move_base_backward":"后撤",
+
+"block_horizontal":"中段防御",
+"block_vertical":"上段防御",
+"block_thrust":"突刺防御"
             },
             "en-us":
             {

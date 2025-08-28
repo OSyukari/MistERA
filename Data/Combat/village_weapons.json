@@ -140,33 +140,6 @@
     "tags":["vertical_up"], "speedMod":-2,  "strength":9, "tracking":1, "moveType":"Swing", "PostureMod":1,
     "itemRequirement":{ "requireTags":["one_handed","village"] },
     "components:": [  ]
-},                                             
-{
-    "$type":"CombatAction_Defense, Assembly-CSharp",
-    
-    "ID":"village_block_horizontal",
-    "tags":["guard"], 
-    "speedMod":2, "PostureMod":2,
-    "redirectKeyword":["horizontal"],
-    "itemRequirement":{ "requireTags":["one_handed","village"] }
-},                                             
-{
-    "$type":"CombatAction_Defense, Assembly-CSharp",
-    
-    "ID":"village_block_vertical",
-    "tags":["guard"], 
-    "speedMod":2, "PostureMod":2,
-    "redirectKeyword":["vertical_up"],
-    "itemRequirement":{ "requireTags":["one_handed","village"] }
-},                                             
-{
-    "$type":"CombatAction_Defense, Assembly-CSharp",
-    
-    "ID":"village_block_thrust",
-    "tags":["guard"], 
-    "speedMod":2, "PostureMod":2,
-    "redirectKeyword":["thrust"],
-    "itemRequirement":{ "requireTags":["one_handed","village"] }
 }
         ]
     },
@@ -221,9 +194,6 @@
 "weapon_village_cleaver":"砍刀",
 "weapon_village_scythe":"镰刀",
 
-"village_block_horizontal":"中段防御",
-"village_block_vertical":"上段防御",
-"village_block_thrust":"突刺防御",
 
 "village_swing_horizontal_light":"横斩",
 "village_swing_horizontal_heavy":"重横斩",
