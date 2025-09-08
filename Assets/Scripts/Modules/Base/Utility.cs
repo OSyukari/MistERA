@@ -48,6 +48,30 @@ public static class Utility
         }
     }
 
+    /// <summary>
+    /// Only accept Dictionary with object key and int:weight value
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="dict"></param>
+    /// <param name="rand"></param>
+    /// <returns></returns>
+    public static T WeightedRandInDict<T>(Dictionary<T, int> dict, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        var total = dict.Values.Sum();
+        var randW = random.Next(0, total);
+
+        var current = default(T);
+        foreach(var kvp in dict)
+        {
+            current = kvp.Key;
+            if (randW <= kvp.Value) return kvp.Key;
+            else randW -= kvp.Value;
+        }
+        return current;
+
+    }
+
     public static float RandVariation(float baseNumber, float maxVariation, System.Random rand = null)
     {
         var random = rand == null ? Random : rand;

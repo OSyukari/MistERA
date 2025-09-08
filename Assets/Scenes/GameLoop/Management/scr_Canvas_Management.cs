@@ -263,6 +263,21 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         else return false;
     }
 
+    /////// EXPS TAB
+    public RectTransform Tab_Expeditions;
+    bool initialized_faction_expsList = false;
+    public initScript_Expeditions Script_Expeditions;
+    private void Initialize_FactionExpsList()
+    {
+        if (initialized_faction_expsList) return;
+        else initialized_faction_expsList = true;
+
+        Script_Expeditions.Initialize(this, currentFaction);
+
+    }
+
+
+
     /////// CHARA TAB
 
     public RectTransform Tab_Jobs;
@@ -288,9 +303,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         if (initialized_faction_charaList) return;
         else initialized_faction_charaList = true;
 
-        while (list_chara.transform.childCount > 0) DestroyImmediate(list_chara.transform.GetChild(0).gameObject);
-        if (charaInFaction != null && charaInFaction.Count > 0) foreach (var c in charaInFaction) DestroyCharaButton(c);
-
+        UnloadButton(tempCharaRefIDStorage);
+        Utility.DestroyAllChildrenFrom(list_chara);
+        tempCharaRefIDStorage.Clear();
 
         if (currentFaction == null) return;
 
@@ -301,14 +316,15 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         SetCurrentChara(scr_System_CampaignManager.current.Player);
 
-        if (charaInFaction.Count > 0) foreach (Character_Trainable chara in charaInFaction) MakeCharaButton(list_chara, prefab_charaNameButton, chara);
+        if (charaInFaction.Count > 0)
+        {
+            foreach (Character_Trainable chara in charaInFaction)
+            {
+                MakeCharaButton(list_chara, prefab_charaNameButton, chara);
+            }
+        }
     }
-
-    private void DestroyCharaButton(Character_Trainable chara)
-    {
-        buttonsByID.Remove(chara.GetHashCode());
-        validatorsByID.Remove(chara.GetHashCode());
-    }
+    List<int> tempCharaRefIDStorage = new List<int>();
 
     private void MakeCharaButton(RectTransform parent, scr_SelectableText prefab, Character_Trainable chara)
     {
@@ -321,10 +337,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         comp.Initialize(this, new ButtonValidator_charaSelect(this, comp, chara));
         comp.SetText(chara.FirstName);
 
-        comp.optionID = chara.GetHashCode();
+        comp.optionID = AssertUniqueHash( chara.GetHashCode());
 
         buttonsByID.Add(comp.optionID, comp);
         validatorsByID.Add(comp.optionID, comp.Validator);
+
+        tempCharaRefIDStorage.Add(comp.optionID);
 
         comp.Validate();
     }
@@ -474,6 +492,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     button.Initialize(this, new button_ChangeTab(this, button, Tab_Production, Initialize_FactionProduction)); break;
                 case 3: // jobs tab
                     button.Initialize(this, new button_ChangeTab(this, button, Tab_Jobs, Initialize_FactionCharaList)); break;
+                case 4: // expeditions tab
+                    button.Initialize(this, new button_ChangeTab(this, button, Tab_Expeditions, Initialize_FactionExpsList)); break;
                 case 12:
                     button.Initialize(this, new button_modifyLinkFaction(this)); break;
                 case 20:    // add production order
@@ -484,6 +504,13 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     button.Initialize(this, new button_CharaDetail(this)); break;
                 case 32: // chara edit schedule
                     button.Initialize(this, new button_EditSchedule(this, button, chara_schedulebox, chara_scheduleBoxBG, chara_scheduleCOMboxes)); break;
+                case 40:  // add party 
+                    button.Initialize(this, new ButtonValidator_partyCreate(this, button)); break;
+                case 41:  // edit party members 
+                    button.Initialize(this, new ButtonValidator_partyEditMembers(this, button)); break;
+                case 42:  // edit party inventory 
+                    button.Initialize(this, new ButtonValidator_AlwaysFalse(this)); break;
+
                 case 9999: // exit
                     button.Initialize(this, button_alwaysValid); break;
                 default:
@@ -498,6 +525,54 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
         // build all presetLis
 
+    }
+
+    public void UnloadButton(List<int> buttons)
+    {
+        foreach(var i in buttons)
+        {
+            this.buttonsByID.Remove(i);
+            this.validatorsByID.Remove(i);
+        }
+    }
+
+    public void MakeButton_PartyMembers(Character_Trainable c, scr_SelectableText button)
+    {
+        button.Initialize(this, new ButtonValidator_partyMemberSelect(this, button, c));
+        button.SetText(c.FirstName);
+        button.optionID = AssertUniqueHash(c.GetHashCode());
+
+        buttonsByID.Add(button.optionID, button);
+        validatorsByID.Add(button.optionID, button.Validator);
+
+        button.Validate();
+    }
+    public void MakeButton_Party(Manageable_Party p, scr_SelectableText button)
+    {
+        button.Initialize(this, new ButtonValidator_partySelect(this, button, p));
+        button.SetText(p.FactionDisplayName);
+        button.optionID = AssertUniqueHash(p.GetHashCode());
+
+        buttonsByID.Add(button.optionID, button);
+        validatorsByID.Add(button.optionID, button.Validator);
+
+        button.Validate();
+    }
+
+    public Manageable_Party currentParty = null;
+    public void LoadParty(Manageable_Party p)
+    {
+        currentParty = p;
+        Script_Expeditions.Draw(p);
+    }
+
+    public void UpdatePartyNames()
+    {
+        foreach(var i in this.validatorsByID)
+        {
+            if (!(i.Value is ButtonValidator_partySelect)) continue;
+            (i.Value as ButtonValidator_partySelect).OnClickButton();
+        }
     }
 
     public override void Notify(int optionID)
@@ -554,46 +629,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     }
 
 
-    public class ButtonValidator_charaSelect : ButtonValidator, I_ButtonClickable
-    {
-        //Character_Trainable target;
 
-        int charaRefID;
-        new scr_Canvas_Management parent;
-        scr_SelectableText text;
-
-        public ButtonValidator_charaSelect(scr_Canvas_Management parent, scr_SelectableText text, Character_Trainable chara) : base(parent)
-        {
-            this.charaRefID = chara.RefID;
-            this.text = text;
-            this.parent = parent;
-            this.text.AttachOnHoverEnter(OnPointerEnter);
-        }
-
-        public override bool IsButtonValid()
-        {
-            //if (text == null) Debug.LogError("text null");
-            if (parent.currentChara != null && parent.currentChara.RefID == charaRefID) text.Toggle(true, true);
-            else text.Toggle(true, false);
-
-            return true;
-        }
-
-        public void OnClickButton()
-        {
-            parent.SetCurrentChara(charaRefID);
-            parent.ValidateAll();
-        }
-
-
-
-        public void OnPointerEnter()
-        {
-            // OnPointerEnter is not hooked into page refresh, so we need to tie it manually
-            parent.SetCurrentChara(charaRefID);
-            parent.ValidateAll();
-        }
-    }
+    
 
     public class button_ChangeTab : ButtonValidator, I_ButtonClickable
     {
@@ -1425,6 +1462,46 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
     }
 
+    public class ButtonValidator_charaSelect : ButtonValidator, I_ButtonClickable
+    {
+        //Character_Trainable target;
+
+        int charaRefID;
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+
+        public ButtonValidator_charaSelect(scr_Canvas_Management parent, scr_SelectableText text, Character_Trainable chara) : base(parent)
+        {
+            this.charaRefID = chara.RefID;
+            this.text = text;
+            this.parent = parent;
+            this.text.AttachOnHoverEnter(OnPointerEnter);
+        }
+
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (parent.currentChara != null && parent.currentChara.RefID == charaRefID) text.Toggle(true, true);
+            else text.Toggle(true, false);
+
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.SetCurrentChara(charaRefID);
+            parent.ValidateAll();
+        }
+
+
+
+        public void OnPointerEnter()
+        {
+            // OnPointerEnter is not hooked into page refresh, so we need to tie it manually
+            parent.SetCurrentChara(charaRefID);
+            parent.ValidateAll();
+        }
+    }
     public class button_ManageTradeOrder_RemoveCount : ButtonValidator, I_ButtonClickable
     {
 
@@ -1514,6 +1591,139 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         {
             scr_Menu_addlinkfaction cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.canvas_AddLink.GetComponent<RectTransform>(), parent.transform.parent.GetComponent<RectTransform>()).GetComponent<scr_Menu_addlinkfaction>();
             cvs.InitializeWithArgument(this.parent.CurrentFaction, OnChildExit);
+        }
+    }
+
+    public class ButtonValidator_partySelect : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        Manageable_Party party;
+        public ButtonValidator_partySelect(scr_Canvas_Management parent, scr_SelectableText text, Manageable_Party party) : base(parent)
+        {
+            this.text = text;
+            this.parent = parent;
+            this.party = party;
+            this.text.AttachOnHoverEnter(OnPointerEnter);
+        }
+
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy) return false;
+
+
+            if (parent.currentParty == this.party) text.Toggle(true, true);
+            else text.Toggle(true, false);
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            text.SetText(party.FactionDisplayName);
+        }
+
+        public void OnPointerEnter()
+        {
+            // OnPointerEnter is not hooked into page refresh, so we need to tie it manually
+            parent.LoadParty(party);// (charaRefID);
+            parent.ValidateAll();
+        }
+
+    }
+
+    public class ButtonValidator_partyMemberSelect : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        Character_Trainable c;
+        public ButtonValidator_partyMemberSelect(scr_Canvas_Management parent, scr_SelectableText text, Character_Trainable c) : base(parent)
+        {
+            this.text = text;
+            this.parent = parent;
+            this.c = c;
+
+            text.isButtonToggle = true;
+        }
+
+        bool isJoin = false;
+
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy) return false;
+            if (parent.currentParty == null) return false;
+            if (parent.currentParty.ManagedRefs.Contains(c.RefID)) isJoin = false;
+            else isJoin = true;
+
+            text.Toggle(true, !isJoin);
+
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            if (isJoin) parent.currentParty.AddToFaction(c, Manageable_GuestStatus.Member);
+            else parent.currentParty.RemoveFromFaction(c);
+            parent.Script_Expeditions.Initialize(parent, parent.CurrentFaction, true);
+        }
+    }
+
+    public class ButtonValidator_partyEditMembers : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        public ButtonValidator_partyEditMembers(scr_Canvas_Management parent, scr_SelectableText text) : base(parent)
+        {
+            this.text = text;
+            this.parent = parent;
+            text.isButtonToggle = true;
+        }
+
+        bool isEditing = false;
+
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy) return false;
+            if (parent.currentParty == null || parent.CurrentFaction == null) return false;
+            if (parent.currentParty.isActive) return false;
+
+            if (parent.Script_Expeditions.CurrentMode == initScript_Expeditions.PartyEditUI.MembersEdit) isEditing = true;
+            else isEditing = false;
+
+            text.Toggle(true, isEditing);
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            if (!isEditing) parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.MembersEdit;
+            else parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.Neutral;
+        }
+    }
+
+    public class ButtonValidator_partyCreate : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        public ButtonValidator_partyCreate(scr_Canvas_Management parent, scr_SelectableText text) : base(parent)
+        {
+            this.text = text;
+            this.parent = parent;
+        }
+
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy) return false;
+            return parent.CurrentFaction != null;
+        }
+
+        public void OnClickButton()
+        {
+            parent.CurrentFaction.CreateParty();
+            parent.Script_Expeditions.Initialize(parent, parent.CurrentFaction);
         }
     }
 }

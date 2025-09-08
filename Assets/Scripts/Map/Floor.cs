@@ -51,16 +51,16 @@ public class Floor_Instance : IDisposable, I_Disposable
         this.mapTemplateInstanceID = instanceID;
     }
 
-    [SerializeField][JsonProperty] public int refID = -1;
+    [JsonProperty] public int refID = -1;
 
-    [SerializeField][JsonProperty] private string nameOverwrite = "";
+    [JsonProperty] private string nameOverwrite = "";
     [JsonIgnore] public string displayName { get { if (nameOverwrite != "") return LocalizeDictionary.QueryThenParse(nameOverwrite);
             return this.FloorBase.displayName;
         } }
 
     Dictionary<string, int> roomReference;
 
-    [SerializeField][JsonProperty] public List<Room_Instance> rooms;
+    [JsonProperty] public List<Room_Instance> rooms;
 
     public Room_Instance GetRoomWithRef(int roomRef)
     {
@@ -98,7 +98,7 @@ public class Floor_Instance : IDisposable, I_Disposable
 
                 Room_Instance ri = new Room_Instance(plan, r);
                 ri.parentFloor = this;
-                ri = scr_System_CampaignManager.current.Register(ri);
+                scr_System_CampaignManager.current.Register(ri);
                 rooms.Add(ri);
 
 

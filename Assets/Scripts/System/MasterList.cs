@@ -49,11 +49,13 @@ public class MasterList
                 list.Add(Character_Bases);
                 list.Add(CharGenTemplates);
                 list.Add(Encounters);
+                list.Add(ExplorationEvents);
+                list.Add(ExplorationFeatures);
+                list.Add(ExpeditionEntry);
             }
             return list;
         }
     }
-    public Traits_Group_Index Traits_Groups = new Traits_Group_Index();
    // public Index_Sexperiences Sexperiences = null;
     public Index_BodyPartBase BodyPartBases = new Index_BodyPartBase();
     public Stats_Derived_Base_Index Stats_Derived_Bases = new Stats_Derived_Base_Index();
@@ -76,8 +78,6 @@ public class MasterList
     public Character_Trainable_SerializableTemplate_Index CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
     public Character_Personality_Index Character_Personalities = new Character_Personality_Index();
     public Index_COM COMs = new Index_COM();
-    public Index_Item_Base Items = new Index_Item_Base();
-    public Dictionary_Index Dictionary = new Dictionary_Index();
     public Index_FurnitureBase Furnitures = new Index_FurnitureBase();
     public Index_Events Events = new Index_Events();
     public Index_CombatActions CombatActions = new Index_CombatActions();
@@ -97,6 +97,9 @@ public class MasterList
             this.humanoid_RaceTemplates = CharaOrigins.Instance.RaceTemplateIndex;
             this.BodyPartBases = CharaOrigins.Instance.BodyPartIndex;
             this.Traits_Groups = CharaOrigins.Instance.Traits;
+            this.ExplorationEvents = Expeditions.ExplorationEvents;
+            this.ExplorationFeatures = Expeditions.ExplorationFeatures;
+            this.ExpeditionEntry = Expeditions.ExpeditionEntry;
         }
         else
         {
@@ -108,9 +111,18 @@ public class MasterList
             this.humanoid_RaceTemplates = new Humanoid_RaceTemplate_Index();
             this.BodyPartBases = new Index_BodyPartBase();
             this.Traits_Groups = new Traits_Group_Index();
+            this.ExpeditionEntry = new Index_Expeditions();
+            this.ExplorationEvents = new Index_ExpEvents();
+            this.ExplorationFeatures = new Index_FeatureSet();
         }
     }
 
+    public Traits_Group_Index Traits_Groups;
+    public Index_Item_Base Items;
+    public Dictionary_Index Dictionary;
+    public Index_Expeditions ExpeditionEntry;
+    public Index_ExpEvents ExplorationEvents;
+    public Index_FeatureSet ExplorationFeatures;
     public void MergeWith(MasterList list)
     {
         for (int i = 0; i < this.List.Count; i++)

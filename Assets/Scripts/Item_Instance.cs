@@ -4,14 +4,24 @@ using System;
 using Newtonsoft.Json;
 
 
+public interface I_CombatItem
+{
+    public List<string> ItemTags { get; }
+    public string DisplayName { get; }
+    public string Tooltip {  get; }
+
+    public ItemComponent_Weapon Comp_Weapon { get; }
+    public ItemComponent_Defense Comp_Defense { get; }
+}
+
 /// <summary>
 /// Instantiated: World Gen, Cum
 /// Destroyed: Digest, MergeItem
 /// </summary>
 [System.Serializable]
-public class Item_Instance : IDisposable, I_Disposable
+public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
 {
-    [SerializeField][JsonProperty] protected string parentID = "";   // stay consistent with parent
+    [JsonProperty] protected string parentID = "";   // stay consistent with parent
     [JsonIgnore] public string BaseID { get { return parentID; } }
     protected Item_Base _base = null;
     [JsonIgnore] public Item_Base Base { get {
@@ -26,6 +36,8 @@ public class Item_Instance : IDisposable, I_Disposable
     //[JsonIgnore]
     //List<CombatAction> _cachedCombatActions = null;
 
+    [JsonIgnore]
+    public List<string> ItemTags { get { return this.Tags; } }
 
     [JsonIgnore]
     public List<CombatAction> CombatActions 
@@ -37,7 +49,7 @@ public class Item_Instance : IDisposable, I_Disposable
     }
 
     public void SetCount(int count) { this.count = count; }
-    [SerializeField][JsonProperty] protected int count;
+    [JsonProperty] protected int count;
     [JsonIgnore] public int Count { get { return count - markTokenUsed; } }
     [JsonIgnore] public int InnerCount { get { return count; } }
 
@@ -59,7 +71,7 @@ public class Item_Instance : IDisposable, I_Disposable
     }
 
 
-    [SerializeField][JsonProperty] protected int referenceID = -1;
+    [JsonProperty] protected int referenceID = -1;
     [JsonIgnore] public int RefID { get { return referenceID; } }
     [JsonIgnore] public string Tooltip { get { 
             
@@ -124,7 +136,7 @@ public class Item_Instance : IDisposable, I_Disposable
     string _cache_printfull = "";
 
     public string nameOverwrite = "";
-    [SerializeField][JsonProperty] protected List<ItemComponent_Base> compInstances = new List<ItemComponent_Base>();
+    [JsonProperty] protected List<ItemComponent_Base> compInstances = new List<ItemComponent_Base>();
     protected List<ItemComponent_Base> compInstances_nonSerialized = new List<ItemComponent_Base>();
     [JsonIgnore] public List<ItemComponent_Base> Comps { get
         {
@@ -211,8 +223,8 @@ public class Item_Instance : IDisposable, I_Disposable
         this.count = count;
     }
 
-    [SerializeField][JsonProperty] public int markTokenUsed = 0;
-    [SerializeField][JsonProperty] public bool markForDelete = false;
+    [JsonProperty] public int markTokenUsed = 0;
+    [JsonProperty] public bool markForDelete = false;
 
     public void Tick(TimeSpan t)
     {

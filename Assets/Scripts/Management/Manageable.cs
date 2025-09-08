@@ -14,12 +14,12 @@ public enum Manageable_GuestStatus
 }
 
 [System.Serializable]
-public class Manageable : I_Disposable
+public class Manageable : I_Disposable, I_IsJobGiver
 {
     [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }
 
     public List<int> mealHours = new List<int>();
-    [SerializeField][JsonProperty] protected string salesCurrency = "";
+    [JsonProperty] protected string salesCurrency = "";
     protected Item_Base _currency = null;
     [JsonIgnore] public Item_Base Currency
     {
@@ -72,7 +72,7 @@ public class Manageable : I_Disposable
     } }
 
     [JsonIgnore] public int MainExitCost { get { return mainExit == null ? 1 : mainExit.exitCost; } }
-    [SerializeField][JsonProperty] protected Map_MainExit mainExit = null;
+    [JsonProperty] protected Map_MainExit mainExit = null;
     public void SetMainExit(Map_MainExit exit)
     {
         // refresh map
@@ -122,12 +122,12 @@ public class Manageable : I_Disposable
     }
 
 
-    [SerializeField][JsonProperty] string RelatioshipTypeID_subordinate = "relationship_subordinate";
+    [JsonProperty] string RelatioshipTypeID_subordinate = "relationship_subordinate";
     [JsonIgnore] public RelationshipType Relationship_Subordinate { get
         {
             return scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(RelatioshipTypeID_subordinate);
         } }
-    [SerializeField][JsonProperty] string RelatioshipTypeID_colleague = "relationship_colleague";
+    [JsonProperty] string RelatioshipTypeID_colleague = "relationship_colleague";
     [JsonIgnore]
     public RelationshipType Relationship_Colleague
     {
@@ -192,8 +192,8 @@ public class Manageable : I_Disposable
     /// 24 hours schedule. when managing, ask if chara accept this job (with preconfigured time)
     /// if accept, then write job package into charaSchedule
     /// </summary>
-    [SerializeField][JsonProperty] protected Dictionary<int, Job_Schedule> charaSchedules;
-    [SerializeField][JsonProperty] protected Dictionary<int, Manageable_GuestStatus> charaGuestStatus;
+    [JsonProperty] protected Dictionary<int, Job_Schedule> charaSchedules;
+    [JsonProperty] protected Dictionary<int, Manageable_GuestStatus> charaGuestStatus;
     [JsonIgnore] public List<int> ManagedRefs{get{ if (charaSchedules == null) return new List<int>();
     return charaSchedules.Keys.ToList();}}
     //protected List<Job> availableJobs;
@@ -292,7 +292,8 @@ public class Manageable : I_Disposable
         this.DailyReport.FinalizeReport();
     }
 
-    public FactionInventory Inventory;
+    [JsonProperty] protected FactionInventory _inventory;
+    public FactionInventory Inventory { get { return _inventory; } }
     public List<ProductionOrder> ProductionOrders = new List<ProductionOrder>();
     public List<TradeOrder> TradeOrders = new List<TradeOrder>();
 
@@ -310,10 +311,25 @@ public class Manageable : I_Disposable
         this.managedRoomRefs = new Dictionary<int, List<int>>();
         charaSchedules = new Dictionary<int, Job_Schedule>();
         charaGuestStatus = new Dictionary<int, Manageable_GuestStatus>();
-        this.Inventory = new FactionInventory(this);
+        this._inventory = new FactionInventory(this);
     }
 
     string socialStatus_manager, socialStatus_member, socialStatus_visitor, socialStatus_prisoner, socialStatus_baseString;
+
+
+    public List<Manageable_Party> SubFactions = new List<Manageable_Party>();
+
+    public Manageable_Party CreateParty()
+    {
+        var v = new Manageable_Party(this, $"{this.ID}_subfaction_{this.SubFactions.Count}");
+        SubFactions.Add(v);
+        return v;
+    }
+
+    public Manageable_Party GetParty(string id)
+    {
+        return this.SubFactions.Find(x => x.ID == id);
+    }
 
     protected void InitScript()
     {
@@ -322,10 +338,6 @@ public class Manageable : I_Disposable
         jobReqByOrder = LocalizeDictionary.QueryThenParse("ui_management_production_jobReqByOrder");
         jobReqByMaintenance = LocalizeDictionary.QueryThenParse("ui_management_production_jobReqByMaintenance");
         jobAlert = LocalizeDictionary.QueryThenParse("ui_management_production_jobAlert");
-
-        nonjobPosts = new Dictionary<COM, List<Job_Furniture>>();
-        jobPosts = new Dictionary<COM, List<Job_Furniture>>();
-
         
         scr_System_Time.current.Observer_globalTime += OnTimeUpdate;
         scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate_0;
@@ -390,7 +402,7 @@ public class Manageable : I_Disposable
     {
         //Debug.Log("adding PO " + recipe.RecipeUID + " with count " + count + " and type " + orderType.ToString());
         if (!allowDuplicate && GetProductionOrdersByUID(recipe.RecipeUID) != null) return; 
-        ProductionOrders.Add(new ProductionOrder(this, ref recipe, ref this.Inventory, count, orderType));
+        ProductionOrders.Add(new ProductionOrder(this, ref recipe, ref this._inventory, count, orderType));
     }
 
     public void RemoveProductionOrder(ProductionOrder order)
@@ -471,7 +483,7 @@ public class Manageable : I_Disposable
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
         if (scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
-        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", tag, checkBlacklist))
+        if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "", tag, checkBlacklist))
         {
             ss += $" found no valid [{tag}] instances offered by Furnitures from chara[" + chara.FirstName + "] currenthour[" + currentHour + "]";
             if (s != null) s.Add(ss);
@@ -483,7 +495,7 @@ public class Manageable : I_Disposable
             possibleJobs.RemoveAll(x => x.ParentRoom.isRoomPrivate);
         }
 
-        if (!TryValidateAllInstances(ref possibleJobs, chara))
+        if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
         {
             ss += $" cannot pass validate check for any of the {tag} job instances";
             if (s != null) s.Add(ss);
@@ -491,8 +503,8 @@ public class Manageable : I_Disposable
         }
 
 
-        bool result = GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
-        if (GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly))
+        //bool result = FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
+        if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly))
         {
             //Debug.Log("GetValidPaths success after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
             return possibleJobs;
@@ -518,13 +530,13 @@ public class Manageable : I_Disposable
         string ss = " (" + ID + ")";
         if (!this.mealHours.Contains(currentHour)) return new List<Job_Furniture>();
 
-        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "", "food_meal",false))
+        if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "", "food_meal",false))
         {
             ss += " found no valid [food_meal] instances offered by Furnitures";
             if (s != null) s.Add(ss);
             return new List<Job_Furniture>();
         }
-        else if (!TryValidateAllInstances(ref possibleJobs, chara))
+        else if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
         {
             ss += " cannot pass validate check for any of the Meal job instances";
             if (s != null) s.Add(ss);
@@ -532,7 +544,7 @@ public class Manageable : I_Disposable
         }
         else
         {
-            if (GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
+            if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
             else return new List<Job_Furniture>();
         }
     }
@@ -541,13 +553,13 @@ public class Manageable : I_Disposable
     {
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
-        if (!TryFindValidNonJobInstances(out possibleJobs, chara, "com_furniture_sleep","", false))
+        if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "com_furniture_sleep","", false))
         {
             ss += " found no valid [com_furniture_sleep] instances offered by Furnitures";
             if (s != null) s.Add(ss);
             return new List<Job_Furniture>();
         }
-        else if (!TryValidateAllInstances(ref possibleJobs, chara))
+        else if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
         {
             ss += " cannot pass validate check for any of the Sleep job instances";
             if (s != null) s.Add(ss);
@@ -555,7 +567,7 @@ public class Manageable : I_Disposable
         }
         else
         {
-            if (GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
+            if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
             else return new List<Job_Furniture>();
         }
     }
@@ -606,58 +618,7 @@ public class Manageable : I_Disposable
 
 
 
-    protected bool GetValidPaths(ref List<Job_Furniture> possibleJobs, Character_Trainable chara, ref string s, bool randInsteadofShortest = false)
-    {
-        string ss = "";
-
-        List<int> rooms = new List<int>();
-        foreach (var x in possibleJobs) rooms.Add(x.ParentRoom.RefID);
-        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsParallel(chara.RefID, rooms, randInsteadofShortest);
-
-        Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>> list = null;
-        if (!randInsteadofShortest)
-        {
-            list = sortedList.First().Value;
-            possibleJobs = sortedList.Count > 0 ? possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID)) : new List<Job_Furniture>();
-        }
-        else if (randInsteadofShortest && sortedList.Count > 0)
-        {
-            var randIndex = Utility.GetRandomElement(sortedList.Keys.ToList());
-            list = sortedList[randIndex];
-            possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
-            //Debug.LogError($"GetValidPaths randInsteadofShortest first[{sortedList.First().Key}] chosen[{randIndex}]");
-        }
-        else
-        {
-            possibleJobs = new List<Job_Furniture>();
-        }
-
-
-        if (possibleJobs.Count > 0)
-        {
-            // just in case thing is not pathable
-            var randJob = Utility.GetRandomElement(possibleJobs);
-            IEnumerable<TaggedEdge<int, Door_Instance>> path = list[randJob.ParentRoom.RefID];
-            if (path != null || scr_System_CampaignManager.current.Map.FindRoomByChara(chara.RefID).RefID == randJob.ParentRoom.RefID)
-            {
-                return true;
-            }
-            else
-            {
-                var a = scr_System_CampaignManager.current.Map.FindRoomByChara(chara.RefID);
-                var b = randJob.ParentRoom;
-                ss += " found no pathable job instances from ["+ a.RefID + " "+a.DisplayName + "] to ["+ b.RefID + " "+ b.DisplayName+ "]";
-                if (s != null) s += ss;
-                return false;
-            }
-        }
-        else
-        {
-            ss += " possibleJobs.Count <= 0";
-            if (s != null) s += ss;
-            return false;
-        }
-    }
+    
 
 
     public List<Job_Furniture> GetValidJobsByCOMID(Character_Trainable chara, string comID, List<string> s = null, bool allowJobPostSearch = true, bool allowNonJobPostSearch = true)
@@ -670,7 +631,7 @@ public class Manageable : I_Disposable
 
         if (targetCOM.comTags.Contains("job") && allowJobPostSearch)
         {
-            if (!TryFindValidJobInstances(out possibleJobs, chara, comID, false))
+            if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, chara, comID, false))
             {
                 ss += " found no valid ["+comID+ "] instances offered by Furnitures";
                 if(s != null) s.Add(ss);
@@ -679,7 +640,7 @@ public class Manageable : I_Disposable
         }
         else if (allowNonJobPostSearch)
         {
-            if (!TryFindValidNonJobInstances(out possibleJobs, chara, comID,"", false))
+            if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, comID,"", false))
             {
                 ss += " found no valid ["+comID+"] instances offered by Furnitures";
                 if (s != null) s.Add(ss);
@@ -694,7 +655,7 @@ public class Manageable : I_Disposable
         }
 
         
-        if (!TryValidateAllInstances(ref possibleJobs, chara))
+        if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
         {
             ss += " cannot pass validate check for any of the offered [" + comID + "] job instances";
             if (s != null) s.Add(ss);
@@ -702,7 +663,7 @@ public class Manageable : I_Disposable
         }
         else
         {
-            if (GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
+            if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
             else return null;
         }
     }
@@ -734,107 +695,30 @@ public class Manageable : I_Disposable
         // chara job is null, try give job
         // first find a valid instance of job
         List<Job_Furniture> possibleJobs;
-        if (!TryFindValidJobInstances(out possibleJobs, chara, GetSchedule(chara).Get(currentHour), checkBlacklist))
+        if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, chara, GetSchedule(chara).Get(currentHour), checkBlacklist))
         {
             ss += " found no valid jobinstances offered by Furnitures";
             if (s != null) s += ss;
             return null;
         }
-        else if (!TryValidateAllInstances(ref possibleJobs, chara))
+        else if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
         {
             ss += " cannot pass validate check for any of the offered [" + GetSchedule(chara).Get(currentHour).Name + "] job instances";
             if (s != null) s += ss;
             return null;
         }
         else {
-            if (GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
+            if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
             else return null;
         }
 
     }
 
-    protected bool TryValidateAllInstances(ref List<Job_Furniture> list, Character_Trainable doer)
-    {
-        for (int i = list.Count - 1; i >= 0; i--)
-        {
-            if (!list[i].ValidateActor(doer)) list.RemoveAt(i);
-        }
-        return list.Count > 0;
-    }
+
 
     protected bool ExistsProductionOrderWith(COM com)
     {
         return false;
-    }
-
-    protected bool TryFindValidNonJobInstances(out List<Job_Furniture> list, Character_Trainable c, string comID = "", string comTag = "", bool checkBlacklist = false)
-    {
-        list = new List<Job_Furniture>();
-        foreach (var key in nonjobPosts.Keys)
-        {
-            //Debug.Log("TryFindValidNonJobInstances checking nonjobpost [" + key.ID + "] with [" + nonjobPosts[key].Count +"] entries");
-            if (comID != "" && key.ID != comID) continue;
-            if (comTag != "" && !key.comTags.Contains(comTag)) continue;
-
-            foreach (var post in nonjobPosts[key])
-            {
-                if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
-                {
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
-                    continue;
-                }
-                else if (post.ValidateActor(c, key) && 
-                    (!post.ParentRoom.isRoomPrivate || managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID)) &&
-                    (!post.ParentRoom.isRoomPrison || c.isImprisoned) &&
-                    (!c.isImprisoned || post.ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID).RefID)) list.Add(post);
-            }
-        }
-
-        //list = jobPosts[targetCOM];
-        //Debug.Log("FindValidJobInstances for comID[" + comID + "] has COM[" + comID + "] existProductionOrder [" + ExistsProductionOrderWith(targetCOM) + "] with [" + jobPosts[targetCOM].Count+ "] instances ");
-        return list.Count > 0;
-    }
-
-    protected bool TryFindValidJobInstances(out List<Job_Furniture> list, Character_Trainable c, HourlySchedule schedule, bool checkBlacklist)
-    {
-        var rnd = schedule.getRandCOM;
-        if (rnd == null)
-        {
-            list = new List<Job_Furniture>();
-            return false;
-        }
-        else return TryFindValidJobInstances(out list, c, rnd.ID, checkBlacklist);
-    }
-
-    protected bool TryFindValidJobInstances(out List<Job_Furniture> list, Character_Trainable c, string comID, bool checkBlacklist)
-    {
-        list = new List<Job_Furniture>();
-        COM targetCOM = HasJobWithCOM(comID);
-        if (targetCOM == null) return false;
-        //if (!ExistsProductionOrderWith(targetCOM)) return false;
-
-        foreach (var post in jobPosts[targetCOM])
-        {
-            //post.RefreshValidJobCOMs();
-            if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
-            {
-                Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
-                continue;
-            }
-            else if (post.ValidateActor(c, targetCOM) &&
-                (!c.isImprisoned || post.ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID).RefID)) list.Add(post);
-        }
-
-        //list = jobPosts[targetCOM];
-        //Debug.Log("FindValidJobInstances for comID[" + comID + "] has COM[" + targetCOM.displayName + "] existProductionOrder [" + ExistsProductionOrderWith(targetCOM) + "] with [" + jobPosts[targetCOM].Count+ "] instances ");
-        return list.Count > 0;
-    }
-
-    protected COM HasJobWithCOM(string comID)
-    {
-        if (comID == "") return null;
-        foreach (COM com in jobPosts.Keys) if (com.ID == comID) return com;
-        return null;
     }
 
     protected bool isCharaInManagedSpace(int refID)
@@ -1103,7 +987,7 @@ public class Manageable : I_Disposable
     /// <summary>
     /// 1st key roomRefID, 2nd key charaRefID;
     /// </summary>
-    [SerializeField][JsonProperty] protected Dictionary<int, List<int>> managedRoomRefs = null;
+    [JsonProperty] protected Dictionary<int, List<int>> managedRoomRefs = null;
     private Dictionary<int, Room_Instance> roomRefsCache = null;
 
     [JsonIgnore] public Dictionary<int, Room_Instance> ManagedRooms
@@ -1163,7 +1047,7 @@ public class Manageable : I_Disposable
 
     protected void AddJobPost(COM com, Job_Furniture job)
     {
-        job.SetOwner(this);
+        job.FactionOwner = this;
         //if (!com.requirements.requirement.req_Doers.allowNPC) return; // this one excludes cryosleep so no
 
         if (!com.comTags.Contains("job"))
@@ -1181,11 +1065,11 @@ public class Manageable : I_Disposable
     }
 
     //List<Job_Furniture> NonProductionJobs;
-    Dictionary<COM, List<Job_Furniture>> nonjobPosts;
-    Dictionary<COM, List<Job_Furniture>> jobPosts;
+    Dictionary<COM, List<Job_Furniture>> nonjobPosts = new Dictionary<COM, List<Job_Furniture>>();
+    Dictionary<COM, List<Job_Furniture>> jobPosts = new Dictionary<COM, List<Job_Furniture>>();
 
 
-    
+
     [JsonIgnore] public List<COM> JobPosts { get { return jobPosts.Keys.ToList(); } }
     [JsonIgnore] public List<COM> NonJobPosts { get { return nonjobPosts.Keys.ToList(); } }
     public string printDebugInfo_Jobs()
@@ -1405,7 +1289,6 @@ public class Manageable : I_Disposable
     [System.Serializable]
     public class Job_Schedule
     {
-        [SerializeField]
         [JsonProperty]
         protected HourlySchedule[] schedule = new HourlySchedule[24];
 
@@ -1620,7 +1503,7 @@ public class Manageable : I_Disposable
         }
         
         [JsonIgnore] public int CountABS { get { return count; } }
-        [SerializeField][JsonProperty] protected int count;
+        [JsonProperty] protected int count;
 
         protected Manageable factionOwnerCache;
         [JsonIgnore] Manageable FactionOwner { 
@@ -1628,7 +1511,7 @@ public class Manageable : I_Disposable
             set { this.factionOwnerCache = value; }
         }
 
-        [JsonProperty] [SerializeField] protected string targetFactionID = "";
+        [JsonProperty] protected string targetFactionID = "";
         protected Manageable targetFactionCache = null;
         [JsonIgnore] public Manageable TargetFaction
         {
@@ -1737,7 +1620,7 @@ public class Manageable : I_Disposable
                 if (recipe_cache == null) recipe_cache = Masterlist_Items.Instance.GetRecipeByID(this.recipeID);         
             return recipe_cache; } }
         protected ItemComponentTemplate_Craftable_Recipe recipe_cache = null;
-        [SerializeField][JsonProperty] protected string recipeID = "";
+        [JsonProperty] protected string recipeID = "";
 
         [JsonIgnore]
         public int Count
@@ -1756,7 +1639,7 @@ public class Manageable : I_Disposable
             }
         }
         [JsonIgnore] public int CountABS { get { return count; } }
-        [SerializeField][JsonProperty] protected int count;
+        [JsonProperty] protected int count;
         public int CurrentProgress = 0;
 
         [JsonIgnore] public bool isRequirementValid
@@ -2026,7 +1909,7 @@ public class Manageable : I_Disposable
 
     }
 
-    [SerializeField] public List<JobPostPreset> JobPostsPresets = new List<JobPostPreset>();
+    public List<JobPostPreset> JobPostsPresets = new List<JobPostPreset>();
     public void AddJobPost(MapPlan.WorkModuleInit module)
     {
         this.JobPostsPresets.Add(new JobPostPreset(module));
@@ -2080,7 +1963,7 @@ public class Manageable : I_Disposable
                     _cache = new Dictionary<string, ItemEntry>();
                     foreach(var entry in entries)
                     {
-                        foreach(var content in UtilityEX.GetContent(entry))
+                        foreach(var content in MapUtility.GetContent(entry))
                         {
                             var key = content.itemID + "|" + content.itemNameOverwrite + "|" + content.itemCount;
                             if (!_cache.ContainsKey(key)) _cache.Add(key, content);

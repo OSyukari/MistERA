@@ -217,7 +217,7 @@ public class ExperienceClass
 [System.Serializable]
 public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_RemoveElemByTag
 {
-    [SerializeField][JsonProperty] protected List<ExperienceClass> list = new List<ExperienceClass>();
+    [JsonProperty] protected List<ExperienceClass> list = new List<ExperienceClass>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, ExperienceClass> _List;
     [JsonIgnore] public List<ExperienceClass> List { get { return list; } }
     public void MergeWith(I_IndexMergeable list)

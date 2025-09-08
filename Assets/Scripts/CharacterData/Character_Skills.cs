@@ -52,7 +52,7 @@ public enum LogicalOperand
 public class SkillManager
 {
 
-    [SerializeField][JsonProperty] protected Dictionary<string, int> experienceLogs = new Dictionary<string, int>();
+    [JsonProperty] protected Dictionary<string, int> experienceLogs = new Dictionary<string, int>();
     protected Dictionary<string, int> experienceLogs_currentRound = new Dictionary<string, int>();
     public List<string> ExperiencesToString()
     {
@@ -204,7 +204,7 @@ public class SkillManager
         RefreshSkillsList();
     }
 
-    [SerializeField][JsonProperty] Dictionary<string, SkillInstance> skills = new Dictionary<string, SkillInstance>();
+    [JsonProperty] Dictionary<string, SkillInstance> skills = new Dictionary<string, SkillInstance>();
     [JsonIgnore] public List<SkillInstance> Skills { get
         {
             if (skills == null) return new List<SkillInstance>();

@@ -103,7 +103,6 @@ public class CombatManager
         return false;
     }
 
-    [SerializeField]
     [JsonProperty]
     protected Dictionary<string ,int> combatDummyRefIDs = new Dictionary<string ,int>();
     Dictionary<string, Character_Trainable> combatDummyRefs = new Dictionary<string, Character_Trainable>();

@@ -17,7 +17,7 @@ public class Job_Furniture : Job
      
      */
 
-    [SerializeField][JsonProperty] private int parentRoomID;
+    [JsonProperty] private int parentRoomID;
     private Room_Instance parentRoomRef = null;
     [JsonIgnore] public override Room_Instance ParentRoom
     {
@@ -60,15 +60,6 @@ public class Job_Furniture : Job
         {
             return ParentInstance.DisplayName +(!isContainer ? "" : " : "+( Container == null? " - ": Container.DisplayName ));
         }
-    }
-
-    public void SetOwner(Manageable m) 
-    { if (this.FactionOwner != m)
-        {
-            this.factionOwnerCache = m;
-            this.factionOwnerID = m.ID;
-        }
-
     }
 
     //public List<COM> validNonJobCOMs. This is a cache value holder, dont need to serialize
@@ -148,7 +139,7 @@ public class Job_Furniture : Job
         var list = new List<COM>();
         foreach (FurnitureBase.Furniture_COMGiver comGiver in ParentInstance.FurnitureBase.givesJob)
         {
-            list.AddRange(comGiver.GetCOMs());
+            list.AddRange(MapUtility.GetFurnitureCOMs(comGiver));
         }
         foreach (COM com in list)
         {
@@ -219,7 +210,11 @@ public class Job_Furniture : Job
         //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
         // 2 - if actor is in room, set COM package
         // make COM package
-    
+        var m = FactionOwner as Manageable;
+        if (m == null)
+        {
+            return new List<ActionPackage>();
+        }
         // during registration, chara addactor register currentjobschedule, or register recreation / meal / etc
 
         List<COM> possibleCOMs = actorRefID.Contains(c.RefID) ? actorRefIDStorage[c.RefID].Match(this) : (allowInvalid ? allusableCOMs : new List<COM>());
@@ -230,8 +225,8 @@ public class Job_Furniture : Job
         {
             possibleCOMs = possibleCOMs.FindAll(x => ValidCOMs.Contains(x) 
                                                     && CanCOMAcceptMoreActor(x) 
-                                                    && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner))
-                                                    && (!x.hasFactionReq || !x.isJobCOM || FactionOwner.GetProductionOrder(this, out var xxx, out var po))
+                                                    && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(m))
+                                                    && (!x.hasFactionReq || !x.isJobCOM || m.GetProductionOrder(this, out var xxx, out var po))
                                                 );
             //if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} at step 2");
         }
@@ -241,7 +236,7 @@ public class Job_Furniture : Job
         {
             Manageable.ProductionOrder po = null;
             bool valid = false;
-            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner) && (!com.isJobCOM || FactionOwner.GetProductionOrder(this, out var xxx, out po))))
+            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(m) && (!com.isJobCOM || m.GetProductionOrder(this, out var xxx, out po))))
             {
                 var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, po);
                 if (package.Validate() || allowInvalid)
@@ -464,7 +459,7 @@ public class Job_Furniture : Job
         }
     }
 
-    [SerializeField][JsonProperty] public JobContainer Container = null;
+    [JsonProperty] public JobContainer Container = null;
     [JsonIgnore] public string ContainerTooltip { get {
             if (Container == null) return "";
             return Container.Tooltip;} }
@@ -475,7 +470,7 @@ public class Job_Furniture : Job
     public class JobContainer_Crops : JobContainer
     {
         [JsonIgnore] public override bool hasRemainingCapacity { get { return false; } }
-        [SerializeField][JsonProperty] protected string farmRecipeUID = "";
+        [JsonProperty] protected string farmRecipeUID = "";
         protected ItemComponentTemplate_Harvestable targetCropCache = null;
 
         [JsonIgnore] public ItemComponentTemplate_Harvestable targetCrop{
@@ -590,7 +585,7 @@ public class Job_Furniture : Job
             }
         }
 
-        [SerializeField][JsonProperty] protected List<int> charaRefs = new List<int>();
+        [JsonProperty] protected List<int> charaRefs = new List<int>();
         protected List<Character_Trainable> charaCaches = null;
         [JsonIgnore] public List<Character_Trainable> Chara { get
             {
@@ -679,7 +674,7 @@ public class Job_Furniture : Job
 
         [JsonIgnore] public virtual bool hasRemainingCapacity { get { return false; } }
 
-        [SerializeField][JsonProperty] protected int ownerJobRef = -1;
+        [JsonProperty] protected int ownerJobRef = -1;
         protected Job_Furniture ownerJobCache = null;
         [JsonIgnore] public Job_Furniture ownerJob
         {
@@ -689,7 +684,7 @@ public class Job_Furniture : Job
                 return ownerJobCache;
             }
         }
-        [JsonIgnore] public virtual Manageable FactionOwner
+        [JsonIgnore] public virtual I_IsJobGiver FactionOwner
         {
             get
             {

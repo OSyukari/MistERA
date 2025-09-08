@@ -136,7 +136,7 @@ public class menu_SkillSelect : scr_Menu, IPointerClickHandler
             MakeActionButton(AlwaysValidRect, action, null);
         }
     }
-    protected void MakeItemRect(Item_Instance item, List<CombatAction> actions)
+    protected void MakeItemRect(I_CombatItem item, List<CombatAction> actions)
     {
         if (actions.Count < 1 || !actions.Any(x => !x.HideInSelect)) return;
 
@@ -154,7 +154,7 @@ public class menu_SkillSelect : scr_Menu, IPointerClickHandler
         }
     }
 
-    protected void MakeActionButton(RectTransform parentRect, CombatAction action, Item_Instance item)
+    protected void MakeActionButton(RectTransform parentRect, CombatAction action, I_CombatItem item)
     {
         RectTransform r = Instantiate(prefab_text_linkbutton);
         scr_SelectableText btn = r.GetComponent<scr_SelectableText>();

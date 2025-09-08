@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public class ItemComponentTemplate_Equippable : I_ItemComponentTemplate_Comp
 {
     public List<BodyPartEquipSlot> equipSlot = new List<BodyPartEquipSlot>();

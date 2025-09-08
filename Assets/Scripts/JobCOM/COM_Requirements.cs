@@ -55,8 +55,8 @@ public class COM_Requirements
         public int doerCount = -1;
         public int receiverCount = -1;
 
-        public Requirements req_Doers = new Requirements();
-        public Requirements req_Receivers = new Requirements();
+        public CharaReq req_Doers = new CharaReq();
+        public CharaReq req_Receivers = new CharaReq();
 
         /// <summary>
         /// indicates that this command has no receiver. </br>
@@ -65,11 +65,11 @@ public class COM_Requirements
         /// 
 
 
-        [SerializeField][JsonProperty] protected bool treatReceiverAsDoer = false;
+        [JsonProperty] protected bool treatReceiverAsDoer = false;
 
         [JsonIgnore] public bool TreatReceiverAsDoer { get { return treatReceiverAsDoer; } }
 
-        [SerializeField][JsonProperty] protected bool treatDoerAsReceiver = false;
+        [JsonProperty] protected bool treatDoerAsReceiver = false;
         [JsonIgnore] public bool TreatDoerAsReceiver { get { return treatDoerAsReceiver; } }
 
         [JsonIgnore] public bool AddPartyMemberAsReceiver { get { return req_Receivers.addPartyMembers; } }
@@ -128,205 +128,35 @@ public class COM_Requirements
 
             //            Debug.Log("Command (Variant) Requirement Validating [" + String.Join(",", doerRefIDs) + "] and [" + String.Join(",", receiverRefIDs) + "]");
 
-            if (!req_Doers.Validate(ref _tooltip, doerRefIDs)) 
+            if (!CharaReqUtility.Validate( req_Doers,ref _tooltip, doerRefIDs)) 
             {
                 _tooltip.Add("doer failed doer req validation");
                 return false;
             }
-            if (treatDoerAsReceiver && !req_Receivers.Validate(ref _tooltip, doerRefIDs))
+            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers,ref _tooltip, doerRefIDs))
             {
                 _tooltip.Add("doer failed receiver req validation");
                 return false;
             } 
-            if (receiverCount > 0 && treatReceiverAsDoer && !req_Doers.Validate(ref _tooltip, receiverRefIDs))
+            if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers,ref _tooltip, receiverRefIDs))
             {
                 _tooltip.Add("receiver failed doer req validation");
                 return false;
             } 
             if (receiverCount == 0) 
             {   
-                bool value = req_Receivers.Validate(ref _tooltip, doerRefIDs);
+                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs);
                 if (!value) _tooltip.Add("doer failed receiver == 0 req validation");
                 return value;
             }
             else{
-                bool value = req_Receivers.Validate(ref _tooltip, receiverRefIDs);
+                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, receiverRefIDs);
                 if (!value) _tooltip.Add("receiver failed receiver req validation");
                 return value;
             } 
         }
 
-        [System.Serializable]
-        public class Requirements
-        {
-
-            public List<string> BodyTags = new List<string>();
-            public int minRevealingScore = -1;
-
-            public int cost_EN = 0;
-            public int cost_ST = 0;
-
-            public bool allowPlayer = true;
-            public bool allowNPC = true;
-
-            public bool requireConscious = true;
-            // require conscious to react, like work.
-            // action that do not require conscious are action that are done unilaterally
-            public bool requireUnrestrained = false;
-            public bool requireAction = true;
-            public bool requireNoTeammate = false;
-            public bool addPartyMembers = false;
-            public bool requireUndressed = false;
-            public bool requireMovement = false;
-            public List<string> requireAbsentJobwithCOMTag = new List<string>();
-            public List<string> requireExistingJobwithCOMTag = new List<string>();
-            public void Read(Requirements req)
-            {
-                this.BodyTags.AddRange(req.BodyTags);
-                this.requireAbsentJobwithCOMTag.AddRange(req.requireAbsentJobwithCOMTag);
-                this.requireExistingJobwithCOMTag.AddRange(req.requireExistingJobwithCOMTag);
-                this.BodyTags = this.BodyTags.Distinct().ToList();
-                requireConscious = requireConscious && req.requireConscious;
-                requireUnrestrained = requireUnrestrained || req.requireUnrestrained;
-                requireMovement = requireMovement || req.requireMovement;
-                requireAction = requireAction && req.requireAction;
-                if (this.minRevealingScore == -1 && req.minRevealingScore != -1) this.minRevealingScore = req.minRevealingScore;
-                if (this.cost_EN == 0 && req.cost_EN != 0) this.cost_EN = req.cost_EN;
-                if (this.cost_ST == 0 && req.cost_ST != 0) this.cost_ST = req.cost_ST;
-                this.addPartyMembers = this.addPartyMembers || req.addPartyMembers;
-                this.requireNoTeammate = this.requireNoTeammate || req.requireNoTeammate;
-                this.requireUndressed = this.requireUndressed || req.requireUndressed;
-                
-            }
-
-            public bool Validate(ref List<string> _tooltip, List<int> actorRefIDs)
-            {
-
-                if (minRevealingScore != -1)
-                {
-                    foreach (int doerRefID in actorRefIDs)
-                    {
-                        if (scr_System_CampaignManager.current.FindInstanceByID(doerRefID).Body.GetMaxRevealingScoreByTags(BodyTags, BodyEquipLayer.None) > minRevealingScore)
-                        {
-                            _tooltip.Add("Command invalid: actor body exposure below requirement");
-                            return false;
-                        }
-                    }
-                }
-
-                foreach (var i in actorRefIDs)
-                {
-                    Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(i);
-                    if (c == null) continue;
-
-                    if (BodyTags.Count > 0 && !c.Body.HasBodyTag(BodyTags))
-                    {
-                        _tooltip.Add("Command invalid: actor [" + c.FirstName + "] missing required body part");
-                        return false;
-                    }
-
-                    if (cost_EN != 0 && (c.Stats.Energy.Value - cost_EN) < 0)
-                    {
-                        _tooltip.Add("Command invalid: actor [" + c.FirstName + "] does not have enough energy");
-                        return false;
-                    }
-
-                    if (cost_ST != 0 && (c.Stats.Stamina.Value - cost_ST) < 0)
-                    {
-                        _tooltip.Add("Command invalid: actor [" + c.FirstName + "] does not have enough stamina");
-                        return false;
-                    }
-                    if (!allowPlayer && c.RefID == 0)
-                    {
-                        _tooltip.Add("Command invalid: command not allowed for player");
-                        return false;
-                    }
-                    if (!allowNPC && c.RefID > 0)
-                    {
-                        _tooltip.Add("Command invalid: command not allowed for NPC");
-                        return false;
-                    }
-                    if (requireConscious && c.Stats.isConsciousnessUnconscious)
-                    {
-                        _tooltip.Add("Command invalid: target must be conscious");
-                        return false;
-                    }
-                    if (requireUnrestrained && (c.isRestrained))
-                    {
-                        _tooltip.Add("Command invalid: target must not be restrained");
-                        return false;
-                    }
-                    if (requireAction && !c.canAct)
-                    {
-
-                        if (c.isTimeStopped)
-                        {
-                            _tooltip.Add("Command invalid: target cannot act in timestop");
-                            return false;
-                        }
-                        else
-                        {
-                            _tooltip.Add("Command invalid: target is not able to act due to external factors");
-                            return false;
-                        }
-                    }
-                    if (requireMovement && !c.canMove)
-                    {
-                        _tooltip.Add("Command invalid: target must be able to move");
-                        return false;
-                    }
-                    if (requireUndressed && !c.isUndressed)
-                    {
-                        _tooltip.Add("Command invalid, target is wearing too much");
-                        return false;
-                    }
-                    if (requireNoTeammate && scr_System_CampaignManager.current.party.Members.Count > 0)
-                    {
-                        _tooltip.Add("Command invalid, player cannot have other teammate");
-                        return false;
-                    }
-                    if (requireExistingJobwithCOMTag.Count > 0 && (c.CurrentJob == null || !c.CurrentJob.HasAvailableCOMwithCOMTags(requireExistingJobwithCOMTag)))
-                    {
-                        _tooltip.Add("Requires existing Job with required tags");
-                        return false;
-                    }
-                    if (requireAbsentJobwithCOMTag.Count > 0 && (c.CurrentJob != null && c.CurrentJob.HasAvailableCOMwithCOMTags(requireAbsentJobwithCOMTag)))
-                    {
-                        _tooltip.Add("Cannot be performed while existing Job with conflicting tags");
-                        return false;
-                    }
-
-                }
-
-                return true;
-            }
-
-            public void ApplyCost(EvaluationPackage m, Character_Trainable c, COM com, bool isDoer)
-            //public void ApplyCost(ActionPackage m, Character_Trainable c ,COM com)
-            {
-                if (c == null) return;
-                //Debug.Log("ApplyCOST for com " + m.targetCOM.DisplayName(m.VariantID) + " on chara " + c.FirstName);
-                if (cost_EN != 0f)
-                {
-                    m.m.AddStats(c.RefID, "stats_derived_extended_energy", -cost_EN);
-                    c.Stats.Energy.Increment(-cost_EN);
-                }
-                if (cost_ST != 0f)
-                {
-                    m.m.AddStats(c.RefID, "stats_derived_extended_stamina", -cost_ST);
-                    c.Stats.Stamina.Increment(-cost_ST);
-                }
-
-                var tags = (isDoer ? m.ReceiverTargetTag : m.DoerTargetTag);
-
-                if (tags.Contains("interaction") && (!tags.Contains("service") || isDoer) && !tags.Contains("NonInteraction") && (!tags.Contains("ignored")) && !(c.Stats.isConsciousnessUnconscious))
-                {
-                    // interaction cost
-                    m.m.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
-                    c.Stats.Energy.Increment(c.Stats.Energy_InteractionCost);
-                }
-            }
-        }
+        
     }
 
 
@@ -570,9 +400,10 @@ public class COM_Requirements
         public string jobKeyword = "";
         public string inventoryItemBaseID = "";
 
-        public bool Validate(Manageable m)
+        public bool Validate(I_IsJobGiver m)
         {
-            if (jobKeyword != "" && (m == null || !m.ExistOngoingProductionOrder(jobKeyword))) return false;
+            var mm = m as Manageable;
+            if (jobKeyword != "" && (mm == null || !mm.ExistOngoingProductionOrder(jobKeyword))) return false;
 
             if (!allowInNonPlayerFaction && !m.isPlayerFaction) return false;
             if (!allowInPlayerFaction && m.isPlayerFaction) return false;

@@ -391,7 +391,7 @@ public class CombatInstance
         RefreshOngoing();
     }
 
-    protected void AddActionOngoing(int index, CombatAction action, Character_Trainable source, Item_Instance itemSource,  Character_Trainable target, int baseSpeed, int actionIndex, CombatActionInstance triggerSource = null, bool immediateRefresh = true)
+    protected void AddActionOngoing(int index, CombatAction action, Character_Trainable source, I_CombatItem itemSource,  Character_Trainable target, int baseSpeed, int actionIndex, CombatActionInstance triggerSource = null, bool immediateRefresh = true)
     {
         //if (baseSpeed > 0) Debug.LogError($"AddActionOngoing Error for [{source.FirstName}] action [{action.Name}] baseSpeed [{baseSpeed}]");
         if (triggerSource != null)
@@ -523,7 +523,7 @@ public class CombatInstance
         CurrentPositions = null;
         ActionsByChara.Clear();
         LastActionsOngoing = new Dictionary<int, CombatActionInstance>(LastActions);
-        LastUsedWeapons = new Dictionary<int, Item_Instance>(_lastUsedWeapons);
+        LastUsedWeapons = new Dictionary<int, I_CombatItem>(_lastUsedWeapons);
         WeaponCooldowns.Clear();
         foreach(var i in _weaponCooldowns)
         {
@@ -697,7 +697,7 @@ public class CombatInstance
         Observer_InstanceUpdate?.Invoke();
     }
 
-    protected Item_Instance GetRandomWeapon(Character_Trainable c)
+    protected I_CombatItem GetRandomWeapon(Character_Trainable c)
     {
         var lastUsedWeapon = LastUsedWeapons[c.RefID];
         if (lastUsedWeapon != null) return lastUsedWeapon;
@@ -749,12 +749,12 @@ public class CombatInstance
         fastest.ApplyResults(isPrecalc);
     }
 
-    Dictionary<Item_Instance, ItemCooldown> _weaponCooldowns = new Dictionary<Item_Instance, ItemCooldown>();
-    Dictionary<Item_Instance, ItemCooldown> WeaponCooldowns = new Dictionary<Item_Instance, ItemCooldown>();
+    Dictionary<I_CombatItem, ItemCooldown> _weaponCooldowns = new Dictionary<I_CombatItem, ItemCooldown>();
+    Dictionary<I_CombatItem, ItemCooldown> WeaponCooldowns = new Dictionary<I_CombatItem, ItemCooldown>();
 
-    Dictionary<int, Item_Instance> _lastUsedWeapons = new Dictionary<int, Item_Instance>();
-    Dictionary<int, Item_Instance> LastUsedWeapons = new Dictionary<int, Item_Instance>();
-    public bool isWeaponInCooldown(Item_Instance weapon, out int round)
+    Dictionary<int, I_CombatItem> _lastUsedWeapons = new Dictionary<int, I_CombatItem>();
+    Dictionary<int, I_CombatItem> LastUsedWeapons = new Dictionary<int, I_CombatItem>();
+    public bool isWeaponInCooldown(I_CombatItem weapon, out int round)
     {
         round = 0;
         if (!WeaponCooldowns.TryGetValue(weapon, out var cooldowns)) return false;
@@ -770,12 +770,12 @@ public class CombatInstance
             return false;
         }
     }
-    public bool isWeaponInCooldown(Item_Instance weapon)
+    public bool isWeaponInCooldown(I_CombatItem weapon)
     {
         var result = WeaponCooldowns.TryGetValue(weapon, out var cooldown);
         return result;
     }
-    public void LogLastUsedWeapon(Character_Trainable charaRef, Item_Instance weapon, CombatActionInstance sourceRef)
+    public void LogLastUsedWeapon(Character_Trainable charaRef, I_CombatItem weapon, CombatActionInstance sourceRef)
     {
         if (LastUsedWeapons.TryGetValue(charaRef.RefID, out var last) && last != null && last != weapon)
         {
@@ -789,7 +789,7 @@ public class CombatInstance
         LastUsedWeapons[charaRef.RefID] = weapon;
     }
 
-    public void AddCooldown(Item_Instance item, int value, ItemCooldown.CooldownType type)
+    public void AddCooldown(I_CombatItem item, int value, ItemCooldown.CooldownType type)
     {
         if (!WeaponCooldowns.ContainsKey(item))
         {
@@ -868,11 +868,11 @@ public class CombatInstance
     /// <param name="isTeamB"></param>
     /// <param name="target"></param>
     /// <returns></returns>
-    protected CombatActionPreset GetValidPreset(Character_Trainable c, bool isTeamB, out Character_Trainable target, out List<Item_Instance> items)
+    protected CombatActionPreset GetValidPreset(Character_Trainable c, bool isTeamB, out Character_Trainable target, out List<I_CombatItem> items)
     {
         var opponentTeam = isTeamB ? teamA.Actors : teamB.Actors;
         var possibleTargets = new List<Character_Trainable>(opponentTeam);
-        items = new List<Item_Instance>();
+        items = new List<I_CombatItem>();
         Utility.Shuffle(possibleTargets);
         target = possibleTargets.Count() < 1 ? null : possibleTargets.First();
 
@@ -881,12 +881,12 @@ public class CombatInstance
         var Stats = ActorStats[c.RefID];
 
         LastUsedWeapons.TryGetValue(c.RefID, out var lastWP);
-        Dictionary<Item_Instance, List<CombatAction>> weaponActions = new Dictionary<Item_Instance, List<CombatAction>>(c.Inventory.CombatActions); 
-        List<Item_Instance> weaponPriorityList = new List<Item_Instance>();
+        Dictionary<I_CombatItem, List<CombatAction>> weaponActions = new Dictionary<I_CombatItem, List<CombatAction>>(c.Inventory.CombatActions); 
+        List<I_CombatItem> weaponPriorityList = new List<I_CombatItem>();
         if (lastWP != null) weaponPriorityList.Add(lastWP);
         foreach (var i in c.Inventory.CombatActions) if (!weaponPriorityList.Contains(i.Key) && !isWeaponInCooldown(i.Key)) weaponPriorityList.Add(i.Key);
         
-        Dictionary<Item_Instance, List<CombatAction>> bodyActions = new Dictionary<Item_Instance, List<CombatAction>>();
+        Dictionary<I_CombatItem, List<CombatAction>> bodyActions = new Dictionary<I_CombatItem, List<CombatAction>>();
         foreach(var i in c.Body.CombatActions) if (i.Value.Count > 0) bodyActions.Add(i.Key, i.Value);
         
         List<CombatActionPreset> validPresets = new List<CombatActionPreset>(ActorStats[c.RefID].ValidPresets.Values);
@@ -906,7 +906,7 @@ public class CombatInstance
             }
 
             bool valid = true;
-            var wpList = new List<Item_Instance>(weaponPriorityList);
+            var wpList = new List<I_CombatItem>(weaponPriorityList);
             items.Clear();
 
             foreach (var act in v.Actions)
@@ -954,7 +954,7 @@ public class CombatInstance
     {
         if (!ActorStats[c.RefID].CanAct) return;
 
-        CombatActionPreset preset = GetValidPreset(c, isTeamB, out Character_Trainable target, out List<Item_Instance> items);
+        CombatActionPreset preset = GetValidPreset(c, isTeamB, out Character_Trainable target, out List<I_CombatItem> items);
         if (preset == null)
         {
             Debug.LogError("Cannot find valid rand preset");

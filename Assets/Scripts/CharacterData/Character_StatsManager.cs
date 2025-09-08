@@ -86,7 +86,7 @@ public class StatsManager : I_StatsManager
         return needsList_cache;
     }}
 
-    [SerializeField][JsonProperty] protected List<Stats_Derived_Extended_Instance> list_statsExtended = new List<Stats_Derived_Extended_Instance>();
+    [JsonProperty] protected List<Stats_Derived_Extended_Instance> list_statsExtended = new List<Stats_Derived_Extended_Instance>();
     [JsonIgnore] public List<Stats_Derived_Extended_Instance> StatsExtended { get { return list_statsExtended; } }
 
     /// <summary>
@@ -169,7 +169,7 @@ public class StatsManager : I_StatsManager
 
     
 
-    [SerializeField][JsonProperty] protected Stats_Base baseStat_STR = null, baseStat_CON = null, baseStat_PSY = null, baseStat_WIL = null;
+    [JsonProperty] protected Stats_Base baseStat_STR = null, baseStat_CON = null, baseStat_PSY = null, baseStat_WIL = null;
     [JsonIgnore] public Stats_Base Strength { get {
             if (baseStat_STR == null) baseStat_STR = new Stats_Base(this, "Strength");
             return baseStat_STR; } }
@@ -482,7 +482,7 @@ public class StatsManager : I_StatsManager
     }
 
 
-    [SerializeField][JsonProperty] private int pauseXMinAfterMod = 0;
+    [JsonProperty] private int pauseXMinAfterMod = 0;
 
 
     public void PreUpdateTimeTick()
@@ -614,9 +614,9 @@ public class StatsManager : I_StatsManager
 
     [JsonIgnore] protected bool hasSexualStimulation { get { return pauseXMinAfterMod > 0 || (SexStimulation != null && SexStimulation.Severity != 0) ; } }
 
-    [SerializeField][JsonProperty] protected int consecutiveClimaxCount = 0;
+    [JsonProperty] protected int consecutiveClimaxCount = 0;
     [JsonIgnore] public int ConsecutiveClimaxCount { get { return consecutiveClimaxCount; } }
-    [SerializeField][JsonProperty] bool currentlyClimaxed = false;
+    [JsonProperty] bool currentlyClimaxed = false;
     [JsonIgnore] public bool JustClimaxed { get { return Climaxing.Severity >= 1; } }
 
     private StatusEx_Instance _sexStimulation = null;
@@ -665,8 +665,8 @@ public class StatsManager : I_StatsManager
 
 
 
-    [SerializeField][JsonProperty] protected List<Status_Instance> _statusInstances = new List<Status_Instance>();
-    [SerializeField][JsonProperty] protected List<StatusEx_Instance> _statusInstancesEx = new List<StatusEx_Instance>();
+    [JsonProperty] protected List<Status_Instance> _statusInstances = new List<Status_Instance>();
+    [JsonProperty] protected List<StatusEx_Instance> _statusInstancesEx = new List<StatusEx_Instance>();
     [JsonIgnore] public List<StatusEx_Instance> statusInstancesEx_Displayable
     {
         get

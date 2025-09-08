@@ -1,11 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
-using static UnityEngine.GraphicsBuffer;
-using UnityEngine.SocialPlatforms;
 using System;
-using System.Linq;
-using static Character_Personality.ResponseEntry.Variant;
 
 [System.Serializable]
 public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize, I_RemoveElemByTag
@@ -74,15 +70,15 @@ public enum KojoEventCalls
 public class Character_Personality
 {
     // ID
-    [SerializeField][JsonProperty] private string id;
+    [JsonProperty] private string id;
     [JsonIgnore] public string ID { get { return id; } }
 
     // displayName
-    [SerializeField][JsonProperty] private string displayName;
+    [JsonProperty] private string displayName;
     [JsonIgnore] public string DisplayName { get { return displayName; } }
 
     // Fallback Reference 
-    [SerializeField][JsonProperty] private string fallbackID = "";
+    [JsonProperty] private string fallbackID = "";
     private Character_Personality fallbackRef = null;
     private Character_Personality Fallback { get {
         if (fallbackRef == null && fallbackID != "" && fallbackID != this.id) fallbackRef = scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(fallbackID);
@@ -90,7 +86,7 @@ public class Character_Personality
 
     
     // Responses
-    [SerializeField][JsonProperty] private List<ResponseEntry> entries_list;
+    [JsonProperty] private List<ResponseEntry> entries_list;
     Dictionary<string, ResponseEntry> entries = new Dictionary<string, ResponseEntry>();
 
     public void RemoveEntriesIDContaining(string str)
@@ -711,12 +707,8 @@ public class Character_Personality
     public class Response
     {
 
-
-
         [SerializeField] private string id;
         public string ID { get { return id; } }
-        //[SerializeField] private Personality_Response value;
-        //public Personality_Response Value { get { return value; } }
 
 
         [SerializeField] private string text;

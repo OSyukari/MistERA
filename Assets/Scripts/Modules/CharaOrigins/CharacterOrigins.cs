@@ -26,7 +26,7 @@ public class CharaOrigins : MonoBehaviour
 [System.Serializable]
 public class Character_Origin_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable
 {
-    [SerializeField][JsonProperty] protected List<Character_Origin> list = new List<Character_Origin>();
+    [JsonProperty] protected List<Character_Origin> list = new List<Character_Origin>();
 
     public void MergeWith(I_IndexMergeable list)
     {
@@ -112,7 +112,7 @@ public class Character_Origin
 [System.Serializable]
 public class Character_Origin_startingOption_Index : I_IndexHasID, I_IndexMergeable
 {
-    [SerializeField][JsonProperty] protected List<Character_Origin_startingOption> list = new List<Character_Origin_startingOption>();
+    [JsonProperty] protected List<Character_Origin_startingOption> list = new List<Character_Origin_startingOption>();
     [JsonIgnore] public List<Character_Origin_startingOption> List { get { return list; } }
     protected System.Collections.Concurrent.ConcurrentDictionary<string, Character_Origin_startingOption> _List;
 
@@ -165,8 +165,8 @@ public class Character_Origin_startingOption_Index : I_IndexHasID, I_IndexMergea
 public class Character_Origin_startingOption
 {
     public string ID = "";
-    [SerializeField][JsonProperty] protected string displayname = "";
+    [JsonProperty] protected string displayname = "";
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayname); } }
-    [SerializeField][JsonProperty] protected string tooltip = "";
+    [JsonProperty] protected string tooltip = "";
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
 }

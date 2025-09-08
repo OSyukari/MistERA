@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
@@ -15,7 +14,7 @@ let chara ai autoassign their resting time (sleep, recreation, eat)
 public class Manageable_HomeFaction : Manageable
 {
 
-    [SerializeField][JsonProperty] protected int sharedSleepHour;
+    [JsonProperty] protected int sharedSleepHour;
     [JsonIgnore] public int SharedSleepHour { get { return sharedSleepHour; } }
 
     protected override bool isManageableHours(int hour)
@@ -30,7 +29,7 @@ public class Manageable_HomeFaction : Manageable
     }
     public Manageable_HomeFaction(string id, int sleepHour = 22):base(id)
     {
-        this.Inventory = new FactionInventory(this, new List<string>() { "food_meal" });
+        this._inventory = new FactionInventory(this, new List<string>() { "food_meal" });
         this.sharedSleepHour = sleepHour;
     }
 
@@ -41,8 +40,8 @@ public class Manageable_HomeFaction : Manageable
 [System.Serializable]
 public class Manageable_WorkFaction : Manageable
 {
-    [SerializeField][JsonProperty] protected int manageHourStart = 0;
-    [SerializeField][JsonProperty] protected int manageHourEnd = 24;
+    [JsonProperty] protected int manageHourStart = 0;
+    [JsonProperty] protected int manageHourEnd = 24;
 
     protected override bool isManageableHours(int hour)
     {

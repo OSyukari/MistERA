@@ -87,7 +87,7 @@ public class Status_Base
     [System.Serializable]
     public class Variant
     {
-        [SerializeField][JsonProperty] protected string displayName = "";
+        [JsonProperty] protected string displayName = "";
         public bool displayable = true;
         public bool allowRemoval = false;
         public float threshold = -1;

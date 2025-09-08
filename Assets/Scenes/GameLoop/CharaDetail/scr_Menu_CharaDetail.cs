@@ -341,7 +341,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             rect.SetParent(boxRelationshipList, false);
             listRelationship.Add(rect);
             var scrbox = rect.GetComponent<scr_box_relationship>();
-            UI_Utility.Draw(rel, scrbox);
+            RelationshipManager.Draw(rel, scrbox);
 
             if (safe)
             {

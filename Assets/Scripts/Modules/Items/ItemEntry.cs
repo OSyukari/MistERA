@@ -1,10 +1,5 @@
-using System.Collections.Generic;
-using UnityEngine;
-using System;
-using Unity;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public class ItemEntry
 {
     public ItemEntry()

@@ -6,15 +6,7 @@ using System.Linq;
 //using MoreLinq;
 using Newtonsoft.Json;
 
-public enum Memory_Attitude
-{
-    None,
-    Hate,
-    Dislike,
-    Neutral,
-    Like,
-    Love
-}
+
 
 [System.Serializable]
 
@@ -50,7 +42,7 @@ public class Memory_Entry
     //  [JsonIgnore] public bool isTouchMemory { get { return !isSexTouchMemory && this.Tags.Contains("touch") ; } }
 
     //  [JsonIgnore] public bool isOnlyRefuseMemory { get { return this.interactions.Find(x => x.response != Memory_Response.Refuse) == null; } }
-    [SerializeField][JsonProperty] public List<string> selfTags = new List<string>();
+    [JsonProperty] public List<string> selfTags = new List<string>();
     List<string> targetTags = new List<string>();
 
     public void ReEstablishParent(Character_Trainable c)
@@ -136,10 +128,10 @@ public class Memory_Entry
         } }
 
 
-    [SerializeField][JsonProperty] protected int duration = -1;
+    [JsonProperty] protected int duration = -1;
     [JsonIgnore] public int Duration { get { return duration; } set { this.duration = value; } }
 
-    [SerializeField][JsonProperty] protected List<MemInstance> interactions = new List<MemInstance>();
+    [JsonProperty] protected List<MemInstance> interactions = new List<MemInstance>();
 
     public void FillBlacklist(List<MemBlacklist> Blacklist)
     {
@@ -444,7 +436,7 @@ public class Memory_Entry
         isRefuseOnly = cache_refuseCount > cache_acceptCount && cache_acceptCount == 0;
     }
 
-    [SerializeField][JsonProperty] protected int roomRef = -1;
+    [JsonProperty] protected int roomRef = -1;
 
     /*
     public void MergeEntry(bool isDoer, List<int> targetRefs, string description, Memory_Response response, Memory_Attitude attitude, int duration = -1, COM targetCOM = null, int comVariant = -1, int masterRef = -1, List<string> selfTags = null, List<string> targetTags = null)
@@ -963,7 +955,7 @@ public class MemInstance
             return (int)value;
         } }
 
-    [SerializeField][JsonProperty] protected float modMood = 0, modStress = 0, modLust = 0;
+    [JsonProperty] protected float modMood = 0, modStress = 0, modLust = 0;
     public void AddMoodletScore(float modMood, float modStress, float modLust)
     {
         this.modMood += modMood;

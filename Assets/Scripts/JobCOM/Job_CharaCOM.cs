@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
-using System.Linq;
 
 [System.Serializable]
 public class Job_CharaCOM : Job
 {
     [JsonIgnore] public override bool MemoryEntrySoftMerge { get { return true; } }
-    [SerializeField][JsonProperty] protected int charaRefID;
+    [JsonProperty] protected int charaRefID;
     private Character_Trainable ownerPointer = null;
 
     [JsonIgnore] public Character_Trainable Owner { get { if (ownerPointer == null) ownerPointer = scr_System_CampaignManager.current.FindInstanceByID(charaRefID);

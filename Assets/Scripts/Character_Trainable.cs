@@ -2,9 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System.IO;
-using System.Collections;
 using System.Linq;
 
 public enum Humanoid_GenderAppearance
@@ -28,7 +25,6 @@ public enum Character_BodyType
 [System.Serializable]
 public class Character_Trainable : ScriptableObject, I_Disposable
 {
-    [SerializeField]
     [JsonProperty]
     protected int furnitureLockJobRef = -1;
 
@@ -124,21 +120,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonIgnore] public bool CanActInTimeStop { get { return this.RefID == 0; } }
     [JsonIgnore] public bool isTimeStopped { get { return scr_System_Time.current.TimeStopStrict && !CanActInTimeStop; } }
 
-    //public float portrait_offset_x = 0f;
-    //public float portrait_offset_y = 0f;
-    //public float portrait_offset_size = 1f;
-
     /// <summary>
     /// This field is empty in chara data, if chara data is re-deserealized then this field need to be manually copied
     /// </summary>
-    [SerializeField][JsonProperty] protected string baseID = "";
+    [JsonProperty] protected string baseID = "";
     [JsonIgnore] public string BaseID { get { return baseID; } set { this.baseID = value; } }
-    [SerializeField][JsonProperty] protected int referenceID = -1;
+    [JsonProperty] protected int referenceID = -1;
     [JsonIgnore] public int RefID { get { return referenceID; } }
-    //[SerializeField] public string portraitPath = "";
-    //[SerializeField] public string defaultIcon = "";
-    //[SerializeField] public string defaultPortrait = "";
-
 
     [JsonIgnore] private Humanoid_Womb womb = null;
     [JsonIgnore] public Humanoid_Womb Womb {
@@ -174,7 +162,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.PortraitManager.RebuildInternal(this);
     }
 
-    [SerializeField][JsonProperty] protected SkillManager _Skills = null;
+    [JsonProperty] protected SkillManager _Skills = null;
     [JsonIgnore] public SkillManager Skills{
         get
         {
@@ -356,8 +344,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     }
 
-    [SerializeField][JsonProperty] protected int timeSinceLastSleep = 24;
-    [SerializeField][JsonProperty] protected int timeSinceLastEat = 24;
+    [JsonProperty] protected int timeSinceLastSleep = 24;
+    [JsonProperty] protected int timeSinceLastEat = 24;
     private void Observer_DebugDailyRefresh(int updateOrder)
     {
         if (updateOrder != 0) return;
@@ -440,14 +428,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         InitializeAllSkills();
     }
 
-    [SerializeField]
     [JsonProperty]
     protected StatsManager stats = null;
 
     [JsonIgnore] public StatsManager Stats { get { if (stats == null) stats = new StatsManager();
         return stats; } }
 
-    [SerializeField][JsonProperty] protected PortraitManager Portrait = null;
+    [JsonProperty] protected PortraitManager Portrait = null;
     [JsonIgnore] public PortraitManager PortraitManager { get
         {
             if (this.Portrait == null)
@@ -466,8 +453,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public MemoryManager Memory = null;
 
-    [SerializeField][JsonProperty] protected string firstName = "Jane", middleName = "", lastName = "Doe", title = "";
-    [SerializeField][JsonProperty] public string nameDisplayFormat = "chara_fullname_firstToLast";
+    [JsonProperty] protected string firstName = "Jane", middleName = "", lastName = "Doe", title = "";
+    [JsonProperty] public string nameDisplayFormat = "chara_fullname_firstToLast";
 
     public void SetName(string firstName, string middleName, string lastName, string displayFormat){
         this.FirstName = firstName;
@@ -540,27 +527,27 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return _cachedFullName;
         } }
 
-    [SerializeField][JsonProperty] private string origin = "charOrigin_EmissaryoftheTower";
+    [JsonProperty] private string origin = "charOrigin_EmissaryoftheTower";
     [JsonIgnore] public Character_Origin Origin { 
         get { return scr_System_Serializer.current.MasterList.Character_Origins.GetByID(origin); } 
         set { origin = value.ID; } }
 
-    [SerializeField][JsonProperty] protected string race = "humanRace_human";
+    [JsonProperty] protected string race = "humanRace_human";
     [JsonIgnore] public Humanoid_Race Race { 
         get { return scr_System_Serializer.current.MasterList.humanoid_Races.GetByID(race); } 
         set { race = value.ID; } }
 
-    [SerializeField][JsonProperty] private string raceTemplate = "humanRaceAddon_Magician";
+    [JsonProperty] private string raceTemplate = "humanRaceAddon_Magician";
     [JsonIgnore] public Humanoid_RaceTemplate RaceTemplate { 
         get { return scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetByID(raceTemplate); } 
         set { raceTemplate = value.ID; } }
 
-    [SerializeField][JsonProperty] private string startingGift = "charOriginGift_none";
+    [JsonProperty] private string startingGift = "charOriginGift_none";
     [JsonIgnore] public Character_Origin_startingOption StartingGift { 
         get { return scr_System_Serializer.current.MasterList.Character_Origin_StartingOptions.GetByID(startingGift); } 
         set { startingGift = value.ID; } }
 
-    [SerializeField][JsonProperty] private int currentJobRefID = -1;
+    [JsonProperty] private int currentJobRefID = -1;
 
     public Humanoid_GenderAppearance Appearance;
 
@@ -582,7 +569,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
 
 
-    [SerializeField] [JsonProperty] protected List<int> activeJobRefs = new List<int>();
+    [JsonProperty] protected List<int> activeJobRefs = new List<int>();
     public void ChangeCurrentJob(Job job = null, string targetCOMid = "", string targetCOMTag = "")
     {
         if (this.RefID == scr_System_CampaignManager.current.Player.RefID)
@@ -631,7 +618,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         else return FactionManager.CurrentJobScheduleFaction(hour);
     }
 
-    [SerializeField][JsonProperty] private Character_Factions factionManager = null;
+    [JsonProperty] private Character_Factions factionManager = null;
     [JsonIgnore] public  Character_Factions FactionManager { get { if (factionManager == null)
             {
                 //Debug.LogError("new faction manager created");
@@ -649,7 +636,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.FactionManager.SetHomeFaction(initFactionID, isManager);
     }
 
-    [SerializeField][JsonProperty] protected BodyEquipLayer lastKnownLayer = BodyEquipLayer.Inner;
+    [JsonProperty] protected BodyEquipLayer lastKnownLayer = BodyEquipLayer.Inner;
     public void NotifyConsciousClothingChange(BodyEquipLayer layer)
     {
         this.lastKnownLayer = layer;
@@ -663,13 +650,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     public bool HasTrait(Traits t) { return traits.Contains(t.ID); }
 
     [JsonIgnore] public int Age { get { return 22; } }
-    [SerializeField][JsonProperty] private bool noAging = false;
+    [JsonProperty] private bool noAging = false;
 
-    [SerializeField][JsonProperty] private DateTime birthday;
+    [JsonProperty] private DateTime birthday;
     [JsonIgnore] public DateTime Birthday { get { return birthday; } set { birthday = value; } }
 
     public void TryGetJob(int currentHour, List<string> s)
     {
+        I_IsJobGiver currentJobFaction = FactionManager.CurrentActiveParty != null ? FactionManager.CurrentActiveParty : FactionManager.CurrentlyActiveFaction;
+        I_IsJobGiver currentLocaleFaction = FactionManager.CurrentActiveParty != null ? FactionManager.CurrentActiveParty : FactionManager.CurrentLocaleFaction;
+
         bool resetJob = false;
 
         if (RefID == 0)
@@ -766,25 +756,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
         var jobpost = GetJobPost(currentHour);
         COM currentScheduleCOM = jobpost == null ? null : jobpost.getRandCOM;
-
-        // if sleeping and current schedule is not sleep 
-        // since sleeping is no longer being handled as a job but as status, this is unnecessary
-        /*
-        if ((currentScheduleCOM == null || currentScheduleCOM.ID != "com_furniture_sleep") && (CurrentJob != null && CurrentJob.hasActivePackge(RefID, "com_furniture_sleep")))
-        {   // try to wake up
-            Job job = null;
-
-            ss += "Changing job to " + (job == null ? "NULL" : String.Join("|", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-            if(s != null) s.Add(ss);
-            ChangeCurrentJob(job, job == null || currentScheduleCOM == null ? "" : currentScheduleCOM.ID);
-
-            // check if can break sleep (check if still tired), if cannot break then return here
-        }*/
-
-
-
-
-       
+      
 
         /// if previous almost over (time less than half and time less than 15min)
         /// if still in pathing
@@ -831,9 +803,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 if (s != null) s.Add(ss);
                 return;
             }
-            else if (FactionManager.CurrentLocaleFaction != null)
+            else if (currentLocaleFaction != null)
             {   // get closest schedule job from current location
-                List<Job_Furniture> possibleJobs = FactionManager.CurrentLocaleFaction.GetValidJobsByCOMID(this, "com_furniture_restroom_fix", s);
+                List<Job_Furniture> possibleJobs = currentLocaleFaction.GetValidJobsByCOMID(this, "com_furniture_restroom_fix", s);
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
@@ -857,10 +829,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 if (s != null) s.Add(ss);
                 return;
             }
-            else if (FactionManager.CurrentlyActiveFaction != null)
+            else if (currentJobFaction != null)
             {
                 // chara should go back home to sleep
-                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Sleep(this, currentHour, s);
+                List<Job_Furniture> possibleJobs = currentJobFaction.GetValidJobs_Sleep(this, currentHour, s);
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
@@ -882,11 +854,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 if (s != null) s.Add(ss);
                 return;
             }
-            else if (FactionManager.CurrentLocaleFaction != null)
+            else if (currentLocaleFaction != null)
             {
                 // allow checking during work hour
 
-                List<Job_Furniture> possibleJobs = FactionManager.CurrentLocaleFaction.GetValidJobs_Meal(this, currentHour, s);
+                List<Job_Furniture> possibleJobs = currentLocaleFaction.GetValidJobs_Meal(this, currentHour, s);
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
@@ -912,18 +884,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 if (s != null) s.Add(ss);
                 return;
             }
-            else if (FactionManager.CurrentlyActiveFaction != null)
+            else if (currentJobFaction != null)
             {   // current job is null, or current job is not schedule
 
                 // at this point we know the previous job can be break
                 //foreach (Manageable faction in FactionManager.Factions)
                 //{   // get closest schedule job
-                List<Job_Furniture> possibleJobs = FactionManager.CurrentlyActiveFaction.GetValidJobs_Jobs(this, currentHour, ref ss, true);
+                List<Job_Furniture> possibleJobs = currentJobFaction.GetValidJobs_Jobs(this, currentHour, ref ss, true);
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];
                     var targetID = ((job == null || currentScheduleCOM == null) ? "" : currentScheduleCOM.ID);
-                    if (log) ss += "Changing job to faction "+ FactionManager.CurrentlyActiveFaction.FactionDisplayName+"" + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+                    if (log) ss += "Changing job to faction "+ currentJobFaction.FactionDisplayName+"" + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
                     ChangeCurrentJob(job, targetID);
 
                     if (s != null) s.Add(ss);
@@ -945,13 +917,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 if (s != null) s.Add(ss);
                 return;
             }
-            else if (FactionManager.CurrentlyActiveFaction != null)
+            else if (currentJobFaction != null)
             {
                 List<Job_Furniture> possibleResting = new List<Job_Furniture>();
 
                 //foreach (Manageable faction in FactionManager.HomeFactions)
                 //{
-                possibleResting.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "rest", s, false, true, true));
+                possibleResting.AddRange(currentJobFaction.GetValidJobs_nonJob_byTags(this, currentHour, "rest", s, false, true, true));
                //     break;
                 //}
 
@@ -987,13 +959,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     if (s != null) s.Add(ss);
                     return;
                 }
-            }else if (FactionManager.CurrentlyActiveFaction != null)
+            }else if (currentJobFaction != null)
             {
                 //Debug.LogError("Animal looking for new target");
                 List<Job_CharaCOM> possibletargets = new List<Job_CharaCOM>();
 
                 //foreach (Manageable faction in FactionManager.HomeFactions)
-                possibletargets.AddRange(FactionManager.CurrentlyActiveFaction.GetValidCharaCOMByTag(this, "initSex",  ref ss));
+                possibletargets.AddRange(currentJobFaction.GetValidCharaCOMByTag(this, "initSex",  ref ss));
 
                 if (possibletargets.Count > 0)
                 {
@@ -1023,13 +995,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 if (s != null) s.Add(ss);
                 return;
             }
-            else if (FactionManager.CurrentlyActiveFaction != null)
+            else if (currentJobFaction != null)
             {
                 List<Job_Furniture> possibleRecreations = new List<Job_Furniture>();
 
                 //foreach (Manageable faction in FactionManager.HomeFactions)
                 //{
-               possibleRecreations.AddRange(FactionManager.CurrentlyActiveFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true, false, true));
+               possibleRecreations.AddRange(currentJobFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true, false, true));
                 //    break;
                 //}
 
@@ -1189,7 +1161,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         return -1;
     }
 
-    [SerializeField][JsonProperty] private int interactionJobRef = -1;
+    [JsonProperty] private int interactionJobRef = -1;
     private Job_CharaCOM interactionJobPointer = null;
     [JsonIgnore] public Job_CharaCOM InteractionJob { get { if (interactionJobPointer == null) interactionJobPointer = scr_System_CampaignManager.current.FindJobInstanceByID(interactionJobRef) as Job_CharaCOM;
             return interactionJobPointer;

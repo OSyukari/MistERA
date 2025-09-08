@@ -89,8 +89,6 @@ public class ItemComponent_Weapon : ItemComponent_Base
     {
         return base.canMergeWith(other) && (other is ItemComponent_Weapon) && (this.CompTemplate.comp_Weapon == (other as ItemComponent_Weapon).CompTemplate.comp_Weapon);
     }
-
-    //[SerializeField] new string parentID;
     [JsonIgnore] public override bool Serializable { get { return true; } }
     [JsonIgnore] public override bool Stackable { get { return true; } }
 

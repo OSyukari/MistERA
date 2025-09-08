@@ -32,13 +32,13 @@ public class Stats_Derived_Base_Index : I_IndexHasID, I_IndexMergeable
 [System.Serializable]
 public class Stats_Derived_Base
 {
-    [SerializeField][JsonProperty] protected string id = "";
-    [SerializeField][JsonProperty] public bool noDisplay = false;
-    [SerializeField][JsonProperty] protected string statKeyword = "";
-    [SerializeField][JsonProperty] protected Stats_Derived_Base_ValueSetting valueBase = null;
-    [SerializeField][JsonProperty] protected List<Stat_Modifier> valueCalculations = new List<Stat_Modifier>();
-    [SerializeField][JsonProperty] protected string displayName = "";
-    [SerializeField][JsonProperty] protected string tooltip = "";
+    [JsonProperty] protected string id = "";
+    [JsonProperty] public bool noDisplay = false;
+    [JsonProperty] protected string statKeyword = "";
+    [JsonProperty] protected Stats_Derived_Base_ValueSetting valueBase = null;
+    [JsonProperty] protected List<Stat_Modifier> valueCalculations = new List<Stat_Modifier>();
+    [JsonProperty] protected string displayName = "";
+    [JsonProperty] protected string tooltip = "";
 
     public bool allowOvercap = true;
 
@@ -124,6 +124,7 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         } }
 
     public string ID { get { return Parent.ID; } }
+    
     [NonSerialized] protected Stats_Derived_Base parent = null;
     public Stats_Derived_Base Parent { get
         {

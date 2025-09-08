@@ -33,12 +33,12 @@ public class Stats_Derived_Extended_Index : I_IndexHasID, I_IndexMergeable
 [System.Serializable]
 public class Stats_Derived_Extended
 {
-    [SerializeField][JsonProperty] protected string id = "";
-    [SerializeField][JsonProperty] protected string statKeyword = "";
-    [SerializeField][JsonProperty] protected string displayName = "";
-    [SerializeField][JsonProperty] protected string tooltip = "";
-    [SerializeField][JsonProperty] protected MaxValue maxValue = null;
-    [SerializeField][JsonProperty] protected List<object> eventTriggers = null;
+    [JsonProperty] protected string id = "";
+    [JsonProperty] protected string statKeyword = "";
+    [JsonProperty] protected string displayName = "";
+    [JsonProperty] protected string tooltip = "";
+    [JsonProperty] protected MaxValue maxValue = null;
+    [JsonProperty] protected List<object> eventTriggers = null;
 
     [JsonIgnore] public string ID { get { return id; } }
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(id); } }
@@ -76,8 +76,8 @@ public class Stats_Derived_Extended
     [System.Serializable]
     public class MaxValue
     {
-        [SerializeField][JsonProperty] protected string valueType = "";
-        [SerializeField][JsonProperty] protected string valueString = "";
+        [JsonProperty] protected string valueType = "";
+        [JsonProperty] protected string valueString = "";
 
         public float GetMaxValue(Character_Trainable c)
         {
@@ -108,10 +108,10 @@ public class Stats_Derived_Extended
 [System.Serializable]
 public class Stats_Derived_Extended_Instance
 {
-    [SerializeField][JsonProperty] protected float value = 0f;
+    [JsonProperty] protected float value = 0f;
     [JsonIgnore] public float Value { get { return value; } }
 
-    [SerializeField][JsonProperty] protected string parentID = "";
+    [JsonProperty] protected string parentID = "";
     protected Stats_Derived_Extended parent = null;
     [JsonIgnore] public Stats_Derived_Extended Parent { get
         {

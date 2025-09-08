@@ -1,14 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using QuikGraph;
-using UnityEngine.UI;
-using System.IO;
-using QuikGraph.Algorithms;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public class Floor_Base
 {
     // awake register to list
@@ -62,7 +55,6 @@ public class Floor_Base
         }
     }
 
-    [System.Serializable]
     public class FloorPlan_Exit
     {
         public string ID = "";
@@ -114,7 +106,6 @@ public class Index_Floor_Base : I_IndexHasID, I_IndexMergeable, I_SerializationC
 }
 
 
-[System.Serializable]
 public class Door_Base
 {
     public string ID = "";

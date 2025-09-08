@@ -541,6 +541,8 @@ public class CombatStatManager : I_StatsManager
                     result.Add(source.targetPartDefense);
                 }
             }
+
+            if (source.targetPartRef.Defense != null) result.Add(source.targetPartRef.Defense);
         }
 
         return result;

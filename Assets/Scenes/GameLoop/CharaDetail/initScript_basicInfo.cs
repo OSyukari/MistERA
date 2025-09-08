@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System;
 
 public class initScript_basicInfo : MonoBehaviour
 {
@@ -55,10 +52,10 @@ public class initScript_basicInfo : MonoBehaviour
         raceTemplate.SetText(chara.RaceTemplate.DisplayName, false, chara.RaceTemplate.ID+"_tooltip");
         factionStatus.SetText(chara.FactionManager.CurrentlyActiveFactionStatus);
 
-        chara.Stats.Strength.Draw(this.stat_str);
-        chara.Stats.Constitution.Draw(this.stat_con);
-        chara.Stats.Psyche.Draw(this.stat_psy);
-        chara.Stats.Willpower.Draw(this.stat_will);
+        UI_Utility.Draw(chara.Stats.Strength, this.stat_str);
+        UI_Utility.Draw(chara.Stats.Constitution, this.stat_con);
+        UI_Utility.Draw(chara.Stats.Psyche, this.stat_psy);
+        UI_Utility.Draw(chara.Stats.Willpower, this.stat_will);
 
         if(chara.Stats.HP != null) chara.Stats.HP.Draw(this.hp);
         else this.hp.SetText(" - ");

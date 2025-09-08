@@ -221,14 +221,14 @@ public class FactionInventory : Inventory
 public class CharacterInventory : Inventory
 {
 
-    Dictionary<Item_Instance, List<CombatAction>> _combatActions = null;
+    Dictionary<I_CombatItem, List<CombatAction>> _combatActions = null;
     [JsonIgnore]
-    public Dictionary<Item_Instance, List<CombatAction>> CombatActions
+    public Dictionary<I_CombatItem, List<CombatAction>> CombatActions
     { get
         {
             if (_combatActions == null)
             {
-                _combatActions = new Dictionary<Item_Instance, List<CombatAction>>();
+                _combatActions = new Dictionary<I_CombatItem, List<CombatAction>>();
                 foreach(var i in this.Contents)
                 {
                    // Debug.Log($"CombatActions {i.DisplayName} isWeapon? {i.Comp_Weapon != null}");
@@ -283,7 +283,7 @@ public class CharacterInventory : Inventory
 public class Inventory
 {
 
-    [SerializeField][JsonProperty] protected List<int> contentRefs = new List<int>();
+    [JsonProperty] protected List<int> contentRefs = new List<int>();
     [JsonIgnore] public List<int> ContentRefs { get { return contentRefs; } }
     private List<Item_Instance> contents_cache = null;
 

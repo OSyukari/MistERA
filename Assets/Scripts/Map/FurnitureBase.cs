@@ -1,67 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
-
-[System.Serializable]
-public class FurnitureBase
-{
-    public string ID = "";
-    public string displayName = "";
-    [JsonIgnore] public string DisplayName { get
-        {
-            return LocalizeDictionary.QueryThenParse(ID, displayName);
-        } }
-    // recipe
-    public float furnitureSize = 0f;
-    public List<Furniture_COMGiver> givesJob = new List<Furniture_COMGiver>();
-    public bool noDisplay = false;
-    [JsonIgnore] public bool isJobGiver { get { return this.givesJob.Count > 0; } }
-
-    [JsonIgnore]
-    public bool isValid
-    {
-        get
-        {
-            if (this.ID != "" && this.displayName != "") return true;
-            return false;
-        }
-    }
-
-    public void OnAfterDeserialize()
-    {
-
-    }
-
-    public void OnBeforeSerialize()
-    {
-
-    }
-
-    [System.Serializable]
-    public class Furniture_COMGiver
-    {
-        [SerializeField][JsonProperty] private List<string> comID = new List<string>();
-        [SerializeField][JsonProperty] private List<string> comTags = new List<string>();
-        public List<COM> GetCOMs()
-        {
-            List<COM> returnValues = new List<COM>();
-
-            foreach (string i in comID)
-            {
-                var temp = scr_System_Serializer.current.GetByNameOrID_COM(i);
-                if (temp != null) returnValues.Add(temp);
-                else Debug.LogError($"FURNITURE COMGIVER CANNOT FIND COMMAND {i}");
-            }
-
-            if (comTags.Count > 0) returnValues.AddRange(scr_System_Serializer.current.index_COM.GetByTags(comTags));
-
-            return returnValues;
-        }
-    }
-
-}
 
 [System.Serializable]
 public class FurnitureInstance: IDisposable, I_Disposable
@@ -75,7 +15,7 @@ public class FurnitureInstance: IDisposable, I_Disposable
 
     [JsonIgnore] public bool noDisplay { get { return FurnitureBase.noDisplay; } }
 
-    [SerializeField][JsonProperty] private string furnitureBaseID = "";
+    [JsonProperty] private string furnitureBaseID = "";
     private FurnitureBase furnitureBaseRef = null;
     [JsonIgnore] public FurnitureBase FurnitureBase { get { if (furnitureBaseRef == null && furnitureBaseID != "") furnitureBaseRef = scr_System_Serializer.current.GetByNameOrID_FurnitureBase(furnitureBaseID);
             return furnitureBaseRef;

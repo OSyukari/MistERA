@@ -74,7 +74,6 @@ public class ItemComponent_Ingestible : ItemComponent_Base
         return base.canMergeWith(other) && (other is ItemComponent_Ingestible) && (this.amount == (other as ItemComponent_Ingestible).amount);
     }
 
-    //[SerializeField] new string parentID;
     [JsonIgnore] public override bool Serializable { get { return true; } }
     [JsonIgnore] public override bool Stackable { get { return false; } }
 
@@ -88,7 +87,7 @@ public class ItemComponent_Ingestible : ItemComponent_Base
         this.parentID = itemBase.ID;
         this.amount = CompTemplate.comp_Ingestible.amount;
     }
-    [SerializeField][JsonProperty] public float amount = 0;
+    [JsonProperty] public float amount = 0;
     [JsonIgnore] public List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod> ingestMethod { get { return CompTemplate.comp_Ingestible.ingestMethod; } }
     //public string giveStatus { get { return CompTemplate.comp_Ingestible.giveStatus; } }
     [JsonIgnore] public List<ItemComponentTemplate_Ingestible.OnUseEffect> OnUseEffects { get { return CompTemplate.comp_Ingestible.OnUseEffects; } }

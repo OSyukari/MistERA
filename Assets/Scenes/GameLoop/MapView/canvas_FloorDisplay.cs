@@ -144,7 +144,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     List<int> noDestroyList = new List<int>();
 
-    protected void BuildFaction(Manageable faction)
+    protected void BuildFaction(I_IsJobGiver faction)
     {
         if (faction == null) 
         {

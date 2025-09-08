@@ -21,12 +21,10 @@ public enum Ranking
 public class BodyInternal_Instance
 {
 
-    [SerializeField] private Sexperience experiences = new Sexperience();
-    //public Sexperience Experiences { get { return experiences; } }
-    // [SerializeField] private Sexperience_Single lastExperience = null;
+    private Sexperience experiences = new Sexperience();
 
-    [SerializeField][JsonProperty] protected long firstExperience = 0, lastExperience = 0;
-    [SerializeField][JsonProperty] protected string firstExpDesc = "", lastExpDesc = "";
+    [JsonProperty] protected long firstExperience = 0, lastExperience = 0;
+    [JsonProperty] protected string firstExpDesc = "", lastExpDesc = "";
 
     [JsonIgnore] public string FirstExperienceDesc { get { return this.firstExpDesc; } }
 
@@ -165,7 +163,7 @@ public class BodyInternal_Instance
         }
     }
 
-    [SerializeField][JsonProperty] List<Tuple<int, string>> lastInteactedRefs = new List<Tuple<int, string>>();
+    [JsonProperty] List<Tuple<int, string>> lastInteactedRefs = new List<Tuple<int, string>>();
     private List<BodyInternal_Instance> lastinteractedRefs_cache = null;
     [JsonIgnore] public List<BodyInternal_Instance> LastInteactedRefs
     { get {
@@ -431,13 +429,13 @@ public class BodyInternal_Instance
         }
     }
 
-    [SerializeField][JsonProperty] private float orifice_depth;
+    [JsonProperty] private float orifice_depth;
     [JsonIgnore] public float Depth
     {
         get { return orifice_depth; }
     }
 
-    [SerializeField][JsonProperty] private float orifice_size;
+    [JsonProperty] private float orifice_size;
     [JsonIgnore] public float Size
     {
         get { return orifice_size; }
@@ -527,7 +525,7 @@ public class BodyInternal_Instance
         }
 
     }
-    [SerializeField][JsonProperty] Dictionary<int, int> ContainedRefs_Delays = new Dictionary<int, int>();
+    [JsonProperty] Dictionary<int, int> ContainedRefs_Delays = new Dictionary<int, int>();
     public float volume_capacity;
     [JsonIgnore] public bool containsOverCapacity
     {
@@ -671,7 +669,7 @@ public class BodyInternal_Instance
         } }
 
     //List<Item_Instance> equippedItems;
-    [SerializeField][JsonProperty] Dictionary<string, int> contentsIndex;
+    [JsonProperty] Dictionary<string, int> contentsIndex;
 
     /// <summary>
     /// Return -1 fail, return 0 success return 1+ swapped gear

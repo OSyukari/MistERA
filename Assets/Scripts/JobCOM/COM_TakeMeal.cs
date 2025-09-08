@@ -32,12 +32,12 @@ public class COM_TakeMeal : COM
         //Debug.Log("Initialized TakeMeal COM [" + ID + "] with base COM [" + baseCOM.ID + "] requiring item [" + this.requirements.requireFactionExisting.inventoryItemBaseID + "]");
 
 
-        COM_Results.Result_Character res = new COM_Results.Result_Character();
-        res.entry_results = new COM_Results.Result_Character.Entry_Result();
+        Result_Character res = new Result_Character();
+        res.entry_results = new Result_Character.Entry_Result();
         res.entry_results.useItemFromTargetInventory = this.baseItem.ID;
 
         if (this.results == null) this.results = new COM_Results();
-        if (this.results.results_character == null) this.results.results_character = new List<COM_Results.Result_Character>();
+        if (this.results.results_character == null) this.results.results_character = new List<Result_Character>();
         this.results.results_character.Add(res);
     }
 

@@ -105,8 +105,8 @@ public class scr_panel_TargetInfo : scr_Menu
             RelationshipManager.Character_Relationship rel = chara.Relationships.FindRelationshipWith(0);
             if (rel != null)
             {
-                UI_Utility.Draw_Attitude(rel, attitudeBox);// rel.DrawAttitude(attitudeBox);
-                UI_Utility.Draw_Obedience(rel, obedienceBox);// rel.DrawObedience(obedienceBox);
+                RelationshipManager.Draw_Attitude(rel, attitudeBox);// rel.DrawAttitude(attitudeBox);
+                RelationshipManager.Draw_Obedience(rel, obedienceBox);// rel.DrawObedience(obedienceBox);
             }
 
             if (chara.Stats.Mood != null) chara.Stats.Mood.Draw(moodBox);

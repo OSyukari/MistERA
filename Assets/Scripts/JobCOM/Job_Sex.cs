@@ -17,7 +17,7 @@ public class Job_Sex_Group : Job
         parentRoomRef = null;
     }
 
-    [SerializeField][JsonProperty] protected Dictionary<int, DateTime> actorJoinTime;
+    [JsonProperty] protected Dictionary<int, DateTime> actorJoinTime;
     protected List<int> forceFucking = new List<int>();
 
     protected List<int> preRegisteredActorRefs; // only used as actor list for registration, after which it is no longer used
@@ -56,7 +56,7 @@ public class Job_Sex_Group : Job
         return scr_System_Serializer.current.index_COM.list.FindAll(x => x.comTags.Contains("sex"));
     }
 
-    [SerializeField] [JsonProperty] protected int parentRoomID = -1;
+    [JsonProperty] protected int parentRoomID = -1;
     private Room_Instance parentRoomRef = null;
     [JsonIgnore] public override Room_Instance ParentRoom
     {
@@ -71,7 +71,6 @@ public class Job_Sex_Group : Job
         forceFucking.AddRange(refID);
     }
 
-    [SerializeField]
     [JsonProperty]
     protected Dictionary<int, string> allowActorExit = new Dictionary<int, string>();
 

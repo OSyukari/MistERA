@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class Party { 
 
-    [SerializeField][JsonProperty] private List<int> memberRefIDs;
+    [JsonProperty] private List<int> memberRefIDs;
     [JsonIgnore] public List<int> MemberRefIDs
     {
         get { return memberRefIDs; }

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
 {
-    [SerializeField][JsonProperty] protected List<Humanoid_Race> list = new List<Humanoid_Race>();
+    [JsonProperty] protected List<Humanoid_Race> list = new List<Humanoid_Race>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_Race> _List;
     [JsonIgnore] public List<Humanoid_Race> List { get { return list; } }
 
@@ -57,7 +57,7 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
 [System.Serializable]
 public class Humanoid_RaceTemplate_Index : I_IndexHasID, I_IndexMergeable
 {
-    [SerializeField][JsonProperty] protected List<Humanoid_RaceTemplate> list = new List<Humanoid_RaceTemplate>();
+    [JsonProperty] protected List<Humanoid_RaceTemplate> list = new List<Humanoid_RaceTemplate>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_RaceTemplate> _List;
     [JsonIgnore] public List<Humanoid_RaceTemplate> List { get { return list; } }
 
@@ -109,9 +109,9 @@ public class Humanoid_RaceTemplate_Index : I_IndexHasID, I_IndexMergeable
 public class Humanoid_Race
 {
     public string ID = "";
-    [SerializeField][JsonProperty] protected string displayName = "";
+    [JsonProperty] protected string displayName = "";
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
-    [SerializeField][JsonProperty] protected string tooltip = "";
+    [JsonProperty] protected string tooltip = "";
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
     //public string[] bodyParts;
     public string bodyPartRoot = "";
@@ -126,9 +126,9 @@ public class Humanoid_Race
 public class Humanoid_RaceTemplate
 {
     public string ID = "";
-    [SerializeField][JsonProperty] protected string displayName = "";
+    [JsonProperty] protected string displayName = "";
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
-    [SerializeField][JsonProperty] protected string tooltip = "";
+    [JsonProperty] protected string tooltip = "";
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
     public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
     public List<string> addStatsKeyword = new List<string>();
@@ -140,9 +140,9 @@ public class Humanoid_RaceTemplate
 public class Humanoid_RaceTemplateAddon
 {
     public string ID = "";
-    [SerializeField][JsonProperty] protected string displayName = "";
+    [JsonProperty] protected string displayName = "";
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
-    [SerializeField][JsonProperty] protected string tooltip = "";
+    [JsonProperty] protected string tooltip = "";
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
     public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
     public List<string> addStatsKeyword = new List<string>();

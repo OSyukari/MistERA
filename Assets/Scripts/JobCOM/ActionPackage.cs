@@ -131,9 +131,9 @@ public abstract class ActionPackage
     }
     //public List<Character_Trainable> Actors;
 
-    [SerializeField][JsonProperty] protected List<int> doerRefs = new List<int>();
+    [JsonProperty] protected List<int> doerRefs = new List<int>();
     [JsonIgnore] public virtual List<int> DoerRefs { get { return doerRefs; } }
-    [SerializeField][JsonProperty] protected List<int> receiverRefs = new List<int>();
+    [JsonProperty] protected List<int> receiverRefs = new List<int>();
 
 
     [JsonIgnore] public virtual List<int> ReceiverRefs { get { return receiverRefs; } }
@@ -157,7 +157,7 @@ public abstract class ActionPackage
     public DateTime time;
 
 
-    [SerializeField][JsonProperty] protected string targetCOMID = "";
+    [JsonProperty] protected string targetCOMID = "";
     protected COM targetCOMCache = null;
     [JsonIgnore] public virtual COM targetCOM { get
         {
@@ -279,8 +279,8 @@ public abstract class ActionPackage
             return job_cached;
         } }
 
-    [SerializeField][JsonProperty] public List<string> tooltip = new List<string>();
-    [SerializeField][JsonProperty] protected List<string> extraCOMTags = new List<string>();
+    [JsonProperty] public List<string> tooltip = new List<string>();
+    [JsonProperty] protected List<string> extraCOMTags = new List<string>();
     public void AddExtraCOMTags(List<string> extratags)
     {
         this.extraCOMTags.AddRange(extratags);
@@ -308,7 +308,7 @@ public abstract class ActionPackage
     /// <summary>
     /// Store all custom string descriptions, such as KOJO messages
     /// </summary>
-    [SerializeField][JsonProperty] protected List<string> descriptions;
+    [JsonProperty] protected List<string> descriptions;
 
     protected COM.COM_Variant variant = null;
     protected COM.COM_Variant Variant
@@ -331,7 +331,7 @@ public abstract class ActionPackage
             return true;
         } }
 
-    [SerializeField][JsonProperty] protected int duration;
+    [JsonProperty] protected int duration;
     [JsonProperty] protected bool paused = false;
     [JsonProperty] public int pausedTick = 0;
     [JsonIgnore] public bool isPaused { get { return paused; } set { 
@@ -447,7 +447,7 @@ public abstract class ActionPackage
             this.tooltip = new List<string>();
         }
     }
-    [SerializeField][JsonProperty] protected bool toggleRepeat = false;
+    [JsonProperty] protected bool toggleRepeat = false;
 
     /// <summary>
     /// Set Duration to 0, making it eligible for removal in Job.PostUpdateTime
@@ -589,7 +589,7 @@ public abstract class ActionPackage
         }
     }
 
-    [SerializeField][JsonProperty] protected bool isValid = true;
+    [JsonProperty] protected bool isValid = true;
     [JsonIgnore] public bool IsValid { get { return isValid; } }
 
 
@@ -682,7 +682,7 @@ public abstract class ActionPackage
         return isValid;
     }
 
-    [SerializeField][JsonProperty] protected int validVariant = -1;
+    [JsonProperty] protected int validVariant = -1;
     [JsonIgnore] public virtual int COMVariantID { get { return validVariant; } }
     [JsonIgnore] public virtual string ResourceCost 
     { get
@@ -899,7 +899,7 @@ public abstract class ActionPackage
     {
 
     }
-    [SerializeField][JsonProperty] protected bool requested = false;
+    [JsonProperty] protected bool requested = false;
     public void ResetRequest(List<int> doer, List<int> receiver, int masterRef, bool resetRequestCheck = true){
 
         this.tooltip.Clear();
@@ -927,7 +927,7 @@ public abstract class ActionPackage
         _actorRefs = null;
         //actorRefs
     }
-    [SerializeField][JsonProperty] protected bool requestAccepted = false;
+    [JsonProperty] protected bool requestAccepted = false;
     //Dictionary<int, Dictionary<string, int>> result_stats;
 
     //Dictionary<int, Dictionary<string, int>> result_experiences;
@@ -1085,7 +1085,7 @@ public abstract class ActionPackage
 
     [JsonIgnore] public List<EvaluationPackage> ListEP { get { return packages; } }
 
-    [SerializeField][JsonProperty] protected List<EvaluationPackage> packages = new List<EvaluationPackage>();
+    [JsonProperty] protected List<EvaluationPackage> packages = new List<EvaluationPackage>();
 
     [JsonIgnore] public virtual bool LeftAlign
     {

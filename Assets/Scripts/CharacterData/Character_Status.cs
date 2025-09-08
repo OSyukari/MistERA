@@ -26,13 +26,13 @@ public enum RandomSample
 [System.Serializable]
 public class Status_Instance
 {
-    [SerializeField][JsonProperty] protected string baseID;
+    [JsonProperty] protected string baseID;
     [JsonIgnore] public string ID { get { return baseID; } }
 
     public int duration = -1;
 
 
-    [SerializeField][JsonProperty] protected float severity;
+    [JsonProperty] protected float severity;
     public int pauseXMinAfterMod = 0;
 
     protected I_StatsManager owner = null;

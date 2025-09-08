@@ -37,12 +37,12 @@ public class COM_FarmRecipe : COM
 
         foreach(var vari in variants) vari.displayName = this.displayName;
 
-        if (this.results.results_jobContainer == null) this.results.results_jobContainer = new List<COM_Results.Result_JobContainer>();
+        if (this.results.results_jobContainer == null) this.results.results_jobContainer = new List<Result_JobContainer>();
 
-        COM_Results.Result_JobContainer result = new COM_Results.Result_JobContainer();
+        Result_JobContainer result = new Result_JobContainer();
 
-        result.entry_results = new COM_Results.Result_JobContainer.Entry_Result();
-        result.entry_results.setItem = new COM_Results.Result_JobContainer.Entry_Result.Result_SetItem(comp);
+        result.entry_results = new Result_JobContainer.Entry_Result();
+        result.entry_results.setItem = new Result_JobContainer.Entry_Result.Result_SetItem(comp);
         result.entry_results.isItemContainer = true;
         requirements.requirement.req_Doers.allowNPC = false;
 

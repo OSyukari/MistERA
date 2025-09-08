@@ -36,14 +36,14 @@ public class EvaluationPackage
     }
 
     public bool skipLogging = false;
-    [SerializeField][JsonProperty] private int doerRef = -1;
+    [JsonProperty] private int doerRef = -1;
     private Character_Trainable doerCache = null;
     [JsonIgnore] public Character_Trainable Doer { get { 
             if (doerCache == null && doerRef > -1) doerCache = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
             return doerCache;
         } }
 
-    [SerializeField][JsonProperty] private int receiverRef = -1;
+    [JsonProperty] private int receiverRef = -1;
     private Character_Trainable receiverCache = null;
 
     [JsonIgnore] public Character_Trainable Receiver
@@ -76,7 +76,7 @@ public class EvaluationPackage
             return additionalActorsCache;
         }
     }
-    [SerializeField][JsonProperty] private List<int> additionalActorRefs = new List<int>();
+    [JsonProperty] private List<int> additionalActorRefs = new List<int>();
 
     [JsonIgnore] public Character_Trainable Master { get { return (Package != null ?  Package.Master : null); } }
 
@@ -158,8 +158,8 @@ public class EvaluationPackage
             }
             return actors; } }
 
-    [SerializeField][JsonProperty] protected int requestRate, attitudeRate_pos_doer, attitudeRate_neg_doer;
-    [SerializeField][JsonProperty] protected int responseRate, attitudeRate_pos_receiver, attitudeRate_neg_receiver;
+    [JsonProperty] protected int requestRate, attitudeRate_pos_doer, attitudeRate_neg_doer;
+    [JsonProperty] protected int responseRate, attitudeRate_pos_receiver, attitudeRate_neg_receiver;
 
     [JsonIgnore] public int ResponseRate { get { return responseRate; } }
     [JsonIgnore] public int RequestRate { get { return requestRate; } }
@@ -185,12 +185,12 @@ public class EvaluationPackage
         set { attitude_doer = value; }
     }
 
-    [SerializeField][JsonProperty] List<string> extraDoerTags = new List<string>();
-    [SerializeField][JsonProperty] List<string> extraCOMTags = new List<string>();
-    [SerializeField][JsonProperty] List<string> extraReceiverTags = new List<string>();
-    [SerializeField][JsonProperty] List<string> injectedDoerTags = new List<string>();
-    [SerializeField][JsonProperty] List<string> injectedCOMTags = new List<string>();
-    [SerializeField][JsonProperty] List<string> injectedReceiverTags = new List<string>();
+    [JsonProperty] List<string> extraDoerTags = new List<string>();
+    [JsonProperty] List<string> extraCOMTags = new List<string>();
+    [JsonProperty] List<string> extraReceiverTags = new List<string>();
+    [JsonProperty] List<string> injectedDoerTags = new List<string>();
+    [JsonProperty] List<string> injectedCOMTags = new List<string>();
+    [JsonProperty] List<string> injectedReceiverTags = new List<string>();
 
     List<string> _doerSelfTag = new List<string>();
 
@@ -953,10 +953,10 @@ public class EvaluationPackage
     /// <summary>
     /// rewritten on RollRequest()
     /// </summary>
-    [SerializeField][JsonProperty] public string checkResults_doer = "";
-    [SerializeField][JsonProperty] public string checkResults_doer_short = "";
-    [SerializeField][JsonProperty] public string checkResults_receiver = "";
-    [SerializeField][JsonProperty] public string checkResults_receiver_short = "";
+    [JsonProperty] public string checkResults_doer = "";
+    [JsonProperty] public string checkResults_doer_short = "";
+    [JsonProperty] public string checkResults_receiver = "";
+    [JsonProperty] public string checkResults_receiver_short = "";
 
     string diceroll_autosuccess = LocalizeDictionary.QueryThenParse("ui_diceroll_autosuccess");
     string diceroll_success = LocalizeDictionary.QueryThenParse("ui_diceroll_success");
@@ -989,8 +989,8 @@ public class EvaluationPackage
         return returnVal;
     }
 
-    [SerializeField][JsonProperty] protected Memory_Attitude attitude_doer, attitude_receiver;
-    [SerializeField][JsonProperty] Memory_Response response;
+    [JsonProperty] protected Memory_Attitude attitude_doer, attitude_receiver;
+    [JsonProperty] Memory_Response response;
     // public bool ExecutedSuccessful { get { return response == Memory_Response.Accept; } }
 
     [JsonIgnore] public Memory_Response Response { get { return response; } }
@@ -1031,7 +1031,7 @@ public class EvaluationPackage
         return response == Memory_Response.Accept;
     }
 
-    [SerializeField][JsonProperty] Modifiers modifiers = new Modifiers();
+    [JsonProperty] Modifiers modifiers = new Modifiers();
 
     private void RollAttitude(ref int attitudeRate_pos, ref int attitudeRate_neg, ref Memory_Attitude attitude_begin)
     {

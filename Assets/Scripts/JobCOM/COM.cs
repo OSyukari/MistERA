@@ -263,7 +263,7 @@ public class COM: I_SerializationCallbackReceiver
     [JsonIgnore] public bool isUnsafe { get { return comTags.Contains("unsafe"); } }
     [JsonIgnore] public bool isTouchCOM { get { return !isSexCOM && comTags.Contains("touch"); } }
 
-    [SerializeField][JsonProperty] protected int timeScale = 0;
+    [JsonProperty] protected int timeScale = 0;
     [JsonIgnore] public int TimeScale { get { return timeScale; } }
 
     //public List<DerivedStatMod> doerStatMod = new List<DerivedStatMod>(), receiverStatMod = new List<DerivedStatMod>();
@@ -361,7 +361,7 @@ public class COM: I_SerializationCallbackReceiver
         return true;
     }
 
-    protected bool ValidateFaction(Manageable m)
+    protected bool ValidateFaction(I_IsJobGiver m)
     {
         if (this.requirements.requireFactionExisting != null && !requirements.requireFactionExisting.Validate(m)) return false;
         foreach (var variant in this.variants) if (variant.requirements.requireFactionExisting != null && !variant.requirements.requireFactionExisting.Validate(m)) return false;
@@ -635,7 +635,7 @@ public class COM: I_SerializationCallbackReceiver
                 return parent;
             }
         }
-        [SerializeField] int addValue = 0;
+        int addValue = 0;
         public int Value { get { return addValue; } }
 
     }
@@ -811,11 +811,11 @@ public class COM: I_SerializationCallbackReceiver
         public void ApplyCost(COM parent, EvaluationPackage m)
         {
 
-            if (m.Doer != null) requirements.requirement.req_Doers.ApplyCost(m, m.Doer, parent, true);
-            if (requirements.TreatReceiverAsDoer && m.Receiver != null) requirements.requirement.req_Doers.ApplyCost(m, m.Receiver, parent, true);
+            if (m.Doer != null) CharaReqUtility.ApplyCost( requirements.requirement.req_Doers,m, m.Doer, parent, true);
+            if (requirements.TreatReceiverAsDoer && m.Receiver != null) CharaReqUtility.ApplyCost(requirements.requirement.req_Doers,m, m.Receiver, parent, true);
 
-            if (m.Receiver != null) requirements.requirement.req_Receivers.ApplyCost(m, m.Receiver, parent, false);
-            if (requirements.TreatDoerAsReceiver && m.Doer != null) requirements.requirement.req_Receivers.ApplyCost(m, m.Doer, parent, false);
+            if (m.Receiver != null) CharaReqUtility.ApplyCost(requirements.requirement.req_Receivers,m, m.Receiver, parent, false);
+            if (requirements.TreatDoerAsReceiver && m.Doer != null) CharaReqUtility.ApplyCost(requirements.requirement.req_Receivers,m, m.Doer, parent, false);
 
         }
         public void Read(COM c) {

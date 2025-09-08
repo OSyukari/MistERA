@@ -62,7 +62,7 @@ public class ActionPackage_Redress : ActionPackage
         }
     }
 
-    [SerializeField][JsonProperty] new protected bool toggleRepeat = false;
+    [JsonProperty] new protected bool toggleRepeat = false;
 
     protected override bool PreEvaluate()
     {

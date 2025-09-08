@@ -94,7 +94,7 @@ public class CombatActionInstance
     public List<string> Tags { get
         {
             var list = new List<string>(this.actionRef.tags);
-            if (this.sourceRef != null) list.AddRange(this.sourceRef.Tags);
+            if (this.sourceRef != null) list.AddRange(this.sourceRef.ItemTags);
             return list;
         } }
     public bool isEOTAction = false;
@@ -104,7 +104,7 @@ public class CombatActionInstance
 
     // Self
     [NonSerialized] public Character_Trainable ownerRef = null;
-    [NonSerialized] public Item_Instance sourceRef = null;
+    [NonSerialized] public I_CombatItem sourceRef = null;
     public CombatAction actionRef = null;
 
     // SnapshotData
@@ -546,7 +546,7 @@ public class CombatActionInstance
     }
 
     public int ActionSlotIndex = -1;//{ get { return this.BaseSpeed % 10 == 0 ? (int)(this.BaseSpeed / -10) : -1; } }
-    public CombatActionInstance(CombatInstance handler, Character_Trainable ownerRef, Item_Instance sourceRef, CombatAction actionRef, Character_Trainable targetRef, int BaseSpeed, int roundIndex, int slotIndex, bool isEOT = false)
+    public CombatActionInstance(CombatInstance handler, Character_Trainable ownerRef, I_CombatItem sourceRef, CombatAction actionRef, Character_Trainable targetRef, int BaseSpeed, int roundIndex, int slotIndex, bool isEOT = false)
     {
         this.Handler = handler;
         this.ownerRef = ownerRef;

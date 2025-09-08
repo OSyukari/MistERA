@@ -7,9 +7,9 @@ using System.Linq;
 
 
 [System.Serializable]
-public class BodyPart_Instance
+public class BodyPart_Instance : I_CombatItem
 {
-    [SerializeField][JsonProperty] protected string baseID = "";
+    [JsonProperty] protected string baseID = "";
 
     private BodyPart_Base basePointer = null;
     [JsonIgnore] public BodyPart_Base Base
@@ -26,14 +26,20 @@ public class BodyPart_Instance
 
     }
 
-    Dictionary<Item_Instance, List<CombatAction>> _combatActions = null;
+    Dictionary<I_CombatItem, List<CombatAction>> _combatActions = null;
 
     [JsonIgnore]
-    public Dictionary<Item_Instance, List<CombatAction>> CombatActions { get
+    public Dictionary<I_CombatItem, List<CombatAction>> CombatActions { get
         {
             if (_combatActions == null)
             {
-                _combatActions = new Dictionary<Item_Instance, List<CombatAction>>();
+                _combatActions = new Dictionary<I_CombatItem, List<CombatAction>>();
+
+                if (this.Comp_Weapon != null)
+                {
+                    if (!_combatActions.ContainsKey(this)) _combatActions.Add(this, new List<CombatAction>());
+                    _combatActions[this].AddRange(scr_System_Serializer.current.GetCombatActions(this.Base));
+                }
                 if (this.equipLayers.Contains(BodyEquipLayer.Outer))
                 {
                     foreach (var slot in this.availableSlots)
@@ -173,9 +179,74 @@ public class BodyPart_Instance
             return _equippedItems;
         } }
 
+    [JsonIgnore]
+    public List<string> ItemTags
+    {
+        get
+        {
+            return this.Base.tags;
+        }
+    }
+
+    ItemComponent_Weapon _weaponComp = null;
+    ItemComponent_Defense _defenseComp = null;
+    ItemComponentTemplate _template = null;
+    protected ItemComponentTemplate template
+    {
+        get
+        {
+            if (_template == null) _template = new ItemComponentTemplate();
+            return _template;
+        }
+    }
+    [JsonIgnore]
+    public ItemComponent_Weapon Comp_Weapon
+    {
+        get
+        {
+            if (this._weaponComp == null && Base.hasNaturalWeapon)
+            {
+                template.comp_Weapon = Base.NaturalWeapon;
+                _weaponComp = new ItemComponent_Weapon();
+                _weaponComp.CompTemplate = template;
+            }
+            return this._weaponComp;
+        }
+    }
+
+    [JsonIgnore]
+    public ItemComponent_Defense Comp_Defense
+    {
+        get
+        {
+            if (this._defenseComp == null && Base.hasNaturalDefense)
+            {
+                template.comp_Defense = Base.NaturalDefense;
+                _defenseComp = new ItemComponent_Defense();
+                _defenseComp.CompTemplate = template;
+            }
+            return this._defenseComp;
+        }
+    }
+
+    DefenseStats _defense = null;
+    [JsonIgnore]
+    public DefenseStats Defense
+    {
+        get
+        {
+            if (this._defense == null && Comp_Defense != null)
+            {
+                this._defense = new DefenseStats();
+                this._defense.Set(LocalizeDictionary.QueryThenParse("natural_armor_part").Replace("$part$", this.DisplayName), Comp_Defense);
+            }
+            return this._defense;
+        }
+    }
+
     //List<Item_Instance> equippedItems;
-    [SerializeField][JsonProperty] Dictionary<string, int> coversIndex = new Dictionary<string, int>();
-    [SerializeField][JsonProperty] Dictionary<string, int> contentsIndex = new Dictionary<string, int>();
+    [JsonProperty] Dictionary<string, int> coversIndex = new Dictionary<string, int>();
+    [JsonProperty] Dictionary<string, int> contentsIndex = new Dictionary<string, int>();
 
 
     /// <summary>

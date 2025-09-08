@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
-using System.Reflection;
-using static UnityEngine.GraphicsBuffer;
-using HSVPicker;
 
 public class scr_MenuCanvas_UserPrefs : scr_Menu
 {

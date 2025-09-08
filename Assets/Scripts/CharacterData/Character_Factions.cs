@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
 using UnityEngine;
 using Newtonsoft.Json;
-using static Manageable;
 
 [System.Serializable]
 public class Character_Factions
@@ -19,7 +15,7 @@ public class Character_Factions
         } }
 
     //----------------
-    [SerializeField][JsonProperty] string FactionID_Home = "";
+    [JsonProperty] string FactionID_Home = "";
     Manageable Faction_Home_Cache = null;
     [JsonIgnore] public Manageable Faction_Home{ get{
         if (Faction_Home_Cache == null && FactionID_Home != "") Faction_Home_Cache = scr_System_CampaignManager.current.FindFactionByID(FactionID_Home);
@@ -28,7 +24,7 @@ public class Character_Factions
     }
 
     //----------------
-    [SerializeField][JsonProperty] string Faction_Home_Temporary_FactionID = "";
+    [JsonProperty] string Faction_Home_Temporary_FactionID = "";
     Manageable Faction_Home_Temporary_Cache = null;
     [JsonIgnore] public Manageable Faction_Home_Temporary { get
         {
@@ -37,9 +33,9 @@ public class Character_Factions
         } }
 
     //-----------------
-    [SerializeField][JsonProperty] List<string> FactionIDs_Work = new List<string>();
+    [JsonProperty] List<string> FactionIDs_Work = new List<string>();
     List<Manageable> Factions_Work_Cache = null;
-    List<Manageable> Factions_Work{get
+    [JsonIgnore] public List<Manageable> Factions_Work{get
         {
             if (Factions_Work_Cache == null && FactionIDs_Work != null)
             {
@@ -49,6 +45,8 @@ public class Character_Factions
             return Factions_Work_Cache;
         }
     }
+    //--------------------------
+
     //--------------------------
 
     /// <summary>
@@ -61,10 +59,9 @@ public class Character_Factions
             if (Faction_Home != null) list.Add(Faction_Home);
             return list;
         } }
-    [JsonIgnore] public List<Manageable> WorkFactions { get
-        {
-            return Factions_Work;
-        } }
+    [JsonIgnore] public List<Manageable> WorkFactions { get { return Factions_Work; } }
+
+
 
     public Character_Factions()
     {
@@ -148,6 +145,8 @@ public class Character_Factions
     }
 
     /// <summary>
+    /// For each party chara is in, check if party active and should apply.
+    /// <br/>
     /// If chara currently has a work schedule, return work schedule location
     /// else return home faction
     /// </summary>
@@ -158,20 +157,39 @@ public class Character_Factions
         {
             var faction = CurrentJobScheduleFaction();
             return faction != null ? faction : HomeFactions.Count > 0 ? HomeFactions[0] : null;
+        }
+    }
 
 
-            var currentRoomID = scr_System_CampaignManager.current.Map.FindRoomByChara(Owner.RefID).RefID;
-            foreach (var i in Factions) if (i != null && i.ManagedRooms.ContainsKey(currentRoomID)) return i;
-            return null;
+    [JsonProperty] string activePartyID = "";
+    [JsonProperty] string activePartyOwnerID = "";
+    Manageable_Party _party = null;
+
+    [JsonIgnore]
+    public Manageable_Party CurrentActiveParty
+    {
+        get
+        {
+            if (_party == null && activePartyID != "" && activePartyOwnerID != "")
+            {
+                _party = scr_System_CampaignManager.current.FindFactionByID(activePartyOwnerID).GetParty(activePartyID);
+            }
+            return _party;
+        }
+        set
+        {
+            _party = value;
+            activePartyID = _party == null ? "" : _party.ID;
+            activePartyOwnerID = _party == null ? "" : _party.OwnerFaction.ID;
         }
     }
 
     [JsonIgnore]
-    public Manageable CurrentLocaleFaction
+    public I_IsJobGiver CurrentLocaleFaction
     { get
         {
             var room = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID);
-            return room.FactionOwner;
+            return room.FactionOwner as I_IsJobGiver;
         } }
 
     [JsonIgnore]
@@ -199,8 +217,27 @@ public class Character_Factions
 
         UpdateFactionPriorityList();
 
-        foreach(var v in WorkFactions) v.NotifyFactionMemberChange();
     }
+    [JsonProperty] List<int> trackedPartyRef = new List<int>();
+    public void AddToParty(Manageable_Party party, Manageable_GuestStatus status, bool setHomeFaction)
+    {
+        this.CurrentActiveParty = party;
+        party.AddToFaction(Owner, status);
+
+        AddPartyTracker(party);
+
+        UpdateFactionPriorityList();
+    }
+
+    public void AddPartyTracker(Manageable_Party party)
+    {
+        if (!this.trackedPartyRef.Contains(party.Job.RefID)) trackedPartyRef.Add(party.Job.RefID);
+    }
+    public void RemovePartyTracker(Manageable_Party party)
+    {
+        trackedPartyRef.Remove(party.Job.RefID);
+    }
+
 
     /// <summary>
     /// Workfaction for now does not allow setting single, so if target is not registered as home it will skip setting
@@ -233,7 +270,7 @@ public class Character_Factions
     /// </summary>
     /// <param name="sourceFaction"></param>
     /// <param name="preset"></param>
-    public void SetSchedule(Manageable sourceFaction, JobPostPreset preset)
+    public void SetSchedule(Manageable sourceFaction, Manageable.JobPostPreset preset)
     {
         //string message = "";
         if (preset == null || !preset.isActive)
@@ -299,6 +336,7 @@ public class Character_Factions
         this.Factions_Work_Cache = null;
 
         foreach (var v in HomeFactions) v.NotifyFactionMemberChange();
+        foreach (var v in WorkFactions) v.NotifyFactionMemberChange();
 
         var s = new List<string>();
         UpdateSchedule(ref s);
@@ -337,7 +375,7 @@ public class Character_Factions
         return v.GetSchedule(Owner).Get(hour);
     }
 
-    [SerializeField][JsonProperty] protected Manageable.Job_Schedule privateSchedule =  new Manageable.Job_Schedule();
+    [JsonProperty] protected Manageable.Job_Schedule privateSchedule =  new Manageable.Job_Schedule();
     [JsonIgnore] public bool HasSleepSchedule { get { return privateSchedule.HasWorkHoursWithCOM("com_furniture_sleep"); } }
 
     /// <summary>

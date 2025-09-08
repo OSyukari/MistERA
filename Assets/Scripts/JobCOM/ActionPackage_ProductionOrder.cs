@@ -10,15 +10,16 @@ public class ActionPackage_ProductionOrder : ActionPackage
 {
     [JsonIgnore] public override string JoinAPDescriptorKey { get { return "ActionPackage_ProductionOrder_join"; } }
     [JsonIgnore] public override string JoinAPDescriptorKeyEX { get { return "ActionPackage_ProductionOrder_joinEX"; } }
-    [SerializeField][JsonProperty] private string orderRecipeUID = "";
+    [JsonProperty] private string orderRecipeUID = "";
     private Manageable.ProductionOrder order_cache = null;
     [JsonIgnore] public Manageable.ProductionOrder order
     {
         get
         {
-            if (order_cache == null)
+            if (order_cache == null && jobFurn.FactionOwner is Manageable)
             {
-                order_cache = jobFurn.FactionOwner.GetProductionOrdersByUID(orderRecipeUID);
+
+                order_cache = (jobFurn.FactionOwner as Manageable).GetProductionOrdersByUID(orderRecipeUID);
             }
             return order_cache;
         }

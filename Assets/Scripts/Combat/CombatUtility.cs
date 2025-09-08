@@ -8,11 +8,11 @@ using Unity;
 using UnityEngine;
 public static class CombatUtility
 {
-    public static bool Validate(CombatAction a, Item_Instance i, List<string> injectTags = null)
+    public static bool Validate(CombatAction a, I_CombatItem i, List<string> injectTags = null)
     {
         if (!a.itemRequirement.isActive) return true;
         var tag = injectTags != null ? injectTags : a.itemRequirement.requireTags;
-        if (tag.Count > 0 && (i == null || !Utility.ListContainsStrict(i.Tags,tag)))
+        if (tag.Count > 0 && (i == null || !Utility.ListContainsStrict(i.ItemTags,tag)))
         {
             //Debug.LogError($"CombatUtility Validate CombatAction [{a.ID}] failed, missing tag [{String.Join("|",tag)}] from [{String.Join("|", i.Tags)}]");
             return false;
@@ -116,7 +116,7 @@ public static class CombatUtility
         text.SetText($"{_evasionStatCache} {(drawPre ? stats.Evasion_Pre : stats.Evasion)}", false, "ui_combat_stat_evasion_tooltip");
     }
 
-    public static bool Validate(CombatAction_Defense defense, Item_Instance item)
+    public static bool Validate(CombatAction_Defense defense, I_CombatItem item)
     {
         //if (defense.Defense == null) return true;
         if (defense.redirectKeyword.Count < 1) return true;
@@ -137,7 +137,7 @@ public static class CombatUtility
         return isValid;
     }
 
-    public static bool HasRequiredItems(CombatAction act, ref List<Item_Instance> items, out Item_Instance validItem, Dictionary<Item_Instance, List<CombatAction>> weaponDict, Dictionary<Item_Instance, List<CombatAction>> bodyDict, List<CombatAction> alwaysValidDict)
+    public static bool HasRequiredItems(CombatAction act, ref List<I_CombatItem> items, out I_CombatItem validItem, Dictionary<I_CombatItem, List<CombatAction>> weaponDict, Dictionary<I_CombatItem, List<CombatAction>> bodyDict, List<CombatAction> alwaysValidDict)
     {
         if (!act.itemRequirement.isActive)
         {
@@ -165,7 +165,7 @@ public static class CombatUtility
                 return false;
             }
         }
-        if (act.itemRequirement.Validate(items[0].Tags))
+        if (act.itemRequirement.Validate(items[0].ItemTags))
         {
             validItem = items[0];
             return true;

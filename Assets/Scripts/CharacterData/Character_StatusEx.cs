@@ -63,7 +63,7 @@ public class StatusEx_Base
     [System.Serializable]
     public class Variant
     {
-        [SerializeField][JsonProperty] public string displayName = "";
+        [JsonProperty] public string displayName = "";
 
         string _displayNameCache = string.Empty;
         [JsonIgnore] public string DisplayName { get {
@@ -142,7 +142,7 @@ public class StatusEx_Base
 [System.Serializable]
 public class StatusEx_Instance : I_CacheValues
 {
-    [SerializeField][JsonProperty] protected string baseID = "";
+    [JsonProperty] protected string baseID = "";
     [JsonIgnore] public string ID { get { return baseID; } }
 
     public int duration = -1;
@@ -155,7 +155,7 @@ public class StatusEx_Instance : I_CacheValues
         this.owner = stats;
     }
 
-    [SerializeField][JsonProperty] protected float severity = 0;
+    [JsonProperty] protected float severity = 0;
     public int pauseXMinAfterMod = 0;
 
     protected I_StatsManager owner;

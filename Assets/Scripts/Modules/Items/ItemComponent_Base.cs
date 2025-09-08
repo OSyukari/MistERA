@@ -34,7 +34,7 @@ public abstract class ItemComponent_Base
         this.parent = parent;
     }
 
-    [SerializeField][JsonProperty] protected string parentID;
+    [JsonProperty] protected string parentID;
     [JsonIgnore] protected Item_Base parent = null;
     [JsonIgnore] protected virtual Item_Base Parent
     {

@@ -45,13 +45,54 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
-    [SerializeField] protected string factionOwnerID = "";
-    protected Manageable factionOwnerCache = null;
-    [JsonIgnore] public Manageable FactionOwner { get { if (factionOwnerCache == null) if (factionOwnerID != "") factionOwnerCache = scr_System_CampaignManager.current.FindFactionByID(factionOwnerID);
-            return factionOwnerCache;
-        } }
+    [JsonProperty] protected string factionOwnerRef = "";
+    [JsonProperty] protected string factionOwnerPartyRef = "";
+    protected I_IsJobGiver factionOwner = null;
+    [JsonIgnore] public I_IsJobGiver FactionOwner 
+    {
+        get
+        {
+            if (factionOwner == null && factionOwnerRef != "")
+            {
+                var f = scr_System_CampaignManager.current.FindFactionByID(factionOwnerRef);
+                if (factionOwnerPartyRef != "")
+                {
+                    factionOwner = f.GetParty(factionOwnerPartyRef);
+                }
+                else
+                {
+                    factionOwner = scr_System_CampaignManager.current.FindFactionByID(factionOwnerRef);
+                }
+            }
+            return factionOwner;
+        }
+        set
+        {
+            var a = value as Manageable;
+            var b = value as Manageable_Party;
+            if (b != null)
+            {
+                factionOwnerRef = b.OwnerFaction.ID;
+                factionOwnerPartyRef = b.ID;
+            }
+            else if (a != null)
+            {
+                factionOwnerRef = a.ID;
+                factionOwnerPartyRef = "";
+            }
+            else if (value == null)
+            {
+                factionOwner = null;
+            }
+            else
+            {
+                Debug.LogError("Error setting FactionOwner");
+            }
+        }
+    }
+
     //[NonSerialized] public Manageable FactionOwner = null;
-    [SerializeField][JsonProperty] protected Dictionary<int, COM_Match> actorRefIDStorage = null;
+    [JsonProperty] protected Dictionary<int, COM_Match> actorRefIDStorage = null;
     [JsonIgnore] public virtual List<int> actorRefID 
     { 
         get 
@@ -63,13 +104,8 @@ public class Job : IDisposable, I_Disposable
             }else return actorRefIDStorage.Keys.ToList(); 
         } 
     }
-    [SerializeField][JsonProperty] protected int jobRefID = -1;
-    [SerializeField] protected string jobBaseID;
-    //[SerializeField] protected string tooltip;
-    // refer to jobBaseID -> jobtemplate -> tooltip
-    //[SerializeField] protected string displayname;
-    // refer to jobBaseID -> jobtemplate -> displayname
-
+    [JsonProperty] protected int jobRefID = -1;
+    protected string jobBaseID;
     protected COM getActorPriorityCOM(int refID)
     {
         if (actorRefID.Contains(refID))
@@ -193,12 +229,7 @@ public class Job : IDisposable, I_Disposable
 
     public Job()
     {
-        ep_begin = LocalizeDictionary.QueryThenParse("ep_Description_start");
-        ep_ongoing = LocalizeDictionary.QueryThenParse("ep_Description_ongoing");
-        ep_abort = LocalizeDictionary.QueryThenParse("ep_Description_abort");
-        ep_refuse = LocalizeDictionary.QueryThenParse("ep_Description_refuse");
-        ep_prep = LocalizeDictionary.QueryThenParse("ep_Description_preparing");
-        ep_replace = LocalizeDictionary.QueryThenParse("ep_Description_replace");
+
     }
 
     public virtual void AddActor(int charaRef, string priorityCOMID = "", string priorityCOMTag = "")
@@ -411,8 +442,8 @@ public class Job : IDisposable, I_Disposable
     /// List containing all packages sent to manager.
     /// Does not guarantee package will be run, might be removed due to conflict detection between different jobs
     /// </summary>
-    [SerializeField][JsonProperty] protected List<ActionPackage> packages_previous = new List<ActionPackage>();
-    [SerializeField][JsonProperty] protected List<ActionPackage> packages_current = new List<ActionPackage>();
+    [JsonProperty] protected List<ActionPackage> packages_previous = new List<ActionPackage>();
+    [JsonProperty] protected List<ActionPackage> packages_current = new List<ActionPackage>();
 
     [JsonIgnore] public List<ActionPackage> ExecutingPackages { get { return packages_previous; } }
 
@@ -914,7 +945,7 @@ public class Job : IDisposable, I_Disposable
 
     public virtual void DisposeInternal()
     {
-        this.factionOwnerCache = null;
+        this.FactionOwner = null;
         this.allusableCOMs_cache = null;
     }
 
@@ -939,16 +970,63 @@ public class Job : IDisposable, I_Disposable
         }
 
         this.exp = new ExperienceLog();
-        //PostUpdateTime();
-        ep_begin = LocalizeDictionary.QueryThenParse("ep_Description_start");
-        ep_ongoing = LocalizeDictionary.QueryThenParse("ep_Description_ongoing");
-        ep_abort = LocalizeDictionary.QueryThenParse("ep_Description_abort");
-        ep_refuse = LocalizeDictionary.QueryThenParse("ep_Description_refuse");
-        ep_prep = LocalizeDictionary.QueryThenParse("ep_Description_preparing");
-        ep_replace = LocalizeDictionary.QueryThenParse("ep_Description_replace");
+
     }
 
-    [JsonIgnore] public string ep_begin, ep_ongoing, ep_abort, ep_refuse, ep_prep, ep_replace;
+
+    string _ep_begin = null, _ep_ongoing = null, _ep_abort = null, _ep_refuse = null, _ep_prep = null, _ep_replace = null;
+    [JsonIgnore] public string ep_begin
+    {
+        get
+        {
+            if (_ep_begin == null) _ep_begin = LocalizeDictionary.QueryThenParse("ep_Description_start");
+            return _ep_begin;
+        }
+    }
+    [JsonIgnore]
+    public string ep_ongoing
+    {
+        get
+        {
+            if (_ep_ongoing == null) _ep_ongoing = LocalizeDictionary.QueryThenParse("ep_Description_ongoing");
+            return _ep_ongoing;
+        }
+    }
+    [JsonIgnore]
+    public string ep_abort
+    {
+        get
+        {
+            if (_ep_abort == null) _ep_abort = LocalizeDictionary.QueryThenParse("ep_Description_abort");
+            return _ep_abort;
+        }
+    }
+    [JsonIgnore]
+    public string ep_refuse
+    {
+        get
+        {
+            if (_ep_refuse == null) _ep_refuse = LocalizeDictionary.QueryThenParse("ep_Description_refuse");
+            return _ep_refuse;
+        }
+    }
+
+    [JsonIgnore]
+    public string ep_prep
+    {
+        get
+        {
+            if (_ep_prep == null) _ep_prep = LocalizeDictionary.QueryThenParse("ep_Description_preparing");
+            return _ep_prep;
+        }
+    }
+        [JsonIgnore]
+    public string ep_replace
+    { get
+        {
+            if (_ep_replace == null) _ep_replace = LocalizeDictionary.QueryThenParse("ep_Description_replace");
+            return _ep_replace;
+        } }
     [JsonIgnore] public ExperienceLog exp = new ExperienceLog();
 }
 

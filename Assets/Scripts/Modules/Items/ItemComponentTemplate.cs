@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
 using Newtonsoft.Json;
 
 public interface I_ItemComponentTemplate_Comp
@@ -58,6 +54,8 @@ public class ItemComponentTemplate
     public ItemComponentTemplate_Harvestable comp_Harvestable = null;
     // ItemComponent_Degradable
     public ItemComponentTemplate_Degradable comp_Degradable = null;
+
+    public ItemComponentTemplate_Furniture Comp_Furniture = null;
     public ItemComponent_Base Instantiate(Item_Base parent)
     {
         switch (compType)

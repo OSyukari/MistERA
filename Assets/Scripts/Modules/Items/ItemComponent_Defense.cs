@@ -79,7 +79,6 @@ public class ItemComponent_Defense : ItemComponent_Base
         return base.canMergeWith(other) && (other is ItemComponent_Defense) && (this.CompTemplate.comp_Defense == (other as ItemComponent_Defense).CompTemplate.comp_Defense);
     }
 
-    //[SerializeField] new string parentID;
     [JsonIgnore] public override bool Serializable { get { return true; } }
     [JsonIgnore] public override bool Stackable { get { return true; } }
     [JsonIgnore] public int Integrity { get { return this.CompTemplate.comp_Defense.integrity; } }

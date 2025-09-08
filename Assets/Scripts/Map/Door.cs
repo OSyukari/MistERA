@@ -14,7 +14,7 @@ using UnityEngine;
 [System.Serializable]
 public class Door_Instance
 {
-    [SerializeField] float cost = 0.1f;
+    float cost = 0.1f;
     public Door_Instance(float cost)
     {
         if (cost < 0.1f)

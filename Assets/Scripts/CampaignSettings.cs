@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -9,9 +6,9 @@ using Newtonsoft.Json;
 public class CampaignSettings
 {
     public string ID = "";
-    [SerializeField][JsonProperty] protected string displayName;
+    [JsonProperty] protected string displayName;
     [JsonIgnore] public string DisplayName{get{ return LocalizeDictionary.QueryThenParse(ID);}}
-    [SerializeField][JsonProperty] protected string tooltip;
+    [JsonProperty] protected string tooltip;
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID+"_tooltip"); } }
     public bool isAvailable = true;
     public string requireOriginID = "";
@@ -51,10 +48,10 @@ public class CampaignSettings
 public class CampaignSettings_ExtraOptions
 {
     public string ID = "";
-    [SerializeField][JsonProperty] protected string displayName = "";
+    [JsonProperty] protected string displayName = "";
     public List<string> tags = new List<string> ();
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
-    [SerializeField][JsonProperty] protected string tooltip = "";
+    [JsonProperty] protected string tooltip = "";
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
     public List<CampaignSettings_Initializer> initializers = new List<CampaignSettings_Initializer>();
 
@@ -65,7 +62,7 @@ public class CampaignSettings_ExtraOptions
 [System.Serializable]
 public class Index_CampaignSetting: I_IndexHasID, I_IndexMergeable, I_RemoveElemByTag
 {
-    [SerializeField][JsonProperty] protected List<CampaignSettings> list = new List<CampaignSettings>();
+    [JsonProperty] protected List<CampaignSettings> list = new List<CampaignSettings>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, CampaignSettings> _List;
     [JsonIgnore] public List<CampaignSettings> List { get { return list; } }
 

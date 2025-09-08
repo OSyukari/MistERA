@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Newtonsoft.Json;
 
 
@@ -32,7 +30,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable
     }
 
 }
-[System.Serializable]
+
 
 public class Map_MainExit
 {
@@ -40,7 +38,7 @@ public class Map_MainExit
     public int exitCost = 1;
 }
 
-[System.Serializable]
+
 public class CampaignSettings_Initializer
 {
     public string initClass = "";
@@ -50,7 +48,7 @@ public class CampaignSettings_Initializer
 /// <summary>
 /// Assets\Data\Defs\MapDefs\MapDefs.json
 /// </summary>
-[System.Serializable]
+
 public class MapPlan
 {
     public string ID = "";
@@ -69,7 +67,6 @@ public class MapPlan
     public List<int> mealHours = new List<int>();
     public List<CampaignSettings_Initializer> initializers = new List<CampaignSettings_Initializer>();
 
-    [System.Serializable]
     public class SalesInventoryInit
     {
         public List<string> matchByTags = new List<string>();
@@ -80,7 +77,6 @@ public class MapPlan
         public bool countOverride = false;
     }
 
-    [System.Serializable]
     public class WorkModuleInit
     {
         public string jobPostID = "";
@@ -91,10 +87,6 @@ public class MapPlan
         public List<ItemEntry> hourlyCost = new List<ItemEntry>();
     }
 
-
-
-
-    [System.Serializable]
     public class WorkHoursInit
     {
         public string charaBaseID = "";
@@ -102,9 +94,6 @@ public class MapPlan
         public int endHour = 0;
         public string comID = "";
     }
-
-
-    [System.Serializable]
     public class MapPlan_Floor
     {
         public string ID = "";
@@ -121,7 +110,7 @@ public class MapPlan
 
     }
 
-    [System.Serializable]
+
     public class MapPlan_FloorDoors
     {
         public string fromExitID = "";
@@ -129,20 +118,18 @@ public class MapPlan
         public string targetExitID = "";
     }
 
-    [System.Serializable]
+
     public class MapPlan_FloorInit
     {
         public string addClass = "";
         public Map_init_playerLocation map_init_playerLocation = null;
         public Map_init_placeChara map_init_placeChara = null;
 
-        [System.Serializable]
         public class Map_init_playerLocation
         {
             public string roomID = "";
         }
 
-        [System.Serializable]
         public class Map_init_placeChara
         {
             public string roomID = "";

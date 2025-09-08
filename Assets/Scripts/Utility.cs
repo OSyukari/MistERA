@@ -7,8 +7,6 @@ using UnityEngine.UI;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine.EventSystems;
-using static scr_panel_COMmanager;
-using static Stats_Derived_Extended;
 using System.IO;
 using System.Text;
 using Microsoft.Extensions.ObjectPool;
@@ -66,6 +64,7 @@ public static class UtilityEX
             Converters = new JsonConverter[] { new JSON_SO_Converter<Character_Trainable>() }
     };
 
+
     public static SaveFileHolder ReadSaveHolder(FileInfo file)
     {
        using (var sr = new StreamReader(file.FullName))
@@ -118,41 +117,6 @@ public static class UtilityEX
             holder.SafeMode = _safe;
             return holder;
         }
-    }
-
-
-
-    public static List<ItemEntry> GetContent(MapPlan.SalesInventoryInit inv)
-    {
-        var list = new List<ItemEntry>();
-        if (inv.matchByID != "") list.Add(new ItemEntry(inv.matchByID, inv.nameOverwrite, inv.itemCount, inv.countOverride));
-        if (inv.matchByTags.Count > 0)
-        {
-            foreach (var recipe in Masterlist_Items.Instance.CraftingRecipe.Values)
-            {
-                var outputItem = recipe.OutputItem;
-                if (outputItem == null) Debug.LogError($"sales inventory get content {recipe.outputItemBaseID} is null");
-                else if (Utility.ListContainsStrict(outputItem.Tags, inv.matchByTags))
-                {
-                    if (inv.exceptTags.Count > 0 && Utility.ListContainsLoose(outputItem.Tags, inv.exceptTags)) continue;
-                    else if (outputItem.Tags.Contains("do_not_sell")) continue;
-                    list.Add(new ItemEntry(outputItem.id, "", recipe.outputAmount * inv.itemCount, inv.countOverride));
-                } 
-            }
-
-            foreach (var item in scr_System_Serializer.current.index_Item_Base.List)
-            {
-                if (item.Tags.Contains("do_not_use")) continue;
-                if (item.GetCompTemplateByID("ItemComponent_Craftable") != null) continue;
-                if (Utility.ListContainsStrict(item.Tags, inv.matchByTags))
-                {
-                    if (inv.exceptTags.Count > 0 && Utility.ListContainsLoose(item.Tags, inv.exceptTags)) continue;
-                    else if (item.Tags.Contains("do_not_sell")) continue;
-                    list.Add(new ItemEntry(item.id, "", inv.itemCount, inv.countOverride));
-                } 
-            }
-        }
-        return list;
     }
 
     public static void ApplyOnConsume(BodyInternal_Instance body, List<ItemComponentTemplate_Ingestible.OnUseEffect> onUses)
@@ -1753,6 +1717,7 @@ public static class EventUtility
  
                 var currentRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(owner.Self.RefID);
                 if (currentRoom == null) return false;
+                if (currentRoom.FactionOwner.MainExit == null) return false;
 
                 var path = scr_System_CampaignManager.current.Map.Findpath(owner.Self.RefID, currentRoom.FactionOwner.MainExit.RefID, currentRoom.RefID);
                 var oneStepExit = path == null || path.Count() < 1 ? -1 : path.First().Target;

@@ -1,0 +1,76 @@
+{
+    "ExpeditionEntry":{
+        "list":
+        [
+            {
+                "ExpeditionID":"expedition_forest",
+                "HasStartHour":false,
+                "ForceStartHour":0,
+                "DurationHour":6,
+                "EventIDs":[],
+                "FeatureKeywords":[],
+                "Events":
+                [
+                    {
+                        "eventID":"",
+                        "eventString_Ongoing":"",
+                        "weight":1,
+                        "DurationMinutes":30
+                    }
+                ]
+            }
+        ]
+    },
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"",
+    "eventString_Ongoing":"",
+    "DurationMinutes":0,
+    "baseWeight":0,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":0, "cost_ST":0 }
+    },
+    "weightMods":[
+        {
+            "modValue":0,
+            "teamRequirements":[
+                {
+
+                }
+            ]
+        }
+    ]
+}
+        ]
+
+    },
+    "ExplorationFeatures":
+    {
+        "list":
+        [
+            { "requireKeywords":[], "featureEventIDs":[] }
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"expedition_forest":"森林远征"
+
+            },
+            "en-us":
+            {
+
+
+            }
+        }
+    }
+}

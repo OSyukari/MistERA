@@ -30,13 +30,13 @@ public class scr_System_CampaignManager_Serializable
 public class scr_System_CampaignManager : MonoBehaviour
 {
 
-    public Action<PortraitManager.CharaPortrait> Observer_UpdateCurrentTargetAnchor;
+    [NonSerialized] public Action<PortraitManager.CharaPortrait> Observer_UpdateCurrentTargetAnchor;
     public void UpdateCurrentTargetAnchor(PortraitManager.CharaPortrait p)
     {
         Observer_UpdateCurrentTargetAnchor?.Invoke(p);
     }
     // Singleton
-    public static scr_System_CampaignManager current;
+    [NonSerialized] public static scr_System_CampaignManager current;
     private void Awake()
     {
         if (current == null)
@@ -261,7 +261,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
 
-    public bool ColdLoad = true;
+    [NonSerialized] public bool ColdLoad = true;
 
     public void UpdateScene()
     {
@@ -630,7 +630,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
-    public static int ThrottledUpdate = 3;
+    [NonSerialized] public static int ThrottledUpdate = 3;
     public static bool FullUpdate
     {
         get
@@ -909,7 +909,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
 
-    [SerializeField][JsonProperty] int currentRoomRef = -1;
+    [JsonProperty] int currentRoomRef = -1;
     public event Action<int, Room_Instance> Observer_CurrentRoom;
     public void ChangeCurrentRoom(Room_Instance room, bool forceReinitTarget = false)
     {
@@ -955,7 +955,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         return Map.CharaInRoom(refID);
     }
 
-    [SerializeField] [JsonProperty] protected Dictionary<string, string> relationshipRecords = new Dictionary<string, string>();
+    [JsonProperty] protected Dictionary<string, string> relationshipRecords = new Dictionary<string, string>();
 
     public List<int> CharaInCurrentRoom { get {
             return Map.CharaInRoom(currentRoomRef);
@@ -969,19 +969,16 @@ public class scr_System_CampaignManager : MonoBehaviour
     string CurrentCampaignID;
     Room_Instance debugRoom;
 
-    [SerializeField]
-    [JsonProperty]
     protected int statisRoomID = -1;
     Room_Instance _statisRoom = null;
 
-    [JsonIgnore]
     public Room_Instance StatisRoom { get
         {
             if (_statisRoom == null) {
                 if (statisRoomID == -1)
                 {
-                    _statisRoom = Register(new Room_Instance(null, null));
-                    statisRoomID = _statisRoom.RefID;
+                    _statisRoom = new Room_Instance(null, null);// Register();
+                    statisRoomID = Register(_statisRoom);//.RefID;
                 }
                 else
                 {
@@ -1003,8 +1000,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         map = new Map_Instance();
 
-        debugRoom = Register(new Room_Instance(null, null), 0);
-        currentRoomRef = debugRoom.RefID;
+        debugRoom = new Room_Instance(null, null);
+        currentRoomRef = Register(debugRoom, 0);
 
         refIDCounter = 1000000;
 
@@ -1139,8 +1136,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         scr_System_Time.current.UpdateTime(0, 0, 0, 0, true);
     }
 
-    public int jobRef_playerCOM = 2;
-    public int jobRef_followPlayerCOM = 1;
+    [NonSerialized] public int jobRef_playerCOM = 2;
+    [NonSerialized] public int jobRef_followPlayerCOM = 1;
 
     Dictionary<int, Character_Trainable> Index_referenceID;
     public List<Character_Trainable> InstancedCharacters { get { return Index_referenceID.Values.ToList(); } }
@@ -1263,11 +1260,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// </summary>
     //public Dictionary<int, int> charaLocation { get { return Map.charaRoomRef; } }
 
-
-
-
-
-    public Room_Instance Register(Room_Instance r, int forceRefID = -1)
+    public int Register(Room_Instance r, int forceRefID = -1)
     {
         if (forceRefID == -1) forceRefID = GetRefID;
         if (map.HasRoomWithRef(forceRefID)) Debug.LogError("CampaignManager Registering room with force refID [" + forceRefID + "]already taken!");
@@ -1276,7 +1269,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             r.Register(forceRefID);
             map.AddRoom(r);
         }
-        return r;
+        return r.RefID;
     }
 
     public Floor_Instance Register(Floor_Instance r, int forceRefID = -1)
@@ -1384,6 +1377,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     List<Manageable> organizations;
+    List<Manageable_Party > parties;
     [JsonIgnore] public List<Manageable> Factions { get { return (organizations == null) ? new List<Manageable>() : organizations; } }
     public Manageable FindorAddHomeFactionByID(string id)
     {
@@ -1656,11 +1650,11 @@ public static class WorldManager
                 {
                     if (id == "PLAYER")
                     {
-                        org.AddToFaction(scr_System_CampaignManager.current.Player.RefID, Manageable_GuestStatus.Manager);
+                        org.AddToFaction(scr_System_CampaignManager.current.Player, Manageable_GuestStatus.Manager);
                         if (scr_System_CampaignManager.current.Player.FactionManager.Faction_Home == null) scr_System_CampaignManager.current.Player.FactionManager.SetHomeFaction(org.ID, true);
                         else scr_System_CampaignManager.current.Player.FactionManager.AddWorkFaction(org.ID, true);
                     }
-                    else foreach (var i in org.ManagedChara) if (i.BaseID == id) org.AddToFaction(i.RefID, Manageable_GuestStatus.Manager);
+                    else foreach (var i in org.ManagedChara) if (i.BaseID == id) org.AddToFaction(i, Manageable_GuestStatus.Manager);
                 }
             }
 

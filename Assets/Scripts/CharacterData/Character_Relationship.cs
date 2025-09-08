@@ -10,7 +10,7 @@ using NUnit.Framework;
 [System.Serializable]
 public class RelationshipManager
 {
-    [SerializeField][JsonProperty] protected string _personalityID = "personality_default";
+    [JsonProperty] protected string _personalityID = "personality_default";
     protected Character_Personality _personality = null;
 
     [JsonIgnore] public Character_Personality Personality
@@ -30,8 +30,8 @@ public class RelationshipManager
         this.kojoVariables_Daily.Clear();
     }
 
-    [SerializeField][JsonProperty] Dictionary<string, int> kojoVariables_Daily = new Dictionary<string, int>();
-    [SerializeField][JsonProperty] Dictionary<string, int> kojoVariables_Permanent = new Dictionary<string, int>();
+    [JsonProperty] Dictionary<string, int> kojoVariables_Daily = new Dictionary<string, int>();
+    [JsonProperty] Dictionary<string, int> kojoVariables_Permanent = new Dictionary<string, int>();
     public int GetKojoVariable(bool isDaily, Character_Relationship rel, string varID)
     {
         var targetList = isDaily ? kojoVariables_Daily : kojoVariables_Permanent;
@@ -61,7 +61,7 @@ public class RelationshipManager
         else targetList[key] += value;
     }
 
-    [SerializeField][JsonProperty] protected Dictionary<int, Character_Relationship> relationships = new Dictionary<int, Character_Relationship>();
+    [JsonProperty] protected Dictionary<int, Character_Relationship> relationships = new Dictionary<int, Character_Relationship>();
 
     [JsonIgnore]
     public List<Character_Relationship> Relationships
@@ -282,8 +282,8 @@ public class RelationshipManager
     [System.Serializable]
     public class Character_Relationship
     {
-        [SerializeField][JsonProperty] int targetRefID = -1;
-        [SerializeField][JsonProperty] string targetBaseID = "";
+        [JsonProperty] int targetRefID = -1;
+        [JsonProperty] string targetBaseID = "";
         public string displayName = "";
         [JsonIgnore] public bool displayable { get { return this.ownerRefID != targetRefID; } }
         [JsonIgnore] public int ownerRefID = -1;
@@ -364,7 +364,7 @@ public class RelationshipManager
             _Relationship_Personal = null;
             this.isA_Personal = isA;
         }
-        [SerializeField][JsonProperty] string relationshipTypeID_Bio = "";
+        [JsonProperty] string relationshipTypeID_Bio = "";
         protected RelationshipType _Relationship_Bio = null;
         public bool isA_Bio = false;
         [JsonIgnore] public RelationshipType Relationship_Bio { get
@@ -374,7 +374,7 @@ public class RelationshipManager
                 return _Relationship_Bio;
             } }
 
-        [SerializeField][JsonProperty] string relationshipTypeID_Social = "";
+        [JsonProperty] string relationshipTypeID_Social = "";
         protected RelationshipType _Relationship_Social = null;
         public bool isA_Social = false;
         [JsonIgnore] public RelationshipType Relationship_Social
@@ -391,7 +391,7 @@ public class RelationshipManager
             }
         }
 
-        [SerializeField][JsonProperty] string relationshipTypeID_Personal = "";
+        [JsonProperty] string relationshipTypeID_Personal = "";
         protected RelationshipType _Relationship_Personal = null;
         public bool isA_Personal = false;
         [JsonIgnore] public RelationshipType Relationship_Personal
@@ -411,7 +411,7 @@ public class RelationshipManager
             } }
 
         [JsonIgnore] public string TargetBaseID { get { return targetBaseID; } }
-        [SerializeField][JsonProperty] float[] relationshipScores = new float[5] { 0f, 0f, 0f, 0f, 0f};
+        [JsonProperty] float[] relationshipScores = new float[5] { 0f, 0f, 0f, 0f, 0f};
 
 
         [JsonIgnore] public float Trust_Raw
@@ -618,6 +618,41 @@ public class RelationshipManager
         public string initialPersonalRelationship="";
         public bool initialPersonalRelationship_isA;
     }
+    public static void Draw_Obedience(RelationshipManager.Character_Relationship rel, scr_HoverableText box)
+    {
+        List<string> tooltip = new List<string>();
+        //box.SetText(LocalizeDictionary.QueryThenParse("relationship_obedience") + ":" + rel.ObedienceString(tooltip), false, "relationship_obedience_tooltip");
+        box.SetText(rel.ObedienceString(tooltip), false, "relationship_obedience_tooltip");
+        box.SetExternalTooltip(String.Join("\n", tooltip));
+    }
+
+    public static void Draw_Attitude(RelationshipManager.Character_Relationship rel, scr_HoverableText box)
+    {
+        List<string> tooltip1 = new List<string>();
+        //box.SetText(LocalizeDictionary.QueryThenParse("relationship_attitude") + ":" + rel.AttitudeString(tooltip1), false, "relationship_attitude_tooltip");
+        box.SetText(rel.AttitudeString(tooltip1), false, "relationship_attitude_tooltip");
+        box.SetExternalTooltip(String.Join("\n", tooltip1));
+    }
+
+    public static void Draw(RelationshipManager.Character_Relationship rel, scr_box_relationship box)
+    {
+        List<string> relName = new List<string>();
+
+        if (rel.Relationship_Bio != null) relName.Add(rel.isA_Bio ? rel.Relationship_Bio.GetDisplayNameAisToB(rel.Owner) : rel.Relationship_Bio.GetDisplayNameBistoA(rel.Owner));
+        if (rel.Relationship_Social != null) relName.Add(rel.isA_Social ? rel.Relationship_Social.GetDisplayNameAisToB(rel.Owner) : rel.Relationship_Social.GetDisplayNameBistoA(rel.Owner));
+        if (rel.Relationship_Personal != null) relName.Add(rel.isA_Personal ? rel.Relationship_Personal.GetDisplayNameAisToB(rel.Owner) : rel.Relationship_Personal.GetDisplayNameBistoA(rel.Owner));
+
+        box.targetName.SetText(rel.relationText.Replace("$name$", rel.TargetName).Replace("$relation$", relName.Count > 0 ? String.Join(",", relName) : "no relation"));
+
+        box.trustBox.SetText(LocalizeDictionary.QueryThenParse("relationship_trust") + ": " + rel.Trust.ToString("N0"), false, "relationship_trust_tooltip");
+        box.fearBox.SetText(LocalizeDictionary.QueryThenParse("relationship_fear") + ": " + rel.Fear.ToString("N0"), false, "relationship_fear_tooltip");
+        box.goodwillBox.SetText(LocalizeDictionary.QueryThenParse("relationship_goodwill") + ": " + rel.Goodwill.ToString("N0"), false, "relationship_goodwill_tooltip");
+        box.badwillBox.SetText(LocalizeDictionary.QueryThenParse("relationship_badwill") + ": " + rel.Badwill.ToString("N0"), false, "relationship_badwill_tooltip");
+        box.desireBox.SetText(LocalizeDictionary.QueryThenParse("relationship_desire") + ": " + rel.Desire.ToString("N0"), false, "relationship_desire_tooltip");
+
+        RelationshipManager.Draw_Obedience(rel, box.obedienceBox);
+        RelationshipManager.Draw_Attitude(rel, box.attitudeBox);
+    }
 }
 [System.Serializable]
 public enum RelationshipScoreType
@@ -718,14 +753,15 @@ public class RelationshipType
     {
 
     }
+
 }
 
 [System.Serializable]
 public class Index_RelationshipTypes: I_IndexHasID, I_IndexMergeable
 {
-    [SerializeField][JsonProperty] protected List<RelationshipType> list_biological = new List<RelationshipType>();
-    [SerializeField][JsonProperty] protected List<RelationshipType> list_social = new List<RelationshipType>();
-    [SerializeField][JsonProperty] protected List<RelationshipType> list_personal = new List<RelationshipType>();
+    [JsonProperty] protected List<RelationshipType> list_biological = new List<RelationshipType>();
+    [JsonProperty] protected List<RelationshipType> list_social = new List<RelationshipType>();
+    [JsonProperty] protected List<RelationshipType> list_personal = new List<RelationshipType>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, RelationshipType> _List;
     [JsonIgnore] public List<RelationshipType> List { get { 
             var v = new List<RelationshipType>();

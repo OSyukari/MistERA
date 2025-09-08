@@ -7,15 +7,15 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class BodyInternal_Base
 {
-    [SerializeField][JsonProperty] private string id = "";
+    [JsonProperty] private string id = "";
     [JsonIgnore] public string ID { get { return id; } }
 
 
-    [SerializeField][JsonProperty] private string tooltip = "";
+    [JsonProperty] private string tooltip = "";
     [JsonIgnore] public string Tooltip { get { return tooltip; } }
 
 
-    [SerializeField][JsonProperty] private string displayName = "";
+    [JsonProperty] private string displayName = "";
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(displayName); } }
 
     public List<string> internalID = new List<string>();
@@ -27,8 +27,6 @@ public class BodyInternal_Base
 
     public int sortOrder = 99;
     public List<string> tags = new List<string>();
-    //[SerializeField]
-    //public List<ItemComponent_Data> Comps = new List<ItemComponent_Data>();
 
     public string firstExperienceDesc = "";
     public List<string> virginityLossTags = new List<string>();

@@ -31,10 +31,10 @@ public class Character_Body
         } }
 
     [JsonIgnore]
-    public Dictionary<Item_Instance, List<CombatAction>> CombatActions
+    public Dictionary<I_CombatItem, List<CombatAction>> CombatActions
     { get
         {
-            var list = new Dictionary<Item_Instance, List<CombatAction>>();
+            var list = new Dictionary<I_CombatItem, List<CombatAction>>();
             foreach(var i in this.Body)
             {
                 foreach(var kvp in i.CombatActions)
@@ -85,7 +85,7 @@ public class Character_Body
         }
     }
     //----------------------
-    [SerializeField][JsonProperty] private List<BodyPart_Instance> body = null;
+    [JsonProperty] private List<BodyPart_Instance> body = null;
     [JsonIgnore] public List<BodyPart_Instance> Body {
         get {
             if (body == null || body.Count < 1) AddMissing();
@@ -234,8 +234,8 @@ public class Character_Body
         
     }
 
-    [SerializeField][JsonProperty] protected bool Climax = false;
-    [SerializeField][JsonProperty] protected bool Cum = false;
+    [JsonProperty] protected bool Climax = false;
+    [JsonProperty] protected bool Cum = false;
 
     public bool isClimaxing(bool checkCum)
     {

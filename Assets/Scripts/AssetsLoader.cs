@@ -1,8 +1,6 @@
 using UnityEngine;
-using System.Threading.Tasks;
 using System.Collections;
 using UnityEngine.Networking;
-using JetBrains.Annotations;
 using System.IO;
 
 public class AssetsLoader

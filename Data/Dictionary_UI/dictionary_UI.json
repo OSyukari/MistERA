@@ -217,9 +217,11 @@
 "management_faction_home_temporary_tooltip": "同家庭阵营，但优先级高于家庭阵营。负责处理角色暂时脱离家庭阵营的情况（例如外出探险）",
 "management_faction_work": "<link=management_faction_work_tooltip>工作阵营</link>",
 "management_faction_work_tooltip": "（未实装）",
+
 "ui_management_tab_overview": "阵营简介",
 "ui_management_tab_production": "订单生产",
 "ui_management_tab_jobs": "工作分配",
+"ui_management_tab_expeditions": "远征队伍",
 "ui_management_factionName":"阵营名称",
 "ui_management_linkStatus":"链接状态",
 
@@ -273,6 +275,17 @@
 "ui_management_jobs_schedule_jobpost_tooltip": "会清除当前的其他岗位设定",
 "ui_management_jobs_schedule_jobpost_ext": "外派工作岗位",
 "ui_management_jobs_schedule_jobpost_ext_tooltip": "会清除当前的其他岗位设定",
+
+"ui_management_expeditions_createParty": "创建队伍",
+"ui_management_expeditions_partyTitle": "<link=ui_management_expeditions_partyTitle_tooltip>队伍名称：</link>",
+"ui_management_expeditions_partyTitle_tooltip": "点击右侧可编辑",
+"ui_management_expeditions_editMembers": "编辑队伍成员",
+"ui_management_expeditions_editMember": "队伍成员",
+"ui_management_expeditions_partyStatus": "队伍状态",
+"ui_management_expeditions_partyInventory": "<link=ui_management_expeditions_partyInventory_tooltip>队伍装备</link>",
+"ui_management_expeditions_partyInventory_tooltip": "外出探索时，队伍成员能够取用道具栏内的物品\n只有在外过夜露营时，队伍成员才会取用道具栏内的餐点和家具\n\n探索中取得的道具会存取在单独的道具栏内，并且在探索结束回归后存入据点道具栏",
+"ui_management_expeditions_partyInventory_empty": "无", 
+
 
 "ui_management_jobs_viewCharaDetail_tooltip": "打开角色的详细信息面板",
 "ui_management_jobs_viewCharaDetail": "查看角色详细",
@@ -549,6 +562,7 @@
 "management_faction_work_tooltip": "(not yet implemented)",
 "ui_management_tab_overview": "Overview",
 "ui_management_tab_production": "Productions",
+"ui_management_tab_expeditions": "Expeditions",
 "ui_management_tab_jobs": "Work Assignment",
 "ui_management_factionName":"Faction Name",
 "ui_management_linkStatus":"Link Status",
@@ -604,6 +618,16 @@
 "ui_management_jobs_schedule_jobpost_tooltip": "Will clear all other jobpost settings",
 "ui_management_jobs_schedule_jobpost_ext": "External Jobposts",
 "ui_management_jobs_schedule_jobpost_ext_tooltip": "Will clear all other jobpost settings",
+
+"ui_management_expeditions_createParty": "Create Team", 
+"ui_management_expeditions_partyTitle": "<link=ui_management_expeditions_partyTitle_tooltip>Team Name:</link>",
+"ui_management_expeditions_partyTitle_tooltip": "Click the name on the right to edit",
+"ui_management_expeditions_editMembers": "Editing Team Members",
+"ui_management_expeditions_editMember": "Team Members",
+"ui_management_expeditions_partyStatus": "Team Status",
+"ui_management_expeditions_partyInventory": "<link=ui_management_expeditions_partyInventory_tooltip>Team Inventory</link>",
+"ui_management_expeditions_partyInventory_tooltip": "When out exploring, the team will have access to its inventory.\nFor furnitures and meals, team members will have access to them when resting at camp.\n\nItems obtained during exploration will be stored in a separate inventory and will be send into faction inventory when returning from the expedition",
+"ui_management_expeditions_partyInventory_empty": "None", 
 
 "ui_management_jobs_viewCharaDetail_tooltip": "Open a detailed info panel on target character",
 "ui_management_jobs_viewCharaDetail": "View Chara Detail",

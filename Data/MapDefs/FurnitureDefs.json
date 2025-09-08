@@ -265,8 +265,18 @@
             "furnitureSize":2,
             "givesJob":
             [ { "comTags":["furniture","prison"] }]
+        },
+        {
+            "ID":"furniture_camping_site",
+            "displayName":"露营地点",
+            "recipe":[],
+            "furnitureSize":0,
+            "givesJob":
+            [   { "comTags":["furniture","bed"] },
+                { "comID":["com_furniture_takingBreak"] },
+                { "comTags":["furniture","food_meal"] },
+                { "comID":["com_furniture_restroom_fix"] } ]
         }
-        
     ]
     },
     "Dictionary":

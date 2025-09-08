@@ -41,11 +41,11 @@ public class Traits
 
     //-serialized data--
 
-    [SerializeField][JsonProperty] private string trait_ID = "";
+    [JsonProperty] private string trait_ID = "";
     [JsonIgnore] public string ID { get { return trait_ID; } }
 
     public int trait_score = 0;
-    [SerializeField][JsonProperty] private string trait_displayname = "";
+    [JsonProperty] private string trait_displayname = "";
     public string trait_tooltip = "";
 
     [JsonIgnore] public string displayname { get { return trait_displayname; } }
@@ -80,7 +80,6 @@ public class scr_Traits_Group
     public int neutralIndex = 0;
     public string group_tooltip = "";
 
-    [SerializeField]
     [JsonProperty]
     private Trait_Type type = Trait_Type.Untyped;
     [JsonIgnore] public Trait_Type Type { get { return type; } }

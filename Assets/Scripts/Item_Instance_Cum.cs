@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class Item_Instance_Cum : Item_Instance
 {
-    [SerializeField] public int ownerRefID;
+    public int ownerRefID;
     private Character_Trainable ownerRef = null;
     [JsonIgnore] public Character_Trainable Owner
     {

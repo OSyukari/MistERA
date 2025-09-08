@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class Room_Instance: IDisposable, I_Disposable
 {
-    [SerializeField][JsonProperty] private int refID = -1;
+    [JsonProperty] private int refID = -1;
     [JsonIgnore] public int RefID { get { return refID; } }
     [JsonIgnore] protected string displayName { get
         {
@@ -112,13 +112,14 @@ public class Room_Instance: IDisposable, I_Disposable
 
     }
 
-    [SerializeField][JsonProperty] string baseFloorID = "";
-    [SerializeField][JsonProperty] string baseRoomID = "";
+    [JsonProperty] string baseFloorID = "";
+    [JsonProperty] string baseRoomID = "";
     [JsonIgnore] public Room_Base Base
     {
         get
         {
             if (baseRoom == null && baseRoomID != "Debug") baseRoom = scr_System_Serializer.current.GetByNameOrID_Floor_Base(baseFloorID).GetRoom(baseRoomID);
+            //else baseRoom = new Room_Base();
             return baseRoom;
         }
     }
@@ -175,6 +176,7 @@ public class Room_Instance: IDisposable, I_Disposable
         roomJobRefs = new List<int>();
         this.furnitures = new List<FurnitureInstance>();
         this.refID = refID;
+
         foreach (string f in Base.furnitureIDs) AddFurniture(f);
         if (!baseRoom.noCleaning) AddFurniture(scr_System_Serializer.current.GetByNameOrID_FurnitureBase("furniture_marker_cleaning"));
     }
@@ -199,17 +201,51 @@ public class Room_Instance: IDisposable, I_Disposable
     }
 
 
-    [SerializeField][JsonProperty] protected string factionOwnerRef = "";
-    protected Manageable factionOwner = null;
-    [JsonIgnore] public Manageable FactionOwner { get { if (factionOwner == null && factionOwnerRef != "") factionOwner = scr_System_CampaignManager.current.FindFactionByID(factionOwnerRef);
+    [JsonProperty] protected string factionOwnerRef = "";
+    [JsonProperty] protected string factionOwnerPartyRef = "";
+    protected I_IsJobGiver factionOwner = null;
+    [JsonIgnore] public I_IsJobGiver FactionOwner 
+    { 
+        get {
+            if (factionOwner == null && factionOwnerRef != "")
+            {
+                var f = scr_System_CampaignManager.current.FindFactionByID(factionOwnerRef);
+                if (factionOwnerPartyRef != "")
+                {
+                    factionOwner = f.GetParty(factionOwnerPartyRef);
+                }
+                else
+                {
+                    factionOwner = scr_System_CampaignManager.current.FindFactionByID(factionOwnerRef);
+                }
+            }
             return factionOwner;
-        } }
+        } set
+        {
+            var a = value as Manageable;
+            var b = value as Manageable_Party;
+            if (b != null)
+            {
+                factionOwnerRef = b.OwnerFaction.ID;
+                factionOwnerPartyRef = b.ID;
+            }
+            else if (a != null)
+            {
+                factionOwnerRef = a.ID;
+                factionOwnerPartyRef = "";
+            }
+            else
+            {
+                Debug.LogError("Error setting FactionOwner");
+            }
+        }
+    }
 
     public void SetFaction(Manageable org)
     {
         factionOwnerRef = org.ID;
         factionOwner = org;
-        foreach (var furniture in this.Furnitures) if (furniture.JobGiver != null) furniture.JobGiver.SetOwner(org);
+        foreach (var furniture in this.Furnitures) if (furniture.JobGiver != null) furniture.JobGiver.FactionOwner = org;// SetOwner(org);
 
     }
 
@@ -219,7 +255,7 @@ public class Room_Instance: IDisposable, I_Disposable
     }
 
 
-    [SerializeField][JsonProperty] private List<int> roomJobRefs = new List<int>();
+    [JsonProperty] private List<int> roomJobRefs = new List<int>();
     private List<Job> roomJobs = null;
     [JsonIgnore] public List<Job> Jobs 
     { 
@@ -234,7 +270,7 @@ public class Room_Instance: IDisposable, I_Disposable
     }
 
 
-    [SerializeField][JsonProperty] private List<FurnitureInstance> furnitures = new List<FurnitureInstance>();
+    [JsonProperty] private List<FurnitureInstance> furnitures = new List<FurnitureInstance>();
     private List<FurnitureInstance> roomJobFurnitures = new List<FurnitureInstance>();
     [JsonIgnore] public List<FurnitureInstance> Furnitures
     {
@@ -283,7 +319,7 @@ public class Room_Instance: IDisposable, I_Disposable
     [JsonIgnore] public bool isRoomPrison { get { return Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_prison")) != null; } }
     [JsonIgnore] public bool isRoomPrivate{ get { return Furnitures.Find(x=>x.FurnitureBase.ID.Contains( "furniture_bed")) != null || isRoomPrison; } }
 
-    [SerializeField] [JsonProperty] private List<int> roomItemsRefs = new List<int>();
+    [JsonProperty] private List<int> roomItemsRefs = new List<int>();
     private List<Item_Instance> roomItemsCache = null;
     [JsonIgnore] List<Item_Instance> roomItems { get
         {
@@ -302,9 +338,6 @@ public class Room_Instance: IDisposable, I_Disposable
             return Room_Instance.CleaningStatus.Clean;
         }
     }
-
-    // use cache
-    //[SerializeField] List<Item> contains;
 
     public bool HasItem_Tag(string tag)
     {

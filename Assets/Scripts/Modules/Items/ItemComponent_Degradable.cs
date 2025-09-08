@@ -51,7 +51,7 @@ public class ItemComponent_Degradable : ItemComponent_Base
     public ItemComponent_Degradable(){
         
     }
-    [SerializeField][JsonProperty] private int minuteCounter = 0;    //SerializedField
+    [JsonProperty] private int minuteCounter = 0;    //SerializedField
     [JsonIgnore] public int MinuteCounter { get { return minuteCounter; } }
     public override bool Tick(TimeSpan t)
     {

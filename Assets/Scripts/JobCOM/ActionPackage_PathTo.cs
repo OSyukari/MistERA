@@ -9,13 +9,12 @@ using System;
 using Newtonsoft.Json;
 using System.Linq;
 
-[System.Serializable]
 public class ActionPackage_PathTo : ActionPackage
 {
-    [SerializeField][JsonProperty] new protected bool toggleRepeat = false;
+    [JsonProperty] new protected bool toggleRepeat = false;
     [JsonIgnore] public override bool isTemporaryAP { get { return true; } }
 
-    [SerializeField][JsonProperty] private int targetRoomRef = -1;
+    [JsonProperty] private int targetRoomRef = -1;
 
     private Room_Instance targetRoom_cache = null;
     [JsonIgnore] public Room_Instance TargetRoom { get
@@ -212,10 +211,7 @@ public class ActionPackage_PathTo : ActionPackage
                 }
 
                 scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.DisplaySetting.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Length > 0 ? $"\n{LocalizeDictionary.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", s2)}":""), true);
-                if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)
-                {
-
-                }
+                //if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)  { }
 
             }
             if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" + LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target).DisplayName) + "</align>", true);

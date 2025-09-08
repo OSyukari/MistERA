@@ -1,0 +1,27 @@
+{
+    "CombatActions":{
+        "list":[
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    
+    "ID":"animal_clawstrike",
+    "tags":[], "strength":5,"tracking":2,  "moveType":"Impact",
+    "itemRequirement":{ "requireTags":["claw"] }
+    
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"animal_clawstrike":"爪击"
+            },
+            "en-us":
+            {
+            }
+        }
+    }
+}

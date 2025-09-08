@@ -16,9 +16,7 @@ public class MemoryManager
     //public ExperienceManager Experience;
     //public SexLogManager SexLogManager;
 
-    //[SerializeField] protected List<Memory_Entry> entries;
-
-    [SerializeField][JsonProperty] protected SortedList<long, Memory_Entry> entries = null;
+    [JsonProperty] protected SortedList<long, Memory_Entry> entries = null;
     [JsonIgnore] public List<Memory_Entry> Entries { get {
             if (entries == null) entries = new SortedList<long, Memory_Entry>();
             return entries.Values.ToList(); } }

@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable, I_SerializationCallbackReceiver, I_RemoveElemByTag, I_RemoveNSFW
 {
-    [SerializeField][JsonProperty] protected List<Item_Base> list = new List<Item_Base>();
+    [JsonProperty] protected List<Item_Base> list = new List<Item_Base>();
     [JsonIgnore] public List<Item_Base> List { get { return this.ID_Dictionary.Values.ToList(); } }
     public void MergeWith(I_IndexMergeable list){
         var l = list as Index_Item_Base;
@@ -254,15 +254,6 @@ public class Item_Base
         {
             return itemComps_Template.Exists(x => x.compType == "ItemComponent_Weapon");
         } }
-    /*
-    [SerializeField] float beauty = 0f;
-    public float Beauty { get { return beauty; } }
-    public bool IsBeautyAffecting
-    {get{
-        if (beauty == 0f) return false;
-        else return true; 
-    }
-    }*/
 
 
     // SortingOption : item type tag
@@ -310,7 +301,7 @@ public class ItemComponent_SerializedData
 public enum MoveType
 {
     None,
-    Swing, Thrust,
+    Swing, Thrust, Impact,
     Gunshot
 }
 

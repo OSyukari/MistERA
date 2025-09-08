@@ -17,8 +17,8 @@ public interface I_CacheValues
 [System.Serializable]
 public class Stats_Base : I_CacheValues, I_StatsDisplayable
 {
-    [SerializeField][JsonProperty] protected int value_base = 10;
-    [SerializeField][JsonProperty] protected string stat_base_string = "";
+    [JsonProperty] protected int value_base = 10;
+    public string stat_base_string = "";
     [JsonIgnore] public string ID { get { return stat_base_string; } }
 
     protected I_StatsManager parentCache = null;

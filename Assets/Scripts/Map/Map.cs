@@ -21,7 +21,7 @@ public class Map_Instance
     //public List<Floor_Instance> floors;
     // [JsonIgnore] public float z_rotation{ get { return Template.z_rotation; } }
     /*
-     [SerializeField][JsonProperty] private string baseTemplate = "";
+     [JsonProperty] private string baseTemplate = "";
      private MapPlan template = null;
      private MapPlan Template
      {
@@ -80,7 +80,7 @@ public class Map_Instance
 
 
 
-    [SerializeField][JsonProperty] List<int> _activeFloorRefIDs = null;
+    [JsonProperty] List<int> _activeFloorRefIDs = null;
     [JsonIgnore] public List<int> ActiveFloorRefIDs
     {
         get
@@ -236,7 +236,7 @@ public class Map_Instance
             Manageable fa = scr_System_CampaignManager.current.FindFactionByID(a.Key);
             foreach(var b in a.Value)
             {
-                Manageable fb = scr_System_CampaignManager.current.Map.GetRoomByRef(b).FactionOwner;
+                Manageable fb = scr_System_CampaignManager.current.Map.GetRoomByRef(b).FactionOwner as Manageable;
                 if(fa != null && fb != null) ConnectFactions(fa, fb);
             }
             
@@ -261,7 +261,7 @@ public class Map_Instance
     /// Key - floorRefID
     /// Value - floorInstance
     /// </summary>
-    [SerializeField][JsonProperty] protected Dictionary<int, Floor_Instance> floors = new Dictionary<int, Floor_Instance>();
+    [JsonProperty] protected Dictionary<int, Floor_Instance> floors = new Dictionary<int, Floor_Instance>();
     [JsonIgnore] public List<Floor_Instance> Floors
     {
         get { return floors.Values.ToList(); }
@@ -520,7 +520,7 @@ public class Map_Instance
     /// Key - charaRefID
     /// Value - roomRefID
     /// </summary>
-    [SerializeField][JsonProperty] protected Dictionary<int, int> charaRoomRef = new Dictionary<int, int>();
+    [JsonProperty] protected Dictionary<int, int> charaRoomRef = new Dictionary<int, int>();
     [JsonIgnore] protected Dictionary<int, List<int>> roomCharaRef = null;
     Func<TaggedEdge<int, Door_Instance>, double> edgeCost = entry => entry.Tag.Cost;
     Func<int, double> heuristic = value => 0f;
@@ -739,7 +739,7 @@ public class Map_Instance
     /// <summary>
     /// This list will be used when creating player move button and when update existing
     /// </summary>
-    [SerializeField][JsonProperty] Dictionary<string, List<int>> factionGraphs = new Dictionary<string, List<int>>();
+    [JsonProperty] Dictionary<string, List<int>> factionGraphs = new Dictionary<string, List<int>>();
 
     public List<Manageable> GetConnectedFactionRooms(string factionID)
     {
@@ -756,12 +756,14 @@ public class Map_Instance
         {
             var j = scr_System_CampaignManager.current.Map.GetRoomByRef(i);
             if (j == null || j.FactionOwner == null) continue;
-            if (j.FactionOwner.MainExit == null)
+            var m = j.FactionOwner as Manageable;
+            if (j.FactionOwner.MainExit == null || m == null)
             {
-                Debug.LogError($"Faction [{j.FactionOwner.ID}] has no main exit");
+                Debug.LogError($"Faction [{j.FactionOwner.FactionDisplayName}] has no main exit");
                 continue;
             }
-            list.Add(j.FactionOwner);
+
+            list.Add(m);
         }
         return list;    
     }

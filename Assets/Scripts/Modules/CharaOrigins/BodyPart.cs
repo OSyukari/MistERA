@@ -71,15 +71,15 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
 [System.Serializable]
 public class BodyPart_Base
 {
-    [SerializeField][JsonProperty] private string id = "";
+    [JsonProperty] private string id = "";
     [JsonIgnore] public string ID { get { return id; } }
 
 
-    [SerializeField][JsonProperty] private string tooltip = "";
+    [JsonProperty] private string tooltip = "";
     [JsonIgnore] public string Tooltip { get { return tooltip; } }
 
 
-    [SerializeField][JsonProperty] private string displayName = "";
+    [JsonProperty] private string displayName = "";
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(displayName); } }
 
     public List<string> internalID = new List<string>();
@@ -93,7 +93,6 @@ public class BodyPart_Base
 
     public int sortOrder = 99;
     public List<string> tags = new List<string>();
-    //[SerializeField]
     //public List<ItemComponent_Data> Comps = new List<ItemComponent_Data>();
 
     public List<string> GetAllChildsID()
@@ -126,5 +125,22 @@ public class BodyPart_Base
             return true;
         }
     }
+
+    [JsonIgnore]
+    public bool hasNaturalDefense { get
+        {
+            return this.NaturalDefense.armorLayers.Count > 0;
+        } }
+    public ItemComponentTemplate_Defense NaturalDefense = new ItemComponentTemplate_Defense();
+    [JsonIgnore]
+    public bool hasNaturalWeapon
+    {
+        get
+        {
+            return this.NaturalWeapon.DamageTypes.Count > 0;
+        }
+    }
+    public ItemComponentTemplate_Weapon NaturalWeapon = new ItemComponentTemplate_Weapon();
+
 
 }
