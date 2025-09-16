@@ -142,6 +142,7 @@
                 "chara_currently_doing": "$chara$$currentjob$",
                 "chara_currentjob_none": "暂无",
                 "chara_currentjob_idling": "发呆中",
+                "chara_currentjob_expedition": "外出远征中",
                 "chara_currentjob_free": "自由时间",
 
                 "job_desc_refuseOnly":"拒绝了$jobdesc$",

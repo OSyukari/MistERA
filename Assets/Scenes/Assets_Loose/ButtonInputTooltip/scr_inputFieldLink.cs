@@ -20,6 +20,8 @@ public class scr_inputFieldLink:MonoBehaviour
         var color = this.self_inputfield.colors;//.normalColor = 
         color.normalColor = setting.BackgroundColor_Transparent.Color;
         color.selectedColor = setting.BackgroundColor_Transparent.Color;
+
+        this.self_inputfield.selectionColor = setting.BackgroundColor_Transparent.Color;
     }
 
     public void Initialize(TextMeshProUGUI parent, string content="")

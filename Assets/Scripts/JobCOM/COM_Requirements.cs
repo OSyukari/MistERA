@@ -408,7 +408,7 @@ public class COM_Requirements
             if (!allowInNonPlayerFaction && !m.isPlayerFaction) return false;
             if (!allowInPlayerFaction && m.isPlayerFaction) return false;
 
-            if (inventoryItemBaseID != "" && (m == null || m.Inventory.GetItemCount(inventoryItemBaseID) < 1))
+            if (inventoryItemBaseID != "" && (m == null || m.Inventory == null || m.Inventory.GetItemCount(inventoryItemBaseID) < 1))
             {
                 //Debug.LogError($"validate inventory for {(m == null ? "null" : m.FactionDisplayName)} error, does not contain item {inventoryItemBaseID} or low count {m.Inventory.GetItemCount(inventoryItemBaseID)}");
                 return false;

@@ -873,6 +873,24 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             //}
         }
 
+        if (currentJobFaction is Manageable_Party && ((Manageable_Party)currentJobFaction).Job.isActive)
+        {
+            var p = (Manageable_Party)currentJobFaction;
+            if (this.CurrentJob != p.Job)
+            {
+                ChangeCurrentJob(p.Job);
+                if (log) ss += "Changing job to party exploration job " + p.FactionDisplayName + "" + p.Job.DisplayName;
+                if (s != null) s.Add(ss);
+            }
+            else
+            {
+                // be careful actorjobcomplete list, but here not necessary as camp ignore the list
+                if (log) ss += "working on party exploration job " + p.FactionDisplayName + "" + p.Job.DisplayName;
+                if (s != null) s.Add(ss);
+            }
+            return;
+        }
+
         if (currentScheduleCOM != null && currentScheduleCOM.ID != "com_furniture_sleep")
         {   // if current schedule has available job (exclude sleep)
 
@@ -1299,6 +1317,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_end"));
                 var memEntry = this.Memory.AddEntry(memInst, new List<string>() { "forbidMerge" });
+
                 memEntry.entryDescription = memInst.description;
                 // re-check every AP
                 UtilityEX.GetAPsFrom(this, out List<ActionPackage> aps);

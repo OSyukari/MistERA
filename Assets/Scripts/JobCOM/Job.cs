@@ -289,6 +289,11 @@ public class Job : IDisposable, I_Disposable
 
     public virtual void RemoveActor(int charaRef)
     {
+        foreach (var p in packages_previous)
+        {
+            if (p.Duration == 0) continue;  // package is ticked and should be naturally removed, let it
+            if (p.actorRefs.Contains(charaRef)) p.NotifyInterrupted();
+        }
         //if (this.actorRefID.Contains(charaRef) && this.actorRefIDStorage != null && this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
         if (this.actorRefIDStorage != null && this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
         for (int i = packages_current.Count - 1; i >= 0; i--) if (packages_current[i].actorRefs.Contains(charaRef)) packages_current.RemoveAt(i);

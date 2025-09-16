@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_caveHypothermia",
+    "eventString_Ongoing":"exp_event_caveHypothermia_ongoing",
+    "DurationMinutes":20,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":8, "cost_ST":6 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_caveHypothermia_result_warmedUp",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_caveHypothermia_result_shelteredFind",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_caveHypothermia_result_shivering",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveHypothermia_result_numbness",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveHypothermia_result_equipmentDamage",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_caveHypothermia":"低温侵袭",
+"exp_event_caveHypothermia_ongoing":"$names$在洞穴中感到刺骨的寒意逐渐渗入",
+"exp_event_caveHypothermia_result_warmedUp":"$names$找到方法取暖，恢复了体温",
+"exp_event_caveHypothermia_result_shelteredFind":"$names$发现一处避寒之地，找到有用物品",
+"exp_event_caveHypothermia_result_shivering":"$names$因寒冷而剧烈颤抖，难以集中精神",
+"exp_event_caveHypothermia_result_numbness":"$names$因寒冷导致手脚麻木",
+"exp_event_caveHypothermia_result_equipmentDamage":"$names$的装备因低温受损"
+            },
+            "en-us":
+            {
+"exp_event_caveHypothermia":"Hypothermia Threat",
+"exp_event_caveHypothermia_ongoing":"$names$ feel a biting chill creeping in within the cave",
+"exp_event_caveHypothermia_result_warmedUp":"$names$ managed to warm up and regain body heat",
+"exp_event_caveHypothermia_result_shelteredFind":"$names$ found a sheltered spot with useful items",
+"exp_event_caveHypothermia_result_shivering":"$names$ shivered uncontrollably, struggling to focus",
+"exp_event_caveHypothermia_result_numbness":"$names$ suffered numbness in hands and feet from the cold",
+"exp_event_caveHypothermia_result_equipmentDamage":"$names$’s equipment was damaged by the extreme cold"
+            }
+        }
+    }
+}

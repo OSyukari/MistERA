@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_cavePlant",
+    "eventString_Ongoing":"exp_event_cavePlant_ongoing",
+    "DurationMinutes":25,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":5, "cost_ST":5 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_cavePlant_result_successfulGather",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_cavePlant_result_usefulFind",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_cavePlant_result_nothing",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_cavePlant_result_toxicFumes",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_cavePlant_result_slip",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_cavePlant":"洞穴植物",
+"exp_event_cavePlant_ongoing":"$names$在洞穴中发现了一丛植物",
+"exp_event_cavePlant_result_successfulGather":"$names$采集到了有用的草药",
+"exp_event_cavePlant_result_usefulFind":"$names$发现了有价值的植物",
+"exp_event_cavePlant_result_nothing":"$names$检查了植物但没发现有价值的东西",
+"exp_event_cavePlant_result_toxicFumes":"$names$吸入了植物释放的有毒气体",
+"exp_event_cavePlant_result_slip":"$names$在采集时滑倒受伤"
+            },
+            "en-us":
+            {
+"exp_event_cavePlant":"Cave Plants",
+"exp_event_cavePlant_ongoing":"$names$ discovered a cluster of plants in a cave",
+"exp_event_cavePlant_result_successfulGather":"$names$ gathered useful herbs",
+"exp_event_cavePlant_result_usefulFind":"$names$ found valuable plants",
+"exp_event_cavePlant_result_nothing":"$names$ examined the plants but found nothing of value",
+"exp_event_cavePlant_result_toxicFumes":"$names$ inhaled toxic fumes from the plants",
+"exp_event_cavePlant_result_slip":"$names$ slipped and got injured while gathering"
+            }
+        }
+    }
+}

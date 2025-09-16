@@ -55,4 +55,37 @@ public static class ExpeditionUtility
         return Utility.WeightedRandInDict(dict);
     }
 
+    public static ExpResults RandResult(ExpEvents exp, ActionPackage p)
+    {
+        var dict = new Dictionary<ExpResults, int>();
+        foreach (var i in exp.possibleResults)
+        {
+            var ii = GetWeight(i, p.Actors);
+            if (ii < 1) continue;
+            dict.Add(i, ii);
+        }
+        return Utility.WeightedRandInDict(dict);
+    }
+
+    public static int GetWeight(ExpResults ev, List<Character_Trainable> targets)
+    {
+        int weight = ev.baseWeight;
+
+        if (!TeamReqUtility.Validate(ev.teamRequirement, targets)) return -1;
+        foreach (var wmods in ev.weightMods)
+        {
+            bool isValid = true;
+            foreach (var wmod in wmods.teamRequirements)
+            {
+                if (!TeamReqUtility.Validate(wmod, targets))
+                {
+                    isValid = false;
+                    break;
+                }
+            }
+            if (isValid) weight += wmods.modValue;
+        }
+        return weight;
+    }
+
 }

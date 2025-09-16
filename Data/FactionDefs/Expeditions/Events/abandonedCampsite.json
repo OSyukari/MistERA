@@ -1,0 +1,61 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_abandonedCampsite",
+    "eventString_Ongoing":"exp_event_abandonedCampsite_ongoing",
+    "DurationMinutes":30,
+    "baseWeight":1,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":0, "cost_ST":0 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_abandonedCampsite_result_resting",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_abandonedCampsite_result_loot",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_abandonedCampsite_result_guro",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+
+"exp_event_abandonedCampsite":"被抛弃的营地",
+"exp_event_abandonedCampsite_ongoing":"$names$找到了一处被废弃的露营地",
+"exp_event_abandonedCampsite_result_resting":"$names$在营地短暂休息了一下",
+"exp_event_abandonedCampsite_result_loot":"$names$在营地找到了可用的道具",
+"exp_event_abandonedCampsite_result_guro":"$names$在营地发现了冒险者的尸体"
+            },
+            "en-us":
+            {
+"exp_event_abandonedCampsite":"Abandoned Camp",
+"exp_event_abandonedCampsite_ongoing":"$names$ discovered an abandoned camp",
+"exp_event_abandonedCampsite_result_resting":"$names$ have a brief rest at the camp",
+"exp_event_abandonedCampsite_result_loot":"$names$ discovered some useful supplies",
+"exp_event_abandonedCampsite_result_guro":"$names$ found the previous owner's corpses"
+
+            }
+        }
+    }
+}

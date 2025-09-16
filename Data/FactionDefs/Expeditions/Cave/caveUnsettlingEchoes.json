@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_caveUnsettlingEchoes",
+    "eventString_Ongoing":"exp_event_caveUnsettlingEchoes_ongoing",
+    "DurationMinutes":20,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":8, "cost_ST":3 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_caveUnsettlingEchoes_result_stayedCalm",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_caveUnsettlingEchoes_result_discoveredSource",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_caveUnsettlingEchoes_result_anxiety",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveUnsettlingEchoes_result_disoriented",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveUnsettlingEchoes_result_droppedItem",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_caveUnsettlingEchoes":"诡异回音",
+"exp_event_caveUnsettlingEchoes_ongoing":"$names$在洞穴中听到令人不安的回音",
+"exp_event_caveUnsettlingEchoes_result_stayedCalm":"$names$保持冷静，继续前行",
+"exp_event_caveUnsettlingEchoes_result_discoveredSource":"$names$发现了回音来源，找到有用物品",
+"exp_event_caveUnsettlingEchoes_result_anxiety":"$names$因回音感到焦虑不安",
+"exp_event_caveUnsettlingEchoes_result_disoriented":"$names$因回音干扰而方向感混乱",
+"exp_event_caveUnsettlingEchoes_result_droppedItem":"$names$因惊慌失措掉落了装备"
+            },
+            "en-us":
+            {
+"exp_event_caveUnsettlingEchoes":"Unsettling Echoes",
+"exp_event_caveUnsettlingEchoes_ongoing":"$names$ hear unsettling echoes reverberating through the cave",
+"exp_event_caveUnsettlingEchoes_result_stayedCalm":"$names$ stayed calm and pressed forward",
+"exp_event_caveUnsettlingEchoes_result_discoveredSource":"$names$ found the source of the echoes and discovered useful items",
+"exp_event_caveUnsettlingEchoes_result_anxiety":"$names$ felt anxious and unsettled by the echoes",
+"exp_event_caveUnsettlingEchoes_result_disoriented":"$names$ became disoriented due to the echoes",
+"exp_event_caveUnsettlingEchoes_result_droppedItem":"$names$ dropped equipment in a moment of panic"
+            }
+        }
+    }
+}

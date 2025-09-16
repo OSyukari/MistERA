@@ -1,0 +1,66 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_caveClearPool",
+    "eventString_Ongoing":"exp_event_caveClearPool_ongoing",
+    "DurationMinutes":15,
+    "baseWeight":3,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":0, "cost_ST":0 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_caveClearPool_result_refreshing",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_caveClearPool_result_hiddenFind",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_caveClearPool_result_relaxed",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveClearPool_result_fishSpot",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_caveClearPool":"清澈水潭",
+"exp_event_caveClearPool_ongoing":"$names$在洞穴中发现一潭清澈见底的水池",
+"exp_event_caveClearPool_result_refreshing":"$names$在水池边饮水，感到神清气爽",
+"exp_event_caveClearPool_result_hiddenFind":"$names$在水池底部发现了有用的物品",
+"exp_event_caveClearPool_result_relaxed":"$names$在水池旁稍作休息，感到放松",
+"exp_event_caveClearPool_result_fishSpot":"$names$在水池中发现了可捕捞的鱼群"
+            },
+            "en-us":
+            {
+"exp_event_caveClearPool":"Clear Cave Pool",
+"exp_event_caveClearPool_ongoing":"$names$ found a crystal-clear pool of water in the cave",
+"exp_event_caveClearPool_result_refreshing":"$names$ drank from the pool and felt refreshed",
+"exp_event_caveClearPool_result_hiddenFind":"$names$ found useful items at the bottom of the pool",
+"exp_event_caveClearPool_result_relaxed":"$names$ rested by the pool and felt relaxed",
+"exp_event_caveClearPool_result_fishSpot":"$names$ spotted a school of fish in the pool"
+            }
+        }
+    }
+}

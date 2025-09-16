@@ -247,7 +247,7 @@ public class Job_Sex_Group : Job
             }
             packages_previous.RemoveAt(i);
         }
-       
+       actorJobComplete.Remove(charaRef);
     }
 
     public override void RemoveActor(int charaRef)

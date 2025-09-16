@@ -48,7 +48,7 @@ public class scr_System_Time : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-
+    public static DateTime Static = new DateTime(1960, 01, 01);
     // Serializable Interface
     public scr_System_Time_Serializable GetSerializable()
     {

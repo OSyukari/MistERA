@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_caveMurkyPool",
+    "eventString_Ongoing":"exp_event_caveMurkyPool_ongoing",
+    "DurationMinutes":28,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":6, "cost_ST":7 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_caveMurkyPool_result_safeWade",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_caveMurkyPool_result_hiddenFind",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_caveMurkyPool_result_exhausted",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveMurkyPool_result_slipInjury",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveMurkyPool_result_creatureAmbush",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_caveMurkyPool":"幽暗水潭",
+"exp_event_caveMurkyPool_ongoing":"$names$在洞穴中发现一潭深浅不明的幽暗水池",
+"exp_event_caveMurkyPool_result_safeWade":"$names$小心翼翼地涉水通过了水潭",
+"exp_event_caveMurkyPool_result_hiddenFind":"$names$在水潭中发现了隐藏的有用物品",
+"exp_event_caveMurkyPool_result_exhausted":"$names$尝试穿越水潭后筋疲力尽",
+"exp_event_caveMurkyPool_result_slipInjury":"$names$在水潭边滑倒受伤",
+"exp_event_caveMurkyPool_result_creatureAmbush":"$names$在水潭中惊动了潜伏的洞穴生物"
+            },
+            "en-us":
+            {
+"exp_event_caveMurkyPool":"Murky Cave Pool",
+"exp_event_caveMurkyPool_ongoing":"$names$ found a murky pool of water with unknown depth in the cave",
+"exp_event_caveMurkyPool_result_safeWade":"$names$ carefully waded through the pool",
+"exp_event_caveMurkyPool_result_hiddenFind":"$names$ discovered useful items hidden in the pool",
+"exp_event_caveMurkyPool_result_exhausted":"$names$ became exhausted after attempting to cross the pool",
+"exp_event_caveMurkyPool_result_slipInjury":"$names$ slipped and got injured near the pool",
+"exp_event_caveMurkyPool_result_creatureAmbush":"$names$ disturbed a lurking cave creature in the pool"
+            }
+        }
+    }
+}

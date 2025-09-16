@@ -1,0 +1,66 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_oreClump",
+    "eventString_Ongoing":"exp_event_oreClump_ongoing",
+    "DurationMinutes":15,
+    "baseWeight":3,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":0, "cost_ST":0 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_oreClump_result_successfulHarvest",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_oreClump_result_extraFind",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_oreClump_result_rested",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_oreClump_result_toolSharpened",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_oreClump":"矿石堆",
+"exp_event_oreClump_ongoing":"$names$发现了一堆闪闪发光的矿石",
+"exp_event_oreClump_result_successfulHarvest":"$names$成功采集了有价值的矿石",
+"exp_event_oreClump_result_extraFind":"$names$在矿石堆中发现了额外的有用材料",
+"exp_event_oreClump_result_rested":"$names$在采集矿石时稍作休息，感到放松",
+"exp_event_oreClump_result_toolSharpened":"$names$在采集时顺便磨砺了工具"
+            },
+            "en-us":
+            {
+"exp_event_oreClump":"Ore Clump",
+"exp_event_oreClump_ongoing":"$names$ found a clump of shimmering ore",
+"exp_event_oreClump_result_successfulHarvest":"$names$ successfully harvested valuable ore",
+"exp_event_oreClump_result_extraFind":"$names$ discovered additional useful materials in the ore clump",
+"exp_event_oreClump_result_rested":"$names$ took a break while gathering ore, feeling relaxed",
+"exp_event_oreClump_result_toolSharpened":"$names$ sharpened their tools while harvesting"
+            }
+        }
+    }
+}

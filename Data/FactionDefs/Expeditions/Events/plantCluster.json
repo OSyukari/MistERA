@@ -1,0 +1,75 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_plantCluster",
+    "eventString_Ongoing":"exp_event_plantCluster_ongoing",
+    "DurationMinutes":20,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":0, "cost_ST":5 }
+    },
+    "possibleResults":[
+        {
+        "baseWeight":4,
+        "resultText":"exp_event_plantCluster_result_successfulGather",
+        "results_character":{}
+        },
+        {
+        "baseWeight":3,
+        "resultText":"exp_event_plantCluster_result_edibleFind",
+        "results_character":{}
+        },
+        {
+        "baseWeight":2,
+        "resultText":"exp_event_plantCluster_result_nothing",
+        "results_character":{}
+        },
+        {
+        "baseWeight":1,
+        "resultText":"exp_event_plantCluster_result_poisonous",
+        "results_character":{}
+        },
+        {
+        "baseWeight":1,
+        "resultText":"exp_event_plantCluster_result_insectBite",
+        "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_plantCluster":"植物丛",
+"exp_event_plantCluster_ongoing":"$names$发现了一丛植物",
+"exp_event_plantCluster_result_successfulGather":"$names$采集到了有用的草药",
+"exp_event_plantCluster_result_edibleFind":"$names$发现了可食用的植物",
+"exp_event_plantCluster_result_nothing":"$names$检查了植物但没发现有价值的东西",
+"exp_event_plantCluster_result_poisonous":"$names$接触了有毒的植物",
+"exp_event_plantCluster_result_insectBite":"$names$在采集时惊动了昆虫并被叮咬"
+
+            },
+            "en-us":
+            {
+
+"exp_event_plantCluster":"Plant Cluster",
+"exp_event_plantCluster_ongoing":"$names$ discovered a cluster of plants",
+"exp_event_plantCluster_result_successfulGather":"$names$ gathered useful herbs",
+"exp_event_plantCluster_result_edibleFind":"$names$ found edible plants",
+"exp_event_plantCluster_result_nothing":"$names$ examined the plants but found nothing of value",
+"exp_event_plantCluster_result_poisonous":"$names$ encountered poisonous plants",
+"exp_event_plantCluster_result_insectBite":"$names$ disturbed some insects and got bitten while gathering"
+            }
+        }
+    }
+}

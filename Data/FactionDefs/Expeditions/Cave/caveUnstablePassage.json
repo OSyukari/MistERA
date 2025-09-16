@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_caveUnstablePassage",
+    "eventString_Ongoing":"exp_event_caveUnstablePassage_ongoing",
+    "DurationMinutes":25,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":7, "cost_ST":6 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_caveUnstablePassage_result_safePassage",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_caveUnstablePassage_result_hiddenFind",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_caveUnstablePassage_result_stress",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveUnstablePassage_result_minorCollapse",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveUnstablePassage_result_equipmentLoss",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_caveUnstablePassage":"不稳定通道",
+"exp_event_caveUnstablePassage_ongoing":"$names$在洞穴中遇到一段摇摇欲坠的通道",
+"exp_event_caveUnstablePassage_result_safePassage":"$names$小心通过了不稳定的通道",
+"exp_event_caveUnstablePassage_result_hiddenFind":"$names$在通道中发现隐藏的有用物品",
+"exp_event_caveUnstablePassage_result_stress":"$names$因担心塌方而感到极度紧张",
+"exp_event_caveUnstablePassage_result_minorCollapse":"$names$遭遇轻微塌方，受到擦伤",
+"exp_event_caveUnstablePassage_result_equipmentLoss":"$names$在通过时丢失了一些装备"
+            },
+            "en-us":
+            {
+"exp_event_caveUnstablePassage":"Unstable Passage",
+"exp_event_caveUnstablePassage_ongoing":"$names$ encountered a crumbling passage in the cave at risk of collapse",
+"exp_event_caveUnstablePassage_result_safePassage":"$names$ carefully navigated through the unstable passage",
+"exp_event_caveUnstablePassage_result_hiddenFind":"$names$ found useful items hidden in the passage",
+"exp_event_caveUnstablePassage_result_stress":"$names$ felt intense stress from fear of a cave-in",
+"exp_event_caveUnstablePassage_result_minorCollapse":"$names$ experienced a minor collapse and got scraped",
+"exp_event_caveUnstablePassage_result_equipmentLoss":"$names$ lost some equipment while passing through"
+            }
+        }
+    }
+}

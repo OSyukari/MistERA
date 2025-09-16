@@ -40,6 +40,7 @@ public interface I_IsJobGiver
     [JsonIgnore] public Room_Instance MainExit { get; }
     [JsonIgnore] public FactionInventory Inventory { get; }
     [JsonIgnore] public List<Character_Trainable> Managers { get; }
+    [JsonIgnore] public List<Character_Trainable> ManagedChara { get; }
     [JsonIgnore] public bool isPlayerFaction { get; }
 }
 
@@ -54,6 +55,67 @@ public enum PartyAvailability
 [System.Serializable]
 public class Manageable_Party : I_IsJobGiver
 {
+    [JsonIgnore]
+    public string ExpeditionName
+    {
+        get
+        {
+            return this.Job.Expedition == null ? " - " : this.Job.Expedition.DisplayName;
+        }
+    }
+
+    [JsonIgnore] public bool CanStartExpedition { get { return this.Job.Expedition != null && GetAvailability(out string tootlip) == PartyAvailability.Inactive; } }
+    [JsonIgnore] public bool CanResolveExpedition { get { return this.Job.Expedition != null && this.Job.isActive; } }
+    public void SetExpedition(Expedition exp, int startHour = -1)
+    {
+        this.Job.SetExpedition(exp, startHour == -1 ? this.StartHour : startHour);
+    }
+
+    public bool AllowPassNight = true;
+    public int RecurringCooldown = 0;
+    public bool IsRecurring = false;
+    public int StartHour = 8;
+    [JsonIgnore] public int FinalStartHour
+    {
+        get
+        {
+            if (this.Job.Expedition == null || !this.Job.Expedition.HasStartHour) return StartHour;
+            return this.Job.Expedition.ForceStartHour;
+        }
+    }
+    [JsonIgnore] public int FinalDuration
+    { get
+        {
+            var baseDuration = BaseDuration;
+            if (AllowPassNight && baseDuration < 24) {
+
+                var home = this.OwnerFaction as Manageable_HomeFaction;
+                var homeSleeHour = home == null ? 0 : home.SharedSleepHour;
+
+                return baseDuration + ((home != null && (baseDuration + FinalStartHour) >= homeSleeHour) ? 8 : 0);
+            }
+            else return baseDuration + (baseDuration / 24) * 8;
+        }
+    }
+    [JsonIgnore]
+    public int BaseDuration
+    {
+        get
+        {
+            var baseDuration = this.Job.Expedition == null ? 0 : this.Job.Expedition.DurationHour;
+            return baseDuration;
+        }
+    }
+    public void StartExpedition()
+    {
+        this.Job.SetActive();
+    }
+
+    public void EndExpedition()
+    {
+        this.Job.EndExpedition();
+    }
+
 
     [JsonIgnore] public bool isPlayerFaction { get { return this.OwnerFaction.isPlayerFaction; } }
 
@@ -80,6 +142,11 @@ public class Manageable_Party : I_IsJobGiver
                 canAct = false;
                 ttips.Add($"{i.FirstName} cannot act");
             }
+            else if (i.FactionManager.CurrentActiveParty != null && i.FactionManager.CurrentActiveParty != this)
+            {
+                canAct = false;
+                ttips.Add($"{i.FirstName} is active in another party");
+            }
         }
         if (!canAct)
         {
@@ -88,8 +155,6 @@ public class Manageable_Party : I_IsJobGiver
         }
         else return PartyAvailability.Inactive;
     }
-
-
 
     /// <summary>
     /// Use GetAvailability for failure tooltip
@@ -103,7 +168,7 @@ public class Manageable_Party : I_IsJobGiver
     [JsonIgnore]
     public bool isActive { get
         {
-            return false;
+            return Job != null && Job.isActive;
         } }
 
     public string ID;
@@ -310,7 +375,7 @@ public class Manageable_Party : I_IsJobGiver
     {
         get { return new List<Manageable>(); } }
 
-    [JsonIgnore] public Room_Instance MainExit { get { return null; } }
+    [JsonIgnore] public Room_Instance MainExit { get { return this.Room; } }
 
     [JsonIgnore]
     public List<Character_Trainable> Managers{
@@ -320,6 +385,31 @@ public class Manageable_Party : I_IsJobGiver
             foreach (var i in this.charaGuestStatus) if (i.Value == Manageable_GuestStatus.Manager) v.Add(scr_System_CampaignManager.current.FindInstanceByID(i.Key));
             return v;
         }
+    }
+
+    public void Manage(int currentHour, int currentMinute)
+    {
+        bool allowLazyRefresh = currentMinute % 15 != 0;
+        foreach (var kvpair in nonjobPosts)
+        {
+            foreach (var post in kvpair.Value)
+            {
+                post.RefreshValidCOMs(allowLazyRefresh);
+            }
+        }
+
+        foreach (var kvpair in jobPosts)
+        {
+            foreach (var post in kvpair.Value)
+            {
+                post.RefreshValidCOMs(false);
+            }
+        }
+
+        this.Job.UpdateStatus();
+
+       // string s = "Faction [" + ID + "] manage at hour [" + currentHour + "]";
+       // s += "\n" + Inventory.PrintContent();// + " _ " + String.Join(" ", Inventory.PrintTracker());
     }
 }
 

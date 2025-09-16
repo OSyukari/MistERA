@@ -444,7 +444,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             }
         }
 
-
+        foreach (var p in this.SubFactions) p.Manage(currentHour, currentMinute);
        // string s = "Faction [" + ID + "] manage at hour [" + currentHour + "]";
        // s += "\n" + Inventory.PrintContent();// + " _ " + String.Join(" ", Inventory.PrintTracker());
     }

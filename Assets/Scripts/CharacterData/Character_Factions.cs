@@ -219,6 +219,15 @@ public class Character_Factions
 
     }
     [JsonProperty] List<int> trackedPartyRef = new List<int>();
+
+
+    public void AddToParty(I_IsJobGiver party, Manageable_GuestStatus status, bool setHomeFaction)
+    {
+        var p = party as Manageable_Party;
+        if (p == null) return;
+
+        AddToParty(p, status, setHomeFaction);
+    }
     public void AddToParty(Manageable_Party party, Manageable_GuestStatus status, bool setHomeFaction)
     {
         this.CurrentActiveParty = party;
@@ -228,6 +237,31 @@ public class Character_Factions
 
         UpdateFactionPriorityList();
     }
+    /// <summary>
+    /// Only wipe the CurrentActiveParty if match
+    /// </summary>
+    /// <param name="party"></param>
+    public void RemoveFromParty(Manageable_Party party)
+    {
+        if (this.CurrentActiveParty == party)
+        {
+            this.CurrentActiveParty = null;
+        }
+
+        UpdateFactionPriorityList();
+    }
+    /// <summary>
+    /// Only wipe the CurrentActiveParty if match
+    /// </summary>
+    /// <param name="party"></param>
+    public void RemoveFromParty(I_IsJobGiver party)
+    {
+        var p = party as Manageable_Party;
+        if (p == null) return;
+
+        RemoveFromParty(p);
+    }
+
 
     public void AddPartyTracker(Manageable_Party party)
     {

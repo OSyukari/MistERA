@@ -510,7 +510,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     button.Initialize(this, new ButtonValidator_partyEditMembers(this, button)); break;
                 case 42:  // edit party inventory 
                     button.Initialize(this, new ButtonValidator_AlwaysFalse(this)); break;
-
+                case 43:
+                    button.Initialize(this, new ButtonValidator_partyEditExpeditions(this, button)); break;
+                case 44:
+                    button.Initialize(this, new initScript_Expeditions.ButtonValidator_StartExp(this, button)); break;
+                case 45:
+                    button.Initialize(this, new initScript_Expeditions.ButtonValidator_AllowPassNightToggle(this, button, Script_Expeditions.ExpeditionConfig.Duration)); break;
+                case 46:
+                    button.Initialize(this, new initScript_Expeditions.ButtonValidator_RecurringToggle(this, button, Script_Expeditions.ExpeditionConfig.CooldownTime, Script_Expeditions.OnEndEdit_Recurring)); break;
                 case 9999: // exit
                     button.Initialize(this, button_alwaysValid); break;
                 default:
@@ -552,6 +559,17 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         button.Initialize(this, new ButtonValidator_partySelect(this, button, p));
         button.SetText(p.FactionDisplayName);
         button.optionID = AssertUniqueHash(p.GetHashCode());
+
+        buttonsByID.Add(button.optionID, button);
+        validatorsByID.Add(button.optionID, button.Validator);
+
+        button.Validate();
+    }
+    public void MakeButton_Expedition(Expedition exp, scr_SelectableText button)
+    {
+        button.Initialize(this, new ButtonValidator_selectExp(this, button, exp));
+        button.SetText(exp.DisplayName);
+        button.optionID = AssertUniqueHash(exp.GetHashCode());
 
         buttonsByID.Add(button.optionID, button);
         validatorsByID.Add(button.optionID, button.Validator);
@@ -941,7 +959,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 //parent.RefreshCurrentChara();
                 parent.currentHighlightJobCOM = null;
                 parent.SetCurrentChara(parent.currentChara);
-                parent.ValidateAll();
+               // parent.ValidateAll();
             }
             else
             {
@@ -1490,7 +1508,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             parent.SetCurrentChara(charaRefID);
-            parent.ValidateAll();
+            //parent.ValidateAll();
         }
 
 
@@ -1702,6 +1720,45 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             else parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.Neutral;
         }
     }
+    public class ButtonValidator_partyEditExpeditions : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        public ButtonValidator_partyEditExpeditions(scr_Canvas_Management parent, scr_SelectableText text) : base(parent)
+        {
+            this.text = text;
+            this.parent = parent;
+        }
+
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy) return false;
+            if (parent.currentParty == null || parent.CurrentFaction == null)
+            {
+                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_setExpTarget_none"));
+                return false;
+            }
+
+            if (parent.currentParty.isActive)
+            {
+                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_setExpTarget_active")
+                    .Replace("$target$", parent.currentParty.ExpeditionName));
+                return false;
+            }
+            else
+            {
+                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_setExpTarget_inactive")
+                    .Replace("$target$", parent.currentParty.ExpeditionName));
+                return true;
+            }
+        }
+
+        public void OnClickButton()
+        {
+            parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.ExpeditionEdit;
+        }
+    }
 
     public class ButtonValidator_partyCreate : ButtonValidator, I_ButtonClickable
     {
@@ -1726,5 +1783,47 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             parent.Script_Expeditions.Initialize(parent, parent.CurrentFaction);
         }
     }
+
+    public scr_SelectExp expSelectPage;
+    public class ButtonValidator_selectExp : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        Expedition exp;
+        public ButtonValidator_selectExp(scr_Canvas_Management parent, scr_SelectableText text, Expedition exp) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+            this.exp = exp;
+            text.isButtonToggle = true;
+            text.AttachOnHoverEnter(OnHover);
+        }
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy) return false;
+            else if (parent.currentParty == null) return false;
+            else if (this.exp == null) return false;
+
+            this.text.Toggle(true, this.exp == parent.currentParty.Job.Expedition);
+            return true;
+        }
+
+        public void OnHover()
+        {
+            parent.expSelectPage.LoadExp(this.exp);
+        }
+
+        public void OnClickButton()
+        {
+            parent.currentParty.SetExpedition(this.exp);
+            parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.Neutral;
+            parent.LoadParty(parent.currentParty);// (charaRefID);
+            //parent.ValidateAll();
+        }
+    }
+
+    public Expedition currentExpedition = null;
+    
 }
 

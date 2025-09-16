@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_caveNarrowTunnel",
+    "eventString_Ongoing":"exp_event_caveNarrowTunnel_ongoing",
+    "DurationMinutes":30,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":7, "cost_ST":8 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_caveNarrowTunnel_result_successfulPass",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_caveNarrowTunnel_result_hiddenNiche",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_caveNarrowTunnel_result_fatigued",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveNarrowTunnel_result_scrape",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveNarrowTunnel_result_stuck",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_caveNarrowTunnel":"狭窄隧道",
+"exp_event_caveNarrowTunnel_ongoing":"$names$在洞穴中遇到一条需要挤过的狭窄隧道",
+"exp_event_caveNarrowTunnel_result_successfulPass":"$names$成功挤过了狭窄隧道",
+"exp_event_caveNarrowTunnel_result_hiddenNiche":"$names$在隧道中发现了一个隐藏的壁龛，里面有有用物品",
+"exp_event_caveNarrowTunnel_result_fatigued":"$names$挤过隧道后感到精疲力竭",
+"exp_event_caveNarrowTunnel_result_scrape":"$names$在挤过隧道时被岩壁擦伤",
+"exp_event_caveNarrowTunnel_result_stuck":"$names$在隧道中卡住，费力挣脱"
+            },
+            "en-us":
+            {
+"exp_event_caveNarrowTunnel":"Narrow Tunnel",
+"exp_event_caveNarrowTunnel_ongoing":"$names$ encountered a narrow tunnel in the cave that requires squeezing through",
+"exp_event_caveNarrowTunnel_result_successfulPass":"$names$ successfully squeezed through the tunnel",
+"exp_event_caveNarrowTunnel_result_hiddenNiche":"$names$ found a hidden niche with useful items in the tunnel",
+"exp_event_caveNarrowTunnel_result_fatigued":"$names$ became exhausted after squeezing through the tunnel",
+"exp_event_caveNarrowTunnel_result_scrape":"$names$ got scraped by the tunnel walls",
+"exp_event_caveNarrowTunnel_result_stuck":"$names$ got stuck in the tunnel but managed to break free"
+            }
+        }
+    }
+}

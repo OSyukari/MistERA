@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_caveDustyPassage",
+    "eventString_Ongoing":"exp_event_caveDustyPassage_ongoing",
+    "DurationMinutes":25,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":6, "cost_ST":5 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_caveDustyPassage_result_safePassage",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_caveDustyPassage_result_hiddenFind",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_caveDustyPassage_result_coughingFit",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveDustyPassage_result_irritation",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveDustyPassage_result_equipmentClog",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_caveDustyPassage":"尘埃通道",
+"exp_event_caveDustyPassage_ongoing":"$names$在洞穴中遇到一条充满未知尘埃颗粒的通道",
+"exp_event_caveDustyPassage_result_safePassage":"$names$小心通过了尘埃通道",
+"exp_event_caveDustyPassage_result_hiddenFind":"$names$在尘埃中发现了有用的物品",
+"exp_event_caveDustyPassage_result_coughingFit":"$names$因吸入尘埃而剧烈咳嗽",
+"exp_event_caveDustyPassage_result_irritation":"$names$因尘埃导致皮肤和眼睛不适",
+"exp_event_caveDustyPassage_result_equipmentClog":"$names$的装备被尘埃堵塞，影响使用"
+            },
+            "en-us":
+            {
+"exp_event_caveDustyPassage":"Dusty Passage",
+"exp_event_caveDustyPassage_ongoing":"$names$ encountered a passage in the cave filled with unknown dust particles",
+"exp_event_caveDustyPassage_result_safePassage":"$names$ carefully navigated through the dusty passage",
+"exp_event_caveDustyPassage_result_hiddenFind":"$names$ found useful items hidden in the dust",
+"exp_event_caveDustyPassage_result_coughingFit":"$names$ suffered a coughing fit from inhaling the dust",
+"exp_event_caveDustyPassage_result_irritation":"$names$ experienced skin and eye irritation from the dust",
+"exp_event_caveDustyPassage_result_equipmentClog":"$names$’s equipment got clogged by the dust, affecting its use"
+            }
+        }
+    }
+}

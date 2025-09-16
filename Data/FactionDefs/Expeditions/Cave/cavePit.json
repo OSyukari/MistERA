@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_cavePit",
+    "eventString_Ongoing":"exp_event_cavePit_ongoing",
+    "DurationMinutes":30,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":5, "cost_ST":8 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_cavePit_result_successfulCross",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_cavePit_result_alternatePath",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_cavePit_result_fatigue",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_cavePit_result_slip",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_cavePit_result_equipmentLoss",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_cavePit":"深邃洞穴裂缝",
+"exp_event_cavePit_ongoing":"$names$在洞穴中遇到了一道需要跨越的深邃裂缝",
+"exp_event_cavePit_result_successfulCross":"$names$成功跨越了裂缝",
+"exp_event_cavePit_result_alternatePath":"$names$找到了一条绕过裂缝的替代路径",
+"exp_event_cavePit_result_fatigue":"$names$尝试跨越裂缝后感到极度疲惫",
+"exp_event_cavePit_result_slip":"$names$在跨越裂缝时滑倒受伤",
+"exp_event_cavePit_result_equipmentLoss":"$names$在跨越裂缝时丢失了一些装备"
+            },
+            "en-us":
+            {
+"exp_event_cavePit":"Deep Cave Pit",
+"exp_event_cavePit_ongoing":"$names$ encountered a deep pit in the cave that needs to be crossed",
+"exp_event_cavePit_result_successfulCross":"$names$ successfully crossed the pit",
+"exp_event_cavePit_result_alternatePath":"$names$ found an alternate path around the pit",
+"exp_event_cavePit_result_fatigue":"$names$ became extremely fatigued after attempting to cross the pit",
+"exp_event_cavePit_result_slip":"$names$ slipped and got injured while crossing the pit",
+"exp_event_cavePit_result_equipmentLoss":"$names$ lost some equipment while crossing the pit"
+            }
+        }
+    }
+}

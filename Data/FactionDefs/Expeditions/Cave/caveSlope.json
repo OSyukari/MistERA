@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_caveSlope",
+    "eventString_Ongoing":"exp_event_caveSlope_ongoing",
+    "DurationMinutes":35,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":5, "cost_ST":10 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_caveSlope_result_successfulClimb",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_caveSlope_result_shortcutFound",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_caveSlope_result_exhausted",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveSlope_result_slip",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveSlope_result_rockfall",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_caveSlope":"陡峭洞穴斜坡",
+"exp_event_caveSlope_ongoing":"$names$在洞穴中遇到了一段难以攀登的陡坡",
+"exp_event_caveSlope_result_successfulClimb":"$names$成功攀登了斜坡",
+"exp_event_caveSlope_result_shortcutFound":"$names$发现了一条绕过斜坡的捷径",
+"exp_event_caveSlope_result_exhausted":"$names$尝试攀登斜坡后感到筋疲力尽",
+"exp_event_caveSlope_result_slip":"$names$在攀登时滑倒受伤",
+"exp_event_caveSlope_result_rockfall":"$names$在攀登时引发了落石"
+            },
+            "en-us":
+            {
+"exp_event_caveSlope":"Steep Cave Slope",
+"exp_event_caveSlope_ongoing":"$names$ encountered a steep slope in the cave that’s hard to climb",
+"exp_event_caveSlope_result_successfulClimb":"$names$ successfully climbed the slope",
+"exp_event_caveSlope_result_shortcutFound":"$names$ found a shortcut around the slope",
+"exp_event_caveSlope_result_exhausted":"$names$ became exhausted after attempting to climb the slope",
+"exp_event_caveSlope_result_slip":"$names$ slipped and got injured while climbing",
+"exp_event_caveSlope_result_rockfall":"$names$ triggered a rockfall while climbing"
+            }
+        }
+    }
+}

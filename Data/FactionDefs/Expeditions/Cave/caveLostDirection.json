@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_caveLostDirection",
+    "eventString_Ongoing":"exp_event_caveLostDirection_ongoing",
+    "DurationMinutes":35,
+    "baseWeight":2,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":8, "cost_ST":4 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_caveLostDirection_result_foundWay",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_caveLostDirection_result_markedPath",
+            "results_character":{}
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_caveLostDirection_result_fatigued",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveLostDirection_result_panic",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_caveLostDirection_result_misstep",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_caveLostDirection":"迷失方向",
+"exp_event_caveLostDirection_ongoing":"$names$在洞穴中迷失了方向，难以辨认路径",
+"exp_event_caveLostDirection_result_foundWay":"$names$最终找到了正确的路径",
+"exp_event_caveLostDirection_result_markedPath":"$names$标记了路径并发现了有用的线索",
+"exp_event_caveLostDirection_result_fatigued":"$names$因长时间寻找出路而筋疲力尽",
+"exp_event_caveLostDirection_result_panic":"$names$因迷路而感到恐慌",
+"exp_event_caveLostDirection_result_misstep":"$names$在迷路时不慎踩空受伤"
+            },
+            "en-us":
+            {
+"exp_event_caveLostDirection":"Lost Direction",
+"exp_event_caveLostDirection_ongoing":"$names$ lost their bearings in the cave, struggling to find the way",
+"exp_event_caveLostDirection_result_foundWay":"$names$ eventually found the correct path",
+"exp_event_caveLostDirection_result_markedPath":"$names$ marked the path and discovered useful clues",
+"exp_event_caveLostDirection_result_fatigued":"$names$ became exhausted from searching for the way out",
+"exp_event_caveLostDirection_result_panic":"$names$ panicked from being lost",
+"exp_event_caveLostDirection_result_misstep":"$names$ misstepped and got injured while lost"
+            }
+        }
+    }
+}

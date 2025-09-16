@@ -147,6 +147,24 @@ public abstract class ActionPackage
                 _actorRefs.AddRange(receiverRefs);
             }
             return _actorRefs;
+        }set
+        {
+            _actorRefs = null;
+            _actors = null;
+        }
+    }
+
+    List<Character_Trainable> _actors = null;
+    [JsonIgnore]
+    public List<Character_Trainable> Actors
+    { get
+        {
+            if (_actors == null)
+            {
+                _actors = new List<Character_Trainable>();
+                foreach (var i in this.actorRefs) _actors.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
+            }
+            return _actors;
         } }
 
     [JsonIgnore] protected int roomKey = -1;
@@ -257,7 +275,7 @@ public abstract class ActionPackage
         else return RefuseResponse.Replace("$comdesc$", s);
     }
 
-    public string DescriptionText()
+    public virtual string DescriptionText()
     {
         return doer[0].FirstName + this.job.GetJobDescription(doer[0].RefID);
     }
@@ -924,7 +942,7 @@ public abstract class ActionPackage
         this.master_cached = null;
         this.masterRef = masterRef;
 
-        _actorRefs = null;
+        actorRefs = null;
         //actorRefs
     }
     [JsonProperty] protected bool requestAccepted = false;

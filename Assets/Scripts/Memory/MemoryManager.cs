@@ -306,6 +306,13 @@ public class MemoryManager
     //Character_Trainable ownerCache = null;
     //Character_Trainable Owner { get { if (ownerCache == null) ownerCache = scr_System_CampaignManager.current.FindInstanceByID(ownerRefID); return ownerCache; } }
 
+    public Memory_Entry AddEntryMSG(string msg, List<string> tags)
+    {
+        var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, msg);
+        return AddEntry(memInst, tags);
+    }
+
+
     /// <summary>
     /// Duration == -2 -> permanent. <br/> Duration == -1 -> default
     /// </summary>

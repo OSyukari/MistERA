@@ -74,7 +74,7 @@ public class ActionPackage_Expedition : ActionPackage
 
 
     [JsonProperty] new protected bool toggleRepeat = false;
-    [JsonIgnore] public override bool isTemporaryAP { get { return true; } }
+    [JsonIgnore] public override bool isTemporaryAP { get { return false; } }
 
     [JsonIgnore]
     public override bool AllowJoining
@@ -89,16 +89,20 @@ public class ActionPackage_Expedition : ActionPackage
 
     public ActionPackage_Expedition(Manageable_Party p, ExpEvents ev)
     {
+        doerRefs = new List<int>();
         SourceEV = ev;
         this.weight = GetWeight(this.SourceEV, p, out var tt);
         TargetChara = tt;
+        foreach(var i in TargetChara)this.doerRefs.Add(i.RefID);
+        this.duration = SourceEV.DurationMinutes;
     }
 
-
-    protected ExpEvents originalEV = null;
-
     [JsonIgnore] public override List<int> actorRefs { get { return new List<int>(this.doerRefs) { }; } }
-    [JsonIgnore] public override string DisplayName { get { return originalEV == null ? "-" : originalEV.EventName_Ongoing; } }
+    [JsonIgnore] public override string DisplayName { get { 
+            var names = new List<string>();
+            foreach (var i in this.Actors) names.Add(i.CallName);
+            return SourceEV == null ? "-" : SourceEV.EventName_Ongoing.Replace("$names$", String.Join(", ",names)); 
+        } }
 
     public override void RepeatReset(bool resetRequest = false)
     {
@@ -158,8 +162,17 @@ public class ActionPackage_Expedition : ActionPackage
     /// </summary>
     protected override void Execution()
     {
-        // make evresult
+        // pick EVResult, and if can resolve, resolve it.
+        // else, store the AP in a message for player later manual resolve
 
+        var result = ExpeditionUtility.RandResult(SourceEV, this);
+        var jobb = this.job as Job_Expedition;
+        if (result != null && jobb != null)
+        {
+            var names = new List<string>();
+            foreach (var i in this.Actors) names.Add(i.CallName);
+            jobb.AddResult(LocalizeDictionary.QueryThenParse( result.resultText).Replace("$names$",String.Join(", ",names)), new List<string>(), this.actorRefs);
+        }
     }
 
     public override ActionPackage Copy()
