@@ -13,6 +13,8 @@ public class LocalizeDictionary : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
+
+        _cacheResult.Clear();
     }
     public static LocalizeDictionary Instance { get; private set; }
 

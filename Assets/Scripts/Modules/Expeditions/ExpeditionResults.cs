@@ -11,6 +11,16 @@ public class ExpResults
 
     public string resultText = "";
 
-    public Result_Character results_character = null;
+    public List<Result_Character> results_characters = new List<Result_Character>();
+    public List<Result_Faction_Party> results_factions = new List<Result_Faction_Party>();
 
+    public string eventID = "";
+    public string eventLabel = "";
+
+    /// <summary>
+    /// If query fail (because no npc with this baseID exist), then generate<br/>
+    /// 1st key is event identifier, 2nd key is character baseID
+    /// </summary>
+    public List<Event.EventScope_Target> TargetValidators = new List<Event.EventScope_Target>();
+    public bool overrideTargetScope = false;
 }

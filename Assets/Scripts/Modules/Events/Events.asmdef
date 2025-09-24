@@ -1,10 +1,8 @@
 {
-    "name": "Expeditions",
+    "name": "Events",
     "rootNamespace": "",
     "references": [
-        "Base",
-        "Results",
-        "Events"
+        "GUID:7a6b4398b6dade840b4ad6f4a724a4d1"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

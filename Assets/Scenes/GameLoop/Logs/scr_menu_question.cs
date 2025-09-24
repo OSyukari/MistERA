@@ -160,7 +160,7 @@ public class scr_menu_question : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return selected || (parent.Active && option.isValid(instance));
+            return selected || (parent.Active && EventUtility.isValid( option,instance));
         }
 
         public void OnClickButton()

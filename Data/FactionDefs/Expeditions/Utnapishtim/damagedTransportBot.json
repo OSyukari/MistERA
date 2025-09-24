@@ -1,0 +1,92 @@
+{
+    "ExplorationEvents": {
+        "list": [
+{
+    "eventID": "exp_event_Utnapishtim_damagedTransportBot",
+    "eventString_Ongoing": "exp_event_Utnapishtim_damagedTransportBot_ongoing",
+    "DurationMinutes": 45,
+    "baseWeight": 2,
+    "teamRequirement": {
+        "minTeamCount": 1,
+        "maxTeamCount": 99,
+        "charaReq": {
+            "cost_EN": 10,
+            "cost_ST": 15
+        }
+    },
+    "possibleResults": [
+        {
+            "baseWeight": 4,
+            "resultText": "exp_event_Utnapishtim_damagedTransportBot_result_empty",
+            "results_characters": [ ],
+            "results_factions":[ ]
+        },
+        {
+            "baseWeight": 3,
+            "resultText": "exp_event_Utnapishtim_damagedTransportBot_result_loot",
+            "results_characters": [ ],
+            "results_factions":[
+                {
+                    "entry_results":{
+                        "randomLoot":{
+                            "weightedLoots":[
+                                { "weight":1, "itemEntry":{ "itemID": "consumable_emergency_ration", "itemNameOverwrite": "", "itemCount": 1, "itemCountOverride": false } }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "baseWeight": 2,
+            "resultText": "exp_event_Utnapishtim_damagedTransportBot_result_parts",
+            "results_characters": [ ]
+        },
+        {
+            "baseWeight": 1,
+            "resultText": "exp_event_Utnapishtim_damagedTransportBot_result_malfunction",
+            "results_characters": [ ]
+        },
+        {
+            "baseWeight": 10,
+            "resultText": "exp_event_Utnapishtim_damagedTransportBot_result_alertEnemy",
+            "eventID":"exp_event_Utnapishtim_combat_avoidable",
+            "overrideTargetScope":true,
+            "TargetValidators":[
+                {
+                    "refKeys":["enemy","teamB_frontline"],
+                    "baseScope":"Generate",
+                    "chara_conditions":[
+                        {"parameters":["village_huntsman_scythe"]}
+                    ]
+                },
+                {
+                    "refKeys":["enemy","teamB_backline"],
+                    "baseScope":"Generate",
+                    "chara_conditions":[
+                        {"parameters":["village_huntsman_scythe"]}
+                    ]
+                }
+            ]
+        }
+    ]
+}
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_Utnapishtim_damagedTransportBot": "损毁的运输机器人",
+                "exp_event_Utnapishtim_damagedTransportBot_ongoing": "$names$发现了一个损毁的小型运输机器人",
+                "exp_event_Utnapishtim_damagedTransportBot_result_empty": "$names$打开了机器人的储物仓，里面空无一物。",
+                "exp_event_Utnapishtim_damagedTransportBot_result_loot": "$names$成功从机器人内部回收了少量补给。",
+                "exp_event_Utnapishtim_damagedTransportBot_result_parts": "$names$成功拆解了机器人的一些有用的功能部件。",
+                "exp_event_Utnapishtim_damagedTransportBot_result_malfunction": "$names$尝试打开机器人时，它突然发出刺耳的警报声",
+                "exp_event_Utnapishtim_damagedTransportBot_result_alertEnemy": "$names$尝试打开机器人时，它发出刺耳的警报声，引来了敌人！"
+            },
+            "en-us": {
+
+            }
+        }
+    }
+}

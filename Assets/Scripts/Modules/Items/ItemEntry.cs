@@ -21,6 +21,8 @@ public class ItemEntry
         this.itemCount = entry.itemCount;
         this.itemCountOverride = entry.itemCountOverride;
     }
+    public int randomCount_min = 0;
+    public int randomCount_max = 0;
     public string itemID = "";
     public string itemNameOverwrite = "";
     public int itemCount = 0;

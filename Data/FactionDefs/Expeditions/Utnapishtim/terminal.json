@@ -1,0 +1,96 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_Utnapishtim_terminal",
+    "eventString_Ongoing":"exp_event_Utnapishtim_terminal_ongoing",
+    "DurationMinutes":15,
+    "baseWeight":3,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":5, "cost_ST":0 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_Utnapishtim_terminal_result_roomAccess",
+            "results_characters": [ ],
+            "results_factions":[
+                {
+                    "entry_results":{
+                        "randomLoot":{
+                            "weightedLoots":[
+                                { "weight":1, "itemEntry":{ "itemID": "consumable_emergency_ration", "itemNameOverwrite": "", "itemCount": 1, "itemCountOverride": false } }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_Utnapishtim_terminal_result_hallAccess",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_Utnapishtim_terminal_result_dataRecovered",
+            "results_character":{}
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_Utnapishtim_terminal_result_alarmEnemy",
+            "eventID":"exp_event_Utnapishtim_combat_avoidable",
+            "overrideTargetScope":true,
+            "TargetValidators":
+            [
+                {
+                    "refKeys":["enemy","teamB_frontline"],
+                    "baseScope":"Generate",
+                    "chara_conditions":[
+                        {"parameters":["village_huntsman_scythe"]}
+                    ]
+                },
+                {
+                    "refKeys":["enemy","teamB_backline"],
+                    "baseScope":"Generate",
+                    "chara_conditions":[
+                        {"parameters":["village_huntsman_scythe"]}
+                    ]
+                }
+            ]
+        },
+        {
+            "baseWeight":2,
+            "resultText":"exp_event_Utnapishtim_terminal_result_overload",
+            "results_character":{}
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_Utnapishtim_terminal":"仍在运作的终端",
+"exp_event_Utnapishtim_terminal_ongoing":"$names$发现一个仍在运作的终端",
+"exp_event_Utnapishtim_terminal_result_roomAccess":"$names$成功解锁了终端，打开了附近的一扇封闭的房间",
+"exp_event_Utnapishtim_terminal_result_hallAccess":"$names$成功解锁了终端，打开了封锁附近通道的大门",
+"exp_event_Utnapishtim_terminal_result_dataRecovered":"$names$从终端中恢复了有用的数据",
+"exp_event_Utnapishtim_terminal_result_alarmEnemy":"$names$的错误操作触发了终端系统警报，引来了敌人",
+"exp_event_Utnapishtim_terminal_result_overload":"$names$的错误操作引发了终端系统宕机，附近有几扇门被锁死了"
+            },
+            "en-us":
+            {
+
+            }
+        }
+    }
+}

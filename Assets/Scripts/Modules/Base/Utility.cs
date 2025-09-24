@@ -72,6 +72,25 @@ public static class Utility
 
     }
 
+    /// <summary>
+    /// return the loop count it takes to get desired result with dice
+    /// </summary>
+    /// <param name="diceMax">dice will be thrown in range 0 - diceMax</param>
+    /// <param name="maxIteration">max loop count allowed, this is also the return value if all fails</param>
+    /// <param name="successThreshold">return current iteration when dice <= threshold</param>
+    /// <param name="rand"></param>
+    /// <returns></returns>
+    public static int DiceUntil(int diceMax, int maxIteration, int successThreshold, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        for (int i = 0; i < maxIteration; i++)
+        {
+            var randW = random.Next(0, diceMax);
+            if (randW <= successThreshold) return i;
+        }
+        return maxIteration;
+    }
+
     public static float RandVariation(float baseNumber, float maxVariation, System.Random rand = null)
     {
         var random = rand == null ? Random : rand;

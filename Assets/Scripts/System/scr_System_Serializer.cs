@@ -484,7 +484,7 @@ public class scr_System_Serializer : MonoBehaviour
         return MasterList.StatusEXs.GetByID(name_or_id);
     }
 
-    public Stats_Derived_Extended GetByNameOrID_StatusEx(string name_or_id)
+    public Stats_Derived_Extended GetByNameOrID_StatsEx(string name_or_id)
     {
         return MasterList.StatEXs.GetByID(name_or_id);
     }

@@ -1,24 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public enum EventTrigger
-{
-    /// <summary>
-    /// This event will not be run by trigger
-    /// </summary>
-    None,
-    OnEnterRoom
-}
-
-[System.Serializable]
-public enum TargetScope
-{
-    None,
-    AllCharaInSelfRoom,
-    AllCharaInSelfRoom_ExcludeSelf
-}
-
 public class EventManager
 {
     public List<EventInstance> activeEvents = new List<EventInstance>();
@@ -74,7 +56,10 @@ public class EventManager
     {
         this.activeEvents.Add(ev);
         if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"startevent {ev.Name} on {(ev.Self == null ? "null" : ev.Self.FirstName)}, isValid? {ev.isValid}");
-        if (startImmediate) Run();
+        if (startImmediate)
+        {
+            Run();
+        }
     }
 
     protected bool running = false;

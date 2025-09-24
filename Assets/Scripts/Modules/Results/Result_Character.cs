@@ -1,4 +1,7 @@
 
+using Newtonsoft.Json;
+using System;
+
 public enum Memory_Attitude
 {
     None,
@@ -7,6 +10,14 @@ public enum Memory_Attitude
     Neutral,
     Like,
     Love
+}
+
+public enum CharaResultType
+{
+    none,
+    statMod_ST, statMod_EN, statMod_HP, statMod_MP,
+    redress
+
 }
 
 public class Result_Character
@@ -25,12 +36,19 @@ public class Result_Character
 
     public class Entry_Result
     {
-        public string type = "";
+        public CharaResultType type = CharaResultType.none;
         public string value = "";
 
         public int statMod_ST = 0;
         public int statMod_EN = 0;
 
         public string useItemFromTargetInventory = "";
+
+        [JsonIgnore]
+        public string Print
+        { get
+            {
+                return $"{type}{value}";
+            } }
     }
 }

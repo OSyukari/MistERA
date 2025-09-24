@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 
+[System.Serializable]
 public class CharaOrigins : MonoBehaviour
 {
     public static CharaOrigins Instance { get; private set; }

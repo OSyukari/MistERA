@@ -1,0 +1,58 @@
+{
+    "ExpeditionEntry":{
+        "list":
+        [
+{
+    "ExpeditionID":"expedition_cave",
+    "HasStartHour":false,
+    "ForceStartHour":0,
+    "DurationHour":6,
+    "EventIDs":[],
+    "FeatureKeywords":["cave"],
+    "Events":
+    [
+
+    ]
+}     ]
+    },
+    "ExplorationFeatures":
+    {
+        "list":
+        [
+{ "requireKeywords":["cave","goblin"], "featureEventIDs":[] },
+{ "requireKeywords":["cave"], 
+    "featureEventIDs":[ "exp_event_abandonedCampsite",
+                        "exp_event_oreClump",
+                        "exp_event_plantCluster",
+
+                        "exp_event_caveClearPool",
+                        "exp_event_caveDustyPassage",
+                        "exp_event_caveHypothermia",
+                        "exp_event_caveLostDirection",
+                        "exp_event_caveMurkyPool",
+                        "exp_event_caveNarrowTunnel",
+                        "exp_event_cavePit",
+                        "exp_event_cavePlant",
+                        "exp_event_caveSlope",
+                        "exp_event_caveUnsettlingEchoes",
+                        "exp_event_caveUnstablePassage"] }
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"expedition_cave":"洞穴探索"
+
+            },
+            "en-us":
+            {
+
+
+            }
+        }
+    }
+}

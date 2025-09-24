@@ -465,6 +465,51 @@ public class StatsManager : I_StatsManager
         return 0f;
     }
 
+    /// <summary>
+    /// Only statEX can be modded, other will return false
+    /// </summary>
+    /// <param name="statID"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool ModStatValue(string statID, float value)
+    {
+        // Catch Stat Base
+        if (statID == Strength.ID) return false;
+        else if (statID == Constitution.ID) return false;
+        else if (statID == Psyche.ID) return false;
+        else if (statID == Willpower.ID) return false;
+
+
+        // Catch Stat Derived
+        Stats_Derived_Base statDerived = scr_System_Serializer.current.GetByNameOrID_StatsDerivedBase(statID);
+        if (statDerived != null) return false;
+
+        // Catch Stat Ex
+        Stats_Derived_Extended_Instance statex = GetStatEx(statID);
+        if (statex != null)
+        {
+            statex.Restore(value);
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool HasStat(string statID)
+    {
+        if (statID == Strength.ID || statID == Constitution.ID || statID == Psyche.ID || statID == Willpower.ID) return true;
+
+        // Catch Stat Derived
+        Stats_Derived_Base statDerived = scr_System_Serializer.current.GetByNameOrID_StatsDerivedBase(statID);
+        if (statDerived != null && Owner.hasStatKeyword(statDerived.StatKeyword)) return true;
+
+        // Catch Stat Ex
+        Stats_Derived_Extended_Instance statex = GetStatEx(statID);
+        if (statex != null) return true;
+
+        return false;
+    }
+
     public Stats_Derived_Instance GetDerivedStat(string statID)
     {
         Stats_Derived_Base statDerived = scr_System_Serializer.current.GetByNameOrID_StatsDerivedBase(statID);

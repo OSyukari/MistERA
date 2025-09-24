@@ -50,8 +50,10 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         indexCurrent = factionPriority.IndexOf(parent.CurrentFaction);
         indexCOM = factionPriority.IndexOf(faction);
 
-        text.text = (index == currentHour ? "> " : "") + index + "H - " + desc.Replace("$com$", comName != "" ? comName : desc_noplan)
-                                         .Replace("$faction$", faction != null ? faction.FactionDisplayName : desc_personal) + (index == currentHour ? " <" : "");
+        bool current = index == currentHour && c.FactionManager.CurrentActiveParty == null;
+
+        text.text = (current ? "> " : "") + index + "H - " + desc.Replace("$com$", comName != "" ? comName : desc_noplan)
+                                         .Replace("$faction$", faction != null ? faction.FactionDisplayName : desc_personal) + (current ? " <" : "");
 
         if (indexCurrent < indexCOM) this.text.color = disableColor;
         else if (parent.CurrentHighlightHours != null && parent.CurrentHighlightHours.Contains(this.index))

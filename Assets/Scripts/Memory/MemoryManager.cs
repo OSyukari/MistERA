@@ -308,7 +308,7 @@ public class MemoryManager
 
     public Memory_Entry AddEntryMSG(string msg, List<string> tags)
     {
-        var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, msg);
+        var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, msg);
         return AddEntry(memInst, tags);
     }
 
@@ -326,13 +326,15 @@ public class MemoryManager
 #if UNITY_EDITOR
         if (memInstance.response == Memory_Response.None) Debug.LogError($"Logging Null response memory on {Owner.FirstName} about {memInstance.description}");
 #endif
-        var roomRef = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID).RefID;
+        var room = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID);
+        var roomRef = room.RefID;
         Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance, "", duration);
         entry.MergeWithAll = mergeWithAll;
 
         if (this.Last == null || !this.Last.TryMergeWith(entry))
         {
             this.entries.Add(entry.EndTime.Ticks, entry);
+            if (room.isNameDynamic) entry.roomNameOverride = room.DisplayName;
             ClearCache();
             return entry;
         }

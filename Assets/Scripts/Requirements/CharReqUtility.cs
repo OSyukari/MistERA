@@ -20,6 +20,14 @@ public static class CharaReqUtility
             return false;
         }
 
+
+        if (q.BodyTags.Count > 0 && !c.Body.HasBodyTag(q.BodyTags))
+        {
+            _tooltip.Add("Command invalid: actor body missing required part");
+            return false;
+        }
+        
+
         if (q.minRevealingScore != -1)
         {
             if (c.Body.GetMaxRevealingScoreByTags(q.BodyTags, BodyEquipLayer.None) > q.minRevealingScore)
@@ -129,5 +137,25 @@ public static class CharaReqUtility
             m.m.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
             c.Stats.Energy.Increment(c.Stats.Energy_InteractionCost);
         }
+    }
+    public static void ApplyCost(CharaReq q, Character_Trainable c, List<string> tooltip = null)
+    //public void ApplyCost(ActionPackage m, Character_Trainable c ,COM com)
+    {
+        if (c == null) return;
+        //Debug.Log("ApplyCOST for com " + m.targetCOM.DisplayName(m.VariantID) + " on chara " + c.FirstName);
+        var str = new List<string>();
+        if (q.cost_EN != 0f)
+        {
+            if (tooltip != null) str.Add($"{LocalizeDictionary.QueryThenParse("stats_derived_extended_energy")}{(-q.cost_EN).ToString("+0;-#")}");
+            //m.m.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
+            c.Stats.Energy.Increment(-q.cost_EN);
+        }
+        if (q.cost_ST != 0f)
+        {
+            if (tooltip != null) str.Add($"{LocalizeDictionary.QueryThenParse("stats_derived_extended_stamina")}{(-q.cost_ST).ToString("+0;-#")}");
+            //m.m.AddStats(c.RefID, "stats_derived_extended_stamina", -q.cost_ST);
+            c.Stats.Stamina.Increment(-q.cost_ST);
+        }
+        if (tooltip != null && str.Count > 0) tooltip.Add($"{c.CallName}： {String.Join(", ",str)}");
     }
 }

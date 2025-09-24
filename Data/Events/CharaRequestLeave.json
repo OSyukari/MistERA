@@ -16,7 +16,7 @@
                 "TargetValidators":
                 [
                     {
-                        "refkey":"targets",
+                        "refkeys":["targets"],
                         "baseScope":"AllCharaInSelfRoom_ExcludeSelf",
                         "minTargetCount":1,
                         "chara_conditions":[
@@ -27,7 +27,7 @@
                 ],
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
                         "options":[
                             {   "option": "silent branch event, this shouldnt be displayed",
                                 "Results": [ { "Type":"StartEvent", "arguments":["targets","CharaLeaveRoom","","requestFrom"]} ] 
@@ -46,7 +46,7 @@
                 },
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Question, Events",
                         "question":"event_CharaLeaveRoom_ev01",
                         "options":[
                             {   "option": "event_CharaLeaveRoom_ev01_op1", "isDefaultCancel":true, 
@@ -58,13 +58,13 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "end2",
                         "isLast": true,
                         "line": "event_CharaLeaveRoom_ev02"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
                         "label": "select1",
                         "options":[
                             {   
@@ -82,18 +82,18 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "end4",
                         "line": "event_CharaLeaveRoom_ev04",
                         "isLast": true
                     },
                                         {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "end3",
                         "line": "event_CharaLeaveRoom_ev03"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
                         "options":[
                             {   
                                 "option": "silent branch after successful interrupts",

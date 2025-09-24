@@ -518,6 +518,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     button.Initialize(this, new initScript_Expeditions.ButtonValidator_AllowPassNightToggle(this, button, Script_Expeditions.ExpeditionConfig.Duration)); break;
                 case 46:
                     button.Initialize(this, new initScript_Expeditions.ButtonValidator_RecurringToggle(this, button, Script_Expeditions.ExpeditionConfig.CooldownTime, Script_Expeditions.OnEndEdit_Recurring)); break;
+                case 47:
+                    button.Initialize(this, new initScript_Expeditions.ButtonValidator_EditCamp(this, button)); break;
                 case 9999: // exit
                     button.Initialize(this, button_alwaysValid); break;
                 default:
@@ -554,6 +556,17 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         button.Validate();
     }
+    public void MakeButton_PartyMemberComp(Character_Trainable c, scr_SelectableText button, Manageable_Party.PartyComposition comp)
+    {
+        button.Initialize(this, new initScript_Expeditions.ButtonValidator_partyMemberTeamComp(this, button, c, comp));
+        button.SetText(LocalizeDictionary.QueryThenParse($"PartyComposition_{comp}"));
+        button.optionID = AssertUniqueHash(c.GetHashCode());
+
+        buttonsByID.Add(button.optionID, button);
+        validatorsByID.Add(button.optionID, button.Validator);
+
+        button.Validate();
+    }
     public void MakeButton_Party(Manageable_Party p, scr_SelectableText button)
     {
         button.Initialize(this, new ButtonValidator_partySelect(this, button, p));
@@ -583,6 +596,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         currentParty = p;
         Script_Expeditions.Draw(p);
     }
+
 
     public void UpdatePartyNames()
     {
@@ -647,7 +661,21 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     }
 
 
+    public scr_SelectableText MakeEventResolveButton(ExpeditionMessageEntry m, out scr_memoryBox rect)
+    {
+        var mb = Instantiate(this.Script_Expeditions.prefab_resolveEventBtn).GetComponent<scr_memoryBox>();
+        rect = mb;
+        var b = mb.memText.GetComponent<scr_SelectableText>();
+        b.Initialize(this, new initScript_Expeditions.ButtonValidator_ResolveEvent(this, b, m));
+        b.SetText( m.unresolved.DisplayName );
+        b.optionID = AssertUniqueHash(m.GetHashCode());
 
+        buttonsByID.Add(b.optionID, b);
+        validatorsByID.Add(b.optionID, b.Validator);
+
+        b.Validate();
+        return b;
+    }
     
 
     public class button_ChangeTab : ButtonValidator, I_ButtonClickable
@@ -1734,24 +1762,13 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         {
             //if (text == null) Debug.LogError("text null");
             if (!text.gameObject.activeInHierarchy) return false;
-            if (parent.currentParty == null || parent.CurrentFaction == null)
+            if (parent.currentParty == null || parent.CurrentFaction == null || parent.currentParty.Job == null)
             {
-                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_setExpTarget_none"));
+                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_").Replace("$expName$","-"));
                 return false;
             }
-
-            if (parent.currentParty.isActive)
-            {
-                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_setExpTarget_active")
-                    .Replace("$target$", parent.currentParty.ExpeditionName));
-                return false;
-            }
-            else
-            {
-                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_setExpTarget_inactive")
-                    .Replace("$target$", parent.currentParty.ExpeditionName));
-                return true;
-            }
+            text.SetText(parent.currentParty.Job.DisplayName+ (parent.currentParty.isActive ? " "+parent.currentParty.Job.RemainingTime : ""));
+            return !parent.currentParty.isActive;
         }
 
         public void OnClickButton()

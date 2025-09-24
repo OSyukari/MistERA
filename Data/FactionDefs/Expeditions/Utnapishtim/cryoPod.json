@@ -1,0 +1,69 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_Utnapishtim_cryoPod",
+    "eventString_Ongoing":"exp_event_Utnapishtim_cryoPod_ongoing",
+    "DurationMinutes":20,
+    "baseWeight":3,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":5, "cost_ST":3 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":4,
+            "resultText":"exp_event_Utnapishtim_cryoPod_result_repaired",
+            "results_character":{}
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_Utnapishtim_cryoPod_result_supplies",
+            "results_characters": [ ],
+            "results_factions":[
+                {
+                    "entry_results":{
+                        "randomLoot":{
+"weightedLoots":[
+{ "weight":1, "itemEntry":{ "itemID": "consumable_emergency_ration", "itemNameOverwrite": "", "itemCount": 1, "itemCountOverride": false } }
+]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_Utnapishtim_cryoPod_result_leak",
+            "results_characters":
+            [
+                { "entry_results":{ "type":"statMod_HP", "value":-1 } }
+            ]
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_Utnapishtim_cryoPod":"封闭的冷冻仓",
+"exp_event_Utnapishtim_cryoPod_ongoing":"$names$发现了一个封闭的冷冻仓，似乎还在运作中",
+"exp_event_Utnapishtim_cryoPod_result_repaired":"$names$打开了冷冻仓发现里面空无一物",
+"exp_event_Utnapishtim_cryoPod_result_supplies":"$names$打开了冷冻仓，找到了有用的物资",
+"exp_event_Utnapishtim_cryoPod_result_leak":"$names$在尝试打开冷冻仓的过程中不慎接触到了泄露的冷冻液"
+            },
+            "en-us":
+            {
+
+            }
+        }
+    }
+}

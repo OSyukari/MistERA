@@ -236,12 +236,6 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
             return true;
         }
 
-        protected void OnEnd()
-        {
-            foreach(var i in parent.teamA.Actors) i.Stats.HP.RestoreMax();
-            foreach (var i in parent.teamB.Actors) i.Stats.HP.RestoreMax();
-        }
-
         public void OnClickButton()
         {
             if (parent.successCallback != null) parent.successCallback.Invoke();
@@ -255,7 +249,7 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
                 }
             }
             
-            scr_System_CampaignManager.current.StartCombat(parent.teamA, parent.teamB, OnEnd);
+            scr_System_CampaignManager.current.StartCombat(parent.teamA, parent.teamB, "exp_event_Utnapishtim_combat_training_end", "exp_event_Utnapishtim_combat_training_end", "exp_event_Utnapishtim_combat_training_end");
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();
         }
     }

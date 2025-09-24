@@ -51,7 +51,7 @@ public class ExpEvents
     public class WeightModifier
     {
         public int modValue = 0;
-        public List<TeamReq> teamRequirements = new List<TeamReq>();
+        public TeamReq teamRequirement = new TeamReq();
     }
 
     public List<ExpResults> possibleResults = new List<ExpResults>();

@@ -190,11 +190,7 @@ public class Job_Furniture : Job
         //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
         // 2 - if actor is in room, set COM package
         // make COM package
-        var m = FactionOwner as Manageable;
-        if (m == null)
-        {
-            return new List<ActionPackage>();
-        }
+        var m = FactionOwner is Manageable ? FactionOwner as Manageable : null;
         // during registration, chara addactor register currentjobschedule, or register recreation / meal / etc
 
         List<COM> possibleCOMs = actorRefID.Contains(c.RefID) ? actorRefIDStorage[c.RefID].Match(this) : (allowInvalid ? allusableCOMs : new List<COM>());
@@ -205,8 +201,8 @@ public class Job_Furniture : Job
         {
             possibleCOMs = possibleCOMs.FindAll(x => ValidCOMs.Contains(x) 
                                                     && CanCOMAcceptMoreActor(x) 
-                                                    && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(m))
-                                                    && (!x.hasFactionReq || !x.isJobCOM || m.GetProductionOrder(this, out var xxx, out var po))
+                                                    && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner))
+                                                    && (!x.hasFactionReq || !x.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out var po)))
                                                 );
             //if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} at step 2");
         }
@@ -216,7 +212,7 @@ public class Job_Furniture : Job
         {
             Manageable.ProductionOrder po = null;
             bool valid = false;
-            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(m) && (!com.isJobCOM || m.GetProductionOrder(this, out var xxx, out po))))
+            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner) && (!com.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out po)))))
             {
                 var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, po);
                 if (package.Validate() || allowInvalid)

@@ -1,0 +1,70 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_Utnapishtim_crumblingFloor",
+    "eventString_Ongoing":"exp_event_Utnapishtim_crumblingFloor_ongoing",
+    "DurationMinutes":15,
+    "tags":["hazard"],
+    "baseWeight":3,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq":{ "cost_EN":0, "cost_ST":0 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_Utnapishtim_crumblingFloor_result_hiddenRoom",
+            "results_characters": [ ],
+            "results_factions":[
+                {
+                    "entry_results":{
+                        "randomLoot":{
+"weightedLoots":[
+{ "weight":1, "itemEntry":{ "itemID": "consumable_emergency_ration", "itemNameOverwrite": "", "itemCount": 1, "itemCountOverride": false } }
+]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "baseWeight":6,
+            "resultText":"exp_event_Utnapishtim_crumblingFloor_result_evaded",
+            "results_characters": [ ]
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_Utnapishtim_crumblingFloor_result_injured",
+            "results_characters":
+            [
+                { "entry_results":{ "type":"statMod_HP", "value":-1 } }
+            ]
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_Utnapishtim_crumblingFloor":"地板塌陷",
+"exp_event_Utnapishtim_crumblingFloor_ongoing":"$names$脚下的地板突然崩塌！",
+"exp_event_Utnapishtim_crumblingFloor_result_hiddenRoom":"$names$发现地板塌陷后揭露了一个隐藏隔间",
+"exp_event_Utnapishtim_crumblingFloor_result_evaded":"$names$及时躲避了地板塌陷",
+"exp_event_Utnapishtim_crumblingFloor_result_injured":"$names$被卷入地板塌陷，受到了伤害"
+            },
+            "en-us":
+            {
+
+            }
+        }
+    }
+}

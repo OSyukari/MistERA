@@ -872,24 +872,34 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
             //}
         }
-
-        if (currentJobFaction is Manageable_Party && ((Manageable_Party)currentJobFaction).Job.isActive)
+        if (currentJobFaction is Manageable_Party)
         {
-            var p = (Manageable_Party)currentJobFaction;
-            if (this.CurrentJob != p.Job)
+            var party = currentJobFaction as Manageable_Party;
+            if (party != null && party.isActive && !party.Job.isResting)
             {
-                ChangeCurrentJob(p.Job);
-                if (log) ss += "Changing job to party exploration job " + p.FactionDisplayName + "" + p.Job.DisplayName;
-                if (s != null) s.Add(ss);
+                if (this.CurrentJob == party.Job && party.Job.canReturn)
+                {
+                    this.FactionManager.RemoveFromParty(party);
+                    ChangeCurrentJob();
+                    if (log) ss += "Exiting party exploration job " + party.FactionDisplayName + "" + party.Job.DisplayName;
+                    if (s != null) s.Add(ss);
+                }
+                if (this.CurrentJob != party.Job)
+                {
+                    ChangeCurrentJob(party.Job);
+                    if (log) ss += "Changing job to party exploration job " + party.FactionDisplayName + "" + party.Job.DisplayName;
+                    if (s != null) s.Add(ss);
+                }
+                else
+                {
+                    // be careful actorjobcomplete list, but here not necessary as camp ignore the list
+                    if (log) ss += "working on party exploration job " + party.FactionDisplayName + "" + party.Job.DisplayName;
+                    if (s != null) s.Add(ss);
+                }
+                return;
             }
-            else
-            {
-                // be careful actorjobcomplete list, but here not necessary as camp ignore the list
-                if (log) ss += "working on party exploration job " + p.FactionDisplayName + "" + p.Job.DisplayName;
-                if (s != null) s.Add(ss);
-            }
-            return;
         }
+
 
         if (currentScheduleCOM != null && currentScheduleCOM.ID != "com_furniture_sleep")
         {   // if current schedule has available job (exclude sleep)
@@ -927,36 +937,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
 
 
-        if (shouldRest)
+        if (shouldRest && TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(false, true, true)))
         {
-            if (CurrentJob != null && !resetJob && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("rest")) != null) 
-            {
-
-                if (s != null) s.Add(ss);
-                return;
-            }
-            else if (currentJobFaction != null)
-            {
-                List<Job_Furniture> possibleResting = new List<Job_Furniture>();
-
-                //foreach (Manageable faction in FactionManager.HomeFactions)
-                //{
-                possibleResting.AddRange(currentJobFaction.GetValidJobs_nonJob_byTags(this, currentHour, "rest", s, false, true, true));
-               //     break;
-                //}
-
-                if (possibleResting.Count > 0)
-                {
-                    Job job = Utility.GetRandomElement(possibleResting);
-                    if (log) ss += "| Changing job to resting job " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $" |{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                    ChangeCurrentJob(job, "", "rest");
-                    if (CurrentJob != job) Debug.LogError($"Error in changing job from {(CurrentJob == null ? "null" : CurrentJob.RefID)} to {(job == null ? "null" : job.RefID)}");
-                    if (s != null) s.Add(ss);
-                    return;
-                }
-            }
+            if (s != null) s.Add(ss);
+            return;
         }
-
 
         if (isAnimal && !scr_System_CentralControl.current.isSafeMode)
         {        // try find interaction job (rape job)
@@ -1004,37 +989,63 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             // if still no job, set to look for recreation
             // need to find : is there location restriction ? search currently at ?
             // include search : character currently at + home faction
-            if (CurrentJob != null && !resetJob && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("recreation")) != null)
+            if (TryFindNonJobByTag(resetJob, "recreation", currentJobFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(true, false, true)))
             {
-                // already set to a recreation job
-
-                // but, job might not have active package
-
+                if (s != null) s.Add(ss);
+                return;
+            }else if (TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(false, true, true)))
+            {
                 if (s != null) s.Add(ss);
                 return;
             }
-            else if (currentJobFaction != null)
+        }
+    }
+
+    public class NonJobSearchWrapper
+    {
+        public bool skipPrivate, shortestPathOnly, checkBlacklist;
+        public NonJobSearchWrapper(bool skipPrivate, bool shortestPathOnly, bool checkBlacklist) 
+        {
+            this.skipPrivate = skipPrivate;
+            this.shortestPathOnly = shortestPathOnly;
+            this.checkBlacklist = checkBlacklist;
+        }
+
+        public void Search(ref List<Job_Furniture> list, I_IsJobGiver faction, Character_Trainable c, int hour, string tag, List<string> s)
+        {
+            list.AddRange(faction.GetValidJobs_nonJob_byTags(c, hour, tag, s, this.skipPrivate, this.shortestPathOnly, this.checkBlacklist));
+        }
+    }
+
+    protected bool TryFindNonJobByTag(bool resetJob, string tag, I_IsJobGiver currentJobFaction, int currentHour, ref string ss, bool log, List<string> s, NonJobSearchWrapper search)
+    {
+        if (CurrentJob != null && !resetJob && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains(tag)) != null)
+        {
+            return true;
+        }
+        else if (currentJobFaction != null)
+        {
+            List<Job_Furniture> possibleRecreations = new List<Job_Furniture>();
+
+            //foreach (Manageable faction in FactionManager.HomeFactions)
+            //{
+            search.Search(ref possibleRecreations, currentJobFaction, this, currentHour, tag, s);
+            //possibleRecreations.AddRange(currentJobFaction.GetValidJobs_nonJob_byTags(this, currentHour, tag, s, true, false, true));
+            //    break;
+            //}
+
+            if (possibleRecreations.Count > 0)
             {
-                List<Job_Furniture> possibleRecreations = new List<Job_Furniture>();
+                Job job = Utility.GetRandomElement(possibleRecreations);
+                if (log) ss += $"Changing job to tag [{tag}] " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
 
-                //foreach (Manageable faction in FactionManager.HomeFactions)
-                //{
-               possibleRecreations.AddRange(currentJobFaction.GetValidJobs_nonJob_byTags(this, currentHour, "recreation", s,true, false, true));
-                //    break;
-                //}
+                ChangeCurrentJob(job, "", tag);
+                if (CurrentJob != job) Debug.LogError($"Error in changing job from {(CurrentJob == null ? "null" : CurrentJob.RefID)} to {(job == null ? "null" : job.RefID)}");
 
-                if (possibleRecreations.Count > 0)
-                {
-                    Job job = Utility.GetRandomElement(possibleRecreations);
-                    if (log) ss += "Changing job to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-                
-                    ChangeCurrentJob(job,"","recreation");
-
-                    if (s != null) s.Add(ss);
-                    return;
-                }
+                return true;
             }
         }
+        return false;
     }
 
     [JsonIgnore] public bool canEat { get {
@@ -1315,7 +1326,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (!this.Stats.isConsciousnessUnconscious)
             {
 
-                var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_end"));
+                var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_end"));
                 var memEntry = this.Memory.AddEntry(memInst, new List<string>() { "forbidMerge" });
 
                 memEntry.entryDescription = memInst.description;
@@ -1518,7 +1529,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);
         Stats.RemoveStatusByStringMatch("chara_status_sleep_deprived");
 
-        var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_begin"));
+        var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_begin"));
         this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" });
 
         return sleepHour;
@@ -1724,7 +1735,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
     }
 
-
+    public bool isTemporaryActor = false;
 
     
 

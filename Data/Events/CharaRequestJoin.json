@@ -14,7 +14,7 @@
                 },
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
                         "options":[
                             {   
                                 "target_chara_conditions":{
@@ -48,7 +48,7 @@
                         "isLast": true
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Question, Events",
                         "label":"br_choice",
                         "question":"event_RequestJoin_Job_ev01",
                         "options":[
@@ -63,7 +63,7 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
                         "label": "br_refuse_ops",
                         "options":[
                             {   
@@ -74,13 +74,13 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "br_refuse",
                         "isLast": true,
                         "line": "event_RequestJoin_Job_ev02"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
                         "label": "br_join_ops",
                         "options":[
                             {   
@@ -95,13 +95,13 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "br_join",
                         "isLast": true,
                         "line": "event_RequestJoin_Job_ev03"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "br_join_fail",
                         "isLast": true,
                         "line": "event_RequestJoin_Job_ev04"

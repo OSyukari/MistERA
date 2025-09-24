@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using NugetForUnity.Ui;
 
 public class ActionPackage_Expedition : ActionPackage
 {
@@ -33,18 +34,12 @@ public class ActionPackage_Expedition : ActionPackage
         int weight = ev.baseWeight;
 
         if (!TeamReqUtility.Validate(ev.teamRequirement, p, out targets)) return -1;
-        foreach (var wmods in ev.weightMods)
+        foreach (var wmod in ev.weightMods)
         {
-            bool isValid = true;
-            foreach (var wmod in wmods.teamRequirements)
+            if (TeamReqUtility.Validate(wmod.teamRequirement, targets))
             {
-                if (!TeamReqUtility.Validate(wmod, targets))
-                {
-                    isValid = false;
-                    break;
-                }
+                weight += wmod.modValue;
             }
-            if (isValid) weight += wmods.modValue;
         }
         return weight;
     }
@@ -95,6 +90,8 @@ public class ActionPackage_Expedition : ActionPackage
         TargetChara = tt;
         foreach(var i in TargetChara)this.doerRefs.Add(i.RefID);
         this.duration = SourceEV.DurationMinutes;
+
+        this.memEntryName = p.Job.DisplayName;
     }
 
     [JsonIgnore] public override List<int> actorRefs { get { return new List<int>(this.doerRefs) { }; } }
@@ -157,6 +154,8 @@ public class ActionPackage_Expedition : ActionPackage
     {
         return isValid;
     }
+
+    [JsonProperty] protected string memEntryName = "";
     /// <summary>
     /// move one step along the path. Does not have EvaluationPackage attached to it !!!!
     /// </summary>
@@ -171,8 +170,72 @@ public class ActionPackage_Expedition : ActionPackage
         {
             var names = new List<string>();
             foreach (var i in this.Actors) names.Add(i.CallName);
-            jobb.AddResult(LocalizeDictionary.QueryThenParse( result.resultText).Replace("$names$",String.Join(", ",names)), new List<string>(), this.actorRefs);
+            var r = jobb.AddResult($"{LocalizeDictionary.QueryThenParse(result.resultText).Replace("$names$", String.Join(", ", names))}", new List<string>(), this.actorRefs);
+
+            foreach (var i in this.Actors)
+            {
+                CharaReqUtility.ApplyCost(SourceEV.teamRequirement.charaReq, i, r.Tooltips);
+
+                foreach(var j in result.results_characters)
+                {
+                    ResultCharaUtility.Apply(j, jobb.FactionOwner_Party, i, r.Tooltips);
+                }
+                foreach (var j in result.results_factions)
+                {
+                    ResultFactionUtility.Apply(j, jobb, i, r.Tooltips);
+                }
+                var ids = new List<int>();
+                var names2 = new List<string>();
+                foreach (var j in this.Actors) 
+                {
+                    if (j == i) continue;
+                    ids.Add(j.RefID);
+                    names2.Add(j.CallName);
+                }
+                var newMem = new MemInstance(ids, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral,
+                                    LocalizeDictionary.QueryThenParse(result.resultText).Replace("$names$", names2.Count > 0 ? 
+                                        LocalizeDictionary.QueryThenParse("exp_event_active_memory_teammates").Replace("$team$", String.Join(", ", names2)) : ""));
+                var entry = i.Memory.AddEntry(newMem, new List<string>() { "expedition" });
+                entry.entryDescription = memEntryName;
+                entry.disableRoomName = true;
+
+
+                // MOD RELATIONSHIP
+            }
+
+            if (result.eventID != "")
+            {
+                var package = new SerializableEventPackage();
+                package.eventID = result.eventID;
+                package.eventLabel = result.eventLabel;
+
+                List<int> party = new List<int>(), frontline = new List<int>(), backline = new List<int>();
+                foreach(var i in this.Actors)
+                {
+                    party.Add(i.RefID);
+                    switch (jobb.FactionOwner_Party.GetTeamComp(i.RefID))
+                    {
+                        case Manageable_Party.PartyComposition.frontline:
+                            frontline.Add(i.RefID);
+                            break;
+                        case Manageable_Party.PartyComposition.backline:
+                            backline.Add(i.RefID);
+                            break;
+                        default:break;
+
+                    }
+                }
+                package.Targets.Add("party", party);
+                package.Targets.Add("teamA_frontline", frontline);
+                package.Targets.Add("teamA_backline", backline);
+                package.overrideTargetScope = result.overrideTargetScope;
+                package.targetScopes = result.TargetValidators;
+                r.unresolved = package;
+            }
+
+            jobb.StartCooldown();
         }
+
     }
 
     public override ActionPackage Copy()

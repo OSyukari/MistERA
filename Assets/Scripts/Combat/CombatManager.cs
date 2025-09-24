@@ -91,7 +91,19 @@ public class CombatManager
     public void NotifyCombatEnd(CombatInstance instance)
     {
         activeInstances.Remove(instance);
-        _playerInstance = null;
+        if (_playerInstance == instance) _playerInstance = null;
+
+        var endEVID = instance.CombatEndEventID;
+        if (endEVID != "")
+        {
+            var CombatEndEv = new EventInstance(null, endEVID, "", 50, false);
+            List<Character_Trainable> Aparty = new List<Character_Trainable>(instance.teamA.Actors), Bparty = new List<Character_Trainable>(instance.teamB.Actors);
+            CombatEndEv.Targets.Add("party", Aparty);
+            CombatEndEv.Targets.Add("enemy", Bparty);
+            CombatEndEv.LoadNext(endEVID, "");
+            scr_System_CampaignManager.current.RegisterViewChangeEventCallback(CombatEndEv);
+        }
+
     }
 
     public bool isCharaInCombat(int charaRef)
@@ -145,7 +157,7 @@ public class CombatManager
 
     }
 
-    public void StartCombat(TeamComposition teamA, TeamComposition teamB, Action OnCombatEnd = null)
+    public void StartCombat(TeamComposition teamA, TeamComposition teamB, string victoryEvID, string drawEvID, string defeatEvID, bool forcePlayerInstance = false)
     {
         var nameA = new List<string>();
         var nameB = new List<string>();
@@ -170,7 +182,11 @@ public class CombatManager
 
         Debug.Log($"Starting combat with [{String.Join(" ", nameA)}] vs [{String.Join(" ", nameB)}]");
         
-        var cinst = new CombatInstance(teamA, teamB, true, OnCombatEnd);
+        var cinst = new CombatInstance(teamA, teamB, true);
+        cinst.victoryEventID = victoryEvID;
+        cinst.drawEventID = drawEvID;
+        cinst.defeatEventID = defeatEvID;
+        cinst.forcePlayerInstance = forcePlayerInstance;
         this.activeInstances.Add(cinst);
 
         Update();

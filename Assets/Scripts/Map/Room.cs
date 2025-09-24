@@ -13,6 +13,12 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class Room_Instance: IDisposable, I_Disposable
 {
+    [JsonIgnore]
+    public bool isNameDynamic
+    { get
+        {
+            return this.FactionOwner is Manageable_Party;
+        } }
     [JsonProperty] private int refID = -1;
     [JsonIgnore] public int RefID { get { return refID; } }
     [JsonIgnore] protected string displayName { get
@@ -28,8 +34,13 @@ public class Room_Instance: IDisposable, I_Disposable
     protected string _displayNameCache = "";
     [JsonIgnore] public string DisplayName { get
         {
-            if (_displayNameCache == "")
+            if (isNameDynamic && this.FactionOwner is Manageable_Party)
             {
+                return (this.FactionOwner as Manageable_Party).ExpeditionName;
+            }
+            else if (_displayNameCache == "")
+            {
+                
                 if (isRoomPrison)
                 {
                     _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_prison") + " (" + displayName + ")";
@@ -111,6 +122,8 @@ public class Room_Instance: IDisposable, I_Disposable
         this._displayNameCache = "";
 
     }
+
+    public Inventory Inventory = new Inventory();
 
     [JsonProperty] string baseFloorID = "";
     [JsonProperty] string baseRoomID = "";
@@ -241,12 +254,10 @@ public class Room_Instance: IDisposable, I_Disposable
         }
     }
 
-    public void SetFaction(Manageable org)
+    public void SetFaction(I_IsJobGiver org)
     {
-        factionOwnerRef = org.ID;
-        factionOwner = org;
+        this.FactionOwner = org;
         foreach (var furniture in this.Furnitures) if (furniture.JobGiver != null) furniture.JobGiver.FactionOwner = org;// SetOwner(org);
-
     }
 
     public void AddFurniture(string s)

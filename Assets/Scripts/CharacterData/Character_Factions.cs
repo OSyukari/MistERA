@@ -221,21 +221,24 @@ public class Character_Factions
     [JsonProperty] List<int> trackedPartyRef = new List<int>();
 
 
-    public void AddToParty(I_IsJobGiver party, Manageable_GuestStatus status, bool setHomeFaction)
+    public bool AddToParty(I_IsJobGiver party, Manageable_GuestStatus status, bool setHomeFaction)
     {
         var p = party as Manageable_Party;
-        if (p == null) return;
+        if (p == null) return false;
 
-        AddToParty(p, status, setHomeFaction);
+        return AddToParty(p, status, setHomeFaction);
     }
-    public void AddToParty(Manageable_Party party, Manageable_GuestStatus status, bool setHomeFaction)
+    public bool AddToParty(Manageable_Party party, Manageable_GuestStatus status, bool setHomeFaction)
     {
+        if (this.CurrentActiveParty != null && this.CurrentActiveParty != party) return false;
+
         this.CurrentActiveParty = party;
         party.AddToFaction(Owner, status);
 
         AddPartyTracker(party);
 
         UpdateFactionPriorityList();
+        return true;
     }
     /// <summary>
     /// Only wipe the CurrentActiveParty if match

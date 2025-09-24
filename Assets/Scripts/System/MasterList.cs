@@ -79,7 +79,7 @@ public class MasterList
     public Character_Personality_Index Character_Personalities = new Character_Personality_Index();
     public Index_COM COMs = new Index_COM();
     public Index_FurnitureBase Furnitures = new Index_FurnitureBase();
-    public Index_Events Events = new Index_Events();
+
     public Index_CombatActions CombatActions = new Index_CombatActions();
     public Index_CombatActionPresets CombatActionPresets = new Index_CombatActionPresets();
     public Index_CharGenTemplates CharGenTemplates = new Index_CharGenTemplates();
@@ -89,6 +89,7 @@ public class MasterList
     {
         if (initCoreList)
         {
+            this.Events = Masterlist_Event.Instance.Events;
             this.Items = Masterlist_Items.Instance.Index;
             this.Dictionary = LocalizeDictionary.Instance.Index;
             this.humanoid_Races = CharaOrigins.Instance.Humanoid_Race_Index;
@@ -103,6 +104,7 @@ public class MasterList
         }
         else
         {
+            this.Events = new Index_Events();
             this.Items = new Index_Item_Base();
             this.Dictionary = new Dictionary_Index();
             this.humanoid_Races = new Humanoid_Race_Index();
@@ -117,6 +119,7 @@ public class MasterList
         }
     }
 
+    public Index_Events Events;
     public Traits_Group_Index Traits_Groups;
     public Index_Item_Base Items;
     public Dictionary_Index Dictionary;

@@ -115,7 +115,7 @@ public class Stats_Derived_Extended_Instance
     protected Stats_Derived_Extended parent = null;
     [JsonIgnore] public Stats_Derived_Extended Parent { get
         {
-            if (parent == null) parent = scr_System_Serializer.current.GetByNameOrID_StatusEx(parentID);
+            if (parent == null) parent = scr_System_Serializer.current.GetByNameOrID_StatsEx(parentID);
             return parent;
         } }
 

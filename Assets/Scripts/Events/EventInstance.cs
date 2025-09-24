@@ -22,6 +22,9 @@ public class EventInstance
         }
     }
 
+    public bool overrideTargetScope = false;
+    public List<Event.EventScope_Target> OverrideTargetScope = new List<Event.EventScope_Target>();
+
     bool firstInit = true;
 
     public bool isVisible
@@ -60,6 +63,11 @@ public class EventInstance
 
     public Dictionary<string, List<Action>> FunctionCalls = new Dictionary<string, List<Action>>();
     public Dictionary<string, List<Character_Trainable>> Targets = new Dictionary<string, List<Character_Trainable>>();
+
+    /// <summary>
+    /// Can be used to store strings (flush with dict key)
+    /// or store string key that ca
+    /// </summary>
     public Dictionary<string, List<string>> AppendStrings = new Dictionary<string, List<string>>();
 
     /// <summary>
@@ -67,19 +75,18 @@ public class EventInstance
     /// </summary>
     /// <param name="targetRef"></param>
     /// <param name="maxCallStack"></param>
-    public EventInstance (Character_Trainable eventSelf, string eventID, string label, int maxCallStack = 50)
+    public EventInstance(Character_Trainable eventSelf, string eventID, string label, int maxCallStack = 50, bool immediateInit = true)
     {
         this.Self = eventSelf;
         this.maxCallStack = maxCallStack;
         // init stuff
-        LoadNext(eventID, label);
+        if (immediateInit) LoadNext(eventID, label);
         //Start();
-
     }
 
     public string Name { get
         {
-            return $"EvInstance {(currentEvent != null ? currentEvent.ID : nextEvent != null ? nextEvent.ID : "null")} {(currentEntry != null ? currentEntry.Name : nextEntry != null ? nextEntry.Name : "null")}";
+            return $"EvInstance {(currentEvent != null ? LocalizeDictionary.QueryThenParse( currentEvent.ID) : nextEvent != null ? LocalizeDictionary.QueryThenParse(nextEvent.ID) : "null")} {(currentEntry != null ? currentEntry.Name : nextEntry != null ? nextEntry.Name : "null")}";
         } }
 
     protected bool _isvalid = false;
@@ -119,7 +126,7 @@ public class EventInstance
             }
         }
         
-        if (canRun && (nextEvent == currentEvent || nextEvent.Validate(this))) isValid = true;
+        if (canRun && (nextEvent == currentEvent || EventUtility.Validate(nextEvent,this))) isValid = true;
         else this.Clear();
         
     }
@@ -174,7 +181,7 @@ public class EventInstance
 
     public bool Validate()
     {
-        isValid = this.canRun && this.nextEvent.Validate(this);
+        isValid = this.canRun && EventUtility.Validate( this.nextEvent,this);
         return isValid;
     }
     /// <summary>

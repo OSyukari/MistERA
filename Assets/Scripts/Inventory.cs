@@ -8,16 +8,16 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class FactionInventory : Inventory
 {
-    private Manageable ownerCache = null;
+    private I_IsJobGiver ownerCache = null;
     [JsonIgnore]
-    public Manageable FactionOwner
+    public I_IsJobGiver FactionOwner
     {
         get
         {
             return ownerCache;
         }
     }
-    public void ReEstablishParent(Manageable FactionOwner)
+    public void ReEstablishParent(I_IsJobGiver FactionOwner)
     {
         this.ownerCache = FactionOwner;
     }
@@ -26,7 +26,7 @@ public class FactionInventory : Inventory
     {
     }
 
-    public FactionInventory(Manageable FactionOwner, List<string> tagTracker = null) : this()
+    public FactionInventory(I_IsJobGiver FactionOwner, List<string> tagTracker = null) : this()
     {
         if (tagTracker != null) tracksTag.AddRange(tagTracker);
         this.ownerCache = FactionOwner;
@@ -213,7 +213,18 @@ public class FactionInventory : Inventory
     public override void Remove(Item_Instance item)
     {
         base.Remove(item);
-        foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] += item.Count;
+        foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= item.Count;
+    }
+
+    public void Dump(FactionInventory target, List<string> tooltip= null)
+    {
+        var items = new List<Item_Instance>(this.Contents);
+        foreach(var i in items)
+        {
+            this.Remove(i);
+            target.AddItem(i);
+            if (tooltip != null) tooltip.Add(i.Print());
+        }
     }
 }
 

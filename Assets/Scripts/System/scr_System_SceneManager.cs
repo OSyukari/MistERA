@@ -88,7 +88,7 @@ public class scr_System_SceneManager : MonoBehaviour
         }
     }
 
-
+    public Action Observer_OnPageUnload;
     /// <summary>
     /// argument 1: specify unloading canvas with specified comp. if last canvas in list does not have this comp, function will end.
     /// </summary>
@@ -121,7 +121,7 @@ public class scr_System_SceneManager : MonoBehaviour
                 Destroy(this.gameObject);
             }
         }
-
+        Observer_OnPageUnload?.Invoke();
     }
 
     private IEnumerator LoadYourAsyncScene(string path)

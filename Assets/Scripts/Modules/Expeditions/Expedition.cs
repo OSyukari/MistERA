@@ -51,7 +51,8 @@ public class Expedition
     public bool HasStartHour = false;
     public int ForceStartHour = 0;
     public int DurationHour = 0;
-
+    public float EventRate = 0.05f;
+    public List<string> DescriptionText = new List<string>();
     // we need a collection of events
 
     /// <summary>

@@ -55,6 +55,30 @@ public static class ExpeditionUtility
         return Utility.WeightedRandInDict(dict);
     }
 
+    /// <summary>
+    /// Uses encounter rate to calc cooldown
+    /// </summary>
+    /// <param name="exp"></param>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static int Cooldown(Expedition exp, Manageable_Party p)
+    {
+        var dict = new Dictionary<ActionPackage_Expedition, int>();
+        foreach (var i in exp.AllEvents)
+        {
+            var ii = new ActionPackage_Expedition(p, i);
+            if (ii.weight < 1) continue;
+            dict.Add(ii, ii.weight);
+        }
+
+        //var totalWeight = dict.Values.Sum();
+        var currentMin = scr_System_Time.current.getCurrentTime().Minute;
+        //Debug.Log($"Before DiceUntil: {(int)(totalWeight / exp.EventRate)} {60 - currentMin} {exp.EventRate} {totalWeight}");
+        if (exp.EventRate <= 0f) return 60 - currentMin;
+        if (exp.EventRate >= 1.0f) return 0;
+        return Utility.DiceUntil(100, 60-currentMin, (int)(exp.EventRate * 100));
+    }
+
     public static ExpResults RandResult(ExpEvents exp, ActionPackage p)
     {
         var dict = new Dictionary<ExpResults, int>();
@@ -72,18 +96,13 @@ public static class ExpeditionUtility
         int weight = ev.baseWeight;
 
         if (!TeamReqUtility.Validate(ev.teamRequirement, targets)) return -1;
-        foreach (var wmods in ev.weightMods)
+        foreach (var wmod in ev.weightMods)
         {
-            bool isValid = true;
-            foreach (var wmod in wmods.teamRequirements)
+            if (TeamReqUtility.Validate(wmod.teamRequirement, targets))
             {
-                if (!TeamReqUtility.Validate(wmod, targets))
-                {
-                    isValid = false;
-                    break;
-                }
+                weight += wmod.modValue;
             }
-            if (isValid) weight += wmods.modValue;
+
         }
         return weight;
     }

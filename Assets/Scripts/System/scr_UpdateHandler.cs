@@ -187,31 +187,24 @@ public class scr_UpdateHandler : MonoBehaviour
         // tldr, totalUpdateTime is the update duration count, and we should filter command logging based on this value.
         if (!Updating && cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime))
         {
-            if (EventHandler.Active)
-            {
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
-            }
-            else
-            {
+            
+            if (EventHandler.Active && scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
+            
+            if(scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"UpdateHandler PlayerPackage Update duration {updateTime} {totalUpdateTime}");
 
-                if(scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"UpdateHandler PlayerPackage Update duration {updateTime} {totalUpdateTime}");
-
-                StartCoroutine(SingleUpdate());
-            }
+            StartCoroutine(SingleUpdate());
+            
         }
         else if (!Updating && init)
         {
-            if (EventHandler.Active)
-            {
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
-            }
-            else
-            {
-                updateTime = 1;
-                totalUpdateTime = 1;
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"UpdateHandler ForceUpdate duration {updateTime}  {totalUpdateTime}");
-                StartCoroutine(SingleUpdate());
-            }
+            
+            if (EventHandler.Active && scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
+            
+            updateTime = 1;
+            totalUpdateTime = 1;
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"UpdateHandler ForceUpdate duration {updateTime}  {totalUpdateTime}");
+            StartCoroutine(SingleUpdate());
+            
 
         }
         else if (updateUI) NotifyLogsSingleUpdate();

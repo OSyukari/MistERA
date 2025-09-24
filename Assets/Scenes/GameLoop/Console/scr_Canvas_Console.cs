@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 {
 
-    public CanvasGroup selfCanvas;
+    public CanvasGroup selfCanvas, parentCanvas;
     public int consoleCount;
 
     public scr_HoverableText targetName, targetCurrentJob;
@@ -48,6 +48,10 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
             selfCanvas.alpha = 0;
             selfCanvas.blocksRaycasts = false;
             consoleInput.text = string.Empty;
+
+            parentCanvas.interactable = false;
+            parentCanvas.alpha = 0;
+            parentCanvas.blocksRaycasts = false;
             scr_System_CampaignManager.current.UpdateScene();
         }
         else

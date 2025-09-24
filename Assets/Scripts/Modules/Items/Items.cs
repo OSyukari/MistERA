@@ -2,14 +2,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-
+[System.Serializable]
 public class Masterlist_Items : MonoBehaviour
 {
     public JsonSerializerSettings SerializerSettings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto };
 
     public static Masterlist_Items Instance { get; private set; }
 
-    public Index_Item_Base Index = new Index_Item_Base();
+    [SerializeField] public Index_Item_Base Index = new Index_Item_Base();
 
     private void Awake()
     {

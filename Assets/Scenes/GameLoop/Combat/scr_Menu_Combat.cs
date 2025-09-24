@@ -27,6 +27,7 @@ public class scr_Menu_Combat : scr_Menu
 
     List<CombatActionInstance> currentActionsBackup;
 
+    public RectTransform DebugPanel;
 
     public CombatUI CurrentMode
     {
@@ -215,6 +216,7 @@ public class scr_Menu_Combat : scr_Menu
                 CurrentMode = CombatUI.Overview;
                 backgroundRect.gameObject.SetActive(true);
                 LoadCombatInstance(scr_System_CampaignManager.current.Combat.PlayerCombatInstance);
+                this.DebugPanel.gameObject.SetActive(scr_System_CampaignManager.current.DebugMode);
                 break;
             default:
                 //disable self
@@ -408,6 +410,12 @@ public class scr_Menu_Combat : scr_Menu
 
             switch (button.optionID)
             {
+                case -9996:
+                    button.Initialize(this, new Button_Debug_EndCombat(this, button, CombatResult.Victory)); break;
+                case -9997:
+                    button.Initialize(this, new Button_Debug_EndCombat(this, button, CombatResult.Draw)); break;
+                case -9998:
+                    button.Initialize(this, new Button_Debug_EndCombat(this, button, CombatResult.Defeat)); break;
                 case -9999:
                     // execute round
                     button.Initialize(this, new Button_FinalizeRound(this, button));
@@ -600,6 +608,33 @@ public class scr_Menu_Combat : scr_Menu
                 parent.UnloadCombatInstance();
                 scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
             }
+        }
+    }
+
+    public class Button_Debug_EndCombat : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Menu_Combat parent;
+        RectTransform selfRect;
+        scr_SelectableText text;
+        CombatResult targetResult;
+        public Button_Debug_EndCombat(scr_Menu_Combat parent, scr_SelectableText selfRect, CombatResult targetResult) : base(parent)
+        {
+            this.parent = parent;
+            this.text = selfRect;
+            this.selfRect = selfRect.SelfRect;
+            this.targetResult = targetResult;
+        }
+        public override bool IsButtonValid()
+        {
+            if (!selfRect.gameObject.activeInHierarchy) return false;
+            if (parent.currentActiveCombat == null) return false;
+            if (parent.currentActiveCombat.Result != CombatResult.Ongoing) return false;
+            return true;
+        }
+        public void OnClickButton()
+        {
+            // finalize combat and run
+            parent.currentActiveCombat.Result = targetResult;
         }
     }
 }

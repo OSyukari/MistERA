@@ -35,7 +35,7 @@ public class CombatInstance
     protected bool roundInit = false;
 
     CombatResult _result = CombatResult.Ongoing;
-    CombatResult Result
+    public CombatResult Result
     {
         get
         {
@@ -44,9 +44,22 @@ public class CombatInstance
         set
         {
             _result = value;
+            switch (_result)
+            {
+                case CombatResult.Defeat:
+                    TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_defeat"));
+                    break;
+                case CombatResult.Victory:
+                    TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_victory"));
+                    break;
+                case CombatResult.Draw:
+                    TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_timeLimit"));
+                    break;
+            }
+
             if (_result != CombatResult.Ongoing)
             {
-                if (this.OnCombatEnd != null) this.OnCombatEnd.Invoke();
+                Observer_InstanceUpdate?.Invoke();
                 scr_System_CampaignManager.current.Combat.NotifyCombatEnd(this);
             }
         }
@@ -72,11 +85,29 @@ public class CombatInstance
     public int roundMaxAction_B = 2;
     public Action OnCombatEnd = null;
 
+    public bool forcePlayerInstance = false;
+
     Character_Trainable dummyRef;
 
     public int EOTIndex = -200;
 
-    public CombatInstance(TeamComposition teamA, TeamComposition teamB, bool allowRetreat = true, Action onCombatEnd = null)
+    public string victoryEventID = "";
+    public string drawEventID = "";
+    public string defeatEventID = "";
+
+    [JsonIgnore]
+    public string CombatEndEventID
+    { get
+        {
+            switch(this.Result)
+            {
+                case CombatResult.Draw: return drawEventID;
+                case CombatResult.Defeat: return defeatEventID;
+                case CombatResult.Victory: return victoryEventID;
+                default: return "";
+            }
+        } }
+    public CombatInstance(TeamComposition teamA, TeamComposition teamB, bool allowRetreat = true)
     {
         this.allowRetreat = allowRetreat;
         this.teamA = teamA;
@@ -100,7 +131,6 @@ public class CombatInstance
         foreach (var i in teamA.frontline) ActorPositions.Add(i, BattlefieldZone.A_frontline);
         foreach (var i in teamA.support) ActorPositions.Add(i, BattlefieldZone.A_backline);
         foreach (var i in teamB.frontline) ActorPositions.Add(i, BattlefieldZone.B_frontline);
-        OnCombatEnd = onCombatEnd;
         foreach (var i in teamB.support) ActorPositions.Add(i, BattlefieldZone.B_backline);
 
         foreach(var i in teamA.Actors) TemporaryNames.Add(i.RefID, i.FirstName);
@@ -214,7 +244,7 @@ public class CombatInstance
         get
         {
             int playerRef = scr_System_CampaignManager.current.Player.RefID;
-            return hasActor(playerRef);
+            return forcePlayerInstance || hasActor(playerRef);
         }
     }
 
@@ -301,13 +331,11 @@ public class CombatInstance
 
         if (!continueA)
         {
-            TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_defeat"));
             Result = CombatResult.Defeat;
             return true;
         }
         else if (!continueB)
         {
-            TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_victory"));
             Result = CombatResult.Victory;
             return true;
         }
@@ -328,10 +356,13 @@ public class CombatInstance
         }
         else if (!Ongoing || CurrentRound+1 >= TurnLimit)
         {
-            TurnEndMessages.Add(LocalizeDictionary.QueryThenParse("combat_turnEnd_timeLimit"));
+
             Result = CombatResult.Draw;
         }
-        Observer_InstanceUpdate?.Invoke();
+        else
+        {
+            Observer_InstanceUpdate?.Invoke();
+        }
         
         foreach(var i in ActorStats)
         {

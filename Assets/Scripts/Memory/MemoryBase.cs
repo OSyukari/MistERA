@@ -248,7 +248,10 @@ public class Memory_Entry
         }
 
         if (other.Tags.Contains("initSex")) return false;
-        
+
+        if (other.Tags.Contains("expeditionEnd")) return false;
+        if (other.Tags.Contains("expedition") && selfTags.Contains("expedition") && !selfTags.Contains("expeditionEnd")) return true;
+
         else if (MergeWithAll || other.MergeWithAll)
         {
             return !selfTags.Contains("forbidMerge") && !other.selfTags.Contains("forbidMerge");
@@ -627,6 +630,9 @@ public class Memory_Entry
         }
     }
 
+    public bool disableRoomName = false;
+    public string roomNameOverride = "";
+
     public string ToString(bool withDescription = false, bool withRoomName = true, bool withTimeStamp = false)
     {
         string s = "";
@@ -642,9 +648,9 @@ public class Memory_Entry
         else if (this.MemInstanceDescriptions != null && this.MemInstanceDescriptions.Count > 0) body = MemInstanceDescriptions[0];
         else body = "Error no stuff";
 
-        if (withRoomName)
+        if (withRoomName && !disableRoomName)
         {
-            var roomname = this.roomRef == -1 ? "unknown" : scr_System_CampaignManager.current.Map.GetRoomByRef(roomRef).DisplayName;
+            var roomname = roomNameOverride != "" ? roomNameOverride : this.roomRef == -1 ? "unknown" : scr_System_CampaignManager.current.Map.GetRoomByRef(roomRef).DisplayName;
             return LocalizeDictionary.QueryThenParse("ui_entry_memory_withRoomName").Replace("$desc$", body).Replace("$roomname$", roomname);
         } else return body;
 

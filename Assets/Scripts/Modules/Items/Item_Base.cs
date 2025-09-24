@@ -21,7 +21,7 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
         }
     }
 
-    Dictionary<string, Item_Base> ID_Dictionary = new Dictionary<string, Item_Base>();
+    [SerializeField] Dictionary<string, Item_Base> ID_Dictionary = new Dictionary<string, Item_Base>();
     public void RegisterAllID(List<string> s)
     {
         s.Add("Index_Item_Base : registering ID with list length [" + list.Count + "]");

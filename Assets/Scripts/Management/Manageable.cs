@@ -252,6 +252,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         if (updateOrder != 0) return;
         DailyReport.Clear();
+
+        foreach (var i in this.SubFactions) i.OnDayUpdate_0();
     }
 
     protected void OnDayUpdate_1(int updateOrder)
@@ -1862,7 +1864,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
         foreach (var p in TradeOrders) p.ReEstablishParent(this);
         if (this.managedRoomRefs != null) foreach (var r in ManagedRooms) RefreshRoomJobs(r.Value);
         if (this.Inventory != null) this.Inventory.ReEstablishParent(this);
-        
+
+        foreach (var p in this.SubFactions) p.ReEstablishParent(this);
+
+
     }
 
     public void DisposeInternal()

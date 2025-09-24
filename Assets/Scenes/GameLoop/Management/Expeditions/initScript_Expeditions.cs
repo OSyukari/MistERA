@@ -6,6 +6,7 @@ using UnityEngine.Assertions.Must;
 
 public class initScript_Expeditions : MonoBehaviour
 {
+    public scr_teamBTN prefab_teamButton;
     public enum PartyEditUI
     {
         Neutral,
@@ -73,10 +74,21 @@ public class initScript_Expeditions : MonoBehaviour
 
             foreach (var chara in m.ManagedChara)
             {
-                var script = Instantiate(prefab_memberButton);
-                script.SelfRect.SetParent(list_EditCharaInParty, false);
+                if (chara == scr_System_CampaignManager.current.Player) continue;
+                var box = Instantiate(prefab_teamButton);
+                box.selfRect.SetParent(list_EditCharaInParty, false);
+
+                var script = box.teammateButton;
                 canvas.MakeButton_PartyMembers(chara, script);
                 temporaryCharaIDs.Add(script.optionID);
+
+                var script2 = box.btn_frontline;
+                canvas.MakeButton_PartyMemberComp(chara, script2, Manageable_Party.PartyComposition.frontline);
+                temporaryCharaIDs.Add(script2.optionID);
+
+                var script3 = box.btn_support;
+                canvas.MakeButton_PartyMemberComp(chara, script3, Manageable_Party.PartyComposition.backline);
+                temporaryCharaIDs.Add(script3.optionID);
             }
 
         }
@@ -107,6 +119,7 @@ public class initScript_Expeditions : MonoBehaviour
     List<int> temporaryTeamIDs = new List<int>();
     List<int> temporaryCharaIDs = new List<int>();
     List<int> temporaryExpIDs = new List<int>();
+    List<int> temporaryExpResolves = new List<int>();
 
     public TMP_InputField teamNameButton;
     public TMP_Text teammates;
@@ -123,6 +136,7 @@ public class initScript_Expeditions : MonoBehaviour
     public scr_HoverableText grid_gear;
     public RectTransform grid_inventory, grid_inv_temp, text_inv_empty;
 
+    public RectTransform prefab_resolveEventBtn;
     public void Draw(Manageable_Party p)
     {
         if (party != p)
@@ -167,9 +181,9 @@ public class initScript_Expeditions : MonoBehaviour
                 {
                     hasInv = hasInv || true;
                     var v = Instantiate(canvas.prefab_text_link);
-                    v.SetParent(grid_inventory);
+                    v.SetParent(grid_inventory, false);
                     var v2 = v.GetComponent<scr_HoverableText>();
-                    v2.SetText(i.DisplayName);
+                    v2.SetText(i.Print());
                 }
             }
             if (p.Room != null && p.Room.DisplayableFurnitures.Count > 0)
@@ -179,10 +193,11 @@ public class initScript_Expeditions : MonoBehaviour
                 grid_gear.SetText(p.Room.DisplayableFurnitureNames_withLink);
             }
             else grid_gear.gameObject.SetActive(false);
-            
-            if (p.TempInventory != null)
+
+            /*
+            if (p.Inventory != null)
             {
-                foreach (var i in p.TempInventory.Contents)
+                foreach (var i in p.Inventory.Contents)
                 {
                     hasInv = hasInv || true;
                     var v = Instantiate(canvas.prefab_text_link);
@@ -190,45 +205,57 @@ public class initScript_Expeditions : MonoBehaviour
                     var v2 = v.GetComponent<scr_HoverableText>();
                     v2.SetText(i.DisplayName);
                 }
-            }
+            }*/
             text_inv_empty.gameObject.SetActive(!hasInv);
 
-            if (p.isActive)
+            ExpeditionConfig.gameObject.SetActive(true);
+
+
+            canvas.UnloadButton(temporaryExpResolves);
+            temporaryExpResolves.Clear();
+            Utility.DestroyAllChildrenFrom(list_ExpeditionMSG);
+            foreach (var msg in p.Job.ExpeditionResults)
             {
-                ExpeditionConfig.gameObject.SetActive(false);
-                list_ExpeditionMSG.gameObject.SetActive(true) ;
-
-                Utility.DestroyAllChildrenFrom(list_ExpeditionMSG);
-                foreach(var msg in p.Job.ExpeditionResults)
+                bool first = true;
+                foreach (var i in msg.Value)
                 {
-                    bool first = true;
-                    foreach(var i in msg.Value)
-                    {
-                        var v = Instantiate(prefab_memEntry);
-                        v.SelfRect.SetParent(list_ExpeditionMSG, false);
-                        v.memText.SetText(i.FullDescription);
-                        v.memText.SetExternalTooltip(String.Join("\n",i.Tooltips));
-                        v.timeStamp.text = first ? msg.Key.ToShortTimeString() : "";
-                        first = false;
-                    }
-                }
-
-                foreach(var ap in p.Job.ActivePackages)
-                {
-                    if (ap.Duration <= 0) continue;
-                    if (ap.isTemporaryAP) continue;
-                   // var app = ap as ActionPackage_Expedition;
-                   // if (app == null) continue;
                     var v = Instantiate(prefab_memEntry);
                     v.SelfRect.SetParent(list_ExpeditionMSG, false);
-                    v.memText.SetText(ap.DisplayName);
-                    v.timeStamp.text = "";// LocalizeDictionary.QueryThenParse("exp_event_timestamp_ongoing");// first ? msg.Key.ToShortTimeString() : "";
+                    v.memText.SetText(i.FullDescription);
+                    v.memText.SetExternalTooltip(String.Join("\n", i.Tooltips));
+                    v.timeStamp.text = first ? msg.Key.ToShortTimeString() : "";
+                    first = false;
+
+                    if (i.unresolved != null && i.unresolved.isValid)
+                    {
+                        var vp = canvas.MakeEventResolveButton(i, out var box);
+                        box.SelfRect.SetParent(list_ExpeditionMSG, false);
+                        box.timeStamp.text = "";
+                        temporaryExpResolves.Add(vp.optionID);
+                    }
                 }
             }
-            else
+
+            bool hasActive = false;
+            foreach(var ap in p.Job.ActivePackages)
             {
-                ExpeditionConfig.gameObject.SetActive(true);
-                list_ExpeditionMSG.gameObject.SetActive(false);
+                if (ap.Duration <= 0) continue;
+                if (ap.isTemporaryAP) continue;
+                hasActive = true;
+                // var app = ap as ActionPackage_Expedition;
+                // if (app == null) continue;
+                var v = Instantiate(prefab_memEntry);
+                v.SelfRect.SetParent(list_ExpeditionMSG, false);
+                v.memText.SetText(ap.DisplayName);
+                v.timeStamp.text = "";// LocalizeDictionary.QueryThenParse("exp_event_timestamp_ongoing");// first ? msg.Key.ToShortTimeString() : "";
+            }
+
+            if (!hasActive && p.Job.isActive)
+            {
+                var v = Instantiate(prefab_memEntry);
+                v.SelfRect.SetParent(list_ExpeditionMSG, false);
+                v.memText.SetText(p.Job.DescriptionString);
+                v.timeStamp.text = "";// LocalizeDictionary.QueryThenParse("exp_event_timestamp_ongoing");// first ? msg.Key.ToShortTimeString() : "";
             }
         }
     }
@@ -240,7 +267,7 @@ public class initScript_Expeditions : MonoBehaviour
 
     public void OnValueChanged_PartyName(string s)
     {
-        Debug.Log("OnValueChanged");
+       // Debug.Log("OnValueChanged");
         if (party == null) return;
         
         party.FactionDisplayName = teamNameButton.text;
@@ -273,12 +300,56 @@ public class initScript_Expeditions : MonoBehaviour
                 .Replace("$time$", $"{parent.currentParty.BaseDuration}")
                 .Replace("$final$", $"{parent.currentParty.FinalDuration}"));
 
-            return true;
+            return !parent.currentParty.isActive;
         }
         public void OnClickButton()
         {
             var booleanvalue = parent.currentParty.AllowPassNight;
             parent.currentParty.AllowPassNight = !booleanvalue;
+        }
+    }
+
+    public class ButtonValidator_EditCamp : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        public ButtonValidator_EditCamp(scr_Canvas_Management parent, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+        }
+        public override bool IsButtonValid()
+        {
+            if (!text.gameObject.activeInHierarchy) return false;
+            else if (parent.currentParty == null)
+            {
+                this.tooltip = $"RoomJobs: null";
+                return false;
+            }
+
+            List<string> roomJobs = new List<string>();
+            foreach (var i in parent.currentParty.Room.Jobs) roomJobs.Add($"{i.DisplayName}:{String.Join("|", i.allusableCOMStrings)}");
+
+            List<string> managedRooms = new List<string>();
+            foreach (var i in parent.currentParty.ManagedRooms) managedRooms.Add($"{i.Key}:{String.Join("|",i.Value)}");
+
+            List<string> nonJobPosts = new List<string>();
+            foreach (var i in parent.currentParty.NonjobPosts)
+            {
+                List<string> names = new List<string>();
+                foreach (var j in i.Value) names.Add(j.DisplayName);
+                nonJobPosts.Add($"{i.Key.DisplayName()}:{String.Join("|", names)}");
+            }
+
+this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("\n", roomJobs))}\n\nManagedRooms:\n{String.Join("\n",managedRooms)}\n\nNonJobPosts:\n{String.Join("\n", nonJobPosts)}"; 
+
+
+
+            return false;
+        }
+
+        public void OnClickButton()
+        {
         }
     }
 
@@ -303,13 +374,13 @@ public class initScript_Expeditions : MonoBehaviour
                 recurringCooldown.text = "-";
                 return false;
             }
+
             var isRecurring = parent.currentParty.IsRecurring;
             text.Toggle(true, isRecurring);
-            recurringCooldown.interactable = isRecurring;
-            if (isRecurring) act?.Invoke();
-            else  recurringCooldown.text = " - ";
+            recurringCooldown.interactable = !parent.currentParty.isActive && isRecurring;
+            act?.Invoke();
 
-            return true;
+            return !parent.currentParty.isActive;
         }
 
         public void OnClickButton()
@@ -334,8 +405,14 @@ public class initScript_Expeditions : MonoBehaviour
     public void OnEndEdit_Recurring()
     {
         if (canvas == null || canvas.currentParty == null) return;
-        ExpeditionConfig.CooldownTime.text = LocalizeDictionary.QueryThenParse("ui_management_expeditionConfig_recurringCooldown")
-            .Replace("$count$", $"{canvas.currentParty.RecurringCooldown}");
+
+        if (!canvas.currentParty.IsRecurring) ExpeditionConfig.CooldownTime.text = "-";
+        else
+        {
+            var body = LocalizeDictionary.QueryThenParse("ui_management_expeditionConfig_recurringCooldown")
+                    .Replace("$count$", $"{canvas.currentParty.RecurringCooldown}");
+            ExpeditionConfig.CooldownTime.text = ExpeditionConfig.CooldownTime.interactable ? $"[{body}]" : body;
+        }
     }
 
     public void OnValueChanged_StartTime()
@@ -364,10 +441,12 @@ public class initScript_Expeditions : MonoBehaviour
         }
         else
         {
-            ExpeditionConfig.StartTime.interactable = true;
-            ExpeditionConfig.StartTime.text = LocalizeDictionary.QueryThenParse("ui_management_expeditionConfig_startTime")
-            .Replace("$time$", $"{StaticTime.AddHours(canvas.currentParty.FinalStartHour).ToShortTimeString()}");
+            ExpeditionConfig.StartTime.interactable = !canvas.currentParty.isActive;
+            var body = LocalizeDictionary.QueryThenParse("ui_management_expeditionConfig_startTime")
+                .Replace("$time$", $"{StaticTime.AddHours(canvas.currentParty.FinalStartHour).ToShortTimeString()}");
+            ExpeditionConfig.StartTime.text = ExpeditionConfig.StartTime.interactable ? $"[{body}]" : body;
         }
+
     }
 
     public class ButtonValidator_StartExp : ButtonValidator, I_ButtonClickable
@@ -379,36 +458,152 @@ public class initScript_Expeditions : MonoBehaviour
             this.parent = parent;
             this.text = text;
         }
+
         public override bool IsButtonValid()
         {
+            onClick = null;
+            var p = parent.currentParty;
+            
             //if (text == null) Debug.LogError("text null");
             if (!text.gameObject.activeInHierarchy) return false;
-            if (parent.currentParty == null)
+            if (p == null)
             {
                 this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_setExpTarget_none"));
                 return false;
             }
+
             if (!parent.currentParty.isActive)
             {
-                this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_startExp"));
-                return parent.currentParty.CanStartExpedition;
+                if (p.Job.ExpeditionActive)
+                {
+                    this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_cancel"));
+                    onClick = CancelExp;
+                    return true;
+                }
+                else
+                {
+                    this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_startExp"));
+                    onClick = StartExp;
+                    return parent.currentParty.CanStartExpedition;
+                }
             }
-            else if (parent.currentParty.CanResolveExpedition)
+            else if (parent.currentParty.Job.hasUnresolvedResult)
             {
-                this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_resolveExp"));
+                this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_requireManualresolve"));
+                return false;
+            }
+            else if (parent.currentParty.Job.status != Job_Expedition.ExpeditionStatus.returning)
+            {
+                onClick = AbortExp;
+                this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_abort"));
                 return true;
             }
             else
             {
-                this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_ongoingExp"));
+                this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_resolving"));
                 return false;
             }
         }
 
+        Action onClick = null;
+
+        protected void StartExp()
+        {
+            parent.currentParty.Job.ExpeditionActive = true;
+        }
+
+        protected void AbortExp()
+        {
+            parent.currentParty.Job.status = Job_Expedition.ExpeditionStatus.returning;
+        }
+
+        protected void CancelExp()
+        {
+            parent.currentParty.Job.ExpeditionActive = false;
+        }
+
         public void OnClickButton()
         {
-            parent.currentParty.StartExpedition();
-            parent.LoadParty(parent.currentParty);// (charaRefID);
+            if (onClick != null)
+            {
+                var time = scr_System_Time.current.getCurrentTime();
+                onClick();
+                parent.currentParty.Job.UpdateStatus(time.Hour, time.Minute);
+                parent.LoadParty(parent.currentParty);// (charaRefID);
+            }
+        }
+    }
+
+    public class ButtonValidator_ResolveEvent : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        ExpeditionMessageEntry m;
+
+        public ButtonValidator_ResolveEvent(scr_Canvas_Management parent, scr_SelectableText text, ExpeditionMessageEntry m) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+            this.m = m;
+        }
+
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy) return false;
+            if (parent.currentParty == null || parent.currentParty.Job == null) return false;
+            if (m.unresolved == null) return false;
+            if (m.unresolved.resolved) return false;
+
+            return true;
+        }
+
+
+        public void OnClickButton()
+        {
+            //scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs);
+            var ev = EventUtility.StartEvent(parent.currentParty.Job, m.unresolved, true);
+            //scr_System_CampaignManager.current.FreeUpdate();
+            m.unresolved.resolved = true;
+
+            scr_System_CampaignManager.current.RegisterSceneUnloadEventCallback(ev);
+            scr_System_SceneManager.current.UnloadLastCanvasFromScene();
+
+        }
+    }
+
+    public class ButtonValidator_partyMemberTeamComp : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        Character_Trainable c;
+        Manageable_Party.PartyComposition targetComp;
+        public ButtonValidator_partyMemberTeamComp(scr_Canvas_Management parent, scr_SelectableText text, Character_Trainable c, Manageable_Party.PartyComposition comp) : base(parent)
+        {
+            this.text = text;
+            this.parent = parent;
+            this.c = c;
+            this.targetComp = comp;
+            text.isButtonToggle = true;
+        }
+
+        bool isJoin = false;
+
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy) return false;
+            if (parent.currentParty == null) return false;
+            if (!parent.currentParty.ManagedRefs.Contains(c.RefID)) return false;
+
+            
+            text.Toggle(true, parent.currentParty.GetTeamComp(c.RefID) == targetComp);
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.currentParty.SetTeamComp(c.RefID, targetComp);
         }
     }
 }

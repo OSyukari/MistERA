@@ -55,9 +55,39 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         registeredPackagesByRoom = new Dictionary<int, List<ActionPackage>>();
 
+
         currentRoomRef = -1;
-        Index_JobReferenceID = new Dictionary<int, Job>();
         LogManager = new MessageLogManager();
+    }
+
+    protected void Start()
+    {
+
+        scr_System_SceneManager.current.Observer_OnPageUnload += OnSceneUnload;
+    }
+
+    protected void OnSceneUnload()
+    {
+        if (actions_sceneUnload != null)
+        {
+            Debug.Log($"OnSceneUnload, keyword [{actions_sceneUnload.Name}]");
+            scr_UpdateHandler.current.EventHandler.StartEvent(actions_sceneUnload, false);
+            scr_System_CampaignManager.current.FreeUpdate(-1, actions_sceneUnload.Name);
+        }
+        actions_sceneUnload = null;
+    }
+
+    EventInstance actions_sceneUnload = null;
+    EventInstance actions_viewChange = null;
+    public void RegisterSceneUnloadEventCallback(EventInstance a, bool immediate = false)
+    {
+        actions_sceneUnload = a;
+        if (immediate) OnSceneUnload();
+    }
+
+    public void RegisterViewChangeEventCallback(EventInstance b)
+    {
+        actions_viewChange = b;
     }
 
     /// <summary>
@@ -232,7 +262,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         LogManager.ClearLogChara(isAnimating);
     }
 
-    Dictionary<int, Job> Index_JobReferenceID;
+    Dictionary<int, Job> Index_JobReferenceID = new Dictionary<int, Job>();
 
     public int GlobalTimeScale { get { return 4; } }
 
@@ -784,6 +814,15 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void ChangeCurrentViewMode(ViewMode vm, bool lockView = false)
     {
+        if (actions_viewChange != null)
+        {
+            var act = actions_viewChange;
+            actions_viewChange = null;
+            scr_UpdateHandler.current.EventHandler.StartEvent(act, false);
+            scr_System_CampaignManager.current.FreeUpdate(-1, act.Name);
+            return;
+        }
+
         if (scr_System_CentralControl.current.LogPrefs.DLog_UIChange && vm == ViewMode.View_Room) Debug.Log("changevm");
         // if update lock, allow only setting to logs
         if (scr_UpdateHandler.current.Animating && vm != ViewMode.View_Logs)
@@ -801,7 +840,11 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             if (viewMode != vm) viewMode = vm;
             Observer_CurrentViewMode?.Invoke(vm, lockView);
-            if (viewMode == ViewMode.View_Room) scr_UpdateHandler.current.Animating = false;
+            Observer_UpdateNotice?.Invoke(false);
+            if (viewMode == ViewMode.View_Room)
+            {
+                scr_UpdateHandler.current.Animating = false;
+            }
         }
     }
 
@@ -1079,7 +1122,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 }
                 else if (ini.initClass == "campaign_init_map_extra")
                 {
-                    map.AddMapTemplate(ini.initArguments[0], ini.initArguments[1].ToString());
+                    map.AddMapTemplate(ini.initArguments[0], ini.initArguments[1].ToString(),true);
                     // FindInstanceByID(0).baseID = ini.initArguments[0];
                 }
                 else if (ini.initClass == "campaign_init_factionConnect")
@@ -1538,14 +1581,19 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
-    public void StartCombat(TeamComposition teamA, TeamComposition teamB, Action OnCombatEnd = null)
+    public void StartCombat(TeamComposition teamA, TeamComposition teamB, string victoryEvID, string drawEvID, string defeatEvID, bool forcePlayerInstance = false)
     {
-        Combat.StartCombat(teamA, teamB, OnCombatEnd);
+        Combat.StartCombat(teamA, teamB, victoryEvID, drawEvID, defeatEvID, forcePlayerInstance);
     }
 }
 
 public static class WorldManager
 {
+
+    public static Item_Instance Instantiate(ItemEntry entry)
+    {
+        return Instantiate(entry.itemID, entry.itemCountOverride ? "" : entry.itemNameOverwrite, entry.itemCount);
+    }
     public static Item_Instance Instantiate(string parentID, string nameOverwrite = "", int innerCount = 1)
     {
         var baseItem = scr_System_Serializer.current.GetByNameOrID_Item_Base(parentID);
@@ -1707,8 +1755,8 @@ public static class WorldManager
         switch (init.addClass)
         {
             case "map_init_playerLocation":
-
-                if (!disablePlayerInit && init.map_init_playerLocation != null && init.map_init_playerLocation.roomID != "")
+                if (disablePlayerInit) break;
+                if (init.map_init_playerLocation != null && init.map_init_playerLocation.roomID != "")
                 {
                     Room_Instance r = f.FindRoom(init.map_init_playerLocation.roomID);
                     if (r != null)

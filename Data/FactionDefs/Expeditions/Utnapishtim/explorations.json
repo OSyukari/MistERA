@@ -1,0 +1,108 @@
+{
+    "ExpeditionEntry":{
+        "list":
+        [
+{
+    "ExpeditionID":"expedition_Utnapishtim_wreck",
+    "HasStartHour":false,
+    "ForceStartHour":0,
+    "DurationHour":6,
+    "DescriptionText":[
+        "expedition_Utnapishtim_exploring_1", "expedition_Utnapishtim_exploring_2", "expedition_Utnapishtim_exploring_3",
+        "expedition_Utnapishtim_exploring_4", "expedition_Utnapishtim_exploring_5", "expedition_Utnapishtim_exploring_6",
+        "expedition_Utnapishtim_exploring_7", "expedition_Utnapishtim_exploring_8", "expedition_Utnapishtim_exploring_9",
+        "expedition_Utnapishtim_exploring_10", "expedition_Utnapishtim_exploring_11", "expedition_Utnapishtim_exploring_12",
+        "expedition_Utnapishtim_exploring_13" ],
+    "EventIDs":[],
+    "FeatureKeywords":["Utnapishtim"],
+    "Events":
+    [
+
+    ]
+},
+{
+    "ExpeditionID":"expedition_Utnapishtim_engines",
+    "HasStartHour":false,
+    "ForceStartHour":0,
+    "DurationHour":6,
+    "DescriptionText":[
+        "expedition_Utnapishtim_exploring_1", "expedition_Utnapishtim_exploring_2", "expedition_Utnapishtim_exploring_3",
+        "expedition_Utnapishtim_exploring_4", "expedition_Utnapishtim_exploring_5", "expedition_Utnapishtim_exploring_6",
+        "expedition_Utnapishtim_exploring_7", "expedition_Utnapishtim_exploring_8", "expedition_Utnapishtim_exploring_9",
+        "expedition_Utnapishtim_exploring_10", "expedition_Utnapishtim_exploring_11", "expedition_Utnapishtim_exploring_12",
+        "expedition_Utnapishtim_exploring_13" ],
+    "EventIDs":[],
+    "FeatureKeywords":["Utnapishtim"],
+    "Events":
+    [
+
+    ]
+},
+{
+    "ExpeditionID":"expedition_Utnapishtim_cargo",
+    "HasStartHour":false,
+    "ForceStartHour":0,
+    "DurationHour":6,
+    "DescriptionText":[
+        "expedition_Utnapishtim_exploring_1", "expedition_Utnapishtim_exploring_2", "expedition_Utnapishtim_exploring_3",
+        "expedition_Utnapishtim_exploring_4", "expedition_Utnapishtim_exploring_5", "expedition_Utnapishtim_exploring_6",
+        "expedition_Utnapishtim_exploring_7", "expedition_Utnapishtim_exploring_8", "expedition_Utnapishtim_exploring_9",
+        "expedition_Utnapishtim_exploring_10", "expedition_Utnapishtim_exploring_11", "expedition_Utnapishtim_exploring_12",
+        "expedition_Utnapishtim_exploring_13" ],
+    "EventIDs":[],
+    "FeatureKeywords":["Utnapishtim"],
+    "Events":
+    [
+
+    ]
+}
+        ]
+    },
+    "ExplorationFeatures":
+    {
+        "list":
+        [
+{ "requireKeywords":["Utnapishtim"], 
+    "featureEventIDs":[ "exp_event_Utnapishtim_crumblingFloor",
+                        "exp_event_Utnapishtim_cryoPod",
+                        "exp_event_Utnapishtim_damagedTransportBot",
+                        "exp_event_Utnapishtim_terminal"
+                        
+                        ] }
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"expedition_Utnapishtim_wreck":"生命守护者 战舰残骸",
+"expedition_Utnapishtim_engines":"生命守护者 引擎",
+"expedition_Utnapishtim_cargo":"生命守护者 货运区",
+
+"expedition_Utnapishtim_exploring_1":"$names$在战舰的破损管道间穿行，空气稀薄，每一步都小心避开裸露的电线。",
+"expedition_Utnapishtim_exploring_2":"$names$搜索着昏暗的货舱，脚下金属板微微震动，但四周没有异常迹象。",
+"expedition_Utnapishtim_exploring_3":"$names$沿着倾斜的通道前进，墙壁上结着薄霜，暂时未发现任何物资。",
+"expedition_Utnapishtim_exploring_4":"$names$在废弃的控制室翻找，屏幕闪烁着微弱的残光，周围一片寂静。",
+"expedition_Utnapishtim_exploring_5":"$names$探索着战舰深处，氧气瓶的嘶嘶声回荡在空旷的走廊中，尚未遇到危险。",
+"expedition_Utnapishtim_exploring_6":"$names$穿过一间坍塌的休息室，破旧的座椅上积满灰尘，暂时没有收获。",
+"expedition_Utnapishtim_exploring_7":"$names$在低重力区域漂浮前行，周围散落的碎片缓缓旋转，无其他动静。",
+"expedition_Utnapishtim_exploring_8":"$names$检查了一处损坏的通风口，冷风刺骨，但未发现任何有价值的物品。",
+"expedition_Utnapishtim_exploring_9":"$names$在昏暗的战舰走廊中前行，空气中弥漫着金属锈蚀的气味，暂时没有发现任何异常。",
+"expedition_Utnapishtim_exploring_10":"$names$小心翼翼地穿过残破的舱室，脚下碎屑嘎吱作响，四周一片死寂。",
+"expedition_Utnapishtim_exploring_11":"$names$在战舰的废弃储藏区搜索，周围只有微弱的灯光闪烁，尚未找到有用物资。",
+"expedition_Utnapishtim_exploring_12":"$names$探索着冰冷的甲板，氧气表读数逐渐下降，但通道依然安静。",
+"expedition_Utnapishtim_exploring_13":"$names$穿过一扇半开的舱门，低温让呼出的气息凝成白雾，周围没有动静。"
+
+
+            },
+            "en-us":
+            {
+
+
+            }
+        }
+    }
+}
