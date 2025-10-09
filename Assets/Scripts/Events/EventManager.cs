@@ -44,6 +44,8 @@ public class EventManager
 
     public void StartEvent(Character_Trainable target, string eventID, string label, bool startImmediate)
     {
+        startImmediate = startImmediate || scr_UpdateHandler.current.Updating;
+
         var newEvent = new EventInstance(target, eventID, label);
         //newEvent.LoadNext(true, eventID, label);
         this.activeEvents.Add(newEvent);
@@ -54,6 +56,8 @@ public class EventManager
 
     public void StartEvent(EventInstance ev, bool startImmediate)
     {
+        startImmediate = startImmediate || scr_UpdateHandler.current.Updating;
+
         this.activeEvents.Add(ev);
         if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"startevent {ev.Name} on {(ev.Self == null ? "null" : ev.Self.FirstName)}, isValid? {ev.isValid}");
         if (startImmediate)

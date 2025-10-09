@@ -1,11 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using TMPro;
-using System.Linq;
 
 
 public class menu_combatSim : scr_Menu, IPointerClickHandler

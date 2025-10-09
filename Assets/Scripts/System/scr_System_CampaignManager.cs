@@ -21,6 +21,7 @@ public class scr_System_CampaignManager_Serializable
     public Dictionary<int, Character_Trainable> Characters;
     public Dictionary<int, Item_Instance> Items;
     public string campaignSettingID;
+    public int debugRoomRef, statisRoomRef, tempRoomRef;
     // LogsManager? dont need serializing, logs are throwaway lines anyway
 }
 
@@ -112,6 +113,8 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         var obj = new scr_System_CampaignManager_Serializable();
 
+        PreSaveCleanup();
+
         obj.Jobs = Index_JobReferenceID;
         obj.deterministicRolls = deterministicRolls;
         obj.debugMode = debugMode;
@@ -131,7 +134,21 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.Characters = this.Index_referenceID;
         obj.campaignSettingID = CurrentCampaignID;
 
+        obj.statisRoomRef = this.statisRoomID;
+        obj.tempRoomRef = this.tempRoomID;
+        obj.debugRoomRef = this.debugRoomRef;
+
         return obj;
+    }
+
+    protected void PreSaveCleanup()
+    {
+        var listC = Map.CharaInRoom(TemporaryRoom.RefID);
+        foreach(var i in listC)
+        {
+            var chara = FindInstanceByID(i);
+            Unregister(chara);
+        }
     }
 
     public void LoadSerializable(scr_System_CampaignManager_Serializable obj)
@@ -193,6 +210,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         foreach (var i in Index_referenceID) i.Value.OnAfterDeserialize();
 
         party = obj.Party;
+
+
+        this.statisRoomID = obj.statisRoomRef;
+        this.tempRoomID = obj.tempRoomRef;
+        this._statisRoom = null;
+        this._tempRoom = null;
+        this.debugRoomRef = obj.debugRoomRef;
 
         currentRoomRef = obj.CurrentRoomRef;
         currentTarget = 0;
@@ -426,7 +450,9 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public bool DoFullUpdate(int charaRef)
     {
-        return charaRef == 0 || Map.IsCharaInActiveFloors(charaRef) || FullUpdate;
+        if (charaRef == 0) return true;
+        //if (Map.IsCharaInInactiveRooms(charaRef)) return false;
+        return FullUpdate || Map.IsCharaInActiveFloors(charaRef);
     }
 
     /// <summary>
@@ -693,7 +719,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             var floor = Map.GetFloorByRoomRefID(kvpair_list.Key);
 
-            if (floor != null && ( Map.ActiveFloorRefIDs.Contains(floor.refID) || kvpair_list.Value.Find(x=>x.actorRefs.Contains(0)) != null ))
+            if (floor != null && ( true || Map.ActiveFloorRefIDs.Contains(floor.refID) || kvpair_list.Value.Find(x=>x.actorRefs.Contains(0)) != null ))
             {
                 // normal loop
                 updateDuration = 1;
@@ -775,7 +801,10 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
-
+    public void NotifyEndJob(Job j)
+    {
+        Unregister(j);
+    }
     
 
     public bool isPackageExecuted(ActionPackage p)
@@ -783,6 +812,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         return this.executedPackagesByRoom.ContainsKey(p);
     }
 
+    public void Unregister(Job j)
+    {
+        Index_JobReferenceID.Remove(j.RefID);
+    }
     public int Register(Job j, int forceRefID = -1)
     {
 
@@ -947,12 +980,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             if (value == null) _currentTargetEX = CurrentTarget;
             else _currentTargetEX = value;
+            Debug.Log($"Invoking CurrentTargetEX {_currentTargetEX.RefID}");
             Observer_CurrentTargetEX?.Invoke(_currentTargetEX.RefID);
         }
     }
 
 
-    [JsonProperty] int currentRoomRef = -1;
+    int currentRoomRef = -1;
     public event Action<int, Room_Instance> Observer_CurrentRoom;
     public void ChangeCurrentRoom(Room_Instance room, bool forceReinitTarget = false)
     {
@@ -1009,13 +1043,18 @@ public class scr_System_CampaignManager : MonoBehaviour
     Map_Instance map;
     public Map_Instance Map { get { return map; } }
 
+
+    int debugRoomRef = 0;
     string CurrentCampaignID;
-    Room_Instance debugRoom;
+    public Room_Instance debugRoom;
 
     protected int statisRoomID = -1;
     Room_Instance _statisRoom = null;
 
-    public Room_Instance StatisRoom { get
+    /// <summary>
+    /// Room that houses persistent characters (such as combat dummies)
+    /// </summary>
+    public Room_Instance StasisRoom { get
         {
             if (_statisRoom == null) {
                 if (statisRoomID == -1)
@@ -1031,6 +1070,32 @@ public class scr_System_CampaignManager : MonoBehaviour
             return _statisRoom;
         } }
 
+    protected int tempRoomID = -1;
+    Room_Instance _tempRoom = null;
+
+    /// <summary>
+    /// Room that houses temporary characters (such as combat encounter generated enemies)
+    /// </summary>
+    public Room_Instance TemporaryRoom
+    {
+        get
+        {
+            if (_tempRoom == null)
+            {
+                if (tempRoomID == -1)
+                {
+                    _tempRoom = new Room_Instance(null, null);// Register();
+                    tempRoomID = Register(_tempRoom);//.RefID;
+                }
+                else
+                {
+                    _tempRoom = scr_System_CampaignManager.current.Map.GetRoomByRef(tempRoomID);
+                }
+            }
+            return _tempRoom;
+        }
+    }
+
     public void StartCampaign(CampaignSettings camp, CampaignSettings_ExtraOptions camp_ex, Character_Trainable main, Character_Trainable sub = null)
     {
         // Debug.Log("3d8 " + Utility.Dice(1, 8) + " " + Utility.Dice(1, 8) + " " + Utility.Dice(1, 8));
@@ -1044,7 +1109,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         map = new Map_Instance();
 
         debugRoom = new Room_Instance(null, null);
-        currentRoomRef = Register(debugRoom, 0);
+        currentRoomRef = Register(debugRoom, debugRoomRef);
 
         refIDCounter = 1000000;
 
@@ -1055,6 +1120,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         party = new Party();
 
         scr_System_Time.current.initializeTime();
+
+        var hostile = FindorAddHomeFactionByID("AlwaysHostile");
 
         if (camp_ex != null)
         {
@@ -1099,7 +1166,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 {
                     Manageable f = FindorAddHomeFactionByID(ini.initArguments[0]);
                     if (ini.initArguments[1] == "true"){
-                        FindInstanceByID(0).FactionManager.SetHomeFaction(f.ID, (ini.initArguments[2] == "true"));
+                        FindInstanceByID(0).FactionManager.SetHomeFaction(f.ID, ini.initArguments[2] == "true" ? Manageable_GuestStatus.Manager : Manageable_GuestStatus.Member);
                     }
                 }
                 else if (ini.initClass == "campaign_init_productionOrder")
@@ -1117,7 +1184,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                     Room_Instance ri = f.ManagedRooms.Values.ToList().Find(x=>x.Base.ID ==  ini.initArguments[1]);
                     if (ri == null) continue;
                     Character_Trainable c = InstantiateCharacter_FromBaseID(ini.initArguments[2], ri);
-                    c.FactionManager.SetHomeFaction(g.ID);
+                    c.FactionManager.SetHomeFaction(g.ID, Manageable_GuestStatus.Member);
                     c.FactionManager.SetTempHomeFaction(f.ID);
                 }
                 else if (ini.initClass == "campaign_init_map_extra")
@@ -1183,7 +1250,6 @@ public class scr_System_CampaignManager : MonoBehaviour
     [NonSerialized] public int jobRef_followPlayerCOM = 1;
 
     Dictionary<int, Character_Trainable> Index_referenceID;
-    public List<Character_Trainable> InstancedCharacters { get { return Index_referenceID.Values.ToList(); } }
 
     /*
     List<Item_Instance> items;
@@ -1255,6 +1321,19 @@ public class scr_System_CampaignManager : MonoBehaviour
             return refIDCounter - 1; } }
 
     [SerializeField] protected List<int> deletedRefIDs;
+
+    protected void Unregister(Character_Trainable c)
+    {
+        this.Index_referenceID.Remove(c.RefID);
+        deletedRefIDs.Add(c.RefID);
+        Unregister(c.InteractionJob);
+        Map.UnregisterChara(c.RefID);
+        Debug.Log($"Unregistering chara {c.FirstName}");
+        foreach(var m in c.FactionManager.Factions)
+        {
+            m.RemoveFromFaction(c);
+        }
+    }
 
     public Character_Trainable Register(Character_Trainable c, int forceRefID = -1)
     {
@@ -1580,10 +1659,18 @@ public class scr_System_CampaignManager : MonoBehaviour
         detail.InitializeWithArgument(self, successCallback, failCallback);
 
     }
-
-    public void StartCombat(TeamComposition teamA, TeamComposition teamB, string victoryEvID, string drawEvID, string defeatEvID, bool forcePlayerInstance = false)
+    public void StartCombat(TeamComposition teamA, TeamComposition teamB, string victoryEvID, string drawEvID, string defeatEvID, EventInstance source = null, bool forcePlayerInstance = false)
     {
-        Combat.StartCombat(teamA, teamB, victoryEvID, drawEvID, defeatEvID, forcePlayerInstance);
+        Combat.StartCombat(teamA, teamB, victoryEvID, drawEvID, defeatEvID, source, forcePlayerInstance);
+    }
+
+    public menu_Trade prefab_FactionExchange;
+
+    public void StartFactionExchange(I_IsJobGiver fa, I_IsJobGiver fb, bool allowChara, bool allowHostile, bool allowKill, bool allowTransfer)
+    {
+        //Combat.StartCombat(teamA, teamB, victoryEvID, drawEvID, defeatEvID, source, forcePlayerInstance);
+        menu_Trade trade = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_FactionExchange.GetComponent<RectTransform>()).GetComponent<menu_Trade>();
+        trade.InitializeWithArgument(fa, fb, allowChara, allowHostile, allowKill, allowTransfer);
     }
 }
 
@@ -1699,7 +1786,7 @@ public static class WorldManager
                     if (id == "PLAYER")
                     {
                         org.AddToFaction(scr_System_CampaignManager.current.Player, Manageable_GuestStatus.Manager);
-                        if (scr_System_CampaignManager.current.Player.FactionManager.Faction_Home == null) scr_System_CampaignManager.current.Player.FactionManager.SetHomeFaction(org.ID, true);
+                        if (scr_System_CampaignManager.current.Player.FactionManager.Faction_Home == null) scr_System_CampaignManager.current.Player.FactionManager.SetHomeFaction(org.ID, Manageable_GuestStatus.Manager);
                         else scr_System_CampaignManager.current.Player.FactionManager.AddWorkFaction(org.ID, true);
                     }
                     else foreach (var i in org.ManagedChara) if (i.BaseID == id) org.AddToFaction(i, Manageable_GuestStatus.Manager);
@@ -1725,6 +1812,7 @@ public static class WorldManager
                     org.AddSalesInventory(itemInit);
                 }
             }
+            org.explorationKeywords = map.explorationKeywords;
             org.mealHours = map.mealHours;
 
         }

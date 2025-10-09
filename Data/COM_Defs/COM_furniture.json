@@ -93,7 +93,8 @@
                 "_comments": "all COM with sleep tag are hard-coded to allow character without sleep need to recover 1HP and 1MP on command completion",
                 "requirements": {
                     "requirement": {
-                        "treatReceiverAsDoer": true
+                        "treatReceiverAsDoer": true,
+                        "req_Doers":{ "requireFullHP":true }
                     }
                 },
                 "results": {
@@ -134,6 +135,90 @@
                             }
                         },
                         "displayName": "com_furniture_takingBreak_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 5
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 0
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": [  "com_furniture_takingBreak_begin_1",
+                                        "com_furniture_takingBreak_begin_2" ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "com_furniture_takingLongBreak",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_takingLongBreak_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture",
+                    "bed",
+                    "rest"
+                ],
+                "_comments": "all COM with sleep tag are hard-coded to allow character without sleep need to recover 1HP and 1MP on command completion",
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers":{ "requireMissingHP":true },
+                        "req_Receivers":{ "requireMissingHP":true }
+                    }
+                },
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_ST",
+                                "value": "4"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "8"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_HP",
+                                "value": "1"
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_takingLongBreak_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99
+                            }
+                        },
+                        "displayName": "com_furniture_takingLongBreak_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -686,6 +771,8 @@
 
                 "com_furniture_takingBreak_displayName_1": "休息",
                 "com_furniture_takingBreak_displayName_2": "一起休息",
+                "com_furniture_takingLongBreak_displayName_1": "长休",
+                "com_furniture_takingLongBreak_displayName_2": "一起长休",
                 "com_furniture_takingBreak_begin_1": "$doer.firstname$伸了个懒腰，开始放松休息",
                 "com_furniture_takingBreak_begin_2": "$doer.firstname$享受着片刻的安静",
                 
@@ -751,6 +838,8 @@
                 "com_furniture_sleep_after_1": "$doer.firstname$ fell asleep",
                 "com_furniture_takingBreak_displayName_1": "Take a Break",
                 "com_furniture_takingBreak_displayName_2": "Take a Break",
+                "com_furniture_takingLongBreak_displayName_1": "Take a longer break",
+                "com_furniture_takingLongBreak_displayName_2": "Take a longer break",
                 "com_furniture_takingBreak_begin_1": "$doer.firstname$ stretches a bit, then begins to relax and rest",
                 "com_furniture_takingBreak_begin_2": "$doer.firstname$ enjoys a moment of quiet",
                 "com_furniture_playVideoGames_displayName_1": "Play video games",

@@ -978,6 +978,25 @@ public abstract class ActionPackage
             }
 
         }
+        else if (targetCOM is COM_Character_Remove)
+        {   // match every doer and receiver
+            List<Character_Trainable> temp_doers = new List<Character_Trainable>(doer);
+            List<Character_Trainable> temp_receivers = new List<Character_Trainable>(receiver);
+
+            Character_Trainable temp_doer, temp_receiver;
+
+            while (temp_doers.Count > 0 && temp_receivers.Count > 0)
+            {
+                temp_doer = Utility.GetRandomElement(temp_doers);
+                //c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
+
+                temp_receiver = Utility.GetRandomElement(temp_receivers);
+                temp_receivers.Remove(temp_receiver);
+
+                packages.Add(new EvaluationPackage(temp_doer, temp_receiver, this.targetCOM, this));
+
+            }
+        }
         else
         {
             // random match doer and receivers

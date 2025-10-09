@@ -57,6 +57,7 @@ public class Result_Faction
             public bool collectFromRoom = false;
             public bool sendToRecycler = false;
 
+            [JsonIgnore]
             public bool isValid { get { 
                 return ((collectFromRoom && (matchByID != "" || matchByTag != "")) || matchByID != "") 
                         && maxCount > 0; } }

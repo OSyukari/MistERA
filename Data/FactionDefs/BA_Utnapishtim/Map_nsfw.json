@@ -244,8 +244,7 @@
                         "offsetX":-97,
                         "offsetY":227,
                         "connects":
-                        [ { "ID":"medbay_isolation_storage", "cost":1.0  },
-                        { "ID":"medbay_hallway_1", "cost":2.0  } ],
+                        [ { "ID":"medbay_isolation_storage", "cost":1.0  } ],
                         "furnitureIDs":["furniture_bathroom_set", "furniture_table_1_chair_1" ],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Warehouse.jpg"
                     }

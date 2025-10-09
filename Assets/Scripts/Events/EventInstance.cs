@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using UnityEngine;
 
 public enum EventStatus
@@ -12,6 +13,7 @@ public enum EventStatus
 }
 public class EventInstance
 {
+    public bool generated = false;
     scr_UpdateHandler _updateHandler = null;
     protected scr_UpdateHandler updateHandler
     {
@@ -22,15 +24,18 @@ public class EventInstance
         }
     }
 
+    public bool overrideTargetGen = false;
     public bool overrideTargetScope = false;
+    public List<Event.GenerationParameters> OverrideTargetGen = new List<Event.GenerationParameters>();
     public List<Event.EventScope_Target> OverrideTargetScope = new List<Event.EventScope_Target>();
 
     bool firstInit = true;
-
+    public bool displayOverride = false;
     public bool isVisible
     {
         get
         {
+            if (displayOverride) return true;
             if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"EventInstance {(Self == null ? "null" : Self.FirstName)} {this.Name} isVisible? {Self == null} {Self == scr_System_CampaignManager.current.Player} {scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID)}");
             return Self == null || Self == scr_System_CampaignManager.current.Player || scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID);
         }
@@ -58,8 +63,6 @@ public class EventInstance
             if (value != null) targetRef = value.RefID;
         }
     }
-
-
 
     public Dictionary<string, List<Action>> FunctionCalls = new Dictionary<string, List<Action>>();
     public Dictionary<string, List<Character_Trainable>> Targets = new Dictionary<string, List<Character_Trainable>>();
@@ -98,6 +101,26 @@ public class EventInstance
 
     protected Event currentEvent = null;
     protected Event.EventEntry currentEntry = null;
+
+    [JsonIgnore]
+    public string DumpCurrentLine
+    {
+        get
+        {
+            if (currentEntry == null) return "";
+            if (currentEntry is Event.EventEntry.EventEntry_Line)
+            {
+                return UtilityEX.ParseEventEntry(this, (currentEntry as Event.EventEntry.EventEntry_Line).line);
+            }
+            else if (currentEntry is Event.EventEntry.EventEntry_Question)
+            {
+                return UtilityEX.ParseEventEntry(this, (currentEntry as Event.EventEntry.EventEntry_Question).question);
+            }
+            else return "";
+        }
+    }
+
+
 
     protected Event nextEvent = null;
     protected Event.EventEntry nextEntry = null;

@@ -40,6 +40,8 @@ public class SerializableEventPackage
     public Dictionary<string, List<string>> AppendStrings = new Dictionary<string, List<string>>();
     public bool overrideTargetScope = false;
     public List<Event.EventScope_Target> targetScopes = new List<Event.EventScope_Target>();
+    public bool overrideTargetGen = false;
+    public List<Event.GenerationParameters> targetGens = new List<Event.GenerationParameters>();
     [JsonIgnore]
     public bool isValid
     { get
@@ -51,6 +53,15 @@ public class SerializableEventPackage
     [JsonIgnore]
     public string DisplayName { get { return LocalizeDictionary.QueryThenParse(eventID); } }
     public bool resolved = false;
+    public string resolveMessage = "";
+    public void NotifyCharaExit(int refID)
+    {
+        foreach(var i in Targets)
+        {
+            i.Value.Remove(refID);
+        }
+    }
+
 }
 
 
@@ -125,6 +136,16 @@ public class Job_Expedition : Job
             ExpeditionResults.Add(scr_System_Time.current.getCurrentTime(), new List<ExpeditionMessageEntry>() { ExpeditionResult });
         }
     }
+    public ExpeditionMessageEntry AddResult(string s, List<string> tags, List<Character_Trainable> chara, bool registerMemory = false)
+    {
+        var charaRefs = new List<int>();
+        foreach (var c in chara)
+        {
+            charaRefs.Add(c.RefID);
+        }
+
+        return AddResult(s, tags, charaRefs, registerMemory);
+    }
 
     public ExpeditionMessageEntry AddResult(string s, List<string> tags, List<int> chara, bool registerMemory = false)
     {
@@ -147,11 +168,6 @@ public class Job_Expedition : Job
         returning
     }
 
-    protected void ClearLogs()
-    {
-        ExpeditionResults.Clear();
-    }
-
     [JsonIgnore]
     protected List<string> ActorNames
     {
@@ -166,11 +182,14 @@ public class Job_Expedition : Job
     }
 
     public ExpeditionStatus status = ExpeditionStatus.inactive;
+
     public string statusTooltip = "";
 
     public void UpdateStatus(int currentHour, int currentMinute)
     {
         this.packageCooldown = Math.Max(this.packageCooldown - 1, 0);
+        if (!this.FactionOwner_Party.isPlayerFaction) return;
+
         bool begin = false;
         if (!ExpeditionActive || Expedition == null)
         {
@@ -189,7 +208,6 @@ public class Job_Expedition : Job
             {
                 if (status == ExpeditionStatus.queued && FactionOwner_Party.TryStartExpedition())
                 {
-                    ClearLogs();
                     AddResult(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_start"), new List<string>(), new List<int>());
                     this.RemainingMinutes = Expedition.DurationHour * 60;
                     status = ExpeditionStatus.gathering;
@@ -228,10 +246,6 @@ public class Job_Expedition : Job
                     //entry.entryDescription = memstr;
                     entry.disableRoomName = true;
                 }
-
-
-                
-
             }
         }
 
@@ -264,7 +278,7 @@ public class Job_Expedition : Job
             if (RemainingMinutes == 0) this.status = ExpeditionStatus.returning;
         }
 
-        if (this.status == ExpeditionStatus.returning && this.actorRefID.Count < 1)
+        if (this.status == ExpeditionStatus.returning && this.actorRefID.Count < 1 && scr_System_CampaignManager.current.CharaInRoom( this.ParentRoom.RefID).Count < 1)
         {
             this.ExpeditionActive = FactionOwner_Party.IsRecurring;
             this.status = this.ExpeditionActive ? ExpeditionStatus.queued : ExpeditionStatus.inactive;
@@ -556,6 +570,11 @@ public class Job_Expedition : Job
             ss += "expedition active, exploring, no event ||";
             return true;
         }
+        else if (FactionOwner_Party.isPrisoner(c))
+        {
+            ss += "is being imprisoned, cannot explore ||";
+            return true;
+        }
         else
         {
 
@@ -569,7 +588,7 @@ public class Job_Expedition : Job
             if (pl1 != null)
             {
                 AddPackage(new List<ActionPackage>() { pl1 });
-                ss += "creating package " + pl1.DescriptionText(c.RefID);
+                ss += $"creating package [{pl1.DescriptionText(c.RefID)}] among [{list1.Count}]";
                 return true;
             }
             else
@@ -595,7 +614,7 @@ public class Job_Expedition : Job
     /// <param name="c"></param>
     /// <param name="allowInvalid"></param>
     /// <returns></returns>
-    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false)
+    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false, List<string> debug = null)
     {
         //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
         // 2 - if actor is in room, set COM package
@@ -605,14 +624,16 @@ public class Job_Expedition : Job
         int loop = 0;
         while (loop < 10)
         {
+            loop++;
             var newAP = ExpeditionUtility.RandEvent(Expedition, this.FactionOwner_Party);
+            if (newAP == null) continue;
+            if (!newAP.Actors.Contains(c)) continue;
             newAP.ReEstablishParent(this);// = this;
             if (newAP.Validate() || allowInvalid)
             {
                 results.Add(newAP);
                 break;
             }
-            loop++;
         }
 
         return results;

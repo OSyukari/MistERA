@@ -7,6 +7,29 @@ using Newtonsoft.Json;
 
 public static class FactionUtility
 {
+
+    public static bool isFactionHostile(I_IsJobGiver a, I_IsJobGiver b)
+    {
+        Manageable finalA = a is Manageable ? a as Manageable : (a is Manageable_Party ? (a as Manageable_Party).OwnerFaction : null);
+        Manageable finalB = b is Manageable ? b as Manageable : (b is Manageable_Party ? (b as Manageable_Party).OwnerFaction : null);
+
+        if (finalA == null || finalB == null) return false;
+        if (finalA.ID == finalB.ID) return false;
+        if (finalA.ID == "AlwaysHostile" || finalB.ID == "AlwaysHostile") return true;
+        return false;
+
+    }
+    public static bool isFactionFriendly(I_IsJobGiver a, I_IsJobGiver b)
+    {
+        Manageable finalA = a is Manageable ? a as Manageable : (a is Manageable_Party ? (a as Manageable_Party).OwnerFaction : null);
+        Manageable finalB = b is Manageable ? b as Manageable : (b is Manageable_Party ? (b as Manageable_Party).OwnerFaction : null);
+
+        if (finalA == null || finalB == null) return false;
+        return finalA.ID == finalB.ID;
+
+    }
+
+
     public static bool TryFindValidNonJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, Dictionary<int, List<int>> managedRoomRefs, out List<Job_Furniture> list, Character_Trainable c, string comID = "", string comTag = "", bool checkBlacklist = false)
     {
         list = new List<Job_Furniture>();
@@ -23,10 +46,24 @@ public static class FactionUtility
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                     continue;
                 }
-                else if (post.ValidateActor(c, key) &&
-                    (!post.ParentRoom.isRoomPrivate || managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID)) &&
-                    (!post.ParentRoom.isRoomPrison || c.isImprisoned) &&
-                    (!c.isImprisoned || post.ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID).RefID)) list.Add(post);
+                else if (!post.ValidateActor(c, key))
+                {
+                    continue;
+                }
+                else if (post.ParentRoom.isRoomPrivate && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID))
+                {
+                    continue;
+                }
+                else if (post.ParentRoom.isRoomPrison != c.isImprisoned)
+                {
+                    continue;
+                }
+                else if (c.isRestrained && c.Jail.ownerJob != post)
+                {
+                    continue;
+                }
+                list.Add(post);
+            
             }
         }
 
@@ -72,8 +109,7 @@ public static class FactionUtility
                 Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                 continue;
             }
-            else if (post.ValidateActor(c, targetCOM) &&
-                (!c.isImprisoned || post.ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID).RefID)) list.Add(post);
+            else if (post.ValidateActor(c, targetCOM) && (!c.isRestrained || c.Jail.ownerJob ==  post)) list.Add(post);
         }
 
         //list = jobPosts[targetCOM];
@@ -99,12 +135,17 @@ public static class FactionUtility
         SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsParallel(chara.RefID, rooms, randInsteadofShortest);
 
         Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>> list = null;
-        if (!randInsteadofShortest)
+
+        if (sortedList.Count < 1)
+        {
+            possibleJobs = new List<Job_Furniture>();
+        }
+        else if (!randInsteadofShortest)
         {
             list = sortedList.First().Value;
-            possibleJobs = sortedList.Count > 0 ? possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID)) : new List<Job_Furniture>();
+            possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
         }
-        else if (randInsteadofShortest && sortedList.Count > 0)
+        else if (randInsteadofShortest)
         {
             var randIndex = Utility.GetRandomElement(sortedList.Keys.ToList());
             list = sortedList[randIndex];

@@ -16,6 +16,7 @@ public class ExpResults
 
     public string eventID = "";
     public string eventLabel = "";
+    public bool runImmediate = false;
 
     /// <summary>
     /// If query fail (because no npc with this baseID exist), then generate<br/>
@@ -23,4 +24,7 @@ public class ExpResults
     /// </summary>
     public List<Event.EventScope_Target> TargetValidators = new List<Event.EventScope_Target>();
     public bool overrideTargetScope = false;
+
+    public List<Event.GenerationParameters> TargetGenerations = new List<Event.GenerationParameters>();
+    public bool overrideTargetGeneration = false;
 }

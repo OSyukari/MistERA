@@ -52,7 +52,19 @@ public static class UtilityEX
     public static Color32 UI_SelfColor = new Color32(45, 54, 255, 80);
     public static Color32 UI_HostileColor = new Color32(255, 0, 52, 80);
 
-
+    public static I_IsJobGiver GetActiveFactionFrom(List<Character_Trainable> cs)
+    {
+        Dictionary<I_IsJobGiver, int> factions = new Dictionary<I_IsJobGiver, int>();
+        foreach (var c in cs)
+        {
+            I_IsJobGiver key = c.FactionManager.CurrentActiveParty != null ? c.FactionManager.CurrentActiveParty : c.FactionManager.CurrentlyActiveFaction;
+            if (key == null) continue;
+            if (factions.ContainsKey(key)) factions[key] += 1;
+            else factions[key] = 1;
+        }
+        if (factions.Any()) return Utility.GetMaxWeightInDict(factions);
+        else return null;
+    }
 
     public static bool SHIFT { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
 
@@ -326,129 +338,6 @@ public static class UtilityEX
 
 
 
-    public static bool CompareValue(bool value1, LogicalOperand operand, string value2)
-    {
-        //Debug.LogError("Comparevalue climaxed ["+value1+"] ["+operand+"] ["+value2+"]");
-        bool value;
-        if (!bool.TryParse(value2, out value))
-        {
-            Debug.LogError("CompareValue (bool) Error: cannot parse value into boolean");
-            return false;
-        }
-
-        // modify invalid operands into valid ones
-        if (operand == LogicalOperand.gte || operand == LogicalOperand.lte) operand = LogicalOperand.eq;
-        else if (operand == LogicalOperand.gt || operand == LogicalOperand.lt) operand = LogicalOperand.neq;
-
-        switch (operand)
-        {
-            case LogicalOperand.eq:
-                return value1 == value;
-            case LogicalOperand.neq:
-                return value1 != value;
-            default:
-                Debug.LogError("CompareValue (boolean) Error: invalid operand");
-                return false;
-        }
-    }
-
-    public static bool CompareValue(bool value1, LogicalOperand operand, bool value)
-    {
-        //Debug.LogError("Comparevalue climaxed ["+value1+"] ["+operand+"] ["+value2+"]");
-        // modify invalid operands into valid ones
-        //if (operand == LogicalOperand.gte || operand == LogicalOperand.lte) operand = LogicalOperand.eq;
-        //else if (operand == LogicalOperand.gt || operand == LogicalOperand.lt) operand = LogicalOperand.neq;
-
-        switch (operand)
-        {
-            case LogicalOperand.eq:
-            case LogicalOperand.gte:
-            case LogicalOperand.lte:
-                return value1 == value;
-            case LogicalOperand.neq:
-            case LogicalOperand.gt:
-            case LogicalOperand.lt:
-                return value1 != value;
-            default:
-                Debug.LogError("CompareValue (boolean) Error: invalid operand");
-                return false;
-        }
-    }
-
-    public static bool CompareValue(int value1, string operand, string value2)
-    {
-        int value;
-        if (!int.TryParse(value2, out value))
-        {
-            Debug.LogError("CompareValue (int) Error: cannot parse value into int");
-            return false;
-        }
-
-        switch (operand)
-        {
-            case "eq":
-                return value1 == value;
-            case "neq":
-                return value1 != value;
-            case "gte":
-                return value1 >= value;
-            case "lte":
-                return value1 <= value;
-            case "gt":
-                return value1 > value;
-            case "lt":
-                return value1 < value;
-            default:
-                Debug.LogError("CompareValue (int) Error: invalid operand");
-                return false;
-        }
-    }
-
-    public static bool CompareValue(float value1, LogicalOperand operand, float value2)
-    {
-
-        switch (operand)
-        {
-            case LogicalOperand.eq:
-                return value1 == value2;
-            case LogicalOperand.neq:
-                return value1 != value2;
-            case LogicalOperand.gte:
-                return value1 >= value2;
-            case LogicalOperand.lte:
-                return value1 <= value2;
-            case LogicalOperand.gt:
-                return value1 > value2;
-            case LogicalOperand.lt:
-                return value1 < value2;
-            default:
-                Debug.LogError("CompareValue (int) Error: invalid operand");
-                return false;
-        }
-    }
-
-    public static bool CompareValue(int value1, LogicalOperand operand, int value2)
-    {
-
-        switch (operand)
-        {
-            case LogicalOperand.eq:
-                return value1 == value2;
-            case LogicalOperand.neq:
-                return value1 != value2;
-            case LogicalOperand.gte:
-                return value1 >= value2;
-            case LogicalOperand.lte:
-                return value1 <= value2;
-            case LogicalOperand.gt:
-                return value1 > value2;
-            case LogicalOperand.lt:
-                return value1 < value2;
-            default:
-                Debug.LogError("CompareValue (int) Error: invalid operand");
-                return false;
-        }
-    }
 
     public static DateTime GetCampaignTime()
     {

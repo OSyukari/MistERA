@@ -95,6 +95,21 @@ public static class CharaReqUtility
             _tooltip.Add("Cannot be performed while existing Job with conflicting tags");
             return false;
         }
+        if (q.requireCombat && !c.canFight)
+        {
+            _tooltip.Add("Chara cannot fight");
+            return false;
+        }
+        if (q.requireFullHP && c.Stats.HP != null && c.Stats.HP.ValuePercentile < 0.9)
+        {
+            _tooltip.Add("Chara is injured and cannot execute");
+            return false;
+        }
+        if (q.requireMissingHP && (c.Stats.HP == null || c.Stats.HP.ValuePercentile >= 1))
+        {
+            _tooltip.Add("Chara is not injured and cannot execute");
+            return false;
+        }
         return true;
     }
 

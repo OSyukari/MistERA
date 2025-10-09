@@ -319,6 +319,7 @@
                         "initArguments":["Utnapishtim", "currency_JPY", "", "20000"]
                     }
                 ],
+                "explorationKeywords":["Utnapishtim"],
                 "salesInventory":[
                     { "matchByID":"consumable_10pulls_ticket", "itemCount":1 }
                  ],

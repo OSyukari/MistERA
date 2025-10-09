@@ -289,7 +289,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public Image chara_scheduleBoxBG;
 
     public List<RectTransform> chara_scheduleCOMboxes;
-    public RectTransform list_chara;
+    public RectTransform list_chara, list_prisoner;
     public scr_SelectableText prefab_charaNameButton;
 
     private List<Character_Trainable> charaInFaction;
@@ -305,24 +305,26 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         UnloadButton(tempCharaRefIDStorage);
         Utility.DestroyAllChildrenFrom(list_chara);
+        Utility.DestroyAllChildrenFrom(list_prisoner);
         tempCharaRefIDStorage.Clear();
 
         if (currentFaction == null) return;
 
-        charaInFaction = currentFaction.ManagedChara_Members;
+        charaInFaction = currentFaction.ManagedChara;
         if (charaInFaction == null || charaInFaction.Count < 1) return;
-
-
 
         SetCurrentChara(scr_System_CampaignManager.current.Player);
 
-        if (charaInFaction.Count > 0)
+        
+        foreach (Character_Trainable chara in currentFaction.ManagedChara_Members)
         {
-            foreach (Character_Trainable chara in charaInFaction)
-            {
-                MakeCharaButton(list_chara, prefab_charaNameButton, chara);
-            }
+            MakeCharaButton(list_chara, prefab_charaNameButton, chara);
         }
+        foreach (Character_Trainable chara in currentFaction.ManagedChara_Prisoners)
+        {
+            MakeCharaButton(list_prisoner, prefab_charaNameButton, chara);
+        }
+
     }
     List<int> tempCharaRefIDStorage = new List<int>();
 
@@ -567,9 +569,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         button.Validate();
     }
-    public void MakeButton_Party(Manageable_Party p, scr_SelectableText button)
+    public void MakeButton_Party(Manageable_Party p, scr_SelectableText button, bool isKidnap = false)
     {
-        button.Initialize(this, new ButtonValidator_partySelect(this, button, p));
+        button.Initialize(this, new ButtonValidator_partySelect(this, button, p, isKidnap));
         button.SetText(p.FactionDisplayName);
         button.optionID = AssertUniqueHash(p.GetHashCode());
 
@@ -578,9 +580,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         button.Validate();
     }
-    public void MakeButton_Expedition(Expedition exp, scr_SelectableText button)
+    public void MakeButton_Expedition(Expedition exp, scr_SelectableText button, scr_partyBTN box)
     {
-        button.Initialize(this, new ButtonValidator_selectExp(this, button, exp));
+        button.Initialize(this, new initScript_Expeditions.ButtonValidator_selectExp(this, button, exp, box));
         button.SetText(exp.DisplayName);
         button.optionID = AssertUniqueHash(exp.GetHashCode());
 
@@ -591,10 +593,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     }
 
     public Manageable_Party currentParty = null;
-    public void LoadParty(Manageable_Party p)
+    public void LoadParty(Manageable_Party p, bool iskidnap = false)
     {
         currentParty = p;
-        Script_Expeditions.Draw(p);
+        Script_Expeditions.Draw(p, iskidnap);
     }
 
 
@@ -661,11 +663,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     }
 
 
-    public scr_SelectableText MakeEventResolveButton(ExpeditionMessageEntry m, out scr_memoryBox rect)
+    public scr_SelectableText MakeEventResolveButton(ExpeditionMessageEntry m, out scr_resolveEv mb)
     {
-        var mb = Instantiate(this.Script_Expeditions.prefab_resolveEventBtn).GetComponent<scr_memoryBox>();
-        rect = mb;
-        var b = mb.memText.GetComponent<scr_SelectableText>();
+        mb = Instantiate(this.Script_Expeditions.prefab_resolveEventBtn);
+        var b = mb.button;
         b.Initialize(this, new initScript_Expeditions.ButtonValidator_ResolveEvent(this, b, m));
         b.SetText( m.unresolved.DisplayName );
         b.optionID = AssertUniqueHash(m.GetHashCode());
@@ -1645,8 +1646,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         new scr_Canvas_Management parent;
         scr_SelectableText text;
         Manageable_Party party;
-        public ButtonValidator_partySelect(scr_Canvas_Management parent, scr_SelectableText text, Manageable_Party party) : base(parent)
+        bool isKidnap;
+        public ButtonValidator_partySelect(scr_Canvas_Management parent, scr_SelectableText text, Manageable_Party party, bool isKidnap) : base(parent)
         {
+            this.isKidnap = isKidnap;
             this.text = text;
             this.parent = parent;
             this.party = party;
@@ -1672,7 +1675,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public void OnPointerEnter()
         {
             // OnPointerEnter is not hooked into page refresh, so we need to tie it manually
-            parent.LoadParty(party);// (charaRefID);
+            parent.LoadParty(party, isKidnap);// (charaRefID);
             parent.ValidateAll();
         }
 
@@ -1699,6 +1702,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             //if (text == null) Debug.LogError("text null");
             if (!text.gameObject.activeInHierarchy) return false;
             if (parent.currentParty == null) return false;
+            if (!parent.currentParty.isPlayerFaction) return false;
             if (parent.currentParty.ManagedRefs.Contains(c.RefID)) isJoin = false;
             else isJoin = true;
 
@@ -1734,6 +1738,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             if (!text.gameObject.activeInHierarchy) return false;
             if (parent.currentParty == null || parent.CurrentFaction == null) return false;
             if (parent.currentParty.isActive) return false;
+            if (!parent.currentParty.isPlayerFaction) return false;
 
             if (parent.Script_Expeditions.CurrentMode == initScript_Expeditions.PartyEditUI.MembersEdit) isEditing = true;
             else isEditing = false;
@@ -1767,6 +1772,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_").Replace("$expName$","-"));
                 return false;
             }
+            if (!parent.currentParty.isPlayerFaction) return false;
             text.SetText(parent.currentParty.Job.DisplayName+ (parent.currentParty.isActive ? " "+parent.currentParty.Job.RemainingTime : ""));
             return !parent.currentParty.isActive;
         }
@@ -1802,43 +1808,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     }
 
     public scr_SelectExp expSelectPage;
-    public class ButtonValidator_selectExp : ButtonValidator, I_ButtonClickable
-    {
-        new scr_Canvas_Management parent;
-        scr_SelectableText text;
-        Expedition exp;
-        public ButtonValidator_selectExp(scr_Canvas_Management parent, scr_SelectableText text, Expedition exp) : base(parent)
-        {
-            this.parent = parent;
-            this.text = text;
-            this.exp = exp;
-            text.isButtonToggle = true;
-            text.AttachOnHoverEnter(OnHover);
-        }
-        public override bool IsButtonValid()
-        {
-            //if (text == null) Debug.LogError("text null");
-            if (!text.gameObject.activeInHierarchy) return false;
-            else if (parent.currentParty == null) return false;
-            else if (this.exp == null) return false;
-
-            this.text.Toggle(true, this.exp == parent.currentParty.Job.Expedition);
-            return true;
-        }
-
-        public void OnHover()
-        {
-            parent.expSelectPage.LoadExp(this.exp);
-        }
-
-        public void OnClickButton()
-        {
-            parent.currentParty.SetExpedition(this.exp);
-            parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.Neutral;
-            parent.LoadParty(parent.currentParty);// (charaRefID);
-            //parent.ValidateAll();
-        }
-    }
+    
 
     public Expedition currentExpedition = null;
     

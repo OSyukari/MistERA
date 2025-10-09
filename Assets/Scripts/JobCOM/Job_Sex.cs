@@ -138,6 +138,7 @@ public class Job_Sex_Group : Job
         Debug.Log($"sex job end, updating? {scr_UpdateHandler.current.Updating}");
         if (!scr_UpdateHandler.current.Updating) this.NotifyDescriptionsOutOfUpdate();
         //else this.NotifyDescriptionsOutOfUpdate
+        scr_System_CampaignManager.current.NotifyEndJob(this);
     }
 
     [JsonIgnore] public override List<int> actorRefID

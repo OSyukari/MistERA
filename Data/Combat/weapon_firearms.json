@@ -4,7 +4,7 @@
         {
             "id":"firearm_handgun",
             "displayName":"firearm_handgun",
-            "Tags":["firearm","one_handed"],
+            "Tags":["firearm","one_handed","ranged"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Weapon", 
@@ -31,7 +31,7 @@
     
     "ID":"firearm_aiming_handgun",
     "tags":["aiming"], "PostureMod":1,
-    "itemRequirement":{ "requireTags":["firearm"] }
+    "itemRequirement":{ "requireTags":["ranged"] }
     
 },         
 {

@@ -190,8 +190,11 @@ public class Room_Instance: IDisposable, I_Disposable
         this.furnitures = new List<FurnitureInstance>();
         this.refID = refID;
 
-        foreach (string f in Base.furnitureIDs) AddFurniture(f);
-        if (!baseRoom.noCleaning) AddFurniture(scr_System_Serializer.current.GetByNameOrID_FurnitureBase("furniture_marker_cleaning"));
+        if (baseRoomID != "Debug")
+        {
+            foreach (string f in Base.furnitureIDs) AddFurniture(f);
+            if (!baseRoom.noCleaning) AddFurniture(scr_System_Serializer.current.GetByNameOrID_FurnitureBase("furniture_marker_cleaning"));
+        }
     }
 
     
@@ -328,7 +331,7 @@ public class Room_Instance: IDisposable, I_Disposable
     }
     
     [JsonIgnore] public bool isRoomPrison { get { return Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_prison")) != null; } }
-    [JsonIgnore] public bool isRoomPrivate{ get { return Furnitures.Find(x=>x.FurnitureBase.ID.Contains( "furniture_bed")) != null || isRoomPrison; } }
+    [JsonIgnore] public bool isRoomPrivate{ get { return !isRoomPrison && Furnitures.Find(x=>x.FurnitureBase.ID.Contains( "furniture_bed")) != null; } }
 
     [JsonProperty] private List<int> roomItemsRefs = new List<int>();
     private List<Item_Instance> roomItemsCache = null;

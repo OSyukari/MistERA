@@ -63,8 +63,7 @@ public enum TargetScope
 {
     None,
     AllCharaInSelfRoom,
-    AllCharaInSelfRoom_ExcludeSelf,
-    Generate
+    AllCharaInSelfRoom_ExcludeSelf
 }
 
 public class Event : I_SerializationCallbackReceiver
@@ -112,6 +111,48 @@ public class Event : I_SerializationCallbackReceiver
         public List<string> parameters = new List<string>();
     }
 
+    public class GenerationParameters
+    {
+        public string factionTemplate = "";
+        public string mergeFactionKey = "";
+        public GenEncounter encounterTemplate = new GenEncounter();
+
+
+
+        public List<GenNPCs> charaTemplate = new List<GenNPCs>();
+        /// <summary>
+        /// Inventory will only be generated if factionTemplate successfully generated a party
+        /// </summary>
+        public List<ItemEntry> factionInventory = new List<ItemEntry>();
+
+        public class GenNPCs
+        {
+            public string baseID = "";
+            public List<string> refKeys = new List<string>();
+
+        }
+
+        public class GenEncounter
+        {
+            public Dictionary<string, int> encounterWeights = new Dictionary<string, int>();
+            public List<string> frontlineKeys = new List<string>();
+            public List<string> supportKeys = new List<string>();
+
+            [JsonIgnore]
+            public bool isValid
+            { get { return this.encounterWeights.Count > 0; } }
+
+            [JsonIgnore]
+            public string GetRandEntry
+            {
+                get
+                {
+                    return Utility.WeightedRandInDict(this.encounterWeights);
+                }
+            }
+        }
+    }
+
 
     [System.Serializable]
     public class EventScope_Target
@@ -146,6 +187,8 @@ public class Event : I_SerializationCallbackReceiver
         foreach (var ev in this.events) if (ev.label != "") jumpLabels.Add(ev.label, ev);
     }
 
+
+    public List<GenerationParameters> TargetGeneration = new List<GenerationParameters>();
     public List<EventScope_Target> TargetValidators = new List<EventScope_Target>();
 
     [System.Serializable]
@@ -184,6 +227,7 @@ public class Event : I_SerializationCallbackReceiver
         {
             public override string Name { get { return line; } }
             public string line = "";
+            public List<Executor> Results = new List<Executor>();
         }
 
         [System.Serializable]
@@ -255,66 +299,85 @@ public class Event : I_SerializationCallbackReceiver
             public List<Executor> Results = new List<Executor>();
 
 
-            [System.Serializable]
-            public enum ExecutionType
+           
+        }
+
+        [System.Serializable]
+        public class Executor
+        {   // handle a single result
+            public List<Condition> conditions = new List<Condition>();
+            public ExecutionType Type = ExecutionType.None;
+            public List<string> arguments = new List<string>();
+
+            public bool isValid()
             {
-                None,
-                JumpToLabel,
-                EventEnd,
-                /// <summary>
-                /// [self/targetkey, autoQuitJob?, typefilter]
-                /// </summary>
-                InterruptAP,
-                /// <summary>
-                /// [StatusID, value]
-                /// </summary>
-                ModStatusValue,
-                ModStatEXValue,
-                WakeUp,
-                ExecuteCallback,
-                /// <summary>
-                /// [callbackKey]
-                /// </summary>
-                ExistCallbackID,
-                FlushLogs,
-                FlushAppendStrings,
-                /// <summary>
-                /// [] <br/>
-                /// will also interrupt all existing Job and AP (that's a given)
-                /// </summary>
-                LeaveRoom,
-                /// <summary>
-                /// [Self/targetlabel, eventid, eventlabel, originalSelfLabel]
-                /// </summary>
-                StartEvent,
-                JoinTargetJob,
-                /// <summary>
-                /// require Targets containing scopeKeys: teamA_frontline, teamA_backline, teamB_frontline, teamB_backline
-                /// </summary>
-                StartCombat,
-                FullRecovery,
-                FullHPRecovery
+                foreach (var condition in conditions) if (!condition.isValid()) return false;
+                return true;
             }
+        }
 
-            [System.Serializable]
-            public class Executor
-            {   // handle a single result
-                public List<Condition> conditions = new List<Condition>();
-                public ExecutionType Type = ExecutionType.None;
-                public List<string> arguments = new List<string>();
-
-                public bool isValid()
-                {
-                    foreach (var condition in conditions) if (!condition.isValid()) return false;
-                    return true;
-                }
-            }
+        [System.Serializable]
+        public enum ExecutionType
+        {
+            None,
+            JumpToLabel,
+            EventEnd,
+            /// <summary>
+            /// [self/targetkey, autoQuitJob?, typefilter]
+            /// </summary>
+            InterruptAP,
+            /// <summary>
+            /// [StatusID, value]
+            /// </summary>
+            ModStatusValue,
+            ModStatEXValue,
+            WakeUp,
+            ExecuteCallback,
+            /// <summary>
+            /// same as ExecuteCallback, but will return true even if callback not found
+            /// </summary>
+            ExecuteCallbackPermissive,
+            /// <summary>
+            /// [callbackKey], if exist, branch true
+            /// </summary>
+            ExistCallbackID,
+            FlushLogs,
+            ExistAppendStrings,
+            FlushAppendStrings,
+            /// <summary>
+            /// [] <br/>
+            /// will also interrupt all existing Job and AP (that's a given)
+            /// </summary>
+            LeaveRoom,
+            /// <summary>
+            /// [Self/targetlabel, eventid, eventlabel, originalSelfLabel]
+            /// </summary>
+            StartEvent,
+            JoinTargetJob,
+            /// <summary>
+            /// require Targets containing scopeKeys: teamA_frontline, teamA_backline, teamB_frontline, teamB_backline
+            /// </summary>
+            StartCombat,
+            /// <summary>
+            /// [A Self/targetlabel, B targetlabel, allowChara, allowHostile, allowKill, allowTransfer ]<br/>
+            /// Will search the appropriate (most active) faction among A and B and initiate exchange. <br/>
+            /// If cannot find A and if self is player, will initiate trade using Player's homefaction
+            /// </summary>
+            FactionExchangeInventory,
+            FullRecovery,
+            FullHPRecovery,
+            /// <summary>
+            /// [A victimlabel, B hostilelabel, kidnapExplorationID] 
+            /// </summary>
+            PartyKidnap
         }
     }
 
     [System.Serializable]
     public class Condition
     {
+
+
         public bool isValid()
         {
             return true;

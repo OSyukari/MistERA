@@ -23,7 +23,7 @@
             "recipe":[],
             "furnitureSize":3,
             "givesJob":
-            [ { "comTags":["furniture","bed"] }]
+            [ { "comTags":["furniture","bed"] } ]
         },
         {
             "ID":"furniture_bed_queen",
@@ -46,7 +46,7 @@
             "displayName":"长沙发",
             "recipe":[],
             "furnitureSize":4,
-            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
             "ID":"furniture_sofa_1",
@@ -54,7 +54,7 @@
             "recipe":[],
             "furnitureSize":1,
             "givesJob":
-            [ { "comID":["com_furniture_takingBreak"] } ]
+            [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
             "ID":"furniture_TV_flatscreen",
@@ -135,28 +135,28 @@
             "displayName":"单人桌椅",
             "recipe":[],
             "furnitureSize":1,
-            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
             "ID":"furniture_dining_table_10",
             "displayName":"长餐桌",
             "recipe":[],
             "furnitureSize":10,
-            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
             "ID":"furniture_cafe_table_2",
             "displayName":"咖啡桌",
             "recipe":[],
             "furnitureSize":2,
-            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
             "ID":"furniture_round_table_4",
             "displayName":"圆桌",
             "recipe":[],
             "furnitureSize":4,
-            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
             "ID":"furniture_piano",
@@ -256,7 +256,7 @@
             "recipe":[],
             "furnitureSize":1,
             "givesJob":
-            [ { "comTags":["furniture","prison"] }]
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
         },
         {
             "ID":"furniture_prison_containment_spot_2",
@@ -264,7 +264,7 @@
             "recipe":[],
             "furnitureSize":2,
             "givesJob":
-            [ { "comTags":["furniture","prison"] }]
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
         },
         {
             "ID":"furniture_camping_site",
@@ -273,7 +273,7 @@
             "furnitureSize":0,
             "givesJob":
             [   { "comTags":["furniture","bed"] },
-                { "comID":["com_furniture_takingBreak"] },
+                { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] },
                 { "comTags":["furniture","food_meal"] },
                 { "comID":["com_furniture_restroom_fix"] } ]
         }

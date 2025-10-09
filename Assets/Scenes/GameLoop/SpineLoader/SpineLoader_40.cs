@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 using System.Reflection;
+using System.Linq;
 
 /// <summary>
 /// Most code are from NikkeViewerEX
@@ -109,11 +110,17 @@ public class SpineLoader_40 : SpineLoader
         {
             refresh = true;
             var idleAnim = Animation.skeletonDataAsset.GetSkeletonData(true).FindAnimation(idleAnimName);
-            if (idleAnim != null)
-            {// send looping idle animation
-             //self_SkeletonGraphic.AnimationState.AddAnimation(0, idleAnim, true, 0);
-                Animation.AnimationState.SetAnimation(0, idleAnim, true);
+            if (idleAnim == null)
+            {
+                var list = Animation.skeletonDataAsset.GetSkeletonData(true).Animations.ToArray().ToList();
+                idleAnim = list.Count > 0 ? list[0] : null;
+                var names = new List<string>();
+                foreach (var i in list) names.Add(i.Name);
+                Debug.Log($"Spine animation name mismatch\nAtlasPath {atlasPath}\nValid Anims: {String.Join("|", names)}");
             }
+            // send looping idle animation
+            //self_SkeletonGraphic.AnimationState.AddAnimation(0, idleAnim, true, 0);
+            if (idleAnim != null) Animation.AnimationState.SetAnimation(0, idleAnim, true);
         }
 
         if (refresh)

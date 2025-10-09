@@ -108,7 +108,7 @@
                 "displayName":"",
                 "tooltip":"An {0}'s body.",
                 "AvailableSlots":["Neck","Torso"],
-                "childID":["frontleg_beast_base","hindleg_beast_base"],
+                "childID":["frontleg_beast_base","frontleg_beast_base","hindleg_beast_base","hindleg_beast_base"],
                 "internalID":["stomach_beast_base","anus_beast_base","penis_beast_base","guts_beast_base"],
                 "tags":["torso","lower"],
                 "sortOrder":1,

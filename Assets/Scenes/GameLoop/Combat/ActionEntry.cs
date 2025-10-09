@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.EventSystems;
 
-public class ActionEntry : MonoBehaviour
+public class ActionEntry : MonoBehaviour, IPointerEnterHandler
 {
 
     public RectTransform SelfRect;
@@ -13,9 +14,15 @@ public class ActionEntry : MonoBehaviour
     public Image selfImage;
     public scr_HoverableText additionalText;
 
+    scr_Menu_Combat parent;
+    CombatActionInstance inst;
+    bool pointerEnter = false;
     string s = "";
-    public void Initialize(CombatActionInstance inst)
+    public void Initialize(CombatActionInstance inst, scr_Menu_Combat parent, bool OnPointerEnter = false)
     {
+        this.pointerEnter = OnPointerEnter;
+        this.parent = parent;
+        this.inst = inst;
         if (isHostile) selfImage.color = UtilityEX.UI_HostileColor;
         else selfImage.color = UtilityEX.UI_SelfColor;
 
@@ -33,5 +40,14 @@ public class ActionEntry : MonoBehaviour
         Result.SetExternalTooltip($"{inst.ResultTooltip}");
 
         additionalText.SetText(inst.FinalResult);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!pointerEnter) return;
+//        Debug.Log("onpointenter");
+        parent.LoadChara(inst.ownerRef, isHostile ? false : true);
+        if (inst.isHostile) parent.LoadChara(inst.targetRef, isHostile ? true : false);
+
     }
 }

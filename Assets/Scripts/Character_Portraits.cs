@@ -6,7 +6,7 @@ using System.Linq;
 using System;
 using UnityEngine.UI;
 
-[System.Serializable]
+
 public class PortraitManager
 {
     public List<CharaPortrait> portraitPriorityList = null;

@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using UnityEngine.UIElements;
 
 public enum Humanoid_GenderAppearance
 {
@@ -171,7 +172,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
     }
 
-
+    [JsonIgnore]
+    public bool canFight
+    {
+        get
+        {
+            return this.canAct && (this.Stats.HP == null || this.Stats.HP.Value > 0);
+        }
+    }
     [JsonIgnore] public bool canAct
     {
         get
@@ -219,19 +227,19 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             case "hasPenisPiercing":
                 return false;
             case "canAct":
-                return UtilityEX.CompareValue(canAct, operand, value);
+                return Utility.CompareValue(canAct, operand, value);
             case "isInEstrus":  // check chara status depending on menstruation cycle, or if chara is drugged
                 Debug.Log(FirstName + " Comparevalue isInEstrus [" + false + "] [" + operand + "] [" + value + "]");
-                return UtilityEX.CompareValue(false, operand, value);
+                return Utility.CompareValue(false, operand, value);
             case "climaxed":    // check if chara has climaxed in current postupdatetime
                // Debug.LogError(FirstName + " Comparevalue climaxed [" + this.Climaxing + "] [" + operand + "] [" + value + "]");
-                return UtilityEX.CompareValue(this.Climaxing, operand, value); ;
+                return Utility.CompareValue(this.Climaxing, operand, value); ;
             case "currentClimaxCount": // check chara consecutive climax count. how ? 
                 //Debug.LogError("Checking ConsecutiveClimaxCount on " + FirstName + " value is " + this.Status.ConsecutiveClimaxCount);
                 Debug.Log(FirstName + " Comparevalue currentClimaxCount [" + this.Stats.ConsecutiveClimaxCount + "] [" + operand + "] [" + value + "]");
                 if (int.TryParse(value, out int cliamxCount))
                 {
-                    return UtilityEX.CompareValue(this.Stats.ConsecutiveClimaxCount, operand, cliamxCount); ;
+                    return Utility.CompareValue(this.Stats.ConsecutiveClimaxCount, operand, cliamxCount); ;
                 }
                 else
                 {
@@ -240,15 +248,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 }
             case "isUnconscious": // check chara sleeping or unconscious
                 //Debug.Log(FirstName + " Comparevalue isUnconscious [" + this.Stats.isConsciousnessUnconscious + "] [" + operand + "] [" + value + "]");
-                return UtilityEX.CompareValue(this.Stats.isConsciousnessUnconscious, operand, value);
+                return Utility.CompareValue(this.Stats.isConsciousnessUnconscious, operand, value);
             case "isTimestopped": // check if chara can act in timestop and if currently timestopped
                // bool isTimestopped = scr_System_Time.current.timeStop && !this.CanActInTimeStop;
                 //Debug.LogError(FirstName+" Comparevalue isTimestopped [" + isTimeStopped + "] [" + operand + "] [" + value + "]");
-                return UtilityEX.CompareValue(isTimeStopped, operand, value);
+                return Utility.CompareValue(isTimeStopped, operand, value);
 
             case "isCumReady":  // check if chara is currently over cum threshold
                // Debug.Log(FirstName + " Comparevalue isCumReady [" + (Stats.SexStimulation.Severity >= Stats.CumThreshold) + "] [" + operand + "] [" + value + "]");
-                return UtilityEX.CompareValue(Body.isClimaxing(true), operand, value);
+                return Utility.CompareValue(Body.isClimaxing(true), operand, value);
 
             case "isFatigued":  // check if chara can act but currently low on stamina
                 return false;
@@ -633,7 +641,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     public void InitializeFaction(Manageable m, bool isManager)
     {
         string initFactionID = (m == null ? "" : m.ID);
-        this.FactionManager.SetHomeFaction(initFactionID, isManager);
+        this.FactionManager.SetHomeFaction(initFactionID, isManager? Manageable_GuestStatus.Manager : Manageable_GuestStatus.Member);
     }
 
     [JsonProperty] protected BodyEquipLayer lastKnownLayer = BodyEquipLayer.Inner;
@@ -642,6 +650,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.lastKnownLayer = layer;
     }
 
+    [JsonIgnore]
+    public bool DisplayCharaEvent
+    {
+        get
+        {
+            foreach(var m in this.FactionManager.Factions)
+            {
+                if (m.isPlayerFaction) return true;
+            }
+            return false;
+        }
+    }
 
     public void AddTrait(string s) { traits.Add(s); }
     public void AddTrait(Traits s) { traits.Add(s.ID); }
@@ -875,7 +895,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         if (currentJobFaction is Manageable_Party)
         {
             var party = currentJobFaction as Manageable_Party;
-            if (party != null && party.isActive && !party.Job.isResting)
+            if (party != null && ((FactionManager.isPartyLocked && party.hasExpeditionSet) || party.isActive) && !party.Job.isResting && !party.skipTryGetJob(this))
             {
                 if (this.CurrentJob == party.Job && party.Job.canReturn)
                 {
@@ -883,20 +903,26 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     ChangeCurrentJob();
                     if (log) ss += "Exiting party exploration job " + party.FactionDisplayName + "" + party.Job.DisplayName;
                     if (s != null) s.Add(ss);
+                    return;
                 }
-                if (this.CurrentJob != party.Job)
+                if (party.Job != null && this.CurrentJob != party.Job)
                 {
                     ChangeCurrentJob(party.Job);
                     if (log) ss += "Changing job to party exploration job " + party.FactionDisplayName + "" + party.Job.DisplayName;
                     if (s != null) s.Add(ss);
+                    return;
                 }
-                else
+                else if (party.Job.hasActivePackge(this.RefID))
                 {
                     // be careful actorjobcomplete list, but here not necessary as camp ignore the list
                     if (log) ss += "working on party exploration job " + party.FactionDisplayName + "" + party.Job.DisplayName;
                     if (s != null) s.Add(ss);
+                    return;
                 }
-                return;
+            }
+            else if (FactionManager.isPartyLocked)
+            {
+                Debug.LogError($"Error party locked and hasExpeditionSet[{party.hasExpeditionSet}] !isResting[{!party.Job.isResting}] !skipTryGetJob[{!party.skipTryGetJob(this)}]");
             }
         }
 
@@ -1044,6 +1070,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 return true;
             }
+            else return false;
         }
         return false;
     }
@@ -1734,8 +1761,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return 160;
         }
     }
-
-    public bool isTemporaryActor = false;
 
     
 

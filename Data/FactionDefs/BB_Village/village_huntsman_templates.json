@@ -64,7 +64,7 @@
             {
                 "ID":"village_encounter_villager_patrol_2",
                 "frontline":["village_huntsman_scythe"],
-                "support":[]
+                "support":["village_huntsman_scythe"]
             }
         ]
     },

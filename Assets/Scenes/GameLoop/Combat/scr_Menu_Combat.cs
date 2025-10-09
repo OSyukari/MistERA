@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using Cysharp.Threading.Tasks.Triggers;
+using UnityEngine.UIElements;
 
 public class scr_Menu_Combat : scr_Menu
 {
@@ -204,7 +205,6 @@ public class scr_Menu_Combat : scr_Menu
 
     public bool isActive = false;
     public CanvasGroup self;
-    public RectTransform backgroundRect;
     private void OnViewModeChange(ViewMode vm, bool lockView)
     {
         switch (vm)
@@ -214,7 +214,6 @@ public class scr_Menu_Combat : scr_Menu
                 isActive = true;
                 viewEnable(self, false);
                 CurrentMode = CombatUI.Overview;
-                backgroundRect.gameObject.SetActive(true);
                 LoadCombatInstance(scr_System_CampaignManager.current.Combat.PlayerCombatInstance);
                 this.DebugPanel.gameObject.SetActive(scr_System_CampaignManager.current.DebugMode);
                 break;
@@ -223,14 +222,13 @@ public class scr_Menu_Combat : scr_Menu
                 UnloadCombatInstance();
                 isActive = false;
                 viewDisable(self, false);
-                backgroundRect.gameObject.SetActive(false);
                 break;
         }
         ValidateAll();
     }
 
     public CombatInstance currentActiveCombat = null;
-    public RectTransform charaList_teamA, charaList_teamB;
+    public RectTransform charaList_teamA, charaList_teamB, centerActionList;
     public scr_prefab_actortab prefab_Actor;
 
     protected void UnloadCombatInstance()
@@ -246,6 +244,33 @@ public class scr_Menu_Combat : scr_Menu
         TemporaryButtonRefs.Clear();
     }
 
+    public scr_bgImageSwapper background;
+    public scr_CharPortraitBox left, right;
+    protected void LoadCombatRoom(string imagePath)
+    {
+        if (imagePath != "")
+        {
+            background.image.color = background.activeColor;
+            if (background.co != null)
+            {
+                StopCoroutine(background.co);
+                background.co = null;
+            }
+            background.co = StartCoroutine(background.roomchange(imagePath));
+        }
+        else
+        {
+            background.image.color = background.disabledColor;
+        }
+    }
+
+    public void LoadChara(Character_Trainable c, bool isLeft)
+    {
+        if (c == null) return;
+        if (isLeft) left.InitializeWithArgument(c);
+        else right.InitializeWithArgument(c);
+    }
+
     protected void LoadCombatInstance(CombatInstance instance)
     {
         if (this.currentActiveCombat == instance) return;
@@ -253,12 +278,16 @@ public class scr_Menu_Combat : scr_Menu
         if (this.currentActiveCombat != null) UnloadCombatInstance();
         actorTabs.Clear();
 
+        LoadCombatRoom(instance.backgroundImgPath);
+
         this.currentActiveCombat = instance;
         this.currentActiveCombat.Observer_InstanceUpdate += OnInstanceUpdate;
 
         Utility.DestroyAllChildrenFrom (charaList_teamA);
         Utility.DestroyAllChildrenFrom (charaList_teamB);
 
+        //scrollLeft = left.GetComponent<ScrollRect>();
+        //scrollRight = right.GetComponent<ScrollRect>();
         // for each team, draw their character box in respective transform
         // for enemy team, decide on their action and draw action
 
@@ -269,6 +298,8 @@ public class scr_Menu_Combat : scr_Menu
     }
     public Dictionary<int, scr_prefab_actortab> actorTabs = new Dictionary<int, scr_prefab_actortab>();
 
+    //public RectTransform left, right;
+    //protected ScrollRect scrollLeft, scrollRight;
     string _turnCount = string.Empty;
     int turnCount = -1;
     private void OnInstanceUpdate()
@@ -298,6 +329,19 @@ public class scr_Menu_Combat : scr_Menu
             actorTabs.Add(c.RefID, rect);
         }
 
+        centerActionList.anchoredPosition = new Vector2(0, -1000);
+
+        charaList_teamA.anchoredPosition = new Vector2(0, -1000);
+        charaList_teamB.anchoredPosition = new Vector2(0, -1000);
+
+        //if (scrollLeft != null) scrollLeft.normalizedPosition = Vector3.zero;
+        //else Debug.LogError("nope");
+        //if (scrollRight != null) scrollRight.normalizedPosition = Vector3.zero;
+        //else Debug.LogError("nope");
+
+        //left.horizontalScroller.ScrollPageUp();// = Vector3.zero;
+        //right.normalizedPosition = Vector3.zero;
+
         Utility.DestroyAllChildrenFrom(InTurn_Actions);
         Utility.DestroyAllChildrenFrom(EOT_Actions, 1);
 
@@ -319,7 +363,7 @@ public class scr_Menu_Combat : scr_Menu
                 ActionEntry entry = Instantiate(prefab_ActionEntry);
                 entry.SelfRect.SetParent(InTurn_Actions, false);
                 entry.isHostile = currentActiveCombat.teamB.hasActor(act.ownerRef.RefID);
-                entry.Initialize(act);
+                entry.Initialize(act, this, true);
             }
             act = act.Next ;
         }
@@ -331,7 +375,7 @@ public class scr_Menu_Combat : scr_Menu
             ActionEntry entry = Instantiate(prefab_ActionEntry);
             entry.SelfRect.SetParent(EOT_Actions, false);
             entry.isHostile = currentActiveCombat.teamB.hasActor(eot.ownerRef.RefID);
-            entry.Initialize(eot);
+            entry.Initialize(eot, this, true);
             eot = eot.Next;
         }
         actionList.No_EOT_message.gameObject.SetActive(!hasEOT);
@@ -511,7 +555,7 @@ public class scr_Menu_Combat : scr_Menu
             }
             else text.gameObject.SetActive(false);
 
-            return (isActive || scr_System_CampaignManager.current.DebugMode) && text.gameObject.activeInHierarchy;
+            return isActive && text.gameObject.activeInHierarchy;
         }
 
         public void ResetAction(CombatActionInstance instance, int displayIndex)
@@ -567,7 +611,7 @@ public class scr_Menu_Combat : scr_Menu
                 text.gameObject.SetActive(false);
             }
 
-            return (isActive || scr_System_CampaignManager.current.DebugMode) && text.gameObject.activeInHierarchy;
+            return isActive && text.gameObject.activeInHierarchy;
         }
 
         public void OnClickButton()

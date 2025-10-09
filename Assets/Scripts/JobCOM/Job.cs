@@ -251,7 +251,6 @@ public class Job : IDisposable, I_Disposable
         actorJobComplete.Remove(charaRef);
     }
 
-    [System.Serializable]
     public class COM_Match
     {
         public string comID = "";
@@ -340,7 +339,7 @@ public class Job : IDisposable, I_Disposable
     
     */
 
-    public virtual List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false)
+    public virtual List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false, List<string> debug = null)
     {
         Debug.Log("UNIMPLEMENTED MAKEPACKAGE FUNCTION");
         return new List<ActionPackage>();
@@ -548,7 +547,14 @@ public class Job : IDisposable, I_Disposable
     /// Return true if job.parentRoom is player current room, and that player is not Unconscious<br/>
     /// if debug mode, then still allow player to see even if unconscious
     /// </summary>
-    [JsonIgnore] bool isJobVisibleToPlayer { get { return this.ParentRoom.RefID == scr_System_CampaignManager.current.CurrentRoom.RefID; } }//&& (scr_System_CampaignManager.current.isPlayerConscious || scr_System_CampaignManager.current.DebugMode); }}
+    [JsonIgnore] bool isJobVisibleToPlayer { get {
+            if (this.ParentRoom == null)
+            {
+                Debug.LogError($"isJobVisibleToPlayer ParentRoom null, ref [{this.RefID}] [{this.DisplayName}]");
+            }
+            
+            
+            return this.ParentRoom.RefID == scr_System_CampaignManager.current.CurrentRoom.RefID; } }//&& (scr_System_CampaignManager.current.isPlayerConscious || scr_System_CampaignManager.current.DebugMode); }}
 
     public void CollectLogs(ActionPackage ap)
     {

@@ -44,21 +44,25 @@
             "baseWeight":1,
             "resultText":"exp_event_Utnapishtim_terminal_result_alarmEnemy",
             "eventID":"exp_event_Utnapishtim_combat_avoidable",
-            "overrideTargetScope":true,
-            "TargetValidators":
+            "overrideTargetGeneration":true,
+            "TargetGenerations":
             [
                 {
-                    "refKeys":["enemy","teamB_frontline"],
-                    "baseScope":"Generate",
-                    "chara_conditions":[
-                        {"parameters":["village_huntsman_scythe"]}
-                    ]
-                },
-                {
-                    "refKeys":["enemy","teamB_backline"],
-                    "baseScope":"Generate",
-                    "chara_conditions":[
-                        {"parameters":["village_huntsman_scythe"]}
+                    "factionTemplate":"AlwaysHostile",
+                    "encounterTemplate":
+                    {
+                        "encounterWeights":{
+                            "nameless_guardian_encounter_1":5,
+                            "nameless_guardian_encounter_2":3,
+                            "nameless_guardian_encounter_3":3
+                        },
+                        "frontlineKeys":["enemy","teamB_frontline"],
+                        "supportKeys":["enemy","teamB_backline"]
+                    },
+                    "factionInventory":
+                    [
+                        { "itemID":"consumable_fruit_tomato", "itemNameOverwrite":"", "itemCount":2, "itemCountOverride":false  },
+                        { "itemID":"item_trash", "itemNameOverwrite":"", "itemCount":3, "itemCountOverride":false  }
                     ]
                 }
             ]

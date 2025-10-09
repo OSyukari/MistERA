@@ -728,6 +728,24 @@
                                 "kojo_default_com_furniture_takingBreak_accept_success_4"  ]
             }
         ]
+    }, 
+    {
+        "ID": "com_furniture_takingLongBreak",
+        "variants":
+        [
+            {   "requirements": [ { "requireEPFailure":true } ],
+                "_comment":"failure variant",
+                "responses":[   "kojo_default_com_furniture_takingBreak_refuse_1", 
+                                "kojo_default_com_furniture_takingBreak_refuse_2" ]
+            },
+            {   "requirements": [ { "requireSelfAction":true } ],
+                "_comment":"barely success variant",
+                "responses":[   "kojo_default_com_furniture_takingBreak_accept_success_1",
+                                "kojo_default_com_furniture_takingBreak_accept_success_2",
+                                "kojo_default_com_furniture_takingBreak_accept_success_3" ,
+                                "kojo_default_com_furniture_takingBreak_accept_success_4"  ]
+            }
+        ]
     },
     {
         "ID": "com_furniture_playVideoGames",

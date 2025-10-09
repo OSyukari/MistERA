@@ -62,6 +62,7 @@ public class MapPlan
     public List<string> managerBaseIDs = new List<string>();
     public List<WorkHoursInit> workHours = null;
     public List<WorkModuleInit> workModules = new List<WorkModuleInit>();
+    public List<string> explorationKeywords = new List<string>();
     public List<SalesInventoryInit> salesInventory = new List<SalesInventoryInit>();
     public string salesCurrency = "";
     public List<int> mealHours = new List<int>();

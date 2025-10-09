@@ -13,10 +13,33 @@ public static class TeamReqUtility
         team = new List<Character_Trainable>();
         foreach (var i in p.ManagedChara)
         {
+            var status = p.GetStatus(i);
+            switch(status)
+            {
+                case Manageable_GuestStatus.Prisoner:
+                    if (!q.allowPrisoner) continue;
+                    break;
+                case Manageable_GuestStatus.Hidden:
+                    if (!q.allowHidden) continue;
+                    break;
+                case Manageable_GuestStatus.Visitor:
+                    if (!q.allowVisitor) continue;
+                    break;
+                default:
+                    break;
+            }
+
+            if (q.requireCombat)
+            {
+                if (!i.canFight) continue;
+                else if (status != Manageable_GuestStatus.Manager && status != Manageable_GuestStatus.Member && status != Manageable_GuestStatus.Visitor) continue;
+            }
+
             if (CharaReqUtility.Validate( q.charaReq, ref tooltip, i)) team.Add(i);
         }
         return team.Count >= q.minTeamCount && team.Count <= q.maxTeamCount;
     }
+
 
     public static bool Validate(ExpEvents.TeamReq q, List<Character_Trainable> list)
     {
@@ -79,11 +102,49 @@ public static class ExpeditionUtility
         return Utility.DiceUntil(100, 60-currentMin, (int)(exp.EventRate * 100));
     }
 
-    public static ExpResults RandResult(ExpEvents exp, ActionPackage p)
+    public static ExpResults RandResult(ExpEvents exp, ActionPackage_Expedition p)
     {
         var dict = new Dictionary<ExpResults, int>();
+
+        string lockedFaction = "";
+
+        foreach(var c in p.Actors)
+        {
+            if (c.FactionManager.isPartyLocked)
+            {
+                lockedFaction = c.FactionManager.CurrentLockedParty.ID;
+                break;
+            }
+        }
+
         foreach (var i in exp.possibleResults)
         {
+            if (i.TargetGenerations.Count > 0)
+            {
+                bool targetGenValid = true;
+                string factionTemplate = p.Job_Expedition == null ? "" : p.Job_Expedition.FactionOwner_Party.OwnerFaction.ID;
+                /*
+                foreach(var gen in i.TargetGenerations)
+                {
+                    if (lockedFaction != "" && gen.factionTemplate != "" && gen.factionTemplate != lockedFaction)
+                    {   
+                        // then check if target is already kidnapped
+                        // target is kidnapped if current faction current party guest status is visitor or prisoner
+
+                        // allow gen if first kidnap and if same faction kidnap
+                        // do not allow 2nd kidnap
+                        targetGenValid = false;
+                        break;
+                    }
+                }
+                if (!targetGenValid)
+                {
+                    Debug.Log($"Exp RandResult [{exp.eventID}] excluding result generating factionTemplate due to active actor locked in [{lockedFaction}]");
+                    // cannot resolve a second generation in a 
+                    continue;
+                }*/
+                // check if targetgen conflict with p.
+            }
             var ii = GetWeight(i, p.Actors);
             if (ii < 1) continue;
             dict.Add(i, ii);

@@ -67,7 +67,6 @@ public class scr_panel_COMmanager : scr_Menu
             ChangeCurrentTab(COMTabs.Sex);
 
         }
-        //UpdateJobCOM();
         if(scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room) ValidateAll();
     }
 
@@ -98,7 +97,6 @@ public class scr_panel_COMmanager : scr_Menu
 
     private void OnCurrentTargetChange(int refID)
     {
-        //UpdateJobCOM();
         if (refID == 0) ChangeCurrentTab(COMTabs.Interaction);
 
         UpdateEquipBox();
@@ -588,28 +586,7 @@ public class scr_panel_COMmanager : scr_Menu
                     button.gameObject.SetActive(false);
 #endif
                     break;
-/*
-                case -7700: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "mood", 1)); break;
-                case -7701: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "mood", -1)); break;
-                case -7702: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "stress", 1)); break;
-                case -7703: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "stress", -1)); break;
-                case -7704: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "lust", 1)); break;
-                case -7705: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "lust", -1)); break;
-                case -7706: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "trust", 10)); break;
-                case -7707: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "trust", -10)); break;
-                case -7708: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "fear", 10)); break;
-                case -7709: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "fear", -10)); break;
-                case -7710: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "goodwill", 10)); break;
-                case -7711: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "goodwill", -10)); break;
-                case -7712: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "badwill", 10)); break;
-                case -7713: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "badwill", -10)); break;
-                case -7714: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "desire", 10)); break;
-                case -7715: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "desire", -10)); break;
-                case -7716: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "pride", 10)); break;
-                case -7717: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "pride", -10)); break;
-                case -7718: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "corruption", 10)); break;
-                case -7719: button.Initialize(this, new ButtonValidator_ModCharaPersonality(this, "corruption", -10)); break;
-           */     default:
+                default:
                     //button.Initialize(this, button_alwaysValid);
                     break;
             }
@@ -621,8 +598,6 @@ public class scr_panel_COMmanager : scr_Menu
 
         }
 
-        //UpdateJobCOM();
-        // build all presetList
         ValidateAll();
     }
 
@@ -853,7 +828,7 @@ public class scr_panel_COMmanager : scr_Menu
 
                     if ((j as Job_Furniture).allusableCOMs.Count > 0)
                     {
-                        if (jfurn.isContainer)
+                        if (jfurn.Container != null || jfurn.isContainer)
                         {
                             scr_IndividualCOMBox newScript = Instantiate(prefab_IndividualCOMBox);
                             newScript.title.text = jfurn.DisplayName;
@@ -861,11 +836,14 @@ public class scr_panel_COMmanager : scr_Menu
 
                             RectTransform newRect = newScript.GetComponent<RectTransform>();
                             newRect.SetParent(Box_FurnitureCOMsList, false);
-
-                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true))
+                            List<string> debugLogger = null;
+                            List<string> coms = new List<string>();
+                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true, debugLogger))
                             {
-                                MakeCOMButton(newScript.list, buttonPrefab_COM, j, ap.targetCOM, ap.targetCOM.COMRepeat, false, ap);
+                                coms.Add(ap.targetCOM.DisplayName());
+                                MakeCOMButton(newScript.list, buttonPrefab_COM, j, ap.targetCOM, true, false, ap);
                             }
+                            //Debug.Log($"Log AvailablePackages [{String.Join("|",coms)}]\n{String.Join("\n",debugLogger)}");
                             furnitureRectList.Add(jfurn.RefID, newScript);
                         }
                         else
@@ -874,7 +852,7 @@ public class scr_panel_COMmanager : scr_Menu
 
                             foreach(var ap in packages)
                             {
-                                MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, false, true);
+                                MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true);
                             }
                             
                             
@@ -901,7 +879,7 @@ public class scr_panel_COMmanager : scr_Menu
                 {
                     foreach (var ap in j.JoinablePackages(0))
                     {
-                        MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, false, false);
+                        MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, false);
                     }
                 }
 
@@ -1483,15 +1461,13 @@ public class scr_panel_COMmanager : scr_Menu
             //if (com.comTags.Contains("sex") && )
             tooltip = "";
 
-
-
             if (package == null)
             {
                 Debug.LogError("COMVALIDATOR ISBUTTON VALID ERROR PACKAGE NULL");
                 return false;
             }
 #if UNITY_EDITOR
-            tooltip += "AP " + package.DisplayName + " isSex[" + (package as ActionPackage_Sex != null) + "] isInteract [" + (package as ActionPackage_Interaction != null) + "]\n";
+            tooltip += "COM " + package.DisplayName + " isSex[" + (package as ActionPackage_Sex != null) + "] isInteract [" + (package as ActionPackage_Interaction != null) + "]\n";
 #endif
 
             if (parent.ValidateCOMByTags(com))
@@ -1520,7 +1496,19 @@ else */
                     else if (package is ActionPackage_Interaction || package is ActionPackage_ProductionOrder)
                     {
                         var doers = new List<int>();
-                        var receivers = new List<int>();
+                        var receivers = new List<int>(cachedReceivers);
+                        bool forbidInjectTarget = false;
+                        List<int> targets = new List<int>();
+                        if (package.targetCOM is COM_Character_Remove && job is Job_Furniture && (job as Job_Furniture).Container != null)
+                        {
+                            var container = (job as Job_Furniture).Container as Job_Furniture.JobContainer_Chara;
+                            if (container != null)
+                            {
+                                targets.AddRange(container.CharaRefs);
+                                forbidInjectTarget = true;
+                            }
+
+                        }
 #if UNITY_EDITOR
                         if (false)
                         {
@@ -1528,10 +1516,9 @@ else */
                             if (cachedReceivers.Count > 0) Debug.LogError($"COMMANAGER resetCOM cachedReceivers [{String.Join("|", cachedReceivers)}]");
                         }
 #endif
-                        List<int> targets = new List<int>();
                         var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
-                        if (currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
-                        targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
+                        if (!forbidInjectTarget && currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
+                        if (!forbidInjectTarget) targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
                         targets = targets.Distinct().ToList();
                         targets.Remove(0);
                         targets.RemoveAll(x => doers.Contains(x) || receivers.Contains(x));
@@ -1556,12 +1543,12 @@ else */
                     {
                         returnVal = false;
                         tooltip += "package did not pass internal validation\n";
-                    }
-                    else if (job is Job_Furniture && job.ExecutingPackages.FindAll(x=>!x.isTemporaryAP).Count > 0)
+                    }/*
+                    else if (job is Job_Furniture && job.ExecutingPackages.FindAll(x=>!x.isTemporaryAP).Count >= 0)
                     {
                         returnVal = false;
                         tooltip += "target furniture cannot accept new packages\n";
-                    }
+                    }*/
                     else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
                     {
                         returnVal = false;
@@ -1612,6 +1599,10 @@ else */
 
             tooltip += $"\nJobRef {jobRefID}";
 
+            foreach (var ep in package.ListEP)
+            {
+                tooltip += $"\nEP:{(ep.Doer == null ? "null" : ep.Doer.FirstName)}->{(ep.Receiver == null ? "null" : ep.Receiver.FirstName)}";
+            }
             if (returnVal) display = display && true;
             else if (!(com.HideWhenInvalid || hidingOverride)) display = display && true;
             else if (com.comTags.Contains("player")) display = display && true;
@@ -1810,15 +1801,10 @@ else */
 
                 parent.currentSexJob = null;
                 (job as Job_Sex_Group).EndJob();
-                //parent.RefreshTitle(scr_System_CampaignManager.current.CurrentTargetRef);
-                //parent.UpdateJobCOM();
             }
 
             scr_System_CampaignManager.current.FreeUpdate(-1, txt);
 
-            //scr_System_CampaignManager.current.UpdateScene();
-            //scr_System_CampaignManager.current.FindInstanceByID(scr_System_CampaignManager.current.CurrentTarget).currentJobRefID = refe;
-            //parent.UpdateJobCOM(refe);
         }
     }
 
@@ -2244,7 +2230,7 @@ else */
 
             var addTofaction = scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction;
 
-            c.FactionManager.SetTempHomeFaction(addTofaction.ID);
+            c.FactionManager.SetTempHomeFaction(addTofaction.ID, Manageable_GuestStatus.Prisoner, false);
 
             //scr_System_CampaignManager.current.CurrentRoom.AddItem(WorldManager.Instantiate(itemID));
             scr_System_CampaignManager.current.NotifyUpdate();

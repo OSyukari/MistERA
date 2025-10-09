@@ -49,9 +49,9 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
             selfCanvas.blocksRaycasts = false;
             consoleInput.text = string.Empty;
 
-            parentCanvas.interactable = false;
-            parentCanvas.alpha = 0;
-            parentCanvas.blocksRaycasts = false;
+           // parentCanvas.interactable = false;
+            //parentCanvas.alpha = 0;
+           // parentCanvas.blocksRaycasts = false;
             scr_System_CampaignManager.current.UpdateScene();
         }
         else

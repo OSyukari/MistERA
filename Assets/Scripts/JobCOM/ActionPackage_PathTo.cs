@@ -27,7 +27,9 @@ public class ActionPackage_PathTo : ActionPackage
         {
             if (_path == null && doerRef != -1 && TargetRoom != null)
             {
-                _path = scr_System_CampaignManager.current.Map.Findpath(doerRef, TargetRoom.RefID).ToList();
+                var pp = scr_System_CampaignManager.current.Map.Findpath(doerRef, TargetRoom.RefID);
+                if (pp == null) return null;
+                _path = pp.ToList();
             }
             return _path;
         }

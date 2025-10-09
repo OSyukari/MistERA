@@ -58,7 +58,7 @@
                 "valueBase":{
                     "comment1":"calculation method: first gather all valid statMods(depending on context)",
                     "comment2":" [(baseValue) (value * mult) + (modKey*N)(value * mult)] * finalMod_mult + finalMod_value",
-                    "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999
+                    "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":1.0, "valueCeiling":9999
                 },
                 "valueCalculations":
                 [
@@ -130,7 +130,7 @@
                 "valueBase":{
                     "comment1":"calculation method: first gather all valid statMods(depending on context)",
                     "comment2":" [(baseValue) (value * mult) + (modKey*N)(value * mult)] * finalMod_mult + finalMod_value",
-                    "baseValue_value":0.0, "baseValue_mult":10.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999
+                    "baseValue_value":10.0, "baseValue_mult":5.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":1.0, "valueCeiling":9999
                 },
                 "valueCalculations":
                 [
@@ -140,7 +140,7 @@
                         "_comment3":"statGetter add context key",
                         "_comment4":"type: setBase, setMult, addBase, addMult. setBase and setMult will conflict with same ones",
 
-                        "modKey":"baseValue", "type":"setBase", "contextKey":[], "conditions":[],
+                        "modKey":"baseValue", "type":"addBase", "contextKey":[], "conditions":[],
                         "valueType":"getStatValue", "valueString":"Constitution"
                     }
                 ]
@@ -153,7 +153,7 @@
                 "valueBase":{
                     "comment1":"calculation method: first gather all valid statMods(depending on context)",
                     "comment2":" [(baseValue) (value * mult) + (modKey*N)(value * mult)] * finalMod_mult + finalMod_value",
-                    "baseValue_value":0.0, "baseValue_mult":10.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999
+                    "baseValue_value":10.0, "baseValue_mult":5.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":1.0, "valueCeiling":9999
                 },
                 "valueCalculations":
                 [
@@ -163,7 +163,7 @@
                         "_comment3":"statGetter add context key",
                         "_comment4":"type: setBase, setMult, addBase, addMult. setBase and setMult will conflict with same ones",
 
-                        "modKey":"baseValue", "type":"setBase", "contextKey":[], "conditions":[],
+                        "modKey":"baseValue", "type":"addBase", "contextKey":[], "conditions":[],
                         "valueType":"getStatValue", "valueString":"Willpower"
                     }
                 ]

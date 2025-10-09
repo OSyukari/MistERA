@@ -18,7 +18,6 @@ public interface I_CombatItem
 /// Instantiated: World Gen, Cum
 /// Destroyed: Digest, MergeItem
 /// </summary>
-[System.Serializable]
 public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
 {
     [JsonProperty] protected string parentID = "";   // stay consistent with parent

@@ -10,15 +10,18 @@ using UnityEngine.EventSystems;
 public class scr_bgImageSwapper : MonoBehaviour
 {
     // Start is called before the first frame update
+    public bool monitorCurrentRoom = false;
     private void Start()
     {
-        scr_System_CampaignManager.current.Observer_CurrentRoom += OnRoomChange;
         image.color = disabledColor;
-
-        OnRoomChange(0, scr_System_CampaignManager.current.CurrentRoom);
+        if (monitorCurrentRoom)
+        {
+            scr_System_CampaignManager.current.Observer_CurrentRoom += OnRoomChange;
+            OnRoomChange(0, scr_System_CampaignManager.current.CurrentRoom);
+        }
     }
 
-    Coroutine co = null;
+    public Coroutine co = null;
 
     private void OnRoomChange(int updateSequence, Room_Instance room)
     {
@@ -40,7 +43,7 @@ public class scr_bgImageSwapper : MonoBehaviour
         }
     }
 
-    private IEnumerator roomchange(string a)
+    public IEnumerator roomchange(string a)
     {
         Texture2D loaded = null;
         yield return AssetsLoader.LoadTextureCoroutine(a, texture => loaded = texture);

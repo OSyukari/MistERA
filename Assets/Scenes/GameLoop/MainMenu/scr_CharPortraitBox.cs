@@ -69,7 +69,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         // Debug.Log("ReadCurrentChar");
         if (id == -1) return;
         else if (!this.gameObject.activeInHierarchy) return;
-        else if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Logs) return;
+        //else if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Logs) return;
         else CheckCharaChange(id);
         
     }
@@ -90,12 +90,22 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         CheckCharaChange(refID);
         return true;
     }
+    public bool InitializeWithArgument(Character_Trainable chara)
+    {
+        if (chara == null) return false;
+        CheckCharaChange(chara);
+        return true;
+    }
 
     PortraitManager PreviousRef = null;
 
     private void CheckCharaChange(int refID)
     {
         var chara = scr_System_CampaignManager.current.FindInstanceByID(refID);
+        CheckCharaChange(chara == null ? null : chara.PortraitManager);
+    }
+    private void CheckCharaChange(Character_Trainable chara)
+    {
         CheckCharaChange(chara == null ? null : chara.PortraitManager);
     }
 

@@ -7,8 +7,12 @@ using TMPro;
 using System.Linq;
 using System;
 
-public class scr_prefab_actortab : MonoBehaviour
+public class scr_prefab_actortab : MonoBehaviour, IPointerEnterHandler
 {
+    public List<Image> transparent = new List<Image>();
+
+    public scr_CharIconBox imageBox;
+
     public scr_HoverableText nameBox, hp, mp, posture, status, action, location;
     public scr_SelectableText btn_plus, btn_minus;
 
@@ -32,11 +36,24 @@ public class scr_prefab_actortab : MonoBehaviour
         this.Parent = Parent;
         this.Stats = Stats as CombatStatManager;
         this.c = c;
+
+        imageBox.InitializeWithArgument(this.c.RefID, null, this.Stats);
+
         Utility.DestroyAllChildrenFrom( actionList);
 
         this.isHostile = isHostile;
-        this.Parent.MakeModCountButton(this, this.btn_minus, true);
-        this.Parent.MakeModCountButton(this, this.btn_plus, false);
+
+
+        if (isHostile)
+        {
+            btn_minus.gameObject.SetActive(false);
+            btn_plus.gameObject.SetActive(false);
+        }
+        else
+        {
+            this.Parent.MakeModCountButton(this, this.btn_minus, true);
+            this.Parent.MakeModCountButton(this, this.btn_plus, false);
+        }
         this.Parent.MakeEOTActionButton(c, this.extra_EOTAction);
     }
 
@@ -79,17 +96,22 @@ public class scr_prefab_actortab : MonoBehaviour
     public void UpdateContent(CombatInstance Handler, bool useOverride = false)
     {
         this.nameBox.SetText(Handler.GetName(c));
+        if (scr_System_CampaignManager.current.DebugMode) this.nameBox.SetExternalTooltip($"refid: {c.RefID}");
+
+        this.imageBox.OnUpdateNotice();
+
         this.status.SetText("");
-        if (Stats.HP != null) Stats.HP.Draw(this.hp);
-        else this.hp.SetText("-");
+
+        //if (Stats.HP != null) Stats.HP.Draw(this.hp);
+        //else this.hp.SetText("-");
 
         location.SetText(Handler.GetLocationName(c));
 
-        if (Stats.MP != null) Stats.MP.Draw(this.mp);
-        else this.mp.SetText("-");
+        //if (Stats.MP != null) Stats.MP.Draw(this.mp);
+        //else this.mp.SetText("-");
         //this.hp.SetText($"HP {(Stats.HP != null ? $"{Stats.HP.Value}/{Stats.HP.MaxValue}" : "-/-")}");
         //this.mp.SetText($"MP {(Stats.MP != null ? $"{Stats.MP.Value}/{Stats.MP.MaxValue}" : "-/-")}");
-        CombatUtility.DrawPosture(Stats, this.posture);
+        //CombatUtility.DrawPosture(Stats, this.posture);
 
         bool canPush = Handler.roundMaxAction > 2 && Stats.CanPush;
 
@@ -133,5 +155,11 @@ public class scr_prefab_actortab : MonoBehaviour
             tempList.Remove(act.ActionSlotIndex);
         }
         foreach(var key in tempList) actions[key].ResetAction(null, this.overrideCount);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        //Debug.Log($"pointer enter {c.CallName}");
+        Parent.LoadChara(this.c, !isHostile);
     }
 }

@@ -7,7 +7,6 @@ using System.IO;
 using System.Collections;
 using System.Linq;
 
-[System.Serializable]
 public abstract class Character_SerializableBase
 {
     public string baseID = "";
@@ -22,7 +21,6 @@ public abstract class Character_SerializableBase
     }
 }
 
-[System.Serializable]
 public class Character_SerializableSafe : Character_SerializableBase
 {
     public CharaSafeTemplate Template = null;
@@ -43,7 +41,6 @@ public class Character_SerializableSafe : Character_SerializableBase
     }
 }
 
-[System.Serializable]
 public class Character_SerializableTrainable : Character_SerializableBase
 {
     public CharaTrainableTemplate Template = null;

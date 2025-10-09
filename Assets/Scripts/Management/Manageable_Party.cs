@@ -42,6 +42,8 @@ public interface I_IsJobGiver
     [JsonIgnore] public List<Character_Trainable> Managers { get; }
     [JsonIgnore] public List<Character_Trainable> ManagedChara { get; }
     [JsonIgnore] public bool isPlayerFaction { get; }
+    [JsonIgnore]
+    public bool isMealHour { get ;  }
 }
 
 [System.Serializable]
@@ -72,7 +74,8 @@ public class Manageable_Party : I_IsJobGiver
         this._recurringCooldown = 0;
         this._recurringTicked = false;
     }
-
+    [JsonIgnore]
+    public bool isMealHour { get { return this.OwnerFaction.isMealHour; } }
     public bool AllowPassNight = true;
     public int RecurringCooldown = 0;
     public bool IsRecurring = false;
@@ -163,13 +166,34 @@ public class Manageable_Party : I_IsJobGiver
     public void ExpeditionEnd()
     {
         this._recurringCooldown = this.RecurringCooldown;
+        // clear all prisoners
+        var list = charaGuestStatus.Keys.ToList();
+        foreach(var i in list)
+        {
+            if (charaGuestStatus[i] == Manageable_GuestStatus.Prisoner)
+            {
+                var c = scr_System_CampaignManager.current.FindInstanceByID(i);
+                RemoveFromFaction(c);
+            }
+        }
     }
 
     public bool TryStartExpedition()
     {
         if (_recurringCooldown <= 0 && !this._recurringTicked)
         {
+            this.Job.ExpeditionResults.Clear();
             this._recurringTicked = true;
+
+            foreach(var c in this.ManagedChara)
+            {
+                if (this.charaPartyComposition.ContainsKey(c.RefID) && !c.canFight)
+                {
+                    this.Job.AddResult("failed to start expedition due to chara cannot fight", new List<string>(), new List<Character_Trainable>() { c });
+                    return false;
+                }
+            }
+
             return true;
         }
         else if (!this._recurringTicked)
@@ -187,11 +211,17 @@ public class Manageable_Party : I_IsJobGiver
 
     [JsonIgnore] public bool isPlayerFaction { get { return this.OwnerFaction.isPlayerFaction; } }
 
+    public Manageable_GuestStatus GetStatus(Character_Trainable c)
+    {
+        if (this.charaGuestStatus.TryGetValue(c.RefID, out var status)) return status;
+        else return Manageable_GuestStatus.Hidden;
+    }
+
     public PartyAvailability GetAvailability(out string tooltip)
     {
         if (isActive)
         {
-            tooltip = "party is active";
+            tooltip = LocalizeDictionary.QueryThenParse("ui_management_partyAvailability_active");
             return PartyAvailability.Active;
         }
 
@@ -199,7 +229,7 @@ public class Manageable_Party : I_IsJobGiver
         List<string> ttips = new List<string>();
         if (this.ManagedRefs.Count < 1)
         {
-            tooltip = "does not have any member";
+            tooltip = LocalizeDictionary.QueryThenParse("ui_management_partyAvailability_nomember");
             return PartyAvailability.Unavailable;
         }
         bool canAct = true;
@@ -208,12 +238,12 @@ public class Manageable_Party : I_IsJobGiver
             if (!i.canAct)
             {
                 canAct = false;
-                ttips.Add($"{i.FirstName} cannot act");
+                ttips.Add(LocalizeDictionary.QueryThenParse("ui_management_partyAvailability_cannotAct").Replace("$name$", i.FirstName));
             }
             else if (i.FactionManager.CurrentActiveParty != null && i.FactionManager.CurrentActiveParty != this)
             {
                 canAct = false;
-                ttips.Add($"{i.FirstName} is active in another party");
+                ttips.Add(LocalizeDictionary.QueryThenParse("ui_management_partyAvailability_occupied").Replace("$name$", i.FirstName));
             }
         }
         if (!canAct)
@@ -221,7 +251,12 @@ public class Manageable_Party : I_IsJobGiver
             tooltip = String.Join("\n", ttips);
             return PartyAvailability.Unavailable;
         }
-        else return PartyAvailability.Inactive;
+        else
+        {
+
+            tooltip = LocalizeDictionary.QueryThenParse("ui_management_partyAvailability_inactive");
+            return PartyAvailability.Inactive;
+        }
     }
 
     /// <summary>
@@ -238,6 +273,14 @@ public class Manageable_Party : I_IsJobGiver
         {
             return Job != null && Job.isActive;
         } }
+    [JsonIgnore]
+    public bool hasExpeditionSet
+    {
+        get
+        {
+            return Job != null && Job.Expedition != null;
+        }
+    }
 
     public string ID;
 
@@ -282,7 +325,7 @@ public class Manageable_Party : I_IsJobGiver
     /// </summary>
     /// <param name="c"></param>
     /// <param name="guestStatus"></param>
-    public void AddToFaction(Character_Trainable c, Manageable_GuestStatus guestStatus)
+    public void AddToFaction(Character_Trainable c, Manageable_GuestStatus guestStatus, bool sendEvent = true)
     {
         //c.AddToFaction(this);
         if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus);
@@ -291,7 +334,16 @@ public class Manageable_Party : I_IsJobGiver
         if (!charaPartyComposition.ContainsKey(c.RefID)) charaPartyComposition.Add(c.RefID, PartyComposition.frontline);
 
         // set manager roles
-        if (!OwnerFaction.ManagedChara.Contains(c)) OwnerFaction.AddToFaction(c, guestStatus);
+        if (!OwnerFaction.ManagedChara.Contains(c)) OwnerFaction.AddToFaction(c, guestStatus, false);
+
+        if (sendEvent && guestStatus == Manageable_GuestStatus.Prisoner)
+        {
+            var ev = new EventInstance(c, "OnCharaImprison", "");
+            ev.AppendStrings.Add("partyName", new List<string>() { this.FactionDisplayName });
+            ev.AppendStrings.Add("factionName", new List<string>() { this.OwnerFaction.FactionDisplayName });
+            ev.displayOverride = this.OwnerFaction.isPlayerFaction;
+            scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+        }
 
         _managedChara = null;
 
@@ -305,6 +357,14 @@ public class Manageable_Party : I_IsJobGiver
         _managedChara = null;
 
         c.FactionManager.RemovePartyTracker(this);
+
+        if (ManagedRefs.Count < 1 && !isPlayerFaction)
+        {
+            scr_System_CampaignManager.current.Unregister(Job);
+            scr_System_CampaignManager.current.Map.UnregisterRoom(MainExit.RefID);
+            Inventory.Destroy();
+            this.OwnerFaction.RemoveSubfaction(this);
+        }
     }
 
     public List<Job_Furniture> GetValidJobs_Meal(Character_Trainable chara, int currentHour, List<string> s = null)
@@ -520,9 +580,40 @@ public class Manageable_Party : I_IsJobGiver
         RefreshRoomJobs();
     }
 
+    public void NotifyCharaKidnapped(Character_Trainable c, Manageable_Party kidnapLoc)
+    {
+        this.Job.AddResult($"{c.FirstName} is kidnapped at {kidnapLoc.FactionDisplayName}", new List<string>(), new List<Character_Trainable>() { c});
+        if (!this.Job.hasUnresolvedResult) return;
+        foreach(var i in this.Job.ExpeditionResults)
+        {
+            foreach(var result in i.Value)
+            {
+                if (result.unresolved == null || result.unresolved.resolved) continue;
+                result.unresolved.NotifyCharaExit(c.RefID);
+            }
+        }
+    }
+
     public List<int> RoomOwners(int roomRef)
     {
         return this.ManagedRefs;
+    }
+
+    public bool skipTryGetJob(Character_Trainable c)
+    {
+        if (charaGuestStatus.TryGetValue(c.RefID, out var status))
+        {
+            return status == Manageable_GuestStatus.Hidden;
+        }
+        else return false;
+    }
+    public bool isPrisoner(Character_Trainable c)
+    {
+        if (charaGuestStatus.TryGetValue(c.RefID, out var status))
+        {
+            return status == Manageable_GuestStatus.Prisoner;
+        }
+        else return false;
     }
 
     [JsonProperty] protected Dictionary<int, PartyComposition> charaPartyComposition = new Dictionary<int, PartyComposition>();
@@ -540,6 +631,14 @@ public class Manageable_Party : I_IsJobGiver
                 foreach(var i in this.ManagedRefs) _managedChara.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
             }
             return _managedChara;
+        }
+    }
+    [JsonIgnore]
+    public List<Character_Trainable> ManagedChara_Displayables
+    {
+        get
+        {
+            return ManagedChara.FindAll(x => GetStatus(x) != Manageable_GuestStatus.Hidden);
         }
     }
     [JsonProperty] protected Dictionary<int, List<int>> managedRoomRefs = null;
@@ -617,6 +716,16 @@ public class Manageable_Party : I_IsJobGiver
     [JsonProperty] protected string DisplayName = "";
 
     [JsonIgnore]
+    public string BackgroundImagePath
+    {
+        get
+        {
+            return this.Job == null || this.Job.Expedition == null ? "" : this.Job.Expedition.backgroundImagePath;
+        }
+    }
+
+
+    [JsonIgnore]
     public string FactionDisplayName
     {
         get
@@ -626,6 +735,15 @@ public class Manageable_Party : I_IsJobGiver
         set
         {
             this.DisplayName = value;
+        }
+    }
+
+    [JsonIgnore]
+    public string FullFactionDisplayName
+    {
+        get
+        {
+            return $"{this.OwnerFaction.FactionDisplayName}_{this.FactionDisplayName}";
         }
     }
 

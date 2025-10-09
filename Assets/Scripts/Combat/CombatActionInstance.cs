@@ -545,6 +545,13 @@ public class CombatActionInstance
         }
     }
 
+    public bool isHostile
+    {
+        get { 
+        
+            return targetRef != null && Handler.AreOnOpposingTeam(ownerRef, targetRef);
+        } }
+
     public int ActionSlotIndex = -1;//{ get { return this.BaseSpeed % 10 == 0 ? (int)(this.BaseSpeed / -10) : -1; } }
     public CombatActionInstance(CombatInstance handler, Character_Trainable ownerRef, I_CombatItem sourceRef, CombatAction actionRef, Character_Trainable targetRef, int BaseSpeed, int roundIndex, int slotIndex, bool isEOT = false)
     {

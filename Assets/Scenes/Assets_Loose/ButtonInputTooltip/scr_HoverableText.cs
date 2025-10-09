@@ -178,5 +178,8 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
        
     }
 
-
+    public void SetColor(Color32 color)
+    {
+        this.m_TextMeshPro.color = color;
+    }
 }

@@ -61,6 +61,7 @@
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_combat",
         "line": "exp_event_Utnapishtim_combat_avoidable_ev03",
+        "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
         "nextEntryLabel":"br_combat_start"
     },
     {
@@ -70,7 +71,7 @@
         "options":[
         {   
             "option": "silent branch event, this shouldnt be displayed",
-            "Results": [ { "Type":"StartCombat" , "arguments":["exp_event_Utnapishtim_combat_training_end","exp_event_combat_draw","exp_event_Utnapishtim_combat_training_end"]}] 
+            "Results": [ { "Type":"StartCombat" , "arguments":["exp_event_combat_victory","exp_event_combat_draw","exp_event_combat_defeat"]}] 
         }
         ]
     },
@@ -78,12 +79,14 @@
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_avoid",
         "line": "exp_event_Utnapishtim_combat_avoidable_ev02",
+        "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
         "isLast": true
     },
     {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_error",
         "line": "exp_event_Utnapishtim_combat_avoidable_ev99",
+        "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
         "isLast": true
     }
                 ]
@@ -101,7 +104,7 @@
 "exp_event_Utnapishtim_combat_avoidable_ev01_op1":"回避敌人（探索进度下降）",
 "exp_event_Utnapishtim_combat_avoidable_ev01_op2":"开始战斗",
 "exp_event_Utnapishtim_combat_avoidable_ev02":"$party.name$的小队成功回避了敌人",
-"exp_event_Utnapishtim_combat_avoidable_ev03":"战斗开始！",
+"exp_event_Utnapishtim_combat_avoidable_ev03":"$party.name$与$enemy.name$开始战斗！",
 "exp_event_Utnapishtim_combat_avoidable_ev99":"警告！由于内容缺失，该事件强制终止。"
             }
         }

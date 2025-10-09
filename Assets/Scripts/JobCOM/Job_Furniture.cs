@@ -185,7 +185,7 @@ public class Job_Furniture : Job
         return pkgs;
     }
 
-    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false)
+    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false, List<string> debug = null)
     {
         //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
         // 2 - if actor is in room, set COM package
@@ -193,7 +193,11 @@ public class Job_Furniture : Job
         var m = FactionOwner is Manageable ? FactionOwner as Manageable : null;
         // during registration, chara addactor register currentjobschedule, or register recreation / meal / etc
 
-        List<COM> possibleCOMs = actorRefID.Contains(c.RefID) ? actorRefIDStorage[c.RefID].Match(this) : (allowInvalid ? allusableCOMs : new List<COM>());
+        List<COM> possibleCOMs = c.RefID != scr_System_CampaignManager.current.Player.RefID && actorRefID.Contains(c.RefID) ? actorRefIDStorage[c.RefID].Match(this) : (allowInvalid ? allusableCOMs : new List<COM>());
+
+        List<string> comnames = new List<string>();
+        foreach (var i in possibleCOMs) comnames.Add(i.DisplayName());
+        if (debug != null) debug.Add($"possibleCOMs containRef[{actorRefID.Contains(c.RefID)}] allowInvalid[{allowInvalid}]\nCOMs:{String.Join("|", comnames)}");
 
         if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} looking for {actorRefIDStorage[c.RefID].comID} at step 1");
         
@@ -206,22 +210,37 @@ public class Job_Furniture : Job
                                                 );
             //if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} at step 2");
         }
-
         List<ActionPackage> results = new List<ActionPackage>();
         foreach(var com in possibleCOMs)
         {
             Manageable.ProductionOrder po = null;
-            bool valid = false;
+            // bool valid = false;
+            /*if (com is COM_Character_Remove && this.Container != null && this.Container is JobContainer_Chara && (this.Container as JobContainer_Chara).CharaRefs)
+            {
+                var container = this.Container as JobContainer_Chara;
+                var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(container.CharaRefs), -1, po);
+                if (package.Validate() || allowInvalid)
+                {
+                    results.Add(package);
+                   // valid = true;
+                }
+            }
+            else*/
+            if (com is COM_TakeMeal && !FactionOwner.isMealHour) continue;
             if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner) && (!com.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out po)))))
             {
                 var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, po);
                 if (package.Validate() || allowInvalid)
                 {
                     results.Add(package);
-                    valid = true;
+                    if (debug != null) debug.Add($"add com {com.DisplayName()}");
+                    //  valid = true;
                 }
+                else if (debug != null) debug.Add($"com {com.DisplayName()} invalid");
+                
             }
-           // if (com.comTags.Contains("food_meal") && !valid) Debug.LogError($"mealcom {com.ID} failed playerCOM validation, allowinvalid {allowInvalid} hasfactionreq {(!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc2, out po))}");
+            else if(debug != null)  debug.Add($"com {com.DisplayName()} skipped");
+            // if (com.comTags.Contains("food_meal") && !valid) Debug.LogError($"mealcom {com.ID} failed playerCOM validation, allowinvalid {allowInvalid} hasfactionreq {(!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc2, out po))}");
         }
 
         return results;
@@ -391,9 +410,18 @@ public class Job_Furniture : Job
 
     public override string GetJobDescription(int charaRef)
     {
-        JobContainer_Chara jChara = Container as JobContainer_Chara;
-        if (isContainer && jChara != null && jChara.hasContent(charaRef)) return allusableCOMs.Find(x => x.comTags.Contains("character_trainable")).displayName;
-        else return base.GetJobDescription(charaRef);
+
+        if (packages_current.Find(x => x.actorRefs.Contains(charaRef)) == null && packages_previous.Find(x => x.actorRefs.Contains(charaRef)) == null)
+        {
+            JobContainer_Chara jChara = Container as JobContainer_Chara;
+            if (isContainer && jChara != null && jChara.hasContent(charaRef))
+            {
+                var containername = allusableCOMs.Find(x => x.comTags.Contains("character_trainable")).displayName;
+                if (containername != "") return containername;
+            }
+        }
+
+        return base.GetJobDescription(charaRef);
     }
 
 
@@ -562,6 +590,7 @@ public class Job_Furniture : Job
         }
 
         [JsonProperty] protected List<int> charaRefs = new List<int>();
+        [JsonIgnore] public List<int> CharaRefs { get { return charaRefs; } }
         protected List<Character_Trainable> charaCaches = null;
         [JsonIgnore] public List<Character_Trainable> Chara { get
             {
@@ -729,17 +758,18 @@ public class Job_Furniture : Job
     {
         // one job can only have one active comtype
         if (this.ParentInstance.FurnitureBase.furnitureSize <= 0) return true;
+        if (this.Container != null && this.Container.HasContent && com is COM_Character_Remove) return true;
         int i = (com.requirements.requirement.doerCount != -1 ? com.requirements.requirement.doerCount : 1) * (int)this.ParentInstance.FurnitureBase.furnitureSize;
         foreach (var p in packages_current)
         {
             if (p.isTemporaryAP) continue;
-            if (p.targetCOM != com) return false;
+           // if (p.targetCOM != com) return false;
             i -= p.actorRefs.Count;
         }
         foreach (var p in packages_previous)
         {
             if (p.isTemporaryAP) continue;
-            if (p.targetCOM != com) return false;
+            //if (p.targetCOM != com) return false;
             i -= p.actorRefs.Count;
         }
         if (i > 0) return true;

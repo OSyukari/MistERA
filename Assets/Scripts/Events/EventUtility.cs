@@ -6,7 +6,14 @@ using System.Linq;
 
 public static class EventUtility
 {
-    public static EventInstance StartEvent(Job_Expedition j, SerializableEventPackage p, bool startImmediate = false)
+    /// <summary>
+    /// This function does not automatically register and start this event in handler
+    /// </summary>
+    /// <param name="j"></param>
+    /// <param name="p"></param>
+    /// <param name="startImmediate"></param>
+    /// <returns></returns>
+    public static EventInstance StartEvent(Job_Expedition j, SerializableEventPackage p)
     {
         EventInstance inst = new EventInstance(scr_System_CampaignManager.current.Player, p.eventID, p.eventLabel, 50, false);
         foreach(var k in p.Targets)
@@ -20,6 +27,11 @@ public static class EventUtility
             inst.overrideTargetScope = true;
             inst.OverrideTargetScope = p.targetScopes;
         }
+        if (p.overrideTargetGen)
+        {
+            inst.overrideTargetGen = true;
+            inst.OverrideTargetGen = p.targetGens;
+        }
         inst.LoadNext(p.eventID, p.eventLabel);
         return inst;
         //scr_UpdateHandler.current.EventHandler.StartEvent(inst, startImmediate);
@@ -30,6 +42,106 @@ public static class EventUtility
     public static bool Validate(Event ev, EventInstance instance)
     {
         if (!isCharaValid(ev.SelfValidator, instance, instance.Self)) return false;
+
+        var targetGens = instance.overrideTargetGen ? instance.OverrideTargetGen : ev.TargetGeneration;
+        if (targetGens.Count > 0 && !instance.generated)
+        {
+            instance.generated = true;
+            foreach(var generationParameters in targetGens)
+            {
+                Manageable_Party party = null;
+                var baseFaction = generationParameters.factionTemplate == "" ? null : scr_System_CampaignManager.current.FindFactionByID(generationParameters.factionTemplate);
+                if (baseFaction != null)
+                {
+                    var key = generationParameters.mergeFactionKey;
+                    if (key != "" && instance.Targets.ContainsKey(key))
+                    {
+                        var faction = UtilityEX.GetActiveFactionFrom(instance.Targets[key]);
+                        if (faction != null && faction is Manageable_Party && (faction as Manageable_Party).OwnerFaction == baseFaction)
+                        {
+                            party = (Manageable_Party) faction;
+                        }
+                    }
+
+                    if (party == null) party = baseFaction.CreateParty();
+                }
+
+                if (party != null && generationParameters.encounterTemplate.isValid)
+                {
+                    var encounter = scr_System_Serializer.current.MasterList.Encounters.GetByID(generationParameters.encounterTemplate.GetRandEntry);
+                    if (encounter != null)
+                    {
+                        foreach(var i in  encounter.frontline)
+                        {
+                            var c = GenerateTargets(i);
+                            if (c != null)
+                            {
+                                c.FactionManager.AddToParty(party, Manageable_GuestStatus.Member, true);
+
+                                foreach (var key in generationParameters.encounterTemplate.frontlineKeys)
+                                {
+                                    if (!instance.Targets.ContainsKey(key)) instance.Targets.Add(key, new List<Character_Trainable>());
+                                    instance.Targets[key].Add(c);
+                                    instance.Targets[key] = instance.Targets[key].Distinct().ToList();
+                                }
+                            }
+                        }
+                        foreach (var i in encounter.support)
+                        {
+                            var c = GenerateTargets(i);
+                            if (c != null)
+                            {
+                                c.FactionManager.AddToParty(party, Manageable_GuestStatus.Member, true);
+
+                                foreach (var key in generationParameters.encounterTemplate.supportKeys)
+                                {
+                                    if (!instance.Targets.ContainsKey(key)) instance.Targets.Add(key, new List<Character_Trainable>());
+                                    instance.Targets[key].Add(c);
+                                    instance.Targets[key] = instance.Targets[key].Distinct().ToList();
+                                }
+                            }
+                        }
+
+                        foreach(var item in encounter.inventory)
+                        {
+                            party.Inventory.AddItem(WorldManager.Instantiate(item));
+                        }
+                    }
+                }
+
+                foreach (var i in generationParameters.charaTemplate)
+                {
+                    var c = GenerateTargets(i.baseID);
+                    if (c != null)
+                    {
+                        if (party != null)
+                        {
+                            c.FactionManager.AddToParty(party, Manageable_GuestStatus.Member, true);
+
+                        }
+
+                        foreach (var key in i.refKeys)
+                        {
+                            if (!instance.Targets.ContainsKey(key)) instance.Targets.Add(key, new List<Character_Trainable>());
+                            instance.Targets[key].Add(c);
+                            instance.Targets[key] = instance.Targets[key].Distinct().ToList();
+                        }
+                    }
+                }
+
+                if (party != null)
+                {
+                    foreach(var entry in generationParameters.factionInventory)
+                    {
+                        party.Inventory.AddItem(WorldManager.Instantiate(entry));
+                    }
+                }else if (generationParameters.factionInventory.Count > 0)
+                {
+                    Debug.Log($"Event NPC Generation error: failed to create party for [{generationParameters.factionTemplate}], this will cause error down the line");
+                }
+            }
+        }
+
         var targetScopes = instance.overrideTargetScope ? instance.OverrideTargetScope : ev.TargetValidators;
         foreach (var targetscope in targetScopes)
         {
@@ -73,13 +185,9 @@ public static class EventUtility
         }
     }
 
-    public static Character_Trainable GenerateTargets(Event.CharaCondition r)
+    public static Character_Trainable GenerateTargets(string r)
     {
-        if (r.parameters.Count >= 1)
-        {
-            return scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(r.parameters[0], scr_System_CampaignManager.current.StatisRoom);
-        }
-        return null;
+        return scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(r, scr_System_CampaignManager.current.TemporaryRoom);
     }
 
     public static bool isValid(Event.CharaCondition r, EventInstance ev, Character_Trainable c)
@@ -123,13 +231,13 @@ public static class EventUtility
             case "isRoomOwner":
                 if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool isRoomOwner))
                 {
-                    return room != null && UtilityEX.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, isRoomOwner);
+                    return room != null && Utility.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, isRoomOwner);
                 }
                 else return false;
             case "canMove":
                 if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool canMove))
                 {
-                    return UtilityEX.CompareValue(c.canMove, LogicalOperand.eq, canMove);
+                    return Utility.CompareValue(c.canMove, LogicalOperand.eq, canMove);
                 }
                 else return false;
             case "hasJoinableAP":
@@ -139,7 +247,7 @@ public static class EventUtility
                 if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool isWorkingOnJob))
                 {
                     if (debug) Debug.Log($"isWorkingOnJob {c.FirstName} {c.isWorkingOnJob} eq {isWorkingOnJob}");
-                    return UtilityEX.CompareValue(c.isWorkingOnJob, LogicalOperand.eq, isWorkingOnJob);
+                    return Utility.CompareValue(c.isWorkingOnJob, LogicalOperand.eq, isWorkingOnJob);
                 }
                 else
                 {
@@ -153,7 +261,7 @@ public static class EventUtility
                 if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool canLeave))
                 {
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"checking {c.FirstName} canleave {c.canLeave}, currentjob {c.CurrentJobRefID} ");
-                    return UtilityEX.CompareValue(c.canLeave, LogicalOperand.eq, canLeave);
+                    return Utility.CompareValue(c.canLeave, LogicalOperand.eq, canLeave);
                 }
                 else
                 {
@@ -166,7 +274,7 @@ public static class EventUtility
                 if ((r.parameters.Count >= 4 && float.TryParse(r.parameters[3], out value) || r.parameters.Count >= 3) && Enum.TryParse<LogicalOperand>(r.parameters[2], false, out var op) && c.Stats.HasStat(r.parameters[1]))
                 {
                     var valueC = c.Stats.GetStatValue(r.parameters[1]);
-                    return UtilityEX.CompareValue(valueC, op, value);
+                    return Utility.CompareValue(valueC, op, value);
                 }
                 else return false;
             default:
@@ -221,25 +329,15 @@ public static class EventUtility
                         }
                     }
                     break;
-                case TargetScope.Generate:
-                    foreach(var i in scope.chara_conditions)
-                    {
-                        var c = GenerateTargets(i);
-                        if (c != null)
-                        {
-                            c.isTemporaryActor = true;
-                            list.Add(c);
-                        }
-                    }
-                    break;
+
 
                 default: break;
             }
         }
         foreach(var key in scope.refKeys)
         {
-            if (!library.ContainsKey(key)) library.Add(key, list);
-            else library[key].AddRange(list);
+            if (!library.ContainsKey(key)) library.Add(key, new List<Character_Trainable>());
+            library[key].AddRange(list);
             library[key] = library[key].Distinct().ToList();
         }
         return (scope.minTargetCount == -1 || list.Count >= scope.minTargetCount) && (scope.maxTargetCount == -1 || list.Count <= scope.maxTargetCount);
@@ -251,9 +349,9 @@ public static class EventUtility
         foreach (var cond in op.self_chara_conditions) if (!isValid(cond, owner, owner.Self)) return false;
         foreach (var kvp in op.target_chara_conditions)
         {
-            if (!owner.Targets.ContainsKey(kvp.Key))
+            if (!owner.Targets.ContainsKey(kvp.Key) || owner.Targets[kvp.Key].Count < 1)
             {
-                Debug.LogError($"EventInstance {owner.Name} does not contain scoped target Key [{kvp.Key}]");
+                Debug.LogError($"EventInstance {owner.Name} does not contain scoped target Key [{kvp.Key}] or count < 1, isGenerated? {owner.generated}");
                 return false;
             }
             foreach (var c in owner.Targets[kvp.Key])
@@ -291,6 +389,8 @@ public static class EventUtility
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, rA ? $"<align=\"right\">{content}</align>" : content, "", false));
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
+
+        foreach(var i in block.Results) Execute(owner, i);
 
         owner.LoadNext(block.nextEventID, block.nextEntryLabel);
         owner.Notify(EventStatus.running);
@@ -369,12 +469,12 @@ public static class EventUtility
     }
 
 
-    public static bool Execute(EventInstance owner, Event.EventEntry.Options.Executor exec)
+    public static bool Execute(EventInstance owner, Event.EventEntry.Executor exec)
     {
         //Debug.Log($"Execute option type {Type}");
         switch (exec.Type)
         {
-            case Event.EventEntry.Options.ExecutionType.FullHPRecovery:
+            case Event.EventEntry.ExecutionType.FullHPRecovery:
                 if (exec.arguments.Count < 1)
                 {
                     return false;
@@ -396,7 +496,7 @@ public static class EventUtility
                     c.Stats.HP.RestoreMax();// RestoreAll();
                 }
                 return true;
-            case Event.EventEntry.Options.ExecutionType.FullRecovery:
+            case Event.EventEntry.ExecutionType.FullRecovery:
                 if (exec.arguments.Count < 1)
                 {
                     return false;
@@ -418,7 +518,7 @@ public static class EventUtility
                 }
                 return true;
 
-            case Event.EventEntry.Options.ExecutionType.ModStatEXValue:
+            case Event.EventEntry.ExecutionType.ModStatEXValue:
                 if (exec.arguments.Count < 3)
                 { 
                     return false; 
@@ -447,7 +547,7 @@ public static class EventUtility
                     c.Stats.ModStatValue(exec.arguments[1], value);
                 }
                 return true;
-            case Event.EventEntry.Options.ExecutionType.JumpToLabel:
+            case Event.EventEntry.ExecutionType.JumpToLabel:
                 if (exec.arguments.Count != 2)
                 {
 #if UNITY_EDITOR
@@ -463,9 +563,9 @@ public static class EventUtility
                     owner.LoadNext(exec.arguments[0], exec.arguments[1]);
                     return true;
                 }
-            case Event.EventEntry.Options.ExecutionType.EventEnd:
+            case Event.EventEntry.ExecutionType.EventEnd:
                 return false;
-            case Event.EventEntry.Options.ExecutionType.JoinTargetJob:
+            case Event.EventEntry.ExecutionType.JoinTargetJob:
                 if (exec.arguments.Count >= 2)
                 {
                     var targetList = owner.Targets[exec.arguments[0]];
@@ -487,7 +587,7 @@ public static class EventUtility
                     return false;
                 }
 
-            case Event.EventEntry.Options.ExecutionType.InterruptAP:
+            case Event.EventEntry.ExecutionType.InterruptAP:
                 if (exec.arguments.Count < 3)
                 {
 #if UNITY_EDITOR
@@ -578,42 +678,68 @@ public static class EventUtility
                         }
                     }
                 }
-            case Event.EventEntry.Options.ExecutionType.WakeUp:
+            case Event.EventEntry.ExecutionType.WakeUp:
                 owner.Self.WakeUp(true);
                 return true;
-            case Event.EventEntry.Options.ExecutionType.ExistCallbackID:
-                var execKeyID = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
-                if (!owner.FunctionCalls.ContainsKey(execKeyID) || owner.FunctionCalls[execKeyID].Count < 1) return false;
-                else return true;
-            case Event.EventEntry.Options.ExecutionType.ExecuteCallback:
-                var execKey = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
-                if (!owner.FunctionCalls.ContainsKey(execKey))
+            case Event.EventEntry.ExecutionType.ExistAppendStrings:
+                var appendStrID = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
+                if (appendStrID == "")
                 {
-                    Debug.LogError($"cannot find key [{execKey}] in ExecuteCallback");
-                    return false;
-                }
-                else if (owner.FunctionCalls[execKey].Count < 1)
-                {
-                    //Debug.Log($" [{execKey}] in ExecuteCallback has no registered functioncalls");
+                    Debug.Log($"cannot find key ExistAppendStrings");
                     return false;
                 }
                 else
                 {
-                    foreach (var callback in owner.FunctionCalls[execKey])
+                    if (owner.AppendStrings.ContainsKey(appendStrID))
                     {
-                        callback.Invoke();
+                        Debug.Log($"found key ExistAppendStrings {appendStrID}");
+                        return true;
                     }
-                    return true;
+                    else
+                    {
+                        Debug.LogError($"cannot find ExistAppendStrings {appendStrID} in {owner.Name}");
+                        return false;
+                    }
                 }
-            case Event.EventEntry.Options.ExecutionType.FlushLogs:
+            case Event.EventEntry.ExecutionType.ExistCallbackID:
+                var execKeyID = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
+                if (!owner.FunctionCalls.ContainsKey(execKeyID) || owner.FunctionCalls[execKeyID].Count < 1) return false;
+                else return true;
+            case Event.EventEntry.ExecutionType.ExecuteCallback:
+                if (exec.arguments.Count >= 1)
+                {
+                    var execKey = exec.arguments[0];
+                    if (!owner.FunctionCalls.ContainsKey(execKey)) return false;
+                    else if (owner.FunctionCalls[execKey].Count < 1) return false;
+                    else
+                    {
+                        foreach (var callback in owner.FunctionCalls[execKey]) callback.Invoke();
+                        return true;
+                    }
+                }
+                else return false;
+            case Event.EventEntry.ExecutionType.ExecuteCallbackPermissive:
+                if (exec.arguments.Count >= 1)
+                {
+                    var execKey = exec.arguments[0];
+                    if (!owner.FunctionCalls.ContainsKey(execKey)) return true;
+                    else if (owner.FunctionCalls[execKey].Count < 1) return true;
+                    else
+                    {
+                        foreach (var callback in owner.FunctionCalls[execKey]) callback.Invoke();
+                        return true;
+                    }
+                }
+                else return false;                
+            case Event.EventEntry.ExecutionType.FlushLogs:
                 scr_UpdateHandler.current.FlushCollectedLogs(true, false);
                 return true;
-            case Event.EventEntry.Options.ExecutionType.FlushAppendStrings:
+            case Event.EventEntry.ExecutionType.FlushAppendStrings:
                 var execKey2 = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
                 if (!owner.AppendStrings.ContainsKey(execKey2)) return false;
                 scr_System_CampaignManager.current.AddLog(owner.Self == null ? -1 : owner.Self.RefID, String.Join("\n", owner.AppendStrings[execKey2]));
                 return true;
-            case Event.EventEntry.Options.ExecutionType.LeaveRoom:
+            case Event.EventEntry.ExecutionType.LeaveRoom:
                 if (owner.Self == null) return false;
 
                 var currentRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(owner.Self.RefID);
@@ -628,7 +754,7 @@ public static class EventUtility
                 scr_System_CampaignManager.current.MoveCharacterTo(owner.Self.RefID, oneStepExit);
 
                 return true;
-            case Event.EventEntry.Options.ExecutionType.StartCombat:
+            case Event.EventEntry.ExecutionType.StartCombat:
                 if (exec.arguments.Count < 3)
                 {
                     return false;
@@ -644,11 +770,84 @@ public static class EventUtility
 
                 if (teamA.Actors.Count > 0 && teamB.Actors.Count > 0)
                 {
-                    scr_System_CampaignManager.current.StartCombat(teamA, teamB, exec.arguments[0], exec.arguments[1], exec.arguments[2], owner.Self == scr_System_CampaignManager.current.Player);
+                    scr_System_CampaignManager.current.StartCombat(teamA, teamB, exec.arguments[0], exec.arguments[1], exec.arguments[2], owner, owner.Self == scr_System_CampaignManager.current.Player);
                     return true;
                 }
                 else return false;
-            case Event.EventEntry.Options.ExecutionType.StartEvent:
+            case Event.EventEntry.ExecutionType.PartyKidnap:
+                if (exec.arguments.Count >= 3)
+                {
+                    //if (bool.TryParse(exec.arguments[2], out bool isPrisoner))
+                    //{
+                        Expedition kidnapExp = Expeditions.ExpeditionEntry.GetByID(exec.arguments[2]);
+                        Manageable_Party kidnapLoc = null; List<Character_Trainable> kidnappers = null;
+                        if (owner.Targets.ContainsKey(exec.arguments[1]))
+                        {
+                            kidnappers = owner.Targets[exec.arguments[1]];
+                            kidnapLoc = UtilityEX.GetActiveFactionFrom(kidnappers) as Manageable_Party;
+                        }
+                        if (kidnappers == null || kidnappers.Count < 1 || kidnapLoc == null || kidnapLoc.MainExit == null) return false;
+                        if (owner.Targets.ContainsKey(exec.arguments[0]))
+                        {
+                            var victims = owner.Targets[exec.arguments[0]];
+                            foreach (var i in victims) if (i.FactionManager.isPartyLocked) return false;
+                            foreach (var i in victims)
+                            {
+                                if (! i.FactionManager.AddToParty(kidnapLoc, Manageable_GuestStatus.Visitor, false, true))
+                                {
+                                    Debug.LogError("Erroe failed to add party, event abort");
+                                    return false;
+                                }
+                                scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
+                                i.ChangeCurrentJob(null);
+                            }
+                            foreach (var i in kidnappers)
+                            {
+                                scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
+                                kidnapLoc.AddToFaction(i, Manageable_GuestStatus.Hidden);
+                                if (!kidnapLoc.skipTryGetJob(i)) Debug.LogError("failed setting gueststatus hidden");
+                            }
+                            kidnapLoc.FactionDisplayName = kidnapExp.DisplayName;
+                            kidnapLoc.SetExpedition(kidnapExp);
+                            kidnapLoc.Job.AddResult("kidnapped!", new List<string>(), victims, true);
+                            return true;
+                        }
+                    //}
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.FactionExchangeInventory:
+                if (exec.arguments.Count < 6) return false;
+
+                if (bool.TryParse(exec.arguments[2], out var v1) && bool.TryParse(exec.arguments[3], out var v2) && bool.TryParse(exec.arguments[4], out var v3) && bool.TryParse(exec.arguments[5], out var v4))
+                {
+                    I_IsJobGiver faction_a = null, faction_b = null;
+
+                    switch (exec.arguments[0])
+                    {
+                        case "self":
+                            if (owner.Self != null)
+                            {
+                                faction_a = owner.Self.FactionManager.CurrentActiveParty != null ? owner.Self.FactionManager.CurrentActiveParty : owner.Self.FactionManager.CurrentlyActiveFaction;
+                                if (faction_a == null) faction_a = owner.Self.FactionManager.Faction_Home;
+                            }
+                            break;
+                        default:
+                            if (owner.Targets.ContainsKey(exec.arguments[0])) faction_a = UtilityEX.GetActiveFactionFrom(owner.Targets[exec.arguments[0]]);
+                            break;
+                    }
+
+                    if (owner.Targets.ContainsKey(exec.arguments[1])) faction_b = UtilityEX.GetActiveFactionFrom(owner.Targets[exec.arguments[1]]);
+                    
+                    if (faction_a == null || faction_b == null)
+                    {
+                        return false;
+                    }
+
+                    scr_System_CampaignManager.current.StartFactionExchange(faction_a, faction_b, v1, v2, v3, v4);
+                    return true;
+                }
+                else return false;
+            case Event.EventEntry.ExecutionType.StartEvent:
                 if (exec.arguments.Count >= 4)
                 {
                     var targetChars = new List<Character_Trainable>();

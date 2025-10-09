@@ -601,7 +601,7 @@ public class Character_Personality
                     {
                         var status = chara.Stats.GetStatusByStringMatch(statusID);
                         if (checkExistOnly) return status != null;
-                        else return status != null && UtilityEX.CompareValue(chara.Stats.GetStatusByStringMatch(statusID).Severity, operand, value);
+                        else return status != null && Utility.CompareValue(chara.Stats.GetStatusByStringMatch(statusID).Severity, operand, value);
                     }
                 }
 
@@ -618,7 +618,7 @@ public class Character_Personality
                     public bool Validate(RelationshipManager.Character_Relationship rel)
                     {
                         if (checkExistOnly) return (rel.Owner.Relationships.GetKojoVariableExist(isDailyVariable, rel, variableID) == (value != 0));
-                        else return UtilityEX.CompareValue(rel.Owner.Relationships.GetKojoVariable(isDailyVariable, rel, variableID), operand, value);
+                        else return Utility.CompareValue(rel.Owner.Relationships.GetKojoVariable(isDailyVariable, rel, variableID), operand, value);
 
                     }
                 }

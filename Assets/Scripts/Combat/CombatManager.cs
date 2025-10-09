@@ -10,6 +10,10 @@ public class TeamTemplate
     public string ID = "";
     public List<string> frontline = new List<string>();
     public List<string> support = new List<string>();
+    /// <summary>
+    /// this will only be used when generating actual encounter in a team
+    /// </summary>
+    public List<ItemEntry> inventory = new List<ItemEntry>();
     [JsonIgnore]
     public string Name
     { get
@@ -98,12 +102,12 @@ public class CombatManager
         {
             var CombatEndEv = new EventInstance(null, endEVID, "", 50, false);
             List<Character_Trainable> Aparty = new List<Character_Trainable>(instance.teamA.Actors), Bparty = new List<Character_Trainable>(instance.teamB.Actors);
+            CombatEndEv.Self = instance.isPlayerInstance ? scr_System_CampaignManager.current.Player : null;
             CombatEndEv.Targets.Add("party", Aparty);
             CombatEndEv.Targets.Add("enemy", Bparty);
             CombatEndEv.LoadNext(endEVID, "");
             scr_System_CampaignManager.current.RegisterViewChangeEventCallback(CombatEndEv);
         }
-
     }
 
     public bool isCharaInCombat(int charaRef)
@@ -131,7 +135,7 @@ public class CombatManager
         {
             if (!combatDummyRefIDs.ContainsKey(baseID))
             {
-                var chara = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(baseID, scr_System_CampaignManager.current.StatisRoom);
+                var chara = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(baseID, scr_System_CampaignManager.current.StasisRoom);
                 combatDummyRefIDs.Add(baseID, chara.RefID);
             }
             var refID = combatDummyRefIDs[baseID];
@@ -157,7 +161,7 @@ public class CombatManager
 
     }
 
-    public void StartCombat(TeamComposition teamA, TeamComposition teamB, string victoryEvID, string drawEvID, string defeatEvID, bool forcePlayerInstance = false)
+    public void StartCombat(TeamComposition teamA, TeamComposition teamB, string victoryEvID, string drawEvID, string defeatEvID, EventInstance source = null, bool forcePlayerInstance = false)
     {
         var nameA = new List<string>();
         var nameB = new List<string>();
@@ -182,11 +186,15 @@ public class CombatManager
 
         Debug.Log($"Starting combat with [{String.Join(" ", nameA)}] vs [{String.Join(" ", nameB)}]");
         
-        var cinst = new CombatInstance(teamA, teamB, true);
+        var cinst = new CombatInstance(teamA, teamB, true, source);
         cinst.victoryEventID = victoryEvID;
         cinst.drawEventID = drawEvID;
         cinst.defeatEventID = defeatEvID;
         cinst.forcePlayerInstance = forcePlayerInstance;
+        var faction = UtilityEX.GetActiveFactionFrom(teamA.Actors);
+        var imgpath = faction is Manageable_Party ? (faction as Manageable_Party).BackgroundImagePath : "";
+        cinst.backgroundImgPath = imgpath != "" ? imgpath : scr_System_CampaignManager.current.CurrentRoom.Base.roomImagePath;
+
         this.activeInstances.Add(cinst);
 
         Update();

@@ -78,7 +78,7 @@ public class Character_Factions
     /// if factionID is empty, then create faction with character name
     /// </summary>
     /// <param name="homeFactionID"></param>
-    public void SetHomeFaction(string homeFactionID, bool isManager = false)
+    public void SetHomeFaction(string homeFactionID, Manageable_GuestStatus status = Manageable_GuestStatus.Member, bool sendEvent = true)
     {
         if (homeFactionID != FactionID_Home)
         {
@@ -86,7 +86,7 @@ public class Character_Factions
             this.FactionID_Home = homeFactionID;
         }
         //Debug.Log("SetHomeFaction called on " + Owner.FirstName + " with arguments homeFactionID["+ homeFactionID+ "] isManager["+isManager+"]");
-        if (this.Faction_Home != null) Faction_Home.AddToFaction(Owner, isManager ? Manageable_GuestStatus.Manager : Manageable_GuestStatus.Member);
+        if (this.Faction_Home != null) Faction_Home.AddToFaction(Owner, status, sendEvent);
         UpdateFactionPriorityList();
     }
 
@@ -95,7 +95,7 @@ public class Character_Factions
     /// if factionID is empty, set to null
     /// </summary>
     /// <param name="tempFactionID"></param>
-    public void SetTempHomeFaction(string tempFactionID)
+    public void SetTempHomeFaction(string tempFactionID, Manageable_GuestStatus status = Manageable_GuestStatus.Visitor, bool sendEvent = true)
     {
         if (tempFactionID != Faction_Home_Temporary_FactionID)
         {
@@ -103,7 +103,7 @@ public class Character_Factions
             this.Faction_Home_Temporary_FactionID = tempFactionID;
         }
 
-        if (Faction_Home_Temporary != null) Faction_Home_Temporary.AddToFaction(Owner, Manageable_GuestStatus.Visitor);
+        if (Faction_Home_Temporary != null) Faction_Home_Temporary.AddToFaction(Owner, status, sendEvent);
         UpdateFactionPriorityList();
     }
 
@@ -165,8 +165,9 @@ public class Character_Factions
     [JsonProperty] string activePartyOwnerID = "";
     Manageable_Party _party = null;
 
+
     [JsonIgnore]
-    public Manageable_Party CurrentActiveParty
+    public Manageable_Party CurrentParty
     {
         get
         {
@@ -181,6 +182,42 @@ public class Character_Factions
             _party = value;
             activePartyID = _party == null ? "" : _party.ID;
             activePartyOwnerID = _party == null ? "" : _party.OwnerFaction.ID;
+        }
+    }
+
+    [JsonIgnore]
+    public Manageable_Party CurrentActiveParty
+    {
+        get
+        {
+            if (this.CurrentLockedParty != null) return this.CurrentLockedParty;
+            else if (this.CurrentParty != null) return this.CurrentParty;
+            return null;
+        }
+    }
+    [JsonIgnore]
+    public bool isPartyLocked { get { return this.CurrentLockedParty != null; } }
+
+    [JsonProperty] string lockedPartyID = "";
+    [JsonProperty] string lockedPartyOwnerID = "";
+    Manageable_Party _lockedparty = null;
+
+    [JsonIgnore]
+    public Manageable_Party CurrentLockedParty
+    {
+        get
+        {
+            if (_lockedparty == null && lockedPartyID != "" && lockedPartyOwnerID != "")
+            {
+                _lockedparty = scr_System_CampaignManager.current.FindFactionByID(lockedPartyOwnerID).GetParty(lockedPartyID);
+            }
+            return _lockedparty;
+        }
+        set
+        {
+            _lockedparty = value;
+            lockedPartyID = _lockedparty == null ? "" : _lockedparty.ID;
+            lockedPartyOwnerID = _lockedparty == null ? "" : _lockedparty.OwnerFaction.ID;
         }
     }
 
@@ -221,20 +258,50 @@ public class Character_Factions
     [JsonProperty] List<int> trackedPartyRef = new List<int>();
 
 
-    public bool AddToParty(I_IsJobGiver party, Manageable_GuestStatus status, bool setHomeFaction)
+    public bool AddToParty(I_IsJobGiver party, Manageable_GuestStatus status, bool setHomeFaction, bool isLock = false)
     {
         var p = party as Manageable_Party;
         if (p == null) return false;
 
-        return AddToParty(p, status, setHomeFaction);
+        return AddToParty(p, status, setHomeFaction, isLock);
     }
-    public bool AddToParty(Manageable_Party party, Manageable_GuestStatus status, bool setHomeFaction)
+    public bool AddToParty(Manageable_Party party, Manageable_GuestStatus status, bool setHomeFaction, bool isLock = false)
     {
-        if (this.CurrentActiveParty != null && this.CurrentActiveParty != party) return false;
+        //if (this.CurrentActiveParty != null && this.CurrentActiveParty != party) return false;
 
-        this.CurrentActiveParty = party;
-        party.AddToFaction(Owner, status);
+        if (isLock)
+        {
+            if (this.CurrentLockedParty != null && this.CurrentLockedParty != party)
+            {
+                Debug.LogError($"Error AddToParty, [{Owner.FirstName}] already locked to [{this.CurrentLockedParty.FullFactionDisplayName}], cannot lock to [{party.FullFactionDisplayName}]");
+                return false;
+            }
+            else this.CurrentLockedParty = party;
 
+            if (this.CurrentParty != null)
+            {
+                this.CurrentParty.NotifyCharaKidnapped(this.Owner, party);
+            }
+        }
+        else
+        {
+            if (this.CurrentParty != null && this.CurrentParty != party)
+            {
+                Debug.LogError($"Error AddToParty, [{Owner.FirstName}] already assigned to [{this.CurrentParty.FullFactionDisplayName}], cannot join [{party.FullFactionDisplayName}]");
+                return false;
+            }
+            else this.CurrentParty = party;
+        }
+
+        party.AddToFaction(Owner, status, true);
+
+        if (setHomeFaction)
+        {
+            if (Faction_Home == null) SetHomeFaction(party.OwnerFaction.ID, status, false);
+            else SetTempHomeFaction(party.OwnerFaction.ID, status, false);
+        }
+        
+        
         AddPartyTracker(party);
 
         UpdateFactionPriorityList();
@@ -244,13 +311,13 @@ public class Character_Factions
     /// Only wipe the CurrentActiveParty if match
     /// </summary>
     /// <param name="party"></param>
-    public void RemoveFromParty(Manageable_Party party)
+    /// <param name="forceRemove">allow removing anyg CurrentParty</param>
+    /// <param name="unlock">allow removing anything LockedParty</param>
+    public void RemoveFromParty(Manageable_Party party, bool forceRemove = false, bool unlock = false)
     {
-        if (this.CurrentActiveParty == party)
-        {
-            this.CurrentActiveParty = null;
-        }
-
+        if (this.CurrentLockedParty == party || unlock) this.CurrentLockedParty = null;
+        if (this.CurrentParty == party || forceRemove) this.CurrentParty = null;
+       
         UpdateFactionPriorityList();
     }
     /// <summary>
@@ -429,6 +496,8 @@ public class Character_Factions
         var consecutiveRestHour = scheduleValidation.Item2;
         var consecutiveSleepHours = scheduleValidation.Item1;
         var sleepHours = Owner.Stats.SleepHours;
+
+        if (HomeFactions.Count < 1) return;
 
         var homeSleepHour = (HomeFactions[0] as Manageable_HomeFaction).SharedSleepHour;
         if (consecutiveRestHour >= 24 || (homeSleepHour >= 0 && consecutiveSleepHours[homeSleepHour] > 0 && consecutiveSleepHours[(homeSleepHour + sleepHours) % 24] == consecutiveSleepHours[homeSleepHour] + sleepHours))

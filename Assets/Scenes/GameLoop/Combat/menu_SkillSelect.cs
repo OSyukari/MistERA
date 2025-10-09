@@ -401,7 +401,7 @@ public class menu_SkillSelect : scr_Menu, IPointerClickHandler
                 ActionEntry entry = Instantiate(prefab_ActionEntry);
                 entry.SelfRect.SetParent(InTurn_Actions, false);
                 entry.isHostile = Combat.teamB.hasActor(act.ownerRef.RefID);
-                entry.Initialize(act);
+                entry.Initialize(act, this.parent);
             }
             act = act.Next;
            // counter--;
@@ -415,7 +415,7 @@ public class menu_SkillSelect : scr_Menu, IPointerClickHandler
             ActionEntry entry = Instantiate(prefab_ActionEntry);
             entry.SelfRect.SetParent(EOT_Actions, false);
             entry.isHostile = Combat.teamB.hasActor(eot.ownerRef.RefID);
-            entry.Initialize(eot);
+            entry.Initialize(eot, this.parent);
             eot = eot.Next;
         }
         No_EOT_message.gameObject.SetActive(!hasEOT);

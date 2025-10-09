@@ -163,7 +163,7 @@ public class Character_Body
 
         foreach (string s in newbody)
         {
-            if (body.Find(x => x.Base.ID == s) != null) continue;
+            //if (body.Find(x => x.Base.ID == s) != null) continue;
            // Debug.LogError($"{Owner.FirstName} body addmissing on {s}");
             BodyPart_Instance b = new BodyPart_Instance();
             b.Initialize(s, Owner);

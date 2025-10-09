@@ -180,6 +180,12 @@ public class FactionInventory : Inventory
         }
     }
 
+    public override Item_Instance Split(Item_Instance item, int count)
+    {
+        tracker_cache = null;
+        return base.Split(item, count);
+    }
+
     public override bool AddItem(Item_Instance i)
     {
         var temp = tracker;
@@ -296,7 +302,7 @@ public class Inventory
 
     [JsonProperty] protected List<int> contentRefs = new List<int>();
     [JsonIgnore] public List<int> ContentRefs { get { return contentRefs; } }
-    private List<Item_Instance> contents_cache = null;
+    protected List<Item_Instance> contents_cache = null;
 
     /// <summary>
     /// This is a cached list, to remove item properly remove from contentrefs
@@ -319,9 +325,21 @@ public class Inventory
             }
             return contents_cache;
         }
+        set
+        {
+            contents_cache = null;
+        }
     }
-
-
+    public void Destroy()
+    {
+        foreach (var i in contentRefs)
+        {
+            var item = scr_System_CampaignManager.current.FindItemInstanceByID(i);
+            scr_System_CampaignManager.current.Unregister(item);
+        }
+        this.contentRefs.Clear();
+        this.Contents = null;
+    }
 
     public virtual bool AddItem(Item_Instance i)
     {
@@ -422,8 +440,26 @@ public class Inventory
             this.contentRefs.Remove(item.RefID);
             //this.Contents.Remove(item);
         }
+    }
 
-
+    /// <summary>
+    /// Split self item inner count by count, and return the count 
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    public virtual Item_Instance Split(Item_Instance item, int count)
+    {
+        if (!this.Contents.Contains(item)) return null;
+        if (count <= 0) return null;
+        if (count >= item.Count)
+        {
+            this.Remove(item);
+            return item;
+        }
+        var newInstance = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, count);
+        item.ModCount(-count);
+        return newInstance;
     }
 
 

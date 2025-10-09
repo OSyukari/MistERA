@@ -207,7 +207,7 @@ public class StatsManager : I_StatsManager
             if (Owner.Race == null) Debug.LogError("Owner " + Owner.FirstName + " Race Null");
 
             AddStatModifier(Owner.Race.stat_modifiers); // get statMods from race
-            AddStatModifier(Owner.RaceTemplate.stat_modifiers); // get statMods from racetemplate
+            if (Owner.RaceTemplate != null) AddStatModifier(Owner.RaceTemplate.stat_modifiers); // get statMods from racetemplate
             foreach(var equipRef in Owner.EquippedItemRefs)    // addstatmod equipment
             {
                 var equip = scr_System_CampaignManager.current.FindItemInstanceByID(equipRef);

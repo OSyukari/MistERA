@@ -5,10 +5,12 @@ using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.UI;
 using System.IO;
-using Newtonsoft.Json.Bson;
 
 public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    public bool isCombatBox = false;
+    public CombatStatManager CombatStats = null;
+
     public TextMeshProUGUI picture_AA;
     public Image picture;
     public RectTransform pictureBox;
@@ -25,12 +27,11 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
     private float internalSizeX;
     private RectTransform thisBox;
     public Image SelfBackground;
-    
+
     // Start is called before the first frame update
     private void Awake()
     {
         thisBox = this.GetComponent<RectTransform>();
-        SelfBackground.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
 
         internalSizeY = thisBox.sizeDelta.y;
         internalSizeX = thisBox.sizeDelta.x;
@@ -43,18 +44,36 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         box_Xray.gameObject.SetActive(false);
         box_ovum.gameObject.SetActive(false);
 
-        scr_System_CampaignManager.current.Observer_CurrentTarget += ReadCurrentChar;
-        scr_System_CampaignManager.current.Observer_UpdateNotice += OnUpdateNotice;
-        scr_UpdateHandler.current.Observer_PostUpdateTime_3 += OnPostUpdateTime3;
+
     }
 
     private void OnPostUpdateTime3()
     {
-        if (this.chara_refID < 1 || scr_System_CampaignManager.current.GetCharaRoomInstance(chara_refID).RefID != scr_System_CampaignManager.current.CurrentRoom.RefID)
+        bool destroy = false;
+
+        if (this.chara_refID < 1)
         {
-            scr_System_CampaignManager.current.Observer_CurrentTarget -= ReadCurrentChar;
-            scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= OnPostUpdateTime3;
-            scr_System_CampaignManager.current.Observer_UpdateNotice -= OnUpdateNotice;
+            destroy = true;
+        }
+        else if (!isCombatBox)
+        {
+            var room = scr_System_CampaignManager.current.GetCharaRoomInstance(chara_refID);
+            if (room == null || room.RefID != scr_System_CampaignManager.current.CurrentRoom.RefID)
+            {
+                destroy = true;
+            }
+        }
+ 
+
+        if (destroy)
+        {
+            if (!isCombatBox)
+            {
+                scr_System_CampaignManager.current.Observer_CurrentTarget -= ReadCurrentChar;
+                scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= OnPostUpdateTime3;
+                scr_System_CampaignManager.current.Observer_UpdateNotice -= OnUpdateNotice;
+            }
+
             Destroy(this.gameObject);
         }
         else
@@ -63,22 +82,36 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
     }
 
-    private void OnUpdateNotice(bool b)
+    public void OnUpdateNotice(bool b = false)
     {
         OnPostUpdateTime3();
     }
 
     private void ReadCurrentChar(int i)
     {
-        if (this.chara_refID == i) nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;
-        else nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
+        if (nameBox.gameObject.activeInHierarchy && !isCombatBox)
+        {
+            if (this.chara_refID == i) nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;
+            else nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
+        }
+            
     }
 
     Character_Trainable chara = null;
     int chara_refID = -1;
     Canvas canvas;
-    public bool InitializeWithArgument(int refID, Canvas canvas)
+
+
+    public bool InitializeWithArgument(int refID, Canvas canvas, CombatStatManager combatHandler = null)
     {
+        this.CombatStats = combatHandler;
+        if (this.CombatStats != null) isCombatBox = true;
+
+        nameBox.gameObject.SetActive(!this.isCombatBox);
+        rect_Combat.gameObject.SetActive(this.isCombatBox);
+        rect_nonCombat.gameObject.SetActive(!this.isCombatBox);
+        box_ovum.gameObject.SetActive(false);
+
         this.canvas = canvas;
         chara_refID = refID;
         chara = scr_System_CampaignManager.current.FindInstanceByID(chara_refID) as Character_Trainable;
@@ -95,89 +128,26 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
             
     }
-    /*
-    private void readTXT(string path, TextMeshProUGUI box)
-    {
-        var sr = new StreamReader(Application.dataPath + "/" + path);
-        var fileContents = sr.ReadToEnd();
-        sr.Close();
-        box.text = fileContents;
-    }
-
-    private Texture2D LoadTexture(string FilePath)
-    {
-
-        // Load a PNG or JPG file from disk to a Texture2D
-        // Returns null if load fails
-
-        Texture2D Tex2D;
-        byte[] FileData;
-
-        if (File.Exists(FilePath))
-        {
-            FileData = File.ReadAllBytes(FilePath);
-            Tex2D = new Texture2D(2, 2);           // Create new "empty" texture
-            if (Tex2D.LoadImage(FileData))           // Load the imagedata into the texture (size is set automatically)
-                return Tex2D;                 // If data = readable -> return texture
-        }
-        return null;                     // Return null if load failed
-
-    }*/
-
-    //Texture2D SpriteTexture = null;
-    //Sprite NewSprite;
-
-    /*
-    public void loadSprite(string path)
-    {
-        var image = this.picture;
-        if (path == null||path=="")
-        {
-            image.sprite = SpriteAsset.transparent;
-            return;
-        }
-        SpriteTexture = LoadTexture(Application.dataPath+"/"+path);
-        NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), 100.0f);
-        image.sprite = NewSprite;
-
-        // RESIZE IMAGE TO FIT MINIMUM
-        float resize = 0.0f;
-        bool resiz = false;
-        var targetSizeX = pictureBox.sizeDelta.x;
-        var targetSizeY = pictureBox.sizeDelta.y;
-
-        image.SetNativeSize();
-        //Debug.Log("image resize targetX [" + targetSizeX + "] targetY[" + targetSizeY + "] imageX ["+image.rectTransform.sizeDelta.x+"] imageY ["+ image.rectTransform.sizeDelta.y+"]");
-
-        /*
-        float x = image.rectTransform.sizeDelta.x * image.transform.localScale.x;
-        float y = image.rectTransform.sizeDelta.y * image.transform.localScale.y;
-
-        if (x + 0.01f < targetSizeX || y + 0.01f < targetSizeY)
-        {
-            resize = Mathf.Max(targetSizeX / (x + 0.01f), targetSizeY / (y + 0.01f));
-            resiz = true;
-        }
-        else if ((x - 0.01f) > targetSizeX || (y - 0.01f) > targetSizeY)
-        {
-            resize = Mathf.Max(targetSizeX / (x - 0.01f), targetSizeY / (y - 0.01f));
-            resiz = true;
-        }
-
-        if (resiz)
-        {
-            //Debug.Log("UpdateImage: resize localX " + aaBox.localScale.x + "*" + resize + " localY " + aaBox.localScale.y + "*" + resize + " localZ " + aaBox.localScale.z + "*" + resize);
-            image.transform.localScale = new Vector3(resize, resize, resize);
-        }
-    }
-*/
-
-
     private void Initialize()
     {
 
+        if (!isCombatBox) SelfBackground.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
+
         picture.gameObject.SetActive(true);
         mouseOver = false;
+
+        if (mp.selfRect.gameObject.activeInHierarchy &&( chara.Stats.MP == null || chara.Stats.MP.MaxValue < 1))
+        {
+            mp.selfRect.gameObject.SetActive(false);
+        }
+
+
+        if (!isCombatBox)
+        {
+            scr_System_CampaignManager.current.Observer_CurrentTarget += ReadCurrentChar;
+            scr_System_CampaignManager.current.Observer_UpdateNotice += OnUpdateNotice;
+            scr_UpdateHandler.current.Observer_PostUpdateTime_3 += OnPostUpdateTime3;
+        }
     }
 
     public RectTransform prefab_Canvas_charaDetail;
@@ -186,7 +156,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
     {
-        if (this.chara != null)
+        if (this.chara != null && !isCombatBox)
         {
             if (scr_System_CampaignManager.current.CurrentTargetRef != chara_refID)
             {
@@ -202,12 +172,12 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
     bool mouseOver;
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (mouseOver != true)
+        if (mouseOver != true && !isCombatBox)
         {
             //picture.gameObject.SetActive(true);
             //picture_AA.gameObject.SetActive(false);
             mouseOver = true;
-            nameBox.color = scr_System_CentralControl.current.Color_hover;
+            if (nameBox.gameObject.activeInHierarchy) nameBox.color = scr_System_CentralControl.current.Color_hover;
             updateImage();
 
         }
@@ -217,17 +187,22 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public void ForceExit()
     {
         mouseOver = false;
-        nameBox.color = scr_System_CentralControl.current.Color_neutral;
 
-        if (scr_System_CampaignManager.current.CurrentTargetRef == chara_refID && !scr_System_CampaignManager.current.displaySex) nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;
-        else nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
+        if (nameBox.gameObject.activeInHierarchy)
+        {
+            nameBox.color = scr_System_CentralControl.current.Color_neutral;
+
+            if (scr_System_CampaignManager.current.CurrentTargetRef == chara_refID && !scr_System_CampaignManager.current.displaySex) nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;
+            else nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
+        }
+
 
         updateImage();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (mouseOver != false) ForceExit();
+        if (mouseOver != false && !isCombatBox) ForceExit();
     }
 
     Coroutine coroutine = null;
@@ -279,21 +254,46 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
             if (box_ovum.gameObject.activeInHierarchy) box_ovum.gameObject.SetActive(false);
         }
 
-        ScaleStatBar(hp, chara.Stats.HP);
-        ScaleStatBar(mp, chara.Stats.MP);
-        ScaleStatBar(st, chara.Stats.Stamina);
-        ScaleStatBar(en, chara.Stats.Energy);
+        var cStats = CombatStats;
 
+        if (cStats != null && hp.selfRect.gameObject.activeInHierarchy)
+        {
+            cStats.HP.Draw(hp.text);
+            ScaleStatBar(hp.bar, cStats.HP);
+        }
+        if (cStats != null && mp.selfRect.gameObject.activeInHierarchy)
+        {
+            cStats.MP.Draw(mp.text);
+            ScaleStatBar(mp.bar, cStats.MP);
+        }
+        if (st.selfRect.gameObject.activeInHierarchy) ScaleStatBar(st.bar, chara.Stats.Stamina);
+        if (en.selfRect.gameObject.activeInHierarchy) ScaleStatBar(en.bar, chara.Stats.Energy);
+        if (cStats != null && posture.selfRect.gameObject.activeInHierarchy)
+        {
+            CombatUtility.DrawPosture(cStats, posture.text);
+            ScaleStatBar(posture.bar, cStats.Posture, cStats.MaxPosture);
+        }
+                
        // this.picture.SetNativeSize();
         //Debug.Log("refresh character " + chara.FirstName + " hp " + chara.Stats.HP.Value + "/" + chara.Stats.HP.MaxValue + " mp "+chara.Stats.MP.Value+"/"+ chara.Stats.MP.MaxValue+" st "+ chara.Stats.Stamina.Value+"/"+ chara.Stats.Stamina.MaxValue+" en "+ chara.Stats.Energy.Value+"/"+ chara.Stats.Energy.MaxValue);
     }
 
-    public RectTransform hp, mp, st, en;
+    public statBar hp, mp, st, en, posture;
+    public RectTransform rect_nonCombat, rect_Combat;
 
     private void ScaleStatBar(RectTransform bar, Stats_Derived_Extended_Instance stat)
     {
         var scale = bar.localScale;
         if (stat != null && stat.MaxValue > 0.2f) scale.x = stat.Value / stat.MaxValue;
+        else scale.x = 0f;
+        //Debug.Log("scale stat bar : " + stat.DisplayName + " " + stat.Value + "/" + stat.MaxValue);
+        bar.localScale = scale;
+    }
+
+    private void ScaleStatBar(RectTransform bar, float value, float maxValue)
+    {
+        var scale = bar.localScale;
+        if (maxValue > 0.2f) scale.x = value / maxValue;
         else scale.x = 0f;
         //Debug.Log("scale stat bar : " + stat.DisplayName + " " + stat.Value + "/" + stat.MaxValue);
         bar.localScale = scale;
@@ -321,20 +321,6 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         RefreshOvumBox();
     }
     */
-
-    private void SetSprite(Image image, Texture2D SpriteTexture)
-    {
-        if (SpriteTexture == null)
-        {
-            if (image.sprite == null || image.sprite != SpriteAsset.transparent) image.sprite = SpriteAsset.transparent;
-        }
-        else
-        {
-            if (image.sprite == null || image.sprite.texture != SpriteTexture) UtilityEX.LoadSprite(SpriteTexture, image);
-        }
-        image.SetNativeSize();
-
-    }
     /*
 private void xray_widget()
 {

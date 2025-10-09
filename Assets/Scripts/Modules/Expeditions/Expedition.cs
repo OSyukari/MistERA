@@ -48,6 +48,7 @@ public class Expedition
         {
             return LocalizeDictionary.QueryThenParse(ExpeditionID);
         } }
+    public string backgroundImagePath = "";
     public bool HasStartHour = false;
     public int ForceStartHour = 0;
     public int DurationHour = 0;
@@ -61,7 +62,7 @@ public class Expedition
     [JsonProperty] protected List<string> EventIDs = new List<string>();
 
     Dictionary<string, ExpEvents> _lut = new Dictionary<string, ExpEvents>();
-
+    public List<string> keywords = new List<string>();
     public List<string> FeatureKeywords = new List<string>();
 
     List<ExpEvents> _allEvents = null;

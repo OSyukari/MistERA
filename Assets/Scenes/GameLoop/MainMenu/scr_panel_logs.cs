@@ -265,7 +265,12 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
         if (scr_UpdateHandler.current.Updating || scr_UpdateHandler.current.EventHandler.Active || canAnimate)
         {
-            Debug.Log($"OnPointerClick updating[{scr_UpdateHandler.current.Updating}] evActive[{scr_UpdateHandler.current.EventHandler.Active}] canAnimate[{canAnimate}]");
+            if (scr_UpdateHandler.current.EventHandler.Active && !scr_UpdateHandler.current.EventHandler.Waiting && !canAnimate)
+            {
+                Debug.Log($"Pre! OnPointerClick updating[{scr_UpdateHandler.current.Updating}] waiting[{scr_UpdateHandler.current.EventHandler.Waiting}] evActive[{scr_UpdateHandler.current.EventHandler.Active}] canAnimate[{canAnimate}]");
+                scr_UpdateHandler.current.EventHandler.Run();
+            }
+            Debug.Log($"OnPointerClick updating[{scr_UpdateHandler.current.Updating}] waiting[{scr_UpdateHandler.current.EventHandler.Waiting}] evActive[{scr_UpdateHandler.current.EventHandler.Active}] canAnimate[{canAnimate}]");
             Observer_OnClick?.Invoke(eventData);
             if (canAnimate && !animationLock)
             {

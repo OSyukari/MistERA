@@ -1,0 +1,63 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "OnCharaImprison",
+                "SelfValidator":{
+                    "chara_conditions":[
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+    {
+        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+        "_comment":"npc handling, check auto push but default cancel",
+        "options":[
+            {   
+                "option": "branch where there is callbacks",
+                "Results": [ { "Type":"ExistAppendStrings", "arguments":["partyName"]},
+                             { "Type":"ExistAppendStrings", "arguments":["factionName"]},
+                             { "Type":"JumpToLabel", "arguments":["","br_party"]} ] 
+            },
+            {   
+                "option": "silent branch event, this shouldnt be displayed",
+                "Results": [ { "Type":"ExistAppendStrings", "arguments":["factionName"]},
+                             { "Type":"JumpToLabel", "arguments":["","br_noparty"]} ] 
+            },
+            {   
+                "option": "silent branch event, this shouldnt be displayed",
+                "Results": [ { "Type":"EventEnd" } ] 
+            }
+        ]
+    },
+    {
+        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "label": "br_party",
+        "isLast": true,
+        "line": "$self.name$被$factionName$的$partyName$小队捕获了！"
+    },
+    {
+        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "label": "br_noparty",
+        "isLast": true,
+        "line": "$self.name$被$factionName$捕获了！"
+    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"OnCharaImprison":"监禁事件"
+            },
+            "en-us":
+            {
+
+            }
+        }
+    }
+}

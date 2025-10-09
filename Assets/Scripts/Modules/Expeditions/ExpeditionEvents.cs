@@ -45,6 +45,11 @@ public class ExpEvents
         public int minTeamCount = 1;
         public int maxTeamCount = 99;
 
+        public bool allowVisitor = true;
+        public bool allowHidden = false;
+        public bool allowPrisoner = false;
+        public bool requireCombat = true;
+
         public CharaReq charaReq = new CharaReq();
         //public ItemRequirement itemReq = new ItemRequirement();
     }

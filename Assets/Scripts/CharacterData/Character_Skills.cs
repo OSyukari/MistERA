@@ -37,18 +37,6 @@ public class Index_CharaSkills : I_IndexMergeable, I_IndexHasID, I_RemoveElemByT
 }
 
 [System.Serializable]
-public enum LogicalOperand
-{
-    none,
-    gte,
-    lte,
-    eq,
-    neq,
-    gt,
-    lt
-}
-
-[System.Serializable]
 public class SkillManager
 {
 
@@ -488,7 +476,7 @@ public class CharaSkill
                 {
                     if (!i.isValid) continue;
 
-                    if (!UtilityEX.CompareValue(c.Skills.GetExperienceLevel(i.experienceID), i.operand, i.value))
+                    if (!Utility.CompareValue(c.Skills.GetExperienceLevel(i.experienceID), i.operand, i.value))
                     {
                         c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + i.Tooltip + "</color>");
                         returnValue = false;
@@ -515,7 +503,7 @@ public class CharaSkill
                 c2.Clear();
                 int sumValue = 0;
                 foreach (var i in requireSumExperiences.experienceIDs) sumValue += c.Skills.GetExperienceLevel(i);
-                if (!UtilityEX.CompareValue(sumValue, requireSumExperiences.operand, requireSumExperiences.value))
+                if (!Utility.CompareValue(sumValue, requireSumExperiences.operand, requireSumExperiences.value))
                 {
                     c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + requireSumExperiences.Tooltip + "</color> (currently "+sumValue+")");
                     returnValue = false;

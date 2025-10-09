@@ -23,6 +23,10 @@ public class CharaReq
     public bool addPartyMembers = false;
     public bool requireUndressed = false;
     public bool requireMovement = false;
+    public bool requireCombat = false;
+    public bool requireFullHP = false;
+    public bool requireMissingHP = false;
+
     public List<string> requireAbsentJobwithCOMTag = new List<string>();
     public List<string> requireExistingJobwithCOMTag = new List<string>();
     public void Read(CharaReq req)
@@ -40,7 +44,11 @@ public class CharaReq
         if (this.cost_ST == 0 && req.cost_ST != 0) this.cost_ST = req.cost_ST;
         this.addPartyMembers = this.addPartyMembers || req.addPartyMembers;
         this.requireNoTeammate = this.requireNoTeammate || req.requireNoTeammate;
+
         this.requireUndressed = this.requireUndressed || req.requireUndressed;
+        this.requireCombat = this.requireCombat || req.requireCombat;
+        this.requireFullHP = this.requireFullHP || req.requireFullHP;
+        this.requireMissingHP = this.requireMissingHP || req.requireMissingHP;
 
     }
 }

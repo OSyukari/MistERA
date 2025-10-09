@@ -280,7 +280,7 @@
 "ui_management_expeditions_partyTitle": "<link=ui_management_expeditions_partyTitle_tooltip>队伍名称：</link>",
 "ui_management_expeditions_partyTitle_tooltip": "点击右侧可编辑",
 "ui_management_expeditions_editMembers": "<link=ui_management_expeditions_editMembers_tooltip>编辑队伍成员</link>",
-"ui_management_expeditions_editMembers_tooltip": "远征队伍不可编入玩家（因为远征地图没有实际地图不可互动）\n\n将来实装了可探索地图后，会允许玩家编入队伍一同前往这类可探索地图",
+"ui_management_expeditions_editMembers_tooltip": "远征队伍不可编入玩家（因为远征地图没有实际地图不可互动）和囚犯\n\n将来实装了可探索地图后，会允许玩家编入队伍一同前往这类可探索地图",
 "ui_management_expeditions_partyStatus": "队伍状态",
 "ui_management_expeditions_partyInventory": "<link=ui_management_expeditions_partyInventory_tooltip>队伍装备</link>",
 "ui_management_expeditions_partyInventory_tooltip": "外出探索时，队伍成员能够取用道具栏内的物品\n只有在外过夜露营时，队伍成员才会取用道具栏内的餐点和家具\n\n探索中取得的道具会存取在单独的道具栏内，并且在探索结束回归后存入据点道具栏",
@@ -296,9 +296,27 @@
 "PartyComposition_backline": "后排",
 "PartyComposition_frontline": "前排",
 
+"trade_chara_Treatment": "<link=trade_chara_Treatment_tooltip>角色处置：</link>",
+"trade_chara_Treatment_tooltip": "决定是否将角色编入队伍。不编入的情况下，可以单独选择拿取角色的装备。",
+"trade_chara_Treatment_capture": "<link=trade_chara_Treatment_capture_tooltip>捕获</link>",
+"trade_chara_Treatment_capture_tooltip": "将角色以囚犯身份纳入队伍\n队伍回归后该角色将以同样身份加入阵营",
+"trade_chara_Treatment_transfer": "<link=trade_chara_Treatment_transfer_tooltip>转移</link>",
+"trade_chara_Treatment_transfer_tooltip": "将角色以成员身份纳入队伍\n队伍回归后该角色将以同样身份加入阵营",
+"trade_chara_Treatment_none": "<link=trade_chara_Treatment_none_tooltip>无</link>",
+"trade_chara_Treatment_none_tooltip": "不将该角色纳入队伍\n可以选择对方身上的装备带走",
+
 "ui_management_expeditionJob_team_active": "$names$正在探索……", 
 "ui_management_expeditionJob_team_resting": "$names$正在休息……", 
 "ui_management_expeditionJob_team_returning": "$names$正在返回……", 
+
+"ui_management_expeditions_setExpTarget_none":"请设定探索目标",
+
+"ui_management_partyAvailability_inactive": "队伍待命中", 
+"ui_management_partyAvailability_active": "队伍活动中", 
+"ui_management_partyAvailability_nomember": "未安排成员", 
+"ui_management_partyAvailability_cannotAct": "$name$无法行动",
+"ui_management_partyAvailability_occupied": "$name$正在别的队伍中活动", 
+
 
 "ui_management_expeditionJob_": "设定探索目标：$expName$", 
 "ui_management_expeditionJob_inactive": "探索目标：$expName$", 

@@ -3,7 +3,6 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
-using NugetForUnity.Ui;
 
 public class ActionPackage_Expedition : ActionPackage
 {
@@ -28,6 +27,13 @@ public class ActionPackage_Expedition : ActionPackage
             this.exp_evID = value == null ? "" : value.eventID;
         }
     }
+
+    [JsonIgnore]
+    public Job_Expedition Job_Expedition
+    { get
+        {
+            return this.job as Job_Expedition;
+        } }
 
     protected int GetWeight(ExpEvents ev, Manageable_Party p, out List<Character_Trainable> targets)
     {
@@ -230,7 +236,19 @@ public class ActionPackage_Expedition : ActionPackage
                 package.Targets.Add("teamA_backline", backline);
                 package.overrideTargetScope = result.overrideTargetScope;
                 package.targetScopes = result.TargetValidators;
-                r.unresolved = package;
+                package.overrideTargetGen = result.overrideTargetGeneration;
+                package.targetGens = result.TargetGenerations;
+
+                if (package.isValid && result.runImmediate)
+                {
+                    Debug.Log("event runimmediate start");
+                    var ev = EventUtility.StartEvent(this.Job_Expedition, package);
+                    scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+                }
+                else
+                {
+                    r.unresolved = package;
+                }
             }
 
             jobb.StartCooldown();

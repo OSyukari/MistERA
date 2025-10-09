@@ -1,0 +1,55 @@
+{
+    "baseID": "nameless_guardian_type_b",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": 0,
+                "portrait_offset_y": -200,
+                "portrait_offset_size": 0.45,
+
+                "icon_offset_x":50,
+                "icon_offset_y":50,
+                "icon_offset_size":0.7,
+
+                "icon_path":"NamelessGuardians/Nameless_Guardian_Back_Sprite.png",
+
+                "straightAlpha":true,
+                "materialTexturePaths":["NamelessGuardians/NP0091_spr.png"],
+                "atlasJSON_path":"NamelessGuardians/NP0091_spr.atlas",
+                "skeletonJSON_path":"NamelessGuardians/NP0091_spr.skel",
+                "idleAnimName":"00"
+
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Male",
+      "BodyType": "Default",
+      "stat_STR": 10,
+      "stat_CON": 10,
+      "stat_PSY": 10,
+      "stat_WIL": 10,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_AAA",
+      "size_P": "trait_Size_P_average",
+      "size_V": "trait_Size_V_none",
+      "size_A": "trait_Size_A_none",
+      "Skills": null
+    },
+    "firstName": "nameless_guardian_type_b_name",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "robotrace_namelessguardian_type_b",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}
+    

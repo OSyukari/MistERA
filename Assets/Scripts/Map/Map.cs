@@ -66,7 +66,8 @@ public class Map_Instance
 
     protected void RebuildActiveFloorRefs(Room_Instance playerRoom = null)
     {
-        if (playerRoom == null) playerRoom = FindRoomByChara(0);
+        return;
+        if (playerRoom == null) playerRoom = FindRoomByChara(scr_System_CampaignManager.current.Player.RefID);
 
         if (playerRoom.parentFloor == null) _activeFloorRefIDs = new List<int>();
         else
@@ -274,6 +275,28 @@ public class Map_Instance
     [JsonIgnore] protected Dictionary<int, int> roomFloorRef;
     [JsonIgnore] protected ReadOnlyDictionary<int, int> roomFloorRef_Immutable;
 
+    public void UnregisterChara(int refID)
+    {
+        charaRoomRef.Remove(refID);
+        RebuildRoomCharaRef();
+    }
+    public void UnregisterRoom(int refID)
+    {
+        roomFloorRef.Remove(refID);
+        Room_Instance room = null;
+        if (Rooms.TryGetValue(refID, out room) || rooms_orphans.TryGetValue(refID, out room))
+        {
+            foreach (var job in room.Jobs) scr_System_CampaignManager.current.Unregister(job);
+            room.Inventory.Destroy();
+        }
+        Rooms.Remove(refID);
+        rooms_orphans.Remove(refID);
+        roomFloorRef.Remove(refID);
+        RebuildRoomCharaRef();
+        //charaRoomRef.
+        BuildPath();
+    }
+
     public bool IsBothCharaInSameRoom(int a, int b)
     {
         if (!charaRoomRef.ContainsKey(a) || !charaRoomRef.ContainsKey(b)) return false;
@@ -304,10 +327,16 @@ public class Map_Instance
         }
     }
 
+    public bool IsCharaInInactiveRooms(int charaRef)
+    {
+        var room = FindRoomByChara(charaRef);
+        return room.RefID == 0 || room == scr_System_CampaignManager.current.StasisRoom || room == scr_System_CampaignManager.current.TemporaryRoom;
+    }
+
     public bool IsCharaInActiveFloors(int charaRef)
     {
-        var floor = GetFloorByRoomRefID(FindRoomByChara(charaRef).RefID);
-        return floor == null ? false : ActiveFloorRefIDs.Contains(floor.refID);
+        var floor = FindRoomByChara(charaRef).parentFloor;
+        return floor == null ? false : true;// ActiveFloorRefIDs.Contains(floor.refID);
     }
 
     public void UpdateRoomForceGreeting()
@@ -525,6 +554,13 @@ public class Map_Instance
     Func<TaggedEdge<int, Door_Instance>, double> edgeCost = entry => entry.Tag.Cost;
     Func<int, double> heuristic = value => 0f;
 
+    /// <summary>
+    /// is imprisoned changed to isrestrained. allow prisoners to move freely
+    /// </summary>
+    /// <param name="roomRef"></param>
+    /// <param name="targetRoom"></param>
+    /// <param name="imprisoned"></param>
+    /// <returns></returns>
     protected IEnumerable<TaggedEdge<int, Door_Instance>> Findpath(Room_Instance roomRef, Room_Instance targetRoom, bool imprisoned)
     {
         if (roomRef == null || targetRoom == null)
@@ -568,7 +604,7 @@ public class Map_Instance
             Debug.LogError("Campaign manager findpath null either chararoom null or targetroom null");
             return null;
         }
-        else if (scr_System_CampaignManager.current.FindInstanceByID(charaRefID).isImprisoned && toRoomRefID != roomRefID)
+        else if (scr_System_CampaignManager.current.FindInstanceByID(charaRefID).isRestrained && toRoomRefID != roomRefID)
         {   // restrained and target room not self room
             //Debug.Log("target is restrained and cannot leave room, selfRoom["+roomRef.RefID +" "+roomRef.DisplayName+ "] targetRoom["+ targetRoom.RefID +" "+ targetRoom.DisplayName+ "]");
             return null;
@@ -683,7 +719,7 @@ public class Map_Instance
         var roomsInSameFloor = new List<Room_Instance>();
         foreach (var i in roomRefsInSameFloor) roomsInSameFloor.Add(GetRoomByRef(i));
 
-        bool imprisoned = scr_System_CampaignManager.current.FindInstanceByID(charaRefID).isImprisoned;
+        bool imprisoned = scr_System_CampaignManager.current.FindInstanceByID(charaRefID).isRestrained;
 
         
         Parallel.ForEach(roomsInSameFloor, target =>

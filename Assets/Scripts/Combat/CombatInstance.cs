@@ -73,6 +73,19 @@ public class CombatInstance
     }
     public bool allowRetreat = true;
 
+    public bool AreOnSameTeam(Character_Trainable a, Character_Trainable b)
+    {
+        if (this.teamA.hasActor(a.RefID) && this.teamA.hasActor(b.RefID)) return true;
+        else if (this.teamB.hasActor(a.RefID) && this.teamB.hasActor(b.RefID)) return true;
+        return false;
+    }
+    public bool AreOnOpposingTeam(Character_Trainable a, Character_Trainable b)
+    {
+        if (this.teamA.hasActor(a.RefID) && this.teamB.hasActor(b.RefID)) return true;
+        else if (this.teamB.hasActor(a.RefID) && this.teamA.hasActor(b.RefID)) return true;
+        return false;
+    }
+
     public TeamComposition teamA = new TeamComposition();
     public TeamComposition teamB = new TeamComposition();
 
@@ -84,6 +97,8 @@ public class CombatInstance
     public int roundMaxAction_A = 2;
     public int roundMaxAction_B = 2;
     public Action OnCombatEnd = null;
+
+    public string backgroundImgPath = "";
 
     public bool forcePlayerInstance = false;
 
@@ -107,8 +122,10 @@ public class CombatInstance
                 default: return "";
             }
         } }
-    public CombatInstance(TeamComposition teamA, TeamComposition teamB, bool allowRetreat = true)
+    public EventInstance sourceEV = null;
+    public CombatInstance(TeamComposition teamA, TeamComposition teamB, bool allowRetreat = true, EventInstance source = null)
     {
+        this.sourceEV = source;
         this.allowRetreat = allowRetreat;
         this.teamA = teamA;
         this.teamB = teamB;

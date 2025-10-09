@@ -5,12 +5,14 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public enum Manageable_GuestStatus
 {
     Manager,
     Member,
-    Visitor
+    Visitor,
+    Prisoner,
+    Hidden,
+    None
 }
 
 [System.Serializable]
@@ -103,13 +105,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public bool isPrisoner(int charaRef)
     {
-        var resultbool = charaGuestStatus.ContainsKey(charaRef) && charaGuestStatus[charaRef] == Manageable_GuestStatus.Visitor;
-
-        var currentRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(charaRef);
-
-        resultbool = resultbool && this.managedRoomRefs.ContainsKey(currentRoom.RefID) && (scr_System_CampaignManager.current.FindInstanceByID(charaRef).isRestrained || currentRoom.isRoomPrison);
-
-        return resultbool;
+        if (charaGuestStatus[charaRef] == Manageable_GuestStatus.Prisoner) return true;
+        return false;
     }
 
     public string GetCharaSocialStandingName(int charaRef)
@@ -160,7 +157,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         get
         {
-            var v = managedChara.Where(x => isMember(x.RefID)).ToList();
+            var v = ManagedChara.Where(x => isMember(x.RefID)).ToList();
             return v;
         }
     }
@@ -169,7 +166,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         get
         {
-            var v = managedChara.Where(x => isVisitor(x.RefID)).ToList();
+            var v = ManagedChara.Where(x => isVisitor(x.RefID)).ToList();
             return v;
         }
     }
@@ -179,7 +176,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         get
         {
-            var v = managedChara.Where(x => isPrisoner(x.RefID)).ToList();
+            var v = ManagedChara.Where(x => isPrisoner(x.RefID)).ToList();
             return v;
         }
     }
@@ -464,7 +461,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         {
             if (i.RefID != chara.RefID &&
                 ( scr_System_CentralControl.current.CanInteractWith(chara.RefID, i.RefID) ) &&
-                (!restrainedOnly || i.isImprisoned || i.isRestrained) &&
+                (!restrainedOnly || i.isRestrained) &&
                 (i.InteractionJob.HasAvailableCOMwithCOMTags (new List<string>() { tag  }))
                 )
             {
@@ -519,6 +516,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     }
 
+    [JsonIgnore]
+    public bool isMealHour { get { return this.mealHours.Contains(scr_System_Time.current.getCurrentTime().Hour); } }
+
     /// <summary>
     /// If currenthour is not mealhour, return empty
     /// </summary>
@@ -530,7 +530,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
-        if (!this.mealHours.Contains(currentHour)) return new List<Job_Furniture>();
+        if (!isMealHour) return new List<Job_Furniture>();
 
         if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "", "food_meal",false))
         {
@@ -853,20 +853,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else charaSchedules[c.RefID].Get(hour).Set(jobPostID, commands);
     }
 
-    public void UnsetWork(Character_Trainable c)
-    {
-        if (charaGuestStatus.ContainsKey(c.RefID))
-        {
-
-        }
-    }
-
     /// <summary>
     /// Can also be used to change guest status
     /// </summary>
     /// <param name="c"></param>
     /// <param name="guestStatus"></param>
-    public void AddToFaction(Character_Trainable c, Manageable_GuestStatus guestStatus)
+    public void AddToFaction(Character_Trainable c, Manageable_GuestStatus guestStatus, bool sendEvent = true)
     {
 
         //c.AddToFaction(this);
@@ -876,6 +868,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (!ManagedRefs.Contains(c.RefID)) charaSchedules.Add(c.RefID, new Job_Schedule());
         managedChara = null;
         _managerRefs = null;
+
+        if (sendEvent && guestStatus == Manageable_GuestStatus.Prisoner)
+        {
+            var ev = new EventInstance(c, "OnCharaImprison", "");
+            ev.displayOverride = this.isPlayerFaction || c.DisplayCharaEvent;
+            ev.AppendStrings.Add("partyName", new List<string>() { this.FactionDisplayName });
+            scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+        }
         // set manager roles
         NotifyFactionMemberChange();
     }
@@ -901,7 +901,21 @@ public class Manageable : I_Disposable, I_IsJobGiver
         managedChara = null;
         _managerRefs = null;
 
+        foreach (var i in managedRoomRefs) i.Value.Remove(c.RefID);
+        var newlist = new List<Manageable_Party>(SubFactions);
+        foreach (var i in newlist)
+        {
+            i.RemoveFromFaction(c);
+
+        }
+
         NotifyFactionMemberChange();
+    }
+
+    public void RemoveSubfaction(Manageable_Party p)
+    {
+        this.SubFactions.Remove(p);
+        Debug.Log($"Destroy {this.FactionDisplayName} subfaction {p.FactionDisplayName}");
     }
 
     // one manageable instance have one manager
@@ -1028,7 +1042,6 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         return false;
     }
-
 
     protected void RefreshRoomJobs(Room_Instance ri)
     {
@@ -1755,12 +1768,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
                     // verify that said chara is indeed using this faction as maintenance target
                     if (chara.FactionManager == null)
                     {
-                        Debug.LogError(chara.FirstName + " HAS EMPTY FactionManager ON GetMaintenanceCost_Chara");
+                        Debug.Log(chara.FirstName + " HAS EMPTY FactionManager ON GetMaintenanceCost_Chara");
                         continue;
                     }
                     else if (chara.FactionManager.HomeFactions.Count < 1)
                     {
-                        Debug.LogError(chara.FirstName + " HAS EMPTY HomePriorityList ON GetMaintenanceCost_Chara");
+                        Debug.Log(chara.FirstName + " HAS EMPTY HomePriorityList ON GetMaintenanceCost_Chara");
                         continue;
                     }
                     else if (chara.FactionManager.HomeFactions[0].ID != this.ID)
@@ -1913,7 +1926,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
 
     }
-
+    public List<string> explorationKeywords = new List<string>();
     public List<JobPostPreset> JobPostsPresets = new List<JobPostPreset>();
     public void AddJobPost(MapPlan.WorkModuleInit module)
     {
