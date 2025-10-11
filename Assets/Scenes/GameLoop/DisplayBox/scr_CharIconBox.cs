@@ -51,11 +51,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         bool destroy = false;
 
-        if (this.chara_refID < 1)
-        {
-            destroy = true;
-        }
-        else if (!isCombatBox)
+        if (!isCombatBox)
         {
             var room = scr_System_CampaignManager.current.GetCharaRoomInstance(chara_refID);
             if (room == null || room.RefID != scr_System_CampaignManager.current.CurrentRoom.RefID)
@@ -63,16 +59,13 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
                 destroy = true;
             }
         }
- 
+
 
         if (destroy)
         {
-            if (!isCombatBox)
-            {
-                scr_System_CampaignManager.current.Observer_CurrentTarget -= ReadCurrentChar;
-                scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= OnPostUpdateTime3;
-                scr_System_CampaignManager.current.Observer_UpdateNotice -= OnUpdateNotice;
-            }
+            scr_System_CampaignManager.current.Observer_CurrentTarget -= ReadCurrentChar;
+            scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= OnPostUpdateTime3;
+            scr_System_CampaignManager.current.Observer_UpdateNotice -= OnUpdateNotice;
 
             Destroy(this.gameObject);
         }
@@ -115,7 +108,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         this.canvas = canvas;
         chara_refID = refID;
         chara = scr_System_CampaignManager.current.FindInstanceByID(chara_refID) as Character_Trainable;
-        if (chara != null && chara.RefID > 0)
+        if (chara != null)
         {
             Initialize();
             nameBox.text = chara.FirstName;

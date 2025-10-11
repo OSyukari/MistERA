@@ -270,16 +270,18 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
         var tooltips = new List<string>();  
         foreach(var name in team.frontline)
         {
-            var chara = scr_System_CampaignManager.current.Combat.GetCombatDummy(name);
+            var chara = scr_System_CampaignManager.current.Combat.GetCombatDummy(name, teamB.ActorRefs);
             teamB.frontline.Add(chara.RefID);
+            teamB.NotifyAddActor();
             List<string> inv = new List<string>();
             foreach (var i in chara.Inventory.Contents) inv.Add(i.Print());
             tooltips.Add($"{chara.CallName} {chara.BaseID}: {String.Join("|", inv)}");
         }
         foreach (var name in team.support)
         {
-            var chara = scr_System_CampaignManager.current.Combat.GetCombatDummy(name);
+            var chara = scr_System_CampaignManager.current.Combat.GetCombatDummy(name, teamB.ActorRefs);
             teamB.support.Add(chara.RefID);
+            teamB.NotifyAddActor();
             List<string> inv = new List<string>();
             foreach (var i in chara.Inventory.Contents) inv.Add(i.Print());
             tooltips.Add($"{chara.CallName} {chara.BaseID}: {String.Join("|", inv)}");

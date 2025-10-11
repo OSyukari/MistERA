@@ -245,7 +245,7 @@ public class initScript_Expeditions : MonoBehaviour
                 bool first = true;
                 foreach (var i in msg.Value)
                 {
-                    if (i.unresolved != null)
+                    if (i.unresolved != null || i.resolveMessage != "")
                     {
                         var v = canvas.MakeEventResolveButton(i, out var box);
                         box.SelfRect.SetParent(list_ExpeditionMSG, false);
@@ -253,10 +253,10 @@ public class initScript_Expeditions : MonoBehaviour
                         box.preText.SetText(i.FullDescription);
                         box.preText.SetExternalTooltip(String.Join("\n", i.Tooltips));
                         box.timeStamp.text = first ? msg.Key.ToShortTimeString() : "";
-                        if (i.unresolved.resolved && i.unresolved.resolveMessage != "")
+                        if (i.unresolved == null && i.resolveMessage != "")
                         {
                             box.postEvRect.gameObject.SetActive(true);
-                            box.postText.SetText(i.unresolved.resolveMessage);
+                            box.postText.SetText(i.resolveMessage);
                         }
                         else
                         {
@@ -597,7 +597,6 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
             if (parent.currentParty == null || parent.currentParty.Job == null) return false;
             if (!parent.currentParty.isPlayerFaction) return false;
             if (m.unresolved == null) return false;
-            if (m.unresolved.resolved) return false;
 
             return true;
         }
@@ -611,13 +610,14 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
         public void OnClickButton()
         {
             //scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs);
-            var ev = EventUtility.StartEvent(parent.currentParty.Job, m.unresolved);
+            var package = m.unresolved;
+            var ev = EventUtility.StartEvent(parent.currentParty.Job, package);
             //scr_System_CampaignManager.current.FreeUpdate();
-            m.unresolved.resolved = true;
-
+            m.unresolved = null;
+            m.resolveEventName = package.DisplayName;
             var callbacks = new List<Action>();
             ev.FunctionCalls.Add("ResolveEvent", callbacks);
-            callbacks.Add(() => m.unresolved.resolveMessage = ev.DumpCurrentLine);
+            callbacks.Add(() => m.resolveMessage = ev.DumpCurrentLine);
 
             scr_System_CampaignManager.current.RegisterSceneUnloadEventCallback(ev);
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();

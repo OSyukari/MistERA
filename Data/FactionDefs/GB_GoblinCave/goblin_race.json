@@ -1,0 +1,86 @@
+{
+        "CharGenTemplates":
+    {
+        "list":[
+{
+    "ID":"creature_humanoid_goblin",
+    "title":"creature_humanoid_goblin",
+    "targetBaseID":"creature_humanoid_goblin_template",
+    "str_var":3,"con_var":3, "psy_var":3,"wil_var":3,
+    "useNameGen":true, "nameGen_firstName":"goblin",
+    "Appearance":"Male",
+    "inventoryOverride":[
+        { "ID":"clothing_outer_longcoat" },
+        {"ID":"weapon_village_cutlass","nameOverwrite":""}
+    ]
+},
+{
+    "ID":"creature_humanoid_hobgoblin",
+    "title":"creature_humanoid_hobgoblin",
+    "targetBaseID":"creature_humanoid_hobgoblin_template",
+    "str_var":4,"con_var":4, "psy_var":1,"wil_var":1,
+    "useNameGen":true, "nameGen_firstName":"goblin",
+    "Appearance":"Male",
+    "inventoryOverride":[
+        { "ID":"clothing_outer_longcoat" },
+        {"ID":"weapon_village_cutlass","nameOverwrite":""}
+    ]
+}
+        ]
+    },
+    "humanoid_Races":
+    {
+        "list": [
+
+            {
+                "ID": "creature_humanoid_goblin",
+                "displayName": "Goblin",
+                "tooltip": "Tiny yet numerous, always lurking, they shall not be underestimated.",
+                "bodyPartRoot":"head_humanoid_base",
+                "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
+                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","stress","lust","physical","memory"],
+                "_comment2":"provide new template for basevalue",
+                "needs":[
+                    {
+                        "ID":"food",
+                        "displayName":"food need",
+                        "tooltip":"tooltip",
+                        "statusDebuffID": "chara_status_malnourished",
+                        "consumeItemByTag": "food_meal",
+                        "requiresStatKeyword": "hunger",
+                        "overwritesNeedsIDs": []
+                    }
+                ]
+            }
+            
+        ]
+    },
+    "Encounters":{
+        "list":[
+
+            {
+                "ID":"goblin_patrol_1",
+                "frontline":["creature_humanoid_hobgoblin"],
+                "support":["creature_humanoid_goblin"]
+            }
+            
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "creature_humanoid_goblin":"哥布林",
+                "creature_humanoid_hobgoblin":"大哥布林"
+            },
+            "en-us":
+            {
+                "creature_humanoid_goblin":"Goblin",
+                "creature_humanoid_hobgoblin":"Hoboblin"
+            }
+        }
+    }
+    
+}

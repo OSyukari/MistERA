@@ -13,7 +13,8 @@ public enum NameCulture
 {
     none,
     japanese,
-    english
+    english,
+    goblin
 }
 
 [System.Serializable]

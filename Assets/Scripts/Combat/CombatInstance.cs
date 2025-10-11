@@ -825,6 +825,7 @@ public class CombatInstance
     }
     public void LogLastUsedWeapon(Character_Trainable charaRef, I_CombatItem weapon, CombatActionInstance sourceRef)
     {
+        if (weapon is BodyPart_Instance) return;
         if (LastUsedWeapons.TryGetValue(charaRef.RefID, out var last) && last != null && last != weapon)
         {
             AddCooldown(last, 2, ItemCooldown.CooldownType.Disarm);

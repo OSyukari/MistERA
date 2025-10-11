@@ -93,28 +93,7 @@
 {
     "initClass":"campaign_init_factionVisitor",
     "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Neon","External"]
-},
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim01",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim02",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim03",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim04",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim05",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim06",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim07",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim08",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim09",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim10",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim11",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim12",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim13",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim14",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim15",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim16",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim17",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim18",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim19",true] },
-{ "initClass":"campaign_init_map_extra", "initArguments":["map_bluearchive_utnapishtim", "Utnapishtim20",true] }
-
+}
                     ]
                 }
             ]

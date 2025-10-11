@@ -22,13 +22,17 @@ public class TeamTemplate
         } }
 }
 
-[System.Serializable]
 public class TeamComposition
 {
 
     public List<int> frontline = new List<int>();
     public List<int> support = new List<int>();
 
+    public void NotifyAddActor()
+    {
+        this._actors = null;
+        this._actorCache = null;
+    }
 
     protected List<int> _actorCache = null;
     [JsonIgnore]
@@ -120,8 +124,8 @@ public class CombatManager
     }
 
     [JsonProperty]
-    protected Dictionary<string ,int> combatDummyRefIDs = new Dictionary<string ,int>();
-    Dictionary<string, Character_Trainable> combatDummyRefs = new Dictionary<string, Character_Trainable>();
+    protected Dictionary<string ,List<int>> combatDummyRefIDs = new Dictionary<string ,List<int>>();
+    Dictionary<int, Character_Trainable> combatDummyRefs = new Dictionary<int, Character_Trainable>();
 
     [JsonIgnore]
     public Character_Trainable Dummy { get
@@ -129,19 +133,27 @@ public class CombatManager
         return GetCombatDummy("Campaign1_86_Lerche");
     } }
 
-    public Character_Trainable GetCombatDummy(string baseID)
+    public Character_Trainable GetCombatDummy(string baseID, List<int> generatedIDs = null)
     {
-        if (!combatDummyRefs.ContainsKey(baseID))
+        Character_Trainable returnValue = null;
+
+        if (!combatDummyRefIDs.ContainsKey(baseID)) combatDummyRefIDs.Add(baseID, new List<int>() {});
+            
+        var refList = combatDummyRefIDs[baseID];
+        if (refList.Count < 1 || (generatedIDs != null && refList.Except(generatedIDs).ToList().Count < 1))
         {
-            if (!combatDummyRefIDs.ContainsKey(baseID))
-            {
-                var chara = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(baseID, scr_System_CampaignManager.current.StasisRoom);
-                combatDummyRefIDs.Add(baseID, chara.RefID);
-            }
-            var refID = combatDummyRefIDs[baseID];
-            combatDummyRefs.Add(baseID, scr_System_CampaignManager.current.FindInstanceByID(refID));
+            var chara = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(baseID, scr_System_CampaignManager.current.StasisRoom);
+            refList.Add(chara.RefID);
+            combatDummyRefs.Add(chara.RefID, chara);
+            returnValue = chara;
         }
-        return combatDummyRefs[baseID];
+        else
+        {
+            var intRef = generatedIDs != null ? refList.Except(generatedIDs).ToList().First() : refList.First();
+            returnValue = combatDummyRefs[intRef];
+        }
+        
+        return returnValue;
     }
 
 

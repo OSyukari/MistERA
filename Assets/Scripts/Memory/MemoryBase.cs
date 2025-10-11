@@ -49,7 +49,14 @@ public class Memory_Entry
     {
         this.ownerRef = c.RefID;
         this.owner = c; 
+
+        foreach(var entry in this.interactions)
+        {
+            entry.tags = entry.tags.Distinct().ToList();
+        }
+
         InternalUpdate();
+
     }
 
     protected int ownerRef = -1;
@@ -991,6 +998,7 @@ public class MemInstance
         if (!canMergeWith(mem)) return false;
 
         this.tags.AddRange(mem.tags);
+        this.tags = this.tags.Distinct().ToList();
 
         this.modLust += mem.modLust;
         this.modMood += mem.modMood;

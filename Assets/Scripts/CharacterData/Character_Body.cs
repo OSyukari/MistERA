@@ -224,7 +224,6 @@ public class Character_Body
                     if (part.EquipItem(item, ref slots, forceEquip) && slots.Count < 1) break;
                 }
             }
-            if (comp != null && comp.statModifiers.Count > 0) Owner.Stats.RefreshAllStats(true);
             return true;
         }
         else

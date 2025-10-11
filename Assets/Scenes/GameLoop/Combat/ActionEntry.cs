@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
 
-public class ActionEntry : MonoBehaviour, IPointerEnterHandler
+public class ActionEntry : MonoBehaviour
 {
 
     public RectTransform SelfRect;
@@ -41,13 +41,13 @@ public class ActionEntry : MonoBehaviour, IPointerEnterHandler
 
         additionalText.SetText(inst.FinalResult);
     }
-
+    /*
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!pointerEnter) return;
 //        Debug.Log("onpointenter");
-        parent.LoadChara(inst.ownerRef, isHostile ? false : true);
-        if (inst.isHostile) parent.LoadChara(inst.targetRef, isHostile ? true : false);
+ //       parent.LoadChara(inst.ownerRef, isHostile ? false : true);
+  //      if (inst.isHostile) parent.LoadChara(inst.targetRef, isHostile ? true : false);
 
-    }
+    }*/
 }

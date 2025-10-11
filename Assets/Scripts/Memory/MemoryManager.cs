@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 /// <summary>
 /// Manage Interaction Memory and Character Experiences
 /// </summary>
-[System.Serializable]
 public class MemoryManager
 {
 
@@ -57,9 +56,12 @@ public class MemoryManager
     {
         // ClearCache();
         bool clearcache = false;
-        foreach (var entry in entries.Values)
+        var list = new List<long>(this.entries.Keys);
+        foreach(var i in list)// var entry in entries.Values)
         {
+            var entry = entries[i];
             clearcache = entry.Tick(t) || clearcache;
+            if (entry.Duration == 0) entries.Remove(i);//.RemoveAt(i);
         }
         if (clearcache) ClearCache();
     }

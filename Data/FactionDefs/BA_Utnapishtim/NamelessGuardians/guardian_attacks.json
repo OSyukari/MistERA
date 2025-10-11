@@ -2,14 +2,30 @@
     "CombatActionPresets":
     {
         "list":[
+
 {
     "ID":"preset_nameless_guardians_f_combo_1a",
-    "actions":["move_base_forward", "nameless_guardian_laser_close"]
+    "actions":["move_base_forward", "nameless_guardian_clawThrust"]
 },
 {
-    "ID":"preset_nameless_guardians_f_combo2",
-    "actions":["base_evade", "nameless_guardian_laser_close"]
+    "ID":"preset_nameless_guardians_f_combo_1b",
+    "actions":["move_base_forward", "nameless_guardian_clawStomp"]
 },
+
+{
+    "ID":"preset_nameless_guardians_f_combo_2b",
+    "actions":["base_evade", "nameless_guardian_clawThrust"]
+},
+{
+    "ID":"preset_nameless_guardians_f_combo_3",
+    "actions":["nameless_guardian_clawStomp", "base_observe"]
+},
+{
+    "ID":"preset_nameless_guardians_f_combo_4",
+    "actions":["firearm_aiming_handgun", "nameless_guardian_laser_close"]
+},
+
+
 {
     "ID":"preset_nameless_guardians_m_combo1",
     "actions":["firearm_aiming_handgun", "nameless_guardian_laser_long"]
@@ -18,10 +34,8 @@
     "ID":"preset_nameless_guardians_m_combo2",
     "actions":["firearm_aiming_handgun", "nameless_guardian_laser_long", "nameless_guardian_laser_long"]
 },
-{
-    "ID":"preset_nameless_guardians_m_combo3",
-    "actions":["base_evade", "nameless_guardian_laser_long"]
-},
+
+
 {
     "ID":"preset_nameless_guardians_b_combo1",
     "actions":["firearm_aiming_handgun", "nameless_guardian_laser_heavy"]
@@ -40,18 +54,34 @@
     "ID":"nameless_guardian_laser_close",
     "tags":["laser"], 
     "tracking":0, "range":0, "strength":5, "moveType":"Gunshot",
-    "itemRequirement":{ "requireTags":["nameless_guardian","type_f"] },
+    "itemRequirement":{ "requireTags":["head", "nameless_guardian","type_f"] },
     "extraMods":{ "mods": { "combat_stat_tracking":[ { "requireTags":["aiming"], "Value":5 } , { "requireTags":["laser"], "Value":-1 }] } },
     "speedMod":-1
 },
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
+    "ID":"nameless_guardian_clawThrust",
+    "tags":["thrust"], 
+    "PostureMod":-3, "speedMod":-1, "tracking":1, "range":0, "strength":5, "moveType":"Thrust",
+    "itemRequirement":{ "requireTags":["nameless_guardian","type_f", "leg"] },
+    "extraMods":{ 
+        "mods": { "combat_stat_speed":[ { "requireTags":["movement"], "Value":2 } ] }
+    }
+},
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    "ID":"nameless_guardian_clawStomp",
+    "tags":["vertical_up"], 
+    "PostureMod":-2, "speedMod":-2, "tracking":2, "range":0, "strength":7, "moveType":"Impact",
+    "itemRequirement":{ "requireTags":["nameless_guardian","type_f", "leg"] }
+},
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
     "ID":"nameless_guardian_laser_long",
     "tags":["laser"], 
-    "tracking":0, "range":2, "strength":5, "moveType":"Gunshot",
-    "itemRequirement":{ "requireTags":["nameless_guardian","type_m"] },
-    "extraMods":{ "mods": { "combat_stat_tracking":[ { "requireTags":["aiming"], "Value":5 } , { "requireTags":["laser"], "Value":-2 }] } },
-    "speedMod":5
+    "PostureMod":-2, "speedMod":5, "tracking":0, "range":2, "strength":5, "moveType":"Gunshot",
+    "itemRequirement":{ "requireTags":["head", "nameless_guardian","type_m"] },
+    "extraMods":{ "mods": { "combat_stat_tracking":[ { "requireTags":["aiming"], "Value":5 } , { "requireTags":["laser"], "Value":-2 }] } }
 },
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
@@ -72,6 +102,8 @@
             "zh-cn":
             {
 "nameless_guardian_laser_close":"近距镭射",
+"nameless_guardian_clawThrust":"爪击突刺",
+"nameless_guardian_clawStomp":"爪击下砸",
 "nameless_guardian_laser_long":"长距镭射",
 "nameless_guardian_laser_heavy":"重型镭射"
             },

@@ -1,5 +1,5 @@
 {
-    "baseID": "nameless_guardian_type_m",
+    "baseID": "nameless_guardian_type_m_template",
     "Portrait":{
         "portraitPriorityList":[
             {
@@ -27,8 +27,8 @@
     "Template": {
       "Appearance": "Male",
       "BodyType": "Default",
-      "stat_STR": 10,
-      "stat_CON": 10,
+      "stat_STR": 6,
+      "stat_CON": 6,
       "stat_PSY": 10,
       "stat_WIL": 10,
       "personalityID": "personality_default",

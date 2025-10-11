@@ -668,7 +668,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         mb = Instantiate(this.Script_Expeditions.prefab_resolveEventBtn);
         var b = mb.button;
         b.Initialize(this, new initScript_Expeditions.ButtonValidator_ResolveEvent(this, b, m));
-        b.SetText( m.unresolved.DisplayName );
+        b.SetText( m.unresolved == null ? m.resolveEventName : m.unresolved.DisplayName );
         b.optionID = AssertUniqueHash(m.GetHashCode());
 
         buttonsByID.Add(b.optionID, b);

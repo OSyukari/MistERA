@@ -52,9 +52,9 @@
                     "encounterTemplate":
                     {
                         "encounterWeights":{
-                            "nameless_guardian_encounter_1":5,
-                            "nameless_guardian_encounter_2":3,
-                            "nameless_guardian_encounter_3":3
+                            "nameless_guardian_encounter_1a":5,
+                            "nameless_guardian_encounter_1b":3,
+                            "nameless_guardian_encounter_2":1
                         },
                         "frontlineKeys":["enemy","teamB_frontline"],
                         "supportKeys":["enemy","teamB_backline"]

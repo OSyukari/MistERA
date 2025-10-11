@@ -1,0 +1,50 @@
+
+{
+    "baseID": "creature_humanoid_goblin_template",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                
+                "portrait_offset_x": -51,
+                "portrait_offset_y": 18,
+                "portrait_offset_size": 1.5,
+                
+                "icon_offset_x":0,
+                "icon_offset_y":33,
+                "icon_offset_size":0.7,
+
+                "portrait_path":"GB_GoblinCave/st_051_00a.png",
+                "icon_path":"GB_GoblinCave/st_051_00a.png"
+            }
+        ]
+    },
+    "Template":{
+        "Appearance": "Male",
+        "BodyType": "Default",
+        "stat_STR": 8,
+        "stat_CON": 12,
+        "stat_PSY": 8,
+        "stat_WIL": 7,
+        "Height":80,
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_AAA",
+        "size_P": "trait_Size_P_average",
+        "size_V": "trait_Size_V_none",
+        "size_A": "trait_Size_A_1",
+        "initialRelationship":[
+        ]
+    },
+    "firstName": "creature_humanoid_goblin",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "creature_humanoid_goblin",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

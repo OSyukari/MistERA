@@ -61,27 +61,8 @@
                         "overwritesNeedsIDs": []
                     }
                 ]
-            },
-            {
-                "ID": "creature_humanoid_goblin",
-                "displayName": "Goblin",
-                "tooltip": "Tiny yet numerous, always lurking, they shall not be underestimated.",
-                "bodyPartRoot":"head_humanoid_base",
-                "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
-                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","stress","lust","physical","memory"],
-                "_comment2":"provide new template for basevalue",
-                "needs":[
-                    {
-                        "ID":"food",
-                        "displayName":"food need",
-                        "tooltip":"tooltip",
-                        "statusDebuffID": "chara_status_malnourished",
-                        "consumeItemByTag": "food_meal",
-                        "requiresStatKeyword": "hunger",
-                        "overwritesNeedsIDs": []
-                    }
-                ]
             }
+
         ]
     },
     "BodyPartBases":

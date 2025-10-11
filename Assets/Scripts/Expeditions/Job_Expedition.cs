@@ -24,6 +24,10 @@ public class ExpeditionMessageEntry
     }
 
     public SerializableEventPackage unresolved = null;
+    public string resolveEventName = "";
+    public string resolveMessage = "";
+    public List<string> resolveTooltips = new List<string>();
+
 
 }
 
@@ -52,8 +56,6 @@ public class SerializableEventPackage
 
     [JsonIgnore]
     public string DisplayName { get { return LocalizeDictionary.QueryThenParse(eventID); } }
-    public bool resolved = false;
-    public string resolveMessage = "";
     public void NotifyCharaExit(int refID)
     {
         foreach(var i in Targets)
@@ -379,20 +381,21 @@ public class Job_Expedition : Job
         }
     }
 
+    [JsonIgnore]
     public bool hasUnresolvedResult
     {
         get
         {
             foreach(var i in this.ExpeditionResults.Values)
             {
-                foreach (var j in i) if (j.unresolved != null && !j.unresolved.resolved) return true;
+                foreach (var j in i) if (j.unresolved != null) return true;
             }
             return false;
         }
     }
-    public bool canReturn { get { return isActive && this.status == ExpeditionStatus.returning && !hasUnresolvedResult; } }
-    public bool isResting { get { return isActive && this.status == ExpeditionStatus.resting; } }
-    public bool isActive { get {
+    [JsonIgnore] public bool canReturn { get { return isActive && this.status == ExpeditionStatus.returning && !hasUnresolvedResult; } }
+    [JsonIgnore] public bool isResting { get { return isActive && this.status == ExpeditionStatus.resting; } }
+    [JsonIgnore] public bool isActive { get {
             return this.Expedition != null && this.status > ExpeditionStatus.queued; } }
 
     [JsonIgnore]

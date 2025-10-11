@@ -588,7 +588,7 @@ public class Manageable_Party : I_IsJobGiver
         {
             foreach(var result in i.Value)
             {
-                if (result.unresolved == null || result.unresolved.resolved) continue;
+                if (result.unresolved == null) continue;
                 result.unresolved.NotifyCharaExit(c.RefID);
             }
         }

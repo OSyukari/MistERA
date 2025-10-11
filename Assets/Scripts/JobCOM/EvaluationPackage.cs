@@ -6,7 +6,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
 
-[System.Serializable]
 public enum ParticipantType { 
     doer,
     receiver,
@@ -15,7 +14,6 @@ public enum ParticipantType {
 }
 
 
-[System.Serializable]
 public class EvaluationPackage
 {
     protected bool initializedRand = false;

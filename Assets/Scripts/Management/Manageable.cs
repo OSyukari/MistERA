@@ -2115,13 +2115,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
             foreach(var entry in tradeRegistry) if(entry.Value != 0) tradeLogs.Add(entry.Key + entry.Value.ToString("+0;-#"));
         }
 
-        public string msg_manageSuccess = "";
-        public string msg_manageFailure = "";
+        [JsonIgnore] public string msg_manageSuccess = "";
+        [JsonIgnore] public string msg_manageFailure = "";
 
-        public string msg_tradeFailure = "";
-        public string msg_tradeSuccess = "";
+        [JsonIgnore] public string msg_tradeFailure = "";
+        [JsonIgnore] public string msg_tradeSuccess = "";
 
-        public bool initialized = false;
+        [JsonIgnore] public bool initialized = false;
 
         public void Initialize()
         {

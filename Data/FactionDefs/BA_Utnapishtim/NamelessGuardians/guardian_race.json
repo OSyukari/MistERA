@@ -1,4 +1,17 @@
 {
+    "CharGenTemplates":
+    {
+        "list":[
+{
+    "ID":"nameless_guardian_type_f",
+    "targetBaseID":"nameless_guardian_type_f_template"
+},
+{
+    "ID":"nameless_guardian_type_m",
+    "targetBaseID":"nameless_guardian_type_m_template"
+}
+        ]
+    },
     "humanoid_Races":
     {
         "list": [
@@ -7,7 +20,7 @@
                 "displayName": "Nameless Guardian Type F",
                 "tooltip": "",
                 "bodyPartRoot":"nameless_guardian_f_head_base",
-                "addStatsKeyword":["hp","mp","energy","stamina","physical"]
+                "addStatsKeyword":["hp","stamina","physical"]
             },
             {
                 "ID": "robotrace_namelessguardian_type_m",
@@ -39,15 +52,7 @@
                 "sortOrder":0,
                 "NaturalWeapon":{
                     "Mass":10,
-                    "DamageTypes":
-                    {
-                        "Impact":   {"targetDamageTypes":["Slash", "Blunt"],"convertRatio":0.5}
-                    }
-                },
-                "NaturalDefense":
-                {
-                    "integrity":4,
-                    "armorLayers": [ { "applyToDamageTypes":["Blunt","Slash"], "damageReductionValue":1 } ]
+                    "DamageTypes": { "Gunshot":   {"targetDamageTypes":["Blunt"],"convertRatio":0.5} }
                 }
             },
             {
@@ -56,61 +61,42 @@
                 "tooltip":"An {0}'s leg.",
                 "tags":["leg", "nameless_guardian", "type_f"],
                 "sortOrder":1,
+                "NaturalWeapon":{
+                    "Mass":10,
+                    "DamageTypes":
+                    {
+                        "Impact":   {"targetDamageTypes":["Slash", "Blunt"],"convertRatio":0.5},
+                        "Thrust":   {"targetDamageTypes":["Slash", "Blunt"],"convertRatio":0.5}
+                    }
+                },
                 "NaturalDefense":
                 {
-                    "integrity":4,
-                    "armorLayers": [ { "applyToDamageTypes":["Blunt","Slash"], "damageReductionValue":1 } ]
+                    "integrity":15,
+                    "armorLayers": [ { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":4 } ]
                 }
             },
             {
                 "id": "nameless_guardian_m_head_base",
                 "displayName":"%%bodyPart_base_head%%",
                 "tooltip":"An {0}'s head.",
-                "childID":[ "nameless_guardian_m_body_base", "nameless_guardian_m_tentacle_base", "nameless_guardian_m_tentacle_base"],
-                "tags":["head", "nameless_guardian", "type_m","ranged"],
+                "childID":[ "nameless_guardian_m_tentacle_base", "nameless_guardian_m_tentacle_base"],
+                "tags":["head", "nameless_guardian", "type_m","ranged", "tentacle"],
                 "NaturalWeapon":{
-                    "Mass":10,
-                    "DamageTypes":
-                    {
-                        "Impact":   {"targetDamageTypes":["Slash", "Blunt"],"convertRatio":0.5}
-                    }
+                    "Mass":5,
+                    "DamageTypes": { "Gunshot":   {"targetDamageTypes":["Blunt"],"convertRatio":0.5} }
                 },
-                "sortOrder":0,
-                "NaturalDefense":
-                {
-                    "integrity":4,
-                    "armorLayers": [ { "applyToDamageTypes":["Blunt","Slash"], "damageReductionValue":1 } ]
-                }
-            },
-            {
-                "id": "nameless_guardian_m_body_base",
-                "displayName":"",
-                "tooltip":"An {0}'s tentacle body.",
-                "tags":["tentacle", "nameless_guardian", "type_m"],
-                "sortOrder":1,
-                "NaturalDefense":
-                {
-                    "integrity":4,
-                    "armorLayers": [ { "applyToDamageTypes":["Blunt","Slash"], "damageReductionValue":1 } ]
-                }
+                "sortOrder":0
             },
             {
                 "id": "nameless_guardian_m_tentacle_base",
                 "displayName":"",
                 "tooltip":"An {0}'s tentacle.",
                 "tags":["tentacle", "nameless_guardian", "type_m"],
-                "sortOrder":2,
-                "NaturalWeapon":{
-                    "Mass":10,
-                    "DamageTypes":
-                    {
-                        "Impact":   {"targetDamageTypes":["Slash", "Blunt"],"convertRatio":0.5}
-                    }
-                },
+                "sortOrder":1,
                 "NaturalDefense":
                 {
-                    "integrity":4,
-                    "armorLayers": [ { "applyToDamageTypes":["Blunt","Slash"], "damageReductionValue":1 } ]
+                    "integrity":10,
+                    "armorLayers": [ { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":4 } ]
                 }
             },
             {
@@ -183,7 +169,12 @@
     "Encounters":{
         "list":[
             {
-                "ID":"nameless_guardian_encounter_1",
+                "ID":"nameless_guardian_encounter_1a",
+                "frontline":[   "nameless_guardian_type_f","nameless_guardian_type_f",
+                                "nameless_guardian_type_f"]
+            },
+            {
+                "ID":"nameless_guardian_encounter_1b",
                 "frontline":[   "nameless_guardian_type_f","nameless_guardian_type_f",
                                 "nameless_guardian_type_f","nameless_guardian_type_f"],
                 "support":[     "nameless_guardian_type_m"]
@@ -201,7 +192,9 @@
                                 "nameless_guardian_type_f","nameless_guardian_type_f"],
                 "support":[     "nameless_guardian_type_m","nameless_guardian_type_m",
                                 "nameless_guardian_type_b"]
-            }
+            },
+            { "ID":"nameless_guardian_dummy_M", "frontline":[   "nameless_guardian_type_f"], "support":[   "nameless_guardian_type_m"] },
+            { "ID":"nameless_guardian_dummy_B", "frontline":[   "nameless_guardian_type_f"], "support":[   "nameless_guardian_type_b"] }
         ]
     },
     "Dictionary":
@@ -212,7 +205,12 @@
             {
                 "nameless_guardian_type_f_name":"无名守护者Type.F",
                 "nameless_guardian_type_m_name":"无名守护者Type.M",
-                "nameless_guardian_type_b_name":"无名守护者Type.B"
+                "nameless_guardian_type_b_name":"无名守护者Type.B",
+
+                "nameless_guardian_encounter_1a":"无名守护者巡逻队",
+                "nameless_guardian_encounter_1b":"无名守护者巡逻队",
+                "nameless_guardian_encounter_2":"无名守护者巡逻队2",
+                "nameless_guardian_encounter_3":"无名守护者巡逻队3"
             },
             "en-us":
             {
