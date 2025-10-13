@@ -93,7 +93,8 @@
 {
     "initClass":"campaign_init_factionVisitor",
     "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Neon","External"]
-}
+},
+{ "initClass":"campaign_init_map_extra_debug", "initArguments":["map_bluearchive_utnapishtim", "UtnapishtimEx",true] }
                     ]
                 }
             ]

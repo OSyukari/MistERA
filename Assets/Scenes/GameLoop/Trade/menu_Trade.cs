@@ -51,6 +51,15 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
     List<scr_charaEntry> list_c = new List<scr_charaEntry>();
     List<scr_itemEntry> list_i = new List<scr_itemEntry>();
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="allowChara">AllowCharaModification (equipment/transfer)</param>
+    /// <param name="allowHostile">AllowHostileAction</param>
+    /// <param name="allowKill">AllowKilling</param>
+    /// <param name="allowTransfer">AllowCharaTransfer</param>
     public void InitializeWithArgument(I_IsJobGiver a, I_IsJobGiver b, bool allowChara, bool allowHostile, bool allowKill, bool allowTransfer)
     {
         list_c.Clear(); list_i.Clear();
@@ -154,15 +163,18 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
         }*/
     }
 
+    /// <summary>
+    /// First resolve inventory, then resolve character. Cuz charaResolve will trigger party cleanup wiping all item data.
+    /// </summary>
     public void ResolveAll()
     {
-        foreach(var c in list_c)
-        {
-            c.Resolve();
-        }
-        foreach(var i in list_i)
+        foreach (var i in list_i)
         {
             i.Resolve();
+        }
+        foreach (var c in list_c)
+        {
+            c.Resolve();
         }
     }
 

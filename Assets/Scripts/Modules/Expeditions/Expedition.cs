@@ -18,6 +18,11 @@ public class Index_Expeditions : I_IndexHasID, I_IndexMergeable
             this.list.AddRange(l.list);
         }
     }
+    /// <summary>
+    /// DO NOT CALL THIS DIRECTLY
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public Expedition GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
     Dictionary<string, Expedition> ID_Dictionary = new Dictionary<string, Expedition>();
     public void RegisterAllID(List<string> s)
@@ -50,41 +55,67 @@ public class Expedition
         } }
     public string backgroundImagePath = "";
     public bool HasStartHour = false;
+
+    public int MaxExplorationRate = -1;
+    public bool isUnique = false;
+    public bool removeOnComplete = false;
+    /// <summary>
+    /// CanExplore == CanRescue
+    /// </summary>
+    public bool canExplore = false;
+    [JsonIgnore] public bool CanRescue { get { return canExplore; } }
+
+    public string rescueEventID = "";
+    public string rescueEventLabel = "";
+    [JsonIgnore] public bool CanBeRescued { get { return rescueEventID != ""; } }
+
     public int ForceStartHour = 0;
     public int DurationHour = 0;
     public float EventRate = 0.05f;
     public List<string> DescriptionText = new List<string>();
     // we need a collection of events
 
+
+    [JsonIgnore]
+    public string RescueConditionText
+    {
+        get
+        {
+            if (this.MaxExplorationRate > 0)
+            {
+                return LocalizeDictionary.QueryThenParse("ui_management_expedition_rescueCondition_expRate").Replace("$keyword$",String.Join( "|", keywords));
+            }
+            else
+            {
+                return "error unknown";
+            }
+        }
+    }
+
     /// <summary>
     /// key: event, value: weight, total weight is sum of all individual weights
     /// </summary>
-    [JsonProperty] protected List<string> EventIDs = new List<string>();
+    public List<string> EventIDs = new List<string>();
 
-    Dictionary<string, ExpEvents> _lut = new Dictionary<string, ExpEvents>();
     public List<string> keywords = new List<string>();
     public List<string> FeatureKeywords = new List<string>();
 
-    List<ExpEvents> _allEvents = null;
+    public List<WeightModifiers> weightModifiers = new List<WeightModifiers>();
+    public class WeightModifiers
+    {
+        public List<string> keywords = new List<string>();
+        public float weightModPre = 0;
+        public float weightMult = 0;
+        public float weightModPost = 0;
 
-    [JsonIgnore] public List<ExpEvents> AllEvents { get
+        public bool Match(List<string> list)
         {
-            if (_allEvents == null)
-            {
-                _allEvents = new List<ExpEvents>();
-                var strKeys = new List<string>(EventIDs);
+            return Utility.ListContainsStrict(list, keywords);
+        }
+    }
 
-                foreach(var feature in Expeditions.ExplorationFeatures.list)
-                {
-                    if (Utility.ListContainsStrict(FeatureKeywords, feature.requireKeywords)) strKeys.AddRange(feature.featureEventIDs);
-                }
-                strKeys = strKeys.Distinct().ToList();
+    // keyword randomizer, use in instance
+    // allevents move into expinstance
 
-                foreach(var i in strKeys)
-                {
-                    _allEvents.Add(Expeditions.ExplorationEvents.GetByID(i));
-                }
-            }
-            return _allEvents;
-        } }
+
 }

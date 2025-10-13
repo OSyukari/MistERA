@@ -589,6 +589,18 @@ public class Memory_Entry
         return this.interactions.Find(x=>x.comID == comID) != null;
     }
 
+    [JsonIgnore]
+    public bool HasStatMod
+    {
+        get
+        {
+            if (this.cache_lust != null && this.cache_lust.ValueFloat > 0) return true;
+            if (this.cache_stress != null && this.cache_stress.ValueFloat > 0) return true;
+            if (this.cache_mood != null && this.cache_mood.ValueFloat > 0) return true;
+            return false;
+        }
+    }
+
     private Stat_Modifier cache_lust = null, cache_stress = null, cache_mood = null;
     [JsonIgnore] public Stat_Modifier Mod_Lust { get
         {

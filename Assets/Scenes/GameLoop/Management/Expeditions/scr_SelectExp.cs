@@ -18,7 +18,7 @@ public class scr_SelectExp : MonoBehaviour
         LoadExp(null);
     }
 
-    public void LoadExp(Expedition exp)
+    public void LoadExp(ExpeditionInstance exp)
     {
         if (exp == null)
         {
@@ -28,9 +28,9 @@ public class scr_SelectExp : MonoBehaviour
             return;
         }
 
-        expName.SetText(exp.DisplayName);
+        expName.SetText(exp.Base.DisplayName);
         expDuration.gameObject.SetActive(true);
-        expDuration.SetText(duration.Replace("$time$",$"{exp.DurationHour}")+(exp.HasStartHour ? $"\n{force.Replace("$time$", time.AddHours(exp.ForceStartHour).ToShortTimeString())}" : ""));
+        expDuration.SetText(duration.Replace("$time$",$"{exp.Base.DurationHour}")+(exp.Base.HasStartHour ? $"\n{force.Replace("$time$", time.AddHours(exp.Base.ForceStartHour).ToShortTimeString())}" : ""));
         expFeatures.gameObject.SetActive(true);
         expFeatures.SetText($"{feature.Replace("$list$", String.Join(" ", exp.FeatureKeywords))}");
 

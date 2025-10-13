@@ -315,6 +315,8 @@ public class Job_Furniture : Job
             //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
             // 2 - if actor is in room, set COM package
             // make COM package
+
+
             var list1 = MakePackages(c);
             var list2 = MakePackagesJoinable(c);
 
@@ -389,11 +391,7 @@ public class Job_Furniture : Job
     public override void PreUpdateTime(int currentMinute)
     {
         if(this.validCOMs != null) this.validCOMs.Clear();
-        this.validCOMs = null;
-        if( this.ValidCOMs.Count > 0)
-        {
-           // just refresh cache 
-        }
+        this.validCOMs = null;  //lazy refresh
         base.PreUpdateTime(currentMinute);
     }
 
@@ -561,7 +559,6 @@ public class Job_Furniture : Job
         }
     }
 
-    [System.Serializable]
     public class JobContainer_Chara : JobContainer
     {
         [JsonIgnore] public override string DisplayName { get { return (contentNames); } }
@@ -673,7 +670,6 @@ public class Job_Furniture : Job
     }
 
 
-    [System.Serializable]
     public abstract class JobContainer : IDisposable, I_Disposable
     {
 
@@ -759,7 +755,10 @@ public class Job_Furniture : Job
         // one job can only have one active comtype
         if (this.ParentInstance.FurnitureBase.furnitureSize <= 0) return true;
         if (this.Container != null && this.Container.HasContent && com is COM_Character_Remove) return true;
-        int i = (com.requirements.requirement.doerCount != -1 ? com.requirements.requirement.doerCount : 1) * (int)this.ParentInstance.FurnitureBase.furnitureSize;
+        int maxActor = com.MaxActorCount;
+        int i = (com.requirements.requirement.doerCount >= 1 ? com.requirements.requirement.doerCount : 1) * (int)this.ParentInstance.FurnitureBase.furnitureSize;
+        //Debug.Log($"CanCOMAcceptMoreActor {com.DisplayName()}, maxActor[{maxActor}] i[{i}] furnitureSize[{(int)this.ParentInstance.FurnitureBase.furnitureSize}]");
+        i = Math.Min(i, maxActor);
         foreach (var p in packages_current)
         {
             if (p.isTemporaryAP) continue;

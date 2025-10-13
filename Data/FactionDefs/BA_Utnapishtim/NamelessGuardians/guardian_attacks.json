@@ -22,27 +22,27 @@
 },
 {
     "ID":"preset_nameless_guardians_f_combo_4",
-    "actions":["firearm_aiming_handgun", "nameless_guardian_laser_close"]
+    "actions":["weapon_ranged_aiming", "nameless_guardian_laser_close"]
 },
 
 
 {
     "ID":"preset_nameless_guardians_m_combo1",
-    "actions":["firearm_aiming_handgun", "nameless_guardian_laser_long"]
+    "actions":["weapon_ranged_aiming", "nameless_guardian_laser_long"]
 },
 {
     "ID":"preset_nameless_guardians_m_combo2",
-    "actions":["firearm_aiming_handgun", "nameless_guardian_laser_long", "nameless_guardian_laser_long"]
+    "actions":["weapon_ranged_aiming", "nameless_guardian_laser_long", "nameless_guardian_laser_long"]
 },
 
 
 {
     "ID":"preset_nameless_guardians_b_combo1",
-    "actions":["firearm_aiming_handgun", "nameless_guardian_laser_heavy"]
+    "actions":["weapon_ranged_aiming", "nameless_guardian_laser_heavy"]
 },
 {
     "ID":"preset_nameless_guardians_b_combo2",
-    "actions":["firearm_aiming_handgun", "nameless_guardian_laser_heavy", "nameless_guardian_laser_heavy", "nameless_guardian_laser_heavy"]
+    "actions":["weapon_ranged_aiming", "nameless_guardian_laser_heavy", "nameless_guardian_laser_heavy", "nameless_guardian_laser_heavy"]
 }
         ]
     },

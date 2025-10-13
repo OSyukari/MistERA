@@ -2,9 +2,8 @@
     "Items":{
         "list":[
         {
-            "id":"weapon_village_cutlass",
-            "displayName":"Cutlass",
-            "Tags":["blade","thrust","one_handed","village"],
+            "id":"weapon_simple_cutlass",
+            "Tags":["blade","thrust","melee","simple"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Weapon", 
@@ -22,9 +21,8 @@
             ]
         },
         {
-            "id":"weapon_village_cleaver",
-            "displayName":"Cleaver",
-            "Tags":["blade","one_handed","village"],
+            "id":"weapon_simple_cleaver",
+            "Tags":["blade","melee","simple"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Weapon", 
@@ -42,9 +40,8 @@
             ]
         },
         {
-            "id":"weapon_village_scythe",
-            "displayName":"Cleaver",
-            "Tags":["blade","one_handed","village"],
+            "id":"weapon_simple_scythe",
+            "Tags":["blade","melee","simple"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Weapon", 
@@ -60,6 +57,25 @@
                     }
                 }
             ]
+        },
+        {
+            "id":"weapon_simple_club",
+            "Tags":["blunt","melee","simple"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Weapon", 
+                    "comp_Weapon": 
+                    {
+                        "Mass":8,
+                        "Balance":-3,
+                        "DamageTypes":
+                        {
+                            "Swing":   {"targetDamageTypes":["Blunt"],"convertRatio":0.7},
+                            "Thrust":    {"targetDamageTypes":["Blunt"],"convertRatio":0.3}
+                        }
+                    }
+                }
+            ]
         }
         
     ]
@@ -69,7 +85,7 @@
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
     
-    "ID":"village_swing_horizontal_light",
+    "ID":"simple_swing_horizontal_light",
     "tags":["horizontal"], "strength":6,"tracking":3,  "moveType":"Swing",
     "_comment":"faster if previous is right",
     "extraMods":{
@@ -78,24 +94,24 @@
             "combat_stat_speed":[ { "requireTags":["horizontal"], "Value":1 } ]
         }
     },
-    "itemRequirement":{ "requireTags":["one_handed","village"] }
+    "itemRequirement":{ "requireTags":["melee","simple"] }
     
 },         
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
-    "ID":"village_thrust_forward",
+    "ID":"simple_thrust_forward",
     "PostureMod":-1, "tracking":1,
     "tags":["thrust"], "strength":5, "moveType":"Thrust",
-    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "itemRequirement":{ "requireTags":["melee","simple"] },
     "_comment":"longer attack reach and move forward, thrust move decrease self posture",
     "speedMod":2
 },                 
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
-    "ID":"village_thrust_heavy_forward",
+    "ID":"simple_thrust_heavy_forward",
     "PostureMod":-3, "tracking":0, "range":1,
     "tags":["thrust"], "strength":7, "moveType":"Thrust",
-    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "itemRequirement":{ "requireTags":["melee","simple"] },
     "_comment":"if previous action has movement, will get back the speed mod",
     "extraMods":{
         "mods":
@@ -106,9 +122,9 @@
 },         
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
-    "ID":"village_swing_horizontal_heavy",
+    "ID":"simple_swing_horizontal_heavy",
     "tags":["horizontal"], "speedMod":-2, "tracking":2, "strength":8, "PostureMod":1,"moveType":"Swing",
-    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "itemRequirement":{ "requireTags":["melee","simple"] },
     "extraMods":{
         "mods":
         {
@@ -118,9 +134,9 @@
 },              
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
-    "ID":"village_swing_horizontal_heavy_followup",
+    "ID":"simple_swing_horizontal_heavy_followup",
     "tags":["horizontal"], "speedMod":-2,  "tracking":2, "strength":8, "PostureMod":1, "moveType":"Swing",
-    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "itemRequirement":{ "requireTags":["melee","simple"] },
     "extraMods":{
         "mods":
         {
@@ -128,7 +144,7 @@
         }
     },
     "Reaction":{
-        "CounterMoves":["village_swing_horizontal_heavy"],
+        "CounterMoves":["simple_swing_horizontal_heavy"],
         "TriggerConditions": { "MaxEvasion":1, "MaxRange":0 }
     }
 },       
@@ -136,9 +152,9 @@
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
     
-    "ID":"village_swing_up_heavy",
+    "ID":"simple_swing_up_heavy",
     "tags":["vertical_up"], "speedMod":-2,  "strength":9, "tracking":1, "moveType":"Swing", "PostureMod":1,
-    "itemRequirement":{ "requireTags":["one_handed","village"] },
+    "itemRequirement":{ "requireTags":["melee","simple"] },
     "components:": [  ]
 }
         ]
@@ -147,40 +163,40 @@
     {
         "list":[
 {
-    "ID":"preset_village_slash_4hitCombo",
-    "actions":["village_swing_horizontal_light", "village_swing_horizontal_light", "village_thrust_forward","village_swing_horizontal_heavy"]
+    "ID":"preset_simple_slash_4hitCombo",
+    "actions":["simple_swing_horizontal_light", "simple_swing_horizontal_light", "simple_thrust_forward","simple_swing_horizontal_heavy"]
 },
 {
-    "ID":"preset_village_slash_2hit_followup_Combo",
-    "actions":["village_swing_horizontal_heavy", "village_swing_horizontal_heavy_followup"]
+    "ID":"preset_simple_slash_2hit_followup_Combo",
+    "actions":["simple_swing_horizontal_heavy", "simple_swing_horizontal_heavy_followup"]
 },
 {
-    "ID":"preset_village_slash_forward",
-    "actions":["move_base_forward", "village_swing_up_heavy"]
+    "ID":"preset_simple_slash_forward",
+    "actions":["move_base_forward", "simple_swing_up_heavy"]
 },
 {
-    "ID":"preset_village_slash_forward_light",
-    "actions":["move_base_forward", "village_swing_horizontal_light"]
+    "ID":"preset_simple_slash_forward_light",
+    "actions":["move_base_forward", "simple_swing_horizontal_light"]
 },
 {
-    "ID":"preset_village_slash_forward_followup",
-    "actions":["move_base_forward", "village_swing_horizontal_heavy_followup"]
+    "ID":"preset_simple_slash_forward_followup",
+    "actions":["move_base_forward", "simple_swing_horizontal_heavy_followup"]
 },
 {
-    "ID":"preset_village_thrust_2hit_forward",
-    "actions":["village_thrust_forward", "village_thrust_forward","base_observe"]
+    "ID":"preset_simple_thrust_2hit_forward",
+    "actions":["simple_thrust_forward", "simple_thrust_forward","base_observe"]
 },
 {
-    "ID":"preset_village_thrust_1hit",
-    "actions":["village_thrust_forward","base_observe"]
+    "ID":"preset_simple_thrust_1hit",
+    "actions":["simple_thrust_forward","base_observe"]
 },
 {
-    "ID":"preset_village_thrust_lunge_1hit",
-    "actions":["move_base_forward","village_thrust_heavy_forward"]
+    "ID":"preset_simple_thrust_lunge_1hit",
+    "actions":["move_base_forward","simple_thrust_heavy_forward"]
 },
 {
-    "ID":"preset_village_blunt_4hit_backpedal",
-    "actions":["village_swing_horizontal_light","village_swing_horizontal_light","move_base_backward","village_swing_horizontal_light","village_swing_horizontal_light"]
+    "ID":"preset_simple_blunt_4hit_backpedal",
+    "actions":["simple_swing_horizontal_light","simple_swing_horizontal_light","move_base_backward","simple_swing_horizontal_light","simple_swing_horizontal_light"]
 }
         ]
     },
@@ -190,23 +206,23 @@
         {
             "zh-cn":
             {
-"weapon_village_cutlass":"军刀",
-"weapon_village_cleaver":"砍刀",
-"weapon_village_scythe":"镰刀",
+"weapon_simple_cutlass":"军刀",
+"weapon_simple_cleaver":"砍刀",
+"weapon_simple_scythe":"镰刀",
+"weapon_simple_club":"木棒",
 
-
-"village_swing_horizontal_light":"横斩",
-"village_swing_horizontal_heavy":"重横斩",
-"village_swing_horizontal_heavy_followup":"重横斩+",
-"village_swing_up_heavy":"重纵斩",
-"village_thrust_forward":"突刺",
-"village_thrust_heavy_forward":"重突刺"
+"simple_swing_horizontal_light":"横斩",
+"simple_swing_horizontal_heavy":"重横斩",
+"simple_swing_horizontal_heavy_followup":"重横斩+",
+"simple_swing_up_heavy":"重纵斩",
+"simple_thrust_forward":"突刺",
+"simple_thrust_heavy_forward":"重突刺"
             },
             "en-us":
             {
-"weapon_village_cutlass":"Cutlass",
-"weapon_village_cleaver":"Cleaver",
-"weapon_village_scythe":"Scythe"
+"weapon_simple_cutlass":"Cutlass",
+"weapon_simple_cleaver":"Cleaver",
+"weapon_simple_scythe":"Scythe"
 
             }
         }

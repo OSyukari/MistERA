@@ -82,11 +82,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
         mainExit = exit;
         mainExit_cache = null;
         int newRef = MainExit == null ? -1 : MainExit.RefID;
-
-        // all established paths
-        scr_System_CampaignManager.current.Map.OnFactionMainExitChange(this, previousRef, newRef);
     }
 
+    public Manageable_GuestStatus GetStatus(int chararef)
+    {
+        if (charaGuestStatus.TryGetValue(chararef, out var guestStatus)) return guestStatus;
+        else return Manageable_GuestStatus.None;
+    }
     public bool isManager(int charaRef)
     {
         return charaGuestStatus.ContainsKey(charaRef) && charaGuestStatus[charaRef] == Manageable_GuestStatus.Manager;
@@ -95,6 +97,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         return charaGuestStatus.ContainsKey(charaRef) && 
             ( charaGuestStatus[charaRef] == Manageable_GuestStatus.Manager || charaGuestStatus[charaRef] == Manageable_GuestStatus.Member);
+    }
+    public bool isManagedChara(int chararef)
+    {
+        return charaGuestStatus.ContainsKey(chararef);
     }
 
     public bool isVisitor(int charaRef)
@@ -217,7 +223,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (_jobpost == null) continue;
 
             var c = scr_System_CampaignManager.current.FindInstanceByID(cSchedule.Key);
-            var targetFaction = c == null ? null : c.FactionManager.HomeFactions.First();
+            var targetFaction = c == null ? null : c.FactionManager.HomeFactions[0];
             if(targetFaction == null) continue;
 
             // self will pay wage to targetfaction
@@ -292,7 +298,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
     [JsonProperty] protected FactionInventory _inventory;
-    public FactionInventory Inventory { get { return _inventory; } }
+    [JsonIgnore] public FactionInventory Inventory { get { return _inventory; } }
     public List<ProductionOrder> ProductionOrders = new List<ProductionOrder>();
     public List<TradeOrder> TradeOrders = new List<TradeOrder>();
 
@@ -318,6 +324,18 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public List<Manageable_Party> SubFactions = new List<Manageable_Party>();
 
+    [JsonIgnore]
+    public List<Manageable_Party> KidnapFactions
+    { get
+        {
+            var kidnaps = new List<Manageable_Party>();
+            foreach (var c in ManagedChara)
+            {
+                var kk = c.FactionManager.CurrentLockedParty;
+                if (kk != null && !kidnaps.Contains(kk)) kidnaps.Add(kk);
+            }
+            return kidnaps;
+        } }
     public Manageable_Party CreateParty()
     {
         var v = new Manageable_Party(this, $"{this.ID}_subfaction_{this.SubFactions.Count}");
@@ -352,6 +370,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
         socialStatus_prisoner = LocalizeDictionary.QueryThenParse("management_faction_socialStatus_prisoner");
 
         socialStatus_baseString = LocalizeDictionary.QueryThenParse("management_faction_socialStatus_baseString");
+    }
+
+
+    public bool HasScheduleFor(Character_Trainable c, int hour)
+    {
+        if (charaSchedules.TryGetValue(c.RefID, out var schedule))
+        {
+            return schedule.Get(hour).isActive;
+        }
+        else return false;
     }
 
     public Job_Schedule GetSchedule(Character_Trainable c)
@@ -1160,6 +1188,24 @@ public class Manageable : I_Disposable, I_IsJobGiver
     [JsonIgnore] public Dictionary<string, int> productionWarnings = new Dictionary<string, int>();
     [JsonIgnore] public Dictionary<string, int> resourceWarnings = new Dictionary<string, int>();
 
+    public List<ExpeditionInstance> GetAllValidExpeditions()
+    {
+        var list = new List<ExpeditionInstance>();
+        bool matchKeyword = this.explorationKeywords.Count > 0;
+        foreach(var exp in Expeditions.ExpeditionEntry.list)
+        {
+            if (!exp.isUnique) continue;
+            if (!exp.canExplore) continue;
+            if (matchKeyword)
+            {
+                if (exp.keywords.Count < 1) continue;
+                if (!Utility.ListContainsStrict(this.explorationKeywords, exp.keywords)) continue;
+            }
+            list.Add(scr_System_CampaignManager.current.CreateExpedition(exp.ExpeditionID));
+        }
+        return list;
+    }
+
     /// <summary>
     /// This refresh internal warning messages. Only required when message is required...
     /// </summary>
@@ -1292,16 +1338,23 @@ public class Manageable : I_Disposable, I_IsJobGiver
             }
         }
     }
-
+    [JsonIgnore]
+    public Manageable FactionOwnerRoot
+    {
+        get
+        {
+            return this;
+        }
+    }
     [JsonIgnore] public List<Manageable> ConnectedFactions
     {
         get
         {
-            return scr_System_CampaignManager.current.Map.GetConnectedFactionRooms(this.ID);
+            return scr_System_CampaignManager.current.Map.GetConnectedFactions(this.ID);
         }
     }
 
-    [System.Serializable]
+
     public class Job_Schedule
     {
         [JsonProperty]
@@ -1359,7 +1412,6 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
-    [System.Serializable]
     public class HourlySchedule
     {
 
@@ -1451,7 +1503,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 return cache_name;
             } }
 
-        [JsonIgnore] public bool isActive { get { return this.jobID.Length > 0 || this.comIDs.Count > 0; } }
+        [JsonIgnore] public bool isActive { get { return this.comIDs.Count > 0; } }
 
         [JsonIgnore]
         public COM getRandCOM
@@ -1465,7 +1517,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     }
 
-    [System.Serializable]
+
     public class TradeOrder
     {
         public ItemEntry Entry = null;
@@ -1628,7 +1680,6 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
 
-    [System.Serializable]
     public class ProductionOrder
     {
         [JsonIgnore] public ItemComponentTemplate_Craftable_Recipe Recipe { get {
@@ -1754,7 +1805,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         //foreach(var e in scr_System_Serializer.current.CraftingRecipe) if (e.jobKeyword != "" && kvp.Key.comTags.Contains(e.jobKeyword)) recipes.Add(e.outputItemBaseID);
     }
 
-    [NonSerialized][JsonIgnore] Dictionary<string, int> charaMaintenanceCostCache = null;
+    Dictionary<string, int> charaMaintenanceCostCache = null;
 
     [JsonIgnore] public Dictionary<string, int> GetMaintenanceCost_Chara
     {
@@ -1819,7 +1870,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
 
 
-    [NonSerialized][JsonIgnore] List<Tuple<string, int>> DailyCharaMaintenance = new List<Tuple<string, int>>();
+    List<Tuple<string, int>> DailyCharaMaintenance = new List<Tuple<string, int>>();
     /// <summary>
     /// Only consumes token item for now
     /// </summary>
@@ -1881,6 +1932,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
         foreach (var p in this.SubFactions) p.ReEstablishParent(this);
 
 
+    }
+
+    [JsonIgnore]
+    public bool isPlayerRelatedFaction
+    {
+        get
+        {
+            return isPlayerFaction;
+        }
     }
 
     public void DisposeInternal()
@@ -1955,7 +2015,6 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else return pricelabel.Replace("$count$", value.ToString()).Replace("$item$", Currency.DisplayName);
     }
 
-    [System.Serializable]
     public class SalesInventory
     {
         public List<MapPlan.SalesInventoryInit> entries = new List<MapPlan.SalesInventoryInit>();
@@ -1993,7 +2052,6 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
-    [System.Serializable]
     public class JobPostPreset
     {
         public JobPostPreset()

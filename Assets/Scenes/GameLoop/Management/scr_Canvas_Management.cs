@@ -513,7 +513,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 case 42:  // edit party inventory 
                     button.Initialize(this, new ButtonValidator_AlwaysFalse(this)); break;
                 case 43:
-                    button.Initialize(this, new ButtonValidator_partyEditExpeditions(this, button)); break;
+                    button.Initialize(this, new initScript_Expeditions.ButtonValidator_partyEditExpeditions(this, button, Script_Expeditions.SelextExpTooltip)); break;
                 case 44:
                     button.Initialize(this, new initScript_Expeditions.ButtonValidator_StartExp(this, button)); break;
                 case 45:
@@ -580,10 +580,11 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         button.Validate();
     }
-    public void MakeButton_Expedition(Expedition exp, scr_SelectableText button, scr_partyBTN box)
+    public scr_HoverableText SelectExpeditionExtraTooltip;
+    public void MakeButton_Expedition(ExpeditionInstance exp, scr_SelectableText button, scr_partyBTN box)
     {
         button.Initialize(this, new initScript_Expeditions.ButtonValidator_selectExp(this, button, exp, box));
-        button.SetText(exp.DisplayName);
+        button.SetText(exp.Base.DisplayName);
         button.optionID = AssertUniqueHash(exp.GetHashCode());
 
         buttonsByID.Add(button.optionID, button);
@@ -1654,13 +1655,17 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             this.parent = parent;
             this.party = party;
             this.text.AttachOnHoverEnter(OnPointerEnter);
+
+            if (isKidnap)
+            {
+                this.tooltip = party.Job.Expedition.Base.RescueConditionText;
+            }
         }
 
         public override bool IsButtonValid()
         {
             //if (text == null) Debug.LogError("text null");
             if (!text.gameObject.activeInHierarchy) return false;
-
 
             if (parent.currentParty == this.party) text.Toggle(true, true);
             else text.Toggle(true, false);
@@ -1753,35 +1758,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             else parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.Neutral;
         }
     }
-    public class ButtonValidator_partyEditExpeditions : ButtonValidator, I_ButtonClickable
-    {
-        new scr_Canvas_Management parent;
-        scr_SelectableText text;
-        public ButtonValidator_partyEditExpeditions(scr_Canvas_Management parent, scr_SelectableText text) : base(parent)
-        {
-            this.text = text;
-            this.parent = parent;
-        }
-
-        public override bool IsButtonValid()
-        {
-            //if (text == null) Debug.LogError("text null");
-            if (!text.gameObject.activeInHierarchy) return false;
-            if (parent.currentParty == null || parent.CurrentFaction == null || parent.currentParty.Job == null)
-            {
-                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_").Replace("$expName$","-"));
-                return false;
-            }
-            if (!parent.currentParty.isPlayerFaction) return false;
-            text.SetText(parent.currentParty.Job.DisplayName+ (parent.currentParty.isActive ? " "+parent.currentParty.Job.RemainingTime : ""));
-            return !parent.currentParty.isActive;
-        }
-
-        public void OnClickButton()
-        {
-            parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.ExpeditionEdit;
-        }
-    }
+    
 
     public class ButtonValidator_partyCreate : ButtonValidator, I_ButtonClickable
     {

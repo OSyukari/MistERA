@@ -32,8 +32,8 @@
                     "line": "exp_event_combat_draw_ev99",
                     "isLast": true
                 }
-                            ]
-                        },
+                ]
+            },
             {                
                 "ID": "exp_event_combat_victory",
                 "events": [
@@ -147,7 +147,7 @@
                                         { "Type":"JumpToLabel", "arguments":["","br_escape"]} ] 
                         },
                         {   
-                            "option": "接受战败（全员HP-1）",  "isDefaultCancel":true,
+                            "option": "接受战败（全员HP-1）", 
                             "Results": [ { "Type":"ModStatEXValue", "arguments":["party","stats_derived_extended_hp","-1"]},
                                          { "Type":"JumpToLabel", "arguments":["","br_defeat"]} ] 
                         }

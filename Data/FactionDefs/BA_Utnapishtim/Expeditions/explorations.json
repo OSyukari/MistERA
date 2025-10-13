@@ -3,28 +3,11 @@
         "list":
         [
 {
-    "ExpeditionID":"expedition_Utnapishtim_wreck",
-    "HasStartHour":false,
-    "ForceStartHour":0,
-    "DurationHour":6,
-    "DescriptionText":[
-"expedition_Utnapishtim_danger_1", "expedition_Utnapishtim_danger_2", "expedition_Utnapishtim_danger_3",
-"expedition_Utnapishtim_danger_4", "expedition_Utnapishtim_danger_5", "expedition_Utnapishtim_danger_6",
-"expedition_Utnapishtim_danger_7", "expedition_Utnapishtim_danger_8", "expedition_Utnapishtim_danger_9",
-"expedition_Utnapishtim_danger_10", "expedition_Utnapishtim_danger_11", "expedition_Utnapishtim_danger_12",
-"expedition_Utnapishtim_danger_13", "expedition_Utnapishtim_danger_14", "expedition_Utnapishtim_danger_15"],
-    "EventIDs":[],
-    "FeatureKeywords":["Utnapishtim"],
-    "Events":
-    [
-
-    ]
-},
-{
     "ExpeditionID":"expedition_Utnapishtim_engines",
     "HasStartHour":false,
     "ForceStartHour":0,
     "DurationHour":26,
+    "isUnique":true, "canExplore":true,
     "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
     "DescriptionText":[
         "expedition_Utnapishtim_exploring_1", "expedition_Utnapishtim_exploring_2", "expedition_Utnapishtim_exploring_3",
@@ -45,6 +28,7 @@
     "HasStartHour":false,
     "ForceStartHour":0,
     "DurationHour":16,
+    "isUnique":true, "canExplore":true,
     "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
     "DescriptionText":[
         "expedition_Utnapishtim_exploring_1", "expedition_Utnapishtim_exploring_2", "expedition_Utnapishtim_exploring_3",
@@ -81,7 +65,6 @@
         {
             "zh-cn":
             {
-"expedition_Utnapishtim_wreck":"生命守护者 战舰残骸",
 "expedition_Utnapishtim_engines":"生命守护者 引擎",
 "expedition_Utnapishtim_cargo":"生命守护者 货运区",
 

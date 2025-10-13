@@ -4,7 +4,7 @@
         {
             "id":"firearm_handgun",
             "displayName":"firearm_handgun",
-            "Tags":["firearm","one_handed","ranged"],
+            "Tags":["firearm","ranged"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Weapon", 
@@ -26,14 +26,7 @@
     },
     "CombatActions":{
         "list":[      
-{
-    "$type":"CombatAction_Defense, Assembly-CSharp",
     
-    "ID":"firearm_aiming_handgun",
-    "tags":["aiming"], "PostureMod":1,
-    "itemRequirement":{ "requireTags":["ranged"] }
-    
-},         
 {
     "$type":"CombatAction_Attack, Assembly-CSharp",
     "ID":"firearm_attack_standardbullet",
@@ -78,7 +71,6 @@
             {
 "firearm_handgun":"手枪",
 "firearm_handgun_tooltip":"暂未实装弹药和装填系统",
-"firearm_aiming_handgun":"瞄准",
 "firearm_execution_headshot":"爆头",
 "firearm_attack_standardbullet":"射击（通常弹）"
             },

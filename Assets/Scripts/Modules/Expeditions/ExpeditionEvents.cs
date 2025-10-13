@@ -39,16 +39,20 @@ public class ExpEvents
     public int baseWeight = 0;
     public TeamReq teamRequirement = new TeamReq();
     public List<WeightModifier> weightMods = new List<WeightModifier>();
-
+    public List<string> tags = new List<string>();
     public class TeamReq
     {
         public int minTeamCount = 1;
         public int maxTeamCount = 99;
 
+        public bool allowMIA = true;
+
         public bool allowVisitor = true;
         public bool allowHidden = false;
         public bool allowPrisoner = false;
         public bool requireCombat = true;
+
+        public string debug_teamNameMatch = "";
 
         public CharaReq charaReq = new CharaReq();
         //public ItemRequirement itemReq = new ItemRequirement();

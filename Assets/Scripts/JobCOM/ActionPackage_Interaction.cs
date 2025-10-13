@@ -30,6 +30,15 @@ public class ActionPackage_Interaction : ActionPackage
         return isValid;
     }
 
+    [JsonIgnore]
+    public override bool AllowJoining
+    {
+        get
+        {
+            return this.targetCOM.MaxActorCount > this.actorRefs.Count;
+        }
+    }
+
     public override int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers)
     {
         var tempPackage = this.Copy();

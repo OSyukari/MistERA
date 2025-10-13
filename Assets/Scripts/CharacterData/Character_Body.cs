@@ -275,7 +275,7 @@ public class Character_Body
             return false;
         }
 
-        if (bodyTag == "") bodyTag = ingest.ingestMethod.First().bodyTags;
+        if (bodyTag == "" && ingest.ingestMethod.Count > 0) bodyTag = ingest.ingestMethod[0].bodyTags;
 
         if (bodyTag != "")
         {
@@ -411,7 +411,6 @@ public class Character_Body
 
                 if (part.Sensitivity != "" && (int)Owner.Stats.GetStatusSeverityByStringMatch(part.Sensitivity) >= Owner.Stats.CumThreshold)
                 {
-                    //char key = part.Sensitivity.Last();
 
                     ConcatenateClimax(ref climaxKeywords, part.Sensitivity);// climaxKeywords.Add("Strong Climax "+ part.Sensitivity);
                     Item_Instance cum = null;

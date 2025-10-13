@@ -37,6 +37,8 @@ public class Result_Faction
 
         public Result_Event startEvent = null;
 
+        public int ExpeditionProgressMod = 0;
+
         public class Result_Event
         {
             public string eventID = "";

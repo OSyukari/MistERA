@@ -84,6 +84,8 @@ public static class EventUtility
                                     instance.Targets[key].Add(c);
                                     instance.Targets[key] = instance.Targets[key].Distinct().ToList();
                                 }
+
+                                c.isTemporaryActor = true;
                             }
                         }
                         foreach (var i in encounter.support)
@@ -99,7 +101,10 @@ public static class EventUtility
                                     instance.Targets[key].Add(c);
                                     instance.Targets[key] = instance.Targets[key].Distinct().ToList();
                                 }
+
+                                c.isTemporaryActor = true;
                             }
+
                         }
 
                         foreach(var item in encounter.inventory)
@@ -126,6 +131,8 @@ public static class EventUtility
                             instance.Targets[key].Add(c);
                             instance.Targets[key] = instance.Targets[key].Distinct().ToList();
                         }
+
+                        c.isTemporaryActor = true;
                     }
                 }
 
@@ -276,6 +283,10 @@ public static class EventUtility
                     var valueC = c.Stats.GetStatValue(r.parameters[1]);
                     return Utility.CompareValue(valueC, op, value);
                 }
+                else return false;
+            case "CanTerminateExpedition":
+                var faction = c.FactionManager.CurrentActiveParty;
+                if (faction != null && !faction.Job.hasUnresolvedResult) return true;
                 else return false;
             default:
                 return true;
@@ -774,45 +785,160 @@ public static class EventUtility
                     return true;
                 }
                 else return false;
-            case Event.EventEntry.ExecutionType.PartyKidnap:
-                if (exec.arguments.Count >= 3)
+            case Event.EventEntry.ExecutionType.PartyMIA:
+                if (exec.arguments.Count >= 4)
                 {
                     //if (bool.TryParse(exec.arguments[2], out bool isPrisoner))
                     //{
-                        Expedition kidnapExp = Expeditions.ExpeditionEntry.GetByID(exec.arguments[2]);
-                        Manageable_Party kidnapLoc = null; List<Character_Trainable> kidnappers = null;
-                        if (owner.Targets.ContainsKey(exec.arguments[1]))
+                    ExpeditionInstance kidnapExp = scr_System_CampaignManager.current.CreateExpedition(exec.arguments[2]);
+                    Manageable kidnapFaction = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
+                    if (kidnapFaction == null)
+                    {
+                        scr_System_CampaignManager.current.Unregister(kidnapExp);
+                        return false;
+                    }
+                    if (owner.Targets.ContainsKey(exec.arguments[0]))
+                    {
+                        Manageable_Party kidnapLoc = null;
+                        var victims = owner.Targets[exec.arguments[0]];
+                        if (victims.Count < 1)
                         {
-                            kidnappers = owner.Targets[exec.arguments[1]];
-                            kidnapLoc = UtilityEX.GetActiveFactionFrom(kidnappers) as Manageable_Party;
+                            scr_System_CampaignManager.current.Unregister(kidnapExp);
+                            return false;
                         }
-                        if (kidnappers == null || kidnappers.Count < 1 || kidnapLoc == null || kidnapLoc.MainExit == null) return false;
-                        if (owner.Targets.ContainsKey(exec.arguments[0]))
+                        var victimsFaction = UtilityEX.GetActiveFactionFrom(victims);
+                        if (victimsFaction is Manageable_Party && victimsFaction.FactionOwnerRoot == kidnapFaction)
                         {
-                            var victims = owner.Targets[exec.arguments[0]];
-                            foreach (var i in victims) if (i.FactionManager.isPartyLocked) return false;
+                            // keep same party
+                            kidnapLoc = victimsFaction as Manageable_Party;
+                        }
+                        else
+                        {
+                            kidnapLoc = kidnapFaction.CreateParty();
+                            // create new party
+                            bool locked = false;
                             foreach (var i in victims)
                             {
-                                if (! i.FactionManager.AddToParty(kidnapLoc, Manageable_GuestStatus.Visitor, false, true))
-                                {
-                                    Debug.LogError("Erroe failed to add party, event abort");
-                                    return false;
-                                }
-                                scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
-                                i.ChangeCurrentJob(null);
+                                if (i.FactionManager.CurrentActiveParty == victimsFaction && i.FactionManager.isPartyLocked) locked = true;
                             }
-                            foreach (var i in kidnappers)
+                            if (!locked) victimsFaction = null;
+                        }
+
+                        kidnapLoc.FactionDisplayName = kidnapExp.Base.DisplayName;
+
+                        foreach (var i in victims)
+                        {
+                            i.ChangeCurrentJob(null);
+                            scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
+                            if (!i.FactionManager.AddToParty(kidnapLoc, Manageable_GuestStatus.Visitor, false, true))
                             {
-                                scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
-                                kidnapLoc.AddToFaction(i, Manageable_GuestStatus.Hidden);
-                                if (!kidnapLoc.skipTryGetJob(i)) Debug.LogError("failed setting gueststatus hidden");
+                                Debug.LogError("Erroe failed to add party, event abort");
+                                scr_System_CampaignManager.current.Unregister(kidnapExp);
+                                return false;
                             }
-                            kidnapLoc.FactionDisplayName = kidnapExp.DisplayName;
-                            kidnapLoc.SetExpedition(kidnapExp);
-                            kidnapLoc.Job.AddResult("kidnapped!", new List<string>(), victims, true);
+                        }
+
+                        kidnapLoc.SetExpedition(kidnapExp);
+                        kidnapLoc.ForceStartExpedition();
+                        if (victimsFaction != null && victimsFaction != kidnapLoc)
+                        {
+                            (victimsFaction as Manageable_Party).Job.DumpLogInto(kidnapLoc.Job);
+                        }
+                        kidnapLoc.Job.AddResult(LocalizeDictionary.QueryThenParse(exec.arguments[3]), new List<string>(), victims, true);
+                        return true;
+                    }
+                    //}
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.PartyKidnap:
+                if (exec.arguments.Count >= 4)
+                {
+                    ExpeditionInstance kidnapExp = scr_System_CampaignManager.current.CreateExpedition(exec.arguments[2]);
+                    Manageable_Party kidnapLoc = null, exitFaction = null;
+                    List<Character_Trainable> kidnappers = null;
+                    if (owner.Targets.ContainsKey(exec.arguments[1]))
+                    {
+                        kidnappers = owner.Targets[exec.arguments[1]];
+                        kidnapLoc = UtilityEX.GetActiveFactionFrom(kidnappers) as Manageable_Party;
+                    }
+                    if (kidnappers == null || kidnappers.Count < 1 || kidnapLoc == null || kidnapLoc.MainExit == null)
+                    {
+                        scr_System_CampaignManager.current.Unregister(kidnapExp);
+                        return false;
+                    }
+                    if (owner.Targets.ContainsKey(exec.arguments[0]))
+                    {
+                        var victims = owner.Targets[exec.arguments[0]];
+                        var victimFaction = UtilityEX.GetActiveFactionFrom(victims);
+
+                        if (victimFaction is Manageable_Party && victimFaction.FactionOwnerRoot == kidnapLoc.FactionOwnerRoot && victimFaction != kidnapLoc)
+                        {
+                            exitFaction = kidnapLoc;
+                            // merge 2 party
+                            kidnapLoc = victimFaction as Manageable_Party;
+                        }
+
+                        kidnapLoc.FactionDisplayName = kidnapExp.Base.DisplayName;
+                        foreach (var i in victims)
+                        {
+                            i.ChangeCurrentJob(null);
+                            scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
+                            if (! i.FactionManager.AddToParty(kidnapLoc, Manageable_GuestStatus.Visitor, false, true))
+                            {
+                                Debug.LogError("Erroe failed to add party, event abort");
+                                scr_System_CampaignManager.current.Unregister(kidnapExp);
+                                return false;
+                            }
+                        }
+                        foreach (var i in kidnappers)
+                        {
+                            if (exitFaction != null) exitFaction.RemoveFromFaction(i);
+                            scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
+                            kidnapLoc.AddToFaction(i, Manageable_GuestStatus.Hidden);
+                        }
+
+
+                        kidnapLoc.SetExpedition(kidnapExp);
+                        if (exitFaction != null) exitFaction.Job.DumpLogInto(kidnapLoc.Job);
+                        kidnapLoc.Job.AddResult(LocalizeDictionary.QueryThenParse(exec.arguments[3]), new List<string>(), victims, true);
+                        return true;
+                    }
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.TerminateExpedition:
+                if (exec.arguments.Count >= 1)
+                {
+                    List<Character_Trainable> targetActors = null;
+                    if (owner.Targets.ContainsKey(exec.arguments[0]))
+                    {
+                        targetActors = owner.Targets[exec.arguments[0]];
+                        var tf = UtilityEX.GetActiveFactionFrom(targetActors);
+                        Manageable_Party targetFaction = tf == null ? null : tf as Manageable_Party;
+
+                        if (targetFaction != null && targetFaction.Job != null)
+                        {
+                            targetFaction.Job.Expedition.CompleteProgress();
                             return true;
                         }
-                    //}
+                    }
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.ResetExpedition:
+                if (exec.arguments.Count >= 1)
+                {
+                    List<Character_Trainable> targetActors = null;
+                    if (owner.Targets.ContainsKey(exec.arguments[0]))
+                    {
+                        targetActors = owner.Targets[exec.arguments[0]];
+                        var tf = UtilityEX.GetActiveFactionFrom(targetActors);
+                        Manageable_Party targetFaction = tf == null ? null : tf as Manageable_Party;
+
+                        if (targetFaction != null && targetFaction.Job != null)
+                        {
+                            targetFaction.Job.Expedition.ResetProgress();
+                            return true;
+                        }
+                    }
                 }
                 return false;
             case Event.EventEntry.ExecutionType.FactionExchangeInventory:

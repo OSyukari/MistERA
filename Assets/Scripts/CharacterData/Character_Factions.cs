@@ -49,15 +49,20 @@ public class Character_Factions
 
     //--------------------------
 
+    List<Manageable> _homefactions = null;
     /// <summary>
     /// PRIORITY LISTING, FROM MOST PRIORITY TO LEAST
     /// </summary>
     [JsonIgnore] public List<Manageable> HomeFactions { get
         {
-            List<Manageable> list = new List<Manageable>();
-            if (Faction_Home_Temporary != null) list.Add(Faction_Home_Temporary);
-            if (Faction_Home != null) list.Add(Faction_Home);
-            return list;
+            if (_homefactions == null)
+            {
+                _homefactions = new List<Manageable>();
+                if (Faction_Home_Temporary != null) _homefactions.Add(Faction_Home_Temporary);
+                if (Faction_Home != null) _homefactions.Add(Faction_Home);
+            }
+
+            return _homefactions;
         } }
     [JsonIgnore] public List<Manageable> WorkFactions { get { return Factions_Work; } }
 
@@ -257,7 +262,49 @@ public class Character_Factions
     }
     [JsonProperty] List<int> trackedPartyRef = new List<int>();
 
+    public bool AddToPartyAsTemp(I_IsJobGiver party, Manageable_GuestStatus status, Manageable_GuestStatus homeStatus, bool isLock = false)
+    {
+        var p = party as Manageable_Party;
+        if (p == null) return false;
 
+        return AddToPartyAsTemp(p, status, homeStatus, isLock);
+    }
+    public bool AddToPartyAsTemp(Manageable_Party party, Manageable_GuestStatus status, Manageable_GuestStatus homeStatus, bool isLock = false)
+    {
+        //if (this.CurrentActiveParty != null && this.CurrentActiveParty != party) return false;
+
+        if (isLock)
+        {
+            if (this.CurrentLockedParty != null && this.CurrentLockedParty != party)
+            {
+                this.CurrentLockedParty.NotifyCharaKidnapped(this.Owner, party);
+                this.CurrentLockedParty.RemoveFromFaction(this.Owner);
+            }
+            if (this.CurrentParty != null) this.CurrentParty.NotifyCharaKidnapped(this.Owner, party);
+
+            this.CurrentLockedParty = party;
+        }
+        else
+        {
+            if (this.CurrentParty != null && this.CurrentParty != party)
+            {
+                Debug.LogError($"Error AddToParty, [{Owner.FirstName}] already assigned to [{this.CurrentParty.FullFactionDisplayName}], cannot join [{party.FullFactionDisplayName}]");
+                return false;
+            }
+            else this.CurrentParty = party;
+        }
+
+        party.AddToFaction(Owner, status, true);
+
+
+        if (Faction_Home == null) SetHomeFaction(party.OwnerFaction.ID, homeStatus, false);
+        else SetTempHomeFaction(party.OwnerFaction.ID, homeStatus, false);
+
+        AddPartyTracker(party);
+
+        UpdateFactionPriorityList();
+        return true;
+    }
     public bool AddToParty(I_IsJobGiver party, Manageable_GuestStatus status, bool setHomeFaction, bool isLock = false)
     {
         var p = party as Manageable_Party;
@@ -273,15 +320,12 @@ public class Character_Factions
         {
             if (this.CurrentLockedParty != null && this.CurrentLockedParty != party)
             {
-                Debug.LogError($"Error AddToParty, [{Owner.FirstName}] already locked to [{this.CurrentLockedParty.FullFactionDisplayName}], cannot lock to [{party.FullFactionDisplayName}]");
-                return false;
+                this.CurrentLockedParty.NotifyCharaKidnapped(this.Owner, party);
+                this.CurrentLockedParty.RemoveFromFaction(this.Owner);
             }
-            else this.CurrentLockedParty = party;
+            if (this.CurrentParty != null) this.CurrentParty.NotifyCharaKidnapped(this.Owner, party);
 
-            if (this.CurrentParty != null)
-            {
-                this.CurrentParty.NotifyCharaKidnapped(this.Owner, party);
-            }
+            this.CurrentLockedParty = party;
         }
         else
         {
@@ -301,7 +345,6 @@ public class Character_Factions
             else SetTempHomeFaction(party.OwnerFaction.ID, status, false);
         }
         
-        
         AddPartyTracker(party);
 
         UpdateFactionPriorityList();
@@ -315,7 +358,12 @@ public class Character_Factions
     /// <param name="unlock">allow removing anything LockedParty</param>
     public void RemoveFromParty(Manageable_Party party, bool forceRemove = false, bool unlock = false)
     {
-        if (this.CurrentLockedParty == party || unlock) this.CurrentLockedParty = null;
+        if (this.CurrentLockedParty == party || unlock)
+        {
+            var p = this.CurrentLockedParty;
+            this.CurrentLockedParty = null;
+            p.RemoveFromFaction(Owner);
+        }
         if (this.CurrentParty == party || forceRemove) this.CurrentParty = null;
        
         UpdateFactionPriorityList();
@@ -408,15 +456,19 @@ public class Character_Factions
         UpdateFactionPriorityList();
     }
 
+    List<Manageable> _factions = null;
     /// <summary>
     /// Listing factions in order of priority. Work (internal priority order) > Home/TempHome
     /// </summary>
     [JsonIgnore] public List<Manageable> Factions  { get { 
-                var factionListCache = new List<Manageable>();
-                factionListCache.AddRange(WorkFactions);
-                factionListCache.AddRange(HomeFactions);
-            
-            return factionListCache; } }
+            if (_factions == null)
+            {
+                _factions = new List<Manageable>();
+                _factions.AddRange(WorkFactions);
+                _factions.AddRange(HomeFactions);
+            }
+           
+            return _factions; } }
 
     [JsonIgnore] public List<Manageable> ManagerFactions { get
         {
@@ -433,6 +485,8 @@ public class Character_Factions
     /// </summary>
     private void UpdateFactionPriorityList()
     {
+        _factions = null;
+        _homefactions = null;
         if (FactionIDs_Work == null) FactionIDs_Work = new List<string>();
 
         this.Faction_Home_Temporary_Cache = null;
@@ -456,10 +510,7 @@ public class Character_Factions
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
         foreach (var faction in Factions)
         {
-            Manageable.Job_Schedule schedule = faction.GetSchedule(Owner);
-            if (schedule == null) continue;
-            //string comID = schedule.Get(hour).comIDs;
-            if (schedule.Get(hour).comIDs.Count > 0) return faction;
+            if (faction.HasScheduleFor(this.Owner, hour)) return faction;
         }
         return null;
     }
@@ -482,6 +533,14 @@ public class Character_Factions
     [JsonProperty] protected Manageable.Job_Schedule privateSchedule =  new Manageable.Job_Schedule();
     [JsonIgnore] public bool HasSleepSchedule { get { return privateSchedule.HasWorkHoursWithCOM("com_furniture_sleep"); } }
 
+    [JsonIgnore]
+    public bool HasPlayerFaction
+    {
+        get
+        {
+            return this.Factions.Any(x => x.isPlayerFaction);
+        }
+    }
     /// <summary>
     /// Wipe and rebuild personal sleep schedule.<br/>
     /// Use this whenever an external schedule modification has taken place<br/>

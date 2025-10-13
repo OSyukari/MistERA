@@ -49,7 +49,6 @@ public class COM_Requirements
 
     public Requirement requirement = new Requirement();
 
-    [System.Serializable]
     public class Requirement
     {
         public int doerCount = -1;

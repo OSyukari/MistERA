@@ -475,7 +475,7 @@ public class CombatInstance
     public int MaxActionsByCharaRef(int refID, bool excludeEOT = true)
     {
         var list = ActionsByCharaRef(refID, excludeEOT);
-        var count = list.Count > 0 ? list.Last().ActionSlotIndex + 1 : 0;
+        var count = list.Count > 0 ? list[list.Count -1].ActionSlotIndex + 1 : 0;
         return count < 2 ? 2 : count;
     }
 
@@ -923,7 +923,7 @@ public class CombatInstance
         var possibleTargets = new List<Character_Trainable>(opponentTeam);
         items = new List<I_CombatItem>();
         Utility.Shuffle(possibleTargets);
-        target = possibleTargets.Count() < 1 ? null : possibleTargets.First();
+        target = possibleTargets.Count() < 1 ? null : possibleTargets[0];
 
         int distance = GetCombatDistance(c, target, false);
 
@@ -1016,7 +1016,7 @@ public class CombatInstance
         }
         if (items.Count > action.Count && preset.EOT_Action != null)
         {
-            CombatActionInstance counter = new CombatActionInstance(this, c, items.Last(), preset.EOT_Action, target, BaseSpeed[c.RefID],  CurrentRound, EOTIndex, true);
+            CombatActionInstance counter = new CombatActionInstance(this, c, items[items.Count - 1], preset.EOT_Action, target, BaseSpeed[c.RefID],  CurrentRound, EOTIndex, true);
             if (savedCounters.ContainsKey(c.RefID)) savedCounters[c.RefID] = counter;
             else savedCounters.Add(c.RefID, counter);
         }

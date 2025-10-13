@@ -219,17 +219,14 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
     }
 }
 
-[System.Serializable]
 public class COM: I_SerializationCallbackReceiver
 {
 
-    [System.Serializable]
     public class Acceptance
     {
         public int baseAcceptanceValue = 0;
         public bool useDefault = true;
     }
-    [System.Serializable]
     public class Difficulty
     {
         public int baseD20Check = 0;
@@ -274,6 +271,23 @@ public class COM: I_SerializationCallbackReceiver
     public COM_Descriptions descriptions_remove = new COM_Descriptions();
     public COM_Descriptions description_ongoing = new COM_Descriptions();
     public COM_Descriptions description_after = new COM_Descriptions();
+
+    [JsonIgnore]
+    public int MaxActorCount
+    {
+        get
+        {
+            var i = Math.Max(0, this.requirements.requirement.doerCount);
+            var j = Math.Max(0, this.requirements.requirement.receiverCount);
+            foreach(var v in this.variants)
+            {
+                i = Math.Max(i, v.requirements.requirement.doerCount);
+                j = Math.Max(j, v.requirements.requirement.receiverCount);
+            }
+
+            return i + j;
+        }
+    }
 
     public virtual string GetDescription_Begin(EvaluationPackage evp, int variantID)
     {

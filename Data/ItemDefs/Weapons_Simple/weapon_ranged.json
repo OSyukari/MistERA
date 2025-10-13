@@ -1,0 +1,122 @@
+{
+    "Items":{
+        "list":[
+        {
+            "id":"weapon_simple_sling",
+            "displayName":"Sling",
+            "Tags":["ranged","simple"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Weapon", 
+                    "comp_Weapon": 
+                    {
+                        "Mass":4,
+                        "Balance":-1,
+                        "DamageTypes":
+                        {
+                            "Projectile":   {"targetDamageTypes":["Blunt"],"convertRatio":0.5}
+                        },
+                        "ExecutionMove":"firearm_execution_headshot"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"weapon_simple_shortbow",
+            "displayName":"Shortbow",
+            "Tags":["simple","ranged"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Weapon", 
+                    "comp_Weapon": 
+                    {
+                        "Mass":5,
+                        "Balance":-1,
+                        "DamageTypes":
+                        {
+                            "Projectile":   {"targetDamageTypes":["Pierce"],"convertRatio":0.7}
+                        },
+                        "ExecutionMove":"firearm_execution_headshot"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"weapon_simple_lightcrossbow",
+            "displayName":"Crossbow",
+            "Tags":["simple","ranged"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Weapon", 
+                    "comp_Weapon": 
+                    {
+                        "Mass":10,
+                        "Balance":-2,
+                        "DamageTypes":
+                        {
+                            "Projectile":   {"targetDamageTypes":["Pierce"],"convertRatio":0.7}
+                        },
+                        "ExecutionMove":"firearm_execution_headshot"
+                    }
+                }
+            ]
+        }
+        
+    ]
+    },
+    "CombatActions":{
+        "list":[      
+{
+    "$type":"CombatAction_Defense, Assembly-CSharp",
+    
+    "ID":"weapon_ranged_aiming",
+    "tags":["aiming"], "PostureMod":1,
+    "itemRequirement":{ "requireTags":["ranged"] }
+    
+},         
+{
+    "$type":"CombatAction_Attack, Assembly-CSharp",
+    "ID":"weapon_ranged_projectile_attack",
+    "tracking":-2, "range":1,
+    "tags":[], "strength":6, "moveType":"Projectile",
+    "extraMods":{
+        "mods":
+        {
+            "combat_stat_tracking":[ { "requireTags":["aiming"], "Value":3 } ]
+        }
+    },
+    "itemRequirement":{ "requireTags":["simple","ranged"] },
+    "speedMod": 0
+}
+        ]
+    },
+    "CombatActionPresets":
+    {
+        "list":[
+{
+    "ID":"preset_simple_ranged_combo1",
+    "actions":["weapon_ranged_aiming", "weapon_ranged_projectile_attack"]
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"weapon_simple_sling":"投石索",
+"weapon_simple_shortbow":"短弓",
+"weapon_simple_lightcrossbow":"轻弩",
+"weapon_ranged_aiming":"瞄准",
+"weapon_ranged_projectile_attack":"射击"
+
+            },
+            "en-us":
+            {
+
+
+            }
+        }
+    }
+}

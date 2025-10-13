@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Reflection;
 
 [System.Serializable]
 public class TeamTemplate
@@ -135,7 +136,6 @@ public class CombatManager
 
     public Character_Trainable GetCombatDummy(string baseID, List<int> generatedIDs = null)
     {
-        Character_Trainable returnValue = null;
 
         if (!combatDummyRefIDs.ContainsKey(baseID)) combatDummyRefIDs.Add(baseID, new List<int>() {});
             
@@ -145,15 +145,21 @@ public class CombatManager
             var chara = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(baseID, scr_System_CampaignManager.current.StasisRoom);
             refList.Add(chara.RefID);
             combatDummyRefs.Add(chara.RefID, chara);
-            returnValue = chara;
+            return chara;
         }
         else
         {
-            var intRef = generatedIDs != null ? refList.Except(generatedIDs).ToList().First() : refList.First();
-            returnValue = combatDummyRefs[intRef];
+            var intRef = -1;
+            if (generatedIDs != null)
+            {
+                var list = refList.Except(generatedIDs).ToList();
+                return combatDummyRefs[ list[0]];
+            }
+            else
+            {
+                return combatDummyRefs[ refList[0]];
+            }
         }
-        
-        return returnValue;
     }
 
 

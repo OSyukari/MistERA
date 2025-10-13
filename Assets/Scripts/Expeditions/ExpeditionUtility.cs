@@ -7,11 +7,19 @@ using System.Linq;
 
 public static class TeamReqUtility
 {
-    public static bool Validate(ExpEvents.TeamReq q, Manageable_Party p, out List<Character_Trainable> team)
+    public static bool Validate(ExpEvents.TeamReq q, Manageable_Party p, out List<Character_Trainable> team, List<Character_Trainable> injectActorList = null)
     {
         var tooltip = new List<string>();
         team = new List<Character_Trainable>();
-        foreach (var i in p.ManagedChara)
+        if (q.debug_teamNameMatch != "")
+        {
+            //Debug.Log($"Validate TeamReqUtility, factionName[{p.FactionDisplayName}] debugTeamName[{q.debug_teamNameMatch}] contains? {p.FactionDisplayName.Contains(q.debug_teamNameMatch)}");
+            if (!p.FactionDisplayName.Contains(q.debug_teamNameMatch)) return false;
+        }
+
+        var list = injectActorList == null ? p.ManagedChara : injectActorList;
+        
+        foreach (var i in list)
         {
             var status = p.GetStatus(i);
             switch(status)
@@ -29,6 +37,8 @@ public static class TeamReqUtility
                     break;
             }
 
+            if (!q.allowMIA && i.FactionManager.isPartyLocked) continue;
+
             if (q.requireCombat)
             {
                 if (!i.canFight) continue;
@@ -39,19 +49,6 @@ public static class TeamReqUtility
         }
         return team.Count >= q.minTeamCount && team.Count <= q.maxTeamCount;
     }
-
-
-    public static bool Validate(ExpEvents.TeamReq q, List<Character_Trainable> list)
-    {
-        var team = new List<Character_Trainable>();
-        var tooltip = new List<string>();
-        foreach (var i in list)
-        {
-            if (CharaReqUtility.Validate(q.charaReq, ref tooltip, i)) team.Add(i);
-        }
-        return team.Count >= q.minTeamCount && team.Count <= q.maxTeamCount;
-    }
-
 }
 
 public static class ExpeditionUtility
@@ -66,12 +63,12 @@ public static class ExpeditionUtility
        on combat/event resolve reinjiect into expResult
      
      */
-    public static ActionPackage_Expedition RandEvent(Expedition exp, Manageable_Party p)
+    public static ActionPackage_Expedition RandEvent(ExpeditionInstance exp, Manageable_Party p)
     {
         var dict = new Dictionary<ActionPackage_Expedition, int>();
         foreach (var i in exp.AllEvents)
         {
-            var ii = new ActionPackage_Expedition(p, i);
+            var ii = new ActionPackage_Expedition(p,exp, i);
             if (ii.weight < 1) continue;
             dict.Add(ii, ii.weight);
         }
@@ -84,12 +81,12 @@ public static class ExpeditionUtility
     /// <param name="exp"></param>
     /// <param name="p"></param>
     /// <returns></returns>
-    public static int Cooldown(Expedition exp, Manageable_Party p)
+    public static int Cooldown(ExpeditionInstance exp, Manageable_Party p)
     {
         var dict = new Dictionary<ActionPackage_Expedition, int>();
         foreach (var i in exp.AllEvents)
         {
-            var ii = new ActionPackage_Expedition(p, i);
+            var ii = new ActionPackage_Expedition(p,exp, i);
             if (ii.weight < 1) continue;
             dict.Add(ii, ii.weight);
         }
@@ -97,12 +94,12 @@ public static class ExpeditionUtility
         //var totalWeight = dict.Values.Sum();
         var currentMin = scr_System_Time.current.getCurrentTime().Minute;
         //Debug.Log($"Before DiceUntil: {(int)(totalWeight / exp.EventRate)} {60 - currentMin} {exp.EventRate} {totalWeight}");
-        if (exp.EventRate <= 0f) return 60 - currentMin;
-        if (exp.EventRate >= 1.0f) return 0;
-        return Utility.DiceUntil(100, 60-currentMin, (int)(exp.EventRate * 100));
+        if (exp.Base.EventRate <= 0f) return 60 - currentMin;
+        if (exp.Base.EventRate >= 1.0f) return 0;
+        return Utility.DiceUntil(100, 60-currentMin, (int)(exp.Base.EventRate * 100));
     }
 
-    public static ExpResults RandResult(ExpEvents exp, ActionPackage_Expedition p)
+    public static ExpResults RandResult(ExpEvents exp, Manageable_Party party, ActionPackage_Expedition p)
     {
         var dict = new Dictionary<ExpResults, int>();
 
@@ -145,21 +142,21 @@ public static class ExpeditionUtility
                 }*/
                 // check if targetgen conflict with p.
             }
-            var ii = GetWeight(i, p.Actors);
+            var ii = GetWeight(i, party, p.Actors);
             if (ii < 1) continue;
             dict.Add(i, ii);
         }
         return Utility.WeightedRandInDict(dict);
     }
 
-    public static int GetWeight(ExpResults ev, List<Character_Trainable> targets)
+    public static int GetWeight(ExpResults ev, Manageable_Party p, List<Character_Trainable> targets)
     {
         int weight = ev.baseWeight;
 
-        if (!TeamReqUtility.Validate(ev.teamRequirement, targets)) return -1;
+        if (!TeamReqUtility.Validate(ev.teamRequirement, p, out var something1, targets)) return -1;
         foreach (var wmod in ev.weightMods)
         {
-            if (TeamReqUtility.Validate(wmod.teamRequirement, targets))
+            if (TeamReqUtility.Validate(wmod.teamRequirement, p, out var something2, targets))
             {
                 weight += wmod.modValue;
             }

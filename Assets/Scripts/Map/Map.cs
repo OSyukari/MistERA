@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 
-[System.Serializable]
 public class Map_Instance
 {
 
@@ -81,7 +80,7 @@ public class Map_Instance
 
 
 
-    [JsonProperty] List<int> _activeFloorRefIDs = null;
+    List<int> _activeFloorRefIDs = null;
     [JsonIgnore] public List<int> ActiveFloorRefIDs
     {
         get
@@ -162,12 +161,12 @@ public class Map_Instance
     }
 
 
-    AdjacencyGraph<int, TaggedEdge<int, Door_Instance>> graph = null;
-    ArrayAdjacencyGraph<int, TaggedEdge<int, Door_Instance>> graphImmutable = null;
+    Dictionary<int, AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>> graphs = null;
+    Dictionary<int, ArrayAdjacencyGraph<int, TaggedEdge<int, Door_Instance>>> graphsImmutable = null;
 
     private void BuildPath()
     {
-        graph = new AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>();
+        graphs = new Dictionary<int, AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>>();
         floorDoorQuickSearch = new Dictionary<int, int>();
         FloorLayout = new Dictionary<Tuple<int, int>, Vector2>();
 
@@ -177,6 +176,7 @@ public class Map_Instance
         foreach(KeyValuePair<int, Floor_Instance> kvp_fl in floors)
         {
             if (!mapTemplateInstances.ContainsKey(kvp_fl.Value.mapTemplateInstanceID)) mapTemplateInstances.Add(kvp_fl.Value.mapTemplateInstanceID, kvp_fl.Value.MapTemplate);
+            if (!graphs.ContainsKey(kvp_fl.Value.mapTemplateInstanceID)) graphs.Add(kvp_fl.Value.mapTemplateInstanceID, new AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>());
 
             Floor_Base fb = kvp_fl.Value.FloorBase;
 
@@ -187,7 +187,7 @@ public class Map_Instance
 
             }
 
-            graph.AddVerticesAndEdgeRange(kvp_fl.Value.Graph.Edges);
+            graphs[kvp_fl.Value.mapTemplateInstanceID].AddVerticesAndEdgeRange(kvp_fl.Value.Graph.Edges);
 
         }
 
@@ -217,8 +217,8 @@ public class Map_Instance
 
                     var edge = new TaggedEdge<int, Door_Instance>(i, j, dinst);
                     var edgeR = new TaggedEdge<int, Door_Instance>(j, i, dinst);
-                    graph.AddVerticesAndEdge(edge);
-                    graph.AddVerticesAndEdge(edgeR);
+                    graphs[kvp_plan.Key].AddVerticesAndEdge(edge);
+                    graphs[kvp_plan.Key].AddVerticesAndEdge(edgeR);
 
                     //Debug.Log("adding quicksearch [" + i + "] ["+j+"]");
 
@@ -231,19 +231,9 @@ public class Map_Instance
             }
         }
 
-        //Debug.LogError("MAP GRAPH REBUILT");
-        foreach (var a in factionGraphs)
-        {
-            Manageable fa = scr_System_CampaignManager.current.FindFactionByID(a.Key);
-            foreach(var b in a.Value)
-            {
-                Manageable fb = scr_System_CampaignManager.current.Map.GetRoomByRef(b).FactionOwner as Manageable;
-                if(fa != null && fb != null) ConnectFactions(fa, fb);
-            }
-            
-        }
+        graphsImmutable = new Dictionary<int, ArrayAdjacencyGraph<int, TaggedEdge<int, Door_Instance>>>();
+        foreach (var kvp in graphs) graphsImmutable.Add(kvp.Key, kvp.Value.ToArrayAdjacencyGraph());
 
-        graphImmutable = graph.ToArrayAdjacencyGraph();
         /*
          https://github.com/KeRNeLith/QuikGraph/wiki/Creating-Graphs
 
@@ -578,66 +568,57 @@ public class Map_Instance
            // Debug.LogError("roomFloorRef status: " + String.Join("|", roomFloorRef_Immutable.Keys));
             return null;
         }
-        else if (graphImmutable == null)
+        else if (graphsImmutable == null)
         {
             //Debug.LogError("FINDPATH ERROR GRAPH NULL");
             return null;
         }
-        int chara_floorRef = roomFloorRef_Immutable[roomRef.RefID];
-        int target_floorRef = roomFloorRef_Immutable[targetRoom.RefID];
-        TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graphImmutable.ShortestPathsAStar(edgeCost, heuristic, roomRef.RefID);
-        if (tryGetPaths(targetRoom.RefID, out IEnumerable<TaggedEdge<int, Door_Instance>> path))
+
+        var fromFloor = roomRef.parentFloor == null ? -1 : roomRef.parentFloor.mapTemplateInstanceID;
+        var toFloor = targetRoom.parentFloor == null ? -1 : targetRoom.parentFloor.mapTemplateInstanceID;
+
+        var fromFaction = roomRef.FactionOwner == null ? null : roomRef.FactionOwner.FactionOwnerRoot;
+        var toFaction = targetRoom.FactionOwner == null ? null : targetRoom.FactionOwner.FactionOwnerRoot;
+
+        if (fromFloor != -1 && toFloor != -1 && fromFloor == toFloor && graphsImmutable.ContainsKey(fromFloor))
         {
-            return path;
+            // same graph pathing >= same floor pathing
+            TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graphsImmutable[fromFloor].ShortestPathsAStar(edgeCost, heuristic, roomRef.RefID);
+            if (tryGetPaths(targetRoom.RefID, out IEnumerable<TaggedEdge<int, Door_Instance>> path))
+            {
+                return path;
+            }
+            else return null;
+        }
+        else if (isConnectedFaction(fromFaction, toFaction))
+        {
+            IEnumerable<TaggedEdge<int, Door_Instance>> path1 = null, path2 = null;
+            TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGet1 = fromFloor == -1 ? null : graphsImmutable[fromFloor].ShortestPathsAStar(edgeCost, heuristic, roomRef.RefID);
+            TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGet2 = toFloor == -1 ? null : graphsImmutable[toFloor].ShortestPathsAStar(edgeCost, heuristic, toFaction.MainExit.RefID);
+            // different graph teleport pathfinding
+            if (tryGet1 == null || tryGet1(fromFaction.MainExit.RefID, out path1) && (tryGet2 == null || tryGet2(targetRoom.RefID, out path2)))
+            {
+                var path = new List<TaggedEdge<int, Door_Instance>>();
+                if (path1 != null) path.AddRange(path1.ToList());
+                path.Add(new TaggedEdge<int, Door_Instance>(fromFaction.MainExit.RefID, toFaction.MainExit.RefID, new Door_Instance(5)));
+                if (path2 != null) path.AddRange(path2.ToList());
+
+                return path;
+            }
+            else return null;
         }
         else return null;
+        //else no path exist
     }
 
     public IEnumerable<TaggedEdge<int, Door_Instance>> Findpath(int charaRefID, int toRoomRefID, int roomRefID = -1)
     {
-
+        var chara = scr_System_CampaignManager.current.FindInstanceByID(charaRefID);
         var roomRef = FindRoomByChara(charaRefID); //charaRoomRef[charaRefID];
         if( roomRefID == -1) roomRefID = roomRef.RefID;
         var targetRoom = GetRoomByRef(toRoomRefID);
-        if (roomRef == null || targetRoom == null)
-        {
-            Debug.LogError("Campaign manager findpath null either chararoom null or targetroom null");
-            return null;
-        }
-        else if (scr_System_CampaignManager.current.FindInstanceByID(charaRefID).isRestrained && toRoomRefID != roomRefID)
-        {   // restrained and target room not self room
-            //Debug.Log("target is restrained and cannot leave room, selfRoom["+roomRef.RefID +" "+roomRef.DisplayName+ "] targetRoom["+ targetRoom.RefID +" "+ targetRoom.DisplayName+ "]");
-            return null;
-        }
 
-        if ( roomFloorRef_Immutable == null || !roomFloorRef_Immutable.ContainsKey(roomRefID) || !roomFloorRef_Immutable.ContainsKey(toRoomRefID))
-        {
-            Debug.LogError("Findpath Error roomRef null or does not contain both keys ["+roomRef+"] ["+toRoomRefID+"]");
-            Debug.LogError("roomFloorRef status: " + String.Join("|", roomFloorRef_Immutable.Keys));
-            return null;
-        }else if (graphImmutable == null)
-        {
-            Debug.LogError("FINDPATH ERROR GRAPH NULL");
-            return null;
-        }
-        int chara_floorRef = roomFloorRef_Immutable[roomRefID];
-        int target_floorRef = roomFloorRef_Immutable[toRoomRefID];
-
-        //if (chara_floorRef == target_floorRef) return FindFloorByRefID(roomRef).Findpath(charaRefID, roomRef, toRoomRefID);
-        //else
-        // {
-        //TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = null;
-        //Task t = Task.Run(() => tryGetPaths = graph.ShortestPathsDijkstra(edgeCost, roomRef));
-
-        //    t.Wait();
-        //graph.ShortestPathsAStar(edgeCost, heuristic, roomRefID);
-        //TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graph.ShortestPathsDijkstra(edgeCost, roomRefID);
-        TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graphImmutable.ShortestPathsAStar(edgeCost, heuristic, roomRefID);
-        if (tryGetPaths(toRoomRefID, out IEnumerable<TaggedEdge<int, Door_Instance>> path))
-        {
-            return path;
-        }
-        else return null;
+        return Findpath(roomRef, targetRoom, chara.isRestrained);
     }
 
     struct PathfindingJob : IJobParallelFor
@@ -662,6 +643,14 @@ public class Map_Instance
            // pathfindResult = mi.Findpath(graphRef. charaRefID, targetRoomID, charaRoomRefID);
           //  if (pathfindResult != null) foreach (TaggedEdge<int, Door_Instance> e in pathfindResult) pathCost += e.Tag.Cost;
         }
+    }
+
+    public bool isConnectedFaction(Manageable a, Manageable b)
+    {
+        if (a == null || b == null) return false;
+        if (a == b) return true;
+        if (factionGraphs.TryGetValue(a.ID, out var lists) && lists.Contains(b.ID)) return true;
+        else return false;
     }
 
 
@@ -775,9 +764,9 @@ public class Map_Instance
     /// <summary>
     /// This list will be used when creating player move button and when update existing
     /// </summary>
-    [JsonProperty] Dictionary<string, List<int>> factionGraphs = new Dictionary<string, List<int>>();
+    [JsonProperty] Dictionary<string, List<string>> factionGraphs = new Dictionary<string, List<string>>();
 
-    public List<Manageable> GetConnectedFactionRooms(string factionID)
+    public List<Manageable> GetConnectedFactions(string factionID)
     {
         var list = new List<Manageable>();
         if (!factionGraphs.ContainsKey(factionID)) return list;
@@ -790,102 +779,33 @@ public class Map_Instance
         }
         foreach (var i in factionGraphs[factionID])
         {
-            var j = scr_System_CampaignManager.current.Map.GetRoomByRef(i);
-            if (j == null || j.FactionOwner == null) continue;
-            var m = j.FactionOwner as Manageable;
-            if (j.FactionOwner.MainExit == null || m == null)
-            {
-                Debug.LogError($"Faction [{j.FactionOwner.FactionDisplayName}] has no main exit");
-                continue;
-            }
-
-            list.Add(m);
+            var j = scr_System_CampaignManager.current.FindFactionByID(i);
+            if (j == null) continue;
+            list.Add(j);
         }
         return list;    
-    }
-    public void OnFactionMainExitChange(Manageable faction, int oldExitRef, int newExitRef)
-    {
-        var existingExitConnections = factionGraphs.ContainsKey(faction.ID) ? factionGraphs[faction.ID] : new List<int>();
-        // exit is duplicate of entry
-
-        foreach(var target in existingExitConnections)
-        {
-            var targetRoom = scr_System_CampaignManager.current.Map.GetRoomByRef(target);
-            if (targetRoom == null) continue;
-
-            RemoveFactionExit(oldExitRef, target);
-
-            bool opsResult = true;
-            opsResult = AddFactionExit(newExitRef, target, new Door_Instance(faction.MainExitCost)) && opsResult;
-            opsResult = AddFactionExit(target, newExitRef, RemoveFactionExit(target, oldExitRef)) && opsResult;
-
-            if (!opsResult) Debug.LogError($"OnFactionMainExitChange ERROR [{faction.ID}] update room [{targetRoom.DisplayName}], result {opsResult}");
-        }
-
     }
 
     public void ConnectFactions(Manageable a, Manageable b)
     {
-        if (a == null || b == null)
-        {
-            Debug.LogError($"Connecting Factions [{a.ID}] and [{b.ID}] error, one of them is null");
-            return;
-        }
-        if (a.MainExit == null || b.MainExit == null)
-        {
-            Debug.LogError($"Connecting Factions [{a.ID}] and [{b.ID}] error, one of them has null exit");
-            return;
-        }
+        if (a == null || b == null) return;
 
-        if (!factionGraphs.ContainsKey(a.ID)) factionGraphs.Add(a.ID, new List<int>() { b.MainExit.RefID });
-        else if (!factionGraphs[a.ID].Contains(b.MainExit.RefID)) factionGraphs[a.ID].Add(b.MainExit.RefID);
+        if (!factionGraphs.ContainsKey(a.ID)) factionGraphs.Add(a.ID, new List<string>() { b.ID });
+        else if (!factionGraphs[a.ID].Contains(b.ID)) factionGraphs[a.ID].Add(b.ID);
 
-        if (!factionGraphs.ContainsKey(b.ID)) factionGraphs.Add(b.ID, new List<int>() { a.MainExit.RefID });
-        else if (!factionGraphs[b.ID].Contains(a.MainExit.RefID)) factionGraphs[b.ID].Add(a.MainExit.RefID);
-
-        bool opsResult = true;
-        opsResult = AddFactionExit(a.MainExit.RefID, b.MainExit.RefID, new Door_Instance(a.MainExitCost)) && opsResult;
-        opsResult = AddFactionExit(b.MainExit.RefID, a.MainExit.RefID, new Door_Instance(b.MainExitCost)) && opsResult;
-
-        if(!opsResult) Debug.LogError($"Connecting Factions [{a.ID}] and [{b.ID}], result {opsResult}");
-        //else Debug.Log($"Connecting Factions [{a.ID}] and [{b.ID}], result {opsResult}");
+        if (!factionGraphs.ContainsKey(b.ID)) factionGraphs.Add(b.ID, new List<string>() { a.ID });
+        else if (!factionGraphs[b.ID].Contains(a.ID)) factionGraphs[b.ID].Add(a.ID);
     }
 
     public void DisconnectFactions(Manageable a, Manageable b)
     {
         if (a == null || b == null) return;
-        if (a.MainExit == null || b.MainExit == null) return;
+       // if (a.MainExit == null || b.MainExit == null) return;
 
-        RemoveFactionExit(a.MainExit.RefID, b.MainExit.RefID);
-        RemoveFactionExit(b.MainExit.RefID, a.MainExit.RefID);
-
-        if (factionGraphs.ContainsKey(a.ID)) factionGraphs[a.ID].Remove(b.MainExit.RefID);
-        if (factionGraphs.ContainsKey(b.ID)) factionGraphs[b.ID].Remove(a.MainExit.RefID);
+        if (factionGraphs.ContainsKey(a.ID)) factionGraphs[a.ID].Remove(b.ID);
+        if (factionGraphs.ContainsKey(b.ID)) factionGraphs[b.ID].Remove(a.ID);
     }
 
-    protected bool AddFactionExit(int from, int to, Door_Instance cost)
-    {
-        if (cost == null) return false;
-        var edge = new TaggedEdge<int, Door_Instance>(from, to, cost);
-        if (graph.Edges.ToList().Find(x => x.Source == from && x.Target == to) == null)
-        {
-            graph.AddVerticesAndEdge(edge);
-            graphImmutable = graph.ToArrayAdjacencyGraph();
-        }
-        return true;
-    }
-
-    protected Door_Instance RemoveFactionExit(int from, int to)
-    {
-        var target = graph.Edges.ToList().Find(x=>x.Source == from && x.Target == to);
-        if (target == null) return null;
-        else
-        {
-            graph.RemoveEdge(target);
-            graphImmutable = graph.ToArrayAdjacencyGraph();
-            return target.Tag;
-        }
-    }
 
     public void SerializationRebuilt()
     {

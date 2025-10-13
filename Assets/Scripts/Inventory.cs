@@ -296,7 +296,6 @@ public class CharacterInventory : Inventory
 }
 
 
-[System.Serializable]
 public class Inventory
 {
 
@@ -343,6 +342,7 @@ public class Inventory
 
     public virtual bool AddItem(Item_Instance i)
     {
+        if (i == null) return false;
         bool log = scr_System_CampaignManager.current.Recycler != this && scr_System_CentralControl.current.LogPrefs.DLog_Inventory;
         bool added = false;
 
@@ -434,10 +434,10 @@ public class Inventory
     }
     public virtual void Remove(Item_Instance item)
     {
-        if (this.Contents.Contains(item))
+        if (this.ContentRefs.Contains(item.RefID))
         {
             this.contents_cache = null;
-            this.contentRefs.Remove(item.RefID);
+            this.ContentRefs.Remove(item.RefID);
             //this.Contents.Remove(item);
         }
     }
@@ -450,11 +450,15 @@ public class Inventory
     /// <returns></returns>
     public virtual Item_Instance Split(Item_Instance item, int count)
     {
-        if (!this.Contents.Contains(item)) return null;
+        if (!Contains(item))
+        {
+            Debug.LogError("Error Inventory Split: does not contain itemRef");
+            return null;
+        }
         if (count <= 0) return null;
         if (count >= item.Count)
         {
-            this.Remove(item);
+            Remove(item);
             return item;
         }
         var newInstance = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, count);

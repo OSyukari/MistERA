@@ -273,7 +273,6 @@
             "furnitureSize":0,
             "givesJob":
             [   { "comTags":["furniture","bed"] },
-                { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] },
                 { "comTags":["furniture","food_meal"] },
                 { "comID":["com_furniture_restroom_fix"] } ]
         }

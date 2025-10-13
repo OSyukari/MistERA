@@ -42,7 +42,7 @@ public class ActionPackage_Expedition : ActionPackage
         if (!TeamReqUtility.Validate(ev.teamRequirement, p, out targets)) return -1;
         foreach (var wmod in ev.weightMods)
         {
-            if (TeamReqUtility.Validate(wmod.teamRequirement, targets))
+            if (TeamReqUtility.Validate(wmod.teamRequirement, p, out var something, targets))
             {
                 weight += wmod.modValue;
             }
@@ -88,11 +88,12 @@ public class ActionPackage_Expedition : ActionPackage
     public ActionPackage_Expedition() : base()
     { }
 
-    public ActionPackage_Expedition(Manageable_Party p, ExpEvents ev)
+    public ActionPackage_Expedition(Manageable_Party p, ExpeditionInstance exp, ExpEvents ev)
     {
         doerRefs = new List<int>();
         SourceEV = ev;
         this.weight = GetWeight(this.SourceEV, p, out var tt);
+        this.weight = exp.GetWeightModifiers(SourceEV.tags, this.weight);
         TargetChara = tt;
         foreach(var i in TargetChara)this.doerRefs.Add(i.RefID);
         this.duration = SourceEV.DurationMinutes;
@@ -117,7 +118,7 @@ public class ActionPackage_Expedition : ActionPackage
     {
         get
         {
-            if (roomKey == -1) roomKey = scr_System_CampaignManager.current.GetCharaRoomInstance(this.doerRefs.First()).RefID;
+            if (roomKey == -1) roomKey = scr_System_CampaignManager.current.GetCharaRoomInstance(this.doerRefs[0]).RefID;
             return roomKey;
         }
     }
@@ -170,7 +171,7 @@ public class ActionPackage_Expedition : ActionPackage
         // pick EVResult, and if can resolve, resolve it.
         // else, store the AP in a message for player later manual resolve
 
-        var result = ExpeditionUtility.RandResult(SourceEV, this);
+        var result = ExpeditionUtility.RandResult(SourceEV, this.Job_Expedition.FactionOwner_Party, this);
         var jobb = this.job as Job_Expedition;
         if (result != null && jobb != null)
         {
@@ -250,6 +251,8 @@ public class ActionPackage_Expedition : ActionPackage
                     r.unresolved = package;
                 }
             }
+
+            jobb.FactionOwner_Party.NotifyExpeditionProgress(-SourceEV.DurationMinutes, this.actorRefs);
 
             jobb.StartCooldown();
         }

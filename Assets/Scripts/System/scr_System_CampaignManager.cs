@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using NUnit.Framework.Constraints;
 
 [System.Serializable]
 public class scr_System_CampaignManager_Serializable
@@ -21,6 +22,7 @@ public class scr_System_CampaignManager_Serializable
     public Dictionary<int, Character_Trainable> Characters;
     public Dictionary<int, Item_Instance> Items;
     public string campaignSettingID;
+    public Dictionary<int, ExpeditionInstance> ExpeditionInstances;
     public int debugRoomRef, statisRoomRef, tempRoomRef;
     // LogsManager? dont need serializing, logs are throwaway lines anyway
 }
@@ -86,6 +88,40 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (immediate) OnSceneUnload();
     }
 
+    Dictionary<string, ExpeditionInstance> _uniqueExpeditionInstances = null;
+
+    protected void RebuildExpeditionsList()
+    {
+        _uniqueExpeditionInstances = new Dictionary<string, ExpeditionInstance>();
+
+        foreach (var exp in Index_ExpeditionInstances)
+        {
+            if (exp.Value.Base.isUnique) _uniqueExpeditionInstances.Add(exp.Value.Base.ExpeditionID, exp.Value);
+        }
+    }
+
+    public ExpeditionInstance FindExpeditionByID(int id)
+    {
+        if (_uniqueExpeditionInstances == null) RebuildExpeditionsList();
+        if (Index_ExpeditionInstances.TryGetValue(id, out var expinst)) return expinst;
+        return null;
+    }
+    public ExpeditionInstance CreateExpedition(string id)
+    {
+        if (_uniqueExpeditionInstances == null) RebuildExpeditionsList();
+        if (_uniqueExpeditionInstances.TryGetValue(id, out var expinst)) return expinst;
+        // create new
+        var baseExp = Expeditions.ExpeditionEntry.GetByID(id);
+        if (baseExp == null) return null;
+        var newstuff = Register(new ExpeditionInstance(baseExp));
+
+        //Index_ExpeditionInstances.Add(newstuff.RefID, newstuff); -> already registered
+        if (baseExp.isUnique) _uniqueExpeditionInstances.Add(baseExp.ExpeditionID, newstuff);
+
+        return newstuff;
+    }
+
+
     public void RegisterViewChangeEventCallback(EventInstance b)
     {
         actions_viewChange = b;
@@ -133,6 +169,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.Combat = this.Combat;
         obj.Characters = this.Index_referenceID;
         obj.campaignSettingID = CurrentCampaignID;
+        obj.ExpeditionInstances = this.Index_ExpeditionInstances;
 
         obj.statisRoomRef = this.statisRoomID;
         obj.tempRoomRef = this.tempRoomID;
@@ -149,6 +186,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             var chara = FindInstanceByID(i);
             Unregister(chara);
         }
+        ExpeditionInstancesCleanup();
     }
 
     public void LoadSerializable(scr_System_CampaignManager_Serializable obj)
@@ -211,6 +249,9 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         party = obj.Party;
 
+        this.Index_ExpeditionInstances = obj.ExpeditionInstances;
+
+        this._uniqueExpeditionInstances = null;
 
         this.statisRoomID = obj.statisRoomRef;
         this.tempRoomID = obj.tempRoomRef;
@@ -225,7 +266,32 @@ public class scr_System_CampaignManager : MonoBehaviour
         NotifyUpdate();
     }
 
+    protected void ExpeditionInstancesCleanup()
+    {
+        foreach(var ex in this.Index_ExpeditionInstances)
+        {
+            ex.Value.UsageCount = 0;
+        }
+        foreach(var m in organizations)
+        {
+            foreach(var p in m.SubFactions)
+            {
+                if (!p.hasExpeditionSet) continue;
+                p.Job.Expedition.UsageCount++;
+            }
+        }
+        var list = this.Index_ExpeditionInstances.Keys.ToList();
+        foreach(var k in list)
+        {
+            if (this.Index_ExpeditionInstances[k].CanDelete)
+            {
 
+                Debug.Log($"Cleanup: Removing ExpeditionInstance {this.Index_ExpeditionInstances[k].Base.DisplayName}");
+                this.Index_ExpeditionInstances.Remove(k);
+            }
+        }
+        this._uniqueExpeditionInstances = null;
+    }
 
     private MessageLogManager LogManager;
 
@@ -450,6 +516,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public bool DoFullUpdate(int charaRef)
     {
+        return true;
         if (charaRef == 0) return true;
         //if (Map.IsCharaInInactiveRooms(charaRef)) return false;
         return FullUpdate || Map.IsCharaInActiveFloors(charaRef);
@@ -841,6 +908,34 @@ public class scr_System_CampaignManager : MonoBehaviour
         return j.RefID;
     }
 
+    Dictionary<int, ExpeditionInstance> Index_ExpeditionInstances = new Dictionary<int, ExpeditionInstance>();
+
+    public void Unregister(ExpeditionInstance i)
+    {
+        if (this.Index_ExpeditionInstances.ContainsKey(i.RefID))
+        {
+            this.Index_ExpeditionInstances.Remove(i.RefID);
+        }
+        RebuildExpeditionsList();
+    }
+
+    public ExpeditionInstance Register(ExpeditionInstance i, int forceRefID = -1)
+    {
+        if (forceRefID > -1 && !Index_ExpeditionInstances.ContainsKey(forceRefID))
+        {
+            // do nothing
+        }
+        else
+        {
+            if (forceRefID != -1) Debug.LogError("Registering Job with forceRefID " + forceRefID + " Indexjobref already contain forceRef");
+            forceRefID = GetRefID;
+        }
+
+        Index_ExpeditionInstances.Add(forceRefID, i);
+        i.Register(forceRefID);
+        return i;
+    }
+
     private ViewMode viewMode;
     public ViewMode CurrentViewMode { get { return viewMode; } }
     public event Action<ViewMode,bool> Observer_CurrentViewMode;
@@ -1192,6 +1287,15 @@ public class scr_System_CampaignManager : MonoBehaviour
                     map.AddMapTemplate(ini.initArguments[0], ini.initArguments[1].ToString(),true);
                     // FindInstanceByID(0).baseID = ini.initArguments[0];
                 }
+#if UNITY_EDITOR
+                else if (ini.initClass == "campaign_init_map_extra_debug")
+                {
+                    for(int i = 0; i < 1; i ++)
+                    {
+                        map.AddMapTemplate(ini.initArguments[0], $"{ini.initArguments[1]}_{i}", true);
+                    }
+                }
+#endif
                 else if (ini.initClass == "campaign_init_factionConnect")
                 {
                     var f1 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[0]);
@@ -1499,7 +1603,6 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     List<Manageable> organizations;
-    List<Manageable_Party > parties;
     [JsonIgnore] public List<Manageable> Factions { get { return (organizations == null) ? new List<Manageable>() : organizations; } }
     public Manageable FindorAddHomeFactionByID(string id)
     {

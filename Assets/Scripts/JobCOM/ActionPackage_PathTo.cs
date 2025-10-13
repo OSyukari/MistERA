@@ -78,7 +78,7 @@ public class ActionPackage_PathTo : ActionPackage
             }
 
             var pp = path;
-            duration = (int)path.First().Tag.Cost;
+            duration = (int)path[0].Tag.Cost;
         }
 
     }

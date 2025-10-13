@@ -7,7 +7,6 @@ using QuikGraph;
 using System.IO;
 
 
-[System.Serializable]
 public class ActionPackage_Redress : ActionPackage
 {
     [JsonIgnore] public override bool isTemporaryAP { get { return true; } }

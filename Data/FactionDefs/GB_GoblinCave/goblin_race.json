@@ -3,27 +3,36 @@
     {
         "list":[
 {
-    "ID":"creature_humanoid_goblin",
+    "ID":"creature_goblin_club",
     "title":"creature_humanoid_goblin",
     "targetBaseID":"creature_humanoid_goblin_template",
     "str_var":3,"con_var":3, "psy_var":3,"wil_var":3,
     "useNameGen":true, "nameGen_firstName":"goblin",
     "Appearance":"Male",
     "inventoryOverride":[
-        { "ID":"clothing_outer_longcoat" },
-        {"ID":"weapon_village_cutlass","nameOverwrite":""}
+        {"ID":"weapon_simple_club","nameOverwrite":""}
     ]
 },
 {
-    "ID":"creature_humanoid_hobgoblin",
+    "ID":"creature_goblin_slinger",
+    "title":"creature_humanoid_goblin",
+    "targetBaseID":"creature_humanoid_goblin_template",
+    "str_var":3,"con_var":3, "psy_var":3,"wil_var":3,
+    "useNameGen":true, "nameGen_firstName":"goblin",
+    "Appearance":"Male",
+    "inventoryOverride":[
+        {"ID":"weapon_simple_sling","nameOverwrite":""}
+    ]
+},
+{
+    "ID":"creature_hobgoblin_club",
     "title":"creature_humanoid_hobgoblin",
     "targetBaseID":"creature_humanoid_hobgoblin_template",
     "str_var":4,"con_var":4, "psy_var":1,"wil_var":1,
     "useNameGen":true, "nameGen_firstName":"goblin",
     "Appearance":"Male",
     "inventoryOverride":[
-        { "ID":"clothing_outer_longcoat" },
-        {"ID":"weapon_village_cutlass","nameOverwrite":""}
+        {"ID":"weapon_simple_club","nameOverwrite":""}
     ]
 }
         ]
@@ -60,8 +69,13 @@
 
             {
                 "ID":"goblin_patrol_1",
-                "frontline":["creature_humanoid_hobgoblin"],
-                "support":["creature_humanoid_goblin"]
+                "frontline":["creature_goblin_club","creature_goblin_club"],
+                "support":["creature_goblin_slinger"]
+            },
+            {
+                "ID":"goblin_patrol_2",
+                "frontline":["creature_hobgoblin_club","creature_goblin_club","creature_goblin_club"],
+                "support":["creature_goblin_slinger","creature_goblin_slinger"]
             }
             
         ]
@@ -73,7 +87,9 @@
             "zh-cn":
             {
                 "creature_humanoid_goblin":"哥布林",
-                "creature_humanoid_hobgoblin":"大哥布林"
+                "creature_humanoid_hobgoblin":"大哥布林",
+
+                "goblin_patrol_1":"哥布林巡逻队1"
             },
             "en-us":
             {

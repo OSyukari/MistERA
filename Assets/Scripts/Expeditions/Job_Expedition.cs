@@ -63,11 +63,11 @@ public class SerializableEventPackage
             i.Value.Remove(refID);
         }
     }
+    public bool isResolved = false;
 
 }
 
 
-[System.Serializable]
 public class Job_Expedition : Job
 {
     [JsonIgnore]
@@ -76,7 +76,7 @@ public class Job_Expedition : Job
         get
         {
             return LocalizeDictionary.QueryThenParse($"ui_management_expeditionJob_{this.status}")
-                    .Replace("$expName$", this.Expedition == null ? "-" : this.Expedition.DisplayName);
+                    .Replace("$expName$", this.Expedition == null ? "-" : Expedition.Base.DisplayName);
         }
     }
 
@@ -85,11 +85,22 @@ public class Job_Expedition : Job
     {
         get
         {
-            return LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_remainingTime")
+            if (this.RemainingMinutes < 0) return "";
+            else return LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_remainingTime")
                     .Replace("$time$", $"{((double)this.RemainingMinutes / 60.0).ToString("F1")}");
         }
     }
-
+    [JsonIgnore]
+    public string RemainingProgress
+    {
+        get
+        {
+            if (Expedition == null || Expedition.ExploreRate < 0 || Expedition.Base.MaxExplorationRate <= 0) return "";
+            
+            return LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_remainingProgress")
+                    .Replace("$rate$", ((double)(Expedition.Base.MaxExplorationRate - Expedition.ExploreRate) / Expedition.Base.MaxExplorationRate).ToString("P1"));
+        }
+    }
     [JsonIgnore]
     public string DisplayName_EndJob
     {
@@ -138,6 +149,16 @@ public class Job_Expedition : Job
             ExpeditionResults.Add(scr_System_Time.current.getCurrentTime(), new List<ExpeditionMessageEntry>() { ExpeditionResult });
         }
     }
+
+    public void DumpLogInto(Job_Expedition other)
+    {
+        foreach(var i in this.ExpeditionResults)
+        {
+            other.ExpeditionResults.Add(i.Key, i.Value);
+        }
+        this.ExpeditionResults.Clear();
+    }
+
     public ExpeditionMessageEntry AddResult(string s, List<string> tags, List<Character_Trainable> chara, bool registerMemory = false)
     {
         var charaRefs = new List<int>();
@@ -187,11 +208,17 @@ public class Job_Expedition : Job
 
     public string statusTooltip = "";
 
-    public void UpdateStatus(int currentHour, int currentMinute)
+    public void UpdateStatus(int currentHour = -1, int currentMinute = -1, bool tickPackage = true)
     {
-        this.packageCooldown = Math.Max(this.packageCooldown - 1, 0);
-        if (!this.FactionOwner_Party.isPlayerFaction) return;
+        if (currentHour == -1 || currentMinute == -1)
+        {
+            var cur = scr_System_Time.current.getCurrentTime();
+            currentHour = cur.Hour;
+            currentMinute = cur.Minute;
+        }
 
+        if (tickPackage) this.packageCooldown = Math.Max(this.packageCooldown - 1, 0);
+        if (!this.FactionOwner_Party.isPlayerFaction) return;
         bool begin = false;
         if (!ExpeditionActive || Expedition == null)
         {
@@ -211,7 +238,7 @@ public class Job_Expedition : Job
                 if (status == ExpeditionStatus.queued && FactionOwner_Party.TryStartExpedition())
                 {
                     AddResult(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_start"), new List<string>(), new List<int>());
-                    this.RemainingMinutes = Expedition.DurationHour * 60;
+                    
                     status = ExpeditionStatus.gathering;
                     statusTooltip = "gathering expedition members";
                     begin = true;
@@ -241,7 +268,7 @@ public class Job_Expedition : Job
                 foreach (var cref in this.actorRefID)
                 {
                     var c = scr_System_CampaignManager.current.FindInstanceByID(cref);
-                    var memstr = LocalizeDictionary.QueryThenParse("exp_event_departure_memory").Replace("$loc$", this.Expedition.DisplayName);
+                    var memstr = LocalizeDictionary.QueryThenParse("exp_event_departure_memory").Replace("$loc$", this.Expedition.Base.DisplayName);
                     var newMem = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, memstr);
 
                     var entry = c.Memory.AddEntry(newMem, new List<string>() { "forbidMerge" });
@@ -276,8 +303,21 @@ public class Job_Expedition : Job
 
         if (this.status == ExpeditionStatus.active)
         {
-            RemainingMinutes = Math.Max(0, RemainingMinutes - 1);
-            if (RemainingMinutes == 0) this.status = ExpeditionStatus.returning;
+            if (RemainingMinutes != -1)
+            {
+                if (RemainingMinutes > 0 && tickPackage) RemainingMinutes = Math.Max(0, RemainingMinutes - 1);
+                if (RemainingMinutes == 0) this.status = ExpeditionStatus.returning;
+            }
+            if (this.Expedition.ExploreRate == 0)
+            {
+                this.status = ExpeditionStatus.returning;
+            }
+
+            if (this.actorRefID.Count < 1 && scr_System_CampaignManager.current.CharaInRoom(this.ParentRoom.RefID).Count < 1)
+            {
+                this.status = ExpeditionStatus.returning;
+                this.AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_jobInterruptMIA"), new List<string>(), new List<Character_Trainable>());
+            }
         }
 
         if (this.status == ExpeditionStatus.returning && this.actorRefID.Count < 1 && scr_System_CampaignManager.current.CharaInRoom( this.ParentRoom.RefID).Count < 1)
@@ -352,32 +392,32 @@ public class Job_Expedition : Job
     /// <summary>
     /// Please call this from Party
     /// </summary>
-    public void SetExpedition(Expedition exp)
+    public void SetExpedition(ExpeditionInstance exp)
     {
         this.Expedition = exp;
     }
 
-    [JsonProperty] protected int RemainingMinutes = 0;
+    public int RemainingMinutes = -1;
 
 
-    [JsonProperty] string expeditionID = "";
-    Expedition _exp = null;
+    [JsonProperty] int expeditionRefID = -1;
+    ExpeditionInstance _exp = null;
 
     [JsonIgnore]
-    public Expedition Expedition
+    public ExpeditionInstance Expedition
     {
         get
         {
-            if (_exp == null && expeditionID != "")
+            if (_exp == null && expeditionRefID != -1)
             {
-                _exp = Expeditions.ExpeditionEntry.GetByID(expeditionID);
+                _exp = scr_System_CampaignManager.current.FindExpeditionByID(expeditionRefID);
             }
             return _exp;
         }
         set
         {
             _exp = value;
-            expeditionID = value == null ? "" : value.ExpeditionID;
+            expeditionRefID = value == null ? -1 : value.RefID;
         }
     }
 
@@ -409,7 +449,7 @@ public class Job_Expedition : Job
             switch(this.status)
             {
                 case ExpeditionStatus.active:
-                    if (this.Expedition.DescriptionText.Count > 0) return LocalizeDictionary.QueryThenParse(Utility.GetRandomElement(this.Expedition.DescriptionText)).Replace("$names$", String.Join(", ", ActorNames));
+                    if (Expedition != null && Expedition.Base.DescriptionText.Count > 0) return LocalizeDictionary.QueryThenParse(Utility.GetRandomElement(Expedition.Base.DescriptionText)).Replace("$names$", String.Join(", ", ActorNames));
                     else return LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_team_active").Replace("$names$", String.Join(", ", ActorNames));
                 case ExpeditionStatus.resting:
                     return LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_team_resting").Replace("$names$", String.Join(", ", ActorNames));
@@ -462,21 +502,30 @@ public class Job_Expedition : Job
         var desiredCOM = this.allusableCOMs.Find(x => x.ID == desiredCOMID);
 
         var parentFaction = FactionOwner_Party;
-        var parentPlusFaction = parentFaction == null ? null : parentFaction.OwnerFaction;
+        var parentPlusFaction = FactionOwner.FactionOwnerRoot;
 
         if (isActive && status == ExpeditionStatus.returning && !canReturn)
         {
             // dont do anything
             return true;
         }
-        if (canReturn)
+        else if (canReturn)
         {
             actorJobComplete.Add(c.RefID);
+            int exitRef = -1;
+            if (parentPlusFaction.MainExit != null && parentPlusFaction.isMember(c.RefID)) exitRef = parentPlusFaction.MainExit.RefID;
 
-            if (charaRoom.RefID != parentPlusFaction.MainExit.RefID)
+            if (exitRef == -1)
+            {
+                if (!this.Expedition.Base.CanBeRescued) Debug.LogError("ERROR!!!!");
+
+                // require rescue
+                return true;
+            }
+            else if (charaRoom.RefID != exitRef)
             {   // return chara
                 AddResult(LocalizeDictionary.QueryThenParse("exp_event_returning"), new List<string>(), new List<int> { c.RefID });
-                ActionPackage_TeleportTo package = new ActionPackage_TeleportTo(this, c.RefID, parentPlusFaction.MainExit.RefID);
+                ActionPackage_TeleportTo package = new ActionPackage_TeleportTo(this, c.RefID, exitRef);
                 if (!package.Validate())
                 {
                     ss += "actor pathing package creation failed ||";
@@ -485,7 +534,7 @@ public class Job_Expedition : Job
                 ss += "actor pathing created ||";
                 AddPackage(new List<ActionPackage>() { package });
 
-                var memStr = LocalizeDictionary.QueryThenParse("exp_event_return_memory").Replace("$loc$", this.Expedition.DisplayName);
+                var memStr = LocalizeDictionary.QueryThenParse("exp_event_return_memory").Replace("$loc$", Expedition.Base.DisplayName);
                 var newMem = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, memStr);
 
                 var entry = c.Memory.AddEntry(newMem, new List<string>() { "expeditionEnd" });
@@ -495,16 +544,21 @@ public class Job_Expedition : Job
             }
             else
             {   // release chara
+                //Debug.LogError($"Error fail to return {c.CallName} from party {FactionOwner_Party.FullFactionDisplayName}");
                 return false;
             }
         }
-        if (charaRoom.RefID != parentFaction.MainExit.RefID)
+        else if (charaRoom.RefID != parentFaction.MainExit.RefID)
         {
             //Debug.Log("JobFurniture : trying to add pathing package to ["+c.FirstName+"]");
             // 1 - if actor not in job room, set go to room.
             // make movement package
-            
-            if (charaRoom.RefID != parentPlusFaction.MainExit.RefID)
+            if (parentPlusFaction == null || parentPlusFaction.MainExit == null)
+            {
+                Debug.LogError($"{c.CallName} UpdateActorPackage Error!: {FactionOwner.FactionDisplayName} hasNullOwner? {parentPlusFaction == null} hasNullMainExit? {(parentPlusFaction == null || parentPlusFaction.MainExit == null)}");
+                return false;
+            }
+            else if (charaRoom.RefID != parentPlusFaction.MainExit.RefID)
             {
                 //AddResult(LocalizeDictionary.QueryThenParse("exp_event_gathering"), new List<string>(), new List<int> { c.RefID });
                 ActionPackage_PathTo package = new ActionPackage_PathTo(this, c.RefID, parentPlusFaction.MainExit.RefID);
@@ -578,7 +632,7 @@ public class Job_Expedition : Job
             ss += "is being imprisoned, cannot explore ||";
             return true;
         }
-        else
+        else if (RemainingMinutes != 0 && Expedition.ExploreRate != 0)
         {
 
             //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
@@ -600,12 +654,17 @@ public class Job_Expedition : Job
                 return false;
             }
         }
+        else
+        {
+            // idle
+            return true;
+        }
     }
 
     public void StartCooldown()
     {
         if (this.Expedition == null || this.FactionOwner_Party == null) return;
-        this.packageCooldown = ExpeditionUtility.Cooldown(this.Expedition, this.FactionOwner_Party);
+        this.packageCooldown = ExpeditionUtility.Cooldown(Expedition, this.FactionOwner_Party);
         Debug.Log($"Expedition cooldown set to: {packageCooldown}");
     }
 

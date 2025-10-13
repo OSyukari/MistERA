@@ -60,7 +60,7 @@ public static class ResultFactionUtility
             //Item_Base targetItem = scr_System_Serializer.current.GetByNameOrID_Item_Base(moveItem.)
             FactionInventory recycler = scr_System_CampaignManager.current.Recycler;
 
-            FactionInventory target = faction.isPlayerFaction && !r.transferItem.sendToRecycler ? faction.Inventory : recycler;
+            FactionInventory target = faction.isPlayerRelatedFaction && !r.transferItem.sendToRecycler ? faction.Inventory : recycler;
 
             if (r.transferItem.collectFromRoom && room != null)
             {
@@ -83,7 +83,7 @@ public static class ResultFactionUtility
 
         if (r.randomLoot != null)
         {
-            if (faction.isPlayerFaction)
+            if (faction.isPlayerRelatedFaction)
             {
                 var randEntry = Utility.WeightedRandInDict(r.randomLoot.weights);
                 faction.Inventory.AddItem(WorldManager.Instantiate(randEntry));
@@ -95,6 +95,12 @@ public static class ResultFactionUtility
         if (r.startEvent != null)
         {
 
+        }
+
+        if (r.ExpeditionProgressMod != 0 && faction is Manageable_Party)
+        {
+            (faction as Manageable_Party).NotifyExpeditionProgress(-r.ExpeditionProgressMod);
+            if (tooltips != null) tooltips.Add($"Expedition Progress {r.ExpeditionProgressMod.ToString("+0-#")}");
         }
     }
 

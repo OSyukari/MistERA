@@ -297,12 +297,11 @@ public class ItemComponent_SerializedData
 
 }
 
-[System.Serializable]
 public enum MoveType
 {
     None,
     Swing, Thrust, Impact,
-    Gunshot
+    Gunshot, Projectile
 }
 
 [System.Serializable]

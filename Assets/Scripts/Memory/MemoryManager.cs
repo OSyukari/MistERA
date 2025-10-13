@@ -60,7 +60,7 @@ public class MemoryManager
         foreach(var i in list)// var entry in entries.Values)
         {
             var entry = entries[i];
-            clearcache = entry.Tick(t) || clearcache;
+            clearcache = (entry.Tick(t) && entry.HasStatMod) || clearcache;
             if (entry.Duration == 0) entries.Remove(i);//.RemoveAt(i);
         }
         if (clearcache) ClearCache();

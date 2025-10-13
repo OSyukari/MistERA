@@ -223,33 +223,33 @@ public class StatsManager : I_StatsManager
                 if (mods == null || mods.Count < 1) continue;
                 AddStatModifier(mods);
             }
-            // addstatmod traits
+
+            // add missing statEX -> HP MP ST EN
+            foreach (var statEX in scr_System_Serializer.current.index_StatsExtended.list)
+            {
+                if (Owner.hasStatKeyword(statEX.StatKeyword) && StatsExtended.Find(x => x.ID == statEX.ID) == null)
+                {
+                    var newstat = statEX.Instantiate(this);
+                    StatsExtended.Add(newstat);
+                }
+            }
+
+            // remove invalid statEX
+            for (int i = StatsExtended.Count - 1; i >= 0; i--)
+            {
+                if (!Owner.hasStatKeyword(StatsExtended[i].Parent.StatKeyword))
+                {
+                    StatsExtended.RemoveAt(i);
+                }
+            }
         }
 
         foreach (var i in list_statsDerived) i.ClearCache();
 
-        // add missing statEX
-        foreach (var statEX in scr_System_Serializer.current.index_StatsExtended.list)
-        {
-            if (Owner.hasStatKeyword(statEX.StatKeyword) && StatsExtended.Find(x => x.ID == statEX.ID) == null)
-            {
-                var newstat = statEX.Instantiate(this);
-                StatsExtended.Add(newstat);
-            }
-        }
+        // force refresh StatsEx value to keep it valid
+        foreach (var ex in StatsExtended) ex.Restore(0f);
 
-        // remove invalid statEX
-        for (int i = StatsExtended.Count - 1; i >= 0; i--)
-        {
-            if (!Owner.hasStatKeyword(StatsExtended[i].Parent.StatKeyword))
-            {
-                StatsExtended.RemoveAt(i);
-            }
-            else
-            {   // force refresh StatsEx value to keep it valid
-                StatsExtended[i].Restore(0f);
-            }
-        }
+
 
         foreach (var ex in this.statusInstancesEx) ex.ClearCache();
         needsList_cache = null;
@@ -893,7 +893,7 @@ public class StatsManager : I_StatsManager
     }
     [JsonIgnore] private StatusEx_Instance mood = null;
 
-    [System.Serializable]
+
     public class ModStorage
     {
         public string modKey = string.Empty;

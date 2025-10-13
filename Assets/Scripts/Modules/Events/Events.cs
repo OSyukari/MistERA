@@ -222,7 +222,6 @@ public class Event : I_SerializationCallbackReceiver
 
         }
 
-        [System.Serializable]
         public class EventEntry_Line : EventEntry
         {
             public override string Name { get { return line; } }
@@ -230,7 +229,6 @@ public class Event : I_SerializationCallbackReceiver
             public List<Executor> Results = new List<Executor>();
         }
 
-        [System.Serializable]
         public class EventEntry_Question : EventEntry
         {
             public override string Name { get { return question; } }
@@ -248,7 +246,6 @@ public class Event : I_SerializationCallbackReceiver
                 }
             }
         }
-        [System.Serializable]
         public class EventEntry_Branch : EventEntry
         {
             public List<Options> options = new List<Options>();
@@ -263,7 +260,6 @@ public class Event : I_SerializationCallbackReceiver
         /// check command validator
         /// self validator and executor will need to read local string data
         /// </summary>
-        [System.Serializable]
         public class Options
         {
             public string option = "";
@@ -302,7 +298,6 @@ public class Event : I_SerializationCallbackReceiver
            
         }
 
-        [System.Serializable]
         public class Executor
         {   // handle a single result
             public List<Condition> conditions = new List<Condition>();
@@ -367,9 +362,18 @@ public class Event : I_SerializationCallbackReceiver
             FullRecovery,
             FullHPRecovery,
             /// <summary>
-            /// [A victimlabel, B hostilelabel, kidnapExplorationID] 
+            /// [A victimlabel, MIA_faction, kidnapExplorationID, kidnapMessage] 
             /// </summary>
-            PartyKidnap
+            PartyMIA,
+            /// <summary>
+            /// [A victimlabel, B hostilelabel, kidnapExplorationID, kidnapMessage] 
+            /// </summary>
+            PartyKidnap,
+            /// <summary>
+            /// [targetLabel]
+            /// </summary>
+            TerminateExpedition,
+            ResetExpedition
         }
     }
 

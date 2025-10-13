@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using TMPro;
 using UnityEngine.Assertions.Must;
+using System.Linq;
 
 public class initScript_Expeditions : MonoBehaviour
 {
@@ -24,7 +25,7 @@ public class initScript_Expeditions : MonoBehaviour
         }
         set 
         {
-            Debug.Log("Setting CurrentMode");
+           // Debug.Log("Setting CurrentMode");
             _currentMode = value;
             bool _neutral = _currentMode == PartyEditUI.Neutral;
             bool _editM = _currentMode == PartyEditUI.MembersEdit;
@@ -53,7 +54,7 @@ public class initScript_Expeditions : MonoBehaviour
 
         canvas.UnloadButton(this.temporaryTeamIDs);
         Utility.DestroyAllChildrenFrom(teamList, 2);
-        Utility.DestroyAllChildrenFrom(miaList, 1);
+        Utility.DestroyAllChildrenFrom(miaList, 2);
 
         Manageable_Party first = loadPrev ? previous : null;
         foreach (var party in m.SubFactions)
@@ -95,15 +96,11 @@ public class initScript_Expeditions : MonoBehaviour
             }
         }
 
-        List<Manageable_Party> kidnaps = new List<Manageable_Party>();
-        foreach(var c in m.ManagedChara)
-        {
-            var kk = c.FactionManager.CurrentLockedParty;
-            if (kk != null && !kidnaps.Contains(kk)) kidnaps.Add(kk);
-        }
+        bool hasKidnap = false;
 
-        foreach (var party in kidnaps)
+        foreach (var party in m.KidnapFactions)
         {
+            hasKidnap = true;
             var script = Instantiate(prefab_partyButton);
             script.SelfRect.SetParent(miaList, false);
             var names = new List<string>();
@@ -114,9 +111,11 @@ public class initScript_Expeditions : MonoBehaviour
             temporaryTeamIDs.Add(script.PartyButton.optionID);
         }
 
+        text_MIA_None.gameObject.SetActive(!hasKidnap);
+
         canvas.UnloadButton(this.temporaryExpIDs);
         Utility.DestroyAllChildrenFrom(List_AllExpeditions);
-        foreach(var exp in Expeditions.ExpeditionEntry.list)
+        foreach(var exp in m.GetAllValidExpeditions())
         {
             var script = Instantiate(prefab_partyButton);
             script.SelfRect.SetParent(this.List_AllExpeditions, false);
@@ -158,6 +157,7 @@ public class initScript_Expeditions : MonoBehaviour
     public RectTransform grid_inventory, grid_inv_temp, text_inv_empty;
 
     public scr_resolveEv prefab_resolveEventBtn;
+    public scr_HoverableText text_MIA_None;
     public void Draw(Manageable_Party p, bool isKidnap)
     {
         if (party != p)
@@ -165,6 +165,10 @@ public class initScript_Expeditions : MonoBehaviour
             this.teamNameButton.DeactivateInputField();
             this.ExpeditionConfig.StartTime.DeactivateInputField();
             this.ExpeditionConfig.CooldownTime.DeactivateInputField();
+        }
+        else
+        {
+            return;
         }
         party = p;
         previous = p;
@@ -217,6 +221,16 @@ public class initScript_Expeditions : MonoBehaviour
                 hasInv = true;
                 grid_gear.gameObject.SetActive(true);
                 grid_gear.SetText(p.Room.DisplayableFurnitureNames_withLink);
+                if (scr_System_CampaignManager.current.DebugMode)
+                {
+                    var allvalidcoms = new List<string>();
+                    foreach(var f in p.Room.Jobs)
+                    {
+                        allvalidcoms.AddRange(f.allusableCOMStrings);
+                    }
+                    allvalidcoms = allvalidcoms.Distinct().ToList();
+                    grid_gear.SetExternalTooltip($"AllvalidCOMS:\n{String.Join("|", allvalidcoms)}");
+                }
             }
             else grid_gear.gameObject.SetActive(false);
 
@@ -236,7 +250,6 @@ public class initScript_Expeditions : MonoBehaviour
 
             ExpeditionConfig.gameObject.SetActive(!isKidnap);
 
-
             canvas.UnloadButton(temporaryExpResolves);
             temporaryExpResolves.Clear();
             Utility.DestroyAllChildrenFrom(list_ExpeditionMSG);
@@ -253,7 +266,7 @@ public class initScript_Expeditions : MonoBehaviour
                         box.preText.SetText(i.FullDescription);
                         box.preText.SetExternalTooltip(String.Join("\n", i.Tooltips));
                         box.timeStamp.text = first ? msg.Key.ToShortTimeString() : "";
-                        if (i.unresolved == null && i.resolveMessage != "")
+                        if ((i.unresolved == null || i.unresolved.isResolved) && i.resolveMessage != "")
                         {
                             box.postEvRect.gameObject.SetActive(true);
                             box.postText.SetText(i.resolveMessage);
@@ -289,7 +302,7 @@ public class initScript_Expeditions : MonoBehaviour
                 v.timeStamp.text = "";// LocalizeDictionary.QueryThenParse("exp_event_timestamp_ongoing");// first ? msg.Key.ToShortTimeString() : "";
             }
 
-            if (!hasActive && p.Job.isActive)
+            if (!hasActive && p.Job.isActive && p.Job.actorRefID.Count > 0)
             {
                 var v = Instantiate(prefab_memEntry);
                 v.SelfRect.SetParent(list_ExpeditionMSG, false);
@@ -475,7 +488,7 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
     {
         if (canvas == null || canvas.currentParty == null) return;
         var currentExp = canvas.currentParty.Job.Expedition;
-        if (currentExp != null && currentExp.HasStartHour)
+        if (currentExp != null && currentExp.Base.HasStartHour)
         {
             ExpeditionConfig.StartTime.interactable = false;
             ExpeditionConfig.StartTime.text = LocalizeDictionary.QueryThenParse("ui_management_expeditionConfig_startTimeForced")
@@ -513,8 +526,11 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
                 this.text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditions_setExpTarget_none"));
                 return false;
             }
-            if (!p.isPlayerFaction) return false;
-
+            if (!p.isPlayerFaction)
+            {
+                this.text.SetText("non player party, cannot resolve");
+                return false;
+            }
             if (!parent.currentParty.isActive)
             {
                 if (p.Job.ExpeditionActive)
@@ -594,9 +610,9 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
         {
             //if (text == null) Debug.LogError("text null");
             if (!text.gameObject.activeInHierarchy) return false;
-            if (parent.currentParty == null || parent.currentParty.Job == null) return false;
+            if (parent.currentParty == null || parent.currentParty.Job == null || !parent.currentParty.Job.isActive) return false;
             if (!parent.currentParty.isPlayerFaction) return false;
-            if (m.unresolved == null) return false;
+            if (m.unresolved == null || m.unresolved.isResolved) return false;
 
             return true;
         }
@@ -613,11 +629,22 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
             var package = m.unresolved;
             var ev = EventUtility.StartEvent(parent.currentParty.Job, package);
             //scr_System_CampaignManager.current.FreeUpdate();
-            m.unresolved = null;
-            m.resolveEventName = package.DisplayName;
-            var callbacks = new List<Action>();
-            ev.FunctionCalls.Add("ResolveEvent", callbacks);
-            callbacks.Add(() => m.resolveMessage = ev.DumpCurrentLine);
+            var callbacks1 = new List<Action>();
+            package.isResolved = true;
+
+            ev.FunctionCalls.Add("ResolveEvent", callbacks1);
+            callbacks1.Add(() => {
+                m.resolveEventName = package.DisplayName;
+                m.resolveMessage = ev.DumpCurrentLine;
+                package.isResolved = true;
+                m.unresolved = null;
+            });
+
+            var callbacks2 = new List<Action>();
+            ev.FunctionCalls.Add("RetryEvent", callbacks2);
+            callbacks2.Add(() => {
+                package.isResolved = false;
+            });
 
             scr_System_CampaignManager.current.RegisterSceneUnloadEventCallback(ev);
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();
@@ -661,13 +688,58 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
         }
     }
 
+    public scr_HoverableText SelextExpTooltip;
+    public class ButtonValidator_partyEditExpeditions : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        scr_HoverableText extraTooltip;
+        public ButtonValidator_partyEditExpeditions(scr_Canvas_Management parent, scr_SelectableText text, scr_HoverableText tooltip) : base(parent)
+        {
+            this.text = text;
+            this.parent = parent;
+            this.extraTooltip = tooltip;
+            this.extraTooltip.SetText("");
+        }
+
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy) return false;
+            if (parent.currentParty == null || parent.CurrentFaction == null || parent.currentParty.Job == null)
+            {
+                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_").Replace("$expName$", "-"));
+                return false;
+            }
+            text.SetText(parent.currentParty.Job.DisplayName);
+            bool isplayer = parent.currentParty.isPlayerFaction;
+            if (!isplayer || parent.currentParty.isActive)
+            {
+                extraTooltip.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_remaining_active")
+                        .Replace("$time$", parent.currentParty.Job.RemainingTime)
+                        .Replace("$progress$", parent.currentParty.Job.RemainingProgress));
+            }
+            else
+            {
+                extraTooltip.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_remaining_inactive"));
+            }
+
+            return parent.currentParty.isPlayerFaction && !parent.currentParty.isActive;
+        }
+
+        public void OnClickButton()
+        {
+            parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.ExpeditionEdit;
+        }
+    }
+
     public class ButtonValidator_selectExp : ButtonValidator, I_ButtonClickable
     {
         new scr_Canvas_Management parent;
         scr_SelectableText text;
-        Expedition exp;
+        ExpeditionInstance exp;
         scr_partyBTN box;
-        public ButtonValidator_selectExp(scr_Canvas_Management parent, scr_SelectableText text, Expedition exp, scr_partyBTN box) : base(parent)
+        public ButtonValidator_selectExp(scr_Canvas_Management parent, scr_SelectableText text, ExpeditionInstance exp, scr_partyBTN box) : base(parent)
         {
             this.parent = parent;
             this.text = text;
@@ -679,7 +751,7 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
         public override bool IsButtonValid()
         {
             //if (text == null) Debug.LogError("text null");
-            box.SelfRect.gameObject.SetActive(parent.CurrentFaction != null && (parent.CurrentFaction.explorationKeywords.Count < 1 || (exp.keywords.Count > 0 && Utility.ListContainsStrict(parent.CurrentFaction.explorationKeywords, exp.keywords))));
+            //box.SelfRect.gameObject.SetActive(parent.CurrentFaction != null && (parent.CurrentFaction.explorationKeywords.Count < 1 || (exp.Keywords.Count > 0 && Utility.ListContainsStrict(parent.CurrentFaction.explorationKeywords, exp.Keywords))));
             //Debug.Log($"ButtonValidator_selectExp isvalid [{String.Join("|", parent.CurrentFaction.explorationKeywords)}] [{String.Join("|", exp.keywords)}]");
             if (!text.gameObject.activeInHierarchy) return false;
             if (!parent.currentParty.isPlayerFaction) return false;

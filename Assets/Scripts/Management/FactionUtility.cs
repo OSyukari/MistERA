@@ -150,7 +150,6 @@ public static class FactionUtility
             var randIndex = Utility.GetRandomElement(sortedList.Keys.ToList());
             list = sortedList[randIndex];
             possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
-            //Debug.LogError($"GetValidPaths randInsteadofShortest first[{sortedList.First().Key}] chosen[{randIndex}]");
         }
         else
         {

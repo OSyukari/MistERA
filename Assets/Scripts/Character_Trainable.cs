@@ -20,12 +20,11 @@ public enum Character_BodyType
 }
 
 
-
-
-
-[System.Serializable]
 public class Character_Trainable : ScriptableObject, I_Disposable
 {
+    public bool isTemporaryActor = false;
+
+
     [JsonProperty]
     protected int furnitureLockJobRef = -1;
 
@@ -1582,8 +1581,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             {
                 Inventory.AddItem(instance);
                 //inventory_ref.Add(itemRefID);
+                if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
             }
-            Stats.RefreshAllStats(true);
         }
     }
 

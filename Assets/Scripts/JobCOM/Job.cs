@@ -22,7 +22,6 @@ public interface I_Disposable
 ///               rest on ground
 ///               
 /// </summary>
-[System.Serializable]
 public class Job : IDisposable, I_Disposable
 {
     [JsonIgnore] public virtual bool MemoryEntrySoftMerge { get { return false; } }
