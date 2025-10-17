@@ -46,7 +46,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在做清洁"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_production_cooking",
@@ -117,7 +118,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在下厨"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_production_chemistry",
@@ -189,7 +191,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在制造化学产品"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_production_engineering",
@@ -240,7 +243,8 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在制造工程道具"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_research_engineering",
@@ -288,7 +292,8 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在研究工程项目"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_research_physics",
@@ -336,7 +341,8 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在研究物理"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_research_biochemistry",
@@ -384,7 +390,8 @@
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在研究生物化学"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_training_shooting",
@@ -443,7 +450,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在训练射击"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_training_melee",
@@ -502,7 +510,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在格斗训练"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_farm_maintain",
@@ -577,7 +586,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在打理农场"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_farm_remove",
@@ -647,7 +657,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在移除作物"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_farm_cultivate_crop",
@@ -710,7 +721,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在种植作物"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_farm_cultivate_meat",
@@ -774,7 +786,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在培育肉食"]}], "keepLooking":false }
             }
         ]
     },

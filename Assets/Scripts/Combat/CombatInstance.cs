@@ -871,7 +871,7 @@ public class CombatInstance
             // handles posture break, lose action
         }
         var hpdmg = Mathf.Ceil(-amount - posDmg);
-        stat.HP.Restore(hpdmg);
+        stat.HP.ModValue(hpdmg);
         ActorStats[target.RefID].Reset(this);
         from.AddFinalMessage(LocalizeDictionary.QueryThenParse("ActionResult_tooltip_receiveDamage")
             .Replace("$self$", GetName(target.RefID))

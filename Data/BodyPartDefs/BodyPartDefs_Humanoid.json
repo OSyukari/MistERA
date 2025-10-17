@@ -54,7 +54,7 @@
                 "displayName":"%%bodyPart_base_leg%%",
                 "tooltip":"An {0}'s leg.",
                 "AvailableSlots":["Leg","Feet"],
-                "tags":["leg","feet"],
+                "tags":["knee","leg","feet"],
                 "sortOrder":5
             },
             {
@@ -62,7 +62,7 @@
                 "displayName":"%%bodyPart_base_leg%%",
                 "tooltip":"An {0}'s leg.",
                 "AvailableSlots":["Leg","Feet"],
-                "tags":["leg","feet"],
+                "tags":["knee","leg","feet"],
                 "sortOrder":6
             }
         ],
@@ -119,7 +119,7 @@
                 "sensitivityClassString":"C",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
                 "sortOrder":7,
-                "sizeRatio":0.1,
+                "sizeRatio":0.05,
                 "depthRatio":0.1,
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
                 "virginityLossTags":["penetration"]

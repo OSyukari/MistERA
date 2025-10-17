@@ -8,7 +8,7 @@
                 "ActionPackageClass":"ActionPackage_Sex",
                 "displayName":"com_sex_oral_V_displayName_1",
                 "timeScale":3,
-                "comTags":["sex","service"],
+                "comTags":["sex","service", "position_face", "position_inequal"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{

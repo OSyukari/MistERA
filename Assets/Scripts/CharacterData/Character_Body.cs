@@ -134,7 +134,6 @@ public class Character_Body
         foreach (var organ in Internals) organ.ClearLastInteractedRefs();
     }
 
-
     public void AddMissing()
     {
         // Debug.Log("Body_AddMissing : baseID [" + Owner.Race.bodyPartRoot + "] refID [" + Owner.RefID + "]");
@@ -356,6 +355,11 @@ public class Character_Body
 
     }
 
+    public List<BodyInternal_Instance> GetInternalsWithTags(List<string> tags)
+    {
+        return Internals.FindAll(x => x.hasAnyTag(tags));
+    }
+
     public BodyInternal_Instance GetRandomInternalWithTag(string tag)
     {
         List<BodyInternal_Instance> l = Internals.FindAll(x => x.hasTag(tag));
@@ -369,7 +373,10 @@ public class Character_Body
         if (l.Count == 0) return null;
         return Utility.GetRandomElement(l);
     }
-
+    public BodyPart_Instance GetRandomPartWithBaseID(string baseID)
+    {
+        return Utility.GetRandomElement(Body.FindAll(x => x.Base.ID == baseID));
+    }
 
     protected void ConcatenateClimax(ref string originalString, string sensitivityString)
     {

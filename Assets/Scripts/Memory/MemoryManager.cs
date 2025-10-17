@@ -406,7 +406,8 @@ public class MemoryManager
         if (memInstance.response == Memory_Response.None) Debug.LogError($"Logging Null response memory on {Owner.FirstName} about {memInstance.description}");
 
         Memory_Entry entry = new Memory_Entry(Owner, job, roomRef, selfTags, memInstance, jobDesc, memDuration);
-        entry.StartTime = ep.Package.StartTime;
+        var jobStartTime = ep.Package.job.GetActorLastJoinTime(Owner.RefID);
+        entry.StartTime = ep.Package.StartTime < jobStartTime ? jobStartTime : ep.Package.StartTime;
 
         if (ep.targetCOM != null && (ep.targetCOM.comTags.Contains("initSex") || ep.targetCOM.comTags.Contains("endSex")))
         {

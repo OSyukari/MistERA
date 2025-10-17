@@ -1,0 +1,56 @@
+{
+        "ExpeditionEntry":{
+        "list":
+        [
+{
+    "ExpeditionID":"expedition_cave_bear",
+    "HasStartHour":false,
+    "ForceStartHour":0,
+    "DurationHour":12,
+    "isUnique":true, "canExplore":true,
+    "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
+    "EventIDs":[],
+    "keywords":["Utnapishtim"],
+    "FeatureKeywords":["cave", "bear"],
+    "Events":
+    [
+
+    ]
+}
+        ]
+    },
+    "ExplorationFeatures":
+    {
+        "list":
+        [
+{
+    "requireKeywords": [ "cave", "bear" ],
+    "featureEventIDs": [
+        "exp_event_caveBearEncounter","exp_event_caveBearLair"
+    ],
+    "DescriptionText":[
+        "expeditionDescription_caveBear_1",
+        "expeditionDescription_caveBear_2"
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"expedition_cave_bear":"熊洞",
+"expeditionDescription_caveBear_1":"$names$在潮湿的洞壁上发现了巨大的爪痕",
+"expeditionDescription_caveBear_2":"空气中弥漫着一股浓烈的野兽麝香气味"
+            },
+            "en-us":
+            {
+
+
+            }
+        }
+    }
+}

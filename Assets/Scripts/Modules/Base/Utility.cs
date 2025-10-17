@@ -250,6 +250,31 @@ public static class Utility
         return Random.Next(0, list.Count);
     }
 
+    public static void ShuffleList<T>(List<T> list)
+    {
+        FilterRandXInList(list, list.Count);
+    }
+
+    public static void FilterRandXInList<T>(List<T> list, int count, System.Random rand = null)
+    {
+        if (list == null) return;
+        if (count < 0) return;
+        var random = rand == null ? Random : rand;
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = random.Next(0, i + 1);
+            // Swap elements at i and j
+            T temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
+        }
+        // Remove excess elements from the end until list.Count <= count
+        while (list.Count > count)
+        {
+            list.RemoveAt(list.Count - 1);
+        }
+    }
+
     /// <summary>
     /// Check if L2 contain at least 1 element of L1. Also return true if L2 is empty
     /// </summary>

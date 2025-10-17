@@ -68,7 +68,6 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     }
 }
 
-[System.Serializable]
 public class BodyPart_Base
 {
     [JsonProperty] private string id = "";

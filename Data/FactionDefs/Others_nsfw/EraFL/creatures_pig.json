@@ -44,7 +44,7 @@
     "lastName": "",
     "nameDisplayFormat": "chara_fullname_firstToLast",
     "origin": "charOrigin_none",
-    "race": "creature_beastRace_pig",
+    "race": "creature_beastRace_animal",
     "raceTemplate": "humanRaceAddon_standard",
     "startingGift": "charOriginGift_none"
 }

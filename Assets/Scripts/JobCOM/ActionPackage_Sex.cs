@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
+using System.Linq;
 
 
-[System.Serializable]
 public class ActionPackage_Sex : ActionPackage
 {
     // determine package portrait
@@ -29,14 +29,13 @@ public class ActionPackage_Sex : ActionPackage
         toggleRepeat = job is Job_Sex_Group ? true : false;
        // if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log($"sexap reinitCOM, setting togglerepeat to {toggleRepeat}");
     }
-    public override void RepeatReset(bool resetRequest = false)
+    public override void Repeat()
     {
 
-        base.RepeatReset(resetRequest);
+        base.Repeat();
         this.extraCOMTags.Remove("justWokenUp");
         this.isStrongPenetration = false;
         // reset 
-
     }
 
     [JsonIgnore]
@@ -49,7 +48,6 @@ public class ActionPackage_Sex : ActionPackage
         }
         set
         {
-            Debug.LogError("APsex set repeat to false!!");
             toggleRepeat = value;
             this.tooltip = new List<string>();
         }
@@ -94,6 +92,59 @@ public class ActionPackage_Sex : ActionPackage
         copy.duration = this.duration;
         //Debug.LogError($"copy sexAP, target togglerepeat? {copy.toggleRepeat}");
         return copy;
+    }
+
+    public bool CollectValidActorAndBodytag(int c, List<int> validTargets, List<string> occupiedBodyTags)
+    {
+        if (!this.actorRefs.Contains(c)) return false;
+        bool returnVal = false;
+        foreach (var ep in this.ListEP)
+        {
+            if (ep.targetCOM == null || ep.VariantID < 0) continue;
+            if (ep.DoerRef == c && ep.Receiver != null)
+            {
+                if (validTargets != null) validTargets.Add(ep.Receiver.RefID);
+                occupiedBodyTags.AddRange(ep.targetCOM.variants[ep.VariantID].requirements.requirement.doerBodyTags);
+                if (ep.doerInternal != null) occupiedBodyTags.AddRange(ep.doerInternal.Parent.Base.tags);
+                returnVal = true;
+            }
+            else if (ep.ReceiverRef == c && ep.Doer != null)
+            {
+                if (validTargets != null) validTargets.Add(ep.Doer.RefID);
+                occupiedBodyTags.AddRange(ep.targetCOM.variants[ep.VariantID].requirements.requirement.receiverBodyTags); 
+                if (ep.receiverInternal != null) occupiedBodyTags.AddRange(ep.receiverInternal.Parent.Base.tags);
+                returnVal = true;
+            }
+        }
+
+        return returnVal;
+    }
+    public void CollectConflictTags(int doer, int receiver, List<string> conflictTags)
+    {
+        if (!this.actorRefs.Contains(doer)) return;
+        if (receiver == default) receiver = -1;
+        if (receiver >= 0 && !this.actorRefs.Contains(receiver)) return;
+
+        foreach (var ep in this.ListEP)
+        {
+            if (ep.targetCOM == null || ep.VariantID < 0) continue;
+            if (ep.DoerRef == doer && ep.ReceiverRef == receiver)
+            {
+                if (conflictTags != null)
+                {
+                    conflictTags.AddRange(ep.targetCOM.conflictTags);
+                    conflictTags = conflictTags.Distinct().ToList();
+                }
+            }
+            else if (ep.ReceiverRef == doer && ep.DoerRef == receiver)
+            {
+                if (conflictTags != null)
+                {
+                    conflictTags.AddRange(ep.targetCOM.conflictTags);
+                    conflictTags = conflictTags.Distinct().ToList();
+                }
+            }
+        }
     }
 }
 

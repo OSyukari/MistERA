@@ -62,10 +62,7 @@ public class initScript_Expeditions : MonoBehaviour
             if (first == null) first = party;
             var script = Instantiate(prefab_partyButton);
             script.SelfRect.SetParent(teamList, false);
-            var names = new List<string>();
-            foreach (var i in party.ManagedChara_Displayables) names.Add(i.FirstName);
-            script.partyMembers.SetText(String.Join(" ", names));
-            canvas.MakeButton_Party(party, script.PartyButton);
+            canvas.MakeButton_Party(party, script);
             temporaryTeamIDs.Add(script.PartyButton.optionID);
         }
         if (previousFaction != m)
@@ -106,7 +103,7 @@ public class initScript_Expeditions : MonoBehaviour
             var names = new List<string>();
             foreach (var i in party.ManagedChara_Displayables) names.Add(i.FirstName);
             script.partyMembers.SetText(String.Join(" ", names));
-            canvas.MakeButton_Party(party, script.PartyButton, true);
+            canvas.MakeButton_Party(party, script, true);
             //script.PartyButton.SetText(party.ExpeditionName);
             temporaryTeamIDs.Add(script.PartyButton.optionID);
         }
@@ -158,9 +155,25 @@ public class initScript_Expeditions : MonoBehaviour
 
     public scr_resolveEv prefab_resolveEventBtn;
     public scr_HoverableText text_MIA_None;
+
+    protected void UpdateDisplay(bool isKidnap)
+    {
+        teamNameButton.interactable = !isKidnap;
+        teamNameButton.text = $"{party.FactionDisplayName}";// (p.FactionDisplayName);
+        var names = new List<string>();
+        foreach (var i in party.ManagedChara_Displayables) names.Add(i.FirstName);
+        teammates.SetText($"{String.Join(", ", names)}");
+        string status_tooltip;
+
+        //p.GetAvailability(out status_tooltip);
+        var tooltip = $"{party.GetAvailability(out status_tooltip)} {party.Job.status}";
+        teamStatus.SetText(status_tooltip);
+        teamStatus.SetExternalTooltip(tooltip);
+    }
+
     public void Draw(Manageable_Party p, bool isKidnap)
     {
-        if (party != p)
+        if (party != p || p == null)
         {
             this.teamNameButton.DeactivateInputField();
             this.ExpeditionConfig.StartTime.DeactivateInputField();
@@ -168,6 +181,7 @@ public class initScript_Expeditions : MonoBehaviour
         }
         else
         {
+            UpdateDisplay(isKidnap);
             return;
         }
         party = p;
@@ -190,17 +204,8 @@ public class initScript_Expeditions : MonoBehaviour
         }
         else
         {
-            teamNameButton.interactable = !isKidnap;
-            teamNameButton.text = $"{p.FactionDisplayName}";// (p.FactionDisplayName);
-            var names = new List<string>();
-            foreach (var i in p.ManagedChara_Displayables) names.Add(i.FirstName);
-            teammates.SetText($"{String.Join(", ", names)}");
-            string status_tooltip;
+            UpdateDisplay(isKidnap);
 
-            //p.GetAvailability(out status_tooltip);
-            var tooltip = $"{p.GetAvailability(out status_tooltip)} {p.Job.status}";
-            teamStatus.SetText(status_tooltip);
-            teamStatus.SetExternalTooltip(tooltip);
 
             OnEndEdit_StartTime();
 
@@ -501,7 +506,6 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
                 .Replace("$time$", $"{StaticTime.AddHours(canvas.currentParty.FinalStartHour).ToShortTimeString()}");
             ExpeditionConfig.StartTime.text = ExpeditionConfig.StartTime.interactable ? $"[{body}]" : body;
         }
-
     }
 
     public class ButtonValidator_StartExp : ButtonValidator, I_ButtonClickable
@@ -585,9 +589,8 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
         {
             if (onClick != null)
             {
-                var time = scr_System_Time.current.getCurrentTime();
                 onClick();
-                parent.currentParty.Job.UpdateStatus(time.Hour, time.Minute);
+                parent.currentParty.Job.UpdateStatus(-1,-1,false);
                 parent.LoadParty(parent.currentParty);// (charaRefID);
             }
         }
@@ -772,6 +775,7 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
         {
             parent.currentParty.SetExpedition(this.exp);
             parent.Script_Expeditions.CurrentMode = initScript_Expeditions.PartyEditUI.Neutral;
+            parent.currentParty.Job.UpdateStatus(-1,-1,false);
             parent.LoadParty(parent.currentParty);// (charaRefID);
             //parent.ValidateAll();
         }

@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
-[System.Serializable]
+
 public enum AP_Priority
 {
     npc_action,
@@ -18,7 +18,7 @@ public enum AP_Priority
     player_pathing
 }
 
-[System.Serializable]
+
 public enum AP_Status
 {
     aborted,
@@ -31,7 +31,7 @@ public enum AP_Status
 /// let job make interaction package
 /// let campaign store all packages and iterate them 
 /// </summary>
-[System.Serializable]
+
 public abstract class ActionPackage
 {
     string cache_refusedResponse = "";
@@ -167,10 +167,9 @@ public abstract class ActionPackage
             return _actors;
         } }
 
-    [JsonIgnore] protected int roomKey = -1;
     [JsonIgnore] public virtual int RoomKey { get {
-            if (roomKey == -1) roomKey = scr_System_CampaignManager.current.GetCharaRoomInstance(actorRefs[0]).RefID;
-            return roomKey; } }
+            if (this.job != null && this.job.ParentRoom != null) return this.job.ParentRoom.RefID;
+            return -1; } }
 
     public DateTime time;
 
@@ -478,7 +477,16 @@ public abstract class ActionPackage
         this.toggleRepeat = false;
     }
 
-    public virtual void RepeatReset(bool resetRequest = false)
+    public bool repeated = false;
+    public virtual void Repeat()
+    {
+        this.duration = this.targetCOM.TimeScale;
+        this.LoggedBegin = false;
+        this.LoggedOngoing = false;
+        this.Ticked = false;
+        this.repeated = true;
+    }
+    public virtual void Reset(bool resetRequest = false)
     {
         this.duration = this.targetCOM.TimeScale;
         this.LoggedBegin = false;
@@ -486,7 +494,6 @@ public abstract class ActionPackage
         this.Ticked = false;
         if (resetRequest) this.requested = false;
     }
-
     public void SetActive(DateTime current)
     {
         this.time = current;
@@ -681,10 +688,9 @@ public abstract class ActionPackage
         }
         else
         {
-            roomKey = scr_System_CampaignManager.current.GetCharaRoomInstance(actorRefs[0]).RefID;
             foreach (int i in actorRefs)
             {
-                if (scr_System_CampaignManager.current.GetCharaRoomInstance(actorRefs[0]).RefID != roomKey)
+                if (scr_System_CampaignManager.current.GetCharaRoomInstance(actorRefs[0]).RefID != RoomKey)
                 {
                     tooltip.Add("ActionPackage preEvaluation: actorRef[" + i + "] is not in same room as others actors");
                     isValid = false;
@@ -1077,12 +1083,28 @@ public abstract class ActionPackage
             } //foreach(var res in checkResults) res = "<align=\"right\">" + res + "<\"align>";
             string finalResults = String.Join("\n", checkResults);
 
-            scr_UpdateHandler.current.NotifyCheckResult(finalResults);
+            //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
         }
 
         return returnVal;
     }
 
+    public string GetCheckResult(bool rightAlign)
+    {
+        List<string> checkResults = new List<string>();
+
+        foreach (var ep in packages)
+        {
+            if (ep.ActorRefs.Contains(0) && ep.Actors.Count < 2) continue; // skip player alone package
+            checkResults.Add(ep.GetCheckResult(!rightAlign));
+        }
+
+        string finalResults = String.Join("\n", checkResults);
+        if (rightAlign) finalResults = "<align=\"right\">" + finalResults + "</align>";
+        return finalResults;
+        //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
+    }
+    
     /// <summary>
     /// If AP duration is already zero, do not resend request.<br/>
     /// If ep is accepted, job log ep kojo message.
@@ -1119,6 +1141,8 @@ public abstract class ActionPackage
         }
 
     }
+
+    public bool LowPriority = false;
 
     [JsonIgnore] public List<EvaluationPackage> ListEP { get { return packages; } }
 
@@ -1160,7 +1184,7 @@ public abstract class ActionPackage
 
             if (executed)
             {
-                this.job.LogMessage_Begin_CheckResult(ep);
+                //this.job.LogMessage_Begin_CheckResult(ep);
 
                 if (ep.ReceiverTargetTag.Contains("job"))
                 {
@@ -1275,17 +1299,20 @@ public abstract class ActionPackage
                 var allchara = scr_System_CampaignManager.current.CharaInCurrentRoom;
                 foreach (var i in allchara)
                 {
-                    if (i == 0) continue;
-                    var targetJob = scr_System_CampaignManager.current.FindInstanceByID(i).CurrentJob;
+                    if (i.RefID == 0) continue;
+                    var targetJob = i.CurrentJob;
                     if (targetJob is Job_Sex_Group) 
                     { 
                         existingJob = targetJob as Job_Sex_Group;
                         break;
                     }
                 }
-                if (existingJob == null) existingJob = new Job_Sex_Group(this.actorRefs, scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey), true);
-                else foreach (var actor in this.actorRefs) existingJob.AddActor(actor);
-                scr_System_CampaignManager.current.Register(existingJob);
+                if (existingJob == null)
+                {
+                    existingJob = new Job_Sex_Group(this.actorRefs, scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey), true);
+                    scr_System_CampaignManager.current.Register(existingJob);
+                }
+                else foreach (var actor in this.actorRefs) scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(existingJob);// existingJob.AddActor(actor);
                 /*
                 var doerCurrentJob = evp.Doer.CurrentJob;
                 var receiverCurrentJob = evp.Receiver == null ? null : evp.Receiver.CurrentJob;
@@ -1419,7 +1446,7 @@ public abstract class ActionPackage
             ActionPackage forceAP = this.Copy();
             forceAP.ReInitializeCOM(this.job, this.targetCOM, this.DoerRefs, this.ReceiverRefs, this.masterRef, true);
             //forceAP.ResetRequest(forceAP.doerRefs, forceAP.receiverRefs, forceAP.masterRef, true);
-            forceAP.RepeatReset(true);
+            forceAP.Reset(true);
             forceAP.AddExtraCOMTag("forced");
             Debug.Log($"adding force AP, isrepeat? {forceAP.PackageRepeat}");
             if (forceAP.Validate())

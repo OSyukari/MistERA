@@ -9,7 +9,16 @@ public static class ResultFactionUtility
         var faction = ValidateFaction(result, job, c);
         if (faction == null) return;
         if (result.entry_conditions != null && !ValidateCondition(result.entry_conditions, faction)) return;
-        if (result.entry_results != null) ApplyEntryResult(result.entry_results, faction, job.ParentRoom, c);
+        if (result.entry_results != null) ApplyEntryResult(result.entry_results, faction, job.ParentRoom);
+    }
+    public static void Apply(Result_Faction_Party result, Job_Expedition job, List<string> tooltips = null)
+    {
+        //Debug.Log("Validator_Result Apply on " + c.FirstName);
+        if (job.ParentRoom == null) return;
+        var faction = ValidateFaction(result, job);
+        if (faction == null) return;
+        if (result.entry_conditions != null && !ValidateCondition(result.entry_conditions, faction)) return;
+        if (result.entry_results != null) ApplyEntryResult(result.entry_results, faction, job.ParentRoom, tooltips);
     }
     public static void Apply(Result_Faction result, Job job, Character_Trainable c, List<string> tooltips = null)
     {
@@ -18,7 +27,7 @@ public static class ResultFactionUtility
         var faction = ValidateFaction(result, job, c);
         if (faction == null) return;
         if (result.entry_conditions != null && !ValidateCondition(result.entry_conditions, faction)) return;
-        if (result.entry_results != null) ApplyEntryResult(result.entry_results, faction, job.ParentRoom, c, tooltips);
+        if (result.entry_results != null) ApplyEntryResult(result.entry_results, faction, job.ParentRoom, tooltips);
     }
 
     public static I_IsJobGiver ValidateFaction(Result_Faction f, Job job, Character_Trainable c)
@@ -38,13 +47,17 @@ public static class ResultFactionUtility
     {
         return job == null ? null : job.FactionOwner;
     }
-    public static I_IsJobGiver ValidateFaction(Result_Faction_Party f, Job job, Character_Trainable c)
+    public static I_IsJobGiver ValidateFaction(Result_Faction_Party f, Job job, Character_Trainable c = null)
     {
-        if (job is Job_Expedition)
+        if (job is Job_Expedition && job.FactionOwner != null)
         {
-            return (job as Job_Expedition).FactionOwner_Party;
+            return (job as Job_Expedition).FactionOwner;
         }
-        else return c.FactionManager.CurrentActiveParty;
+        else if (c != null)
+        {
+            return c.FactionManager.CurrentActiveParty;
+        }
+        else return null;
     }
 
 
@@ -53,7 +66,7 @@ public static class ResultFactionUtility
         return faction != null;
     }
 
-    public static void ApplyEntryResult(Result_Faction.Entry_Result r, I_IsJobGiver faction, Room_Instance room, Character_Trainable c, List<string> tooltips = null)
+    public static void ApplyEntryResult(Result_Faction.Entry_Result r, I_IsJobGiver faction, Room_Instance room, List<string> tooltips = null)
     {
         if (r.transferItem != null && r.transferItem.isValid)
         {
@@ -87,7 +100,7 @@ public static class ResultFactionUtility
             {
                 var randEntry = Utility.WeightedRandInDict(r.randomLoot.weights);
                 faction.Inventory.AddItem(WorldManager.Instantiate(randEntry));
-                if (tooltips != null) tooltips.Add($"{c.CallName} obtained {randEntry.Print}");
+                if (tooltips != null) tooltips.Add($"{faction.FactionDisplayName} obtained {randEntry.Print}");
             }
 
         }

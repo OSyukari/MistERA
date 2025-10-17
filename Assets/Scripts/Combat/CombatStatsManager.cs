@@ -13,7 +13,14 @@ public class CombatStatManager : I_StatsManager
         Recovery,
         Neutral
     }
-
+    [JsonIgnore]
+    public Character_Trainable Owner
+    {
+        get
+        {
+            return owner;
+        }
+    }
     [JsonIgnore] public Stats_Derived_Extended_Instance HP { get { return GetStatEx("stats_derived_extended_hp"); } }
     [JsonIgnore] public Stats_Derived_Extended_Instance MP { get { return GetStatEx("stats_derived_extended_mp"); } }
     [JsonIgnore] public Stats_Derived_Extended_Instance Stamina { get { return GetStatEx("stats_derived_extended_stamina"); } }
@@ -162,7 +169,7 @@ public class CombatStatManager : I_StatsManager
     StatsManager Parent = null;
     public CombatStatManager(Character_Trainable Owner, StatsManager stats)
     {
-        this.Owner = Owner;
+        this.owner = Owner;
         this.Parent = stats;
         // first, copy modifiers
         this._posture = (int)Parent.HP.Value;
@@ -242,7 +249,7 @@ public class CombatStatManager : I_StatsManager
         // remove invalid statEX -> not required, same as prev
 
         // force refresh StatsEx value to keep it valid
-        foreach (var i in StatsExtended) i.Restore(0f);
+        foreach (var i in StatsExtended) i.ModValue(0f);
         foreach (var ex in this.statusInstancesEx) ex.ClearCache();
 
         if (fullReset)  this._posture = Math.Clamp(inst == null ? this._posture : inst.PostureStorage[this.Owner.RefID], 0, this.MaxPosture);
@@ -291,7 +298,7 @@ public class CombatStatManager : I_StatsManager
 
     protected List<Stat_Modifier> modifiers_combat = new List<Stat_Modifier>();
 
-    protected Character_Trainable Owner;
+    protected Character_Trainable owner = null;
 
     protected List<Stat_Modifier> GetModifiers(string statID, List<string> contexts = null, bool checkStatusInstance = true, bool checkMemory = true)
     {

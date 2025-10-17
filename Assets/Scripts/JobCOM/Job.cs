@@ -54,6 +54,10 @@ public class Job : IDisposable, I_Disposable
             if (factionOwner == null && factionOwnerRef != "")
             {
                 var f = scr_System_CampaignManager.current.FindFactionByID(factionOwnerRef);
+                if (f == null)
+                {
+                    Debug.LogError($"error cannot find faction {factionOwnerRef}");
+                }
                 if (factionOwnerPartyRef != "")
                 {
                     factionOwner = f.GetParty(factionOwnerPartyRef);
@@ -90,8 +94,14 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
+    public DateTime GetActorLastJoinTime(int actorRef)
+    {
+        if (actorJoinTime.ContainsKey(actorRef)) return actorJoinTime[actorRef];
+        else return DateTime.MinValue;
+    }
     //[NonSerialized] public Manageable FactionOwner = null;
     [JsonProperty] protected Dictionary<int, COM_Match> actorRefIDStorage = null;
+    [JsonProperty] protected Dictionary<int, DateTime> actorJoinTime = new Dictionary<int, DateTime>();
     [JsonIgnore] public virtual List<int> actorRefID 
     { 
         get 
@@ -247,6 +257,7 @@ public class Job : IDisposable, I_Disposable
         {
             actorRefIDStorage[charaRef] = new COM_Match(priorityCOMID, priorityCOMTag);
         }
+        actorJoinTime[charaRef] = scr_System_Time.current.getCurrentTime();
         actorJobComplete.Remove(charaRef);
     }
 
@@ -447,6 +458,7 @@ public class Job : IDisposable, I_Disposable
     /// </summary>
     [JsonProperty] protected List<ActionPackage> packages_previous = new List<ActionPackage>();
     [JsonProperty] protected List<ActionPackage> packages_current = new List<ActionPackage>();
+    [JsonProperty] protected List<ActionPackage> packages_completed = new List<ActionPackage>();
 
     [JsonIgnore] public List<ActionPackage> ExecutingPackages { get { return packages_previous; } }
 
@@ -555,111 +567,97 @@ public class Job : IDisposable, I_Disposable
             
             return this.ParentRoom.RefID == scr_System_CampaignManager.current.CurrentRoom.RefID; } }//&& (scr_System_CampaignManager.current.isPlayerConscious || scr_System_CampaignManager.current.DebugMode); }}
 
+    /// <summary>
+    /// There is isJobVisibleToPlayer check prior to this
+    /// </summary>
+    /// <param name="ap"></param>
     public void CollectLogs(ActionPackage ap)
     {
-        if (ap.Duration == -1)
-        {   // disabled
-            // check if there is a identical package 
-            if (packages_previous.FindAll(x => UtilityEX.ArePackagesEqual(x, ap)).Count > 1)
-            {
-                //                    continue;
-            }
-            else
-            {   // we know this package has been aborted and it is visible to player, so we print it's abort message
-                // command abort should be rare and NPC are not naturally inclined to do so
-                // so we shouldn't have to filter it
-                foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Abort(ep);
-                ap.DisablePackage(true);
-            }
-
+        bool rightAlign = false;
+        bool displayOngoing = false;
+        bool display = false;
+        if (isPlayerRelatedJob) {
+            display = true;
+            rightAlign = false;
         }
         else
         {
-            if (isPlayerRelatedJob)
-            {
-                if (ap.Duration == 0 && isPlayerRelatedJob)
-                {// 
-                 // duration == 0 this might be aborted
-                    if (!ap.executeSuccessful) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Refuse(ep);
-                }
-                else if (ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
-                {   // one ticked
-
-                    // check player involved in job
-                    if (scr_System_CampaignManager.current.IsDisplayCOM(ap))
-                    {
-                        foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin(ep);
-                    }
-                    else if (scr_UpdateHandler.current.isFirstUpdate)
-                    {
-                        foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Ongoing(ep);
-                    }
-                }
-            }
-            else if (scr_UpdateHandler.current.DoDisplayCOM(ap))
-            {   // is visible to player
-
-                if (!ap.LoggedBegin && ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
-                {   // player not involved in job
-                    // in case they use same furniture as player and get lobbed inside here
-
-                    foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin(ep);
-                    ap.LoggedBegin = true;
-                }
-                else if (scr_UpdateHandler.current.isFirstUpdate)
-                {
-                    foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Ongoing(ep);
-                }
-
-            }
+            rightAlign = true;
+            display = scr_UpdateHandler.current.DoDisplayCOM(ap);
+            displayOngoing = scr_UpdateHandler.current.isLastUpdate();
         }
-    }
 
-    public virtual void PostUpdateTime_getLogsBegin()
-    {
-        if (!isJobVisibleToPlayer) return;
-        if (packages_previous.Count < 1) return;
-        // Debug.Log("PostUpdateTime for job " + this.jobRefID);
-        for (int i = packages_previous.Count - 1; i >= 0; i--)
+        if (ap.Duration == -1 && packages_previous.FindAll(x => UtilityEX.ArePackagesEqual(x, ap)).Count < 1)
         {
-            CollectLogs(packages_previous[i]);
+            if (display) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Abort(ep,rightAlign);
+            ap.DisablePackage(true);
         }
-        scr_UpdateHandler.current.NotifyJobDescriptions(messages_before, messages_ongoing, null, messages_kojo);
-        // send log to campaignManager
+        else if (ap.Duration == 0)
+        {//   duration == 0 this might be aborted
+            foreach (EvaluationPackage ep in ap.ListEP) this.exp.MergeWith(ep.m, rightAlign);
+
+            if (display && !ap.executeSuccessful) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Refuse(ep, rightAlign);
+            else if (display) foreach (EvaluationPackage ep in ap.ListEP) if (display) LogMessage_After(ep, rightAlign);
+
+            this.exp.leftAlignOverride = !rightAlign;
+        }
+        //else if ( ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
+        else if (display && !ap.LoggedBegin)
+        {   // one ticked
+            this.messages_checks.Add(ap.GetCheckResult(rightAlign));
+            if (ap.repeated) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Ongoing(ep, false, rightAlign);
+            else
+            {
+                foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin(ep, false, rightAlign);
+            }
+        }
+        else if (displayOngoing && ap.Duration > 0)
+        {
+            foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Ongoing(ep, true);
+        }
     }
 
     public void NotifyDescriptionsOutOfUpdate()
     {
         //Debug.Log($"NotifyDescriptionsOutOfUpdate on {DisplayName}");
-        scr_UpdateHandler.current.NotifyJobDescriptions(messages_before, messages_ongoing, messages_after, messages_kojo);
+        scr_UpdateHandler.current.NotifyJobDescriptions(messages_checks, messages_before, messages_ongoing, messages_after, messages_kojo);
+        messages_checks.Clear();
         messages_before.Clear();
         messages_ongoing.Clear();
         messages_kojo.Clear();
         messages_after.Clear();
     }
 
+    public virtual void PostUpdateTime_getLogsBegin()
+    {
+        if (!isJobVisibleToPlayer) return;
+        if (packages_previous.Count < 1) return;
+        return;
+        // Debug.Log("PostUpdateTime for job " + this.jobRefID);
+        for (int i = packages_previous.Count - 1; i >= 0; i--)
+        {
+            CollectLogs(packages_previous[i]);
+        }
+        //scr_UpdateHandler.current.NotifyJobDescriptions(messages_checks, messages_before, messages_ongoing, null, messages_kojo);
+        // send log to campaignManager
+    }
+
     public virtual void PostUpdateTime()
     {
         //Debug.Log("PostUpdateTime for job " + this.jobRefID);
         actorJobComplete.RemoveAll(x => !this.actorRefID.Contains(x));
+        bool visible = isJobVisibleToPlayer;
         for ( int i = packages_previous.Count -1; i >= 0; i--)
         {
+            if (visible) CollectLogs(packages_previous[i]);
             // Duration 0 meaning they just run, meaning
             if (packages_previous[i].Duration <= 0)
             {
-                if (isPlayerRelatedJob || isVisibleToPlayer)
-                {
-                    foreach (EvaluationPackage ep in packages_previous[i].ListEP)
-                    {
-                        if(scr_UpdateHandler.current.DoDisplayCOM(packages_previous[i])) LogMessage_After(ep);
-                        this.exp.MergeWith(ep.m);
-                    }
-                }
-
+                
                 if (packages_previous[i].PackageRepeat)
                 {
                     if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("readding package " + packages_previous[i].DisplayName);
-                    packages_previous[i].RepeatReset(false);
+                    packages_previous[i].Repeat();
                     packages_current.Add(packages_previous[i]);
                 }
                 else
@@ -675,13 +673,18 @@ public class Job : IDisposable, I_Disposable
         }
 
         //InternalJobUpdate();
-        scr_UpdateHandler.current.NotifyJobDescriptions(null, null, messages_after, null);
+        if (visible)
+        {
+            scr_UpdateHandler.current.NotifyJobDescriptions(messages_checks, messages_before, messages_ongoing, messages_after, messages_kojo);
+            scr_UpdateHandler.current.exp.MergeWith(this.exp, false);
+        }
 
+        messages_checks.Clear();
         messages_before.Clear();
         messages_after.Clear();
         messages_ongoing.Clear();
         messages_kojo.Clear();
-        //exp.Clear();
+        exp.Clear();
 
     }
 
@@ -742,10 +745,21 @@ public class Job : IDisposable, I_Disposable
     public List<int> GetLastInteractedActorRefs(int charaRef)
     {
         List<int> list = new List<int>();
-        foreach (var package in packages_current) if (package.actorRefs.Contains(charaRef)) list.AddRange(package.actorRefs);
-        foreach (var package in packages_previous) if (package.actorRefs.Contains(charaRef)) list.AddRange(package.actorRefs);
+        foreach (var package in packages_current)
+        {
+            if (package.actorRefs.Contains(charaRef))
+            {
+                list.AddRange(package.actorRefs); list = list.Distinct().ToList();
+            }
+        }
+        foreach (var package in packages_previous)
+        {
+            if (package.actorRefs.Contains(charaRef))
+            {
+                list.AddRange(package.actorRefs); list = list.Distinct().ToList();
+            }
+        }
 
-        list = list.Distinct().ToList();
         list.Remove(charaRef);
         return list;
     }
@@ -781,27 +795,64 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
+    [NonSerialized] protected List<string> messages_checks = new List<string>();
+    [JsonIgnore] public string MessagesChecks { get { return messages_checks.Count > 0 ? String.Join("\n", messages_checks) : ""; } }
     [NonSerialized] protected List<string> messages_before = new List<string>();
     [JsonIgnore] public string MessagesBefore { get { return messages_before.Count > 0 ? String.Join("\n", messages_before) : ""; } }
 
     [NonSerialized] protected List<string> messages_after = new List<string>();
     [JsonIgnore] public string MessagesAfter { get { return messages_after.Count > 0 ? String.Join("\n", messages_after) : ""; } }
 
-    public void LogMessage_Begin(EvaluationPackage ep)
+    public void LogMessage_Begin(EvaluationPackage ep, bool ignoreBegin = false, bool rightAlign = false)
     {
         if (ep == null) return;
         if (!isVisibleToPlayer) return;
-        if (ep.skipLogging || ep.Package.LoggedBegin) return;
+        if (ep.skipLogging) return;
+        if (!ignoreBegin && ep.Package.LoggedBegin) return;
         if (ep.Doer.isTimeStopped) return;
-        var s = ep.Description_Begin;
+        ep.Package.LoggedBegin = true;
+
+        var s =  $"{ep.Description_Begin}";
 
         if (s.Length > 0) {
 
-            if(ep.Package != null && !ep.Package.LeftAlign) s = "<align=\"right\">" + s + "</align>";
+            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
             messages_before.Add(s);
         }
     }
+    /// <summary>
+    /// This one should be allowed to repeat on every player command input, so there is less check
+    /// </summary>
+    /// <param name="ep"></param>
+    public void LogMessage_Begin_Ongoing(EvaluationPackage ep, bool ignoreBegin = false, bool rightAlign = false)
+    {
+        if (ep == null) return;
+        if (ep.skipLogging) return;
+        if (!ignoreBegin && ep.Package.LoggedBegin) return;
+        if (ep.Doer.isTimeStopped) return;
+        ep.Package.LoggedBegin = true;
 
+        var s1 = $"{ep.Description_Ongoing}";
+        if (s1.Length > 0)
+        {
+            if (rightAlign) s1 = "<align=\"right\">" + s1 + "</align>";
+            messages_before.Add(s1);
+        }
+    }
+    public void LogMessage_Ongoing(EvaluationPackage ep, bool rightAlign = false)
+    {
+        //List<Character_Trainable> actors, string s
+        //.Actors, ep.Description_Ongoing
+        if (ep == null) return;
+        if (ep.Doer.isTimeStopped) return;
+        if (ep.skipLogging) return;
+        var s = ep.Description_Ongoing;
+        if (s.Length > 0)
+        {
+            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
+            messages_after.Add(s);
+        }
+    }
     public void LogMessage_Kojo(EvaluationPackage ep)
     {
         if (ep == null) return;
@@ -836,51 +887,25 @@ public class Job : IDisposable, I_Disposable
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents && (s.Length > 0 || s2.Length > 0 || s3.Length > 0)) Debug.Log($"Kojo Message logged: [{s}] [{s2}] [{s3}]");
     }
 
-    /// <summary>
-    /// This is getting disabled
-    /// </summary>
-    /// <param name="ep"></param>
-    public void LogMessage_Begin_CheckResult(EvaluationPackage ep)
-    {
-        return;
-        if (ep == null) return;
-        if (ep.skipLogging) return;
-        if (!isVisibleToPlayer) return;
-        var s = "("+ep.Doer.FirstName+(ep.Receiver == null ? "": " -> "+ep.Receiver.FirstName)+") "+ ep.targetCOM.DisplayName(ep.VariantID) + ": " + (ep.Response > Memory_Response.Refuse ? (ep.ReceiverAttitude > Memory_Attitude.None ? ep.ReceiverAttitude.ToString() : ep.DoerAttitude.ToString()) : ep.Response.ToString());
-
-        if (ep.Package != null && !ep.Package.LeftAlign) s = "<align=\"right\">" +s+ "</align>";
-        //string s2= ep.targetCOM.variants[ep.VariantID].GetVariantDescription(true,true, ep.DoerRef, scr_System_CampaignManager.current.Map.FindRoomByChara(ep.DoerRef).DisplayName, ep.Package.DoerRefs, ep.Package.ReceiverRefs, ep.Package.masterRef);        
-        messages_before.Add(s);
-    }
-
-    public void LogMessage_Begin_Refuse(EvaluationPackage ep)
+    public void LogMessage_Begin_Refuse(EvaluationPackage ep, bool rightAlign = false)
     {
         if (ep == null) return;
         if (ep.skipLogging || ep.Package.LoggedBegin) return;
         if (!isVisibleToPlayer) return;
         if (ep.Doer.isTimeStopped) return;
         if (ep.Response >= Memory_Response.Accept) return;
-
         if (ep.Doer != null && ep.Package != null)
         {
-            messages_before.Add(this.ep_refuse.Replace("$self$", ep.Receiver.FirstName).Replace("$comdesc$", ep.targetCOM.DisplayName(ep.VariantID)));
+            var s = this.ep_refuse.Replace("$self$", ep.Receiver.FirstName).Replace("$comdesc$", ep.targetCOM.DisplayName(ep.VariantID)); 
+            if (s.Length > 0)
+            {
+                if (rightAlign) s = "<align=\"right\">" + s + "</align>";
+                messages_before.Add(s);
+            }
         }
     }
 
-/// <summary>
-/// This one should be allowed to repeat on every player command input, so there is less check
-/// </summary>
-/// <param name="ep"></param>
-    public void LogMessage_Begin_Ongoing(EvaluationPackage ep)
-    {
-        if (ep == null) return;
-        if (!isVisibleToPlayer) return;
-        if (ep.skipLogging || ep.Package.LoggedBegin) return;
-        if (ep.Doer.isTimeStopped) return;
-        var s = ep.Description_Ongoing;
 
-        if (s.Length > 0) messages_before.Add(s);
-    }
 
     public void LogMessage_Begin_Replace(ActionPackage aprevious, ActionPackage anext)
     {
@@ -897,7 +922,7 @@ public class Job : IDisposable, I_Disposable
         // need to inject 
     }
 
-    public void LogMessage_Begin_Abort(EvaluationPackage ep)
+    public void LogMessage_Begin_Abort(EvaluationPackage ep, bool rightAlign = false)
     {
         if (ep == null) return;
         if (!isVisibleToPlayer) return;
@@ -905,29 +930,21 @@ public class Job : IDisposable, I_Disposable
         if (ep.Doer.isTimeStopped) return;
 
         var s = ep.Description_Remove;
-        if(s.Length > 0) messages_before.Add(s);
+        if (s.Length > 0)
+        {
+            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
+            messages_before.Add(s);
+        }
     }
 
     protected List<string> messages_ongoing = new List<string>();
     protected Dictionary<int, string> messages_kojo = new Dictionary<int, string>();
     //public Tuple<int, string> MessagesOngoing { get { return messages_ongoing.Count > 0 ? String.Join("\n", messages_ongoing) : ""; } }
 
-    public void LogMessage_Ongoing(EvaluationPackage ep)
-    {
-        //List<Character_Trainable> actors, string s
-        //.Actors, ep.Description_Ongoing
-        if (ep == null) return;
-        if (!isVisibleToPlayer) return;
-        //if (ep.Doer.isTimeStopped) return;
-        if (ep.skipLogging) return;
-        var s = ep.Description_Ongoing;
 
-        if (s.Length > 0) messages_ongoing.Add(s);
-    }
-    public void LogMessage_After(EvaluationPackage ep)
+    public void LogMessage_After(EvaluationPackage ep, bool rightAlign = false)
     {
         if (ep == null) return;
-        if (!isVisibleToPlayer) return;
         if (ep.skipLogging) return;
         var s = ep.Description_After;
 
@@ -938,7 +955,13 @@ public class Job : IDisposable, I_Disposable
             s = s.Replace("$item$", pOrderPackage.order.Recipe.OutputItem.DisplayName);
         }
 
-        if (s.Length > 0) messages_after.Add(s);
+        if (s.Length > 0)
+        {
+            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
+            messages_after.Add(s);
+        }
+        else if (rightAlign) LogMessage_Ongoing(ep, rightAlign);
+        
         /*
         else if (ep.Actors != null)
         {
@@ -980,8 +1003,9 @@ public class Job : IDisposable, I_Disposable
         }
 
         this.exp = new ExperienceLog();
-
     }
+
+
 
 
     string _ep_begin = null, _ep_ongoing = null, _ep_abort = null, _ep_refuse = null, _ep_prep = null, _ep_replace = null;

@@ -322,7 +322,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     string socialStatus_manager, socialStatus_member, socialStatus_visitor, socialStatus_prisoner, socialStatus_baseString;
 
 
-    public List<Manageable_Party> SubFactions = new List<Manageable_Party>();
+    [JsonProperty] public List<Manageable_Party> SubFactions = new List<Manageable_Party>();
 
     [JsonIgnore]
     public List<Manageable_Party> KidnapFactions
@@ -803,9 +803,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         if (addAllCharaToFaction)
         {
-            foreach (int charaRef in scr_System_CampaignManager.current.CharaInRoom(room.RefID))
+            foreach (var c in scr_System_CampaignManager.current.CharaInRoom(room.RefID))
             {
-                Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
                 if (c != null)
                 {
                     c.InitializeFaction(this, false);

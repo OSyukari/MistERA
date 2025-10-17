@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using System.Linq;
 
 
-[System.Serializable]
 public class BodyPart_Instance : I_CombatItem
 {
     [JsonProperty] protected string baseID = "";
@@ -63,7 +62,7 @@ public class BodyPart_Instance : I_CombatItem
         this.owner = c;
         this.ownerRefID = c.RefID;
 
-        foreach (var i in internals) i.ReEstablishParent(c);
+        foreach (var i in internals) i.ReEstablishParent(this);
     }
     public void Initialize(string baseID, Character_Trainable c)
     {
@@ -77,7 +76,7 @@ public class BodyPart_Instance : I_CombatItem
         {
             if (s.Length < 1) continue;
             BodyInternal_Instance inter = new BodyInternal_Instance();
-            if (!inter.Initialize(s, this.Owner)) continue;
+            if (!inter.Initialize(s, this)) continue;
             else if ((inter.hasTag("vagina") || inter.hasTag("womb") || inter.hasTag("urethra")) && !Owner.Template.isFemale) { }
             //else if (inter.hasTag("anus") && Owner.Template.Size_A.ID == "trait_Size_A_none") { }
             else if (inter.hasTag("penis") && !Owner.Template.isMale) { }
@@ -107,7 +106,7 @@ public class BodyPart_Instance : I_CombatItem
 
     private int ownerRefID = -1;
     private Character_Trainable owner = null;
-    private Character_Trainable Owner
+    [JsonIgnore] public Character_Trainable Owner
     {
         get
         {
@@ -158,7 +157,10 @@ public class BodyPart_Instance : I_CombatItem
         foreach (BodyInternal_Instance i in internals) if (i.EquippedRefIDs.Contains(equipRef)) return i;
         return null;
     }
-
+    public BodyInternal_Instance GetRandInternalWithTagsLoose(List<string> tags)
+    {
+        return Utility.GetRandomElement(internals.FindAll(x => Utility.ListContainsLoose(x.Base.tags, tags)));
+    }
     [JsonIgnore] public List<int> EquippedRefIDs { get
         {
             var v = contentsIndex.Values.ToList();

@@ -1,10 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
-using Newtonsoft.Json;
 
-[System.Serializable]
 public class COM_Sex : COM
 {
     new public bool COMRepeat = true;

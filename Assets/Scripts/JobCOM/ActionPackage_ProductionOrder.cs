@@ -72,15 +72,6 @@ public class ActionPackage_ProductionOrder : ActionPackage
         this.orderRecipeUID = order.Recipe.RecipeUID;
     }
 
-    [JsonIgnore] public override int RoomKey
-    {
-        get
-        {
-            if (roomKey == -1) roomKey = job.ParentRoom.RefID;
-            return roomKey;
-        }
-    }
-
     protected override bool PreEvaluate()
     {
 

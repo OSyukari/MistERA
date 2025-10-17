@@ -68,9 +68,9 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         if (displayCharaName)
         {
             btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn, false, ignorePathToggle));
-            List<int> list = scr_System_CampaignManager.current.CharaInRoom(ri.RefID);
+            var list = scr_System_CampaignManager.current.CharaInRoom(ri.RefID);
             List<string> names = new List<string>();
-            foreach (int i in list)  if (i != 0) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
+            foreach (var i in list)  if (i.RefID != 0) names.Add(i.FirstName);
 
             btn.SetText(tempRefID + " - " + ri.DisplayName);
 
@@ -325,9 +325,9 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
             ttip = "Room: " + room.DisplayName;
             if (room.Furnitures.Count > 0) ttip += "\nFurnitures: " + room.DisplayableFurnitureNames;
-            List<int> list = scr_System_CampaignManager.current.CharaInRoom(room.RefID);
+            var list = scr_System_CampaignManager.current.CharaInRoom(room.RefID);
             List<string> names = new List<string>();
-            foreach (int ii in list) if (ii != 0) names.Add(scr_System_CampaignManager.current.FindInstanceByID(ii).FirstName);
+            foreach (var ii in list) if (ii.RefID != 0) names.Add(ii.FirstName);
             if (names.Count > 0) ttip += "\nCurrently in room: " + String.Join(" ", names);
         }
 

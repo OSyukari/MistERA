@@ -49,8 +49,14 @@ public static class EventUtility
             instance.generated = true;
             foreach(var generationParameters in targetGens)
             {
+                if (generationParameters.allowScope && FindTargets(generationParameters.scopeReplacer, instance, instance.Self, ref instance.Targets))
+                {
+                    Debug.Log($"{instance.Name} reuse chara SUCCESS !!");
+                    continue;
+                }
                 Manageable_Party party = null;
                 var baseFaction = generationParameters.factionTemplate == "" ? null : scr_System_CampaignManager.current.FindFactionByID(generationParameters.factionTemplate);
+
                 if (baseFaction != null)
                 {
                     var key = generationParameters.mergeFactionKey;
@@ -149,20 +155,25 @@ public static class EventUtility
             }
         }
 
-        var targetScopes = instance.overrideTargetScope ? instance.OverrideTargetScope : ev.TargetValidators;
-        foreach (var targetscope in targetScopes)
+        if (!instance.scoped)
         {
-            if (!FindTargets(targetscope, instance, instance.Self, ref instance.Targets)) return false;
-            else
+            instance.scoped = true;
+            var targetScopes = instance.overrideTargetScope ? instance.OverrideTargetScope : ev.TargetValidators;
+            foreach (var targetscope in targetScopes)
             {
-               // List<string> names = new List<string>();
+                if (!FindTargets(targetscope, instance, instance.Self, ref instance.Targets)) return false;
+                else
+                {
+                    // List<string> names = new List<string>();
 
-               // foreach (var i in instance.Targets[targetscope.refKey]) names.Add(i.FirstName);
+                    // foreach (var i in instance.Targets[targetscope.refKey]) names.Add(i.FirstName);
 #if UNITY_EDITOR
-               // if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"TargetScope {targetscope.baseScope} find targets {instance.Targets[targetscope.refKey].Count} {String.Join("|", names)}");
+                    // if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"TargetScope {targetscope.baseScope} find targets {instance.Targets[targetscope.refKey].Count} {String.Join("|", names)}");
 #endif
+                }
             }
         }
+
         return true;
     }
 
@@ -197,6 +208,13 @@ public static class EventUtility
         return scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(r, scr_System_CampaignManager.current.TemporaryRoom);
     }
 
+    /// <summary>
+    /// Exist check will be performed before this function is called. If a refkey is called and either doesnt exist or no entry, then will return false
+    /// </summary>
+    /// <param name="r"></param>
+    /// <param name="ev"></param>
+    /// <param name="c"></param>
+    /// <returns></returns>
     public static bool isValid(Event.CharaCondition r, EventInstance ev, Character_Trainable c)
     {
         if (r.parameters.Count < 1) return true;
@@ -233,6 +251,8 @@ public static class EventUtility
                 return !c.Stats.isConsciousnessUnconscious;
             case "isUnconscious":
                 return c.Stats.isConsciousnessUnconscious;
+            case "isFemale":
+                return c.isFemale;
             case "isSleeping":
                 return c.Stats.isSleeping;
             case "isRoomOwner":
@@ -288,6 +308,25 @@ public static class EventUtility
                 var faction = c.FactionManager.CurrentActiveParty;
                 if (faction != null && !faction.Job.hasUnresolvedResult) return true;
                 else return false;
+            case "HasFactionID":
+                if (r.parameters.Count >= 2)
+                {
+                    var party = c.FactionManager.CurrentParty;
+                    var locked = c.FactionManager.CurrentLockedParty;
+                    if (party != null && party.FactionOwnerRoot.ID == r.parameters[1]) return true;
+                    else if (locked != null && locked.FactionOwnerRoot.ID == r.parameters[1]) return true;
+                    foreach (var f in c.FactionManager.Factions) if (f.ID == r.parameters[1]) return true;
+                }
+                return false;
+            case "HasBaseID":
+                if (r.parameters.Count >= 2)
+                {
+                    //Debug.Log($"{c.CallName} HasBaseID [{r.parameters[1]}] [{c.BaseID}]");
+                    return c.BaseID == r.parameters[1];
+                }
+                return false;
+            case "NonPlayerFactionChara":
+                return !c.FactionManager.HasPlayerFaction;
             default:
                 return true;
         }
@@ -295,24 +334,23 @@ public static class EventUtility
 
     public static bool FindTargets(Event.EventScope_Target scope, EventInstance ev, Character_Trainable self, ref Dictionary<string, List<Character_Trainable>> library)
     {
-        if (scope.refKeys.Count < 1) return true;
+        if (scope.refKeys.Count < 1) return false;
 
         var list = new List<Character_Trainable>();
 
         if (scope.baseScope != TargetScope.None)
         {
             Room_Instance room = null;
-            List<int> charaRefs = null;
+            List<Character_Trainable> charaRefs = null;
 
             switch (scope.baseScope)
             {
                 case TargetScope.AllCharaInSelfRoom:
                     if (self == null) return false;
                     room = scr_System_CampaignManager.current.GetCharaRoomInstance(self.RefID);
-                    charaRefs = room == null ? new List<int>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
-                    foreach (var refid in charaRefs)
+                    charaRefs = room == null ? new List<Character_Trainable>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
+                    foreach (var chara in charaRefs)
                     {
-                        var chara = scr_System_CampaignManager.current.FindInstanceByID(refid);
                         bool isvalid = true;
                         foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
                         if (!isvalid) continue;
@@ -322,10 +360,9 @@ public static class EventUtility
                 case TargetScope.AllCharaInSelfRoom_ExcludeSelf:
                     if (self == null) return false;
                     room = scr_System_CampaignManager.current.GetCharaRoomInstance(self.RefID);
-                    charaRefs = room == null ? new List<int>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
-                    foreach (var refid in charaRefs)
+                    charaRefs = room == null ? new List<Character_Trainable>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
+                    foreach (var chara in charaRefs)
                     {
-                        var chara = scr_System_CampaignManager.current.FindInstanceByID(refid);
                         if (chara == self) continue;
                         if (scr_System_CampaignManager.current.IsInSameParty(self, chara)) continue;
                         bool isvalid = true;
@@ -340,23 +377,94 @@ public static class EventUtility
                         }
                     }
                     break;
+                case TargetScope.ScopeWithinRef:
+                    if (scope.extraScopeArguments.Count >= 1)
+                    {
+                        if (ev.Targets.TryGetValue(scope.extraScopeArguments[0], out var possibleRefs))
+                        {
+                            foreach (var chara in possibleRefs)
+                            {
+                                bool isvalid = true;
+                                foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
+                                if (!isvalid) continue;
+                                if (!list.Contains(chara))
+                                {
+#if UNITY_EDITOR
+                                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Chara {chara.FirstName} satisfy condition {scope.baseScope}");
+#endif
+                                    list.Add(chara);
+                                }
+                            }
+                        }
 
+                    }
+                    break;
+                case TargetScope.ScopeInRoomExceptRef:
+                    if (scope.extraScopeArguments.Count >= 1)
+                    {
+                        if (ev.Targets.TryGetValue(scope.extraScopeArguments[0], out var locationRef))
+                        {
+                            Dictionary<Room_Instance, int> roomRegistry = new Dictionary<Room_Instance, int>();
+                            foreach(var chara in locationRef)
+                            {
+                                var loc = scr_System_CampaignManager.current.Map.FindRoomByChara(chara.RefID);
+                                if (roomRegistry.ContainsKey(loc)) roomRegistry[loc] += 1;
+                                else roomRegistry.Add(loc, 1);
+                            }
+                            room = Utility.GetMaxWeightInDict(roomRegistry);
+                            charaRefs = room == null ? new List<Character_Trainable>() : room.RoomChara;
+                            //Debug.Log($"ScopeInRoomExceptRef with Chara {String.Join("|",room.RoomCharaRefs)}");
+                            foreach (var chara in charaRefs)
+                            {
+                                if (locationRef.Contains(chara))
+                                {
+                                    //Debug.Log($"ScopeInRoomExceptRef locationref conflict");
+                                    continue;
+                                }
+                                if (chara.CurrentJob != null)
+                                {
+                                    //Debug.Log($"{chara.CallName} current job non null");
+                                    continue;
+                                }
+                                bool isvalid = true;
+                                foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
+                                if (!isvalid)
+                                {
+                                    Debug.Log($"{chara.CallName} rejected by chara_conditions");
+                                    continue;
+                                }
+                                if (!list.Contains(chara))
+                                {
+    #if UNITY_EDITOR
+                                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Chara {chara.FirstName} satisfy condition {scope.baseScope}");
+    #endif
+                                    list.Add(chara);
+                                }
+                            }
+                        }
+                    }
+                    break;
 
                 default: break;
             }
         }
+
+        if (scope.minTargetCount != -1 && list.Count < scope.minTargetCount) return scope.allowEventOnMinTargetCountMiss;
+        if (scope.maxTargetCount != -1 && !scope.pickAmongValidTargets && list.Count > scope.maxTargetCount) return false;
+
+        if (scope.pickAmongValidTargets) Utility.FilterRandXInList(list, scope.maxTargetCount);
         foreach(var key in scope.refKeys)
         {
             if (!library.ContainsKey(key)) library.Add(key, new List<Character_Trainable>());
             library[key].AddRange(list);
             library[key] = library[key].Distinct().ToList();
         }
-        return (scope.minTargetCount == -1 || list.Count >= scope.minTargetCount) && (scope.maxTargetCount == -1 || list.Count <= scope.maxTargetCount);
+        return true;
     }
 
     public static bool isValid(Event.EventEntry.Options op, EventInstance owner)
     {
-        foreach (var c in op.Conditions) if (!c.isValid()) return false;
+        foreach (var c in op.conditions) if (!c.isValid()) return false;
         foreach (var cond in op.self_chara_conditions) if (!isValid(cond, owner, owner.Self)) return false;
         foreach (var kvp in op.target_chara_conditions)
         {
@@ -397,7 +505,7 @@ public static class EventUtility
             if (rA) content = $"<align=\"right\">{content}</align>";
             // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
             // but on execute they are consistent
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, rA ? $"<align=\"right\">{content}</align>" : content, "", false));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, rA ? $"<align=\"right\">{content}</align>" : content, "", true));
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
 
@@ -762,7 +870,7 @@ public static class EventUtility
                 if (oneStepExit == -1) return false;
 
                 Debug.LogError($"Execute LeaveRoom, one step exit to roomRef {oneStepExit}");
-                scr_System_CampaignManager.current.MoveCharacterTo(owner.Self.RefID, oneStepExit);
+                scr_System_CampaignManager.current.MoveCharacterTo(owner.Self, oneStepExit);
 
                 return true;
             case Event.EventEntry.ExecutionType.StartCombat:
@@ -783,6 +891,42 @@ public static class EventUtility
                 {
                     scr_System_CampaignManager.current.StartCombat(teamA, teamB, exec.arguments[0], exec.arguments[1], exec.arguments[2], owner, owner.Self == scr_System_CampaignManager.current.Player);
                     return true;
+                }
+                else return false;
+            case Event.EventEntry.ExecutionType.StartSexJobInParty:
+                if (exec.arguments.Count >= 8)
+                {
+                    List<Character_Trainable> rapists = null, victims = null;
+                    if (owner.Targets.TryGetValue(exec.arguments[1], out victims) && owner.Targets.TryGetValue(exec.arguments[2], out var locations) && int.TryParse(exec.arguments[3], out var duration))
+                    {
+                        owner.Targets.TryGetValue(exec.arguments[0], out rapists);
+
+
+                        var f = UtilityEX.GetActiveFactionFrom(locations) as Manageable_Party;
+                        if (f == null || f.Room == null)
+                        {
+                            return false;
+                        }
+                        foreach (var i in victims)
+                        {
+                            if (i.FactionManager.CurrentActiveParty != null) i.FactionManager.CurrentActiveParty.NotifyCharaKidnapped(i, f, false);
+                        }
+                        List<string> restrictTags = exec.arguments[4].Split("|", StringSplitOptions.RemoveEmptyEntries).ToList();
+
+                        foreach (var c in victims) scr_System_CampaignManager.current.MoveCharacterTo(c, f.Room);
+                        if (rapists != null) foreach (var c in rapists) scr_System_CampaignManager.current.MoveCharacterTo(c, f.Room);
+
+                        Job_Sex_Group j = new Job_Sex_Group(rapists, victims, f.Room, true, restrictTags);
+                        j.restrictDuration = duration;
+                        j.onJobEndEventID = exec.arguments[5];
+                        j.onJobEndEventLabel = exec.arguments[6];
+
+                        f.Job.AddResult(LocalizeDictionary.QueryThenParse(exec.arguments[7]), new List<string>(), victims);
+
+                        scr_System_CampaignManager.current.Register(j);
+                        return true;
+                    }
+                    else return false;
                 }
                 else return false;
             case Event.EventEntry.ExecutionType.PartyMIA:
@@ -829,7 +973,7 @@ public static class EventUtility
                         foreach (var i in victims)
                         {
                             i.ChangeCurrentJob(null);
-                            scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
+                            scr_System_CampaignManager.current.MoveCharacterTo(i, kidnapLoc.MainExit);
                             if (!i.FactionManager.AddToParty(kidnapLoc, Manageable_GuestStatus.Visitor, false, true))
                             {
                                 Debug.LogError("Erroe failed to add party, event abort");
@@ -882,7 +1026,7 @@ public static class EventUtility
                         foreach (var i in victims)
                         {
                             i.ChangeCurrentJob(null);
-                            scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
+                            scr_System_CampaignManager.current.MoveCharacterTo(i, kidnapLoc.MainExit);
                             if (! i.FactionManager.AddToParty(kidnapLoc, Manageable_GuestStatus.Visitor, false, true))
                             {
                                 Debug.LogError("Erroe failed to add party, event abort");
@@ -893,7 +1037,7 @@ public static class EventUtility
                         foreach (var i in kidnappers)
                         {
                             if (exitFaction != null) exitFaction.RemoveFromFaction(i);
-                            scr_System_CampaignManager.current.MoveCharacterTo(i.RefID, kidnapLoc.MainExit.RefID);
+                            scr_System_CampaignManager.current.MoveCharacterTo(i, kidnapLoc.MainExit);
                             kidnapLoc.AddToFaction(i, Manageable_GuestStatus.Hidden);
                         }
 

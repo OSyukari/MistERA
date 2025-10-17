@@ -94,7 +94,7 @@ public class scr_charaEntry : MonoBehaviour
                 Debug.LogError($"Chara Resolve Trade failed, undefined faction type");
             }
             this.innerChara.ChangeCurrentJob();
-            scr_System_CampaignManager.current.MoveCharacterTo(innerChara.RefID, targetFaction.MainExit.RefID);
+            scr_System_CampaignManager.current.MoveCharacterTo(innerChara, targetFaction.MainExit);
         }
     }
 

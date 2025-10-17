@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using QuikGraph;
 
-[System.Serializable]
 public enum ExpeditionStatus
 {
     Inactive,
@@ -15,7 +14,6 @@ public enum ExpeditionStatus
     Resting,
     Returning
 }
-[System.Serializable]
 public enum PartyStatus
 {
     Unavailable,
@@ -49,7 +47,6 @@ public interface I_IsJobGiver
     [JsonIgnore] public Manageable FactionOwnerRoot { get; }
 }
 
-[System.Serializable]
 public enum PartyAvailability
 {
     Unavailable,
@@ -178,6 +175,23 @@ public class Manageable_Party : I_IsJobGiver
             {
                 var c = scr_System_CampaignManager.current.FindInstanceByID(i);
                 RemoveFromFaction(c);
+            }
+        }
+        // clear all temporaryactors
+        var list2 = new List<int>( scr_System_CampaignManager.current.Map.CharaInRoom(this.Room.RefID));
+        //Debug.LogError($"ExpeditionEnd clearing room actor {String.Join("|", list2)}");
+        foreach (int charaRef in list2)
+        {
+            var c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
+
+            if (c.isTemporaryActor && (c.CurrentJob == null || c.CurrentJobRefID == -1) && !c.FactionManager.HasPlayerFaction)
+            {
+                Debug.LogError($"Detected chara {c.CallName} inside {this.FullFactionDisplayName}, unregistering");
+                scr_System_CampaignManager.current.Unregister(c);
+            }
+            else
+            {
+                Debug.LogError($"ERROR character {c.CallName} stuck inside {this.FullFactionDisplayName}");
             }
         }
     }
@@ -422,7 +436,11 @@ public class Manageable_Party : I_IsJobGiver
             foreach (var actor in this.ManagedRefs)
             {
                 var cc = scr_System_CampaignManager.current.FindInstanceByID(actor);
-                if (!cc.isTemporaryActor || cc.FactionManager.HasPlayerFaction) delete = false;
+                if (!cc.isTemporaryActor || cc.FactionManager.HasPlayerFaction || cc.CurrentJob != null)
+                {
+                    delete = false;
+                    break;
+                }
             }
 
             if (delete)
@@ -650,9 +668,14 @@ public class Manageable_Party : I_IsJobGiver
         RefreshRoomJobs();
     }
 
-    public void NotifyCharaKidnapped(Character_Trainable c, Manageable_Party kidnapLoc)
+    /// <summary>
+    /// Remove C from job unresolved results, remove from job, and internalUpdate
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="kidnapLoc"></param>
+    public void NotifyCharaKidnapped(Character_Trainable c, Manageable_Party kidnapLoc, bool messageLoggin = true)
     {
-        this.Job.AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_notifyCharaMIA").Replace("$location$", kidnapLoc.FactionDisplayName), new List<string>(), new List<Character_Trainable>() { c});
+        if (messageLoggin || kidnapLoc != this) this.Job.AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_notifyCharaMIA").Replace("$location$", kidnapLoc.FactionDisplayName), new List<string>(), new List<Character_Trainable>() { c});
         if (this.Job.hasUnresolvedResult)
         {
             foreach (var i in this.Job.ExpeditionResults)
@@ -660,7 +683,7 @@ public class Manageable_Party : I_IsJobGiver
                 foreach (var result in i.Value)
                 {
                     if (result.unresolved == null) continue;
-                    result.unresolved.NotifyCharaExit(c.RefID);
+                    result.NotifyCharaExit(c.RefID);
                 }
             }
         }
@@ -855,7 +878,7 @@ public class Manageable_Party : I_IsJobGiver
                     package.Targets.Add("teamA_frontline", frontline);
                     package.Targets.Add("teamA_backline", backline);
 
-                    foreach(var i in scr_System_CampaignManager.current.CharaInRoom(k.Room.RefID))
+                    foreach(var i in scr_System_CampaignManager.current.CharaRefsInRoom(k.Room.RefID))
                     {
                         if (this.FactionOwnerRoot.isMember(i)) victims.Add(i);
                     }

@@ -569,9 +569,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         button.Validate();
     }
-    public void MakeButton_Party(Manageable_Party p, scr_SelectableText button, bool isKidnap = false)
+    public void MakeButton_Party(Manageable_Party p, scr_partyBTN script, bool isKidnap = false)
     {
-        button.Initialize(this, new ButtonValidator_partySelect(this, button, p, isKidnap));
+        var button = script.PartyButton;
+        button.Initialize(this, new ButtonValidator_partySelect(this, script, p, isKidnap));
         button.SetText(p.FactionDisplayName);
         button.optionID = AssertUniqueHash(p.GetHashCode());
 
@@ -1647,12 +1648,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         new scr_Canvas_Management parent;
         scr_SelectableText text;
         Manageable_Party party;
+        scr_partyBTN script;
         bool isKidnap;
-        public ButtonValidator_partySelect(scr_Canvas_Management parent, scr_SelectableText text, Manageable_Party party, bool isKidnap) : base(parent)
+        public ButtonValidator_partySelect(scr_Canvas_Management parent, scr_partyBTN script, Manageable_Party party, bool isKidnap) : base(parent)
         {
             this.isKidnap = isKidnap;
-            this.text = text;
+            this.text = script.PartyButton;
             this.parent = parent;
+            this.script = script;
             this.party = party;
             this.text.AttachOnHoverEnter(OnPointerEnter);
 
@@ -1669,6 +1672,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
             if (parent.currentParty == this.party) text.Toggle(true, true);
             else text.Toggle(true, false);
+
+            var names = new List<string>();
+            foreach (var i in party.ManagedChara_Displayables) names.Add(i.FirstName);
+            party.GetAvailability(out var status_tooltip);
+            script.partyMembers.SetText($"{String.Join(" ", names)}\n{status_tooltip}{(party.Job.Expedition == null ? "" : $"\n{party.Job.DisplayName}")}");
+
             return true;
         }
 
@@ -1720,7 +1729,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         {
             if (isJoin) parent.currentParty.AddToFaction(c, Manageable_GuestStatus.Member);
             else parent.currentParty.RemoveFromFaction(c);
-            parent.Script_Expeditions.Initialize(parent, parent.CurrentFaction, true);
+            parent.LoadParty(parent.currentParty);
         }
     }
 

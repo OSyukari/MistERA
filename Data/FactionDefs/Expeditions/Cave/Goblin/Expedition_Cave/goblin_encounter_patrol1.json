@@ -1,0 +1,52 @@
+{
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_goblinCave_patrolEncounter",
+                "eventString_Ongoing": "exp_event_goblinCave_patrolEncounter_ongoing",
+                "DurationMinutes": 30,
+                "tags": [
+                    "encounter",
+                    "goblin",
+                    "sexual",
+                    "hazard",
+                    "cave"
+                ],
+                "baseWeight": 5,
+                "possibleResults": [
+                    {
+                        "baseWeight": 5,
+                        "resultText": "$names$反应迅速，在被发现前成功退入阴影中，屏住呼吸直到巡逻队离开。"
+                    },
+                    {
+                        "baseWeight": 4,
+                        "resultText": "$names$试图反抗或逃跑，但很快就被数量占优的哥布林们淹没。她们的武器被夺走，手脚被粗暴地捆绑起来，沦为了哥布林们发泄兽欲的战利品。"
+                    },
+                    {
+                        "baseWeight": 3,
+                        "resultText": "在哥布林们贪婪的注视下，$names$放弃了抵抗，主动解开了自己的衣物。哥布林们发出了满足的怪叫，将她们团团围住，当作公共的泄欲母畜来使用。"
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "队伍中一名成员被推了出来作为诱饵，吸引了所有哥布林的注意力。当她被哥布林们拖入黑暗中，遭受轮番侵犯时，队伍的其余成员趁乱逃脱了。"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_goblinCave_patrolEncounter": "遭遇哥布林",
+                "exp_event_goblinCave_patrolEncounter_ongoing": "$names$在洞穴的拐角处，与一队手持简陋武器、散发着恶臭的哥布林巡逻队不期而遇！",
+                "exp_event_goblinCave_patrolEncounter_result_evaded": "",
+                "exp_event_goblinCave_patrolEncounter_result_captured": "",
+                "exp_event_goblinCave_patrolEncounter_result_offering": "",
+                "exp_event_goblinCave_patrolEncounter_result_sacrifice": "",
+
+
+                "exp_event_goblinCave_patrolEncounter_result_sacrifice1":"队伍被一小群饥渴的哥布林斥候包围"
+            }
+        }
+    }
+}

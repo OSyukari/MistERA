@@ -21,6 +21,7 @@ public static class TeamReqUtility
         
         foreach (var i in list)
         {
+            if (i.CurrentJob != p.Job && !i.CurrentJob.CanBeInterrupted) continue;
             var status = p.GetStatus(i);
             switch(status)
             {
@@ -118,7 +119,7 @@ public static class ExpeditionUtility
         {
             if (i.TargetGenerations.Count > 0)
             {
-                bool targetGenValid = true;
+                //bool targetGenValid = true;
                 string factionTemplate = p.Job_Expedition == null ? "" : p.Job_Expedition.FactionOwner_Party.OwnerFaction.ID;
                 /*
                 foreach(var gen in i.TargetGenerations)

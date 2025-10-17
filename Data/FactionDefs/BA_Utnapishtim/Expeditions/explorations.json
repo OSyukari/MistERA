@@ -9,12 +9,6 @@
     "DurationHour":26,
     "isUnique":true, "canExplore":true,
     "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
-    "DescriptionText":[
-        "expedition_Utnapishtim_exploring_1", "expedition_Utnapishtim_exploring_2", "expedition_Utnapishtim_exploring_3",
-        "expedition_Utnapishtim_exploring_4", "expedition_Utnapishtim_exploring_5", "expedition_Utnapishtim_exploring_6",
-        "expedition_Utnapishtim_exploring_7", "expedition_Utnapishtim_exploring_8", "expedition_Utnapishtim_exploring_9",
-        "expedition_Utnapishtim_exploring_10", "expedition_Utnapishtim_exploring_11", "expedition_Utnapishtim_exploring_12",
-        "expedition_Utnapishtim_exploring_13" ],
     "EventIDs":["exp_event_Utnapishtim_crumblingFloor"],
     "keywords":["Utnapishtim"],
     "FeatureKeywords":["Utnapishtim"],
@@ -30,12 +24,6 @@
     "DurationHour":16,
     "isUnique":true, "canExplore":true,
     "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
-    "DescriptionText":[
-        "expedition_Utnapishtim_exploring_1", "expedition_Utnapishtim_exploring_2", "expedition_Utnapishtim_exploring_3",
-        "expedition_Utnapishtim_exploring_4", "expedition_Utnapishtim_exploring_5", "expedition_Utnapishtim_exploring_6",
-        "expedition_Utnapishtim_exploring_7", "expedition_Utnapishtim_exploring_8", "expedition_Utnapishtim_exploring_9",
-        "expedition_Utnapishtim_exploring_10", "expedition_Utnapishtim_exploring_11", "expedition_Utnapishtim_exploring_12",
-        "expedition_Utnapishtim_exploring_13" ],
     "EventIDs":["exp_event_Utnapishtim_crumblingFloor"],
     "FeatureKeywords":["Utnapishtim"],
     "keywords":["Utnapishtim"],
@@ -48,16 +36,33 @@
     },
     "ExplorationFeatures":
     {
-        "list":
-        [
-{ "requireKeywords":["Utnapishtim"], 
-    "featureEventIDs":[ "exp_event_Utnapishtim_cryoPod",
-                        "exp_event_Utnapishtim_damagedTransportBot",
-                        "exp_event_Utnapishtim_terminal"
-                        
-                        ] }
+        "list": [
+            {
+                "requireKeywords": [
+                    "Utnapishtim"
+                ],
+                "featureEventIDs": [
+                    "exp_event_Utnapishtim_cryoPod",
+                    "exp_event_Utnapishtim_damagedTransportBot",
+                    "exp_event_Utnapishtim_terminal"
+                ],
+                "DescriptionText": [
+                    "expedition_Utnapishtim_exploring_1",
+                    "expedition_Utnapishtim_exploring_2",
+                    "expedition_Utnapishtim_exploring_3",
+                    "expedition_Utnapishtim_exploring_4",
+                    "expedition_Utnapishtim_exploring_5",
+                    "expedition_Utnapishtim_exploring_6",
+                    "expedition_Utnapishtim_exploring_7",
+                    "expedition_Utnapishtim_exploring_8",
+                    "expedition_Utnapishtim_exploring_9",
+                    "expedition_Utnapishtim_exploring_10",
+                    "expedition_Utnapishtim_exploring_11",
+                    "expedition_Utnapishtim_exploring_12",
+                    "expedition_Utnapishtim_exploring_13"
+                ]
+            }
         ]
-
     },
     "Dictionary":
     {
@@ -83,20 +88,20 @@
 "expedition_Utnapishtim_exploring_13":"$names$穿过一扇半开的舱门，低温让呼出的气息凝成白雾，周围没有动静。",
 
 "expedition_Utnapishtim_danger_1": "$names$不慎滑落至战舰下层裂隙，辐射警报刺耳响起，空气中弥漫着金属焦味。",
-"expedition_Utnapishtim_danger_2": "$names$ 闯入真空泄漏区，防护服紧贴皮肤，每一次呼吸都伴随低压警铃。",
-"expedition_Utnapishtim_danger_3": "$names$ 遭遇结构坍塌，碎片四溅，她们在摇晃的通道中勉强维持平衡。",
-"expedition_Utnapishtim_danger_4": "$names$ 误入高温蒸汽泄漏区，视野被白雾笼罩，脚下的金属板烫得发出咝咝声。",
-"expedition_Utnapishtim_danger_5": "$names$ 穿越一处电涌区域，周围的灯光闪烁不定，仪器发出不规则的爆裂声。",
-"expedition_Utnapishtim_danger_6": "$names$ 被困在倾斜的舱室，地板随时可能断裂，远处传来机械运转的低鸣。",
-"expedition_Utnapishtim_danger_7": "$names$ 发现一处冷却液泄漏，黏稠液体漫过脚踝，刺鼻气味令人头晕。",
-"expedition_Utnapishtim_danger_8": "$names$ 进入重力异常区，身体忽轻忽重，周围漂浮的碎片威胁着她们的防护服。",
-"expedition_Utnapishtim_danger_9": "$names$ 踏入一处磁场紊乱区，通讯器发出刺耳杂音，指南针疯狂旋转。",
-"expedition_Utnapishtim_danger_10": "$names$ 遭遇管道破裂，冰冷的气体喷涌而出，防护服表面迅速结霜。",
-"expedition_Utnapishtim_danger_11": "$names$ 进入一处氧气稀薄的舱室，呼吸变得急促，视野边缘开始模糊。",
-"expedition_Utnapishtim_danger_12": "$names$ 误触故障的激光栅栏，刺眼的光束在身旁掠过，烧焦了附近的金属壁。",
-"expedition_Utnapishtim_danger_13": "$names$ 穿越一处暴露的反应堆外缘，辐射计数器急促鸣响，空气中弥漫着微弱的电离味。",
-"expedition_Utnapishtim_danger_14": "$names$ 被困在断裂的升降通道，周围的齿轮发出刺耳的摩擦声，随时可能彻底崩塌。",
-"expedition_Utnapishtim_danger_15": "$names$ 发现一处化学物质泄漏，地板上散落着腐蚀性液体，冒着缕缕青烟。"
+"expedition_Utnapishtim_danger_2": "$names$闯入真空泄漏区，防护服紧贴皮肤，每一次呼吸都伴随低压警铃。",
+"expedition_Utnapishtim_danger_3": "$names$遭遇结构坍塌，碎片四溅，她们在摇晃的通道中勉强维持平衡。",
+"expedition_Utnapishtim_danger_4": "$names$误入高温蒸汽泄漏区，视野被白雾笼罩，脚下的金属板烫得发出咝咝声。",
+"expedition_Utnapishtim_danger_5": "$names$穿越一处电涌区域，周围的灯光闪烁不定，仪器发出不规则的爆裂声。",
+"expedition_Utnapishtim_danger_6": "$names$被困在倾斜的舱室，地板随时可能断裂，远处传来机械运转的低鸣。",
+"expedition_Utnapishtim_danger_7": "$names$发现一处冷却液泄漏，黏稠液体漫过脚踝，刺鼻气味令人头晕。",
+"expedition_Utnapishtim_danger_8": "$names$进入重力异常区，身体忽轻忽重，周围漂浮的碎片威胁着她们的防护服。",
+"expedition_Utnapishtim_danger_9": "$names$踏入一处磁场紊乱区，通讯器发出刺耳杂音，指南针疯狂旋转。",
+"expedition_Utnapishtim_danger_10": "$names$遭遇管道破裂，冰冷的气体喷涌而出，防护服表面迅速结霜。",
+"expedition_Utnapishtim_danger_11": "$names$进入一处氧气稀薄的舱室，呼吸变得急促，视野边缘开始模糊。",
+"expedition_Utnapishtim_danger_12": "$names$误触故障的激光栅栏，刺眼的光束在身旁掠过，烧焦了附近的金属壁。",
+"expedition_Utnapishtim_danger_13": "$names$穿越一处暴露的反应堆外缘，辐射计数器急促鸣响，空气中弥漫着微弱的电离味。",
+"expedition_Utnapishtim_danger_14": "$names$被困在断裂的升降通道，周围的齿轮发出刺耳的摩擦声，随时可能彻底崩塌。",
+"expedition_Utnapishtim_danger_15": "$names$发现一处化学物质泄漏，地板上散落着腐蚀性液体，冒着缕缕青烟。"
             },
             "en-us":
             {

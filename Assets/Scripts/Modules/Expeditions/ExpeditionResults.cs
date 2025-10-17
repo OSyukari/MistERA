@@ -12,6 +12,10 @@ public class ExpResults
     public string resultText = "";
 
     public List<Result_Character> results_characters = new List<Result_Character>();
+
+    /// <summary>
+    /// If chara is in a party, this will tick once per party
+    /// </summary>
     public List<Result_Faction_Party> results_factions = new List<Result_Faction_Party>();
 
     public string eventID = "";

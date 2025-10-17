@@ -95,7 +95,7 @@ public class ActionPackage_Expedition : ActionPackage
         this.weight = GetWeight(this.SourceEV, p, out var tt);
         this.weight = exp.GetWeightModifiers(SourceEV.tags, this.weight);
         TargetChara = tt;
-        foreach(var i in TargetChara)this.doerRefs.Add(i.RefID);
+        foreach(var i in TargetChara) this.doerRefs.Add(i.RefID);
         this.duration = SourceEV.DurationMinutes;
 
         this.memEntryName = p.Job.DisplayName;
@@ -107,22 +107,6 @@ public class ActionPackage_Expedition : ActionPackage
             foreach (var i in this.Actors) names.Add(i.CallName);
             return SourceEV == null ? "-" : SourceEV.EventName_Ongoing.Replace("$names$", String.Join(", ",names)); 
         } }
-
-    public override void RepeatReset(bool resetRequest = false)
-    {
-
-    }
-
-    [JsonIgnore]
-    public override int RoomKey
-    {
-        get
-        {
-            if (roomKey == -1) roomKey = scr_System_CampaignManager.current.GetCharaRoomInstance(this.doerRefs[0]).RefID;
-            return roomKey;
-        }
-    }
-
 
     protected override bool PreEvaluate()
     {
@@ -175,9 +159,7 @@ public class ActionPackage_Expedition : ActionPackage
         var jobb = this.job as Job_Expedition;
         if (result != null && jobb != null)
         {
-            var names = new List<string>();
-            foreach (var i in this.Actors) names.Add(i.CallName);
-            var r = jobb.AddResult($"{LocalizeDictionary.QueryThenParse(result.resultText).Replace("$names$", String.Join(", ", names))}", new List<string>(), this.actorRefs);
+            var r = jobb.AddResult($"{LocalizeDictionary.QueryThenParse(result.resultText)}", new List<string>(), this.actorRefs);
 
             foreach (var i in this.Actors)
             {
@@ -187,10 +169,7 @@ public class ActionPackage_Expedition : ActionPackage
                 {
                     ResultCharaUtility.Apply(j, jobb.FactionOwner_Party, i, r.Tooltips);
                 }
-                foreach (var j in result.results_factions)
-                {
-                    ResultFactionUtility.Apply(j, jobb, i, r.Tooltips);
-                }
+
                 var ids = new List<int>();
                 var names2 = new List<string>();
                 foreach (var j in this.Actors) 
@@ -208,6 +187,11 @@ public class ActionPackage_Expedition : ActionPackage
 
 
                 // MOD RELATIONSHIP
+            }
+
+            foreach (var j in result.results_factions)
+            {
+                ResultFactionUtility.Apply(j, jobb, r.Tooltips);
             }
 
             if (result.eventID != "")

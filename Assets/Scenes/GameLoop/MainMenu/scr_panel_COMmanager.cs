@@ -41,7 +41,7 @@ public class scr_panel_COMmanager : scr_Menu
 
     
 
-    List<int> trackedJobRefs;
+    List<int> trackedJobRefs = new List<int>();
 
     public void notifyActorsChange()
     {
@@ -64,7 +64,7 @@ public class scr_panel_COMmanager : scr_Menu
     {
         if (j is Job_Sex_Group && !scr_UpdateHandler.current.Lock)
         {
-            ChangeCurrentTab(COMTabs.Sex);
+            ChangeCurrentTab(COMTabs.Sex, false);
 
         }
         if(scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room) ValidateAll();
@@ -97,7 +97,7 @@ public class scr_panel_COMmanager : scr_Menu
 
     private void OnCurrentTargetChange(int refID)
     {
-        if (refID == 0) ChangeCurrentTab(COMTabs.Interaction);
+        if (refID == 0) ChangeCurrentTab(COMTabs.Interaction, false);
 
         UpdateEquipBox();
         ValidateAll();
@@ -303,7 +303,6 @@ public class scr_panel_COMmanager : scr_Menu
 
         forbidCOMRepeatList = new Dictionary<string, Dictionary<int, bool>>();
         currentTab = COMTabs.Interaction;
-        trackedJobRefs = new List<int>();
 
         filters_sextouch = new List<scr_SelectableText>();
         filters_sextouch.AddRange(filters_Sex);
@@ -665,7 +664,7 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
-    private List<int> tempList;
+    private List<int> tempList = new List<int>();
 
     public override void ValidateAll()
     {
@@ -694,6 +693,9 @@ public class scr_panel_COMmanager : scr_Menu
 
     private void UpdateJobCOM()
     {
+        // if current thing not active then skip
+        if (!panel_InteractionCOMs.gameObject.activeInHierarchy) return;
+
         foreach(var kvpair in furnitureRectList)
         {
             Job_Furniture jf = (scr_System_CampaignManager.current.FindJobInstanceByID(kvpair.Key) as Job_Furniture);
@@ -702,7 +704,7 @@ public class scr_panel_COMmanager : scr_Menu
         }
 
 
-        tempList = new List<int>();
+        tempList.Clear();
         tempList.Add(scr_System_CampaignManager.current.jobRef_playerCOM);
         string s3 = "Tracking player interactionjob " + scr_System_CampaignManager.current.jobRef_playerCOM;
         /**/
@@ -848,14 +850,7 @@ public class scr_panel_COMmanager : scr_Menu
                         }
                         else
                         {
-                            var packages = (j as Job_Furniture).MakePackagesJoinable(scr_System_CampaignManager.current.Player);
-
-                            foreach(var ap in packages)
-                            {
-                                MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true);
-                            }
-                            
-                            
+                                                      
                             foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true))
                             {
                                 MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, ap.targetCOM, ap.targetCOM.COMRepeat, false, ap);
@@ -872,6 +867,7 @@ public class scr_panel_COMmanager : scr_Menu
                     }*/
                 }
             }
+            /*
             else
             {
                 //Debug.Log(jobRef+" already tracked");
@@ -882,11 +878,20 @@ public class scr_panel_COMmanager : scr_Menu
                         MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, false);
                     }
                 }
-
-            }
+           
+            } */
         }
 
-        for(int i = trackedJobRefs.Count - 1; i >= 0; i--)
+        //unload all joinable
+        for(int i = joinableAPTracker.Count -1; i >= 0; i--)
+        {
+            var validator = joinableAPTracker[i];
+            DestroyCOMButton(validator.text.optionID);
+            //Debug.Log("Destroy button!");
+        }
+        joinableAPTracker.Clear();
+
+        for (int i = trackedJobRefs.Count - 1; i >= 0; i--)
         {
             if (!tempList.Contains(trackedJobRefs[i]))
             {
@@ -898,6 +903,30 @@ public class scr_panel_COMmanager : scr_Menu
                     if (kvp.Value.ContainsKey(trackedJobRefs[i])) kvp.Value.Remove(trackedJobRefs[i]);
                 }
                 trackedJobRefs.RemoveAt(i);
+            }
+            else
+            {
+                var j = scr_System_CampaignManager.current.FindJobInstanceByID(trackedJobRefs[i]);
+                if (j is Job_Furniture)
+                {
+                    Job_Furniture jfurn = j as Job_Furniture;
+                    if (jfurn != null && jfurn.allusableCOMs.Count > 0 && !jfurn.isContainer && jfurn.Container == null)
+                    {
+                        foreach (var ap in j.JoinablePackages(0))
+                        {
+                            Debug.Log($"package comID {ap.targetCOM.ID} actors {String.Join("|", ap.actorRefs)} remaining {ap.Duration} jobref {ap.job.RefID}");
+                            joinableAPTracker.Add(MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true));
+                        }
+                        /*
+                        var packages = (j as Job_Furniture).MakePackagesJoinable(scr_System_CampaignManager.current.Player);
+                        if (packages.Count > 1) Debug.Log($"Adding {packages.Count} button!");
+                        foreach (var ap in packages)
+                        {
+                            joinableAPTracker.Add( MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true));
+
+                        }*/
+                    }
+                }
             }
         }
 
@@ -932,6 +961,7 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
+    public List<ButtonValidator_validateAP> joinableAPTracker = new List<ButtonValidator_validateAP>();
     private void DestroyCOMBox(int jobRef)
     {
         RectTransform rect = furnitureRectList[jobRef].GetComponent<RectTransform>();
@@ -987,10 +1017,10 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
-    private void ChangeCurrentTab(COMTabs tab)
+    private void ChangeCurrentTab(COMTabs tab, bool validate = false)
     {
         currentTab = tab;
-        ValidateAll();
+        if (validate) ValidateAll();
     }
 
     protected bool ValidateCOMByTags(COM com)
@@ -1054,7 +1084,7 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
-    private void MakeCOMButton(RectTransform parent, RectTransform prefab, ActionPackage ap, bool comRepeat = false, bool hidingOverride = false)
+    private ButtonValidator_validateAP MakeCOMButton(RectTransform parent, RectTransform prefab, ActionPackage ap, bool comRepeat = false, bool hidingOverride = false)
     {
         /*
         take in AP by reference. 
@@ -1067,8 +1097,9 @@ public class scr_panel_COMmanager : scr_Menu
         if (job == null || com == null) 
         {
            // Debug.Log("AP " + ap.DisplayName + " makeCOMButton Error, exiting");
-            return;
+            return null;
         }
+        ButtonValidator_validateAP validator = null;
         var key = "|jobRef|"+ (job == null ? "": job.RefID) + "|comID|" + (com == null? "": com.ID) + "|doers|" + ap.DoerRefs.Sum().ToString();
         if (!indexCOM.ContainsKey(key))
         {
@@ -1089,7 +1120,7 @@ public class scr_panel_COMmanager : scr_Menu
 
             buttonsByID.Add(comp.optionID, comp);
             validatorsByID.Add(comp.optionID, comp.Validator);
-
+            validator = comp.Validator as ButtonValidator_validateAP;
             comp.Validate();
 
             indexCOM.Add(key, comp.optionID);
@@ -1098,11 +1129,12 @@ public class scr_panel_COMmanager : scr_Menu
         else if (validatorsByID.ContainsKey(indexCOM[key]) && (validatorsByID[indexCOM[key]] as ButtonValidator_validateAP) != null)
         {
             //Debug.Log("AP validator remaking AP validator by injection");
-            var validator = validatorsByID[indexCOM[key]] as ButtonValidator_validateAP;
+            validator = validatorsByID[indexCOM[key]] as ButtonValidator_validateAP;
             validator.RemakePackage(ap);
         }
         else Debug.LogError("AP validator remaking AP non unique key ["+key+"], failed validator injection");
-        
+
+        return validator;
     }
 
     private void DestroyCOMButton(int jobRef)
@@ -1133,7 +1165,7 @@ public class scr_panel_COMmanager : scr_Menu
         int jobRefID;
         string comID;
 
-        scr_SelectableText text;
+        public scr_SelectableText text;
 
         COM com 
         { 
@@ -1794,7 +1826,7 @@ else */
             if ((job as Job_Sex_Group) == null)
             {
                 endString_saved = endString;
-                scr_System_CampaignManager.current.Register(new Job_Sex_Group(scr_System_CampaignManager.current.CharaInCurrentRoom, scr_System_CampaignManager.current.CurrentRoom));
+                scr_System_CampaignManager.current.Register(new Job_Sex_Group(scr_System_CampaignManager.current.CharaRefInCurrentRoom, scr_System_CampaignManager.current.CurrentRoom));
             }
             else
             {
@@ -2136,7 +2168,7 @@ else */
 
         public void OnClickButton()
         {
-            parent.ChangeCurrentTab(target);
+            parent.ChangeCurrentTab(target, false);
             //scr_System_CampaignManager.current.NotifyUpdate();
         }
     }

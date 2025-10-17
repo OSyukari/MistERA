@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
 using System.IO;
-
+using WebP;
 public class AssetsLoader
 {
 
@@ -19,21 +19,50 @@ public class AssetsLoader
         }
 
         var fullPath = $"file://{scr_System_Serializer.current.GetFullPath(path)}";
+        string extension = Path.GetExtension(path).ToLower();
 
-        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(fullPath))
+        using (UnityWebRequest uwr = UnityWebRequest.Get(fullPath))
         {
             yield return uwr.SendWebRequest();
 
             if (uwr.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError("Error loading texture: " + uwr.error);
-                onComplete?.Invoke(null);
+                onComplete?.Invoke(null); 
+                yield break;
+            }
+
+            byte[] bytes = uwr.downloadHandler.data;
+            Texture2D tex = null;
+
+            if (extension == ".png" || extension == ".jpg" || extension == ".jpeg")
+            {
+                // Native Unity support
+                tex = new Texture2D(2, 2);
+                tex.LoadImage(bytes);
+            }
+            else if (extension == ".webp")
+            {
+                // Use NativeWebP if available
+                var newTex = Texture2DExt.CreateTexture2DFromWebP(bytes, true, false, out var Error);
+                if (Error == Error.Success)
+                {
+                    tex = newTex;
+                }
+                else
+                {
+                    onComplete?.Invoke(null);
+                    yield break;
+                }
             }
             else
             {
-                Texture2D tex = DownloadHandlerTexture.GetContent(uwr);
-                onComplete?.Invoke(tex);
+                Debug.LogError($"AssetsLoader LoadTextureCoroutine Error, unhandled format [{extension}]");
+                onComplete?.Invoke(null);
+                yield break;
             }
+
+            onComplete?.Invoke(tex);
         }
     }
 

@@ -252,17 +252,19 @@
         },
         {
             "ID":"furniture_prison_containment_spot",
-            "displayName":"收容单间",
-            "recipe":[],
             "furnitureSize":1,
             "givesJob":
             [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
         },
         {
             "ID":"furniture_prison_containment_spot_2",
-            "displayName":"收容双人间",
-            "recipe":[],
             "furnitureSize":2,
+            "givesJob":
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
+        },
+        {
+            "ID":"furniture_prison_containment_spot_4",
+            "furnitureSize":4,
             "givesJob":
             [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
         },
@@ -321,7 +323,8 @@
 "furniture_shooting_range_spot":"靶场射击点",
 "furniture_arena_spot":"擂台",
 "furniture_prison_containment_spot":"收容单间",
-"furniture_prison_containment_spot_2":"收容双人间"
+"furniture_prison_containment_spot_2":"收容双人间",
+"furniture_prison_containment_spot_4":"收容宿舍"
             },
             "en-us":
             {

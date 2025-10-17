@@ -1,0 +1,37 @@
+{
+    "CharGenTemplates":
+    {
+        "list":[
+{
+    "ID":"creature_animal_cavebear",
+    "title":"creature_animal_cavebear",
+    "targetBaseID":"creature_animal_bear_template",
+    "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
+    "Appearance":"Male"
+}
+        ]
+    },
+        "Encounters":{
+        "list":[
+            { "ID":"bear_encounter_2", "frontline":[   "creature_animal_cavebear"] }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"creature_animal_bear":"熊",
+"creature_animal_cavebear":"穴熊",
+"bear_encounter_1":"熊",
+"bear_encounter_2":"穴熊"
+            },
+            "en-us":
+            {
+
+            }
+        }
+    }
+    
+}

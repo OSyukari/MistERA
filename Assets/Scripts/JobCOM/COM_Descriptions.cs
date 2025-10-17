@@ -158,7 +158,7 @@ public class COM_Descriptions
                     else
                     {
                         var s2 = LocalizeDictionary.QueryThenParse(texts[randIndex]);
-                        _texts.Add(randIndex, s2);
+                        if (_texts.ContainsKey(randIndex)) _texts.Add(randIndex, s2);
                         list.Add(s2);
                     }
                 }

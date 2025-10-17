@@ -31,11 +31,11 @@ public interface I_StatsManager
     [JsonIgnore] public Stats_Derived_Extended_Instance Stamina { get; }
     [JsonIgnore] public Stats_Derived_Extended_Instance Energy { get ; }
 
+    public Character_Trainable Owner { get; }
     public void RestoreAll();
 
 }
 
-[System.Serializable]
 public class StatsManager : I_StatsManager
 {
 
@@ -58,7 +58,7 @@ public class StatsManager : I_StatsManager
 
     protected Character_Trainable owner = null;
 
-    [JsonIgnore] protected Character_Trainable Owner
+    [JsonIgnore] public Character_Trainable Owner
     {
         get
         {
@@ -247,7 +247,7 @@ public class StatsManager : I_StatsManager
         foreach (var i in list_statsDerived) i.ClearCache();
 
         // force refresh StatsEx value to keep it valid
-        foreach (var ex in StatsExtended) ex.Restore(0f);
+        foreach (var ex in StatsExtended) ex.ModValue(0f);
 
 
 
@@ -319,7 +319,7 @@ public class StatsManager : I_StatsManager
     public void Restore(string baseTypeID, int amount)
     {
         Stats_Derived_Extended_Instance ex = GetStatEx(baseTypeID);
-        if (ex != null) ex.Restore(amount);
+        if (ex != null) ex.ModValue(amount);
     }
 
     protected List<Stat_Modifier> modifiers = new List<Stat_Modifier>();
@@ -488,7 +488,7 @@ public class StatsManager : I_StatsManager
         Stats_Derived_Extended_Instance statex = GetStatEx(statID);
         if (statex != null)
         {
-            statex.Restore(value);
+            statex.ModValue(value);
             return true;
         }
 

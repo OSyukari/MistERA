@@ -63,33 +63,6 @@ public class Map_Instance
 
     [JsonIgnore] public Dictionary<int, int> floorDoorQuickSearch;
 
-    protected void RebuildActiveFloorRefs(Room_Instance playerRoom = null)
-    {
-        return;
-        if (playerRoom == null) playerRoom = FindRoomByChara(scr_System_CampaignManager.current.Player.RefID);
-
-        if (playerRoom.parentFloor == null) _activeFloorRefIDs = new List<int>();
-        else
-        {
-            _activeFloorRefIDs = GetConnectedFloorRefs(playerRoom.parentFloor.refID);
-            _activeFloorRefIDs.Add(playerRoom.parentFloor.refID);
-        }
-
-        //Debug.Log("RebuildActiveFloorRefs: source["+ (playerRoom == null? "null": playerRoom.DisplayName)+"|"+ (playerRoom.parentFloor == null ? "null": playerRoom.parentFloor.displayName)+ "]" + String.Join("|", _activeFloorRefIDs));
-    }
-
-
-
-    List<int> _activeFloorRefIDs = null;
-    [JsonIgnore] public List<int> ActiveFloorRefIDs
-    {
-        get
-        {
-            if (_activeFloorRefIDs == null) RebuildActiveFloorRefs();
-            return _activeFloorRefIDs;
-        }
-    }
-
     public Map_Instance()
     {
         //foreach (MapTemplate.FloorPlanInstance f in Template.floors)
@@ -265,25 +238,23 @@ public class Map_Instance
     [JsonIgnore] protected Dictionary<int, int> roomFloorRef;
     [JsonIgnore] protected ReadOnlyDictionary<int, int> roomFloorRef_Immutable;
 
-    public void UnregisterChara(int refID)
-    {
-        charaRoomRef.Remove(refID);
-        RebuildRoomCharaRef();
-    }
     public void UnregisterRoom(int refID)
     {
         roomFloorRef.Remove(refID);
         Room_Instance room = null;
         if (Rooms.TryGetValue(refID, out room) || rooms_orphans.TryGetValue(refID, out room))
         {
+            foreach(var chara in room.RoomChara)
+            {
+                Debug.LogError("ERROR WIPING CHARA");
+            }
             foreach (var job in room.Jobs) scr_System_CampaignManager.current.Unregister(job);
             room.Inventory.Destroy();
         }
         Rooms.Remove(refID);
         rooms_orphans.Remove(refID);
         roomFloorRef.Remove(refID);
-        RebuildRoomCharaRef();
-        //charaRoomRef.
+        charaRoomRef.Remove(refID); 
         BuildPath();
     }
 
@@ -305,24 +276,6 @@ public class Map_Instance
     /// </summary>
     [JsonIgnore] public List<ActionPackage> dirtyCharaAPRef = new List<ActionPackage>();
 
-    public void RebuildRoomCharaRef()
-    {
-        if (roomCharaRef == null) roomCharaRef = new Dictionary<int, List<int>>();
-        roomCharaRef.Clear();
-        //foreach (var i in roomFloorRef.Keys) roomCharaRef.Add(i, new List<int>());
-        foreach (var i in charaRoomRef)
-        {
-            if (!roomCharaRef.ContainsKey(i.Value)) roomCharaRef.Add(i.Value, new List<int>());
-            roomCharaRef[i.Value].Add(i.Key);
-        }
-    }
-
-    public bool IsCharaInInactiveRooms(int charaRef)
-    {
-        var room = FindRoomByChara(charaRef);
-        return room.RefID == 0 || room == scr_System_CampaignManager.current.StasisRoom || room == scr_System_CampaignManager.current.TemporaryRoom;
-    }
-
     public bool IsCharaInActiveFloors(int charaRef)
     {
         var floor = FindRoomByChara(charaRef).parentFloor;
@@ -331,15 +284,15 @@ public class Map_Instance
 
     public void UpdateRoomForceGreeting()
     {
-        foreach (var i in roomCharaRef)
+        foreach (var i in Rooms)
         {
-            UpdateRoom(i, true);
+            UpdateRoom(i.Value, true);
         }
     }
 
-    private void UpdateRoom(KeyValuePair<int, List<int>> iii, bool forceGreeting = false)
+    private void UpdateRoom(Room_Instance ri, bool forceGreeting = false)
     {
-        var charaInRoom = iii.Value;
+        var charaInRoom = ri.RoomChara;
         // if(Rooms.ContainsKey(iii.Key) && iii.Value.Count > 0) Debug.Log("roomCharaRef " + Rooms[iii.Key].DisplayName + " and charaRefs " + String.Join("|", iii.Value));
         /*if (iii.Key == scr_System_CampaignManager.current.CurrentRoom.RefID)
         {
@@ -350,15 +303,14 @@ public class Map_Instance
             }
             //Debug.Log("roomCharaRef " + GetRoomByRef(iii.Key).DisplayName + " and charaRefs " + String.Join("|", charaInRoom));
         }*/
-        charaInRoom = charaInRoom.Distinct().ToList();
 
         for (int x = 0; x < charaInRoom.Count; x++)
         {
-            var xx = scr_System_CampaignManager.current.FindInstanceByID(charaInRoom[x]);
+            var xx = charaInRoom[x];
             UtilityEX.GetEPsFrom(xx, out List<EvaluationPackage> xxEPs);
 
             bool interrupted = false;
-            bool isDirty = dirtyCharaRef.Contains(charaInRoom[x]);
+            bool isDirty = dirtyCharaRef.Contains(charaInRoom[x].RefID);
 
             List<string> selfTags = new List<string>();
             foreach (var i in xxEPs) selfTags.AddRange(i.isDoer(xx) ? i.DoerTargetTag : i.ReceiverTargetTag);
@@ -366,7 +318,7 @@ public class Map_Instance
             List<int> ignoreList = new List<int>();
 
             // check interrupt
-            var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(iii.Key, true) : dirtyCharaAPRef;
+            var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(ri.RefID, true) : dirtyCharaAPRef;
             if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
             //if (xx.RefID != 0)
             //{
@@ -374,8 +326,8 @@ public class Map_Instance
                 // these are all ap that chara could react to
             foreach (var i in checkInterruptAPs)
             {
-                if (i.RoomKey != iii.Key) continue;// { Debug.LogError("dirtychararef roomkey inequal [" + i.RoomKey + "] [" + iii.Key + "]"); continue; }
-                if (i.actorRefs.Contains(charaInRoom[x])) continue;//{ Debug.LogError("dirtychararef actorref contains [" + String.Join("|", i.actorRefs) + "] [" + charaInRoom[x] + "]"); continue; }
+                if (i.RoomKey != ri.RefID) continue;// { Debug.LogError("dirtychararef roomkey inequal [" + i.RoomKey + "] [" + iii.Key + "]"); continue; }
+                if (i.actorRefs.Contains(xx.RefID)) continue;//{ Debug.LogError("dirtychararef actorref contains [" + String.Join("|", i.actorRefs) + "] [" + charaInRoom[x] + "]"); continue; }
                 if (xx.CurrentJob != null && i.job != null && i.job.RefID == xx.CurrentJobRefID) continue;//{ Debug.LogError("dirtychararef currentjob identical [" + i.job.DisplayName + "]"); continue; }
                 if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
                 if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
@@ -398,7 +350,7 @@ public class Map_Instance
                     if (x == y) continue;
                     if (charaInRoom[x] == charaInRoom[y]) continue;
 
-                    var yy = scr_System_CampaignManager.current.FindInstanceByID(charaInRoom[y]);
+                    var yy = charaInRoom[y];
                     if (xx == null || yy == null) continue;
 
                     UtilityEX.GetEPsFrom(yy, out List<EvaluationPackage> yyEPs);
@@ -406,12 +358,12 @@ public class Map_Instance
                     /*
                     Prioritise self or target.
                      */
-                    isDirty = isDirty || dirtyCharaRef.Contains(charaInRoom[y]);
+                    isDirty = isDirty || dirtyCharaRef.Contains(yy.RefID);
                     if ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume)
                     {
                         xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "OnTimestopEnd");
                     }
-                    else if ((forceGreeting || isDirty) && !(scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[x]) && scr_System_CampaignManager.current.isPlayerPartyMember(charaInRoom[y])))
+                    else if ((forceGreeting || isDirty) && !(scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) && scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID)))
                     {
                         xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "Greeting");
                         //yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "Greeting");
@@ -428,8 +380,6 @@ public class Map_Instance
 
     public void UpdateAllRoom()
     {
-        RebuildRoomCharaRef();
-
         //var time = DateTime.Now;
         // List<int> dirtyCharaRefNew = new List<int>();
 
@@ -447,9 +397,9 @@ public class Map_Instance
             Debug.Log($"UpdateAllRoom, check interrupt\nDirtyCharaRefs: {String.Join("|",names)}\nDirtyAPRefs: {String.Join("|", names2)}");
         }
 
-        foreach (var i in roomCharaRef)
+        foreach (var i in Rooms)
         {
-            UpdateRoom(i);
+            UpdateRoom(i.Value);
         }
         //System.Threading.Tasks.Parallel.ForEach(roomCharaRef, entry => UpdateRoom(entry));
 
@@ -507,40 +457,40 @@ public class Map_Instance
         roomFloorRef_Immutable = new ReadOnlyDictionary<int, int>(roomFloorRef);
     }
 
-    public void MoveCharaTo(int charaRef, int roomRef)
+    public void MoveCharaTo(Character_Trainable charaRef, Room_Instance newRoom)
     {
-        dirtyCharaRef.Add(charaRef);
+        if (!charaRoomRef.ContainsKey(charaRef.RefID))
+        {
+            newRoom.AddChara(charaRef);
+        }
+        else
+        {
+            FindRoomByChara(charaRef.RefID).MoveTo(charaRef, newRoom);
+        }
+        charaRoomRef[charaRef.RefID] = newRoom.RefID;
+        dirtyCharaRef.Add(charaRef.RefID);
         dirtyCharaRef = dirtyCharaRef.Distinct().ToList();
 
-        //var oldRoomRef = charaRoomRef.ContainsKey(charaRef) ? charaRoomRef[charaRef] : -1;
-        if (!charaRoomRef.ContainsKey(charaRef)) charaRoomRef.Add(charaRef, 0);
-        charaRoomRef[charaRef] = roomRef;
-
-        this.roomCharaRef = null;
-        if (charaRef == scr_System_CampaignManager.current.Player.RefID)
+        if (charaRef.RefID == 0)
         {
             var job = scr_System_CampaignManager.current.Player.CurrentJob;
-            var room = GetRoomByRef(roomRef);
             var currentTargetRef = scr_System_CampaignManager.current.CurrentTargetRef;
-            scr_System_CampaignManager.current.ChangeCurrentRoom(room);
-            if (currentTargetRef > 0 && charaRoomRef[currentTargetRef] != roomRef && !scr_System_CampaignManager.current.isPlayerPartyMember(currentTargetRef)) scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.Player.RefID);
-            if (job != null && job.ParentRoom != null && job.ParentRoom.RefID != roomRef) scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
-            RebuildActiveFloorRefs(room);
+            scr_System_CampaignManager.current.ChangeCurrentRoom(newRoom);
+            if (currentTargetRef > 0 && charaRoomRef[currentTargetRef] != newRoom.RefID && !scr_System_CampaignManager.current.isPlayerPartyMember(currentTargetRef)) scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.Player.RefID);
+            if (job != null && job.ParentRoom != null && job.ParentRoom.RefID != newRoom.RefID) scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
         }
     }
 
     public List<int> CharaInRoom(int roomRef)
     {
-        if (roomCharaRef == null) RebuildRoomCharaRef();
-        return roomCharaRef.ContainsKey(roomRef) ? roomCharaRef[roomRef] : new List<int>();
+        return GetRoomByRef(roomRef).RoomCharaRefs;
     }
 
     /// <summary>
     /// Key - charaRefID
     /// Value - roomRefID
     /// </summary>
-    [JsonProperty] protected Dictionary<int, int> charaRoomRef = new Dictionary<int, int>();
-    [JsonIgnore] protected Dictionary<int, List<int>> roomCharaRef = null;
+    public Dictionary<int, int> charaRoomRef = new Dictionary<int, int>();
     Func<TaggedEdge<int, Door_Instance>, double> edgeCost = entry => entry.Tag.Cost;
     Func<int, double> heuristic = value => 0f;
 
@@ -829,8 +779,6 @@ public class Map_Instance
         }
 
         BuildPath();
-        RebuildActiveFloorRefs();
-        RebuildRoomCharaRef();
     }
 }
 

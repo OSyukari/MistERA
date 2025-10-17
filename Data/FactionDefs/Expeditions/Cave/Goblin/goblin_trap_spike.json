@@ -1,0 +1,49 @@
+{
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_goblinCave_spikeTrap",
+                "eventString_Ongoing": "exp_event_goblinCave_spikeTrap_ongoing",
+                "DurationMinutes": 20,
+                "tags": [
+                    "hazard",
+                    "trap",
+                    "goblin",
+                    "sexual",
+                    "restraint"
+                ],
+                "baseWeight": 5,
+                "possibleResults": [
+                    {
+                        "baseWeight": 6,
+                        "resultText": "exp_event_goblinCave_spikeTrap_result_evaded"
+                    },
+                    {
+                        "baseWeight": 4,
+                        "resultText": "exp_event_goblinCave_spikeTrap_result_snared"
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_goblinCave_spikeTrap_result_capturedAndUsed"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_goblinCave_spikeTrap_result_hiddenPath"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_goblinCave_spikeTrap": "哥布林的尖刺陷阱",
+                "exp_event_goblinCave_spikeTrap_ongoing": "$names$在潮湿的地面上前行时，脚下突然传来一声机括脆响，一个被苔藓和泥土巧妙伪装的陷阱被触发了！",
+                "exp_event_goblinCave_spikeTrap_result_evaded": "$names$凭借着惊人的反应速度，在脚下的活板门完全打开前向一旁翻滚，有惊无险地避开了这个致命的陷阱。",
+                "exp_event_goblinCave_spikeTrap_result_snared": "活板门并未完全打开，但从中弹出的涂满粘液的绳网缠住了$names$的腿。虽然奋力挣脱了，但制服的裙摆被撕开了一个大口子，雪白的大腿暴露在外，还因为用力过猛而摔倒在地，姿态颇为不雅。",
+                "exp_event_goblinCave_spikeTrap_result_capturedAndUsed": "地面瞬间翻转，$names$在尖叫声中坠入下方的深坑。幸运的是，坑底并非尖锐的木刺，而是数十根被打磨光滑、顶端呈圆弧状、模仿着勃起阳具的木桩，上面还涂满了滑腻的、散发着异味的粘液。她们的身体被强制以M字开腿的姿势固定在木桩上，木桩的顶端恰好对准了阴部，每一次挣扎都会带来一阵阵羞耻的摩擦。很快，被陷阱触发的警报声吸引来了几只巡逻的哥布林，它们看着坑中动弹不得的猎物，发出了贪婪而污秽的笑声。",
+                "exp_event_goblinCave_spikeTrap_result_hiddenPath": "$names$坠入了陷阱，但坑道的侧壁却在冲击下坍塌，露出了一条哥布林们自己都未曾发现的古代密道。在通道深处，发现了一些被遗忘的宝物。"
+            }
+        }
+    }
+}

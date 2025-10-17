@@ -1,50 +1,50 @@
 
 {
-    "baseID": "creature_humanoid_hobgoblin_template",
+    "baseID": "creature_animal_bear_template",
     "Portrait":{
         "portraitPriorityList":[
             {
                 "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
                 
-                "portrait_offset_x": -51,
-                "portrait_offset_y": 18,
-                "portrait_offset_size": 1.5,
+                "portrait_offset_x": 0.236,
+                "portrait_offset_y": 0.0,
+                "portrait_offset_size": 1.41,
                 
-                "icon_offset_x":-26,
-                "icon_offset_y":-97,
-                "icon_offset_size":0.7,
+                "icon_offset_x":30.9,
+                "icon_offset_y":-4,
+                "icon_offset_size":0.4,
 
-                "portrait_path":"GB_GoblinCave/st_052_00a.png",
-                "icon_path":"GB_GoblinCave/st_052_00a.png"
+                "portrait_path":"EraFL/pig01.png",
+                "icon_path":"EraFL/pig01.png"
             }
         ]
     },
     "Template":{
         "Appearance": "Male",
         "BodyType": "Default",
-        "stat_STR": 21,
-        "stat_CON": 24,
-        "stat_PSY": 6,
-        "stat_WIL": 9,
-        "Height":240,
+        "stat_STR": 26,
+        "stat_CON": 28,
+        "stat_PSY": 4,
+        "stat_WIL": 14,
+        "Height":291,
         "sensitivity_B": "trait_Sensitivity_B_default",
         "sensitivity_M": "trait_Sensitivity_M_default",
         "sensitivity_C": "trait_Sensitivity_C_default",
         "sensitivity_V": "trait_Sensitivity_V_default",
         "sensitivity_A": "trait_Sensitivity_A_default",
         "size_B": "trait_Size_B_AAA",
-        "size_P": "trait_Size_P_big",
+        "size_P": "trait_Size_P_average",
         "size_V": "trait_Size_V_none",
         "size_A": "trait_Size_A_1",
         "initialRelationship":[
         ]
     },
-    "firstName": "creature_humanoid_goblin",
+    "firstName": "creature_animal_bear",
     "middleName": "",
     "lastName": "",
     "nameDisplayFormat": "chara_fullname_firstToLast",
     "origin": "charOrigin_none",
-    "race": "creature_humanoid_goblin",
+    "race": "creature_beastRace_animal",
     "raceTemplate": "humanRaceAddon_standard",
     "startingGift": "charOriginGift_none"
 }

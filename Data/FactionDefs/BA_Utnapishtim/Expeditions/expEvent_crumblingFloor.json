@@ -125,6 +125,7 @@
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_avoid",
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev02",
+    "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
@@ -132,6 +133,7 @@
     "label": "br_mia",
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev03",
     "Results":[
+        { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
         { "Type":"PartyMIA" , "arguments":["party","AlwaysHostile", "expedition_Utnapishtim_wreck", "exp_event_Utnapishtim_crumblingFloor_MIA_message"]}
     ],
     "isLast": true

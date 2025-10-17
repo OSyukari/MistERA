@@ -46,21 +46,6 @@ public class ActionPackage_Redress : ActionPackage
         return this;
     }
 
-    public override void RepeatReset(bool resetRequest = false)
-    {
-
-    }
-
-    [JsonIgnore]
-    public override int RoomKey
-    {
-        get
-        {
-            if (roomKey == -1) roomKey = scr_System_CampaignManager.current.GetCharaRoomInstance(doerRef).RefID;
-            return roomKey;
-        }
-    }
-
     [JsonProperty] new protected bool toggleRepeat = false;
 
     protected override bool PreEvaluate()

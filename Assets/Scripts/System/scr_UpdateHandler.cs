@@ -210,21 +210,26 @@ public class scr_UpdateHandler : MonoBehaviour
         else if (updateUI) NotifyLogsSingleUpdate();
     }
 
+    /// <summary>
+    /// Check for when AP is not player directly involved but should be displayed regardless <br/>
+    /// log update is initiated by Job and there is already a player location visibility check prior to this.
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
     public bool DoDisplayCOM(ActionPackage p)
     {
         if (p == null) return false;
-
-        // if player related, return true
-        if (p.actorRefs != null && p.actorRefs.Contains(0)) return true;
-
-        // log update is initiated by Job and there is already a player visibility check prior to this.
-        //if (p.job != null && p.job.ParentRoom != null && p.job.ParentRoom.RefID != scr_System_CampaignManager.current.CurrentRoom.RefID) return false;
-
-        if (!scr_System_CampaignManager.current.DebugMode && p.targetCOM != null && p.targetCOM.TimeScale * 2 < totalUpdateTime) return false;
-
+        if (p.targetCOM != null)
+        {
+            if (p.ComTags.Contains("initSex") || p.ComTags.Contains("endSex")) return true;
+            else if (p.targetCOM.TimeScale * 4 < totalUpdateTime) return false;
+        }
         return true;
     }
-
+    public bool isLastUpdate()
+    {
+        return updateTime == 0;
+    }
     /// <summary>
     /// check whether the internal COM has a TimeScale that is long enough for display.
     /// <br/>
@@ -238,7 +243,6 @@ public class scr_UpdateHandler : MonoBehaviour
         return p.targetCOM.TimeScale * 2 >= totalUpdateTime;
     }
 
-    protected List<string> checkResults = new List<string>();
     List<string> currentRoundClimax = new List<string>();
     public ExperienceLog exp = new ExperienceLog();
 
@@ -278,6 +282,7 @@ public class scr_UpdateHandler : MonoBehaviour
 
             if (EventHandler.Active && !EventHandler.Waiting)
             {
+                EventHandler.Run(false, true);
                 ExecuteEventCallbacks(CallbackResumeUpdate);
                 yield return null;
             }
@@ -286,6 +291,7 @@ public class scr_UpdateHandler : MonoBehaviour
             {
                 scr_System_CampaignManager.current.NotifyEventEnd();
             }
+            FlushCollectedLogs(true, oneLoop, true);
 
             halted = false;
             loopCount++;
@@ -293,7 +299,6 @@ public class scr_UpdateHandler : MonoBehaviour
             //var time2 = time;
             //foreach (Manageable faction in organizations) faction.Manage();
             if (firstLoopCounter > 0) firstLoopCounter --;
-            FlushCollectedLogs(true, oneLoop);
             oneLoop = false;
 
            // if (firstPreUpdate) firstPreUpdate = false;
@@ -307,9 +312,6 @@ public class scr_UpdateHandler : MonoBehaviour
             updateTime -= 1;
 
             scr_System_Time.current.UpdateTime(0, 0, timestop ? 0 : 1, 0, true);   // if timestop then the value dont really matter
-
-            if (checkResults.Count > 0) cnManager.AddLog(-1, String.Join("\n", checkResults), false);
-            checkResults.Clear();
 
             // during postupdatetime, all job will clear and re-update package, and all character will check cum.
             // separate this.
@@ -325,8 +327,6 @@ public class scr_UpdateHandler : MonoBehaviour
 
             cnManager.ClearExecutedAPs();
             //cnManager.ClearLogs(true);
-            if (EventHandler.Active) EventHandler.Run(false, true);
-
 
             scr_System_Time.current.NotifyTimeResumeEnd();
            // if (scr_System_Time.current.TimeResume) scr_System_Time.current.timeStop = TimestopState.normal;
@@ -370,9 +370,11 @@ public class scr_UpdateHandler : MonoBehaviour
         // begin job message
         if (false && playerJob != null) cnManager.AddLog(-1, playerJob.MessagesBefore, halted);
 
+        cnManager.AddLog(-1, String.Join("\n", message_checks), halted);
         cnManager.AddLog(-1, String.Join("\n", message_begin), halted);
         cnManager.AddLog(-1, String.Join("\n", message_ongoing), halted);
 
+        message_checks.Clear();
         message_begin.Clear();
         message_ongoing.Clear();
 
@@ -398,47 +400,28 @@ public class scr_UpdateHandler : MonoBehaviour
         {
             var job = scr_System_CampaignManager.current.FindJobInstanceByID(i);
             //Debug.Log("Merging with ActiveJob "+job.RefID+" " + job.DisplayName);
-            this.exp.MergeWith(job.exp);
+            this.exp.MergeWith(job.exp, false);
         }
-        cnManager.AddLog(-1, exp.PrintContent(), halted);
+
+        cnManager.AddLog(-1, exp.PrintContent_Messages(), halted);
+        cnManager.AddLog(-1, exp.PrintContent_Stats(), halted);
+        cnManager.AddLog(-1, exp.PrintContent_Relations(), halted);
+        cnManager.AddLog(-1, exp.PrintContent_Exps(), halted);
+
         exp.Clear();
 
         if (timeStop) totalUpdateTime = 0;
 
-
         cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", false, true, scr_System_Time.current.getCurrentTime().ToString());
 
-        /*
-        List<string> names = new List<string>();
-        foreach (var charaRef in cnManager.CharaInCurrentRoom)
-        {
-            if (charaRef == 0 || cnManager.PlayerPartyMembers.Contains(charaRef)) continue;
-            Character_Trainable c = cnManager.FindInstanceByID(charaRef);
-            if (c == null) continue;
-            names.Add("<align=\"right\">"+LocalizeDictionary.QueryThenParse("chara_currently_doing").Replace("$chara$",c.FirstName).Replace("$currentjob$", c.GetJobDescription()) +"</align>");
-            //cnManager.AddLog(charaRef, c.FirstName+ " is in room" + room.DisplayName+  ", currently " + c.GetJobDescription(), true);
-        }
-        if (names.Count > 0) cnManager.AddLog(-1, String.Join("\n", names) , false, true);
-        //yield return null;
-        */
-
-        //if (playerJob == null || playerJob is Job_Sex_Group) { }
-        //else
-        //{   // release player from previous job registry to avoid lingering COM display
-        //    scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
-        // }
         Updating = false;
 
         if (EventHandler.Active)
         {
-
-#if UNITY_EDITOR
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError($"EVENTHANDLER ACTIVE, running... is Updating? {Updating}");
-#endif
             EventHandler.Run(false, true);
         }
-
         ExecuteEventCallbacks(CallbackResumeUpdate);
+        FlushCollectedLogs(true, oneLoop, true);
         NotifyLogsSingleUpdate(CallbackResumeUpdate);
     }
 
@@ -459,10 +442,12 @@ public class scr_UpdateHandler : MonoBehaviour
     public void AddEventCallback(Action e)
     {
         eventCallbacks.Add(e);
+        //Debug.Log($"AddEventCallback count {eventCallbacks.Count}");
     }
     protected List<Action> eventCallbacks = new List<Action>();
     protected void ExecuteEventCallbacks(bool autoResumeUpdate)
     {
+        //Debug.Log($"ExecuteEventCallbacks count {eventCallbacks.Count}");
         bool log = scr_System_CentralControl.current.LogPrefs.DLog_Events;
         FlushCollectedLogs(true, true, false);
         var loopCount = 100;
@@ -489,12 +474,20 @@ public class scr_UpdateHandler : MonoBehaviour
 
 
 
-    List<string> message_begin = new List<string>(), message_end = new List<string>();
+    List<string> message_checks = new List<string>(), message_begin = new List<string>(), message_end = new List<string>();
     List<string> message_ongoing = new List<string>();
-    public void NotifyJobDescriptions(List<string> begin, List<string> ongoing, List<string> end, Dictionary<int, string> kojo)
+    public void NotifyJobDescriptions(List<string> checks, List<string> begin, List<string> ongoing, List<string> end, Dictionary<int, string> kojo)
     {
+        if (checks != null && checks.Count > 0)
+        {
+            message_checks.AddRange(checks);
+        }
         // accumate result, on flush addlog to CNManager
-        if (begin != null && begin.Count > 0) message_begin.AddRange(begin);
+        if (begin != null && begin.Count > 0)
+        {
+            //Debug.Log($"Begin: {String.Join("\n", begin)}");
+            message_begin.AddRange(begin);
+        }
         if (ongoing != null && ongoing.Count > 0) message_ongoing.AddRange(ongoing);
         if (end != null && end.Count > 0) message_end.AddRange(end);
         if (kojo != null)
@@ -525,9 +518,12 @@ public class scr_UpdateHandler : MonoBehaviour
     {
         if (flushOut)
         {
-            if (checkResults.Count > 0) cnManager.AddLog(-1, String.Join("\n", checkResults), false);
-            cnManager.AddLog(-1, exp.PrintContent(), true);
-            if (message_begin.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_begin), true);
+            if (message_checks.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_checks), false);
+            if (message_begin.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_begin), false);
+            cnManager.AddLog(-1, exp.PrintContent_Messages(), true);
+            cnManager.AddLog(-1, exp.PrintContent_Stats(), true);
+            cnManager.AddLog(-1, exp.PrintContent_Relations(), true);
+            cnManager.AddLog(-1, exp.PrintContent_Exps(), true);
             if (firstLoop && message_ongoing.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_ongoing), true);
 
             foreach(var kvp in kojoMsgDictionary)
@@ -539,7 +535,7 @@ public class scr_UpdateHandler : MonoBehaviour
             if (message_end.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_end), true);
         }
         exp.Clear();
-        checkResults.Clear();
+        message_checks.Clear();
         currentRoundClimax.Clear();
         message_begin.Clear();
         message_ongoing.Clear(); 
@@ -549,19 +545,12 @@ public class scr_UpdateHandler : MonoBehaviour
         if (executeCallbacks) ExecuteEventCallbacks(true);
     }
 
-    public void NotifyCheckResult(string resultString)
-    {
-        if (resultString.Length < 1) return;
-        if (!Updating) Debug.LogError($"Updatehandler: receiver checkresult [{resultString}] but not currently updating");
-        checkResults.Add(resultString);
-        //Observer_LogsSingleStepUpdate?.Invoke(false);
-    }
-
     public void NotifyClimax(int targetRefID, string s, ExperienceLog exp)
     {
         if (!scr_System_CampaignManager.current.ShowCharaLog(targetRefID)) return;
-        currentRoundClimax.Add(s);
-        this.exp.MergeWith(exp);
+        this.exp.MergeWith(exp, false);
+        if (this.exp.GetRightAlign(targetRefID)) currentRoundClimax.Add($"<align=\"right\">{s}</align>");
+        else currentRoundClimax.Add(s);
     }
 
     public void NotifyLogsSingleUpdate(bool skipAll = false)
@@ -569,6 +558,11 @@ public class scr_UpdateHandler : MonoBehaviour
         Observer_LogsSingleStepUpdate?.Invoke(skipAll);
     }
 
+    public void AddExperience(int charaRef, string expID, int count)
+    {
+        if (!scr_System_CampaignManager.current.ShowCharaLog(charaRef)) return;
+        this.exp.AddExperience(charaRef, expID, count);
+    }
 
     public int PlayerQuery(Action<scr_Menu> action)
     {

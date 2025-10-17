@@ -22,8 +22,8 @@
     "Template":{
         "Appearance": "Male",
         "BodyType": "Default",
-        "stat_STR": 16,
-        "stat_CON": 18,
+        "stat_STR": 19,
+        "stat_CON": 26,
         "stat_PSY": 3,
         "stat_WIL": 7,
         "Height":173,
@@ -44,7 +44,7 @@
     "lastName": "",
     "nameDisplayFormat": "chara_fullname_firstToLast",
     "origin": "charOrigin_none",
-    "race": "creature_beastRace_horse",
+    "race": "creature_beastRace_animal",
     "raceTemplate": "humanRaceAddon_standard",
     "startingGift": "charOriginGift_none"
 }

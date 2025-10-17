@@ -25,7 +25,8 @@
             "baseWeight": 3,
             "resultText": "exp_event_Utnapishtim_damagedTransportBot_result_loot",
             "results_characters": [ ],
-            "results_factions":[
+            "results_factions":
+            [
                 {
                     "entry_results":{
                         "randomLoot":{

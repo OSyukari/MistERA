@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
 
 public enum ParticipantType { 
     doer,
@@ -16,6 +15,7 @@ public enum ParticipantType {
 
 public class EvaluationPackage
 {
+
     protected bool initializedRand = false;
     protected Unity.Mathematics.Random Random;
     protected int Dice(int count, int maxVal, int minVal)
@@ -565,7 +565,7 @@ public class EvaluationPackage
                 else _responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) - consciousPenalty, 5, 95);
 
             }
-        }else if (self.isRestrained || self.isImprisoned)
+        }else if (self.isRestrained || self.isImprisoned || self.cannotRefuse)
         {
             mod.AddModifier(self.RefID, "Restrained", 0);
             _responseRate = 100;
@@ -821,7 +821,7 @@ public class EvaluationPackage
     public void Execute()
     {
         //if (receiver == null || doer == receiver) receiver = doer;
-
+        _doerInternal = null; _receiverInternal = null;
         targetCOM.ApplyCost(this);
 
         // clear previous tags, cuz some command have built-in random part selection we dont want both part end up in tags
@@ -849,6 +849,7 @@ public class EvaluationPackage
         {
             if (targetCOM is COM_Sex)
             {
+                Debug.Log($"sexcom! {targetCOM.ID} is psex ? {(pSex == null ? "null" : "exist")} variantID {(pSex == null ? "null" : pSex.COMVariantID)}");
                 Fuck_2(null, Doer, targetCOM, Receiver == null ? Doer : Receiver, pSex.isStrongPenetration || pSex.targetCOM.variants[pSex.COMVariantID].setForce, response);
             }
             else
@@ -982,9 +983,53 @@ public class EvaluationPackage
 
         List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID);
         checkResults_doer = Doer.FirstName + ": " + (mods.Count > 0 ? String.Join(" + ", modifiers.GetModifiersByRefID(Doer.RefID)) + " = ": "") + (requestRate >= 100 ? "automatic success" : diceroll + " <= " + requestRate + " "+(returnVal ?  "Success":"Failure") +" " +"("+attitude_doer + ")");
-        checkResults_doer_short = $"{Doer.FirstName}: ({requestRate}%) => {(requestRate >= 100 ? diceroll_autosuccess : (returnVal ? diceroll_success : diceroll_failure))}";
+        checkResults_doer_short = $"({Doer.FirstName}) {targetCOM.DisplayName(VariantID)}: {(requestRate >= 100 ? diceroll_autosuccess : $"({requestRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
 
         return returnVal;
+    }
+
+    /// <summary>
+    /// Response rate 25% neg 50% neutral 25% pos
+    /// </summary>
+    /// <param name="receiver"></param>
+    /// <param name="rel"></param>
+    /// <param name="targetCOM"></param>
+    /// <param name="isPositive"></param>
+    /// <returns></returns>
+
+    private bool RollResponse()
+    {
+        bool returnVal = true;
+        // first find if doer is willing
+        int diceroll = Dice(1, 100, 0);
+        if (Receiver == null || Receiver.RefID == 0)
+        {
+            // display player option menu to decide accept or refuse
+            returnVal = true;
+            checkResults_receiver = "";
+            checkResults_receiver_short = "";
+            attitude_receiver = Memory_Attitude.None;
+        }
+        else
+        {
+            if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = responseRate >= scr_System_CampaignManager.current.DeterministicThreshold ? 0 : 100;
+
+            if (diceroll >= 95 && responseRate <= 95) returnVal = false; // rate <= 95 allow crit failure 
+            else if (diceroll <= 5 && responseRate >= 5) returnVal = true; // rate >= 5 allow crit success
+            else returnVal = diceroll <= responseRate;
+
+            RollAttitude(ref attitudeRate_pos_receiver, ref attitudeRate_neg_receiver, ref attitude_receiver);
+            List<string> mods = modifiers.GetModifiersByRefID(Receiver.RefID);
+            checkResults_receiver = Receiver.FirstName + ": " + (mods.Count > 0 ? String.Join(" + ", mods) + " = " : "") + (responseRate >= 100 ? "automatic success" : diceroll + " <= " + responseRate + " " + (returnVal ? "Success" : "Failure")) + " " + "(" + attitude_receiver + ")";
+            checkResults_receiver_short = $"({Doer.FirstName}{(Receiver == null || Receiver == Doer ? "" : " -> " + Receiver.FirstName)}) {targetCOM.DisplayName(VariantID)}: {(requestRate >= 100 ? diceroll_autosuccess : $"({requestRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
+
+        }
+        return returnVal;
+    }
+    public string GetCheckResult(bool full = false)
+    {
+        if (response > Memory_Response.None) return full ? checkResults_receiver : checkResults_receiver_short;
+        else return full ? checkResults_doer : checkResults_doer_short;
     }
 
     [JsonProperty] protected Memory_Attitude attitude_doer, attitude_receiver;
@@ -1026,6 +1071,20 @@ public class EvaluationPackage
             else response = Memory_Response.Accept;
         }
 
+
+        if (targetCOM != null && response == Memory_Response.Accept)
+        {
+            doerInternal = Utility.GetRandomElement(Doer.Body.GetInternalsWithTags(targetCOM.requirements.requirement.doerBodyTags));
+            receiverInternal = Utility.GetRandomElement((Receiver == null ? Doer : Receiver).Body.GetInternalsWithTags(targetCOM.requirements.requirement.receiverBodyTags));
+
+        }
+        else
+        {
+            doerInternal = null;
+            receiverInternal = null;
+        }
+
+
         return response == Memory_Response.Accept;
     }
 
@@ -1046,45 +1105,6 @@ public class EvaluationPackage
         modifiers.AddModifier(charaRef, key, count);
     }
 
-    /// <summary>
-    /// Response rate 25% neg 50% neutral 25% pos
-    /// </summary>
-    /// <param name="receiver"></param>
-    /// <param name="rel"></param>
-    /// <param name="targetCOM"></param>
-    /// <param name="isPositive"></param>
-    /// <returns></returns>
-
-    private bool RollResponse()
-    {
-        bool returnVal = true;
-        // first find if doer is willing
-        int diceroll = Dice(1, 100, 0);
-        if (Receiver == null || Receiver.RefID == 0)
-        {
-            // display player option menu to decide accept or refuse
-            returnVal = true;
-            checkResults_receiver = "";
-            checkResults_receiver_short = "";
-            attitude_receiver = Memory_Attitude.None;
-        }  
-        else
-        {
-            if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = responseRate >= scr_System_CampaignManager.current.DeterministicThreshold ? 0 : 100;
-
-            if (diceroll >= 95 && responseRate <= 95) returnVal = false; // rate <= 95 allow crit failure 
-            else if (diceroll <= 5 && responseRate >= 5) returnVal = true; // rate >= 5 allow crit success
-            else returnVal = diceroll <= responseRate;
-
-            RollAttitude(ref attitudeRate_pos_receiver, ref attitudeRate_neg_receiver, ref attitude_receiver);
-            List<string> mods = modifiers.GetModifiersByRefID(Receiver.RefID);
-            checkResults_receiver = Receiver.FirstName + ": " + (mods.Count > 0 ? String.Join(" + ", mods) + " = " : "") + (responseRate >= 100 ? "automatic success" : diceroll + " <= " + responseRate + " " + (returnVal ? "Success" : "Failure"))  + " " + "(" + attitude_receiver + ")";
-            checkResults_receiver_short = $"{Receiver.FirstName}: ({responseRate}%) => {(responseRate >= 100 ? diceroll_autosuccess : (returnVal ? diceroll_success : diceroll_failure))}";
-
-
-        }
-        return returnVal;
-    }
 
 
 
@@ -1107,16 +1127,14 @@ public class EvaluationPackage
         {
             //if (doer != receiver) receiver.AddSexLogOngoing(doer.RefID, receiver.RefID, com.ID, 1);
             // if doing to self then always accept. 
-            BodyInternal_Instance doerBody = doer.Body.GetRandomInternalWithTag(Utility.GetRandomElement(com.requirements.requirement.doerBodyTags));
-            BodyInternal_Instance receiverBody = receiver.Body.GetRandomInternalWithTag(Utility.GetRandomElement(com.requirements.requirement.receiverBodyTags));
 
             List<BodyInternal_Instance> receiverList = new List<BodyInternal_Instance>();
             List<BodyInternal_Instance> doerList = new List<BodyInternal_Instance>();
 
             bool executed = false;
-            executed = executed || Fuck_3(true, true, doer, doerBody, receiverBody, com, variantID, isForce, true)
-                                || Fuck_3(true, false, receiver, receiverBody, doerBody, com, variantID, isForce, false)
-                                || Fuck_3(false, true, doer, doerBody, receiverBody, com, variantID, isForce, true);
+            executed = executed || Fuck_3(true, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true)
+                                || Fuck_3(true, false, receiver, receiverInternal, doerInternal, com, variantID, isForce, false)
+                                || Fuck_3(false, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true);
 
             if (!executed) Debug.LogError("com " + com.displayName + " not executed due to not finding required bodypart");
         }
@@ -1127,7 +1145,44 @@ public class EvaluationPackage
         }
     }
 
-    [System.Serializable]
+    public string bodypart_doer = "", bodypart_receiver = "";
+    BodyInternal_Instance _doerInternal = null, _receiverInternal = null;
+    [JsonIgnore]
+    public BodyInternal_Instance doerInternal
+    { get
+        {
+            if (_doerInternal == null && bodypart_doer != "" && targetCOM != null)
+            {
+                var rand = Doer.Body.GetRandomPartWithBaseID(bodypart_doer);
+                _doerInternal = rand == null ? null : rand.GetRandInternalWithTagsLoose(targetCOM.requirements.requirement.doerBodyTags);
+            }
+            return _doerInternal;
+        }
+        set
+        {
+            _doerInternal = value;
+            bodypart_doer = value == null ? "" : value.Parent.Base.ID;
+        }
+    }
+    [JsonIgnore]
+    public BodyInternal_Instance receiverInternal
+    {
+        get
+        {
+            if (_receiverInternal == null && bodypart_receiver != "" && targetCOM != null)
+            {
+                var rand = (Receiver == null ? Doer : Receiver).Body.GetRandomPartWithBaseID(bodypart_receiver);
+                _receiverInternal = rand == null ? null : rand.GetRandInternalWithTagsLoose(targetCOM.requirements.requirement.receiverBodyTags);
+            }
+            return _receiverInternal;
+        }
+        set
+        {
+            _receiverInternal = value;
+            bodypart_receiver = value == null ? "" : value.Parent.Base.ID;
+        }
+    }
+
     public class Modifiers
     {
         public Dictionary<int, Dictionary<string, int>> modifiers = new Dictionary<int, Dictionary<string, int>>();
@@ -1261,19 +1316,19 @@ public class EvaluationPackage
             if (fucker.CurrentSize > Math.Max( fucked.CurrentMaxSize, fucked.CurrentMaxSize) * 1.25)
             {
                 // if size > size * 1.5 pain 
-                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times max_maxsize [" + fucked.CurrentMaxSize +"|"+ fucked.CurrentMaxSize + "] : response heavy pain, expanding");
 
                 var painMultiplier = fucker.CurrentSize / Math.Max(fucked.CurrentMaxSize, fucked.CurrentSize);
 
-                fuckerPl = baseStrength * 0.7f; fuckerPn = painMultiplier * 0.5f;
+                fuckerPl = baseStrength; fuckerPn = painMultiplier * 0.1f;
                 fuckedPl = 0f;                  fuckedPn = baseStrength * painMultiplier;
                 expansion = painMultiplier;
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times max_maxsize [" + fucked.CurrentMaxSize + "|" + fucked.CurrentMaxSize + $"] : response heavy pain, expanding\nFucker pl {fuckerPl} baseStr {baseStrength} pain {fuckerPn} mult {painMultiplier}");
             }
             else if (fucker.CurrentSize > fucked.CurrentMaxSize * 1.25)
             {
                 // if size > size * 1.5 pain 
                 s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times CurrentMaxSize [" + fucked.CurrentMaxSize + "] : response pain, expanding");
-                fuckerPl = baseStrength * 1.0f; ;       
+                fuckerPl = baseStrength * 1.2f;
                 fuckedPl = baseStrength * 0.3f;   fuckedPn = baseStrength * 0.6f;
                 expansion = 3;
 
@@ -1282,7 +1337,7 @@ public class EvaluationPackage
             {
                 // if size > size * 1.5 pain 
                 s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times CurrentSizeExtended [" + fucked.CurrentSizeExtended + "] : response pain, expanding");
-                fuckerPl = baseStrength * 1.3f;
+                fuckerPl = baseStrength * 1.4f;
                 fuckedPl = baseStrength * 0.6f; fuckedPn = baseStrength * 0.3f;
                 expansion = 1;
 
@@ -1476,7 +1531,7 @@ public class EvaluationPackage
 
     public void ModRelationshipResult(RelationshipManager.Character_Relationship rel, RelationshipScoreType type, int value)
     {
-        this.m.AddRelations(rel.ownerRefID, rel.TargetID, type, value);
+        this.m.AddRelations(rel.Owner.RefID, rel.TargetID, type, value);
         rel.ModRelationValue(type, value);
     }
 
@@ -1501,9 +1556,11 @@ public class EvaluationPackage
     }
 }
 
-[System.Serializable]
 public class ExperienceLog
 {
+    [JsonIgnore] public bool leftAlignOverride = false;
+
+    protected SortedDictionary<int, bool> RightAlign = new SortedDictionary<int, bool>();
     protected SortedDictionary<int, Dictionary<string, int>> StatLog = new SortedDictionary<int, Dictionary<string, int>>();
     protected SortedDictionary<int, Dictionary<string, int>> ExpLog = new SortedDictionary<int, Dictionary<string, int>>();
     protected SortedDictionary<int, Dictionary<int, int>> RelationLog = new SortedDictionary<int, Dictionary<int, int>>();
@@ -1514,8 +1571,19 @@ public class ExperienceLog
 
     }
    
+    public bool GetRightAlign(int chararef)
+    {
+        if (this.RightAlign.TryGetValue(chararef, out bool result)) return result;
+        return true;
+    }
+    public void AddChara(int charaRef)
+    {
+        if (!this.RightAlign.ContainsKey(charaRef)) this.RightAlign.Add(charaRef, charaRef == 0 ? false : true);
+    }
+
     public void AddExperience(int charaRef, string expID, int count)
     {
+        AddChara(charaRef);
        // Debug.Log("EVP Explog, adding experiences "+expID);
         if (!this.ExpLog.ContainsKey(charaRef)) ExpLog.Add(charaRef, new Dictionary<string, int>());
 
@@ -1531,6 +1599,8 @@ public class ExperienceLog
     /// <param name="count"></param>
     public void AddRelations(int sourceCharaRef, int targetCharaRef, RelationshipScoreType relID, int count)
     {
+        AddChara(sourceCharaRef);
+        AddChara(targetCharaRef);
         //Debug.Log("EVP Explog, adding relations");
         // Debug.LogError("AddRelations between ["+sourceCharaRef+"] and ["+targetCharaRef+"]");
         int playerRef = scr_System_CampaignManager.current.Player.RefID;
@@ -1545,13 +1615,14 @@ public class ExperienceLog
 
     public void AddMessage(int charaRef, string message)
     {
-        if (!this.MessageLog.ContainsKey(charaRef)) MessageLog.Add(charaRef, new List<string>());
-
-        this.MessageLog[charaRef].Add(message);
+        AddChara(charaRef);
+        if (!this.MessageLog.ContainsKey(charaRef)) MessageLog.Add(charaRef, new List<string>() { message });
+        else this.MessageLog[charaRef].Add(message);
     }
 
     public void AddStats(int charaRef, string statID, int count)
     {
+        AddChara(charaRef);
         //Debug.Log("EVP Explog, adding stat");
         if (!this.StatLog.ContainsKey(charaRef)) StatLog.Add(charaRef, new Dictionary<string, int>());
 
@@ -1559,47 +1630,53 @@ public class ExperienceLog
         else StatLog[charaRef].Add(statID, count);
     }
 
-    public void MergeWith(ExperienceLog log)
+    public void MergeWith(ExperienceLog log, bool shorten)
     {
-       // Debug.Log("EVP Explog, merging");
-
-        foreach (KeyValuePair<int, Dictionary<string, int>> kvp in log.ExpLog)
+        foreach(KeyValuePair<int, bool> kvp in log.RightAlign)
         {
-            if (!this.ExpLog.ContainsKey(kvp.Key)) ExpLog.Add(kvp.Key, kvp.Value);
-            else
-            {
-
-                foreach (KeyValuePair<string, int> kkvp in kvp.Value)
-                {
-                    if (!this.ExpLog[kvp.Key].ContainsKey(kkvp.Key)) this.ExpLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
-                    else this.ExpLog[kvp.Key][kkvp.Key] += kkvp.Value;
-                }
-            }
+            this.RightAlign[kvp.Key] = log.leftAlignOverride ? false : kvp.Value;
         }
 
-        foreach (KeyValuePair<int, Dictionary<int, int>> kvp in log.RelationLog)
+        if (!shorten)
         {
-            if (!this.RelationLog.ContainsKey(kvp.Key)) RelationLog.Add(kvp.Key, kvp.Value);
-            else
+            foreach (KeyValuePair<int, Dictionary<string, int>> kvp in log.ExpLog)
             {
-
-                foreach (KeyValuePair<int, int> kkvp in kvp.Value)
+                if (!this.ExpLog.ContainsKey(kvp.Key)) ExpLog.Add(kvp.Key, kvp.Value);
+                else
                 {
-                    if (!this.RelationLog[kvp.Key].ContainsKey(kkvp.Key)) this.RelationLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
-                    else this.RelationLog[kvp.Key][kkvp.Key] += kkvp.Value;
+
+                    foreach (KeyValuePair<string, int> kkvp in kvp.Value)
+                    {
+                        if (!this.ExpLog[kvp.Key].ContainsKey(kkvp.Key)) this.ExpLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
+                        else this.ExpLog[kvp.Key][kkvp.Key] += kkvp.Value;
+                    }
                 }
             }
-        }
 
-        foreach (KeyValuePair<int, Dictionary<string, int>> kvp in log.StatLog)
-        {
-            if (!this.StatLog.ContainsKey(kvp.Key)) StatLog.Add(kvp.Key, kvp.Value);
-            else
+            foreach (KeyValuePair<int, Dictionary<int, int>> kvp in log.RelationLog)
             {
-                foreach (KeyValuePair<string, int> kkvp in kvp.Value)
+                if (!this.RelationLog.ContainsKey(kvp.Key)) RelationLog.Add(kvp.Key, kvp.Value);
+                else
                 {
-                    if (!this.StatLog[kvp.Key].ContainsKey(kkvp.Key)) this.StatLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
-                    else this.StatLog[kvp.Key][kkvp.Key] += kkvp.Value;
+
+                    foreach (KeyValuePair<int, int> kkvp in kvp.Value)
+                    {
+                        if (!this.RelationLog[kvp.Key].ContainsKey(kkvp.Key)) this.RelationLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
+                        else this.RelationLog[kvp.Key][kkvp.Key] += kkvp.Value;
+                    }
+                }
+            }
+
+            foreach (KeyValuePair<int, Dictionary<string, int>> kvp in log.StatLog)
+            {
+                if (!this.StatLog.ContainsKey(kvp.Key)) StatLog.Add(kvp.Key, kvp.Value);
+                else
+                {
+                    foreach (KeyValuePair<string, int> kkvp in kvp.Value)
+                    {
+                        if (!this.StatLog[kvp.Key].ContainsKey(kkvp.Key)) this.StatLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
+                        else this.StatLog[kvp.Key][kkvp.Key] += kkvp.Value;
+                    }
                 }
             }
         }
@@ -1608,12 +1685,14 @@ public class ExperienceLog
         {
             if (!this.MessageLog.ContainsKey(kvp.Key)) MessageLog.Add(kvp.Key, kvp.Value);
             else MessageLog[kvp.Key].AddRange(kvp.Value);
+            MessageLog[kvp.Key].RemoveAll(x=>x.Length < 1);
         }
     }
 
     public void Clear()
     {
-
+        leftAlignOverride = false;
+        RightAlign.Clear();
         //bool clearedBeforePrint = false;
         //foreach (KeyValuePair<int, Dictionary<string, int>> kvp in ExpLog) kvp.Value.Clear();
         ExpLog.Clear();
@@ -1629,9 +1708,9 @@ public class ExperienceLog
         MessageLog.Clear();
     }
 
-    public string PrintContent()
+    public string PrintContent_Stats()
     {
-       // Debug.Log("EVP Explog, print");
+        // Debug.Log("EVP Explog, print");
         List<string> lines = new List<string>();
 
         foreach (var kvp_refID in StatLog)
@@ -1639,46 +1718,69 @@ public class ExperienceLog
             if (kvp_refID.Value.Count > 0)
             {
                 string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                if (s.Length < 1) continue;
+
                 s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
-                lines.Add(s);
+                lines.Add(RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
             }
         }
-
+        return String.Join('\n', lines.ToArray());
+    }
+    public string PrintContent_Relations()
+    {
+        // Debug.Log("EVP Explog, print");
+        List<string> lines = new List<string>();
         // Only player character related relationship increase is logged
         foreach (var kvp_refID in RelationLog)
         {
             if (kvp_refID.Value.Count > 0)
             {
-                string s =  scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse("relationship_"+ ((RelationshipScoreType) kvp.Key).ToString().ToLower())   + "" + kvp.Value.ToString("+0;-#") + " ";
+                string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse("relationship_" + ((RelationshipScoreType)kvp.Key).ToString().ToLower()) + "" + kvp.Value.ToString("+0;-#") + " ";
+                if (s.Length < 1) continue;
+
                 s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
-                lines.Add(s);
+                lines.Add(RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
             }
         }
-
+        return String.Join('\n', lines.ToArray());
+    }
+    public string PrintContent_Exps()
+    {
+        // Debug.Log("EVP Explog, print");
+        List<string> lines = new List<string>();
+        // Only player character related relationship increase is logged
         foreach (var kvp_refID in ExpLog)
         {
             if (kvp_refID.Value.Count > 0)
             {
                 string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse( kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                if (s.Length < 1) continue;
+
                 s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
-                lines.Add(s);
+                lines.Add(RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
             }
         }
-
-        foreach(var kvp_msg in MessageLog)
+        return String.Join('\n', lines.ToArray());
+    }
+    public string PrintContent_Messages()
+    {
+       // Debug.Log("EVP Explog, print");
+        List<string> lines = new List<string>();
+        foreach(var kvp_refID in MessageLog)
         {
-            if (kvp_msg.Value.Count > 0)
+            if (kvp_refID.Value.Count > 0)
             {
-                string s = String.Join("\n", kvp_msg.Value);
+                string s = RightAlign[kvp_refID.Key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID.Value)}</align>" :  String.Join("\n", kvp_refID.Value);
+                if (s.Length < 1) continue;
                 lines.Add(s);
             }
+            //Debug.Log($"FlushLogMessage {kvp_refID.Key} {RightAlign[kvp_refID.Key]} {String.Join("||", kvp_refID.Value)}");
 
         }
-
-        return String.Join("\n", lines);
+        return String.Join('\n', lines.ToArray());
     }
 
 }

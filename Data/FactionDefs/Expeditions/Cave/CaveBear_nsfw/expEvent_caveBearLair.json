@@ -1,0 +1,79 @@
+{
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_caveBearLair",
+                "eventString_Ongoing": "exp_event_caveBearLair_ongoing",
+                "DurationMinutes": 20,
+                "tags": [
+                    "bear"
+                ],
+    "weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"caveBear" } } ],
+                "baseWeight": 5,
+                "possibleResults": [
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_caveBearLair_result_item"
+                    },
+                    {
+                        "baseWeight": 4,
+                        "resultText": "exp_event_caveBearLair_result_remains"
+                    },
+                    {
+                        "baseWeight": 1,
+    "weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"Encounter" } } ],
+                        "resultText": "exp_event_caveBearLair_result_encounter",
+                        "eventID":"event_caveBearEncounter",
+            "overrideTargetGeneration":true,
+            "TargetGenerations":
+            [
+                {
+                    "factionTemplate":"AlwaysHostile",
+                    "encounterTemplate":
+                    {
+                        "encounterWeights":{
+                            "bear_encounter_2":1
+                        },
+                        "frontlineKeys":["enemy","teamB_frontline"],
+                        "supportKeys":["enemy","teamB_backline"]
+                    },
+                    "factionInventory": [ ],
+                    "allowScope":true,
+                    "scopeReplacer":{
+                        "refKeys":["enemy", "teamB_frontline"],
+                        "baseScope":"ScopeInRoomExceptRef",
+                        "extraScopeArguments":["party"],
+                        "chara_conditions":[
+                            {"parameters":["NonPlayerFactionChara"]},
+                            {"parameters":["HasBaseID","creature_animal_cavebear"]},
+                            {"parameters":["HasFactionID","AlwaysHostile"]}
+                        ],
+                        "minTargetCount":1,
+                        "maxTargetCount":1,
+                        "pickAmongValidTargets":true,
+                        "allowEventOnMinTargetCountMiss":false
+                    }
+                }
+            ]
+                    },
+                    {
+                        "baseWeight": 5,
+                        "resultText": "exp_event_caveBearLair_result_evaded"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_caveBearLair": "穴熊巢穴",
+                "exp_event_caveBearLair_ongoing": "$names$在洞穴深处发现了似乎是穴熊的巢穴。空气中弥漫着浓烈的野兽腥臭和麝香。",
+                "exp_event_caveBearLair_result_item": "$names$小心翼翼地搜查了巢穴，幸运地发现了一些有用的物品",
+                "exp_event_caveBearLair_result_evaded": "$names$明智地选择不惊动巢穴，悄无声息地绕道离开了。",
+                "exp_event_caveBearLair_result_encounter": "$names$惊动了正在睡觉的穴熊！",
+                "exp_event_caveBearLair_result_remains": "$names$在巢穴里发现了冒险者的遗体"
+            }
+        }
+    }
+}

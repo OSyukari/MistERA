@@ -18,7 +18,8 @@ public class ExpeditionMessageEntry
         {
             var names = new List<string>();
             foreach (var i in Characters) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).CallName);
-            return $"{EventDescription.Replace("$names$", String.Join(", ", names))}";
+            var newstring = EventDescription.Replace("$names$", String.Join(", ", names));
+            return newstring;
 
         }
     }
@@ -28,7 +29,22 @@ public class ExpeditionMessageEntry
     public string resolveMessage = "";
     public List<string> resolveTooltips = new List<string>();
 
-
+    public void NotifyCharaExit(int refID)
+    {
+        if (unresolved == null || unresolved.isResolved) return;
+        if (Characters.Remove(refID))
+        {
+            //Debug.LogError($"NotifyCharaExit {scr_System_CampaignManager.current.FindInstanceByID(refID).CallName} in {FullDescription} original {EventDescription}");
+            unresolved.NotifyCharaExit(refID);
+        }
+    }
+    public bool NotifyCharaReturn(int refID)
+    {
+        if (unresolved == null || unresolved.isResolved) return false;
+        if (!Characters.Contains(refID)) Characters.Add(refID);
+        //Debug.LogError($"NotifyCharaReturn {refID}");
+        return true;
+    }
 }
 
 
@@ -150,6 +166,49 @@ public class Job_Expedition : Job
         }
     }
 
+    public override void AddActor(int charaRef, string priorityCOMID = "", string priorityCOMTag = "")
+    {
+        base.AddActor(charaRef, priorityCOMID, priorityCOMTag);
+        if (isActive && hasUnresolvedResult)
+        {
+            foreach (var i in ExpeditionResults)
+            {
+                foreach (var result in i.Value)
+                {
+                    if (!result.NotifyCharaReturn(charaRef)) continue;
+                    if (result.unresolved.Targets.TryGetValue("party", out var partyList))
+                    {
+                        if (!partyList.Contains(charaRef))   partyList.Add(charaRef);
+                    }
+                    else result.unresolved.Targets.Add("party", new List<int> { charaRef });
+
+                    string key = "";
+
+                    switch (FactionOwner_Party.GetTeamComp(charaRef))
+                    {
+                        case Manageable_Party.PartyComposition.frontline:
+                            key = "teamA_frontline";
+                            break;
+                        case Manageable_Party.PartyComposition.backline:
+                            key = "teamA_backline";
+                            break;
+                        default: break;
+                    }
+                    
+                    if (key != "")
+                    {
+                        if (result.unresolved.Targets.TryGetValue(key, out var formation))
+                        {
+                            if (!formation.Contains(charaRef)) formation.Add(charaRef);
+                        }
+                        else result.unresolved.Targets.Add(key, new List<int> { charaRef });
+                    }
+                }
+            }
+        }
+
+        UpdateStatus(-1, -1, false);
+    }
     public void DumpLogInto(Job_Expedition other)
     {
         foreach(var i in this.ExpeditionResults)
@@ -238,7 +297,7 @@ public class Job_Expedition : Job
                 if (status == ExpeditionStatus.queued && FactionOwner_Party.TryStartExpedition())
                 {
                     AddResult(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_start"), new List<string>(), new List<int>());
-                    
+                    properExitRefs.Clear();
                     status = ExpeditionStatus.gathering;
                     statusTooltip = "gathering expedition members";
                     begin = true;
@@ -320,16 +379,34 @@ public class Job_Expedition : Job
             }
         }
 
-        if (this.status == ExpeditionStatus.returning && this.actorRefID.Count < 1 && scr_System_CampaignManager.current.CharaInRoom( this.ParentRoom.RefID).Count < 1)
+        if (this.status == ExpeditionStatus.returning && this.actorRefID.Count < 1)
         {
-            this.ExpeditionActive = FactionOwner_Party.IsRecurring;
-            this.status = this.ExpeditionActive ? ExpeditionStatus.queued : ExpeditionStatus.inactive;
-            this.statusTooltip = "expedition concluded";
-            var result = AddResult(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_end"), new List<string>(), new List<int>());
-            List<string> obtained = new List<string>();
-            FactionOwner_Party.Inventory.Dump(FactionOwner_Party.OwnerFaction.Inventory, obtained);
-            result.Tooltips.Add($"obtained {String.Join(", ", obtained)}");
-            FactionOwner_Party.ExpeditionEnd();
+            var charaList = scr_System_CampaignManager.current.CharaInRoom(this.ParentRoom.RefID);
+            var charaCount = charaList.Count;
+            if (charaCount > 0)
+            {
+                foreach (var c in charaList)
+                {
+                    if (c.isTemporaryActor && (c.CurrentJob == null || c.CurrentJobRefID == -1) && !c.FactionManager.HasPlayerFaction)
+                    {
+                       // Debug.Log($"Checking Charalist {c.CallName} is removable");
+                        charaCount--;
+                    }
+                }
+            }
+
+            if (charaCount < 1)
+            {
+                properExitRefs.Clear();
+                this.ExpeditionActive = FactionOwner_Party.IsRecurring;
+                this.status = this.ExpeditionActive ? ExpeditionStatus.queued : ExpeditionStatus.inactive;
+                this.statusTooltip = "expedition concluded";
+                var result = AddResult(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_end"), new List<string>(), new List<int>());
+                List<string> obtained = new List<string>();
+                FactionOwner_Party.Inventory.Dump(FactionOwner_Party.OwnerFaction.Inventory, obtained);
+                result.Tooltips.Add($"obtained {String.Join(", ", obtained)}");
+                FactionOwner_Party.ExpeditionEnd();
+            }
         }
     }
     /// <summary>
@@ -340,7 +417,7 @@ public class Job_Expedition : Job
     {
         get
         {
-            return FactionOwner.MainExit;
+            return FactionOwner_Party.MainExit;
         }
     }
 
@@ -403,6 +480,45 @@ public class Job_Expedition : Job
     [JsonProperty] int expeditionRefID = -1;
     ExpeditionInstance _exp = null;
 
+    public override void RemoveActor(int charaRef)
+    {
+        for (int index = packages_previous.Count - 1; index >= 0; index--)
+        {
+            var p = packages_previous[index];
+            if (p.actorRefs.Contains(charaRef))
+            {
+                p.DisablePackage();
+                if (! scr_System_CampaignManager.current.Unregister(p))
+                {
+                    Debug.LogError($"EXPEDITION REMOVEACTOR Unregister ERROR package {p.DisplayName}");
+                }
+                else
+                {
+                    Debug.Log($"EXPEDITION REMOVEACTOR disabling package {p.DisplayName}");
+                }
+                packages_previous.RemoveAt(index);
+            }
+        }
+        for (int index = packages_current.Count - 1; index >= 0; index--)
+        {
+            var p = packages_current[index];
+            if (p.actorRefs.Contains(charaRef))
+            {
+                p.DisablePackage();
+                if (!scr_System_CampaignManager.current.Unregister(p))
+                {
+                    Debug.LogError($"EXPEDITION REMOVEACTOR Unregister ERROR package {p.DisplayName}");
+                }
+                else
+                {
+                    Debug.Log($"EXPEDITION REMOVEACTOR disabling package {p.DisplayName}");
+                }
+                packages_current.RemoveAt(index);
+            }
+        }
+        base.RemoveActor(charaRef);
+    }
+
     [JsonIgnore]
     public ExpeditionInstance Expedition
     {
@@ -449,7 +565,7 @@ public class Job_Expedition : Job
             switch(this.status)
             {
                 case ExpeditionStatus.active:
-                    if (Expedition != null && Expedition.Base.DescriptionText.Count > 0) return LocalizeDictionary.QueryThenParse(Utility.GetRandomElement(Expedition.Base.DescriptionText)).Replace("$names$", String.Join(", ", ActorNames));
+                    if (Expedition != null && Expedition.DescriptionText.Count > 0) return LocalizeDictionary.QueryThenParse(Utility.GetRandomElement(Expedition.DescriptionText)).Replace("$names$", String.Join(", ", ActorNames));
                     else return LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_team_active").Replace("$names$", String.Join(", ", ActorNames));
                 case ExpeditionStatus.resting:
                     return LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_team_resting").Replace("$names$", String.Join(", ", ActorNames));
@@ -462,6 +578,11 @@ public class Job_Expedition : Job
             }
         } }
 
+    public bool canExit(int charaRef)
+    {
+        return properExitRefs.Contains(charaRef);
+    }
+    public List<int> properExitRefs = new List<int>();
     public override bool UpdateActorPackage(Character_Trainable c, out string ss)
     {
         /*
@@ -511,7 +632,7 @@ public class Job_Expedition : Job
         }
         else if (canReturn)
         {
-            actorJobComplete.Add(c.RefID);
+            
             int exitRef = -1;
             if (parentPlusFaction.MainExit != null && parentPlusFaction.isMember(c.RefID)) exitRef = parentPlusFaction.MainExit.RefID;
 
@@ -545,6 +666,7 @@ public class Job_Expedition : Job
             else
             {   // release chara
                 //Debug.LogError($"Error fail to return {c.CallName} from party {FactionOwner_Party.FullFactionDisplayName}");
+                properExitRefs.Add(c.RefID);
                 return false;
             }
         }

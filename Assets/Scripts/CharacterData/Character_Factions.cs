@@ -91,7 +91,12 @@ public class Character_Factions
             this.FactionID_Home = homeFactionID;
         }
         //Debug.Log("SetHomeFaction called on " + Owner.FirstName + " with arguments homeFactionID["+ homeFactionID+ "] isManager["+isManager+"]");
-        if (this.Faction_Home != null) Faction_Home.AddToFaction(Owner, status, sendEvent);
+        if (this.Faction_Home != null)
+        {
+            Faction_Home.AddToFaction(Owner, status, sendEvent);
+            if (this.Owner.isTemporaryActor && Faction_Home.isPlayerRelatedFaction) this.Owner.isTemporaryActor = false;
+        }
+
         UpdateFactionPriorityList();
     }
 
@@ -108,7 +113,11 @@ public class Character_Factions
             this.Faction_Home_Temporary_FactionID = tempFactionID;
         }
 
-        if (Faction_Home_Temporary != null) Faction_Home_Temporary.AddToFaction(Owner, status, sendEvent);
+        if (Faction_Home_Temporary != null)
+        { 
+            Faction_Home_Temporary.AddToFaction(Owner, status, sendEvent);
+            if (this.Owner.isTemporaryActor && Faction_Home_Temporary.isPlayerRelatedFaction) this.Owner.isTemporaryActor = false;
+        }
         UpdateFactionPriorityList();
     }
 
@@ -495,6 +504,8 @@ public class Character_Factions
 
         foreach (var v in HomeFactions) v.NotifyFactionMemberChange();
         foreach (var v in WorkFactions) v.NotifyFactionMemberChange();
+
+        this.Owner.NotifyFactionChange();
 
         var s = new List<string>();
         UpdateSchedule(ref s);

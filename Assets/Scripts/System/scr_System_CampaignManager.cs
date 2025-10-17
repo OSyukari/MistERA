@@ -12,7 +12,7 @@ public class scr_System_CampaignManager_Serializable
     public int deterministicThreshold;
     public bool deterministicRolls;
     public bool debugMode;
-    public List<Manageable> Factions;
+    public Dictionary<string, Manageable> Factions;
     public List<int> DeletedRefIDs;
     public int refIDCounter;
     public Map_Instance Map;
@@ -53,9 +53,6 @@ public class scr_System_CampaignManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         Index_referenceID = new Dictionary<int, Character_Trainable>();
         Index_ItemReferenceID = new Dictionary<int, Item_Instance>();
-
-        organizations = new List<Manageable>();
-
         registeredPackagesByRoom = new Dictionary<int, List<ActionPackage>>();
 
 
@@ -73,7 +70,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         if (actions_sceneUnload != null)
         {
-            Debug.Log($"OnSceneUnload, keyword [{actions_sceneUnload.Name}]");
+           // Debug.Log($"OnSceneUnload, keyword [{actions_sceneUnload.Name}]");
             scr_UpdateHandler.current.EventHandler.StartEvent(actions_sceneUnload, false);
             scr_System_CampaignManager.current.FreeUpdate(-1, actions_sceneUnload.Name);
         }
@@ -180,13 +177,20 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     protected void PreSaveCleanup()
     {
-        var listC = Map.CharaInRoom(TemporaryRoom.RefID);
+        var listC = new List<int>( Map.CharaInRoom(TemporaryRoom.RefID));
+        Debug.Log($"PreSaveCleanup tempRefs [{String.Join("|",listC)}]");
         foreach(var i in listC)
         {
             var chara = FindInstanceByID(i);
-            Unregister(chara);
+            if (chara.CurrentJob == null) Unregister(chara);
         }
         ExpeditionInstancesCleanup();
+        PartyCleanup();
+    }
+
+    protected void PartyCleanup()
+    {
+
     }
 
     public void LoadSerializable(scr_System_CampaignManager_Serializable obj)
@@ -202,7 +206,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         registeredPackagesByRoom.Clear();
 
-        foreach (var i in organizations) i.DisposeInternal();
+        foreach (var i in Factions) i.DisposeInternal();
         organizations.Clear();
 
         playerPointer = null;
@@ -229,22 +233,20 @@ public class scr_System_CampaignManager : MonoBehaviour
         //foreach (var i in Index_JobReferenceID.Values) i.OnAfterDeserialize();
 
         Index_JobReferenceID = obj.Jobs;
-        foreach (var i in Index_JobReferenceID) i.Value.OnAfterDeserialize();
-
+        organizations = obj.Factions;
         Index_ItemReferenceID = obj.Items;
+        Index_referenceID = obj.Characters;
+        foreach (var i in Index_JobReferenceID) i.Value.OnAfterDeserialize();
         foreach (var i in Index_ItemReferenceID) i.Value.OnAfterDeserialize();
-
         // factions require job to already exist
         // also requires Items to exist cuz inventory refresh
-        organizations = obj.Factions;
-        foreach (var i in organizations) i.OnAfterDeserialize();
+        foreach (var i in Factions) i.OnAfterDeserialize();
 
         // now rebuild full map data
         map.SerializationRebuilt();
         
         if (obj.Combat != null) this.Combat = obj.Combat;
 
-        Index_referenceID = obj.Characters;
         foreach (var i in Index_referenceID) i.Value.OnAfterDeserialize();
 
         party = obj.Party;
@@ -272,7 +274,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             ex.Value.UsageCount = 0;
         }
-        foreach(var m in organizations)
+        foreach(var m in Factions)
         {
             foreach(var p in m.SubFactions)
             {
@@ -307,7 +309,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         if (s.Length < 1) return;
         var chara = scr_System_CampaignManager.current.FindInstanceByID(refID);
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, animate, rightAlign), animate);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, false, rightAlign), animate);
         //ChangeCurrentViewMode(ViewMode.View_Logs);
     }
 
@@ -321,17 +323,23 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="line"></param>
-    /// <param name="animate"></param>
+    /// <param name="animate">whether on add line invoke a ui update</param>
     public void AddLog_Line(EventInstance instance, string line, string tooltip, bool animate = true)
     {
         // here we need to process line into translated
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(null, line, tooltip, animate, false), animate);
+        //Debug.Log($"Event Addline {line}");
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(null, line, tooltip, false, false), animate);
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="question"></param>
+    /// <param name="animate">whether on add line invoke a ui update</param>
     public void AddLog_Question(EventInstance parent, Event.EventEntry.EventEntry_Question question, bool animate = true) 
     {
         //scr_UpdateHandler.current.FlushCollectedLogs(true, false);
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(new Message_Question(null, parent, question)), animate);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(new Message_Question(parent.Self == null ? null : parent.Self.PortraitManager, parent, question)), animate);
     }
 
     public event Action<MessageLog, bool> Observer_MessageLogs;
@@ -466,11 +474,11 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
         Map.dirtyCharaAPRef.Add(p);
     }
-    public void Unregister(ActionPackage p)
+    public bool Unregister(ActionPackage p)
     {
         bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Jobs;
         if (debug) Debug.Log("Unregistering AP " + p.DisplayName);
-        if (!registeredPackagesByRoom.ContainsKey(p.RoomKey)) return;
+        if (!registeredPackagesByRoom.ContainsKey(p.RoomKey)) return false;
         //if (p.targetCOM.comTags.Contains("character_trainable") && p.Duration > -1) return;
         var possibleTargets = registeredPackagesByRoom[p.RoomKey].FindAll(x => UtilityEX.ArePackagesEqual(x, p));
         if (possibleTargets.Count > 0)
@@ -482,6 +490,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             if (debug) Debug.Log("Unregistering AP " + p.DisplayName + ", did not find any matching package");
         }
+        return possibleTargets.Count > 0;
         //if (registeredPackagesByRoom[p.RoomKey].Contains(p)) registeredPackagesByRoom[p.RoomKey].Remove(p);
     }
 
@@ -503,7 +512,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public bool isCharaVisibleToPlayer(int charaRefID)
     {
-        return Map.IsBothCharaInSameRoom(charaRefID, Player.RefID);// Map.FindRoomByChara(charaRefID) == Map.FindRoomByChara();//.RefID == currentRoomRef;
+        return CurrentRoom.RoomCharaRefs.Contains(charaRefID);
+        //return Map.IsBothCharaInSameRoom(charaRefID, Player.RefID);// Map.FindRoomByChara(charaRefID) == Map.FindRoomByChara();//.RefID == currentRoomRef;
     }
 
     public void NotifyUpdateHandlerExist()
@@ -642,11 +652,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public bool ShowCharaLog(int refID)
     {
-        if (refID < 0)
-        {
-            Debug.LogError("SHOWCHARALOG REFID " + refID + " ERROR");
-            return false;
-        }
+        if (refID < 0) return false;
+        
 
         var room = GetCharaRoomInstance(refID);
         //Debug.LogError("SHOWCHARALOG ? room " + (room == null?"null":room.RefID) + " vs "+ (CurrentRoom == null ? "null" : CurrentRoom.RefID));
@@ -766,19 +773,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         List<ActionPackage> detachedAPs = new List<ActionPackage>();
 
-        if (registeredPackagesByRoom.Count < 1) Debug.LogError("CampaignManager FreeUpdate called but no package in list");
-        else
-        {
-            /*
-            string s = "CampaignManager FreeUpdate\n";
-            foreach (var list in registeredPackagesByRoom.Values)
-            {
-                foreach (var element in list) s += element.DisplayName + " ";
-                s += "\n";
-            }
-            Debug.Log(s);
-            */
-        }
+        //if (registeredPackagesByRoom.Count < 1) Debug.LogError("CampaignManager FreeUpdate called but no package in list");
 
         int updateDuration = 1;
 
@@ -786,7 +781,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             var floor = Map.GetFloorByRoomRefID(kvpair_list.Key);
 
-            if (floor != null && ( true || Map.ActiveFloorRefIDs.Contains(floor.refID) || kvpair_list.Value.Find(x=>x.actorRefs.Contains(0)) != null ))
+            if (floor != null && ( true || kvpair_list.Value.Find(x=>x.actorRefs.Contains(0)) != null ))
             {
                 // normal loop
                 updateDuration = 1;
@@ -802,7 +797,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
 
             List<ActionPackage> roomEffects = new List<ActionPackage>();
-            List<int> allActorsInRoom = CharaInRoom(kvpair_list.Key);
+            List<int> allActorsInRoom = CharaRefsInRoom(kvpair_list.Key);
             List<int> freeActors = new List<int>(allActorsInRoom);
             var list = kvpair_list.Value;
 
@@ -1023,7 +1018,11 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void Job_PostUpdateTime_getLogsBegin()
     {
-        System.Threading.Tasks.Parallel.ForEach(this.Index_JobReferenceID.Values, job => job.PostUpdateTime_getLogsBegin());
+        //System.Threading.Tasks.Parallel.ForEach(this.Index_JobReferenceID.Values, job => job.PostUpdateTime_getLogsBegin());
+        foreach (var job in this.Index_JobReferenceID.Values)
+        {
+            job.PostUpdateTime_getLogsBegin();
+        }
     }
 
 
@@ -1052,9 +1051,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
 
             var i = new List<int>();
-            foreach(var refID in CharaInCurrentRoom)
+            foreach(var chara in CharaInCurrentRoom)
             {
-                var chara = scr_System_CampaignManager.current.FindInstanceByID(refID);
                 if(chara.CurrentJob != null) i.Add(chara.CurrentJob.RefID);
                 if (chara.InteractionJob != null) i.Add(chara.InteractionJob.RefID);
             }
@@ -1122,16 +1120,27 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
     }
 
-    public List<int> CharaInRoom(int refID)
+    public List<Character_Trainable> CharaInRoom(int refID)
     {
-        return Map.CharaInRoom(refID);
+        return Map.GetRoomByRef(refID).RoomChara;
+    }
+    public List<int> CharaRefsInRoom(int refID)
+    {
+        return Map.GetRoomByRef(refID).RoomCharaRefs;
     }
 
     [JsonProperty] protected Dictionary<string, string> relationshipRecords = new Dictionary<string, string>();
 
-    public List<int> CharaInCurrentRoom { get {
-            return Map.CharaInRoom(currentRoomRef);
+    public List<Character_Trainable> CharaInCurrentRoom { get {
+            return Map.GetRoomByRef(currentRoomRef).RoomChara;
         } }
+    public List<int> CharaRefInCurrentRoom
+    {
+        get
+        {
+            return Map.GetRoomByRef(currentRoomRef).RoomCharaRefs;
+        }
+    }
 
     public Party party;
 
@@ -1426,12 +1435,20 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     [SerializeField] protected List<int> deletedRefIDs;
 
-    protected void Unregister(Character_Trainable c)
+    public void Unregister(Character_Trainable c)
     {
+        var room = Map.FindRoomByChara(c.RefID);
+        room.RemoveChara(c);
         this.Index_referenceID.Remove(c.RefID);
+        // first, notify everyone that this should be purged
+        foreach (var chara in this.Index_referenceID.Values)
+        {
+            chara.Relationships.NotifyCharaUnregister(c.RefID);
+        }
+
         deletedRefIDs.Add(c.RefID);
         Unregister(c.InteractionJob);
-        Map.UnregisterChara(c.RefID);
+        Map.charaRoomRef.Remove(c.RefID);
         Debug.Log($"Unregistering chara {c.FirstName}");
         foreach(var m in c.FactionManager.Factions)
         {
@@ -1516,19 +1533,20 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         //Debug.LogError("moveallchara from debug to room " + (room != null ? room.RefID : "null"));
 
-        List<int> charaInDebug = Map.CharaInRoom(0);
+        
+        List<Character_Trainable> charaInDebug = new List<Character_Trainable>(Map.GetRoomByRef(0).RoomChara) ;
 
         if(charaInDebug.Count < 1)
         {
             Debug.Log("Player already initialized into another room, init location failed");
         }
-        foreach (int i in charaInDebug)
+        foreach (var i in charaInDebug)
         {
-            Map.MoveCharaTo(i, room.RefID);
+            MoveCharacterTo(i, room);
             Debug.Log("CampaignManager: MoveCharaToRoom character refID [" + i + "] registered to room [" + room.DisplayName + "]");
 
         }
-        if(charaInDebug.Contains(0)) currentRoomRef = room.RefID;
+        if(charaInDebug.Any(x=>x.RefID == 0)) currentRoomRef = room.RefID;
         
         //NotifyUpdate();
         UpdateScene();
@@ -1544,8 +1562,8 @@ public class scr_System_CampaignManager : MonoBehaviour
     private void UpdateCurrentTarget()
     {
 
-        if (currentTarget > 0 && CharaInCurrentRoom.Contains(currentTarget)) return;
-        var charaInRoom = CharaInCurrentRoom;
+        if (currentTarget > 0 && CharaRefInCurrentRoom.Contains(currentTarget)) return;
+        var charaInRoom = CharaRefInCurrentRoom;
         charaInRoom.Remove(0);
 
 
@@ -1557,23 +1575,30 @@ public class scr_System_CampaignManager : MonoBehaviour
         return i == 0 || PlayerPartyMembers.Contains(i);
     }
     public List<int> PlayerPartyMembers { get { return party.MemberRefIDs; } }
-
+    public void MoveCharacterTo(Character_Trainable charaRef, int targetRoomRef)
+    {
+        MoveCharacterTo(charaRef, Map.GetRoomByRef(targetRoomRef));
+    }
     public void MoveCharacterTo(int charaRef, int targetRoomRef)
+    {
+        MoveCharacterTo(FindInstanceByID(charaRef), Map.GetRoomByRef(targetRoomRef));
+    }
+    public void MoveCharacterTo(Character_Trainable charaRef, Room_Instance targetRoomRef)
     {
         bool playerMoved = false;
         bool updateScene = false;
         bool updateTarget = false;
-        if (CharaInCurrentRoom.Contains(charaRef)) updateScene = true;
-        else if (charaRef == 0) updateScene = true;
-        else if (targetRoomRef == currentRoomRef) updateScene = true;
+        if (CharaRefInCurrentRoom.Contains(charaRef.RefID)) updateScene = true;
+        else if (charaRef.RefID == 0) updateScene = true;
+        else if (targetRoomRef.RefID == currentRoomRef) updateScene = true;
 
-        if (charaRef == CurrentTargetRef || charaRef == 0) updateTarget = true;
+        if (charaRef.RefID == CurrentTargetRef || charaRef.RefID == 0) updateTarget = true;
         //if (charaLocation[charaRef] == currentRoomRef) updateTarget = true;
         //else if (targetRoomRef == currentRoomRef && currentTarget < 1) updateTarget = true;
 
         Map.MoveCharaTo(charaRef, targetRoomRef);
 
-        if (charaRef == 0)
+        if (charaRef.RefID == 0)
         {
             playerMoved = true;
             // if player is moved, do additional update
@@ -1582,8 +1607,8 @@ public class scr_System_CampaignManager : MonoBehaviour
             {
                 // do we break team if timestop ?
                 //charaLocation[i] = targetRoomRef; // move party members
-                MoveCharacterTo(i, targetRoomRef);
                 var teammate = FindInstanceByID(i);
+                MoveCharacterTo(teammate, targetRoomRef);
 
                 if (teammate.CurrentJob != null)
                 {
@@ -1593,7 +1618,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                     teammate.ChangeCurrentJob(null);
                 }
             }
-            ChangeCurrentRoom(Map.GetRoomByRef(targetRoomRef));
+            ChangeCurrentRoom(Map.GetRoomByRef(targetRoomRef.RefID));
             //UpdateScene();
         }
         
@@ -1602,23 +1627,29 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (updateTarget) UpdateCurrentTarget();
     }
 
-    List<Manageable> organizations;
-    [JsonIgnore] public List<Manageable> Factions { get { return (organizations == null) ? new List<Manageable>() : organizations; } }
+    Dictionary<string, Manageable> organizations = new Dictionary<string, Manageable>();
+    [JsonIgnore] public List<Manageable> Factions { get { return organizations.Values.ToList(); } }
     public Manageable FindorAddHomeFactionByID(string id)
     {
-        Manageable target = organizations.Find(x => x.ID == id);
-        if (target == null) 
+        if (organizations.TryGetValue(id, out var target))
         {
-            target = new Manageable_HomeFaction(id);
-            organizations.Add(target);
+            return target;
         }
-        return target;
+        else
+        {
+            var newstuff = new Manageable_HomeFaction(id);
+            organizations.Add(id, newstuff);
+            return newstuff;
+        }
     }
 
     public Manageable FindFactionByID(string id)
     {
-        Manageable target = organizations.Find(x => x.ID == id) as Manageable;
-        return target;
+        if (organizations.TryGetValue(id, out var target))
+        {
+            return target;
+        }
+        else return null;
     }
 
     protected Character_Trainable InstantiateCharacter(Character_Trainable c, Room_Instance room, int forceRefID = -1){
@@ -1634,7 +1665,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             c = Register(c);
         }
 
-        Map.MoveCharaTo(c.RefID, room.RefID);
+        MoveCharacterTo(c, room);
         //Debug.LogError("Adding charaRef "+c.RefID +" to roomRef "+room.RefID);
         //Debug.Log("CampaignManager: Instantiate character baseID [" + c.baseID + "] with refID [" + c.RefID + "] registered to room ["+room.RefID+"]");
 

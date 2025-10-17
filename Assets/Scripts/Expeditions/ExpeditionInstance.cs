@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using TMPro;
 
 public class ExpeditionInstance
 {
@@ -74,8 +75,41 @@ public class ExpeditionInstance
         if (baseref.MaxExplorationRate >= 0) this.ExploreRate = baseref.MaxExplorationRate;
     }
 
+    List<string> _descriptionText = null;
+    [JsonIgnore] public List<string> DescriptionText
+    { get
+        {
+            if (_descriptionText == null)
+            {
+                _descriptionText = new List<string>();
+                _descriptionText.AddRange(this.Base.DescriptionText);
+                foreach (var feature in Features)
+                {
+                    _descriptionText.AddRange(feature.DescriptionText);
+                }
+                _descriptionText = _descriptionText.Distinct().ToList();
+            }
+            return _descriptionText;
+        } }
+
     [JsonIgnore] public List<string> Keywords { get { return Base.keywords; } }
     [JsonIgnore] public List<string> FeatureKeywords { get { return Base.FeatureKeywords; } }
+
+    List<FeatureSet> _features = null;
+    [JsonIgnore] public List<FeatureSet> Features
+    { get
+        {
+            if (_features == null)
+            {
+                _features = new List<FeatureSet>();
+                foreach (var feature in Expeditions.ExplorationFeatures.list)
+                {
+                    if (Utility.ListContainsStrict(FeatureKeywords, feature.requireKeywords)) _features.Add(feature);
+                }
+                _features = _features.Distinct().ToList();
+            }
+            return _features;
+        } }
 
     List<ExpEvents> _allEvents = null;
     [JsonIgnore]
@@ -88,9 +122,9 @@ public class ExpeditionInstance
                 _allEvents = new List<ExpEvents>();
                 var strKeys = new List<string>(Base.EventIDs);
 
-                foreach (var feature in Expeditions.ExplorationFeatures.list)
+                foreach (var feature in Features)
                 {
-                    if (Utility.ListContainsStrict(FeatureKeywords, feature.requireKeywords)) strKeys.AddRange(feature.featureEventIDs);
+                    strKeys.AddRange(feature.featureEventIDs);
                 }
                 strKeys = strKeys.Distinct().ToList();
 

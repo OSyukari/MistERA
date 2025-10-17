@@ -255,6 +255,7 @@ public class COM: I_SerializationCallbackReceiver
     //public int moodModValue = 0, stressModValue = 0, lustModValue = 0;
 
     public List<string> comTags = new List<string>();
+    public List<string> conflictTags = new List<string>();
 
     [JsonIgnore] public bool isSexCOM { get { return comTags.Contains("sex"); } }
     [JsonIgnore] public bool isUnsafe { get { return comTags.Contains("unsafe"); } }
@@ -602,7 +603,12 @@ public class COM: I_SerializationCallbackReceiver
 
     public void OnAfterDeserialize()
     {
-        foreach(string s in requirements.requirement.req_Doers.BodyTags)
+        if (comTags.Contains("position_face")) conflictTags.Add("position_reverse");
+        if (comTags.Contains("position_reverse")) conflictTags.Add("position_face");
+        if (comTags.Contains("position_equal")) conflictTags.Add("position_inequal");
+        if (comTags.Contains("position_inequal")) conflictTags.Add("position_equal");
+
+        foreach (string s in requirements.requirement.req_Doers.BodyTags)
         {
             AddCOMTags(s);
         }
@@ -670,7 +676,6 @@ public class COM: I_SerializationCallbackReceiver
         return variants[variantID].GetVariantDescription(false, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
     }
 
-    [System.Serializable]
     public class COM_Variant
     {
         //[NonSerialized] private int ownerIndex = -1;

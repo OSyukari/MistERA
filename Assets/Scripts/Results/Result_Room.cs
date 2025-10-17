@@ -11,7 +11,6 @@ public class Result_Room
         if (entry_results != null) entry_results.Apply(job, package, m, c);
     }
 
-    [System.Serializable]
     public class Entry_Condition
     {
 
@@ -22,7 +21,6 @@ public class Result_Room
         }
     }
 
-    [System.Serializable]
     public class Entry_Result
     {
         public Result_MoveItem moveItem = null;
@@ -56,7 +54,6 @@ public class Result_Room
 
         }
 
-        [System.Serializable]
         public class Result_MoveItem
         {
             public string itemTag = "";

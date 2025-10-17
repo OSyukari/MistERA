@@ -1,0 +1,80 @@
+{
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_caveBearEncounter",
+                "eventString_Ongoing": "exp_event_caveBearEncounter_ongoing",
+                "DurationMinutes": 20,
+                "teamRequirement":{
+                    "minTeamCount":1,
+                    "maxTeamCount":99,
+                    "charaReq":{ "cost_EN":5, "cost_ST":3 }
+                },
+    "weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"caveBear" } } ],
+                "tags": [
+                    "bear"
+                ],
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 3,
+                        "resultText": "exp_event_caveBearEncounter_result_stealth_success"
+                    },
+                    {
+                        "baseWeight": 4,
+                        "resultText": "exp_event_caveBearEncounter_result_stealth_fail",
+                        "eventID":"event_caveBearEncounter",
+    "weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"Encounter" } } ],
+            "overrideTargetGeneration":true,
+            "TargetGenerations":
+            [
+                {
+                    "factionTemplate":"AlwaysHostile",
+                    "encounterTemplate":
+                    {
+                        "encounterWeights":{
+                            "bear_encounter_2":1
+                        },
+                        "frontlineKeys":["enemy","teamB_frontline"],
+                        "supportKeys":["enemy","teamB_backline"]
+                    },
+                    "factionInventory": [ ],
+                    "allowScope":true,
+                    "scopeReplacer":{
+                        "refKeys":["enemy", "teamB_frontline"],
+                        "baseScope":"ScopeInRoomExceptRef",
+                        "extraScopeArguments":["party"],
+                        "chara_conditions":[
+                            {"parameters":["NonPlayerFactionChara"]},
+                            {"parameters":["HasBaseID","creature_animal_cavebear"]},
+                            {"parameters":["HasFactionID","AlwaysHostile"]}
+                        ],
+                        "minTargetCount":1,
+                        "maxTargetCount":1,
+                        "pickAmongValidTargets":true,
+                        "allowEventOnMinTargetCountMiss":false
+                    }
+                }
+            ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_caveBearEncounter_result_distracted"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_caveBearEncounter": "遭遇穴熊",
+                "exp_event_caveBearEncounter_ongoing": "$names$在洞穴深处遭遇了一头巨大的穴熊。",
+
+                "exp_event_caveBearEncounter_result_stealth_success": "$names$屏住呼吸，成功地从野兽身边溜了过去。",
+                "exp_event_caveBearEncounter_result_stealth_fail": "$names$在潜行时发出的微小声响惊动了野兽！",
+                "exp_event_caveBearEncounter_result_distracted": "$names$成功用携带的口粮引开了穴熊的注意"
+            }
+        }
+    }
+}

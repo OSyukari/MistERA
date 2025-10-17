@@ -40,9 +40,9 @@ public class scr_Panel_CurrentChars : MonoBehaviour
     {
         for (int i = trackedRefs.Count - 1; i >= 0; i--)
         {
-            if (!scr_System_CampaignManager.current.CharaInCurrentRoom.Contains(trackedRefs[i])) trackedRefs.RemoveAt(i);
+            if (!scr_System_CampaignManager.current.CharaRefInCurrentRoom.Contains(trackedRefs[i])) trackedRefs.RemoveAt(i);
         }
-        foreach (var i in scr_System_CampaignManager.current.CharaInCurrentRoom) AddChara(i);
+        foreach (var i in scr_System_CampaignManager.current.CharaRefInCurrentRoom) AddChara(i);
     }
 
     public List<int> trackedRefs = new List<int>();

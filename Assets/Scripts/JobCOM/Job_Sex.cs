@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 /// <summary>
 /// THIS JOB.. PROBABLY WILL GET SERIALIZED, WHEN NPC ARE ENGAGED IN SEX
 /// </summary>
-[System.Serializable]
+
 public class Job_Sex_Group : Job
 {
     public override void DisposeInternal()
@@ -17,10 +17,9 @@ public class Job_Sex_Group : Job
         parentRoomRef = null;
     }
 
-    [JsonProperty] protected Dictionary<int, DateTime> actorJoinTime;
     protected List<int> forceFucking = new List<int>();
 
-    protected List<int> preRegisteredActorRefs; // only used as actor list for registration, after which it is no longer used
+    protected List<int> preRegisteredActorRefs = new List<int>(); // only used as actor list for registration, after which it is no longer used
 
     //public event Action<bool> Observer_JobUpdate;
 
@@ -32,7 +31,6 @@ public class Job_Sex_Group : Job
     public Job_Sex_Group(List<int> actorRefID, Room_Instance ri, bool immediateUndress = true)
     {
         Debug.Log("new sex job group initialized with actors ["+String.Join(",",actorRefID)+"]");
-        actorJoinTime = new Dictionary<int, DateTime>();
         preRegisteredActorRefs = actorRefID;
         forceFucking = new List<int>();
         undress = immediateUndress;
@@ -40,6 +38,85 @@ public class Job_Sex_Group : Job
         this.parentRoomID = ri.RefID;
 
         scr_UpdateHandler.current.Observer_PostUpdateTime_EventEnd += OnEventResolve;
+    }
+
+    public int restrictDuration = -1;
+    public string onJobEndEventID = "", onJobEndEventLabel = "";
+
+    public List<string> restrictTags = new List<string>();
+    /// <summary>
+    /// Used by EventCaller
+    /// </summary>
+    /// <param name="rapist"></param>
+    /// <param name="nonRapist"></param>
+    /// <param name="ri"></param>
+    /// <param name="immediateUndress"></param>
+    /// <param name="restrictTags"></param>
+    public Job_Sex_Group(List<Character_Trainable> rapist, List<Character_Trainable> nonRapist, Room_Instance ri, bool immediateUndress = true, List<string> restrictTags = null)
+    {
+        preRegisteredActorRefs.Clear();
+        this.rapistActorList.Clear();
+        if (rapist != null)
+        {
+            foreach (var c in rapist)
+            {
+                preRegisteredActorRefs.Add(c.RefID);
+                rapistActorList.Add(c.RefID);
+            }
+        }
+        foreach (var c in nonRapist)
+        {
+            preRegisteredActorRefs.Add(c.RefID);
+        }
+
+        Debug.Log("new sex job group initialized with actors [" + String.Join(",", preRegisteredActorRefs) + $"] and rapists [{String.Join(",", rapistActorList)}]");
+        forceFucking.Clear();
+        undress = immediateUndress;
+        this.parentRoomRef = ri;
+        this.parentRoomID = ri.RefID;
+
+        if (restrictTags != null) this.restrictTags = restrictTags;
+
+        scr_UpdateHandler.current.Observer_PostUpdateTime_EventEnd += OnEventResolve;
+    }
+
+    public List<int> rapistActorList = new List<int>();
+    List<int> _rapistActorList = new List<int>();
+
+    [JsonIgnore]
+    public List<int> Rapist
+    {
+        get
+        {
+            if (rapistActorList.Count > 0) return rapistActorList;
+            else
+            {
+                if (!_cachedActorList)
+                {
+                    _rapistActorList.Clear();
+                    bool hasReceiver = false;
+                    foreach (var i in this.actorRefID)
+                    {
+                        var c = scr_System_CampaignManager.current.FindInstanceByID(i);
+                        if (c.isFemale) hasReceiver = true;
+                        else if (c.isMale && c.isAnimal)
+                        {
+                            _rapistActorList.Add(i);
+                        }
+                    }
+                    if (!hasReceiver) _rapistActorList.Clear();
+
+                }
+                return _rapistActorList;
+            }
+        }
+    }
+
+    bool _cachedActorList = false;
+    protected void UpdateActors()
+    {
+        if (rapistActorList.Count > 0) return;
+        _cachedActorList = false;
     }
 
     public override void RemovePackage(ActionPackage ap, bool logRemove = false)
@@ -68,6 +145,7 @@ public class Job_Sex_Group : Job
     }
     public void SetForced(List<int> refID)
     {
+       // Debug.Log("SetForced");
         forceFucking.AddRange(refID);
     }
 
@@ -87,14 +165,14 @@ public class Job_Sex_Group : Job
     protected void OnEventResolve(bool eventhandler_active)
     {
         if (eventhandler_active) return;
-        bool active = false;
+       // bool active = false;
         foreach(var i in allowActorExit)
         {
             if (!this.actorRefID.Contains(i.Key)) continue;
             var chara = scr_System_CampaignManager.current.FindInstanceByID(i.Key);
             if (GetExistingPackages(chara, true, true, true, false).Count < 1)
             {
-                active = true;
+               // active = true;
                 RemoveActor(i.Key);
                 Debug.Log($"OnEventResolve actor {chara.FirstName} exit, reason |{i.Value}|");
                 if (i.Value != "") this.messages_after.Add(i.Value);
@@ -141,16 +219,6 @@ public class Job_Sex_Group : Job
         scr_System_CampaignManager.current.NotifyEndJob(this);
     }
 
-    [JsonIgnore] public override List<int> actorRefID
-    {
-        get
-        {
-            var temp = actorJoinTime.Keys.ToList();
-            temp.Sort();
-            return temp;
-        }
-    }
-
     public override string GetJobDescription(int charaRef)
     {
 
@@ -159,7 +227,7 @@ public class Job_Sex_Group : Job
             Character_Trainable C = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
             if (C.isTimeStopped) return LocalizeDictionary.QueryThenParse("chara_currentjob_sex_timestop");
             else if (C.isSleeping) return LocalizeDictionary.QueryThenParse("chara_currentjob_sex_sleeping");
-            else if (false) return LocalizeDictionary.QueryThenParse("chara_currentjob_sex_rape");
+            else if (Rapist.Count > 0 && !Rapist.Contains(charaRef)) return LocalizeDictionary.QueryThenParse("chara_currentjob_sex_rape");
             else return LocalizeDictionary.QueryThenParse("chara_currentjob_sex");
         }
         else
@@ -168,30 +236,29 @@ public class Job_Sex_Group : Job
         }
     }
 
-
-    public DateTime GetActorLastJoinTime(int actorRef)
-    {
-        if (actorJoinTime.ContainsKey(actorRef)) return actorJoinTime[actorRef];
-        else return DateTime.MinValue;
-    }
-
     public override void Register(int id)
     {
         base.Register(id);
 
         UpdateAllUsableCOMs();
-        Debug.Log("Job_Sex_Debug registered with available com["+String.Join("|",allusableCOMStrings)+"]");
+       // Debug.Log("Job_Sex_Debug registered with available com["+String.Join("|",allusableCOMStrings)+"]");
         foreach (int charaRef in preRegisteredActorRefs)
         {
-            if (charaRef != 0) AddActor(charaRef);
+            if (charaRef != 0) scr_System_CampaignManager.current.FindInstanceByID(charaRef).ChangeCurrentJob(this);// AddActor(charaRef);
             //this.actorJoinTime.Add(charaRef, scr_System_Time.current.getCurrentTime());
         }
 
         if (preRegisteredActorRefs.Contains(0))
         {
-            AddActor(0);
-
+            scr_System_CampaignManager.current.FindInstanceByID(0).ChangeCurrentJob(this);
             if (actorRefID.Count > 1) scr_System_CampaignManager.current.ChangeCurrentTarget(actorRefID[1]);
+        }
+        preRegisteredActorRefs.Clear();
+
+        if (!this.actorRefID.Contains(0) && this.restrictDuration == -1)
+        {
+            Debug.Log("Creating non-player Sex job without setting restrictDuration, defaulting value to 90");
+            this.restrictDuration = 90;
         }
     }
 
@@ -199,44 +266,20 @@ public class Job_Sex_Group : Job
 
     public override void AddActor(int charaRef, string priorityCOMID = "", string priorityCOMTag = "")
     {
-        //allowActorExit.Remove(charaRef);
-        if (actorRefID.Contains(charaRef)) return;  // prevent infinite loop
+        base.AddActor(charaRef, priorityCOMID, priorityCOMTag);
 
         //Debug.LogError("JOBSEX ADDACTOR " + charaRef);
         var c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
         //base.AddActor(charaRef, priorityCOMID); -> this com use different actorlist than base so calling base will cause overflow
-        if (!actorJoinTime.ContainsKey((int)charaRef))
-        {
-            actorJoinTime.Add(charaRef, scr_System_Time.current.getCurrentTime());
-        }
-        c.ChangeCurrentJob(this);
-
-        // 
-        if (false && undress)
-        {
-            var syncTime = 0;
-            foreach (var i in packages_previous) syncTime = Math.Max(syncTime, i.Duration);
-            if (syncTime > 0 && c.canAct)
-            {
-                AddPackage(new List<ActionPackage> { new ActionPackage_Undress(this, charaRef, BodyEquipLayer.None, Revealing.ShapeReveal, syncTime) });
-            }
-            else
-            {
-                c.Undress(BodyEquipLayer.None, Revealing.ShapeReveal, true);
-            }
-
-        }
-        else
-        {
-            c.Undress(BodyEquipLayer.None, Revealing.ShapeReveal, true);
-        }
+        c.Undress(BodyEquipLayer.None, Revealing.ShapeReveal, true);
+        //c.ChangeCurrentJob(this);
 
         for(var i = packages_previous.Count - 1; i >= 0; i--)
         {
             // unregister and re-register all
             if (packages_previous[i].Duration == 0) continue;
             scr_System_CampaignManager.current.Unregister(packages_previous[i]);
-            packages_previous[i].RepeatReset();
+            packages_previous[i].Reset();
             if (packages_previous[i].Validate())
             {
                 packages_current.Add(packages_previous[i]);
@@ -248,7 +291,7 @@ public class Job_Sex_Group : Job
             }
             packages_previous.RemoveAt(i);
         }
-       actorJobComplete.Remove(charaRef);
+        UpdateActors();
     }
 
     public override void RemoveActor(int charaRef)
@@ -256,13 +299,13 @@ public class Job_Sex_Group : Job
         //if (this.actorRefID.Contains(charaRef)) this.actorRefID.Remove(charaRef);
         if (this.actorJoinTime.ContainsKey(charaRef))
         {
-
             var chara = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
             this.actorJoinTime.Remove(charaRef);
             chara.ChangeCurrentJob(null);
         }
         base.RemoveActor(charaRef);
         //Observer_JobUpdate?.Invoke(true);
+        UpdateActors();
     }
 
     public override bool IsActorValid(int doerRefID, int receiverRefID)
@@ -270,6 +313,10 @@ public class Job_Sex_Group : Job
         return scr_System_CentralControl.current.CanHaveSex(doerRefID, receiverRefID);
     }
 
+    public bool isActorGettingRaped(int charaRef)
+    {
+        return actorRefID.Contains(charaRef) && rapistActorList.Count > 0 && !rapistActorList.Contains(charaRef);
+    }
     public override bool IsJobValid()
     {
         return true;
@@ -279,6 +326,8 @@ public class Job_Sex_Group : Job
     public override void AddPackage(List<ActionPackage> packages, bool isPlayerCOM = false)
     {
         //Debug.Log("JobSex adding packages.");
+
+
 
         string s = "Old Packages\n";
         foreach (ActionPackage p in packages_current)
@@ -299,6 +348,7 @@ public class Job_Sex_Group : Job
             if (packages[i] is ActionPackage_Sex)
             {
                 var p = packages[i] as ActionPackage_Sex;
+                var display = isPlayerRelatedJob || scr_UpdateHandler.current.DoDisplayCOM(p);
 
                 if (p.targetCOM.comTags.Contains("noAction"))
                 {
@@ -322,7 +372,9 @@ public class Job_Sex_Group : Job
                         }
                         else if (UtilityEX.DetectConflict(p, packages_current[ii]))
                         {   // leave the conflict package in previous to use for COM text selection purposes.
-                            foreach (var ep in packages_current[ii].ListEP) LogMessage_Begin_Abort(ep);
+
+                            if (display) foreach (var ep in packages_current[ii].ListEP) LogMessage_Begin_Abort(ep);
+
                             replaced = true;
                             packages_current[ii].LoggedBegin = true;
 
@@ -335,12 +387,13 @@ public class Job_Sex_Group : Job
 
                     for (int ii = packages_previous.Count - 1; ii >= 0; ii--)
                     {
+
                         if (packages_previous[ii].Duration > 0 && UtilityEX.DetectConflict(p, packages_previous[ii]))
                         {   // leave the conflict package in previous to use for COM text selection purposes.
-                            foreach (var ep in packages_previous[ii].ListEP) LogMessage_Begin_Abort(ep);
+                            if (display) foreach (var ep in packages_previous[ii].ListEP) LogMessage_Begin_Abort(ep);
+
                             replaced = true;
                             packages_previous[ii].LoggedBegin = true;
-
 
                             packages_current[ii].PackageRepeat = false;
                             packages_previous[ii].DisablePackage();
@@ -351,7 +404,7 @@ public class Job_Sex_Group : Job
 
                     if(p.Duration > -1)
                     {
-                        if (replaced) this.messages_before.Add(ep_replace);
+                        if (replaced && display) this.messages_before.Add(ep_replace);
                         ActionPackage ap = p.Copy();
                         packages_current.Add(ap);
                         if (isPlayerCOM) scr_System_CampaignManager.current.SetDisplayCOM(ap, scr_System_CampaignManager.displayAP_Reason.isPlayerCOM);
@@ -470,12 +523,16 @@ public class Job_Sex_Group : Job
         {
             if (p.targetCOM.ID == "com_sex_penetration_force") forceFucking.AddRange(p.doerRefs);
         }*/
-
+        //Debug.Log("Preupdatetime");
         forceFucking = forceFucking.Distinct().ToList();
 
         foreach(var p in packages_current)
         {
-            if (Utility.ListContainsStrict(forceFucking, p.DoerRefs)) (p as ActionPackage_Sex).isStrongPenetration = true;
+            if (Utility.ListContainsStrict(forceFucking, p.DoerRefs))
+            {
+                Debug.Log("Preupdatetime isStrongPenetration");
+                (p as ActionPackage_Sex).isStrongPenetration = true;
+            }
             //else (p as ActionPackage_Sex).isStrongPenetration = false;
         }
 
@@ -484,27 +541,95 @@ public class Job_Sex_Group : Job
 
     [JsonIgnore] public override bool CanBeInterrupted { get { return false; } }
 
+
+    protected bool CollectValidActorAndBodytag(int c, out List<int> validTargets, out List<string> occupiedBodyTags, out int actionCount)
+    {
+        validTargets = new List<int>();// GetLastInteractedActorRefs(c.RefID);
+        occupiedBodyTags = new List<string>();
+        actionCount = 0;
+        bool waitForSync = false;
+        foreach (var package in this.packages_current)
+        {
+            if (!(package is ActionPackage_Sex)) continue;
+            if ((package as ActionPackage_Sex).CollectValidActorAndBodytag(c, validTargets, occupiedBodyTags)) actionCount++;
+        }
+
+        foreach (var package in this.packages_previous)
+        {
+            if (!(package is ActionPackage_Sex)) continue;
+            if ((package as ActionPackage_Sex).CollectValidActorAndBodytag(c, validTargets, occupiedBodyTags)) actionCount++;
+            if (package.Duration > 0) waitForSync = true;
+        }
+
+        if (validTargets.Count < 1)
+        {
+            foreach (var i in actorRefID)
+            {
+                if (i != c && scr_System_CentralControl.current.CanHaveSex(c, i) && scr_System_CentralControl.current.CanInteractWith(c, i)) validTargets.Add(i);
+            }
+        }
+
+        return !waitForSync;
+    }
+
+    protected void CollectConflictTags(int doer, int receiver, out List<string> conflictTags)
+    {
+        conflictTags = new List<string>();
+        foreach (var package in this.packages_current)
+        {
+            if (!(package is ActionPackage_Sex)) continue;
+            (package as ActionPackage_Sex).CollectConflictTags(doer,receiver,conflictTags);
+        }
+
+        foreach (var package in this.packages_previous)
+        {
+            if (!(package is ActionPackage_Sex)) continue;
+            (package as ActionPackage_Sex).CollectConflictTags(doer, receiver, conflictTags);
+        }
+    }
+
+    protected void CollectAllValidCOMs(Character_Trainable c, out List<COM> coms, List<int> occupiedBodyTags)
+    {
+        coms = new List<COM>();
+        foreach(var com in this.allusableCOMs)
+        {
+
+        }
+    }
+
     public override bool UpdateActorPackage(Character_Trainable c, out string ss)
     {
         ss = "|JobSex internal update|";
+        //if (c.Climaxing) Debug.Log($"{c.CallName} Climaxing");
 
         if (actorRefID.Contains(0))
         {
             ss += "|letting player decide|";
         }
+        else if (restrictDuration == 0)
+        {
+            ss += "|sexjob timer runs out|";
+            return false;
+        }
         else
         {
             if (!c.canAct) ss += "|cannot act|";
-            else if (hasActivePackgeWithTag(c.RefID, "sex")) ss += "|already have active com";
-            else if (c.isMale)
+            else if (Rapist.Count > 0 && !Rapist.Contains(c.RefID)) ss += "|being raped|";
+            else if (CollectValidActorAndBodytag(c.RefID, out var validTarget, out var occupiedBodyTags, out var actionCount))
             {
-                List<int> validTarget = new List<int>();
-                foreach (var i in actorRefID) if (i != c.RefID && scr_System_CentralControl.current.CanHaveSex(c.RefID, i) && scr_System_CentralControl.current.CanInteractWith(c.RefID, i)) validTarget.Add(i);
-
-
+                List<string> conflictTags = new List<string>();
+                if (c.Climaxing)
+                {
+                    occupiedBodyTags.Clear();
+                    actionCount = 0;
+                }else if (actionCount >= 2 || occupiedBodyTags.Count >= 4)
+                {
+                    // dont need to perform too much actions
+                    return true;
+                }
                 if (validTarget.Count < 1)
                 {
-                    if(actorRefIDStorage != null && actorRefIDStorage.ContainsKey(c.RefID) && actorRefIDStorage[c.RefID].comID == "com_interaction_endOngoingSex")
+                    if (actorRefIDStorage != null && actorRefIDStorage.ContainsKey(c.RefID) && actorRefIDStorage[c.RefID].comID == "com_interaction_endOngoingSex")
                     {
                         ss += "|job has no valid target, already waited, aborting|";
                         return false;
@@ -516,31 +641,75 @@ public class Job_Sex_Group : Job
                         actorRefIDStorage[c.RefID] = new COM_Match("com_interaction_endOngoingSex");
                         return true;
                     }
-
                 }
                 var randomTarget = Utility.GetRandomElement(validTarget);
+                // gender doesnt matter, what matter is valid body tag
+                //Debug.Log($"OccupiedBodyTags {String.Join("|", occupiedBodyTags)}");
+                Dictionary<BodyInternal_Instance, int> internals = new Dictionary<BodyInternal_Instance, int>();
+                foreach(var part in c.Body.Internals)
+                {
+                    if (occupiedBodyTags.Count > 0 && (Utility.ListContainsLoose(part.Base.tags, occupiedBodyTags) || Utility.ListContainsLoose(part.Parent.Base.tags, occupiedBodyTags))) continue;
+                    var sens = part.MaxSensitivity;
+                    if (sens < 1) continue;
+                    internals.Add(part, sens);
+                }
+                var sorted = internals.OrderBy(x => x.Value);
+                var selected = sorted.Count() > 0 ? sorted.Last().Key : null;
+                // most effective way to have sex is to stimulate most sensitive body part
+                // rank self bodypart, and select the most sensitive that has not been occupied
+                // allow masturbate
 
-                
+                // CollectValidActorAndBodytag(randomTarget, out var something, out var receiverBodyTags, out var receiverActionCount);
                 // random find penis related
-                var listAll = this.allusableCOMs.FindAll(x => x.requirements.requirement.doerBodyTags.Contains("penis"));
-
-                COM randomCOM = Utility.GetRandomElement(listAll);
-
-                ActionPackage_Sex newP = new ActionPackage_Sex(this, randomCOM, new List<int>() { c.RefID }, new List<int>() { randomTarget }, c.RefID);
-                if (!newP.Validate())
+                /*
+                List<COM> listAll = new List<COM>();
+                foreach(var x in allusableCOMs)
                 {
-                    ss += "|selected package " + randomCOM.ID + " did not pass internal validation, aborting|";
-                    return false;
-                }
-                else
+                    if (selected != null && !Utility.ListContainsLoose(selected.Base.tags, x.requirements.requirement.doerBodyTags)) continue;
+                    if (occupiedBodyTags.Count > 0 && Utility.ListContainsLoose(occupiedBodyTags, x.requirements.requirement.doerBodyTags)) continue;
+                    listAll.Add(x);
+                }*/
+
+                if (!c.Climaxing) CollectConflictTags(c.RefID, randomTarget, out conflictTags);
+
+                Debug.Log($"actor {c.CallName} looking to add sex, actionCount {actionCount} tags {String.Join("|", occupiedBodyTags)}");
+                var listAll = this.allusableCOMs.FindAll(x => 
+                    (restrictTags.Count < 1 || Utility.ListContainsStrict(x.comTags, restrictTags))
+                    && (selected == null ? true : Utility.ListContainsLoose(selected.Base.tags, x.requirements.requirement.doerBodyTags)) 
+                    && (occupiedBodyTags.Count < 1 || !Utility.ListContainsLoose(x.requirements.requirement.doerBodyTags, occupiedBodyTags))
+                    && (conflictTags.Count < 1 || !Utility.ListContainsLoose( x.comTags, conflictTags)));
+                
+                Utility.ShuffleList(listAll);
+
+                for(int i = 0; i < 5 && i < listAll.Count; i++)
                 {
-                    newP.PackageRepeat = false;
-                    AddPackage(new List<ActionPackage>() { newP });
-                    SetForced(new List<int>() { c.RefID });
-                    return true;
+                    COM randomCOM = listAll[i];
+                    ActionPackage_Sex newP = new ActionPackage_Sex(this, randomCOM, new List<int>() { c.RefID }, new List<int>() { randomTarget }, c.RefID);
+                    ActionPackage_Sex newPM = new ActionPackage_Sex(this, randomCOM, new List<int>() { c.RefID }, new List<int>() { }, c.RefID); 
+
+                    if (newP.Validate())
+                    {
+                        AddPackage(new List<ActionPackage>() { newP });
+                        SetForced(new List<int>() { c.RefID });
+                        return true;
+                    }
+                    else if (newPM.Validate())
+                    {
+                        if (actionCount >= 1) newP.LowPriority = true;
+                        AddPackage(new List<ActionPackage>() { newPM });
+                        SetForced(new List<int>() { c.RefID });
+                        return true;
+                    }
                 }
+
+                ss += $"|cannot find new valid sexAP with existing tags [{String.Join(" ", occupiedBodyTags)}] with selected [{(selected == null ? "-" : selected.DisplayName)}], selected target [{(randomTarget)}] conflictTags [{String.Join(" ", conflictTags)}]|";
+                return actionCount > 0;
             }
-            
+            else
+            {
+                ss += $"|wait for Sync|";
+                return true;
+            }
         }
 
         return true;
@@ -548,6 +717,8 @@ public class Job_Sex_Group : Job
 
     public override void PostUpdateTime()
     {
+        //Debug.Log("PostUpdateTime");
+        if (restrictDuration > 0) restrictDuration -= 1;
         forceFucking.Clear();
 
         base.PostUpdateTime();
@@ -556,6 +727,9 @@ public class Job_Sex_Group : Job
         List<string> prevs = new List<string>();
         foreach (var p in packages_current) currs.Add(p.DisplayName);
         foreach (var p in packages_previous) prevs.Add(p.DisplayName);
+
+        if (restrictDuration == 0) EndJob();
+
 
         //Debug.Log("PostUpdateTime currentPackages: " + String.Join(" ", currs));
         //Debug.Log("PostUpdateTime previousPackages: " + String.Join(" ", prevs));

@@ -1,6 +1,6 @@
 
 {
-    "baseID": "creature_humanoid_goblin_template",
+    "baseID": "creature_humanoid_hobgoblin_template",
     "Portrait":{
         "portraitPriorityList":[
             {
@@ -10,30 +10,30 @@
                 "portrait_offset_y": 18,
                 "portrait_offset_size": 1.5,
                 
-                "icon_offset_x":0,
-                "icon_offset_y":33,
+                "icon_offset_x":-26,
+                "icon_offset_y":-97,
                 "icon_offset_size":0.7,
 
-                "portrait_path":"GB_GoblinCave/st_051_00a.png",
-                "icon_path":"GB_GoblinCave/st_051_00a.png"
+                "portrait_path":"Goblin/st_052_00a.png",
+                "icon_path":"Goblin/st_052_00a.png"
             }
         ]
     },
     "Template":{
         "Appearance": "Male",
         "BodyType": "Default",
-        "stat_STR": 8,
-        "stat_CON": 12,
-        "stat_PSY": 8,
-        "stat_WIL": 7,
-        "Height":80,
+        "stat_STR": 21,
+        "stat_CON": 24,
+        "stat_PSY": 6,
+        "stat_WIL": 9,
+        "Height":240,
         "sensitivity_B": "trait_Sensitivity_B_default",
         "sensitivity_M": "trait_Sensitivity_M_default",
         "sensitivity_C": "trait_Sensitivity_C_default",
         "sensitivity_V": "trait_Sensitivity_V_default",
         "sensitivity_A": "trait_Sensitivity_A_default",
         "size_B": "trait_Size_B_AAA",
-        "size_P": "trait_Size_P_average",
+        "size_P": "trait_Size_P_big",
         "size_V": "trait_Size_V_none",
         "size_A": "trait_Size_A_1",
         "initialRelationship":[

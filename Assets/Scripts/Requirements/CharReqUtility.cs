@@ -136,12 +136,12 @@ public static class CharaReqUtility
         if (q.cost_EN != 0f)
         {
             m.m.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
-            c.Stats.Energy.Increment(-q.cost_EN);
+            c.Stats.Energy.ModValue(-q.cost_EN);
         }
         if (q.cost_ST != 0f)
         {
             m.m.AddStats(c.RefID, "stats_derived_extended_stamina", -q.cost_ST);
-            c.Stats.Stamina.Increment(-q.cost_ST);
+            c.Stats.Stamina.ModValue(-q.cost_ST);
         }
 
         var tags = (isDoer ? m.ReceiverTargetTag : m.DoerTargetTag);
@@ -150,7 +150,7 @@ public static class CharaReqUtility
         {
             // interaction cost
             m.m.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
-            c.Stats.Energy.Increment(c.Stats.Energy_InteractionCost);
+            c.Stats.Energy.ModValue(c.Stats.Energy_InteractionCost);
         }
     }
     public static void ApplyCost(CharaReq q, Character_Trainable c, List<string> tooltip = null)
@@ -163,13 +163,13 @@ public static class CharaReqUtility
         {
             if (tooltip != null) str.Add($"{LocalizeDictionary.QueryThenParse("stats_derived_extended_energy")}{(-q.cost_EN).ToString("+0;-#")}");
             //m.m.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
-            c.Stats.Energy.Increment(-q.cost_EN);
+            c.Stats.Energy.ModValue(-q.cost_EN);
         }
         if (q.cost_ST != 0f)
         {
             if (tooltip != null) str.Add($"{LocalizeDictionary.QueryThenParse("stats_derived_extended_stamina")}{(-q.cost_ST).ToString("+0;-#")}");
             //m.m.AddStats(c.RefID, "stats_derived_extended_stamina", -q.cost_ST);
-            c.Stats.Stamina.Increment(-q.cost_ST);
+            c.Stats.Stamina.ModValue(-q.cost_ST);
         }
         if (tooltip != null && str.Count > 0) tooltip.Add($"{c.CallName}： {String.Join(", ",str)}");
     }

@@ -58,6 +58,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     [JsonIgnore] public bool Climaxing { get { return Stats.Climaxing != null && Stats.Climaxing.Severity >= 1; } }
 
+    /// <summary>
+    /// Return true if character is locked inside a furniture
+    /// </summary>
     [JsonIgnore] public bool isRestrained { get { 
             return furnitureLockInstance != null;
         } }
@@ -67,6 +70,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         get
         {
             return FactionManager.CurrentlyActiveFaction != null && FactionManager.CurrentlyActiveFaction.isPrisoner(this.RefID);
+        }
+    }
+    [JsonIgnore]
+    public bool cannotRefuse
+    {
+        get
+        {
+            if (CurrentJob != null && CurrentJob is Job_Sex_Group && (CurrentJob as Job_Sex_Group).isActorGettingRaped(this.RefID)) return true;
+            return false;
         }
     }
     [JsonIgnore] public bool canMove { get { return canAct && !isRestrained && !isImprisoned; } }
@@ -335,6 +347,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Relationships.DailyRefresh();
     }
 
+    public void NotifyFactionChange()
+    {
+        this.Relationships.NotifyFactionChange();
+    }
+
     // Recovery
     public void FullRest(int recoveryStrength = -1)
     {
@@ -344,10 +361,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         var willMod = Stats.Willpower.GetStatMod(contextKey);
         var psyMod = Stats.Psyche.GetStatMod(contextKey);
 
-        if (Stats.Stamina != null) Stats.Stamina.Restore(recoveryStrength > 0 ? 10 * recoveryStrength : Stats.Stamina.MaxValue);
-        if (Stats.Energy != null) Stats.Energy.Restore(recoveryStrength > 0 ? 10 * recoveryStrength : Stats.Energy.MaxValue);
-        if (Stats.HP != null) Stats.HP.Restore(recoveryStrength > 0 ? recoveryStrength : conMod);
-        if (Stats.MP != null) Stats.MP.Restore(recoveryStrength > 0 ? recoveryStrength : psyMod);
+        if (Stats.Stamina != null) Stats.Stamina.ModValue(recoveryStrength > 0 ? 10 * recoveryStrength : Stats.Stamina.MaxValue);
+        if (Stats.Energy != null) Stats.Energy.ModValue(recoveryStrength > 0 ? 10 * recoveryStrength : Stats.Energy.MaxValue);
+        if (Stats.HP != null) Stats.HP.ModValue(recoveryStrength > 0 ? recoveryStrength : conMod);
+        if (Stats.MP != null) Stats.MP.ModValue(recoveryStrength > 0 ? recoveryStrength : psyMod);
 
     }
 
@@ -522,7 +539,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             _title = string.Empty;
         }
     }
+    [JsonIgnore]
+    public string Title_Raw
+    {
+        get
+        {
 
+            return title;
+        }
+    }
     string _cachedFullName = "";
 
     [JsonIgnore] public string FullName { get {
@@ -579,10 +604,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonProperty] protected List<int> activeJobRefs = new List<int>();
     public void ChangeCurrentJob(Job job = null, string targetCOMid = "", string targetCOMTag = "")
     {
-        if (this.RefID == scr_System_CampaignManager.current.Player.RefID)
-        {
-            Debug.Log($"Changing player job from {(CurrentJob == null ? "null": CurrentJob.DisplayName+"_"+ CurrentJob.RefID)} to {(job == null ? "null" : job.DisplayName + "_" + job.RefID)}");
-        }
         this._cachedJobDescription = string.Empty;
         if (job != null && job == this.InteractionJob)
         {
@@ -896,7 +917,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             var party = currentJobFaction as Manageable_Party;
             if (party != null && ((FactionManager.isPartyLocked && party.hasExpeditionSet) || party.isActive) && !party.Job.isResting && !party.skipTryGetJob(this))
             {
-                if (this.CurrentJob == party.Job && party.Job.canReturn)
+                
+                if (this.CurrentJob == party.Job && party.Job.canReturn && party.Job.canExit(this.RefID))
                 {
                     this.FactionManager.RemoveFromParty(party);
                     ChangeCurrentJob();
@@ -904,7 +926,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     if (s != null) s.Add(ss);
                     return;
                 }
-                if (party.Job != null && this.CurrentJob != party.Job)
+                else if (party.Job != null && this.CurrentJob != party.Job)
                 {
                     ChangeCurrentJob(party.Job);
                     if (log) ss += "Changing job to party exploration job " + party.FactionDisplayName + "" + party.Job.DisplayName;
@@ -968,26 +990,25 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return;
         }
 
-        if (isAnimal && !scr_System_CentralControl.current.isSafeMode)
+        if (isAnimal && !scr_System_CentralControl.current.isSafeMode && isRestrained)
         {        // try find interaction job (rape job)
             if (CurrentJob != null && !resetJob)
             {
                 //Debug.LogError("Animal find job, current job is not null");
                 if (CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("sex")) != null)
                 {
-                    Debug.Log("Animal find job, current job is not null: Animal current job has sex, abort");
-
+                    if (log) ss += "|already in sex job|";
                     if (s != null) s.Add(ss);
                     return;
                 }
                 else if (CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("initSex")) != null)
                 {
-                    Debug.Log("Animal find job, current job is not null: Animal current job has initsex, abort");
-
+                    if (log) ss += "|trying to initiate sex|";
                     if (s != null) s.Add(ss);
                     return;
                 }
-            }else if (currentJobFaction != null)
+            }
+            else if (currentJobFaction != null)
             {
                 //Debug.LogError("Animal looking for new target");
                 List<Job_CharaCOM> possibletargets = new List<Job_CharaCOM>();
@@ -997,13 +1018,25 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 if (possibletargets.Count > 0)
                 {
-                    Job job = Utility.GetRandomElement(possibletargets);
-                    if (log) ss += "Changing job to having sex with " + (job == null ? "NULL" : "interaction |" + (job == null ? "null" : job.RefID) + "| in room[" + job.ParentRoom.DisplayName + "]");
-                    //Debug.LogError("Animal fucking ");
-                    ChangeCurrentJob(job, "com_interaction_initiateSex");
+                    Job_CharaCOM interactionJob = Utility.GetRandomElement(possibletargets);
+                    var existingJob = interactionJob == null ? null : interactionJob.Owner.CurrentJob;
+                    if (existingJob != null && existingJob is Job_Sex_Group)
+                    {
+                        var existingSex = existingJob as Job_Sex_Group;
+                        ChangeCurrentJob(existingSex);
+                        if (log) ss += $"|joining existing Sexjob on {interactionJob.Owner.CallName}|";
+                        if (s != null) s.Add(ss);
+                        return;
+                    }
+                    else
+                    {
 
-                    if (s != null) s.Add(ss);
-                    return;
+                        ChangeCurrentJob(interactionJob, "com_interaction_initiateSex");
+                        if (log) ss += $"|trying to initiate sex on {interactionJob.Owner.CallName} in room {interactionJob.ParentRoom.DisplayName}";
+                        if (s != null) s.Add(ss);
+                        return;
+                    }
+
                 }
             }
 

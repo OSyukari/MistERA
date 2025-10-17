@@ -7,7 +7,7 @@
     "ActionPackageClass":"ActionPackage_Sex",
     "displayName":"com_sex_P_doggy_displayName_1",
     "timeScale":3,
-    "comTags":["sex","penetration"],
+    "comTags":["sex","penetration", "position_reverse", "position_equal"],
     "requirements":{
         "requirement":{
             "req_Doers":{
@@ -104,27 +104,6 @@
     ],
     "description_begin":{
         "Entries":[ 
-            {
-                "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
-                "keepLooking":true,
-                "conditions":[
-                    { "validateChara":{"target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"false" } },
-                    { "validateChara":{"target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"false" } }
-                ],
-                "Entries":[
-                    {
-                        "_comment":"receiver is estrus",
-                        "keepLooking":false,
-                        "conditions":[
-                            { "validateChara":{"target":"receiver", "statID":"isInEstrus", "operand":"eq", "value":"true" } }
-                        ],
-                        "texts":[
-                            "$receiver.firstname$被情欲所驱使，像是在撒娇一样伸出屁股…",
-                            "发情的$receiver.firstname$在粗暴的抽插下喘着粗气……"
-                        ]
-                    }
-                ]
-            },
             {
                 "_comment":"middle branch, no condition, always check",
                 "keepLooking":true,
@@ -320,6 +299,27 @@
                                     }
                                 ]
                             }
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
+                "keepLooking":true,
+                "conditions":[
+                    { "validateChara":{"target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"false" } },
+                    { "validateChara":{"target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"false" } }
+                ],
+                "Entries":[
+                    {
+                        "_comment":"receiver is estrus",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validateChara":{"target":"receiver", "statID":"isInEstrus", "operand":"eq", "value":"true" } }
+                        ],
+                        "texts":[
+                            "$receiver.firstname$被情欲所驱使，像是在撒娇一样伸出屁股…",
+                            "发情的$receiver.firstname$在粗暴的抽插下喘着粗气……"
                         ]
                     }
                 ]

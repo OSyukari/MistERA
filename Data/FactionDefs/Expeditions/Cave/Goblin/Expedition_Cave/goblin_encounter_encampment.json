@@ -1,0 +1,57 @@
+{
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_goblinCave_nestDiscovery",
+                "eventString_Ongoing": "$names$在洞窟深处发现了一处散发着恶臭的哥布林巢穴。",
+                "DurationMinutes": 30,
+                "tags": [
+                    "hazard",
+                    "encounter",
+                    "goblin",
+                    "sexual"
+                ],
+                "baseWeight": 5,
+                "possibleResults": [
+                    {
+                        "baseWeight": 4,
+                        "resultText": "exp_event_goblinCave_nestDiscovery_result_stealthSuccess"
+                    },
+                    {
+                        "baseWeight": 3,
+                        "resultText": "exp_event_goblinCave_nestDiscovery_result_capture_breedingStock"
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_goblinCave_nestDiscovery_result_capture_ritual"
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_goblinCave_nestDiscovery_result_capture_escape"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_goblinCave_nestDiscovery_result_ambush_slimePit"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_goblinCave_nestDiscovery": "发现哥布林巢穴",
+                "exp_event_goblinCave_nestDiscovery_ongoing": "$names$在洞窟深处发现了一处散发着恶臭的哥布林巢穴。",
+                "exp_event_goblinCave_nestDiscovery_result_stealthSuccess": "$names$屏住呼吸，悄悄地绕过了巢穴，并在角落里发现了一些有用的物资。",
+                "exp_event_goblinCave_nestDiscovery_result_capture_breedingStock": "$names$的行踪被发现，她们被愤怒的哥布林们拖入巢穴深处，沦为满足其无穷欲望的繁殖工具。",
+                "exp_event_goblinCave_nestDiscovery_result_capture_ritual": "$names$被哥布林抓住，被迫参加了一场原始而淫秽的繁殖仪式，身体被当成献给邪神的祭品反复玷污。",
+                "exp_event_goblinCave_nestDiscovery_result_capture_escape": "虽然被哥布林抓住并遭受了一番凌辱，但$names$趁乱找到机会逃了出来，但丢失了部分补给品。",
+                "exp_event_goblinCave_nestDiscovery_result_ambush_slimePit": "$names$触发了陷阱！她们脚下的地面塌陷，掉进了一个涂满催情黏液的坑洞，被潜伏在其中的触手怪物肆意玩弄。",
+
+                "exp_event_goblinCave_nestDiscovery_result_ambush_slimePit1": "在哥布林的巢穴角落，发现了大量被撕碎的女性衣物和散落的饰品。",
+                "exp_event_goblinCave_nestDiscovery_result_ambush_slimePit2": "在目睹了哥布林残忍的巢穴后，队伍的士气大幅下降，出现了撤退的声音。",
+                "exp_event_goblinCave_nestDiscovery_result_ambush_slimePit3": "发现了被哥布林作为战利品挂起来的、其他冒险者的破烂衣物和贴身用品。"
+            }
+        }
+    }
+}

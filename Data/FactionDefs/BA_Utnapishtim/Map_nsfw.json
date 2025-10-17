@@ -197,9 +197,6 @@
                                         "furniture_prison_containment_spot_2",
                                         "furniture_prison_containment_spot_2",
                                         "furniture_prison_containment_spot_2",
-                                        "furniture_prison_containment_spot_2",
-                                        "furniture_prison_containment_spot",
-                                        "furniture_prison_containment_spot",
                                         "furniture_prison_containment_spot"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Prison.jpg"
                     },
@@ -211,13 +208,9 @@
                         "connects":
                         [ { "ID":"medbay_isolation_office", "cost":1.0  } ],
                         "furnitureIDs":["furniture_toilet_shower_set",
-                                        "furniture_prison_containment_spot_2",
-                                        "furniture_prison_containment_spot_2",
-                                        "furniture_prison_containment_spot_2",
-                                        "furniture_prison_containment_spot_2",
                                         "furniture_prison_containment_spot",
-                                        "furniture_prison_containment_spot",
-                                        "furniture_prison_containment_spot" ],
+                                        "furniture_prison_containment_spot_2",
+                                        "furniture_prison_containment_spot_4"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Prison.jpg"
                     },
                     {

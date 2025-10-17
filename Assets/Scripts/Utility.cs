@@ -147,7 +147,7 @@ public static class UtilityEX
                     {
                         string statID = onUse.arguments[0];
                         var stat = body.Owner.Stats.GetStatEx(statID);
-                        if (stat != null) stat.Restore(statValue);
+                        if (stat != null) stat.ModValue(statValue);
                     }
                     break;
                 case EffectKeyword.ModStatValuePercent:
@@ -255,6 +255,7 @@ public static class UtilityEX
                 switch(kvp[1])
                 {
                     case "name": newString = newString.Replace(match.Value, owner.Self.FirstName); break;
+                    case "nameCount": newString = newString.Replace(match.Value, owner.Self.FirstName); break;
                     case "room_name":
                         var room = scr_System_CampaignManager.current.Map.FindRoomByChara(owner.Self.RefID);
                         if (room != null) newString = newString.Replace(match.Value, room.DisplayName); break;
@@ -265,16 +266,25 @@ public static class UtilityEX
             {
                 bool error = false;
                 List<string> collect = new List<string>();
+                Dictionary<string, int> collectDict = new Dictionary<string, int>();
                 foreach (var c in owner.Targets[kvp[0]])
                 {
                     switch(kvp[1])
                     {
                         case "name": if (!collect.Contains(c.CallName)) collect.Add(c.CallName); break;
+                        case "nameCount":
+                            if (!collectDict.ContainsKey(c.CallName)) collectDict.Add(c.CallName, 1);
+                            else collectDict[c.CallName] += 1;
+                            break;
                         case "room_name":
                             var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
                             if (room != null && !collect.Contains(room.DisplayName)) collect.Add(room.DisplayName); break;
                         default: error = true; break;
                     }
+                }
+                if (collectDict.Count > 0)
+                {
+                    foreach (var collectkvp in collectDict) collect.Add(LocalizeDictionary.QueryThenParse("event_targetscope_nameCount").Replace("$name$", collectkvp.Key).Replace("$count$", $"{collectkvp.Value}"));
                 }
                 if (!error) newString = newString.Replace(match.Value, String.Join(separator, collect));
             }
@@ -511,28 +521,46 @@ public static class UtilityEX
         }
         else
         {   //detecting conflict between 2 sex packages inside a sex job (allow coexist)
+            if (Utility.ListContainsLoose(a.actorRefs, package.actorRefs))
+            {
+                if (a.targetCOM != null && package.targetCOM != null)
+                {
+                    if (a.targetCOM.conflictTags.Count > 0 && Utility.ListContainsLoose(package.targetCOM.comTags, a.targetCOM.conflictTags))
+                    {
+                        Debug.Log($"Detecting ActionPackage_Sex Conflict between {a.DisplayName} and {package.DisplayName} caught by condition -2\nList 1 [{String.Join(" ", a.targetCOM.conflictTags)}] [{String.Join(" ", package.targetCOM.comTags)}]");
+                        return true;
+                    }
+                    if (package.targetCOM.conflictTags.Count > 0 && Utility.ListContainsLoose(a.targetCOM.comTags, package.targetCOM.conflictTags))
+                    {
+                        Debug.Log($"Detecting ActionPackage_Sex Conflict between {a.DisplayName} and {package.DisplayName} caught by condition -2\nList 1 [{String.Join(" ", a.targetCOM.comTags)}] [{String.Join(" ", package.targetCOM.conflictTags)}]");
+                        return true;
+                    }
+                }
 
-            if (Utility.ListContainsLoose(a.DoerRefs, package.DoerRefs) && Utility.ListContainsLoose(a.doerBodyTags, package.doerBodyTags))
-            {
-                Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 1\nList 1 [" + String.Join(" ", a.DoerRefs) + " " + String.Join(" ", a.doerBodyTags) + "] List 2 [" + String.Join(" ", package.DoerRefs) + " " + String.Join(" ", package.doerBodyTags) + "]");
-                return true;
-            }
-            if (p2.ReceiverRefs.Count > 0 && Utility.ListContainsLoose(a.ReceiverRefs, p2.ReceiverRefs) && Utility.ListContainsLoose(a.receiverBodyTags, p2.receiverBodyTags))
-            {
-                Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 2\nList 1 [" + String.Join(" ", a.receiverBodyTags) + "] List 2 [" + String.Join(" ", p2.receiverBodyTags) + "]");
-                return true;
-            }
+                if (Utility.ListContainsLoose(a.DoerRefs, package.DoerRefs) && Utility.ListContainsLoose(a.doerBodyTags, package.doerBodyTags))
+                {
+                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 1\nList 1 [" + String.Join(" ", a.DoerRefs) + " " + String.Join(" ", a.doerBodyTags) + "] List 2 [" + String.Join(" ", package.DoerRefs) + " " + String.Join(" ", package.doerBodyTags) + "]");
+                    return true;
+                }
+                if (p2.ReceiverRefs.Count > 0 && Utility.ListContainsLoose(a.ReceiverRefs, p2.ReceiverRefs) && Utility.ListContainsLoose(a.receiverBodyTags, p2.receiverBodyTags))
+                {
+                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 2\nList 1 [" + String.Join(" ", a.receiverBodyTags) + "] List 2 [" + String.Join(" ", p2.receiverBodyTags) + "]");
+                    return true;
+                }
 
-            if (Utility.ListContainsLoose(a.DoerRefs, p2.ReceiverRefs) && Utility.ListContainsLoose(a.doerBodyTags, p2.receiverBodyTags))
-            {
-                Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 3\nList 1 [" + String.Join(" ", a.doerBodyTags) + "] List 2 [" + String.Join(" ", p2.receiverBodyTags) + "]");
-                return true;
+                if (Utility.ListContainsLoose(a.DoerRefs, p2.ReceiverRefs) && Utility.ListContainsLoose(a.doerBodyTags, p2.receiverBodyTags))
+                {
+                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 3\nList 1 [" + String.Join(" ", a.doerBodyTags) + "] List 2 [" + String.Join(" ", p2.receiverBodyTags) + "]");
+                    return true;
+                }
+                if (Utility.ListContainsLoose(a.ReceiverRefs, p2.DoerRefs) && Utility.ListContainsLoose(a.receiverBodyTags, p2.doerBodyTags))
+                {
+                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 4\nList 1 [" + String.Join(" ", a.receiverBodyTags) + "] List 2 [" + String.Join(" ", p2.doerBodyTags) + "]");
+                    return true;
+                }
             }
-            if (Utility.ListContainsLoose(a.ReceiverRefs, p2.DoerRefs) && Utility.ListContainsLoose(a.receiverBodyTags, p2.doerBodyTags))
-            {
-                Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 4\nList 1 [" + String.Join(" ", a.receiverBodyTags) + "] List 2 [" + String.Join(" ", p2.doerBodyTags) + "]");
-                return true;
-            }
+                
+
 
 
             //if (Utility.ListContainsLoose(p2.actorRefs, actorRefs) || p2.actorRefs.Contains(receiver.RefID)) return true;
@@ -984,7 +1012,27 @@ public static class UtilityEX
                     c.FactionManager.SetTempHomeFaction(addTofaction.ID);
                 }
                 break;
+            case "spawnCharaPrisoner":
+                if (parsed.Count() >= 2)
+                {
+                    if (scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction == null)
+                    {
+                        Debug.LogError("cannot find relevant player facton to add");
+                        break;
+                    }
+                    if (!scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction.ManagedRefs.Contains(0))
+                    {
+                        Debug.LogError("can only be used when player is in a player-managed faction");
+                        break;
+                    }
 
+                    var c = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(parsed[1], scr_System_CampaignManager.current.CurrentRoom);
+
+                    var addTofaction = scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction;
+
+                    c.FactionManager.SetTempHomeFaction(addTofaction.ID, Manageable_GuestStatus.Prisoner);
+                }
+                break;
 
         }
 
@@ -1320,4 +1368,3 @@ public static class UtilityEX
 
 
 }
-

@@ -24,7 +24,7 @@ public class FurnitureBase
     {
         get
         {
-            if (this.ID != "" && this.displayName != "") return true;
+            if (this.ID != "") return true;
             return false;
         }
     }

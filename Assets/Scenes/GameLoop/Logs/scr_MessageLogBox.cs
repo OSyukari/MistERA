@@ -10,7 +10,7 @@ public class scr_MessageLogBox : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public void OnPointerEnter(PointerEventData eventData)
     {
 
-        if (portrait != null && !scr_UpdateHandler.current.Lock)
+        if (false && portrait != null && !scr_UpdateHandler.current.Lock)
         {
             //Debug.Log("scr_MessageLogBox OnPointerEnter, refID "+charaRefID);
             scr_System_CampaignManager.current.Log_TrySetChara(portrait, false);

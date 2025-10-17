@@ -7,7 +7,7 @@
     "ActionPackageClass":"ActionPackage_Sex",
     "displayName":"com_sex_P_missionary_displayName_1",
     "timeScale":3,
-    "comTags":["sex", "penetration"],
+    "comTags":["sex", "penetration", "position_face", "position_equal"],
     "requirements":{
         "requirement":{
             "req_Doers":{
@@ -105,38 +105,6 @@
     "description_begin":{
 
             "Entries":[ 
-            {
-                "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
-                "keepLooking":true,
-                "conditions":[
-                    { "validateChara":{"target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"false" } },
-                    { "validateChara":{"target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"false" } }
-                ],
-                "Entries":[
-                    {
-                        "_comment":"receiver is estrus",
-                        "keepLooking":false,
-                        "conditions":[
-                            { "validateChara":{"target":"receiver", "statID":"isInEstrus", "operand":"eq", "value":"true" } }
-                        ],
-                        "texts":[
-                            "发情的$receiver.firstname$的视线被$doer.firstname$的阴茎深深吸引…",
-                            "被情欲所俘虏的$receiver.firstname$，将贪婪的视线投向了$doer.firstname$的阴茎…"
-                        ]
-                    },
-                    {
-                        "_comment":"receiver is lewd",
-                        "keepLooking":false,
-                        "conditions":[
-                            { "validateChara":{"target":"receiver", "statID":"currentClimaxCount", "operand":"gte", "value":"1" } }
-                        ],
-                        "texts":[
-                            "$receiver.firstname$在肉欲的驱使下，迈开大腿将阴茎含到了深处…",
-                            "兴奋不已的$receiver.firstname$配合着$doer.firstname$的插入，美艳地摆动着腰…"
-                        ]
-                    }
-                ]
-            },
             {
                 "_comment":"middle branch, no condition, always check",
                 "keepLooking":true,
@@ -374,6 +342,38 @@
                                     }
                                 ]
                             }
+                        ]
+                    }
+                ]
+            },
+            {
+                "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
+                "keepLooking":true,
+                "conditions":[
+                    { "validateChara":{"target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"false" } },
+                    { "validateChara":{"target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"false" } }
+                ],
+                "Entries":[
+                    {
+                        "_comment":"receiver is estrus",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validateChara":{"target":"receiver", "statID":"isInEstrus", "operand":"eq", "value":"true" } }
+                        ],
+                        "texts":[
+                            "发情的$receiver.firstname$的视线被$doer.firstname$的阴茎深深吸引…",
+                            "被情欲所俘虏的$receiver.firstname$，将贪婪的视线投向了$doer.firstname$的阴茎…"
+                        ]
+                    },
+                    {
+                        "_comment":"receiver is lewd",
+                        "keepLooking":false,
+                        "conditions":[
+                            { "validateChara":{"target":"receiver", "statID":"currentClimaxCount", "operand":"gte", "value":"3" } }
+                        ],
+                        "texts":[
+                            "$receiver.firstname$在肉欲的驱使下，迈开大腿将阴茎含到了深处…",
+                            "兴奋不已的$receiver.firstname$配合着$doer.firstname$的插入，美艳地摆动着腰…"
                         ]
                     }
                 ]

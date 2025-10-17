@@ -46,19 +46,35 @@ public class MessageLogManager
     {
         this.currentPortrait = null;
     }
-
-    public MessageLog AddLog(PortraitManager refID, string s, string tooltip, bool animate = false, bool rA = false)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="refID"></param>
+    /// <param name="s">string message</param>
+    /// <param name="tooltip"></param>
+    /// <param name="animate">if true, will split string message into different lines</param>
+    /// <param name="rA"></param>
+    /// <returns></returns>
+    public MessageLog AddLog(PortraitManager refID, string s, string tooltip, bool lineSplit = false, bool rA = false)
     {
         if (s.Length < 1) return null;
 
-        List<string> splitted = s.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
         Message_Text log = new Message_Text(refID, null, tooltip);
-        foreach (string ss in splitted) if (ss.Length > 0) log.AddMessage(ss, rA);
+        if (lineSplit)
+        {
+            List<string> splitted = s.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (splitted.Count < 1) return null;
+            foreach (string ss in splitted) if (ss.Length > 0) log.AddMessage(ss, rA);
+        }
+        else
+        {
+            log.AddMessage(s, rA);
+        }
 
-        return AddLog(log, animate);
+        return AddLog(log);
     }
 
-    public MessageLog AddLog(MessageLog log, bool animate = false)
+    public MessageLog AddLog(MessageLog log)
     {
         Logs.Add(log);
         return log;
@@ -81,8 +97,6 @@ public class MessageLogManager
     }
 
 }
-
-[System.Serializable]
 
 public class Message_Text : MessageLog
 {
@@ -146,10 +160,6 @@ public class Message_Text : MessageLog
         return lines;
     }
 
-    public void AddMessage(List<string> s, bool rA)
-    {
-        foreach (var en in s) Messages.Add(new Message(en, rA));
-    }
     public void AddMessage(string s, bool rA)
     {
         if (s.Length > 0) Messages.Add(new Message(s, rA));
@@ -188,12 +198,11 @@ public class Message_Text : MessageLog
     scr_HoverableText currentLine = null;
     public void Draw(scr_MessageLogBox box, scr_HoverableText linePrefab)
     {
-        this.Draw();
+        base.Draw();
         this.selfBox = box;
         this.prefab_LogLine = linePrefab;
 
         box.Initialize(PortraitRef);
-        if (this.PortraitRef != null) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
         if(canAnimate()) Animate();
     }
 
@@ -227,7 +236,6 @@ public class Message_Text : MessageLog
 
 
 
-[System.Serializable]
 public class Message_Question : MessageLog
 {
 
@@ -254,7 +262,6 @@ public class Message_Question : MessageLog
 }
 
 
-[System.Serializable]
 public abstract class MessageLog
 {
     public bool displayed = false;
@@ -280,6 +287,7 @@ public abstract class MessageLog
     public void Draw()
     {
         this.displayed = true;
+        if (this.PortraitRef != null) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
     }
 
 }

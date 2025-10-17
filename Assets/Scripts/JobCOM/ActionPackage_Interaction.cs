@@ -6,11 +6,6 @@ using Newtonsoft.Json;
 using QuikGraph;
 using System.IO;
 
-
-
-
-
-[System.Serializable]
 public class ActionPackage_Interaction : ActionPackage
 {
     

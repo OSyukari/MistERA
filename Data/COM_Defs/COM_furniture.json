@@ -78,7 +78,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在睡觉"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_takingBreak",
@@ -152,7 +153,8 @@
                                         "com_furniture_takingBreak_begin_2" ]
                         }
                     ]
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在休息"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_takingLongBreak",
@@ -236,7 +238,8 @@
                                         "com_furniture_takingBreak_begin_2" ]
                         }
                     ]
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在休息"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_playVideoGames",
@@ -319,7 +322,8 @@
                                         "com_furniture_playVideoGames_begin_2" ]
                         }
                     ]
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在玩游戏"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_watchVideo",
@@ -403,7 +407,8 @@
                                         "com_furniture_watchVideo_begin_3" ]
                         }
                     ]
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在看电视"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_takeShower",
@@ -467,7 +472,8 @@
                                         "com_furniture_takeShower_begin_3" ]
                         }
                     ]
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在洗澡"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_restroom_fix",
@@ -524,7 +530,6 @@
                 "DifficultyCheck": {
                     "baseD20Check": 0
                 },
-
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_restroom_fix_ongoing_1"]}], "keepLooking":false },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_restroom_fix_begin_1"]}], "keepLooking":false }
             },
@@ -603,7 +608,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在冷冻休眠"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_getmeal",
@@ -675,7 +681,8 @@
                         }
                     ]
                     
-                }
+                },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在吃饭"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_prison",

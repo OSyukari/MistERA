@@ -65,7 +65,7 @@ public class scr_Panel_CurrentCharList : scr_Menu
             RemoveChara(i);
         }
 
-        foreach(var chara in scr_System_CampaignManager.current.CharaInCurrentRoom)
+        foreach(var chara in scr_System_CampaignManager.current.CharaRefInCurrentRoom)
         {
             AddChara(chara);
         }

@@ -4,10 +4,8 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System.Linq;
 using System;
-using NUnit.Framework;
 
 
-[System.Serializable]
 public class RelationshipManager
 {
     [JsonProperty] protected string _personalityID = "personality_default";
@@ -61,14 +59,37 @@ public class RelationshipManager
         else targetList[key] += value;
     }
 
+    [JsonProperty] protected Dictionary<string, Character_Relationship> relationships_generic = new Dictionary<string, Character_Relationship>();
     [JsonProperty] protected Dictionary<int, Character_Relationship> relationships = new Dictionary<int, Character_Relationship>();
+
+    public void NotifyCharaUnregister(int unregisterID)
+    {
+        if (relationships.TryGetValue(unregisterID, out var relation))
+        {
+            relationships.Remove(unregisterID);
+            
+            if (relationships_generic.TryGetValue(relation.TargetBaseID, out var generic))
+            {
+                generic.MergeWith(relation);
+            }
+            else
+            {
+                relation.ConvertToGeneric();
+                relationships_generic.Add(relation.TargetBaseID, relation);
+            }
+        }
+    }
+
+    public void NotifyFactionChange()
+    {
+        foreach (var i in this.relationships.Values) i.NotifyFactionChange();
+    }
 
     [JsonIgnore]
     public List<Character_Relationship> Relationships
     {
         get
         {
-            if (relationships == null) relationships = new Dictionary<int, Character_Relationship>();
             var list = relationships.Values.Where(x => x.displayable).ToList();
             list.Sort(SortRelationship);
             return list;
@@ -79,7 +100,6 @@ public class RelationshipManager
     {
         get
         {
-            if (relationships == null) relationships = new Dictionary<int, Character_Relationship>();
             var list = relationships.Values.Where(x => x.displayable).ToList();
             list.Sort(SortDesire);
             return list;
@@ -157,7 +177,7 @@ public class RelationshipManager
         foreach (var i in targetEPs) s += i.targetCOM.ID + "_";
         //Debug.Log("NotifyMeeting between " + Owner.FirstName + " and " + c.FirstName+"\n"+s);
 
-        var rel = (relationships.ContainsKey(c.RefID)) ? relationships[c.RefID] : FindRelationshipWith(c);
+        var rel = FindRelationshipWith(c);
 
         //Utility.GetEventTagsFrom(Owner, c, out List<string> selfTags, out List<string> targetTags ,out List<EvaluationPackage> selfEPs);
         //Utility.GetEPsFrom(owner, c, out List<EvaluationPackage> selfEPs, out List<EvaluationPackage> targetEPs);
@@ -199,7 +219,8 @@ public class RelationshipManager
         this.ownerRef = c.RefID;
         this.owner = c;
 
-        foreach (var i in relationships.Values) i.ReEstablishParent(this);
+        foreach (var i in relationships) i.Value.ReEstablishParent(this);
+        foreach (var i in relationships_generic) i.Value.ReEstablishParent(this);
     }
 
     public void IncreaseRelationshipWith(int targetRef, RelationshipScoreType relID, float amount, ExperienceLog exp = null)
@@ -219,14 +240,6 @@ public class RelationshipManager
 
         if (exp != null) exp.AddRelations(ownerRef, targetRef, relID, (int)amount); 
     }
-
-    public Character_Relationship FindRelationshipWith(Character_Trainable chara)
-    {   // allow relationship with oneself
-        if (chara == null || chara.RefID < 0) return null;
-        if (relationships.TryGetValue(chara.RefID, out var rel)) return rel;
-        else return MakeRelationshipWith(chara);
-    }
-
     public string GetKOJOMessage(bool isDoer, EvaluationPackage ep)
     {
         if (Owner.RefID == 0) return "";
@@ -238,18 +251,28 @@ public class RelationshipManager
         else return this.Personality.GetKOJOMessage(isDoer, ep, rel);
     }
 
+    /// <summary>
+    /// Only check if relation exist, does not generate
+    /// </summary>
+    /// <param name="charaRef"></param>
+    /// <returns></returns>
     public bool ExistRelationship(int charaRef)
     {
-        return relationships.ContainsKey(charaRef);// (charaRef, out var rel)) return rel;
+        return relationships.ContainsKey(charaRef);
     }
 
     public Character_Relationship FindRelationshipWith(int charaRef)
     {
-        if (charaRef < 0 || charaRef == Owner.RefID) return null;
+        if (charaRef < 0) return null;
         if (relationships.TryGetValue(charaRef, out var rel)) return rel;
         else return MakeRelationshipWith(scr_System_CampaignManager.current.FindInstanceByID(charaRef));
     }
-
+    public Character_Relationship FindRelationshipWith(Character_Trainable c)
+    {
+        if (c == null || c.RefID < 0) return null;
+        if (relationships.TryGetValue(c.RefID, out var rel)) return rel;
+        else return MakeRelationshipWith(c);
+    }
     protected Character_Relationship MakeRelationshipWith(Character_Trainable chara)
     {
         if (chara == null) return null;
@@ -269,24 +292,62 @@ public class RelationshipManager
         if(Owner.Template != null)
         {
             var template = Owner.Template.initialRelationship.Find(x => x.baseID == targetBaseID);
-            relationships.Add(chara.RefID, new Character_Relationship(this, chara.RefID, template));
+            relationships.Add(chara.RefID, new Character_Relationship(this, chara, template));
         }
         else
         {
-            relationships.Add(chara.RefID, new Character_Relationship(this, chara.RefID, null));
+            relationships.Add(chara.RefID, new Character_Relationship(this, chara, null));
         }
 
-        return relationships[chara.RefID];
+        var returnValue = relationships[chara.RefID];
+
+        if (relationships_generic.TryGetValue(returnValue.TargetBaseID, out var generic))
+        {
+            returnValue.MergeWith(generic);
+        }
+
+        return returnValue;
     }
 
-    [System.Serializable]
     public class Character_Relationship
     {
+        /// <summary>
+        /// read relationshipscores from math abs
+        /// </summary>
+        /// <param name="rel"></param>
+        public void MergeWith(Character_Relationship rel)
+        {
+            for(int i = 0; i < relationshipScores.Length; i++)
+            {
+                if (Math.Abs(relationshipScores[i]) < Math.Abs(rel.relationshipScores[i]))
+                {
+                    relationshipScores[i] = rel.relationshipScores[i];
+                }
+            }
+        }
+
+        /// <summary>
+        /// Wipe cache
+        /// </summary>
+        public void ConvertToGeneric()
+        {
+            this.targetRefID = -1;
+            this._target = null;
+            this.relationshipTypeID_Bio = "";
+            _Relationship_Bio = null;
+            _Relationship_Personal = null;
+            _Relationship_Social = null;
+            this.relationshipTypeID_Personal = "";
+            this.relationshipTypeID_Social = "";
+            isA_Bio = false;
+            isA_Personal = false;
+            isA_Social = false;
+        }
+
         [JsonProperty] int targetRefID = -1;
         [JsonProperty] string targetBaseID = "";
         public string displayName = "";
-        [JsonIgnore] public bool displayable { get { return this.ownerRefID != targetRefID; } }
-        [JsonIgnore] public int ownerRefID = -1;
+        [JsonIgnore] public bool displayable { get { return targetRefID != -1 && this.Owner.RefID != targetRefID; } }
 
         public RelationshipObedienceType Obedience(List<string> tooltip = null)
         {
@@ -318,7 +379,10 @@ public class RelationshipManager
             return LocalizeDictionary.QueryThenParse("relationship_obedience_" + ((int)Obedience(tooltip)).ToString() + append);
             
         }
-
+        public void NotifyFactionChange()
+        {
+            this._Relationship_Social = null;
+        }
         public RelationshipAttitudeType Attitude(List<string> tooltip = null)
         {
             
@@ -351,12 +415,8 @@ public class RelationshipManager
             return LocalizeDictionary.QueryThenParse("relationship_attitude_" + ((int)Attitude(tooltip)).ToString() + append);
         }
 
-        protected RelationshipManager _manager = null;
-        [JsonIgnore] public RelationshipManager Manager { get { return _manager; } }
-        protected Character_Trainable _owner = null;
-        [JsonIgnore] public Character_Trainable Owner { get { return _owner; } }
-
-
+        [JsonIgnore] public RelationshipManager Manager = null;// { get { return _manager; } }
+        [JsonIgnore] public Character_Trainable Owner { get { return Manager.Owner; } }
 
         public void ChangePersonalRelationship(string newID, bool isA = false)
         {
@@ -367,8 +427,10 @@ public class RelationshipManager
         [JsonProperty] string relationshipTypeID_Bio = "";
         protected RelationshipType _Relationship_Bio = null;
         public bool isA_Bio = false;
-        [JsonIgnore] public RelationshipType Relationship_Bio { get
+        [JsonIgnore] public RelationshipType Relationship_Bio 
+        { get
             {
+                if (Target == null) return null;
                 if (relationshipTypeID_Bio == "") return null;
                 if (_Relationship_Bio == null) _Relationship_Bio = scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(relationshipTypeID_Bio);
                 return _Relationship_Bio;
@@ -377,15 +439,21 @@ public class RelationshipManager
         [JsonProperty] string relationshipTypeID_Social = "";
         protected RelationshipType _Relationship_Social = null;
         public bool isA_Social = false;
+
+        /// <summary>
+        /// Make a cache and wipe it on demand
+        /// </summary>
         [JsonIgnore] public RelationshipType Relationship_Social
         {
             get
             {
-                if ( _Relationship_Social == null)
+                if (Target == null) return null;
+                if (_Relationship_Social == null)
                 {
-                    var possibleFactions = Owner.FactionManager.Factions.FindAll(x => x.ManagedRefs.Contains(targetRefID));
+                    var possibleFactions = Owner.FactionManager.Factions.FindAll(x => x.isManagedChara(targetRefID));
                     if (possibleFactions.Count < 1) return null;
-                    _Relationship_Social =  possibleFactions[possibleFactions.Count - 1].GetRelationshipBetween(Owner.RefID, targetRefID, out isA_Social);
+                    _Relationship_Social = possibleFactions[possibleFactions.Count - 1].GetRelationshipBetween(Owner.RefID, targetRefID, out isA_Social);
+                    //Debug.Log($"Getting social relationship between {Owner.CallName} and {Target.CallName} as {(_Relationship_Social == null ? "-" : _Relationship_Social.displayName)}");
                 }
                 return _Relationship_Social;
             }
@@ -398,6 +466,7 @@ public class RelationshipManager
         {
             get
             {
+                if (Target == null) return null;
                 if (relationshipTypeID_Personal == "") return null;
                 if (_Relationship_Personal == null) _Relationship_Personal = scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(relationshipTypeID_Personal);
                 return _Relationship_Personal;
@@ -547,7 +616,7 @@ public class RelationshipManager
 
         [JsonIgnore] public float Desire { get { return Desire_Raw / Desire_Div * Desire_Mult; } }
 
-        [JsonIgnore] public string TargetName { get { return this.displayName != "" ? this.displayName : Target.FullName; } }
+        [JsonIgnore] public string TargetName { get { return this.displayName != "" ? LocalizeDictionary.QueryThenParse(this.displayName) : Target != null ? Target.FullName : "missing"; } }
 
 
         public Character_Relationship()
@@ -558,22 +627,17 @@ public class RelationshipManager
         public string relationText = "";
         public void ReEstablishParent(RelationshipManager manager)
         {
-            this.ownerRefID = manager.ownerRef;
-            this._owner = manager.Owner;
-            this._manager = manager;
+            this.Manager = manager;
             relationText = LocalizeDictionary.QueryThenParse("UI_chara_relationship_text");
         }
-        public Character_Relationship(RelationshipManager manager, int targetRefID, presetRelationship template, string overrideCallName = "", string forceBaseID = "")
+
+        public Character_Relationship(RelationshipManager manager, Character_Trainable target, presetRelationship template, string overrideCallName = "", string forceBaseID = "")
         {
             ReEstablishParent(manager);
-            this.targetRefID = targetRefID;
-            if (forceBaseID != "") this.targetBaseID = forceBaseID;
-            this.displayName = overrideCallName;
-            if (targetRefID > -1)
-            {
-                Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(targetRefID);
-                if (forceBaseID == "") this.targetBaseID = c.BaseID;
-            }
+
+            this.targetRefID = target.RefID;
+            this.targetBaseID = forceBaseID != "" ? forceBaseID : Target.BaseID;
+            this.displayName = overrideCallName != "" ? overrideCallName : Target.Title_Raw;
 
             if (template != null)
             {
@@ -589,7 +653,6 @@ public class RelationshipManager
                     this.isA_Personal = template.initialPersonalRelationship_isA;
                 }
             }
-
         }
 
         public void ModRelationValue(RelationshipScoreType type, float value)
@@ -607,10 +670,9 @@ public class RelationshipManager
 
     }
 
-    [System.Serializable]
     public class presetRelationship
     {
-        public string baseID;
+        public string baseID = "";
         public string initialBiologicalRelationship="";
         public bool initialBiologicalRelationship_isA;
         //public string initialSocialRelationship="";

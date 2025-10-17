@@ -14,6 +14,7 @@ public enum EventStatus
 public class EventInstance
 {
     public bool generated = false;
+    public bool scoped = false;
     scr_UpdateHandler _updateHandler = null;
     protected scr_UpdateHandler updateHandler
     {
@@ -37,7 +38,15 @@ public class EventInstance
         {
             if (displayOverride) return true;
             if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"EventInstance {(Self == null ? "null" : Self.FirstName)} {this.Name} isVisible? {Self == null} {Self == scr_System_CampaignManager.current.Player} {scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID)}");
-            return Self == null || Self == scr_System_CampaignManager.current.Player || scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID);
+            if (Self == null || Self == scr_System_CampaignManager.current.Player) return true;
+            if (scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 

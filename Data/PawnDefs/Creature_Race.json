@@ -3,49 +3,7 @@
     {
         "list": [
             {
-                "ID": "creature_beastRace_pig",
-                "displayName": "Pig",
-                "tooltip": "Pig. Eat anything.",
-                "bodyPartRoot":"head_beast_base",
-                "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
-                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","lust","physical"],
-                "_comment2":"provide new template for basevalue",
-                "needs":[
-                    {
-                        "ID":"food",
-                        "displayName":"food need",
-                        "tooltip":"tooltip",
-                        "statusDebuffID": "chara_status_malnourished",
-                        "consumeItemByTag": "food_meal",
-                        "requiresStatKeyword": "hunger",
-                        "overwritesNeedsIDs": []
-                    }
-                ]
-            },
-            {
-                "ID": "creature_beastRace_horse",
-                "displayName": "Horse",
-                "tooltip": "Strong, sturdy, somewhat docile.",
-                "bodyPartRoot":"head_beast_base",
-                "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
-                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","lust","physical"],
-                "_comment2":"provide new template for basevalue",
-                "needs":[
-                    {
-                        "ID":"food",
-                        "displayName":"food need",
-                        "tooltip":"tooltip",
-                        "statusDebuffID": "chara_status_malnourished",
-                        "consumeItemByTag": "food_meal",
-                        "requiresStatKeyword": "hunger",
-                        "overwritesNeedsIDs": []
-                    }
-                ]
-            },
-            {
-                "ID": "creature_beastRace_warg",
-                "displayName": "Warg",
-                "tooltip": "Not as large as a horse, but much more agressive.",
+                "ID": "creature_beastRace_animal",
                 "bodyPartRoot":"head_beast_base",
                 "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
                 "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","lust","physical"],
@@ -173,7 +131,7 @@
                 "sensitivityClassString":"C",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
                 "sortOrder":7,
-                "sizeRatio":0.2,
+                "sizeRatio":0.1,
                 "depthRatio":0.2,
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
                 "virginityLossTags":["penetration"]
@@ -216,6 +174,8 @@
         {
             "zh-cn":
             {
+                
+"creature_beastRace_animal":"动物",
 "natural_armor":"天生护甲",
 "natural_armor_part":"$part$天生护甲"
             },

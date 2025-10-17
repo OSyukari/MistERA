@@ -26,6 +26,7 @@ public class FeatureSet
 {
     public List<string> requireKeywords = new List<string>();
     public List<string> featureEventIDs = new List<string>();
+    public List<string> DescriptionText = new List<string>();
 
     List<ExpEvents> _featureEvents = null;
     [JsonIgnore]

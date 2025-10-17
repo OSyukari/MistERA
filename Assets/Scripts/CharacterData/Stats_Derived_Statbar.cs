@@ -30,7 +30,6 @@ public class Stats_Derived_Extended_Index : I_IndexHasID, I_IndexMergeable
 }
 
 
-[System.Serializable]
 public class Stats_Derived_Extended
 {
     [JsonProperty] protected string id = "";
@@ -129,7 +128,7 @@ public class Stats_Derived_Extended_Instance
     public void Draw(scr_HoverableText text)
     {
         // format: HP value/Max
-        text.SetText(DisplayName + " " + Value + "/" + MaxValue, false, Parent.ID+"_tooltip");
+        text.SetText($"{DisplayName} {(int)Value}/{(int)MaxValue}", false, $"{Parent.ID}_tooltip");
         text.SetExternalTooltip(MaxValueStat.ModStrings());
     }
 
@@ -169,19 +168,6 @@ public class Stats_Derived_Extended_Instance
     {
         owner = c;
     }
-    public void Increment(float amount)
-    {
-        maxValueStat = null;
-        if (amount < 0)
-        {   // if deduction, skip checking maxvalue because its costly
-            value = Math.Max(0f, value + amount);
-        }
-        else
-        {
-            var mxVal = MaxValue;
-            value = Math.Min(mxVal, value + amount);
-        }
-    }
 
     [JsonIgnore] public float ValuePercentile
     {
@@ -217,8 +203,10 @@ public class Stats_Derived_Extended_Instance
         this.value = MaxValue;
     }
 
-    public void Restore(float amount)
+    public void ModValue(float amount)
     {
+        if (amount < 0 && this.Owner.Owner.RefID == 0 && scr_System_CampaignManager.current.DebugMode) return;
+
         this.value = Math.Clamp(this.value + amount, 0, MaxValue);
     }
 

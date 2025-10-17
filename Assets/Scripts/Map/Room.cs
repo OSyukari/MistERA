@@ -10,9 +10,51 @@ using Newtonsoft.Json;
 /// parent handle room relative to floor display
 /// </summary>
 
-[System.Serializable]
 public class Room_Instance: IDisposable, I_Disposable
 {
+    [JsonProperty] protected List<int> roomCharaRefs = new List<int>();
+    List<Character_Trainable> _roomChara = null;
+    [JsonIgnore]
+    public List<Character_Trainable> RoomChara
+    { get
+        {
+            if (_roomChara == null)
+            {
+                _roomChara = new List<Character_Trainable>();
+                foreach(var i in roomCharaRefs) _roomChara.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
+            }
+            return _roomChara;
+        } }
+    [JsonIgnore]
+    public List<int> RoomCharaRefs
+    {
+        get
+        {
+            return roomCharaRefs;
+        }
+    }
+    public void MoveTo(Character_Trainable c, Room_Instance ri)
+    {
+        this.roomCharaRefs.Remove(c.RefID);
+        RoomChara.Remove(c);
+        ri.roomCharaRefs.Add(c.RefID);
+        ri.RoomChara.Add(c);
+    }
+    public void AddChara(Character_Trainable c)
+    {
+        roomCharaRefs.Add(c.RefID);
+        RoomChara.Add(c);
+    }
+    public void RemoveChara(Character_Trainable c)
+    {
+        roomCharaRefs.Remove(c.RefID);
+        RoomChara.Remove(c);
+    }
+    public void AddChara(int charaRef)
+    {
+        AddChara(scr_System_CampaignManager.current.FindInstanceByID(charaRef));
+    }
+
     [JsonIgnore]
     public bool isNameDynamic
     { get

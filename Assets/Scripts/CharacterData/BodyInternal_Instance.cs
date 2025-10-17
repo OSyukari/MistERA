@@ -17,7 +17,6 @@ public enum Ranking
     S
 }
 
-[System.Serializable]
 public class BodyInternal_Instance
 {
 
@@ -194,18 +193,21 @@ public class BodyInternal_Instance
         lastinteractedRefs_cache = null;
     }
 
+    [JsonIgnore] public BodyPart_Instance Parent = null;
 
     public BodyInternal_Instance()
     {
 
     }
 
-    public void ReEstablishParent(Character_Trainable c)
+    public void ReEstablishParent(BodyPart_Instance c)
     {
-        this.owner = c;
-        this.ownerRefID = c.RefID;
+        this.owner = c.Owner;
+        this.ownerRefID = c.Owner.RefID;
+
+        this.Parent = c;
     }
-    public bool Initialize(string baseID, Character_Trainable c)
+    public bool Initialize(string baseID, BodyPart_Instance c)
     {
         this.baseID = baseID;
         ReEstablishParent(c);
@@ -630,6 +632,10 @@ public class BodyInternal_Instance
     {
         return Base.tags.Contains(tag);
     }
+    public bool hasAnyTag(List<string> tag)
+    {
+        return Utility.ListContainsLoose(Base.tags, tag);// Base.tags.Contains(tag);
+    }
     [JsonIgnore] public int sortOrder
     {
         get { return Base.sortOrder; }
@@ -846,7 +852,6 @@ public class BodyInternal_Instance
     }
 }
 
-[System.Serializable]
 public class Sexperience
 {
     public Dictionary<string, float> expTables = new Dictionary<string, float>();

@@ -63,7 +63,9 @@ public enum TargetScope
 {
     None,
     AllCharaInSelfRoom,
-    AllCharaInSelfRoom_ExcludeSelf
+    AllCharaInSelfRoom_ExcludeSelf,
+    ScopeWithinRef,
+    ScopeInRoomExceptRef
 }
 
 public class Event : I_SerializationCallbackReceiver
@@ -86,14 +88,12 @@ public class Event : I_SerializationCallbackReceiver
     //
     public EventScope_Self SelfValidator = new EventScope_Self();
 
-    [System.Serializable]
     public class EventScope_Self
     {
         public List<CharaCondition> chara_conditions = new List<CharaCondition>();
         public List<RoomCondition> room_conditions = new List<RoomCondition>();
     }
 
-    [System.Serializable]
     public class RoomCondition
     {
         public List<string> parameters = new List<string>();
@@ -105,7 +105,6 @@ public class Event : I_SerializationCallbackReceiver
     /// If baseScope is target generation, then check the following<br/>
     /// -> see 
     /// </summary>
-    [System.Serializable]
     public class CharaCondition
     {
         public List<string> parameters = new List<string>();
@@ -151,18 +150,27 @@ public class Event : I_SerializationCallbackReceiver
                 }
             }
         }
+
+        public EventScope_Target scopeReplacer = new EventScope_Target();
+        public bool allowScope = false;
     }
 
-
-    [System.Serializable]
     public class EventScope_Target
     {
         public List<string> refKeys = new List<string>();
         public TargetScope baseScope = TargetScope.None;
+        public List<string> extraScopeArguments = new List<string>();
         public List<CharaCondition> chara_conditions = new List<CharaCondition>();
         public int minTargetCount = -1;
         public int maxTargetCount = -1;
-        
+        /// <summary>
+        /// Allow event and limit target selection to maxTargetCount even if scoped target count is higher
+        /// </summary>
+        public bool pickAmongValidTargets = false;
+        /// <summary>
+        /// Allow event to go on if minTargetCount is disrespected. No effect on other scopes
+        /// </summary>
+        public bool allowEventOnMinTargetCountMiss = false;
     }
 
 
@@ -191,7 +199,7 @@ public class Event : I_SerializationCallbackReceiver
     public List<GenerationParameters> TargetGeneration = new List<GenerationParameters>();
     public List<EventScope_Target> TargetValidators = new List<EventScope_Target>();
 
-    [System.Serializable]
+
     public abstract class EventEntry
     {
         [JsonIgnore] public virtual string Name { get { return label; } }
@@ -268,7 +276,7 @@ public class Event : I_SerializationCallbackReceiver
             /// </summary>
             public string tooltip = "";
 
-            public List<Condition> Conditions = new List<Condition>();
+            public List<Condition> conditions = new List<Condition>();
             public List<CharaCondition> self_chara_conditions = new List<CharaCondition>();
             public Dictionary<string, List<CharaCondition>> target_chara_conditions = new Dictionary<string, List<CharaCondition>>();
             public bool isDefaultCancel = false;
@@ -373,18 +381,21 @@ public class Event : I_SerializationCallbackReceiver
             /// [targetLabel]
             /// </summary>
             TerminateExpedition,
-            ResetExpedition
+            ResetExpedition,
+            /// <summary>
+            /// [rapistLabel, nonrapistLabel, partyRoomFactionLabel, durationMinutes, restrictTags, timerEndEventID, timerEndEventLabel, expLogString] <br/>
+            /// </summary>
+            StartSexJobInParty
         }
     }
 
-    [System.Serializable]
     public class Condition
     {
-
+        public float randChance = 1;
 
         public bool isValid()
         {
-            return true;
+            return randChance == 1 || Utility.Dice(1, 100) < randChance*100;
         }
     }
 

@@ -19,6 +19,8 @@ public class ActionPackage_PathTo : ActionPackage
             return targetRoom_cache;
         } }
 
+    [JsonIgnore] public override int RoomKey { get { return scr_System_CampaignManager.current.Map.FindRoomByChara(this.Doer.RefID).RefID; } }
+
     List<TaggedEdge<int, Door_Instance>> _path = null;
     [JsonIgnore]
     List<TaggedEdge<int, Door_Instance>> path
@@ -86,20 +88,6 @@ public class ActionPackage_PathTo : ActionPackage
     [JsonIgnore] public override string DisplayName { get { return  LocalizeDictionary.QueryThenParse("chara_currentjob_pathing").Replace("$room$", TargetRoom.DisplayName); } }
 
     [JsonIgnore] public override List<int> actorRefs { get { return new List<int>() { doerRef }; } }
-
-    public override void RepeatReset(bool resetRequest = false)
-    {
-
-    }
-
-    [JsonIgnore] public override int RoomKey
-    {
-        get
-        {
-            if (roomKey == -1) roomKey = scr_System_CampaignManager.current.GetCharaRoomInstance(doerRef).RefID;
-            return roomKey;
-        }
-    }
 
     protected override bool PreEvaluate()
     {
@@ -189,7 +177,7 @@ public class ActionPackage_PathTo : ActionPackage
 
             if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" +LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$",scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName)+ "</align>", true);
                 
-            scr_System_CampaignManager.current.MoveCharacterTo(doerRef, pc.Target);
+            scr_System_CampaignManager.current.MoveCharacterTo(Doer, pc.Target);
             if ((int)pc.Tag.Cost > 0 && doerRef == 0)
             {
                 Room_Instance room = scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target);
@@ -198,10 +186,9 @@ public class ActionPackage_PathTo : ActionPackage
                 bool askBreak = false;
                 //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
                 
-                foreach (var charaRef in scr_System_CampaignManager.current.CharaInCurrentRoom)
+                foreach (var c in scr_System_CampaignManager.current.CharaInCurrentRoom)
                 {
-                    if (charaRef == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(charaRef)) continue;
-                    Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
+                    if (c.RefID == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID)) continue;
                     if (c == null) continue;
                     s2 += " " + c.FirstName;
                     askBreak = true;

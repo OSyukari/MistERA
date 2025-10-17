@@ -1,29 +1,29 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-[System.Serializable]
+
 public class Result_Faction_Home : Result_Faction
 {
 
 }
 
-[System.Serializable]
+
 public class Result_Faction_JobOwner : Result_Faction
 {   // this should be used for work factions (cuz they provide job so job necessarily have them as factionowner)
 
 }
-[System.Serializable]
+
 public class Result_Faction_Party : Result_Faction
 {   // this should be used for work factions (cuz they provide job so job necessarily have them as factionowner)
 
 }
-[System.Serializable]
+
 public class Result_Faction
 {
     public Entry_Condition entry_conditions = null;
     public Entry_Result entry_results = null;
 
-    [System.Serializable]
+
     public class Entry_Condition
     {
 
