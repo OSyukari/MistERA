@@ -59,8 +59,8 @@
     "label":"br_appease",
     "options":[
         {   
-            "conditions":[{"randChance":0}],
-            "option": "branch_appease_success",
+            "conditions":[{"randChance":0.1}],
+            "option": "br_appease_success",
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_appease_success"]} ] 
         },
         {   
@@ -68,11 +68,11 @@
             {
                 "trainer":[{"parameters":["isFemale"]}]
             },
-            "option": "silent fail branch",
+            "option": "br_appease_fail_female",
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_appease_fail_female"]} ] 
         },
         {   
-            "option": "branch_appease_fail",
+            "option": "br_appease_fail",
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_appease_fail"]} ] 
         }
     ]
@@ -143,24 +143,65 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_appease_fail_female",
-    "line": "$trainer.name$的安抚尝试失败了！"
+    "line": "$trainer.name$的安抚尝试失败了！",
+    "nextEntryLabel":"br_appease_fail_female_event"
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Question, Events",
+    "label":"br_appease_fail_female_event",
+    "question":"被激怒的野兽将$trainer.name$扑倒，将她当成了发泄欲望的对象。",
+    "options":[
+        {   
+            "option": "激烈反抗",
+
+            "Results": [ 
+                { "Type":"ModStatEXValue", "arguments":["trainer","stats_derived_extended_hp","-1"]},
+                { "Type":"JumpToLabel", "arguments":["","br_combat_combat"]} ] 
+        },
+        {   
+            "option": "屈服", 
+            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_event_begin"]} ] 
+        },
+        {   
+            "option": "屈服（省略事件）", 
+            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_event_skip"]} ] 
+        }
+    ]
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
-    "line": "被激怒的野兽将$trainer.name$扑倒，将她当成了发泄欲望的对象。",
-    "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ]
+    "label": "br_event_skip",
+    "line": "安抚失败的$trainer.name$被穴熊按在了身下强奸",
+    "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
+                { "Type":"FullRecovery" , "arguments":["enemy"]}, 
+                { "Type":"StartSexJobInParty" , "arguments":["enemy","trainer","trainer","120","","","","event_caveBearEncounter_ev09_text"]},
+                { "Type":"EventEnd"}]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
-    "options":[
-        {   
-            "option": "silent branch event, this shouldnt be displayed",
-            "Results": [ 
-            { "Type":"FullRecovery" , "arguments":["enemy"]},
-            { "Type":"StartSexJobInParty" , "arguments":["enemy","trainer","trainer","120","","","","event_caveBearEncounter_ev09_text"]},
-                         {"Type":"EventEnd"}] 
-        }
-    ]
+    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "label": "br_event_begin",
+    "line": "穴熊扒光了$trainer.name$的衣服", 
+    "Results": [ { "Type":"Undress", "arguments":["trainer","None","SeeThrough","true"]} ] 
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "line": "本番插入", 
+    "Results": [ { "Type":"ExecuteAPOnSingleChara", "arguments":["enemy","trainer","com_sex_P_missionary"]},
+                    { "Type":"FlushMessageAll"}   ]  
+
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "line": "肛门插入", 
+    "Results": [ { "Type":"ExecuteAPOnSingleChara", "arguments":["enemy","trainer","com_sex_P_doggy_A"]},
+                    { "Type":"FlushMessageAll"}   ] 
+
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "line": "事件结束（可重复）",
+    "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["RetryEvent"]} ],
+    "isLast": true
 }
                 ]
             }

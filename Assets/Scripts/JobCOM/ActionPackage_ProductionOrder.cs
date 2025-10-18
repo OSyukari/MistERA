@@ -104,14 +104,14 @@ public class ActionPackage_ProductionOrder : ActionPackage
     }
 
     // move one step along the path
-    protected override void Execution()
+    protected override void Execution(MessageCollect m = null)
     {
         //order.AddProgress(targetCOM.TimeScale);
 
 
         Debug.Log("ActionPackage_ProductionOrder: JobInRoom[" + job.ParentRoom.DisplayName + "] COM[" + targetCOM.displayName + "] has null order ?"+(order == null));
 
-        base.Execution();
+        base.Execution(m);
         Debug.Log("Production order ticked, requestAccepted "+requestAccepted);
         if (requestAccepted) foreach (var ep in packages) order.AddProgress(targetCOM.TimeScale);
     }

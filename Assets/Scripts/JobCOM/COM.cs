@@ -323,24 +323,24 @@ public class COM: I_SerializationCallbackReceiver
     //public Validator_Costs costs;
     public COM_Results results = new COM_Results();
 
-    public void ApplyCost(EvaluationPackage m)
+    public void ApplyCost(EvaluationPackage m, MessageCollect msg)
     {
         //Debug.Log("VariantIDs: AP["+p.COMVariantID+"] EP["+m.VariantID+"] param["+variantID+"]");
 
-        if (m.VariantID >= 0) this.variants[m.VariantID].ApplyCost(this, m);
+        if (m.VariantID >= 0) this.variants[m.VariantID].ApplyCost(this, m, msg);
         else
         {
             Debug.LogError("COM " + displayName + " apply cost error, both variantID < 0");
             int validVar = GetValidVariant(m.Doer, m.Receiver);
-            if (validVar >= 0) this.variants[validVar].ApplyCost(this, m);
+            if (validVar >= 0) this.variants[validVar].ApplyCost(this, m, msg);
            // 
         }
     }
 
-    public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target)
+    public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log)
     {
         //Debug.Log("ApplyResults doer[" + (evp.Doer != null ? evp.Doer.FirstName : "-") + "] receiver[" + (evp.Receiver != null ? evp.Receiver.FirstName : "-") + "]");
-        results.ApplyResults(job, p, evp, target);
+        results.ApplyResults(job, p, evp, target,log);
     }
 
     public bool ValidateJob(Job j, out string msg)
@@ -827,14 +827,14 @@ public class COM: I_SerializationCallbackReceiver
             //Debug.LogError("COMVARIANT create useBaseDsc?[ " + (useBaseDscription == 1) + "] useAnotherDesc?[" + (useAnotherVariantDescription > -1) + "]");
         }
 
-        public void ApplyCost(COM parent, EvaluationPackage m)
+        public void ApplyCost(COM parent, EvaluationPackage m, MessageCollect msg)
         {
 
-            if (m.Doer != null) CharaReqUtility.ApplyCost( requirements.requirement.req_Doers,m, m.Doer, parent, true);
-            if (requirements.TreatReceiverAsDoer && m.Receiver != null) CharaReqUtility.ApplyCost(requirements.requirement.req_Doers,m, m.Receiver, parent, true);
+            if (m.Doer != null) CharaReqUtility.ApplyCost( requirements.requirement.req_Doers,m, m.Doer, parent, true, msg);
+            if (requirements.TreatReceiverAsDoer && m.Receiver != null) CharaReqUtility.ApplyCost(requirements.requirement.req_Doers,m, m.Receiver, parent, true, msg);
 
-            if (m.Receiver != null) CharaReqUtility.ApplyCost(requirements.requirement.req_Receivers,m, m.Receiver, parent, false);
-            if (requirements.TreatDoerAsReceiver && m.Doer != null) CharaReqUtility.ApplyCost(requirements.requirement.req_Receivers,m, m.Doer, parent, false);
+            if (m.Receiver != null) CharaReqUtility.ApplyCost(requirements.requirement.req_Receivers,m, m.Receiver, parent, false, msg);
+            if (requirements.TreatDoerAsReceiver && m.Doer != null) CharaReqUtility.ApplyCost(requirements.requirement.req_Receivers,m, m.Doer, parent, false, msg);
 
         }
         public void Read(COM c) {

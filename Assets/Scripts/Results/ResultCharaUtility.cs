@@ -3,11 +3,11 @@ using System.Collections.Generic;
 public static class ResultCharaUtility
 {
 
-    public static void Apply(Result_Character r, EvaluationPackage m, Character_Trainable c, bool isDoer, bool isReceiver)
+    public static void Apply(Result_Character r, EvaluationPackage m, Character_Trainable c, bool isDoer, bool isReceiver, ExperienceLog log)
     {
         if (r.entry_conditions != null && !ValidateCondition(r.entry_conditions, isDoer, isReceiver, m.GetActorAttitude(c.RefID))) return;
         //Debug.Log("COM_Results Result_Character from " + m.Package.targetCOM.displayName + " Apply on " + c.FirstName +" passed condition validation !");
-        if (r.entry_results != null) ApplyResult(r.entry_results, m.job.FactionOwner, c, m.m);
+        if (r.entry_results != null) ApplyResult(r.entry_results, m.job.FactionOwner, c, log);
     }
 
     public static void Apply(Result_Character r, I_IsJobGiver faction, Character_Trainable c, List<string> tooltips = null)

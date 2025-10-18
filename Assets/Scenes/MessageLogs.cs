@@ -256,6 +256,7 @@ public class Message_Question : MessageLog
 
     public void Draw(Canvas mainCanvas, scr_menu_question questionBox , scr_panel_logs logs = null)
     {
+        //Debug.Log("Draw!");
         base.Draw();
         questionBox.InitializeWithArgs(mainCanvas, parentEvent, question, logs);
     }

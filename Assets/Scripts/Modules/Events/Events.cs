@@ -335,6 +335,7 @@ public class Event : I_SerializationCallbackReceiver
             ModStatusValue,
             ModStatEXValue,
             WakeUp,
+            Undress,
             ExecuteCallback,
             /// <summary>
             /// same as ExecuteCallback, but will return true even if callback not found
@@ -347,6 +348,15 @@ public class Event : I_SerializationCallbackReceiver
             FlushLogs,
             ExistAppendStrings,
             FlushAppendStrings,
+
+            FlushMessageStats,
+            FlushMessageExp,
+            FlushMessageRelations,
+            FlushMessageMessages,
+            FlushMessageExpAll,
+
+
+            FlushMessageAll,
             /// <summary>
             /// [] <br/>
             /// will also interrupt all existing Job and AP (that's a given)
@@ -385,7 +395,16 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>
             /// [rapistLabel, nonrapistLabel, partyRoomFactionLabel, durationMinutes, restrictTags, timerEndEventID, timerEndEventLabel, expLogString] <br/>
             /// </summary>
-            StartSexJobInParty
+            StartSexJobInParty,
+            /// <summary>
+            /// [doers, receivers, targetCOMID]<br/>
+            /// Will fail if receivers count is above 1
+            /// </summary>
+            ExecuteAPOnSingleChara,
+            /// <summary>
+            /// [doers, receivers, locationKey]
+            /// </summary>
+            ExecuteAPOnFurniture
         }
     }
 

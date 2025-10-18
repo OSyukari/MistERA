@@ -15,7 +15,6 @@ public class Result_JobContainer
         if (entry_results != null) entry_results.Apply(job, package, m, c);
     }
 
-    [System.Serializable]
     public class Entry_Condition
     {
 
@@ -35,7 +34,6 @@ public class Result_JobContainer
         }
     }
 
-    [System.Serializable]
     public class Entry_Result
     {
         public bool isItemContainer = false;

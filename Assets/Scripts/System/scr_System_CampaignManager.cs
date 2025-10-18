@@ -420,6 +420,12 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
+    public void RegisterExecutedAP(ActionPackage ap)
+    {
+        Map.dirtyCharaAPRef.Add(ap);
+        executedPackagesByRoom.Add(ap, ap.RoomKey);
+    }
+
     Dictionary<int, List<ActionPackage>> registeredPackagesByRoom;
     Dictionary<ActionPackage, int> executedPackagesByRoom = new Dictionary<ActionPackage, int>();
     /// <summary>

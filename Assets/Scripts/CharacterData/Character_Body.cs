@@ -392,7 +392,7 @@ public class Character_Body
         originalString = "experience_sex_strong_climax" + "||" + key + "||" + count;
     }
 
-    public void CheckClimax()
+    public void CheckClimax(MessageCollect message)
     {
         ExperienceLog exp = new ExperienceLog();
         string climaxKeywords = "";
@@ -534,7 +534,9 @@ public class Character_Body
                     .Replace("$count$", LocalizeDictionary.QueryThenParse(disassemble[0] + "_" + disassemble[2]));
 
                 string s = Owner.FirstName + ":" + climaxKeywords + (cumKeywords.Length > 0 ? "/" + cumKeywords : "");
-                scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
+
+                Debug.LogError("Merge Climax Message");
+                message.exp.MergeWith(exp, false);
             }
 
         }

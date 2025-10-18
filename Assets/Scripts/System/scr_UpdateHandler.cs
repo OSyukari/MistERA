@@ -244,7 +244,6 @@ public class scr_UpdateHandler : MonoBehaviour
     }
 
     List<string> currentRoundClimax = new List<string>();
-    public ExperienceLog exp = new ExperienceLog();
 
     protected System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
     protected bool CallbackResumeUpdate = false;
@@ -368,15 +367,9 @@ public class scr_UpdateHandler : MonoBehaviour
         //playerJob = cnManager.Player.CurrentJob;
 
         // begin job message
-        if (false && playerJob != null) cnManager.AddLog(-1, playerJob.MessagesBefore, halted);
 
-        cnManager.AddLog(-1, String.Join("\n", message_checks), halted);
-        cnManager.AddLog(-1, String.Join("\n", message_begin), halted);
-        cnManager.AddLog(-1, String.Join("\n", message_ongoing), halted);
-
-        message_checks.Clear();
-        message_begin.Clear();
-        message_ongoing.Clear();
+        cnManager.AddLog(-1, String.Join("\n", Message.messages_checks), halted);
+        cnManager.AddLog(-1, String.Join("\n", Message.messages_before), halted);
 
         foreach(var kvp in kojoMsgDictionary)
         {
@@ -386,29 +379,27 @@ public class scr_UpdateHandler : MonoBehaviour
         kojoMsgDictionary.Clear();
 
         // all climax ? need to filter out who worth displaying
-        cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), halted);
+        //cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), halted);
 
         currentRoundClimax.Clear();
         // after job message
-        if (false && playerJob != null) cnManager.AddLog(-1, playerJob.MessagesAfter, halted);
-        cnManager.AddLog(-1, String.Join("\n", message_end), halted);
-
-        message_end.Clear();
 
         // all exp inc message
+        /*
         foreach(var i in scr_System_CampaignManager.current.ActiveJobsRefsInCurrentRoom)
         {
             var job = scr_System_CampaignManager.current.FindJobInstanceByID(i);
             //Debug.Log("Merging with ActiveJob "+job.RefID+" " + job.DisplayName);
             this.exp.MergeWith(job.exp, false);
-        }
+        }*/
 
-        cnManager.AddLog(-1, exp.PrintContent_Messages(), halted);
-        cnManager.AddLog(-1, exp.PrintContent_Stats(), halted);
-        cnManager.AddLog(-1, exp.PrintContent_Relations(), halted);
-        cnManager.AddLog(-1, exp.PrintContent_Exps(), halted);
+        cnManager.AddLog(-1, Message.exp.PrintContent_Messages(), halted);
+        cnManager.AddLog(-1, Message.exp.PrintContent_Stats(), halted);
+        cnManager.AddLog(-1, Message.exp.PrintContent_Relations(), halted);
+        cnManager.AddLog(-1, Message.exp.PrintContent_Exps(), halted);
+        cnManager.AddLog(-1, String.Join("\n", Message.messages_after), halted);
 
-        exp.Clear();
+        Message.Clear();
 
         if (timeStop) totalUpdateTime = 0;
 
@@ -445,6 +436,12 @@ public class scr_UpdateHandler : MonoBehaviour
         //Debug.Log($"AddEventCallback count {eventCallbacks.Count}");
     }
     protected List<Action> eventCallbacks = new List<Action>();
+
+    public void ResumeUpdate()
+    {
+        EventHandler.Run(false, true);
+        ExecuteEventCallbacks(CallbackResumeUpdate);
+    }
     protected void ExecuteEventCallbacks(bool autoResumeUpdate)
     {
         //Debug.Log($"ExecuteEventCallbacks count {eventCallbacks.Count}");
@@ -472,32 +469,10 @@ public class scr_UpdateHandler : MonoBehaviour
         this.CallbackResumeUpdate = false;
     }
 
-
-
-    List<string> message_checks = new List<string>(), message_begin = new List<string>(), message_end = new List<string>();
-    List<string> message_ongoing = new List<string>();
-    public void NotifyJobDescriptions(List<string> checks, List<string> begin, List<string> ongoing, List<string> end, Dictionary<int, string> kojo)
+    public MessageCollect Message = new MessageCollect();
+    public void NotifyJobDescriptions(MessageCollect m, bool shorten)
     {
-        if (checks != null && checks.Count > 0)
-        {
-            message_checks.AddRange(checks);
-        }
-        // accumate result, on flush addlog to CNManager
-        if (begin != null && begin.Count > 0)
-        {
-            //Debug.Log($"Begin: {String.Join("\n", begin)}");
-            message_begin.AddRange(begin);
-        }
-        if (ongoing != null && ongoing.Count > 0) message_ongoing.AddRange(ongoing);
-        if (end != null && end.Count > 0) message_end.AddRange(end);
-        if (kojo != null)
-        {
-            foreach(var kvp in kojo)
-            {
-                if (!this.kojoMsgDictionary.ContainsKey(kvp.Key)) this.kojoMsgDictionary[kvp.Key] = kvp.Value;
-                else this.kojoMsgDictionary[kvp.Key] += "\n" + kvp.Value;
-            }
-        }
+        this.Message.Merge(m, shorten);
     }
 
     public Dictionary<int, string> kojoMsgDictionary = new Dictionary<int, string>();
@@ -518,13 +493,12 @@ public class scr_UpdateHandler : MonoBehaviour
     {
         if (flushOut)
         {
-            if (message_checks.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_checks), false);
-            if (message_begin.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_begin), false);
-            cnManager.AddLog(-1, exp.PrintContent_Messages(), true);
-            cnManager.AddLog(-1, exp.PrintContent_Stats(), true);
-            cnManager.AddLog(-1, exp.PrintContent_Relations(), true);
-            cnManager.AddLog(-1, exp.PrintContent_Exps(), true);
-            if (firstLoop && message_ongoing.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_ongoing), true);
+            if (Message.messages_checks.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_checks), false);
+            if (Message.messages_before.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_before), false);
+            cnManager.AddLog(-1, Message.exp.PrintContent_Messages(), true);
+            cnManager.AddLog(-1, Message.exp.PrintContent_Stats(), true);
+            cnManager.AddLog(-1, Message.exp.PrintContent_Relations(), true);
+            cnManager.AddLog(-1, Message.exp.PrintContent_Exps(), true);
 
             foreach(var kvp in kojoMsgDictionary)
             {
@@ -532,15 +506,11 @@ public class scr_UpdateHandler : MonoBehaviour
                 cnManager.AddLog(kvp.Key, kvp.Value, true, !rA);
             }
             if (currentRoundClimax.Count > 0) cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), true);
-            if (message_end.Count > 0) cnManager.AddLog(-1, String.Join("\n", message_end), true);
+            if (Message.messages_after.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_after), true);
         }
-        exp.Clear();
-        message_checks.Clear();
+        Message.Clear();
         currentRoundClimax.Clear();
-        message_begin.Clear();
-        message_ongoing.Clear(); 
         kojoMsgDictionary.Clear();
-        message_end.Clear();
 
         if (executeCallbacks) ExecuteEventCallbacks(true);
     }
@@ -548,8 +518,8 @@ public class scr_UpdateHandler : MonoBehaviour
     public void NotifyClimax(int targetRefID, string s, ExperienceLog exp)
     {
         if (!scr_System_CampaignManager.current.ShowCharaLog(targetRefID)) return;
-        this.exp.MergeWith(exp, false);
-        if (this.exp.GetRightAlign(targetRefID)) currentRoundClimax.Add($"<align=\"right\">{s}</align>");
+        this.Message.exp.MergeWith(exp, false);
+        if (this.Message.exp.GetRightAlign(targetRefID)) currentRoundClimax.Add($"<align=\"right\">{s}</align>");
         else currentRoundClimax.Add(s);
     }
 
@@ -561,7 +531,7 @@ public class scr_UpdateHandler : MonoBehaviour
     public void AddExperience(int charaRef, string expID, int count)
     {
         if (!scr_System_CampaignManager.current.ShowCharaLog(charaRef)) return;
-        this.exp.AddExperience(charaRef, expID, count);
+        this.Message.exp.AddExperience(charaRef, expID, count);
     }
 
     public int PlayerQuery(Action<scr_Menu> action)

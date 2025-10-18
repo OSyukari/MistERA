@@ -787,7 +787,7 @@ public class Job_Expedition : Job
     {
         if (this.Expedition == null || this.FactionOwner_Party == null) return;
         this.packageCooldown = ExpeditionUtility.Cooldown(Expedition, this.FactionOwner_Party);
-        Debug.Log($"Expedition cooldown set to: {packageCooldown}");
+        //Debug.Log($"Expedition cooldown set to: {packageCooldown}");
     }
 
     [JsonProperty] protected int packageCooldown = 0;

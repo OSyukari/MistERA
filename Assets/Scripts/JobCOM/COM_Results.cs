@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
 public class COM_Results
 {
     // Universally required data:
     // - source faction, job, actor, package 
 
-    public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Character_Trainable c)
+    public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Character_Trainable c, ExperienceLog log)
     {
         //Manageable faction; // job.FactionOwner
 
         bool isDoer = p.doer.Contains(c) || (p.targetCOM.requirements.TreatReceiverAsDoer && p.receiver.Contains(c));
         bool isReceiver = p.receiver.Contains(c) || (p.targetCOM.requirements.TreatDoerAsReceiver && p.doer.Contains(c));
 
-        if (results_character != null) foreach (var result in results_character) ResultCharaUtility.Apply( result, evp, c, isDoer, isReceiver);
+        if (results_character != null) foreach (var result in results_character) ResultCharaUtility.Apply( result, evp, c, isDoer, isReceiver,log);
         if (results_jobContainer != null) foreach(var result in results_jobContainer) result.Apply(job, p, evp, c);
         if (results_room != null) foreach (var result in results_room) result.Apply(job, p, evp, c);
 

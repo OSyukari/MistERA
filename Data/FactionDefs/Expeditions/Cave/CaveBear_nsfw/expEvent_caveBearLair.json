@@ -68,7 +68,7 @@
         "Entries": {
             "zh-cn": {
                 "exp_event_caveBearLair": "穴熊巢穴",
-                "exp_event_caveBearLair_ongoing": "$names$在洞穴深处发现了似乎是穴熊的巢穴。空气中弥漫着浓烈的野兽腥臭和麝香。",
+                "exp_event_caveBearLair_ongoing": "$names$在洞穴深处发现了似乎是穴熊的巢穴。\n空气中弥漫着浓烈的野兽腥臭和麝香。",
                 "exp_event_caveBearLair_result_item": "$names$小心翼翼地搜查了巢穴，幸运地发现了一些有用的物品",
                 "exp_event_caveBearLair_result_evaded": "$names$明智地选择不惊动巢穴，悄无声息地绕道离开了。",
                 "exp_event_caveBearLair_result_encounter": "$names$惊动了正在睡觉的穴熊！",

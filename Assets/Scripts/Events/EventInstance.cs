@@ -37,7 +37,7 @@ public class EventInstance
         get
         {
             if (displayOverride) return true;
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"EventInstance {(Self == null ? "null" : Self.FirstName)} {this.Name} isVisible? {Self == null} {Self == scr_System_CampaignManager.current.Player} {scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID)}");
+            //if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"EventInstance {(Self == null ? "null" : Self.FirstName)} {this.Name} isVisible? {Self == null} {Self == scr_System_CampaignManager.current.Player} {scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID)}");
             if (Self == null || Self == scr_System_CampaignManager.current.Player) return true;
             if (scr_System_CampaignManager.current.isCharaVisibleToPlayer(Self.RefID))
             {
@@ -81,7 +81,7 @@ public class EventInstance
     /// or store string key that ca
     /// </summary>
     public Dictionary<string, List<string>> AppendStrings = new Dictionary<string, List<string>>();
-
+    public MessageCollect message = new MessageCollect(true);
     /// <summary>
     /// TargetRef == -1 for null target
     /// </summary>
@@ -241,6 +241,9 @@ public class EventInstance
                 Start(forceLogging);
                 //if (this.Status == EventStatus.waiting) updateHandler.EventHandler.Run(true);
                 // other repeated run calls should be handled by eventmanager
+                break;
+            case EventStatus.waiting:
+                updateHandler.ResumeUpdate();
                 break;
             default: 
                 break;

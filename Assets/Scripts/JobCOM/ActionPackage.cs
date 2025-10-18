@@ -497,7 +497,6 @@ public abstract class ActionPackage
     public void SetActive(DateTime current)
     {
         this.time = current;
-        foreach (var i in this.ListEP) i.m.Clear();
     }
 
     public bool LoggedBegin = false;
@@ -887,12 +886,12 @@ public abstract class ActionPackage
     ///     
     ///     
     /// </summary>
-    protected void ExecutePackage()
+    protected void ExecutePackage(MessageCollect m = null)
     {
         PreExecution();
         // evaluate acceptance
 
-        Execution();
+        Execution(m);
 
 
         
@@ -912,11 +911,6 @@ public abstract class ActionPackage
         // break existing coms if necessary
         // turn self into memory
         // if sex, add to sexlog
-    }
-
-    public void ExecutePackageOutsideUpdate()
-    {
-        ExecutePackage();
     }
 
     protected void PreExecution()
@@ -1027,6 +1021,28 @@ public abstract class ActionPackage
         }
     }
 
+    public void ForceExecute1(DateTime currentTime)
+    {
+        this.StartTime = currentTime;
+        RemakePackages();
+        foreach (var ep in packages)
+        {
+            ep.ForceRespond();
+        }
+        requested = true;
+        repeated = false;
+        LoggedBegin = false;
+        requestAccepted = true;
+    }
+    public void ForceExecute2(MessageCollect m)
+    {
+        Ticked = true;
+        duration = 0;
+        toggleRepeat = false;
+        executeSuccessful = true;
+        ExecutePackageOutsideUpdate(m);
+    }
+
     /// <summary>
     /// Make actual EP and evaluate every single one. If any fail, then return false <br/>
     /// Even if current AP does not need actual EP to handle A->B acceptance, since kojo response and interrupt all works based on EPs, 
@@ -1041,7 +1057,6 @@ public abstract class ActionPackage
         
         bool returnVal = true;
 
-        bool displayCheckResult = false;
 
         foreach(var ep in packages)
         {
@@ -1049,43 +1064,9 @@ public abstract class ActionPackage
             if (!returnVal) break;
 
             if (!ep.Request()) returnVal = false;
-            if (masterRef == 0 || ep.Actors.Find(x => x.RefID == 0) != null) displayCheckResult = true;
         }
 
         requestAccepted = returnVal;
-
-        if (displayCheckResult)
-        {
-            string title = targetCOM.DisplayName(COMVariantID);
-            List<string> checkResults = new List<string>();
-            bool rightAlign = true;
-            foreach (var ep in packages)
-            {
-                if (ep.Doer != null && (ep.Doer.RefID == 0 || ep.Doer.RefID == scr_System_CampaignManager.current.CurrentTargetRef)) rightAlign = false;
-                else if (ep.Receiver != null && (ep.Receiver.RefID == 0 || ep.Receiver.RefID == scr_System_CampaignManager.current.CurrentTargetRef)) rightAlign = false;
-                if (ep.Actors.Find(x => x.RefID == 0) != null && ep.Actors.Count < 2) continue; // skip player alone package
-
-                if (scr_System_CampaignManager.current.DebugMode)
-                {
-                    if (ep.Doer != null && ep.Doer.RefID != 0) checkResults.Add("(" + title + ") " + ep.checkResults_doer_short);
-                    if (ep.Receiver != null && ep.Receiver.RefID != 0 && (ep.Doer == null || ep.Doer.RefID != ep.Receiver.RefID)) checkResults.Add("(" + title + ") " + ep.checkResults_receiver_short);
-                }
-                else
-                {
-                    if (ep.Doer != null && ep.Doer.RefID != 0) checkResults.Add("(" + title + ") " + ep.checkResults_doer_short);
-                    if (ep.Receiver != null && ep.Receiver.RefID != 0 && (ep.Doer == null || ep.Doer.RefID != ep.Receiver.RefID)) checkResults.Add("(" + title + ") " + ep.checkResults_receiver_short);
-                }
-
-            }
-            if (rightAlign)
-            {
-                for (int i = 0; i < checkResults.Count; i++) checkResults[i] = "<align=\"right\">" + checkResults[i] + "<\"align>";
-            } //foreach(var res in checkResults) res = "<align=\"right\">" + res + "<\"align>";
-            string finalResults = String.Join("\n", checkResults);
-
-            //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
-        }
-
         return returnVal;
     }
 
@@ -1141,6 +1122,10 @@ public abstract class ActionPackage
         }
 
     }
+    public void ExecutePackageOutsideUpdate(MessageCollect m = null)
+    {
+        ExecutePackage(m);
+    }
 
     public bool LowPriority = false;
 
@@ -1159,8 +1144,9 @@ public abstract class ActionPackage
     /// <summary>
     /// 
     /// </summary>
-    protected virtual void Execution()
+    protected virtual void Execution(MessageCollect m = null)
     {
+        if (m == null) m = this.job.m;
         if (packages == null || packages.Count < 1)
         {
             Debug.LogError("AP " + DisplayName + " execution() called but there is no package inside. Rebuilding.");
@@ -1177,7 +1163,7 @@ public abstract class ActionPackage
 
         foreach (var ep in packages)
         {
-            ep.Execute();
+            ep.Execute(m);
             bool executed = ep.Response >= Memory_Response.Accept;
             executeSuccessful = executed && executeSuccessful;
 
@@ -1193,8 +1179,8 @@ public abstract class ActionPackage
                     {
                         // increase or decrease manager's attitude toward participating actors if their work result is at least neutral
                         foreach (var manager in job.FactionOwner.Managers){
-                            if(ep.Doer != null) manager.Relationships.IncreaseRelationshipWith(ep.DoerRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, ep.m);
-                            if(ep.Receiver != null) manager.Relationships.IncreaseRelationshipWith(ep.ReceiverRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, ep.m);
+                            if(ep.Doer != null) manager.Relationships.IncreaseRelationshipWith(ep.DoerRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, m.exp);
+                            if(ep.Receiver != null) manager.Relationships.IncreaseRelationshipWith(ep.ReceiverRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, m.exp);
                         }
                     }
                     
@@ -1202,8 +1188,8 @@ public abstract class ActionPackage
                     {   // if job has helper, increase mutual trust if the other one put up at least neutral work result
                         // helper is less forgiving on work result
                         // make it possible here to decrease?
-                        ep.Receiver.Relationships.IncreaseRelationshipWith(ep.DoerRef, RelationshipScoreType.Trust, (int)ep.DoerAttitude - 2, ep.m);
-                        ep.Doer.Relationships.IncreaseRelationshipWith(ep.ReceiverRef, RelationshipScoreType.Trust, (int)ep.ReceiverAttitude - 2, ep.m);
+                        ep.Receiver.Relationships.IncreaseRelationshipWith(ep.DoerRef, RelationshipScoreType.Trust, (int)ep.DoerAttitude - 2, m.exp);
+                        ep.Doer.Relationships.IncreaseRelationshipWith(ep.ReceiverRef, RelationshipScoreType.Trust, (int)ep.ReceiverAttitude - 2, m.exp);
                     }
 
 
@@ -1217,7 +1203,7 @@ public abstract class ActionPackage
 
             }
 
-            this.job.LogMessage_Kojo(ep);
+            this.job.LogMessage_Kojo(ep,m);
         }
 
         // Treat receiver as doer will separate all actors and make them individually do task
@@ -1234,15 +1220,15 @@ public abstract class ActionPackage
                 {
                     if (!ep.DoerTargetTag.Contains("NonInteraction") && ep.Doer.canAct && participant.RefID != ep.Doer.RefID && ep.DoerAttitude != Memory_Attitude.None) 
                     {   // normal success increase by 1, crit succes increase by two and decrease bad by 1. reverse apply.
-                        if(ep.DoerAttitude > Memory_Attitude.Neutral || ep.DoerAttitude <= Memory_Attitude.Hate) ep.Doer.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Goodwill, (int)(ep.DoerAttitude - Memory_Attitude.Neutral), ep.m);
-                        if(ep.DoerAttitude < Memory_Attitude.Neutral || ep.DoerAttitude >= Memory_Attitude.Love) ep.Doer.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, (int)(Memory_Attitude.Neutral - ep.DoerAttitude), ep.m);
+                        if(ep.DoerAttitude > Memory_Attitude.Neutral || ep.DoerAttitude <= Memory_Attitude.Hate) ep.Doer.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Goodwill, (int)(ep.DoerAttitude - Memory_Attitude.Neutral), m.exp);
+                        if(ep.DoerAttitude < Memory_Attitude.Neutral || ep.DoerAttitude >= Memory_Attitude.Love) ep.Doer.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, (int)(Memory_Attitude.Neutral - ep.DoerAttitude), m.exp);
                     }
                     // since its treat receiver as doer AP, we can assume there will not be Receiver in any ep (since it will be 1-0 EP creation)
                     // but just in case we change how this works in the future...
                     if (!ep.ReceiverTargetTag.Contains("NonInteraction") && ep.Receiver != null && ep.Receiver.canAct && participant.RefID != ep.Receiver.RefID && ep.ReceiverAttitude != Memory_Attitude.None)
                     {
-                        if (ep.ReceiverAttitude > Memory_Attitude.Neutral || ep.ReceiverAttitude <= Memory_Attitude.Hate) ep.Receiver.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Goodwill, (int)(ep.ReceiverAttitude - Memory_Attitude.Neutral), ep.m);
-                        if (ep.ReceiverAttitude < Memory_Attitude.Neutral || ep.ReceiverAttitude >= Memory_Attitude.Love) ep.Receiver.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, (int)(Memory_Attitude.Neutral - ep.ReceiverAttitude), ep.m);
+                        if (ep.ReceiverAttitude > Memory_Attitude.Neutral || ep.ReceiverAttitude <= Memory_Attitude.Hate) ep.Receiver.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Goodwill, (int)(ep.ReceiverAttitude - Memory_Attitude.Neutral), m.exp);
+                        if (ep.ReceiverAttitude < Memory_Attitude.Neutral || ep.ReceiverAttitude >= Memory_Attitude.Love) ep.Receiver.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, (int)(Memory_Attitude.Neutral - ep.ReceiverAttitude), m.exp);
                     }
                 }
             }

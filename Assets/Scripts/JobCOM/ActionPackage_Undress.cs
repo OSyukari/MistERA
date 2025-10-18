@@ -11,7 +11,6 @@ using System.IO;
 /// <summary>
 /// Since the implementation of start sex is changed, this package probably wont be necessary
 /// </summary>
-[System.Serializable]
 public class ActionPackage_Undress : ActionPackage
 {
     [JsonIgnore] public override bool isTemporaryAP { get { return true; } }
@@ -116,7 +115,7 @@ public class ActionPackage_Undress : ActionPackage
         }
     }
 
-    protected override void Execution()
+    protected override void Execution(MessageCollect m = null)
     {
         //Debug.Log("ActionPackage_Undress Execute for [" + Doer.FirstName + "]");
         var c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);

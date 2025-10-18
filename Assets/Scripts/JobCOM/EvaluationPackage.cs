@@ -33,7 +33,6 @@ public class EvaluationPackage
         return counter;
     }
 
-    public bool skipLogging = false;
     [JsonProperty] private int doerRef = -1;
     private Character_Trainable doerCache = null;
     [JsonIgnore] public Character_Trainable Doer { get { 
@@ -348,28 +347,6 @@ public class EvaluationPackage
     /// <param name="requestRate"></param>
     protected void CalculateRequestRate(bool isThreat = false)
     {
-
-        /*
-        int _requestRate = 100;
-
-        if (doer.RefID == 0) _requestRate = 100;
-        else if (receiver == null || doer == receiver) _requestRate = 100;
-
-        if (targetCOM.requirements.requirement.req_Receivers.requireConscious && doer.Status.isConsciousnessUnconscious) _requestRate = 0;
-
-        if (Package.masterRef >= 0 && doer.RefID != Package.masterRef)
-        {  // meaning master present // calculate willingness mod
-
-        }
-
-        if (receiver != null && doer != receiver)
-        {   // check doer willingness to do on receiver
-
-
-
-        }
-        requestRate = _requestRate;
-            */
 
         int r1, r2;
         Modifiers m1 = new Modifiers(), m2 = new Modifiers();
@@ -816,13 +793,13 @@ public class EvaluationPackage
     /// <summary>
     /// Cleared on Execute() so no need to store any of it. But the property must 
     /// </summary>
-    [JsonProperty] public ExperienceLog m = new ExperienceLog();
+    //[JsonProperty] public ExperienceLog m = new ExperienceLog();
 
-    public void Execute()
+    public void Execute(MessageCollect m)
     {
         //if (receiver == null || doer == receiver) receiver = doer;
         _doerInternal = null; _receiverInternal = null;
-        targetCOM.ApplyCost(this);
+        targetCOM.ApplyCost(this,m);
 
         // clear previous tags, cuz some command have built-in random part selection we dont want both part end up in tags
         if (Doer.Stats.isConsciousnessUnconscious || Doer.Stats.isConsciousnessReduced) foreach (var str in Doer.Stats.Consciousness.Tags) AddModifier(Doer.RefID, str, 0);
@@ -850,7 +827,7 @@ public class EvaluationPackage
             if (targetCOM is COM_Sex)
             {
                 Debug.Log($"sexcom! {targetCOM.ID} is psex ? {(pSex == null ? "null" : "exist")} variantID {(pSex == null ? "null" : pSex.COMVariantID)}");
-                Fuck_2(null, Doer, targetCOM, Receiver == null ? Doer : Receiver, pSex.isStrongPenetration || pSex.targetCOM.variants[pSex.COMVariantID].setForce, response);
+                Fuck_2(m,null, Doer, targetCOM, Receiver == null ? Doer : Receiver, pSex.isStrongPenetration || pSex.targetCOM.variants[pSex.COMVariantID].setForce, response);
             }
             else
             {
@@ -865,13 +842,13 @@ public class EvaluationPackage
                 Doer.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, Receiver == null ? Doer.RefID : Receiver.RefID, targetCOM, VariantID, true, null, Memory_Response.Accept, attitude_doer, Doer.Stats.MemoryLength, p.masterRef);
                 if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, Memory_Response.Accept, attitude_receiver, Receiver.Stats.MemoryLength, p.masterRef);
                 */
-                UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag,  m);
-                UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m);
+                UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag,  m.exp);
+                UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m.exp);
             }
 
             //apply results later cuz results require COM attitude end
-            if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer);
-            if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver);
+            if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer,m.exp);
+            if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver,m.exp);
         }
 
         foreach(var entry in logExps)
@@ -882,7 +859,7 @@ public class EvaluationPackage
                 // first experience loss
                 string s = LocalizeDictionary.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
                 UtilityEX.StringReplace(entry.body.Owner, ref s);
-                this.m.AddMessage(entry.body.Owner.RefID, s);
+                m.exp.AddMessage(entry.body.Owner.RefID, s);
                 
                 var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Refuse, Memory_Attitude.Hate, entry.body.FirstExperienceDesc);
                 var mem = entry.body.Owner.Memory.AddEntry(memInst2, new List<string>() { "important" }, -2, true);
@@ -1036,7 +1013,11 @@ public class EvaluationPackage
     [JsonProperty] Memory_Response response;
     // public bool ExecutedSuccessful { get { return response == Memory_Response.Accept; } }
 
-    [JsonIgnore] public Memory_Response Response { get { return response; } }
+    [JsonIgnore] public Memory_Response Response { get { return response; } set
+        {
+            response = value;
+        }
+    }
 
     public List<string> tooltip = new List<string>();
 
@@ -1045,18 +1026,21 @@ public class EvaluationPackage
         this.response = Memory_Response.Interrupted;
     }
 
-    protected bool TryRespond(bool recalculateRate = false)
+    /// <summary>
+    /// Combination of evaluate and request
+    /// </summary>
+    public void ForceRespond()
+    {
+        TryRespond(true, true);
+    }
+
+    protected bool TryRespond(bool recalculateRate = false, bool forceSuccess = false)
     {
         /// <summary>
         /// Store all check-influencing factors by dictionary %query% string key
         /// </summary>
-        m.Clear();
 
-        if (recalculateRate)
-        {
-            CalculateRequestRate();
-            CalculateResponseRate();
-        }
+        if (recalculateRate) Evaluate();
 
         // unwilling todo
         if (!RollRequest())
@@ -1071,6 +1055,7 @@ public class EvaluationPackage
             else response = Memory_Response.Accept;
         }
 
+        if (forceSuccess) response = Memory_Response.Accept;
 
         if (targetCOM != null && response == Memory_Response.Accept)
         {
@@ -1110,7 +1095,7 @@ public class EvaluationPackage
 
     //// SEX COM STUFF
     ///
-    private void Fuck_2(Job job, Character_Trainable doer, COM com, Character_Trainable receiver, bool isForce, Memory_Response _response)
+    private void Fuck_2(MessageCollect m,Job job, Character_Trainable doer, COM com, Character_Trainable receiver, bool isForce, Memory_Response _response)
     {
         int variantID = com.GetValidVariant(doer.RefID, (receiver == null || receiver.RefID == doer.RefID) ? -1 : receiver.RefID);
 
@@ -1132,9 +1117,9 @@ public class EvaluationPackage
             List<BodyInternal_Instance> doerList = new List<BodyInternal_Instance>();
 
             bool executed = false;
-            executed = executed || Fuck_3(true, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true)
-                                || Fuck_3(true, false, receiver, receiverInternal, doerInternal, com, variantID, isForce, false)
-                                || Fuck_3(false, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true);
+            executed = executed || Fuck_3(m,true, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true)
+                                || Fuck_3(m,true, false, receiver, receiverInternal, doerInternal, com, variantID, isForce, false)
+                                || Fuck_3(m,false, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true);
 
             if (!executed) Debug.LogError("com " + com.displayName + " not executed due to not finding required bodypart");
         }
@@ -1236,7 +1221,7 @@ public class EvaluationPackage
         return value;
     }
 
-    private bool Fuck_3(bool penetrateOnly ,bool isReceiverFucked, Character_Trainable fucker, BodyInternal_Instance internal_fucker, BodyInternal_Instance internal_fucked, COM com, int variantID, bool isForce, bool logMessage)
+    private bool Fuck_3(MessageCollect m,bool penetrateOnly ,bool isReceiverFucked, Character_Trainable fucker, BodyInternal_Instance internal_fucker, BodyInternal_Instance internal_fucked, COM com, int variantID, bool isForce, bool logMessage)
     {
         string fuckerName = "fucker["+(fucker == null ? "null" : fucker.FirstName)+"] " + "internal["+(internal_fucker == null?"null":internal_fucker.DisplayName)+"]";
         string fuckedName = "fucked["+(internal_fucked == null || internal_fucked .Owner == null ? "null" : internal_fucked.Owner.FirstName) +"] " + "internal["+(internal_fucked == null?"null": internal_fucked.DisplayName)+"]";
@@ -1255,7 +1240,7 @@ public class EvaluationPackage
         {
            // Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
             history.Add(internal_fucked);
-            Penetrate(baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, internal_fucker, internal_fucked, isForce, 0);
+            Penetrate(m,baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, internal_fucker, internal_fucked, isForce, 0);
         }
         else
         {
@@ -1264,11 +1249,11 @@ public class EvaluationPackage
             List<string> newlist1 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
             List<string> newlist2 = isReceiverFucked ? DoerSelfTag : ReceiverSelfTag;
 
-            if (internal_fucked != null && internal_fucked.canBeStimulated) Stimulate(isReceiverFucked ? false : true, ref newlist1, targetCOM, VariantID, ref fuckedPleasure, internal_fucked, fucker, baseStrength, internal_fucker);
-            else UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m);
+            if (internal_fucked != null && internal_fucked.canBeStimulated) Stimulate(m,isReceiverFucked ? false : true, ref newlist1, targetCOM, VariantID, ref fuckedPleasure, internal_fucked, fucker, baseStrength, internal_fucker);
+            else UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m.exp);
 
-            if (internal_fucker != null && internal_fucker.canBeStimulated) Stimulate(isReceiverFucked ? true : false, ref newlist2, targetCOM, VariantID, ref fuckerPleasure, internal_fucker, internal_fucked.Owner, baseStrength, internal_fucked);
-            else UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, m);
+            if (internal_fucker != null && internal_fucker.canBeStimulated) Stimulate(m,isReceiverFucked ? true : false, ref newlist2, targetCOM, VariantID, ref fuckerPleasure, internal_fucker, internal_fucked.Owner, baseStrength, internal_fucked);
+            else UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, m.exp);
         }
 
         Memory_Attitude fucked_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + (int)(fuckedPleasure / 5)));
@@ -1291,7 +1276,7 @@ public class EvaluationPackage
         return true;
     }
 
-    private void Penetrate(float baseStrength,  bool isReceiverFucked, ref List<BodyInternal_Instance> history, ref int fuckerPleasure, ref int fuckedPleasure, BodyInternal_Instance fucker, BodyInternal_Instance fucked, bool isForce = false, float fuckerDepthReduction = 0)
+    private void Penetrate(MessageCollect m,float baseStrength,  bool isReceiverFucked, ref List<BodyInternal_Instance> history, ref int fuckerPleasure, ref int fuckedPleasure, BodyInternal_Instance fucker, BodyInternal_Instance fucked, bool isForce = false, float fuckerDepthReduction = 0)
     {
         List<string> s = new List<string>();
 
@@ -1371,8 +1356,8 @@ public class EvaluationPackage
         }
 
 
-        if (fucker.canBeStimulated) Stimulate(isReceiverFucked ? true : false, ref fuckerTags, targetCOM, VariantID, ref fuckerPleasure, fucker, fucked.Owner, fuckerPl, fucked, fuckerPn, expansion);
-        if (fucked.canBeStimulated) Stimulate(isReceiverFucked ? false : true, ref fuckedTags, targetCOM, VariantID, ref fuckedPleasure, fucked, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
+        if (fucker.canBeStimulated) Stimulate(m,isReceiverFucked ? true : false, ref fuckerTags, targetCOM, VariantID, ref fuckerPleasure, fucker, fucked.Owner, fuckerPl, fucked, fuckerPn, expansion);
+        if (fucked.canBeStimulated) Stimulate(m,isReceiverFucked ? false : true, ref fuckedTags, targetCOM, VariantID, ref fuckedPleasure, fucked, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
 
         // ????????????
         
@@ -1391,11 +1376,11 @@ public class EvaluationPackage
                         var fuckedTags2 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
                         fuckedTags.AddRange(directionOut.Base.tags);
                         fuckedTags.Add("penetration");
-                        Stimulate(isReceiverFucked ? false : true, ref fuckedTags2, targetCOM, VariantID, ref fuckedPleasure, directionOut, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
+                        Stimulate(m,isReceiverFucked ? false : true, ref fuckedTags2, targetCOM, VariantID, ref fuckedPleasure, directionOut, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
                     }else if (directionOut.canBePenetrated && fucker.CurrentDepth - fuckerDepthReduction >= fucked.CurrentDepth)
                     {
                         s.Add("Fucker Depth [" + (fucker.CurrentDepth - fuckerDepthReduction) + "] bigger than 1.25 depth [" + fucked.CurrentDepth + "]");
-                        Penetrate(baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, fucker, directionOut, isForce, fucker.CurrentDepth - fuckerDepthReduction - fucked.CurrentDepth);
+                        Penetrate(m,baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, fucker, directionOut, isForce, fucker.CurrentDepth - fuckerDepthReduction - fucked.CurrentDepth);
                     }
                     else
                     {
@@ -1418,12 +1403,12 @@ public class EvaluationPackage
                         var fuckedTags2 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
                         fuckedTags.AddRange(directionIn.Base.tags);
                         fuckedTags.Add("penetration");
-                        Stimulate(isReceiverFucked ? false : true, ref fuckedTags2, targetCOM, VariantID, ref fuckedPleasure, directionIn, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
+                        Stimulate(m,isReceiverFucked ? false : true, ref fuckedTags2, targetCOM, VariantID, ref fuckedPleasure, directionIn, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
                     }
                     else if (directionIn.canBePenetrated && fucker.CurrentDepth - fuckerDepthReduction >= fucked.CurrentDepth)
                     {
                         s.Add("Fucker Depth [" + (fucker.CurrentDepth - fuckerDepthReduction) + "] bigger than 1.25 depth [" + fucked.CurrentDepth + "]");
-                        Penetrate(baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, fucker, directionIn, isForce, fucker.CurrentDepth - fuckerDepthReduction - fucked.CurrentDepth);
+                        Penetrate(m,baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, fucker, directionIn, isForce, fucker.CurrentDepth - fuckerDepthReduction - fucked.CurrentDepth);
                     }
                     else
                     {
@@ -1453,7 +1438,6 @@ public class EvaluationPackage
     public void ReEstablishParent(ActionPackage ap)
     {
         this.p = ap;
-        this.m = new ExperienceLog();
     }
 
 
@@ -1470,7 +1454,7 @@ public class EvaluationPackage
     /// <param name="sourceBody"></param>
     /// <param name="pain"></param>
     /// <param name="expansion"></param>
-    private void Stimulate(bool isDoer, ref List<string> ownerTags, COM com, int variantID, ref int pleasureTotal, BodyInternal_Instance body, Character_Trainable source, float pleasure, BodyInternal_Instance sourceBody = null, float pain = 0, float expansion = 0)
+    private void Stimulate(MessageCollect m,bool isDoer, ref List<string> ownerTags, COM com, int variantID, ref int pleasureTotal, BodyInternal_Instance body, Character_Trainable source, float pleasure, BodyInternal_Instance sourceBody = null, float pain = 0, float expansion = 0)
     {
         string debug = "Stimulating body part [" + body.DisplayName + "] from [" + body.Owner.FirstName + "], error ";
         /* pleasure will factor in sensitivity data
@@ -1501,7 +1485,7 @@ public class EvaluationPackage
         {   // has experience logging
             var newTags = new List<string>(ownerTags);
             newTags.Add("pleasure");    // add duplicate to not contaminate experience gain amount
-            body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pleasure, isDoer, m);
+            body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pleasure, isDoer, m.exp);
         }
 
         if (pain > 0 || expansion > 0)
@@ -1514,7 +1498,7 @@ public class EvaluationPackage
                     var relation = body.Owner.Relationships.FindRelationshipWith(source);
                     if (relation != null && relation.Obedience(null) > RelationshipObedienceType.Normal)
                     {
-                        ModRelationshipResult(relation, RelationshipScoreType.Fear, (int)pain);
+                        ModRelationshipResult(m,relation, RelationshipScoreType.Fear, (int)pain);
                         //this.m.AddRelations(body.Owner.RefID, source.RefID, RelationshipScoreType.Fear, (int) pain);
                         //relation.ModRelationValue(RelationshipScoreType.Fear, pain);
                     }
@@ -1525,13 +1509,13 @@ public class EvaluationPackage
                 else if (!isDoer && !extraReceiverTags.Contains("pain")) this.extraReceiverTags.Add("pain");
             }
             if (expansion > 0) newTags.Add("expansion");
-            body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pain + expansion, isDoer, m);
+            body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pain + expansion, isDoer, m.exp);
         }
     }
 
-    public void ModRelationshipResult(RelationshipManager.Character_Relationship rel, RelationshipScoreType type, int value)
+    public void ModRelationshipResult(MessageCollect m,RelationshipManager.Character_Relationship rel, RelationshipScoreType type, int value)
     {
-        this.m.AddRelations(rel.Owner.RefID, rel.TargetID, type, value);
+        m.exp.AddRelations(rel.Owner.RefID, rel.TargetID, type, value);
         rel.ModRelationValue(type, value);
     }
 

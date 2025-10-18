@@ -128,19 +128,20 @@ public static class CharaReqUtility
         return Validate(q,ref _tooltip, list);
     }
 
-    public static void ApplyCost(CharaReq q, EvaluationPackage m, Character_Trainable c, COM com, bool isDoer)
+    public static void ApplyCost(CharaReq q, EvaluationPackage m, Character_Trainable c, COM com, bool isDoer, MessageCollect msg)
     //public void ApplyCost(ActionPackage m, Character_Trainable c ,COM com)
     {
         if (c == null) return;
+
         //Debug.Log("ApplyCOST for com " + m.targetCOM.DisplayName(m.VariantID) + " on chara " + c.FirstName);
         if (q.cost_EN != 0f)
         {
-            m.m.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
+            msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
             c.Stats.Energy.ModValue(-q.cost_EN);
         }
         if (q.cost_ST != 0f)
         {
-            m.m.AddStats(c.RefID, "stats_derived_extended_stamina", -q.cost_ST);
+            msg.exp.AddStats(c.RefID, "stats_derived_extended_stamina", -q.cost_ST);
             c.Stats.Stamina.ModValue(-q.cost_ST);
         }
 
@@ -149,7 +150,7 @@ public static class CharaReqUtility
         if (tags.Contains("interaction") && (!tags.Contains("service") || isDoer) && !tags.Contains("NonInteraction") && (!tags.Contains("ignored")) && !(c.Stats.isConsciousnessUnconscious))
         {
             // interaction cost
-            m.m.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
+            msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
             c.Stats.Energy.ModValue(c.Stats.Energy_InteractionCost);
         }
     }

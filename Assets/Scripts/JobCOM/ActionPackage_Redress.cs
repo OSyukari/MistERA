@@ -104,7 +104,7 @@ public class ActionPackage_Redress : ActionPackage
         return isValid;
     }
 
-    protected override void Execution()
+    protected override void Execution(MessageCollect m = null)
     {
         Debug.Log("ActionPackage_Redress Execute for [" + Doer.FirstName + "]");
         var c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);

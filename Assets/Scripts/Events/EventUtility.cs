@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 
 public static class EventUtility
@@ -505,7 +506,7 @@ public static class EventUtility
             if (rA) content = $"<align=\"right\">{content}</align>";
             // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
             // but on execute they are consistent
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, rA ? $"<align=\"right\">{content}</align>" : content, "", true));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, rA ? $"<align=\"right\">{content}</align>" : content, "", false));
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
 
@@ -519,7 +520,7 @@ public static class EventUtility
     {
 
 #if UNITY_EDITOR
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {block.question} ");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {block.question} isVisible {owner.isVisible}");
 #endif
 
         if (owner.isVisible)
@@ -590,7 +591,7 @@ public static class EventUtility
 
     public static bool Execute(EventInstance owner, Event.EventEntry.Executor exec)
     {
-        //Debug.Log($"Execute option type {Type}");
+        //Debug.Log($"Execute option type {exec.Type}");
         switch (exec.Type)
         {
             case Event.EventEntry.ExecutionType.FullHPRecovery:
@@ -874,25 +875,175 @@ public static class EventUtility
 
                 return true;
             case Event.EventEntry.ExecutionType.StartCombat:
-                if (exec.arguments.Count < 3)
+                if (exec.arguments.Count >= 3)
                 {
-                    return false;
+                    TeamComposition teamA = new TeamComposition();
+                    if (owner.Targets.ContainsKey("teamA_frontline")) foreach (var i in owner.Targets["teamA_frontline"]) teamA.frontline.Add(i.RefID);
+                    if (owner.Targets.ContainsKey("teamA_backline")) foreach (var i in owner.Targets["teamA_backline"]) teamA.support.Add(i.RefID);
+
+                    TeamComposition teamB = new TeamComposition();
+                    if (owner.Targets.ContainsKey("teamB_frontline")) foreach (var i in owner.Targets["teamB_frontline"]) teamB.frontline.Add(i.RefID);
+                    if (owner.Targets.ContainsKey("teamB_backline")) foreach (var i in owner.Targets["teamB_backline"]) teamB.support.Add(i.RefID);
+
+                    if (teamA.Actors.Count > 0 && teamB.Actors.Count > 0)
+                    {
+                        scr_System_CampaignManager.current.StartCombat(teamA, teamB, exec.arguments[0], exec.arguments[1], exec.arguments[2], owner, owner.Self == scr_System_CampaignManager.current.Player);
+                        return true;
+                    }
                 }
-                
-                TeamComposition teamA = new TeamComposition();
-                if (owner.Targets.ContainsKey("teamA_frontline")) foreach (var i in owner.Targets["teamA_frontline"]) teamA.frontline.Add(i.RefID);
-                if (owner.Targets.ContainsKey("teamA_backline")) foreach (var i in owner.Targets["teamA_backline"]) teamA.support.Add(i.RefID);
-
-                TeamComposition teamB = new TeamComposition();
-                if (owner.Targets.ContainsKey("teamB_frontline")) foreach (var i in owner.Targets["teamB_frontline"]) teamB.frontline.Add(i.RefID);
-                if (owner.Targets.ContainsKey("teamB_backline")) foreach (var i in owner.Targets["teamB_backline"]) teamB.support.Add(i.RefID);
-
-                if (teamA.Actors.Count > 0 && teamB.Actors.Count > 0)
+                return false;
+            case Event.EventEntry.ExecutionType.Undress:
+                if (exec.arguments.Count >= 4)
                 {
-                    scr_System_CampaignManager.current.StartCombat(teamA, teamB, exec.arguments[0], exec.arguments[1], exec.arguments[2], owner, owner.Self == scr_System_CampaignManager.current.Player);
-                    return true;
+                    if (owner.Targets.TryGetValue(exec.arguments[0], out var tgts) 
+                        && Enum.TryParse< BodyEquipLayer>(exec.arguments[1], out var layer) 
+                        && Enum.TryParse< Revealing >( exec.arguments[2], out var reveal)
+                        && bool.TryParse(exec.arguments[3], out var armor))
+                    {
+                        foreach (var c in tgts) c.Undress(layer, reveal, armor);
+                        return true;
+                    }
                 }
-                else return false;
+                return false;
+            case Event.EventEntry.ExecutionType.FlushMessageExpAll:
+                if (true)
+                {
+                    var m1 = owner.message.exp.PrintContent_Messages();
+                    var m2 = owner.message.exp.PrintContent_Stats();
+                    var m3 = owner.message.exp.PrintContent_Relations();
+                    var m4 = owner.message.exp.PrintContent_Exps();
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m1, false));
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m2, false));
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m3, false));
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m4, false));
+                }
+                return true;
+            case Event.EventEntry.ExecutionType.FlushMessageStats:
+                if (true)
+                {
+                    var message = owner.message.exp.PrintContent_Stats();
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, message, false));
+                }
+                return true;
+            case Event.EventEntry.ExecutionType.FlushMessageExp:
+                if (true)
+                {
+                    var message = owner.message.exp.PrintContent_Exps();
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, message, false));
+                }
+                return true;
+            case Event.EventEntry.ExecutionType.FlushMessageRelations:
+                if (true)
+                {
+                    var message = owner.message.exp.PrintContent_Relations();
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, message, false));
+                }
+                return true;
+            case Event.EventEntry.ExecutionType.FlushMessageMessages:
+                if (true)
+                {
+                    var message = owner.message.exp.PrintContent_Messages();
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, message, false));
+                }
+                return true;
+            case Event.EventEntry.ExecutionType.FlushMessageAll:
+                if (true)
+                {
+                    var b1 = String.Join("\n", owner.message.messages_checks);
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, b1, false));
+                    var b2 = String.Join("\n", owner.message.messages_before);
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, b2, false));
+
+                    foreach (var kvp in owner.message.messages_kojo)
+                    {
+                        var vkey = kvp.Key;
+                        var vvalue = kvp.Value;
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(vkey, vvalue, false));
+                    }
+                    var m1 = owner.message.exp.PrintContent_Messages();
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m1, false));
+                    var m2 = owner.message.exp.PrintContent_Stats();
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m2, false));
+                    var m3 = owner.message.exp.PrintContent_Relations();
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m3, false));
+                    var m4 = owner.message.exp.PrintContent_Exps();
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m4, false));
+                    var b4 = String.Join("\n", owner.message.messages_after);
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, b4, false));
+                }
+                return true;
+            case Event.EventEntry.ExecutionType.ExecuteAPOnSingleChara:
+                // randomly match doer and receiver, register doer to receiver characom, and add targetcomID
+
+                owner.message.Clear();
+                if (exec.arguments.Count >= 3)
+                {
+                    if (owner.Targets.TryGetValue(exec.arguments[1], out var victims) && victims.Count == 1 && owner.Targets.TryGetValue(exec.arguments[0], out var doers))
+                    {
+                        if (doers.Count < 1)
+                        {
+                            Debug.LogError($"ExecuteAPOnSingleChara validation failed, doer count < 1");
+                            return false;
+                        }
+                        var interactionJob = victims[0].InteractionJob;
+                        if (interactionJob == null)
+                        {
+                            Debug.LogError($"ExecuteAPOnSingleChara validation failed, victim no interactionjob");
+                            return false;
+                        }
+
+                        var targetCOM = scr_System_Serializer.current.MasterList.COMs.GetByID(exec.arguments[2]);
+                        if (targetCOM == null)
+                        {
+                            Debug.LogError($"ExecuteAPOnSingleChara validation failed, cannot find targetCOM {exec.arguments[2]}");
+                            return false;
+                        }
+
+                        var doerRefs = new List<int>();
+                        foreach (var i in doers) doerRefs.Add(i.RefID);
+
+                        foreach (var c in doers)
+                        {
+                            c.ChangeCurrentJob(interactionJob);
+                            scr_System_CampaignManager.current.MoveCharacterTo(c, interactionJob.ParentRoom);
+                        }
+
+                        var package = targetCOM.MakePackage(interactionJob, doerRefs, new List<int>() { victims[0].RefID }, -1);
+                        var package2 = targetCOM.MakePackage(interactionJob, doerRefs, new List<int>() { }, -1);
+                        ActionPackage target = null;
+                        if (package.Validate()) target = package;
+                        else if (package2.Validate()) target = package2;
+                        else
+                        {
+                            Debug.LogError($"{String.Join("|", doerRefs)} command {targetCOM.DisplayName(0)} on {interactionJob.Owner.CallName} package is invalid\npackage1: {String.Join(" | ", package.tooltip)}\npackage2: {String.Join(" | ", package2.tooltip)}");
+                            return false;
+                        }
+
+                        if (target != null)
+                        {
+
+                            interactionJob.InjectPackageAndExecute(target, owner.message);
+                            Debug.Log($"{String.Join("|", doerRefs)} executed command {targetCOM.DisplayName(0)} on {interactionJob.Owner.CallName}, variant {package.targetCOM.DisplayName(package.COMVariantID)}");
+
+                            interactionJob.Owner.Body.CheckClimax(owner.message);
+
+                            foreach (var c in doers)
+                            {
+                                c.ChangeCurrentJob(null);
+                            }
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"ExecuteAPOnSingleChara validation failed, hasvictim? [{owner.Targets.ContainsKey(exec.arguments[1])}] count [{owner.Targets[exec.arguments[1]].Count}] hasdoer? [{owner.Targets.ContainsKey(exec.arguments[0])}]");
+                    }
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.ExecuteAPOnFurniture:
+                // randomly match doer and receiver, register doer to receiver characom, and add targetcomID
+
+                return false;
             case Event.EventEntry.ExecutionType.StartSexJobInParty:
                 if (exec.arguments.Count >= 8)
                 {

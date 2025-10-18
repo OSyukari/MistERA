@@ -156,6 +156,7 @@ public class scr_menu_question : scr_Menu
             }
 
             if (option.isDefaultCancel) this.tooltip += (this.tooltip.Length > 0 ? "\n":"") + LocalizeDictionary.QueryThenParse("event_isDefaultCancel_tooltip");
+            this.tooltip = UtilityEX.ParseEventEntry(instance, this.tooltip);
         }
 
         public override bool IsButtonValid()

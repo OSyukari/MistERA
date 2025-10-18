@@ -175,7 +175,7 @@ public class Job_Sex_Group : Job
                // active = true;
                 RemoveActor(i.Key);
                 Debug.Log($"OnEventResolve actor {chara.FirstName} exit, reason |{i.Value}|");
-                if (i.Value != "") this.messages_after.Add(i.Value);
+                if (i.Value != "") this.m.messages_after.Add(i.Value);
             }
         }
 
@@ -211,7 +211,7 @@ public class Job_Sex_Group : Job
         //this.packages_previous.Clear();
 
 
-        if (appendAfterMsg != "") this.messages_after.Add(appendAfterMsg);
+        if (appendAfterMsg != "") this.m.messages_after.Add(appendAfterMsg);
 
         Debug.Log($"sex job end, updating? {scr_UpdateHandler.current.Updating}");
         if (!scr_UpdateHandler.current.Updating) this.NotifyDescriptionsOutOfUpdate();
@@ -404,7 +404,7 @@ public class Job_Sex_Group : Job
 
                     if(p.Duration > -1)
                     {
-                        if (replaced && display) this.messages_before.Add(ep_replace);
+                        if (replaced && display) this.m.messages_before.Add(ep_replace);
                         ActionPackage ap = p.Copy();
                         packages_current.Add(ap);
                         if (isPlayerCOM) scr_System_CampaignManager.current.SetDisplayCOM(ap, scr_System_CampaignManager.displayAP_Reason.isPlayerCOM);

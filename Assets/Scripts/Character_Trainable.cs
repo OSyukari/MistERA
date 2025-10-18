@@ -280,7 +280,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     private void PostUpdateTime2()
     {
-        if (!scr_System_CentralControl.current.isSafeMode) this.Body.CheckClimax();
+        if (!scr_System_CentralControl.current.isSafeMode) this.Body.CheckClimax(this.InteractionJob.m);
     }
 
     private void PostUpdateTime3()
@@ -1509,7 +1509,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     // add moodlet, reduce relationship -> mod relationship record are from ep. or can we directly inject into updatehandler ?
                     // directly add explog to updatehandler's log
                     var relationship = randRel.Owner.Relationships;
-                    var logger = scr_System_CampaignManager.current.isCharaVisibleToPlayer(this.RefID) ? scr_UpdateHandler.current.exp : null;
+                    var logger = scr_System_CampaignManager.current.isCharaVisibleToPlayer(this.RefID) ? scr_UpdateHandler.current.Message.exp : null;
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Trust, -30, logger);
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Fear, 30, logger);
 
