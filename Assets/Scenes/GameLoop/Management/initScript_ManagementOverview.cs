@@ -54,7 +54,7 @@ public class initScript_ManagementOverview : MonoBehaviour
 
 
         List<string> s_chara = new List<string>();
-        foreach (KeyValuePair<string, int> kvp in m.GetMaintenanceCost_Chara)
+        foreach (KeyValuePair<string, int> kvp in m.GetMaintenanceCost_Chara())
         {
             s_chara.Add(LocalizeDictionary.QueryThenParse("tag_" + kvp.Key) + " " + kvp.Value.ToString("+0;-#"));
         }

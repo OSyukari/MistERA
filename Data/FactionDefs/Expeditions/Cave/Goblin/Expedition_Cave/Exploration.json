@@ -1,0 +1,56 @@
+{
+        "ExpeditionEntry":{
+        "list":
+        [
+{
+    "ExpeditionID":"expedition_cave_goblin",
+    "HasStartHour":false,
+    "ForceStartHour":0,
+    "DurationHour":12,
+    "isUnique":true, "canExplore":true,
+    "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
+    "EventIDs":[],
+    "keywords":["Utnapishtim"],
+    "FeatureKeywords":["cave", "goblin"],
+    "Events":
+    [
+
+    ]
+}
+        ]
+    },
+    "ExplorationFeatures":
+    {
+        "list":
+        [
+{
+    "requireKeywords": [ "cave", "goblin" ],
+    "featureEventIDs": [
+        "exp_event_goblin_guardpost","exp_event_goblin_netTrap",
+        "exp_event_goblin_patrol","exp_event_cave_goblinTrapHole",
+        "exp_event_goblin_nest"
+    ],
+    "DescriptionText":[
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"expedition_cave_goblin":"哥布林洞窟",
+"expeditionDescription_caveGoblin_1":"$names$感觉背后传来一阵令人毛骨悚然的视线，似乎有什么东西在黑暗中窥伺着队伍"
+
+            },
+            "en-us":
+            {
+
+
+            }
+        }
+    }
+}

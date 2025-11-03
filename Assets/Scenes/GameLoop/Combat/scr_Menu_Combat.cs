@@ -10,6 +10,8 @@ using UnityEngine.UIElements;
 
 public class scr_Menu_Combat : scr_Menu
 {
+
+
     public enum CombatUI
     {
         Overview,
@@ -75,8 +77,7 @@ public class scr_Menu_Combat : scr_Menu
         // backup of currently active actions list
         currentActionsBackup = new List<CombatActionInstance>(currentActiveCombat.ActionsOngoing);
 
-        menu_SkillSelect = scr_System_SceneManager.current.LoadCanvasIntoScene(SkillsTab, m_Canvas.GetComponent<RectTransform>()).GetComponent<menu_SkillSelect>();
-
+        menu_SkillSelect = scr_System_SceneManager.current.LoadCanvasIntoScene(this, SkillsTab).GetComponent<menu_SkillSelect>();
         menu_SkillSelect.InitializeWithArgument(this, c, actionIndex, innerInstance);
     }
     public void OpenEOTSelectMenu(Character_Trainable c, CombatActionInstance innerInstance)
@@ -88,7 +89,7 @@ public class scr_Menu_Combat : scr_Menu
         // backup of currently active actions list
         currentActionsBackup = new List<CombatActionInstance>(currentActiveCombat.ActionsOngoing);
 
-        menu_SkillSelect = scr_System_SceneManager.current.LoadCanvasIntoScene(SkillsTab, m_Canvas.GetComponent<RectTransform>()).GetComponent<menu_SkillSelect>();
+        menu_SkillSelect = scr_System_SceneManager.current.LoadCanvasIntoScene(this, SkillsTab).GetComponent<menu_SkillSelect>();
         menu_SkillSelect.InitializeWithArgument_EOT(this, c, currentActiveCombat.EOTIndex/-10, innerInstance);
     }
 

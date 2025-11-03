@@ -35,20 +35,20 @@ public class Room_Instance: IDisposable, I_Disposable
     }
     public void MoveTo(Character_Trainable c, Room_Instance ri)
     {
-        this.roomCharaRefs.Remove(c.RefID);
         RoomChara.Remove(c);
-        ri.roomCharaRefs.Add(c.RefID);
+        this.roomCharaRefs.Remove(c.RefID);
         ri.RoomChara.Add(c);
+        ri.roomCharaRefs.Add(c.RefID);
     }
     public void AddChara(Character_Trainable c)
     {
-        roomCharaRefs.Add(c.RefID);
         RoomChara.Add(c);
+        roomCharaRefs.Add(c.RefID);
     }
     public void RemoveChara(Character_Trainable c)
     {
-        roomCharaRefs.Remove(c.RefID);
         RoomChara.Remove(c);
+        roomCharaRefs.Remove(c.RefID);
     }
     public void AddChara(int charaRef)
     {

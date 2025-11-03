@@ -52,7 +52,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void OnVMChange(ViewMode vm, bool lockView)
     {
-        if (vm == ViewMode.View_Room) ReadCurrentChar(scr_System_CampaignManager.current.CurrentTargetRef);
+        //if (vm == ViewMode.View_Room) ReadCurrentChar(scr_System_CampaignManager.current.CurrentTargetRef, false);
     }
 
     private void ReadCurrentLogImage(PortraitManager id)
@@ -64,7 +64,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         else CheckCharaChange(id);
     }
 
-    private void ReadCurrentChar(int id)
+    private void ReadCurrentChar(int id, bool foceUpdate)
     {
         // Debug.Log("ReadCurrentChar");
         if (id == -1) return;
@@ -236,7 +236,8 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             picture.gameObject.SetActive(false);
             if(spineRect != null) spineRect.gameObject.SetActive(false);
             return;
-        }else if (currentPortrait != null)
+        }
+        else if (currentPortrait != null)
         {
             
         }

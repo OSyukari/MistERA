@@ -9,6 +9,8 @@ using System.Linq;
 
 public abstract class scr_Menu : MonoBehaviour
 {
+    public MenuHandler ParentCanvas = null;
+    public RectTransform SelfRect { get { return this.GetComponent<RectTransform>(); } }
 
     public List<Image> background_solid;
     public List<Image> background_transparent;
@@ -28,6 +30,7 @@ public abstract class scr_Menu : MonoBehaviour
     protected virtual void OnEnable()
     {
         if (!initialized) Initialize();
+        else ValidateAll();
     }
 
     protected ButtonValidator_AlwaysTrue button_alwaysValid;

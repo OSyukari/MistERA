@@ -238,7 +238,7 @@ public class Map_Instance
     [JsonIgnore] protected Dictionary<int, int> roomFloorRef;
     [JsonIgnore] protected ReadOnlyDictionary<int, int> roomFloorRef_Immutable;
 
-    public void UnregisterRoom(int refID)
+    public Room_Instance UnregisterRoom(int refID)
     {
         roomFloorRef.Remove(refID);
         Room_Instance room = null;
@@ -256,6 +256,7 @@ public class Map_Instance
         roomFloorRef.Remove(refID);
         charaRoomRef.Remove(refID); 
         BuildPath();
+        return room;
     }
 
     public bool IsBothCharaInSameRoom(int a, int b)
@@ -407,9 +408,7 @@ public class Map_Instance
         //JobHandle handle = default;
         //handle = job.ScheduleByRef(roomCharaRef.Keys.Count, 64);
         //handle.Complete();
-#if UNITY_EDITOR
-        if(scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log("UpdateAllRooms complete");
-#endif
+
     }
 
     public Room_Instance GetRoomByRef(int roomRef)
@@ -459,13 +458,23 @@ public class Map_Instance
 
     public void MoveCharaTo(Character_Trainable charaRef, Room_Instance newRoom)
     {
-        if (!charaRoomRef.ContainsKey(charaRef.RefID))
+        var room = FindRoomByChara(charaRef.RefID);
+        if (charaRoomRef.ContainsKey(charaRef.RefID))
         {
-            newRoom.AddChara(charaRef);
+            var oldRoom = FindRoomByChara(charaRef.RefID);
+            if (oldRoom == null)
+            {
+                Debug.LogError("old room null");
+                newRoom.AddChara(charaRef);
+            }
+            else
+            {
+                oldRoom.MoveTo(charaRef, newRoom);
+            }
         }
         else
         {
-            FindRoomByChara(charaRef.RefID).MoveTo(charaRef, newRoom);
+            newRoom.AddChara(charaRef);
         }
         charaRoomRef[charaRef.RefID] = newRoom.RefID;
         dirtyCharaRef.Add(charaRef.RefID);

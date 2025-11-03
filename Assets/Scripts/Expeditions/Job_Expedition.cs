@@ -41,7 +41,10 @@ public class ExpeditionMessageEntry
     public bool NotifyCharaReturn(int refID)
     {
         if (unresolved == null || unresolved.isResolved) return false;
-        if (!Characters.Contains(refID)) Characters.Add(refID);
+        if (!Characters.Contains(refID))
+        {
+            Characters.Add(refID);
+        }
         //Debug.LogError($"NotifyCharaReturn {refID}");
         return true;
     }
@@ -138,7 +141,7 @@ public class Job_Expedition : Job
         base.OnAfterDeserialize();
     }
 
-    [JsonIgnore] public override bool CanBeInterrupted { get { return false; } }
+    [JsonIgnore] public override bool CanBeInterrupted { get { return true; } }
 
     public SortedDictionary<DateTime, List<ExpeditionMessageEntry>> ExpeditionResults = new SortedDictionary<DateTime, List<ExpeditionMessageEntry>>();
 
@@ -169,6 +172,7 @@ public class Job_Expedition : Job
     public override void AddActor(int charaRef, string priorityCOMID = "", string priorityCOMTag = "")
     {
         base.AddActor(charaRef, priorityCOMID, priorityCOMTag);
+
         if (isActive && hasUnresolvedResult)
         {
             foreach (var i in ExpeditionResults)
@@ -251,7 +255,7 @@ public class Job_Expedition : Job
     }
 
     [JsonIgnore]
-    protected List<string> ActorNames
+    public List<string> ActorNames
     {
         get
         {
@@ -262,6 +266,13 @@ public class Job_Expedition : Job
             return _cachedNames;
         }
     }
+    [JsonIgnore]
+    public int ActorCount
+    { get
+        {
+            return this.actorRefID.Count;
+        } }
+
 
     public ExpeditionStatus status = ExpeditionStatus.inactive;
 
@@ -381,21 +392,25 @@ public class Job_Expedition : Job
 
         if (this.status == ExpeditionStatus.returning && this.actorRefID.Count < 1)
         {
-            var charaList = scr_System_CampaignManager.current.CharaInRoom(this.ParentRoom.RefID);
-            var charaCount = charaList.Count;
-            if (charaCount > 0)
+            var charaList = this.FactionOwner_Party.Room.RoomChara;
+            var remaining = new List<int>();
+            if (charaList.Count > 0)
             {
                 foreach (var c in charaList)
                 {
                     if (c.isTemporaryActor && (c.CurrentJob == null || c.CurrentJobRefID == -1) && !c.FactionManager.HasPlayerFaction)
                     {
                        // Debug.Log($"Checking Charalist {c.CallName} is removable");
-                        charaCount--;
+
+                    }
+                    else
+                    {
+                        remaining.Add(c.RefID);
                     }
                 }
             }
 
-            if (charaCount < 1)
+            if (remaining.Count < 1)
             {
                 properExitRefs.Clear();
                 this.ExpeditionActive = FactionOwner_Party.IsRecurring;
@@ -406,6 +421,10 @@ public class Job_Expedition : Job
                 FactionOwner_Party.Inventory.Dump(FactionOwner_Party.OwnerFaction.Inventory, obtained);
                 result.Tooltips.Add($"obtained {String.Join(", ", obtained)}");
                 FactionOwner_Party.ExpeditionEnd();
+            }
+            else
+            {
+                Debug.Log($"Actor remain [{String.Join("|", remaining)}]");
             }
         }
     }
@@ -482,6 +501,19 @@ public class Job_Expedition : Job
 
     public override void RemoveActor(int charaRef)
     {
+
+        if (this.hasUnresolvedResult)
+        {
+            foreach (var i in this.ExpeditionResults)
+            {
+                foreach (var result in i.Value)
+                {
+                    if (result.unresolved == null) continue;
+                    result.NotifyCharaExit(charaRef);
+                }
+            }
+        }
+
         for (int index = packages_previous.Count - 1; index >= 0; index--)
         {
             var p = packages_previous[index];
@@ -494,7 +526,7 @@ public class Job_Expedition : Job
                 }
                 else
                 {
-                    Debug.Log($"EXPEDITION REMOVEACTOR disabling package {p.DisplayName}");
+                    //Debug.Log($"EXPEDITION REMOVEACTOR disabling package {p.DisplayName}");
                 }
                 packages_previous.RemoveAt(index);
             }
@@ -634,7 +666,7 @@ public class Job_Expedition : Job
         {
             
             int exitRef = -1;
-            if (parentPlusFaction.MainExit != null && parentPlusFaction.isMember(c.RefID)) exitRef = parentPlusFaction.MainExit.RefID;
+            if (parentPlusFaction.MainExit != null && parentPlusFaction.isManagedChara(c.RefID)) exitRef = parentPlusFaction.MainExit.RefID;
 
             if (exitRef == -1)
             {
@@ -749,7 +781,7 @@ public class Job_Expedition : Job
             ss += "expedition active, exploring, no event ||";
             return true;
         }
-        else if (FactionOwner_Party.isPrisoner(c))
+        else if (false && FactionOwner_Party.isPrisoner(c))
         {
             ss += "is being imprisoned, cannot explore ||";
             return true;
@@ -761,10 +793,18 @@ public class Job_Expedition : Job
             // 2 - if actor is in room, set COM package
             // make COM package
             var list1 = MakePackages(c);
+            var list2 = MakePackagesJoinable(c);
 
             var pl1 = list1.Count > 0 ? Utility.GetRandomElement(list1) : null;
+            var pl2 = list2.Count > 0 ? Utility.GetRandomElement(list2) : null;
 
-            if (pl1 != null)
+            if (pl2 != null && pl2.JoinAP(c))
+            {
+                // do nothing
+                ss += $"joining existing [{pl2.DescriptionText(c.RefID)}] among [{list2.Count}]";
+                return true;
+            }
+            else if (pl1 != null)
             {
                 AddPackage(new List<ActionPackage>() { pl1 });
                 ss += $"creating package [{pl1.DescriptionText(c.RefID)}] among [{list1.Count}]";
@@ -772,7 +812,7 @@ public class Job_Expedition : Job
             }
             else
             {
-                ss += "actor has not valid command or has completed all commands";
+                ss += "expedition actor has not valid command or has completed all commands";
                 return false;
             }
         }
@@ -789,6 +829,15 @@ public class Job_Expedition : Job
         this.packageCooldown = ExpeditionUtility.Cooldown(Expedition, this.FactionOwner_Party);
         //Debug.Log($"Expedition cooldown set to: {packageCooldown}");
     }
+    public bool HasCooldown()
+    {
+        return packageCooldown > 0;
+    }
+    public bool ShouldRest(Character_Trainable c)
+    {
+        return c.shouldRest;
+    }
+
 
     [JsonProperty] protected int packageCooldown = 0;
 
@@ -809,7 +858,7 @@ public class Job_Expedition : Job
         while (loop < 10)
         {
             loop++;
-            var newAP = ExpeditionUtility.RandEvent(Expedition, this.FactionOwner_Party);
+            var newAP = ExpeditionUtility.RandEvent(c, Expedition, this.FactionOwner_Party);
             if (newAP == null) continue;
             if (!newAP.Actors.Contains(c)) continue;
             newAP.ReEstablishParent(this);// = this;
@@ -821,6 +870,25 @@ public class Job_Expedition : Job
         }
 
         return results;
+    }
+    protected List<ActionPackage> MakePackagesJoinable(Character_Trainable c, bool allowInvalid = false, List<string> debug = null)
+    {
+        List<ActionPackage> pkgs = new List<ActionPackage>();
+
+        foreach (var pkg in this.ActivePackages)
+        {
+            if (!(pkg is ActionPackage_Expedition)) continue;
+            if (pkg.Duration <= 1) continue;
+            if (pkg.isPaused) continue;
+            if (pkg.isTemporaryAP) continue;
+            if (pkg.doer.Contains(c)) continue;
+            //if (pkg.Duration * 2 < pkg.targetCOM.TimeScale) continue;
+
+            ActionPackage_Expedition newpkg = pkg.Copy() as ActionPackage_Expedition;
+            if (!newpkg.canJoinAP(c)) continue;
+            else pkgs.Add(pkg);
+        }
+        return pkgs;
     }
 
     public override string GetJobDescription(int charaRef)

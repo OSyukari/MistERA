@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public class Character_Factions
 {
     // Owner Ref
@@ -121,15 +120,48 @@ public class Character_Factions
         UpdateFactionPriorityList();
     }
 
+    public void FlagForDailyNeed()
+    {
+        if (!this.isPartyLocked)
+        {
+            if (this.CurrentActiveParty != null)
+            {
+                var party = this.CurrentActiveParty.FactionOwnerRoot;
+                if (party != null)
+                {
+                    //Debug.LogError($"Registering daily consumption for {Owner.CallName} on faction {party.FactionDisplayName}");
+                    party.RegisterForResourceConsumption(Owner.RefID);
+                }
+            }
+            else if (this.HomeFactions.Count > 0)
+            {
+                var home = this.HomeFactions[0];
+                if (home != null)
+                {
+                    //Debug.LogError($"Registering daily consumption for {Owner.CallName} on faction {home.FactionDisplayName}");
+                    home.RegisterForResourceConsumption(Owner.RefID);
+                }
+            }
+        }
+    }
+
+    
 
     public void DailyNeedConsumption()
     {
         bool returnValue = true;
-        if (HomeFactions != null && HomeFactions.Count > 0)
+        Manageable home = null;
+        if (!this.isPartyLocked)
+        {
+            if (this.CurrentActiveParty != null) home = this.CurrentActiveParty.FactionOwnerRoot;
+            else if (this.HomeFactions.Count > 0) home = this.HomeFactions[0];
+        }
+
+        if (home != null && home.isPlayerFaction)
         {
             foreach(var v in Owner.Stats.Needs)
             {
-                var v2 = HomeFactions[0].QueryDailyCharaMaintenanceResult(v.consumeItemByTag);
+                var v2 = home.QueryDailyCharaMaintenanceResult(v.consumeItemByTag);
                 if (!v2 && v.statusDebuffID != "")
                 {   // add status debuff
                     Owner.Stats.AddOrModStatus(v.statusDebuffID, 1441, 1441);
@@ -137,7 +169,6 @@ public class Character_Factions
                 }
                 returnValue = v2 && returnValue;
             }
-
 
             // increase relationship
             foreach (var manager in HomeFactions[0].Managers)
@@ -153,7 +184,6 @@ public class Character_Factions
                     HomeFactions[0].DailyReport.AddManageReport(Owner.FirstName+"'s trust toward "+manager.FirstName+" has decreased by 1", true);
                 }
             }
-
         }
         // else, no home faction, dont check it.
     }
@@ -295,12 +325,7 @@ public class Character_Factions
         }
         else
         {
-            if (this.CurrentParty != null && this.CurrentParty != party)
-            {
-                Debug.LogError($"Error AddToParty, [{Owner.FirstName}] already assigned to [{this.CurrentParty.FullFactionDisplayName}], cannot join [{party.FullFactionDisplayName}]");
-                return false;
-            }
-            else this.CurrentParty = party;
+            this.CurrentParty = party;
         }
 
         party.AddToFaction(Owner, status, true);
@@ -371,7 +396,7 @@ public class Character_Factions
         {
             var p = this.CurrentLockedParty;
             this.CurrentLockedParty = null;
-            p.RemoveFromFaction(Owner);
+            if (p != null) p.RemoveFromFaction(Owner);
         }
         if (this.CurrentParty == party || forceRemove) this.CurrentParty = null;
        

@@ -3,7 +3,7 @@
         "list": [
             {
                 "eventID": "exp_event_goblinCave_scoutEncounter",
-                "eventString_Ongoing": "exp_event_goblinCave_scoutEncounter_ongoing",
+                "eventString_Ongoing": "",
                 "DurationMinutes": 20,
                 "tags": [
                     "goblin",
@@ -11,32 +11,32 @@
                     "hazard"
                 ],
                 "baseWeight": 5,
-                "possibleResults": [
-                    {
-                        "baseWeight": 4,
-                        "resultText": "exp_event_goblinCave_scoutEncounter_result_escaped"
-                    },
-                    {
-                        "baseWeight": 2,
-                        "resultText": "exp_event_goblinCave_scoutEncounter_result_stoleEquip"
-                    },
-                    {
-                        "baseWeight": 3,
-                        "resultText": "exp_event_goblinCave_scoutEncounter_result_stoleSupplies"
-                    },
-                    {
-                        "baseWeight": 1,
-                        "resultText": "exp_event_goblinCave_scoutEncounter_result_poisonedSupplies"
-                    },
-                    {
-                        "baseWeight": 1,
-                        "resultText": "exp_event_goblinCave_scoutEncounter_result_kidnapped"
-                    },
-                    {
-                        "baseWeight": 2,
-                        "resultText": "exp_event_goblinCave_scoutEncounter_result_leftGift"
-                    }
-                ]
+"possibleResults": [
+    {
+        "baseWeight": 4,
+        "resultText": "exp_event_goblinCave_scoutEncounter_result_escaped"
+    },
+    {
+        "baseWeight": 2,
+        "resultText": "exp_event_goblinCave_scoutEncounter_result_stoleEquip"
+    },
+    {
+        "baseWeight": 3,
+        "resultText": "exp_event_goblinCave_scoutEncounter_result_stoleSupplies"
+    },
+    {
+        "baseWeight": 1,
+        "resultText": "exp_event_goblinCave_scoutEncounter_result_poisonedSupplies"
+    },
+    {
+        "baseWeight": 1,
+        "resultText": "exp_event_goblinCave_scoutEncounter_result_kidnapped"
+    },
+    {
+        "baseWeight": 2,
+        "resultText": "exp_event_goblinCave_scoutEncounter_result_leftGift"
+    }
+]
             }
         ]
     },
@@ -44,13 +44,11 @@
         "Entries": {
             "zh-cn": {
                 "exp_event_goblinCave_scoutEncounter": "哥布林斥候",
-                "exp_event_goblinCave_scoutEncounter_ongoing": "$names$感觉背后传来一阵令人毛骨悚然的视线，似乎有什么东西在黑暗中窥伺着队伍。",
                 "exp_event_goblinCave_scoutEncounter_result_escaped": "队伍发现了鬼鬼祟祟的哥布林斥候，但它在被抓住前就迅速溜进了阴影中。",
                 "exp_event_goblinCave_scoutEncounter_result_stoleEquip": "一个狡猾的哥布林斥候悄无声息地接近了$targetName$，趁其不备夺走了一件装备！",
                 "exp_event_goblinCave_scoutEncounter_result_stoleSupplies": "队伍在稍作休整后发现，一部分补给品不翼而飞，显然是被潜行的哥布林斥候偷走了。",
                 "exp_event_goblinCave_scoutEncounter_result_poisonedSupplies": "哥布林斥候在队伍的水袋里下了某种散发着腥甜气味的黏液，似乎是一种烈性春药。",
                 "exp_event_goblinCave_scoutEncounter_result_kidnapped": "一阵骚乱过后，队伍惊恐地发现$targetName$不见了！只在原地留下了哥布林杂乱的脚印和挣扎的痕迹。",
-                "exp_event_goblinCave_scoutEncounter_result_leftGift": "哥布林斥候消失了，但在队伍的必经之路上留下了一个用污秽液体涂抹过的、形状怪异的木雕，散发着浓烈的雄性气味。",
 
                 "exp_event_goblinCave_scoutEncounter_result_leftGift1":"队伍的照明设备突然熄灭，在伸手不见五指的黑暗中听到了可疑的脚步声。",
                 "exp_event_goblinCave_scoutEncounter_result_leftGift2":"休息时，饮水被悄悄混入了哥布林的体液，喝下后感到一阵恶心与晕眩。",

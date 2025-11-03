@@ -26,7 +26,8 @@
                 "enemy":[{"parameters":["exists"]}]
             },
             "option": "player branch show option",
-            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
+            "Results": [    { "Type":"FullRecovery" , "arguments":["enemy"]},
+                            { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
         },
         {   
             "option": "silent fail branch",
@@ -115,7 +116,6 @@
     {   
         "option": "silent branch event, this shouldnt be displayed",
         "Results": [ 
-            { "Type":"FullRecovery" , "arguments":["enemy"]},
             { "Type":"StartCombat" , "arguments":["exp_event_combat_victory","exp_event_combat_draw","exp_event_combat_defeat"]} ] 
     }
     ]
@@ -153,7 +153,7 @@
     "options":[
         {   
             "option": "激烈反抗",
-
+            "tooltip":"$trainer.name$ HP-1，然后开始战斗",
             "Results": [ 
                 { "Type":"ModStatEXValue", "arguments":["trainer","stats_derived_extended_hp","-1"]},
                 { "Type":"JumpToLabel", "arguments":["","br_combat_combat"]} ] 
@@ -172,10 +172,9 @@
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_event_skip",
     "line": "安抚失败的$trainer.name$被穴熊按在了身下强奸",
+    "isLast":true,
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
-                { "Type":"FullRecovery" , "arguments":["enemy"]}, 
-                { "Type":"StartSexJobInParty" , "arguments":["enemy","trainer","trainer","120","","","","event_caveBearEncounter_ev09_text"]},
-                { "Type":"EventEnd"}]
+                { "Type":"StartSexJobInParty" , "arguments":["enemy","trainer","trainer","120","","","","event_caveBearEncounter_ev09_text"]}]
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",

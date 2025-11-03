@@ -102,7 +102,7 @@ public class CombatInstance
 
     public bool forcePlayerInstance = false;
 
-    Character_Trainable dummyRef;
+   // Character_Trainable dummyRef;
 
     public int EOTIndex = -200;
 
@@ -129,7 +129,7 @@ public class CombatInstance
         this.allowRetreat = allowRetreat;
         this.teamA = teamA;
         this.teamB = teamB;
-        dummyRef = scr_System_CampaignManager.current.Combat.Dummy;
+       // dummyRef = scr_System_CampaignManager.current.Combat.Dummy;
         foreach (var i in teamA.Actors) 
         { 
             if (!ActorStats.TryAdd(i.RefID, i.Stats.MakeCombatHandler())) Debug.LogError($"CombatInstance Failed to add actorRef {i} for teamA, possibly duplcate"); 
@@ -945,12 +945,12 @@ public class CombatInstance
         {
             if (!Stats.CanPush && v.Actions.Count > 2)
             {
-                Debug.Log($"GetValidPreset {v.ID} failed 0th validation, cannot push due to prev round pushed");
+                //Debug.Log($"GetValidPreset {v.ID} failed 0th validation, cannot push due to prev round pushed");
                 continue;
             }
             if (!v.ShouldSelect(distance))
             {
-                Debug.Log($"GetValidPreset {v.ID} failed 1st validation");
+               // Debug.Log($"GetValidPreset {v.ID} failed 1st validation");
                 continue;
             }
 

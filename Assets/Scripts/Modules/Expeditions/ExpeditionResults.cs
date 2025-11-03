@@ -18,8 +18,13 @@ public class ExpResults
     /// </summary>
     public List<Result_Faction_Party> results_factions = new List<Result_Faction_Party>();
 
+    public bool logCharaMemory = true;
+
     public string eventID = "";
     public string eventLabel = "";
+    public string eventAppendStringKey = "";
+    public string eventAppendString = "";
+    //public bool noJobLogging = false;
     public bool runImmediate = false;
 
     /// <summary>

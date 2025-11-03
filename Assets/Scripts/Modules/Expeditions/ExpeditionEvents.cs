@@ -26,6 +26,10 @@ public class Index_ExpEvents : I_IndexHasID, I_IndexMergeable
         {
             // if (o.isValid)
             ID_Dictionary.TryAdd(o.eventID, o);
+            foreach(var result in o.possibleResults)
+            {
+                result.teamRequirement.Read(o.teamRequirement);
+            }
         }
     }
 }
@@ -43,7 +47,7 @@ public class ExpEvents
     public class TeamReq
     {
         public int minTeamCount = 1;
-        public int maxTeamCount = 99;
+        public int maxTeamCount = -1;
 
         public bool allowMIA = true;
 
@@ -56,6 +60,15 @@ public class ExpEvents
 
         public CharaReq charaReq = new CharaReq();
         //public ItemRequirement itemReq = new ItemRequirement();
+
+        public void Read(TeamReq parent)
+        {
+            this.allowMIA = this.allowMIA && parent.allowMIA;
+            this.allowVisitor = this.allowVisitor && parent.allowVisitor;
+            this.allowHidden = this.allowHidden || parent.allowHidden;
+            this.allowPrisoner = this.allowPrisoner || parent.allowPrisoner;
+            this.requireCombat = this.requireCombat && parent.requireCombat;
+        }
     }
     public class WeightModifier
     {
@@ -101,7 +114,8 @@ public class ExpEvents
     {
         get
         {
-            return LocalizeDictionary.QueryThenParse(eventString_Ongoing);
+            if (eventString_Ongoing.Length < 1) return "";
+            else return LocalizeDictionary.QueryThenParse(eventString_Ongoing);
         }
     }
     public virtual bool requirePlayerInteraction { get { return false; } }

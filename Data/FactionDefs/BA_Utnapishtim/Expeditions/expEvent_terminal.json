@@ -49,8 +49,8 @@
             [
                 {
                     "factionTemplate":"AlwaysHostile",
-                    "encounterTemplate":
-                    {
+                    "encounterTemplates":
+                    [ {
                         "encounterWeights":{
                             "nameless_guardian_encounter_1a":5,
                             "nameless_guardian_encounter_1b":3,
@@ -58,7 +58,7 @@
                         },
                         "frontlineKeys":["enemy","teamB_frontline"],
                         "supportKeys":["enemy","teamB_backline"]
-                    },
+                    }],
                     "factionInventory":
                     [
                         { "itemID":"consumable_fruit_tomato", "itemNameOverwrite":"", "itemCount":2, "itemCountOverride":false  },

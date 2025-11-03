@@ -51,7 +51,7 @@ public class scr_panel_TargetInfo : scr_Menu
 
     private void OnViewChange(ViewMode v, bool b) { Refresh(); }
 
-    private void ReadCurrentChar(int id)
+    private void ReadCurrentChar(int id, bool foceUpdate)
     {
         Refresh();
     }

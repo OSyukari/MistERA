@@ -1,0 +1,112 @@
+{
+    "ExplorationEvents": {
+        "list": [
+{
+    "eventID": "exp_event_goblin_nest",
+    "eventString_Ongoing": "exp_event_goblin_nest_Ongoing",
+    "DurationMinutes": 25,
+    "tags": [
+        "goblin"
+    ],
+    "baseWeight": 6,
+    "teamRequirement": {
+        "minTeamCount": 1,
+        "maxTeamCount": 99,
+        "charaReq": { "cost_EN": 6, "cost_ST": 8 }
+    },
+    "possibleResults": [
+{
+    "baseWeight": 5,
+    "resultText": "$names$小心翼翼地从阴影中潜行，成功绕过了哥布林巢穴"
+},
+{
+    "baseWeight": 4,
+    "resultText": "$names$对巢穴内的哥布林们展开伏击",
+    "eventID":"event_caveGoblinEncounter", "eventLabel":"br_combat_ambush_validator", "overrideTargetGeneration":true,
+    "TargetGenerations":
+    [ {
+        "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
+        "encounterTemplates":
+        [{
+            "encounterWeights":{ "goblin_patrol_1":1 },
+            "frontlineKeys":["enemy","teamB_frontline"], "supportKeys":["enemy","teamB_backline"]
+        }]
+    } ]
+},
+{
+    "baseWeight": 3,
+    "resultText": "$names$的行踪被哥布林发现了！",
+    "eventID":"event_caveGoblinEncounter", "eventLabel":"", "overrideTargetGeneration":true,
+    "TargetGenerations":
+    [ {
+        "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
+        "encounterTemplates":
+        [{
+            "encounterWeights":{ "goblin_patrol_1":1 },
+            "frontlineKeys":["enemy","teamB_frontline"], "supportKeys":["enemy","teamB_backline"]
+        }]
+    } ]
+},
+{
+    "baseWeight": 2,
+    "resultText": "$names$只在巢穴内找到了人类的残肢"
+},
+{
+    "baseWeight": 2,
+    "resultText": "$names$潜入巢穴，找到了些有用的道具。",
+    "results_factions":[
+        {
+            "entry_results":{
+                "randomLoot":{
+                    "weightedLoots":[
+{ "weight":1, "itemEntry":{ "itemID": "consumable_emergency_ration", "itemNameOverwrite": "", "itemCount": 1, "itemCountOverride": false } }
+                    ]
+                }
+            }
+        }
+    ]
+},
+{
+    "baseWeight": 1,
+    "resultText": "$names$潜入巢穴，发现了一名被关押的女冒险者",
+    "eventID":"event_goblin_gangRape_rescue", "eventLabel":"", "overrideTargetGeneration":true,
+    "TargetGenerations":
+    [
+        {
+            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
+            "charaTemplate":[ { "baseID":"BD2_random_3star_female", "refKeys":["victims"], "status":"Prisoner" } ]
+        }
+    ]
+},
+{
+    "baseWeight": 1,
+    "resultText": "$names$潜入巢穴，发现一群肮脏矮小的哥布林正在轮奸一名被俘的女性",
+    "eventID":"event_goblin_gangRape", "eventLabel":"", "overrideTargetGeneration":true,
+    "TargetGenerations":
+    [
+        {
+            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
+            "encounterTemplates": [
+                {
+                    "encounterWeights": { "goblin_patrol_1": 1 },
+                    "frontlineKeys": [ "enemy", "teamB_frontline" ],
+                    "supportKeys": [ "enemy", "teamB_backline" ]
+                }
+            ],
+            "charaTemplate":[ { "baseID":"BD2_random_3star_female", "refKeys":["victims"], "status":"Prisoner" } ]
+        }
+    ]
+}
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_goblin_nest": "哥布林巢穴",
+                "exp_event_goblin_nest_Ongoing":"$names$在洞窟深处发现了一处散发着恶臭的哥布林巢穴。"
+            }
+        }
+    }
+}

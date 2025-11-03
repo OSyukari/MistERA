@@ -1,0 +1,56 @@
+{
+    "ExpeditionEntry":{
+        "list":
+        [
+{
+    "ExpeditionID":"expedition_cave_goblin_captive",
+    "HasStartHour":false,
+    "removeOnComplete":true, 
+    "rescueEventID":"expedition_cave_goblin_captive_rescue",
+    "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
+    "EventRate":0.10,
+    "MaxExplorationRate":1200,
+    "DescriptionText":[],
+    "EventIDs":[],
+    "FeatureKeywords":["captive", "goblin"],
+    "keywords":["Utnapishtim"],
+    "Events":
+    [
+
+    ],
+    "weightModifiers":[ { "keywords":["captive"], "weightMult":2 } ]
+}
+        ]
+    },
+    "ExplorationFeatures":
+    {
+        "list":
+        [
+{
+    "requireKeywords": [ "captive", "goblin" ],
+    "featureEventIDs": [
+        "exp_event_caveGoblinCaptive"
+    ],
+    "DescriptionText":[
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"expedition_cave_goblin_captive":"哥布林洞窟",
+"expedition_cave_goblin_captive_rescue":"救援行动：哥布林洞窟"
+            },
+            "en-us":
+            {
+
+
+            }
+        }
+    }
+}

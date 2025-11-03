@@ -43,7 +43,13 @@ public interface I_IsJobGiver
     [JsonIgnore] public bool isPlayerRelatedFaction { get; }
     [JsonIgnore]
     public bool isMealHour { get ;  }
-
+    /// <summary>
+    /// Return true if character is manager/member/hidden. <br/>
+    /// Require strict ordering in membershipstatus
+    /// </summary>
+    /// <param name="charaRef"></param>
+    /// <returns></returns>
+    public bool isMember(int charaRef);
     [JsonIgnore] public Manageable FactionOwnerRoot { get; }
 }
 
@@ -411,6 +417,7 @@ public class Manageable_Party : I_IsJobGiver
 
         if (sendEvent && guestStatus == Manageable_GuestStatus.Prisoner)
         {
+            //Debug.Log($"{c.CallName} is being captured!");
             var ev = new EventInstance(c, "OnCharaImprison", "");
             ev.AppendStrings.Add("partyName", new List<string>() { this.FactionDisplayName });
             ev.AppendStrings.Add("factionName", new List<string>() { this.OwnerFaction.FactionDisplayName });
@@ -422,6 +429,8 @@ public class Manageable_Party : I_IsJobGiver
         InternalUpdate();
     }
 
+    [JsonProperty] protected bool _remove_dirty = false;
+    protected bool DeletingBlocker = false;
     public void RemoveFromFaction(Character_Trainable c)
     {
         if (c == null) return;
@@ -430,29 +439,45 @@ public class Manageable_Party : I_IsJobGiver
         c.FactionManager.RemovePartyTracker(this);
         InternalUpdate();
 
-        if (!isPlayerFaction)
+        if (DeletingBlocker) return;
+        CleanupDetection();
+    }
+
+    public bool CleanupDetection()
+    {
+        if (isPlayerFaction) return false;
+
+        bool delete = true;
+        foreach (var i in ManagedRefs)
         {
-            bool delete = true;
-            foreach (var actor in this.ManagedRefs)
+            var cc = scr_System_CampaignManager.current.FindInstanceByID(i);
+            if (cc == null) continue;   // chara already deleted
+            if (!cc.isTemporaryActor || cc.FactionManager.HasPlayerFaction || cc.CurrentJob != null)
             {
-                var cc = scr_System_CampaignManager.current.FindInstanceByID(actor);
-                if (!cc.isTemporaryActor || cc.FactionManager.HasPlayerFaction || cc.CurrentJob != null)
-                {
-                    delete = false;
-                    break;
-                }
-            }
-
-            if (delete)
-            {
-                Debug.Log($"Cleanup: Removing Subfaction {this.FullFactionDisplayName}");
-
-                scr_System_CampaignManager.current.Unregister(Job);
-                scr_System_CampaignManager.current.Map.UnregisterRoom(MainExit.RefID);
-                Inventory.Destroy();
-                this.OwnerFaction.RemoveSubfaction(this);
+                delete = false;
+                break;
             }
         }
+
+        if (delete)
+        {
+            DeletingBlocker = true;
+            Debug.Log($"Cleanup: Removing Subfaction {this.FullFactionDisplayName}");
+            for (int i = this.ManagedRefs.Count - 1; i >= 0; i--)
+            {
+                var cc = scr_System_CampaignManager.current.FindInstanceByID(this.ManagedRefs[i]);
+                if (cc == null) continue;
+                this.ManagedRefs.RemoveAt(i);
+                scr_System_CampaignManager.current.Unregister(cc);
+            }
+            scr_System_CampaignManager.current.Unregister(Job);
+            scr_System_CampaignManager.current.UnregisterRoom(MainExit.RefID);
+            Inventory.Destroy();
+            this.OwnerFaction.RemoveSubfaction(this);
+            return true;
+        }
+        else return false;
+        
     }
 
     public List<Job_Furniture> GetValidJobs_Meal(Character_Trainable chara, int currentHour, List<string> s = null)
@@ -675,18 +700,11 @@ public class Manageable_Party : I_IsJobGiver
     /// <param name="kidnapLoc"></param>
     public void NotifyCharaKidnapped(Character_Trainable c, Manageable_Party kidnapLoc, bool messageLoggin = true)
     {
-        if (messageLoggin || kidnapLoc != this) this.Job.AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_notifyCharaMIA").Replace("$location$", kidnapLoc.FactionDisplayName), new List<string>(), new List<Character_Trainable>() { c});
-        if (this.Job.hasUnresolvedResult)
+        if (kidnapLoc != this)
         {
-            foreach (var i in this.Job.ExpeditionResults)
-            {
-                foreach (var result in i.Value)
-                {
-                    if (result.unresolved == null) continue;
-                    result.NotifyCharaExit(c.RefID);
-                }
-            }
+            if (messageLoggin) this.Job.AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_notifyCharaMIA").Replace("$location$", kidnapLoc.FactionDisplayName), new List<string>(), new List<Character_Trainable>() { c });
         }
+
         this.Job.RemoveActor(c.RefID);
         InternalUpdate();
         //Debug.Log($"NotifyCharaKidnapped {c.CallName}, status {this.Job.status}, actors[{String.Join("|", this.Job.actorRefID)}], actorInRoom[{String.Join("|", scr_System_CampaignManager.current.CharaInRoom(MainExit.RefID))}] ");
@@ -708,9 +726,54 @@ public class Manageable_Party : I_IsJobGiver
     }
     public bool isPrisoner(Character_Trainable c)
     {
-        if (charaGuestStatus.TryGetValue(c.RefID, out var status))
+        return isPrisoner(c.RefID);
+    }
+    public bool isPrisoner(int c)
+    {
+        if (charaGuestStatus.TryGetValue(c, out var status))
         {
             return status == Manageable_GuestStatus.Prisoner;
+        }
+        else return false;
+    }
+
+    public RelationshipType GetRelationshipBetween(int self, int target, out bool isA)
+    {
+        isA = false;
+        if (!ManagedRefs.Contains(self) || !ManagedRefs.Contains(target))
+        {
+            if (FactionOwnerRoot.ID == "AlwaysHostile")
+            {
+                return FactionOwnerRoot.Relationship_Enemy;
+            }
+            else
+            {
+
+                return null;
+            }
+        }
+
+        if (isPrisoner(self) && !isPrisoner(target))
+        {
+            return FactionOwnerRoot.Relationship_Prisoner;
+        }
+        else if (!isPrisoner(self) && isPrisoner(target))
+        {
+            isA = true;
+            return FactionOwnerRoot.Relationship_Prisoner;
+        }
+        else return FactionOwnerRoot.GetRelationshipBetween(self, target, out isA);
+    }
+
+    public bool isMember(Character_Trainable c)
+    {
+        return isMember(c.RefID);
+    }
+    public bool isMember(int refID)
+    {
+        if (charaGuestStatus.TryGetValue(refID, out var status))
+        {
+            return status < Manageable_GuestStatus.Visitor;
         }
         else return false;
     }
@@ -1000,7 +1063,6 @@ public class Manageable_Party : I_IsJobGiver
         }
 
         this.Job.UpdateStatus(currentHour, currentMinute);
-
        // string s = "Faction [" + ID + "] manage at hour [" + currentHour + "]";
        // s += "\n" + Inventory.PrintContent();// + " _ " + String.Join(" ", Inventory.PrintTracker());
     }

@@ -48,6 +48,68 @@ public class scr_System_SceneManager : MonoBehaviour
     List<RectTransform> canvasList;
     RectTransform targetCanvas;
 
+
+    /// <summary>
+    /// This will also copy canvas anchor
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="prefab"></param>
+    /// <returns></returns>
+    public RectTransform LoadCanvasIntoScene(scr_Menu from, scr_Menu prefab)
+    {
+        var targetPrefab = Instantiate(prefab);
+        targetCanvas = targetPrefab.SelfRect;
+
+        var scr_menu = targetCanvas.GetComponent<scr_Menu>();
+
+        var selfRect = from.ParentCanvas != null ? from.ParentCanvas.PanelAnchor : from.m_Canvas.GetComponent<RectTransform>();
+        if (from.ParentCanvas == null)
+        {
+            targetCanvas.anchorMax = new Vector2(0.5f, 0.5f);
+            targetCanvas.anchorMin = new Vector2(0.5f, 0.5f);
+            targetCanvas.anchoredPosition = new Vector2(0f, 0f);
+        }
+        targetCanvas.SetParent(selfRect, false);
+        targetCanvas.sizeDelta = new Vector2(selfRect.sizeDelta.x, selfRect.sizeDelta.y);
+        //Debug.Log($"parent sizedelta {selfRect.sizeDelta.x} {selfRect.sizeDelta.y}");
+
+        if (scr_menu != null) scr_menu.ParentCanvas = from.ParentCanvas;
+
+        canvasList.Add(targetCanvas);
+        return targetCanvas;
+    }
+    /// <summary>
+    /// This will also copy canvas anchor
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="prefab"></param>
+    /// <returns></returns>
+    public RectTransform LoadCanvasIntoScene(scr_Menu from, RectTransform prefab)
+    {
+
+        targetCanvas = Instantiate(prefab) as RectTransform;
+
+
+
+        var scr_menu = targetCanvas.GetComponent<scr_Menu>();
+
+        var selfRect = from.ParentCanvas != null ? from.ParentCanvas.PanelAnchor : from.m_Canvas.GetComponent<RectTransform>();
+        if (from.ParentCanvas == null)
+        {
+            targetCanvas.anchorMax = new Vector2(0.5f, 0.5f);
+            targetCanvas.anchorMin = new Vector2(0.5f, 0.5f);
+            targetCanvas.anchoredPosition = new Vector2(0f, 0f);
+        }
+        targetCanvas.SetParent(selfRect, false);
+        targetCanvas.sizeDelta = new Vector2(selfRect.sizeDelta.x, selfRect.sizeDelta.y);
+       // Debug.Log($"parent sizedelta {selfRect.sizeDelta.x} {selfRect.sizeDelta.y}");
+        
+        if (scr_menu != null) scr_menu.ParentCanvas = from.ParentCanvas;
+        
+        canvasList.Add(targetCanvas);
+        return targetCanvas;
+    }
+
     public RectTransform LoadCanvasIntoScene(RectTransform prefab, RectTransform parent = null)
     {
         targetCanvas = Instantiate(prefab) as RectTransform;
@@ -56,13 +118,10 @@ public class scr_System_SceneManager : MonoBehaviour
         targetCanvas.anchorMin = new Vector2(0.5f, 0.5f);
         targetCanvas.anchoredPosition = new Vector2(0f, 0f);
 
-        //targetCanvas.sca
-
-        Transform target = parent;
-        if (target != null)
+        if (parent != null)
         {
-            if (target.parent != null && target.parent != target) target = target.parent;
-            targetCanvas.SetParent(target.transform, false);
+            //if (target.parent != null && target.parent != target) target = target.parent;
+            targetCanvas.SetParent(parent, false);
             //targetCanvas.pixel
             targetCanvas.sizeDelta = new Vector2(parent.sizeDelta.x, parent.sizeDelta.y);
         }

@@ -80,7 +80,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         OnPostUpdateTime3();
     }
 
-    private void ReadCurrentChar(int i)
+    private void ReadCurrentChar(int i, bool foceUpdate)
     {
         if (nameBox.gameObject.activeInHierarchy && !isCombatBox)
         {

@@ -7,48 +7,80 @@ using System.Linq;
 
 public static class TeamReqUtility
 {
-    public static bool Validate(ExpEvents.TeamReq q, Manageable_Party p, out List<Character_Trainable> team, List<Character_Trainable> injectActorList = null)
+    public static bool Validate(List<Character_Trainable> list, ExpEvents.TeamReq q, Manageable_Party p, out List<string> tooltip)
     {
-        var tooltip = new List<string>();
-        team = new List<Character_Trainable>();
+        tooltip = new List<string>();
+        var team = new List<Character_Trainable>();
         if (q.debug_teamNameMatch != "")
         {
-            //Debug.Log($"Validate TeamReqUtility, factionName[{p.FactionDisplayName}] debugTeamName[{q.debug_teamNameMatch}] contains? {p.FactionDisplayName.Contains(q.debug_teamNameMatch)}");
+            tooltip.Add($"Validate TeamReqUtility, factionName[{p.FactionDisplayName}] debugTeamName[{q.debug_teamNameMatch}] contains? {p.FactionDisplayName.Contains(q.debug_teamNameMatch)}");
             if (!p.FactionDisplayName.Contains(q.debug_teamNameMatch)) return false;
         }
-
-        var list = injectActorList == null ? p.ManagedChara : injectActorList;
-        
+                
         foreach (var i in list)
         {
-            if (i.CurrentJob != p.Job && !i.CurrentJob.CanBeInterrupted) continue;
+            if (i.CurrentJob != p.Job && !i.CurrentJob.CanBeInterrupted)
+            {
+                tooltip.Add($"{i.CallName} current job cannot be interrupted");
+                continue;
+            }
             var status = p.GetStatus(i);
             switch(status)
             {
                 case Manageable_GuestStatus.Prisoner:
-                    if (!q.allowPrisoner) continue;
+                    if (!q.allowPrisoner)
+                    {
+                        tooltip.Add($"{i.CallName} is prisoner and not allowed");
+                        continue;
+                    }
                     break;
                 case Manageable_GuestStatus.Hidden:
-                    if (!q.allowHidden) continue;
+                    if (!q.allowHidden)
+                    {
+                        tooltip.Add($"{i.CallName} is hidden and not allowed");
+                        continue;
+                    }
                     break;
                 case Manageable_GuestStatus.Visitor:
-                    if (!q.allowVisitor) continue;
+                    if (!q.allowVisitor)
+                    {
+                        tooltip.Add($"{i.CallName} is visitor and not allowed");
+                        continue;
+                    }
                     break;
                 default:
                     break;
             }
 
-            if (!q.allowMIA && i.FactionManager.isPartyLocked) continue;
+            if (!q.allowMIA && i.FactionManager.isPartyLocked)
+            {
+                tooltip.Add($"{i.CallName} is MIA and not allowed");
+                continue;
+            }
 
             if (q.requireCombat)
             {
-                if (!i.canFight) continue;
-                else if (status != Manageable_GuestStatus.Manager && status != Manageable_GuestStatus.Member && status != Manageable_GuestStatus.Visitor) continue;
+                if (!i.canFight)
+                {
+                    tooltip.Add($"{i.CallName} cannot fight and not allowed");
+                    continue;
+                }
+                else if (status != Manageable_GuestStatus.Manager && status != Manageable_GuestStatus.Member && status != Manageable_GuestStatus.Visitor)
+                {
+                    tooltip.Add($"{i.CallName} guest status not allowed to fight");
+                    continue;
+                }
             }
 
             if (CharaReqUtility.Validate( q.charaReq, ref tooltip, i)) team.Add(i);
+            else
+            {
+                tooltip.Add($"{i.CallName} failed charaReq validation");
+                continue;
+            }
         }
-        return team.Count >= q.minTeamCount && team.Count <= q.maxTeamCount;
+
+        return (team.Count >= q.minTeamCount) && (q.maxTeamCount == -1 || team.Count <= q.maxTeamCount);
     }
 }
 
@@ -64,12 +96,12 @@ public static class ExpeditionUtility
        on combat/event resolve reinjiect into expResult
      
      */
-    public static ActionPackage_Expedition RandEvent(ExpeditionInstance exp, Manageable_Party p)
+    public static ActionPackage_Expedition RandEvent(Character_Trainable c, ExpeditionInstance exp, Manageable_Party p)
     {
         var dict = new Dictionary<ActionPackage_Expedition, int>();
         foreach (var i in exp.AllEvents)
         {
-            var ii = new ActionPackage_Expedition(p,exp, i);
+            var ii = new ActionPackage_Expedition(new List<Character_Trainable>() { c }, p.Job , i);
             if (ii.weight < 1) continue;
             dict.Add(ii, ii.weight);
         }
@@ -84,14 +116,6 @@ public static class ExpeditionUtility
     /// <returns></returns>
     public static int Cooldown(ExpeditionInstance exp, Manageable_Party p)
     {
-        var dict = new Dictionary<ActionPackage_Expedition, int>();
-        foreach (var i in exp.AllEvents)
-        {
-            var ii = new ActionPackage_Expedition(p,exp, i);
-            if (ii.weight < 1) continue;
-            dict.Add(ii, ii.weight);
-        }
-
         //var totalWeight = dict.Values.Sum();
         var currentMin = scr_System_Time.current.getCurrentTime().Minute;
         //Debug.Log($"Before DiceUntil: {(int)(totalWeight / exp.EventRate)} {60 - currentMin} {exp.EventRate} {totalWeight}");
@@ -143,21 +167,21 @@ public static class ExpeditionUtility
                 }*/
                 // check if targetgen conflict with p.
             }
-            var ii = GetWeight(i, party, p.Actors);
+            var ii = GetWeight(p.Actors, i, party);
             if (ii < 1) continue;
             dict.Add(i, ii);
         }
         return Utility.WeightedRandInDict(dict);
     }
 
-    public static int GetWeight(ExpResults ev, Manageable_Party p, List<Character_Trainable> targets)
+    public static int GetWeight(List<Character_Trainable> targets, ExpResults ev, Manageable_Party p)
     {
         int weight = ev.baseWeight;
 
-        if (!TeamReqUtility.Validate(ev.teamRequirement, p, out var something1, targets)) return -1;
+        if (!TeamReqUtility.Validate(targets, ev.teamRequirement, p, out var result)) return -1;
         foreach (var wmod in ev.weightMods)
         {
-            if (TeamReqUtility.Validate(wmod.teamRequirement, p, out var something2, targets))
+            if (TeamReqUtility.Validate(targets, wmod.teamRequirement, p, out var result2))
             {
                 weight += wmod.modValue;
             }

@@ -69,7 +69,7 @@ public class Job_Sex_Group : Job
             preRegisteredActorRefs.Add(c.RefID);
         }
 
-        Debug.Log("new sex job group initialized with actors [" + String.Join(",", preRegisteredActorRefs) + $"] and rapists [{String.Join(",", rapistActorList)}]");
+       // Debug.Log("new sex job group initialized with actors [" + String.Join(",", preRegisteredActorRefs) + $"] and rapists [{String.Join(",", rapistActorList)}]");
         forceFucking.Clear();
         undress = immediateUndress;
         this.parentRoomRef = ri;
@@ -207,7 +207,10 @@ public class Job_Sex_Group : Job
         this.actorRefID.Clear();
         this.forceFucking.Clear();
         //this.packages_current.Clear();
-        foreach (var p in this.packages_previous) p.MarkForDelete();
+        foreach (var p in this.packages_previous)
+        {
+            p.DisablePackage();
+        }
         //this.packages_previous.Clear();
 
 
@@ -221,9 +224,10 @@ public class Job_Sex_Group : Job
 
     public override string GetJobDescription(int charaRef)
     {
-
         if (actorRefID.Contains(charaRef))
         {
+            if (jobDescriptionOverride != "") return jobDescriptionOverride;
+
             Character_Trainable C = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
             if (C.isTimeStopped) return LocalizeDictionary.QueryThenParse("chara_currentjob_sex_timestop");
             else if (C.isSleeping) return LocalizeDictionary.QueryThenParse("chara_currentjob_sex_sleeping");
@@ -241,18 +245,36 @@ public class Job_Sex_Group : Job
         base.Register(id);
 
         UpdateAllUsableCOMs();
-       // Debug.Log("Job_Sex_Debug registered with available com["+String.Join("|",allusableCOMStrings)+"]");
-        foreach (int charaRef in preRegisteredActorRefs)
-        {
-            if (charaRef != 0) scr_System_CampaignManager.current.FindInstanceByID(charaRef).ChangeCurrentJob(this);// AddActor(charaRef);
-            //this.actorJoinTime.Add(charaRef, scr_System_Time.current.getCurrentTime());
-        }
-
+        // Debug.Log("Job_Sex_Debug registered with available com["+String.Join("|",allusableCOMStrings)+"]");
         if (preRegisteredActorRefs.Contains(0))
         {
             scr_System_CampaignManager.current.FindInstanceByID(0).ChangeCurrentJob(this);
-            if (actorRefID.Count > 1) scr_System_CampaignManager.current.ChangeCurrentTarget(actorRefID[1]);
         }
+        bool first = true;
+        foreach (int charaRef in preRegisteredActorRefs)
+        {
+            if (charaRef != 0)
+            {
+                var c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);// AddActor(charaRef);
+                c.ChangeCurrentJob(this);
+                if (first && preRegisteredActorRefs.Contains(0))
+                {
+                    first = false;
+                    scr_System_CampaignManager.current.ChangeCurrentTarget(charaRef);
+                }
+
+                if (Rapist.Contains(c.RefID))
+                {
+                    string prev = $"{c.CallName} prev stamina {(c.Stats.Stamina == null ? "-" : c.Stats.Stamina.Value)} energy {(c.Stats.Energy == null ? "-" : c.Stats.Energy.Value)}";
+                    if (c.Stats.Stamina != null) c.Stats.Stamina.RestoreMax();
+                    if (c.Stats.Energy != null) c.Stats.Energy.RestoreMax();
+                    Debug.Log($"Register Sex Job: {prev}, now maxed stamina {(c.Stats.Stamina == null ? "-" : c.Stats.Stamina.Value)} energy {(c.Stats.Energy == null ? "-" : c.Stats.Energy.Value)}");
+                }
+            }
+            //this.actorJoinTime.Add(charaRef, scr_System_Time.current.getCurrentTime());
+        }
+
+        
         preRegisteredActorRefs.Clear();
 
         if (!this.actorRefID.Contains(0) && this.restrictDuration == -1)
@@ -672,7 +694,7 @@ public class Job_Sex_Group : Job
 
                 if (!c.Climaxing) CollectConflictTags(c.RefID, randomTarget, out conflictTags);
 
-                Debug.Log($"actor {c.CallName} looking to add sex, actionCount {actionCount} tags {String.Join("|", occupiedBodyTags)}");
+                //Debug.Log($"actor {c.CallName} looking to add sex, actionCount {actionCount} tags {String.Join("|", occupiedBodyTags)}");
                 var listAll = this.allusableCOMs.FindAll(x => 
                     (restrictTags.Count < 1 || Utility.ListContainsStrict(x.comTags, restrictTags))
                     && (selected == null ? true : Utility.ListContainsLoose(selected.Base.tags, x.requirements.requirement.doerBodyTags)) 

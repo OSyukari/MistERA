@@ -1,0 +1,63 @@
+{
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_cave_goblinTrapHole",
+                "eventString_Ongoing": "",
+                "DurationMinutes": 12,
+                "tags": [
+                    "trap",
+                    "goblin"
+                ],
+                "baseWeight": 8,
+    "teamRequirement": {
+        "minTeamCount": 1,
+        "maxTeamCount": 99,
+        "charaReq": { "cost_EN": 3, "cost_ST": 6 }
+    },
+"possibleResults": [
+    {
+        "baseWeight": 6,
+        "resultText": "$names$提前注意到了落穴陷阱，并且将其回避"
+    },
+    {
+        "baseWeight": 4,
+        "resultText": "$names$不小心触发了捕网陷阱，但反应够快躲开了"
+    },
+    {
+        "baseWeight": 3,
+        "resultText": "$names$掉入了布满尖刺的陷坑中\n尽管在敌人赶来前迅速脱出，但每人都受了点伤",
+        "results_characters":
+        [
+            { "entry_results":{ "type":"statMod_HP", "value":-1 } }
+        ]
+    },
+    {
+        "baseWeight": 1,
+        "resultText": "$names$掉入了布满尖刺的陷坑中\n就这样被哥布林们抓住了",
+        "eventID":"event_goblin_combatDefeat", "eventLabel":"", "overrideTargetGeneration":true,
+        "TargetGenerations":
+        [ {
+            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
+            "encounterTemplates":
+            [
+                {
+                    "encounterWeights": { "goblin_patrol_1": 1 },
+                    "frontlineKeys": [ "enemy", "teamB_frontline" ],
+                    "supportKeys": [ "enemy", "teamB_backline" ]
+                }
+            ]
+        } ]
+    }
+]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_cave_goblinTrapHole": "落穴陷阱"
+            }
+        }
+    }
+}

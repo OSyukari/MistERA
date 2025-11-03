@@ -47,10 +47,12 @@
         "exp_event_caveUnstablePassage"
     ],
     "DescriptionText": [
-        "expedition_cave_exploring_1",
-        "expedition_cave_exploring_2",
-        "expedition_cave_exploring_3",
-        "expedition_cave_exploring_4"
+        "expedition_cave_exploring_1", "expedition_cave_exploring_2",
+        "expedition_cave_exploring_3", "expedition_cave_exploring_4",
+        "expedition_cave_exploring_5", "expedition_cave_exploring_6",
+        "expedition_cave_exploring_7", "expedition_cave_exploring_8",
+        "expedition_cave_exploring_9", "expedition_cave_exploring_10"
+        
     ]
 }
         ]
@@ -66,7 +68,14 @@
 "expedition_cave_exploring_1":"$names$走在狭窄的岩石通道中，四下里一片死寂，只有不知从何处传来的滴水声",
 "expedition_cave_exploring_2":"一阵阴冷的风从洞穴深处吹来，带着一股泥土和未知生物的混合气味，$names$不禁打了个寒颤",
 "expedition_cave_exploring_3":"$names$身边的洞壁上，一片片散发着幽蓝色微光的苔藓静静地生长着",
-"expedition_cave_exploring_4":"$names$沿着一条地下暗河的边缘前行"
+"expedition_cave_exploring_4":"$names$沿着一条地下暗河的边缘前行",
+"expedition_cave_exploring_5":"$names$小心翼翼地穿过狭窄的洞穴通道",
+
+"expedition_cave_exploring_6":"洞内潮湿的空气让$names$感到一丝寒意",
+"expedition_cave_exploring_7":"一块发光的矿石吸引$names$的目光",
+"expedition_cave_exploring_8":"狭窄的缝隙中，$names$侧身挤过，衣服被岩石刮擦",
+"expedition_cave_exploring_9":"$names$用绳索固定身体，勇敢地滑下陡峭的岩坡",
+"expedition_cave_exploring_10":"$names$涉过浅浅的地下水潭，水流冰凉刺骨"
 
             },
             "en-us":

@@ -30,7 +30,6 @@ public class scr_panel_COMmanager : scr_Menu
 
     public enum COMTabs
     {
-        Touch,
         Interaction,
         Sex,
         Inventory,
@@ -62,12 +61,12 @@ public class scr_panel_COMmanager : scr_Menu
 
     private void OnPlayerJobChange(int i, Job j)
     {
-        if (j is Job_Sex_Group && !scr_UpdateHandler.current.Lock)
+        if (j is Job_Sex_Group)
         {
-            ChangeCurrentTab(COMTabs.Sex, false);
-
+            ChangeCurrentTab(COMTabs.Sex);
+            Debug.LogError("changejobtosexgroup");
         }
-        if(scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room) ValidateAll();
+        if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room) ValidateAll();
     }
 
     public List<string> SexComDoersNames
@@ -92,19 +91,21 @@ public class scr_panel_COMmanager : scr_Menu
 
     private void OnCurrentRoomChange(Room_Instance r)
     {
+        if (!this.gameObject.activeInHierarchy) return;
         ValidateAll();
     }
 
-    private void OnCurrentTargetChange(int refID)
+    private void OnCurrentTargetChange(int refID, bool forceUpdate = false)
     {
-        if (refID == 0) ChangeCurrentTab(COMTabs.Interaction, false);
-
-        UpdateEquipBox();
+        if (!this.gameObject.activeInHierarchy) return;
+        RefreshEquips(refID);
+        if (refID == 0) ChangeCurrentTab(COMTabs.Interaction);
         ValidateAll();
     }
 
-    private void RefreshTitle(int refID)
+    private void RefreshTitle(int refID = -1)
     {
+        if (refID == -1) refID = scr_System_CampaignManager.current.CurrentTargetRef;
         List<int> members = new List<int>() { refID };
         members.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
         members = members.Distinct().ToList();
@@ -114,121 +115,90 @@ public class scr_panel_COMmanager : scr_Menu
         foreach (var mb in members) names.Add(scr_System_CampaignManager.current.FindInstanceByID(mb).FirstName);
         string name = String.Join(",", names);
 
-        if (title_interaction.gameObject.activeInHierarchy)
-        {
-            //if (members.Count > 0) title_interaction.text = scr_System_Serializer.current.Dictionary.Parse("%%comManager_title_interact_target%%").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName);
-            if (members.Count > 0) title_interaction.text = LocalizeDictionary.QueryThenParse("comManager_title_interact_target").Replace("$name$", name);
-            else title_interaction.text = LocalizeDictionary.QueryThenParse("comManager_title_interact_self");
-        }
-        if (title_furnitures.gameObject.activeInHierarchy && scr_System_CampaignManager.current.CurrentRoom != null)
-        {
-            List<string> aps = new List<string>();
-            foreach(var ap in scr_System_CampaignManager.current.GetRegisteredAPByRoom(scr_System_CampaignManager.current.CurrentRoom.RefID, false))
-            {
-                if (ap.job.isPlayerRelatedJob) continue;
-                if (ap.isTemporaryAP) continue;
-                aps.Add(ap.DescriptionText());
-            }
-            title_furnitures.SetText(scr_System_CampaignManager.current.CurrentRoom.DisplayableFurnitureNames_withLink);
-            ongoingCOMs.text = String.Join(", ", aps);
-        }
-        if (title_inventory.gameObject.activeInHierarchy)
-        {
-            //if (refID > 0) title_inventory.text = scr_System_Serializer.current.Dictionary.Parse("%%comManager_title_inventory_target%%").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName);
-            if (refID > 0) title_inventory.text = LocalizeDictionary.QueryThenParse("comManager_title_inventory_target").Replace("$name$", name);
-            else title_inventory.text = LocalizeDictionary.QueryThenParse("comManager_title_inventory_self");
-        }
-        if (title_sex.gameObject.activeInHierarchy)
-        {
+        panel_InteractionCOMs.gameObject.SetActive(currentTab == COMTabs.Interaction);
+        panel_SexCOMs.gameObject.SetActive(currentTab == COMTabs.Sex);
+        Box_UndressCOMs.gameObject.SetActive(currentTab == COMTabs.Sex);
+        panel_InventoryCOMs.gameObject.SetActive(currentTab == COMTabs.Inventory);
+        panel_CombatCOMs.gameObject.SetActive(currentTab == COMTabs.Combat);
 
-            if (scr_System_CampaignManager.current.displaySex)
-            {
-
-                Box_SexCOMs.gameObject.SetActive(true);
-                Box_MassageCOMs.gameObject.SetActive(false);
-                Box_TouchCOMs.gameObject.SetActive(false);
-                Box_ServiceCOMs.gameObject.SetActive(false);
-                string doers, receivers, body;
-                if (SexComDoers.Count > 0) doers = String.Join(", ", SexComDoersNames);
-                else doers = " - ";
-
-                if (SexComReceivers.Count > 0) receivers = String.Join(", ", SexComReceiversNames);
-                else receivers = " - ";
-
-                if (!SexComDoers.Contains(0))
+        switch (currentTab)
+        {
+            case COMTabs.Interaction:
+                if (members.Count > 0) title_interaction.text = LocalizeDictionary.QueryThenParse("comManager_title_interact_target").Replace("$name$", name);
+                else title_interaction.text = LocalizeDictionary.QueryThenParse("comManager_title_interact_self");
+                List<string> aps = new List<string>();
+                foreach (var ap in scr_System_CampaignManager.current.GetRegisteredAPByRoom(scr_System_CampaignManager.current.CurrentRoom.RefID, false))
                 {
-                    body = LocalizeDictionary.QueryThenParse("comManager_title_sex_observer");
-                    //body = body.Replace("$player$", scr_System_CampaignManager.current.FindInstanceByID(0).FirstName);
+                    if (ap.job.isPlayerRelatedJob) continue;
+                    if (ap.isTemporaryAP) continue;
+                    aps.Add(ap.DescriptionText());
+                }
+                title_furnitures.SetText(scr_System_CampaignManager.current.CurrentRoom.DisplayableFurnitureNames_withLink);
+                ongoingCOMs.text = String.Join(", ", aps);
+                break;
+            case COMTabs.Sex:
+                if (scr_System_CampaignManager.current.displaySex)
+                {
+                    Box_SexCOMs.gameObject.SetActive(true);
+                    Box_MassageCOMs.gameObject.SetActive(false);
+                    Box_TouchCOMs.gameObject.SetActive(false);
+                    Box_ServiceCOMs.gameObject.SetActive(false);
+                    string doers, receivers, body;
+                    if (SexComDoers.Count > 0) doers = String.Join(", ", SexComDoersNames);
+                    else doers = " - ";
+
+                    if (SexComReceivers.Count > 0) receivers = String.Join(", ", SexComReceiversNames);
+                    else receivers = " - ";
+
+                    if (!SexComDoers.Contains(0))
+                    {
+                        body = LocalizeDictionary.QueryThenParse("comManager_title_sex_observer");
+                        //body = body.Replace("$player$", scr_System_CampaignManager.current.FindInstanceByID(0).FirstName);
+                    }
+                    else
+                    {
+                        body = LocalizeDictionary.QueryThenParse("comManager_title_sex_participant");
+                    }
+
+                    title_sex.text = body.Replace("$doer$", doers).Replace("$receiver$", receivers);
                 }
                 else
                 {
-                    body = LocalizeDictionary.QueryThenParse("comManager_title_sex_participant");
+                    Box_SexCOMs.gameObject.SetActive(false);
+                    Box_MassageCOMs.gameObject.SetActive(true);
+                    Box_TouchCOMs.gameObject.SetActive(true);
+                    Box_ServiceCOMs.gameObject.SetActive(true);
+                    if (refID > 0) title_sex.text = LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName);
+                    else title_sex.text = LocalizeDictionary.QueryThenParse("comManager_title_skinship_self");
                 }
-
-                title_sex.text = body.Replace("$doer$",doers).Replace("$receiver$", receivers);
-            }
-            else
-            {
-
-                Box_SexCOMs.gameObject.SetActive(false);
-                Box_MassageCOMs.gameObject.SetActive(true);
-                Box_TouchCOMs.gameObject.SetActive(true);
-                Box_ServiceCOMs.gameObject.SetActive(true);
-                if (refID > 0) title_sex.text = LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName);
-                else title_sex.text = LocalizeDictionary.QueryThenParse("comManager_title_skinship_self");
-            }
-
+                break;
+            case COMTabs.Inventory:
+                if (refID > 0) title_inventory.text = LocalizeDictionary.QueryThenParse("comManager_title_inventory_target").Replace("$name$", name);
+                else title_inventory.text = LocalizeDictionary.QueryThenParse("comManager_title_inventory_self");
+                break;
         }
-
-        UpdateEquipBox();
     }
 
-    protected void UpdateEquipBox()
+    protected void RefreshEquips(int targetRef)
     {
-        bool playerBox = true, targetBox = true;
-
-        if (title_sex.gameObject.activeInHierarchy)
+        bool playerbox = false, targetbox = false;
+        if (!scr_System_CentralControl.current.isSafeMode)
         {
-            playerBox = true;
+            playerbox = true;
+            targetbox = targetRef > 0;
+        }
+        player_UndressBox.gameObject.SetActive(playerbox);
+        RefreshEquips(ref managedPlayerEquipRefs, playerbox ? scr_System_CampaignManager.current.Player : null, player_UndressEquipList);
+        if (playerbox) undress_player_name.text = scr_System_CampaignManager.current.Player.FirstName;
 
-            if (scr_System_CampaignManager.current.CurrentTargetRef > 0) targetBox = true;
-            else targetBox = false;
-        }
-        else
-        {
-            playerBox = false;
-            targetBox = false;
-        }
-
-        if (playerBox)
-        {
-            player_UndressBox.gameObject.SetActive(true);
-            undress_player_name.text = scr_System_CampaignManager.current.Player.FirstName;
-            RefreshEquips(ref managedPlayerEquipRefs, scr_System_CampaignManager.current.Player, player_UndressEquipList);
-        }
-        else
-        {
-            RefreshEquips(ref managedPlayerEquipRefs, null, player_UndressEquipList);
-            player_UndressBox.gameObject.SetActive(false);
-        }
-
-        if (targetBox)
-        {
-            target_UndressBox.gameObject.SetActive(true);
-            undress_target_name.text = scr_System_CampaignManager.current.CurrentTarget.FirstName;
-            RefreshEquips(ref managedTargetEquipRefs, scr_System_CampaignManager.current.CurrentTarget, target_UndressEquipList);
-        }
-        else
-        {
-            RefreshEquips(ref managedTargetEquipRefs, null, target_UndressEquipList);
-            target_UndressBox.gameObject.SetActive(false);
-        }
-
-
+        target_UndressBox.gameObject.SetActive(targetbox);
+        RefreshEquips(ref managedTargetEquipRefs, targetbox ? scr_System_CampaignManager.current.CurrentTarget : null, target_UndressEquipList);
+        if (targetbox) undress_target_name.text = scr_System_CampaignManager.current.CurrentTarget.FirstName;
     }
 
     private void OnNotifyUpdate(bool value)
     {
+        if (!this.gameObject.activeInHierarchy) return;
         ValidateAll();   
     }
     public RectTransform prefab_equippedItem;
@@ -301,7 +271,6 @@ public class scr_panel_COMmanager : scr_Menu
         scr_System_CampaignManager.current.Observer_CurrentTarget += OnCurrentTargetChange;
         scr_System_CampaignManager.current.Observer_UpdateNotice += OnNotifyUpdate;
 
-        forbidCOMRepeatList = new Dictionary<string, Dictionary<int, bool>>();
         currentTab = COMTabs.Interaction;
 
         filters_sextouch = new List<scr_SelectableText>();
@@ -322,7 +291,7 @@ public class scr_panel_COMmanager : scr_Menu
 
     }
 
-    COMTabs currentTab;
+    COMTabs currentTab = COMTabs.Interaction;
     public override void Initialize()
     {
         base.Initialize();
@@ -342,19 +311,19 @@ public class scr_panel_COMmanager : scr_Menu
 
 
 
-                case -6400: button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Interaction, panel_InteractionCOMs, filters_Interact)); break;
+                case -6400: button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Interaction, filters_Interact)); break;
 
                 case -6401:
                     if (safeMode) button.gameObject.SetActive(false);
-                    else button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Sex, panel_SexCOMs, filters_sextouch, Box_UndressCOMs)); 
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Sex, filters_sextouch)); 
                     break;
                 case -6402:
                     if (safeMode) button.gameObject.SetActive(false);
-                    else button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Inventory, panel_InventoryCOMs, filters_Inventory)); 
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Inventory, filters_Inventory)); 
                     break;
                 case -6403:
                     if (safeMode) button.gameObject.SetActive(false);
-                    else button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Combat, panel_CombatCOMs, filters_Combat)); 
+                    else button.Initialize(this, new ButtonValidator_ChangeCOMTab(this, button, COMTabs.Combat, filters_Combat)); 
                     break;
                 case -6500: button.Initialize(this, new ButtonValidator_ChangeDebugFilter(this, COMFilter.Debug, button)); break;
                 case -6511: button.Initialize(this, new ButtonValidator_ChangeDeterministicRollsFilter(this, COMFilter.DeterministicRolls, button)); break;
@@ -597,15 +566,16 @@ public class scr_panel_COMmanager : scr_Menu
 
         }
 
+        RefreshTitle();
+        COMRepeat_Reset();
+        UpdateJobCOM();
+        RefreshEquips(scr_System_CampaignManager.current.CurrentTargetRef);
         ValidateAll();
     }
 
     protected override void OnEnable()
     {
-        base.OnEnable();
-
-        ValidateAll();
-        //RefreshTitle(scr_System_CampaignManager.current.CurrentTargetRef);
+        if (!initialized) Initialize();
     }
 
     public override void Notify(int optionID)
@@ -624,7 +594,7 @@ public class scr_panel_COMmanager : scr_Menu
                 default: break;
             }
         }
-        ValidateAll();
+        if (validator != null && !validator.noValidate) ValidateAll();
     }
 
     public RectTransform panel_InteractionCOMs, panel_SexCOMs, panel_InventoryCOMs, panel_CombatCOMs;
@@ -668,10 +638,11 @@ public class scr_panel_COMmanager : scr_Menu
 
     public override void ValidateAll()
     {
+       // Debug.Log("validateall");
+        RefreshTitle();
         COMRepeat_Reset();
         UpdateJobCOM();
         //scr_System_CampaignManager.current.NotifyUpdate();
-        RefreshTitle(scr_System_CampaignManager.current.CurrentTargetRef);
         base.ValidateAll();
     }
 
@@ -694,7 +665,6 @@ public class scr_panel_COMmanager : scr_Menu
     private void UpdateJobCOM()
     {
         // if current thing not active then skip
-        if (!panel_InteractionCOMs.gameObject.activeInHierarchy) return;
 
         foreach(var kvpair in furnitureRectList)
         {
@@ -969,7 +939,7 @@ public class scr_panel_COMmanager : scr_Menu
         DestroyImmediate(rect.gameObject);
     }
 
-    Dictionary<string, Dictionary<int, bool>> forbidCOMRepeatList = null;
+    Dictionary<string, Dictionary<int, bool>> forbidCOMRepeatList = new Dictionary<string, Dictionary<int, bool>>();
     public bool COMRepeat_Get(string comID, int jobID, bool value)
     {
         if (!forbidCOMRepeatList.ContainsKey(comID)) return true;
@@ -1017,10 +987,17 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
-    private void ChangeCurrentTab(COMTabs tab, bool validate = false)
+    private void ChangeCurrentTab(COMTabs tab)
     {
-        currentTab = tab;
-        if (validate) ValidateAll();
+        if (scr_System_CampaignManager.current.displaySex)
+        {
+            currentTab = COMTabs.Sex;
+        }
+        else
+        {
+            currentTab = tab;
+        }
+        RefreshTitle();
     }
 
     protected bool ValidateCOMByTags(COM com)
@@ -1723,7 +1700,7 @@ else */
         public void OnClickButton()
         {
 
-            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_charaDetail, parent.m_Canvas.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaDetail>();
+            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_charaDetail).GetComponent<scr_Menu_CharaDetail>();
             detail.InitializeWithArgument(scr_System_CampaignManager.current.CurrentTargetRef);
 
         }
@@ -2094,20 +2071,16 @@ else */
         COMTabs target;
         new scr_panel_COMmanager parent;
         scr_SelectableText text;
-        RectTransform targetCOMs;
         List<scr_SelectableText> filters;
-        RectTransform targetCOMs_extra;
 
         bool permanentDeactivate = false;
 
-        public ButtonValidator_ChangeCOMTab(scr_panel_COMmanager parent, scr_SelectableText text, COMTabs target, RectTransform targetCOMs, List<scr_SelectableText> filters, RectTransform targetCOMs_Extra = null) : base(parent)
+        public ButtonValidator_ChangeCOMTab(scr_panel_COMmanager parent, scr_SelectableText text, COMTabs target, List<scr_SelectableText> filters) : base(parent)
         {
             this.target = target;
             this.parent = parent;
             this.text = text;
-            this.targetCOMs = targetCOMs;
             this.filters = filters;
-            this.targetCOMs_extra = targetCOMs_Extra;
             //text.toggleColor = text.baseColor;
             //text.baseColor = text.disableColor;
             if (scr_System_CentralControl.current.isSafeMode && target != COMTabs.Interaction)
@@ -2125,18 +2098,6 @@ else */
             }
             else if (parent.currentTab == target) text.Toggle(true, true);
             else text.Toggle(true, false);
-
-            if (parent.currentTab != target)
-            {
-                
-                targetCOMs.gameObject.SetActive(false);
-                if (targetCOMs_extra != null) targetCOMs_extra.gameObject.SetActive(false);
-            }
-            else
-            {
-                targetCOMs.gameObject.SetActive(true);
-                if (targetCOMs_extra != null) targetCOMs_extra.gameObject.SetActive(true);
-            }
 
             foreach (scr_SelectableText s in filters)
             {
@@ -2168,7 +2129,7 @@ else */
 
         public void OnClickButton()
         {
-            parent.ChangeCurrentTab(target, false);
+            parent.ChangeCurrentTab(target);
             //scr_System_CampaignManager.current.NotifyUpdate();
         }
     }
@@ -2317,6 +2278,7 @@ else */
             this.text = text;
             this.revealingScoreFilter = revealingScoreFilter;
             this.isPlayer = isPlayer;
+            this.noValidate = true;
         }
         Character_Trainable chara;
 
@@ -2337,7 +2299,7 @@ else */
             chara.Undress(BodyEquipLayer.None, (Revealing)revealingScoreFilter);
             //Debug.Log("Chara [" + chara.FirstName + "] undress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
-            scr_System_CampaignManager.current.NotifyUpdate();
+            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
         }
     }
 
@@ -2356,6 +2318,7 @@ else */
             this.revealingScoreFilter = revealingScoreFilter;
 
             this.isPlayer = isPlayer;
+            this.noValidate = true;
         }
         Character_Trainable chara;
 
@@ -2387,7 +2350,7 @@ else */
             chara.Undress(layer, (Revealing)revealingScoreFilter);
             //Debug.Log("Chara [" + chara.FirstName + "] undress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
-            scr_System_CampaignManager.current.NotifyUpdate();
+            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
         }
     }
 
@@ -2405,6 +2368,7 @@ else */
             this.revealingScoreFilter = revealingScoreFilter;
 
             this.isPlayer = isPlayer;
+            this.noValidate = true;
         }
         Character_Trainable chara;
 
@@ -2448,7 +2412,7 @@ else */
             chara.Redress(layer);
             //Debug.Log("Chara [" + chara.FirstName + "] redress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
-            scr_System_CampaignManager.current.NotifyUpdate();
+            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
         }
     }
 
@@ -2463,6 +2427,7 @@ else */
             this.text = text;
 
             this.isPlayer = isPlayer;
+            this.noValidate = true;
         }
         Character_Trainable chara;
 
@@ -2495,7 +2460,7 @@ else */
             chara.Redress();
             //Debug.Log("Chara [" + chara.FirstName + "] redress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
-            scr_System_CampaignManager.current.NotifyUpdate();
+            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
         }
     }
 
@@ -2521,6 +2486,7 @@ else */
 
             text.isButtonToggle = true;
             text.useDisabledColorWhenUntoggled = true;
+            this.noValidate = true;
         }
         bool isEquipped, isVisible, allowDuringSex;
         public override bool IsButtonValid()
@@ -2566,7 +2532,7 @@ else */
         {
             if (chara.Inventory.Contains(item)) chara.Reequip(item);
             else chara.UnequipItem(equipRef, -1, true, true);
-            scr_System_CampaignManager.current.NotifyUpdate();
+            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
         }
     }
 

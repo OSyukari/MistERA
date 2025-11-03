@@ -387,7 +387,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
 
         public void OnClickButton()
         {
-            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_charaDetail, parent.m_Canvas.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaDetail>();
+            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_charaDetail).GetComponent<scr_Menu_CharaDetail>();
             detail.InitializeWithArgument(actorRef);
         }
 

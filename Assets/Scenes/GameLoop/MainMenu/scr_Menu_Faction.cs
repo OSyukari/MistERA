@@ -74,7 +74,7 @@ public class scr_Menu_Faction : MonoBehaviour
         var targetFaction = targetFactionList[0];
         factionName.text = targetFaction.FactionDisplayName;
         
-        Dictionary<string, int> costChara = targetFaction.GetMaintenanceCost_Chara;
+        Dictionary<string, int> costChara = targetFaction.GetMaintenanceCost_Chara();
 
         List<string> s_chara = new List<string>();
         foreach(KeyValuePair<string,int> kvp in costChara)

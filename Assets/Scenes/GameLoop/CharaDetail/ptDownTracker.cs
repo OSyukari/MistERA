@@ -13,7 +13,7 @@ public class ptDownTracker : MonoBehaviour, IScrollHandler//, IDragHandler
 
     public void NotifyScrollViewUpdate(Vector2 scrollPos)
     {
-        Debug.Log("scroolupdate!!");
+        //Debug.Log("scroolupdate!!");
         UpdatePosition();
     }
 

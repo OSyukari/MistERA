@@ -42,7 +42,7 @@
 
                 "straightAlpha":true,
                 "materialTexturePaths":["Rin/Rin_raiddungeon.png"],
-                "atlasJSON_path":"Rin/Rin_raiddungeon.atlas",
+                "atlasJSON_path":"Rin/Rin_raiddungeon_Cut.atlas",
                 "skeletonJSON_path":"Rin/Rin_raiddungeon.skel",
                 "idleAnimName":"Idle_01"
 

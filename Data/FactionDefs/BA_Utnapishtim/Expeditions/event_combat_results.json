@@ -62,22 +62,22 @@
                 },
     {
         "$type": "Event+EventEntry+EventEntry_Question, Events",
-        "question":"loot?",
+        "question":"搜刮战利品？",
         "options":[
             {   
                 "self_chara_conditions":[ {"parameters":["exists"]}, {"parameters":["isPlayer"]} ],
-                "option": "loot only",
-                "Results": [ { "Type":"FactionExchangeInventory", "arguments":["party","enemy","false","true","true","false"]},
+                "option": "只拿道具",
+                "Results": [ { "Type":"FactionExchangeInventory", "arguments":["party","enemy","false","true","true","false",""]},
                                             { "Type":"JumpToLabel", "arguments":["","br_lootEnd"]} ] 
             },
             {   
                 "self_chara_conditions":[ {"parameters":["exists"]}, {"parameters":["isPlayer"]} ],
-                "option": "loot and capture", 
-                "Results": [ { "Type":"FactionExchangeInventory", "arguments":["party","enemy","true","true","true","true"]},
+                "option": "道具人员都要", 
+                "Results": [ { "Type":"FactionExchangeInventory", "arguments":["party","enemy","true","true","true","true",""]},
                                             { "Type":"JumpToLabel", "arguments":["","br_lootEnd"]} ] 
             },
             {   
-                "option": "do not loot",  "isDefaultCancel":true,
+                "option": "什么都不拿",   "isDefaultCancel":true,
                 "Results": [ { "Type":"JumpToLabel", "arguments":["","br_noLootEnd"]} ] 
             }
         ]

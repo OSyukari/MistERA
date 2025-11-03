@@ -35,14 +35,14 @@ public class ActionPackage_Expedition : ActionPackage
             return this.job as Job_Expedition;
         } }
 
-    protected int GetWeight(ExpEvents ev, Manageable_Party p, out List<Character_Trainable> targets)
+    protected int GetWeight(Manageable_Party p, out List<string> tooltip)
     {
-        int weight = ev.baseWeight;
+        int weight = SourceEV.baseWeight;
 
-        if (!TeamReqUtility.Validate(ev.teamRequirement, p, out targets)) return -1;
-        foreach (var wmod in ev.weightMods)
+        if (!TeamReqUtility.Validate(doer, SourceEV.teamRequirement, p, out tooltip)) return -1;
+        foreach (var wmod in SourceEV.weightMods)
         {
-            if (TeamReqUtility.Validate(wmod.teamRequirement, p, out var something, targets))
+            if (TeamReqUtility.Validate(doer, wmod.teamRequirement, p, out var discard))
             {
                 weight += wmod.modValue;
             }
@@ -51,28 +51,6 @@ public class ActionPackage_Expedition : ActionPackage
     }
 
     public int weight = 0;
-    [JsonProperty] List<int> _targetRefs = new List<int>();
-    List<Character_Trainable> _targetChara = null;
-    [JsonIgnore]
-    public List<Character_Trainable> TargetChara
-    {
-        get
-        {
-            if (_targetChara == null)
-            {
-                _targetChara = new List<Character_Trainable>();
-                foreach (var i in this._targetRefs) _targetChara.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
-            }
-            return _targetChara;
-        }
-        set
-        {
-            this._targetChara = value;
-            this._targetRefs = new List<int>();
-            foreach (var i in value) this._targetRefs.Add(i.RefID);
-        }
-    }
-
 
     [JsonProperty] new protected bool toggleRepeat = false;
     [JsonIgnore] public override bool isTemporaryAP { get { return false; } }
@@ -88,24 +66,41 @@ public class ActionPackage_Expedition : ActionPackage
     public ActionPackage_Expedition() : base()
     { }
 
-    public ActionPackage_Expedition(Manageable_Party p, ExpeditionInstance exp, ExpEvents ev)
+    protected Job_Expedition JobExp
     {
-        doerRefs = new List<int>();
-        SourceEV = ev;
-        this.weight = GetWeight(this.SourceEV, p, out var tt);
-        this.weight = exp.GetWeightModifiers(SourceEV.tags, this.weight);
-        TargetChara = tt;
-        foreach(var i in TargetChara) this.doerRefs.Add(i.RefID);
-        this.duration = SourceEV.DurationMinutes;
-
-        this.memEntryName = p.Job.DisplayName;
+        get
+        {
+            return this.job as Job_Expedition;
+        }
     }
 
-    [JsonIgnore] public override List<int> actorRefs { get { return new List<int>(this.doerRefs) { }; } }
-    [JsonIgnore] public override string DisplayName { get { 
+    public ActionPackage_Expedition(List<Character_Trainable> cs, Job_Expedition job, ExpEvents ev)
+    {
+        this.jobRefID = job.RefID;
+        this.job_cached = job;
+        doerRefs = new List<int>();
+        SourceEV = ev;
+        this.doerRefs = new List<int>();
+        foreach (var i in cs) doerRefs.Add(i.RefID);
+        actorRefs = null;
+        doer_cache = null;
+        this.weight = GetWeight(job.FactionOwner_Party, out var tooltip);
+        if (false && SourceEV.eventID == "exp_event_caveGoblinCaptive")
+        {
+            Debug.LogError($"exp_event_caveGoblinCaptive weight {weight} ModifiedWeight {JobExp.Expedition.GetWeightModifiers(SourceEV.tags, this.weight)}\n{String.Join("\n", tooltip)}");
+        }
+        this.weight = JobExp.Expedition.GetWeightModifiers(SourceEV.tags, this.weight);
+        this.duration = SourceEV.DurationMinutes;
+
+        this.memEntryName = JobExp.FactionOwner_Party.Job.DisplayName;
+    }
+
+
+    [JsonIgnore] public override string DisplayName { get {
+            if (SourceEV == null || SourceEV.EventName_Ongoing.Length < 1) return "EMPTY";
             var names = new List<string>();
             foreach (var i in this.Actors) names.Add(i.CallName);
-            return SourceEV == null ? "-" : SourceEV.EventName_Ongoing.Replace("$names$", String.Join(", ",names)); 
+            return SourceEV.EventName_Ongoing.Replace("$names$", String.Join(", ",names)); 
         } }
 
     protected override bool PreEvaluate()
@@ -133,6 +128,15 @@ public class ActionPackage_Expedition : ActionPackage
 
         return isValid;
     }
+    public bool canJoinAP(Character_Trainable c)
+    {
+        var newactors = new List<Character_Trainable>(this.doer);
+        if (newactors.Contains(c)) return false;
+        newactors.Add(c);
+        var tempPackage = new ActionPackage_Expedition(newactors, this.JobExp, this.SourceEV);
+        return tempPackage.weight >= 1;
+    }
+
     protected override bool Evaluate()
     {
         return true;
@@ -163,35 +167,35 @@ public class ActionPackage_Expedition : ActionPackage
 
             foreach (var i in this.Actors)
             {
-                CharaReqUtility.ApplyCost(SourceEV.teamRequirement.charaReq, i, r.Tooltips);
+                CharaReqUtility.ApplyCost(SourceEV.teamRequirement.charaReq, i, r == null ? null : r.Tooltips);
 
                 foreach(var j in result.results_characters)
                 {
-                    ResultCharaUtility.Apply(j, jobb.FactionOwner_Party, i, r.Tooltips);
+                    ResultCharaUtility.Apply(j, jobb.FactionOwner_Party, i, r == null ? null : r.Tooltips);
                 }
 
-                var ids = new List<int>();
-                var names2 = new List<string>();
-                foreach (var j in this.Actors) 
+                if (result.logCharaMemory)
                 {
-                    if (j == i) continue;
-                    ids.Add(j.RefID);
-                    names2.Add(j.CallName);
+                    var ids = new List<int>();
+                    var names2 = new List<string>();
+                    foreach (var j in this.Actors)
+                    {
+                        if (j == i) continue;
+                        ids.Add(j.RefID);
+                        names2.Add(j.CallName);
+                    }
+                    var newMem = new MemInstance(ids, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral,
+                                        LocalizeDictionary.QueryThenParse(result.resultText).Replace("$names$", names2.Count > 0 ?
+                                            LocalizeDictionary.QueryThenParse("exp_event_active_memory_teammates").Replace("$team$", String.Join(", ", names2)) : ""));
+                    var entry = i.Memory.AddEntry(newMem, new List<string>() { "expedition" });
+                    entry.entryDescription = memEntryName;
+                    entry.disableRoomName = true;
                 }
-                var newMem = new MemInstance(ids, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral,
-                                    LocalizeDictionary.QueryThenParse(result.resultText).Replace("$names$", names2.Count > 0 ? 
-                                        LocalizeDictionary.QueryThenParse("exp_event_active_memory_teammates").Replace("$team$", String.Join(", ", names2)) : ""));
-                var entry = i.Memory.AddEntry(newMem, new List<string>() { "expedition" });
-                entry.entryDescription = memEntryName;
-                entry.disableRoomName = true;
-
-
-                // MOD RELATIONSHIP
             }
 
             foreach (var j in result.results_factions)
             {
-                ResultFactionUtility.Apply(j, jobb, r.Tooltips);
+                ResultFactionUtility.Apply(j, jobb, r == null ? null : r.Tooltips);
             }
 
             if (result.eventID != "")
@@ -199,6 +203,14 @@ public class ActionPackage_Expedition : ActionPackage
                 var package = new SerializableEventPackage();
                 package.eventID = result.eventID;
                 package.eventLabel = result.eventLabel;
+                if (result.eventAppendStringKey != "")
+                {
+                    var list = new List<string>();
+                    if (result.eventAppendString != "") list.Add(result.eventAppendString);
+                    else list.Add(result.resultText);
+
+                    package.AppendStrings.Add(result.eventAppendStringKey, list);
+                }
 
                 List<int> party = new List<int>(), frontline = new List<int>(), backline = new List<int>();
                 foreach(var i in this.Actors)
@@ -230,9 +242,13 @@ public class ActionPackage_Expedition : ActionPackage
                     var ev = EventUtility.StartEvent(this.Job_Expedition, package);
                     scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
                 }
-                else
+                else if (r != null)
                 {
                     r.unresolved = package;
+                }
+                else
+                {
+                    Debug.LogError("ExpResult flagged for no_logging but has unresolved package.");
                 }
             }
 
@@ -243,8 +259,25 @@ public class ActionPackage_Expedition : ActionPackage
 
     }
 
+    public override bool JoinAP(Character_Trainable c)
+    {
+
+
+        c.ChangeCurrentJob(this.job);
+        this.doerRefs.Add(c.RefID);
+        this.doer_cache = null;
+        this.actorRefs = null;
+
+        return true;
+   
+    }
+
     public override ActionPackage Copy()
     {
-        return this;
+            ActionPackage_Expedition copy = new ActionPackage_Expedition(doer, JobExp, SourceEV);
+           // copy.SetVariantID(this.validVariant);
+          //  copy.LoggedBegin = this.LoggedBegin;
+            copy.duration = this.duration;
+            return copy;
     }
 }

@@ -57,7 +57,18 @@ public enum EventTrigger
     None,
     OnEnterRoom
 }
-
+/// <summary>
+/// Ordered, 3 first are considered member of faction, and the rest is not (temp visitor / prisoner)
+/// </summary>
+public enum Manageable_GuestStatus
+{
+    Manager,
+    Member,
+    Hidden,
+    Visitor,
+    Prisoner,
+    None
+}
 
 public enum TargetScope
 {
@@ -114,7 +125,7 @@ public class Event : I_SerializationCallbackReceiver
     {
         public string factionTemplate = "";
         public string mergeFactionKey = "";
-        public GenEncounter encounterTemplate = new GenEncounter();
+        public List<GenEncounter> encounterTemplates = new List<GenEncounter>();
 
 
 
@@ -128,7 +139,7 @@ public class Event : I_SerializationCallbackReceiver
         {
             public string baseID = "";
             public List<string> refKeys = new List<string>();
-
+            public Manageable_GuestStatus status = Manageable_GuestStatus.Member;
         }
 
         public class GenEncounter
@@ -136,6 +147,7 @@ public class Event : I_SerializationCallbackReceiver
             public Dictionary<string, int> encounterWeights = new Dictionary<string, int>();
             public List<string> frontlineKeys = new List<string>();
             public List<string> supportKeys = new List<string>();
+            public Manageable_GuestStatus status = Manageable_GuestStatus.Member;
 
             [JsonIgnore]
             public bool isValid
@@ -167,6 +179,10 @@ public class Event : I_SerializationCallbackReceiver
         /// Allow event and limit target selection to maxTargetCount even if scoped target count is higher
         /// </summary>
         public bool pickAmongValidTargets = false;
+        /// <summary>
+        /// return true if pickAmongValidTargets and validtargetcount > maxTargetCount 
+        /// </summary>
+        public bool mustHaveMoreValidTargets = false;
         /// <summary>
         /// Allow event to go on if minTargetCount is disrespected. No effect on other scopes
         /// </summary>
@@ -222,12 +238,6 @@ public class Event : I_SerializationCallbackReceiver
                 //foreach(var cond in conditions) if (!cond.isValid()) return false;
                 return true;
             }
-        }
-
-        [System.Serializable]
-        public class Query
-        {
-
         }
 
         public class EventEntry_Line : EventEntry
@@ -319,7 +329,6 @@ public class Event : I_SerializationCallbackReceiver
             }
         }
 
-        [System.Serializable]
         public enum ExecutionType
         {
             None,
@@ -349,10 +358,6 @@ public class Event : I_SerializationCallbackReceiver
             ExistAppendStrings,
             FlushAppendStrings,
 
-            FlushMessageStats,
-            FlushMessageExp,
-            FlushMessageRelations,
-            FlushMessageMessages,
             FlushMessageExpAll,
 
 
@@ -380,11 +385,11 @@ public class Event : I_SerializationCallbackReceiver
             FullRecovery,
             FullHPRecovery,
             /// <summary>
-            /// [A victimlabel, MIA_faction, kidnapExplorationID, kidnapMessage] 
+            /// [A victimlabel, MIA_faction, kidnapExplorationID, kidnapMessage, kidnapStatus] 
             /// </summary>
             PartyMIA,
             /// <summary>
-            /// [A victimlabel, B hostilelabel, kidnapExplorationID, kidnapMessage] 
+            /// [A victimlabel, B hostilelabel, kidnapExplorationID, kidnapMessage, kidnapStatus] 
             /// </summary>
             PartyKidnap,
             /// <summary>

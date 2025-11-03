@@ -1,0 +1,72 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "event_goblin_captiveRape",
+                "events": [
+{
+    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "options":[
+        {   
+            "target_chara_conditions":
+            {
+                "party":[{"parameters":["exists"]}],
+                "enemy":[{"parameters":["exists"]}]
+            },
+            "option": "start sex",
+            "Results": [    { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
+                            { "Type":"StartSexJobInParty" , "arguments":["enemy","party","party","120","","","","StartSexJobInParty"]},
+                            { "Type":"JumpToLabel", "arguments":["","br_success"]} ] 
+        },
+        {   
+            "option": "silent fail branch",
+            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_error"]} ] 
+        }
+    ]
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "label": "br_silent",
+    "options":[
+        {   
+            "target_chara_conditions":
+            {
+                "party":[{"parameters":["exists"]}],
+                "enemy":[{"parameters":["exists"]}]
+            },
+            "option": "start sex",
+            "Results": [    { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
+                            { "Type":"StartSexJobInParty" , "arguments":["enemy","party","party","120","","","","StartSexJobInParty_noJobResultLogging"]},
+                            { "Type":"JumpToLabel", "arguments":["","br_success"]} ] 
+        },
+        {   
+            "option": "silent fail branch",
+            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_error"]} ] 
+        }
+    ]
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "label": "br_success",
+    "line": "",
+    "isLast": true
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "label": "br_error",
+    "line": "警告！由于内容缺失，该事件强制终止。",
+    "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
+    "isLast": true
+}
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "event_goblin_captiveRape": "哥布林囚犯"
+            }
+        }
+    }
+}

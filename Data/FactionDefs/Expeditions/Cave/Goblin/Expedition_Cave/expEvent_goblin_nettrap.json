@@ -1,0 +1,56 @@
+{
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_goblin_netTrap",
+                "eventString_Ongoing": "",
+                "DurationMinutes": 10,
+                "tags": [
+                    "trap",
+                    "goblin"
+                ],
+                "baseWeight": 9,
+    "teamRequirement": {
+        "minTeamCount": 1,
+        "maxTeamCount": 99,
+        "charaReq": { "cost_EN": 3, "cost_ST": 5 }
+    },
+                "possibleResults": [
+                    {
+                        "baseWeight": 7,
+                        "resultText": "$names$提前注意到了捕网陷阱，并且将其回避"
+                    },
+                    {
+                        "baseWeight": 4,
+                        "resultText": "$names$不小心触发了捕网陷阱，但反应够快躲开了"
+                    },
+                    {
+                        "baseWeight": 3,
+                        "resultText": "一张从天而降的捕网将$names$全部罩住并吊了起来\n但在哥布林赶来前$names$迅速割开捕网逃了出来"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "一张从天而降的捕网将$names$全部罩住并吊了起来\n动弹不得的队员们就这样被哥布林抓住了",
+                        "eventID":"event_goblin_combatDefeat", "eventLabel":"", "overrideTargetGeneration":true,
+                        "TargetGenerations":
+                        [ {
+                            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
+                            "encounterTemplates":
+                            [{
+                                "encounterWeights":{ "goblin_patrol_1":1 },
+                                "frontlineKeys":["enemy","teamB_frontline"], "supportKeys":["enemy","teamB_backline"]
+                            }]
+                        } ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_goblin_netTrap": "捕网陷阱"
+            }
+        }
+    }
+}

@@ -1,0 +1,100 @@
+{
+    "Events": {
+        "list": [
+            {                
+                "ID": "event_goblin_combatDefeat",
+                "events": [
+                {
+                    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                    "options":[
+                        {   
+                            "self_chara_conditions":[
+                                {"parameters":["exists"]}, {"parameters":["isPlayer"]}
+                            ],
+                            "target_chara_conditions":
+                            {
+                                "party":[{"parameters":["exists"]}],
+                                "enemy":[{"parameters":["exists"]}]
+                            },
+                            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
+                        },
+                        {   
+                            "target_chara_conditions":
+                            {
+                                "party":[{"parameters":["exists"]}],
+                                "enemy":[{"parameters":["exists"]}]
+                            },
+                            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_defeat"]} ] 
+                        },
+                        {   
+                            "option": "silent fail branch",
+                            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_error"]} ] 
+                        }
+                    ]
+                },
+                {
+                    "$type": "Event+EventEntry+EventEntry_Question, Events",
+                    "label":"br_choice",
+                    "question":"$party.name$被哥布林击败了",
+                    "options":[
+                        {   
+                            "option": "用大人的卡片让队员们撤离（MP-1）",
+                            "self_chara_conditions":[ { "parameters":["getStat","stats_derived_extended_mp","gte","1"] } ],
+                            "Results": [ { "Type":"ModStatEXValue", "arguments":["self","stats_derived_extended_mp","-1"]},
+                                        { "Type":"JumpToLabel", "arguments":["","br_escape"]} ] 
+                        },
+                        {   
+                            "option": "接受战败（全员HP-1）", 
+                            "Results": [ { "Type":"ModStatEXValue", "arguments":["party","stats_derived_extended_hp","-1"]},
+                                         { "Type":"JumpToLabel", "arguments":["","br_defeat"]} ] 
+                        },
+                        {   
+                            "option": "接受战败（全员MIA）", 
+                            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_mia"]} ] 
+                        }
+                    ]
+                },
+                {
+                    "$type": "Event+EventEntry+EventEntry_Line, Events",
+                    "label": "br_escape",
+                    "line": "$party.name$成功逃离了敌人",
+                    "isLast": true
+                },
+                {
+                    "$type": "Event+EventEntry+EventEntry_Line, Events",
+                    "label": "br_defeat",
+                    "line": "$party.name$尽力从敌人手下逃走，但都受了一定程度的伤",
+                    "isLast": true
+                },
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "label": "br_mia",
+    "line": "$party.name$被哥布林抓了起来",
+    "Results":[
+        { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
+        { "Type":"PartyKidnap" , "arguments":["party","enemy", "expedition_cave_goblin_captive", "exp_event_Goblin_captive_message","Prisoner"]}
+    ],
+    "isLast": true
+},
+                {
+                    "$type": "Event+EventEntry+EventEntry_Line, Events",
+                    "label": "br_error",
+                    "line": "警告！由于内容缺失，该事件强制终止。",
+                    "isLast": true
+                }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"event_goblin_combatDefeat":"哥布林战败",
+"exp_event_Goblin_captive_message":"$names$被哥布林抓了起来，与主队伍失去了联系！"
+            }
+        }
+    }
+}

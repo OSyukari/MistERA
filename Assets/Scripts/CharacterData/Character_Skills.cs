@@ -146,13 +146,15 @@ public class SkillManager
         {
             experienceLogs_currentRound[i.ExperienceID] += (int)amount;
             if (m != null) m.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);
-            else scr_UpdateHandler.current.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);
+            else Owner.InteractionJob.m.exp.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);
+            //scr_UpdateHandler.current.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);
         }
         else
         {
             experienceLogs_currentRound[i.ExperienceID] += 1;
             if (m != null) m.AddExperience(Owner.RefID, i.ExperienceID, 1);
-            else scr_UpdateHandler.current.AddExperience(Owner.RefID, i.ExperienceID, 1);
+            else Owner.InteractionJob.m.exp.AddExperience(Owner.RefID, i.ExperienceID, 1);
+            //scr_UpdateHandler.current.AddExperience(Owner.RefID, i.ExperienceID, 1);
         }
     }
 

@@ -11,11 +11,11 @@
     "EventRate":0.10,
     "MaxExplorationRate":600,
     "DescriptionText":[
-"expedition_Utnapishtim_danger_1", "expedition_Utnapishtim_danger_2", "expedition_Utnapishtim_danger_3",
-"expedition_Utnapishtim_danger_4", "expedition_Utnapishtim_danger_5", "expedition_Utnapishtim_danger_6",
-"expedition_Utnapishtim_danger_7", "expedition_Utnapishtim_danger_8", "expedition_Utnapishtim_danger_9",
-"expedition_Utnapishtim_danger_10", "expedition_Utnapishtim_danger_11", "expedition_Utnapishtim_danger_12",
-"expedition_Utnapishtim_danger_13", "expedition_Utnapishtim_danger_14", "expedition_Utnapishtim_danger_15"],
+        "expedition_Utnapishtim_danger_1", "expedition_Utnapishtim_danger_2", "expedition_Utnapishtim_danger_3",
+        "expedition_Utnapishtim_danger_4", "expedition_Utnapishtim_danger_5", "expedition_Utnapishtim_danger_6",
+        "expedition_Utnapishtim_danger_7", "expedition_Utnapishtim_danger_8", "expedition_Utnapishtim_danger_9",
+        "expedition_Utnapishtim_danger_10", "expedition_Utnapishtim_danger_11", "expedition_Utnapishtim_danger_12",
+        "expedition_Utnapishtim_danger_13", "expedition_Utnapishtim_danger_14", "expedition_Utnapishtim_danger_15"],
     "EventIDs":[],
     "FeatureKeywords":["Utnapishtim"],
     "keywords":["Utnapishtim"],
@@ -65,7 +65,7 @@
                 },
                 "option": "立刻展开救援",
                 "Results": [ { "Type":"TerminateExpedition", "arguments":["victims"]},
-                            { "Type":"FactionExchangeInventory", "arguments":["party","victims","true","true","true","true"]},
+                            { "Type":"FactionExchangeInventory", "arguments":["party","victims","true","true","true","true",""]},
                             { "Type":"JumpToLabel", "arguments":["","br_lootEnd"]} ] 
             }
         ]

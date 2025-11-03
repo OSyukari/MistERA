@@ -8,6 +8,7 @@ using TMPro;
 
 public class scr_Panel_BottomBar : scr_Menu
 {
+
     private Image image;
 
     //private float update;
@@ -61,7 +62,7 @@ public class scr_Panel_BottomBar : scr_Menu
     }
 
 
-    private void OnCurrentTargetChange(int i)
+    private void OnCurrentTargetChange(int i, bool foceUpdate)
     {
         ValidateAll();
     }
@@ -196,7 +197,7 @@ public class scr_Panel_BottomBar : scr_Menu
         public void OnClickButton()
         {
             //, parent.m_Canvas.transform.GetComponent<RectTransform>()
-            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_charaDetail, parent.m_Canvas.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaDetail>();
+            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_charaDetail).GetComponent<scr_Menu_CharaDetail>();
             detail.InitializeWithArgument(charaRefID);
 
         }
@@ -239,7 +240,7 @@ public class scr_Panel_BottomBar : scr_Menu
         public void OnClickButton()
         {
             //, parent.m_Canvas.GetComponent<RectTransform>()
-            canvas_RoomDisplay FloorDisplay = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.canvas_FloorDisplay.GetComponent<RectTransform>(), parent.m_Canvas.GetComponent<RectTransform>()).GetComponent<canvas_RoomDisplay>();
+            canvas_RoomDisplay FloorDisplay = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.canvas_FloorDisplay).GetComponent<canvas_RoomDisplay>();
             FloorDisplay.LoadFloor(scr_System_CampaignManager.current.CurrentRoom.parentFloor);
         }
     }
@@ -280,7 +281,7 @@ public class scr_Panel_BottomBar : scr_Menu
         public void OnClickButton()
         {
             //, parent.m_Canvas.GetComponent<RectTransform>()
-            scr_Canvas_Management manage = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_Management, parent.m_Canvas.GetComponent<RectTransform>()).GetComponent<scr_Canvas_Management>();
+            scr_Canvas_Management manage = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_Management).GetComponent<scr_Canvas_Management>();
             manage.InitializeWithArgument();
             
         }
@@ -364,7 +365,8 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public void OnClickButton()
         {
-            scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_LoadSave, parent.m_Canvas.GetComponent<RectTransform>());
+            var rect = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_LoadSave);
+
         }
     }
 
@@ -389,7 +391,7 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public void OnClickButton()
         {
-            var rect = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_HelperGuide, parent.m_Canvas.GetComponent<RectTransform>());
+            var rect = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_HelperGuide);
         }
     }
 

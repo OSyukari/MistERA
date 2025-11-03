@@ -138,7 +138,7 @@ public abstract class ActionPackage
 
     [JsonIgnore] public virtual List<int> ReceiverRefs { get { return receiverRefs; } }
 
-    List<int> _actorRefs = null;
+    protected List<int> _actorRefs = null;
     [JsonIgnore] public virtual List<int> actorRefs { get {
             if (_actorRefs == null)
             {
@@ -154,7 +154,7 @@ public abstract class ActionPackage
         }
     }
 
-    List<Character_Trainable> _actors = null;
+    protected List<Character_Trainable> _actors = null;
     [JsonIgnore]
     public List<Character_Trainable> Actors
     { get
@@ -213,7 +213,7 @@ public abstract class ActionPackage
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    public bool JoinAP(Character_Trainable c)
+    public virtual bool JoinAP(Character_Trainable c)
     {
         var variantID = canJoinAP(c, out var doers1, out var receivers1);
         if (variantID >= 0)
@@ -320,7 +320,14 @@ public abstract class ActionPackage
 
     [JsonIgnore] public List<string> doerBodyTags { get { return Variant.requirements.requirement.doerBodyTags; } }
 
-    [JsonIgnore] public List<string> receiverBodyTags { get { return Variant.requirements.requirement.receiverBodyTags; } }
+    [JsonIgnore] public List<string> receiverBodyTags { get {
+#if  UNITY_EDITOR
+            if (Variant == null) Debug.LogError($"receiverBodyTags Variant == null, targetCOM? {(targetCOM == null ? "null" : targetCOM.ID)} validVariantID? {validVariant}");
+            else if (Variant.requirements == null) Debug.LogError("receiverBodyTags Variant.requirements == null");
+            else if (Variant.requirements.requirement == null) Debug.LogError("receiverBodyTags Variant.requirements.requirement == null");
+            else if (Variant.requirements.requirement.receiverBodyTags == null) Debug.LogError("Variant.requirements.requirement.receiverBodyTags == null");
+#endif
+            return Variant.requirements.requirement.receiverBodyTags; } }
 
     /// <summary>
     /// Store all custom string descriptions, such as KOJO messages
@@ -332,7 +339,7 @@ public abstract class ActionPackage
     {
         get
         {
-            if (variant == null && targetCOM != null) variant = targetCOM.GetValidVariant(DoerRefs, ReceiverRefs) >= 0 ? targetCOM.variants[targetCOM.GetValidVariant(DoerRefs, ReceiverRefs)] : null;
+            if (variant == null && targetCOM != null && COMVariantID >= 0 && targetCOM.variants.Count > COMVariantID) variant = targetCOM.variants[COMVariantID];
             if (variant == null)
             {
                 Debug.LogError("COM Variant Invalid [" + targetCOM.ID + "] from doers[" + String.Join("|",DoerRefs) + "] receivers[" + String.Join("|", ReceiverRefs) + "]");
@@ -503,11 +510,6 @@ public abstract class ActionPackage
     public bool LoggedOngoing = false;
     public bool Ticked = false;
     // package refused by C_MANAGER due to low package priority
-    public void MarkForDelete()
-    {
-        this.duration = 0;
-        this.toggleRepeat = false;
-    }
 
     /// <summary>
     /// Tick by 1 minute but with List of all actors in room <br/>

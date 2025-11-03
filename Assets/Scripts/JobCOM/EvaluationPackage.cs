@@ -826,7 +826,7 @@ public class EvaluationPackage
         {
             if (targetCOM is COM_Sex)
             {
-                Debug.Log($"sexcom! {targetCOM.ID} is psex ? {(pSex == null ? "null" : "exist")} variantID {(pSex == null ? "null" : pSex.COMVariantID)}");
+               // Debug.Log($"sexcom! {targetCOM.ID} is psex ? {(pSex == null ? "null" : "exist")} variantID {(pSex == null ? "null" : pSex.COMVariantID)}");
                 Fuck_2(m,null, Doer, targetCOM, Receiver == null ? Doer : Receiver, pSex.isStrongPenetration || pSex.targetCOM.variants[pSex.COMVariantID].setForce, response);
             }
             else
@@ -1549,12 +1549,18 @@ public class ExperienceLog
     protected SortedDictionary<int, Dictionary<string, int>> ExpLog = new SortedDictionary<int, Dictionary<string, int>>();
     protected SortedDictionary<int, Dictionary<int, int>> RelationLog = new SortedDictionary<int, Dictionary<int, int>>();
     protected SortedDictionary<int, List<string>> MessageLog = new SortedDictionary<int, List<string>>();
+    protected SortedDictionary<int, string> climaxMessage = new SortedDictionary<int, string>();
 
     public ExperienceLog()
     {
 
     }
    
+    public void AddClimaxMSG(int chararef, string msg)
+    {
+        AddChara(chararef);
+        climaxMessage[chararef] = msg;
+    }
     public bool GetRightAlign(int chararef)
     {
         if (this.RightAlign.TryGetValue(chararef, out bool result)) return result;
@@ -1671,6 +1677,11 @@ public class ExperienceLog
             else MessageLog[kvp.Key].AddRange(kvp.Value);
             MessageLog[kvp.Key].RemoveAll(x=>x.Length < 1);
         }
+        foreach(KeyValuePair<int, string> kvp in log.climaxMessage)
+        {
+            if (kvp.Value.Length < 1) continue;
+            climaxMessage[kvp.Key] = kvp.Value;
+        }
     }
 
     public void Clear()
@@ -1685,7 +1696,7 @@ public class ExperienceLog
 
         //foreach (KeyValuePair<int, Dictionary<int, int>> kvp in RelationLog) kvp.Value.Clear();
         RelationLog.Clear();
-
+        climaxMessage.Clear();
         //foreach (KeyValuePair<int, Dictionary<string, int>> kvp in StatLog) kvp.Value.Clear();
         StatLog.Clear();
 
@@ -1758,6 +1769,23 @@ public class ExperienceLog
             if (kvp_refID.Value.Count > 0)
             {
                 string s = RightAlign[kvp_refID.Key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID.Value)}</align>" :  String.Join("\n", kvp_refID.Value);
+                if (s.Length < 1) continue;
+                lines.Add(s);
+            }
+            //Debug.Log($"FlushLogMessage {kvp_refID.Key} {RightAlign[kvp_refID.Key]} {String.Join("||", kvp_refID.Value)}");
+
+        }
+        return String.Join('\n', lines.ToArray());
+    }
+    public string PrintContent_Climax()
+    {
+        // Debug.Log("EVP Explog, print");
+        List<string> lines = new List<string>();
+        foreach (var kvp_refID in climaxMessage)
+        {
+            if (kvp_refID.Value.Length > 0)
+            {
+                string s = RightAlign[kvp_refID.Key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID.Value)}</align>" : String.Join("\n", kvp_refID.Value);
                 if (s.Length < 1) continue;
                 lines.Add(s);
             }

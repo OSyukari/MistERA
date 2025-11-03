@@ -831,7 +831,6 @@ public class EnumSetting
     }
 }
 
-[System.Serializable]
 public enum InteractionGenderType
 {
     none,

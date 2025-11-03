@@ -9,7 +9,7 @@
     "DurationHour":26,
     "isUnique":true, "canExplore":true,
     "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
-    "EventIDs":["exp_event_Utnapishtim_crumblingFloor"],
+    "EventIDs":[],
     "keywords":["Utnapishtim"],
     "FeatureKeywords":["Utnapishtim"],
     "Events":
@@ -24,7 +24,7 @@
     "DurationHour":16,
     "isUnique":true, "canExplore":true,
     "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
-    "EventIDs":["exp_event_Utnapishtim_crumblingFloor"],
+    "EventIDs":[],
     "FeatureKeywords":["Utnapishtim"],
     "keywords":["Utnapishtim"],
     "Events":
@@ -44,7 +44,8 @@
                 "featureEventIDs": [
                     "exp_event_Utnapishtim_cryoPod",
                     "exp_event_Utnapishtim_damagedTransportBot",
-                    "exp_event_Utnapishtim_terminal"
+                    "exp_event_Utnapishtim_terminal",
+                    "exp_event_Utnapishtim_crumblingFloor"
                 ],
                 "DescriptionText": [
                     "expedition_Utnapishtim_exploring_1",

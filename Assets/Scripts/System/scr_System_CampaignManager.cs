@@ -33,6 +33,8 @@ public class scr_System_CampaignManager_Serializable
 public class scr_System_CampaignManager : MonoBehaviour
 {
 
+    public MenuHandler CanvasAnchor = null;
+
     [NonSerialized] public Action<PortraitManager.CharaPortrait> Observer_UpdateCurrentTargetAnchor;
     public void UpdateCurrentTargetAnchor(PortraitManager.CharaPortrait p)
     {
@@ -79,12 +81,32 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     EventInstance actions_sceneUnload = null;
     EventInstance actions_viewChange = null;
+    EventInstance actions_hideAnchor = null;
     public void RegisterSceneUnloadEventCallback(EventInstance a, bool immediate = false)
     {
         actions_sceneUnload = a;
         if (immediate) OnSceneUnload();
     }
-
+    public void RegisterCanvasAnchorHideEventCallback(EventInstance a, bool immediate = false)
+    {
+        actions_hideAnchor = a;
+        if (immediate) OnSceneUnload();
+    }
+    public void HideCanvasAnchor()
+    {
+        if (this.CanvasAnchor != null) this.CanvasAnchor.PanelAnchor.gameObject.SetActive(false);
+        if (actions_hideAnchor != null)
+        {
+            // Debug.Log($"OnSceneUnload, keyword [{actions_sceneUnload.Name}]");
+            scr_UpdateHandler.current.EventHandler.StartEvent(actions_hideAnchor, false);
+            scr_System_CampaignManager.current.FreeUpdate(-1, actions_hideAnchor.Name);
+        }
+        actions_hideAnchor = null;
+    }
+    public void EnableCanvasAnchor()
+    {
+        if (this.CanvasAnchor != null) this.CanvasAnchor.PanelAnchor.gameObject.SetActive(true);
+    }
     Dictionary<string, ExpeditionInstance> _uniqueExpeditionInstances = null;
 
     protected void RebuildExpeditionsList()
@@ -182,6 +204,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         foreach(var i in listC)
         {
             var chara = FindInstanceByID(i);
+            if (chara == null) continue;
             if (chara.CurrentJob == null) Unregister(chara);
         }
         ExpeditionInstancesCleanup();
@@ -384,7 +407,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         get
         {
-            return (Player.CurrentJob as Job_Sex_Group) != null;
+            return Player.CurrentJob is Job_Sex_Group;
         }
     }
 
@@ -973,6 +996,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             if (viewMode == ViewMode.View_Room)
             {
                 scr_UpdateHandler.current.Animating = false;
+                EnableCanvasAnchor();
             }
         }
     }
@@ -985,17 +1009,20 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     private int currentTarget = -1;
-    public event Action<int> Observer_CurrentTarget;
-    public event Action<int> Observer_CurrentTargetEX;
+    public event Action<int, bool> Observer_CurrentTarget;
+    public event Action<int, bool> Observer_CurrentTargetEX;
 
     public event Action<bool> Observer_LogsClear;
 
-    public void ChangeCurrentTarget(int refID = 0)
+    public void ChangeCurrentTarget(int refID = 0, bool forceUpdate = false)
     {
         if (Index_referenceID.ContainsKey(refID))
         {
-            currentTarget = (int)refID;
-            Observer_CurrentTarget?.Invoke(currentTarget);
+            if (currentTarget != refID || forceUpdate)
+            {
+                currentTarget = refID;
+                Observer_CurrentTarget?.Invoke(currentTarget, forceUpdate);
+            }
         }
     }
 
@@ -1079,8 +1106,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             if (value == null) _currentTargetEX = CurrentTarget;
             else _currentTargetEX = value;
-            Debug.Log($"Invoking CurrentTargetEX {_currentTargetEX.RefID}");
-            Observer_CurrentTargetEX?.Invoke(_currentTargetEX.RefID);
+           // Debug.Log($"Invoking CurrentTargetEX {_currentTargetEX.RefID}");
+            Observer_CurrentTargetEX?.Invoke(_currentTargetEX.RefID, false);
         }
     }
 
@@ -1113,7 +1140,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         //Debug.Log("CAMPAIGNMANAGER NOTIFY UPDATE");
         Observer_UpdateNotice?.Invoke(value);
         ChangeCurrentRoom(CurrentRoom);
-        Observer_CurrentTarget?.Invoke(CurrentTargetRef);
+        ChangeCurrentTarget(CurrentTargetRef, true);
     }
     public event Action<bool> Observer_UpdateNotice;
 
@@ -1441,15 +1468,31 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     [SerializeField] protected List<int> deletedRefIDs;
 
+    public void UnregisterRoom(int refID)
+    {
+        var room = this.Map.UnregisterRoom(refID);
+        if (room == null) return;
+        if (room != null && this.registeredPackagesByRoom.TryGetValue(refID, out var packages))
+        {
+            Debug.Log($"UnregisterRoom {room.DisplayName} with {packages.Count} APs");
+            registeredPackagesByRoom.Remove(refID);
+        }
+
+        foreach (var chara in this.Index_referenceID.Values)
+        {
+            chara.NotifyRoomUnregister(room);
+        }
+    }
+
     public void Unregister(Character_Trainable c)
     {
         var room = Map.FindRoomByChara(c.RefID);
-        room.RemoveChara(c);
+        if (room != null) room.RemoveChara(c);
         this.Index_referenceID.Remove(c.RefID);
         // first, notify everyone that this should be purged
         foreach (var chara in this.Index_referenceID.Values)
         {
-            chara.Relationships.NotifyCharaUnregister(c.RefID);
+            chara.NotifyCharaUnregister(c);
         }
 
         deletedRefIDs.Add(c.RefID);
@@ -1701,7 +1744,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         var genTemplate = scr_System_Serializer.current.MasterList.CharGenTemplates.GetByID(ID);
         if (genTemplate != null && genTemplate.TargetBaseID != "")
         {
-            Debug.Log($"CampaignManager: Instantiate request for [{ID}] found genTemplate, generating instead [{genTemplate.TargetBaseID}]");
+            //Debug.Log($"CampaignManager: Instantiate request for [{ID}] found genTemplate, generating instead [{genTemplate.TargetBaseID}]");
             var template = GetCharaTemplate(genTemplate.TargetBaseID);
             template.BaseID = ID;
             if (genTemplate.title != "") template.Title = genTemplate.title;
@@ -1718,7 +1761,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public Character_Trainable InstantiateCharacter_FromBaseID(string ID, Room_Instance room, int forceRefID = -1)
     {
-        Debug.Log($"CampaignManager: Instantiate request for ID [{ID}]");
+        //Debug.Log($"CampaignManager: Instantiate request for ID [{ID}]");
         Character_Trainable chara = GetCharaTemplate(ID);
 
         if (chara != null && map.HasRoomWithRef(room.RefID))
@@ -1795,7 +1838,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     protected void StartCombatSimulation(List<int> self, Action successCallback = null, Action failCallback = null)
     {
         // open up combat selection UI, and ui call startcombat proper
-        menu_combatSim detail = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_Simulation.GetComponent<RectTransform>()).GetComponent<menu_combatSim>();
+        menu_combatSim detail = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_Simulation.GetComponent<RectTransform>(), CanvasAnchor == null ? null : CanvasAnchor.PanelAnchor_AlwaysEnable).GetComponent<menu_combatSim>();
         detail.InitializeWithArgument(self, successCallback, failCallback);
 
     }
@@ -1806,11 +1849,11 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public menu_Trade prefab_FactionExchange;
 
-    public void StartFactionExchange(I_IsJobGiver fa, I_IsJobGiver fb, bool allowChara, bool allowHostile, bool allowKill, bool allowTransfer)
+    public void StartFactionExchange(I_IsJobGiver fa, I_IsJobGiver fb, bool allowChara, bool allowHostile, bool allowKill, bool allowTransfer, string rescueEventID)
     {
         //Combat.StartCombat(teamA, teamB, victoryEvID, drawEvID, defeatEvID, source, forcePlayerInstance);
-        menu_Trade trade = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_FactionExchange.GetComponent<RectTransform>()).GetComponent<menu_Trade>();
-        trade.InitializeWithArgument(fa, fb, allowChara, allowHostile, allowKill, allowTransfer);
+        menu_Trade trade = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_FactionExchange.GetComponent<RectTransform>(), CanvasAnchor == null ? null : CanvasAnchor.PanelAnchor_AlwaysEnable).GetComponent<menu_Trade>();
+        trade.InitializeWithArgument(fa, fb, allowChara, allowHostile, allowKill, allowTransfer, rescueEventID);
     }
 }
 
@@ -1904,7 +1947,7 @@ public static class WorldManager
                         var f2 = scr_System_Serializer.current.GetByNameOrID_Item_Base(ini.initArguments[1]);
                         if (f1 != null && f2 != null && int.TryParse(ini.initArguments[3], out int f4))
                         {
-                            Debug.Log($"Instantiating inventory {f1.FactionDisplayName} {f2.DisplayName} {ini.initArguments[2]} {f4}");
+                            //Debug.Log($"Instantiating inventory {f1.FactionDisplayName} {f2.DisplayName} {ini.initArguments[2]} {f4}");
                             f1.Inventory.AddItem(WorldManager.Instantiate(f2.id, ini.initArguments[2], f4));
                         }
                         else

@@ -28,6 +28,7 @@ public class TeamComposition
 
     public List<int> frontline = new List<int>();
     public List<int> support = new List<int>();
+    public List<int> others = new List<int>();
 
     public void NotifyAddActor()
     {
@@ -108,8 +109,18 @@ public class CombatManager
             var CombatEndEv = new EventInstance(null, endEVID, "", 50, false);
             List<Character_Trainable> Aparty = new List<Character_Trainable>(instance.teamA.Actors), Bparty = new List<Character_Trainable>(instance.teamB.Actors);
             CombatEndEv.Self = instance.isPlayerInstance ? scr_System_CampaignManager.current.Player : null;
-            CombatEndEv.Targets.Add("party", Aparty);
-            CombatEndEv.Targets.Add("enemy", Bparty);
+
+            if (instance.sourceEV != null)
+            {
+                CombatEndEv.Targets = instance.sourceEV.Targets;
+            }
+            else
+            {
+                CombatEndEv.Targets.Add("party", Aparty);
+                CombatEndEv.Targets.Add("enemy", Bparty);
+            }
+
+
             CombatEndEv.LoadNext(endEVID, "");
             scr_System_CampaignManager.current.RegisterViewChangeEventCallback(CombatEndEv);
         }
@@ -143,6 +154,7 @@ public class CombatManager
         if (refList.Count < 1 || (generatedIDs != null && refList.Except(generatedIDs).ToList().Count < 1))
         {
             var chara = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(baseID, scr_System_CampaignManager.current.StasisRoom);
+            
             refList.Add(chara.RefID);
             combatDummyRefs.Add(chara.RefID, chara);
             return chara;

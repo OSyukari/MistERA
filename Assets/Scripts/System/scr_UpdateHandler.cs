@@ -159,6 +159,8 @@ public class scr_UpdateHandler : MonoBehaviour
     bool oneLoop;
     public bool halted = false;
 
+
+    public event Action Observer_PreUpdateTime_Hourly;
     public event Action Observer_PreUpdateTime;
     public event Action Observer_PostUpdateTime_1;
     public event Action Observer_PostUpdateTime_2;
@@ -168,6 +170,13 @@ public class scr_UpdateHandler : MonoBehaviour
     public event Action<bool> Observer_LogsSingleStepUpdate;
     public event Action<EventStatus, bool> Observer_EventStatus;
 
+    protected void PreUpdate()
+    {
+        var time = scr_System_Time.current.getCurrentTime();
+        Observer_PreUpdateTime?.Invoke();
+        if (time.Minute == 0) Observer_PreUpdateTime_Hourly?.Invoke();
+    }
+
     public void StartUpdate(bool init, bool silent = false, bool updateUI = false)
     {
         //if (imageScript == null) Debug.LogError("UPDATEHANDLER NO IMAGE ATTACHED");
@@ -175,7 +184,7 @@ public class scr_UpdateHandler : MonoBehaviour
         if (init)
         {
             firstPreUpdate = true;
-            Observer_PreUpdateTime?.Invoke();
+            PreUpdate();
             timeStop = scr_System_Time.current.TimeStop;
             oneLoop = true;
         }
@@ -187,13 +196,9 @@ public class scr_UpdateHandler : MonoBehaviour
         // tldr, totalUpdateTime is the update duration count, and we should filter command logging based on this value.
         if (!Updating && cnManager.ExistPlayerPackage(out updateTime, out totalUpdateTime))
         {
-            
-            if (EventHandler.Active && scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
-            
-            if(scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"UpdateHandler PlayerPackage Update duration {updateTime} {totalUpdateTime}");
+            if(scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"UpdateHandler PlayerPackage StartCoroutine SingleUpdate, Update duration {updateTime} total {totalUpdateTime}, Eventhandler Active? {EventHandler.Active}");
 
             StartCoroutine(SingleUpdate());
-            
         }
         else if (!Updating && init)
         {
@@ -202,10 +207,8 @@ public class scr_UpdateHandler : MonoBehaviour
             
             updateTime = 1;
             totalUpdateTime = 1;
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"UpdateHandler ForceUpdate duration {updateTime}  {totalUpdateTime}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"UpdateHandler ForceUpdate duration {updateTime}  {totalUpdateTime}");
             StartCoroutine(SingleUpdate());
-            
-
         }
         else if (updateUI) NotifyLogsSingleUpdate();
     }
@@ -300,9 +303,9 @@ public class scr_UpdateHandler : MonoBehaviour
             if (firstLoopCounter > 0) firstLoopCounter --;
             oneLoop = false;
 
-           // if (firstPreUpdate) firstPreUpdate = false;
+            // if (firstPreUpdate) firstPreUpdate = false;
             //else
-            Observer_PreUpdateTime?.Invoke();
+            PreUpdate();
 
             //if (Clock) Debug.Log("Observer_PreUpdateTime complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
@@ -395,6 +398,7 @@ public class scr_UpdateHandler : MonoBehaviour
 
         cnManager.AddLog(-1, Message.exp.PrintContent_Messages(), halted);
         cnManager.AddLog(-1, Message.exp.PrintContent_Stats(), halted);
+        cnManager.AddLog(-1, Message.exp.PrintContent_Climax(), halted);
         cnManager.AddLog(-1, Message.exp.PrintContent_Relations(), halted);
         cnManager.AddLog(-1, Message.exp.PrintContent_Exps(), halted);
         cnManager.AddLog(-1, String.Join("\n", Message.messages_after), halted);
@@ -403,7 +407,7 @@ public class scr_UpdateHandler : MonoBehaviour
 
         if (timeStop) totalUpdateTime = 0;
 
-        cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", false, true, scr_System_Time.current.getCurrentTime().ToString());
+        cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", true, true, scr_System_Time.current.getCurrentTime().ToString());
 
         Updating = false;
 
@@ -472,12 +476,14 @@ public class scr_UpdateHandler : MonoBehaviour
     public MessageCollect Message = new MessageCollect();
     public void NotifyJobDescriptions(MessageCollect m, bool shorten)
     {
+       // Debug.Log("NotifyJobDescriptions");
         this.Message.Merge(m, shorten);
     }
 
     public Dictionary<int, string> kojoMsgDictionary = new Dictionary<int, string>();
     public void AppendKojoMessage(int charaRefID, string s)
     {
+        Debug.Log("AppendKojoMessage");
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"AppendKojoMessage: {s}");
         if (!kojoMsgDictionary.ContainsKey(charaRefID)) kojoMsgDictionary.Add(charaRefID, s);
         else kojoMsgDictionary[charaRefID] += "\n" + s;
@@ -497,6 +503,7 @@ public class scr_UpdateHandler : MonoBehaviour
             if (Message.messages_before.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_before), false);
             cnManager.AddLog(-1, Message.exp.PrintContent_Messages(), true);
             cnManager.AddLog(-1, Message.exp.PrintContent_Stats(), true);
+            cnManager.AddLog(-1, Message.exp.PrintContent_Climax(), true);
             cnManager.AddLog(-1, Message.exp.PrintContent_Relations(), true);
             cnManager.AddLog(-1, Message.exp.PrintContent_Exps(), true);
 
@@ -515,19 +522,12 @@ public class scr_UpdateHandler : MonoBehaviour
         if (executeCallbacks) ExecuteEventCallbacks(true);
     }
 
-    public void NotifyClimax(int targetRefID, string s, ExperienceLog exp)
-    {
-        if (!scr_System_CampaignManager.current.ShowCharaLog(targetRefID)) return;
-        this.Message.exp.MergeWith(exp, false);
-        if (this.Message.exp.GetRightAlign(targetRefID)) currentRoundClimax.Add($"<align=\"right\">{s}</align>");
-        else currentRoundClimax.Add(s);
-    }
-
     public void NotifyLogsSingleUpdate(bool skipAll = false)
     {
         Observer_LogsSingleStepUpdate?.Invoke(skipAll);
     }
 
+    /*
     public void AddExperience(int charaRef, string expID, int count)
     {
         if (!scr_System_CampaignManager.current.ShowCharaLog(charaRef)) return;
@@ -537,5 +537,5 @@ public class scr_UpdateHandler : MonoBehaviour
     public int PlayerQuery(Action<scr_Menu> action)
     {
         return 0;
-    }
+    }*/
 }

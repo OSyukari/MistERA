@@ -267,15 +267,18 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public RectTransform Tab_Expeditions;
     bool initialized_faction_expsList = false;
     public initScript_Expeditions Script_Expeditions;
-    private void Initialize_FactionExpsList()
+    private void Initialize_FactionExpsList(bool forceRefresh)
     {
-        if (initialized_faction_expsList) return;
+        if (initialized_faction_expsList && !forceRefresh) return;
         else initialized_faction_expsList = true;
 
         Script_Expeditions.Initialize(this, currentFaction);
 
     }
-
+    private void Initialize_FactionExpsList()
+    {
+        Initialize_FactionExpsList(false);
+    }
 
 
     /////// CHARA TAB
@@ -327,6 +330,16 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
     }
     List<int> tempCharaRefIDStorage = new List<int>();
+
+    protected override void OnEnable()
+    {
+        if (currentTab == Tab_Overview)  Initialize_FactionOverview(); 
+        else if (currentTab == Tab_Production) Initialize_FactionProduction();
+        else if (currentTab == Tab_Jobs) Initialize_FactionCharaList(); 
+        else if (currentTab == Tab_Expeditions) Initialize_FactionExpsList(true);
+
+        base.OnEnable();
+    }
 
     private void MakeCharaButton(RectTransform parent, scr_SelectableText prefab, Character_Trainable chara)
     {
@@ -595,10 +608,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     }
 
     public Manageable_Party currentParty = null;
-    public void LoadParty(Manageable_Party p, bool iskidnap = false)
+    public void LoadParty(Manageable_Party p, bool iskidnap = false, bool forceRefresh = false)
     {
         currentParty = p;
-        Script_Expeditions.Draw(p, iskidnap);
+        Script_Expeditions.Draw(p, iskidnap, forceRefresh);
     }
 
 
@@ -669,8 +682,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     {
         mb = Instantiate(this.Script_Expeditions.prefab_resolveEventBtn);
         var b = mb.button;
-        b.Initialize(this, new initScript_Expeditions.ButtonValidator_ResolveEvent(this, b, m));
-        b.SetText( m.unresolved == null ? m.resolveEventName : m.unresolved.DisplayName );
+        b.Initialize(this, new initScript_Expeditions.ButtonValidator_ResolveEvent(this, b, m, m.unresolved == null ? m.resolveEventName : m.unresolved.DisplayName));
         b.optionID = AssertUniqueHash(m.GetHashCode());
 
         buttonsByID.Add(b.optionID, b);
@@ -771,7 +783,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             //, parent.transform.parent.GetComponent<RectTransform>()
-            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_CharaDetail.GetComponent<RectTransform>(), parent.transform.parent.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaDetail>();
+            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_CharaDetail).GetComponent<scr_Menu_CharaDetail>();
             detail.InitializeWithArgument(parent.currentChara.RefID);
 
             //scr_System_SceneManager.current.UnloadLastCanvasFromScene(typeof(scr_Canvas_Management));
@@ -1386,7 +1398,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
         public void OnClickButton()
         {
-            scr_menu_AddProductionOrder cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.canvas_AddPO.GetComponent<RectTransform>(), parent.transform.parent.GetComponent<RectTransform>()).GetComponent<scr_menu_AddProductionOrder>(); 
+            scr_menu_AddProductionOrder cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.canvas_AddPO).GetComponent<scr_menu_AddProductionOrder>(); 
             cvs.InitializeWithArgument(this.parent.CurrentFaction, OnChildExit);
         }
     }
@@ -1412,7 +1424,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            scr_Menu_AddTrade cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.canvas_AddTR.GetComponent<RectTransform>(), parent.transform.parent.GetComponent<RectTransform>()).GetComponent<scr_Menu_AddTrade>();
+            scr_Menu_AddTrade cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.canvas_AddTR).GetComponent<scr_Menu_AddTrade>();
             cvs.InitializeWithArgument(this.parent.CurrentFaction, OnChildExit);
         }
     }
@@ -1638,7 +1650,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            scr_Menu_addlinkfaction cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.canvas_AddLink.GetComponent<RectTransform>(), parent.transform.parent.GetComponent<RectTransform>()).GetComponent<scr_Menu_addlinkfaction>();
+            scr_Menu_addlinkfaction cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.canvas_AddLink).GetComponent<scr_Menu_addlinkfaction>();
             cvs.InitializeWithArgument(this.parent.CurrentFaction, OnChildExit);
         }
     }
@@ -1676,7 +1688,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             var names = new List<string>();
             foreach (var i in party.ManagedChara_Displayables) names.Add(i.FirstName);
             party.GetAvailability(out var status_tooltip);
-            script.partyMembers.SetText($"{String.Join(" ", names)}\n{status_tooltip}{(party.Job.Expedition == null ? "" : $"\n{party.Job.DisplayName}")}");
+            script.partyMembers.SetText($"{String.Join(" ", names)}{(party.Job.Expedition == null ? "" : $"\n{party.Job.DisplayName}")}");
 
             return true;
         }

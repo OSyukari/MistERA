@@ -134,7 +134,7 @@
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev03",
     "Results":[
         { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
-        { "Type":"PartyMIA" , "arguments":["party","AlwaysHostile", "expedition_Utnapishtim_wreck", "exp_event_Utnapishtim_crumblingFloor_MIA_message"]}
+        { "Type":"PartyMIA" , "arguments":["party","AlwaysHostile", "expedition_Utnapishtim_wreck", "exp_event_Utnapishtim_crumblingFloor_MIA_message","Visitor"]}
     ],
     "isLast": true
 },

@@ -5,17 +5,8 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
-public enum Manageable_GuestStatus
-{
-    Manager,
-    Member,
-    Visitor,
-    Prisoner,
-    Hidden,
-    None
-}
 
-[System.Serializable]
+
 public class Manageable : I_Disposable, I_IsJobGiver
 {
     [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }
@@ -49,9 +40,29 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public RelationshipType GetRelationshipBetween(int self, int target, out bool isA)
     {
         isA = false;
-        if (!ManagedRefs.Contains(self) || !ManagedRefs.Contains(target)) return null;
+        if (!ManagedRefs.Contains(self) || !ManagedRefs.Contains(target))
+        {
+            if (this.ID == "AlwaysHostile")
+            {
+                return Relationship_Enemy;
+            }
+            else
+            {
 
-        if (ManagerRefs.Contains(self) && ManagerRefs.Contains(target)) return Relationship_Colleague;
+                return null;
+            }
+        }
+
+        if (isPrisoner(self) && !isPrisoner(target))
+        {
+            return Relationship_Prisoner;
+        }
+        else if (isPrisoner(target) && !isPrisoner(self))
+        {
+            isA = true;
+            return Relationship_Prisoner;
+        }
+        else if (ManagerRefs.Contains(self) && ManagerRefs.Contains(target)) return Relationship_Colleague;
         else if (!ManagerRefs.Contains(self) && !ManagerRefs.Contains(target)) return Relationship_Colleague;
         else
         {
@@ -59,7 +70,6 @@ public class Manageable : I_Disposable, I_IsJobGiver
             return Relationship_Subordinate;
         }
     }
-
 
     [JsonIgnore] protected Room_Instance mainExit_cache = null;
     [JsonIgnore] public Room_Instance MainExit { get
@@ -95,8 +105,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
     public bool isMember(int charaRef)
     {
-        return charaGuestStatus.ContainsKey(charaRef) && 
-            ( charaGuestStatus[charaRef] == Manageable_GuestStatus.Manager || charaGuestStatus[charaRef] == Manageable_GuestStatus.Member);
+        if (charaGuestStatus.TryGetValue(charaRef, out var status))
+        {
+            return status < Manageable_GuestStatus.Visitor;
+        }
+        else return false;
     }
     public bool isManagedChara(int chararef)
     {
@@ -137,6 +150,22 @@ public class Manageable : I_Disposable, I_IsJobGiver
         get
         {
             return scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(RelatioshipTypeID_colleague);
+        }
+    }
+    [JsonIgnore]
+    public RelationshipType Relationship_Prisoner
+    {
+        get
+        {
+            return scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID("relationship_prisoner");
+        }
+    }
+    [JsonIgnore]
+    public RelationshipType Relationship_Enemy
+    {
+        get
+        {
+            return scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID("relationship_enemy");
         }
     }
 
@@ -232,6 +261,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 AddPayment(targetFaction, null, pay, 1);
             }
             
+        }
+    }
+
+    protected void OnHourPreUpdate()
+    {
+        if (!scr_UpdateHandler.current.EventHandler.Active)
+        {
+            var newlist = new List<Manageable_Party>(this.SubFactions);
+            foreach (var i in newlist) i.CleanupDetection();
         }
     }
 
@@ -363,6 +401,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         scr_System_Time.current.Observer_globalTime_5min += OnTimeUpdate5;
         scr_System_Time.current.Observer_globalTime_Hours += OnHourUpdate;
+        scr_UpdateHandler.current.Observer_PreUpdateTime_Hourly += OnHourPreUpdate;
 
         socialStatus_manager = LocalizeDictionary.QueryThenParse("management_faction_socialStatus_manager");
         socialStatus_member = LocalizeDictionary.QueryThenParse("management_faction_socialStatus_member");
@@ -471,7 +510,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
             }
         }
 
-        foreach (var p in this.SubFactions) p.Manage(currentHour, currentMinute);
+        foreach(var i in this.SubFactions)
+        {
+            i.Manage(currentHour, currentMinute);
+        }
+        //foreach (var p in this.SubFactions) p.Manage(currentHour, currentMinute);
        // string s = "Faction [" + ID + "] manage at hour [" + currentHour + "]";
        // s += "\n" + Inventory.PrintContent();// + " _ " + String.Join(" ", Inventory.PrintTracker());
     }
@@ -898,6 +941,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         if (sendEvent && guestStatus == Manageable_GuestStatus.Prisoner)
         {
+            Debug.Log($"{c.CallName} is being captured!");
             var ev = new EventInstance(c, "OnCharaImprison", "");
             ev.displayOverride = this.isPlayerFaction || c.DisplayCharaEvent;
             ev.AppendStrings.Add("partyName", new List<string>() { this.FactionDisplayName });
@@ -1678,6 +1722,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
             } }
     }
 
+    protected List<int> charaRegisteredForResourceConsumption = new List<int>();
+    public void RegisterForResourceConsumption(int i)
+    {
+        if (!this.isPlayerFaction) return;
+        if (!charaRegisteredForResourceConsumption.Contains(i))  charaRegisteredForResourceConsumption.Add(i);
+    }
 
     public class ProductionOrder
     {
@@ -1806,45 +1856,53 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     Dictionary<string, int> charaMaintenanceCostCache = null;
 
-    [JsonIgnore] public Dictionary<string, int> GetMaintenanceCost_Chara
+
+
+    public Dictionary<string, int> GetMaintenanceCost_Chara(bool registeredOnly = false)
     {
-        get
+  
+        if (charaMaintenanceCostCache == null || registeredOnly)
         {
-            if (charaMaintenanceCostCache == null)
+            charaMaintenanceCostCache = new Dictionary<string, int>();
+
+            foreach (var chara in ManagedChara)
             {
-                charaMaintenanceCostCache = new Dictionary<string, int>();
-                foreach (var chara in ManagedChara)
+                if (registeredOnly && !charaRegisteredForResourceConsumption.Contains( chara.RefID))
                 {
-                    // verify that said chara is indeed using this faction as maintenance target
-                    if (chara.FactionManager == null)
-                    {
-                        Debug.Log(chara.FirstName + " HAS EMPTY FactionManager ON GetMaintenanceCost_Chara");
-                        continue;
-                    }
-                    else if (chara.FactionManager.HomeFactions.Count < 1)
-                    {
-                        Debug.Log(chara.FirstName + " HAS EMPTY HomePriorityList ON GetMaintenanceCost_Chara");
-                        continue;
-                    }
-                    else if (chara.FactionManager.HomeFactions[0].ID != this.ID)
-                    {
-                        // chara is using another faction
-                        continue;
-                    }
+                    DailyReport.AddManageReport($"{chara.FirstName} is not inside faction, no resouce consumed");
+                    //Debug.LogError($"{chara.FirstName} is not inside faction, no resouce consumed");
+                    continue;
+                }
+                // verify that said chara is indeed using this faction as maintenance target
+                if (chara.FactionManager == null)
+                {
+                    Debug.Log(chara.FirstName + " HAS EMPTY FactionManager ON GetMaintenanceCost_Chara");
+                    continue;
+                }
+                else if (chara.FactionManager.HomeFactions.Count < 1)
+                {
+                    Debug.Log(chara.FirstName + " HAS EMPTY HomePriorityList ON GetMaintenanceCost_Chara");
+                    continue;
+                }
+                else if (chara.FactionManager.HomeFactions[0].ID != this.ID)
+                {
+                    // chara is using another faction
+                    continue;
+                }
 
-                    var needs = chara.Stats.Needs;
-                    if (needs.Count < 1) continue;
+                var needs = chara.Stats.Needs;
+                if (needs.Count < 1) continue;
 
-                    foreach (var n in needs)
-                    {
-                        if (!charaMaintenanceCostCache.ContainsKey(n.consumeItemByTag)) charaMaintenanceCostCache.Add(n.consumeItemByTag, 0);
-                        charaMaintenanceCostCache[n.consumeItemByTag] -= 1;
+                foreach (var n in needs)
+                {
+                    if (!charaMaintenanceCostCache.ContainsKey(n.consumeItemByTag)) charaMaintenanceCostCache.Add(n.consumeItemByTag, 0);
+                    charaMaintenanceCostCache[n.consumeItemByTag] -= 1;
 
-                    }
                 }
             }
-            return charaMaintenanceCostCache;
         }
+        return charaMaintenanceCostCache;
+        
     }
 
     [JsonIgnore] public Dictionary<string, List<int>> GetMaintenanceCost_Total
@@ -1852,7 +1910,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         get
         {
             Dictionary<string, List<int>> total = new Dictionary<string, List<int>>();
-            Dictionary<string, int> costChara = GetMaintenanceCost_Chara;
+            Dictionary<string, int> costChara = GetMaintenanceCost_Chara();
             Dictionary<Item_Base, int> costOrder = GetMaintenanceCost_Orders;
             foreach (KeyValuePair<string, int> kvp in Inventory.tracker)
             {
@@ -1875,11 +1933,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
     /// </summary>
     /// <param name="debug"></param>
     /// <returns></returns>
-    public bool CheckDailyResourceConsumption(List<string> debug = null)
+    protected bool CheckDailyResourceConsumption(List<string> debug = null)
     {
         bool returnValue = true;
         DailyCharaMaintenance.Clear();
-        foreach (KeyValuePair<string, int> kvp in GetMaintenanceCost_Chara)
+        foreach (KeyValuePair<string, int> kvp in GetMaintenanceCost_Chara(true))
         {
             List<Item_Instance> extraConsume = new List<Item_Instance>();
             List<string> consumeMessage = new List<string>();
@@ -1898,6 +1956,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (extraConsume.Count > 0) scr_System_CampaignManager.current.Recycler.AddItem(extraConsume);
             if (consumeMessage.Count > 0) DailyReport.AddManageReport($"Consumed resources: {String.Join("\n", consumeMessage)}");
         }
+
+        charaRegisteredForResourceConsumption.Clear();
+
         if (returnValue) DailyReport.AddManageReport("all resources sufficient");
         return returnValue;
     }
@@ -1948,6 +2009,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_0;
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_1;
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_3;
+
+        scr_System_Time.current.Observer_globalTime_5min -= OnTimeUpdate5;
+        scr_System_Time.current.Observer_globalTime_Hours -= OnHourUpdate;
+        scr_UpdateHandler.current.Observer_PreUpdateTime_Hourly -= OnHourPreUpdate;
     }
 
     [JsonIgnore] public Dictionary<Item_Base, int> GetMaintenanceCost_Orders
@@ -2116,7 +2181,6 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public DailyReportHandler DailyReport = new DailyReportHandler();
 
-    [System.Serializable]
     public class DailyReportHandler
     {
         public DailyReportHandler()

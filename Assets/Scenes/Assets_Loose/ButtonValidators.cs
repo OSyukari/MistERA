@@ -41,6 +41,7 @@ public abstract class ButtonValidator
         this.parent = parent;
     }
 
+    public bool noValidate = false;
     public virtual void Destroy()
     {
 

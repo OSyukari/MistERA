@@ -247,7 +247,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 return Utility.CompareValue(this.Climaxing, operand, value); ;
             case "currentClimaxCount": // check chara consecutive climax count. how ? 
                 //Debug.LogError("Checking ConsecutiveClimaxCount on " + FirstName + " value is " + this.Status.ConsecutiveClimaxCount);
-                Debug.Log(FirstName + " Comparevalue currentClimaxCount [" + this.Stats.ConsecutiveClimaxCount + "] [" + operand + "] [" + value + "]");
+                //Debug.Log(FirstName + " Comparevalue currentClimaxCount [" + this.Stats.ConsecutiveClimaxCount + "] [" + operand + "] [" + value + "]");
                 if (int.TryParse(value, out int cliamxCount))
                 {
                     return Utility.CompareValue(this.Stats.ConsecutiveClimaxCount, operand, cliamxCount); ;
@@ -370,10 +370,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     [JsonProperty] protected int timeSinceLastSleep = 24;
     [JsonProperty] protected int timeSinceLastEat = 24;
-    private void Observer_DebugDailyRefresh(int updateOrder)
+    private void Observer_GlobalDay_0(int updateOrder)
     {
         if (updateOrder != 0) return;
-
+        this.FactionManager.FlagForDailyNeed();
     }
 
     
@@ -832,6 +832,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (log) s.Add(", RESET called");
         }*/
 
+        if (isTemporaryActor)
+        {
+            if (s != null) s.Add("isTemporaryActor, breaking");
+            return;
+        }
+
         // Redress check
         if (shouldRedress)
         {
@@ -937,6 +943,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 {
                     // be careful actorjobcomplete list, but here not necessary as camp ignore the list
                     if (log) ss += "working on party exploration job " + party.FactionDisplayName + "" + party.Job.DisplayName;
+                    if (s != null) s.Add(ss);
+                    return;
+                }
+                else if (party.Job.ShouldRest(this))
+                {
+                    if (log) ss += "exploration shouldRest? TRUE ||";
+                    if (s != null) s.Add(ss);
+                }
+                else if (party.Job.HasCooldown() || party.Job.status == Job_Expedition.ExpeditionStatus.returning)
+                {
+                    // be careful actorjobcomplete list, but here not necessary as camp ignore the list
+                    if (log) ss += $"working on party exploration job, inCooldown? {party.Job.HasCooldown()} or returning? {party.Job.status == Job_Expedition.ExpeditionStatus.returning}, faction {party.FactionDisplayName} {party.Job.DisplayName}";
                     if (s != null) s.Add(ss);
                     return;
                 }
@@ -1159,7 +1177,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         } }
     [JsonIgnore] public bool shouldRedress { 
         get {
-            return canRedress;
+            return canRedress && !FactionManager.isPartyLocked;
             if (!canRedress) return false;
             foreach(var i in this.Inventory.Contents)
             {
@@ -1396,7 +1414,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 var callbacks = new List<Action>();
                 var appends = new List<string>();
                 wakeupEV.FunctionCalls.Add("jobCallback", callbacks);
-                wakeupEV.AppendStrings.Add("onWakeUp", appends);
+
+                if (this.InteractionJob.isVisibleToPlayer) wakeupEV.AppendStrings.Add("onWakeUp", appends);
                 //scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
                 scr_UpdateHandler.current.EventHandler.StartEvent(wakeupEV, false);
 
@@ -1413,7 +1432,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                         //Debug.LogError($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
                         
                         ap.ExecutePackageOutsideUpdate();   // execution
-                        ap.job.CollectLogs(ap);
+                        if (ap.job.isVisibleToPlayer) ap.job.CollectLogs(ap);
 
                         ap.DisablePackage();
                         scr_System_CampaignManager.current.Unregister(ap);
@@ -1447,7 +1466,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                                 refused.Remove(rel);
                             }
                         }
-                        ap.job.CollectLogs(ap);
+                        if (ap.job.isVisibleToPlayer) ap.job.CollectLogs(ap);
                     }
                 }
 
@@ -1755,7 +1774,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         scr_System_Time.current.Observer_globalTime_5min += Observer_GlobalMinute5;
         scr_System_Time.current.Observer_globalTime_Hours += Observer_GlobalHour;
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay;
-        scr_System_Time.current.Observer_globalTime_Day += Observer_DebugDailyRefresh;
+        scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_0;
 
 
         scr_UpdateHandler.current.Observer_PreUpdateTime += PreUpdateTime;
@@ -1775,7 +1794,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         scr_System_Time.current.Observer_globalTime_5min -= Observer_GlobalMinute5;
         scr_System_Time.current.Observer_globalTime_Hours -= Observer_GlobalHour;
         scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay;
-        scr_System_Time.current.Observer_globalTime_Day -= Observer_DebugDailyRefresh;
+        scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay_0;
 
         scr_UpdateHandler.current.Observer_PreUpdateTime -= PreUpdateTime;
         scr_UpdateHandler.current.Observer_PostUpdateTime_2 -= PostUpdateTime2;
@@ -1784,6 +1803,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
 
     public RelationshipManager Relationships = null;
+
+    public void NotifyCharaUnregister(Character_Trainable c)
+    {
+        this.Memory.NotifyCharaUnregister(c);
+        this.Relationships.NotifyCharaUnregister(c.RefID);
+    }
+    public void NotifyRoomUnregister(Room_Instance r)
+    {
+        this.Memory.NotifyRoomUnregister(r);
+    }
 
     [JsonIgnore] public int Height
     {

@@ -1,0 +1,76 @@
+{
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_goblin_patrol",
+                "eventString_Ongoing": "exp_event_goblin_patrol_ongoing",
+                "DurationMinutes": 15,
+                "tags": [
+                    "goblin"
+                ],
+                "baseWeight": 10,
+    "teamRequirement": {
+        "minTeamCount": 1,
+        "maxTeamCount": 99,
+        "charaReq": { "cost_EN": 4, "cost_ST": 4 }
+    },
+"possibleResults": [
+    {
+        "baseWeight": 6,
+        "resultText": "$names$反应迅速，在被发现前成功退入阴影中，屏住呼吸直到巡逻队离开。"
+    },
+    {
+        "baseWeight": 3,
+        "resultText": "$names$一名队员在躲藏时不慎弄出了声响，被哥布林注意到了！",
+        "eventID":"event_caveGoblinEncounter", "eventLabel":"", "overrideTargetGeneration":true,
+        "TargetGenerations":
+        [ {
+            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
+            "encounterTemplates":
+            [{
+                "encounterWeights":{ "goblin_patrol_1":1 },
+                "frontlineKeys":["enemy","teamB_frontline"], "supportKeys":["enemy","teamB_backline"]
+            }]
+        } ]
+    },
+    {
+        "baseWeight": 3,
+        "resultText": "$names$埋伏了起来，对哥布林们展开了突袭！",
+        "eventID":"event_caveGoblinEncounter", "eventLabel":"br_combat_ambush_validator", "overrideTargetGeneration":true,
+        "TargetGenerations":
+        [ {
+            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
+            "encounterTemplates":
+            [{
+                "encounterWeights":{ "goblin_patrol_1":1 },
+                "frontlineKeys":["enemy","teamB_frontline"], "supportKeys":["enemy","teamB_backline"]
+            }]
+        } ]
+    },
+    {
+        "baseWeight": 2,
+        "resultText": "$names$对哥布林们突袭，但失败被对方提前发现了",
+        "eventID":"event_caveGoblinEncounter", "eventLabel":"", "overrideTargetGeneration":true,
+        "TargetGenerations":
+        [ {
+            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
+            "encounterTemplates":
+            [{
+                "encounterWeights":{ "goblin_patrol_1":1 },
+                "frontlineKeys":["enemy","teamB_frontline"], "supportKeys":["enemy","teamB_backline"]
+            }]
+        } ]
+    }
+]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_goblin_patrol": "哥布林巡逻队",
+                "exp_event_goblin_patrol_ongoing": "$names$发现了一小队哥布林巡逻队的身影"
+            }
+        }
+    }
+}

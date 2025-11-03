@@ -11,7 +11,7 @@
                 "useNameGen":true, "nameGen_firstName":"english",
                 "Appearance":"Female",
                 "inventoryOverride":[
-                    {"ID":"weapon_village_scythe","nameOverwrite":""}
+                    {"ID":"weapon_simple_scythe","nameOverwrite":""}
                 ]
             }
         ]

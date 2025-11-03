@@ -1,0 +1,105 @@
+{
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_caveGoblinCaptive",
+                "eventString_Ongoing": "exp_event_caveGoblinCaptive_ongoing",
+                "DurationMinutes": 5,
+                "teamRequirement":{
+                    "minTeamCount":1,
+                    "allowPrisoner":true,
+                    "requireCombat":false
+                },
+                "weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"Encounter" } } ],
+                "tags": [
+                    "goblin", "captive"
+                ],
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 4,
+                        "resultText": "exp_event_caveGoblinCaptive_result_rape",
+                        "logCharaMemory":false,
+                        "eventID": "event_goblin_captiveRape", "eventLabel":"br_silent",
+                        "eventAppendStringKey":"StartSexJobInParty_noJobResultLogging","eventAppendString":"",
+                        "runImmediate":true,
+                        "weightMods": [
+                            {
+                                "modValue": 1000,
+                                "teamRequirement": {
+                                    "debug_teamNameMatch": "Encounter"
+                                }
+                            }
+                        ],
+                        "overrideTargetGeneration": true,
+                        "TargetGenerations": [
+                            {
+                                "factionTemplate": "AlwaysHostile",
+                                "mergeFactionKey":"party",
+                                "encounterTemplates": [
+                                    {
+                                        "encounterWeights": {
+                                            "goblin_patrol_1": 1
+                                        },
+                                        "frontlineKeys": [
+                                            "enemy",
+                                            "teamB_frontline"
+                                        ],
+                                        "supportKeys": [
+                                            "enemy",
+                                            "teamB_backline"
+                                        ]
+                                    }
+                                ],
+                                "factionInventory": [],
+                                "allowScope": true,
+                                "scopeReplacer": {
+                                    "refKeys": [
+                                        "enemy",
+                                        "teamB_frontline"
+                                    ],
+                                    "baseScope": "ScopeInRoomExceptRef",
+                                    "extraScopeArguments": [
+                                        "party"
+                                    ],
+                                    "chara_conditions": [
+                                        {
+                                            "parameters": [
+                                                "NonPlayerFactionChara"
+                                            ]
+                                        },
+                                        {
+                                            "parameters": [
+                                                "HasBaseID",
+                                                "creature_goblin"
+                                            ]
+                                        },
+                                        {
+                                            "parameters": [
+                                                "HasFactionID",
+                                                "AlwaysHostile"
+                                            ]
+                                        }
+                                    ],
+                                    "minTargetCount": 1,
+                                    "maxTargetCount": 2,
+                                    "pickAmongValidTargets": true,
+                                    "allowEventOnMinTargetCountMiss": false
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_caveGoblinCaptive": "哥布林囚犯",
+                "exp_event_caveGoblinCaptive_ongoing": "$names$被哥布林们囚禁在了洞穴深处",
+                "exp_event_caveGoblinCaptive_result_rape": "$names$被哥布林们侵犯"
+            }
+        }
+    }
+}

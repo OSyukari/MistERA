@@ -6,7 +6,6 @@ using System.Linq;
 using Newtonsoft.Json;
 
 
-[System.Serializable]
 public class Job_Furniture : Job
 {
     /*

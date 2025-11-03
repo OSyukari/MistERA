@@ -535,7 +535,10 @@ public class Character_Body
 
                 string s = Owner.FirstName + ":" + climaxKeywords + (cumKeywords.Length > 0 ? "/" + cumKeywords : "");
 
-                Debug.LogError("Merge Climax Message");
+                //Debug.LogError("Merge Climax Message");
+
+                //scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
+                exp.AddClimaxMSG(Owner.RefID, s);
                 message.exp.MergeWith(exp, false);
             }
 

@@ -48,10 +48,14 @@ public class initScript_Expeditions : MonoBehaviour
     public scr_partyBTN prefab_partyButton;
     public scr_SelectableText prefab_memberButton;
     Manageable_Party previous = null;
+
+    bool initialized = false;
+
     public void Initialize(scr_Canvas_Management canvas, Manageable m, bool loadPrev = false)
     {
         this.canvas = canvas;
-
+        bool forceReinit = initialized;
+        initialized = true;
         canvas.UnloadButton(this.temporaryTeamIDs);
         Utility.DestroyAllChildrenFrom(teamList, 2);
         Utility.DestroyAllChildrenFrom(miaList, 2);
@@ -101,7 +105,7 @@ public class initScript_Expeditions : MonoBehaviour
             var script = Instantiate(prefab_partyButton);
             script.SelfRect.SetParent(miaList, false);
             var names = new List<string>();
-            foreach (var i in party.ManagedChara_Displayables) names.Add(i.FirstName);
+            foreach (var i in party.ManagedChara_Displayables) names.Add(i.CallName);
             script.partyMembers.SetText(String.Join(" ", names));
             canvas.MakeButton_Party(party, script, true);
             //script.PartyButton.SetText(party.ExpeditionName);
@@ -128,7 +132,7 @@ public class initScript_Expeditions : MonoBehaviour
             CurrentMode = PartyEditUI.Neutral;
         }
 
-        canvas.LoadParty(first);
+        canvas.LoadParty(first, false, forceReinit);
     }
 
     public RectTransform List_AllExpeditions;
@@ -158,20 +162,20 @@ public class initScript_Expeditions : MonoBehaviour
 
     protected void UpdateDisplay(bool isKidnap)
     {
-        teamNameButton.interactable = !isKidnap;
+        teamNameButton.interactable = scr_System_CampaignManager.current.DebugMode || !isKidnap;
         teamNameButton.text = $"{party.FactionDisplayName}";// (p.FactionDisplayName);
         var names = new List<string>();
         foreach (var i in party.ManagedChara_Displayables) names.Add(i.FirstName);
         teammates.SetText($"{String.Join(", ", names)}");
-        string status_tooltip;
 
         //p.GetAvailability(out status_tooltip);
-        var tooltip = $"{party.GetAvailability(out status_tooltip)} {party.Job.status}";
+        var tooltip = $"{party.GetAvailability(out var status_tooltip)} {party.Job.status}";
         teamStatus.SetText(status_tooltip);
         teamStatus.SetExternalTooltip(tooltip);
     }
 
-    public void Draw(Manageable_Party p, bool isKidnap)
+
+    public void Draw(Manageable_Party p, bool isKidnap, bool forceRefresh = false)
     {
         if (party != p || p == null)
         {
@@ -179,7 +183,7 @@ public class initScript_Expeditions : MonoBehaviour
             this.ExpeditionConfig.StartTime.DeactivateInputField();
             this.ExpeditionConfig.CooldownTime.DeactivateInputField();
         }
-        else
+        else if (!forceRefresh)
         {
             UpdateDisplay(isKidnap);
             return;
@@ -207,6 +211,7 @@ public class initScript_Expeditions : MonoBehaviour
             UpdateDisplay(isKidnap);
 
 
+            ExpeditionConfig.gameObject.SetActive(!p.Job.isActive && !isKidnap);
             OnEndEdit_StartTime();
 
             bool hasInv = false;
@@ -253,7 +258,6 @@ public class initScript_Expeditions : MonoBehaviour
             }*/
             text_inv_empty.gameObject.SetActive(!hasInv);
 
-            ExpeditionConfig.gameObject.SetActive(!isKidnap);
 
             canvas.UnloadButton(temporaryExpResolves);
             temporaryExpResolves.Clear();
@@ -303,7 +307,7 @@ public class initScript_Expeditions : MonoBehaviour
                 // if (app == null) continue;
                 var v = Instantiate(prefab_memEntry);
                 v.SelfRect.SetParent(list_ExpeditionMSG, false);
-                v.memText.SetText(ap.DisplayName);
+                v.memText.SetText(ap.DisplayName == "EMPTY" ? p.Job.DescriptionString : ap.DisplayName);
                 v.timeStamp.text = "";// LocalizeDictionary.QueryThenParse("exp_event_timestamp_ongoing");// first ? msg.Key.ToShortTimeString() : "";
             }
 
@@ -491,7 +495,7 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
     }
     public void OnEndEdit_StartTime()
     {
-        if (canvas == null || canvas.currentParty == null) return;
+        if (canvas == null || canvas.currentParty == null || !ExpeditionConfig.gameObject.activeInHierarchy) return;
         var currentExp = canvas.currentParty.Job.Expedition;
         if (currentExp != null && currentExp.Base.HasStartHour)
         {
@@ -601,22 +605,31 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
         new scr_Canvas_Management parent;
         scr_SelectableText text;
         ExpeditionMessageEntry m;
+        string extraText;
 
-        public ButtonValidator_ResolveEvent(scr_Canvas_Management parent, scr_SelectableText text, ExpeditionMessageEntry m) : base(parent)
+        public ButtonValidator_ResolveEvent(scr_Canvas_Management parent, scr_SelectableText text, ExpeditionMessageEntry m, string extraText) : base(parent)
         {
             this.parent = parent;
             this.text = text;
             this.m = m;
+            this.extraText = extraText;
         }
 
         public override bool IsButtonValid()
         {
+            text.SetText(extraText);
+            state = ButtonValidator_States.Valid;
             //if (text == null) Debug.LogError("text null");
             if (!text.gameObject.activeInHierarchy) return false;
             if (parent.currentParty == null || parent.currentParty.Job == null || !parent.currentParty.Job.isActive) return false;
             if (!parent.currentParty.isPlayerFaction) return false;
             if (m.unresolved == null || m.unresolved.isResolved) return false;
-
+            if (m.Characters.Count < 1)
+            {
+                state = ButtonValidator_States.Conflict;
+                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_cannotResolve"));
+                return false;
+            }
             return true;
         }
 
@@ -649,8 +662,8 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
                 package.isResolved = false;
             });
 
-            scr_System_CampaignManager.current.RegisterSceneUnloadEventCallback(ev);
-            scr_System_SceneManager.current.UnloadLastCanvasFromScene();
+            scr_System_CampaignManager.current.RegisterCanvasAnchorHideEventCallback(ev);
+            scr_System_CampaignManager.current.HideCanvasAnchor();
 
         }
     }
@@ -718,9 +731,11 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
             bool isplayer = parent.currentParty.isPlayerFaction;
             if (!isplayer || parent.currentParty.isActive)
             {
-                extraTooltip.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_remaining_active")
+                var stringkey = isplayer && (parent.currentParty.Job.status == Job_Expedition.ExpeditionStatus.active || parent.currentParty.Job.status == Job_Expedition.ExpeditionStatus.returning) ? "ui_management_expeditionJob_remaining_active_ongoing" : "ui_management_expeditionJob_remaining_active";
+                extraTooltip.SetText(LocalizeDictionary.QueryThenParse(stringkey)
                         .Replace("$time$", parent.currentParty.Job.RemainingTime)
-                        .Replace("$progress$", parent.currentParty.Job.RemainingProgress));
+                        .Replace("$progress$", parent.currentParty.Job.RemainingProgress)
+                        .Replace("$names$", parent.currentParty.Job.ActorCount < 1 ? " - " : String.Join(" ", parent.currentParty.Job.ActorNames)));
             }
             else
             {

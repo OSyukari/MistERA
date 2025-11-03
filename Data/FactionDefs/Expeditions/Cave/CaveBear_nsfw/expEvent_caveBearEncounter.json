@@ -30,14 +30,14 @@
             [
                 {
                     "factionTemplate":"AlwaysHostile",
-                    "encounterTemplate":
-                    {
+                    "encounterTemplates":
+                    [{
                         "encounterWeights":{
                             "bear_encounter_2":1
                         },
                         "frontlineKeys":["enemy","teamB_frontline"],
                         "supportKeys":["enemy","teamB_backline"]
-                    },
+                    }],
                     "factionInventory": [ ],
                     "allowScope":true,
                     "scopeReplacer":{

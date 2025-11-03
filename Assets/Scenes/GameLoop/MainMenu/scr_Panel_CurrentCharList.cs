@@ -100,7 +100,7 @@ public class scr_Panel_CurrentCharList : scr_Menu
         ValidateAll();
     }
 
-    private void ReadCurrentChar(int id)
+    private void ReadCurrentChar(int id, bool foceUpdate)
     {
         ValidateAll();
     }

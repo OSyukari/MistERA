@@ -619,7 +619,7 @@ public class StatsManager : I_StatsManager
                     if (curr.duration == 0)
                     {   // on status expire
 
-                        Debug.Log($"status {curr.ID} on {Owner.FirstName} expired, removing");
+                        //Debug.Log($"status {curr.ID} on {Owner.FirstName} expired, removing");
 
                         if (curr.BaseRef.allowNaturalRemoval)
                         {

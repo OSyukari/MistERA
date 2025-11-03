@@ -51,6 +51,9 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
     List<scr_charaEntry> list_c = new List<scr_charaEntry>();
     List<scr_itemEntry> list_i = new List<scr_itemEntry>();
 
+    public string liberateEventID = "";
+
+
     /// <summary>
     /// 
     /// </summary>
@@ -60,10 +63,10 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
     /// <param name="allowHostile">AllowHostileAction</param>
     /// <param name="allowKill">AllowKilling</param>
     /// <param name="allowTransfer">AllowCharaTransfer</param>
-    public void InitializeWithArgument(I_IsJobGiver a, I_IsJobGiver b, bool allowChara, bool allowHostile, bool allowKill, bool allowTransfer)
+    public void InitializeWithArgument(I_IsJobGiver a, I_IsJobGiver b, bool allowChara, bool allowHostile, bool allowKill, bool allowTransfer, string liberateEventID)
     {
         list_c.Clear(); list_i.Clear();
-
+        this.liberateEventID = liberateEventID;
         this.a = a; this.b = b;
         this.allowTransfer = allowTransfer;
         this.allowKill = allowKill;

@@ -35,7 +35,8 @@ public class scr_charaEntry : MonoBehaviour
         none,
         transfer,
         capture,
-        rescue
+        rescue,
+        liberate
     }
 
     public bool allowDismember = false;
@@ -55,7 +56,6 @@ public class scr_charaEntry : MonoBehaviour
             var targetFaction = this.isTeamA ? this.parent.b : this.parent.a;
 
             var prevStatus = innerChara.FactionManager.CurrentActiveParty.GetStatus(innerChara);
-            this.innerChara.FactionManager.RemoveFromParty(null, true, true);
             var newStats = targetFaction.FactionOwnerRoot.GetStatus(innerChara.RefID);
 
             switch (this.TreatmentResult)
@@ -66,14 +66,38 @@ public class scr_charaEntry : MonoBehaviour
                     break;
                 case Treatment.transfer: newStats = prevStatus; break;
                 case Treatment.capture: newStats = Manageable_GuestStatus.Prisoner; break;
+                default:
+                    newStats = Manageable_GuestStatus.None; break;
             }
 
-            if (newStats == Manageable_GuestStatus.None)
+            //Debug.LogError($"Chara Resolve Trade treatment {prevStatus} {newStats} {this.TreatmentResult}");
+            if (TreatmentResult == Treatment.liberate && parent.liberateEventID != "")
+            {
+                if (newStats == Manageable_GuestStatus.None)
+                {
+                    var ev = new EventInstance(innerChara, parent.liberateEventID, "");
+                    ev.Targets.Add("party", isTeamA ? this.parent.b.ManagedChara : this.parent.a.ManagedChara);
+                    ev.Targets.Add("rescued", new List<Character_Trainable>() { innerChara });
+                    ev.displayOverride = innerChara.DisplayCharaEvent || isTeamA ? parent.b.isPlayerFaction : parent.a.isPlayerFaction;// (innerChara.DisplayCharaEvent || (isTeamA ? parent.a.isPlayerFaction || parent.b.isPlayerFaction));
+                    //Debug.Log($"displayOverride? {ev.displayOverride}");
+                    scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+                }
+                else
+                {
+                    Debug.LogError($"Liberating character {innerChara.CallName}, is legit? {newStats == Manageable_GuestStatus.None}");
+                }
+                return;
+            }
+            else if (newStats == Manageable_GuestStatus.None)
             {
                 Debug.LogError($"Chara Resolve Trade failed, undefined faction type");
+                return;
             }
             else if (targetFaction is Manageable_Party)
             {
+
+                scr_System_CampaignManager.current.MoveCharacterTo(innerChara, targetFaction.MainExit);
+                this.innerChara.FactionManager.RemoveFromParty(null, true, true);
 
                 if (this.innerChara.FactionManager.AddToPartyAsTemp(targetFaction, newStats == Manageable_GuestStatus.Prisoner ? Manageable_GuestStatus.Prisoner : Manageable_GuestStatus.Visitor, newStats))
                 {
@@ -86,6 +110,9 @@ public class scr_charaEntry : MonoBehaviour
             }
             else if (targetFaction is Manageable)
             {
+                scr_System_CampaignManager.current.MoveCharacterTo(innerChara, targetFaction.MainExit);
+                this.innerChara.FactionManager.RemoveFromParty(null, true, true);
+
                 if (this.innerChara.FactionManager.Faction_Home == null) this.innerChara.FactionManager.SetHomeFaction((targetFaction as Manageable).ID, newStats);
                 else this.innerChara.FactionManager.SetTempHomeFaction((targetFaction as Manageable).ID, newStats);
             }
@@ -94,7 +121,6 @@ public class scr_charaEntry : MonoBehaviour
                 Debug.LogError($"Chara Resolve Trade failed, undefined faction type");
             }
             this.innerChara.ChangeCurrentJob();
-            scr_System_CampaignManager.current.MoveCharacterTo(innerChara, targetFaction.MainExit);
         }
     }
 
@@ -189,7 +215,7 @@ public class scr_charaEntry : MonoBehaviour
         }
         public void OnClickButton()
         {
-            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_CharaDetail.GetComponent<RectTransform>(), parent.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaDetail>();
+            scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_CharaDetail).GetComponent<scr_Menu_CharaDetail>();
             detail.InitializeWithArgument(c.RefID);
         }
     }
@@ -212,17 +238,16 @@ public class scr_charaEntry : MonoBehaviour
             this.target = target;
 
             bool isRescue = false;
-            bool canBeRescued = false;
+            bool canbeLiberated = false;
 
             if (entry.isTeamA || !parent.allowTransfer) deactivateSelf = true;
-            // if chara in A and not in B -> rescue
             else if (parent.a.FactionOwnerRoot.isManagedChara(entry.innerChara.RefID))
-            {
+            {// if chara in A and not in B -> rescue
                 isRescue = true;
             }
-            else if (parent.b.FactionOwnerRoot.isPrisoner(entry.innerChara.RefID))
-            {
-                canBeRescued = true;
+            else if (parent.b.FactionOwnerRoot.isPrisoner(entry.innerChara.RefID) && parent.liberateEventID != "")
+            {// not in faction, can be liberate
+                canbeLiberated = true;
             }
             // if chara not in A, capture or rescue(transfer)
 
@@ -233,17 +258,17 @@ public class scr_charaEntry : MonoBehaviour
             else if (!parent.allowTransfer) deactivateSelf = true;
             else if (target == Treatment.transfer)
             {
-                if (isRescue || !canBeRescued) deactivateSelf = true;
+                if (isRescue || !canbeLiberated) deactivateSelf = true;
                 else if (!parent.isHostile)
                 {
                     // non hostile faction allow transfer -> direct transfer
                     innerText = $"trade_chara_Treatment_{target}";
                 }
-                else if (canBeRescued)
+                else if (canbeLiberated)
                 {
                     // hostile faction allow transfer and is prisoner -> rescue
-                    target = Treatment.rescue;
-                    innerText = $"trade_chara_Treatment_{target}";
+                    this.target = Treatment.liberate;
+                    innerText = $"trade_chara_Treatment_{this.target}";
                 }
             }
             else if (target == Treatment.capture)

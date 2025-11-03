@@ -8,8 +8,6 @@ using Newtonsoft.Json;
 
 
 
-[System.Serializable]
-
 /// <summary>
 /// Response None = action did not happen in the first place <br/>
 /// Response Refuse = proposal happened, refused by receiver <br/>
@@ -27,14 +25,13 @@ public enum  Memory_Response
     CriticalSuccess
 }
 
-[System.Serializable]
 public class Memory_Entry
 {
     public DateTime StartTime = DateTime.MinValue;
     [JsonIgnore][NonSerialized] public bool MergeWithAll = false;
     public DateTime EndTime = DateTime.MinValue;
     [JsonIgnore] public string PrintTimeStart { get { return StartTime.ToShortTimeString(); } }
-    [JsonIgnore] public string PrintTimeStartAndEnd { get { return StartTime.ToShortTimeString() + (EndTime == StartTime ? "" : "\n- " + EndTime.ToShortTimeString()); } }
+    [JsonIgnore] public string PrintShortTimeStartToEnd { get { return $"{StartTime.ToString("HH:mm")}{(EndTime == StartTime ? "" : " - " + EndTime.ToString("HH:mm"))}"; } }
     [JsonIgnore] public string PrintTimeEndToStart { get { return (EndTime == StartTime ? "" :  EndTime.ToShortTimeString() + "\n- ")+ StartTime.ToShortTimeString(); } }
 
     // [JsonIgnore] public bool isSexMemory { get { return this.Tags.Contains("sex"); } }
@@ -138,7 +135,7 @@ public class Memory_Entry
     [JsonProperty] protected int duration = -1;
     [JsonIgnore] public int Duration { get { return duration; } set { this.duration = value; } }
 
-    [JsonProperty] protected List<MemInstance> interactions = new List<MemInstance>();
+    public List<MemInstance> interactions = new List<MemInstance>();
 
     public void FillBlacklist(List<MemBlacklist> Blacklist)
     {
@@ -446,7 +443,7 @@ public class Memory_Entry
         isRefuseOnly = cache_refuseCount > cache_acceptCount && cache_acceptCount == 0;
     }
 
-    [JsonProperty] protected int roomRef = -1;
+    public int roomRef = -1;
 
     /*
     public void MergeEntry(bool isDoer, List<int> targetRefs, string description, Memory_Response response, Memory_Attitude attitude, int duration = -1, COM targetCOM = null, int comVariant = -1, int masterRef = -1, List<string> selfTags = null, List<string> targetTags = null)
@@ -837,7 +834,7 @@ public class Memory_Entry
 
     public void Draw(scr_memoryBox box)
     {
-        box.timeStamp.text = PrintTimeEndToStart;
+        box.timeStamp.text = PrintShortTimeStartToEnd;
         box.memText.SetText(ToString(true));
 
         List<string> additional = new List<string>();
@@ -874,7 +871,6 @@ public class MemBlacklist
 }
 
 
-[System.Serializable]
 public class MemInstance
 {
     public List<int> targets = new List<int>();

@@ -338,7 +338,6 @@ public class RelationshipManager
             _Relationship_Personal = null;
             _Relationship_Social = null;
             this.relationshipTypeID_Personal = "";
-            this.relationshipTypeID_Social = "";
             isA_Bio = false;
             isA_Personal = false;
             isA_Social = false;
@@ -436,9 +435,8 @@ public class RelationshipManager
                 return _Relationship_Bio;
             } }
 
-        [JsonProperty] string relationshipTypeID_Social = "";
         protected RelationshipType _Relationship_Social = null;
-        public bool isA_Social = false;
+        [JsonIgnore] public bool isA_Social = false;
 
         /// <summary>
         /// Make a cache and wipe it on demand
@@ -450,8 +448,24 @@ public class RelationshipManager
                 if (Target == null) return null;
                 if (_Relationship_Social == null)
                 {
+                    if (Owner.FactionManager.CurrentActiveParty != null)
+                    {
+                        var party = Owner.FactionManager.CurrentActiveParty;
+                        if (party.isPrisoner(Owner) || party.isPrisoner(Target))
+                        {
+                            var relation = party.GetRelationshipBetween(Owner.RefID, Target.RefID, out var social);
+                            if (relation != null)
+                            {
+                                isA_Social = social;
+                                _Relationship_Social = relation;
+                                return _Relationship_Social;
+                            }
+                        }
+                    }
+
                     var possibleFactions = Owner.FactionManager.Factions.FindAll(x => x.isManagedChara(targetRefID));
                     if (possibleFactions.Count < 1) return null;
+
                     _Relationship_Social = possibleFactions[possibleFactions.Count - 1].GetRelationshipBetween(Owner.RefID, targetRefID, out isA_Social);
                     //Debug.Log($"Getting social relationship between {Owner.CallName} and {Target.CallName} as {(_Relationship_Social == null ? "-" : _Relationship_Social.displayName)}");
                 }

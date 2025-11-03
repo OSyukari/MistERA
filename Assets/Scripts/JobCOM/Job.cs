@@ -213,6 +213,8 @@ public class Job : IDisposable, I_Disposable
             return cache_jobDescString;
         } }
 
+    public string jobDescriptionOverride = "";
+
     public virtual string GetJobDescription(int charaRef)
     {
 
@@ -562,6 +564,7 @@ public class Job : IDisposable, I_Disposable
             if (this.ParentRoom == null)
             {
                 Debug.LogError($"isJobVisibleToPlayer ParentRoom null, ref [{this.RefID}] [{this.DisplayName}]");
+                return false;
             }
             
             
@@ -588,7 +591,7 @@ public class Job : IDisposable, I_Disposable
             displayOngoing = scr_UpdateHandler.current.isLastUpdate();
         }
 
-        Debug.LogError($"CollectLogs Duration {ap.Duration} rightAlign {rightAlign}");
+       // Debug.LogError($"CollectLogs Duration {ap.Duration} rightAlign {rightAlign}");
 
         if (ap.Duration == -1 && packages_previous.FindAll(x => UtilityEX.ArePackagesEqual(x, ap)).Count < 1)
         {
@@ -601,7 +604,7 @@ public class Job : IDisposable, I_Disposable
             if (display && !ap.executeSuccessful) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Refuse(ep, rightAlign, m);
             else if (display)
             {
-                Debug.LogError($"CollectLogs LogMessage_After on {ap.ListEP.Count} EPs");
+              //  Debug.LogError($"CollectLogs LogMessage_After on {ap.ListEP.Count} EPs");
                 foreach (EvaluationPackage ep in ap.ListEP) LogMessage_After(ep, rightAlign, m);
             }
 
@@ -628,7 +631,7 @@ public class Job : IDisposable, I_Disposable
     public void NotifyDescriptionsOutOfUpdate()
     {
         //Debug.Log($"NotifyDescriptionsOutOfUpdate on {DisplayName}");
-        scr_UpdateHandler.current.NotifyJobDescriptions(m, true);
+        if (this.isVisibleToPlayer) scr_UpdateHandler.current.NotifyJobDescriptions(m, true);
         m.Clear();
     }
 
@@ -973,7 +976,7 @@ public class Job : IDisposable, I_Disposable
 
         if (s.Length > 0)
         {
-            Debug.LogError($"LogMessage_After with s > 0 {s}");
+            //Debug.LogError($"LogMessage_After with s > 0 {s}");
             if (rightAlign) s = "<align=\"right\">" + s + "</align>";
             m.messages_after.Add(s);
         }

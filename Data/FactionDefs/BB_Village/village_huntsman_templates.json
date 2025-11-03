@@ -11,7 +11,7 @@
     "Appearance":"Male",
     "inventoryOverride":[
         { "ID":"clothing_outer_hat"},
-        {"ID":"weapon_village_scythe","nameOverwrite":""}
+        {"ID":"weapon_simple_scythe","nameOverwrite":""}
     ]
 },
 {
@@ -23,7 +23,7 @@
     "Appearance":"Male",
     "inventoryOverride":[
         { "ID":"clothing_outer_longcoat" },
-        {"ID":"weapon_village_cutlass","nameOverwrite":""}
+        {"ID":"weapon_simple_cutlass","nameOverwrite":""}
     ]
 },
 {
@@ -35,7 +35,7 @@
     "Appearance":"Male",
     "inventoryOverride":[
         { "ID":"clothing_outer_hat"},
-        {"ID":"weapon_village_cleaver","nameOverwrite":""}
+        {"ID":"weapon_simple_cleaver","nameOverwrite":""}
     ]
 },
 {
@@ -49,7 +49,7 @@
         { "ID":"clothing_outer_hat"},
         { "ID":"clothing_outer_longcoat" },
         { "ID":"clothing_inner_glove" },
-        {"ID":"weapon_village_cutlass","nameOverwrite":""}
+        {"ID":"weapon_simple_cutlass","nameOverwrite":""}
     ]
 }
         ]

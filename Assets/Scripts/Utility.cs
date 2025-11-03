@@ -527,7 +527,7 @@ public static class UtilityEX
                 {
                     if (a.targetCOM.conflictTags.Count > 0 && Utility.ListContainsLoose(package.targetCOM.comTags, a.targetCOM.conflictTags))
                     {
-                        Debug.Log($"Detecting ActionPackage_Sex Conflict between {a.DisplayName} and {package.DisplayName} caught by condition -2\nList 1 [{String.Join(" ", a.targetCOM.conflictTags)}] [{String.Join(" ", package.targetCOM.comTags)}]");
+                        //Debug.Log($"Detecting ActionPackage_Sex Conflict between {a.DisplayName} and {package.DisplayName} caught by condition -2\nList 1 [{String.Join(" ", a.targetCOM.conflictTags)}] [{String.Join(" ", package.targetCOM.comTags)}]");
                         return true;
                     }
                     if (package.targetCOM.conflictTags.Count > 0 && Utility.ListContainsLoose(a.targetCOM.comTags, package.targetCOM.conflictTags))

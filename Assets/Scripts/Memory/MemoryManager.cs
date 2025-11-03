@@ -314,6 +314,24 @@ public class MemoryManager
         return AddEntry(memInst, tags);
     }
 
+    public void NotifyCharaUnregister(Character_Trainable c)
+    {
+        foreach (var m in this.Entries)
+        {
+            
+        }
+    }
+    public void NotifyRoomUnregister(Room_Instance r)
+    {
+        foreach(var m in this.Entries)
+        {
+            if (m.roomRef == r.RefID)
+            {
+                m.roomRef = -1;
+                m.roomNameOverride = r.DisplayName;
+            }
+        }
+    }
 
     /// <summary>
     /// Duration == -2 -> permanent. <br/> Duration == -1 -> default

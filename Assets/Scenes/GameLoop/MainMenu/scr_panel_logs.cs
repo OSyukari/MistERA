@@ -55,7 +55,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
                     if (!trackedLogs.Contains(log)) MakeLogEntry(log);
                 }
         */
-        ValidateAll();
+        //ValidateAll();
     }
 
     /// <summary>

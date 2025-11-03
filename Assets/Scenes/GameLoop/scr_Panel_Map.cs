@@ -6,6 +6,9 @@ using UnityEngine.UI;
 using TMPro;
 
 
+/// <summary>
+/// This script is not being used due to disabling global map connections
+/// </summary>
 public class scr_Panel_Map : scr_Menu, IPointerClickHandler
 {
 
