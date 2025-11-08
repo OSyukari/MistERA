@@ -483,7 +483,7 @@ public class scr_UpdateHandler : MonoBehaviour
     public Dictionary<int, string> kojoMsgDictionary = new Dictionary<int, string>();
     public void AppendKojoMessage(int charaRefID, string s)
     {
-        Debug.Log("AppendKojoMessage");
+        //Debug.Log("AppendKojoMessage");
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"AppendKojoMessage: {s}");
         if (!kojoMsgDictionary.ContainsKey(charaRefID)) kojoMsgDictionary.Add(charaRefID, s);
         else kojoMsgDictionary[charaRefID] += "\n" + s;
@@ -510,7 +510,7 @@ public class scr_UpdateHandler : MonoBehaviour
             foreach(var kvp in kojoMsgDictionary)
             {
                 bool rA = kvp.Key == 0 || kvp.Key == scr_System_CampaignManager.current.CurrentTargetRef;
-                cnManager.AddLog(kvp.Key, kvp.Value, true, !rA);
+                cnManager.AddLog(kvp.Key, kvp.Value, false, false);
             }
             if (currentRoundClimax.Count > 0) cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), true);
             if (Message.messages_after.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_after), true);

@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using UnityEngine.UIElements;
 using QuikGraph.Algorithms.Search;
 
-[System.Serializable]
 public enum BattlefieldZone
 {
     A_backline,
@@ -16,7 +15,6 @@ public enum BattlefieldZone
     B_backline
 }
 
-[System.Serializable]
 public enum CombatResult
 {
     Ongoing,

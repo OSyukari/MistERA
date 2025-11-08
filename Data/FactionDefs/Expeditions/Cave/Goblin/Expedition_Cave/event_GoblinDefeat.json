@@ -35,6 +35,7 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Question, Events",
                     "label":"br_choice",
+                    "portraitRefKey":"party",
                     "question":"$party.name$被哥布林击败了",
                     "options":[
                         {   
@@ -57,18 +58,21 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Events",
                     "label": "br_escape",
+                    "portraitRefKey":"party",
                     "line": "$party.name$成功逃离了敌人",
                     "isLast": true
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Events",
                     "label": "br_defeat",
+                    "portraitRefKey":"party",
                     "line": "$party.name$尽力从敌人手下逃走，但都受了一定程度的伤",
                     "isLast": true
                 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_mia",
+    "portraitRefKey":"party",
     "line": "$party.name$被哥布林抓了起来",
     "Results":[
         { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},

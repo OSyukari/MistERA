@@ -19,7 +19,9 @@ public class ptDownTracker : MonoBehaviour, IScrollHandler//, IDragHandler
 
     protected void UpdatePosition()
     {
-        if (currentPortrait != null)
+        var p = scr_System_CampaignManager.current.CurrentTargetEXPortrait;
+        if (p != currentPortrait) SetRectPosition(p);
+        if (currentPortrait != null && init)
         {
             currentPortrait.SetPortraitOffsets(x + targetRect.anchoredPosition.x, y + targetRect.anchoredPosition.y, s + (targetRect.localScale.x - 1));
             scr_System_CampaignManager.current.UpdateCurrentTargetAnchor(currentPortrait);

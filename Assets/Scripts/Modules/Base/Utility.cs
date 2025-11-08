@@ -19,6 +19,23 @@ public static class Utility
         return System.Enum.GetName(type, value);
     }
 
+    public static string GetRelativeDayString(DateTime current, DateTime target)
+    {
+        var difference = current - target;
+        if (difference.Days >= 365)
+        {
+            return $"{current.Year - target.Year} years ago";
+        }
+        else if (difference.Days >= 30)
+        {
+            return $"{(current.Month < target.Month ? current.Month + 12 : current.Month) - target.Month} month ago";
+        }
+        else if (current.DayOfYear != target.DayOfYear)
+        {
+            return $"{Math.Ceiling(difference.TotalDays)} days ago";
+        }
+        else return "today"; 
+    }
 
     /// <summary>
     /// Provides a thread-safe, thread-static System.Random instance for each thread.

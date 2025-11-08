@@ -98,7 +98,13 @@ public class Job_Expedition : Job
                     .Replace("$expName$", this.Expedition == null ? "-" : Expedition.Base.DisplayName);
         }
     }
-
+    public override List<string> JobTypeTag(Character_Trainable c)
+    {
+        var results = new List<string>();
+        if (!this.actorRefID.Contains(c.RefID)) return results;
+        results.Add("expedition");
+        return results;
+    }
     [JsonIgnore]
     public string RemainingTime
     {

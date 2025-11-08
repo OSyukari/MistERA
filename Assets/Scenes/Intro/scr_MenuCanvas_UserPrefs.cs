@@ -14,7 +14,7 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         demoCharaList = new List<scr_Gender_demoChara>();
     }
 
-    public RectTransform SelfRect;
+    //public RectTransform SelfRect;
     public RectTransform ContentPanel, DisplayPanel;
     public scr_SelectableText ContentButton, DisplayButton;
 

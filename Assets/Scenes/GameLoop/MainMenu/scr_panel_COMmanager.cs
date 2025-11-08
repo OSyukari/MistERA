@@ -241,8 +241,6 @@ public class scr_panel_COMmanager : scr_Menu
     }
     private int MakeUndressButton(RectTransform parent, RectTransform prefab, int charaRef, int equipRef)
     {
-
-
         RectTransform r = Instantiate(prefab);
         r.SetParent(parent, false);
         scr_SelectableText comp = r.GetComponent<scr_SelectableText>();
@@ -576,6 +574,12 @@ public class scr_panel_COMmanager : scr_Menu
     protected override void OnEnable()
     {
         if (!initialized) Initialize();
+
+        RefreshTitle();
+        COMRepeat_Reset();
+        UpdateJobCOM();
+        RefreshEquips(scr_System_CampaignManager.current.CurrentTargetRef);
+        ValidateAll();
     }
 
     public override void Notify(int optionID)

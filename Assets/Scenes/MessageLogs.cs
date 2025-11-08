@@ -36,6 +36,33 @@ public class MessageLogManager
             return true;
         }
     }
+    public bool SetLogChara(List<Character_Trainable> list, bool isAnimating, out PortraitManager portrait)
+    {
+        if ( currentPortrait != null && list.Contains(currentPortrait.Owner))
+        {
+            portrait = currentPortrait;
+            return false;
+        }
+        portrait = Utility.GetRandomElement(list).PortraitManager;
+        if (this.Animating)
+        {
+            if (isAnimating)
+            {
+                SetChara(portrait, isAnimating);
+                return true;
+            }
+            else
+            {
+                portrait = null;
+                return false;
+            }
+        }
+        else
+        {
+            SetChara(portrait, isAnimating);
+            return true;
+        }
+    }
 
     private void SetChara(PortraitManager portrait, bool isAnimating)
     {
@@ -170,7 +197,16 @@ public class Message_Text : MessageLog
         this.Messages = new List<Message>();
         this.tooltip = tooltip;
     }
+    public Message_Text(List<Character_Trainable> charas,List<string> tags,  List<Message> messages = null, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(charas, tags, time, parentEvent)
+    {
+        this.Messages = new List<Message>();
+        this.tooltip = tooltip;
+    }
 
+    public override bool DisplaPortrait { get {
+            if (!base.DisplaPortrait) return false;
+            if (this.Messages.Any(x => !x.rightAlign)) return true;
+            return false; } }
     /// <summary>
     /// One paragraph that displays 
     /// </summary>
@@ -188,17 +224,24 @@ public class Message_Text : MessageLog
         public List<string> Iterate(bool lineBreak = false)
         {
 
-            if (!lineBreak || (content.Length > 0 && content.StartsWith("<") && content.EndsWith(">") )) return new List<string> { content };
-            else return content.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (!lineBreak || (content.Length > 0 && content.StartsWith("<") && content.EndsWith(">"))) return new List<string> { (rightAlign ? $"<align=\"right\">{content}</align>" : content)  };
+            else
+            {
+                var list = content.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+                if (!rightAlign) return list;
+                var result = new List<string>();
+                foreach (var content in list) result.Add($"<align=\"right\">{content}</align>");
+                return result;
+            }
 
         }
     }
 
     scr_MessageLogBox selfBox = null;
     scr_HoverableText currentLine = null;
-    public void Draw(scr_MessageLogBox box, scr_HoverableText linePrefab)
+    public void Draw(bool skipImage, scr_MessageLogBox box, scr_HoverableText linePrefab)
     {
-        base.Draw();
+        base.Draw(skipImage || !DisplaPortrait);
         this.selfBox = box;
         this.prefab_LogLine = linePrefab;
 
@@ -248,16 +291,20 @@ public class Message_Question : MessageLog
     {
         this.question = question;
     }
+    public Message_Question(List<Character_Trainable> charas,List<string> tags,  EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default) : base(charas, tags, time, parent)
+    {
+        this.question = question;
+    }
 
     public override void Animate()
     {
         Debug.LogError("Animate called on message_question");
     }
 
-    public void Draw(Canvas mainCanvas, scr_menu_question questionBox , scr_panel_logs logs = null)
+    public void Draw(bool skipImage, Canvas mainCanvas, scr_menu_question questionBox , scr_panel_logs logs = null)
     {
-        //Debug.Log("Draw!");
-        base.Draw();
+        // question log always draw
+        base.Draw(false);
         questionBox.InitializeWithArgs(mainCanvas, parentEvent, question, logs);
     }
 }
@@ -271,7 +318,9 @@ public abstract class MessageLog
     public EventInstance parentEvent = null;
 
     public PortraitManager PortraitRef = null;
-
+    public List<Character_Trainable> multipleChara = new List<Character_Trainable>();
+    public List<string> tagsOverride = new List<string>();
+    public virtual bool DisplaPortrait { get { return (multipleChara != null && multipleChara.Count > 0) || PortraitRef != null; } }
     public DateTime time;
     
     public MessageLog(PortraitManager portraitRef, DateTime time = default, EventInstance parentEvent = null)
@@ -280,15 +329,27 @@ public abstract class MessageLog
         this.parentEvent = parentEvent;
         if (time != default) this.time = time;
         else this.time = scr_System_Time.current.getCurrentTime();
-
+    }
+    public MessageLog(List<Character_Trainable> multipleChara, List<string> tagsOverride, DateTime time = default, EventInstance parentEvent = null)
+    {
+        this.multipleChara = multipleChara;
+        this.tagsOverride = tagsOverride;
+        this.parentEvent = parentEvent;
+        if (time != default) this.time = time;
+        else this.time = scr_System_Time.current.getCurrentTime();
     }
 
     public abstract void Animate();
    
-    public void Draw()
+    public void Draw(bool skipImage)
     {
         this.displayed = true;
-        if (this.PortraitRef != null) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
+        if (!skipImage) ForceDraw();
     }
 
+    public void ForceDraw()
+    {
+        if (this.multipleChara.Count > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, tagsOverride);
+        else if (PortraitRef != null) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
+    }
 }

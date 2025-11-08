@@ -451,7 +451,7 @@ public class RelationshipManager
                     if (Owner.FactionManager.CurrentActiveParty != null)
                     {
                         var party = Owner.FactionManager.CurrentActiveParty;
-                        if (party.isPrisoner(Owner) || party.isPrisoner(Target))
+                        if (party.ManagedChara.Contains(Target) && (party.isPrisoner(Owner) || party.isPrisoner(Target)))
                         {
                             var relation = party.GetRelationshipBetween(Owner.RefID, Target.RefID, out var social);
                             if (relation != null)
@@ -651,7 +651,7 @@ public class RelationshipManager
 
             this.targetRefID = target.RefID;
             this.targetBaseID = forceBaseID != "" ? forceBaseID : Target.BaseID;
-            this.displayName = overrideCallName != "" ? overrideCallName : Target.Title_Raw;
+            this.displayName = overrideCallName != "" ? overrideCallName : "";
 
             if (template != null)
             {
@@ -718,7 +718,7 @@ public class RelationshipManager
         if (rel.Relationship_Social != null) relName.Add(rel.isA_Social ? rel.Relationship_Social.GetDisplayNameAisToB(rel.Owner) : rel.Relationship_Social.GetDisplayNameBistoA(rel.Owner));
         if (rel.Relationship_Personal != null) relName.Add(rel.isA_Personal ? rel.Relationship_Personal.GetDisplayNameAisToB(rel.Owner) : rel.Relationship_Personal.GetDisplayNameBistoA(rel.Owner));
 
-        box.targetName.SetText(rel.relationText.Replace("$name$", rel.TargetName).Replace("$relation$", relName.Count > 0 ? String.Join(",", relName) : "no relation"));
+        box.targetName.SetText(rel.relationText.Replace("$name$", $"{rel.TargetName}"+(rel.Target.isTemporaryActor && rel.Target.Title.Length > 0 ? $"({rel.Target.Title})" : "")).Replace("$relation$", relName.Count > 0 ? String.Join(",", relName) : "no relation"));
 
         box.trustBox.SetText(LocalizeDictionary.QueryThenParse("relationship_trust") + ": " + rel.Trust.ToString("N0"), false, "relationship_trust_tooltip");
         box.fearBox.SetText(LocalizeDictionary.QueryThenParse("relationship_fear") + ": " + rel.Fear.ToString("N0"), false, "relationship_fear_tooltip");

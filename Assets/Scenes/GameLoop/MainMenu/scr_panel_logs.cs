@@ -46,16 +46,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         base.OnEnable();
         LogsList.gameObject.SetActive(true);
         firstLine = true;
-        if (firstLine && canAnimate) AnimateOneStep();
-        //if (canAnimate) AnimateOneStep();
-        // foreach log in logs
-        // if not in tracked list, build into list
-        /*        foreach (var log in scr_System_CampaignManager.current.Logs)
-                {
-                    if (!trackedLogs.Contains(log)) MakeLogEntry(log);
-                }
-        */
-        //ValidateAll();
+        SingleUpdate(false);
     }
 
     /// <summary>
@@ -70,14 +61,14 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         //Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
         if ((firstLine || animate) && canAnimate)
         {
-            AnimateAll();
+            SingleUpdate(false);
             UpdateAnimatingStatus();
         }
     }
 
     private void SingleUpdate(bool skipAll)
     {
-        if (canAnimate)
+        if (canAnimate && !animationLock)
         {
             if (skipAll || Input.GetMouseButton(1)) AnimateAll();
             else AnimateOneStep();
@@ -110,6 +101,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
     //List<List<string>> msgLog;
     //List<string> msg;
+    MessageLog last = null;
 
     private RectTransform currentMsgLog, currentMsg;
     private void AnimateOneStep()
@@ -126,7 +118,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         LogsList.anchoredPosition = new Vector2(0, 0);
 
         var current = todo.Count > 0 ? todo[0] : null;
-        if(current == null)
+        if (current == null)
         {
             scr_System_CampaignManager.current.Log_TryClearChar(true);
             animationLock = false;
@@ -134,19 +126,21 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         }
         else if (!current.displayed)
         {
+            if (skipping) last = current;
+
             if (current is Message_Text)
             {
                 RectTransform msgbox = Instantiate(prefab_LogEntry);
                 //if (current.PortraitRef == -1000) msgbox = Instantiate(prefab_SeparationEntry);
 
                 msgbox.SetParent(LogsList, false);
-                (current as Message_Text).Draw(msgbox.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine);
+                (current as Message_Text).Draw(skipping, msgbox.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine);
             }
             else if (current is Message_Question)
             {
                 var question = Instantiate(prefab_question);
                 question.transform.SetParent(LogsList, false);
-                (current as Message_Question).Draw(this.m_Canvas, question, this);
+                (current as Message_Question).Draw(skipping, this.m_Canvas, question, this);
             }
         }
         else if (current.canAnimate())
@@ -165,21 +159,20 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     }
 
     bool animationLock = false;
+    bool skipping = false;
     private void AnimateAll()
     {
         animationLock = true;
+        last = null;
+        skipping = true;
         while (canAnimate)
         {
             AnimateOneStep();
-      //      yield return new WaitForSecondsRealtime(0.001f);
         }
+        skipping = false;
         animationLock = false;
-        /*
-        if (!scr_UpdateHandler.current.Lock && this.gameObject.activeInHierarchy)
-        {
-            yield return new WaitForSecondsRealtime(0.5f);
-            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
-        }*/
+        if (last != null) last.ForceDraw();
+        last = null;
     }
 
     public bool canAnimate { get { return todo.Count > 0; } }
@@ -274,8 +267,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
             Observer_OnClick?.Invoke(eventData);
             if (canAnimate && !animationLock)
             {
-                if (eventData.button == PointerEventData.InputButton.Right || Input.GetMouseButton(1)) AnimateAll();
-                else AnimateOneStep();
+                SingleUpdate(eventData.button == PointerEventData.InputButton.Right);
             }
         }
         else

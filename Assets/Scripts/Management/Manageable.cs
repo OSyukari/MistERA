@@ -2219,10 +2219,24 @@ public class Manageable : I_Disposable, I_IsJobGiver
         public bool manageError = false;
         public List<string> manageLogs = new List<string>();
 
-        public List<string> miscMessages = new List<string>();
-        public void AddMiscRecord(string s)
+        public List<MiscMessageEntry> miscMessages = new List<MiscMessageEntry>();
+        public class MiscMessageEntry
         {
-            this.miscMessages.Add(s);
+            public string messageTitle = "";
+            public List<string> tooltips = new List<string>();
+            public MiscMessageEntry(string messageTitle, List<string> tooltips)
+            {
+                this.messageTitle = messageTitle;
+                this.tooltips = new List<string>(tooltips);
+            }
+        }
+        public void AddMiscRecord(string s, List<string> tooltips)
+        {
+            this.miscMessages.Add(new MiscMessageEntry( s, tooltips));
+        }
+        public void AddMiscRecord(MiscMessageEntry m)
+        {
+            this.miscMessages.Add(m);
         }
 
         public void AddManageReport(string s, bool isError = false)

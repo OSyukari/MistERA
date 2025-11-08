@@ -564,11 +564,10 @@ public static class EventUtility
         if (owner.isVisible && block.line != "")
         {
             bool rA = !owner.isPlayerRelated;
-            var content = UtilityEX.ParseEventEntry(owner, block.line);
-            if (rA) content = $"<align=\"right\">{content}</align>";
+            
             // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
             // but on execute they are consistent
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, rA ? $"<align=\"right\">{content}</align>" : content, "", false));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, block, rA, false));
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
 

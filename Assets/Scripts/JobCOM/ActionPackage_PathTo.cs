@@ -175,7 +175,7 @@ public class ActionPackage_PathTo : ActionPackage
             var pc = path[0];
             if (!moved) moved = true;
 
-            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" +LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$",scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName)+ "</align>", true);
+            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef,LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$",scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName), true, true);
                 
             scr_System_CampaignManager.current.MoveCharacterTo(Doer, pc.Target);
             if ((int)pc.Tag.Cost > 0 && doerRef == 0)
@@ -199,7 +199,7 @@ public class ActionPackage_PathTo : ActionPackage
                 //if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)  { }
 
             }
-            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, "<align=\"right\">" + LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target).DisplayName) + "</align>", true);
+            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target).DisplayName), true, true);
 
             this.PathPop();
             if (duration > 0) break;

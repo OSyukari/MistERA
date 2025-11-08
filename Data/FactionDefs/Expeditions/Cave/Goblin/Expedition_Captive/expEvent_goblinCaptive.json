@@ -71,7 +71,7 @@
                                         {
                                             "parameters": [
                                                 "HasBaseID",
-                                                "creature_goblin"
+                                                "creature_humanoid_goblin"
                                             ]
                                         },
                                         {

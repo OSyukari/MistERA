@@ -17,10 +17,14 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     public RectTransform box_lust;
     public RectTransform box_ovum;
 
+    public bool InvertXAxis = false;
+
     public bool isCurrentTargetBox = false;
     public bool isCurrentTargetEXBox = false;
+    public bool isCombatBox = false;
 
     // Start is called before the first frame update
+    protected Character_Trainable currentChara = null;
 
     private void Awake()
     {
@@ -31,7 +35,11 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             scr_System_CampaignManager.current.Observer_CurrentViewMode += OnVMChange;
             scr_System_CampaignManager.current.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
         }
-        if (isCurrentTargetEXBox) scr_System_CampaignManager.current.Observer_CurrentTargetEX += ReadCurrentChar;
+        if (isCurrentTargetEXBox)
+        {
+            scr_System_CampaignManager.current.Observer_CurrentTargetEX += ReadCurrentChar;
+            scr_System_CampaignManager.current.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
+        }
     }
 
     bool firstInit = true;
@@ -45,35 +53,35 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         InitializeWithArgument(0);
     }
 
+    
     private void OnAnchorChange(PortraitManager.CharaPortrait p)
     {
+        if (this.currentHandler != p) return;
         UpdateAnchor(p);
     }
 
     private void OnVMChange(ViewMode vm, bool lockView)
     {
-        //if (vm == ViewMode.View_Room) ReadCurrentChar(scr_System_CampaignManager.current.CurrentTargetRef, false);
+        if (this.isCurrentTargetBox && vm == ViewMode.View_Room) ReadCurrentChar(scr_System_CampaignManager.current.CurrentTargetRef, false);
     }
 
-    private void ReadCurrentLogImage(PortraitManager id)
+    private void ReadCurrentLogImage(PortraitManager id, List<string> tags)
     {
         //Debug.Log("ReadCurrentChar");
         if (id == null) return;
         else if (!this.gameObject.activeInHierarchy) return;
         else if (scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Logs) return;
-        else CheckCharaChange(id);
+        else CheckCharaChange(id, tags);
     }
 
     private void ReadCurrentChar(int id, bool foceUpdate)
     {
-        // Debug.Log("ReadCurrentChar");
+        //Debug.Log("ReadCurrentChar");
         if (id == -1) return;
         else if (!this.gameObject.activeInHierarchy) return;
         //else if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Logs) return;
         else CheckCharaChange(id);
-        
     }
-
     /*
     Character_Trainable chara { get
         {
@@ -101,6 +109,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void CheckCharaChange(int refID)
     {
+        //Debug.Log($"CheckCharaChange {refID}");
         var chara = scr_System_CampaignManager.current.FindInstanceByID(refID);
         CheckCharaChange(chara == null ? null : chara.PortraitManager);
     }
@@ -109,11 +118,10 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         CheckCharaChange(chara == null ? null : chara.PortraitManager);
     }
 
-    Coroutine currentlyRunning = null;
+    public Coroutine currentlyRunning = null;
 
     public void UpdateAnchor(PortraitManager.CharaPortrait p)
     {
-        if (currentPortrait != p) return;
 
         //Debug.Log($"update anchor {x} {y} {size}");
         picture.SetNativeSize();
@@ -127,57 +135,51 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             spineRect.anchoredPosition = new Vector2(p.portrait_offset_x, p.portrait_offset_y);
             spineRect.localPosition = new Vector3(picture.rectTransform.localPosition.x, picture.rectTransform.localPosition.y, 0);
         }
+
+        this.spineLoader.SelfRect.localScale = new Vector3(InvertXAxis && p.AllowXAxisFlip ? - 1 : 1, 1, 1);
+        
     }
 
-    private void CheckCharaChange(PortraitManager newPortrait)
+    private void CheckCharaChange(PortraitManager newPortrait, List<string> tags = null)
     {
         //spineRect.gameObject.SetActive(false);
         //picture.gameObject.SetActive(true);
-    
-
-        PreviousRef = portrait;
+        //PreviousRef = portrait;
         portrait = newPortrait;
         if (portrait != null)
         {
-            if(portrait != PreviousRef) {
-                // spineRect.gameObject.SetActive(false);
-                //if (spineRect != null) spineRect.gameObject.SetActive(false);
-                //picture.gameObject.SetActive(false);
-            }
-            Draw();
+            //Debug.Log($"drawing portrait for {newPortrait.Owner.RefID}");
+            if (!isCombatBox) portrait.DrawPortrait(this, tags);
         }
-
-
-        if (spineRect != null && firstInit)
-        {   // somehow first activation of spine does not play animation correctly
-            spineRect.gameObject.SetActive(false);
-            firstInit = false;
-            Draw();
-        }
-
-        if(spineLoader != null)
-        {
-            if (spineRect != null) spineLoader.NotifyChange(spineRect);
-            else spineLoader.NotifyChange(picture.rectTransform);
-        }
-
-
-        mouseOver = false;
-        updateImage();
     }
 
-    public PortraitManager.CharaPortrait currentPortrait;
-    protected void Draw()
+    public void CombatRefresh(I_StatsManager stats, bool forceRefresh = false)
+    {
+        if (!isCombatBox || portrait == null) return;
+        portrait.DrawCombatPortrait(stats, this, forceRefresh);
+    }
+
+    public void Draw(IEnumerator routine)
     {
         if (currentlyRunning != null)
         {
             StopCoroutine(currentlyRunning);
+            spineLoader.Store();
             currentlyRunning = null;
         }
-
-        currentPortrait = portrait.GetValidPortrait();
-        currentlyRunning = StartCoroutine(currentPortrait.DrawPortrait(this));
+        currentlyRunning = StartCoroutine(routine);
+        mouseOver = false;
+        updateImage();
     }
+
+    public void NotifyEndDraw()
+    {
+        this.spineLoader.Destroy();
+    }
+
+    public PortraitManager.CharaPortrait currentHandler = null;
+    public string currentPortrait = "";
+
 
     void OnDestroy()
     {
@@ -190,16 +192,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
     {
-        if (portrait != null) portrait.Click();
-
-        /*
-        if (eventData.button == PointerEventData.InputButton.Left && UtilityEX.isClickBelowDragThreshold(eventData) && this.chara != null)
-        {
-            //Debug.Log("Mouse Click on [" + this.chara.baseID + "] refID [" + chara.referenceID + "]");
-
-            detail = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_Canvas_charaDetail, canvas.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaDetail>();
-            detail.InitializeWithArgument(chara_refID);
-        }*/
+        if (portrait != null && isCurrentTargetBox) portrait.ActivityClick();
     }
 
     bool mouseOver;
@@ -229,6 +222,9 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     }
 
+    /// <summary>
+    /// This updates the extended UI (currently disabled)
+    /// </summary>
     private void updateImage()
     {
         if (portrait == null)
@@ -237,18 +233,6 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             if(spineRect != null) spineRect.gameObject.SetActive(false);
             return;
         }
-        else if (currentPortrait != null)
-        {
-            
-        }
-
-
-
-        //image.rectTransform.anchoredPosition = new Vector2(chara.portrait_offset_x*image.rectTransform.sizeDelta.x, chara.portrait_offset_y*image.rectTransform.sizeDelta.y);
-        //picture.rectTransform.anchoredPosition = new Vector2(chara.portrait_offset_x*picture.rectTransform.sizeDelta.x, chara.portrait_offset_y*picture.rectTransform.sizeDelta.y);
-        //picture.rectTransform.localScale = new Vector3(chara.portrait_offset_size, chara.portrait_offset_size, chara.portrait_offset_size);
-
-
 
         if (scr_System_CentralControl.current.adult)
         {
@@ -286,16 +270,6 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     }
 
     public RectTransform hp, mp, st, en;
-
-    private void ScaleStatBar(RectTransform bar, Stats_Derived_Extended_Instance stat)
-    {
-        var scale = bar.localScale;
-        if (stat != null && stat.MaxValue > 0.2f) scale.x = stat.ValuePercentile;
-        else scale.x = 0f;
-        //Debug.Log("scale stat bar : " + stat.DisplayName + " " + stat.Value + "/" + stat.MaxValue);
-        bar.localScale = scale;
-    }
-
 
     private void xray_widget()
     {

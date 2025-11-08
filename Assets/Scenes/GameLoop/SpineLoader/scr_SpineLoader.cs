@@ -23,10 +23,15 @@ public class scr_SpineLoader : MonoBehaviour
     // 
     private void Awake()
     {
-        selfRect = GetComponent<RectTransform>();
+
     }
     public RectTransform parentRect;
-    protected RectTransform selfRect;
+    protected RectTransform selfRect = null;
+    public RectTransform SelfRect
+    { get
+        {
+            if (selfRect == null) selfRect  = GetComponent<RectTransform>(); return selfRect;
+        } }
     public float selfWidth = 0;
     public float parentWidth = 0;
 
@@ -38,10 +43,9 @@ public class scr_SpineLoader : MonoBehaviour
 
     }
 
-    [ExecuteInEditMode]
     private void Update()
     {
-        selfWidth = selfRect.rect.width;
+        selfWidth = SelfRect.rect.width;
         parentWidth = parentRect.rect.width;
     }
 
@@ -97,15 +101,19 @@ public class scr_SpineLoader : MonoBehaviour
         }
     }
 
-    public void NotifyChange(RectTransform targetRect)
+    public void Store()
     {
-        //selfRect.sizeDelta = new Vector2(Math.Min(targetRect.sizeDelta.x * targetRect.localScale.x, targetRect.sizeDelta.x), selfRect.sizeDelta.y);
+        if (spineLoader == null) return;
+        spineLoader_previous = spineLoader;
+        spineLoader = null;
     }
-
 
     public void Destroy()
     {
-        Destroy(spineLoader);
+        if (spineLoader_previous == null) return;
+        spineLoader_previous.gameObject.SetActive(false);
+        Destroy(spineLoader_previous);
+        spineLoader_previous = null;
     }
 
 

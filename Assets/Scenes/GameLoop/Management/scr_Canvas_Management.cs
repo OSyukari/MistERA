@@ -1686,7 +1686,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             else text.Toggle(true, false);
 
             var names = new List<string>();
-            foreach (var i in party.ManagedChara_Displayables) names.Add(i.FirstName);
+            foreach (var i in party.ManagedChara_Displayables) if (!i.isTemporaryActor) names.Add(i.FirstName);
             party.GetAvailability(out var status_tooltip);
             script.partyMembers.SetText($"{String.Join(" ", names)}{(party.Job.Expedition == null ? "" : $"\n{party.Job.DisplayName}")}");
 

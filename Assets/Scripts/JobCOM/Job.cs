@@ -44,6 +44,12 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
+
+    public virtual List<string> JobTypeTag(Character_Trainable c)
+    {
+        return null;
+    }
+
     [JsonProperty] protected string factionOwnerRef = "";
     [JsonProperty] protected string factionOwnerPartyRef = "";
     protected I_IsJobGiver factionOwner = null;
@@ -375,6 +381,7 @@ public class Job : IDisposable, I_Disposable
     {
         return false;
     }
+
 
 
     public void GetActorAPTags(int refID, List<string> ownerTags, List<ActionPackage> packages = null)

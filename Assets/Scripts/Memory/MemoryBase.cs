@@ -34,6 +34,11 @@ public class Memory_Entry
     [JsonIgnore] public string PrintShortTimeStartToEnd { get { return $"{StartTime.ToString("HH:mm")}{(EndTime == StartTime ? "" : " - " + EndTime.ToString("HH:mm"))}"; } }
     [JsonIgnore] public string PrintTimeEndToStart { get { return (EndTime == StartTime ? "" :  EndTime.ToShortTimeString() + "\n- ")+ StartTime.ToShortTimeString(); } }
 
+    [JsonIgnore] public DateTime FinalEndTime { get
+        {
+            if (EndTime == DateTime.MinValue || EndTime < StartTime) return StartTime;
+            else return EndTime;
+        } }
     // [JsonIgnore] public bool isSexMemory { get { return this.Tags.Contains("sex"); } }
     // [JsonIgnore] public bool isSexTouchMemory { get { return !isSexMemory && ( this.Tags.Contains("service") || this.Tags.Contains("unsafe") ); } }
     //  [JsonIgnore] public bool isTouchMemory { get { return !isSexTouchMemory && this.Tags.Contains("touch") ; } }
@@ -832,9 +837,9 @@ public class Memory_Entry
         }
     }
 
-    public void Draw(scr_memoryBox box)
+    public void Draw(scr_memoryBox box, bool shortenTime = false)
     {
-        box.timeStamp.text = PrintShortTimeStartToEnd;
+        box.timeStamp.text = shortenTime ? FinalEndTime.ToString("MM/dd") : PrintShortTimeStartToEnd;
         box.memText.SetText(ToString(true));
 
         List<string> additional = new List<string>();

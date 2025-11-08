@@ -6,16 +6,18 @@
             {
                 "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
                 
-                "portrait_offset_x": -51,
+                "portrait_offset_x": 51,
                 "portrait_offset_y": 18,
                 "portrait_offset_size": 1.5,
                 
-                "icon_offset_x":-26,
+                "AllowXAxisFlip":true,
+                
+                "icon_offset_x":26,
                 "icon_offset_y":-97,
                 "icon_offset_size":0.7,
 
-                "portrait_path":"Goblin/st_052_00a.png",
-                "icon_path":"Goblin/st_052_00a.png"
+                "portrait_path":"Goblin/st_052_00b.png",
+                "icon_path":"Goblin/st_052_00b.png"
             }
         ]
     },

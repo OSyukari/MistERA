@@ -3,50 +3,47 @@
     "baseID": "Campaign1_Char_Rin",
     "Portrait":{
         "portraitPriorityList":[
-            {
-                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        
+    "portrait_offset_x": 0,    "portrait_offset_y": 0,    "portrait_offset_size": 0.56,
+    "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
 
-                "portrait_offset_x": 44.417,
-                "portrait_offset_y": 39.891,
-                "portrait_offset_size": 0.55,
+    "RequireContextKeys":["production_cooking"],
 
-                "icon_offset_x":0.0,
-                "icon_offset_y":0.0,
-                "icon_offset_size":0.8,
+    "random_portrait_path":["Rin/production_cooking_0_0.webp", "Rin/production_cooking_0_1.webp",
+                            "Rin/production_cooking_0_2.webp", "Rin/production_cooking_0_3.webp",
+                            "Rin/production_cooking_0_4.webp", "Rin/production_cooking_0_5.webp"],
+    "icon_path":"Rin/Rin_Ark_Uniform_Icon.png"
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
-                "Disable":true,
+    "portrait_offset_x": 44.417,    "portrait_offset_y": 39.891,    "portrait_offset_size": 0.55,
+    "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
 
-                "icon_path":"Rin/Rin_Ark_Uniform_Icon.png",
-                "_comment":"utnapishtim uniform",
+    "Disable":true,
 
-                "straightAlpha":true,
-                "materialTexturePaths":["Rin/NP0097_spr.png"],
-                "atlasJSON_path":"Rin/NP0097_spr.atlas",
-                "skeletonJSON_path":"Rin/NP0097_spr.skel",
-                "idleAnimName":"Idle_01"
+    "icon_path":"Rin/Rin_Ark_Uniform_Icon.png",
 
-            },
-            {
-                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+    "straightAlpha":true,
+    "materialTexturePaths":["Rin/NP0097_spr.png"], "atlasJSON_path":"Rin/NP0097_spr.atlas", "skeletonJSON_path":"Rin/NP0097_spr.skel",
+    "idleAnimName":"Idle_01"
 
-                "portrait_offset_x": 5.962,
-                "portrait_offset_y": -328.107,
-                "portrait_offset_size": 0.55,
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
-                "icon_offset_x":0.0,
-                "icon_offset_y":0.0,
-                "icon_offset_size":0.8,
+    "portrait_offset_x": 5.962,     "portrait_offset_y": -328.107,  "portrait_offset_size": 0.55,
+    "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
 
-                "icon_path":"Rin/Rin_Ark_Uniform_Icon.png",
-                "_comment":"default L2D",
+    "icon_path":"Rin/Rin_Ark_Uniform_Icon.png",    "_comment":"default L2D",
 
-                "straightAlpha":true,
-                "materialTexturePaths":["Rin/Rin_raiddungeon.png"],
-                "atlasJSON_path":"Rin/Rin_raiddungeon_Cut.atlas",
-                "skeletonJSON_path":"Rin/Rin_raiddungeon.skel",
-                "idleAnimName":"Idle_01"
+    "straightAlpha":true,
+    "materialTexturePaths":["Rin/Rin_raiddungeon.png"],    "atlasJSON_path":"Rin/Rin_raiddungeon.atlas",    "skeletonJSON_path":"Rin/Rin_raiddungeon.skel",
+    "idleAnimName":"Idle_01"
 
-            }
+}
         ]
     },
     "Template": {

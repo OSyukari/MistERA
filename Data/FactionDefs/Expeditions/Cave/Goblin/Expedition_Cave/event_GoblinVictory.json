@@ -47,12 +47,14 @@
     {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_victory",
+        "portraitRefKey":"party",
         "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
         "line": "$party.name$击败了哥布林",
         "nextEntryLabel":""
     },
     {
         "$type": "Event+EventEntry+EventEntry_Question, Events",
+        "portraitRefKey":"party",
         "question":"搜刮战利品？",
         "options":[
             {   
@@ -70,12 +72,14 @@
     {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_victory_hasVictim",
+        "portraitRefKey":"party",
         "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
         "line": "$party.name$击败了哥布林"
     },
     {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_lootEnd",
+        "portraitRefKey":"party",
         "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
         "line": "$party.name$搜刮了战利品",
         "isLast": true
@@ -83,6 +87,7 @@
     {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_noLootEnd",
+        "portraitRefKey":"party",
         "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
         "line": "$party.name$没有在此过多停留",
         "isLast": true

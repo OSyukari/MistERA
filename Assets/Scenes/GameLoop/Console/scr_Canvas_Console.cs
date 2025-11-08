@@ -1,12 +1,13 @@
+using System;
+using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using System.IO;
-using TMPro;
-using UnityEngine.EventSystems;
-using System;
 using Newtonsoft.Json;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 {
@@ -14,9 +15,11 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     public CanvasGroup selfCanvas, parentCanvas;
     public int consoleCount;
 
-    public scr_HoverableText targetName, targetCurrentJob;
+    public scr_HoverableText targetName, baseID, targetCurrentJob;
     public scr_HoverableText currentRoom;
     public scr_HoverableText blacklist;
+
+    public scr_HoverableText portrait_neutral, portrait_active, portrait_combat;
 
     protected void Update()
     {
@@ -104,8 +107,13 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         CurrentTarget = scr_System_CampaignManager.current.CurrentTarget;
         var room = scr_System_CampaignManager.current.CurrentRoom;
         targetName.SetText("CurrentTarget: " + (CurrentTarget == null ? "null" : CurrentTarget.RefID + " " + CurrentTarget.FullName));
+        baseID.SetText($"BaseID [{(CurrentTarget == null ? "null" :CurrentTarget.BaseID)}]");
         targetCurrentJob.SetText("CurrentJob: " + (CurrentTarget.CurrentJob == null ? "null" : CurrentTarget.CurrentJob.RefID + " " + CurrentTarget.CurrentJob.DisplayName + " " + (CurrentTarget.CurrentJob.ParentRoom == null ? "nullRoom" : CurrentTarget.CurrentJob.ParentRoom.RefID + " " + CurrentTarget.CurrentJob.ParentRoom.DisplayName)));
         currentRoom.SetText("CurrentRoom: " + (room == null ? "null" : room.RefID + " " + room.DisplayName));
+
+        portrait_neutral.SetText($"Neutral Portrait Tags [{(CurrentTarget == null ? "null" : String.Join(" ", CurrentTarget.PortraitManager.tags_neutral))}]");
+        portrait_active.SetText($"Activity Portrait Tags [{(CurrentTarget == null ? "null" : String.Join(" ", CurrentTarget.PortraitManager.tags_active))}]");
+        portrait_combat.SetText($"Combat Portrait Tags [{(CurrentTarget == null ? "null" : String.Join(" ", CurrentTarget.PortraitManager.tags_combat))}]");
 
         blacklist.SetText($"Blacklist: {CurrentTarget.Memory.PrintBlacklist()}");
     }

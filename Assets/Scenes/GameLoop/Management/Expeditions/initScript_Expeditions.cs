@@ -104,9 +104,9 @@ public class initScript_Expeditions : MonoBehaviour
             hasKidnap = true;
             var script = Instantiate(prefab_partyButton);
             script.SelfRect.SetParent(miaList, false);
-            var names = new List<string>();
-            foreach (var i in party.ManagedChara_Displayables) names.Add(i.CallName);
-            script.partyMembers.SetText(String.Join(" ", names));
+            //var names = new List<string>();
+            //foreach (var i in party.ManagedChara_Displayables) if (!i.isTemporaryActor) names.Add(i.CallName);
+            //script.partyMembers.SetText(String.Join(" ", names));
             canvas.MakeButton_Party(party, script, true);
             //script.PartyButton.SetText(party.ExpeditionName);
             temporaryTeamIDs.Add(script.PartyButton.optionID);
@@ -165,7 +165,7 @@ public class initScript_Expeditions : MonoBehaviour
         teamNameButton.interactable = scr_System_CampaignManager.current.DebugMode || !isKidnap;
         teamNameButton.text = $"{party.FactionDisplayName}";// (p.FactionDisplayName);
         var names = new List<string>();
-        foreach (var i in party.ManagedChara_Displayables) names.Add(i.FirstName);
+        foreach (var i in party.ManagedChara_Displayables) if (!i.isTemporaryActor) names.Add(i.FirstName);
         teammates.SetText($"{String.Join(", ", names)}");
 
         //p.GetAvailability(out status_tooltip);

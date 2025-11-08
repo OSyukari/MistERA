@@ -46,6 +46,11 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
 
     }
+    public void CombatRefresh(I_StatsManager stats, bool forceRefresh = false)
+    {
+        if (!isCombatBox) return;
+        chara.PortraitManager.DrawCombatIcon(stats,this,forceRefresh);
+    }
 
     private void OnPostUpdateTime3()
     {
@@ -82,12 +87,12 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     private void ReadCurrentChar(int i, bool foceUpdate)
     {
-        if (nameBox.gameObject.activeInHierarchy && !isCombatBox)
+        if (!isCombatBox)
         {
             if (this.chara_refID == i) nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;
             else nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
         }
-            
+        updateImage();
     }
 
     Character_Trainable chara = null;
@@ -112,6 +117,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         {
             Initialize();
             nameBox.text = chara.FirstName;
+            if (!isCombatBox) ReadCurrentChar(scr_System_CampaignManager.current.CurrentTargetRef, true);
             updateImage();
             return true;
         }
@@ -127,7 +133,6 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         if (!isCombatBox) SelfBackground.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
 
         picture.gameObject.SetActive(true);
-        mouseOver = false;
 
         if (mp.selfRect.gameObject.activeInHierarchy &&( chara.Stats.MP == null || chara.Stats.MP.MaxValue < 1))
         {
@@ -165,11 +170,8 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
     bool mouseOver;
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (mouseOver != true && !isCombatBox)
+        if (!isCombatBox)
         {
-            //picture.gameObject.SetActive(true);
-            //picture_AA.gameObject.SetActive(false);
-            mouseOver = true;
             if (nameBox.gameObject.activeInHierarchy) nameBox.color = scr_System_CentralControl.current.Color_hover;
             updateImage();
 
@@ -179,8 +181,6 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void ForceExit()
     {
-        mouseOver = false;
-
         if (nameBox.gameObject.activeInHierarchy)
         {
             nameBox.color = scr_System_CentralControl.current.Color_neutral;
@@ -188,45 +188,26 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
             if (scr_System_CampaignManager.current.CurrentTargetRef == chara_refID && !scr_System_CampaignManager.current.displaySex) nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;
             else nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
         }
-
-
         updateImage();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (mouseOver != false && !isCombatBox) ForceExit();
+        if (!isCombatBox) ForceExit();
     }
 
     Coroutine coroutine = null;
 
     private void updateImage()
     {
-        if (coroutine != null)
-        {
-            StopCoroutine(coroutine);
-            coroutine = null;
-        }
         if (!this.gameObject.activeInHierarchy) return;
         if (chara == null || chara.PortraitManager == null) return;
-        coroutine = StartCoroutine(co_updateImage());
-    }
-
-    private void OnEnable()
-    {
-        updateImage();
-    }
-
-    /// <summary>
-    /// Run Every Update 
-    /// </summary>
-    private IEnumerator co_updateImage()
-    {
-        if (scr_System_CampaignManager.current.ColdLoad) yield break;
+        if ( chara != null && chara.PortraitManager != null)
+        {
+            if (!isCombatBox) chara.PortraitManager.DrawIcon(this);
+        }
 
 
-        yield return chara.PortraitManager.GetValidPortrait().DrawIcon(this);
-        
         if (scr_System_CentralControl.current.xray_mode > 0 && scr_System_CampaignManager.current.XrayMode)
         {
 
@@ -266,6 +247,36 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
             CombatUtility.DrawPosture(cStats, posture.text);
             ScaleStatBar(posture.bar, cStats.Posture, cStats.MaxPosture);
         }
+
+    }
+
+
+    public PortraitManager.CharaPortrait currentHandler = null;
+    public string currentIcon = "";
+    public Coroutine currentlyRunning = null;
+    public void Draw(IEnumerator routine)
+    {
+        if (currentlyRunning != null)
+        {
+            StopCoroutine(currentlyRunning);
+            currentlyRunning = null;
+        }
+        currentlyRunning = StartCoroutine(routine);
+    }
+
+    private void OnEnable()
+    {
+        updateImage();
+    }
+
+    /// <summary>
+    /// Run Every Update 
+    /// </summary>
+    private IEnumerator co_updateImage()
+    {
+        if (scr_System_CampaignManager.current.ColdLoad) yield break;
+        
+        
                 
        // this.picture.SetNativeSize();
         //Debug.Log("refresh character " + chara.FirstName + " hp " + chara.Stats.HP.Value + "/" + chara.Stats.HP.MaxValue + " mp "+chara.Stats.MP.Value+"/"+ chara.Stats.MP.MaxValue+" st "+ chara.Stats.Stamina.Value+"/"+ chara.Stats.Stamina.MaxValue+" en "+ chara.Stats.Energy.Value+"/"+ chara.Stats.Energy.MaxValue);

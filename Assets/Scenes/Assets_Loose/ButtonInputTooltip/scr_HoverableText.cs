@@ -26,6 +26,7 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
             }
         }
     }
+    public RectTransform SelfRect { get { return this.GetComponent<RectTransform>(); } } 
 
     scr_Canvas_tooltipHandler Handler;
     private Canvas m_Canvas;

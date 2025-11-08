@@ -28,6 +28,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Question, Events",
     "label":"br_active_choice",
+    "portraitRefKey":"party",
     "question":"$party.name$发现一群肮脏矮小的哥布林正在轮奸被俘的女性\n敌方队伍的构成为：$enemy.nameCount$\n被俘对象为：$victims.name$",
     "options":[
         {   
@@ -53,13 +54,15 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_event",
-    "line": "$trainer.name$选择不惊动正在奸淫的哥布林们",
+    "portraitRefKey":"party",
+    "line": "$party.name$选择不惊动正在奸淫的哥布林们",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_abort",
+    "portraitRefKey":"party",
     "line": "$party.name$暂时撤退了",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["RetryEvent"]} ],
     "isLast": true
@@ -67,6 +70,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_combat_combat",
+    "portraitRefKey":"party",
     "line": "$party.name$偷袭了哥布林！（敌方全员HP-2）",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-2"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
@@ -76,6 +80,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_error",
+    "portraitRefKey":"party",
     "line": "警告！由于内容缺失，该事件强制终止。",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
@@ -107,10 +112,12 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Events",
                     "label": "br_hasenemy",
+    "portraitRefKey":"party",
                     "line": "$party.name$击败了哥布林，然后……"
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "portraitRefKey":"party",
                     "label": "br_noenemy",
                     "options":[
                         {   
@@ -130,6 +137,7 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Question, Events",
                     "label":"br_victims",
+    "portraitRefKey":"party",
                     "question":"$party.name$发现了被哥布林们残酷对待后奄奄一息的$victims.name$",
                     "options":[
                         {     
@@ -152,6 +160,7 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Events",
                     "label": "br_lootEnd",
+    "portraitRefKey":"party",
                     "line": "$party.name$搜刮完之后离开了这里",
                     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
                     "isLast": true
@@ -159,6 +168,7 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Events",
                     "label": "br_noLootEnd",
+    "portraitRefKey":"party",
                     "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
                     "line": "$party.name$没有在此过多停留",
                     "isLast": true
@@ -195,11 +205,13 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Events",
                     "label": "br_hasRescue",
+    "portraitRefKey":"party",
                     "line": "$party.name$营救了被哥布林们残酷对待的受害者"
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Events",
                     "line": "……从救出的$rescued.name$那获得了更多此处的情报",
+    "portraitRefKey":"party",
                     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
                     "isLast": true
                 },

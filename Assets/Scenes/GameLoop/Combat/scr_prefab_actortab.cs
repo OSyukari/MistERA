@@ -99,6 +99,7 @@ public class scr_prefab_actortab : MonoBehaviour, IPointerEnterHandler
         if (scr_System_CampaignManager.current.DebugMode) this.nameBox.SetExternalTooltip($"refid: {c.RefID}");
 
         this.imageBox.OnUpdateNotice();
+        this.imageBox.CombatRefresh(Stats, true);
 
         this.status.SetText("");
 

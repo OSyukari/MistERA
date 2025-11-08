@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using UnityEditor;
 using Newtonsoft.Json.Linq;
 
-[System.Serializable]
 public class Index_CharaSkills : I_IndexMergeable, I_IndexHasID, I_RemoveElemByTag
 {
     public List<CharaSkill> list = new List<CharaSkill>();
@@ -36,7 +35,6 @@ public class Index_CharaSkills : I_IndexMergeable, I_IndexHasID, I_RemoveElemByT
     }
 }
 
-[System.Serializable]
 public class SkillManager
 {
 
@@ -207,14 +205,23 @@ public class SkillManager
         this.ReEstablishParent(c);
     }
 
-    public void UpdateAllSkills(List<string> messages = null)
+    public void UpdateAllSkills(List<Manageable.DailyReportHandler.MiscMessageEntry> messages)
     {
+        List<string> msg1 = new List<string>();
         foreach (var i in Skills)
         {
-            while (i.Upgrade(messages))
+            msg1.Clear();
+            int initialLevel = i.GetSkillLevel;
+            int currentLevel = initialLevel;
+            while (i.Upgrade(msg1))
             {
-                // do something or do nothing
+                currentLevel = i.GetSkillLevel;
             }
+            if (initialLevel != currentLevel)
+            {
+                messages.Add(new Manageable.DailyReportHandler.MiscMessageEntry($"{Owner.CallName}'s {i.DisplayName} upgraded {initialLevel} -> {currentLevel}", msg1));
+            }
+
         }
     }
 
@@ -231,7 +238,6 @@ public class SkillManager
 }
 
 
-[System.Serializable]
 public class SkillInstance
 {
     [JsonIgnore] public string DisplayName { 
@@ -318,15 +324,13 @@ public class SkillInstance
     /// </summary>
     [JsonIgnore] public List<string> TooltipCache = new List<string>();
 
-
-    public bool Upgrade(List<string> messages = null)
+    public bool Upgrade(List<string> messages)
     {
         if (!CanUpgrade) return false;
 
         bool refresh = this.GetStatMods().Count > 0;
         this.currentLevel += 1;
-        if (messages != null) messages.Add( Owner.FirstName+"'s skill " + BaseRef.ID + " upgraded to level " + (currentLevel));
-        BaseRef.NotifyUpgrade(Owner, currentLevel, messages);
+        BaseRef.NotifyUpgrade(Owner, currentLevel, messages );
         refresh =  refresh || this.GetStatMods().Count > 0;
         if (refresh)
         {
@@ -345,7 +349,6 @@ public class SkillInstance
 
 
 
-[System.Serializable]
 public class CharaSkill
 {
     public string ID = "";
@@ -374,7 +377,6 @@ public class CharaSkill
         this.Levels[currentLevel].NotifyUpgrade(c, messages);
     }
 
-    [System.Serializable]
     public abstract class Require
     {
         public List<RequirementEntry> entries = new List<RequirementEntry>();
@@ -382,7 +384,6 @@ public class CharaSkill
         public abstract void NotifyUpgrade(Character_Trainable c, List<string> messages = null);
     }
 
-    [System.Serializable]
     public class RequireOne : Require
     {
         public override void NotifyUpgrade(Character_Trainable c, List<string> messages = null)
@@ -518,7 +519,6 @@ public class CharaSkill
             return returnValue;
         }
 
-        [System.Serializable]
         public class RequireExperience
         {
             public string experienceID = "";
@@ -546,7 +546,6 @@ public class CharaSkill
             }
         }
 
-        [System.Serializable]
         public class RequireSumExperience
         {
             public List<string> experienceIDs = new List<string>();

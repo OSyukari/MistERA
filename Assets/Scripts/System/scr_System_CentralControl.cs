@@ -560,7 +560,6 @@ public class scr_System_CentralControl : MonoBehaviour
 }
 
 
-[System.Serializable]
 public class SaveFileHolder
 {
     public string Version;
@@ -578,7 +577,6 @@ public class SaveFileHolder
 
 }
 
-[System.Serializable]
 
 public class SaveFile
 {

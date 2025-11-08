@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using System;
-using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using NUnit.Framework.Constraints;
+using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
-[System.Serializable]
 public class scr_System_CampaignManager_Serializable
 {
     public Dictionary<int, Job> Jobs;
@@ -347,11 +347,23 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="parent"></param>
     /// <param name="line"></param>
     /// <param name="animate">whether on add line invoke a ui update</param>
-    public void AddLog_Line(EventInstance instance, string line, string tooltip, bool animate = true)
+    public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool rA, bool animate = true)
     {
         // here we need to process line into translated
         //Debug.Log($"Event Addline {line}");
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(null, line, tooltip, false, false), animate);
+        MessageLog log = null;
+        var content = UtilityEX.ParseEventEntry(instance, line.line);
+        if (line.portraitRefKey == "self")
+        {
+            log = LogManager.AddLog(null, rA ? $"<align=\"right\">{content}</align>" : content, "", false, false);
+        }
+        else if (instance.Targets.TryGetValue(line.portraitRefKey, out var targetrefs))
+        {
+            var msglog = new Message_Text(targetrefs, line.portraitTagsOverride, null, "", default, instance);
+            msglog.AddMessage(content, rA);
+            log = LogManager.AddLog(msglog);
+        }
+        Observer_MessageLogs?.Invoke(log, log.DisplaPortrait);
     }
     /// <summary>
     /// 
@@ -362,20 +374,35 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void AddLog_Question(EventInstance parent, Event.EventEntry.EventEntry_Question question, bool animate = true) 
     {
         //scr_UpdateHandler.current.FlushCollectedLogs(true, false);
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(new Message_Question(parent.Self == null ? null : parent.Self.PortraitManager, parent, question)), animate);
+        MessageLog log = null;
+        if (question.portraitRefKey == "self")
+        {
+            log = LogManager.AddLog(new Message_Question(parent.Self == null ? null : parent.Self.PortraitManager, parent, question));
+        }else if (parent.Targets.TryGetValue(question.portraitRefKey, out var targetrefs))
+        {
+            log = LogManager.AddLog(new Message_Question(targetrefs, question.portraitTagsOverride, parent, question));
+        }
+        Observer_MessageLogs?.Invoke(log, log.DisplaPortrait);
     }
 
     public event Action<MessageLog, bool> Observer_MessageLogs;
 
 
-    public event Action<PortraitManager> Observer_LogsCharaChange;
+    public event Action<PortraitManager, List<string>> Observer_LogsCharaChange;
     public void Log_TrySetChara(PortraitManager refID, bool isAnimating)
     {
 
         if (LogManager.SetLogChara(refID, isAnimating))
         {
             //Debug.Log("Log_TrySetChara true " + refID);
-            Observer_LogsCharaChange?.Invoke(refID);
+            Observer_LogsCharaChange?.Invoke(refID, new List<string>());
+        }
+    }
+    public void Log_TrySetChara(List<Character_Trainable> list, List<string> keywords)
+    {
+        if (LogManager.SetLogChara(list, true, out var selected) && selected != null)
+        { 
+            Observer_LogsCharaChange?.Invoke(selected, keywords);
         }
     }
     public void Log_TryClearChar(bool isAnimating)
@@ -1110,6 +1137,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             Observer_CurrentTargetEX?.Invoke(_currentTargetEX.RefID, false);
         }
     }
+    public PortraitManager.CharaPortrait CurrentTargetEXPortrait = null;
 
 
     int currentRoomRef = -1;
@@ -1746,7 +1774,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             //Debug.Log($"CampaignManager: Instantiate request for [{ID}] found genTemplate, generating instead [{genTemplate.TargetBaseID}]");
             var template = GetCharaTemplate(genTemplate.TargetBaseID);
-            template.BaseID = ID;
+            // template.BaseID = ID;
             if (genTemplate.title != "") template.Title = genTemplate.title;
             if (genTemplate.useNameGen)
             {

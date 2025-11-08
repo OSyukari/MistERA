@@ -3,7 +3,6 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System;
 
-[System.Serializable]
 public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize, I_RemoveElemByTag
 {
     public List<Character_Personality> list = new List<Character_Personality>();
@@ -48,7 +47,6 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
 }
 
 
-[System.Serializable]
 public enum KojoEventCalls
 {
     Greeting,    // calls when PC enters room and meet Chara,
@@ -66,7 +64,6 @@ public enum KojoEventCalls
 }
 
 
-[System.Serializable]
 public class Character_Personality
 {
     // ID
@@ -207,7 +204,6 @@ public class Character_Personality
     /// <summary>
     /// //////////////////////////////////////////////////////////////////
     /// </summary>
-    [System.Serializable]
     public class ResponseEntry
     {
         /// <summary>
@@ -384,7 +380,6 @@ public class Character_Personality
             return GetResponse(rel, selfTags, targetTags, null);
         }
 
-        [System.Serializable]
         public class Variant
         {
             public List<string> tags = new List<string>();

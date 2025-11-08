@@ -17,6 +17,18 @@ public class Job_Sex_Group : Job
         parentRoomRef = null;
     }
 
+    public override List<string> JobTypeTag(Character_Trainable c)
+    {
+        var results = new List<string>();
+        if (!this.actorRefID.Contains(c.RefID)) return results;
+        results.Add("sex");
+        if (this.Rapist.Count > 0 && !this.Rapist.Contains(c.RefID))
+        {
+            results.Add("raped");
+        }
+        return results;
+    }
+
     protected List<int> forceFucking = new List<int>();
 
     protected List<int> preRegisteredActorRefs = new List<int>(); // only used as actor list for registration, after which it is no longer used

@@ -5,8 +5,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using System;
-using Cysharp.Threading.Tasks.Triggers;
-using UnityEngine.UIElements;
 
 public class scr_Menu_Combat : scr_Menu
 {
@@ -268,8 +266,21 @@ public class scr_Menu_Combat : scr_Menu
     public void LoadChara(Character_Trainable c, bool isLeft)
     {
         if (c == null) return;
-        if (isLeft) left.InitializeWithArgument(c);
-        else right.InitializeWithArgument(c);
+        if (currentActiveCombat == null) return;
+        if (currentActiveCombat.ActorStats.TryGetValue(c.RefID, out var stats))
+        {
+            if (isLeft)
+            {
+                left.InitializeWithArgument(c);
+                left.CombatRefresh(stats, true);
+            }
+            else
+            {
+                right.InitializeWithArgument(c);
+                right.CombatRefresh(stats, true);
+            }
+        }
+
     }
 
     protected void LoadCombatInstance(CombatInstance instance)
@@ -295,7 +306,7 @@ public class scr_Menu_Combat : scr_Menu
 
         // for self team, draw selectable action button
         // on click, swap panel
-        OnInstanceUpdate();
+        OnInstanceUpdate(true);
     }
     public Dictionary<int, scr_prefab_actortab> actorTabs = new Dictionary<int, scr_prefab_actortab>();
 
@@ -305,15 +316,24 @@ public class scr_Menu_Combat : scr_Menu
     int turnCount = -1;
     private void OnInstanceUpdate()
     {
+        OnInstanceUpdate(false);
+    }
+    private void OnInstanceUpdate(bool firstInit)
+    {
         if (CurrentMode == CombatUI.SkillSelect) return;
 
         //Debug.Log($"OnInstanceUpdate");
 
         
         turnCounter.SetText(_turnCount.Replace("$count$", $"{currentActiveCombat.CurrentRound + 1}"));
-
+        bool initA = true, initB = true;
         foreach (var c in currentActiveCombat.teamA.Actors)
         {
+            if (firstInit && initA)
+            {
+                LoadChara(c, true);
+                initA = false;
+            }
             if (actorTabs.ContainsKey(c.RefID)) continue;
             var rect = Instantiate(prefab_Actor);
             rect.SelfRect.SetParent(charaList_teamA, false);
@@ -323,6 +343,11 @@ public class scr_Menu_Combat : scr_Menu
 
         foreach (var c in currentActiveCombat.teamB.Actors)
         {
+            if (firstInit && initB)
+            {
+                LoadChara(c, false);
+                initB = false;
+            }
             if (actorTabs.ContainsKey(c.RefID)) continue;
             var rect = Instantiate(prefab_Actor);
             rect.SelfRect.SetParent(charaList_teamB, false);
@@ -353,6 +378,8 @@ public class scr_Menu_Combat : scr_Menu
             if (resetOverride) i.overrideCount = 2;
             i.UpdateContent(currentActiveCombat);
         }
+
+
 
         turnCount = currentActiveCombat.CurrentRound;
 

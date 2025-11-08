@@ -6,7 +6,6 @@ public interface I_ItemComponentTemplate_Comp
     public ItemComponent_Base Instantiate(Item_Base itemBase);
 }
 
-[System.Serializable]
 public class ItemComponentTemplate
 {
     public string compType = "ItemComponent_Base";

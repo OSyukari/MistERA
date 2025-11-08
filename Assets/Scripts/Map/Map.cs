@@ -1,14 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
 using QuikGraph;
 using QuikGraph.Algorithms;
-using UnityEngine.UI;
-using System.IO;
 using Newtonsoft.Json;
 using System.Linq;
-using Unity.Collections;
 using Unity.Jobs;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
@@ -485,7 +481,7 @@ public class Map_Instance
             var job = scr_System_CampaignManager.current.Player.CurrentJob;
             var currentTargetRef = scr_System_CampaignManager.current.CurrentTargetRef;
             scr_System_CampaignManager.current.ChangeCurrentRoom(newRoom);
-            if (currentTargetRef > 0 && charaRoomRef[currentTargetRef] != newRoom.RefID && !scr_System_CampaignManager.current.isPlayerPartyMember(currentTargetRef)) scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.Player.RefID);
+            if (currentTargetRef > 0 && !scr_System_CampaignManager.current.isPlayerPartyMember(currentTargetRef)) scr_System_CampaignManager.current.ChangeCurrentTarget(0);
             if (job != null && job.ParentRoom != null && job.ParentRoom.RefID != newRoom.RefID) scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
         }
     }

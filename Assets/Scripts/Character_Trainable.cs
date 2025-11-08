@@ -287,6 +287,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     {
         this.Skills.FinalizeExperience();
         this._cachedJobDescription = string.Empty;
+        this.PortraitManager.ClearHandlerCache();
     }
 
     private void Observer_GlobalMinute5(TimeSpan t)
@@ -338,11 +339,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         // check food and sleep need
         if (FactionManager != null) FactionManager.DailyNeedConsumption();
 
-        List<string> updateMessage = new List<string>();
+        List<Manageable.DailyReportHandler.MiscMessageEntry> updateMessage = new List<Manageable.DailyReportHandler.MiscMessageEntry>();
         this.Skills.UpdateAllSkills(updateMessage);
         if (updateMessage.Count > 0)
         {
-            foreach (var i in FactionManager.HomeFactions) i.DailyReport.AddMiscRecord(String.Join("\n", updateMessage));
+            foreach (var i in FactionManager.HomeFactions)
+            {
+                foreach(var m in updateMessage) i.DailyReport.AddMiscRecord(m);
+            }
         }
         this.Relationships.DailyRefresh();
     }
@@ -1634,6 +1638,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 Inventory.AddItem(instance);
                 //inventory_ref.Add(itemRefID);
                 if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
+                this.PortraitManager.ClearHandlerCache();
             }
         }
     }
@@ -1726,6 +1731,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             {
                 Body.EquipItem(item.RefID, comp.equipCount, true);
                 Inventory.Remove(item);
+                this.PortraitManager.ClearHandlerCache();
             }
         }
     }

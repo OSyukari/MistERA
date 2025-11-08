@@ -11,7 +11,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 {
     public RectTransform panel_basicInfo, panel_equip, panel_relation, panel_records;
     public List<RectTransform> panel_basicInfo_extras;
-
     public scr_SpineLoader spineLoader;
     int chara_refID = -1;
     Character_Trainable _chara;
@@ -35,7 +34,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     public Scrollbar scrollbar_horizontal, scrollbar_vertical;
 #pragma warning restore CS0436 // Type conflicts with imported type
 
-
     public ptDownTracker portraitTracker;
     public void InitializeWithArgument(int refID)
     {
@@ -45,25 +43,13 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         if (!initialized) Initialize();
         //pictureRect.onValueChanged.AddListener(OnPictureRectChange);
 
-        if (chara != null)
-        {
-            //Debug.Log("Loading Chara Portrait "+chara.FirstName);
-            currentPortrait = chara.PortraitManager.GetValidPortrait();
-           // StartCoroutine( currentPortrait.DrawPortrait(this));
-           portraitTracker.SetRectPosition(currentPortrait);
-
-        }
-        else
-        {
-            Debug.Log("Chara Null not loading Portrait");
-        }
+        portraitTracker.SetRectPosition(scr_System_CampaignManager.current.CurrentTargetEXPortrait);
+        
         currentTab = panel_basicInfo;
         InitializeBasicInfo();
 
         ValidateAll();
     }
-
-    public PortraitManager.CharaPortrait currentPortrait;
 
     protected override void Awake()
     {
@@ -319,10 +305,9 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     public initScript_Relations initScript_relations;
 
     public RectTransform boxMemoriesList;
-    public scr_memoryBox prefab_MemoryEntry;
 
     public RectTransform boxRelationshipList, prefab_boxRelationship;
-    List<RectTransform> listRelationship = new List<RectTransform>();
+    
 
     private bool initialized_relation = false;
     private void InitializeRelationship()
@@ -330,35 +315,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         if (initialized_relation) return;
         else initialized_relation = true;
 
-        initScript_relations.InitializeData(this.chara);
-
-        bool safe = scr_System_CentralControl.current.isSafeMode;
-
-        //listRelationship = new List<RectTransform>();
-        foreach (RelationshipManager.Character_Relationship rel in chara.Relationships.Relationships)
-        {
-            RectTransform rect = Instantiate(prefab_boxRelationship);
-            rect.SetParent(boxRelationshipList, false);
-            listRelationship.Add(rect);
-            var scrbox = rect.GetComponent<scr_box_relationship>();
-            RelationshipManager.Draw(rel, scrbox);
-
-            if (safe)
-            {
-                scrbox.desireBox.gameObject.SetActive(false);
-            }
-        }
-
-        for (int i = chara.Memory.Entries.Count - 1; i >= 0; i--)// Memory_Entry mem in chara.MemoryManager.entries)
-        {
-            //if (!chara.Memory.Entries[i].isValid) continue;
-            scr_memoryBox line = Instantiate(prefab_MemoryEntry);
-            line.gameObject.transform.SetParent(boxMemoriesList, false);
-            chara.Memory.Entries[i].Draw(line);
-            //line.SetText(chara.MemoryManager.entries[i]);
-
-            //if (entry.Tags.Count > 0) prefab_MemoryEntry.GetComponent<scr_HoverableText>().SetExternalTooltip("Relevant Tags: " + String.Join(" ", entry.Tags));
-        }
+        initScript_relations.InitializeData(this.chara, this);
     }
 
     public RectTransform prefab_panel_BodyDetail;
@@ -486,6 +443,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
     protected override void OnDestroy()
     {
+        //scr_System_CampaignManager.current.CurrentTargetEX = null;
         base.OnDestroy();
         /*
         Debug.Log("scr_Menu_CharaDetail: OnDestroy Called!" + "\n"+
@@ -500,14 +458,11 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
           */        
 
         // trying to reinvoke target to provoke image refresh in scr_CharPortraitBox
-        if (scr_System_CampaignManager.current.CurrentTargetRef == chara_refID) scr_System_CampaignManager.current.ChangeCurrentTarget(chara_refID);
+        //if (scr_System_CampaignManager.current.CurrentTargetRef == chara_refID) scr_System_CampaignManager.current.ChangeCurrentTarget(chara_refID);
 
-        listRelationship.Clear();
         listInternal.Clear();
         internalIndex.Clear();
         internalDictionary.Clear();
-
-
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -653,7 +608,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            sk.Upgrade();
+            sk.Upgrade(null);
         }
     }
 

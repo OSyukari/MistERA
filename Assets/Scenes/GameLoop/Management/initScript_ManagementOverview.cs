@@ -22,8 +22,9 @@ public class initScript_ManagementOverview : MonoBehaviour
         currentlyOutside = LocalizeDictionary.QueryThenParse("ui_management_line_currentlyOutside");
     }
 
+    public RectTransform messageRect;
     public scr_HoverableText report_managementResult, report_tradeResults, report_currentlyOutsideFaction;
-
+    public scr_HoverableText prefab_miscMessageButton;
     public void Initialize(Manageable m)
     {
 
@@ -31,8 +32,31 @@ public class initScript_ManagementOverview : MonoBehaviour
         foreach (var i in m.Managers) managers.Add(i.FullName);
         managerNames.text = String.Join(", ", managers);
 
-        //m.PrintDailyReport(dailyReport);
-        UI_Utility.PrintDailyReport(m, report_managementResult, report_tradeResults, dailyReport);
+        // -----------------print daily report
+        var report = m.DailyReport;
+        if (!report.initialized) report.Initialize();
+
+        if (report.manageError) report_managementResult.SetText(report.msg_manageFailure);
+        else report_managementResult.SetText(report.msg_manageSuccess);
+        report_managementResult.SetExternalTooltip(String.Join("\n", report.manageLogs));
+
+        if (report.tradeError) report_tradeResults.SetText(report.msg_tradeFailure);
+        else report_tradeResults.SetText(report.msg_tradeSuccess);
+        report_tradeResults.SetExternalTooltip(String.Join("\n", report.tradeLogs) + (report.tradeWarnings.Count > 0 ? "\n" + Utility.WrapTextColor(String.Join("\n", report.tradeWarnings), scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color) : ""));
+
+        Utility.DestroyAllChildrenFrom(messageRect);
+
+        foreach (var misc in report.miscMessages)
+        {
+            var msg = Instantiate(prefab_miscMessageButton);
+            msg.SetText(misc.messageTitle);
+            msg.SetExternalTooltip(String.Join("\n", misc.tooltips));
+            msg.SelfRect.SetParent(messageRect, false);
+        }
+
+       // others.text = String.Join("\n", report.miscMessages);
+        // -----------------end
+
 
         List<string> floors = new List<string>();
         //int prCount = 0, usedPRcount = 0;

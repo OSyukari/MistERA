@@ -35,6 +35,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Question, Events",
     "label":"br_choice",
+    "portraitRefKey":"party",
     "question":"$party.name$在洞穴中遇到了哥布林巡逻队，冲突已无法避免\n敌方队伍的构成为：$enemy.nameCount$",
     "options":[
         {   
@@ -70,6 +71,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Question, Events",
     "label":"br_combat_scare",
+    "portraitRefKey":"party",
     "question":"$party.name$的迎战姿态吓唬住了哥布林，哥布林开始四处逃窜！",
     "options":[
         {   
@@ -86,14 +88,16 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_combat_scare_end",
-    "line": "$trainer.name$吓跑了哥布林巡逻队",
+    "portraitRefKey":"party",
+    "line": "$party.name$吓跑了哥布林巡逻队",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_combat_scare_chase",
-    "line": "$trainer.name$追击四处逃窜的哥布林们",
+    "portraitRefKey":"party",
+    "line": "$party.name$追击四处逃窜的哥布林们",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-2"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "nextEntryLabel":"br_combat_start"
@@ -121,6 +125,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_combat_ambush",
+    "portraitRefKey":"party",
     "line": "$party.name$偷袭了哥布林！（敌方全员HP-1）",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-1"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
@@ -129,6 +134,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_combat_combat",
+    "portraitRefKey":"party",
     "line": "$party.name$与哥布林们展开战斗！",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "nextEntryLabel":"br_combat_start"

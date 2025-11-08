@@ -197,6 +197,7 @@ public class scr_Panel_BottomBar : scr_Menu
         public void OnClickButton()
         {
             //, parent.m_Canvas.transform.GetComponent<RectTransform>()
+            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
             scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_charaDetail).GetComponent<scr_Menu_CharaDetail>();
             detail.InitializeWithArgument(charaRefID);
 
@@ -240,6 +241,7 @@ public class scr_Panel_BottomBar : scr_Menu
         public void OnClickButton()
         {
             //, parent.m_Canvas.GetComponent<RectTransform>()
+            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
             canvas_RoomDisplay FloorDisplay = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.canvas_FloorDisplay).GetComponent<canvas_RoomDisplay>();
             FloorDisplay.LoadFloor(scr_System_CampaignManager.current.CurrentRoom.parentFloor);
         }
@@ -281,6 +283,7 @@ public class scr_Panel_BottomBar : scr_Menu
         public void OnClickButton()
         {
             //, parent.m_Canvas.GetComponent<RectTransform>()
+            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
             scr_Canvas_Management manage = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_Management).GetComponent<scr_Canvas_Management>();
             manage.InitializeWithArgument();
             
@@ -365,8 +368,8 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public void OnClickButton()
         {
+            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
             var rect = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_LoadSave);
-
         }
     }
 
@@ -391,6 +394,7 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public void OnClickButton()
         {
+            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
             var rect = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_HelperGuide);
         }
     }
