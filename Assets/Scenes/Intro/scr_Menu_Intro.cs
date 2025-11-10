@@ -370,16 +370,23 @@ public class scr_Menu_Intro : scr_Menu
         new scr_Menu_Intro parent;
         scr_SelectableText button;
         string copied = LocalizeDictionary.QueryThenParse("intro_message_4");
+
+       // float r = 0.76f;
+
         public ButtonValidator_HoverMessage(scr_Menu_Intro parent, scr_SelectableText button) : base(parent)
         {
             this.parent = parent;
             this.button = button;
             if (scr_System_CentralControl.current.isSafeMode) this.tooltip = LocalizeDictionary.QueryThenParse("intro_message_3_safe");
             else this.tooltip = LocalizeDictionary.QueryThenParse("intro_message_3").Replace("$link$", UtilityEX.bugReport);
+
+            //tooltip += $"\n4p3-3p4 = {(4 * r * r * r - 3 * r * r * r * r)}";
         }
 
         public override bool IsButtonValid()
         {
+
+
             return true;
         }
 

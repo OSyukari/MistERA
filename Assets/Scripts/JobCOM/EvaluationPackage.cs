@@ -790,11 +790,15 @@ public class EvaluationPackage
         return TryRespond(recalculateRate);
     }
 
+    public void ApplyCost(MessageCollect m)
+    {
+        targetCOM.ApplyCost(this, m);
+    }
+
     /// <summary>
     /// Cleared on Execute() so no need to store any of it. But the property must 
     /// </summary>
     //[JsonProperty] public ExperienceLog m = new ExperienceLog();
-
     public void Execute(MessageCollect m)
     {
         //if (receiver == null || doer == receiver) receiver = doer;
@@ -929,10 +933,10 @@ public class EvaluationPackage
     /// <summary>
     /// rewritten on RollRequest()
     /// </summary>
-    [JsonProperty] public string checkResults_doer = "";
-    [JsonProperty] public string checkResults_doer_short = "";
-    [JsonProperty] public string checkResults_receiver = "";
-    [JsonProperty] public string checkResults_receiver_short = "";
+    [JsonProperty] protected string checkResults_doer = "";
+    [JsonProperty] protected string checkResults_doer_short = "";
+    [JsonProperty] protected string checkResults_receiver = "";
+    [JsonProperty] protected string checkResults_receiver_short = "";
 
     string diceroll_autosuccess = LocalizeDictionary.QueryThenParse("ui_diceroll_autosuccess");
     string diceroll_success = LocalizeDictionary.QueryThenParse("ui_diceroll_success");
@@ -1005,8 +1009,31 @@ public class EvaluationPackage
     }
     public string GetCheckResult(bool full = false)
     {
-        if (response > Memory_Response.None) return full ? checkResults_receiver : checkResults_receiver_short;
-        else return full ? checkResults_doer : checkResults_doer_short;
+        if (response > Memory_Response.None && checkResults_receiver != "" && checkResults_receiver_short != "")
+        {
+            return full ? checkResults_receiver : checkResults_receiver_short;
+        }
+        else
+        {
+            return full ? checkResults_doer : checkResults_doer_short;
+        }
+    }
+
+    [JsonIgnore]
+    public bool isSingleActor
+    {
+        get
+        {
+            return this.receiverRef == this.doerRef || this.receiverRef < 0;
+        }
+    }
+    [JsonIgnore]
+    public bool skipCheckResult
+    {
+        get
+        {
+            return this.doerRef == 0 && isSingleActor;
+        }
     }
 
     [JsonProperty] protected Memory_Attitude attitude_doer, attitude_receiver;
@@ -1542,6 +1569,8 @@ public class EvaluationPackage
 
 public class ExperienceLog
 {
+    [JsonIgnore] public bool isPlayerLog { get { return RightAlign.ContainsKey(0) 
+                || StatLog.ContainsKey(0) || ExpLog.ContainsKey(0) || RelationLog.ContainsKey(0) || MessageLog.ContainsKey(0) || climaxMessage.ContainsKey(0) ;  } }
     [JsonIgnore] public bool leftAlignOverride = false;
 
     protected SortedDictionary<int, bool> RightAlign = new SortedDictionary<int, bool>();
@@ -1622,7 +1651,9 @@ public class ExperienceLog
 
     public void MergeWith(ExperienceLog log, bool shorten)
     {
-        foreach(KeyValuePair<int, bool> kvp in log.RightAlign)
+        leftAlignOverride = leftAlignOverride || log.leftAlignOverride;
+
+        foreach (KeyValuePair<int, bool> kvp in log.RightAlign)
         {
             this.RightAlign[kvp.Key] = log.leftAlignOverride ? false : kvp.Value;
         }

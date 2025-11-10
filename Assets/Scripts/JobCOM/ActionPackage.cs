@@ -379,7 +379,7 @@ public abstract class ActionPackage
             List<string> names = new List<string>();
             foreach (var i in actorRefs) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
 #if UNITY_EDITOR
-            Debug.LogError($"NotifyInterrupted on TemporyAP for actors [{String.Join("|", names)}] skipping EP notify");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.LogError($"NotifyInterrupted on TemporyAP for actors [{String.Join("|", names)}] skipping EP notify");
 #endif
             return;
         }
@@ -1078,7 +1078,7 @@ public abstract class ActionPackage
 
         foreach (var ep in packages)
         {
-            if (ep.ActorRefs.Contains(0) && ep.Actors.Count < 2) continue; // skip player alone package
+            if (ep.skipCheckResult) continue; // skip player alone package
             checkResults.Add(ep.GetCheckResult(!rightAlign));
         }
 
@@ -1173,7 +1173,7 @@ public abstract class ActionPackage
             if (executed)
             {
                 //this.job.LogMessage_Begin_CheckResult(ep);
-
+               // ep.ApplyCost(m);
                 if (ep.ReceiverTargetTag.Contains("job"))
                 {
                     // ------------- if is JOB COM, increase trust
@@ -1204,8 +1204,6 @@ public abstract class ActionPackage
                 }
 
             }
-
-            this.job.LogMessage_Kojo(ep,m);
         }
 
         // Treat receiver as doer will separate all actors and make them individually do task
@@ -1237,7 +1235,8 @@ public abstract class ActionPackage
         }
         else if (!isForced) SendRefuseEvent();
 
-        
+
+
 
         // init or end train
         if (targetCOM != null && executeSuccessful)
@@ -1269,13 +1268,13 @@ public abstract class ActionPackage
                 else
                 {
                     //this.duration = 15;
-                    var allChara = this.actorRefs; 
+                    var allChara = this.actorRefs;
                     var names = new List<string>();
                     foreach (var i in allChara) names.Add(scr_System_CampaignManager.current.FindInstanceByID(i).FirstName);
                     Debug.Log($"Starting combat with {String.Join(",", names)}, includeplayer? {includePlayer}");
 
                     var playerRef = scr_System_CampaignManager.current.Player;
-                    scr_System_CampaignManager.current.QueueCombatSimulation(playerRef, this.actorRefs.FindAll(x=>x != playerRef.RefID));
+                    scr_System_CampaignManager.current.QueueCombatSimulation(playerRef, this.actorRefs.FindAll(x => x != playerRef.RefID));
 
                 }
             }
@@ -1289,8 +1288,8 @@ public abstract class ActionPackage
                 {
                     if (i.RefID == 0) continue;
                     var targetJob = i.CurrentJob;
-                    if (targetJob is Job_Sex_Group) 
-                    { 
+                    if (targetJob is Job_Sex_Group)
+                    {
                         existingJob = targetJob as Job_Sex_Group;
                         break;
                     }
@@ -1340,15 +1339,15 @@ public abstract class ActionPackage
             }
             else if (targetCOM.comTags.Contains("endSex"))
             {
-                foreach(var chara in actorRefs)
+                foreach (var chara in actorRefs)
                 {
                     var actorJob = scr_System_CampaignManager.current.FindInstanceByID(chara).CurrentJob as Job_Sex_Group;
-                    if(actorJob != null && actorJob != job) actorJob.EndJob();
+                    if (actorJob != null && actorJob != job) actorJob.EndJob();
                 }
                 var existingJob = job as Job_Sex_Group;
                 if (existingJob != null) existingJob.EndJob();
 
-                
+
                 /*
                 var doerCurrentJob = evp.Doer.CurrentJob;
                 var receiverCurrentJob = evp.Receiver == null ? null : evp.Receiver.CurrentJob;
@@ -1377,7 +1376,7 @@ public abstract class ActionPackage
                 {
                     if (c.hasSleepNeed && !c.Stats.isSleeping)// && c.RefID > 0)
                     {
-                        Debug.Log($"{c.FirstName} is going to sleep, current command {targetCOM.DisplayName(COMVariantID)}");
+                        // Debug.Log($"{c.FirstName} is going to sleep, current command {targetCOM.DisplayName(COMVariantID)}");
                         c.Sleep();
 
                         //Debug.Log("ADDING SLEEP TO " + c.FirstName);
@@ -1413,8 +1412,15 @@ public abstract class ActionPackage
                 scr_System_CampaignManager.current.FindInstanceByID(chara).ChangeCurrentJob(null);
             }
         }
+
+        if (this.temporaryM != null)
+        {
+            this.job.m.Merge(this.temporaryM, false);
+            this.temporaryM = null;
+        }
     }
 
+    MessageCollect temporaryM = null;
 
     protected void SendRefuseEvent()
     {
@@ -1424,19 +1430,38 @@ public abstract class ActionPackage
             var refuseEV = new EventInstance(this.doer[0], "OnAPRefuse", "");
             var appends = new List<string>();
             var description = new List<string>();
+           // var refuseInfo = new List<string>();
             var callbacks = new List<Action>();
+            var failCallbacks = new List<Action>();
+            var eventStart = new List<Action>();
+            refuseEV.FunctionCalls.Add("eventStart", eventStart);
             refuseEV.FunctionCalls.Add("apCallback", callbacks);
+            refuseEV.FunctionCalls.Add("failCallback", failCallbacks);
             refuseEV.AppendStrings.Add("apTooltip", appends);
+            //refuseEV.AppendStrings.Add("refuseInfo", refuseInfo);
             refuseEV.Targets.Add("evTarget", this.receiver);
-            refuseEV.AppendStrings.Add("com_variant_name", description);
 
-            scr_UpdateHandler.current.EventHandler.StartEvent(refuseEV, false);
+            MessageCollect mm = new MessageCollect();
+            mm.Merge(this.job.m, false);
+            mm.exp.leftAlignOverride = mm.exp.isPlayerLog;
+            this.job.m.Clear();
+            failCallbacks.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm, false));// .m.Merge(mm, false));
+            //failCallbacks.Add(() => scr_UpdateHandler.current.NotifyLogsSingleUpdate());
+
             ActionPackage forceAP = this.Copy();
+            forceAP.temporaryM = mm;
+
+            var checkResults = GetCheckResult(false);
+            eventStart.Add(() => scr_System_CampaignManager.current.AddLog(-1, checkResults, true));
+            
+            //refuseInfo.Add(GetCheckResult(false));
+            this.LoggedBegin = true;
+
             forceAP.ReInitializeCOM(this.job, this.targetCOM, this.DoerRefs, this.ReceiverRefs, this.masterRef, true);
             //forceAP.ResetRequest(forceAP.doerRefs, forceAP.receiverRefs, forceAP.masterRef, true);
             forceAP.Reset(true);
             forceAP.AddExtraCOMTag("forced");
-            Debug.Log($"adding force AP, isrepeat? {forceAP.PackageRepeat}");
+            //Debug.Log($"adding force AP, isrepeat? {forceAP.PackageRepeat}");
             if (forceAP.Validate())
             {
                 description.Add(forceAP.targetCOM.DisplayName(forceAP.COMVariantID));
@@ -1454,8 +1479,11 @@ public abstract class ActionPackage
                     if (doer[0] == scr_System_CampaignManager.current.Player) callbacks.Add(() => scr_UpdateHandler.current.ToggleCallbackUpdate());
                 }
             }// else do not add callback
+            Debug.Log($"SendRefuseEvent com_variant_name {String.Join("|", description)}, {this.DisplayName}");
+            refuseEV.AppendStrings.Add("com_variant_name", new List<string>(){ this.DisplayName });
             appends.AddRange(forceAP.tooltip);
 
+            scr_UpdateHandler.current.EventHandler.StartEvent(refuseEV, false);
         }
         else
         {

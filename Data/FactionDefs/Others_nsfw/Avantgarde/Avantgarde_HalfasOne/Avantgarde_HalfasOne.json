@@ -27,7 +27,7 @@
                                 "requireNaked":"torso"
                             }
                         ],
-                        "PortraitVariantData":"Avantgarde_HalfasOne/Actor_33_bust.png",
+                        "PortraitVariantData":["Avantgarde_HalfasOne/Actor_33_bust.png"],
                         "IconVariantData":"Avantgarde_HalfasOne/Actor_4_icon.png"
                     }
                 ],

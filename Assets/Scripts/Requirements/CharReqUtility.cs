@@ -134,12 +134,12 @@ public static class CharaReqUtility
         if (c == null) return;
 
         //Debug.Log("ApplyCOST for com " + m.targetCOM.DisplayName(m.VariantID) + " on chara " + c.FirstName);
-        if (q.cost_EN != 0f)
+        if (q != null && q.cost_EN != 0f)
         {
             msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
             c.Stats.Energy.ModValue(-q.cost_EN);
         }
-        if (q.cost_ST != 0f)
+        if (q != null && q.cost_ST != 0f)
         {
             msg.exp.AddStats(c.RefID, "stats_derived_extended_stamina", -q.cost_ST);
             c.Stats.Stamina.ModValue(-q.cost_ST);

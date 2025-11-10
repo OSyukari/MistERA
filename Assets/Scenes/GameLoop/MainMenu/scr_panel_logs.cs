@@ -59,11 +59,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         todo.Add(msg);
         UpdateAnimatingStatus();
         //Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
-        if ((firstLine || animate) && canAnimate)
-        {
-            SingleUpdate(false);
-            UpdateAnimatingStatus();
-        }
+        
+        if (firstLine || animate) SingleUpdate(false);
     }
 
     private void SingleUpdate(bool skipAll)
@@ -72,10 +69,6 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         {
             if (skipAll || Input.GetMouseButton(1)) AnimateAll();
             else AnimateOneStep();
-        }
-        else
-        {
-            //scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
         }
     }
 
@@ -106,7 +99,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     private RectTransform currentMsgLog, currentMsg;
     private void AnimateOneStep()
     {
-        // Debug.Log($"Animateonestep, firstline {firstLine}");
+        //Debug.Log($"Animateonestep, firstline {firstLine}");
         animationLock = true;
         firstLine = false;
         while (LogsList.transform.childCount > scr_System_CentralControl.current.DisplaySetting.MaxLogCount)

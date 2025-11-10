@@ -608,11 +608,23 @@ public class Job : IDisposable, I_Disposable
         else if (ap.Duration == 0)
         {//   duration == 0 this might be aborted
 
-            if (display && !ap.executeSuccessful) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Refuse(ep, rightAlign, m);
+            if (display && !ap.executeSuccessful && !ap.LoggedBegin)
+            {
+                m.messages_checks.Add(ap.GetCheckResult(rightAlign));
+                foreach (EvaluationPackage ep in ap.ListEP)
+                {
+                    LogMessage_Kojo(ep, m);
+                    LogMessage_Begin_Refuse(ep, rightAlign, m);
+                }
+            }
             else if (display)
             {
-              //  Debug.LogError($"CollectLogs LogMessage_After on {ap.ListEP.Count} EPs");
-                foreach (EvaluationPackage ep in ap.ListEP) LogMessage_After(ep, rightAlign, m);
+                //  Debug.LogError($"CollectLogs LogMessage_After on {ap.ListEP.Count} EPs");
+                foreach (EvaluationPackage ep in ap.ListEP)
+                {
+                    LogMessage_Kojo(ep, m);
+                    LogMessage_After(ep, rightAlign, m);
+                }
             }
 
             m.exp.leftAlignOverride = !rightAlign;
@@ -808,7 +820,7 @@ public class Job : IDisposable, I_Disposable
                     if (package.isPaused && package.pausedTick > 3)
                     {
                         packages_previous.RemoveAt(i);
-                        Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to failing 3 times reregistration");
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to failing 3 times reregistration");
                         package.NotifyInterrupted();
                         this.actorJobComplete.AddRange(package.actorRefs);
 
@@ -880,10 +892,11 @@ public class Job : IDisposable, I_Disposable
     {
         if (m == null) m = this.m;
         if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName +", tags: ["+String.Join("|",ep.DoerSelfTag)+"] -> ["+String.Join("|", ep.ReceiverTargetTag) + $"], epStatus [{ep.Response}]");
-        var s = ep.Doer == null ? "" : ep.Doer.Relationships.GetKOJOMessage(true, ep);
-        var s2 = ep.Receiver == null ? "" : ep.Receiver.Relationships.GetKOJOMessage(false, ep);
+        var s = ep.Doer == null ? null : ep.Doer.Relationships.GetKOJOMessage(true, ep);
+        var s2 = ep.Receiver == null ? null : ep.Receiver.Relationships.GetKOJOMessage(false, ep);
         var rel = ep.Receiver != null && ep.Doer != null ? ep.Receiver.Relationships.FindRelationshipWith(ep.Doer) : null;
-        var s3 = rel == null ? "" : ep.Receiver.isSleeping ? ep.Receiver.Relationships.Personality.GetKOJOMessage("DisruptSleep", rel).Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID)) : "";
+        var s3 = rel == null ? null : ep.Receiver.isSleeping ? ep.Receiver.Relationships.Personality.GetKOJOMessage("DisruptSleep", rel) : null;
+        if (s3 != null) s3.message = s3.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
         //var s2 = "Kojo Message triggered for " + ep.Receiver.FirstName + ", tags: [" + String.Join("|", ep.ReceiverSelfTag) + "] -> [" + String.Join("|", ep.DoerTargetTag) + "]";
 
         /* filter by :
@@ -891,23 +904,10 @@ public class Job : IDisposable, I_Disposable
          * - tags
          
          */
-        if (s.Length > 0)
-        {
-            if (!m.messages_kojo.ContainsKey(ep.DoerRef)) m.messages_kojo[ep.DoerRef] = s;
-            else m.messages_kojo[ep.DoerRef] += "\n" + s;
-        }
-        if (s2.Length > 0)
-        {
-            if (!m.messages_kojo.ContainsKey(ep.ReceiverRef)) m.messages_kojo[ep.ReceiverRef] = s2;
-            else m.messages_kojo[ep.ReceiverRef] += "\n" + s2;
-        }
-        if (s3.Length > 0)
-        {
-            
-            if (!m.messages_kojo.ContainsKey(ep.ReceiverRef)) m.messages_kojo[ep.ReceiverRef] = s3;
-            else m.messages_kojo[ep.ReceiverRef] += "\n" + s3;
-        }
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents && (s.Length > 0 || s2.Length > 0 || s3.Length > 0)) Debug.Log($"Kojo Message logged: [{s}] [{s2}] [{s3}]");
+        if (s != null) m.messages_kojo.Add(s);
+        if (s2 != null) m.messages_kojo.Add(s2);
+        if (s3 != null) m.messages_kojo.Add(s3);
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents && (s != null || s2 != null || s3 != null)) Debug.Log($"Kojo Message logged: [{(s == null ? "-" : $"{s.message} | {String.Join(" ",s.portraitTags)}")}] [{(s2 == null ? "-" : s2.message)}] [{(s3 == null ? "-" : s3.message)}]");
     }
 
     public MessageCollect m = new MessageCollect();

@@ -36,6 +36,11 @@ public class scr_System_CampaignManager : MonoBehaviour
     public MenuHandler CanvasAnchor = null;
 
     [NonSerialized] public Action<PortraitManager.CharaPortrait> Observer_UpdateCurrentTargetAnchor;
+    public Action Observer_CurrentTargetClick;
+    public void NotifyCurrentTargetClick()
+    {
+        this.Observer_CurrentTargetClick?.Invoke();
+    }
     public void UpdateCurrentTargetAnchor(PortraitManager.CharaPortrait p)
     {
         Observer_UpdateCurrentTargetAnchor?.Invoke(p);
@@ -331,9 +336,34 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void AddLog(int refID, string s, bool animate = false, bool rightAlign = false, string tooltip = "")
     {
         if (s.Length < 1) return;
-        var chara = scr_System_CampaignManager.current.FindInstanceByID(refID);
+        if (s == "\n")
+        {
+            //Debug.LogError("Detect addlog \\ n");
+            return;
+        }
+        if (s == "\n\n")
+        {
+           // Debug.LogError("Detect addlog \\ n 2");
+            return;
+        }
+        if (s == "\n\n\n")
+        {
+           // Debug.LogError("Detect addlog \\ n 3");
+            return;
+        }
+        var chara = FindInstanceByID(refID);
         Observer_MessageLogs?.Invoke(LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, false, rightAlign), animate);
         //ChangeCurrentViewMode(ViewMode.View_Logs);
+    }
+
+    public void AddLog(MessageCollect_KojoEntry m, bool animate = false, bool rightAlign = false, string tooltip = "")
+    {
+        if (m.message.Length < 1) return;
+        var chara = FindInstanceByID(m.portraitRefID);
+        Message_Text msg = new Message_Text(chara, m.portraitTags, m.message, rightAlign, tooltip);
+        Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
+
+        foreach(var next in m.nexts) AddLog(next, animate, rightAlign);
     }
 
     public void NotifyEventEnd()
@@ -363,7 +393,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog);
         }
-        Observer_MessageLogs?.Invoke(log, log.DisplaPortrait);
+        Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
     /// <summary>
     /// 
@@ -382,7 +412,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             log = LogManager.AddLog(new Message_Question(targetrefs, question.portraitTagsOverride, parent, question));
         }
-        Observer_MessageLogs?.Invoke(log, log.DisplaPortrait);
+        Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
 
     public event Action<MessageLog, bool> Observer_MessageLogs;
@@ -400,9 +430,15 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
     public void Log_TrySetChara(List<Character_Trainable> list, List<string> keywords)
     {
-        if (LogManager.SetLogChara(list, true, out var selected) && selected != null)
-        { 
+        LogManager.SetLogChara(list, true, out var selected);
+        if (selected != null)
+        {
+            //Debug.Log($"Invoking logs change chara on {selected.Owner.CallName} with tags {String.Join("|", keywords)}");
             Observer_LogsCharaChange?.Invoke(selected, keywords);
+        }
+        else
+        {
+            //Debug.Log("Log_TrySetChara failed");
         }
     }
     public void Log_TryClearChar(bool isAnimating)

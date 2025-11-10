@@ -27,7 +27,7 @@
                                 "requireNaked":"torso"
                             }
                         ],
-                        "PortraitVariantData":"Avantgarde_Elena/Actor_24_bust.png",
+                        "PortraitVariantData":["Avantgarde_Elena/Actor_24_bust.png"],
                         "IconVariantData":"Avantgarde_Elena/Actor_24_icon.png"
                     }
                 ],

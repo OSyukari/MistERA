@@ -5,15 +5,39 @@
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
-                "portrait_offset_x": -99.949,
-                "portrait_offset_y": 17.627,
+                "portrait_offset_x": -1.615204,
+                "portrait_offset_y": -363.1122,
                 "portrait_offset_size": 0.55,
 
                 "icon_offset_x":0.0,
                 "icon_offset_y":0.0,
                 "icon_offset_size":0.8,
 
-                "Disable":true,
+                "Disable":false,
+
+"Variants":
+[
+    {
+      "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+      "Conditions":[ { "$type":"PortraitManager+PortraitValidators, Assembly-CSharp",  "requireUnconscious":true } ],
+      "PortraitVariantData":["99"]
+    }, 
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["curious"], "PortraitVariantData":["01","02","04"] },  
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["surprised"], "PortraitVariantData":["02","04"] },  
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["happy"], "PortraitVariantData":["03"] },  
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["confident"], "PortraitVariantData":["08","09","10"] },   
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["doubt"], "PortraitVariantData":["05","10"] },   
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["worry"], "PortraitVariantData":["06"] },   
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["thinking"], "PortraitVariantData":["06"] },   
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["disappointed"], "PortraitVariantData":["07"] },   
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sorry"], "PortraitVariantData":["07"] },   
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["relaxed"], "PortraitVariantData":["08","09","99"] },   
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["naughty"], "PortraitVariantData":["09","11"] },  
+    {
+    "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "Enable":false,
+    "PortraitVariantData":["00","01","02","03","04","05","06","07","08","09","10","11","99"]
+    }
+],
 
                 "icon_path":"Momoka/Momoka_Ark_Uniform_Icon.png",
                 "_comment":"utnapishtim uniform",
@@ -22,7 +46,7 @@
                 "materialTexturePaths":["Momoka/NP0098_spr.png"],
                 "atlasJSON_path":"Momoka/NP0098_spr.atlas",
                 "skeletonJSON_path":"Momoka/NP0098_spr.skel",
-                "idleAnimName":"Idle_01"
+                "idleAnimName":"Idle_01", "addonAnimName":"0aa0"
 
             },
             {
@@ -36,6 +60,7 @@
                 "icon_offset_y":0.0,
                 "icon_offset_size":0.8,
 
+                "Disable":true,
                 "icon_path":"Momoka/Momoka_Ark_Uniform_Icon.png",
                 "_comment":"default L2D",
 
@@ -44,7 +69,7 @@
                 "materialTexturePaths":["Momoka/Momoka_weekdungeon.png"],
                 "atlasJSON_path":"Momoka/Momoka_weekdungeon.atlas",
                 "skeletonJSON_path":"Momoka/Momoka_weekdungeon.skel",
-                "idleAnimName":"Idle_01"
+                "idleAnimName":"Idle_01", "addonAnimName":"00"
 
             }
         ]

@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using QuikGraph;
 
 
 public class scr_System_Serializer : MonoBehaviour
@@ -69,6 +71,26 @@ public class scr_System_Serializer : MonoBehaviour
     {
         return ShortFileAddress.ContainsKey(p) ? ShortFileAddress[p] : p;
     }
+
+    public List<string> GetAllImageFilesInFolder(string folderPath)
+    {
+        //Debug.Log($"GetAllImageFilesWithRegex {folderPath}");
+        var results = new List<string>();
+        foreach(var i in ShortFileAddress)
+        {
+            var extension = Path.GetExtension(i.Value).ToLower();
+            if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".webp")
+            {
+                if (i.Key.Contains($"{folderPath}/"))
+                {
+                    //Debug.Log($"GetAllImageFilesInFolder {folderPath} Match with {i.Key}");
+                    results.Add(i.Key);
+                }
+            }
+        }
+        return results;
+    }
+
     private void BuildAddressables(bool safeMode)
     {
        // var settings = AddressableAssetSettingsDefaultObject.Settings;
@@ -99,7 +121,6 @@ public class scr_System_Serializer : MonoBehaviour
                 }
             }
             if (skipped) continue;
-            string filepath = $"{file.Directory.Name}/{file.Name}";
             //string guidPath = file.FullName.Remove(0, appDataLen).Replace("\\","/");
 
             //Debug.Log($"Reading json file {file.Name} into {filepath}, guid {guidPath}");
@@ -118,11 +139,12 @@ public class scr_System_Serializer : MonoBehaviour
                 continue;
             }*/
 
-            ShortFileAddress.Add(filepath, file.FullName);
+            ShortFileAddress.Add($"{file.Directory.Name}/{file.Name}", file.FullName);
+            //ShortFileAddress.Add($"{file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name}", file.FullName);
 
             //var entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
             //entry.address = filepath;
-            loadedFiles.Add($"Reading json file {file.FullName} into {filepath}");
+            loadedFiles.Add($"Reading json file {file.FullName} into {file.Directory.Name}/{file.Name}");
             //Debug.Log($"reading directory {file.Name} in {file.FullName} in {file.DirectoryName} in {file.DirectoryName}");
         }
        // AssetDatabase.SaveAssets();

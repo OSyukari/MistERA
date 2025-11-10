@@ -269,7 +269,7 @@ public class COM: I_SerializationCallbackReceiver
     public COM_Requirements requirements = new COM_Requirements();
 
     public COM_Descriptions description_begin = new COM_Descriptions();
-    public COM_Descriptions descriptions_remove = new COM_Descriptions();
+    public COM_Descriptions description_remove = new COM_Descriptions();
     public COM_Descriptions description_ongoing = new COM_Descriptions();
     public COM_Descriptions description_after = new COM_Descriptions();
 
@@ -300,7 +300,7 @@ public class COM: I_SerializationCallbackReceiver
 
     public virtual string GetDescription_Remove(EvaluationPackage evp, int variantID)
     {
-        if (variantID == -1) return descriptions_remove.GetText(ref evp);
+        if (variantID == -1) return description_remove.GetText(ref evp);
         else if (variantID >= variants.Count) return "GetDescription_Remove ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Remove(this, evp);
     }
@@ -328,13 +328,14 @@ public class COM: I_SerializationCallbackReceiver
         //Debug.Log("VariantIDs: AP["+p.COMVariantID+"] EP["+m.VariantID+"] param["+variantID+"]");
 
         if (m.VariantID >= 0) this.variants[m.VariantID].ApplyCost(this, m, msg);
-        else
-        {
-            Debug.LogError("COM " + displayName + " apply cost error, both variantID < 0");
-            int validVar = GetValidVariant(m.Doer, m.Receiver);
-            if (validVar >= 0) this.variants[validVar].ApplyCost(this, m, msg);
+        //else
+        //{
+            //Debug.LogError("COM " + displayName + " apply cost error, both variantID < 0");
+            //int validVar = GetValidVariant(m.Doer, m.Receiver);
+            //if (validVar >= 0) this.variants[validVar].ApplyCost(this, m, msg);
            // 
-        }
+       // }
+        
     }
 
     public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log)
@@ -694,7 +695,7 @@ public class COM: I_SerializationCallbackReceiver
         public bool useBaseDescription = true;
 
         public COM_Descriptions description_begin = new COM_Descriptions();
-        public COM_Descriptions descriptions_remove = new COM_Descriptions();
+        public COM_Descriptions description_remove = new COM_Descriptions();
         public COM_Descriptions description_ongoing = new COM_Descriptions();
         public COM_Descriptions description_after = new COM_Descriptions();
 
@@ -722,7 +723,7 @@ public class COM: I_SerializationCallbackReceiver
         {
             
             List<string> s = new List<string>();
-            s.Add(descriptions_remove.GetText(ref evp));
+            s.Add(description_remove.GetText(ref evp));
             // prevent infinite loop
             if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_Remove(evp, useAnothersDescription));
             if (useBaseDescription) s.Add(ownerCOM.GetDescription_Remove(evp, -1));

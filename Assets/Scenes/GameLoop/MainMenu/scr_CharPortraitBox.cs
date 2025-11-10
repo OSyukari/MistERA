@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Runtime.InteropServices;
 
-public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Image picture;
     public scr_SpineLoader spineLoader;
@@ -34,6 +34,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             scr_System_CampaignManager.current.Observer_LogsCharaChange += ReadCurrentLogImage;
             scr_System_CampaignManager.current.Observer_CurrentViewMode += OnVMChange;
             scr_System_CampaignManager.current.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
+            scr_System_CampaignManager.current.Observer_CurrentTargetClick += OnPointerClick;
         }
         if (isCurrentTargetEXBox)
         {
@@ -167,14 +168,20 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             spineLoader.Store();
             currentlyRunning = null;
         }
+        _storedPortrait = this.currentPortrait;
         currentlyRunning = StartCoroutine(routine);
         mouseOver = false;
         updateImage();
     }
 
+    string _storedPortrait = "";
+
     public void NotifyEndDraw()
     {
+        if (isCurrentTargetBox && _storedPortrait != "" && currentPortrait != _storedPortrait) scr_System_CentralControl.current.UnloadTextureCache(_storedPortrait);
         this.spineLoader.Destroy();
+        _storedPortrait = "";
+        currentlyRunning = null;
     }
 
     public PortraitManager.CharaPortrait currentHandler = null;
@@ -190,9 +197,9 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     //public RectTransform prefab_Canvas_charaDetail;
     scr_Menu_CharaDetail detail;
 
-    void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
+    void OnPointerClick()
     {
-        if (portrait != null && isCurrentTargetBox) portrait.ActivityClick();
+        if (portrait != null && isCurrentTargetBox) portrait.ActivityClick(this);
     }
 
     bool mouseOver;

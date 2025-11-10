@@ -374,12 +374,11 @@ public class scr_UpdateHandler : MonoBehaviour
         cnManager.AddLog(-1, String.Join("\n", Message.messages_checks), halted);
         cnManager.AddLog(-1, String.Join("\n", Message.messages_before), halted);
 
-        foreach(var kvp in kojoMsgDictionary)
+        foreach(var kvp in Message.messages_kojo)
         {
-            cnManager.AddLog(kvp.Key, kvp.Value, halted);
+            cnManager.AddLog(kvp);
         }
 
-        kojoMsgDictionary.Clear();
 
         // all climax ? need to filter out who worth displaying
         //cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), halted);
@@ -407,17 +406,22 @@ public class scr_UpdateHandler : MonoBehaviour
 
         if (timeStop) totalUpdateTime = 0;
 
-        cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", true, true, scr_System_Time.current.getCurrentTime().ToString());
-
+        
         Updating = false;
 
         if (EventHandler.Active)
         {
             EventHandler.Run(false, true);
         }
+        else
+        {
+            cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", true, true, scr_System_Time.current.getCurrentTime().ToString());
+
+        }
         ExecuteEventCallbacks(CallbackResumeUpdate);
         FlushCollectedLogs(true, oneLoop, true);
-        NotifyLogsSingleUpdate(CallbackResumeUpdate);
+        //NotifyLogsSingleUpdate(CallbackResumeUpdate);
+
     }
 
     public void DeferredUpdateCall(int intref, string text)
@@ -480,13 +484,11 @@ public class scr_UpdateHandler : MonoBehaviour
         this.Message.Merge(m, shorten);
     }
 
-    public Dictionary<int, string> kojoMsgDictionary = new Dictionary<int, string>();
-    public void AppendKojoMessage(int charaRefID, string s)
+    public void AppendKojoMessage(MessageCollect_KojoEntry m)
     {
         //Debug.Log("AppendKojoMessage");
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"AppendKojoMessage: {s}");
-        if (!kojoMsgDictionary.ContainsKey(charaRefID)) kojoMsgDictionary.Add(charaRefID, s);
-        else kojoMsgDictionary[charaRefID] += "\n" + s;
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"AppendKojoMessage: {m.message}");
+        this.Message.messages_kojo.Add(m);
     }
 
     /// <summary>
@@ -507,17 +509,15 @@ public class scr_UpdateHandler : MonoBehaviour
             cnManager.AddLog(-1, Message.exp.PrintContent_Relations(), true);
             cnManager.AddLog(-1, Message.exp.PrintContent_Exps(), true);
 
-            foreach(var kvp in kojoMsgDictionary)
+            foreach(var kvp in Message.messages_kojo)
             {
-                bool rA = kvp.Key == 0 || kvp.Key == scr_System_CampaignManager.current.CurrentTargetRef;
-                cnManager.AddLog(kvp.Key, kvp.Value, false, false);
+                cnManager.AddLog(kvp);
             }
             if (currentRoundClimax.Count > 0) cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), true);
             if (Message.messages_after.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_after), true);
         }
         Message.Clear();
         currentRoundClimax.Clear();
-        kojoMsgDictionary.Clear();
 
         if (executeCallbacks) ExecuteEventCallbacks(true);
     }

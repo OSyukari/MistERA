@@ -1416,10 +1416,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
                 var wakeupEV = new EventInstance(this, "OnCharaWakeUp", "");
                 var callbacks = new List<Action>();
-                var appends = new List<string>();
+                var appends = new List<Action>();
                 wakeupEV.FunctionCalls.Add("jobCallback", callbacks);
 
-                if (this.InteractionJob.isVisibleToPlayer) wakeupEV.AppendStrings.Add("onWakeUp", appends);
+                if (this.InteractionJob.isVisibleToPlayer) wakeupEV.FunctionCalls.Add("onWakeUp", appends);
                 //scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
                 scr_UpdateHandler.current.EventHandler.StartEvent(wakeupEV, false);
 
@@ -1521,14 +1521,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     var randRel = Utility.GetRandomElement(accepted);
                     var message = this.Relationships.Personality.GetKOJOMessage("OnNightAssaultSuccess", randRel, selfTags, new List<string>());
                     Debug.Log($"({FirstName}) detected night assault accept count {accepted.Count}, random select {randRel.TargetName}, message {message}");
-                    appends.Add(message);
+                    appends.Add(()=>scr_System_CampaignManager.current.AddLog( message));
                 }
                 else if (refused.Count >= 1)
                 {
                     var randRel = Utility.GetRandomElement(refused);
                     var message = this.Relationships.Personality.GetKOJOMessage("OnNightAssaultFailure", randRel, selfTags, new List<string>());
                     Debug.Log($"({FirstName}) detected night assault accept count {accepted.Count}, random select {randRel.TargetName}, message {message}");
-                    appends.Add(message);
+                    appends.Add(() => scr_System_CampaignManager.current.AddLog(message));
                     // add moodlet, reduce relationship -> mod relationship record are from ep. or can we directly inject into updatehandler ?
                     // directly add explog to updatehandler's log
                     var relationship = randRel.Owner.Relationships;

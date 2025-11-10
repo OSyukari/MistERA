@@ -6,15 +6,42 @@
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
-                "portrait_offset_x": -9.047,
-                "portrait_offset_y": 50.749,
+                "portrait_offset_x": -3.7605,
+                "portrait_offset_y": -377.9213,
                 "portrait_offset_size": 0.55,
 
                 "icon_offset_x":0.0,
                 "icon_offset_y":0.0,
                 "icon_offset_size":0.8,
 
-                "Disable":true,
+                "Disable":false,
+
+"Variants":
+[
+    {
+      "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+      "Conditions":[ { "$type":"PortraitManager+PortraitValidators, Assembly-CSharp",  "requireUnconscious":true } ],
+      "PortraitVariantData":["99"]
+    },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["relaxed"], "PortraitVariantData":["03","06","99"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["happy"], "PortraitVariantData":["03","15"] },
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["curious"], "PortraitVariantData":["02"] },      
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["surprised"], "PortraitVariantData":["04","10"] },  
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["confident"], "PortraitVariantData":["05"] },     
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["serious"], "PortraitVariantData":["05","10"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["nagging"], "PortraitVariantData":["06"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sorry"], "PortraitVariantData":["06","07","09","12"] }, 
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["awkward"], "PortraitVariantData":["08"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["worry"], "PortraitVariantData":["07","09","12","13","14"] },  
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["thinking"], "PortraitVariantData":["07","12","14"] }, 
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["doubt"], "PortraitVariantData":["12"] },   
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["tired"], "PortraitVariantData":["11"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["disappointed"], "PortraitVariantData":["11"] },       
+    {
+    "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "Enable":false,
+    "PortraitVariantData":["00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","99"]
+    }
+],
 
                 "icon_path":"Ayumu/Ayumu_Ark_Uniform_Icon.png",
                 "_comment":"utnapishtim uniform",
@@ -23,7 +50,7 @@
                 "materialTexturePaths":["Ayumu/NP0099_spr.png"],
                 "atlasJSON_path":"Ayumu/NP0099_spr.atlas",
                 "skeletonJSON_path":"Ayumu/NP0099_spr.skel",
-                "idleAnimName":"Idle_01"
+                "idleAnimName":"Idle_01", "addonAnimName":"00"
 
             },
             {
@@ -44,7 +71,7 @@
                 "materialTexturePaths":["Ayumu/NP0013_quest.png"],
                 "atlasJSON_path":"Ayumu/NP0013_quest.atlas",
                 "skeletonJSON_path":"Ayumu/NP0013_quest.skel",
-                "idleAnimName":"Idle_01"
+                "idleAnimName":"Idle_01", "addonAnimName":"00"
 
             }
         ]

@@ -13,7 +13,7 @@
                 "ep_Description_start": "$doer$开始$comdesc$$receiver$",
                 "ep_Description_ongoing": "$doer$继续$comdesc$$receiver$",
                 "ep_Description_abort": "$doer$停止了$comdesc$$receiver$",
-                "ep_Description_refuse": "拒绝了$comdesc$",
+                "ep_Description_refuse": "$self$拒绝了$comdesc$",
                 "ap_Description_refuse": "拒绝了$comdesc$",
                 "ap_Description_refused": "$comdesc$被拒绝了",
                 "ap_Description_interrupted": "$comdesc$被打断了",

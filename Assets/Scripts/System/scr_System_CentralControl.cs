@@ -24,6 +24,7 @@ public class DebugLogSettings
     public bool DLog_CurrentRoomJob = false;
     public bool DLog_UnimplementedKojo = false;
     public bool DLog_KojoEvents = false;
+    public bool DLog_Portraits = false;
     public bool DLog_Pathing = false;
     public bool DLog_Equipping = false;
     public bool DLog_Events = false;
@@ -201,18 +202,18 @@ public class scr_System_CentralControl : MonoBehaviour
     private void OnDayUpdate(int dt)
     {
         // if loaded texture count less than 30 then dont do 100
-        var order = textureUseCounter.OrderByDescending(x => x.Value).ToList();
-        if (order.Count >= 30 && order[order.Count - 1].Value < 0)
+        var order = new List<string>(textureUseCounter.Keys);
+
+        // remove extra texture 
+        foreach (var key in order)
         {
-            // remove extra texture 
-            for (int i = order.Count - 1; i >= 0; i--)
-            {
-                if (textureUseCounter[order[i].Key] <= 0) UnloadTextureCache(order[i].Key);
-                if (textureUseCounter.Count <= 30) break;
-            }
+            if (textureUseCounter[key] <= 0) UnloadTextureCacheDefinitive(key);
         }
-        order.Clear();        
+             
     }
+
+
+
     private void OnHourUpdate(TimeSpan t)
     {
         var keys = textureUseCounter.Keys.ToList();
@@ -225,23 +226,55 @@ public class scr_System_CentralControl : MonoBehaviour
 
     public int PortraitCacheHour = 48;
 
-    public Sprite GetSprite(Texture2D tex)
+
+    public bool GetSprite(string path, out Sprite sprite)
     {
-        if (!this.texSprites.ContainsKey(tex)) this.texSprites.Add(tex, Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 100.0f));
-        this.textureUseCounter[tex] = PortraitCacheHour;
-        return texSprites[tex];
+        if (this.texSprites.TryGetValue(path, out sprite))
+        {
+            this.textureUseCounter[path] = PortraitCacheHour;
+            return true;
+        }
+        else return false;
     }
 
-    protected void UnloadTextureCache(Texture2D path)
+    public Sprite MakeSprite(string path, Texture2D tex)
     {
-        if (texSprites.ContainsKey(path)) texSprites.Remove(path);
-        if (textureUseCounter.ContainsKey(path)) textureUseCounter.Remove(path);
+
+        if (this.textureUseCounter.Count > 40)
+        {
+            OnDayUpdate(1);
+            Debug.Log($"Clearing Sprite cache, new size {textureUseCounter.Count}");
+        }
+
+        if (!this.texSprites.ContainsKey(path)) this.texSprites.Add(path, Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 100.0f));
+        if (!this.textures.ContainsKey(path)) this.textures.Add(path, tex);
+        this.textureUseCounter[path] = PortraitCacheHour;
+        return this.texSprites[path];
+    }
+    protected void UnloadTextureCacheDefinitive(string key)
+    {
+        textureUseCounter.Remove(key);
+        if (texSprites.TryGetValue(key, out var sprite))
+        {
+            Destroy(sprite);
+            texSprites.Remove(key);
+        }
+        if (textures.TryGetValue(key, out var texture2D))
+        {
+            Destroy(texture2D);
+            textures.Remove(key);
+        }
+    }
+    public void UnloadTextureCache(string path)
+    {
+        textureUseCounter[path] = 0;
     }
 
-    Dictionary<Texture2D, int> textureUseCounter = new Dictionary<Texture2D, int>();
+    Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+    Dictionary<string, int> textureUseCounter = new Dictionary<string, int>();
     //Dictionary<string, Texture2D> SpriteTextures = new Dictionary<string, Texture2D>();
     //Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
-    Dictionary<Texture2D, Sprite> texSprites = new Dictionary<Texture2D, Sprite>();
+    Dictionary<string, Sprite> texSprites = new Dictionary<string, Sprite>();
 
     private void Initialize()
     {

@@ -14,6 +14,28 @@
             "icon_offset_y":0.0,
             "icon_offset_size":0.8,
 
+  "Variants":
+  [
+    {
+      "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+      "Conditions":[ { "$type":"PortraitManager+PortraitValidators, Assembly-CSharp",  "requireUnconscious":true } ],
+      "PortraitVariantData":["99"]
+    },          
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["surprised"], "PortraitVariantData":["02"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["happy"], "PortraitVariantData":["03"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["awkward"], "PortraitVariantData":["04"] },   
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["serious"], "PortraitVariantData":["05"] },  
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["worry"], "PortraitVariantData":["06"] },  
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["relaxed"], "PortraitVariantData":["99"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sorry"], "PortraitVariantData":["04"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["confident"], "PortraitVariantData":["05"] },    
+    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sad"], "PortraitVariantData":["06"] },    
+    {
+      "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "Enable":false,
+      "PortraitVariantData":["00","01","02","03","04","05","06","99"]
+    }
+  ],
+
             "icon_path":"Hanako/Hanako_Ark_Uniform_Icon.png",
             "_comment":"utnapishtim uniform",
             "_comment2":"hanako_spr default, CH0209_spr swim 22, NP0003_spr sport, NP0004_spr swim, NP0151_spr swim 2",
@@ -22,7 +44,7 @@
             "materialTexturePaths":["Hanako/NP0110_spr.png"],
             "atlasJSON_path":"Hanako/NP0110_spr.atlas",
             "skeletonJSON_path":"Hanako/NP0110_spr.skel",
-            "idleAnimName":"Idle_01"
+                "idleAnimName":"Idle_01", "addonAnimName":"00"
 
         }
       ]

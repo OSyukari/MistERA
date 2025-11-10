@@ -71,7 +71,7 @@ public class scr_SpineLoader : MonoBehaviour
     /// <param name="skeletonJSON_path"></param>
     /// <param name="skeletonScale"></param>
     /// <param name="idleAnimName"></param>
-    public IEnumerator SetBase(List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName = "idle", string touchAnimName = "action")
+    public IEnumerator SetBase(List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName = "idle", string addonAnimName = "action")
     {
 
         TextAsset ta = null;
@@ -91,7 +91,7 @@ public class scr_SpineLoader : MonoBehaviour
         }
         else if (spineLoader == null) spineLoader = scr_System_CentralControl.current.GetSpineLoader(version);
 
-        yield return spineLoader.Initialize(materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, touchAnimName);
+        yield return spineLoader.Initialize(materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName);
 
         if (spineLoader_previous != null)
         {

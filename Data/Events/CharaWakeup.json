@@ -31,7 +31,7 @@
                         "options":[
                             {
                                 "option": "silent branch event, this shouldnt be displayed...unless",
-                                "Results": [ { "Type": "FlushAppendStrings", "arguments":["onWakeUp"]  },
+                                "Results": [ { "Type": "ExecuteCallback", "arguments":["onWakeUp"]  },
                                              { "Type": "ExecuteCallback", "arguments":["jobCallback"] },
                                              { "Type": "FlushLogs" } ]
                             }

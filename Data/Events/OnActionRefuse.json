@@ -35,7 +35,8 @@
                     ]
                 },
                 "option": "player branch",
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
+                "Results": [    { "Type":"ExecuteCallback", "arguments":["eventStart"]},
+                                { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
             },
             {      
                 "option": "silent fail branch",
@@ -63,6 +64,7 @@
     {
         "$type": "Event+EventEntry+EventEntry_Question, Events",
         "label":"br_choice",
+    "portraitRefKey":"evTarget",
         "question":"event_OnAPRefuse_ev01",
         "options":[
             {   
@@ -72,20 +74,24 @@
             },
             {   
                 "option": "event_OnAPRefuse_ev01_op2", "isDefaultCancel":true,
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_end"]} ] 
+                "Results": [  
+                                { "Type":"JumpToLabel", "arguments":["","br_end"]} ] 
             }
         ]
     },
     {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_end",
-        "isLast": true,
-        "line": "event_OnAPRefuse_ev02"
+        "portraitRefKey":"evTarget",
+        "isLast":true,
+        "line": "event_OnAPRefuse_ev02",
+        "Results": [ {"Type":"ExecuteCallback","arguments":["failCallback"]} ] 
     },
     {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_push",
         "line": "event_OnAPRefuse_ev03",
+    "portraitRefKey":"evTarget",
         "nextEntryLabel":"br_push_ops"
     },
     {

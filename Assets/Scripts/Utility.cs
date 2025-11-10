@@ -292,6 +292,7 @@ public static class UtilityEX
 
         foreach(var appendStringkey in owner.AppendStrings)
         {
+           // Debug.Log($"AppendStringKey {appendStringkey.Key}, values {String.Join("|", appendStringkey.Value)}");
             if (appendStringkey.Value.Count < 1) continue;
             newString = newString.Replace($"${appendStringkey.Key}$", String.Join(",", appendStringkey.Value));
         }

@@ -38,6 +38,7 @@ public class MessageLogManager
     }
     public bool SetLogChara(List<Character_Trainable> list, bool isAnimating, out PortraitManager portrait)
     {
+        portrait = null;
         if ( currentPortrait != null && list.Contains(currentPortrait.Owner))
         {
             portrait = currentPortrait;
@@ -202,6 +203,13 @@ public class Message_Text : MessageLog
         this.Messages = new List<Message>();
         this.tooltip = tooltip;
     }
+    public Message_Text(Character_Trainable chara, List<string> tags, string messages, bool rA, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(new List<Character_Trainable>() { chara} , tags, time, parentEvent)
+    {
+        this.Messages = new List<Message>();
+        this.tagsOverride = tags;
+        this.Messages.Add(new Message(messages, rA));
+        this.tooltip = tooltip;
+    }
 
     public override bool DisplaPortrait { get {
             if (!base.DisplaPortrait) return false;
@@ -241,6 +249,8 @@ public class Message_Text : MessageLog
     scr_HoverableText currentLine = null;
     public void Draw(bool skipImage, scr_MessageLogBox box, scr_HoverableText linePrefab)
     {
+        //Debug.Log($"Draw text, skipImage? {skipImage} display? {DisplaPortrait} tags {String.Join("|", tagsOverride)}");
+        //if (skipImage || !DisplaPortrait) Debug.Log($"SkipImage? {skipImage}");
         base.Draw(skipImage || !DisplaPortrait);
         this.selfBox = box;
         this.prefab_LogLine = linePrefab;
@@ -320,7 +330,7 @@ public abstract class MessageLog
     public PortraitManager PortraitRef = null;
     public List<Character_Trainable> multipleChara = new List<Character_Trainable>();
     public List<string> tagsOverride = new List<string>();
-    public virtual bool DisplaPortrait { get { return (multipleChara != null && multipleChara.Count > 0) || PortraitRef != null; } }
+    public virtual bool DisplaPortrait { get { return multipleChara.Count > 0 || PortraitRef != null; } }
     public DateTime time;
     
     public MessageLog(PortraitManager portraitRef, DateTime time = default, EventInstance parentEvent = null)
@@ -345,11 +355,12 @@ public abstract class MessageLog
     {
         this.displayed = true;
         if (!skipImage) ForceDraw();
+       // else Debug.Log("Skipped drawing!");
     }
 
     public void ForceDraw()
     {
         if (this.multipleChara.Count > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, tagsOverride);
-        else if (PortraitRef != null) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
+        else if (PortraitRef != null && PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
     }
 }

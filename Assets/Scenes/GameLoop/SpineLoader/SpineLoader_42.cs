@@ -48,7 +48,7 @@ public class SpineLoader_42 : SpineLoader
 
     }
 
-    public override IEnumerator Initialize(List<string> texturePath, string atlasPath, string skeletonPath, bool straightAlpha, string idleAnimName = "", string touchAnimName = "action")
+    public override IEnumerator Initialize(List<string> texturePath, string atlasPath, string skeletonPath, bool straightAlpha, string idleAnimName = "", string addonAnimName = "action")
     {
         bool refresh = false;
         if (this.atlasPath != atlasPath || this.skeletonPath != skeletonPath || this.texturePath != texturePath)
@@ -131,6 +131,23 @@ public class SpineLoader_42 : SpineLoader
             // send looping idle animation
             //self_SkeletonGraphic.AnimationState.AddAnimation(0, idleAnim, true, 0);
             if (idleAnim != null) Animation.AnimationState.SetAnimation(0, idleAnim, true);
+        }
+        if (this.addonAnimName != addonAnimName)
+        {
+
+            refresh = true;
+            var addonAnim = Animation.skeletonDataAsset.GetSkeletonData(true).FindAnimation(addonAnimName);
+            if (addonAnim == null)
+            {
+                var list = Animation.skeletonDataAsset.GetSkeletonData(true).Animations.ToArray().ToList();
+                addonAnim = list.Count > 0 ? list[0] : null;
+                var names = new List<string>();
+                foreach (var i in list) names.Add(i.Name);
+                Debug.Log($"Spine animation name mismatch\nAtlasPath {atlasPath}\nValid Anims: {String.Join("|", names)}");
+            }
+            // send looping idle animation
+            //self_SkeletonGraphic.AnimationState.AddAnimation(0, idleAnim, true, 0);
+            if (addonAnim != null) Animation.AnimationState.SetAnimation(1, addonAnim, true);
         }
 
         if (refresh)

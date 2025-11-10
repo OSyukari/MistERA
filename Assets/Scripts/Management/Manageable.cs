@@ -552,7 +552,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         //Debug.Log("Begin getvalidRecreation");
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
-        if (scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
+        if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
         if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "", tag, checkBlacklist))
         {
             ss += $" found no valid [{tag}] instances offered by Furnitures from chara[" + chara.FirstName + "] currenthour[" + currentHour + "]";

@@ -100,7 +100,7 @@
 
             "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false },
             "description_after":{ "Entries":[{"texts":[""]}], "keepLooking":false },
-            "descriptions_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
             "description_begin":{ "Entries":[{"texts":["$doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false }
         },
         {
@@ -196,7 +196,7 @@
 
             "description_ongoing":{ "Entries":[{"texts":[""]}], "keepLooking":false },
             "description_after":{ "Entries":[{"texts":[""]}], "keepLooking":false },
-            "descriptions_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
             "description_begin":{ "Entries":[{"texts":[""]}], "keepLooking":false }
         }
     ]

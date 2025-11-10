@@ -29,6 +29,10 @@ public class PortraitManager
     {
         _owner = c;
         if (portraitPriorityList != null) foreach (var i in portraitPriorityList) i.Owner = this;
+        foreach(var i in this.portraitPriorityList)
+        {
+            i.RebuildInternal();
+        }
     }
 
     public void Prepend(CharaPortrait cm)
@@ -37,7 +41,7 @@ public class PortraitManager
         this.portraitPriorityList.Insert(0,cm);
         cm.Owner = this;
 
-        Debug.Log("new portrait, owner ["+Owner.FirstName+"] cmOwner["+cm.Owner.Owner.FirstName+"] isImage[" + (cm is PortraitManager.CharaPortrait_Image) + "] listCount["+portraitPriorityList.Count+"] variantsCount [" + cm.Variants.Count + "] isvalid[" + (cm.isValid()) + "] portraitPath[" + (cm as PortraitManager.CharaPortrait_Image).PortraitPath + "]");
+        //Debug.Log("new portrait, owner ["+Owner.FirstName+"] cmOwner["+cm.Owner.Owner.FirstName+"] isImage[" + (cm is PortraitManager.CharaPortrait_Image) + "] listCount["+portraitPriorityList.Count+"] variantsCount [" + cm.Variants.Count + "] isvalid[" + (cm.isValid()) + "] portraitPath[" + (cm as PortraitManager.CharaPortrait_Image).PortraitPath + "]");
     }
 
     protected CharaPortrait_Image _transparent = null;
@@ -66,7 +70,7 @@ public class PortraitManager
                 if (keywords.Count < 1 && i.RequireContextKeys.Count > 0) continue;
                 if (!Utility.ListContainsStrict(keywords, i.RequireContextKeys))
                 {
-                    Debug.Log($"portrait prioriry missing [{i.RequireContextKeys}] from [{String.Join(" ", keywords)}]");
+                    Debug.Log($"portrait prioriry missing [{String.Join(" ",i.RequireContextKeys)}] from [{String.Join(" ", keywords)}]");
                     continue;
                 }
                 else
@@ -81,8 +85,8 @@ public class PortraitManager
                 handler = portraitPriorityList[portraitPriorityList.Count - 1];
             }
 
-            portrait = handler.PortraitPath;
-            icon = handler.IconPath != "" ? handler.IconPath : portrait;
+            portrait = handler.PortraitPath(keywords);
+            icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
         }
     }
 
@@ -107,7 +111,7 @@ public class PortraitManager
         if (box.currentHandler != _cache_NeutralPortrait || box.currentPortrait != _cache_NeutralPortrait_path)
         {
             box.currentHandler = _cache_NeutralPortrait;
-            box.currentPortrait = _cache_NeutralPortrait_path;
+           // box.currentPortrait = _cache_NeutralPortrait_path;
             scr_System_CampaignManager.current.CurrentTargetEXPortrait = box.currentHandler;
             box.Draw(_cache_NeutralPortrait.DrawPortrait(box, _cache_NeutralPortrait_path));
         }
@@ -125,7 +129,7 @@ public class PortraitManager
         if (box.currentHandler != _cache_CombatPortrait || box.currentPortrait != _cache_CombatPortrait_path)
         {
             box.currentHandler = _cache_CombatPortrait;
-            box.currentPortrait = _cache_CombatPortrait_path;
+            //box.currentPortrait = _cache_CombatPortrait_path;
             box.Draw( _cache_CombatPortrait.DrawPortrait(box, _cache_CombatPortrait_path));
         }
     }
@@ -146,27 +150,26 @@ public class PortraitManager
     [JsonIgnore] public CharaPortrait _cache_ActivityPortrait = null;
     protected string _cache_ActivityPortrait_path = "";
     protected string _cache_ActivityPortrait_icon = "";
-    protected void DrawActivityPortrait(scr_CharPortraitBox box, List<string> tags = null)
+    protected void DrawActivityPortrait(scr_CharPortraitBox box, List<string> tags = null, bool forceRefresh = false)
     {
         //Debug.Log($"{Owner.CallName} DrawActivityPortrait");
-        if (_cache_ActivityPortrait == null || (tags != null && tags.Count > 0))
+        if (_cache_ActivityPortrait == null || (tags != null && tags.Count > 0) || forceRefresh)
         {
             if (tags == null || tags.Count < 1) tags = GetOwnerActionTagsByPriority();
-            Debug.Log($"{Owner.CallName} DrawActivityPortrait Tags {String.Join(" ", tags)}");
             GetValidPortrait(tags, out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon);
             tags_active = tags;
         }
         if (box.currentHandler != _cache_ActivityPortrait || box.currentPortrait != _cache_ActivityPortrait_path)
         {
-            Debug.Log($"{Owner.CallName} DrawActivityPortrait with path {_cache_ActivityPortrait_path}");
+           if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_path}");
             box.currentHandler = _cache_ActivityPortrait;
-            box.currentPortrait = _cache_ActivityPortrait_path;
+            //box.currentPortrait = _cache_ActivityPortrait_path;
             box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path));
         }
 
     }
 
-    protected List<string> GetOwnerActionTagsByPriority()
+    public List<string> GetOwnerActionTagsByPriority()
     {
         var result = new List<string>();
         if (Owner.InteractionJob.isActive)
@@ -191,18 +194,26 @@ public class PortraitManager
         if (_cache_ActivityPortrait == null)
         {
             var tags = GetOwnerActionTagsByPriority();
-            Debug.Log($"{Owner.CallName} drawActivityIcon Tags {String.Join(" ", tags)}");
             GetValidPortrait(tags, out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon);
             tags_active = tags;
         }
         if (box.currentHandler != _cache_ActivityPortrait || box.currentIcon != _cache_ActivityPortrait_icon)
         {
-            Debug.Log($"{Owner.CallName} drawActivityIcon with path {_cache_ActivityPortrait_path}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} drawActivityIcon Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_icon}");
             box.currentHandler = _cache_ActivityPortrait;
             box.currentIcon = _cache_ActivityPortrait_icon;
             box.Draw(_cache_ActivityPortrait.DrawIcon(box, _cache_ActivityPortrait_icon));
         }
 
+    }
+    public void ActivityClick(scr_CharPortraitBox box = null)
+    {
+        if (box != null && box.currentlyRunning == null)
+        {
+            // Debug.Log("clicked!");
+            DrawActivityPortrait(box, tags_active, true);
+            //_cache_ActivityPortrait.Click();
+        }
     }
     public void DrawPortrait(scr_CharPortraitBox box, List<string> tags = null)
     {
@@ -217,29 +228,28 @@ public class PortraitManager
     {
         drawActivityIcon(box);
     }
-    public void ActivityClick()
-    {
-        if (_cache_ActivityPortrait == null)
-        {
-            var tags = GetOwnerActionTagsByPriority();
-            GetValidPortrait(GetOwnerActionTagsByPriority(), out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon);
-            tags_active = tags;
-        }
-        _cache_ActivityPortrait.Click();
-        Debug.Log("clicked!");
-    }
 
     public class PortraitVariant
     {
         public List<PortraitValidators> Conditions = new List<PortraitValidators>();
-        public string PortraitVariantData = "";
+        public List<string> PortraitVariantData = new List<string>();
         public string IconVariantData = "";
+        public bool Enable = true;
+        public List<string> tagsMatch = new List<string>();
         public bool Validate(Character_Trainable c)
         {
+            if (!Enable) return false;
             if (Conditions == null || Conditions.Count < 1) return true;
             foreach(var i in Conditions) if (!i.Validate(c)) return false;
 
             return true;
+        }
+        public bool Validate(List<string> tags)
+        {
+            if (!Enable) return false;
+            if (tagsMatch.Count < 1) return true;
+            if (Utility.ListContainsStrict(tags, tagsMatch)) return true;
+            return false;
         }
     }
 
@@ -274,10 +284,20 @@ public class PortraitManager
 
         public List<PortraitVariant> Variants = new List<PortraitVariant>();
 
+        public virtual void RebuildInternal()
+        {
 
-        [JsonIgnore] public virtual string IconPath { get; }
+        }
 
-        [JsonIgnore] public virtual string PortraitPath { get; }
+        internal virtual string IconPath(List<string> tags)
+        {
+            return "";
+        }
+
+        internal virtual string PortraitPath(List<string> tags)
+        {
+            return "";
+        }
 
         public List<string> RequireContextKeys = new List<string>();
         public virtual bool isValid() { return false; }
@@ -299,6 +319,7 @@ public class PortraitManager
             if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
             //portraitBox.spineLoader.gameObject.SetActive(false);
             portraitBox.picture.sprite = SpriteAsset.transparent;
+            portraitBox.currentPortrait = pathOverride;
             portraitBox.NotifyEndDraw();
             yield break;
         }
@@ -320,8 +341,16 @@ public class PortraitManager
     {   // do not allow multiple transparent image layering -> should use spine instead.
         public string portrait_path = "";
         public List<string> random_portrait_path = new List<string>();
+        public string random_portrait_folder = "";
         public string icon_path="";
 
+        public override void RebuildInternal()
+        {
+            if (this.random_portrait_folder != "")
+            {
+                this.random_portrait_path = scr_System_Serializer.current.GetAllImageFilesInFolder(this.random_portrait_folder);
+            }
+        }
         public CharaPortrait_Image()
         {
 
@@ -347,10 +376,16 @@ public class PortraitManager
             if (pathOverride == "") yield return base.DrawIcon(iconBox, pathOverride);  // no fallback, draw transparent
             else
             {
-                Texture2D loaded = null;
-                yield return AssetsLoader.LoadTextureCoroutine(pathOverride, texture => loaded = texture);
-
-                iconBox.picture.sprite = scr_System_CentralControl.current.GetSprite(loaded);
+                if (scr_System_CentralControl.current.GetSprite(pathOverride, out var sprite))
+                {
+                    iconBox.picture.sprite = sprite;
+                }
+                else
+                {
+                    Texture2D loaded = null;
+                    yield return AssetsLoader.LoadTextureCoroutine(pathOverride, texture => loaded = texture);
+                    iconBox.picture.sprite = scr_System_CentralControl.current.MakeSprite(pathOverride, loaded);
+                }
 
                 iconBox.picture.SetNativeSize();
                 iconBox.picture.rectTransform.anchoredPosition = new Vector2(icon_offset_x, icon_offset_y);
@@ -358,46 +393,51 @@ public class PortraitManager
             }
         }
 
-        [JsonIgnore] public override string IconPath
+        internal override string IconPath(List<string> tags)
         {
-            get
+            if (this.Variants != null)
             {
-                if (this.Variants != null)
-                {
-                    foreach (var i in this.Variants) if (i.Validate(Owner.Owner) && i.IconVariantData != null && i.IconVariantData.Length > 0) return i.IconVariantData;
-                }
-                return icon_path;
+                foreach (var i in this.Variants) if (i.IconVariantData != "" && i.IconVariantData.Length > 0 && i.Validate(tags) && i.Validate(Owner.Owner) ) return i.IconVariantData;
             }
+            return icon_path;
         }
 
-        [JsonIgnore] public override string PortraitPath { get
+        internal override string PortraitPath(List<string> tags)
+        {
+            if (this.Variants != null)
             {
-                if (this.Variants != null)
-                {
-                    foreach (var i in this.Variants) if (i.Validate(Owner.Owner) && i.PortraitVariantData != null && i.PortraitVariantData.Length > 0) return i.PortraitVariantData;
-                }
-                if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
-                else return portrait_path;
-            } }
+                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement( i.PortraitVariantData);
+            }
+            if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
+            else return portrait_path;
+        }
 
         public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride)
         {
-            if (pathOverride == "")
+            if ( pathOverride == "")
             {
                 yield return base.DrawPortrait(portraitBox, pathOverride);
             }
             else
             {
-                Debug.Log($"image drawportrait [{pathOverride}]");
-                Texture2D loaded = null;
-                yield return AssetsLoader.LoadTextureCoroutine(pathOverride, texture => loaded = texture);
+               // Debug.Log($"image drawportrait [{pathOverride}]");
+
+                if (scr_System_CentralControl.current.GetSprite(pathOverride, out var sprite))
+                {
+                    portraitBox.picture.sprite = sprite;
+                }
+                else
+                {
+                    Texture2D loaded = null;
+                    yield return AssetsLoader.LoadTextureCoroutine(pathOverride, texture => loaded = texture);
+                    portraitBox.picture.sprite = scr_System_CentralControl.current.MakeSprite(pathOverride, loaded);
+                }
 
                 portraitBox.picture.gameObject.SetActive(true);
                 if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
 
-                var sprite = scr_System_CentralControl.current.GetSprite(loaded);
+                portraitBox.currentPortrait = pathOverride;
 
-                portraitBox.picture.sprite = sprite;
                 portraitBox.UpdateAnchor(this);
                 portraitBox.NotifyEndDraw();
                 //portraitBox.UpdateAnchor(this, portrait_offset_x, portrait_offset_y, portrait_offset_size);
@@ -419,6 +459,7 @@ public class PortraitManager
         public string skeletonJSON_path = "";
         //public float skeletonScale;
         public string idleAnimName = "";
+        public string addonAnimName = "";
 
         public string icon_path = "";
         public bool straightAlpha = false;
@@ -427,23 +468,23 @@ public class PortraitManager
 
         }
         /*
-                public CharaPortrait_Spine(string icon_path, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, float skeletonScale, string idleAnimName)
-                {
-                    this.materialTexturePaths = materialTexturePath;
-                    this.atlasJSON_path = atlasJSON_path;
-                    this.skeletonJSON_path = skeletonJSON_path;
-                    //this.skeletonScale = skeletonScale;
-                    this.idleAnimName = idleAnimName;
+        public CharaPortrait_Spine(string icon_path, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, float skeletonScale, string idleAnimName)
+        {
+            this.materialTexturePaths = materialTexturePath;
+            this.atlasJSON_path = atlasJSON_path;
+            this.skeletonJSON_path = skeletonJSON_path;
+            //this.skeletonScale = skeletonScale;
+            this.idleAnimName = idleAnimName;
 
 
-                    portrait_offset_x = 0;
-                    portrait_offset_y = 0;
-                    portrait_offset_size = 1;
+            portrait_offset_x = 0;
+            portrait_offset_y = 0;
+            portrait_offset_size = 1;
 
-                    icon_offset_x = 0;
-                    icon_offset_y = 0;
-                    icon_offset_size = 1;
-                }*/
+            icon_offset_x = 0;
+            icon_offset_y = 0;
+            icon_offset_size = 1;
+        }*/
 
         public override bool isValid() { return !Disable; }
         public override IEnumerator DrawIcon(scr_CharIconBox iconBox, string pathOverride )
@@ -451,10 +492,16 @@ public class PortraitManager
             if (pathOverride == "") yield return base.DrawIcon(iconBox, pathOverride);
             else
             {
-                Texture2D loaded = null;
-                yield return AssetsLoader.LoadTextureCoroutine(pathOverride, texture => loaded = texture);
-
-                iconBox.picture.sprite = scr_System_CentralControl.current.GetSprite(loaded);
+                if (scr_System_CentralControl.current.GetSprite(pathOverride, out var sprite))
+                {
+                    iconBox.picture.sprite = sprite;
+                }
+                else
+                {
+                    Texture2D loaded = null;
+                    yield return AssetsLoader.LoadTextureCoroutine(pathOverride, texture => loaded = texture);
+                    iconBox.picture.sprite = scr_System_CentralControl.current.MakeSprite(pathOverride, loaded);
+                }
 
                 iconBox.picture.SetNativeSize();
                 iconBox.picture.rectTransform.anchoredPosition = new Vector2(icon_offset_x, icon_offset_y);
@@ -462,30 +509,22 @@ public class PortraitManager
             }
         }
 
-        [JsonIgnore]
-        public override string IconPath
+        internal override string IconPath(List<string> tags)
         {
-            get
+            if (this.Variants != null)
             {
-                if (this.Variants != null)
-                {
-                    foreach (var i in this.Variants) if (i.Validate(Owner.Owner) && i.IconVariantData != null && i.IconVariantData.Length > 0) return i.IconVariantData;
-                }
-                return icon_path;
+                foreach (var i in this.Variants) if (i.IconVariantData != "" && i.IconVariantData.Length > 0 && i.Validate(tags) && i.Validate(Owner.Owner)) return i.IconVariantData;
             }
+            return icon_path;
         }
 
-        [JsonIgnore]
-        public override string PortraitPath
+        internal override string PortraitPath(List<string> tags)
         {
-            get
+            if (this.Variants != null)
             {
-                if (this.Variants != null)
-                {
-                    foreach (var i in this.Variants) if (i.Validate(Owner.Owner) && i.PortraitVariantData != null && i.PortraitVariantData.Length > 0) return i.PortraitVariantData;
-                }
-                return idleAnimName;
+                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement(i.PortraitVariantData);
             }
+            return this.addonAnimName;
         }
 
         /// <summary>
@@ -496,7 +535,7 @@ public class PortraitManager
         /// <returns></returns>
         public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride)
         {
-            if (pathOverride == "")
+            if (idleAnimName == "")
             {
                 //portraitBox.spineLoader.gameObject.SetActive(false);
                 yield return base.DrawPortrait(portraitBox, pathOverride);
@@ -506,10 +545,10 @@ public class PortraitManager
             {
                // Debug.Log($"spine drawportrait [{pathOverride}]");
                 //Debug.LogError($"PortraitAnimation name {PortraitAnimName}");
-                yield return portraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, pathOverride);
+                yield return portraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, pathOverride);
                 portraitBox.spineRect.gameObject.SetActive(true);
                 portraitBox.picture.gameObject.SetActive(false);
-
+                portraitBox.currentPortrait = pathOverride;
                 portraitBox.spineRect.SetParent(portraitBox.spineLoader.transform, false);
                 portraitBox.UpdateAnchor(this);
                 portraitBox.NotifyEndDraw();

@@ -197,10 +197,17 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         var pictureRect = picture.rectTransform;
         Utility.DestroyAllChildrenFrom( pictureRect);
 
-        Texture2D texture = null;
-        yield return AssetsLoader.LoadTextureCoroutine(floor.FloorBase.imagePath, tex => texture = tex);
+        if (scr_System_CentralControl.current.GetSprite(floor.FloorBase.imagePath, out var sprite))
+        {
+            picture.sprite = sprite;
+        }
+        else
+        {
+            Texture2D texture = null;
+            yield return AssetsLoader.LoadTextureCoroutine(floor.FloorBase.imagePath, tex => texture = tex);
+            picture.sprite = scr_System_CentralControl.current.MakeSprite(floor.FloorBase.imagePath, texture);
+        }
 
-        picture.sprite = scr_System_CentralControl.current.GetSprite(texture);
         var scale = floor.FloorBase.resize;
         picture.rectTransform.localScale = new Vector3(scale, scale, scale);
         floorName.text = floor.displayName;

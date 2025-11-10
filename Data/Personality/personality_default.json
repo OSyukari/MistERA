@@ -698,14 +698,17 @@
         "variants":
         [
             {   "requirements": [ { "requireEPFailure":true } ],
+                "extraPortraitTags":["doubt","apology"], "useActiveTags":false,
                 "_comment":"failure variant",
                 "responses":[ "kojo_default_com_job_farm_cultivate_crop_refuse_1", "kojo_default_com_job_farm_cultivate_crop_refuse_2" ]
             },
             {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "extraPortraitTags":["happy","confident"], "useActiveTags":false,
                 "_comment":"great success variant",
                 "responses":[ "kojo_default_com_job_farm_maintain_accept_success_1" ]
             },
             {   "requirements": [ { "requireSelfAction":true } ],
+                "extraPortraitTags":["surprised","apology"], "useActiveTags":false,
                 "_comment":"barely success variant",
                 "responses":[ "kojo_default_com_job_farm_maintain_accept_failure_1" ]
             }
@@ -716,11 +719,13 @@
         "variants":
         [
             {   "requirements": [ { "requireEPFailure":true } ],
+                "extraPortraitTags":["doubt","apology"], "useActiveTags":false,
                 "_comment":"failure variant",
                 "responses":[   "kojo_default_com_furniture_takingBreak_refuse_1", 
                                 "kojo_default_com_furniture_takingBreak_refuse_2" ]
             },
             {   "requirements": [ { "requireSelfAction":true } ],
+                "extraPortraitTags":["thinking","happy","resting"], "useActiveTags":false,
                 "_comment":"barely success variant",
                 "responses":[   "kojo_default_com_furniture_takingBreak_accept_success_1",
                                 "kojo_default_com_furniture_takingBreak_accept_success_2",
@@ -734,11 +739,13 @@
         "variants":
         [
             {   "requirements": [ { "requireEPFailure":true } ],
+                "extraPortraitTags":["doubt","apology"], "useActiveTags":false,
                 "_comment":"failure variant",
                 "responses":[   "kojo_default_com_furniture_takingBreak_refuse_1", 
                                 "kojo_default_com_furniture_takingBreak_refuse_2" ]
             },
             {   "requirements": [ { "requireSelfAction":true } ],
+                "extraPortraitTags":["thinking","happy","resting"], "useActiveTags":false,
                 "_comment":"barely success variant",
                 "responses":[   "kojo_default_com_furniture_takingBreak_accept_success_1",
                                 "kojo_default_com_furniture_takingBreak_accept_success_2",
@@ -753,14 +760,17 @@
         "variants":
         [
             {   "requirements": [ { "requireEPFailure":true } ],
+                "extraPortraitTags":["apology","shy"], "useActiveTags":false,
                 "_comment":"failure variant",
                 "responses":[ "kojo_default_com_furniture_playVideoGames_refuse_1", "kojo_default_com_furniture_playVideoGames_refuse_2" ]
             },
             {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "extraPortraitTags":["happy","excited", "surprised"], "useActiveTags":false,
                 "_comment":"great success variant",
                 "responses":[ "kojo_default_com_furniture_playVideoGames_accept_success_1", "kojo_default_com_furniture_playVideoGames_accept_success_2" ]
             },
             {   "requirements": [ { "requireSelfAction":true } ],
+                "extraPortraitTags":["pouting", "doubt"], "useActiveTags":false,
                 "_comment":"barely success variant",
                 "responses":[ "kojo_default_com_furniture_playVideoGames_accept_failure_1", "kojo_default_com_furniture_playVideoGames_accept_failure_2" ]
             }
@@ -772,14 +782,18 @@
         "variants":
         [
             {   "requirements": [ { "requireEPFailure":true } ],
+                "extraPortraitTags":["apology","shy"], "useActiveTags":false,
                 "_comment":"failure variant",
                 "responses":[ "kojo_default_com_furniture_watchVideo_refuse_1" ]
             },
             {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "extraPortraitTags":["happy","excited", "surprised"], "useActiveTags":false,
                 "_comment":"great success variant",
-                "responses":[ "kojo_default_com_furniture_watchVideo_accept_success_1", "kojo_default_com_furniture_watchVideo_accept_success_2" ]
+                "responses":[ "kojo_default_com_furniture_watchVideo_accept_success_1", 
+                                "kojo_default_com_furniture_watchVideo_accept_success_2" ]
             },
             {   "requirements": [ { "requireSelfAction":true } ],
+                "extraPortraitTags":["pouting", "doubt"], "useActiveTags":false,
                 "_comment":"barely success variant",
                 "responses":[ "kojo_default_com_furniture_watchVideo_accept_failure_1" ]
             }
@@ -790,10 +804,12 @@
         "variants":
         [
             {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "extraPortraitTags":["happy"], "useActiveTags":false,
                 "_comment":"great success variant",
                 "responses":[ "kojo_default_com_interaction_talk_accept_success_1", "kojo_default_com_interaction_talk_accept_success_2" ]
             },
             {   "requirements": [ { "requireSelfAction":true } ],
+                "extraPortraitTags":["doubt","scheming"], "useActiveTags":false,
                 "_comment":"barely success variant",
                 "responses":[ "kojo_default_com_interaction_talk_accept_failure_1", "kojo_default_com_interaction_talk_accept_failure_2", "kojo_default_com_interaction_talk_accept_failure_3"]
             }
@@ -804,10 +820,12 @@
         "variants":
         [
             {   "requirements": [ { "requireEPFailure":true } ],
+                "extraPortraitTags":["doubt","apology"], "useActiveTags":false,
                 "_comment":"failure variant",
                 "responses":[ "kojo_default_com_job_farm_cultivate_crop_refuse_1", "kojo_default_com_job_farm_cultivate_crop_refuse_2" ]
             },
             {   "requirements": [ { "requireSelfAction":true } ],
+                "extraPortraitTags":["thinking","doubt"], "useActiveTags":false,
                 "_comment":"barely success variant",
                 "responses":[ "kojo_default_com_job_farm_cultivate_crop_accept_failure_2", "kojo_default_com_job_farm_cultivate_crop_accept_failure_1" ]
             }
@@ -818,10 +836,12 @@
         "variants":
         [
             {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "extraPortraitTags":["confident","happy"], "useActiveTags":false,
                 "_comment":"great success variant",
                 "responses":[ "kojo_default_com_job_production_cooking_accept_success_1", "kojo_default_com_job_production_cooking_accept_success_2" ]
             },
             {   "requirements": [ { "requireSelfAction":true } ],
+                "extraPortraitTags":["thinking","doubt"], "useActiveTags":false,
                 "_comment":"barely success variant",
                 "responses":[ "kojo_default_com_job_production_cooking_accept_failure_1" ]
             }
@@ -832,10 +852,12 @@
         "variants":
         [
             {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
+                "extraPortraitTags":["confident","happy"], "useActiveTags":false,
                 "_comment":"great success variant",
                 "responses":[ "kojo_default_com_job_cleaning_accept_success_1" ]
             },
             {   "requirements": [ { "requireSelfAction":true } ],
+                "extraPortraitTags":["apology","surprised"], "useActiveTags":false,
                 "_comment":"barely success variant",
                 "responses":[ "kojo_default_com_job_cleaning_accept_failure_1", "kojo_default_com_job_cleaning_accept_failure_2" ]
             }

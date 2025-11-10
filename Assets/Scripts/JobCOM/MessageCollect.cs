@@ -14,8 +14,10 @@ public class MessageCollect
     public List<string> messages_checks = new List<string>();
     public List<string> messages_before = new List<string>();
     public List<string> messages_after = new List<string>();
-    public Dictionary<int, string> messages_kojo = new Dictionary<int, string>();
+    public List<MessageCollect_KojoEntry> messages_kojo = new List<MessageCollect_KojoEntry>();
     public ExperienceLog exp = new ExperienceLog();
+
+
 
     public MessageCollect() { }
     public MessageCollect(bool displayOverride = false)
@@ -33,7 +35,7 @@ public class MessageCollect
 
     public void Merge(MessageCollect m, bool shorten)
     {
-        if (m.messages_checks != null && m.messages_checks.Count > 0)
+        if (m.messages_checks.Count > 0)
         {
             messages_checks.AddRange(m.messages_checks);
         }
@@ -44,14 +46,19 @@ public class MessageCollect
             messages_before.AddRange(m.messages_before);
         }
         if (m.messages_after != null && m.messages_after.Count > 0) messages_after.AddRange(m.messages_after);
-        if (m.messages_kojo != null)
-        {
-            foreach (var kvp in m.messages_kojo)
-            {
-                if (!this.messages_kojo.ContainsKey(kvp.Key)) this.messages_kojo[kvp.Key] = kvp.Value;
-                else this.messages_kojo[kvp.Key] += "\n" + kvp.Value;
-            }
-        }
+
+        this.messages_kojo.AddRange(m.messages_kojo);
+        
         this.exp.MergeWith(m.exp, shorten);
+        this.displayOverride = this.displayOverride || m.displayOverride;
     }
+}
+
+public class MessageCollect_KojoEntry
+{
+    public int portraitRefID = -1;
+    public List<string> portraitTags = new List<string>();
+    public string message = "";
+
+    public List<MessageCollect_KojoEntry> nexts = new List<MessageCollect_KojoEntry>();
 }

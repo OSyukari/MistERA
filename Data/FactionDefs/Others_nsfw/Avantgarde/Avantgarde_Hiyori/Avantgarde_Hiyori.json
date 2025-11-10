@@ -27,7 +27,7 @@
                                 "requireNaked":"torso"
                             }
                         ],
-                        "PortraitVariantData":"Avantgarde_Hiyori/Actor_32_bust.png",
+                        "PortraitVariantData":["Avantgarde_Hiyori/Actor_32_bust.png"],
                         "IconVariantData":"Avantgarde_Hiyori/Actor_32_icon.png"
                     }
                 ],

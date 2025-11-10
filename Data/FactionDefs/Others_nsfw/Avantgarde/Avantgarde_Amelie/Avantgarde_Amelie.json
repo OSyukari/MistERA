@@ -7,6 +7,66 @@
                 "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
                 
                 "portrait_offset_x": 0,
+                "portrait_offset_y": 0,
+                "portrait_offset_size": 0.63,
+                
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.6,
+
+                "random_portrait_folder":"너만 못하는 집",
+                "portrait_path":"Avantgarde_Amelie/Actor_2_bust.png",
+                "icon_path":"Avantgarde_Amelie/Actor_2_icon.png"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                
+                "portrait_offset_x": 0,
+                "portrait_offset_y": 0,
+                "portrait_offset_size": 0.63,
+                
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.6,
+
+                "random_portrait_folder":"Serena",
+                "portrait_path":"Avantgarde_Amelie/Actor_2_bust.png",
+                "icon_path":"Avantgarde_Amelie/Actor_2_icon.png"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                
+                "portrait_offset_x": 0,
+                "portrait_offset_y": 0,
+                "portrait_offset_size": 0.75,
+                
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.6,
+
+                "random_portrait_folder":"Rina",
+                "portrait_path":"Avantgarde_Amelie/Actor_2_bust.png",
+                "icon_path":"Avantgarde_Amelie/Actor_2_icon.png"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                
+                "portrait_offset_x": 7,
+                "portrait_offset_y": 0,
+                "portrait_offset_size": 0.63,
+                
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.6,
+
+                "random_portrait_folder":"Kim Se-hee",
+                "portrait_path":"Avantgarde_Amelie/Actor_2_bust.png",
+                "icon_path":"Avantgarde_Amelie/Actor_2_icon.png"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                
+                "portrait_offset_x": 0,
                 "portrait_offset_y": -270,
                 "portrait_offset_size": 1.15,
                 
@@ -27,7 +87,7 @@
                                 "requireNaked":"torso"
                             }
                         ],
-                        "PortraitVariantData":"Avantgarde_Amelie/Actor_12_bust.png",
+                        "PortraitVariantData":["Avantgarde_Amelie/Actor_12_bust.png"],
                         "IconVariantData":"Avantgarde_Amelie/Actor_12_icon.png"
                     }
                 ],

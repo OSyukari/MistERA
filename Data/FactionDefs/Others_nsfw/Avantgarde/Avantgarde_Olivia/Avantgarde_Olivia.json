@@ -27,7 +27,7 @@
                                 "requireNaked":"torso"
                             }
                         ],
-                        "PortraitVariantData":"Avantgarde_Olivia/Actor_42_bust.png",
+                        "PortraitVariantData":["Avantgarde_Olivia/Actor_42_bust.png"],
                         "IconVariantData":"Avantgarde_Olivia/Actor_42_icon.png"
                     }
                 ],

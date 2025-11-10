@@ -991,9 +991,7 @@ public static class EventUtility
 
                     foreach (var kvp in owner.message.messages_kojo)
                     {
-                        var vkey = kvp.Key;
-                        var vvalue = kvp.Value;
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(vkey, vvalue, false));
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp));
                     }
                     var m1 = owner.message.exp.PrintContent_Messages();
                     scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m1, false));

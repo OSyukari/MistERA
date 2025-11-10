@@ -185,11 +185,11 @@ public class RelationshipManager
         if(triggerEventID != "")
         {
             var msg = this.Personality.GetKOJOMessage(triggerEventID, selfEPs, targetEPs, rel);
-            if (msg.Length > 0 && scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("["+Owner.FirstName+"] -> ["+c.FirstName+"] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
-            if (msg.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+            if (msg != null && scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("["+Owner.FirstName+"] -> ["+c.FirstName+"] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
+            if (msg != null && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
             {
-                msg = msg.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
-                scr_UpdateHandler.current.AppendKojoMessage(Owner.RefID, msg);
+                msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
+                scr_UpdateHandler.current.AppendKojoMessage(msg);
             }
         }
     }
@@ -205,10 +205,10 @@ public class RelationshipManager
         // if any EP satisfy interrupt condition, every actor in ap are checked for relationship mod
         var triggerEventID = "Interrupt";
         var msg = Personality.GetKOJOMessage(triggerEventID, Owner, selfTags, ap.ListEP);
-        if (scr_System_CampaignManager.current.Player != Owner && msg.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+        if (scr_System_CampaignManager.current.Player != Owner && msg != null && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
         {
-            msg = "<align=\"right\">" +msg.Replace("$self$", Owner.FirstName)+ "</align>"  ;//.Replace("$target$", c.FirstName);
-            scr_UpdateHandler.current.AppendKojoMessage(Owner.RefID, msg);
+            msg.message = $"<align=\"right\">{msg.message.Replace("$self$", Owner.FirstName)}</align>";//.Replace("$target$", c.FirstName);
+            scr_UpdateHandler.current.AppendKojoMessage(msg);
             return true;
         }
         return false;
@@ -240,9 +240,9 @@ public class RelationshipManager
 
         if (exp != null) exp.AddRelations(ownerRef, targetRef, relID, (int)amount); 
     }
-    public string GetKOJOMessage(bool isDoer, EvaluationPackage ep)
+    public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, EvaluationPackage ep)
     {
-        if (Owner.RefID == 0) return "";
+        if (Owner.RefID == 0) return null;
         Character_Relationship rel = null;
         if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
         else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);

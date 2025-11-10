@@ -106,10 +106,10 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         consoleInput.ActivateInputField();
         CurrentTarget = scr_System_CampaignManager.current.CurrentTarget;
         var room = scr_System_CampaignManager.current.CurrentRoom;
-        targetName.SetText("CurrentTarget: " + (CurrentTarget == null ? "null" : CurrentTarget.RefID + " " + CurrentTarget.FullName));
+        targetName.SetText("CurrentTarget: " + (CurrentTarget == null ? "null" : $"{CurrentTarget.RefID} {CurrentTarget.FullName}, isImprisoned {CurrentTarget.isImprisoned} isRestrained {CurrentTarget.isRestrained}"));
         baseID.SetText($"BaseID [{(CurrentTarget == null ? "null" :CurrentTarget.BaseID)}]");
         targetCurrentJob.SetText("CurrentJob: " + (CurrentTarget.CurrentJob == null ? "null" : CurrentTarget.CurrentJob.RefID + " " + CurrentTarget.CurrentJob.DisplayName + " " + (CurrentTarget.CurrentJob.ParentRoom == null ? "nullRoom" : CurrentTarget.CurrentJob.ParentRoom.RefID + " " + CurrentTarget.CurrentJob.ParentRoom.DisplayName)));
-        currentRoom.SetText("CurrentRoom: " + (room == null ? "null" : room.RefID + " " + room.DisplayName));
+        currentRoom.SetText($"CurrentRoom: {(room == null ? "null" : $"{room.RefID} {room.DisplayName}, isPrison? {room.isRoomPrison} isPrivate? {room.isRoomPrivate}")}");
 
         portrait_neutral.SetText($"Neutral Portrait Tags [{(CurrentTarget == null ? "null" : String.Join(" ", CurrentTarget.PortraitManager.tags_neutral))}]");
         portrait_active.SetText($"Activity Portrait Tags [{(CurrentTarget == null ? "null" : String.Join(" ", CurrentTarget.PortraitManager.tags_active))}]");

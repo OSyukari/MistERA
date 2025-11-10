@@ -45,10 +45,16 @@ public class scr_bgImageSwapper : MonoBehaviour
 
     public IEnumerator roomchange(string a)
     {
-        Texture2D loaded = null;
-        yield return AssetsLoader.LoadTextureCoroutine(a, texture => loaded = texture);
-
-        image.sprite = scr_System_CentralControl.current.GetSprite(loaded);
+        if (scr_System_CentralControl.current.GetSprite(a, out var sprite))
+        {
+            image.sprite = sprite;
+        }
+        else
+        {
+            Texture2D loaded = null;
+            yield return AssetsLoader.LoadTextureCoroutine(a, texture => loaded = texture);
+            image.sprite = scr_System_CentralControl.current.MakeSprite(a, loaded);
+        }
     }
 
 

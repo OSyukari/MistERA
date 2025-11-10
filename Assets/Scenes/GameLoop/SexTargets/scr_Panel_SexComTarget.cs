@@ -158,8 +158,8 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
     {
         if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room && sexJob == null && scr_System_CampaignManager.current.CurrentTarget != null)
         {
-            Debug.Log("click!");
-            //scr_System_CampaignManager.current.CurrentTarget.PortraitManager.Click();
+            //Debug.Log("click!");
+            scr_System_CampaignManager.current.NotifyCurrentTargetClick();//.PortraitManager.ActivityClick();
         }
     }
     public void removeAP()
