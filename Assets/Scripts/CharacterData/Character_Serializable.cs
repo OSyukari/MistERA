@@ -11,6 +11,7 @@ public abstract class Character_SerializableBase
 {
     public string baseID = "";
     public string firstName = "Jane", middleName = "", lastName = "Doe", nameDisplayFormat = "chara_fullname_firstToLast";
+    public string characterComment = "";
     public string origin = "charOrigin_EmissaryoftheTower", race = "humanRace_human", raceTemplate = "humanRaceAddon_Magician", startingGift = "charOriginGift_none";
     public bool playable = false;
     public PortraitManager Portrait = null;

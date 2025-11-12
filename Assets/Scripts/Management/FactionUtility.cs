@@ -54,10 +54,7 @@ public static class FactionUtility
                 {
                     continue;
                 }
-                else if (post.ParentRoom.isRoomPrison != c.isImprisoned && post.ParentRoom.isRoomPrison != c.isRestrained)
-                {
-                    continue;
-                }
+                else if (c.isImprisoned != post.ParentRoom.isRoomPrison) continue;
                 else if (c.isRestrained && c.Jail.ownerJob != post)
                 {
                     continue;

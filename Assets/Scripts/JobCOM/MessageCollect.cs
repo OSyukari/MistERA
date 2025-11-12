@@ -16,6 +16,7 @@ public class MessageCollect
     public List<string> messages_after = new List<string>();
     public List<MessageCollect_KojoEntry> messages_kojo = new List<MessageCollect_KojoEntry>();
     public ExperienceLog exp = new ExperienceLog();
+    public List<MessageCollect_KojoEntry> messages_kojo_after = new List<MessageCollect_KojoEntry>();
 
 
 
@@ -30,6 +31,7 @@ public class MessageCollect
         messages_before.Clear();
         messages_after.Clear();
         messages_kojo.Clear();
+        messages_kojo_after.Clear();
         exp.Clear();
     }
 
@@ -48,6 +50,7 @@ public class MessageCollect
         if (m.messages_after != null && m.messages_after.Count > 0) messages_after.AddRange(m.messages_after);
 
         this.messages_kojo.AddRange(m.messages_kojo);
+        this.messages_kojo_after.AddRange(m.messages_kojo_after);
         
         this.exp.MergeWith(m.exp, shorten);
         this.displayOverride = this.displayOverride || m.displayOverride;

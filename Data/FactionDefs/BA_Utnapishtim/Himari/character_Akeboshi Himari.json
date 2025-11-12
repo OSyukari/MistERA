@@ -17,22 +17,22 @@
 [
     
     {
-      "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+       
       "Conditions":[ { "$type":"PortraitManager+PortraitValidators, Assembly-CSharp",  "requireUnconscious":true } ],
       "PortraitVariantData":["99"]
     }, 
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["doubt"], "PortraitVariantData":["03","05"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["awkward"], "PortraitVariantData":["04"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["thinking"], "PortraitVariantData":["05"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sad"], "PortraitVariantData":["06"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["relaxed"], "PortraitVariantData":["07","08","09","99"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["happy"], "PortraitVariantData":["07","08"] },  
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["angry"], "PortraitVariantData":["10","12"] }, 
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["serious"], "PortraitVariantData":["10","11"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["curious"], "PortraitVariantData":["03","05"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["disappointed"], "PortraitVariantData":["06","12"] },   
+    {  "tagsMatch":["doubt"], "PortraitVariantData":["03","05"] },   
+    {  "tagsMatch":["awkward"], "PortraitVariantData":["04"] },   
+    {  "tagsMatch":["thinking"], "PortraitVariantData":["05"] },   
+    {  "tagsMatch":["sad"], "PortraitVariantData":["06"] },   
+    {  "tagsMatch":["relaxed"], "PortraitVariantData":["07","08","09","99"] },   
+    {  "tagsMatch":["happy"], "PortraitVariantData":["07","08"] },  
+    {  "tagsMatch":["angry"], "PortraitVariantData":["10","12"] }, 
+    {  "tagsMatch":["serious"], "PortraitVariantData":["10","11"] },   
+    {  "tagsMatch":["curious"], "PortraitVariantData":["03","05"] },   
+    {  "tagsMatch":["disappointed"], "PortraitVariantData":["06","12"] },   
     {
-    "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "Enable":false,
+     "Enable":false,
     "PortraitVariantData":["00","01","02","03","04","05","06","07","08","09","10","11","12","99"]
     }
 ],
@@ -45,7 +45,7 @@
                 "materialTexturePaths":["Himari/NP0112_spr.png"],
                 "atlasJSON_path":"Himari/NP0112_spr.atlas",
                 "skeletonJSON_path":"Himari/NP0112_spr.skel",
-                "idleAnimName":"Idle_01", "addonAnimName":"0aa0"
+                "idleAnimName":"Idle_01", "addonAnimName":"00"
 
             }
         ]

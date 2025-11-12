@@ -35,6 +35,33 @@ public class PortraitManager
         }
     }
 
+    public bool CanResetPortrait(out string tooltip)
+    {
+        var baseTemplate = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(this.Owner.BaseID);
+        if (baseTemplate == null)
+        {
+            tooltip = $"cannot find Base Character with baseID {Owner.BaseID}";
+            return false;
+        }
+        else if (baseTemplate.Portrait == null || baseTemplate.Portrait.portraitPriorityList.Count < 1)
+        {
+            tooltip = $"Base Character {Owner.BaseID} does not have Portrait manager";
+            return false;
+        }
+        else
+        {
+            tooltip = $"found character template {baseTemplate.baseID}";
+            return true;
+        }
+    }
+    public void ResetPortraits()
+    {
+        var baseTemplate = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(this.Owner.BaseID);
+        this.portraitPriorityList = new List<CharaPortrait>(baseTemplate.Portrait.portraitPriorityList);
+
+        RebuildInternal(this.Owner);
+    }
+
     public void Prepend(CharaPortrait cm)
     {
         if (this.portraitPriorityList == null || this.portraitPriorityList.Count < 1) this.portraitPriorityList = new List<CharaPortrait>();
@@ -56,11 +83,11 @@ public class PortraitManager
     protected void GetValidPortrait(List<string> keywords, out CharaPortrait handler, out string portrait, out string icon)
     {
         handler = null;
+        portrait = "";
+        icon = "";
         if (portraitPriorityList == null || portraitPriorityList.Count == 0)
         {
             handler = Transparent;
-            portrait = "";
-            icon = "";
         }
         else
         {
@@ -70,23 +97,23 @@ public class PortraitManager
                 if (keywords.Count < 1 && i.RequireContextKeys.Count > 0) continue;
                 if (!Utility.ListContainsStrict(keywords, i.RequireContextKeys))
                 {
-                    Debug.Log($"portrait prioriry missing [{String.Join(" ",i.RequireContextKeys)}] from [{String.Join(" ", keywords)}]");
+                    //Debug.Log($"portrait prioriry missing [{String.Join(" ",i.RequireContextKeys)}] from [{String.Join(" ", keywords)}]");
                     continue;
                 }
-                else
-                {
+                portrait = i.PortraitPath(keywords);
+                icon = i.IconPath(keywords) != "" ? i.IconPath(keywords) : portrait;
 
-                }
+                if (portrait == "" || icon == "") continue;
+
                 handler = i;
                 break;
             }
             if (handler == null)
             {
                 handler = portraitPriorityList[portraitPriorityList.Count - 1];
+                portrait = handler.PortraitPath(keywords);
+                icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
             }
-
-            portrait = handler.PortraitPath(keywords);
-            icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
         }
     }
 
@@ -406,6 +433,7 @@ public class PortraitManager
         {
             if (this.Variants != null)
             {
+                if (tags.Count > 0 && scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"Validating variants with tags {String.Join("|", tags)}");
                 foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement( i.PortraitVariantData);
             }
             if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
@@ -535,7 +563,7 @@ public class PortraitManager
         /// <returns></returns>
         public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride)
         {
-            if (idleAnimName == "")
+            if (idleAnimName == "" && pathOverride == "")
             {
                 //portraitBox.spineLoader.gameObject.SetActive(false);
                 yield return base.DrawPortrait(portraitBox, pathOverride);
@@ -543,9 +571,17 @@ public class PortraitManager
             }
             else
             {
+                if (idleAnimName == "")
+                {
+                    yield return portraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, pathOverride, "");
+                }
+                else
+                {
+                    yield return portraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, pathOverride);
+                }
                // Debug.Log($"spine drawportrait [{pathOverride}]");
                 //Debug.LogError($"PortraitAnimation name {PortraitAnimName}");
-                yield return portraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, pathOverride);
+                
                 portraitBox.spineRect.gameObject.SetActive(true);
                 portraitBox.picture.gameObject.SetActive(false);
                 portraitBox.currentPortrait = pathOverride;

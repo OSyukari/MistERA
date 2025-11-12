@@ -3,6 +3,16 @@
   "baseID": "Campaign1_Char_Hanako",
   "Portrait":{
       "portraitPriorityList":[
+{
+  "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+      
+  "portrait_offset_x": 0,    "portrait_offset_y": 0,    "portrait_offset_size": 0.56,
+  "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
+
+  "RequireContextKeys":["combat"],
+  "random_portrait_folder":"Hanako_combat",
+  "icon_path":"Hanako/Hanako_Ark_Uniform_Icon.png"
+},
         {
             "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
@@ -17,21 +27,21 @@
   "Variants":
   [
     {
-      "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+       
       "Conditions":[ { "$type":"PortraitManager+PortraitValidators, Assembly-CSharp",  "requireUnconscious":true } ],
       "PortraitVariantData":["99"]
     },          
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["surprised"], "PortraitVariantData":["02"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["happy"], "PortraitVariantData":["03"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["awkward"], "PortraitVariantData":["04"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["serious"], "PortraitVariantData":["05"] },  
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["worry"], "PortraitVariantData":["06"] },  
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["relaxed"], "PortraitVariantData":["99"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sorry"], "PortraitVariantData":["04"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["confident"], "PortraitVariantData":["05"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sad"], "PortraitVariantData":["06"] },    
+    {  "tagsMatch":["surprised"], "PortraitVariantData":["02"] },    
+    {  "tagsMatch":["happy"], "PortraitVariantData":["03"] },    
+    {  "tagsMatch":["awkward"], "PortraitVariantData":["04"] },   
+    {  "tagsMatch":["serious"], "PortraitVariantData":["05"] },  
+    {  "tagsMatch":["worry"], "PortraitVariantData":["06"] },  
+    {  "tagsMatch":["relaxed"], "PortraitVariantData":["99"] },    
+    {  "tagsMatch":["sorry"], "PortraitVariantData":["04"] },    
+    {  "tagsMatch":["confident"], "PortraitVariantData":["05"] },    
+    {  "tagsMatch":["sad"], "PortraitVariantData":["06"] },    
     {
-      "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "Enable":false,
+       "Enable":false,
       "PortraitVariantData":["00","01","02","03","04","05","06","99"]
     }
   ],

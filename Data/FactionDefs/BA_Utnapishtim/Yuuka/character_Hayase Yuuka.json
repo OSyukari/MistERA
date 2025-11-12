@@ -17,23 +17,23 @@
 "Variants":
 [
     {
-      "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+       
       "Conditions":[ { "$type":"PortraitManager+PortraitValidators, Assembly-CSharp",  "requireUnconscious":true } ],
       "PortraitVariantData":["99"]
     },                  
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["doubt"], "PortraitVariantData":["02","05"] },  
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["happy"], "PortraitVariantData":["03"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["embarrassed"], "PortraitVariantData":["04"] },  
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["thinking"], "PortraitVariantData":["05","99"] },      
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["worry"], "PortraitVariantData":["06"] },  
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["confident"], "PortraitVariantData":["07"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["relaxed"], "PortraitVariantData":["99"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["curious"], "PortraitVariantData":["02"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["awkward"], "PortraitVariantData":["04"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["disappointed"], "PortraitVariantData":["06"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sad"], "PortraitVariantData":["06"] },    
+    {  "tagsMatch":["doubt"], "PortraitVariantData":["02","05"] },  
+    {  "tagsMatch":["happy"], "PortraitVariantData":["03"] },    
+    {  "tagsMatch":["embarrassed"], "PortraitVariantData":["04"] },  
+    {  "tagsMatch":["thinking"], "PortraitVariantData":["05","99"] },      
+    {  "tagsMatch":["worry"], "PortraitVariantData":["06"] },  
+    {  "tagsMatch":["confident"], "PortraitVariantData":["07"] },    
+    {  "tagsMatch":["relaxed"], "PortraitVariantData":["99"] },    
+    {  "tagsMatch":["curious"], "PortraitVariantData":["02"] },    
+    {  "tagsMatch":["awkward"], "PortraitVariantData":["04"] },    
+    {  "tagsMatch":["disappointed"], "PortraitVariantData":["06"] },    
+    {  "tagsMatch":["sad"], "PortraitVariantData":["06"] },    
     {
-    "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "Enable":false,
+     "Enable":false,
     "PortraitVariantData":["00","01","02","03","04","05","06","07","99"]
     }
 ],

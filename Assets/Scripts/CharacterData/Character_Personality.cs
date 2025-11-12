@@ -127,7 +127,7 @@ public class Character_Personality
         return entries[eventID].GetResponse(rel, selfEPs, targetEPs);
     }
 
-    public MessageCollect_KojoEntry GetKOJOMessage(string eventID,Character_Trainable owner,  List<string> selfTags, List<EvaluationPackage> allEPs)
+    public MessageCollect_KojoEntry GetKOJOMessage(string eventID, Character_Trainable owner,  List<string> selfTags, List<EvaluationPackage> allEPs)
     {
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents || (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt && eventID == "Interrupt")) Debug.Log("Try GetKOJOMessage from ["+owner.FirstName+"] evID[" + eventID + "] [missing relation, checking with all ep actors] self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", allEPs) + "]");
 
@@ -151,10 +151,11 @@ public class Character_Personality
     }
 
 
-    public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, EvaluationPackage ep, RelationshipManager.Character_Relationship relation)
+    public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, EvaluationPackage ep, RelationshipManager.Character_Relationship relation, bool checkClimax = false)
     {
         string comID = ep.targetCOM.ID;
         if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
+        if (checkClimax) comID = $"{comID}_Climax";
         if (!entries.ContainsKey(comID))
         {
             if(this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ep, relation);
@@ -275,6 +276,7 @@ public class Character_Personality
                     {
                         isValid = true;
                         var v = i.GetRandomResponse(relDoer, selfTags, ep.DoerTargetTag, playerInvolved, true);
+                        if (v == null) break;
                         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v + ", replace with " + ep.Description_Ongoing);
                         v.message = v.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
                         if (responses == null) responses = v;
@@ -285,6 +287,7 @@ public class Character_Personality
                     {
                         isValid = true;
                         var v = i.GetRandomResponse(relReceiver, selfTags, ep.ReceiverTargetTag, playerInvolved, true);
+                        if (v == null) break;
                         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v + ", replace with " + ep.Description_Ongoing);
                         v.message = v.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
                         if (responses == null) responses = v;
@@ -297,6 +300,7 @@ public class Character_Personality
 
                         isValid = true;
                         var v = i.GetRandomResponse(relSelf, selfTags, ep.ReceiverTargetTag, playerInvolved, true);
+                        if (v == null) break;
                         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v + ", replace with " + ep.Description_Ongoing);
                         v.message = v.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
                         if (responses == null) responses = v;
@@ -390,9 +394,13 @@ public class Character_Personality
 
         public class Variant
         {
+            public bool requireSelfDoer = false;
+            public bool requireSelfReceiver = false;
+
             public List<string> tags = new List<string>();
             public List<string> extraPortraitTags = new List<string>();
             public bool useActiveTags = false;
+            public bool forbidPortaitDisplay = false;
             public List<Requirement> requirements = new List<Requirement>();
             public List<string> responses = new List<string>();
             public List<Results> results = new List<Results>();
@@ -426,9 +434,13 @@ public class Character_Personality
                     if (result != "" && result.Replace("\n", "").Length > 0)
                     {
                         returnV = new MessageCollect_KojoEntry();
-                        returnV.portraitRefID = rel.Owner.RefID;
-                        returnV.portraitTags = new List<string>(extraPortraitTags);
-                        if (useActiveTags) returnV.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                        if (!forbidPortaitDisplay)
+                        {
+                            returnV.portraitRefID = rel.Owner.RefID;
+                            returnV.portraitTags = new List<string>(extraPortraitTags);
+                            if (useActiveTags) returnV.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                        }
+
                         returnV.message = result;
                     }
                     if (sss != null)
@@ -443,32 +455,22 @@ public class Character_Personality
 
             public bool isValid(RelationshipManager.Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
             {
-                foreach(var requirement in requirements)
+                if ( ep != null && rel != null)
+                {
+                    if (requireSelfDoer && ep.Doer != rel.Owner) return false;
+                    else if (requireSelfReceiver)
+                    {
+                        if (ep.Receiver == null && ep.Doer != rel.Owner) return false;
+                        else if (ep.Receiver != null && ep.Receiver != rel.Owner) return false;
+                    }
+                }
+                foreach (var requirement in requirements)
                 {
                     if (!requirement.Validate(rel, selfTags, targetTags, ep)) return false;
                 }
                 return true;
             }
-            public bool isValid(Character_Trainable owner, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
-            {
-                foreach (var requirement in requirements)
-                {
-                    if (!requirement.Validate(owner, null, selfTags, targetTags, ep)) return false;
-                }
-                return true;
-            }
 
-            /*
-            public bool isValid(RelationshipManager.Character_Relationship rel, List<EvaluationPackage> selfTags, List<EvaluationPackage> targetTags)
-            {
-                foreach (var requirement in requirements)
-                {
-                    if (!requirement.Validate(rel, selfTags, targetTags)) return false;
-                }
-                return true;
-            }*/
-
-            [System.Serializable]
             public class Requirement
             {
                 public string targetBaseID = "";
@@ -489,37 +491,6 @@ public class Character_Personality
                 public RequireStatusValue requireSelfStatusValue = new RequireStatusValue();
                 public RequireStatValue requireSelfStatValue = new RequireStatValue();
                 public RequireMemory requireSelfMemory = new RequireMemory();
-
-
-                public bool Validate(RelationshipManager.Character_Relationship rel, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
-                {
-                    List<string> ss1 = new List<string>();
-                    List<string> ss2 = new List<string>();
-                    foreach(var i in selfEPs) ss1.Add(i.ToString());
-                    foreach(var i in targetEPs) ss2.Add(i.ToString());
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req Multiple EPs [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self["+String.Join("|", ss1) +"] target["+String.Join("|", ss2) +"]");
-
-                    var sTags = new List<string>();
-                    var tTags = new List<string>();
-
-
-                    foreach (var ep in selfEPs)
-                    {
-                        sTags = (rel.Owner.RefID == ep.DoerRef ? ep.DoerSelfTag : (rel.Owner.RefID == ep.ReceiverRef ? ep.ReceiverSelfTag : new List<string>()));
-                        tTags = (rel.Target.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Target.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
-                        if (Validate(rel, sTags, tTags, ep)) return true;
-                    }
-
-                    foreach (var ep in targetEPs)
-                    {
-                        sTags = (rel.Owner.RefID == ep.DoerRef ? ep.DoerSelfTag : (rel.Owner.RefID == ep.ReceiverRef ? ep.ReceiverSelfTag : new List<string>()));
-                        tTags = (rel.Target.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Target.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
-                        if (Validate(rel, sTags, tTags, ep)) return true;
-                    }
-
-                    UtilityEX.GetInteractionTagsFrom(rel.Owner, rel.Target, null, -1, ref sTags, ref tTags, ref tTags);
-                    return Validate(rel, sTags, tTags, null);
-                }
 
                 public bool Validate(Character_Trainable self, Character_Trainable target, List<string> selfTags, List<string> targetTags, EvaluationPackage ep, RelationshipManager.Character_Relationship rel = null)
                 {

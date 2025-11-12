@@ -66,35 +66,11 @@
     "initClass":"campaign_init_homefaction",
     "initArguments":["External","false", "false"]
 },
+
 {
     "initClass":"campaign_init_factionVisitor",
-    "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Amelie","External"]
-},
-{
-    "initClass":"campaign_init_factionVisitor",
-    "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Hiyori","External"]
-},
-{
-    "initClass":"campaign_init_factionVisitor",
-    "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Olivia","External"]
-},
-{
-    "initClass":"campaign_init_factionVisitor",
-    "initArguments":["Utnapishtim","medbay_isolation_room_2","Campaign2_Chara_Elena","External"]
-},
-{
-    "initClass":"campaign_init_factionVisitor",
-    "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Rapi","External"]
-},
-{
-    "initClass":"campaign_init_factionVisitor",
-    "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Anis","External"]
-},
-{
-    "initClass":"campaign_init_factionVisitor",
-    "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Neon","External"]
-},
-{ "initClass":"campaign_init_map_extra_debug", "initArguments":["map_bluearchive_utnapishtim", "UtnapishtimEx",true] }
+    "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Cinderella","External","Prisoner"]
+}
                     ]
                 }
             ]

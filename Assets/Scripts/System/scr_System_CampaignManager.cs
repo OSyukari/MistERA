@@ -352,8 +352,15 @@ public class scr_System_CampaignManager : MonoBehaviour
             return;
         }
         var chara = FindInstanceByID(refID);
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, false, rightAlign), animate);
+        var lg = LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, false, rightAlign);
+        Observer_MessageLogs?.Invoke(lg, animate);
         //ChangeCurrentViewMode(ViewMode.View_Logs);
+    }
+
+    public bool IsLogDisplayChara(Character_Trainable c)
+    {
+        if (c.RefID == 0) return true;
+        return false;
     }
 
     public void AddLog(MessageCollect_KojoEntry m, bool animate = false, bool rightAlign = false, string tooltip = "")
@@ -383,9 +390,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         //Debug.Log($"Event Addline {line}");
         MessageLog log = null;
         var content = UtilityEX.ParseEventEntry(instance, line.line);
-        if (line.portraitRefKey == "self")
+        if (content.Length < 1) return;
+        //Debug.Log($"AddLog_Line parsed content: {content}");
+        if (line.portraitRefKey == "self" && instance.Self != null && instance.Self.RefID != 0)
         {
-            log = LogManager.AddLog(null, rA ? $"<align=\"right\">{content}</align>" : content, "", false, false);
+            var msglog = new Message_Text(instance.Self, line.portraitTagsOverride, content, rA, "", default, instance);
+            //msglog.AddMessage(content, rA);
+            log = LogManager.AddLog(msglog);
         }
         else if (instance.Targets.TryGetValue(line.portraitRefKey, out var targetrefs))
         {
@@ -393,7 +404,11 @@ public class scr_System_CampaignManager : MonoBehaviour
             msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog);
         }
-        Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
+        else
+        {
+            log = LogManager.AddLog(null, rA ? $"<align=\"right\">{content}</align>" : content, "", false, false);
+        }
+        Observer_MessageLogs?.Invoke(log, false);
     }
     /// <summary>
     /// 
@@ -407,10 +422,16 @@ public class scr_System_CampaignManager : MonoBehaviour
         MessageLog log = null;
         if (question.portraitRefKey == "self")
         {
-            log = LogManager.AddLog(new Message_Question(parent.Self == null ? null : parent.Self.PortraitManager, parent, question));
-        }else if (parent.Targets.TryGetValue(question.portraitRefKey, out var targetrefs))
+            log = LogManager.AddLog(new Message_Question(parent.Self == null ? null : parent.Self.PortraitManager,question.portraitTagsOverride,  parent, question));
+        }
+        else if (parent.Targets.TryGetValue(question.portraitRefKey, out var targetrefs))
         {
             log = LogManager.AddLog(new Message_Question(targetrefs, question.portraitTagsOverride, parent, question));
+        }
+        else
+        {
+            PortraitManager portraitRef = null;
+            log = LogManager.AddLog(new Message_Question(portraitRef, question.portraitTagsOverride, parent, question));
         }
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
@@ -424,22 +445,20 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         if (LogManager.SetLogChara(refID, isAnimating))
         {
-            //Debug.Log("Log_TrySetChara true " + refID);
+            Debug.Log("Log_TrySetChara true " + refID.Owner.CallName);
             Observer_LogsCharaChange?.Invoke(refID, new List<string>());
         }
     }
-    public void Log_TrySetChara(List<Character_Trainable> list, List<string> keywords)
+    public PortraitManager Log_TrySetChara(List<Character_Trainable> list, List<string> keywords)
     {
         LogManager.SetLogChara(list, true, out var selected);
         if (selected != null)
         {
+            //if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log("Log_TrySetChara true " + selected.Owner.CallName);
             //Debug.Log($"Invoking logs change chara on {selected.Owner.CallName} with tags {String.Join("|", keywords)}");
             Observer_LogsCharaChange?.Invoke(selected, keywords);
         }
-        else
-        {
-            //Debug.Log("Log_TrySetChara failed");
-        }
+        return selected;
     }
     public void Log_TryClearChar(bool isAnimating)
     {
@@ -1115,6 +1134,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void Job_PostUpdateTime_getLogsBegin()
     {
         //System.Threading.Tasks.Parallel.ForEach(this.Index_JobReferenceID.Values, job => job.PostUpdateTime_getLogsBegin());
+        return;
         foreach (var job in this.Index_JobReferenceID.Values)
         {
             job.PostUpdateTime_getLogsBegin();
@@ -1122,6 +1142,9 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Called on PostUpdateTime3
+    /// </summary>
     public void Job_PostUpdateTime()
     {
         System.Threading.Tasks.Parallel.ForEach(this.Index_JobReferenceID.Values, job => job.PostUpdateTime());
@@ -1384,9 +1407,19 @@ public class scr_System_CampaignManager : MonoBehaviour
                     Manageable g = FindorAddHomeFactionByID(ini.initArguments[3]);
                     Room_Instance ri = f.ManagedRooms.Values.ToList().Find(x=>x.Base.ID ==  ini.initArguments[1]);
                     if (ri == null) continue;
+
                     Character_Trainable c = InstantiateCharacter_FromBaseID(ini.initArguments[2], ri);
                     c.FactionManager.SetHomeFaction(g.ID, Manageable_GuestStatus.Member);
-                    c.FactionManager.SetTempHomeFaction(f.ID);
+
+                    if (ini.initArguments.Count >=5 && Enum.TryParse<Manageable_GuestStatus>( ini.initArguments[4], out var guestStatus))
+                    {
+                        c.FactionManager.SetTempHomeFaction(f.ID, guestStatus, false);
+                    }
+                    else
+                    {
+                        c.FactionManager.SetTempHomeFaction(f.ID);
+                    }
+
                 }
                 else if (ini.initClass == "campaign_init_map_extra")
                 {

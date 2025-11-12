@@ -71,7 +71,7 @@ public class scr_SpineLoader : MonoBehaviour
     /// <param name="skeletonJSON_path"></param>
     /// <param name="skeletonScale"></param>
     /// <param name="idleAnimName"></param>
-    public IEnumerator SetBase(List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName = "idle", string addonAnimName = "action")
+    public IEnumerator SetBase(List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName, string addonAnimName)
     {
 
         TextAsset ta = null;

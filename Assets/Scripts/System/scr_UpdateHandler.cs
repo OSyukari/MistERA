@@ -246,7 +246,7 @@ public class scr_UpdateHandler : MonoBehaviour
         return p.targetCOM.TimeScale * 2 >= totalUpdateTime;
     }
 
-    List<string> currentRoundClimax = new List<string>();
+    //List<string> currentRoundClimax = new List<string>();
 
     protected System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
     protected bool CallbackResumeUpdate = false;
@@ -374,16 +374,13 @@ public class scr_UpdateHandler : MonoBehaviour
         cnManager.AddLog(-1, String.Join("\n", Message.messages_checks), halted);
         cnManager.AddLog(-1, String.Join("\n", Message.messages_before), halted);
 
-        foreach(var kvp in Message.messages_kojo)
-        {
-            cnManager.AddLog(kvp);
-        }
+        foreach(var kvp in Message.messages_kojo) cnManager.AddLog(kvp);
 
 
         // all climax ? need to filter out who worth displaying
         //cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), halted);
 
-        currentRoundClimax.Clear();
+        //currentRoundClimax.Clear();
         // after job message
 
         // all exp inc message
@@ -400,6 +397,8 @@ public class scr_UpdateHandler : MonoBehaviour
         cnManager.AddLog(-1, Message.exp.PrintContent_Climax(), halted);
         cnManager.AddLog(-1, Message.exp.PrintContent_Relations(), halted);
         cnManager.AddLog(-1, Message.exp.PrintContent_Exps(), halted);
+
+        foreach (var kvp in Message.messages_kojo_after) cnManager.AddLog(kvp);        
         cnManager.AddLog(-1, String.Join("\n", Message.messages_after), halted);
 
         Message.Clear();
@@ -490,6 +489,10 @@ public class scr_UpdateHandler : MonoBehaviour
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"AppendKojoMessage: {m.message}");
         this.Message.messages_kojo.Add(m);
     }
+    public void AppendKojoMessage_NonVisible(MessageCollect_KojoEntry m)
+    {
+
+    }
 
     /// <summary>
     /// executeCallbacks == true will cause infinite loop if flushcollectedlogs is inside callbacks !!
@@ -509,15 +512,14 @@ public class scr_UpdateHandler : MonoBehaviour
             cnManager.AddLog(-1, Message.exp.PrintContent_Relations(), true);
             cnManager.AddLog(-1, Message.exp.PrintContent_Exps(), true);
 
-            foreach(var kvp in Message.messages_kojo)
-            {
-                cnManager.AddLog(kvp);
-            }
-            if (currentRoundClimax.Count > 0) cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), true);
+            foreach(var kvp in Message.messages_kojo) cnManager.AddLog(kvp);
+            
+            //if (currentRoundClimax.Count > 0) cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), true);
+            foreach (var kvp in Message.messages_kojo_after) cnManager.AddLog(kvp);
             if (Message.messages_after.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_after), true);
         }
         Message.Clear();
-        currentRoundClimax.Clear();
+       // currentRoundClimax.Clear();
 
         if (executeCallbacks) ExecuteEventCallbacks(true);
     }

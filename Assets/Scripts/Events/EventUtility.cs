@@ -1003,6 +1003,12 @@ public static class EventUtility
                     scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m3, false));
                     var m4 = owner.message.exp.PrintContent_Exps();
                     scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m4, false));
+
+                    foreach (var kvp in owner.message.messages_kojo_after)
+                    {
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp));
+                    }
+
                     var b4 = String.Join("\n", owner.message.messages_after);
                     scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, b4, false));
                 }

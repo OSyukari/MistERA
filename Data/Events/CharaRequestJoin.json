@@ -50,6 +50,8 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Events",
                         "label":"br_choice",
+                        
+            "portraitRefKey":"self", "portraitTagsOverride":["curious"],
                         "question":"event_RequestJoin_Job_ev01",
                         "options":[
                             {   
@@ -76,6 +78,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "br_refuse",
+            "portraitRefKey":"self", "portraitTagsOverride":["awkward","disappointed"],
                         "isLast": true,
                         "line": "event_RequestJoin_Job_ev02"
                     },
@@ -97,6 +100,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "br_join",
+            "portraitRefKey":"self", "portraitTagsOverride":["happy","confident"],
                         "isLast": true,
                         "line": "event_RequestJoin_Job_ev03"
                     },

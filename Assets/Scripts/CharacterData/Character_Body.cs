@@ -540,6 +540,14 @@ public class Character_Body
                 //scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
                 exp.AddClimaxMSG(Owner.RefID, s);
                 message.exp.MergeWith(exp, false);
+
+                UtilityEX.GetAPsFrom(this.owner, out var listAP);
+                var listEP = new List<EvaluationPackage>();
+                foreach (var ap in listAP) listEP.AddRange(ap.ListEP);
+                List<string> tags = new List<string>();
+                UtilityEX.GetActorTag(ref tags, this.Owner);
+
+                message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax", this.Owner, tags, listEP));
             }
 
         }

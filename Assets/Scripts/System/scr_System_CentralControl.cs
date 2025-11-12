@@ -30,6 +30,7 @@ public class DebugLogSettings
     public bool DLog_Events = false;
     public bool DLog_Inventory = false;
     public bool DLog_Memory = false;
+    public bool DLog_LogsMenu = false;
     public bool DLog_JoinAP = false;
     public bool DLog_Relationships = false;
     public bool DLog_APConflict = false;

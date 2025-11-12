@@ -64,7 +64,7 @@
     {
         "$type": "Event+EventEntry+EventEntry_Question, Events",
         "label":"br_choice",
-    "portraitRefKey":"evTarget",
+        "portraitRefKey":"evTarget", "portraitTagsOverride":["sorry"],
         "question":"event_OnAPRefuse_ev01",
         "options":[
             {   
@@ -82,7 +82,7 @@
     {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_end",
-        "portraitRefKey":"evTarget",
+        "portraitRefKey":"evTarget", "portraitTagsOverride":["sorry","awkward"],
         "isLast":true,
         "line": "event_OnAPRefuse_ev02",
         "Results": [ {"Type":"ExecuteCallback","arguments":["failCallback"]} ] 
@@ -91,7 +91,7 @@
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_push",
         "line": "event_OnAPRefuse_ev03",
-    "portraitRefKey":"evTarget",
+        "portraitRefKey":"evTarget", "portraitTagsOverride":["surprised","worry"],
         "nextEntryLabel":"br_push_ops"
     },
     {

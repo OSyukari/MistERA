@@ -587,7 +587,7 @@ public class Job : IDisposable, I_Disposable
         bool rightAlign = false;
         bool displayOngoing = false;
         bool display = false;
-        if (isPlayerRelatedJob) {
+        if (isPlayerRelatedJob || ap.isPlayerRelatedPackage) {
             display = true;
             rightAlign = false;
         }
@@ -599,6 +599,17 @@ public class Job : IDisposable, I_Disposable
         }
 
        // Debug.LogError($"CollectLogs Duration {ap.Duration} rightAlign {rightAlign}");
+
+        if (ap.Duration >= 0)
+        {
+            foreach(EvaluationPackage ep in ap.ListEP)
+            {
+                if (ep.Doer != null && ep.Doer.Climaxing) { }
+                else if (ep.Receiver != null && ep.Receiver.Climaxing) { }
+                else continue;
+                LogMessage_Climax(ep, m);
+            }
+        }
 
         if (ap.Duration == -1 && packages_previous.FindAll(x => UtilityEX.ArePackagesEqual(x, ap)).Count < 1)
         {
@@ -626,7 +637,6 @@ public class Job : IDisposable, I_Disposable
                     LogMessage_After(ep, rightAlign, m);
                 }
             }
-
             m.exp.leftAlignOverride = !rightAlign;
         }
         //else if ( ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
@@ -639,9 +649,9 @@ public class Job : IDisposable, I_Disposable
                 foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin(ep, false, rightAlign, m);
             }
         }
-        else if (displayOngoing && ap.Duration > 0)
+        else if (rightAlign && displayOngoing && ap.Duration > 0)
         {
-            foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Ongoing(ep, true, m);
+            foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Ongoing(ep, rightAlign, m);
         }
     }
 
@@ -659,15 +669,14 @@ public class Job : IDisposable, I_Disposable
         if (!isJobVisibleToPlayer) return;
         if (packages_previous.Count < 1) return;
         return;
-        // Debug.Log("PostUpdateTime for job " + this.jobRefID);
-        for (int i = packages_previous.Count - 1; i >= 0; i--)
-        {
-            CollectLogs(packages_previous[i]);
-        }
+        
         //scr_UpdateHandler.current.NotifyJobDescriptions(messages_checks, messages_before, messages_ongoing, null, messages_kojo);
         // send log to campaignManager
     }
 
+    /// <summary>
+    /// Called on PostUpdateTime3
+    /// </summary>
     public virtual void PostUpdateTime()
     {
         //Debug.Log("PostUpdateTime for job " + this.jobRefID);
@@ -888,26 +897,30 @@ public class Job : IDisposable, I_Disposable
             m.messages_after.Add(s);
         }
     }
+
+    public void LogMessage_Climax(EvaluationPackage ep, MessageCollect m = null)
+    {
+        if (m == null) m = this.m;
+        if (ep.Doer != null && ep.Doer.RefID != 0) ep.Doer.Relationships.GetKOJOMessage_Climax(true, ep, m);
+        if (ep.Receiver != null && ep.Receiver.RefID != 0) ep.Receiver.Relationships.GetKOJOMessage_Climax(false, ep, m);
+    }
+
     public void LogMessage_Kojo(EvaluationPackage ep, MessageCollect m = null)
     {
         if (m == null) m = this.m;
         if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName +", tags: ["+String.Join("|",ep.DoerSelfTag)+"] -> ["+String.Join("|", ep.ReceiverTargetTag) + $"], epStatus [{ep.Response}]");
-        var s = ep.Doer == null ? null : ep.Doer.Relationships.GetKOJOMessage(true, ep);
-        var s2 = ep.Receiver == null ? null : ep.Receiver.Relationships.GetKOJOMessage(false, ep);
-        var rel = ep.Receiver != null && ep.Doer != null ? ep.Receiver.Relationships.FindRelationshipWith(ep.Doer) : null;
+        if (ep.Doer != null && ep.Doer.RefID != 0) ep.Doer.Relationships.GetKOJOMessage(true, ep, m);
+        if (ep.Receiver != null && ep.Receiver.RefID != 0) ep.Receiver.Relationships.GetKOJOMessage(false, ep, m);
+
+        var rel = ep.Receiver != null && ep.Doer != null && ep.Receiver != ep.Doer ? ep.Receiver.Relationships.FindRelationshipWith(ep.Doer) : null;
         var s3 = rel == null ? null : ep.Receiver.isSleeping ? ep.Receiver.Relationships.Personality.GetKOJOMessage("DisruptSleep", rel) : null;
         if (s3 != null) s3.message = s3.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
-        //var s2 = "Kojo Message triggered for " + ep.Receiver.FirstName + ", tags: [" + String.Join("|", ep.ReceiverSelfTag) + "] -> [" + String.Join("|", ep.DoerTargetTag) + "]";
 
-        /* filter by :
-         * - com id OR event trigger
-         * - tags
-         
-         */
-        if (s != null) m.messages_kojo.Add(s);
-        if (s2 != null) m.messages_kojo.Add(s2);
-        if (s3 != null) m.messages_kojo.Add(s3);
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents && (s != null || s2 != null || s3 != null)) Debug.Log($"Kojo Message logged: [{(s == null ? "-" : $"{s.message} | {String.Join(" ",s.portraitTags)}")}] [{(s2 == null ? "-" : s2.message)}] [{(s3 == null ? "-" : s3.message)}]");
+        if (s3 != null && s3.message.Length > 0)
+        {
+            m.messages_kojo.Add(s3);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{s3.message}]");
+        }// 
     }
 
     public MessageCollect m = new MessageCollect();

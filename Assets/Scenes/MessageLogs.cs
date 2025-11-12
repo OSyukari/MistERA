@@ -39,12 +39,15 @@ public class MessageLogManager
     public bool SetLogChara(List<Character_Trainable> list, bool isAnimating, out PortraitManager portrait)
     {
         portrait = null;
+        if (list == null || list.Count < 1) return false;
         if ( currentPortrait != null && list.Contains(currentPortrait.Owner))
         {
             portrait = currentPortrait;
             return false;
         }
-        portrait = Utility.GetRandomElement(list).PortraitManager;
+        var randelem = Utility.GetRandomElement(list);
+        if (randelem == null) return false;
+        else portrait = randelem.PortraitManager;
         if (this.Animating)
         {
             if (isAnimating)
@@ -173,9 +176,14 @@ public class Message_Text : MessageLog
     protected List<List<string>> Iterate(bool iteratePerLine = false)
     {
         List<List<string>> lines = new List<List<string>>();
-        if (Header != "") lines.Add(new List<string> { Header });
+        if (Header != "" && Header.Length > 0) lines.Add(new List<string> { Header });
         if (causes != "") lines.Add(new List<string> { "Influencing Factors: " + causes });
-        foreach (var m in Messages) lines.Add(m.Iterate(iteratePerLine));
+
+        foreach (var m in Messages)
+        {
+            var itr = m.Iterate(iteratePerLine);
+            if (itr.Count > 0) lines.Add(itr);
+        }
         foreach (var kvp_refID in experiences)
         {
             if (kvp_refID.Value.Count > 0)
@@ -185,43 +193,45 @@ public class Message_Text : MessageLog
                 lines.Add(new List<string> { s });
             }
         }
+        //Debug.Log($"Lines Iterate:\nHeader: {Header}");
+
         return lines;
     }
 
     public void AddMessage(string s, bool rA)
     {
-        if (s.Length > 0) Messages.Add(new Message(s, rA));
+        //Debug.Log($"AddMessage {s}");
+        if (s != null && s.Length > 0) Messages.Add(new Message(s, rA));
     }
 
     public Message_Text(PortraitManager portraitRefID, List<Message> messages = null, string tooltip = "",  DateTime time = default, EventInstance parentEvent = null ):base(portraitRefID, time, parentEvent)
     {
-        this.Messages = new List<Message>();
+        if (messages != null) this.Messages = messages;
         this.tooltip = tooltip;
     }
     public Message_Text(List<Character_Trainable> charas,List<string> tags,  List<Message> messages = null, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(charas, tags, time, parentEvent)
     {
-        this.Messages = new List<Message>();
+        if (messages != null) this.Messages = messages;
         this.tooltip = tooltip;
     }
     public Message_Text(Character_Trainable chara, List<string> tags, string messages, bool rA, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(new List<Character_Trainable>() { chara} , tags, time, parentEvent)
     {
-        this.Messages = new List<Message>();
         this.tagsOverride = tags;
-        this.Messages.Add(new Message(messages, rA));
+        AddMessage(messages, rA);
         this.tooltip = tooltip;
     }
 
     public override bool DisplaPortrait { get {
-            if (!base.DisplaPortrait) return false;
             if (this.Messages.Any(x => !x.rightAlign)) return true;
-            return false; } }
+            return multipleChara.Count > 0 || PortraitRef != null; ;
+        } }
     /// <summary>
     /// One paragraph that displays 
     /// </summary>
     public class Message
     {
         public bool rightAlign = false;
-        private string content;
+        private string content = "";
 
         public Message(string content, bool rA)
         {
@@ -231,32 +241,45 @@ public class Message_Text : MessageLog
 
         public List<string> Iterate(bool lineBreak = false)
         {
-
-            if (!lineBreak || (content.Length > 0 && content.StartsWith("<") && content.EndsWith(">"))) return new List<string> { (rightAlign ? $"<align=\"right\">{content}</align>" : content)  };
+            if (content.Length < 1) return new List<string>();
+            if (!lineBreak || (content.StartsWith("<") && content.EndsWith(">"))) return new List<string> { (rightAlign ? $"<align=\"right\">{content}</align>" : content)  };
             else
             {
                 var list = content.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
                 if (!rightAlign) return list;
                 var result = new List<string>();
-                foreach (var content in list) result.Add($"<align=\"right\">{content}</align>");
+                foreach (var content in list)
+                {
+                    if (content.Length > 0) result.Add($"<align=\"right\">{content}</align>");
+                }
                 return result;
             }
 
         }
     }
+    public override bool isValid { get { return true; } }
 
     scr_MessageLogBox selfBox = null;
     scr_HoverableText currentLine = null;
-    public void Draw(bool skipImage, scr_MessageLogBox box, scr_HoverableText linePrefab)
+    /// <summary>
+    /// Return bool on whether logs panel should inhibit next auto draw calls
+    /// </summary>
+    /// <param name="skipImage"></param>
+    /// <param name="box"></param>
+    /// <param name="linePrefab"></param>
+    /// <returns></returns>
+    public bool Draw(bool skipImage, scr_MessageLogBox box, scr_HoverableText linePrefab)
     {
         //Debug.Log($"Draw text, skipImage? {skipImage} display? {DisplaPortrait} tags {String.Join("|", tagsOverride)}");
         //if (skipImage || !DisplaPortrait) Debug.Log($"SkipImage? {skipImage}");
-        base.Draw(skipImage || !DisplaPortrait);
+        var returnval = base.Draw(skipImage || !DisplaPortrait);
         this.selfBox = box;
         this.prefab_LogLine = linePrefab;
 
         box.Initialize(PortraitRef);
         if(canAnimate()) Animate();
+
+        return returnval;
     }
 
 
@@ -273,13 +296,18 @@ public class Message_Text : MessageLog
             currentLine.transform.SetParent(selfBox.transform, false);
             if (this.tooltip != "") currentLine.SetExternalTooltip(tooltip);
         }
+        currentLine.SetText(String.Join("\n", msg));
+        //Debug.Log($"Animate CurrentLine {currentLine.Text}, nextLine? {(lines.Count > 0 ? String.Join("\n", lines[0]) : "-")}");
+        msg.Clear();
 
+        /*
         while (msg.Count > 0 && currentLine != null)
         {
+            Debug.Log($"Animate CurrentLine {}");
             var inner = currentLine.Text;
             currentLine.SetText((inner.Length > 0 ? inner + "\n" : "") + msg[0]);// += (currentLine.text.Length > 0 ? "\n" : "") + msg[0];
             msg.RemoveAt(0);
-        }
+        }*/
 
         if (Input.GetMouseButton(1) && this.canAnimate()) Animate();
     }
@@ -291,17 +319,25 @@ public class Message_Text : MessageLog
 
 public class Message_Question : MessageLog
 {
+    public override bool DisplaPortrait
+    {
+        get
+        {
+             return multipleChara.Count > 0 || PortraitRef != null; 
+        }
+    }
 
     public override bool canAnimate()
     {
         return false;
     }
     Event.EventEntry.EventEntry_Question question;
-    public Message_Question(PortraitManager portraitRef, EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default):base(portraitRef, time, parent)
+    public Message_Question(PortraitManager portraitRef, List<string> tags, EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default):base(portraitRef, time, parent)
     {
+        this.tagsOverride = tags;
         this.question = question;
     }
-    public Message_Question(List<Character_Trainable> charas,List<string> tags,  EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default) : base(charas, tags, time, parent)
+    public Message_Question(List<Character_Trainable> charas, List<string> tags,  EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default) : base(charas, tags, time, parent)
     {
         this.question = question;
     }
@@ -330,9 +366,20 @@ public abstract class MessageLog
     public PortraitManager PortraitRef = null;
     public List<Character_Trainable> multipleChara = new List<Character_Trainable>();
     public List<string> tagsOverride = new List<string>();
-    public virtual bool DisplaPortrait { get { return multipleChara.Count > 0 || PortraitRef != null; } }
+    public abstract bool DisplaPortrait { get; }
+    public bool WaitForPortrait
+    {
+        get
+        {
+            if (PortraitRef != null && PortraitRef.Owner.RefID != 0) return true;
+            if (multipleChara.Count >= 1 && multipleChara[0].RefID != 0) return true;
+            return false;
+        }
+    }
     public DateTime time;
     
+    public virtual bool isValid { get { return true; } }
+
     public MessageLog(PortraitManager portraitRef, DateTime time = default, EventInstance parentEvent = null)
     {
         this.PortraitRef = portraitRef;
@@ -351,16 +398,29 @@ public abstract class MessageLog
 
     public abstract void Animate();
    
-    public void Draw(bool skipImage)
+    /// <summary>
+    /// if return true, means we need to wait
+    /// </summary>
+    /// <param name="skipImage"></param>
+    /// <returns></returns>
+    public bool Draw(bool skipImage)
     {
         this.displayed = true;
-        if (!skipImage) ForceDraw();
+        if (!skipImage) return ForceDraw();
+        else return false;
        // else Debug.Log("Skipped drawing!");
     }
 
-    public void ForceDraw()
+    public bool ForceDraw()
     {
-        if (this.multipleChara.Count > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, tagsOverride);
+        if (this.multipleChara.Count > 0)
+        {
+            var result =   scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, tagsOverride);
+            if (result == null) return false;
+            else return result.Owner.RefID != 0;
+        }
         else if (PortraitRef != null && PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
+        if (PortraitRef == null) return false;
+        else return PortraitRef.Owner.RefID != 0;
     }
 }

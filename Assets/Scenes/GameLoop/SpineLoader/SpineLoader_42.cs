@@ -143,7 +143,7 @@ public class SpineLoader_42 : SpineLoader
                 addonAnim = list.Count > 0 ? list[0] : null;
                 var names = new List<string>();
                 foreach (var i in list) names.Add(i.Name);
-                Debug.Log($"Spine animation name mismatch\nAtlasPath {atlasPath}\nValid Anims: {String.Join("|", names)}");
+                Debug.LogError($"Spine animation name mismatch\nAtlasPath {atlasPath}\nValid Anims: {String.Join("|", names)}");
             }
             // send looping idle animation
             //self_SkeletonGraphic.AnimationState.AddAnimation(0, idleAnim, true, 0);

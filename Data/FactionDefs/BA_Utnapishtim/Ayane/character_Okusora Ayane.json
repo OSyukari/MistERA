@@ -3,6 +3,16 @@
     "baseID": "Campaign1_Char_Ayane",
     "Portrait":{
         "portraitPriorityList":[
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        
+    "portrait_offset_x": 0,    "portrait_offset_y": 0,    "portrait_offset_size": 0.56,
+    "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
+
+    "RequireContextKeys":["combat"],
+    "random_portrait_folder":"Ayane_combat",
+    "icon_path":"Ayane/Ayane_Ark_Uniform_Icon.png"
+},
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
@@ -18,31 +28,31 @@
     [
 
     {
-      "$type":"PortraitManager+PortraitVariant, Assembly-CSharp",
+       
       "Conditions":[ { "$type":"PortraitManager+PortraitValidators, Assembly-CSharp",  "requireUnconscious":true } ],
       "PortraitVariantData":["99"]
     },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["serious"], "PortraitVariantData":["05","07","10","12","14","15"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["angry"], "PortraitVariantData":["11","15"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["doubt"], "PortraitVariantData":["07","09"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["thinking"], "PortraitVariantData":["10","14"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["hesitated"], "PortraitVariantData":["09","10","14"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["surprised"], "PortraitVariantData":["02","12"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["curious"], "PortraitVariantData":["02"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["happy"], "PortraitVariantData":["03"] }, 
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sorry"], "PortraitVariantData":["04","08","13"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["apology"], "PortraitVariantData":["04","08","13"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["disappointed"], "PortraitVariantData":["04","06","13"] },  
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["worry"], "PortraitVariantData":["04","09"] },     
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["resting"], "PortraitVariantData":["99"] },     
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["confident"], "PortraitVariantData":["05"] },    
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["sad"], "PortraitVariantData":["06"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["awkward"], "PortraitVariantData":["08"] },   
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["embarrassed"], "PortraitVariantData":["11"] }, 
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["hostile"], "PortraitVariantData":["15"] },
-    { "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "tagsMatch":["relaxed"], "PortraitVariantData":["99"] },   
+    {  "tagsMatch":["serious"], "PortraitVariantData":["05","07","10","12","14","15"] },    
+    {  "tagsMatch":["angry"], "PortraitVariantData":["11","15"] },    
+    {  "tagsMatch":["doubt"], "PortraitVariantData":["07","09"] },    
+    {  "tagsMatch":["thinking"], "PortraitVariantData":["10","14"] },    
+    {  "tagsMatch":["hesitated"], "PortraitVariantData":["09","10","14"] },    
+    {  "tagsMatch":["surprised"], "PortraitVariantData":["02","12"] },    
+    {  "tagsMatch":["curious"], "PortraitVariantData":["02"] },    
+    {  "tagsMatch":["happy"], "PortraitVariantData":["03"] }, 
+    {  "tagsMatch":["sorry"], "PortraitVariantData":["04","08","13"] },    
+    {  "tagsMatch":["apology"], "PortraitVariantData":["04","08","13"] },    
+    {  "tagsMatch":["disappointed"], "PortraitVariantData":["04","06","13"] },  
+    {  "tagsMatch":["worry"], "PortraitVariantData":["04","09"] },     
+    {  "tagsMatch":["resting"], "PortraitVariantData":["99"] },     
+    {  "tagsMatch":["confident"], "PortraitVariantData":["05"] },    
+    {  "tagsMatch":["sad"], "PortraitVariantData":["06"] },   
+    {  "tagsMatch":["awkward"], "PortraitVariantData":["08"] },   
+    {  "tagsMatch":["embarrassed"], "PortraitVariantData":["11"] }, 
+    {  "tagsMatch":["hostile"], "PortraitVariantData":["15"] },
+    {  "tagsMatch":["relaxed"], "PortraitVariantData":["99"] },   
     {
-    "$type":"PortraitManager+PortraitVariant, Assembly-CSharp", "Enable":false,
+     "Enable":false,
     "PortraitVariantData":["00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","99"]
     }
     ],

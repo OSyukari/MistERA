@@ -225,8 +225,9 @@ public class Event : I_SerializationCallbackReceiver
         public string nextEventID = "";
         public string nextEntryLabel = "";
 
-        public string portraitRefKey = "self";
+        public string portraitRefKey = "";
         public List<string> portraitTagsOverride = new List<string>();
+  
 
         //public List<Query> queries = new List<Query>();
         //public List<Condition> conditions = new List<Condition>();

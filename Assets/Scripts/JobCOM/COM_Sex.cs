@@ -15,74 +15,65 @@ public class COM_Sex : COM
         int minDoer = -1, maxReceiver = -1;
         float minDoerLength = 99f, maxReceiverLength = 0f;
 
+        if (doerTag == null) doerTag = requirements.requirement.doerBodyTags;
         //Debug.LogError("ValidateActorLength before forLoop doers");
         foreach (int id in doerRefIDs)
         {
             Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(id);
-            string tag = (doerTag == null || doerTag.Count < 1) ? Utility.GetRandomElement(requirements.requirement.doerBodyTags) : Utility.GetRandomElement(doerTag);
-            //Debug.LogError("ValidateActorLength before 1st doer "+c.FullName+" with tags "+tag+" and with body count "+c.Body.Body.Count+" and internals "+c.Body.Internals.Count);
-            BodyInternal_Instance doer = c.Body.GetRandomInternalWithTag(tag);
-            //Debug.LogError("ValidateActorLength after 1st doer, instance "+(doer == null?"null":doer.baseID));
-            if (doer == null)
+            foreach(var tag in doerTag)
             {
-                //Debug.LogError("ValidateActorLength doer null");
-            }
-            else if (doer.canFuck)
-            {
-                if (doer.CurrentDepth < minDoerLength)
+                //Debug.LogError("ValidateActorLength before 1st doer "+c.FullName+" with tags "+tag+" and with body count "+c.Body.Body.Count+" and internals "+c.Body.Internals.Count);
+                BodyInternal_Instance doer = c.Body.GetRandomInternalWithTag(tag);
+                //Debug.LogError("ValidateActorLength after 1st doer, instance "+(doer == null?"null":doer.baseID));
+                if (doer == null) continue;
+                else if (doer.canFuck)
                 {
-                    minDoerLength = doer.CurrentDepth;
-                    minDoer = id;
+                    if (doer.CurrentDepth < minDoerLength)
+                    {
+                        minDoerLength = doer.CurrentDepth;
+                        minDoer = id;
+                    }
+                }
+                else if (doer.canBePenetrated)
+                {
+                    if (doer.CurrentDepth > maxReceiverLength)
+                    {
+                        maxReceiverLength = doer.CurrentDepth;
+                        maxReceiver = id;
+                    }
                 }
             }
-            else if (doer.canBePenetrated)
-            {
-                if (doer.CurrentDepth > maxReceiverLength)
-                {
-                    maxReceiverLength = doer.CurrentDepth;
-                    maxReceiver = id;
-                }
-            }
-            else
-            {
-
-            }
-            
-                
         }
 
+        if (receiverTag == null) receiverTag = requirements.requirement.receiverBodyTags;
+        
         //Debug.LogError("ValidateActorLength before forLoop receivers");
         foreach (int id in receiverRefIDs)
         {
-            //Debug.LogError("ValidateActorLength before 1st receiver");
-            BodyInternal_Instance receiver = scr_System_CampaignManager.current.FindInstanceByID(id).Body.GetRandomInternalWithTag( (receiverTag == null || receiverTag.Count < 1) ? Utility.GetRandomElement(requirements.requirement.receiverBodyTags) : Utility.GetRandomElement(receiverTag));
-            //Debug.LogError("ValidateActorLength after 1st receiver");
-
-            if (receiver == null)
+            foreach(var tag in receiverTag)
             {
+                //Debug.LogError("ValidateActorLength before 1st receiver");
+                BodyInternal_Instance receiver = scr_System_CampaignManager.current.FindInstanceByID(id).Body.GetRandomInternalWithTag(tag);
+                //Debug.LogError("ValidateActorLength after 1st receiver");
 
-            }
-            else if (receiver.canFuck)
-            {
-                if (receiver.CurrentDepth < minDoerLength)
+                if (receiver == null) continue;
+                else if (receiver.canFuck)
                 {
-                    minDoerLength = receiver.CurrentDepth;
-                    minDoer = id;
+                    if (receiver.CurrentDepth < minDoerLength)
+                    {
+                        minDoerLength = receiver.CurrentDepth;
+                        minDoer = id;
+                    }
+                }
+                else if (receiver.canBePenetrated)
+                {
+                    if (receiver.CurrentDepth > maxReceiverLength)
+                    {
+                        maxReceiverLength = receiver.CurrentDepth;
+                        maxReceiver = id;
+                    }
                 }
             }
-            else if (receiver.canBePenetrated)
-            {
-                if (receiver.CurrentDepth > maxReceiverLength)
-                {
-                    maxReceiverLength = receiver.CurrentDepth;
-                    maxReceiver = id;
-                }
-            }
-            else
-            {
-
-            }
-
         }
         //Debug.Log("sexcom validateactors: doers[" + doerRefIDs.ToArray() + "] receivers [" + receiverRefIDs.ToArray()+"] comName ["+ID+"] validVariant["+index+"]");
         //Debug.Log("mindoer [" + minDoer + "] maxreceiver [" + maxReceiver + "]");

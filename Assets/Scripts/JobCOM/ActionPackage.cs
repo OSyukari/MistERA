@@ -58,6 +58,15 @@ public abstract class ActionPackage
             return cache_interruptedResponse;
         }
     }
+
+    [JsonIgnore]
+    public bool hasActorClimax
+    {
+        get
+        {
+            return this.Actors.Any(x => x.Climaxing);
+        }
+    }
     [JsonIgnore] public virtual bool isTemporaryAP { get { return false; } }
     protected Character_Trainable master_cached = null;
     [JsonIgnore] public Character_Trainable Master { get

@@ -59,8 +59,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         todo.Add(msg);
         UpdateAnimatingStatus();
         //Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
-        
-        if (firstLine || animate) SingleUpdate(false);
+        if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnLogsadd, waiting? {waiting} displayPortrait? {msg.DisplaPortrait} waitForPortrait? {msg.WaitForPortrait} portraitRef {(msg.PortraitRef == null ? "null" : msg.PortraitRef.Owner.CallName)} multiple? {msg.multipleChara.Count} animate? {animate} count? {todo.Count}");
+        if (firstLine) SingleUpdate(false);
+        else if (waiting && msg.WaitForPortrait) return;
+        else if (animate && todo.Count < 2) SingleUpdate(false);
     }
 
     private void SingleUpdate(bool skipAll)
@@ -99,7 +101,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     private RectTransform currentMsgLog, currentMsg;
     private void AnimateOneStep()
     {
-        //Debug.Log($"Animateonestep, firstline {firstLine}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"Animateonestep, firstline {firstLine} waiting? {waiting}");
         animationLock = true;
         firstLine = false;
         while (LogsList.transform.childCount > scr_System_CentralControl.current.DisplaySetting.MaxLogCount)
@@ -127,7 +129,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
                 //if (current.PortraitRef == -1000) msgbox = Instantiate(prefab_SeparationEntry);
 
                 msgbox.SetParent(LogsList, false);
-                (current as Message_Text).Draw(skipping, msgbox.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine);
+                waiting = (current as Message_Text).Draw(skipping, msgbox.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine) || waiting;
+               // if (waiting) Debug.Log("waiting!");
             }
             else if (current is Message_Question)
             {
@@ -151,6 +154,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         animationLock = false;
     }
 
+    bool waiting = false;
     bool animationLock = false;
     bool skipping = false;
     private void AnimateAll()
@@ -249,14 +253,15 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     {
         int clickID = eventData.pointerId;
 
+        waiting = false;
         if (scr_UpdateHandler.current.Updating || scr_UpdateHandler.current.EventHandler.Active || canAnimate)
         {
             if (scr_UpdateHandler.current.EventHandler.Active && !scr_UpdateHandler.current.EventHandler.Waiting && !canAnimate)
             {
-                Debug.Log($"Pre! OnPointerClick updating[{scr_UpdateHandler.current.Updating}] waiting[{scr_UpdateHandler.current.EventHandler.Waiting}] evActive[{scr_UpdateHandler.current.EventHandler.Active}] canAnimate[{canAnimate}]");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"Pre! OnPointerClick updating[{scr_UpdateHandler.current.Updating}] waiting[{scr_UpdateHandler.current.EventHandler.Waiting}] evActive[{scr_UpdateHandler.current.EventHandler.Active}] canAnimate[{canAnimate}]");
                 scr_UpdateHandler.current.EventHandler.Run();
             }
-            if (!canAnimate) Debug.Log($"OnPointerClick updating[{scr_UpdateHandler.current.Updating}] waiting[{scr_UpdateHandler.current.EventHandler.Waiting}] evActive[{scr_UpdateHandler.current.EventHandler.Active}] canAnimate[{canAnimate}]");
+            if (!canAnimate && scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnPointerClick updating[{scr_UpdateHandler.current.Updating}] waiting[{scr_UpdateHandler.current.EventHandler.Waiting}] evActive[{scr_UpdateHandler.current.EventHandler.Active}] canAnimate[{canAnimate}]");
             Observer_OnClick?.Invoke(eventData);
             if (canAnimate && !animationLock)
             {

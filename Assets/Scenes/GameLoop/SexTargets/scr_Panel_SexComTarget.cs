@@ -41,19 +41,14 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         turnOff();
     }
 
-    private void OnTimeChange(TimeSpan t)
-    {
-        if (sexJob != null && inside) turnOn(sexJob);
-    }
-
     private void OnViewModeChange(ViewMode vm, bool lockView)
     {
-        if (sexJob != null && vm != ViewMode.View_Room)
+        if (vm != ViewMode.View_Room)
         {
             //image_bg.raycastTarget = false;
             turnOff();
         }
-        else if (sexJob != null && vm == ViewMode.View_Room)
+        else if (vm == ViewMode.View_Room && sexJob != null)
         {
             //image_bg.raycastTarget = true;
             turnOn(sexJob);
@@ -105,6 +100,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
 
     private void OnCentralUpdate(bool b)
     {
+        if (scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Room) return;
         InternalUpdate();
     }
 
@@ -113,6 +109,8 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
     private void OnPlayerJobChange(int i, Job j)
     {
         //Debug.LogError("ONPLAYERJOBCHANGE SUBSCRIBER CALLED");
+
+        if (scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Room) return;
         InternalUpdate();
     }
 

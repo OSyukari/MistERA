@@ -61,11 +61,7 @@ public class scr_panel_COMmanager : scr_Menu
 
     private void OnPlayerJobChange(int i, Job j)
     {
-        if (j is Job_Sex_Group)
-        {
-            ChangeCurrentTab(COMTabs.Sex);
-            Debug.LogError("changejobtosexgroup");
-        }
+        if (j is Job_Sex_Group) ChangeCurrentTab(COMTabs.Sex);
         if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room) ValidateAll();
     }
 
@@ -458,72 +454,72 @@ public class scr_panel_COMmanager : scr_Menu
                     button.gameObject.SetActive(false);
 #endif
                     break;
+                /*
+            case -7500:
+#if UNITY_EDITOR
+                button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_Amelie"));
+#else
+                button.gameObject.SetActive(false);
+#endif
+                break;
 
-                case -7500:
+            case -7501:
 #if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_Amelie"));
+                button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_Elena"));
 #else
-                    button.gameObject.SetActive(false);
+                button.gameObject.SetActive(false);
 #endif
-                    break;
-
-                case -7501:
+                break;
+            case -7502:
 #if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_Elena"));
+                button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_Hiyori"));
 #else
-                    button.gameObject.SetActive(false);
+                button.gameObject.SetActive(false);
 #endif
-                    break;
-                case -7502:
+                break;
+            case -7503:
 #if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_Hiyori"));
+                button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_Olivia"));
 #else
-                    button.gameObject.SetActive(false);
+                button.gameObject.SetActive(false);
 #endif
-                    break;
-                case -7503:
+                break;
+            case -7504:
 #if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_Olivia"));
+                button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_couple1_Female"));
 #else
-                    button.gameObject.SetActive(false);
+                button.gameObject.SetActive(false);
 #endif
-                    break;
-                case -7504:
+                break;
+            case -7505:
 #if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_couple1_Female"));
+                button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_couple1_Male"));
 #else
-                    button.gameObject.SetActive(false);
+                button.gameObject.SetActive(false);
 #endif
-                    break;
-                case -7505:
+                break;
+            case -7506:
 #if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_couple1_Male"));
+                button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_HalfasOne"));
 #else
-                    button.gameObject.SetActive(false);
+                button.gameObject.SetActive(false);
 #endif
-                    break;
-                case -7506:
+                break;
+            case -7507:
 #if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_HalfasOne"));
+                button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_HalfasTwo"));
 #else
-                    button.gameObject.SetActive(false);
+                button.gameObject.SetActive(false);
 #endif
-                    break;
-                case -7507:
+                break;
+            case -7508:
 #if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_HalfasTwo"));
+                button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_HalfasThree"));
 #else
-                    button.gameObject.SetActive(false);
+                button.gameObject.SetActive(false);
 #endif
-                    break;
-                case -7508:
-#if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "Campaign2_Chara_HalfasThree"));
-#else
-                    button.gameObject.SetActive(false);
-#endif
-                    break;
-
+                break;
+                */
                 case -7600:
 #if UNITY_EDITOR
                     button.Initialize(this, new ButtonValidator_DebugAddCharaToParty(this, button, "creature_animal_pig"));

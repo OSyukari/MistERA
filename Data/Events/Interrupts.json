@@ -45,6 +45,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Events",
                         "label": "interruptSelf",
+                        "portraitRefKey":"targets",
                         "question":"event_OnEnterRoom_interrupt_ev01",
                         "options":[
                             { "option": "event_OnEnterRoom_interrupt_ev01_op1", "isDefaultCancel":true },

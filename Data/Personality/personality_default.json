@@ -9,657 +9,1464 @@
                 "entries_list": 
                 [
     {
+        "ID": "OnClimax",
+        "tags":["nsfw"],
+        "variants":[
+            { "responses":[ "($self$) 高潮 口上文"] }
+        ]
+    },
+    {
+        "ID": "com_sex_finger_caress_C_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            { "requireSelfDoer":true,  "responses":[ "($self$) C抚摸 高潮 口上文"] },
+            { "requireSelfReceiver":true,  "responses":[ "($self$) 被 C抚摸 高潮 口上文"] }
+        ]
+    },
+    {
         "ID": "com_sex_finger_caress_C",
         "tags":["nsfw"],
         "_comment":"variants should be ordered in descending priority.",
         "variants":[
-            {
-                "requirements": [ { "requireSelfAction":false, "selfTags":["sleeping"] } ],
-                "responses":[ "($self$) 睡眠中 C抚摸口上文" ]
-            },
-            {
-                "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 C抚摸口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 C抚摸口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":[ "($self$) 玩家专用 C抚摸口上文" ]
-            },
-            { "responses":[ "($self$) C抚摸口上文" ] }
+            
+            {   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝C抚摸口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 C抚摸口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) C抚摸口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被C抚摸口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被C抚摸口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被C抚摸口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被C抚摸口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被C抚摸口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被C抚摸口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 被C抚摸口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_finger_caress_A",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 A抚摸口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 A抚摸口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 A抚摸口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 A抚摸口上文"]
-            },
-            { "responses":[ "($self$) A抚摸口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝A抚摸口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 A抚摸口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) A抚摸口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被A抚摸口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被A抚摸口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被A抚摸口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被A抚摸口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被A抚摸口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被A抚摸口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 被A抚摸口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_finger_caress_B",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 B抚摸口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 B抚摸口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 B抚摸口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 B抚摸口上文"]
-            },
-            { "responses":[ "($self$) B抚摸口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝B抚摸口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 B抚摸口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) B抚摸口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被B抚摸口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被B抚摸口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被B抚摸口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被B抚摸口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被B抚摸口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被B抚摸口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 被B抚摸口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_finger_insert_A",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 A指入口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 A指入口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 A指入口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 A指入口上文"]
-            },
-            { "responses":[ "($self$) A指入口上文"] }
+
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝A指入口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 A指入口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) A指入口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被A指入口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被A指入口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被A指入口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被A指入口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被A指入口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被A指入口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 被A指入口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_finger_insert_V",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 V指入口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 V指入口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 V指入口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 V指入口上文"]
-            },
-            { "responses":[ "($self$) V指入口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝V指入口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 V指入口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) V指入口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被V指入口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被V指入口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被V指入口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被V指入口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被V指入口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被V指入口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","fingering","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 被V指入口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_finger_P",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 手淫口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 手淫口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 手淫口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 手淫口上文"]
-            },
-            { "responses":[ "($self$) 手淫口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝手淫口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","handjob"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 手淫口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","handjob"], "useActiveTags":false,
+    "responses":[ "($self$) 手淫口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","handjob"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被手淫口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","handjob"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被手淫口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被手淫口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被手淫口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","handjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被手淫口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","handjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被手淫口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","handjob"], "useActiveTags":false,
+    "responses":[ "($self$) 被手淫口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_breast_oral_P",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 乳交口交口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 乳交口交口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 乳交口交口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 乳交口交口上文"]
-            },
-            { "responses":[ "($self$) 乳交口交口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝乳交口交口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","blowjob","boobjob"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 乳交口交口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","blowjob","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 乳交口交口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","blowjob","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被乳交口交口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","blowjob","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被乳交口交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被乳交口交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被乳交口交口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","blowjob","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被乳交口交口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","blowjob","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被乳交口交口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","blowjob","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 被乳交口交口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_breast_P",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 乳交口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 乳交口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 乳交口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 乳交口上文"]
-            },
-            { "responses":[ "($self$) 乳交口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝乳交口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","boobjob"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 乳交口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 乳交口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被乳交口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被乳交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被乳交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被乳交口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被乳交口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被乳交口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","boobjob"], "useActiveTags":false,
+    "responses":[ "($self$) 被乳交口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_legs_caress_C",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 腿按压阴部口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 腿按压阴部口上文" ]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 腿按压阴部口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 腿按压阴部口上文"]
-            },
-            { "responses":[ "($self$) 腿按压阴部口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝腿按压阴部口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 腿按压阴部口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 腿按压阴部口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被腿按压阴部口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被腿按压阴部口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被腿按压阴部口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被腿按压阴部口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被腿按压阴部口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被腿按压阴部口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 被腿按压阴部口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_legs_P",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 足交口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 足交口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 足交口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 足交口上文"]
-            },
-            { "responses":[ "($self$) 足交口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝足交口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","footjob"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 足交口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","footjob"], "useActiveTags":false,
+    "responses":[ "($self$) 足交口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","footjob"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被足交口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","footjob"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被足交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被足交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被足交口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","footjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被足交口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","footjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被足交口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","footjob"], "useActiveTags":false,
+    "responses":[ "($self$) 被足交口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_oral_A",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 舔肛口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 舔肛口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 舔肛口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 舔肛口上文"]
-            },
-            { "responses":[ "($self$) 舔肛口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝舔肛口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","rimjob"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 舔肛口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","rimjob"], "useActiveTags":false,
+    "responses":[ "($self$) 舔肛口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被舔肛口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被舔肛口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被舔肛口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被舔肛口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被舔肛口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被舔肛口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass"], "useActiveTags":false,
+    "responses":[ "($self$) 被舔肛口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_oral_B",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 舔乳头口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 舔乳头口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 舔乳头口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 舔乳头口上文"]
-            },
-            { "responses":[ "($self$) 舔乳头口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝舔乳头口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 舔乳头口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 舔乳头口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被舔乳头口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被舔乳头口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被舔乳头口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被舔乳头口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被舔乳头口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被舔乳头口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","breasts"], "useActiveTags":false,
+    "responses":[ "($self$) 被舔乳头口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_oral_kiss",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+            {
+                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
+                "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
                 "responses":[ "($self$) 睡眠中 亲吻口上文"]
             },
             {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 亲吻口上文" ]
+                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
+                "responses":[ "($self$) 时停中 被亲吻口上文" ]
             },
             {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
                 "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
             },
             {   "requirements": [ { "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
                 "responses":[ "($self$) 指令失败拒绝口上文" ]
             },
             {
                 "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
                 "responses":[ "($self$) 玩家专用 刚睡醒时的 亲吻口上文" ]
             },
             {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
+                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
                 "responses":["($self$) 玩家专用 亲吻口上文"]
             },
-            { "responses":[ "($self$) 亲吻口上文"] }
+            { 
+                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
+                "responses":[ "($self$) 亲吻口上文"] }
         ]
     },
     {
         "ID": "com_sex_oral_P_Force",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 强制口交口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 强制口交口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 强制口交口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 强制口交口上文"]
-            },
-            { "responses":[ "($self$) 强制口交口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝强制口交口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","blowjob","forced"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 强制口交口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","receiver","blowjob","forced"], "useActiveTags":false,
+    "responses":[ "($self$) 强制口交口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","doer","blowjob","forced"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被强制口交口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","doer","blowjob","forced"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被强制口交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被强制口交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被强制口交口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","doer","blowjob","forced"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被强制口交口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","blowjob","forced"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被强制口交口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","doer","blowjob","forced"], "useActiveTags":false,
+    "responses":[ "($self$) 被强制口交口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_oral_P",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 口交口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 口交口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 口交口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 口交口上文"]
-            },
-            { "responses":[ "($self$) 口交口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝口交口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","blowjob"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 口交口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","blowjob"], "useActiveTags":false,
+    "responses":[ "($self$) 口交口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","blowjob"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被口交口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","blowjob"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被口交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被口交口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被口交口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","blowjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被口交口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","blowjob"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被口交口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","blowjob"], "useActiveTags":false,
+    "responses":[ "($self$) 被口交口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_oral_P_balls",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 舔睾丸口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 舔睾丸口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 舔睾丸口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 舔睾丸口上文"]
-            },
-            { "responses":[ "($self$) 舔睾丸口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝舔睾丸口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","blowjob","balls"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 舔睾丸口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","blowjob","balls"], "useActiveTags":false,
+    "responses":[ "($self$) 舔睾丸口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","blowjob","balls"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被舔睾丸口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","blowjob","balls"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被舔睾丸口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被舔睾丸口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被舔睾丸口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","blowjob","balls"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被舔睾丸口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","blowjob","balls"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被舔睾丸口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","blowjob","balls"], "useActiveTags":false,
+    "responses":[ "($self$) 被舔睾丸口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_oral_V",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 舔阴口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 舔阴口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 舔阴口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 舔阴口上文"]
-            },
-            { "responses":[ "($self$) 舔阴口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝舔阴口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","cunnilingus"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 舔阴口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","cunnilingus"], "useActiveTags":false,
+    "responses":[ "($self$) 舔阴口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","cunnilingus","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被舔阴口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","cunnilingus","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被舔阴口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被舔阴口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被舔阴口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","cunnilingus","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被舔阴口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","cunnilingus","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被舔阴口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","cunnilingus","spread_pussy"], "useActiveTags":false,
+    "responses":[ "($self$) 被舔阴口上文"] 
+}
+
         ]
     },
     {
         "ID": "com_sex_P_V_outside_cowgirl",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 骑乘位素股口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 骑乘位素股口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 骑乘位素股口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 骑乘位素股口上文"]
-            },
-            { "responses":[ "($self$) 骑乘位素股口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝骑乘位素股口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","cowgirl","intercrural"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 骑乘位素股口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","cowgirl","intercrural"], "useActiveTags":false,
+    "responses":[ "($self$) 骑乘位素股口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 睡眠中 被骑乘位素股口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 时停中 被骑乘位素股口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被骑乘位素股口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被骑乘位素股口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被骑乘位素股口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 玩家专用 被骑乘位素股口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 被骑乘位素股口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_P_V_outside",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 素股口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 素股口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 素股口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 素股口上文"]
-            },
-            { "responses":[ "($self$) 素股口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝素股口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 素股口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 素股口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","intercrural"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被素股口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","intercrural"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被素股口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被素股口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被素股口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","intercrural"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被素股口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","intercrural"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被素股口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","intercrural"], "useActiveTags":false,
+    "responses":[ "($self$) 被素股口上文"] 
+}
         ]
     },
     {
         "ID": "com_sex_P_cowgirl_A",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 骑乘位A口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 骑乘位A口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 骑乘位A口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 骑乘位A口上文"]
-            },
-            { "responses":[ "($self$) 骑乘位A口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝骑乘位A口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","cowgirl","anal"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 骑乘位A口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","cowgirl","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 骑乘位A口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 睡眠中 被骑乘位A口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 时停中 被骑乘位A口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被骑乘位A口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被骑乘位A口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被骑乘位A口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 玩家专用 被骑乘位A口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 被骑乘位A口上文"] 
+}
+        ]
+    },    {
+        "ID": "com_sex_P_cowgirl_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            { "requireSelfDoer":true,  "responses":[ "($self$) 骑乘位V 高潮 口上文"] },
+            { "requireSelfReceiver":true,  "responses":[ "($self$) 被 骑乘位V 高潮 口上文"] }
         ]
     },
     {
         "ID": "com_sex_P_cowgirl",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 骑乘位V口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 骑乘位V口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 骑乘位V口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 骑乘位V口上文"]
-            },
-            { "responses":[ "($self$) 骑乘位V口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝骑乘位V口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","doer","cowgirl"], "useActiveTags":false,
+    "responses":["($self$) 玩家专用 骑乘位V口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "extraPortraitTags":["sex","doer","cowgirl"], "useActiveTags":false,
+    "responses":[ "($self$) 骑乘位V口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 睡眠中 被骑乘位V口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 时停中 被骑乘位V口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被骑乘位V口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被骑乘位V口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被骑乘位V口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 玩家专用 被骑乘位V口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 被骑乘位V口上文"] 
+}
+        ]
+    },
+    {
+        "ID": "com_sex_P_doggy_A_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            { "requireSelfDoer":true,  "responses":[ "($self$) 后背位A 高潮 口上文"] },
+            { "requireSelfReceiver":true,  "responses":[ "($self$) 被 后背位A 高潮 口上文"] }
         ]
     },
     {
         "ID": "com_sex_P_doggy_A",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 后背位A口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 后背位A口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 后背位A口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 后背位A口上文"]
-            },
-            { "responses":[ "($self$) 后背位A口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝后背位A口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 后背位A口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 后背位A口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","doggy","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被后背位A口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","doggy","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被后背位A口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被后背位A口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被后背位A口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","doggy","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被后背位A口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","doggy","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被后背位A口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","doggy","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 被后背位A口上文"] 
+}
+        ]
+    },
+    {
+        "ID": "com_sex_P_doggy_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            { "requireSelfDoer":true,  "responses":[ "($self$) 后背位V 高潮 口上文"] },
+            { "requireSelfReceiver":true,  "responses":[ "($self$) 被后背位V 高潮 口上文"] }
         ]
     },
     {
         "ID": "com_sex_P_doggy",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 后背位V口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 后背位V口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 后背位V口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 后背位V口上文"]
-            },
-            { "responses":[ "($self$) 后背位V口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝后背位V口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 后背位V口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 后背位V口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","doggy"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被后背位V口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","doggy"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被后背位V口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被后背位V口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被后背位V口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","doggy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被后背位V口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","doggy"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被后背位V口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","doggy"], "useActiveTags":false,
+    "responses":[ "($self$) 被后背位V口上文"] 
+}
+        ]
+    },
+    {
+        "ID": "com_sex_P_missionary_A_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            { "requireSelfDoer":true,  "responses":[ "($self$) 正面位A 高潮 口上文"] },
+            { "requireSelfReceiver":true,  "responses":[ "($self$) 被正面位A 高潮 口上文"] }
         ]
     },
     {
         "ID": "com_sex_P_missionary_A",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 正面位A口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 正面位A口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 正面位A口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 正面位A口上文"]
-            },
-            { "responses":[ "($self$) 正面位A口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝正面位A口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 正面位A口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 正面位A口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","missionary","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被正面位A口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","missionary","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被正面位A口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被正面位A口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被正面位A口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","missionary","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被正面位A口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","missionary","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被正面位A口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","missionary","anal"], "useActiveTags":false,
+    "responses":[ "($self$) 被正面位A口上文"] 
+}
+        ]
+    },
+    {
+        "ID": "com_sex_P_missionary_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            { "requireSelfDoer":true,  "responses":[ "($self$) 正面位V 高潮 口上文"] },
+            { "requireSelfReceiver":true,  "responses":[ "($self$) 被正面位V 高潮 口上文"] }
         ]
     },
     {
         "ID": "com_sex_P_missionary",
         "tags":["nsfw"],
         "variants":[
-            {   "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 正面位V口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 正面位V口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 正面位V口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":["($self$) 玩家专用 正面位V口上文"]
-            },
-            { "responses":[ "($self$) 正面位V口上文"] }
+{   
+    "requireSelfDoer":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝正面位V口上文" ]
+},
+{   
+    "requireSelfDoer":true, "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "forbidPortaitDisplay":true,
+    "responses":["($self$) 玩家专用 正面位V口上文"]
+},
+{ 
+    "requireSelfDoer":true,
+    "forbidPortaitDisplay":true,
+    "responses":[ "($self$) 正面位V口上文"] 
+},
+{   
+    "requireSelfReceiver":true, "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
+    "extraPortraitTags":["sex","receiver","missionary"], "useActiveTags":false,
+    "responses":[ "($self$) 睡眠中 被正面位V口上文"]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
+    "extraPortraitTags":["sex","receiver","missionary"], "useActiveTags":false,
+    "responses":[ "($self$) 时停中 被正面位V口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 刚睡醒时 拒绝被正面位V口上文" ]
+},
+{   
+    "requireSelfReceiver":true, "requirements": [ {  "requireEPFailure":true } ],
+    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
+    "responses":[ "($self$) 拒绝被正面位V口上文" ]
+},
+{
+    "requireSelfReceiver":true, "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
+    "extraPortraitTags":["sex","receiver","missionary"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 刚睡醒时的 被正面位V口上文" ]
+},
+{ 
+    "requireSelfReceiver":true,
+    "requirements": [ { "targetBaseID":"PLAYER"  } ],
+    "extraPortraitTags":["sex","receiver","missionary"], "useActiveTags":false,
+    "responses":[ "($self$) 玩家专用 被正面位V口上文"] 
+},
+{ 
+    "requireSelfReceiver":true,
+    "extraPortraitTags":["sex","receiver","missionary"], "useActiveTags":false,
+    "responses":[ "($self$) 被正面位V口上文"] 
+}
         ]
     },
     {
@@ -885,7 +1692,7 @@
             {
                 "tags":["nsfw"],
                 "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "responses":[ "($self$) 时停中 摸头 口上文" ]
+                "responses":[ "($self$) 时停中 被摸头 口上文" ]
             },
             {
                 "tags":["nsfw"],
@@ -904,30 +1711,6 @@
                 "requirements": [ {  "requireSelfAction":true } ],
                 "_comment":"barely success variant",
                 "responses":[ "kojo_default_com_touch_head_accept_failure_1", "kojo_default_com_touch_head_accept_failure_2", "kojo_default_com_touch_head_accept_failure_3" ]
-            }
-        ]
-    },
-    {
-        "ID": "com_sex_finger_caress_C",
-        "tags":["nsfw"],
-        "_comment":"variants should be ordered in descending priority.",
-        "variants":[
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 C抚摸口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "responses":[ "($self$) 玩家专用 C抚摸口上文" ]
-            },
-            { 
-                "responses":[ "($self$) C抚摸口上文" ] 
             }
         ]
     },

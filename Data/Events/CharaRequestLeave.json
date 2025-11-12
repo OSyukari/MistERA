@@ -48,6 +48,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Events",
                         "question":"event_CharaLeaveRoom_ev01",
+            "portraitRefKey":"self", "portraitTagsOverride":["worry","sorry"],
                         "options":[
                             {   "option": "event_CharaLeaveRoom_ev01_op1", "isDefaultCancel":true, 
                                 "Results":  [  { "Type":"JumpToLabel", "arguments":["","select1"] }  ] 
@@ -60,6 +61,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "end2",
+            "portraitRefKey":"self", "portraitTagsOverride":["disappointed"],
                         "isLast": true,
                         "line": "event_CharaLeaveRoom_ev02"
                     },
@@ -90,6 +92,7 @@
                                         {
                         "$type": "Event+EventEntry+EventEntry_Line, Events",
                         "label": "end3",
+            "portraitRefKey":"self", "portraitTagsOverride":["relaxed"],
                         "line": "event_CharaLeaveRoom_ev03"
                     },
                     {

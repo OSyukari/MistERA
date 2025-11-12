@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Newtonsoft.Json;
 using System.Linq;
-using System;
+using System.Security.Cryptography;
+using Newtonsoft.Json;
+using UnityEngine;
 
 
 public class RelationshipManager
@@ -169,8 +170,11 @@ public class RelationshipManager
     public void NotifyMeeting(Character_Trainable c, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs, string triggerEventID = "")
     {
         if (c == null || c.RefID < 0) return;
-        if (Owner.RefID == 0) return;
-
+        if (Owner.RefID == 0)
+        {
+            //Debug.LogError("Player NotifyMeeting break!");
+            return;
+        }
         string s = "selfEPs: ";
         foreach (var i in selfEPs) s += i.targetCOM.ID+"_";
         s += "\nTargetEPs";
@@ -185,11 +189,20 @@ public class RelationshipManager
         if(triggerEventID != "")
         {
             var msg = this.Personality.GetKOJOMessage(triggerEventID, selfEPs, targetEPs, rel);
-            if (msg != null && scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("["+Owner.FirstName+"] -> ["+c.FirstName+"] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
-            if (msg != null && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+            if (msg != null)
             {
-                msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
-                scr_UpdateHandler.current.AppendKojoMessage(msg);
+                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("[" + Owner.FirstName + "] -> [" + c.FirstName + "] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
+                if (Owner.RefID == 0 || c.RefID == 0)
+                {
+                    msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
+                    scr_UpdateHandler.current.AppendKojoMessage(msg);
+                }
+                else if (scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+                {
+                    msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
+                    scr_UpdateHandler.current.AppendKojoMessage_NonVisible(msg);
+                }
+
             }
         }
     }
@@ -205,7 +218,7 @@ public class RelationshipManager
         // if any EP satisfy interrupt condition, every actor in ap are checked for relationship mod
         var triggerEventID = "Interrupt";
         var msg = Personality.GetKOJOMessage(triggerEventID, Owner, selfTags, ap.ListEP);
-        if (scr_System_CampaignManager.current.Player != Owner && msg != null && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+        if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.message.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
         {
             msg.message = $"<align=\"right\">{msg.message.Replace("$self$", Owner.FirstName)}</align>";//.Replace("$target$", c.FirstName);
             scr_UpdateHandler.current.AppendKojoMessage(msg);
@@ -240,15 +253,53 @@ public class RelationshipManager
 
         if (exp != null) exp.AddRelations(ownerRef, targetRef, relID, (int)amount); 
     }
-    public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, EvaluationPackage ep)
+    /// <summary>
+    /// This call will auto log collected message into m
+    /// </summary>
+    /// <param name="isDoer"></param>
+    /// <param name="ep"></param>
+    /// <param name="m"></param>
+    /// <returns></returns>
+    public void GetKOJOMessage(bool isDoer, EvaluationPackage ep, MessageCollect m)
     {
-        if (Owner.RefID == 0) return null;
+        if (Owner.RefID == 0) return;
         Character_Relationship rel = null;
         if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
         else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
 
-        if (rel == null) return this.Personality.GetKOJOMessage(ep.targetCOM.ID, Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep});
-        else return this.Personality.GetKOJOMessage(isDoer, ep, rel);
+        string cleanedID = ep.targetCOM.ID;
+        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
+
+        var message = rel == null ? this.Personality.GetKOJOMessage(cleanedID, Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
+            : this.Personality.GetKOJOMessage(isDoer, ep, rel);
+
+        if (message != null && message.message.Length > 0)
+        {
+            m.messages_kojo.Add(message);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
+
+        }
+    }
+
+    public void GetKOJOMessage_Climax(bool isDoer, EvaluationPackage ep, MessageCollect m)
+    {
+        if (Owner.RefID == 0) return;
+        if (!Owner.Climaxing) return;
+        Character_Relationship rel = null;
+        if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
+        else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
+
+        string cleanedID = ep.targetCOM.ID;
+        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
+
+        var message2 = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}_Climax", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
+        : this.Personality.GetKOJOMessage(isDoer, ep, rel, true);
+
+        if (message2 != null && message2.message.Length > 0)
+        {
+            m.messages_kojo_after.Add(message2);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Climax Message logged: [{message2.message} | {String.Join(" ", message2.portraitTags)}");
+        }
     }
 
     /// <summary>

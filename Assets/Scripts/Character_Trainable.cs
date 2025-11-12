@@ -483,6 +483,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     [JsonProperty] protected string firstName = "Jane", middleName = "", lastName = "Doe", title = "";
     [JsonProperty] public string nameDisplayFormat = "chara_fullname_firstToLast";
+    [JsonProperty] protected string characterComment = "";
+    [JsonIgnore] public string CharacterComment 
+    {
+        get
+        {
+            if (characterComment == "") return "No Comment";
+            return LocalizeDictionary.QueryThenParse(characterComment);
+        }
+    }
 
     public void SetName(string firstName, string middleName, string lastName, string displayFormat){
         this.FirstName = firstName;
@@ -1837,7 +1846,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
 }
 
-[System.Serializable]
 public class Character_BaseID_Index
 {
 
@@ -1845,7 +1853,6 @@ public class Character_BaseID_Index
 
 
 
-[System.Serializable]
 public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonExisting, I_RemoveNSFW
 {
     public List<Character_SerializableBase> baseCharacters = new List<Character_SerializableBase>();

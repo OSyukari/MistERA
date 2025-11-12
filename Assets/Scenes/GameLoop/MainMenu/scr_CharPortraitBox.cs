@@ -80,6 +80,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         //Debug.Log("ReadCurrentChar");
         if (id == -1) return;
         else if (!this.gameObject.activeInHierarchy) return;
+        else if (this.isCurrentTargetBox && scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Room) return;
         //else if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Logs) return;
         else CheckCharaChange(id);
     }
@@ -146,6 +147,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         //spineRect.gameObject.SetActive(false);
         //picture.gameObject.SetActive(true);
         //PreviousRef = portrait;
+        //bool skipUpdate = portrait == newPortrait && Input.GetMouseButton(1);
         portrait = newPortrait;
         if (portrait != null)
         {
@@ -178,7 +180,10 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void NotifyEndDraw()
     {
-        if (isCurrentTargetBox && _storedPortrait != "" && currentPortrait != _storedPortrait) scr_System_CentralControl.current.UnloadTextureCache(_storedPortrait);
+        if (_storedPortrait != "" && currentPortrait != _storedPortrait)
+        {
+            if (isCurrentTargetBox || isCombatBox) scr_System_CentralControl.current.UnloadTextureCache(_storedPortrait);
+        }
         this.spineLoader.Destroy();
         _storedPortrait = "";
         currentlyRunning = null;

@@ -11,6 +11,15 @@ public class scr_prefab_actortab : MonoBehaviour, IPointerEnterHandler
 {
     public List<Image> transparent = new List<Image>();
 
+    protected void Start()
+    {
+        var color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent;
+        foreach(var i in transparent)
+        {
+            i.color = color.Color;
+        }
+    }
+
     public scr_CharIconBox imageBox;
 
     public scr_HoverableText nameBox, hp, mp, posture, status, action, location;

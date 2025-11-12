@@ -24,7 +24,7 @@
     {
         "$type": "Event+EventEntry+EventEntry_Question, Events",
         "label":"br_trade",
-    "portraitRefKey":"party",
+                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
         "question":"$party.name$找到了失去联络的$victims.name$",
         "options":[
             {   
@@ -46,7 +46,7 @@
         {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_abort",
-    "portraitRefKey":"party",
+                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
         "line": "$party.name$暂时撤退了\n请确保救援对象没有未结算的事件！",
         "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["RetryEvent"]} ],
         "isLast": true
@@ -54,7 +54,7 @@
     {
         "$type": "Event+EventEntry+EventEntry_Line, Events",
         "label": "br_lootEnd",
-    "portraitRefKey":"party",
+                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
         "line": "$party.name$成功营救了$victims.name$",
         "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
         "isLast": true

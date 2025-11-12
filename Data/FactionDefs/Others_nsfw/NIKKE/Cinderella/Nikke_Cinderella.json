@@ -1,0 +1,158 @@
+{
+    "baseID": "Campaign1_Nikke_Cinderella",
+    "Portrait":{
+        "portraitPriorityList":[
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+    "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
+    "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
+
+    "RequireContextKeys":["sex","doer"],
+    "Variants":
+    [    
+        {  "tagsMatch":["rimjob"], "PortraitVariantData":["cinderella_after/237.webp","cinderella_after/238.webp","cinderella_after/239.webp"] },
+        {  "tagsMatch":["handjob"], "PortraitVariantData":["cinderella_after/222.webp","cinderella_after/223.webp","cinderella_after/224.webp"] },
+        {  "tagsMatch":["blowjob","boobjob"], "PortraitVariantData":["cinderella_after/235.webp"] },
+        {  "tagsMatch":["boobjob"], "PortraitVariantData":["cinderella_after/234.webp","cinderella_after/236.webp"] },
+        {  "tagsMatch":["blowjob"], "PortraitVariantData":["cinderella_after/172.webp","cinderella_after/173.webp","cinderella_after/174.webp"] },   
+        {  "tagsMatch":["masturbate"], "PortraitVariantData":["cinderella_after/228.webp","cinderella_after/229.webp","cinderella_after/230.webp"] },      
+        {  "tagsMatch":["cowgirl"], "PortraitVariantData":["cinderella_after/166.webp","cinderella_after/167.webp","cinderella_after/168.webp"] },      
+        {  "tagsMatch":["cunnilingus"], "PortraitVariantData":["cinderella_after/190.webp","cinderella_after/191.webp","cinderella_after/192.webp"] }
+        
+    ],
+
+    "portrait_path":"",
+    "icon_path":"Cinderella/si_c511_00_s.png"
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+    "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
+    "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
+
+    "RequireContextKeys":["sex","receiver"],
+    "Variants":
+    [    
+        {  "tagsMatch":["doggy"], "PortraitVariantData":["cinderella_after/169.webp","cinderella_after/170.webp",  "cinderella_after/171.webp"] },   
+        {  "tagsMatch":["missionary"], "PortraitVariantData":["cinderella_after/231.webp","cinderella_after/232.webp","cinderella_after/233.webp"] }
+    ],
+
+    "portrait_path":"",
+    "icon_path":"Cinderella/si_c511_00_s.png"
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+    "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
+    "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
+
+    "RequireContextKeys":["sex"],
+    "Variants":
+    [    
+        {  "tagsMatch":["cum"], "PortraitVariantData":["cinderella_after/164.webp","cinderella_after/165.webp"] },
+        {  "tagsMatch":["spread_pussy"], "PortraitVariantData":["cinderella_after/240.webp","cinderella_after/241.webp","cinderella_after/242.webp"] },
+        {  "tagsMatch":["kiss"], "PortraitVariantData":["cinderella_after/225.webp","cinderella_after/226.webp","cinderella_after/227.webp"] }
+        
+    ],
+
+    "portrait_path":"",
+    "icon_path":"Cinderella/si_c511_00_s.png"
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+    "portrait_offset_x": 29.53345,
+    "portrait_offset_y": -978.0911,
+    "portrait_offset_size": 0.65,
+
+    "icon_offset_x":0.0,
+    "icon_offset_y":0.0,
+"icon_offset_size":1.13,
+
+    "RequireContextKeys":["combat"],
+    "icon_path":"Cinderella/si_c511_00_s.png",
+  "Variants":
+  [  
+    {  "tagsMatch":["surprised"], "PortraitVariantData":["surprise_02"] },    
+    {  "tagsMatch":["happy"], "PortraitVariantData":["smile_02"] },    
+    {  "tagsMatch":["happy"], "PortraitVariantData":["delight_02"] },    
+    {  "tagsMatch":["sorry"], "PortraitVariantData":["void_02"] },  
+    {  "tagsMatch":["relaxed"], "PortraitVariantData":["delight_02"] },    
+    {  "tagsMatch":["angry"], "PortraitVariantData":["rage_02","angry_02"] },    
+    {  "tagsMatch":["hostile"], "PortraitVariantData":["rage_02"] },    
+    {  "tagsMatch":["disappointed"], "PortraitVariantData":["void_02"] },    
+    {  "tagsMatch":["fear"], "PortraitVariantData":["etc_02"] },    
+    {  "tagsMatch":["sad"], "PortraitVariantData":["sad_02","pain_02","etc_02"] },   
+    {  "tagsMatch":["broken"], "PortraitVariantData":["special_02"] },     
+    { "PortraitVariantData":["idle_02"] }
+  ],
+    "materialTexturePaths":["c511/c511_00.png","c511/c511_00_2.png"],
+    "atlasJSON_path":"c511/c511_00.atlas",
+    "skeletonJSON_path":"c511/c511_00.skel",
+    "idleAnimName":""
+},
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+                "portrait_offset_x": 29.53345, "portrait_offset_y": -978.0911, "portrait_offset_size": 0.65,
+                "icon_offset_x":0.0, "icon_offset_y":0.0, "icon_offset_size":1.13,
+  "Variants":
+  [    
+    {  "tagsMatch":["happy"], "PortraitVariantData":["smile","delight"] },
+    {  "tagsMatch":["surprised"], "PortraitVariantData":["surprise"] },  
+    {  "tagsMatch":["sorry"], "PortraitVariantData":["void"] },  
+    {  "tagsMatch":["relaxed"], "PortraitVariantData":["delight"] },    
+    {  "tagsMatch":["angry"], "PortraitVariantData":["rage","angry"] },    
+    {  "tagsMatch":["hostile"], "PortraitVariantData":["rage"] },    
+    {  "tagsMatch":["disappointed"], "PortraitVariantData":["void"] },    
+    {  "tagsMatch":["fear"], "PortraitVariantData":["etc"] },    
+    {  "tagsMatch":["sad"], "PortraitVariantData":["sad","pain","etc"] },  
+    {  "tagsMatch":["broken"], "PortraitVariantData":["special"] },    
+    {  "Enable":false, "_comment":"transition into combat, then back to neutral -> click animation", "PortraitVariantData":["action"] },
+    {  "Enable":false, "_comment":"transition into combat", "PortraitVariantData":["expression_0"] },
+    {  "Enable":false, "_comment":"transition into neutral", "PortraitVariantData":["expression_0_alt"] },
+    { "PortraitVariantData":["idle"] }
+  ],
+
+                "icon_path":"Cinderella/si_c511_00_s.png",
+
+                "materialTexturePaths":["c511/c511_00.png","c511/c511_00_2.png"],
+                "atlasJSON_path":"c511/c511_00.atlas", "skeletonJSON_path":"c511/c511_00.skel",
+                "idleAnimName":""
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 14,
+      "stat_CON": 18,
+      "stat_PSY": 12,
+      "stat_WIL": 12,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_A",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":145,
+      "initialInventory":[
+        
+        ],
+      "Skills": null
+    },
+    "firstName": "Campaign1_Nikke_Cinderella_firstname",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "characterComment":"Campaign1_Nikke_Cinderella_charaComment",
+    "origin": "charOrigin_none",
+    "race": "humanRace_android_complex",
+    "raceTemplate": "humanRaceAddon_Android_Nikke",
+    "startingGift": "charOriginGift_none"
+}
+    

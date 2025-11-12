@@ -107,6 +107,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Question, Events",
     "label":"br_choice",
+        "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "question":"exp_event_Utnapishtim_crumblingFloor_MIA_ev01",
     "options":[
         {   
@@ -124,6 +125,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_avoid",
+        "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev02",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
@@ -131,6 +133,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Events",
     "label": "br_mia",
+        "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev03",
     "Results":[
         { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},

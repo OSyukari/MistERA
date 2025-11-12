@@ -7,6 +7,7 @@ using UnityEngine;
 public class initScript_Relations : MonoBehaviour
 {
     public scr_SelectableText homeFaction, homeFactionTemp;
+    public TMP_Text charaComment;
 
     public scr_memoryBox prefab_MemoryEntry;
     public scr_memoryDaySplit prefab_DaySplit;
@@ -45,6 +46,8 @@ public class initScript_Relations : MonoBehaviour
                 scrbox.desireBox.gameObject.SetActive(false);
             }
         }
+
+        charaComment.SetText(c.CharacterComment);
 
         DateTime current = scr_System_Time.current.getCurrentTime();
         DateTime lastTime = scr_System_Time.current.getCurrentTime();

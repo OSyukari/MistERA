@@ -168,6 +168,12 @@ public class EvaluationPackage
         else return new List<string>();
     }
 
+    public List<string> GetActorEPSelfTags(int refID)
+    {
+        if (this.DoerRef == refID) return this.DoerSelfTag;
+        else if (this.ReceiverRef == refID) return this.ReceiverSelfTag;
+        else return new List<string>();
+    }
     [JsonIgnore]
     public Memory_Attitude ReceiverAttitude
     {
@@ -207,14 +213,14 @@ public class EvaluationPackage
     }
 
     List<string> _doerTargetTag = new List<string>();
-    COM _doerCOM = null;
+    //COM _doerCOM = null;
     [JsonIgnore] public List<string> DoerTargetTag
     {
         get
         {
-            if (_doerCOM != targetCOM) 
-            {
-                _doerCOM = targetCOM;
+            //if (_doerCOM != targetCOM) 
+           // {
+            //    _doerCOM = targetCOM;
                 HashSet<string> tagSet = new();
 
                 //_doerTargetTag = Enumerable.Concat(targetCOM == null ? new List<string>() : targetCOM.comTags, extraCOMTags).Concat(extraDoerTags).Concat(injectedDoerTags).Concat(injectedCOMTags).Distinct().ToList();
@@ -229,7 +235,7 @@ public class EvaluationPackage
                 foreach (var tag in injectedCOMTags) tagSet.Add(tag);
 
                 _doerTargetTag = new List<string>(tagSet);
-            }
+            
             return _doerTargetTag;
         }
     }
@@ -1124,7 +1130,8 @@ public class EvaluationPackage
     ///
     private void Fuck_2(MessageCollect m,Job job, Character_Trainable doer, COM com, Character_Trainable receiver, bool isForce, Memory_Response _response)
     {
-        int variantID = com.GetValidVariant(doer.RefID, (receiver == null || receiver.RefID == doer.RefID) ? -1 : receiver.RefID);
+        int variantID = this.VariantID;
+        //int variantID = com.GetValidVariant(doer.RefID, (receiver == null || receiver.RefID == doer.RefID) ? -1 : receiver.RefID);
 
         //string s2 = "DoSexInteraction: Character [" + doerRef + "] do sex [" + com.DisplayName(variantID) + "] to [" + receiverRef + "]!\n" + s;
 
@@ -1142,6 +1149,14 @@ public class EvaluationPackage
 
             List<BodyInternal_Instance> receiverList = new List<BodyInternal_Instance>();
             List<BodyInternal_Instance> doerList = new List<BodyInternal_Instance>();
+
+            injectedReceiverTags.AddRange(com.requirements.requirement.req_Doers.BodyTags);
+            injectedReceiverTags.AddRange(com.variants[variantID].requirements.requirement.req_Doers.BodyTags);
+            injectedReceiverTags = injectedReceiverTags.Distinct().ToList();
+
+            injectedDoerTags.AddRange(com.requirements.requirement.req_Receivers.BodyTags);
+            injectedDoerTags.AddRange(com.variants[variantID].requirements.requirement.req_Receivers.BodyTags);
+            injectedDoerTags = injectedDoerTags.Distinct().ToList();
 
             bool executed = false;
             executed = executed || Fuck_3(m,true, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true)
@@ -1329,7 +1344,7 @@ public class EvaluationPackage
             {
                 // if size > size * 1.5 pain 
 
-                var painMultiplier = fucker.CurrentSize / Math.Max(fucked.CurrentMaxSize, fucked.CurrentSize);
+                var painMultiplier = Mathf.Clamp( fucker.CurrentSize / Math.Max(fucked.CurrentMaxSize, fucked.CurrentSize), 1.25f, 10);
 
                 fuckerPl = baseStrength; fuckerPn = painMultiplier * 0.1f;
                 fuckedPl = 0f;                  fuckedPn = baseStrength * painMultiplier;
@@ -1342,7 +1357,7 @@ public class EvaluationPackage
                 s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times CurrentMaxSize [" + fucked.CurrentMaxSize + "] : response pain, expanding");
                 fuckerPl = baseStrength * 1.2f;
                 fuckedPl = baseStrength * 0.3f;   fuckedPn = baseStrength * 0.6f;
-                expansion = 3;
+                expansion = 2;
 
             }
             else if (fucker.CurrentSize > fucked.CurrentSizeExtended * 1.25)
@@ -1498,6 +1513,9 @@ public class EvaluationPackage
             return;
         }
 
+        pain = Math.Clamp(pain, 0, 99);
+        expansion = Math.Clamp(expansion, 0, 99);
+
         //if (sourceBody != null) tags.AddRange(sourceBody.Base.tags);
         logExps.Add(new DelayedExpLogging( body, source.RefID,  sourceBody == null ? source.FirstName : sourceBody.DisplayNameFull, com.ID, com.DisplayName(variantID), 
                                 targetCOM.comTags, sourceBody == null ? null : sourceBody.Base.tags ));
@@ -1506,37 +1524,44 @@ public class EvaluationPackage
 
         if (sourceBody != null) body.LogLastInteractedRef(sourceBody);
 
-        pleasure -= (pain + expansion);
+        //pleasure -= (pain + expansion);
+        var newTags = new List<string>(ownerTags);
+        if (pleasure > 0 ) newTags.Add("has_pleasure");
 
-        if (pleasure > 0 )
-        {   // has experience logging
-            var newTags = new List<string>(ownerTags);
-            newTags.Add("pleasure");    // add duplicate to not contaminate experience gain amount
-            body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pleasure, isDoer, m.exp);
-        }
-
-        if (pain > 0 || expansion > 0)
-        {
-            var newTags = new List<string>(ownerTags);
-            if (pain > 0)
-            {   // check relationship add fear
-                if(source != null && body.Owner.canAct)
+        if (pain > 0)
+        {   // check relationship add fear
+            if (source != null && body.Owner.canAct)
+            {
+                var relation = body.Owner.Relationships.FindRelationshipWith(source);
+                if (relation != null && relation.Obedience(null) > RelationshipObedienceType.Normal)
                 {
-                    var relation = body.Owner.Relationships.FindRelationshipWith(source);
-                    if (relation != null && relation.Obedience(null) > RelationshipObedienceType.Normal)
-                    {
-                        ModRelationshipResult(m,relation, RelationshipScoreType.Fear, (int)pain);
-                        //this.m.AddRelations(body.Owner.RefID, source.RefID, RelationshipScoreType.Fear, (int) pain);
-                        //relation.ModRelationValue(RelationshipScoreType.Fear, pain);
-                    }
+                    ModRelationshipResult(m, relation, RelationshipScoreType.Fear, (int)pain);
                 }
-                
-                newTags.Add("pain");
-                if (isDoer && !extraDoerTags.Contains("pain")) this.extraDoerTags.Add("pain");
-                else if (!isDoer && !extraReceiverTags.Contains("pain")) this.extraReceiverTags.Add("pain");
             }
-            if (expansion > 0) newTags.Add("expansion");
-            body.Owner.Skills.CheckExperienceGain(newTags, isDoer ? ReceiverTargetTag : DoerTargetTag, pain + expansion, isDoer, m.exp);
+
+            newTags.Add("has_pain");
+            if (isDoer && !extraDoerTags.Contains("has_pain")) this.extraDoerTags.Add("has_pain");
+            else if (!isDoer && !extraReceiverTags.Contains("has_pain")) this.extraReceiverTags.Add("has_pain");
+        }
+        if (expansion > 0) newTags.Add("has_expansion");
+
+        if (pleasure > 0)
+        {
+            var newTags2 = new List<string>(newTags);
+            newTags2.Add("pleasure");
+            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, pleasure, isDoer, m.exp);
+        }
+        if (pain > 0)
+        {
+            var newTags2 = new List<string>(newTags);
+            newTags2.Add("pain");
+            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, pain, isDoer, m.exp);
+        }
+        if (expansion > 0)
+        {
+            var newTags2 = new List<string>(newTags);
+            newTags2.Add("expansion");
+            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, expansion, isDoer, m.exp);
         }
     }
 

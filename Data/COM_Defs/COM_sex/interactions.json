@@ -5,7 +5,7 @@
             "ID":"com_interaction_initiateSex",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_interaction_initiateSex",
-            "timeScale":1,
+            "timeScale":2,
             "VariantDoNotReadRequirement":true,
             "HideWhenInvalid":true,
             "comTags":["action","interaction","initSex"],
@@ -98,10 +98,10 @@
             "AcceptanceCheck":{ "baseAcceptanceValue":25 },
             "DifficultyCheck":{ "baseD20Check":0 },
 
-            "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false },
+            "description_ongoing":{ "Entries":[{"texts":["(ongoing) $doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false },
             "description_after":{ "Entries":[{"texts":[""]}], "keepLooking":false },
             "description_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
-            "description_begin":{ "Entries":[{"texts":["$doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false }
+            "description_begin":{ "Entries":[{"texts":["(begin) $doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false }
         },
         {
             "ID":"com_interaction_endOngoingSex",

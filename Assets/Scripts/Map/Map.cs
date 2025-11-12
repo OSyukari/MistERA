@@ -70,7 +70,6 @@ public class Map_Instance
 
         floorDoorQuickSearch = new Dictionary<int, int>();
         FloorLayout = new Dictionary<Tuple<int, int>, Vector2>();
-        rooms_orphans = new Dictionary<int, Room_Instance>();
     }
     public Map_Instance(string mapTemplateID):this()
     {
@@ -216,7 +215,7 @@ public class Map_Instance
     [JsonIgnore] protected Dictionary<int, Room_Instance> Rooms;
 
     // Orphaned room will NOT be updated 
-    [JsonProperty] protected Dictionary<int, Room_Instance> rooms_orphans;
+    [JsonProperty] protected Dictionary<int, Room_Instance> rooms_orphans = new Dictionary<int, Room_Instance>();
     /// <summary>
     /// Key - floorRefID
     /// Value - floorInstance
@@ -290,6 +289,14 @@ public class Map_Instance
     private void UpdateRoom(Room_Instance ri, bool forceGreeting = false)
     {
         var charaInRoom = ri.RoomChara;
+
+        if (scr_System_CampaignManager.current.CurrentRoom == ri && !charaInRoom.Contains(scr_System_CampaignManager.current.Player))
+        {
+            Debug.LogError("error room does not contain player ref");
+            charaInRoom.Add(scr_System_CampaignManager.current.Player);
+            //ri.AddChara(scr_System_CampaignManager.current.Player);
+
+        }
         // if(Rooms.ContainsKey(iii.Key) && iii.Value.Count > 0) Debug.Log("roomCharaRef " + Rooms[iii.Key].DisplayName + " and charaRefs " + String.Join("|", iii.Value));
         /*if (iii.Key == scr_System_CampaignManager.current.CurrentRoom.RefID)
         {
@@ -301,17 +308,28 @@ public class Map_Instance
             //Debug.Log("roomCharaRef " + GetRoomByRef(iii.Key).DisplayName + " and charaRefs " + String.Join("|", charaInRoom));
         }*/
 
+        Dictionary<Character_Trainable, List<EvaluationPackage>> tempDicts = new Dictionary<Character_Trainable, List<EvaluationPackage>>();
+
+        foreach(var i in charaInRoom)
+        {
+            if (i == null) continue;
+            UtilityEX.GetEPsFrom(i, out List<EvaluationPackage> eps);
+            tempDicts.Add(i, eps);
+        }
+
         for (int x = 0; x < charaInRoom.Count; x++)
         {
             var xx = charaInRoom[x];
-            UtilityEX.GetEPsFrom(xx, out List<EvaluationPackage> xxEPs);
+            if (xx == null) continue;
+            var xxEPs = tempDicts[xx];
 
             bool interrupted = false;
-            bool isDirty = dirtyCharaRef.Contains(charaInRoom[x].RefID);
+            bool isDirty = dirtyCharaRef.Contains(xx.RefID);
 
             List<string> selfTags = new List<string>();
             foreach (var i in xxEPs) selfTags.AddRange(i.isDoer(xx) ? i.DoerTargetTag : i.ReceiverTargetTag);
             selfTags = selfTags.Distinct().ToList();
+
             List<int> ignoreList = new List<int>();
 
             // check interrupt
@@ -329,7 +347,7 @@ public class Map_Instance
                 if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
                 if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
 
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
                 if (xx.Relationships.CheckInterrupt(i, selfTags) && xx.RefID != 0)
                 {
                     interrupted = true;
@@ -344,28 +362,34 @@ public class Map_Instance
             {                // check greeting
                 for (int y = 0; y < charaInRoom.Count; y++)
                 {
-                    if (x == y) continue;
-                    if (charaInRoom[x] == charaInRoom[y]) continue;
-
                     var yy = charaInRoom[y];
-                    if (xx == null || yy == null) continue;
+                    if (xx == yy) continue;
+                    if (yy == null) continue;
 
-                    UtilityEX.GetEPsFrom(yy, out List<EvaluationPackage> yyEPs);
+                    var yyEPs = tempDicts[yy];
 
                     /*
                     Prioritise self or target.
                      */
-                    isDirty = isDirty || dirtyCharaRef.Contains(yy.RefID);
                     if ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume)
                     {
                         xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "OnTimestopEnd");
                     }
-                    else if ((forceGreeting || isDirty) && !(scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) && scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID)))
+                    else if ((forceGreeting || isDirty || dirtyCharaRef.Contains(yy.RefID)) && !(scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) && scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID)))
                     {
+                       // Debug.LogError($"Greeting {xx.CallName} -> {yy.CallName}");
                         xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "Greeting");
                         //yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "Greeting");
                     }
+                    else
+                    {
+                        //Debug.LogError($"Greeting Failed {xx.CallName} -> {yy.CallName}, {forceGreeting} {isDirty} {dirtyCharaRef.Contains(yy.RefID)} {!(scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) && scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID))}");
+                    }
                 }
+            }
+            else
+            {
+               // Debug.LogError($"{xx.CallName} is interrupted, not calling greeting events");
             }
 
             if (isDirty)
@@ -454,13 +478,12 @@ public class Map_Instance
 
     public void MoveCharaTo(Character_Trainable charaRef, Room_Instance newRoom)
     {
-        var room = FindRoomByChara(charaRef.RefID);
         if (charaRoomRef.ContainsKey(charaRef.RefID))
         {
             var oldRoom = FindRoomByChara(charaRef.RefID);
             if (oldRoom == null)
             {
-                Debug.LogError("old room null");
+                //Debug.LogError("old room null");
                 newRoom.AddChara(charaRef);
             }
             else
@@ -761,6 +784,7 @@ public class Map_Instance
         if (factionGraphs.ContainsKey(b.ID)) factionGraphs[b.ID].Remove(a.ID);
     }
 
+    bool initialized = false;
 
     public void SerializationRebuilt()
     {
@@ -780,10 +804,23 @@ public class Map_Instance
             foreach (var j in i.rooms)
             {
                 AddRoom(j, i);
+                foreach(var c in j.RoomCharaRefs)
+                {
+                    charaRoomRef[c] = j.RefID;
+                }
+            }
+        }
+
+        foreach(var j in rooms_orphans.Values)
+        {
+            foreach (var c in j.RoomCharaRefs)
+            {
+                charaRoomRef[c] = j.RefID;
             }
         }
 
         BuildPath();
+        initialized = true;
     }
 }
 

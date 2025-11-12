@@ -220,7 +220,7 @@ public class COM_Requirements
 
             if (existing.Count < 1)
             {
-                tooltip.Add("Command invalid: missing pre-req command");
+                tooltip.Add("Command invalid: missing pre-req command by filter 1");
                 return false;
             }
 
@@ -228,12 +228,14 @@ public class COM_Requirements
             {
                 if (existing[i] == null)
                 {
+                    tooltip.Add("remove by 1");
                     existing.RemoveAt(i);
                     continue;
                 }
 
                 if (comID != "" && ((existing[i].targetCOM == null || existing[i].targetCOM.ID != comID)))
                 {
+                    tooltip.Add("remove by 2");
                     existing.RemoveAt(i);
                     continue;
                 }
@@ -241,32 +243,38 @@ public class COM_Requirements
                 //if (existing[i] == null) continue;
                 if (!Utility.ListEquals(existing[i].DoerRefs, doerRefIDs))
                 {
+                    tooltip.Add("remove by 3");
                     existing.RemoveAt(i);
                     continue;
                 }
                 if (!Utility.ListEquals(existing[i].ReceiverRefs, receiverRefIDs))
                 {
+                    tooltip.Add("remove by 4");
                     existing.RemoveAt(i);
                     continue;
                 }
                 if (comtgs.Count > 0 && comtgs.Except(existing[i].targetCOM.comTags).Count() != 0)
                 {
+                    tooltip.Add("remove by 5");
                     existing.RemoveAt(i);
                     continue;
                 }
                 if (doerBTag.Count > 0 && doerBTag.Except(existing[i].doerBodyTags).Count() != 0)
                 {
+                    tooltip.Add("remove by 6");
                     existing.RemoveAt(i);
                     continue;
                 }
                 if (receiverBTag.Count > 0 && receiverBTag.Except(existing[i].receiverBodyTags).Count() != 0)
                 {
+                    tooltip.Add("remove by 7");
                     existing.RemoveAt(i);
                     continue;
                 }
                 List<string> s = new List<string>();
                 if (overpen && !(existing[i].targetCOM as COM_Sex).ValidateActorLength(ref s, existing[i].DoerRefs, existing[i].ReceiverRefs))
                 {
+                    tooltip.Add($"remove by 8, doerRefs {String.Join("|", existing[i].DoerRefs)}, receiveRefs {String.Join("|", existing[i].ReceiverRefs)}");
                     existing.RemoveAt(i);
                     continue;
                 }
@@ -274,7 +282,7 @@ public class COM_Requirements
 
             if (existing.Count < 1)
             {
-                tooltip.Add("Command invalid: missing pre-req command");
+                tooltip.Add("Command invalid: missing pre-req command by filter 2");
                 return false;
             }
             else return true;
