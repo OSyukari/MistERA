@@ -12,8 +12,8 @@
         
         "campaign1_start_student":"（未实装）学生",
         "campaign1_start_student_tooltip":"（未实装）以奇沃托斯的学生身份，与生命守护者的领航员们一同开始游戏。\n身为学生，玩家可以参与战斗。\n限制：玩家的种族模板会被改为--学生模板--\n--学生模板--：--模板描述--",
-        "campaign1_start_debug":"（未实装）debug",
-        "campaign1_start_debug_tooltip":"（未实装）Start with extra debug NPC in party",
+        "campaign1_start_debug":"DEBUG",
+        "campaign1_start_debug_tooltip":"%%campaign1_start_default_tooltip%%\n\nDEBUG剧本将会往游戏内额外添加本不该出现的东西",
 
         "factionName_Utnapishtim":"生命守护者",
 

@@ -10,7 +10,7 @@
     "isUnique":true, "canExplore":true,
     "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
     "EventIDs":[],
-    "keywords":["Utnapishtim"],
+    "keywords":[],
     "FeatureKeywords":["cave", "bear"],
     "Events":
     [
