@@ -81,37 +81,6 @@
             ]
         },
         {
-            "ID": "humanRaceAddon_Android_Nikke",
-            "displayName": "Nikke",
-            "tooltip": "Android body housing a human consciousness. Made to resemble humanoid physiology as close as possible.\nIn spite of their superhuman capabilities, Nikkes still need an environment close to human experience to maintain their mental stability.\nSTR+10 CON+10",
-            "addStatsKeyword":["hunger","sleep","stress","lust","mood"],
-            "stat_modifiers": [
-                {
-                    "statID":"Strength",
-                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"10"
-                },
-                {
-                    "statID":"Constitution",
-                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"10"
-                },
-                {
-                    "statID":"stats_derived_baselineObedience",
-                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
-                }
-            ],
-            "needs":[
-                {
-                    "ID":"food",
-                    "displayName":"food need",
-                    "tooltip":"tooltip",
-                    "statusDebuffID": "chara_status_malnourished",
-                    "consumeItemByTag": "food_meal",
-                    "requiresStatKeyword": "hunger",
-                    "overwritesNeedsIDs": []
-                }
-            ]
-        },
-        {
             "ID": "humanRaceAddon_Android_Sirin",
             "displayName": "Sirin",
             "tooltip": "Light-weight, mass-produced mechanical android, housing artificial intelligence based on a humanoid being.\nSirins can function as long as they are operating a loosely humanoid frame",

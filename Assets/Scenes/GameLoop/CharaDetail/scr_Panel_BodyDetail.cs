@@ -79,11 +79,8 @@ public class scr_Panel_BodyDetail : MonoBehaviour
             }
 
             
-            boxVolume.SetText("Content: " + totalVolume + "ml / "+ instance.volume_capacity.ToString("N0") + "ml");
+            boxVolume.SetText($"Content: {totalVolume}ml / {instance.volume_capacity.ToString("N0")}ml|{instance.VisiblyExpandedCapacity.ToString("N0")}|{instance.MaxCapacity.ToString("N0")}");
             if (volumeTooltip.Count > 0) boxVolume.SetExternalTooltip(String.Join("\n", volumeTooltip));
-            
-           
-
         }
 
         //this.mostExp.gameObject.SetActive(false);

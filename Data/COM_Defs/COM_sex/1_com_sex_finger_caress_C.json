@@ -13,7 +13,6 @@
                     "requirement":{
                         "req_Doers":{
                             "BodyTags":["arm"],
-                            "minRevealingScore":1,
                             "cost_ST": 1
                         },
                         "req_Receivers":{

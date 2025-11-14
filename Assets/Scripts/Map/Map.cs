@@ -333,8 +333,8 @@ public class Map_Instance
             List<int> ignoreList = new List<int>();
 
             // check interrupt
-            var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(ri.RefID, true) : dirtyCharaAPRef;
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
+            var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(ri.RefID, true) : new List<ActionPackage>( dirtyCharaAPRef);
+            //if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
             //if (xx.RefID != 0)
             //{
                 // only check interrupt if not player

@@ -365,47 +365,15 @@ public class scr_UpdateHandler : MonoBehaviour
         {
             cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, EventHandler.Active);
         }
-        
+
         // exiting loop. if player is involved in a job, here's when we should display it.
         //playerJob = cnManager.Player.CurrentJob;
 
         // begin job message
-
-        cnManager.AddLog(-1, String.Join("\n", Message.messages_checks), halted);
-        cnManager.AddLog(-1, String.Join("\n", Message.messages_before), halted);
-
-        foreach(var kvp in Message.messages_kojo) cnManager.AddLog(kvp);
-
-
-        // all climax ? need to filter out who worth displaying
-        //cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), halted);
-
-        //currentRoundClimax.Clear();
-        // after job message
-
-        // all exp inc message
-        /*
-        foreach(var i in scr_System_CampaignManager.current.ActiveJobsRefsInCurrentRoom)
-        {
-            var job = scr_System_CampaignManager.current.FindJobInstanceByID(i);
-            //Debug.Log("Merging with ActiveJob "+job.RefID+" " + job.DisplayName);
-            this.exp.MergeWith(job.exp, false);
-        }*/
-
-        cnManager.AddLog(-1, Message.exp.PrintContent_Messages(), halted);
-        cnManager.AddLog(-1, Message.exp.PrintContent_Stats(), halted);
-        cnManager.AddLog(-1, Message.exp.PrintContent_Climax(), halted);
-        cnManager.AddLog(-1, Message.exp.PrintContent_Relations(), halted);
-        cnManager.AddLog(-1, Message.exp.PrintContent_Exps(), halted);
-
-        foreach (var kvp in Message.messages_kojo_after) cnManager.AddLog(kvp);        
-        cnManager.AddLog(-1, String.Join("\n", Message.messages_after), halted);
-
-        Message.Clear();
+        FlushCollectedLogs(true, false);
 
         if (timeStop) totalUpdateTime = 0;
 
-        
         Updating = false;
 
         if (EventHandler.Active)
@@ -482,6 +450,27 @@ public class scr_UpdateHandler : MonoBehaviour
        // Debug.Log("NotifyJobDescriptions");
         this.Message.Merge(m, shorten);
     }
+    public void NotifyJobDescriptions_PreEvents(MessageCollect m, bool shorten)
+    {
+        // Debug.Log("NotifyJobDescriptions");
+        if (m.messages_before.Count > 0)
+        {
+            Message.messages_before.AddRange(m.messages_before);
+            m.messages_before.Clear();
+        }
+        if (m.messages_checks.Count > 0)
+        {
+            Message.messages_checks.AddRange(m.messages_checks);
+            m.messages_checks.Clear();
+        }
+        if (m.messages_kojo.Count > 0)
+        {
+            Message.messages_kojo.AddRange(m.messages_kojo);
+            m.messages_kojo.Clear();
+        }
+    }
+
+
 
     public void AppendKojoMessage(MessageCollect_KojoEntry m)
     {
@@ -494,6 +483,18 @@ public class scr_UpdateHandler : MonoBehaviour
 
     }
 
+    public void FlushCollectedLogs_PreEvents()
+    {
+
+        if (Message.messages_checks.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_checks), false);
+        if (Message.messages_before.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_before), false);
+
+        foreach (var kvp in Message.messages_kojo) cnManager.AddLog(kvp);
+
+        Message.messages_before.Clear();
+        Message.messages_checks.Clear();
+        Message.messages_kojo.Clear();
+    }
     /// <summary>
     /// executeCallbacks == true will cause infinite loop if flushcollectedlogs is inside callbacks !!
     /// </summary>
@@ -502,25 +503,8 @@ public class scr_UpdateHandler : MonoBehaviour
     /// <param name="executeCallbacks"></param>
     public void FlushCollectedLogs(bool flushOut, bool firstLoop, bool executeCallbacks = false)
     {
-        if (flushOut)
-        {
-            if (Message.messages_checks.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_checks), false);
-            if (Message.messages_before.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_before), false);
-            cnManager.AddLog(-1, Message.exp.PrintContent_Messages(), true);
-            cnManager.AddLog(-1, Message.exp.PrintContent_Stats(), true);
-            cnManager.AddLog(-1, Message.exp.PrintContent_Climax(), true);
-            cnManager.AddLog(-1, Message.exp.PrintContent_Relations(), true);
-            cnManager.AddLog(-1, Message.exp.PrintContent_Exps(), true);
-
-            foreach(var kvp in Message.messages_kojo) cnManager.AddLog(kvp);
-            
-            //if (currentRoundClimax.Count > 0) cnManager.AddLog(-1, String.Join("\n", currentRoundClimax), true);
-            foreach (var kvp in Message.messages_kojo_after) cnManager.AddLog(kvp);
-            if (Message.messages_after.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_after), true);
-        }
-        Message.Clear();
-       // currentRoundClimax.Clear();
-
+        if (flushOut) Message.FlushCollectLogs();
+        else Message.Clear();
         if (executeCallbacks) ExecuteEventCallbacks(true);
     }
 

@@ -2,7 +2,7 @@
     "Events": {
         "list": [
             {                
-                "ID": "exp_event_combat_draw",
+                "ID": "exp_event_combat_Draw",
                 "events": [
                 {
                     "$type": "Event+EventEntry+EventEntry_Branch, Events",
@@ -36,7 +36,7 @@
                 ]
             },
             {                
-                "ID": "exp_event_combat_victory",
+                "ID": "exp_event_combat_Victory",
                 "events": [
                 {
                     "$type": "Event+EventEntry+EventEntry_Branch, Events",
@@ -110,7 +110,7 @@
                 ]
             },
             {                
-                "ID": "exp_event_combat_defeat",
+                "ID": "exp_event_combat_Defeat",
                 "events": [
                 {
                     "$type": "Event+EventEntry+EventEntry_Branch, Events",
@@ -189,9 +189,9 @@
         {
             "zh-cn":
             {
-"exp_event_combat_victory":"战斗胜利",
-"exp_event_combat_draw":"战斗平局",
-"exp_event_combat_defeat":"战斗失败",
+"exp_event_combat_Victory":"战斗胜利",
+"exp_event_combat_Draw":"战斗平局",
+"exp_event_combat_Defeat":"战斗失败",
 
 "exp_event_combat_draw_ev01":"$party.name$的小队未能击败敌人",
 "exp_event_combat_draw_ev99":"警告！由于内容缺失，该事件强制终止。"

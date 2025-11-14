@@ -36,7 +36,8 @@ public class Stats_Derived_Extended
     [JsonProperty] protected string statKeyword = "";
     [JsonProperty] protected string displayName = "";
     [JsonProperty] protected string tooltip = "";
-    [JsonProperty] protected MaxValue maxValue = null;
+    [JsonProperty] protected StatGetter maxValue = null;
+    [JsonProperty] protected StatGetter reductionModStat = null;
     [JsonProperty] protected List<object> eventTriggers = null;
 
     [JsonIgnore] public string ID { get { return id; } }
@@ -71,9 +72,13 @@ public class Stats_Derived_Extended
         //return 0f;
     }
 
+    public Stats_Derived_Instance GetReductionStat(I_StatsManager c)
+    {
+        if (reductionModStat == null) return null;
+        return reductionModStat.GetDerivedStat(c);
+    }
 
-    [System.Serializable]
-    public class MaxValue
+    public class StatGetter
     {
         [JsonProperty] protected string valueType = "";
         [JsonProperty] protected string valueString = "";
@@ -203,10 +208,24 @@ public class Stats_Derived_Extended_Instance
         this.value = MaxValue;
     }
 
+    private Stats_Derived_Instance reductionStat = null;
+    [JsonIgnore] public Stats_Derived_Instance ReductionStat
+    {
+        get
+        {
+            if (reductionStat == null) reductionStat = Parent.GetReductionStat(Owner);
+            return reductionStat;
+        }
+    }
+
     public void ModValue(float amount)
     {
         if (amount < 0 && this.Owner.Owner.RefID == 0 && scr_System_CampaignManager.current.DebugMode) return;
 
+        if ( amount < 0 && ReductionStat != null)
+        {
+            amount = Math.Clamp(amount + ReductionStat.FinalValue(), amount, 0);
+        }
         this.value = Math.Clamp(this.value + amount, 0, MaxValue);
     }
 
@@ -217,7 +236,7 @@ public class Stats_Derived_Extended_Instance
 
     public void SetValue(float value)
     {
-        this.value = value;
+        this.value = Math.Clamp(value, 0, MaxValue);
     }
 }
 

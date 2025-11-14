@@ -8,7 +8,8 @@
             "displayName":"Health",
             "tooltip":"Health Point.\nIf this reaches 0, character will become unconscious\nIf it reaches negative Constitution score, character dies.\nTemporary injury will decrese score, permanent injury will decrease maximum.\nMaximum score is 10 + CON Modifier + others.\nNaturally recovers during sleep.",
             "statKeyword":"hp",
-            "maxValue":{ "valueType":"getStatValue", "valueString":"stats_derived_hp_max" }
+            "maxValue":{ "valueType":"getStatValue", "valueString":"stats_derived_hp_max" },
+            "reductionModStat":{ "valueType":"getStatValue", "valueString":"stats_derived_damageReduction_HP" }
         },
         {
             "id":"stats_derived_extended_mp",
@@ -76,6 +77,13 @@
                         "valueType":"number", "valueString":"10"
                     }
                 ]
+            }, 
+            {
+                "id": "stats_derived_damageReduction_HP",
+                "displayName":"HP Damage Reduction",
+                "statKeyword":"hp",
+                "tooltip":"reduce hp damage",
+                "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
             },
             {
                 "id": "stats_derived_mp_max",

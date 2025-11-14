@@ -187,6 +187,8 @@ public class Character_Personality
 
     public MessageCollect_KojoEntry GetKOJOMessage(string eventID, RelationshipManager.Character_Relationship rel, List<string> selfTags, List<string> targetTags)
     {
+        if (selfTags == null) selfTags = new List<string>();
+        if (targetTags == null) targetTags = new List<string>();
         if (!entries.ContainsKey(eventID))
         {
 
@@ -397,6 +399,9 @@ public class Character_Personality
             public bool requireSelfDoer = false;
             public bool requireSelfReceiver = false;
 
+            public CharaReq selfReq = null;
+            public CharaReq targetReq = null;
+
             public List<string> tags = new List<string>();
             public List<string> extraPortraitTags = new List<string>();
             public bool useActiveTags = false;
@@ -464,6 +469,10 @@ public class Character_Personality
                         else if (ep.Receiver != null && ep.Receiver != rel.Owner) return false;
                     }
                 }
+                List<string> ttips = new List<string>();
+                if (this.selfReq != null && !CharaReqUtility.Validate(this.selfReq, ref ttips, rel.Owner)) return false;
+                if (this.targetReq != null && ! CharaReqUtility.Validate(this.targetReq, ref ttips, rel.Target)) return false;
+
                 foreach (var requirement in requirements)
                 {
                     if (!requirement.Validate(rel, selfTags, targetTags, ep)) return false;

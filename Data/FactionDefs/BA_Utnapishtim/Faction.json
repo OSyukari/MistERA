@@ -143,11 +143,21 @@
         {
             "ID": "charOrigin_KivotosStudent",
             "displayname": "Kivotos Student",
-            "tooltip": "Native of another world.\nLimit: Race Modifier must be Kivotos Student.",
+            "tooltip": "Native of another world.\nLimit: Race Modifier must be Kivotos Student.\n\nProvide 1 DR for hp damage (will be moved somewhere else in the future)",
             "availableOptionsID": [
                 "charOriginGift_none"
             ],
-            "forceRaceTemplate_ID": "humanRaceAddon_Kivotos"
+            "forceRaceTemplate_ID": "humanRaceAddon_Kivotos",
+            "stat_modifiers":[
+                {
+                    "statID":"stats_derived_baselineObedience",
+                    "modKey":"originMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                },
+                {
+                    "statID":"stats_derived_damageReduction_HP",
+                    "modKey":"originMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                }
+            ]
         }
     ]
     },

@@ -1610,11 +1610,20 @@ public class ExperienceLog
 
     }
    
-    public void AddClimaxMSG(int chararef, string msg)
+    public void AppendClimaxMSG(int chararef, string msg)
     {
         AddChara(chararef);
-        climaxMessage[chararef] = msg;
+        if (!climaxMessage.ContainsKey(chararef)) climaxMessage[chararef] = msg;
+        else climaxMessage[chararef] += msg;
     }
+
+    public void PrependClimaxMSG(int chararef, string msg)
+    {
+        AddChara(chararef);
+        if (!climaxMessage.ContainsKey(chararef)) climaxMessage[chararef] = msg.Replace("$append$", "");
+        else climaxMessage[chararef] = msg.Replace("$append$", climaxMessage[chararef]);
+    }
+
     public bool GetRightAlign(int chararef)
     {
         if (this.RightAlign.TryGetValue(chararef, out bool result)) return result;

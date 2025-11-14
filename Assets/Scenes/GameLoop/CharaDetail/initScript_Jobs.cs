@@ -8,7 +8,7 @@ public class initScript_Relations : MonoBehaviour
 {
     public scr_SelectableText homeFaction, homeFactionTemp;
     public TMP_Text charaComment;
-
+    public scr_HoverableText viewHidden;
     public scr_memoryBox prefab_MemoryEntry;
     public scr_memoryDaySplit prefab_DaySplit;
     //public RectTransform workFactionBox, workFactionsPrefab;
@@ -54,6 +54,15 @@ public class initScript_Relations : MonoBehaviour
         bool first = true;
         bool shorten = false;
         string lastString = Utility.GetRelativeDayString(current, lastTime);
+
+        List<string> _hidden = new List<string>();
+        foreach(var i in c.Relationships.GenericRelationship)
+        {
+            _hidden.Add($"{i.Key} {i.Value.Debug_RelationshipScores}");
+        }
+        if (_hidden.Count > 0) viewHidden.SetExternalTooltip(String.Join("\n", _hidden));
+        else viewHidden.SetExternalTooltip("none");
+
 
         for (int i = c.Memory.Entries.Count - 1; i >= 0; i--)// Memory_Entry mem in chara.MemoryManager.entries)
         {

@@ -499,6 +499,7 @@ public abstract class ActionPackage
         this.duration = this.targetCOM.TimeScale;
         this.LoggedBegin = false;
         this.LoggedOngoing = false;
+        this.LoggedKojo = false;
         this.Ticked = false;
         this.repeated = true;
     }
@@ -507,6 +508,7 @@ public abstract class ActionPackage
         this.duration = this.targetCOM.TimeScale;
         this.LoggedBegin = false;
         this.LoggedOngoing = false;
+        this.LoggedKojo = false;
         this.Ticked = false;
         if (resetRequest) this.requested = false;
     }
@@ -517,6 +519,7 @@ public abstract class ActionPackage
 
     public bool LoggedBegin = false;
     public bool LoggedOngoing = false;
+    public bool LoggedKojo = false;
     public bool Ticked = false;
     // package refused by C_MANAGER due to low package priority
 
@@ -1088,12 +1091,14 @@ public abstract class ActionPackage
         foreach (var ep in packages)
         {
             if (ep.skipCheckResult) continue; // skip player alone package
-            checkResults.Add(ep.GetCheckResult(!rightAlign));
+            var res = ep.GetCheckResult(!rightAlign);
+            if (res.Length < 1) continue;
+            checkResults.Add(res);
         }
 
         string finalResults = String.Join("\n", checkResults);
-        if (rightAlign) finalResults = "<align=\"right\">" + finalResults + "</align>";
-        return finalResults;
+        if (rightAlign && finalResults.Length > 0) finalResults = "<align=\"right\">" + finalResults + "</align>";
+        return finalResults.Length > 0 ? finalResults : "";
         //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
     }
     
@@ -1433,7 +1438,7 @@ public abstract class ActionPackage
 
     protected void SendRefuseEvent()
     {
-        Debug.LogError($"Sending refuse event for package {this.DisplayName}, doercount {this.doer.Count}, isupdating? {scr_UpdateHandler.current.Updating}");
+        
         if (this.doer.Count == 1 && this.receiver.Count > 0)
         {
             var refuseEV = new EventInstance(this.doer[0], "OnAPRefuse", "");
@@ -1451,7 +1456,9 @@ public abstract class ActionPackage
             refuseEV.Targets.Add("evTarget", this.receiver);
 
             MessageCollect mm = new MessageCollect();
-            mm.Merge(this.job.m, false);
+            this.job.CollectLogs(this, mm);
+
+            //mm.Merge(this.job.m, false);
             mm.exp.leftAlignOverride = mm.exp.isPlayerLog;
             this.job.m.Clear();
             failCallbacks.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm, false));// .m.Merge(mm, false));
@@ -1460,8 +1467,9 @@ public abstract class ActionPackage
             ActionPackage forceAP = this.Copy();
             forceAP.temporaryM = mm;
 
-            var checkResults = GetCheckResult(false);
-            eventStart.Add(() => scr_System_CampaignManager.current.AddLog(-1, checkResults, true));
+            //var checkResults = GetCheckResult(false);
+            //eventStart.Add(() => scr_System_CampaignManager.current.AddLog(-1, checkResults, true));
+            eventStart.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions_PreEvents(mm, true));
             
             //refuseInfo.Add(GetCheckResult(false));
             this.LoggedBegin = true;
@@ -1488,7 +1496,7 @@ public abstract class ActionPackage
                     if (doer[0] == scr_System_CampaignManager.current.Player) callbacks.Add(() => scr_UpdateHandler.current.ToggleCallbackUpdate());
                 }
             }// else do not add callback
-            Debug.Log($"SendRefuseEvent com_variant_name {String.Join("|", description)}, {this.DisplayName}");
+            Debug.Log($"SendRefuseEvent  for package {this.DisplayName}, doercount {this.doer.Count}, isupdating? {scr_UpdateHandler.current.Updating}, SUCCESS : com_variant_name {String.Join("|", description)}, {this.DisplayName}");
             refuseEV.AppendStrings.Add("com_variant_name", new List<string>(){ this.DisplayName });
             appends.AddRange(forceAP.tooltip);
 
@@ -1496,7 +1504,7 @@ public abstract class ActionPackage
         }
         else
         {
-            Debug.LogError($"Doercount {this.doer.Count} exceeding 1, abort launch");
+            Debug.LogError($"Sending refuse event failed, Doercount {this.doer.Count} exceeding 1, abort launch");
         }
     }
 

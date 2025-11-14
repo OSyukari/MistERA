@@ -982,36 +982,7 @@ public static class EventUtility
                 }
                 return true;
             case Event.EventEntry.ExecutionType.FlushMessageAll:
-                if (true)
-                {
-                    var b1 = String.Join("\n", owner.message.messages_checks);
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, b1, false));
-                    var b2 = String.Join("\n", owner.message.messages_before);
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, b2, false));
-
-                    foreach (var kvp in owner.message.messages_kojo)
-                    {
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp));
-                    }
-                    var m1 = owner.message.exp.PrintContent_Messages();
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m1, false));
-                    var m2 = owner.message.exp.PrintContent_Stats();
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m2, false));
-                    var m5 = owner.message.exp.PrintContent_Climax();
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m5, false));
-                    var m3 = owner.message.exp.PrintContent_Relations();
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m3, false));
-                    var m4 = owner.message.exp.PrintContent_Exps();
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m4, false));
-
-                    foreach (var kvp in owner.message.messages_kojo_after)
-                    {
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp));
-                    }
-
-                    var b4 = String.Join("\n", owner.message.messages_after);
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, b4, false));
-                }
+                owner.message.FlushCollectLogsCallback();
                 return true;
             case Event.EventEntry.ExecutionType.ExecuteAPOnSingleChara:
                 // randomly match doer and receiver, register doer to receiver characom, and add targetcomID

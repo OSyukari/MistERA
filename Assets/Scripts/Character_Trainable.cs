@@ -153,10 +153,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.referenceID = refID;
 
         this.Appearance = Template.Appearance;
+
         //Debug.Log("Setting Appearance to " + this.Appearance);
 
         if (this.Body == null) Body = new Character_Body(this);
         else Body.ReEstablishParent(this);
+
+        this.Body.Height = Template.Height;
+        this.Body.Weight = Template.Weight;
+
         Body.AddMissing();
 
 
@@ -617,6 +622,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonProperty] protected List<int> activeJobRefs = new List<int>();
     public void ChangeCurrentJob(Job job = null, string targetCOMid = "", string targetCOMTag = "")
     {
+
         this._cachedJobDescription = string.Empty;
         if (job != null && job == this.InteractionJob)
         {
@@ -624,7 +630,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
         else
         {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("Changing " + FirstName + "'s job from " + (CurrentJob == null ? "null" : CurrentJob.DisplayName) + " to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings)));
+            if (RefID == 0 && scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("Changing " + FirstName + "'s job from " + (CurrentJob == null ? "null" : CurrentJob.DisplayName) + " to " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings)));
             if (this.CurrentJob != null && (job == null || CurrentJob.RefID != job.RefID)) CurrentJob.RemoveActor(RefID);
 
             this.currentJobPointer = job;
@@ -1307,7 +1313,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             else if (this.CurrentJob != null) _cachedJobDescription = this.CurrentJob.GetJobDescription(RefID);
             else _cachedJobDescription = LocalizeDictionary.QueryThenParse("chara_currentjob_none"); ;
         }
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"{FirstName} getjobdescription {_cachedJobDescription}");
+        //if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"{FirstName} getjobdescription {_cachedJobDescription}");
         return _cachedJobDescription;
     }
 
@@ -1829,21 +1835,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Memory.NotifyRoomUnregister(r);
     }
 
-    [JsonIgnore] public int Height
-    {
-        get
-        {
-            if (Template != null) return Template.Height;
-            return 160;
-        }
-    }
-
-    
-
 
     [JsonIgnore] public bool Debug_ForceDeepSleep = false;
-
-
 }
 
 public class Character_BaseID_Index

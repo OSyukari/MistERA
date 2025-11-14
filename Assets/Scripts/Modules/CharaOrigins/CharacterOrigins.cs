@@ -108,6 +108,8 @@ public class Character_Origin
     [JsonIgnore][NonSerialized] public List<Character_Origin_startingOption> AvailableOptions = new List<Character_Origin_startingOption>();
     [JsonIgnore][NonSerialized] public List<Humanoid_Race> DisallowRace = new List<Humanoid_Race>();
     [JsonIgnore][NonSerialized] public List<Humanoid_RaceTemplate> DisallowRaceTemplate = new List<Humanoid_RaceTemplate>();
+
+    public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
 }
 
 [System.Serializable]

@@ -662,6 +662,15 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
                 package.isResolved = false;
             });
 
+            var callbacks3 = new List<Action>();
+            ev.FunctionCalls.Add("AddEventMessagePostResolve", callbacks3);
+            callbacks3.Add(() => {
+                if (ev.AppendStrings.ContainsKey("AddEventMessagePostResolve"))
+                {
+                    m.resolveMessage = $"{m.resolveMessage}\n{String.Join("\n", ev.AppendStrings["AddEventMessagePostResolve"])}";
+                }
+            });
+
             scr_System_CampaignManager.current.RegisterCanvasAnchorHideEventCallback(ev);
             scr_System_CampaignManager.current.HideCanvasAnchor();
 

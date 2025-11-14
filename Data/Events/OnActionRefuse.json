@@ -51,13 +51,13 @@
         "label": "br_npc_ops",
         "options":[
             {   
+                "option": "silent branch event, this shouldnt be displayed",
+                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_end"]} ] 
+            },
+            {   
                 "option": "branch where there is callbacks",
                 "Results": [ { "Type":"ExistCallbackID", "arguments":["apCallback"]},
                              { "Type":"JumpToLabel", "arguments":["","br_push"]} ] 
-            },
-            {   
-                "option": "silent branch event, this shouldnt be displayed",
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_end"]} ] 
             }
         ]
     },

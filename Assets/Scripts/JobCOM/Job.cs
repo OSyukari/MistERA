@@ -621,7 +621,8 @@ public class Job : IDisposable, I_Disposable
 
             if (display && !ap.executeSuccessful && !ap.LoggedBegin)
             {
-                m.messages_checks.Add(ap.GetCheckResult(rightAlign));
+                var checkResult = ap.GetCheckResult(rightAlign);
+                if (checkResult.Length > 0) m.messages_checks.Add(checkResult);
                 foreach (EvaluationPackage ep in ap.ListEP)
                 {
                     LogMessage_Kojo(ep, m);
@@ -642,7 +643,10 @@ public class Job : IDisposable, I_Disposable
         //else if ( ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
         else if (display && !ap.LoggedBegin)
         {   // one ticked
-            m.messages_checks.Add(ap.GetCheckResult(rightAlign));
+
+            var checkResult = ap.GetCheckResult(rightAlign);
+            if (checkResult.Length > 0) m.messages_checks.Add(checkResult);
+
             if (ap.repeated) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Ongoing(ep, false, rightAlign, m);
             else
             {
@@ -905,9 +909,13 @@ public class Job : IDisposable, I_Disposable
         if (ep.Receiver != null && ep.Receiver.RefID != 0) ep.Receiver.Relationships.GetKOJOMessage_Climax(false, ep, m);
     }
 
+    public bool kojoLogged = false;
+
     public void LogMessage_Kojo(EvaluationPackage ep, MessageCollect m = null)
     {
         if (m == null) m = this.m;
+        if (ep.Package.LoggedKojo) return;
+        ep.Package.LoggedKojo = true;
         if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName +", tags: ["+String.Join("|",ep.DoerSelfTag)+"] -> ["+String.Join("|", ep.ReceiverTargetTag) + $"], epStatus [{ep.Response}]");
         if (ep.Doer != null && ep.Doer.RefID != 0) ep.Doer.Relationships.GetKOJOMessage(true, ep, m);
         if (ep.Receiver != null && ep.Receiver.RefID != 0) ep.Receiver.Relationships.GetKOJOMessage(false, ep, m);

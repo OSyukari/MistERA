@@ -111,6 +111,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         //Debug.LogError("ONPLAYERJOBCHANGE SUBSCRIBER CALLED");
 
         if (scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Room) return;
+        if (!this.gameObject.activeInHierarchy) return;
         InternalUpdate();
     }
 

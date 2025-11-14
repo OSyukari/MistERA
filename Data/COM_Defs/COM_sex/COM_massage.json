@@ -357,7 +357,7 @@
             "comTags":["touch","massage"],
             "requirements":{
                 "requirement":{
-                    "req_Doers":{ "BodyTags":["arm"], "minRevealingScore":1 },
+                    "req_Doers":{ "BodyTags":["arm"] },
                     "req_Receivers":{ "BodyTags":["head"] , "minRevealingScore":1,
                         "requireConscious":false,
                         "requireAction": false },

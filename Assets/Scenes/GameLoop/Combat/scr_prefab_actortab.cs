@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
-using System.Linq;
 using System;
 
 public class scr_prefab_actortab : MonoBehaviour, IPointerEnterHandler
@@ -22,8 +21,8 @@ public class scr_prefab_actortab : MonoBehaviour, IPointerEnterHandler
 
     public scr_CharIconBox imageBox;
 
-    public scr_HoverableText nameBox, hp, mp, posture, status, action, location;
-    public scr_SelectableText btn_plus, btn_minus;
+    public scr_HoverableText  status, action, location;
+    public scr_SelectableText nameBox,  btn_plus, btn_minus;
 
     public RectTransform actionList;
     public RectTransform SelfRect;
@@ -63,10 +62,19 @@ public class scr_prefab_actortab : MonoBehaviour, IPointerEnterHandler
             this.Parent.MakeModCountButton(this, this.btn_minus, true);
             this.Parent.MakeModCountButton(this, this.btn_plus, false);
         }
+
+        if (!isHostile)
+        {
+            this.nameBox.forbidNotify = true;
+            this.nameBox.showBrackets = false;
+        }
+        else
+        {
+            this.Parent.MakeTargetSelectBTN(this, this.nameBox);
+        }
+
         this.Parent.MakeEOTActionButton(c, this.extra_EOTAction);
     }
-
-
 
     public bool CanModCount()
     {
@@ -105,7 +113,7 @@ public class scr_prefab_actortab : MonoBehaviour, IPointerEnterHandler
     public void UpdateContent(CombatInstance Handler, bool useOverride = false)
     {
         this.nameBox.SetText(Handler.GetName(c));
-        if (scr_System_CampaignManager.current.DebugMode) this.nameBox.SetExternalTooltip($"refid: {c.RefID}");
+        if (scr_System_CampaignManager.current.DebugMode) this.nameBox.GetComponent<scr_HoverableText>().SetExternalTooltip($"refid: {c.RefID}");
 
         this.imageBox.OnUpdateNotice();
         this.imageBox.CombatRefresh(Stats, true);
@@ -116,12 +124,6 @@ public class scr_prefab_actortab : MonoBehaviour, IPointerEnterHandler
         //else this.hp.SetText("-");
 
         location.SetText(Handler.GetLocationName(c));
-
-        //if (Stats.MP != null) Stats.MP.Draw(this.mp);
-        //else this.mp.SetText("-");
-        //this.hp.SetText($"HP {(Stats.HP != null ? $"{Stats.HP.Value}/{Stats.HP.MaxValue}" : "-/-")}");
-        //this.mp.SetText($"MP {(Stats.MP != null ? $"{Stats.MP.Value}/{Stats.MP.MaxValue}" : "-/-")}");
-        //CombatUtility.DrawPosture(Stats, this.posture);
 
         bool canPush = Handler.roundMaxAction > 2 && Stats.CanPush;
 

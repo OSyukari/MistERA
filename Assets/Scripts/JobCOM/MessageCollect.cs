@@ -18,7 +18,73 @@ public class MessageCollect
     public ExperienceLog exp = new ExperienceLog();
     public List<MessageCollect_KojoEntry> messages_kojo_after = new List<MessageCollect_KojoEntry>();
 
+    public void FlushCollectLogs()
+    {
+        var cnManager = scr_System_CampaignManager.current;
 
+        if (messages_checks.Count > 0) cnManager.AddLog(-1, String.Join("\n", messages_checks), false);
+        if (messages_before.Count > 0) cnManager.AddLog(-1, String.Join("\n", messages_before), false);
+
+        foreach (var kvp in messages_kojo) cnManager.AddLog(kvp);
+
+        cnManager.AddLog(-1, exp.PrintContent_Messages(), true);
+
+        foreach (var kvp in messages_kojo_after) cnManager.AddLog(kvp);
+        cnManager.AddLog(-1, exp.PrintContent_Climax(), true);
+        if (messages_after.Count > 0) cnManager.AddLog(-1, String.Join("\n", messages_after), true);
+
+        cnManager.AddLog(-1, exp.PrintContent_Stats(), true);
+        cnManager.AddLog(-1, exp.PrintContent_Relations(), true);
+        cnManager.AddLog(-1, exp.PrintContent_Exps(), true);
+
+        Clear();
+    }
+
+    public void FlushCollectLogsCallback()
+    {
+
+        if (messages_checks.Count > 0)
+        {
+            var s = String.Join("\n", messages_checks);
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, false));
+        }
+        if (messages_before.Count > 0)
+        {
+            var s = String.Join("\n", messages_before);
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, false));
+        }
+
+        foreach (var kvp in messages_kojo)
+        {
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp));
+        }
+
+        var s2 = exp.PrintContent_Messages();
+        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s2, true));
+
+        foreach (var kvp in messages_kojo_after)
+        {
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp));
+        }
+        var s4 = exp.PrintContent_Climax();
+        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s4, true));
+        if (messages_after.Count > 0)
+        {
+            var s = String.Join("\n", messages_after);
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
+        }
+
+        var s3 = exp.PrintContent_Stats();
+        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s3, true));
+
+        var s5 = exp.PrintContent_Relations();
+        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s5, true));
+
+        var s6 = exp.PrintContent_Exps();
+        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s6, true));
+
+        Clear();
+    }
 
     public MessageCollect() { }
     public MessageCollect(bool displayOverride = false)

@@ -80,6 +80,17 @@ public static class CharaReqUtility
             _tooltip.Add("Command invalid, target is wearing too much");
             return false;
         }
+        if (q.requireMale && !c.isMale)
+        {
+            _tooltip.Add($"Command invalid, {c.CallName} must be male");
+            return false;
+        }
+        if (q.requireFemale && !c.isFemale)
+        {
+            _tooltip.Add($"Command invalid, {c.CallName} must be female");
+            return false;
+        }
+        //if (q.requireAroused && c.Body.)
         if (q.requireNoTeammate && scr_System_CampaignManager.current.party.Members.Count > 0)
         {
             _tooltip.Add("Command invalid, player cannot have other teammate");

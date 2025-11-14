@@ -868,6 +868,10 @@ public class CombatInstance
                 .Replace("$self$", GetName(target.RefID)));
             // handles posture break, lose action
         }
+
+        // get natural armor ?
+        // from.Attack.damageTypes;
+
         var hpdmg = Mathf.Ceil(-amount - posDmg);
         stat.HP.ModValue(hpdmg);
         ActorStats[target.RefID].Reset(this);

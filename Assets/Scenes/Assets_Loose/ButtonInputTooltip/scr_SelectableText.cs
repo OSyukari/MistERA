@@ -78,6 +78,7 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (forbidNotify) return;
         if (isValid)
         {
             if (validator == null || validator.State == ButtonValidator_States.Valid)
@@ -98,6 +99,7 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (forbidNotify) return;
         if (isValid)
         {
             if (onHoverEnter != null) onHoverEnter();
@@ -107,7 +109,8 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.pointerId == -1 && isValid && optionID != -1 && !forbidNotify)
+        if(forbidNotify) return;
+        if (eventData.pointerId == -1 && isValid && optionID != -1)
         {
             //Debug.Log("SelectableText Notify Parent : optionID [" + optionID + "]");
             if (onClick != null) onClick();

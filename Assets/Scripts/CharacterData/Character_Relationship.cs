@@ -63,6 +63,12 @@ public class RelationshipManager
     [JsonProperty] protected Dictionary<string, Character_Relationship> relationships_generic = new Dictionary<string, Character_Relationship>();
     [JsonProperty] protected Dictionary<int, Character_Relationship> relationships = new Dictionary<int, Character_Relationship>();
 
+    [JsonIgnore]public Dictionary<string, Character_Relationship> GenericRelationship
+    { get
+        {
+            return relationships_generic;
+        } }
+
     public void NotifyCharaUnregister(int unregisterID)
     {
         if (relationships.TryGetValue(unregisterID, out var relation))
@@ -546,6 +552,16 @@ public class RelationshipManager
 
         [JsonIgnore] public string TargetBaseID { get { return targetBaseID; } }
         [JsonProperty] float[] relationshipScores = new float[5] { 0f, 0f, 0f, 0f, 0f};
+
+        [JsonIgnore] public string Debug_RelationshipScores
+        { get
+            {
+                return $"| {RelationshipScoreType.Trust} {relationshipScores[(int)RelationshipScoreType.Trust]} | " +
+                    $"{RelationshipScoreType.Fear} {relationshipScores[(int)RelationshipScoreType.Fear]} |" +
+                    $"{RelationshipScoreType.Goodwill} {relationshipScores[(int)RelationshipScoreType.Goodwill]} |" +
+                    $"{RelationshipScoreType.Badwill} {relationshipScores[(int)RelationshipScoreType.Badwill]} |" +
+                    $"{RelationshipScoreType.Desire} {relationshipScores[(int)RelationshipScoreType.Desire]} |";
+            } }
 
 
         [JsonIgnore] public float Trust_Raw

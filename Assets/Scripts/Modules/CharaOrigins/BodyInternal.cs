@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 
-[System.Serializable]
+
 public class BodyInternal_Base
 {
     [JsonProperty] private string id = "";
@@ -54,9 +54,15 @@ public class BodyInternal_Base
     public string sensitivityClassString = "";
     public string maxSensitivityStatString = "";
 
+    public string exposedKojoID = "";
+
     public bool needLubrication = false;
     public float sizeRatio = 0;
-    public float volumeRatio = 0;
     public float depthRatio = 0;
+
+    public float volumeHeightRatio = 0;
+    public float volumeMassRatio = 0;
+    public float maxExpansionRatio = 1;
+    public float visibleExpansionRatio = 1;
 
 }

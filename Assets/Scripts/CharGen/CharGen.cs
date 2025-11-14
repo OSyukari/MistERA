@@ -8,7 +8,6 @@ using System.Collections;
 using System.Linq;
 
 
-[System.Serializable]
 public enum NameCulture
 {
     none,
@@ -134,11 +133,14 @@ public class NameGenerator
     }
 }
 
-[System.Serializable]
 public class CharaTemplateGenerator
 {
     public string ID = "";
     public string firstName = "", middleName = "", lastName = "";
+
+    public int setHeight = 0, heightVariation = 0;
+    public int setWeight = 0, weightVariation = 0;
+
     public bool useNameGen = false;
     public NameCulture nameGen_firstName = NameCulture.none, nameGen_middleName = NameCulture.none, nameGen_lastName = NameCulture.none;
     public string nameDisplayFormat = "";
@@ -188,6 +190,13 @@ public class CharaTemplateGenerator
             template.stat_PSY = (int)Utility.RandVariation(psy_base == 0 ? template.stat_PSY : psy_base, psy_var);
             template.stat_WIL = (int)Utility.RandVariation(wil_base == 0 ? template.stat_WIL : wil_base, wil_var);
             template.SetGender(Appearance);
+            
+            if (this.setHeight > 0) template.Height = this.setHeight;
+            if (this.heightVariation > 0) template.Height = (int)Utility.RandVariation(template.Height, this.heightVariation);
+
+            if (this.setWeight > 0) template.Weight = this.setWeight;
+            if (this.weightVariation > 0) template.Weight = (int)Utility.RandVariation(template.Weight, this.weightVariation);
+
             if (this.inventoryOverride.Count > 0) template.initialInventory.AddRange(this.inventoryOverride);
             return template;
         }

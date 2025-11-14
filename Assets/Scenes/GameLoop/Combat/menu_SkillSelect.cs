@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
-using System.Linq;
 
 public class menu_SkillSelect : scr_Menu, IPointerClickHandler
 {
@@ -65,9 +66,12 @@ public class menu_SkillSelect : scr_Menu, IPointerClickHandler
         SkillTab.originalAction.SetText($"{(this.isEOTAction ? "EX" : actionIndex + 1)}: {(this.editing == null || this.editing.actionRef == null ? "-" : this.editing.actionRef.Name)}  ");
 
         name_self.SetText(_name_self.Replace("$name$", c.FirstName));
-        Target = editing == null ? null : editing.targetRef;
+
+        if (editing != null) Target = editing.targetRef;
+        else name_target.SetText(_name_target.Replace("$name$", Combat.GetName(Target)));
+        //Target = editing == null ? null : editing.targetRef;
         if (editing != null) this.wipActionsList.Remove(editing);
-        else 
+        else
         {
             Left.Refresh(c, Combat);
             Right.Refresh(Target, Combat);
@@ -249,17 +253,16 @@ public class menu_SkillSelect : scr_Menu, IPointerClickHandler
 
     public RectTransform targetingRect_A, targetingRect_B;
 
-    Character_Trainable _target;
     public Character_Trainable Target
     {
         get
         {
-            return _target;
+            return parent.CurrentTarget;
         }
         set
         {
-            _target = value;
-            name_target.SetText(_name_target.Replace("$name$", Combat.GetName(Target)));
+            parent.CurrentTarget = value;
+            name_target.SetText(_name_target.Replace("$name$", Combat.GetName(value)));
         }
     }
     public enum MenuMode 

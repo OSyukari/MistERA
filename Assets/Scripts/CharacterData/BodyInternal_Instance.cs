@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using UnityEngine;
 
 public enum Ranking
 {
@@ -213,14 +212,20 @@ public class BodyInternal_Instance
         ReEstablishParent(c);
 
         basePointer = scr_System_Serializer.current.GetByNameOrID_BodyInternal_Base(baseID);
-        if (basePointer == null) return false;
+        if (Base == null) return false;
         this.experiences = new Sexperience();
 
-        orifice_depth = basePointer.depthRatio == 0 ? 0 : Utility.RandVariation(Owner.Height, 0.1f) * basePointer.depthRatio;
-        orifice_size = basePointer.sizeRatio == 0 ? 0 : Utility.RandVariation(Owner.Height, 0.1f) * basePointer.sizeRatio;
-        volume_capacity = basePointer.volumeRatio == 0 ? 0 : Utility.RandVariation(Owner.Height, 0.1f) * basePointer.volumeRatio;
+        orifice_depth = Base.depthRatio == 0 ? 0 : Utility.RandVariation(Owner.Body.Height, 0.1f) * Base.depthRatio;
+        orifice_size = Base.sizeRatio == 0 ? 0 : Utility.RandVariation(Owner.Body.Height, 0.1f) * Base.sizeRatio;
 
-        contentsIndex = new Dictionary<string, int>();
+        if (Base.volumeHeightRatio != 0 && Base.volumeMassRatio != 0)
+        {
+            volume_capacity = (float)Owner.Body.Height * (1f + Base.volumeMassRatio * Owner.Body.BMI*0.1f / 5f) * Base.volumeHeightRatio;
+            //Debug.Log($"Generating intenral volume, height {Owner.Body.Height} ratio {Base.volumeHeightRatio} mass {Base.volumeMassRatio} BMI {Owner.Body.BMI}, result {volume_capacity}");
+        }
+
+        contentsIndex.Clear();
+
         foreach (BodyEquipLayer i in equipLayers)
         {
             foreach (BodyPartEquipSlot j in availableSlots)
@@ -423,7 +428,6 @@ public class BodyInternal_Instance
     {
         get
         {
-            //if (Trait_Sensitivity != null) return Math.Max(basePointer.defaultSensitivity + Trait_Sensitivity.trait_score, 0);
             if (Base.maxSensitivityStatString == "") return 0;
             //Debug.Log("Fetching " + Base.maxSensitivityStatString+", does it exist "+(scr_System_Serializer.current.GetByNameOrID_StatsDerivedBase(Base.maxSensitivityStatString) != null));
 
@@ -528,14 +532,52 @@ public class BodyInternal_Instance
 
     }
     [JsonProperty] Dictionary<int, int> ContainedRefs_Delays = new Dictionary<int, int>();
-    public float volume_capacity;
+    public float volume_capacity = 0;
     [JsonIgnore] public bool containsOverCapacity
+    {
+        get
+        {
+            return CurrentlyContained >= MaxCapacity;
+        }
+    }
+    [JsonIgnore]
+    public float VisiblyExpandedCapacity
+    {
+        get
+        {
+            return this.volume_capacity < 0.01 ? 0 : this.volume_capacity * Base.visibleExpansionRatio;
+        }
+    }
+    [JsonIgnore] public float MaxCapacity
+    {
+        get
+        {
+            return this.volume_capacity < 0.01 ? 0 : this.volume_capacity * Base.maxExpansionRatio;
+        }
+    }
+
+    [JsonIgnore] public bool VisiblyExpanded { get
+        {
+            return this.volume_capacity < 0.01 || CurrentlyContained < 0.1 ? false : CurrentlyContained / this.volume_capacity > Base.visibleExpansionRatio;
+        } }
+
+    [JsonIgnore]
+    public float CurrentlyContained
     {
         get
         {
             float sum = 0;
             foreach (var i in Contains) sum += i.GetComp_Ingestible().amount;
-            return sum > volume_capacity;
+            return sum;
+        }
+    }
+
+    [JsonIgnore]
+    public float RemainingCapacity
+    {
+        get
+        {
+            return MaxCapacity - CurrentlyContained;
         }
     }
 
@@ -557,22 +599,80 @@ public class BodyInternal_Instance
         Owner.Skills.CheckExperienceGain(tags, amount, m);
     }
 
-    public void Ingest(Item_Instance i, ExperienceLog m = null)
+
+    public bool Ingest(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null)
+    {
+        if (!this.canContain) return false;
+        var comp = item.GetComp_Ingestible();
+
+
+        if (item as Item_Instance_Cum != null)
+        {
+            var com = item as Item_Instance_Cum;
+            if (!com.experienceTicked)
+            {
+                com.experienceTicked = true;
+                int exp = Math.Abs((int)(comp.amount / 10)) + 1;
+
+                AddExperience(comp.amount, new List<string>() { "cum" }, m);
+
+                if (cumStimulation != 0)
+                {
+                    string s = Sensitivity;
+                    if (s != "") Owner.Stats.AddOrModStatus(s, comp.amount * cumStimulation);
+                }
+            }
+        }
+
+        if (RemainingCapacity >= comp.amount || comp.amount < 1)
+        {
+            Debug.Log($"{Owner.CallName} {this.DisplayName} ingest cum {comp.amount} ml, RemainingCapacity {RemainingCapacity}, full capacity ingest");
+            IngestInternal(item, m);
+            return true;
+        }
+        else if (RemainingCapacity >= 1)
+        {
+            var newcap = Math.Min(RemainingCapacity, comp.amount);
+            if (item is Item_Instance_Cum)
+            {
+                var cum = item as Item_Instance_Cum;
+                Item_Instance_Cum newitem = WorldManager.Instantiate(cum.Owner, cum.nameOverwrite);
+                newitem.GetComp_Ingestible().amount = newcap;
+                IngestInternal(newitem, m);
+            }
+            else
+            {
+                Item_Instance newitem = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, item.Count);
+                newitem.GetComp_Ingestible().amount = newcap;
+                IngestInternal(newitem, m);
+            }
+            comp.amount -= newcap;
+        }
+
+        if (!forceFill) return false;
+        if (fillHistory == null) fillHistory = new List<BodyInternal_Instance>() { this };
+        else fillHistory.Add(this);
+
+        BodyInternal_Instance directionOut = (Base.tag_directionOut == "" || Base.tag_directionOut == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionOut);
+        BodyInternal_Instance directionIn = (Base.tag_directionIn == "" || Base.tag_directionIn == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionIn);
+
+        if (directionIn != null && directionIn != this && directionIn.canContain && !fillHistory.Contains(directionIn) && directionIn.Ingest(item, m, forceFill, fillHistory)) return true;
+        else if (directionOut != null && directionOut != this && directionOut.canContain && !fillHistory.Contains(directionOut) && directionOut.Ingest(item, m, forceFill, fillHistory)) return true;
+
+        return false;
+    }
+
+    protected void IngestInternal(Item_Instance i, ExperienceLog m = null)
     {
         var comp = i.GetComp_Ingestible();
-        //bool consumed = false;
-        if (i as Item_Instance_Cum != null)
+
+        if (comp != null && m != null && i is Item_Instance_Cum)
         {
-            float amount = comp.amount;
-            int exp = Math.Abs((int)(comp.amount / 10)) + 1;
-
-            AddExperience(amount, new List<string>() { "cum"}, m);
-
-            if (cumStimulation != 0)
-            {
-                string s = Sensitivity;
-                if (s != "") Owner.Stats.AddOrModStatus(s, amount * cumStimulation);
-            }
+            var owner = (i as Item_Instance_Cum).Owner;
+            m.AppendClimaxMSG(owner.RefID,
+                LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_single")
+                    .Replace("$partname$", this.DisplayNameFull)
+                    .Replace("$amount$", $"{comp.amount.ToString("N0")}"));
         }
 
         UtilityEX.ApplyOnConsume(this, comp.OnUseEffects);
@@ -593,8 +693,7 @@ public class BodyInternal_Instance
         }
 
         ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method = comp.ingestMethod.Find(x => this.hasTag(x.bodyTags));
-
-        //if (!contain.ContainsKey(kvp.Key)) DigestDelays.Add(kvp.Key, Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
+       // if (!contain.ContainsKey(kvp.Key)) DigestDelays.Add(kvp.Key, Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
         this.ContainedRefs_Delays.Add(i.RefID, (int)Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
         contains_cache = null;
     }
@@ -675,7 +774,7 @@ public class BodyInternal_Instance
         } }
 
     //List<Item_Instance> equippedItems;
-    [JsonProperty] Dictionary<string, int> contentsIndex;
+    [JsonProperty] Dictionary<string, int> contentsIndex = new Dictionary<string, int>();
 
     /// <summary>
     /// Return -1 fail, return 0 success return 1+ swapped gear

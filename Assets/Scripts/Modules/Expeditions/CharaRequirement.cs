@@ -26,6 +26,10 @@ public class CharaReq
     public bool requireCombat = false;
     public bool requireFullHP = false;
     public bool requireMissingHP = false;
+    //public bool requireAroused = false;
+
+    public bool requireMale = false;
+    public bool requireFemale = false;
 
     public List<string> requireAbsentJobwithCOMTag = new List<string>();
     public List<string> requireExistingJobwithCOMTag = new List<string>();
@@ -39,6 +43,9 @@ public class CharaReq
         requireUnrestrained = requireUnrestrained || req.requireUnrestrained;
         requireMovement = requireMovement || req.requireMovement;
         requireAction = requireAction && req.requireAction;
+        requireMale = this.requireMale || req.requireMale;
+        requireFemale = this.requireFemale || req.requireFemale;
+        //requireAroused = this.requireAroused || req.requireAroused;
         if (this.minRevealingScore == -1 && req.minRevealingScore != -1) this.minRevealingScore = req.minRevealingScore;
         if (this.cost_EN == 0 && req.cost_EN != 0) this.cost_EN = req.cost_EN;
         if (this.cost_ST == 0 && req.cost_ST != 0) this.cost_ST = req.cost_ST;

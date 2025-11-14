@@ -2,14 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System.IO;
-using System.Collections;
-using System.Linq;
-using Cysharp.Threading.Tasks;
 
-
-[System.Serializable]
 public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonExisting
 {
 
@@ -160,11 +153,12 @@ public class CharaSerializableTemplate_Trainable : CharaSerializableTemplate_Bas
 
 
 
-[System.Serializable]
 public abstract class CharaTemplate
 {
     public List<Skills> Skills = new List<Skills>();
-    public int Height = 163;
+    public int Height = 162;//cm
+    public double HWMultiplier = 0.43;
+    public int Weight = 70; //kg
     public Humanoid_GenderAppearance Appearance = Humanoid_GenderAppearance.Female;
     public int stat_STR = 10, stat_CON = 10, stat_PSY = 10, stat_WIL = 10;
     public string personalityID = "personality_default";
@@ -189,14 +183,12 @@ public abstract class CharaTemplate
     public abstract void SetGender(Humanoid_GenderAppearance gender);
 }
 
-[System.Serializable]
 public class presetInventory
 {
     public string ID = "";
     public string nameOverwrite = "";
 }
 
-[System.Serializable]
 public class CharaSafeTemplate : CharaTemplate
 {
 
@@ -228,6 +220,7 @@ public class CharaSafeTemplate : CharaTemplate
         newInstance.Skills = new List<Skills>();
         if (this.Skills != null) newInstance.Skills.AddRange(this.Skills);
         newInstance.Height = Height;
+        newInstance.Weight = Weight;
         newInstance.stat_STR = stat_STR;
         newInstance.stat_CON = stat_CON;
         newInstance.stat_PSY = stat_PSY;
@@ -244,7 +237,6 @@ public class CharaSafeTemplate : CharaTemplate
     }
 }
 
-[System.Serializable]
 public class CharaTrainableTemplate : CharaTemplate
 { 
 
@@ -398,6 +390,7 @@ public class CharaTrainableTemplate : CharaTemplate
         newInstance.Skills = new List<Skills>();
         if (this.Skills != null) newInstance.Skills.AddRange(this.Skills);
         newInstance.Height = Height;
+        newInstance.Weight = Weight;
         newInstance.stat_STR = stat_STR;
         newInstance.stat_CON = stat_CON;
         newInstance.stat_PSY = stat_PSY;

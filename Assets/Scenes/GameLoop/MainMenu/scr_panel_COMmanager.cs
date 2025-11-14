@@ -61,8 +61,8 @@ public class scr_panel_COMmanager : scr_Menu
 
     private void OnPlayerJobChange(int i, Job j)
     {
-        if (j is Job_Sex_Group) ChangeCurrentTab(COMTabs.Sex);
-        if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room) ValidateAll();
+        if (j is Job_Sex_Group && currentTab != COMTabs.Sex) ChangeCurrentTab(COMTabs.Sex);
+        if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room && this.gameObject.activeInHierarchy) ValidateAll();
     }
 
     public List<string> SexComDoersNames
@@ -157,6 +157,7 @@ public class scr_panel_COMmanager : scr_Menu
                     }
 
                     title_sex.text = body.Replace("$doer$", doers).Replace("$receiver$", receivers);
+                
                 }
                 else
                 {
@@ -164,9 +165,14 @@ public class scr_panel_COMmanager : scr_Menu
                     Box_MassageCOMs.gameObject.SetActive(true);
                     Box_TouchCOMs.gameObject.SetActive(true);
                     Box_ServiceCOMs.gameObject.SetActive(true);
-                    if (refID > 0) title_sex.text = LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName);
+                    if (refID > 0)
+                    {
+                        title_sex.text = $"{LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName)}\n{String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyDescription)}";
+                    }
                     else title_sex.text = LocalizeDictionary.QueryThenParse("comManager_title_skinship_self");
                 }
+
+
                 break;
             case COMTabs.Inventory:
                 if (refID > 0) title_inventory.text = LocalizeDictionary.QueryThenParse("comManager_title_inventory_target").Replace("$name$", name);
@@ -175,6 +181,7 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
+    public scr_HoverableText self_internal_descriptor, target_internal_descriptor;
     protected void RefreshEquips(int targetRef)
     {
         bool playerbox = false, targetbox = false;
@@ -185,11 +192,20 @@ public class scr_panel_COMmanager : scr_Menu
         }
         player_UndressBox.gameObject.SetActive(playerbox);
         RefreshEquips(ref managedPlayerEquipRefs, playerbox ? scr_System_CampaignManager.current.Player : null, player_UndressEquipList);
-        if (playerbox) undress_player_name.text = scr_System_CampaignManager.current.Player.FirstName;
+        if (playerbox)
+        {
+            //self_internal_descriptor.SetText("");
+            self_internal_descriptor.SetText(String.Join(", ", scr_System_CampaignManager.current.Player.Body.BodyRevealingDesriptors));
+            undress_player_name.text = scr_System_CampaignManager.current.Player.FirstName;
+        }
 
         target_UndressBox.gameObject.SetActive(targetbox);
         RefreshEquips(ref managedTargetEquipRefs, targetbox ? scr_System_CampaignManager.current.CurrentTarget : null, target_UndressEquipList);
-        if (targetbox) undress_target_name.text = scr_System_CampaignManager.current.CurrentTarget.FirstName;
+        if (targetbox)
+        {
+            target_internal_descriptor.SetText(String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyRevealingDesriptors));
+            undress_target_name.text = scr_System_CampaignManager.current.CurrentTarget.FirstName;
+        }
     }
 
     private void OnNotifyUpdate(bool value)
@@ -701,7 +717,7 @@ public class scr_panel_COMmanager : scr_Menu
             s3 += "\nTracking Roomjobref " + job.RefID;
         }
 
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("All tracked job : [" + String.Join("] [", trackedJobRefs) + "]\n"+s3);
+        //if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("All tracked job : [" + String.Join("] [", trackedJobRefs) + "]\n"+s3);
 
         foreach(int jobRef in tempList)
         {
@@ -884,7 +900,7 @@ public class scr_panel_COMmanager : scr_Menu
                     {
                         foreach (var ap in j.JoinablePackages(0))
                         {
-                            Debug.Log($"package comID {ap.targetCOM.ID} actors {String.Join("|", ap.actorRefs)} remaining {ap.Duration} jobref {ap.job.RefID}");
+                            if (scr_System_CentralControl.current.LogPrefs.DLog_CurrentRoomJob) Debug.Log($"package comID {ap.targetCOM.ID} actors {String.Join("|", ap.actorRefs)} remaining {ap.Duration} jobref {ap.job.RefID}");
                             joinableAPTracker.Add(MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true));
                         }
                         /*
@@ -2299,7 +2315,7 @@ else */
             chara.Undress(BodyEquipLayer.None, (Revealing)revealingScoreFilter);
             //Debug.Log("Chara [" + chara.FirstName + "] undress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
-            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
+            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
         }
     }
 
@@ -2350,7 +2366,7 @@ else */
             chara.Undress(layer, (Revealing)revealingScoreFilter);
             //Debug.Log("Chara [" + chara.FirstName + "] undress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
-            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
+            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
         }
     }
 
@@ -2412,7 +2428,7 @@ else */
             chara.Redress(layer);
             //Debug.Log("Chara [" + chara.FirstName + "] redress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
-            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
+            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
         }
     }
 
@@ -2460,7 +2476,7 @@ else */
             chara.Redress();
             //Debug.Log("Chara [" + chara.FirstName + "] redress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
 
-            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
+            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
         }
     }
 
@@ -2532,7 +2548,7 @@ else */
         {
             if (chara.Inventory.Contains(item)) chara.Reequip(item);
             else chara.UnequipItem(equipRef, -1, true, true);
-            scr_System_CampaignManager.current.ChangeCurrentTarget(chara.RefID, true);
+            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
         }
     }
 

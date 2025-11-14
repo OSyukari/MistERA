@@ -166,7 +166,7 @@
     {   
         "option": "silent branch event, this shouldnt be displayed",
         "Results": [ 
-            { "Type":"StartCombat" , "arguments":["exp_event_combat_victory","exp_event_combat_draw","event_goblin_combatDefeat"]} ] 
+            { "Type":"StartCombat" , "arguments":["exp_event_combat_Victory","exp_event_combat_Draw","event_goblin_combatDefeat"]} ] 
     }
     ]
 },

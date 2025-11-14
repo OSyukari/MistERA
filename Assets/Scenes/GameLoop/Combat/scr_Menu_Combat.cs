@@ -159,6 +159,20 @@ public class scr_Menu_Combat : scr_Menu
     Action PostValidateCallback = null;
     Action SkipValidateCallback = null;
 
+    public button_selectTarget MakeTargetSelectBTN(scr_prefab_actortab tab, scr_SelectableText btn)
+    {
+        btn.Initialize(this, new button_selectTarget(this, tab.c, btn));
+
+        btn.optionID = AssertUniqueHash(btn.GetHashCode());
+        this.buttonsByID.Add(btn.optionID, btn);
+        this.validatorsByID.Add(btn.optionID, btn.Validator);
+
+        TemporaryButtonRefs.Add(btn.optionID);
+
+        return btn.Validator as button_selectTarget;
+
+    }
+
     public Button_ModActionCount MakeModCountButton(scr_prefab_actortab tab, scr_SelectableText btn, bool isReduce)
     {
         btn.Initialize(this, new Button_ModActionCount(this, tab, currentActiveCombat, isReduce));
@@ -230,6 +244,7 @@ public class scr_Menu_Combat : scr_Menu
     public RectTransform charaList_teamA, charaList_teamB, centerActionList;
     public scr_prefab_actortab prefab_Actor;
 
+    public Character_Trainable CurrentTarget = null;
     protected void UnloadCombatInstance()
     {
         if (currentActiveCombat != null ) currentActiveCombat.Observer_InstanceUpdate -= OnInstanceUpdate;
@@ -600,6 +615,31 @@ public class scr_Menu_Combat : scr_Menu
         }
     }
 
+    public class button_selectTarget : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Menu_Combat parent;
+        Character_Trainable c;
+        scr_SelectableText text;
+
+        public button_selectTarget(scr_Menu_Combat parent, Character_Trainable c, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent;
+            this.c = c;
+            this.text = text;
+        }
+
+        public override bool IsButtonValid()
+        {
+            this.text.Toggle(true, parent.CurrentTarget == c);
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            if (parent.CurrentTarget == c) parent.CurrentTarget = null;
+            else parent.CurrentTarget = c;
+        }
+    }
     public class Button_OpenEOTActionSelect : ButtonValidator, I_ButtonClickable
     {
         new scr_Menu_Combat parent;

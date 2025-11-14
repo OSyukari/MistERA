@@ -103,6 +103,17 @@ public class CombatManager
         activeInstances.Remove(instance);
         if (_playerInstance == instance) _playerInstance = null;
 
+        if (instance.sourceEV != null && instance.sourceEV.FunctionCalls.ContainsKey("AddEventMessagePostResolve"))
+        {
+            var resultString = LocalizeDictionary.QueryThenParse($"exp_event_combat_{instance.Result}");
+            instance.sourceEV.AppendStrings.Add("AddEventMessagePostResolve", new List<string>() { resultString });
+            foreach(var func in instance.sourceEV.FunctionCalls["AddEventMessagePostResolve"])
+            {
+                func.Invoke();
+            }
+        }
+
+
         var endEVID = instance.CombatEndEventID;
         if (endEVID != "")
         {

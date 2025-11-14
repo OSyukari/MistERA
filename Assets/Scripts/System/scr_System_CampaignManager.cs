@@ -351,6 +351,11 @@ public class scr_System_CampaignManager : MonoBehaviour
            // Debug.LogError("Detect addlog \\ n 3");
             return;
         }
+        if (s.Contains("<align=\"right\"></align>"))
+        {
+            Debug.LogError($"empty string dtected, full string [{s}]");
+            return;
+        }
         var chara = FindInstanceByID(refID);
         var lg = LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, false, rightAlign);
         Observer_MessageLogs?.Invoke(lg, animate);
@@ -445,7 +450,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         if (LogManager.SetLogChara(refID, isAnimating))
         {
-            Debug.Log("Log_TrySetChara true " + refID.Owner.CallName);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log("Log_TrySetChara true " + refID.Owner.CallName);
             Observer_LogsCharaChange?.Invoke(refID, new List<string>());
         }
     }

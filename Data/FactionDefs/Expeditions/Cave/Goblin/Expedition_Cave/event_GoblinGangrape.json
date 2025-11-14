@@ -73,7 +73,7 @@
     "line": "$party.name$偷袭了哥布林！（敌方全员HP-2）",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-2"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
-                { "Type":"StartCombat" , "arguments":["event_goblin_gangRape_rescue","exp_event_combat_draw","event_goblin_combatDefeat"]} ],
+                { "Type":"StartCombat" , "arguments":["event_goblin_gangRape_rescue","exp_event_combat_Draw","event_goblin_combatDefeat"]} ],
     "isLast": true
 },
 {

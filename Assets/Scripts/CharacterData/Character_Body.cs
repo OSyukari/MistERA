@@ -7,9 +7,80 @@ using System.Runtime.Serialization;
 using System.Linq;
 using Newtonsoft.Json;
 
-[System.Serializable]
+
 public class Character_Body
 {
+    float _cacheBMI = 0;
+    [JsonIgnore]
+    public float BMI
+    {
+        get
+        {
+            if (_cacheBMI == 0)
+            {
+                _cacheBMI = (float)Weight / ( (float)Height* (float)Height / 100f /100f);
+                Debug.Log($"Caching BMI score {Weight}/({(float)Height/100}*{(float)Height / 100}) = {_cacheBMI}");
+            }
+
+            return _cacheBMI;
+        }
+    }
+    public int Height = 162;
+    public int Weight = 70;
+
+    List<string> _cached_bodyDescriptions = new List<string>();
+    List<string> _cached_internalTags = new List<string>();
+    bool _cached_internals_description = false;
+    public void NotifyInternalsContentChange()
+    {
+        _cached_internals_description = false;
+    }
+
+    [JsonIgnore]
+    public List<string> BodyDescription
+    {
+        get
+        {
+            if (!_cached_internals_description && GetBodyDescription()) return _cached_bodyDescriptions;
+            else return _cached_bodyDescriptions;
+        }
+    }
+    [JsonIgnore]
+    public List<string> BodyRevealingDesriptors { get
+        {
+            if (!_cached_internals_description && GetBodyDescription()) return _cached_internalTags;
+            else return _cached_internalTags;
+        } }
+    protected bool GetBodyDescription()
+    {
+        _cached_internals_description = true;
+        _cached_bodyDescriptions.Clear();// = "";
+        _cached_internalTags.Clear();
+        var tempList = new SortedDictionary<int,string>();
+        foreach(var part in this.Body)
+        {
+            if (part.internals.Count < 1) continue;
+            if (part.GetRevealingScore(BodyEquipLayer.None) > 0) continue;
+            foreach(var i in part.internals)
+            {
+                if (i.Base.exposedKojoID == "") continue;
+                tempList.Add(i.sortOrder, i.Base.exposedKojoID);
+            }
+        }
+        var string_tempList = tempList.Values.Distinct().ToList();
+        var relation = Owner.Relationships.FindRelationshipWith(Owner);
+        foreach(var kojoID in string_tempList)
+        {
+            var result = Owner.Relationships.Personality.GetKOJOMessage(kojoID, relation, null, null);
+            if (result == null || result.message.Length < 1) continue;
+            _cached_bodyDescriptions.Add(result.message);
+            _cached_internalTags.Add(LocalizeDictionary.QueryThenParse(kojoID));
+        }
+
+        _cached_internalTags = _cached_internalTags.Distinct().ToList();
+        return true;
+    }
+
 
     List<CombatAction> _alwaysValidActions = null;
     [JsonIgnore]
@@ -48,6 +119,7 @@ public class Character_Body
 
     public void UpdateTimeMinute(TimeSpan t)
     {
+       // _cached_internals_description = false;
         foreach (BodyInternal_Instance i in Internals) i.UpdateTimeMinute(t);
     }
     public void UpdateTimeHour(TimeSpan t)
@@ -223,6 +295,7 @@ public class Character_Body
                     if (part.EquipItem(item, ref slots, forceEquip) && slots.Count < 1) break;
                 }
             }
+            _cached_internals_description = false;
             return true;
         }
         else
@@ -350,7 +423,7 @@ public class Character_Body
             returnVal = i.UnequipItem(itemRefID) || returnVal;
             //if (returnVal) break;
         }
-
+        _cached_internals_description = false;
         return returnVal;
 
     }
@@ -431,11 +504,11 @@ public class Character_Body
                     this.Climax = true;
                     // ADDLOG CLIMAX
                     var cumAmount = 20;
+                    cumKeywords = "yes";
                     if (part.canFuck) cum = part.Cum(cumAmount, exp);
 
                     if (cum != null)
                     {
-
                         this.Cum = true;
 
                         // find valid container for cum
@@ -447,14 +520,23 @@ public class Character_Body
 
                         if (container != null)
                         {   // if valid bodyinternal container exist : Fucker != null && Fucker.canContain
-                            container.Ingest(cum, exp);
+                            if (!container.Ingest(cum, exp, true))
+                            {
+                                scr_System_CampaignManager.current.Map.FindRoomByChara(ownerRefID).AddItem(cum);
+                                // cum on ground, write message
+                                exp.AppendClimaxMSG(Owner.RefID, LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_none")
+                                    .Replace("$amount$", $"{cum.GetComp_Ingestible().amount.ToString("N0")}"));
+                            }
 
+                            exp.PrependClimaxMSG(Owner.RefID, LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_prepend"));
+
+                            container.Parent.Owner.Body.NotifyInternalsContentChange();
                             string key = "ui_entry_memory_description_cum_";
                             // ADDLOG CUM FOR RECEIVER
                             var desc = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_creampie");
                             desc = desc.Replace("$target$", part.Owner.FirstName)
                                         .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
-                                        .Replace("$amount$", cum.GetComp_Ingestible().amount.ToString("N0"));
+                                        .Replace("$amount$", cumAmount.ToString("N0"));
 
 
                             List<string> containerTags = new List<string>(container.Base.tags) {};
@@ -462,13 +544,13 @@ public class Character_Body
                             UtilityEX.GetActorTag(ref containerTags, container.Owner);
                             if (container.Sensitivity != "") containerTags.Add(container.Sensitivity);
 
-                            UtilityEX.CheckExperienceGainNoStimulate(container.Owner, cum.GetComp_Ingestible().amount, false, containerTags, new List<string>());
+                            UtilityEX.CheckExperienceGainNoStimulate(container.Owner, cumAmount, false, containerTags, new List<string>());
 
                             // ADDLOG CUM FOR SHOOTER
                             var desc2 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_cumOnto");
                             desc2 = desc2.Replace("$target$", container.Owner.FirstName)
                                         .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
-                                        .Replace("$amount$", cum.GetComp_Ingestible().amount.ToString("N0"));
+                                        .Replace("$amount$", cumAmount.ToString("N0"));
 
                             
                             var memInst2 = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.None, Memory_Attitude.None, desc);
@@ -478,8 +560,6 @@ public class Character_Body
                             
                             var memInst3 = new MemInstance(new List<int>() { container.Owner.RefID }, containerTags, "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc2);
                             part.Owner.Memory.AddEntry(memInst3, selfTag, -1, true);
-
-                            cumKeywords = LocalizeDictionary.QueryThenParse("experience_sex_cumtainer").Replace("$amount$", cumAmount.ToString()).Replace("$partname$",container.DisplayNameFull);
                         }
                         else
                         {   // cum on ground
@@ -487,16 +567,14 @@ public class Character_Body
 
                             // ADDLOG CUM FOR SHOOTER
                             var desc = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_cum");
-                            desc = desc .Replace("$amount$", cum.GetComp_Ingestible().amount.ToString("N0"));
+                            desc = desc .Replace("$amount$", cumAmount.ToString("N0"));
 
                             
                             var memInst4 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>() { "" }, "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc);
                             part.Owner.Memory.AddEntry(memInst4, selfTag, -1, true);
-
-                            cumKeywords = LocalizeDictionary.QueryThenParse("experience_sex_cum").Replace("$amount$", cumAmount.ToString());
                         }
                         climaxDebuff -= 200;
-                        //climaxKeywords.Add("Cum(" + (container != null? container.DisplayName + ":"+ cum.GetComp_Ingestible().amount+"ml" + ":"+container.Owner.FirstName : cum.GetComp_Ingestible().amount+"ml") + ")");
+  
 
                         var desc1 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
 
@@ -533,12 +611,20 @@ public class Character_Body
                     .Replace("$sensitivity$", disassemble[1])
                     .Replace("$count$", LocalizeDictionary.QueryThenParse(disassemble[0] + "_" + disassemble[2]));
 
-                string s = Owner.FirstName + ":" + climaxKeywords + (cumKeywords.Length > 0 ? "/" + cumKeywords : "");
+                if (cumKeywords.Length > 0)
+                {
+                    exp.PrependClimaxMSG(Owner.RefID, $"{Owner.FirstName}: {climaxKeywords}/$append$");
+                }
+                else
+                {
+                    exp.PrependClimaxMSG(Owner.RefID, $"{Owner.FirstName}: {climaxKeywords}");
+                }
+                //string s = Owner.FirstName + ":" + climaxKeywords + (cumKeywords.Length > 0 ? "/" + cumKeywords : "");
 
                 //Debug.LogError("Merge Climax Message");
 
                 //scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
-                exp.AddClimaxMSG(Owner.RefID, s);
+                //exp.AddClimaxMSG(Owner.RefID, s);
                 message.exp.MergeWith(exp, false);
 
                 UtilityEX.GetAPsFrom(this.owner, out var listAP);
@@ -547,7 +633,10 @@ public class Character_Body
                 List<string> tags = new List<string>();
                 UtilityEX.GetActorTag(ref tags, this.Owner);
 
+
+                //exp.AddMessage(Owner.RefID, "kojo message here");
                 message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax", this.Owner, tags, listEP));
+
             }
 
         }

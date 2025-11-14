@@ -134,6 +134,8 @@
 "charaDetail_btn_resetPortraitManager_tooltip": "角色的立绘管理数据在游戏开始后会写入存档\n若是游戏开始后，角色的立绘JSON被修改，那为了读取该修改数据，需要手动刷新\n\n刷新后，会丢失玩家调整的立绘坐标和缩放。",
 
 "charaDetail_panel_relationship": "人际关系",
+"charaDetail_panel_viewHiddenRelationships": "<link=\"charaDetail_panel_viewHiddenRelationships_tooltip\">检视其他关系</link>",
+"charaDetail_panel_viewHiddenRelationships_tooltip": "若某项人际关系的对象角色被删除，该项人际关系会被移动到此处显示。",
 "charaDetail_panel_skills": "技能",
 "charaDetail_panel_experiences": "经验",
 "charaDetail_panel_bodyexp": "身体数据",
