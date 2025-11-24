@@ -41,6 +41,7 @@ public class MasterList
                 list.Add(Items);
                 list.Add(Status);
                 list.Add(CharacterTemplates);
+                list.Add(Character_RelationshipAttitudes);
                 list.Add(Character_Personalities);
                 list.Add(Character_Origins);    // need to be ordered later cuz require other list to be ready
                 list.Add(COMs);
@@ -77,6 +78,7 @@ public class MasterList
     public Index_CharaSkills Skills = new Index_CharaSkills();
     public Character_Trainable_SerializableTemplate_Index CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
     public Character_Personality_Index Character_Personalities = new Character_Personality_Index();
+    public Index_CharaRelationshipAttitudes Character_RelationshipAttitudes = new Index_CharaRelationshipAttitudes();
     public Index_COM COMs = new Index_COM();
     public Index_FurnitureBase Furnitures = new Index_FurnitureBase();
 

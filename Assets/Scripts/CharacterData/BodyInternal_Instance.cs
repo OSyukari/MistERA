@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
+using static EvaluationPackage;
 
 public enum Ranking
 {
@@ -215,12 +217,19 @@ public class BodyInternal_Instance
         if (Base == null) return false;
         this.experiences = new Sexperience();
 
-        orifice_depth = Base.depthRatio == 0 ? 0 : Utility.RandVariation(Owner.Body.Height, 0.1f) * Base.depthRatio;
-        orifice_size = Base.sizeRatio == 0 ? 0 : Utility.RandVariation(Owner.Body.Height, 0.1f) * Base.sizeRatio;
-
-        if (Base.volumeHeightRatio != 0 && Base.volumeMassRatio != 0)
+        if (Base.depthRatio != 0)
         {
-            volume_capacity = (float)Owner.Body.Height * (1f + Base.volumeMassRatio * Owner.Body.BMI*0.1f / 5f) * Base.volumeHeightRatio;
+            orifice_depth = (float)Owner.Body.Height * Base.depthRatio;
+        }
+
+        if (Base.sizeRatio != 0)
+        {
+            orifice_size = Mathf.Sqrt((float)(Owner.Body.Height * Owner.Body.Weight)) * Base.sizeRatio;// Base.sizeRatio == 0 ? 0 : Utility.RandVariation(Owner.Body.Height, 0.1f) * Base.sizeRatio;
+        }
+
+        if (Base.volumeRatio != 0)
+        {
+            volume_capacity = (float)Owner.Body.Height/100f * (float)Owner.Body.Weight * Base.volumeRatio;
             //Debug.Log($"Generating intenral volume, height {Owner.Body.Height} ratio {Base.volumeHeightRatio} mass {Base.volumeMassRatio} BMI {Owner.Body.BMI}, result {volume_capacity}");
         }
 
@@ -337,44 +346,9 @@ public class BodyInternal_Instance
     }
 
 
-    [JsonIgnore] public float CurrentDepth
-    {
-        get
-        {
-
-            float modifier = 1;
-            if (hasTag("arousalExpansion"))
-            {
-                modifier += Math.Max(0, Math.Max( Owner.Stats.Lust != null ? Owner.Stats.Lust.Severity:0, Owner.Stats.Stress != null ? Owner.Stats.Stress.Severity : 0) * 0.2f);
-                modifier += Math.Max(0, (Owner.Stats.SexStimulation.Severity - 50) )* 0.01f;
-            }
-            if (this.canBePenetrated && this.ExpansionSkill != null)
-            {
-                modifier += this.ExpansionSkill.GetSkillLevel * 0.1f;
-            }
-            return Depth * modifier;
-        }
-    }
 
     [JsonIgnore] public bool needLubrication { get { return Base.needLubrication; } }
 
-    [JsonIgnore] public float CurrentSize
-    {
-        get
-        {
-            float baseSize = Size;
-
-            float modifier = 1 + (!canBePenetrated ? 0 : needLubrication ? (Owner.Stats.Lubrication.Severity -30) * 0.01f : 0f);
-            if (hasTag("arousalExpansion")) modifier += Math.Max(0, Math.Max(Owner.Stats.Lust != null ? Owner.Stats.Lust.Severity:0, Owner.Stats.Stress != null ? Owner.Stats.Stress.Severity : 0) * 0.2f);
-            if (this.canBePenetrated && this.ExpansionSkill != null)
-            {
-                modifier += this.ExpansionSkill.GetSkillLevel * 0.2f;
-                baseSize += this.ExpansionSkill.GetSkillLevel * 0.5f;
-            }
-
-            return baseSize * modifier ;
-        }
-    }
 
     protected SkillInstance _sensitivitySkill = null;
     [JsonIgnore] public SkillInstance SensitivitySkill
@@ -403,26 +377,6 @@ public class BodyInternal_Instance
         }
     }
 
-    [JsonIgnore]
-    public float CurrentSizeExtended
-    {
-        get
-        {
-            return CurrentSize * (1 + (this.SensitivitySkill != null ? this.SensitivitySkill.GetSkillLevel * 0.05f : 0f));
-        }
-    }
-
-    [JsonIgnore] public float CurrentMaxSize
-    {
-        get
-        {
-            if (hasTag("anus")) return CurrentSizeExtended * 1.5f;
-            else if (hasTag("vagina")) return CurrentSizeExtended * 2;
-            else if (hasTag("womb")) return CurrentSizeExtended * 20;
-
-            return CurrentSizeExtended;
-        }
-    }
 
     [JsonIgnore]public int MaxSensitivity
     {
@@ -435,16 +389,54 @@ public class BodyInternal_Instance
         }
     }
 
-    [JsonProperty] private float orifice_depth;
+    [JsonProperty] private float orifice_depth = 0;
     [JsonIgnore] public float Depth
     {
         get { return orifice_depth; }
     }
+    [JsonIgnore]
+    public float CurrentDepth
+    {
+        get
+        {
+            if (this.orifice_depth == 0 || Owner.Stats.SexStimulation == null) return this.orifice_depth;
+            float mod = Owner.Stats.SexStimulation.Severity * 0.02f;
+            return mod * MaxDepth + (1 - mod) * Depth;
+        }
+    }
+    [JsonIgnore] public float MaxDepth
+    {
+        get { return orifice_depth * Base.aroused_depthMod; }
+    }
 
-    [JsonProperty] private float orifice_size;
+    [JsonProperty] private float orifice_size = 0;
     [JsonIgnore] public float Size
     {
-        get { return orifice_size; }
+        get { if (orifice_size == 0) return 0;
+            if (this.ExpansionSkill == null) return orifice_size;
+            return orifice_size * ( 1 + this.ExpansionSkill.GetSkillLevel * 0.1f); }
+    }
+    [JsonIgnore]
+    public float MaxSize
+    {
+        get { return Size * (Base.stretch_ratio + Base.aroused_stretchMod + (this.SensitivitySkill != null ? this.SensitivitySkill.GetSkillLevel * 0.05f : 0f)); }
+    }
+
+    [JsonIgnore]
+    public float CurrentSize
+    {
+        get
+        {
+            if (Size == 0) return 0;
+
+            float mod = Owner.Stats.SexStimulation.Severity * 0.02f;
+            if (needLubrication && Owner.Stats.Lubrication.Severity <= 66) mod *= (0.015f * Owner.Stats.Lubrication.Severity);
+
+            return MaxSize * mod + Size * (1 - mod);
+            //float modifier = 1 + Math.Max(needLubrication && ?  (needLubrication ? (Owner.Stats.Lubrication.Severity - 30) * 0.01f : 0f);
+           // if (hasTag("arousalExpansion")) modifier += Math.Max(0, Math.Max(Owner.Stats.Lust != null ? Owner.Stats.Lust.Severity : 0, Owner.Stats.Stress != null ? Owner.Stats.Stress.Severity : 0) * 0.2f);
+
+        }
     }
 
     [JsonIgnore] public bool canDigest
@@ -459,7 +451,7 @@ public class BodyInternal_Instance
     {
         get
         {
-            return Depth > 0 && Size > 0;
+            return orifice_depth > 0 && orifice_size > 0;
         }
     }
 
@@ -491,7 +483,7 @@ public class BodyInternal_Instance
     {
         get
         {
-            return volume_capacity > 0.1;
+            return volume_capacity > 0 && Base.tags.Contains("internal");
         }
     }
 
@@ -540,26 +532,50 @@ public class BodyInternal_Instance
             return CurrentlyContained >= MaxCapacity;
         }
     }
+
+    [JsonIgnore]
+    public float VolumeCapacity { get
+        {
+            return this.canContain ? volume_capacity : 0;
+        } }
+
+    [JsonIgnore]
+    public float CumVolume
+    { get
+        {
+            return this.canFuck  && this.volume_capacity > 0 ? this.volume_capacity : 0;
+        } }
+
+    [JsonIgnore]
+    public bool isVisiblyExpanded
+    {
+        get
+        {
+            return this.canContain && CurrentlyContained >= VolumeCapacity;
+        }
+    }
+    [JsonIgnore]
+    public bool isExtremelyExpanded
+    { get
+        {
+            return this.canContain && CurrentlyContained >= VisiblyExpandedCapacity;
+        } }
+
     [JsonIgnore]
     public float VisiblyExpandedCapacity
     {
         get
         {
-            return this.volume_capacity < 0.01 ? 0 : this.volume_capacity * Base.visibleExpansionRatio;
+            return VolumeCapacity > 0 ? this.VolumeCapacity * Base.visibleExpansionRatio : 0;
         }
     }
     [JsonIgnore] public float MaxCapacity
     {
         get
         {
-            return this.volume_capacity < 0.01 ? 0 : this.volume_capacity * Base.maxExpansionRatio;
+            return VolumeCapacity > 0 ? this.VolumeCapacity * Base.maxExpansionRatio : 0;
         }
     }
-
-    [JsonIgnore] public bool VisiblyExpanded { get
-        {
-            return this.volume_capacity < 0.01 || CurrentlyContained < 0.1 ? false : CurrentlyContained / this.volume_capacity > Base.visibleExpansionRatio;
-        } }
 
     [JsonIgnore]
     public float CurrentlyContained
@@ -574,6 +590,22 @@ public class BodyInternal_Instance
 
     [JsonIgnore]
     public float RemainingCapacity
+    {
+        get
+        {
+            return VolumeCapacity - CurrentlyContained;
+        }
+    }
+    [JsonIgnore]
+    public float RemainingExpandingCapacity
+    {
+        get
+        {
+            return VisiblyExpandedCapacity - CurrentlyContained;
+        }
+    }
+    [JsonIgnore]
+    public float RemainingMaxCapacity
     {
         get
         {
@@ -624,42 +656,81 @@ public class BodyInternal_Instance
             }
         }
 
-        if (RemainingCapacity >= comp.amount || comp.amount < 1)
+
+        if (!forceFill)
         {
-            Debug.Log($"{Owner.CallName} {this.DisplayName} ingest cum {comp.amount} ml, RemainingCapacity {RemainingCapacity}, full capacity ingest");
-            IngestInternal(item, m);
-            return true;
+            if (RemainingExpandingCapacity >= comp.amount || comp.amount < 1)
+            {
+                Debug.Log($"{Owner.CallName} {this.DisplayName} ingest cum {comp.amount} ml, RemainingExpandingCapacity {RemainingExpandingCapacity}, full capacity ingest");
+                IngestInternal(item, m);
+                return true;
+            }
+            else if (RemainingExpandingCapacity >= 1)
+            {
+                var newcap = Math.Min(RemainingExpandingCapacity, comp.amount);
+                if (item is Item_Instance_Cum)
+                {
+                    var cum = item as Item_Instance_Cum;
+                    Item_Instance_Cum newitem = WorldManager.Instantiate(cum.Owner, cum.nameOverwrite);
+                    newitem.GetComp_Ingestible().amount = newcap;
+                    IngestInternal(newitem, m);
+                }
+                else
+                {
+                    Item_Instance newitem = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, item.Count);
+                    newitem.GetComp_Ingestible().amount = newcap;
+                    IngestInternal(newitem, m);
+                }
+                comp.amount -= newcap;
+            }
+            return false;
         }
-        else if (RemainingCapacity >= 1)
+        else
         {
-            var newcap = Math.Min(RemainingCapacity, comp.amount);
-            if (item is Item_Instance_Cum)
+            if (RemainingCapacity >= comp.amount || comp.amount < 1)
             {
-                var cum = item as Item_Instance_Cum;
-                Item_Instance_Cum newitem = WorldManager.Instantiate(cum.Owner, cum.nameOverwrite);
-                newitem.GetComp_Ingestible().amount = newcap;
-                IngestInternal(newitem, m);
+                Debug.Log($"{Owner.CallName} {this.DisplayName} ingest cum {comp.amount} ml, RemainingCapacity {RemainingCapacity}, full capacity ingest");
+                IngestInternal(item, m);
+                return true;
             }
-            else
+
+            if (fillHistory == null) fillHistory = new List<BodyInternal_Instance>() { this };
+            else fillHistory.Add(this);
+
+            BodyInternal_Instance directionOut = (Base.tag_directionOut == "" || Base.tag_directionOut == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionOut);
+            BodyInternal_Instance directionIn = (Base.tag_directionIn == "" || Base.tag_directionIn == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionIn);
+
+            if (directionIn != null && directionIn != this && directionIn.canContain && !fillHistory.Contains(directionIn) && directionIn.Ingest(item, m, forceFill, fillHistory)) return true;
+            else if (RemainingMaxCapacity >= comp.amount)
             {
-                Item_Instance newitem = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, item.Count);
-                newitem.GetComp_Ingestible().amount = newcap;
-                IngestInternal(newitem, m);
+                IngestInternal(item, m);
+                return true;
+            }else
+            {
+                if (RemainingMaxCapacity >= 1)
+                {
+                    var newcap = Math.Min(RemainingMaxCapacity, comp.amount);
+                    if (item is Item_Instance_Cum)
+                    {
+                        var cum = item as Item_Instance_Cum;
+                        Item_Instance_Cum newitem = WorldManager.Instantiate(cum.Owner, cum.nameOverwrite);
+                        newitem.GetComp_Ingestible().amount = newcap;
+                        IngestInternal(newitem, m);
+                    }
+                    else
+                    {
+                        Item_Instance newitem = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, item.Count);
+                        newitem.GetComp_Ingestible().amount = newcap;
+                        IngestInternal(newitem, m);
+                    }
+                    comp.amount -= newcap;
+                }
+
+                if (directionOut != null && directionOut != this && directionOut.canContain && !fillHistory.Contains(directionOut) && directionOut.Ingest(item, m, forceFill, fillHistory)) return true;
+                else return false;
             }
-            comp.amount -= newcap;
+            
         }
-
-        if (!forceFill) return false;
-        if (fillHistory == null) fillHistory = new List<BodyInternal_Instance>() { this };
-        else fillHistory.Add(this);
-
-        BodyInternal_Instance directionOut = (Base.tag_directionOut == "" || Base.tag_directionOut == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionOut);
-        BodyInternal_Instance directionIn = (Base.tag_directionIn == "" || Base.tag_directionIn == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionIn);
-
-        if (directionIn != null && directionIn != this && directionIn.canContain && !fillHistory.Contains(directionIn) && directionIn.Ingest(item, m, forceFill, fillHistory)) return true;
-        else if (directionOut != null && directionOut != this && directionOut.canContain && !fillHistory.Contains(directionOut) && directionOut.Ingest(item, m, forceFill, fillHistory)) return true;
-
-        return false;
     }
 
     protected void IngestInternal(Item_Instance i, ExperienceLog m = null)

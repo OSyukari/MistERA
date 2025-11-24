@@ -206,6 +206,11 @@
 "ui_prefs_colorPicker_ConfirmAndExit": "确认并退出",
 "ui_prefs_colorPicker_RevertChanges": "撤销变更",
 
+"ui_memory_relationship_refuse":"拒绝了与$target$成为$relationship$",
+"ui_memory_relationship_refused":"向$target$请求成为$relationship$，被拒绝了",
+"ui_memory_relationship_change":"成为了$target$的$relationship$",
+"ui_memory_relationship_end":"结束了与$target$的$relationship$关系",
+
 "ui_top_faction_canEat": "<link=ui_top_faction_canEat_tooltip>可吃饭</link>",
 "ui_top_faction_canEat_tooltip": "阵营道具栏内有可食用的餐点时，到了饭点可以在餐厅领取食物。",
 "ui_top_faction_canSleep": "<link=ui_top_faction_canSleep_tooltip>可睡觉</link>",

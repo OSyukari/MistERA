@@ -40,8 +40,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public RelationshipType GetRelationshipBetween(int self, int target, out bool isA)
     {
         isA = false;
-        if (!ManagedRefs.Contains(self) || !ManagedRefs.Contains(target))
+        if (!isManagedChara(self) || !isManagedChara(target))
         {
+            if (self == 0 || target == 0) Debug.Log($"GetRelationshipBetween {self} and {target}, one of them is unmanaged {isManagedChara(self)} {isManagedChara(target)}");
             if (this.ID == "AlwaysHostile")
             {
                 return Relationship_Enemy;
@@ -52,14 +53,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 return null;
             }
         }
-
-        if (isPrisoner(self) && !isPrisoner(target))
+        else if (isPrisoner(self) && !isPrisoner(target))
         {
+            if (self == 0 || target == 0) Debug.Log($"GetRelationshipBetween {self} and {target}, self is prisoner");
             return Relationship_Prisoner;
         }
         else if (isPrisoner(target) && !isPrisoner(self))
         {
             isA = true;
+            if (self == 0 || target == 0) Debug.Log($"GetRelationshipBetween {self} and {target}, target is prisoner");
             return Relationship_Prisoner;
         }
         else if (ManagerRefs.Contains(self) && ManagerRefs.Contains(target)) return Relationship_Colleague;
@@ -137,7 +139,25 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else return "";
     }
 
+    [JsonProperty] string RelatioshipTypeID_stranger = "relationship_stranger";
+    [JsonIgnore]
+    public RelationshipType Relationship_Stranger
+    {
+        get
+        {
+            return scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(RelatioshipTypeID_stranger);
+        }
+    }
 
+    [JsonProperty] string RelatioshipTypeID_acquaintance = "relationship_acquaintance";
+    [JsonIgnore]
+    public RelationshipType Relationship_Acquaintance
+    {
+        get
+        {
+            return scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(RelatioshipTypeID_acquaintance);
+        }
+    }
     [JsonProperty] string RelatioshipTypeID_subordinate = "relationship_subordinate";
     [JsonIgnore] public RelationshipType Relationship_Subordinate { get
         {

@@ -82,6 +82,7 @@ public enum TargetScope
 public class Event : I_SerializationCallbackReceiver
 {
     public string ID = "";
+    public bool allowDuplicate = true;
     /// <summary>
     /// Since there is jump involved, Event itself should not be managing the flow
     /// Event only responsible for query and nothing more
@@ -222,6 +223,7 @@ public class Event : I_SerializationCallbackReceiver
 
         public string label = "";
         public bool isLast = false;
+        public bool allowDuplicate = true;
         public string nextEventID = "";
         public string nextEntryLabel = "";
 
@@ -413,7 +415,9 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>
             /// [doers, receivers, locationKey]
             /// </summary>
-            ExecuteAPOnFurniture
+            ExecuteAPOnFurniture,
+
+            CheckRelationship
         }
     }
 

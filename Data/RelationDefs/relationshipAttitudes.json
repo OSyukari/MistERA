@@ -1,0 +1,196 @@
+{
+    "Character_RelationshipAttitudes":
+    {
+        "list":
+        [
+            {
+                "ID":"relationship_attitude_terrified",            
+                "obedienceMod":3,
+                "MainEmotionKey":"Fear",
+                "Requirements":
+                {
+                    "requireScore":[
+                        { "requireScoreID":"Fear", "operand":"gt","value":150 }      
+                    ],
+                    "requireStress":{"operand":"lt","value":-1},
+                    "requireMood":{"operand":"lt","value":-1}
+                }      
+            },
+            {
+                "ID":"relationship_attitude_submissive",         
+                "obedienceMod":2,
+                "MainEmotionKey":"Fear",
+                "Requirements":
+                {
+                    "requireScore":[
+                        { "requireScoreID":"Fear", "operand":"gt","value":100 }      
+                    ],
+                    "requireStress":{"operand":"lte","value":-1}
+                }
+            },
+            {
+                "ID":"relationship_attitude_wary",             
+                "obedienceMod":-1,
+                "MainEmotionKey":"Fear",
+                "Requirements":
+                {
+                    "requireScore":[
+                        { "requireScoreID":"Fear", "operand":"gt","value":50 },
+                        { "requireScoreID":"Trust", "operand":"lt","value":50 },
+                        { "requireScoreID":"Goodwill", "operand":"lt","value":50 }
+                    ]
+                }
+
+            },
+            {
+                "ID":"relationship_attitude_hateful",               
+                "obedienceMod":-4,
+                "MainEmotionKey":"Badwill",
+                "Requirements":
+                {
+                    "requireScore":[
+                        { "requireScoreID":"Badwill", "operand":"gte","value":200 }
+                    ],
+                    "requireMood":{"operand":"lte","value":-2}
+                }       
+            },
+            {
+                "ID":"relationship_attitude_rebellious",                
+                "obedienceMod":-3,
+                "MainEmotionKey":"Badwill",
+                "Requirements":
+                {
+                    "requireScore":[
+                        { "requireScoreID":"Badwill", "operand":"gte","value":150 },
+                        { "requireScoreID":"Fear", "operand":"lt","value":50 },
+                        { "requireScoreID":"Trust", "operand":"lt","value":50 }
+                    ],
+                    "requireStress":{"operand":"lte","value":-1}
+                }      
+            },
+            {
+                "ID":"relationship_attitude_resentful",                       
+                "obedienceMod":-2,
+                "MainEmotionKey":"Badwill",
+                "Requirements":
+                {
+                    "requireScore":[
+                        { "requireScoreID":"Badwill", "operand":"gte","value":100 }
+                    ]
+                }  
+            },  
+            {
+                "ID":"relationship_attitude_disdainful",                
+                "obedienceMod":-1,
+                "MainEmotionKey":"Badwill",
+                "Requirements":
+                {
+                    "requireScore":[
+                        { "requireScoreID":"Badwill", "operand":"gte","value":50 }
+                    ]
+                }      
+            },          
+
+
+            {
+                "ID":"relationship_attitude_admiring",            
+                "obedienceMod":3,
+                "MainEmotionKey":"Goodwill",
+                "Requirements":
+                {
+                    "requireScore":[{"requireScoreID":"Trust","operand":"gte","value":100},
+                                    {"requireScoreID":"Goodwill","operand":"gte","value":150}],
+                    "requireMood":{"operand":"gte","value":1}
+                },
+                "allowedEvolveInto":[]
+            },
+            {
+                "ID":"relationship_attitude_affectionate",
+                "obedienceMod":2,
+                "MainEmotionKey":"Goodwill",
+                "Requirements":
+                {
+                    "requireScore":[{"requireScoreID":"Trust","operand":"gte","value":50},
+                                    {"requireScoreID":"Goodwill","operand":"gte","value":100}],
+                    "requireMood":{"operand":"gte","value":1}
+                },
+                "allowedEvolveInto":[]
+            },
+            {
+                "ID":"relationship_attitude_friendly",
+                "obedienceMod":1,
+                "MainEmotionKey":"Goodwill",
+                "Requirements":
+                {
+                    "requireScore":[{"requireScoreID":"Goodwill","operand":"gte","value":50}],
+                    "requireMood":{"operand":"gte","value":1}
+                },
+                "allowedEvolveInto":[]
+            },
+
+
+            {
+                "ID":"relationship_attitude_infatuated",
+                "obedienceMod":3,
+                "MainEmotionKey":"Desire",
+                "Requirements":
+                {
+                    "requireScore":[{"requireScoreID":"Desire","operand":"gte","value":100},
+                                    {"requireScoreID":"Goodwill","operand":"gte","value":50}],
+                    "requireMood":{"operand":"gte","value":1},
+                    "requireLust":{"operand":"gte","value":2}
+                }
+            },
+            {
+                "ID":"relationship_attitude_lustful",
+                "obedienceMod":2,
+                "MainEmotionKey":"Desire",
+                "Requirements":
+                {
+                    "requireScore":[{"requireScoreID":"Desire","operand":"gte","value":50}],
+                    "requireLust":{"operand":"gte","value":2}
+                }
+            },
+
+            {
+                "ID":"relationship_attitude_neutral",
+                "obedienceMod":0,
+                "allowedEvolveInto":[]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"relationship_attitude_terrified": "恐惧",     
+"relationship_attitude_hateful": "憎恨",
+"relationship_attitude_rebellious": "叛逆",
+"relationship_attitude_disdainful": "厌恶",    
+"relationship_attitude_resentful": "怨恨",         
+"relationship_attitude_wary": "警惕",             
+"relationship_attitude_submissive": "屈服",    
+"relationship_attitude_admiring": "仰慕",        
+"relationship_attitude_infatuated": "爱慕",       
+"relationship_attitude_affectionate": "亲密",      
+"relationship_attitude_lustful": "欲求",    
+"relationship_attitude_friendly": "友善",
+"relationship_attitude_neutral":"平常",
+
+"relationship_attitude_uiEntry": "态度：$content$",
+"relationship_attitude": "态度",
+"relationship_attitude_tooltip": "角色的态度基于角色当前心情，压力，和（有的话）与互动对象的关系。\n与当前对象互动后，对其的态度会在记忆中累计，直到该记忆条目被忘记。\n不同的态度会增加/降低角色对指令的服从度（每点服从度+-25%指令成功度）\n"
+
+
+
+            },
+            "en-us":
+            {
+              
+
+            }
+        }
+    }
+}

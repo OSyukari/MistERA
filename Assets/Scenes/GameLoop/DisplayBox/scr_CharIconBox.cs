@@ -28,6 +28,8 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
     private RectTransform thisBox;
     public Image SelfBackground;
 
+    public scr_HoverableText attitudeBox;
+
     // Start is called before the first frame update
     private void Awake()
     {
@@ -246,6 +248,13 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         {
             CombatUtility.DrawPosture(cStats, posture.text);
             ScaleStatBar(posture.bar, cStats.Posture, cStats.MaxPosture);
+        }
+
+        Character_Relationship rel = chara.Relationships.FindRelationshipWith(0);
+        if (rel != null)
+        {
+            RelationshipManager.Draw_Attitude(rel, attitudeBox);// rel.DrawAttitude(attitudeBox);
+                                                                // RelationshipManager.Draw_Obedience(rel, obedienceBox);// rel.DrawObedience(obedienceBox);
         }
 
     }

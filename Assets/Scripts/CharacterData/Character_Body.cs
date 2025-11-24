@@ -10,21 +10,6 @@ using Newtonsoft.Json;
 
 public class Character_Body
 {
-    float _cacheBMI = 0;
-    [JsonIgnore]
-    public float BMI
-    {
-        get
-        {
-            if (_cacheBMI == 0)
-            {
-                _cacheBMI = (float)Weight / ( (float)Height* (float)Height / 100f /100f);
-                Debug.Log($"Caching BMI score {Weight}/({(float)Height/100}*{(float)Height / 100}) = {_cacheBMI}");
-            }
-
-            return _cacheBMI;
-        }
-    }
     public int Height = 162;
     public int Weight = 70;
 
@@ -57,6 +42,7 @@ public class Character_Body
         _cached_bodyDescriptions.Clear();// = "";
         _cached_internalTags.Clear();
         var tempList = new SortedDictionary<int,string>();
+        var tempList2 = new Dictionary<string, List<string>>();
         foreach(var part in this.Body)
         {
             if (part.internals.Count < 1) continue;
@@ -65,13 +51,16 @@ public class Character_Body
             {
                 if (i.Base.exposedKojoID == "") continue;
                 tempList.Add(i.sortOrder, i.Base.exposedKojoID);
+                if (!tempList2.ContainsKey(i.Base.exposedKojoID)) tempList2.Add(i.Base.exposedKojoID, new List<string>());
+                if (i.isExtremelyExpanded) tempList2[i.Base.exposedKojoID].Add("Expansion_Extreme");
+                else if (i.isVisiblyExpanded) tempList2[i.Base.exposedKojoID].Add("Expansion");
             }
         }
         var string_tempList = tempList.Values.Distinct().ToList();
         var relation = Owner.Relationships.FindRelationshipWith(Owner);
         foreach(var kojoID in string_tempList)
         {
-            var result = Owner.Relationships.Personality.GetKOJOMessage(kojoID, relation, null, null);
+            var result = Owner.Relationships.Personality.GetKOJOMessage(kojoID, relation, tempList2[kojoID].Distinct().ToList(), null);
             if (result == null || result.message.Length < 1) continue;
             _cached_bodyDescriptions.Add(result.message);
             _cached_internalTags.Add(LocalizeDictionary.QueryThenParse(kojoID));
@@ -503,16 +492,24 @@ public class Character_Body
 
                     this.Climax = true;
                     // ADDLOG CLIMAX
-                    var cumAmount = 20;
+                    float cumAmount = 0;
                     cumKeywords = "yes";
-                    if (part.canFuck) cum = part.Cum(cumAmount, exp);
+                    if (part.canFuck && part.CumVolume > 0)
+                    {
+                        cumAmount = part.CumVolume;
+                        cum = part.Cum(part.CumVolume, exp);
+                    }
+                    else
+                    {
+                        cum = null;
+                    }
 
                     if (cum != null)
                     {
                         this.Cum = true;
 
                         // find valid container for cum
-                        List<BodyInternal_Instance> possiblecontainers = part.LastInteactedRefs.FindAll(x=>x.canContain);
+                        List<BodyInternal_Instance> possiblecontainers = part.LastInteactedRefs.FindAll(x => x.canContain);
                         List<BodyInternal_Instance> possibleEmptyContainers = possiblecontainers.FindAll(x => !x.containsOverCapacity);
 
                         BodyInternal_Instance container = (possibleEmptyContainers.Count > 0 ? Utility.GetRandomElement(possibleEmptyContainers)
@@ -539,7 +536,7 @@ public class Character_Body
                                         .Replace("$amount$", cumAmount.ToString("N0"));
 
 
-                            List<string> containerTags = new List<string>(container.Base.tags) {};
+                            List<string> containerTags = new List<string>(container.Base.tags) { };
                             containerTags.Add("cum");
                             UtilityEX.GetActorTag(ref containerTags, container.Owner);
                             if (container.Sensitivity != "") containerTags.Add(container.Sensitivity);
@@ -552,13 +549,13 @@ public class Character_Body
                                         .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
                                         .Replace("$amount$", cumAmount.ToString("N0"));
 
-                            
-                            var memInst2 = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.None, Memory_Attitude.None, desc);
+
+                            var memInst2 = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.Accept, Memory_Attitude.None, desc);
                             container.Owner.Memory.AddEntry(memInst2, containerTags, -1, true);
 
 
-                            
-                            var memInst3 = new MemInstance(new List<int>() { container.Owner.RefID }, containerTags, "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc2);
+
+                            var memInst3 = new MemInstance(new List<int>() { container.Owner.RefID }, containerTags, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc2);
                             part.Owner.Memory.AddEntry(memInst3, selfTag, -1, true);
                         }
                         else
@@ -567,19 +564,19 @@ public class Character_Body
 
                             // ADDLOG CUM FOR SHOOTER
                             var desc = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_cum");
-                            desc = desc .Replace("$amount$", cumAmount.ToString("N0"));
+                            desc = desc.Replace("$amount$", cumAmount.ToString("N0"));
 
-                            
-                            var memInst4 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>() { "" }, "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc);
+
+                            var memInst4 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>() { "" }, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc);
                             part.Owner.Memory.AddEntry(memInst4, selfTag, -1, true);
                         }
                         climaxDebuff -= 200;
-  
+
 
                         var desc1 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
 
-                        
-                        var memInst5 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc1);
+
+                        var memInst5 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst5, selfTag, -1, true);
 
                         UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());
@@ -590,8 +587,8 @@ public class Character_Body
                         climaxDebuff -= 50;
 
                         var desc1 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
-                        
-                        var memInst6 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.Like, desc1);
+
+                        var memInst6 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst6, selfTag, -1, true);
 
                         UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());

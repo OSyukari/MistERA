@@ -767,7 +767,34 @@ public static class EventUtility
                 {
                     return false;
                 }
+            case Event.EventEntry.ExecutionType.CheckRelationship:
+                if (exec.arguments.Count >= 2 && exec.arguments[0] != exec.arguments[1])
+                {
+                    List<Character_Trainable> ca = null, cb = null;
+                    if (exec.arguments[0] == "self") ca = new List<Character_Trainable>() { owner.Self };
+                    else if (!owner.Targets.TryGetValue(exec.arguments[0], out ca))
+                    {
+                        Debug.LogError($"CheckRelationship missing taget scopeKey {exec.arguments[0]}");
+                        return false;
+                    }
 
+
+                    if (exec.arguments[1] == "self") cb = new List<Character_Trainable>() { owner.Self };
+                    else if (!owner.Targets.TryGetValue(exec.arguments[1], out cb))
+                    {
+                        Debug.LogError($"CheckRelationship missing taget scopeKey {exec.arguments[1]}");
+                        return false;
+                    }
+
+                    Debug.Log($"CheckRelationship between {exec.arguments[0]} and {exec.arguments[1]}");
+
+                    foreach(var a in ca)
+                    {
+                        foreach (var b in cb) a.Relationships.FindRelationshipWith(b).PostUpdateCallback();
+                    }
+
+                }
+                return false;
             case Event.EventEntry.ExecutionType.InterruptAP:
                 if (exec.arguments.Count < 3)
                 {

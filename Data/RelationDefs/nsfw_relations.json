@@ -1,24 +1,78 @@
 {
     "RelationshipTypes":
     {
-        "list_personal":[
+        "list_social":[
             {
-                "ID":"relationship_fwb",
-                "displayName":"relationship_fwb_displayName",
-                "isEqualRelationship":true,
-                "Requirements":[ ],
-                "RelationshipMod":[0,0,20,0,100]
-            },
-            {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+
                 "ID":"relationship_slave",
                 "displayName":"relationship_slave_displayName",
-                "DisplayName_A_is_to_B":"relationship_slave_displayName_A_is_to_B",
-                "DisplayName_B_is_to_A":"relationship_slave_displayName_B_is_to_A",
-                "isEqualRelationship":false,
-                "Requirements":[ ],
-                "RelationshipModA":[0,0,0,0,100],
-                "RelationshipModB":[0,200,0,100,0]
+
+                "relationship_A_to_B":{
+                    "permission":{ "intimacy_low":true, "intimacy_high":true, "lead_follow":true },
+                    "displayName":"relationship_slave_displayName_A_is_to_B",
+                    "RelationshipMod":[0,0,0,0,100]
+                },
+                "relationship_B_to_A":{
+                    "displayName":"relationship_slave_displayName_B_is_to_A",
+                    "RelationshipMod":[0,200,0,100,0],
+
+                    "Requirements":
+                    {
+                        "requireRawScore":[
+                            {"requireScoreID":"Fear","operand":"gte","value":50}
+                        ],
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Fear","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
+                        ],
+                        "requireScore":[ {"requireScoreID":"Fear","operand":"gte","value":50}],
+                        "requireMood":{"operand":"gte","value":0}
+                    },
+                    "MainEmotionKey":"Badwill",
+                    "MaintenanceRequirements":
+                    {
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Fear","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9}
+                        ]
+                    }
+                }
             }
+        ],
+        "list_personal":[
+            {
+                "$type":"RelationshipType, Assembly-CSharp",
+
+                "ID":"relationship_fwb",
+                "displayName":"relationship_fwb_displayName",
+                "trustCapIncrease":25,
+                "RelationshipMod":[0,0,5,0,15],
+                "Requirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Desire","operand":"gte","value":150}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Desire","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
+                    ],
+                    "requireScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":15},
+                        {"requireScoreID":"Desire","operand":"gte","value":150}],
+                    "requireLust":{"operand":"gte","value":1}
+                },
+                "MainEmotionKey":"Badwill",
+                "permission":{ "intimacy_low":true, "intimacy_high":true },
+                "MaintenanceRequirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Desire","operand":"gte","value":100}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Desire","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9},
+                        {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9}
+                    ]
+                }
+            }
+            
         ]
     },
     "Dictionary":

@@ -52,8 +52,8 @@ public class scr_Panel_BodyDetail : MonoBehaviour
             boxDepth.gameObject.SetActive(true);
             boxSensitivity.gameObject.SetActive(true);
 
-            boxSize.text = "Size: "+instance.Rank_Size+"[" + (instance.Size > 0.2f ? instance.Size.ToString("N1") : " - ") + "]";
-            boxDepth.text = "Depth " + instance.Rank_Depth + "[" + (instance.Depth > 0.2f ? instance.Depth.ToString("N1") : " - ") + "]";
+            boxSize.text = "Size: "+instance.Rank_Size+"[" + (instance.Size != 0 ? instance.Size.ToString("N1")+"/"+ instance.MaxSize.ToString("N1") : " - ") + "]";
+            boxDepth.text = "Depth " + instance.Rank_Depth + "[" + (instance.Depth != 0 ? instance.Depth.ToString("N1")+"/"+instance.MaxDepth.ToString("N1") : " - ") + "]";
             boxSensitivity.text = instance.Sensitivity;
         }
         else
@@ -79,7 +79,7 @@ public class scr_Panel_BodyDetail : MonoBehaviour
             }
 
             
-            boxVolume.SetText($"Content: {totalVolume}ml / {instance.volume_capacity.ToString("N0")}ml|{instance.VisiblyExpandedCapacity.ToString("N0")}|{instance.MaxCapacity.ToString("N0")}");
+            boxVolume.SetText($"Content: {totalVolume}ml / {instance.VolumeCapacity.ToString("N0")}ml|{instance.VisiblyExpandedCapacity.ToString("N0")}ml|{instance.MaxCapacity.ToString("N0")}ml");
             if (volumeTooltip.Count > 0) boxVolume.SetExternalTooltip(String.Join("\n", volumeTooltip));
         }
 

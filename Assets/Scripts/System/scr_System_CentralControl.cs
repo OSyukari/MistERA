@@ -39,6 +39,7 @@ public class DebugLogSettings
     public bool DLog_AP = false;
     public bool DLog_UIChange = false;
     public bool DLog_Interrupt = false;
+    public bool DLog_Attitude = false;
 }
 
 public class scr_System_CentralControl : MonoBehaviour

@@ -322,7 +322,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
         this.Body.UpdateTimeHour(t);
         timeSinceLastEat = Math.Min(24, timeSinceLastEat + 1);
-
+        this.Relationships.HourlyRefresh();
         //Debug.Log($"{FirstName} Observer_GlobalHour: conscious? {Stats.isConsciousnessUnconscious} sleep? {hasStatKeyword("sleep")} lastSleep {timeSinceLastSleep}, lastEat {timeSinceLastEat}");
     }
 
@@ -1416,8 +1416,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             // IF SLEEP DEPRIVED, IT IS ALREADY ADDED PRIOR TO THIS POINT (ON CALLING WakeupPrep)        
             this.Stats.RemoveStatusByStringMatch("chara_status_sleeping");
             // Debug.Log($"Chara wake up at conscious {this.Stats.Consciousness.Severity}");
-            List<RelationshipManager.Character_Relationship> accepted = new List<RelationshipManager.Character_Relationship>();
-            List<RelationshipManager.Character_Relationship> refused = new List<RelationshipManager.Character_Relationship>();
+            List<Character_Relationship> accepted = new List<Character_Relationship>();
+            List<Character_Relationship> refused = new List<Character_Relationship>();
 
             if (!this.Stats.isConsciousnessUnconscious)
             {
@@ -1756,16 +1756,21 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         RemoveObservers();
     }
 
+    public void PostReloadUpdate()
+    {
+        if (this.Relationships != null) Relationships.PostReloadUpdate();
+    }
+
     public void OnAfterDeserialize()
     {
         string s = "Loaded Chara " + FullName + "\n";
         if (this.factionManager != null) FactionManager.ReEstablishParentData(this);
         if (this.Body != null) Body.ReEstablishParent(this);
         if (this.Memory != null) Memory.ReEstablishParent(this);
-        if (this.Relationships != null) Relationships.ReEstablishParent(this);
         if (this.Skills != null) Skills.ReEstablishParent(this);
         if (this.Stats != null) Stats.ReEstablishParent(this);  // stats require memory
         if (this.Portrait != null) Portrait.RebuildInternal(this);
+        if (this.Relationships != null) Relationships.ReEstablishParent(this);
 
         bool value = true;
         if (CurrentJob != null)

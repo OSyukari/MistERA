@@ -59,8 +59,19 @@ public class EventManager
         startImmediate = startImmediate || scr_UpdateHandler.current.Updating;
 
         this.activeEvents.Add(ev);
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"startevent {ev.Name} on {(ev.Self == null ? "null" : ev.Self.FirstName)}, isValid? {ev.isValid}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"startevent {ev.Name} on {(ev.Self == null ? "null" : ev.Self.FirstName)}, isValid? {ev.isValid} isVisible? {ev.isVisible}");
         if (startImmediate)
+        {
+            Run();
+        }
+    }
+
+    public void StartEventAuto(EventInstance ev)
+    {
+
+        this.activeEvents.Add(ev);
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"startevent {ev.Name} on {(ev.Self == null ? "null" : ev.Self.FirstName)}, isValid? {ev.isValid} isVisible? {ev.isVisible}");
+        if (!scr_UpdateHandler.current.Updating)
         {
             Run();
         }

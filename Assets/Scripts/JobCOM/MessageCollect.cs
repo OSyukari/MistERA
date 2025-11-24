@@ -31,11 +31,12 @@ public class MessageCollect
 
         foreach (var kvp in messages_kojo_after) cnManager.AddLog(kvp);
         cnManager.AddLog(-1, exp.PrintContent_Climax(), true);
-        if (messages_after.Count > 0) cnManager.AddLog(-1, String.Join("\n", messages_after), true);
 
         cnManager.AddLog(-1, exp.PrintContent_Stats(), true);
         cnManager.AddLog(-1, exp.PrintContent_Relations(), true);
         cnManager.AddLog(-1, exp.PrintContent_Exps(), true);
+
+        if (messages_after.Count > 0) cnManager.AddLog(-1, String.Join("\n", messages_after), true);
 
         Clear();
     }
@@ -68,12 +69,6 @@ public class MessageCollect
         }
         var s4 = exp.PrintContent_Climax();
         scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s4, true));
-        if (messages_after.Count > 0)
-        {
-            var s = String.Join("\n", messages_after);
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
-        }
-
         var s3 = exp.PrintContent_Stats();
         scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s3, true));
 
@@ -82,6 +77,13 @@ public class MessageCollect
 
         var s6 = exp.PrintContent_Exps();
         scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s6, true));
+
+        if (messages_after.Count > 0)
+        {
+            var s = String.Join("\n", messages_after);
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
+        }
+
 
         Clear();
     }

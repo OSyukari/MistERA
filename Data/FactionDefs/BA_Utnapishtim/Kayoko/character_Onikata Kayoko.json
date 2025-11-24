@@ -79,13 +79,7 @@
       "size_V": "trait_Size_V_1",
       "size_A": "trait_Size_A_1",
       "Height":157,
-      "initialRelationship":[
-            {
-                "baseID":"PLAYER",
-                "initialPersonalRelationship":"relationship_mentor",
-                "initialPersonalRelationship_isA":false
-            }
-        ],
+
       "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Hat" },
             { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },

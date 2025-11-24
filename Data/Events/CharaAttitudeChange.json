@@ -1,0 +1,104 @@
+{
+    "Events": {
+        "list": [
+    {
+        "ID": "AttitudeChange",
+        "_comment":"triggers on character attitude change.",
+        "SelfValidator":{
+            "chara_conditions":[
+                {"parameters":["exists"]},
+                {"parameters":["excludePlayer"]},
+                {"parameters":["isConscious"]}
+            ]
+        },
+        "events": [
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                "options":[
+                    {   
+                        "Results": [ { "Type":"CheckRelationship", "arguments":["self","target"]} ] 
+                    }
+                ],
+                "isLast": true
+            }
+        ]
+    },
+    {
+        "ID": "RequestRelationshipChange",
+        "_comment":"triggers on character attitude change.",
+        "SelfValidator":{
+            "chara_conditions":[
+                {"parameters":["exists"]},
+                {"parameters":["excludePlayer"]},
+                {"parameters":["isConscious"]}
+            ]
+        },
+        "events": [
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                "options":[
+                    {   
+                        "target_chara_conditions":{
+                            "target":[
+                                {"parameters":["exists"]},
+                                {"parameters":["isPlayer"]},
+                                {"parameters":["isConscious"]}
+                            ]
+                        },
+                        "option": "player branch",
+                        "Results": [ { "Type":"FlushMessageAll" },
+                                     { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
+                    },
+                    {   
+                        "target_chara_conditions":{
+                            "target":[
+                                {"parameters":["exists"]},
+                                {"parameters":["excludePlayer"]},
+                                {"parameters":["isConscious"]}
+                            ]
+                        },
+                        "option": "npc branch",
+                        "Results": [ { "Type":"ExecuteCallbackPermissive", "arguments":["acceptanceCheck"] },
+                                     { "Type":"EventEnd" } ] 
+                    },
+                    {   
+                        "Results": [ { "Type":"EventEnd" } ] 
+                    }
+                ]
+            },
+            {
+                "$type": "Event+EventEntry+EventEntry_Question, Events",
+                "label":"br_choice",
+                "question":"$self.name$请求将二人的关系从$original$变更为$new$",
+                "options":[
+                    {   
+                        "option": "同意",
+                        "Results": [{ "Type":"ExecuteCallbackPermissive", "arguments":["accept"] },
+                                    { "Type":"EventEnd" } ] 
+                    },
+                    {   
+                        "option": "拒绝",
+                        "Results": [{ "Type":"ExecuteCallbackPermissive", "arguments":["refuse"] },
+                                    { "Type":"EventEnd" }] 
+                    }
+                ]
+            }
+        ]
+    }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"event_AttitudeChange_string":"【$self.name$对$target.name$的态度从$originalAttitude$转变为了$newAttitude$】"
+            },
+            "en-us":
+            {
+
+            }
+        }
+    }
+}

@@ -293,6 +293,16 @@ public class scr_System_CampaignManager : MonoBehaviour
         currentTarget = 0;
         viewMode = ViewMode.View_Room;
 
+        foreach (var i in Index_referenceID) i.Value.PostReloadUpdate();
+
+        var ri = CurrentRoom;
+        if (!ri.RoomChara.Contains(Player))
+        {
+            Debug.Log("error room does not contain player ref");
+            ri.AddChara(Player);//.Add(scr_System_CampaignManager.current.Player);
+            //ri.AddChara(scr_System_CampaignManager.current.Player);
+
+        }
         NotifyUpdate();
     }
 

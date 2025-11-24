@@ -316,6 +316,20 @@ public static class Utility
         //return distinctL2.Any(item => distinctL1.Contains(item, comparer));
     }
 
+    public static string LogicOperandToString(LogicalOperand op)
+    {
+        switch (op)
+        {
+            case LogicalOperand.gte: return ">=";
+            case LogicalOperand.lte: return "<=";
+            case LogicalOperand.eq: return "==";
+            case LogicalOperand.neq: return "!=";
+            case LogicalOperand.gt: return ">";
+            case LogicalOperand.lt: return "<";
+            default: return "??";
+        }
+    }
+
     /// <summary>
     /// Check if L2 is contained in L1
     /// </summary>

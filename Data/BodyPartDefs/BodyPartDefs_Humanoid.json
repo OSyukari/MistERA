@@ -80,10 +80,10 @@
                 "sensitivityClassString":"M",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_M",
                 "sortOrder":0,
-                "sizeRatio":0.1,
-                "depthRatio":0.05,
 
-                "volumeHeightRatio":0.55, "volumeMassRatio":0.08, "visibleExpansionRatio":0.9, "maxExpansionRatio":1,
+                "sizeRatio":0.121, "stretch_ratio":1.5,"aroused_stretchMod":0,
+                "depthRatio":0.09,  "aroused_depthMod":1.0,
+                "volumeRatio":0.3, "visibleExpansionRatio":2, "maxExpansionRatio":4,
 
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
                 "virginityLossTags":["internal", "external"]
@@ -95,11 +95,12 @@
                 "tags":["stomach","internal"],
                 "tag_directionIn":"mouth",
                 "tag_directionOut":"guts",
+
                 "sortOrder":1,
 
-                "volumeHeightRatio":12, "volumeMassRatio":0.2, "visibleExpansionRatio":1.8, "maxExpansionRatio":4,
+                "sizeRatio":0.055, 
+                "volumeRatio":8.4,  "visibleExpansionRatio":2, "maxExpansionRatio":4
 
-                "depthRatio":0.4
             },
             {
                 "id": "breasts_humanoid_base",
@@ -124,8 +125,11 @@
                 "sensitivityClassString":"C",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
                 "sortOrder":7,
-                "sizeRatio":0.05,
-                "depthRatio":0.1,
+                
+                "sizeRatio":0.131,
+                "depthRatio":0.077,
+                "volumeRatio":0.0284,
+
                 "exposedKojoID":"Exposed_Penis",
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
                 "virginityLossTags":["penetration"]
@@ -142,9 +146,6 @@
                 "sensitivityClassString":"C",
                 "exposedKojoID":"Exposed_Clit",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
-                "sizeRatio":0,
-                "volumeRatio":0,
-                "depthRatio":0,
                 "sortOrder":3
             },
             {
@@ -158,12 +159,12 @@
                 "tag_directionOut":"clit",
                 "sensitivityClassString":"V",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_V",
-                "sizeRatio":0.05,
 
-                "volumeHeightRatio":1.1, "volumeMassRatio":0.12, "visibleExpansionRatio":2.5, "maxExpansionRatio":6,
+                "sizeRatio":0.085, "stretch_ratio":2.0,"aroused_stretchMod":0.6,
+                "depthRatio":0.085, "aroused_depthMod":1.25,
+                "volumeRatio":0.25, "visibleExpansionRatio":2, "maxExpansionRatio":6,
 
                 "needLubrication":true,
-                "depthRatio":0.05,
                 "sortOrder":5,
                 "exposedKojoID":"Exposed_Vagina",
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
@@ -179,11 +180,11 @@
                 "tags":["nsfw","womb","internal"],
                 "sensitivityClassString":"W",
                 "tag_directionOut":"vagina",
-                "sizeRatio":0.01,
 
-                "volumeHeightRatio":0.07, "volumeMassRatio":0.25, "visibleExpansionRatio":3, "maxExpansionRatio":10,
+                "sizeRatio":0.025, "stretch_ratio":1.2,"aroused_stretchMod":0.3,
+                "depthRatio":0.03, "aroused_depthMod":1.1,
+                "volumeRatio":0.042, "visibleExpansionRatio":2, "maxExpansionRatio":5,
 
-                "depthRatio":0.05,
                 "sortOrder":6,
                 "firstExperienceDesc":"%%bodyPart_internal_virgin_silent%%",
                 "virginityLossTags":["penetration"],
@@ -197,9 +198,8 @@
                 "tag_directionIn":"stomach",
                 "tag_directionOut":"anus",
 
-                "volumeHeightRatio":45, "volumeMassRatio":0.18, "visibleExpansionRatio":1.6, "maxExpansionRatio":3.5,
-
-                "depthRatio":2.5,
+                "sizeRatio":0.095, 
+                "volumeRatio":22, "visibleExpansionRatio":1.3, "maxExpansionRatio":2,
                 "sortOrder":8
             },
             {
@@ -214,12 +214,12 @@
                 "sensitivityClassString":"A",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_A",
                 "needLubrication":true,
-                "sizeRatio":0.02,
                 "exposedKojoID":"Exposed_Anus",
 
-                "volumeHeightRatio":1.8, "volumeMassRatio":0.15, "visibleExpansionRatio":2, "maxExpansionRatio":5,
+                "sizeRatio":0.07, "stretch_ratio":1.8, "aroused_stretchMod":0.4,
+                "depthRatio":0.12, "aroused_depthMod":1.05,
+                "volumeRatio":1, "visibleExpansionRatio":1.3, "maxExpansionRatio":6,
 
-                "depthRatio":0.1,
                 "sortOrder":9,
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
                 "virginityLossTags":["penetration"]

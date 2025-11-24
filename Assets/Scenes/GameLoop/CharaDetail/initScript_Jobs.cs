@@ -33,7 +33,7 @@ public class initScript_Relations : MonoBehaviour
         bool safe = scr_System_CentralControl.current.isSafeMode;
 
         //listRelationship = new List<RectTransform>();
-        foreach (RelationshipManager.Character_Relationship rel in c.Relationships.Relationships)
+        foreach (Character_Relationship rel in c.Relationships.Relationships)
         {
             RectTransform rect = Instantiate(parent.prefab_boxRelationship);
             rect.SetParent(parent.boxRelationshipList, false);

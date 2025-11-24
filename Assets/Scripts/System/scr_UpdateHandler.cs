@@ -508,6 +508,12 @@ public class scr_UpdateHandler : MonoBehaviour
         if (executeCallbacks) ExecuteEventCallbacks(true);
     }
 
+    public void AppendEndMessage(string s)
+    {
+        Message.messages_after.Add(s);
+        if (!Updating) FlushCollectedLogs(true, false);
+    }
+
     public void NotifyLogsSingleUpdate(bool skipAll = false)
     {
         Observer_LogsSingleStepUpdate?.Invoke(skipAll);

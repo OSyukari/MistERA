@@ -52,7 +52,7 @@ public class EvaluationPackage
         }
     }
 
-    public RelationshipManager.Character_Relationship Relationship(Character_Trainable self)
+    public Character_Relationship Relationship(Character_Trainable self)
     {
         if (self == null) return null;
         else if (this.Doer == self) return this.Doer.Relationships.FindRelationshipWith(this.Receiver);
@@ -406,23 +406,31 @@ public class EvaluationPackage
 
         /////////////////////////////////////////////////////////
 
-        RelationshipManager.Character_Relationship rel = self.Relationships.FindRelationshipWith(target);
+        Character_Relationship rel = self.Relationships.FindRelationshipWith(target);
 
         float baseValue = targetCOM.baseAcceptanceValue;
-       // float diceMax = 20;
+
+        if (targetCOM.isSexCOM && (rel == null || !rel.HasPermission_Intimacy_High())) mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_high")}]", -4);
+        else if (targetCOM.isTouchCOM && (rel == null || !rel.HasPermission_Intimacy_Low())) mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_low")}]", -2);
+
+        // float diceMax = 20;
         //float diceMin = 0;
         float average = (20 + 0) / 2;
 
         if (rel != null)
         {
-            var modvalue = ((int)rel.Obedience(null) - (int)RelationshipObedienceType.Normal) * 5;
+            var attitude = rel.GetCurrentAttitude();
+            var modvalue = attitude == null ? 0 : attitude.obedienceMod * 5;
             if (isThreat)
             {
                 modvalue *= 2;
-                mod.AddModifier(self.RefID, "[Threat]", 0);
+                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pressure")}]", modvalue);
+            }
+            else
+            {
+                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_obedience")}]", modvalue);
             }
 
-            mod.AddModifier(self.RefID, "Obedience", modvalue);
             baseValue -= modvalue;
         }
 
@@ -636,7 +644,7 @@ public class EvaluationPackage
         }
         else
         {
-            RelationshipManager.Character_Relationship rel = self.Relationships.FindRelationshipWith(target.RefID);
+            Character_Relationship rel = self.Relationships.FindRelationshipWith(target.RefID);
 
             float baseValue = targetCOM.baseAcceptanceValue;
             float diceMax = 20 + (self.Stats.Mood.Severity >= 0 ? rel.Goodwill / 10 : rel.Goodwill / 20);
@@ -756,7 +764,7 @@ public class EvaluationPackage
         }
         else
         {
-            RelationshipManager.Character_Relationship rel = self.Relationships.FindRelationshipWith(target.RefID);
+            Character_Relationship rel = self.Relationships.FindRelationshipWith(target.RefID);
 
             if (rel == null) Debug.LogError("EVP relationship null");
 
@@ -1340,46 +1348,37 @@ public class EvaluationPackage
         // ??????Size????????????Size
         if (fucked.canBePenetrated)
         {
-            if (fucker.CurrentSize > Math.Max( fucked.CurrentMaxSize, fucked.CurrentMaxSize) * 1.25)
+            if (fucker.CurrentSize > fucked.CurrentSize * 3)
             {
                 // if size > size * 1.5 pain 
 
-                var painMultiplier = Mathf.Clamp( fucker.CurrentSize / Math.Max(fucked.CurrentMaxSize, fucked.CurrentSize), 1.25f, 10);
+                var painMultiplier = Mathf.Clamp( fucker.CurrentSize / fucked.CurrentSize, 1, 10);
 
-                fuckerPl = baseStrength; fuckerPn = painMultiplier * 0.1f;
-                fuckedPl = 0f;                  fuckedPn = baseStrength * painMultiplier;
+                fuckerPl = baseStrength * 1.2f; ; fuckerPn = painMultiplier * 0.1f;
+                fuckedPl = baseStrength * 0.3f;  fuckedPn = baseStrength * painMultiplier;
                 expansion = painMultiplier;
-                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times max_maxsize [" + fucked.CurrentMaxSize + "|" + fucked.CurrentMaxSize + $"] : response heavy pain, expanding\nFucker pl {fuckerPl} baseStr {baseStrength} pain {fuckerPn} mult {painMultiplier}");
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 3 times currentSize [" + fucked.CurrentSize + $"] : response heavy pain, expanding\nFucker pl {fuckerPl} baseStr {baseStrength} pain {fuckerPn} mult {painMultiplier}");
             }
-            else if (fucker.CurrentSize > fucked.CurrentMaxSize * 1.25)
+            else if (fucker.CurrentSize > fucked.CurrentSize * 1.25)
             {
                 // if size > size * 1.5 pain 
-                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times CurrentMaxSize [" + fucked.CurrentMaxSize + "] : response pain, expanding");
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times CurrentSizeExtended [" + fucked.CurrentSize + "] : response pain, expanding");
                 fuckerPl = baseStrength * 1.2f;
-                fuckedPl = baseStrength * 0.3f;   fuckedPn = baseStrength * 0.6f;
-                expansion = 2;
-
-            }
-            else if (fucker.CurrentSize > fucked.CurrentSizeExtended * 1.25)
-            {
-                // if size > size * 1.5 pain 
-                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 1.25 times CurrentSizeExtended [" + fucked.CurrentSizeExtended + "] : response pain, expanding");
-                fuckerPl = baseStrength * 1.4f;
-                fuckedPl = baseStrength * 0.6f; fuckedPn = baseStrength * 0.3f;
+                fuckedPl = baseStrength * 0.6f; fuckedPn = baseStrength * 0.5f;
                 expansion = 1;
 
             }
-            else if (fucker.CurrentSize >= fucked.CurrentSize)
+            else if (fucker.CurrentSize >= fucked.CurrentSize * 0.8)
             {   // perfect match between size and extend
-                s.Add("Fucker Size [" + fucker.CurrentSize + "] 1 to 1.25 times CurrentSize [" + fucked.CurrentSize + "] : perfect match");
+                s.Add("Fucker Size [" + fucker.CurrentSize + $"] between 0.8 and 1.25 [{fucked.CurrentSize}] current size, perfect match");
                 fuckerPl = baseStrength * 1.6f;
                 fuckedPl = baseStrength * 1.2f; 
 
             }
-            else if (fucker.CurrentSize >= fucked.CurrentSize*0.8)
+            else if (fucker.CurrentSize >= fucked.Size*0.8)
             {
                 // else if size >= size pleasure
-                s.Add("Fucker Size [" + fucker.CurrentSize + "] between 0.8 and 1.0 CurrentSize [" + fucked.CurrentSize + "] : response satisfied");
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] between 0.8 and 0.8Max Size [" + fucked.Size + "] : response satisfied");
                 fuckerPl = baseStrength * 1.3f; ;
                 fuckedPl = baseStrength;
             }
@@ -1533,7 +1532,8 @@ public class EvaluationPackage
             if (source != null && body.Owner.canAct)
             {
                 var relation = body.Owner.Relationships.FindRelationshipWith(source);
-                if (relation != null && relation.Obedience(null) > RelationshipObedienceType.Normal)
+                var attitude = relation == null ? null : relation.GetCurrentAttitude();
+                if (attitude != null && attitude.obedienceMod > 0)
                 {
                     ModRelationshipResult(m, relation, RelationshipScoreType.Fear, (int)pain);
                 }
@@ -1565,7 +1565,7 @@ public class EvaluationPackage
         }
     }
 
-    public void ModRelationshipResult(MessageCollect m,RelationshipManager.Character_Relationship rel, RelationshipScoreType type, int value)
+    public void ModRelationshipResult(MessageCollect m,Character_Relationship rel, RelationshipScoreType type, int value)
     {
         m.exp.AddRelations(rel.Owner.RefID, rel.TargetID, type, value);
         rel.ModRelationValue(type, value);

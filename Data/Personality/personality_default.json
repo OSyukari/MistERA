@@ -22,7 +22,10 @@
     },
     {
         "ID":"Exposed_Vagina", "tags":["nsfw"],
-        "variants":[ { "responses":["（阴道露出描述文）"] } ]
+        "variants":[ 
+        { "requirements":  [ { "selfTags":["Expansion_Extreme"] }  ], "responses":[ "（阴道露出 精液灌满 描述文）"] },
+        { "requirements":  [ { "selfTags":["Expansion"] }  ], "responses":[ "（阴道露出 小腹膨胀 描述文）"] },
+        { "responses":["（阴道露出描述文）"] } ]
     },
     {
         "ID": "OnClimax",
@@ -31,6 +34,158 @@
             { "responses":[ "($self$) 高潮 口上文"] }
         ]
     },
+
+    {
+        "ID":"relationship_friend_propose", 
+        "variants":[ { "responses":["($self$) 申请成为朋友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_friend_set", 
+        "variants":[ { "responses":["($self$) 成为朋友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_friend_refuse", 
+        "variants":[ { "responses":["($self$) 拒绝成为朋友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_friend_refused", 
+        "variants":[ { "responses":["($self$) 被拒绝成为朋友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_friend_break", 
+        "variants":[ { "responses":["($self$) 朋友关系破裂 口上文"]} ]
+    },
+
+    {
+        "ID":"relationship_bff_propose", 
+        "variants":[ { "responses":["($self$) 申请成为挚友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_bff_set", 
+        "variants":[ { "responses":["($self$) 成为挚友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_bff_refuse", 
+        "variants":[ { "responses":["($self$) 拒绝成为挚友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_bff_refused", 
+        "variants":[ { "responses":["($self$) 被拒绝成为挚友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_bff_break", 
+        "variants":[ { "responses":["($self$) 挚友关系破裂 口上文"]} ]
+    },
+
+    {
+        "ID":"relationship_couple_propose", 
+        "variants":[ { "responses":["($self$) 申请成为情侣 口上文"]} ]
+    },
+    {
+        "ID":"relationship_couple_set", 
+        "variants":[ { "responses":["($self$) 成为情侣 口上文"]} ]
+    },
+    {
+        "ID":"relationship_couple_refuse", 
+        "variants":[ { "responses":["($self$) 拒绝成为情侣 口上文"]} ]
+    },
+    {
+        "ID":"relationship_couple_refused", 
+        "variants":[ { "responses":["($self$) 被拒绝成为情侣 口上文"]} ]
+    },
+    {
+        "ID":"relationship_couple_break", 
+        "variants":[ { "responses":["($self$) 情侣关系破裂 口上文"]} ]
+    },
+
+    {
+        "ID":"relationship_rival_propose", 
+        "variants":[ { "responses":["($self$) 申请成为劲敌 口上文"]} ]
+    },
+    {
+        "ID":"relationship_rival_set", 
+        "variants":[ { "responses":["($self$) 成为劲敌 口上文"]} ]
+    },
+    {
+        "ID":"relationship_rival_refuse", 
+        "variants":[ { "responses":["($self$) 拒绝成为劲敌 口上文"]} ]
+    },
+    {
+        "ID":"relationship_rival_refused", 
+        "variants":[ { "responses":["($self$) 被拒绝成为劲敌 口上文"]} ]
+    },
+    {
+        "ID":"relationship_rival_break", 
+        "variants":[ { "responses":["($self$) 劲敌关系结束 口上文"]} ]
+    },
+
+    {
+        "ID":"relationship_marriage_propose", 
+        "variants":[ { "responses":["($self$) 求婚 口上文"]} ]
+    },
+    {
+        "ID":"relationship_marriage_set", 
+        "variants":[ { "responses":["($self$) 求婚成功 口上文"]} ]
+    },
+    {
+        "ID":"relationship_marriage_refuse", 
+        "variants":[ { "responses":["($self$) 拒绝求婚成功 口上文"]} ]
+    },
+    {
+        "ID":"relationship_marriage_refused", 
+        "variants":[ { "responses":["($self$) 被拒绝求婚成功 口上文"]} ]
+    },
+    {
+        "ID":"relationship_marriage_break", 
+        "variants":[ { "responses":["($self$) 婚姻关系破裂 口上文"]} ]
+    },
+
+    {
+        "ID":"relationship_fwb_propose", 
+        "variants":[ { "responses":["($self$) 申请成为炮友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_fwb_set", 
+        "variants":[ { "responses":["($self$) 成为炮友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_fwb_refuse", 
+        "variants":[ { "responses":["($self$) 拒绝成为炮友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_fwb_refused", 
+        "variants":[ { "responses":["($self$) 被拒绝成为炮友 口上文"]} ]
+    },
+    {
+        "ID":"relationship_fwb_break", 
+        "variants":[ { "responses":["($self$) 炮友关系破裂 口上文"]} ]
+    },
+
+    {
+        "ID":"relationship_bully_propose_A", 
+        "variants":[ { "responses":["($self$) (this should never trigger) 口上文"]} ]
+    },
+    {
+        "ID":"relationship_bully_set_A", 
+        "variants":[ { "responses":["($self$) 成为欺凌者 口上文"]} ]
+    },
+    {
+        "ID":"relationship_bully_break_A", 
+        "variants":[ { "responses":["($self$) 欺凌关系结束 口上文"]} ]
+    },
+    {
+        "ID":"relationship_bully_propose_B", 
+        "variants":[ { "responses":["($self$) (this should never trigger) 口上文"]} ]
+    },
+    {
+        "ID":"relationship_bully_set_B", 
+        "variants":[ { "responses":["($self$) 成为被欺凌者 口上文"]} ]
+    },
+    {
+        "ID":"relationship_bully_break_B", 
+        "variants":[ { "responses":["($self$) 欺凌关系结束 口上文"]} ]
+    },
+
     {
         "ID": "com_sex_finger_caress_C_Climax",
         "tags":["nsfw"],

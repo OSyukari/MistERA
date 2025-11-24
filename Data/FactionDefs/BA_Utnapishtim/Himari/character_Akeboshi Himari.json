@@ -69,11 +69,7 @@
       "size_A": "trait_Size_A_1",
       "Height":162,
       "initialRelationship":[
-            {
-                "baseID":"PLAYER",
-                "initialPersonalRelationship":"relationship_mentor",
-                "initialPersonalRelationship_isA":false
-            },
+
             {
                 "baseID":"Campaign1_Char_Yuuka",
                 "initialPersonalRelationship":"relationship_bff"

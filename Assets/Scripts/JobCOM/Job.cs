@@ -44,6 +44,10 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
+    public virtual bool HasSpecialPermissionFor(COM com)
+    {
+        return false;
+    }
 
     public virtual List<string> JobTypeTag(Character_Trainable c)
     {

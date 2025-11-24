@@ -102,11 +102,11 @@ public class scr_panel_TargetInfo : scr_Menu
 
             //if (chara.FactionManager.CurrentlyActiveFaction != null) socialStatusBox.SetText(chara.FactionManager.CurrentlyActiveFactionStatus);
 
-            RelationshipManager.Character_Relationship rel = chara.Relationships.FindRelationshipWith(0);
+            Character_Relationship rel = chara.Relationships.FindRelationshipWith(0);
             if (rel != null)
             {
                 RelationshipManager.Draw_Attitude(rel, attitudeBox);// rel.DrawAttitude(attitudeBox);
-                RelationshipManager.Draw_Obedience(rel, obedienceBox);// rel.DrawObedience(obedienceBox);
+               // RelationshipManager.Draw_Obedience(rel, obedienceBox);// rel.DrawObedience(obedienceBox);
             }
 
             if (chara.Stats.Mood != null) chara.Stats.Mood.Draw(moodBox);
@@ -192,6 +192,7 @@ public class scr_panel_TargetInfo : scr_Menu
 
     public override void Notify(int optionID)
     {
+        /*
         ButtonValidator validator = validatorsByID[optionID];
         I_ButtonClickable button = validator as I_ButtonClickable;
         if (button != null)
@@ -205,40 +206,12 @@ public class scr_panel_TargetInfo : scr_Menu
                 default: break;
             }
         }
-        ValidateAll();
-    }
-
-    private void MakeCOMButton(RectTransform parent, RectTransform prefab, int charaRef, int equipRef)
-    {
-        RectTransform r = Instantiate(prefab);
-        r.SetParent(parent, false);
-        scr_SelectableText comp = r.GetComponent<scr_SelectableText>();
-
-        comp.Initialize(this, new ButtonValidator_equipSingle(this, charaRef, equipRef, comp));
-        comp.optionID = equipRef;
-
-        buttonsByID.Add(comp.optionID, comp);
-        validatorsByID.Add(comp.optionID, comp.Validator);
-
-        comp.Validate();
-    }
-
-    private void DestroyCOMButton(int buttonRef)
-    {
-
-        scr_SelectableText text = buttonsByID[buttonRef];
-        buttonsByID.Remove(buttonRef);
-        ButtonValidator validator = validatorsByID[buttonRef];
-        validatorsByID.Remove(buttonRef);
-
-        validator.Destroy();
-        text.gameObject.SetActive(false);
-        Destroy(text.gameObject);
-        
+        ValidateAll();*/
     }
 
     public override void Initialize()
     {
+        /*
         base.Initialize();
 
 
@@ -267,58 +240,7 @@ public class scr_panel_TargetInfo : scr_Menu
         }
 
         // build all presetList
-        ValidateAll();
-    }
-
-    public class ButtonValidator_equipSingle : ButtonValidator, I_ButtonClickable
-    {
-
-        int charaRef = -1;
-        int equipRef = -1;
-        new scr_panel_TargetInfo parent;
-        scr_SelectableText text;
-        Character_Trainable chara;
-        Item_Instance item = null;
-        ItemComponent_Equippable eq = null;
-        public ButtonValidator_equipSingle(scr_Menu parent, int charaRef, int equipRef, scr_SelectableText text) : base(parent)
-        {
-            this.parent = parent as scr_panel_TargetInfo;
-            this.charaRef = charaRef;
-            this.chara = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
-            this.equipRef = equipRef;
-            this.text = text;
-            item = scr_System_CampaignManager.current.FindItemInstanceByID(equipRef);
-            if (item != null) eq = item.GetComp_Equippable();
-        }
-
-        public override bool IsButtonValid()
-        {
-
-            if (eq == null || item == null) return false;
-            //Debug.LogError("Chara " + chara.FullName + " inventory " + chara.inventory_ref.ToArray().ToString());
-            //Debug.LogError("EquipRef " + equipRef +" displayName "+item.DisplayName);
-
-            text.SetText(item.DisplayName);
-
-
-            var equippedPart = chara.GetPartByEquipRef(equipRef);
-            if (chara.Inventory.Contains(item) || equippedPart == null) return false;
-
-            if (equippedPart.GetRevealingScore(eq.equipLayer) > 1) text.gameObject.SetActive(false);
-            else text.gameObject.SetActive(true);
-
-            return true;
-        }
-
-
-
-
-        public void OnClickButton()
-        {
-            //if (chara.inventory_ref.Contains(equipRef)) chara.EquipItem(equipRef, true);
-            chara.UnequipItem(equipRef, -1, true, true);
-            scr_System_CampaignManager.current.NotifyUpdate();
-        }
+        ValidateAll();*/
     }
 
 }

@@ -3,129 +3,441 @@
     {
         "list_biological":[
             {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+
                 "ID":"relationship_parent",
                 "displayName":"relationship_parent_displayName",
-                "DisplayName_A_is_to_B":"relationship_parent_displayName_A_is_to_B",
-                "DisplayName_B_is_to_A":"relationship_parent_displayName_B_is_to_A",
-                "isEqualRelationship":false,
-                "hasGenderVariant":true,
-                "Requirements":[ ],
-                "_comment":"trust|fear|good|bad|lust",
-                "RelationshipModA":[100,0,100,0,0],
-                "RelationshipModB":[100,100,100,100,0]
+
+                "relationship_A_to_B":{
+                    "permission":{ "intimacy_low":true, "lead_follow":true },
+                    "displayName":"relationship_parent_displayName_A_is_to_B",
+                    "hasGenderVariant":true,
+                    "RelationshipMod":[100,0,100,0,0]
+                },
+                "relationship_B_to_A":{
+                    "permission":{ "intimacy_low":true, "lead_follow":true },
+                    "displayName":"relationship_parent_displayName_B_is_to_A",
+                    "hasGenderVariant":true,
+                    "RelationshipMod":[100,100,100,100,0]
+                },
+                "_comment":"trust|fear|good|bad|lust"
             },
             {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+
                 "ID":"relationship_sibling",
-                "displayName":"relationship_sibling_displayName",
-                "DisplayName_A_is_to_B":"relationship_sibling_displayName_A_is_to_B",
-                "DisplayName_B_is_to_A":"relationship_sibling_displayName_B_is_to_A",
-                "isEqualRelationship":false,
-                "hasGenderVariant":true,
-                "Requirements":[ ],
-                "RelationshipModA":[100,0,100,100,0],
-                "RelationshipModB":[100,0,100,100,0]
+                "displayName":"relationship_sibling_displayName",               
+
+                "relationship_A_to_B":{
+                    "permission":{ "intimacy_low":true, "lead_follow":true },
+                    "displayName":"relationship_sibling_displayName_A_is_to_B",
+                    "hasGenderVariant":true,
+                    "RelationshipMod":[100,0,100,100,0]
+                },
+                "relationship_B_to_A":{
+                    "permission":{ "intimacy_low":true, "lead_follow":true },
+                    "displayName":"relationship_sibling_displayName_B_is_to_A",
+                    "hasGenderVariant":true,
+                    "RelationshipMod":[100,0,100,100,0]
+                }
             },
             {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+
                 "ID":"relationship_stepparent",
-                "displayName":"relationship_stepparent_displayName",
-                "DisplayName_A_is_to_B":"relationship_stepparent_displayName_A_is_to_B",
-                "DisplayName_B_is_to_A":"relationship_stepparent_displayName_B_is_to_A",
-                "isEqualRelationship":false,
-                "hasGenderVariant":true,
-                "Requirements":[ ],
-                "RelationshipModA":[0,0,50,0,0],
-                "RelationshipModB":[-50,50,0,50,0]
+                "displayName":"relationship_stepparent_displayName",         
+
+                "relationship_A_to_B":{
+                    "permission":{ "intimacy_low":true, "lead_follow":true },
+                    "displayName":"relationship_stepparent_displayName_A_is_to_B",
+                    "hasGenderVariant":true,
+                    "RelationshipMod":[0,0,50,0,0]
+                },
+                "relationship_B_to_A":{
+                    "permission":{ "intimacy_low":true, "lead_follow":true },
+                    "displayName":"relationship_stepparent_displayName_B_is_to_A",
+                    "hasGenderVariant":true,
+                    "RelationshipMod":[-50,50,0,50,0]
+                }
             }
         ],
         "list_social":
         [
             {
+                "$type":"RelationshipType, Assembly-CSharp",
+
                 "ID":"relationship_colleague",
                 "displayName":"relationship_colleague_displayName",
-                "isEqualRelationship":true,
-                "Requirements":[ ],
                 "RelationshipMod":[20,0,0,0,0]
             },
             {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+
                 "ID":"relationship_subordinate",
-                "displayName":"relationship_subordinate_displayName",
-                "DisplayName_A_is_to_B":"relationship_subordinate_displayName_A_is_to_B",
-                "DisplayName_B_is_to_A":"relationship_subordinate_displayName_B_is_to_A",
-                "isEqualRelationship":false,
-                "Requirements":[ ],
-                "RelationshipModA":[10,0,0,0,0],
-                "RelationshipModB":[20,0,0,0,0]
+                "displayName":"relationship_subordinate_displayName", 
+
+                "relationship_A_to_B":{
+                    "permission":{ "lead_follow":true },
+                    "displayName":"relationship_subordinate_displayName_A_is_to_B",
+                    "RelationshipMod":[10,0,0,0,0]
+                },
+                "relationship_B_to_A":{
+                    "displayName":"relationship_subordinate_displayName_B_is_to_A",
+                    "RelationshipMod":[20,0,0,0,0]
+                }
+
             },
             {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+
                 "ID":"relationship_prisoner",
                 "displayName":"relationship_prisoner_displayName",
-                "DisplayName_A_is_to_B":"relationship_prisoner_displayName_A_is_to_B",
-                "DisplayName_B_is_to_A":"relationship_prisoner_displayName_B_is_to_A",
-                "isEqualRelationship":false,
-                "Requirements":[ ],
-                "RelationshipModA":[0,0,0,0,0],
-                "RelationshipModB":[0,0,0,0,0]
+
+                "relationship_A_to_B":{
+                    "permission":{ "intimacy_low":true, "intimacy_high":true, "lead_follow":true },
+                    "displayName":"relationship_prisoner_displayName_A_is_to_B",
+                    "RelationshipMod":[0,0,0,0,10]
+                },
+                "relationship_B_to_A":{
+                    "displayName":"relationship_prisoner_displayName_B_is_to_A",
+                    "RelationshipMod":[0,25,0,25,0]
+                }
             },
             {
+                "$type":"RelationshipType, Assembly-CSharp",
+
                 "ID":"relationship_enemy",
-                "displayName":"relationship_enemy_displayName",
-                "isEqualRelationship":true,
-                "Requirements":[ ],
-                "RelationshipModA":[0,0,0,0,0],
-                "RelationshipModB":[0,0,0,0,0]
+                "displayName":"relationship_enemy_displayName"
+            },
+            {
+                "$type":"RelationshipType, Assembly-CSharp",
+
+                "ID":"relationship_stranger",
+                "displayName":"relationship_stranger_displayName"
+            },
+            {
+                "$type":"RelationshipType, Assembly-CSharp",
+
+                "ID":"relationship_acquaintance",
+                "displayName":"relationship_acquaintance_displayName"
+            },
+            {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+
+                "ID":"relationship_mentor",
+                "displayName":"relationship_mentor_displayName",
+
+                "relationship_A_to_B":{
+                    "displayName":"relationship_mentor_displayName_A_is_to_B",
+                    "RelationshipMod":[0,0,5,0,0],
+
+                    "Requirements":
+                    {
+                        "requireRawScore":[
+                            {"requireScoreID":"Goodwill","operand":"gte","value":70}
+                        ],
+                        "requireScore":[
+                            {"requireScoreID":"Goodwill","operand":"gte","value":100}
+                        ],
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
+                        ],
+                        "requireMood":{"operand":"gte","value":0}
+                    },
+                    "MainEmotionKey":"Badwill",
+                    "MaintenanceRequirements":
+                    {
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9}
+                        ]
+                    }
+                },
+                "relationship_B_to_A":{
+                    "displayName":"relationship_mentor_displayName_B_is_to_A",
+                    "RelationshipMod":[5,0,5,0,0],
+
+                    "Requirements":
+                    {
+                        "requireRawScore":[
+                            {"requireScoreID":"Trust","operand":"gte","value":50}
+                        ],
+                        "requireScore":[
+                            {"requireScoreID":"Trust","operand":"gte","value":50}
+                        ],
+                        "requireMood":{"operand":"gte","value":0}
+                    },
+                    "MainEmotionKey":"Badwill",
+                    "MaintenanceRequirements":
+                    {
+                        "requireRawScore":[
+                            {"requireScoreID":"Trust","operand":"gte","value":30}
+                        ]
+                    }
+                }
+            },
+            {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+
+                "ID":"relationship_servant",
+                "displayName":"relationship_servant_displayName",
+
+                "relationship_A_to_B":{
+                    "displayName":"relationship_servant_displayName_A_is_to_B",
+                    "RelationshipMod":[0,0,0,0,50],
+                    "permission":{ "lead_follow":true },
+
+                    "Requirements":
+                    {
+                        "requireRawScore":[
+                            {"requireScoreID":"Goodwill","operand":"gte","value":50}
+                        ],
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
+                        ],
+                        "requireScore":[ {"requireScoreID":"Goodwill","operand":"gte","value":50}],
+                        "requireMood":{"operand":"gte","value":0}
+                    },
+                    "MainEmotionKey":"Badwill",
+                    "MaintenanceRequirements":
+                    {
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9}
+                        ]
+                    }
+                },
+                "relationship_B_to_A":{
+                    "displayName":"relationship_servant_displayName_B_is_to_A",
+                    "RelationshipMod":[50,50,0,50,0],
+
+                    "Requirements":
+                    {
+                        "requireRawScore":[
+                            {"requireScoreID":"Trust","operand":"gte","value":50}
+                        ],
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Trust","operand":"gt","compareScoreID":"Fear","compareScoreMult":1.1}
+                        ],
+                        "requireScore":[ {"requireScoreID":"Trust","operand":"gte","value":50}],
+                        "requireMood":{"operand":"gte","value":0}
+                    },
+                    "MainEmotionKey":"Fear",
+                    "MaintenanceRequirements":
+                    {
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Trust","operand":"gt","compareScoreID":"Fear","compareScoreMult":0.9}
+                        ]
+                    }
+                }
             }
         ],
         "list_personal":[
             {
-                "ID":"relationship_couple",
-                "displayName":"relationship_couple_displayName",
-                "isEqualRelationship":true,
-                "hasGenderVariant":true,
-                "Requirements":[ ],
-                "RelationshipMod":[20,20,20,20,100]
-            },
-            {
-                "ID":"relationship_marriage",
-                "displayName":"relationship_marriage_displayName",
-                "isEqualRelationship":true,
-                "hasGenderVariant":true,
-                "Requirements":[ ],
-                "RelationshipMod":[50,25,50,25,50]
-            },
-            {
+                "$type":"RelationshipType, Assembly-CSharp",
+
                 "ID":"relationship_friend",
                 "displayName":"relationship_friend_displayName",
-                "isEqualRelationship":true,
-                "Requirements":[ ],
-                "RelationshipMod":[20,0,20,0,0]
+                "canUpgradeInto":["relationship_bff"],
+                "RelationshipMod":[0,0,5,0,0],
+                "trustCapIncrease":25,
+                "Requirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Goodwill","operand":"gte","value":50}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
+                    ],
+                    "requireScore":[ 
+                        {"requireScoreID":"Trust","operand":"gte","value":10},
+                        {"requireScoreID":"Goodwill","operand":"gte","value":50}],
+                    "requireMood":{"operand":"gte","value":0}
+                },
+                "MainEmotionKey":"Badwill",
+                "MaintenanceRequirements":
+                {
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9}
+                    ]
+                }
             },
             {
+                "$type":"RelationshipType, Assembly-CSharp",
+
                 "ID":"relationship_bff",
+                "permission":{ "lead_follow":true },
+                "canUpgradeInto":["relationship_couple"],
                 "displayName":"relationship_bff_displayName",
-                "isEqualRelationship":true,
-                "Requirements":[ ],
-                "RelationshipMod":[100,0,100,0,0]
+                "RelationshipMod":[10,0,10,0,0],
+                "trustCapIncrease":50,
+                "Requirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":50},
+                        {"requireScoreID":"Goodwill","operand":"gte","value":50}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
+                    ],
+                    "requireScore":[ 
+                        {"requireScoreID":"Trust","operand":"gte","value":50},
+                        {"requireScoreID":"Goodwill","operand":"gte","value":50}
+                    ],
+                    "requireMood":{"operand":"gte","value":0}
+                },
+                "MainEmotionKey":"Badwill",
+                "MaintenanceRequirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":30}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9}
+                    ]
+                }
             },
             {
-                "ID":"relationship_mentor",
-                "displayName":"relationship_mentor_displayName",
-                "DisplayName_A_is_to_B":"relationship_mentor_displayName_A_is_to_B",
-                "DisplayName_B_is_to_A":"relationship_mentor_displayName_B_is_to_A",
-                "isEqualRelationship":false,
-                "Requirements":[ ],
-                "_comment":"trust|fear|good|bad|lust",
-                "RelationshipModA":[0,0,0,0,0],
-                "RelationshipModB":[30,0,0,0,0]
+                "$type":"RelationshipType, Assembly-CSharp",
+
+                "ID":"relationship_couple",
+                "permission":{ "intimacy_low":true, "intimacy_high":true, "lead_follow":true },
+                "canUpgradeInto":["relationship_marriage"],
+                "displayName":"relationship_couple_displayName",
+                "hasGenderVariant":true,
+                "trustCapIncrease":125,
+                "RelationshipMod":[15,0,0,0,10],
+                "Requirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":50},
+                        {"requireScoreID":"Desire","operand":"gte","value":100}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Desire","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
+                    ],
+                    "requireScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":75},
+                        {"requireScoreID":"Desire","operand":"gte","value":100},
+                        {"requireScoreID":"Goodwill","operand":"gte","value":50}],
+                    "requireMood":{"operand":"gte","value":0}
+                },
+                "MainEmotionKey":"Badwill",
+                "MaintenanceRequirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":45},
+                        {"requireScoreID":"Desire","operand":"gte","value":50}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Desire","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9},
+                        {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9}
+                    ]
+                }
             },
             {
-                "ID":"relationship_servant",
-                "displayName":"relationship_servant_displayName",
-                "DisplayName_A_is_to_B":"relationship_servant_displayName_A_is_to_B",
-                "DisplayName_B_is_to_A":"relationship_servant_displayName_B_is_to_A",
-                "isEqualRelationship":false,
-                "Requirements":[ ],
-                "RelationshipModA":[0,0,0,0,50],
-                "RelationshipModB":[50,50,0,50,0]
+                "$type":"RelationshipType, Assembly-CSharp",
+
+                "ID":"relationship_marriage",
+                "permission":{ "intimacy_low":true, "intimacy_high":true, "lead_follow":true },
+                "displayName":"relationship_marriage_displayName",
+                "allowNaturalProposition":false,
+                "hasGenderVariant":true,
+                "RelationshipMod":[25,0,0,0,25],
+                "trustCapIncrease":500,
+                "Requirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":150},
+                        {"requireScoreID":"Goodwill","operand":"gte","value":150}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
+                    ],
+                    "requireScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":150},
+                        {"requireScoreID":"Goodwill","operand":"gte","value":150}
+                    ],
+                    "requireMood":{"operand":"gte","value":2}
+                },
+                "MainEmotionKey":"Badwill",
+                "MaintenanceRequirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":100}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9}
+                    ],
+                    "requireScoreCompare":[
+                        {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9},
+                        {"requireScoreID":"Trust","operand":"gt","compareScoreID":"Fear","compareScoreMult":0.9}
+                    ]
+                }
+            },
+            {
+                "$type":"RelationshipType, Assembly-CSharp",
+
+                "ID":"relationship_rival",
+                "displayName":"relationship_rival_displayName",
+                "RelationshipMod":[5,0,0,20,0],
+                "trustCapIncrease":25,
+                "Requirements":
+                {
+                    "requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":25},
+                        {"requireScoreID":"Badwill","operand":"gte","value":50}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Badwill","operand":"gt","compareScoreID":"Goodwill","compareScoreMult":1.1}
+                    ],
+                    "requireScore":[ {"requireScoreID":"Badwill","operand":"gte","value":50}],
+                    "requireMood":{"operand":"lt","value":0}
+                },
+                "MainEmotionKey":"Goodwill",
+                "MaintenanceRequirements":
+                {"requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":10}
+                    ],
+                    "requireRawScoreCompare":[
+                        {"requireScoreID":"Badwill","operand":"gt","compareScoreID":"Goodwill","compareScoreMult":0.9}
+                    ]
+                }
+            },
+            {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+
+                "ID":"relationship_bully",
+                "displayName":"relationship_bully_displayName",    
+                "trustCapIncrease":-10,    
+
+                "relationship_A_to_B":{
+                    "displayName":"relationship_bully_displayName_A_is_to_B",
+                    "RelationshipMod":[0,0,0,10,10],
+                    "allowNaturalProposition":"false"
+                },
+                "relationship_B_to_A":{
+                    "displayName":"relationship_bully_displayName_B_is_to_A",
+                    "RelationshipMod":[0,20,0,10,0],
+
+                    "Requirements":
+                    {
+                        "requireRawScore":[
+                            {"requireScoreID":"Fear","operand":"gte","value":50}
+                        ],
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Fear","operand":"gt","compareScoreID":"Trust","compareScoreMult":1.1}
+                        ],
+                        "requireScore":[ {"requireScoreID":"Fear","operand":"gte","value":50}],
+                        "requireMood":{"operand":"lt","value":0},
+                        "requireStress":{"operand":"lt","value":0}
+                    },
+                    "MainEmotionKey":"Trust",
+                    "MaintenanceRequirements":
+                    {
+                        "requireRawScoreCompare":[
+                            {"requireScoreID":"Fear","operand":"gt","compareScoreID":"Trust","compareScoreMult":0.9}
+                        ]
+                    }
+                }
             }
         ]
     },
@@ -135,7 +447,30 @@
         {
             "zh-cn":
             {
-                
+
+"rel_tooltip_inequal_baseString":"$name$ $isequal$\n甲方：$tooltip_a$\n乙方：$tooltip_b$",
+"rel_tooltip_baseString":"$name$ $isequal$ $allownatural$ $reqvalidation$\n关系加值：$bonus$\n申请需求：$req$\n维持关系条件：$maintenance$",
+"rel_tooltip_biological":"血缘关系",
+"rel_tooltip_social":"职场关系",
+"rel_tooltip_personal":"个人关系",
+"rel_tooltip_short_baseString":"$name$ $isequal$\n关系加值：$bonus$",
+"rel_tooltip_isequal":"对等关系",
+"rel_tooltip_inequal":"不对等关系",
+"rel_tooltip_allownatural":"NPC可主动提出",
+"rel_tooltip_disallownatural":"NPC不可主动提出",
+"rel_tooltip_reqvalidation":"需要对方接受",
+"rel_tooltip_novalidation":"可单方面成立",
+"rel_tooltip_req_none":"无",
+"rel_tooltip_maintenance_none":"无",
+
+"com_rel_tooltip_nopermission_low":"未允许接触",
+"com_rel_tooltip_nopermission_high":"未允许性行为",
+"com_rel_tooltip_pressure":"被施压",
+"com_rel_tooltip_obedience":"接受度",
+
+
+                "relationship_stranger_displayName":"陌生人",
+                "relationship_acquaintance_displayName":"熟人",
                 "relationship_couple_displayName": "恋人",
                 "relationship_couple_displayName_male": "男朋友",
                 "relationship_couple_displayName_female": "女朋友",
@@ -168,6 +503,11 @@
                 "relationship_sibling_displayName_B_is_to_A": "弟妹",
                 "relationship_sibling_displayName_B_is_to_A_male": "弟弟",
                 "relationship_sibling_displayName_B_is_to_A_female": "妹妹",
+                
+                "relationship_rival_displayName":"竞争对手",
+                "relationship_bully_displayName":"欺凌",
+                "relationship_bully_displayName_A_is_to_B":"欺凌者",
+                "relationship_bully_displayName_B_is_to_A":"被欺凌者",
 
                 "relationship_prisoner_displayName":"监禁",
                 "relationship_prisoner_displayName_A_is_to_B":"狱卒",

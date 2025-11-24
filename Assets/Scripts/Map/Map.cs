@@ -40,7 +40,7 @@ public class Map_Instance
     }
     public void NotifyEventEnd()
     {
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Map NotifyEventEnd, dirtyAP {String.Join(",",dirtyCharaAPRef)} dirtyChara {String.Join(",", dirtyCharaRef)}");
+       // if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Map NotifyEventEnd, dirtyAP {String.Join(",",dirtyCharaAPRef)} dirtyChara {String.Join(",", dirtyCharaRef)}");
         this.dirtyCharaAPRef.Clear();
         this.dirtyCharaRef.Clear();
     }

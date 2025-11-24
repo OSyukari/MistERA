@@ -57,12 +57,11 @@ public class BodyInternal_Base
     public string exposedKojoID = "";
 
     public bool needLubrication = false;
-    public float sizeRatio = 0;
-    public float depthRatio = 0;
 
-    public float volumeHeightRatio = 0;
-    public float volumeMassRatio = 0;
-    public float maxExpansionRatio = 1;
-    public float visibleExpansionRatio = 1;
+    public float sizeRatio = 0, stretch_ratio = 1, aroused_stretchMod = 0;
+
+    public float depthRatio = 0, aroused_depthMod = 1;
+
+    public float volumeRatio = 0, visibleExpansionRatio = 1, maxExpansionRatio = 1;
 
 }

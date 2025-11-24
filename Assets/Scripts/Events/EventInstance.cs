@@ -174,6 +174,7 @@ public class EventInstance
         }
     }
     public bool canRun { get { return nextEntry != null && nextEvent != null; } }
+    public bool allowDuplicate { get { return (currentEvent == null || currentEvent.allowDuplicate) && (nextEvent == null || nextEvent.allowDuplicate); } }
     public bool Active { get { return Status != EventStatus.idle; } }
     public bool Displayable { get { return true; } }
     public void Start(bool waitingEnd = false)
