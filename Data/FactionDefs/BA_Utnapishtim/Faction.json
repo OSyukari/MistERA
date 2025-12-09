@@ -69,11 +69,7 @@
 {
     "initClass":"campaign_init_factionVisitor",
     "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Cinderella","External","Prisoner"]
-},
-
-{ "initClass":"campaign_init_factionVisitor", "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Rapi","External","Prisoner"]},
-{ "initClass":"campaign_init_factionVisitor", "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Neon","External","Prisoner"]},
-{ "initClass":"campaign_init_factionVisitor", "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Anis","External","Prisoner"]}
+}
                     ]
                 }
             ]

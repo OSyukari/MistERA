@@ -256,19 +256,19 @@ public class SkillManager
         List<string> extratags = null;
         List<SkillInstance> pastskills = new List<SkillInstance>();
         if (actiontags.Count < 1) return finalmod;
-        Debug.Log($"checking skills tags {Owner.CallName} selftags {String.Join("|", selftags)} targettags {String.Join("|", actiontags)} on list {String.Join("|", availableSkillChecks.Keys)}");
+        //Debug.Log($"checking skills tags {Owner.CallName} selftags {String.Join("|", selftags)} targettags {String.Join("|", actiontags)} on list {String.Join("|", availableSkillChecks.Keys)}");
         foreach(var check in availableSkillChecks)
         {
             skillName = "";
             mod = 0;
             if (!actiontags.Contains(check.Key)) continue;
             if (check.Value.Count < 1) continue;
-            Debug.Log($"checking skills tags {Owner.CallName} has {String.Join("|", actiontags)}, found valid {check.Key} with use {check.Value.Count}");
+            //Debug.Log($"checking skills tags {Owner.CallName} has {String.Join("|", actiontags)}, found valid {check.Key} with use {check.Value.Count}");
             foreach (var sk in check.Value)
             {
                 if (sk.Check(selftags, actiontags, ref mod, ref skillName, ref extratags, pastskills))
                 {
-                    Debug.Log($"{Owner.CallName} skillcheck {skillName} success, {finalmod} {String.Join("|", extratags)} ");
+                    //Debug.Log($"{Owner.CallName} skillcheck {skillName} success, {finalmod} {String.Join("|", extratags)} ");
                 }
             }
             if (mod != 0)
