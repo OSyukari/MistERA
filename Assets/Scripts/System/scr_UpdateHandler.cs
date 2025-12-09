@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class scr_UpdateHandler : MonoBehaviour
 {
@@ -329,7 +330,6 @@ public class scr_UpdateHandler : MonoBehaviour
 
             cnManager.ClearExecutedAPs();
             //cnManager.ClearLogs(true);
-
             scr_System_Time.current.NotifyTimeResumeEnd();
            // if (scr_System_Time.current.TimeResume) scr_System_Time.current.timeStop = TimestopState.normal;
 
@@ -388,6 +388,7 @@ public class scr_UpdateHandler : MonoBehaviour
         ExecuteEventCallbacks(CallbackResumeUpdate);
         FlushCollectedLogs(true, oneLoop, true);
         //NotifyLogsSingleUpdate(CallbackResumeUpdate);
+        scr_System_CampaignManager.current.NotifyEventEnd();
 
     }
 
@@ -433,7 +434,6 @@ public class scr_UpdateHandler : MonoBehaviour
 
         if (log) Debug.Log($"invoking Observer_PostUpdateTime_EventEnd, stillupdating? {this.EventHandler.Active}");
         Observer_PostUpdateTime_EventEnd?.Invoke(this.EventHandler.Active);
-        scr_System_CampaignManager.current.NotifyEventEnd();
         FlushCollectedLogs(true, true, false);
         var bo = cnManager.ExistPlayerPackage(out var a, out var b, true);
         if (autoResumeUpdate)
@@ -471,7 +471,11 @@ public class scr_UpdateHandler : MonoBehaviour
     }
 
 
-
+    public void AppendMessageBefore(string s, bool rightalign)
+    {
+        if (s.Length < 1) return;
+        this.Message.messages_before.Add($"<align=\"right\">{s}</align>");
+    }
     public void AppendKojoMessage(MessageCollect_KojoEntry m)
     {
         //Debug.Log("AppendKojoMessage");

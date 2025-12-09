@@ -145,7 +145,7 @@ public class ActionPackage_Expedition : ActionPackage
     /// Does not require EP, thus overwrite.
     /// </summary>
     /// <returns></returns>
-    protected override bool Request(bool rebuildPackage = true)
+    protected override bool Request(bool rebuildPackage = true, bool forceAccept = false)
     {
         return isValid;
     }
@@ -167,7 +167,7 @@ public class ActionPackage_Expedition : ActionPackage
 
             foreach (var i in this.Actors)
             {
-                CharaReqUtility.ApplyCost(SourceEV.teamRequirement.charaReq, i, r == null ? null : r.Tooltips);
+                TeamReqUtility.ApplyCost(SourceEV.teamRequirement, i, r == null ? null : r.Tooltips);
 
                 foreach(var j in result.results_characters)
                 {
@@ -259,7 +259,7 @@ public class ActionPackage_Expedition : ActionPackage
 
     }
 
-    public override bool JoinAP(Character_Trainable c)
+    public override bool JoinAP(Character_Trainable c, bool forceAccept = false)
     {
 
 

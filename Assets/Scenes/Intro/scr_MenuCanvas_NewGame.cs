@@ -283,12 +283,9 @@ public class scr_MenuCanvas_NewGame : scr_Menu
         public void OnClickButton()
         {
 
-            if (parent.currentCampaign.requireOriginID != "")
-            {
-                Action<Character_Trainable> act = delegate (Character_Trainable s) { parent.SetPlayerChar(s); };
-                parent.OpenCharaSelect(act, parent.currentCampaign.requireOriginID);
 
-            }
+            Action<Character_Trainable> act = delegate (Character_Trainable s) { parent.SetPlayerChar(s); };
+            parent.OpenCharaSelect(act, parent.currentCampaign.requireOriginID);
         }
     }
 
@@ -309,11 +306,9 @@ public class scr_MenuCanvas_NewGame : scr_Menu
 
         public void OnClickButton()
         {
-            if (parent.currentCampaign.requireOriginID != "")
-            {
-                Action<Character_Trainable> act = delegate (Character_Trainable s) { parent.SetComanionChar(s); };
-                parent.OpenCharaSelect(act, parent.currentCampaign.requireOriginID);
-            }
+            
+            Action<Character_Trainable> act = delegate (Character_Trainable s) { parent.SetComanionChar(s); };
+            parent.OpenCharaSelect(act, parent.currentCampaign.requireOriginID);
         }
     }
 

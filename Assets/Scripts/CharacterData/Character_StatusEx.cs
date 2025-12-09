@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 using Newtonsoft.Json;
+using NUnit.Framework;
+using UnityEngine;
 
 [System.Serializable]
 public class Index_StatusEx : I_IndexHasID, I_IndexMergeable
@@ -33,7 +34,6 @@ public class Index_StatusEx : I_IndexHasID, I_IndexMergeable
 
 }
 
-[System.Serializable]
 public class StatusEx_Base
 {
     public string statusID = "";
@@ -47,7 +47,7 @@ public class StatusEx_Base
     public bool noDisplay = false;
     public bool constant = false;
     public string stringFormat = "N1";
-    public bool allowOvercap = true;
+    public bool allowOvercap = false;
     public bool capModded = false;
     [JsonIgnore] public bool isValid
     {
@@ -139,7 +139,6 @@ public class StatusEx_Base
 }
 
 
-[System.Serializable]
 public class StatusEx_Instance : I_CacheValues
 {
     [JsonProperty] protected string baseID = "";
@@ -147,12 +146,11 @@ public class StatusEx_Instance : I_CacheValues
 
     public int duration = -1;
 
+    protected StatModStorage storage = null;
     public void ReEstablishParent(I_StatsManager stats)
     {
-
-        cached_value = null;
-
         this.owner = stats;
+        storage = new StatModStorage(owner, 0, 1, 0, 1, -999,999, this.BaseRef.capModded, this.BaseRef.allowOvercap);
     }
 
     [JsonProperty] protected float severity = 0;
@@ -171,7 +169,6 @@ public class StatusEx_Instance : I_CacheValues
         }
     }
 
-    protected Dictionary<string, StatsManager.ModStorage> StoredModifiers = new Dictionary<string, StatsManager.ModStorage>();
 
     public void Draw(scr_HoverableText text)
     {
@@ -184,11 +181,11 @@ public class StatusEx_Instance : I_CacheValues
     {
         get
         {
-            if (cached_value == null) ClearCache();
+            if (!_cached) ClearCache();
             var first = BaseRef.variants[0];
             var last = BaseRef.variants[BaseRef.variants.Count - 1];
-
-            return Math.Max(first.threshold, Math.Min(last.threshold, cached_value.FinalValue + DebugSeverityMod));
+            return Math.Clamp(storage.Value + DebugSeverityMod, first.threshold, last.threshold);
+           // return Math.Max(first.threshold, Math.Min(last.threshold, storage.Value + DebugSeverityMod));
         }
     }
 
@@ -196,70 +193,60 @@ public class StatusEx_Instance : I_CacheValues
     {
         get
         {
-            if (cached_value == null) ClearCache();
-            return cached_value.Print();
+            if (!_cached) ClearCache();
+            return $"{storage.Print()} -> {storage.Value}";
         }
     }
 
-
-    private StatRecord cached_value = null;
-
-
     public float SeverityPrevious = 0f;
+    bool _cached = false;
     public void ClearCache( bool resetOnly = false)
     {
         //Debug.Log("StatEx " + baseID + " CLEAR CACHE");
         if (resetOnly)
         {
-            this.cached_value = null;
+            this._cached = false;
             return;
         }
-        if (cached_value != null) SeverityPrevious = Severity;
-        this.cached_value = null;
+        if (_cached) SeverityPrevious = Severity;
+        _cached = false;
 
         if (this.BaseRef.variationMode.variationType == StatusEx_Base.Status_Variation_Type.summation)
         {
+            storage.Reset();
             float i = severity;
+            storage.SetBase(i, 1);
             List<string> s = new List<string>();
-            s.Add("initial value "+severity);
+
             List<Status_Instance> listSI = owner.FindStatusByID(BaseRef.variationMode.stringData);
             foreach (var inst in listSI)
             {
                 i += inst.Severity;
                 s.Add(inst.ID + " " + inst.Severity);
             }
-            cached_value = new StatRecord();
-            cached_value.SetValue(i, 0f);
-            cached_value.SetExternalTooltip(s);
+            storage.SetFinalOverride(i, 1);
+            storage.SetExternalTooltip(s);
+
+            _cached = true;
         }
         else if (this.BaseRef.variationMode.variationType == StatusEx_Base.Status_Variation_Type.statModifiers)
         {
             // so we are only checking among other status' severity modifiers stattypestring
+            storage.Reset();
 
-            
             var initialValue = BaseRef.variationMode.value;
             severity = initialValue;
-            StoredModifiers.Clear();
+            storage.SetBase(initialValue, 1);
 
-            var modifiers = owner.GetModifiers(this, BaseRef.statusID);
             var list = new List<Stat_Modifier>();
-            list.AddRange(modifiers);
+            list.AddRange(owner.GetModifiers(this, BaseRef.statusID));
 
+            float finalResult = UtilityEX.ParseStatMods(this, storage, list);
+            storage.SetFinalOverride(finalResult, 1);
 
-            //if (list.Count > 0) Debug.LogError("statEx varStatModifier count "+list.Count);
-
-            var tempList = new StatRecord();
-          //  tempList.Add("initial value " + severity);
-
-            float finalResult;
-
-
-            finalResult = UtilityEX.ParseStatMods(this, owner, StoredModifiers, list, tempList, -999, 999, this.BaseRef.capModded, this.BaseRef.allowOvercap);
-
-            tempList.SetValue(finalResult, initialValue);
-
-            cached_value = tempList;
+            _cached = true;
         }
+        _severityIndex = -1;
     }
 
     [JsonIgnore] public string SeverityDisplayName
@@ -277,16 +264,24 @@ public class StatusEx_Instance : I_CacheValues
 
     [JsonIgnore] public List<string> Tags { get { return this.BaseRef.variants[SeverityIndex].tags; } }
 
+
+    [JsonProperty] protected int _severityIndex = -1;
     protected int SeverityIndex
     {
         get
         {
-            for (int i = 0; i < BaseRef.variants.Count; i++)
-            {
-                if (this.Severity <= BaseRef.variants[i].threshold) return i;
-            }
-            return BaseRef.variants.Count - 1;
+            if (_severityIndex == -1) _severityIndex = UpdateIndex();
+            return _severityIndex;
         }
+    }
+
+    protected int UpdateIndex()
+    {
+        for (int i = 0; i < BaseRef.variants.Count; i++)
+        {
+            if (this.Severity <= BaseRef.variants[i].threshold) return i;
+        }
+        return BaseRef.variants.Count - 1;
     }
 
     [JsonIgnore] public int DebugSeverityMod = 0;
@@ -297,15 +292,15 @@ public class StatusEx_Instance : I_CacheValues
     }
     public StatusEx_Instance(StatusEx_Base baseStatus, I_StatsManager owner, float initialSeverity = 0f, int duration = -1)
     {
-        this.owner = owner;
         this.baseRef = baseStatus;
         this.baseID = baseStatus.statusID;
         this.duration = duration;
         if (Mathf.Abs(initialSeverity) < float.Epsilon) this.severity = 0f;
         else this.severity = initialSeverity;
         this.pauseXMinAfterMod = BaseRef.variationMode.pauseXMinAfterMod;
+
+        ReEstablishParent(owner);
         //ClearCache();
-        cached_value = null;
     }
     public StatusEx_Instance Copy(I_StatsManager newOwner)
     {

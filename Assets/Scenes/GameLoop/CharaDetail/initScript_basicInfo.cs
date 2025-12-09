@@ -29,11 +29,16 @@ public class initScript_basicInfo : MonoBehaviour
     public TextMeshProUGUI linkBox_resize;
 
 
+    public RectTransform SkillsGrid;
+    public scr_HoverableText viewExpButton;
+
     public void InitData(Character_Trainable chara)
     {
         if (chara == null) return;
 
         bool safe = scr_System_CentralControl.current.isSafeMode;
+
+        while (SkillsGrid.transform.childCount > 0) DestroyImmediate(SkillsGrid.transform.GetChild(0).gameObject);
 
         fullName.SetText(chara.FullName, false);
         //Debug.LogError("Query gender data on string " + chara.Appearance.ToString());
@@ -99,11 +104,12 @@ public class initScript_basicInfo : MonoBehaviour
         // clean traitsGrid
         while (traitsList.transform.childCount > 0) DestroyImmediate(traitsList.transform.GetChild(0).gameObject);
 
+        var isDebug = scr_System_CampaignManager.current.DebugMode;
         // get stats grid
         foreach (var statDerived in chara.Stats.list_statsDerived)
         {
             if (!statDerived.Parent.isValidStatFor(chara.Stats)) continue;
-            if (statDerived.Parent.noDisplay) continue;
+            if (!isDebug && statDerived.Parent.noDisplay) continue;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
             UI_Utility.Draw(statDerived, link);
             link.GetComponent<RectTransform>().SetParent(statsGrid, false);
@@ -119,7 +125,8 @@ public class initScript_basicInfo : MonoBehaviour
         }
 
         while (statusEXGrid.transform.childCount > 0) DestroyImmediate(statusEXGrid.transform.GetChild(0).gameObject);
-        foreach (var stat in chara.Stats.statusInstancesEx_Displayable)
+        var siex_list = scr_System_CampaignManager.current.DebugMode ? chara.Stats.statusInstancesEx : chara.Stats.statusInstancesEx_Displayable;
+        foreach (var stat in siex_list)
         {
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
             stat.Draw(link);
@@ -129,10 +136,9 @@ public class initScript_basicInfo : MonoBehaviour
 
         while (statusGrid.transform.childCount > 0) DestroyImmediate(statusGrid.transform.GetChild(0).gameObject);
         //int ii = 0;
-        foreach (Status_Instance i in chara.Stats.StatusInstances_Displayable)
+        var si_list = scr_System_CampaignManager.current.DebugMode ? chara.Stats.StatusInstances : chara.Stats.StatusInstances_Displayable;
+        foreach (Status_Instance i in si_list)
         {
-            if (i.BaseRef.noDisplay) continue;
-            //ii += 1;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
             
             UI_Utility.Draw(i, link);

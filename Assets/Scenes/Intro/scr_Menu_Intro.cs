@@ -192,7 +192,7 @@ public class scr_Menu_Intro : scr_Menu
                     button.Initialize(this, new ButtonValidator_AlwaysTrue(this));
                     break;
                 case 3:
-                    button.Initialize(this, new ButtonValidator_AlwaysFalse(this));
+                    button.Initialize(this, new ButtonValidator_AlwaysTrue(this));
                     break;
                 case 5:
                     button.Initialize(this, new ButtonValidator_HoverMessage(this, button));break;
@@ -278,7 +278,8 @@ public class scr_Menu_Intro : scr_Menu
 
     public void OpenCharaSelect()
     {
-        scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_menuCanvas_CharaSelect, this.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaSelect>();
+        var cselect = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_menuCanvas_CharaSelect, this.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaSelect>();
+        cselect.InitializeWithArguments(null, null);
     }
 
     public void OpenNewGame()

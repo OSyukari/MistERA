@@ -371,8 +371,13 @@ public class Room_Instance: IDisposable, I_Disposable
             this.baseRoom = baseRoom;
         }
     }
-    
-    [JsonIgnore] public bool isRoomPrison { get { return Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_prison")) != null; } }
+
+    bool _isRoomPrison = false;
+    bool _isRoomPrison_cached = false;
+    [JsonIgnore] public bool isRoomPrison { get { 
+            if (!_isRoomPrison_cached) _isRoomPrison = Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_prison")) != null;
+            return _isRoomPrison;
+        } }
     [JsonIgnore] public bool isRoomPrivate{ get { return !isRoomPrison && Furnitures.Find(x=>x.FurnitureBase.ID.Contains( "furniture_bed")) != null; } }
 
     [JsonProperty] private List<int> roomItemsRefs = new List<int>();

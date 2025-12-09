@@ -5,6 +5,7 @@
         [
             {
                 "ID":"skill_addiction_homosexual_female",
+                "noDisplay":true,
                 "tags":["nsfw"],
                 "requirements":{
                     "$type":"CharaSkill+RequireAll, Assembly-CSharp",

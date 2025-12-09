@@ -5,6 +5,7 @@
         [
             {
                 "ID":"skill_sexSkill_maso",
+                "noDisplay":true,
                 "tags":["nsfw"],
                 "levels":
                 [   {

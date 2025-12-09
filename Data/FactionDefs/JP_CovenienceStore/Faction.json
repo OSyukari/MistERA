@@ -94,7 +94,7 @@
                 "ActionPackageClass":"ActionPackage_Interaction",
                 "displayName":"jp_convenience_store_frontDesk_displayName_1",
                 "timeScale":30,
-                "comTags":["job","furniture","workModules","!!!!extrajobcomtag!!!!"],
+                "comTags":["job","furniture","workModules","!!!!extrajobcomtag!!!!","social"],
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true
@@ -398,7 +398,6 @@
         "list":[
             {
                 "statusID":"chara_status_inducedSleep",
-                "displayName":"安眠药效果",
                 "variationMode": { 
                     "baselineVariation":{
                         "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
@@ -408,11 +407,11 @@
                 } ,
                 "variants":[
                     {
-                        "displayName":"",
+                        "displayable":false,
                         "threshold":0
                     },
                     {
-                        "displayName":"轻微疲劳",
+                        "displayName":"安眠效果: 轻微疲劳",
                         "threshold":5,
                         "stat_modifiers":[
                             {
@@ -422,7 +421,7 @@
                         ]
                     },
                     {
-                        "displayName":"疲劳",
+                        "displayName":"安眠效果: 疲劳",
                         "threshold":999,
                         "stat_modifiers":[
                             {

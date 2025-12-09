@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
+using UnityEngine;
 
 [System.Serializable]
 public class Job_CharaCOM : Job
@@ -15,6 +16,14 @@ public class Job_CharaCOM : Job
         } }
 
     private Room_Instance parentRoomRef = null;
+    [JsonIgnore]
+    public override string DisplayName
+    {
+        get
+        {
+            return $"{Owner.CallName}'s Interaction Job";
+        }
+    }
     [JsonIgnore] public override Room_Instance ParentRoom { get
         {
             return scr_System_CampaignManager.current.GetCharaRoomInstance(charaRefID);

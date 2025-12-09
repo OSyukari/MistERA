@@ -176,11 +176,11 @@ public class Character_Factions
                 if (Owner.RefID == manager.RefID) continue;
 
                 if (returnValue){
-                    Owner.Relationships.FindRelationshipWith(manager.RefID).ModRelationValue(RelationshipScoreType.Trust, 1);
+                    Owner.Relationships.IncreaseRelationshipWith(manager.RefID, RelationshipScoreType.Trust, 1);// FindRelationshipWith(manager.RefID).ModRelationValue(RelationshipScoreType.Trust, 1);
                     HomeFactions[0].DailyReport.AddManageReport(Owner.FirstName+"'s trust toward "+manager.FirstName+" has increased by 1");
                 } 
                 else{
-                    Owner.Relationships.FindRelationshipWith(manager.RefID).ModRelationValue(RelationshipScoreType.Trust, -1);
+                    Owner.Relationships.IncreaseRelationshipWith(manager.RefID, RelationshipScoreType.Trust, -1);
                     HomeFactions[0].DailyReport.AddManageReport(Owner.FirstName+"'s trust toward "+manager.FirstName+" has decreased by 1", true);
                 }
             }

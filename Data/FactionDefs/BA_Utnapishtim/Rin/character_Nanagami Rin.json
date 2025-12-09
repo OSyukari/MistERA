@@ -19,7 +19,7 @@
     "portrait_offset_x": 0,    "portrait_offset_y": 0,    "portrait_offset_size": 0.56,
     "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
 
-    "RequireContextKeys":["production_cooking"],
+    "RequireContextKeys":["cooking"],
     "random_portrait_folder":"Rin_production_cooking",
     "icon_path":"Rin/Rin_Ark_Uniform_Icon.png"
 },

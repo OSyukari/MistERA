@@ -199,7 +199,6 @@ public class Sexperience_Instance
 
 
 
-[System.Serializable]
 public class ExperienceClass
 {
     public string ExperienceID = "";

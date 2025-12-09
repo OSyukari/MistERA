@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 
 public class PortraitManager
 {
-    public List<CharaPortrait> portraitPriorityList = null;
+    public List<CharaPortrait> portraitPriorityList = new List<CharaPortrait>();
 
     public PortraitManager()
     {
@@ -64,7 +64,6 @@ public class PortraitManager
 
     public void Prepend(CharaPortrait cm)
     {
-        if (this.portraitPriorityList == null || this.portraitPriorityList.Count < 1) this.portraitPriorityList = new List<CharaPortrait>();
         this.portraitPriorityList.Insert(0,cm);
         cm.Owner = this;
 
@@ -85,7 +84,7 @@ public class PortraitManager
         handler = null;
         portrait = "";
         icon = "";
-        if (portraitPriorityList == null || portraitPriorityList.Count == 0)
+        if (portraitPriorityList.Count < 1)
         {
             handler = Transparent;
         }

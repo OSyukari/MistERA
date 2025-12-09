@@ -57,7 +57,7 @@ public class scr_Menu_Clock : MonoBehaviour
 
     }
 
-    private void observerUpdate(TimeSpan elapsedTime)
+    private void observerUpdate(TimeSpan elapsedTime, TimeSpan elapsed_real)
     {
         refreshClock();
     }

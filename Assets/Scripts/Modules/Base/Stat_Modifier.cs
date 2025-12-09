@@ -6,7 +6,6 @@ using System.Linq;
 using Newtonsoft.Json;
 
 
-[System.Serializable]
 public enum Stat_Modifier_Type
 {
     none,
@@ -16,9 +15,21 @@ public enum Stat_Modifier_Type
     getStatMod
 }
 
-[System.Serializable]
 public class Stat_Modifier
 {
+    public Stat_Modifier()
+    {
+
+    }
+
+    public Stat_Modifier(string key, float value)
+    {
+        modKey = key;
+        this.valueType = Stat_Modifier_Type.number;
+        this.valueString = value.ToString();
+        this.init = true;
+        this._valueFloat = value;
+    }
     public enum AccessClass
     {
         unverified,
@@ -39,14 +50,74 @@ public class Stat_Modifier
         addMult
     }
 
+
+    bool _isFinal = false;
+    bool _isFinal_cached = false;
+    [JsonIgnore]
+    public bool isFinal
+    {   get
+        {
+            if (!_isFinal_cached)
+            {
+                _isFinal = modKey == "finalMod";
+                _isFinal_cached = true;
+            }
+            return _isFinal;
+        }
+    }
+
+    bool _isBase = false;
+    bool _isBase_cached = false;
+    [JsonIgnore]
+    public bool isBase
+    {
+        get
+        {
+            if (!_isBase_cached)
+            {
+                _isBase = modKey == "baseValue";
+                _isBase_cached = true;
+            }
+            return _isBase;
+        }
+    }
+
+
+
     public string statID = "";
+
     /// <summary>
     /// Used for external caching
     /// </summary>
     [NonSerialized][JsonIgnore] public string _cachedDisplay = string.Empty;
 
     // baseValue, finalMod, conflicting mod source
-    public string modKey = "";
+    [JsonProperty] protected string modKey = "";
+    [JsonIgnore]
+    public string ModString { get
+        {
+            return modKey;
+
+        } set
+        {
+            modKey = value;
+            _cached_modkey = false;
+        }
+    }
+
+    bool _cached_modkey = false;
+    int _modkey = -1;
+
+
+    [JsonIgnore]
+    public int ModKey { get {
+            if (!_cached_modkey)
+            {
+                _cached_modkey = true;
+                _modkey = Utility.GetUniqueID(modKey);
+            }
+            return _modkey;
+        } }
 
     // setBase setMult addBase addMult
     public StatMod_Type type = StatMod_Type.none;
@@ -55,11 +126,19 @@ public class Stat_Modifier
     public List<object> conditions = new List<object>();
     protected AccessClass targetClass = AccessClass.unverified;
 
+    [JsonIgnore]
+    public int Priority { get { return (int)targetClass; } }
+
     public bool isPermanent = true;
     public int tick = -1;
 
     public Stat_Modifier_Type valueType = Stat_Modifier_Type.none;
     public string valueString = "";
+
+    /// <summary>
+    /// This is used for memory that might alter the statmod's impact
+    /// </summary>
+    public string valueString_backup = "";
 
     bool init = false;
 
@@ -88,6 +167,7 @@ public class Stat_Modifier
         //if (statID == "chara_status_stress") Debug.LogError($"Setvaluetypeandstring on {statID} {modKey} {type} {vType} {vString}");
         this.valueType = vType;
         this.valueString = vString;
+        this.valueString_backup = vString;
     }
 
 
@@ -95,9 +175,7 @@ public class Stat_Modifier
     /// Used by Utility ParseStatMods. <br/>
     /// to reduce dependency cycle, these should be exposed and allow external rw.
     /// </summary>
-    [NonSerialized][JsonIgnore] 
-    public bool initialized = false, _isStatEX = false, _isStatDerived = false;
-   
+    [NonSerialized][JsonIgnore]  public bool initialized = false, _isStatEX = false, _isStatDerived = false;
 
     private void CheckAccess(bool isStatEx, bool isStatDerived)
     {
@@ -122,30 +200,40 @@ public class Stat_Modifier
         
     }
 
+
+    bool _validAccess = false;
+    bool _validAccess_cached = false;
     public bool ValidateAccess(bool isStatEx, bool isStatDerived, bool allowStatBase, bool allowStatDerived, bool allowStatEX = false, bool allowStatus = false, bool allowStatusEX = false)
     {
+        if (_validAccess_cached) return _validAccess;
         if (targetClass == AccessClass.unverified) CheckAccess(isStatEx, isStatDerived);
 
         switch(targetClass){
             case AccessClass.statbase :
-                if (allowStatBase) return true;
+                if (allowStatBase) _validAccess = true;
                 break;
             case AccessClass.statDerived:
-                if (allowStatDerived) return true;
+                if (allowStatDerived) _validAccess = true;
                 break;
             case AccessClass.statEx:
-                if (allowStatEX) return true;
+                if (allowStatEX) _validAccess = true;
                 break;
             case AccessClass.status:
-                if (allowStatus) return true;
+                if (allowStatus) _validAccess = true;
                 break;
             case AccessClass.statusEX:
-                if(allowStatusEX) return true;
+                if(allowStatusEX) _validAccess = true; 
                 break;
-            case AccessClass.unverified: return false;
-            default: return true;
+            case AccessClass.unverified: _validAccess = false; break;
+            case AccessClass.unrestricted: _validAccess = true; break;
+            default: _validAccess = false;
+                break;
         }
-
-        return false;
+        if (!_validAccess)
+        {
+            Debug.LogError($"Error validateAccess on {this.statID} trying to acces {targetClass}");
+        }
+        _validAccess_cached = true;
+        return _validAccess;
     }
 }

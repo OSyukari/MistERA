@@ -49,7 +49,62 @@
                 "campaign2_start_avantgarde_amelie":"堕落轮回",
                 "campaign2_start_avantgarde_amelie_tooltip":"Begin with Amelie\n(from アメリ・ブランシェットは何度も堕ちる ～カレドニー魔法学院と繰り返す一週間～ by AVANTGARDE)",
     
-                "campaign_mistera":"迷雾年代"
+                "campaign_mistera":"迷雾年代",
+
+                "char_editor_title":"角色编辑",
+                "char_editor_firstname":"<link=\"char_editor_tooltip_saveAsName\">名字</link>",
+                "char_editor_middlename":"<link=\"char_editor_tooltip_saveAsName\">中间名</link>",
+                "char_editor_lastname":"<link=\"char_editor_tooltip_saveAsName\">姓氏</link>",
+                "char_editor_tooltip_saveAsName":"点击修改对应名称\n\n角色文件会被保存为 名字_中间名_姓氏.json，会覆盖重名角色，请注意",
+                "char_editor_origin":"<link=\"tooltip_originselection\">起源</link>",
+                "tooltip_originselection":"选择角色的起源（目前只实装了属性调整和种族限制等）和额外初始项（尚未实装）",
+                "char_editor_race":"<link=\"tooltip_raceselection\">种族</link>",
+                "tooltip_raceselection":"选择角色的种族和模板。二者分别提供属性调整。",
+                "char_editor_race_template":"模板",
+                
+                "char_editor_stats_title":"<link=\"char_editor_stats_title_tooltip\">角色属性</link>",
+                "char_editor_stats_title_tooltip":"右侧的4个数值为属性点数，可以通过下侧的按钮自由变更点数分配给哪个属性",
+                "char_editor_stats_strength":"<link=\"stats_base_Strength_tooltip\">%%stats_base_Strength%%</link>",
+                "char_editor_stats_constitution":"<link=\"stats_base_Constitution_tooltip\">%%stats_base_Constitution%%</link>",
+                "char_editor_stats_psyche":"<link=\"stats_base_Psyche_tooltip\">%%stats_base_Psyche%%</link>",
+                "char_editor_stats_willpower":"<link=\"stats_base_Willpower_tooltip\">%%stats_base_Willpower%%</link>",
+                "char_editor_reroll":"<link=\"char_editor_reroll_tooltip\">重投属性</link>",
+                "char_editor_reroll_tooltip":"每个属性骰为3D6，最低3 最高18 期望值10.5",
+                "char_editor_reroll10":"<link=\"char_editor_reroll10_tooltip\">重投10次</link>",
+                "char_editor_reroll10_tooltip":"重投10次属性，保留总值最高的投掷结果",
+                "char_editor_maxroll":"<link=\"char_editor_maxroll_tooltip\">最高属性</link>",
+                "char_editor_maxroll_tooltip":"你是说，你全属性都骰出了18？！",
+                "char_editor_stats_value":"<link=\"char_editor_stats_value_tooltip\">基础</link>",
+                "char_editor_stats_value_tooltip":"属性骰数值",
+                "char_editor_stats_racialmod":"<link=\"char_editor_stats_racialmod_tooltip\">种族</link>",
+                "char_editor_stats_racialmod_tooltip":"种族和模板提供的数值调整（如果有的话）",
+                "char_editor_stats_final":"<link=\"char_editor_stats_final_tooltip\">总值</link>",
+                "char_editor_stats_final_tooltip":"属性最终值（还未计算装备等其他调整）",
+                "char_editor_stats_modifier":"<link=\"char_editor_stats_modifier_tooltip\">调整</link>",
+                "char_editor_stats_modifier_tooltip":"属性调整值 (属性 / 2 - 5 向下取整)。计算其他属性数值时主要取用的对象",
+                "char_editor_appearance":"<link=\"char_editor_appearance_tooltip\">性别</link>",
+                "char_editor_appearance_tooltip":"角色的外观性别。该选项只决定角色外观，游戏中判定角色的互动性别时，会参考性别选项和角色的身体器官\n\n具体内容请参考%%intro_button_editPref%% -> %%ui_prefs_button_contentSetting%% -> %%ui_prefs_gendersetting%%",
+                "GenderAppearance_Male":"男性",
+                "tooltip_GenderAppearance_Male":"You possess the characteristics of a male member of your race.",
+                "GenderAppearance_Female":"女性",
+                "tooltip_GenderAppearance_Female":"You possess the characteristics of a female member of your race.",
+                "GenderAppearance_Ambiguous":"无法确定",
+                "tooltip_GenderAppearance_Ambiguous":"You could either be a male or a female member of your race. It's hard to tell.\nYour appearance is considered to be male and female.",
+                "GenderAppearance_Inhuman":"非人",
+                "tooltip_GenderAppearance_Inhuman":"You are still humanoid, but your appearance does not look human-relatable at all.\nYour appearance is considered to not be male nor female.",
+                
+                "char_editor_selectTraitBTN":"<link=\"char_editor_selectTraitBTN_tooltip\">选择特质</link>",
+                "char_editor_selectTraitBTN_tooltip":"%%wip_disabled%%",
+
+                "char_editor_bodydata":"<link=\"char_editor_bodydata_tooltip\">身体数据</link>",
+                "char_editor_bodydata_tooltip":"此处修改角色的身体模板数据。游戏开始后，会根据模板来生成具体的部位\n\n%%ui_tooltip_trait_size%%",
+                "char_editor_sensitivity":"部位感度",
+                "char_editor_size":"部位尺寸",
+
+                "char_editor_derivedStats_tooltip":"All of the stat-based traits belongs to one of 4 stat attribute category.\nEach trait has a score cost.\n\nFor all selected traits that belong to the same stat category, \nthe total of their score must be lesser or equal to the corresponding stat's modifier value,\nno limit on the number of traits chosen.",
+
+                "char_editor_exitBTN":"放弃变更",
+                "char_editor_confirmBTN":"保存角色"
             },
             "en-us":
             {

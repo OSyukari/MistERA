@@ -83,6 +83,7 @@ public class Status_Base
     }
 
     public List<Variant> variants = new List<Variant>();
+    public string variantThresholdModStat = "";
 
     [System.Serializable]
     public class Variant

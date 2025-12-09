@@ -356,6 +356,67 @@ public static class Utility
 
         return true;
     }
+    // Stores the mapping from the human-readable string key to the unique integer ID.
+    private static readonly Dictionary<string, int> _idLookup = new Dictionary<string, int>();
+    private static readonly Dictionary<int, string > _stringLookup = new Dictionary<int, string>();
+
+    // The counter used to assign the next available unique integer ID.
+    private static int _nextID = 1; // Start at 1 to avoid conflicts with 0 (default/null value)
+
+    // Used to ensure thread safety when allocating a new ID.
+    private static readonly object _lock = new object();
+
+    /// <summary>
+    /// Retrieves the unique integer ID for a given string key. 
+    /// If the key does not exist, a new unique ID is allocated and cached. <br/><br/>
+    /// NOTE: THIS FUNCTION DOES NOT STORE ID
+    /// </summary>
+    /// <param name="key">The string identifier (e.g., "AttackPower", "Speed").</param>
+    /// <returns>The guaranteed unique integer ID for that key.</returns>
+    public static int GetUniqueID(string key)
+    {
+        if (string.IsNullOrEmpty(key))
+        {
+            Debug.LogError("Attempted to get ID for null or empty key.");
+            return 0; // Return a safe default/invalid ID
+        }
+
+        // 1. Attempt non-locking read first for maximum read-speed
+        if (_idLookup.TryGetValue(key, out int existingID))
+        {
+            return existingID;
+        }
+
+        // 2. If the key is new, we must allocate a new ID safely
+        lock (_lock)
+        {
+            // Re-check after acquiring the lock in case another thread allocated it
+            // while this thread was waiting for the lock.
+            if (_idLookup.TryGetValue(key, out existingID))
+            {
+                return existingID;
+            }
+
+            // Allocate new ID
+            int newID = _nextID;
+            _idLookup.Add(key, newID);
+            _stringLookup.Add(newID, key);
+            _nextID++;
+
+            return newID;
+        }
+    }
+    public static string GetStringByUniqueID(int UniqueID)
+    {
+        // 1. Attempt non-locking read first for maximum read-speed
+        if (_stringLookup.TryGetValue(UniqueID, out string existingID))
+        {
+            return existingID;
+        }
+        return "";
+    }
+
+
 
     /// <summary>
     /// Contains List.Distinct() which may interfere with equality comparison ?

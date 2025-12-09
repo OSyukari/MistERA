@@ -19,6 +19,10 @@
                 {
                     "statID":"stats_derived_baselineObedience",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
+                },
+                {
+                    "statID":"stats_derived_alcoholSensitivity",
+                    "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"-0.5"
                 }
             ],
             "needs":[
@@ -31,7 +35,8 @@
                     "requiresStatKeyword": "hunger",
                     "overwritesNeedsIDs": []
                 }
-            ]
+            ],
+            "requireRaceType":["android"]
         }
     ]
     },

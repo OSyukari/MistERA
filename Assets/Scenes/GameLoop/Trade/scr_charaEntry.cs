@@ -56,7 +56,7 @@ public class scr_charaEntry : MonoBehaviour
             var targetFaction = this.isTeamA ? this.parent.b : this.parent.a;
 
             var prevStatus = innerChara.FactionManager.CurrentActiveParty.GetStatus(innerChara);
-            var newStats = targetFaction.FactionOwnerRoot.GetStatus(innerChara.RefID);
+            var newStats = targetFaction.FactionOwnerRoot.GetStatus(innerChara);
 
             switch (this.TreatmentResult)
             {

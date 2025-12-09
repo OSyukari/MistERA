@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, I_RemoveElemByTag

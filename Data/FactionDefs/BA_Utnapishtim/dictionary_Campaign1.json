@@ -5,7 +5,7 @@
         {
             "zh-cn":
             {
-                "campaign_starfarers":"星之旅人",
+        "campaign_starfarers":"星之旅人",
         "campaign_starfarers_tooltip":"为了方便熟悉游戏机制而设计的小型剧本。\n\n此剧本为碧蓝档案同人",
         "campaign1_start_default":"老师",
         "campaign1_start_default_tooltip":"以碧蓝档案的老师身份，与%%factionName_Utnapishtim%%的领航员们一同开始游戏。\n身为老师，玩家有义务管理%%factionName_Utnapishtim%%阵营，有义务维护学生们的身心健康。\n限制：玩家不可参与战斗（未实装）\n玩家的立绘和名字会被更改",

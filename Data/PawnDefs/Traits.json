@@ -641,7 +641,8 @@
                     "trait_ID": "trait_Sensitivity_B_dull",
                     "trait_displayname": "Dull",
                     "trait_score":-10,
-                    "trait_tooltip": "B Sensitivity Dull"
+                    "trait_tooltip": "B Sensitivity Dull",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_B", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"0.6" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_B_default",
@@ -654,13 +655,15 @@
                     "trait_ID": "trait_Sensitivity_B_sensitive",
                     "trait_displayname": "Sensitive",
                     "trait_score":10,
-                    "trait_tooltip": "B Sensitive"
+                    "trait_tooltip": "B Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_B", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.2" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_B_supersensitive",
                     "trait_displayname": "Super Sensitive",
                     "trait_score":20,
-                    "trait_tooltip": "B Super Sensitive"
+                    "trait_tooltip": "B Super Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_B", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
             "type": 8,
@@ -676,7 +679,8 @@
                     "trait_ID": "trait_Sensitivity_M_dull",
                     "trait_displayname": "Dull",
                     "trait_score":-10,
-                    "trait_tooltip": "M Sensitivity Dull"
+                    "trait_tooltip": "M Sensitivity Dull",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_M", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"0.6" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_M_default",
@@ -689,13 +693,15 @@
                     "trait_ID": "trait_Sensitivity_M_sensitive",
                     "trait_displayname": "Sensitive",
                     "trait_score":10,
-                    "trait_tooltip": "M Sensitive"
+                    "trait_tooltip": "M Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_M", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.2" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_M_supersensitive",
                     "trait_displayname": "Super Sensitive",
                     "trait_score":20,
-                    "trait_tooltip": "M Super Sensitive"
+                    "trait_tooltip": "M Super Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_M", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
             "type": 8,
@@ -711,7 +717,8 @@
                     "trait_ID": "trait_Sensitivity_C_dull",
                     "trait_displayname": "Dull",
                     "trait_score":-50,
-                    "trait_tooltip": "C Sensitivity Dull"
+                    "trait_tooltip": "C Sensitivity Dull",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_C", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"0.6" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_C_default",
@@ -724,13 +731,15 @@
                     "trait_ID": "trait_Sensitivity_C_sensitive",
                     "trait_displayname": "Sensitive",
                     "trait_score":50,
-                    "trait_tooltip": "C Sensitive"
+                    "trait_tooltip": "C Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_C", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.2" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_C_supersensitive",
                     "trait_displayname": "Sensitive",
                     "trait_score":100,
-                    "trait_tooltip": "C Sensitive"
+                    "trait_tooltip": "C Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_C", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
             "type": 8,
@@ -746,7 +755,8 @@
                     "trait_ID": "trait_Sensitivity_V_dull",
                     "trait_displayname": "Dull",
                     "trait_score":-20,
-                    "trait_tooltip": "V Sensitivity Dull"
+                    "trait_tooltip": "V Sensitivity Dull",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_V", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"0.6" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_V_default",
@@ -759,13 +769,15 @@
                     "trait_ID": "trait_Sensitivity_V_sensitive",
                     "trait_displayname": "Sensitive",
                     "trait_score":20,
-                    "trait_tooltip": "V Sensitive"
+                    "trait_tooltip": "V Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_V", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.2" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_V_supersensitive",
                     "trait_displayname": "Sensitive",
                     "trait_score":40,
-                    "trait_tooltip": "V Sensitive"
+                    "trait_tooltip": "V Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_V", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
             "type": 8,
@@ -781,7 +793,8 @@
                     "trait_ID": "trait_Sensitivity_A_dull",
                     "trait_displayname": "Dull",
                     "trait_score":-5,
-                    "trait_tooltip": "A Sensitivity Dull"
+                    "trait_tooltip": "A Sensitivity Dull",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_A", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"0.6" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_A_default",
@@ -794,13 +807,15 @@
                     "trait_ID": "trait_Sensitivity_A_sensitive",
                     "trait_displayname": "Sensitive",
                     "trait_score":5,
-                    "trait_tooltip": "A Sensitive"
+                    "trait_tooltip": "A Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_A", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.2" } ]
                 },
                 {
                     "trait_ID": "trait_Sensitivity_A_supersensitive",
                     "trait_displayname": "Super Sensitive",
                     "trait_score":10,
-                    "trait_tooltip": "A Super Sensitive"
+                    "trait_tooltip": "A Super Sensitive",
+                    "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_A", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
             "type": 8,
@@ -978,6 +993,83 @@
             "group_tooltip": "has anus or not. "
         }
     ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "default":
+            {
+
+            },
+            "zh-cn":
+            {
+                "trait_Sensitivity_B":"B敏感度",
+                "trait_Sensitivity_B_dull":"钝感",
+                "trait_Sensitivity_B_default":"普通",
+                "trait_Sensitivity_B_sensitive":"敏感",
+                "trait_Sensitivity_B_supersensitive":"超敏感",
+
+                "trait_Sensitivity_M":"M敏感度",
+                "trait_Sensitivity_M_dull":"钝感",
+                "trait_Sensitivity_M_default":"普通",
+                "trait_Sensitivity_M_sensitive":"敏感",
+                "trait_Sensitivity_M_supersensitive":"超敏感",
+
+                "trait_Sensitivity_C":"C敏感度",
+                "trait_Sensitivity_C_dull":"钝感",
+                "trait_Sensitivity_C_default":"普通",
+                "trait_Sensitivity_C_sensitive":"敏感",
+                "trait_Sensitivity_C_supersensitive":"超敏感",
+
+                "trait_Sensitivity_V":"V敏感度",
+                "trait_Sensitivity_V_dull":"钝感",
+                "trait_Sensitivity_V_default":"普通",
+                "trait_Sensitivity_V_sensitive":"敏感",
+                "trait_Sensitivity_V_supersensitive":"超敏感",
+
+                "trait_Sensitivity_A":"A敏感度",
+                "trait_Sensitivity_A_dull":"钝感",
+                "trait_Sensitivity_A_default":"普通",
+                "trait_Sensitivity_A_sensitive":"敏感",
+                "trait_Sensitivity_A_supersensitive":"超敏感",
+                
+                "trait_Size_B":"胸部尺寸",
+                "trait_Size_B_none":"无胸部",
+                "trait_Size_B_AAA":"AAA",
+                "trait_Size_B_AAA_tooltip":"男性的默认尺寸",
+                "trait_Size_B_AA":"AA",
+                "trait_Size_B_A":"A",
+                "trait_Size_B_B":"B",
+                "trait_Size_B_C":"C",
+                "trait_Size_B_D":"D",
+                "trait_Size_B_E":"E",
+                "trait_Size_B_F":"F",
+                "trait_Size_B_G":"G",
+                "trait_Size_B_H":"H",
+
+                "ui_tooltip_trait_size":"关于部位的尺寸设置：目前只实装了部位的从无到有的生成规则，还未实装部位的尺寸实际调整（也就是目前选部位多大没任何变化）",
+
+                "trait_Size_P":"阴茎尺寸",
+                "trait_Size_P_none":"无阴茎",
+                "trait_Size_P_tiny":"迷你",
+                "trait_Size_P_small":"小",
+                "trait_Size_P_average":"中",
+                "trait_Size_P_big":"大",
+                "trait_Size_P_huge":"巨大",
+
+                "trait_Size_V":"阴道尺寸",
+                "trait_Size_V_none":"无阴道",
+                "trait_Size_V_1":"有阴道",
+                "trait_Size_A":"肛门尺寸",
+                "trait_Size_A_none":"无肛门",
+                "trait_Size_A_1":"有肛门"
+            },
+            "en-us":
+            {
+
+            }
+        }
     }
     
 }

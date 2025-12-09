@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using System.IO;
 using QuikGraph.Algorithms;
 using Newtonsoft.Json;
+using QuikGraph.Algorithms.ShortestPath;
 
 // Instantiate floor with floorplan
 // campaignmanager dispense floor uid
@@ -24,8 +25,6 @@ using Newtonsoft.Json;
 // contained item gives job
 // bed gives sleeping job, resource item gives gathering job, dirt gives cleaning job, workbench gives crafting job, gathering spot gives party job, recreation furniture gives playing job, furniture gives training job
 // serializable item
-
-[System.Serializable]
 public class Floor_Instance : IDisposable, I_Disposable
 {
 

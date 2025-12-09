@@ -90,7 +90,7 @@ public class ActionPackage_Redress : ActionPackage
     {
         return true;
     }
-    protected override bool Request(bool rebuildPackage = true)
+    protected override bool Request(bool rebuildPackage = true, bool forceAccept = false)
     {
         if (rebuildPackage)
         {

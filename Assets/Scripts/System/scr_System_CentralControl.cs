@@ -557,6 +557,25 @@ public class scr_System_CentralControl : MonoBehaviour
         return false;
     }
 
+    FileInfo autoSave = null;
+    public void AutoSave()
+    {
+        if (scr_UpdateHandler.current.Lock) return;
+        if (scr_System_CampaignManager.current.Player.CurrentJob is Job_Sex_Group) return;
+
+        scr_UpdateHandler.current.NotifySL(true);
+
+        var time = DateTime.Now;
+        var save = new SaveFile(true);
+        string s = JsonConvert.SerializeObject(save, Formatting.Indented, UtilityEX.SerializerSettings);
+
+        if (autoSave == null) autoSave = new System.IO.FileInfo(scr_System_Serializer.AutosavePath);
+        autoSave.Directory.Create();
+        File.WriteAllText(autoSave.FullName, s);
+
+        scr_UpdateHandler.current.NotifySL(false);
+    }
+
     public void QuickSave()
     {
         scr_UpdateHandler.current.NotifySL(true);

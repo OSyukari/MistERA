@@ -83,17 +83,16 @@ public class scr_SpineLoader : MonoBehaviour
         else if (ta.text.Contains("4.2.")) version = "4.2";
 
         // this need full path
-        if (spineLoader != null && (spineLoader.Version != version || spineLoader.atlasPath != atlasJSON_path || spineLoader.skeletonPath != skeletonJSON_path))
+        if (spineLoader == null || (spineLoader.Version != version || spineLoader.atlasPath != atlasJSON_path || spineLoader.skeletonPath != skeletonJSON_path))
         {   // then call this one
             spineLoader_previous = spineLoader;
             
             spineLoader = scr_System_CentralControl.current.GetSpineLoader(version);
         }
-        else if (spineLoader == null) spineLoader = scr_System_CentralControl.current.GetSpineLoader(version);
 
         yield return spineLoader.Initialize(materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName);
 
-        if (spineLoader_previous != null)
+        if (spineLoader_previous != null && spineLoader_previous != spineLoader)
         {
             spineLoader_previous.gameObject.SetActive(false);
             UnityEngine.Object.Destroy(spineLoader_previous.gameObject);
@@ -106,6 +105,12 @@ public class scr_SpineLoader : MonoBehaviour
         if (spineLoader == null) return;
         spineLoader_previous = spineLoader;
         spineLoader = null;
+        if (spineLoader_previous != null)
+        {
+            spineLoader_previous.gameObject.SetActive(false);
+            Destroy(spineLoader_previous.gameObject);
+            spineLoader_previous = null;
+        }
     }
 
     public void Destroy()

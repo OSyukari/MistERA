@@ -1,0 +1,73 @@
+{
+    "Experiences":
+    {
+        "list":[
+{  "ExperienceID":"experience_cooking", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["cooking"] , "ExcludeOwnerTags":[] },
+{  "ExperienceID":"experience_farming", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["farming"] , "ExcludeOwnerTags":[] },
+{  "ExperienceID":"experience_social", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["social", "interaction"] , "ExcludeOwnerTags":[] },
+{  "ExperienceID":"experience_operating", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["operating"] , "ExcludeOwnerTags":[] }
+        ]
+    },
+"Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+{
+    "experience_operating":"操作经验",
+    "experience_operating_tooltip":"str，操作 驾驶 遥控",
+    "experience_cooking":"下厨经验",
+    "experience_cooking_tooltip":"int，调味 手艺 刀工",
+    "experience_social":"社交经验",
+    "experience_social_tooltip":"wis，交涉，察言观色，议价，欺瞒",
+    "experience_farming":"农活经验",
+
+    "experience_perception":"察觉经验",
+    "experience_perception_tooltip":"str，搜索，寻找，追踪",
+
+    "experience_sleight_of_hand":"巧手经验",
+    "experience_sleight_of_hand_tooltip":"开锁 偷窃 魔术",
+
+    "experience_acrobatics":"特技经验",
+    "experience_acrobatics_tooltip":"跳跃 跑酷 潜行",
+
+    "experience_athletics":"运动经验",
+    "experience_athletics_tooltip":"con，身体掌控能力，奔跑游泳等",
+
+    "experience_survival":"求生经验",
+    "experience_survival_tooltip":"con，寻找食物，导航，保暖，潜行，急救",
+    
+    "experience_combat":"战斗经验",
+    "experience_combat_tooltip":"con，战斗 威吓 苦痛耐受",
+
+    "experience_knowledge":"学识经验",
+    "experience_knowledge_tooltip":"int，读书 数学 会计 法律 文学 议价",
+    "experience_medicine":"医疗经验",
+
+
+    "experience_arts":"艺术经验",
+    "experience_arts_tooltip":"int，绘画 音乐 雕塑",
+
+    "experience_perform":"演出经验",
+    "experience_perform_tooltip":"int，演出 音乐 表演 戏剧 乔装 欺骗 话术 辩论",
+
+    "experience_engineering":"工程经验",
+    "experience_engineering_tooltip":"int，制造 陷阱 锁 枪 程序",
+
+
+    "experience_animal_handling":"驯养经验",
+    "experience_animal_handling_tooltip":"驯兽 骑乘 安抚 辨识天气",
+
+    "experience_spellcraft":"魔术经验",
+    "experience_spellcraft_tooltip":"wis，操纵魔力",
+
+
+
+    "experience_":"经验"
+    
+
+
+}
+        }
+    }
+}

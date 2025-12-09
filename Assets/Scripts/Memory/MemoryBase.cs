@@ -149,7 +149,7 @@ public class Memory_Entry
             if (i.response < Memory_Response.Accept)
             {
                 // in case of memory merge contains both accept and refuse, skip it
-                if (this.interactions.Find(x => x.isSimilar(i) && x.response > Memory_Response.Refuse) != null) continue;
+                if (this.interactions.Find(x => x.isSimilar(i) && x.response >= Memory_Response.Interrupted) != null) continue;
                 var lists = Blacklist.Find(x => x.comID == i.comID && x.roomRef == this.roomRef && Utility.ListEquals(i.targets, x.targets));
                 if (lists != null) lists.count += i.stackCount;
                 else Blacklist.Add(new MemBlacklist(this.roomRef, i));
@@ -360,35 +360,6 @@ public class Memory_Entry
         return true;
     }
 
-    /*
-        private void EvaluateAll()
-        {
-            cache_score = 0; cache_acceptCount = 0; cache_refuseCount = 0;
-            foreach(var i in interactions) EvaluateSingle(Owner, i, ref cache_score, ref cache_acceptCount, ref cache_refuseCount);
-            isEvaluationCached = true;
-        }
-
-        protected void updateMemInstanceDescription()
-        {
-            // <comID, comVariantID, targets, isDoer, masterRef, accept/refuse> count
-
-
-            Dictionary<Tuple<string, int, string, bool, int, bool>, int> s = new Dictionary<Tuple<string, int, string, bool, int, bool>, int>();
-            foreach (var i in interactions)
-            {
-                if (i.comID == "") continue;
-                int[] sorted = i.targets.Distinct().ToArray();
-                Array.Sort(sorted);
-                var tup = new Tuple<string, int, string, bool, int, bool>(i.comID, i.comVariantID, String.Join(",", sorted), i.isDoer, i.masterRef, i.response != Memory_Response.Refuse);
-                if (s.ContainsKey(tup)) s[tup] += i.stackCount;
-                else s.Add(tup, i.stackCount);
-            }
-
-            memInstanceDescriptionCache = new List<string>();
-            foreach (var kvp in s) memInstanceDescriptionCache.Add(makeSingleMemInstanceDescription(kvp.Key, kvp.Value));
-        
-        }
-     */
     [JsonIgnore] [NonSerialized] public bool isRefuseOnly = false;
 
 
@@ -400,10 +371,7 @@ public class Memory_Entry
         targets = null;
         targetTags.Clear();
         memInstanceDescriptionCache = new List<string>();
-        scoreMod_Lust = 0f;
-        scoreMod_Mood = 0f;
-        scoreMod_Stress = 0f;
-        cache_lust = null; cache_mood = null; cache_stress = null;
+        float scoreMod_Mood = 0, scoreMod_Stress = 0, scoreMod_Lust = 0;
         cache_score = 0; cache_acceptCount = 0; cache_refuseCount = 0;
         int maxLust = 0, minLust = 0, maxMood = 0, minMood = 0, maxStress = 0, minStress = 0;
 
@@ -411,8 +379,8 @@ public class Memory_Entry
         {
             memInstanceDescriptionCache.Add(i.Print());
 
-            if (i.response != Memory_Response.Refuse)cache_acceptCount++;
-            else cache_refuseCount++;
+            if (i.response != Memory_Response.Refuse) cache_acceptCount += i.stackCount;
+            else cache_refuseCount += i.stackCount;
             int iLust = i.Lust, iMood = i.Mood, iStress = i.Stress;
 
 
@@ -437,9 +405,32 @@ public class Memory_Entry
             scoreMod_Stress += iStress * i.stackCount;
         }
 
-        scoreMod_Lust = Math.Max(Math.Min(scoreMod_Lust, maxLust), minLust);
-        scoreMod_Mood = Math.Max(Math.Min(scoreMod_Mood, maxMood), minMood);
-        scoreMod_Stress = Math.Max(Math.Min(scoreMod_Stress, maxStress), minStress);
+        Mod_Stress.Clear();
+        var stresslist = SplitScore((int)scoreMod_Stress, minStress, maxStress);
+        for(int i = 0; i < stresslist.Count; i++)
+        {
+            var moodlet = initMoodlet("chara_status_stress", i);
+            moodlet.SetValueTypeAndString(Stat_Modifier_Type.number, stresslist[i].ToString());
+            Mod_Stress.Add(moodlet);
+        }
+
+        Mod_Mood.Clear();
+        var moodlist = SplitScore((int)scoreMod_Mood, minMood, maxMood);
+        for (int i = 0; i < moodlist.Count; i++)
+        {
+            var moodlet = initMoodlet("chara_status_mood", i);
+            moodlet.SetValueTypeAndString(Stat_Modifier_Type.number, moodlist[i].ToString());
+            Mod_Mood.Add(moodlet);
+        }
+
+        Mod_Lust.Clear();
+        var lustlist = SplitScore((int)scoreMod_Lust, minLust, maxLust);
+        for (int i = 0; i < lustlist.Count; i++)
+        {
+            var moodlet = initMoodlet("chara_status_lust", i);
+            moodlet.SetValueTypeAndString(Stat_Modifier_Type.number, lustlist[i].ToString());
+            Mod_Lust.Add(moodlet);
+        }
 
         MergeWithAll = MergeWithAll || (targetTags.Contains("initSex") && !targetTags.Contains("endSex"));
 
@@ -450,110 +441,33 @@ public class Memory_Entry
 
     public int roomRef = -1;
 
-    /*
-    public void MergeEntry(bool isDoer, List<int> targetRefs, string description, Memory_Response response, Memory_Attitude attitude, int duration = -1, COM targetCOM = null, int comVariant = -1, int masterRef = -1, List<string> selfTags = null, List<string> targetTags = null)
+    protected List<int> SplitScore(int original, int min, int max)
     {
-        // refresh memory decay duration. if unspecified duration, then duration is owner memory duration.
-        // when merging, take both duration keep the longest. if one of them is permanent then both permanent
-        if (this.duration == -1 || duration == -1) this.duration = -1;
-        else this.duration = Math.Max(this.duration, duration);
-
-        // merge tags
-        if (this.selfTags == null) this.selfTags= new List<string>();
-        this.selfTags.AddRange(selfTags);
-        this.selfTags = this.selfTags.Distinct().ToList();
-
-        if (this.targetTags == null) this.targetTags= new List<string>();
-        this.targetTags.AddRange(targetTags);
-        this.targetTags = this.targetTags.Distinct().ToList();
-
-        Utility.RemoveConflictTags(ref this.selfTags);
-        Utility.RemoveConflictTags(ref this.targetTags);
-
-        // make new interaction instance and add to list
-        var newInst = new MemInstance(targetRefs, targetCOM == null ? "" : targetCOM.ID, comVariant, masterRef, isDoer, response, attitude);
-        bool merged = false;
-        foreach(var i in interactions)
+        List<int> result = new List<int>();
+        while (original != 0)
         {
-            if (i.TryMergeWith(newInst))
+            if (max > 0 && original >= max)
             {
-                //Debug.LogError("Merged");
-                merged = true; 
-                break;
+                original -= max;
+                result.Add(max);
             }
-        }
-        if (!merged) this.interactions.Add(newInst);
-
-        // clear tags cache, check new tag summation, filter conflict, and re-clear cache
-
-        string s22 = "MemoryMergeEntry on "+Owner.FirstName+", pre_merge cacheScore [" + cache_score + "],";
-        // update memory statmod
-        EvaluateSingle(Owner, newInst, ref cache_score, ref cache_acceptCount, ref cache_refuseCount);
-        s22 += "postMerge score [" + cache_score + "] from response [" + response.ToString() + "] att [" + attitude.ToString() + "]";
-        //Debug.LogError(s22);
-        // merge description ? check repeat first, better store description in unparsed ways to faciliate redundancy check
-        
-        string[] descSplit = description == null ? null : description.Split("||");
-        if (descSplit == null) { }
-        else if (descSplit.Length < 2 && !this.description.Contains(description) && description.Length > 0) this.description.Add(description);
-        else
-        {
-            string s = "Merging Memory Description";
-            var target = this.description.Find(x=>x.Contains(descSplit[0]));  
-            if (target != null)
+            else if (min < 0 && original <= min)
             {
-                var targSplit = target.Split("||");
-                if (targSplit.Length == descSplit.Length)
-                {
-                    this.description.Remove(target);
-                    var newString = targSplit[0];
-                    for (int i = 1; i < targSplit.Length; i++)
-                    {
-                        if (int.TryParse(descSplit[i], out var descVal) && int.TryParse(targSplit[i], out var targVal))
-                        {
-                            newString += "||" + (descVal + targVal).ToString("N0");
-                        }
-                        else
-                        {
-                            s += "\nInt parse error on ["+ descSplit[i]+ "] and ["+ targSplit[i]+ "], aborting merge, restoring old";
-                            newString += "||" + targSplit[i];
-                            //this.description.Add(desc);
-                            //break;
-                        }
-                    }
-                    if (newString.Length >= 1) this.description.Add(newString);
-                    s+="\nOriginal: " + target + "\nTarget: " + description + "\nResult: " + newString;
-                }
-                else
-                {
-                    s += "\nBoth desciption does not have identical split length, adding directly";
-                    if (description.Length >= 1) this.description.Add(description);
-                }
+                original -= min;
+                result.Add(min);
+            }
+            else if (original != 0)
+            {
+                result.Add(original);
+                break;
             }
             else
             {
-                s += "\nNo repeat found, adding directly";
-                if (description.Length >= 1) this.description.Add(description);
+                break;
             }
-            //Debug.LogError(s);
         }
-      
-
-
-
-        // targetRefs need manual updating
-        if (targetRefs != null)
-        {
-            this.targetRefs.AddRange(targetRefs);
-            this.targetRefs = this.targetRefs.Distinct().ToList();
-        }
-
-        // UPDATE MemEntry moodlet values and decision buff/debuff values
-        updateMemInstanceDescription();
-
-
-    }  */
-
+        return result;
+    }
 
 
     [JsonIgnore] public List<string> Tags { get { return Enumerable.Concat(selfTags, targetTags).ToList(); } }
@@ -596,59 +510,23 @@ public class Memory_Entry
     {
         get
         {
-            if (this.cache_lust != null && this.cache_lust.ValueFloat > 0) return true;
-            if (this.cache_stress != null && this.cache_stress.ValueFloat > 0) return true;
-            if (this.cache_mood != null && this.cache_mood.ValueFloat > 0) return true;
-            return false;
+            return Mod_Stress.Count > 0 || Mod_Mood.Count > 0 || Mod_Lust.Count > 0;
         }
     }
 
-    private Stat_Modifier cache_lust = null, cache_stress = null, cache_mood = null;
-    [JsonIgnore] public Stat_Modifier Mod_Lust { get
-        {
-            var value = scoreMod_Lust;
-            if (cache_lust == null) cache_lust = initMoodlet("chara_status_lust");
-            cache_lust.SetValueTypeAndString(Stat_Modifier_Type.number, value.ToString());
+    public List<Stat_Modifier> Mod_Stress = new List<Stat_Modifier>();
+    public List<Stat_Modifier> Mod_Mood = new List<Stat_Modifier>();
+    public List<Stat_Modifier> Mod_Lust = new List<Stat_Modifier>();
 
-            return cache_lust;
-        } }
-    [JsonIgnore] public Stat_Modifier Mod_Stress
-    {
-        get
-        {
-            var value = scoreMod_Stress;
-            if (cache_stress == null) cache_stress = initMoodlet("chara_status_stress");
-            cache_stress.SetValueTypeAndString(Stat_Modifier_Type.number, value.ToString());
 
-            return cache_stress;
-        }
-    }
-
-    private Stat_Modifier initMoodlet(string statID)
+    private Stat_Modifier initMoodlet(string statID, int addEx = 0)
     {
         var newstuff = new Stat_Modifier();
         newstuff.statID = statID;
-        newstuff.modKey = "Memory_"+ EndTime.Ticks;
+        newstuff.ModString = $"Memory_{EndTime.Ticks}_{addEx}";
         newstuff.type = Stat_Modifier.StatMod_Type.addBase;
         //newstuff.SetValueTypeAndString("number", value)
         return newstuff;
-    }
-
-
-
-    protected float scoreMod_Mood = 0, scoreMod_Stress = 0, scoreMod_Lust = 0;
-    [JsonIgnore] public Stat_Modifier Mod_Mood
-    {
-        get
-        {
-            var value = scoreMod_Mood;
-            // Good COM Result increase mood. Bad result decrease Mood.
-
-            if (cache_mood == null) cache_mood = initMoodlet("chara_status_mood");
-            cache_mood.SetValueTypeAndString(Stat_Modifier_Type.number, value.ToString());
-
-            return cache_mood;
-        }
     }
 
     public bool disableRoomName = false;
@@ -846,7 +724,34 @@ public class Memory_Entry
         additional.Add(entryDescription);
         if (Tags.Count > 0) additional.Add(PrintTags);
         additional.AddRange(MemInstanceDescriptions);
-        additional.Add("Statmod: Check" + cache_score.ToString("+0;-#") + " Mood"+ UtilityEX.StatValue(Mod_Mood, null).ToString("+0;-#")+" Stress"+ UtilityEX.StatValue(Mod_Stress, null).ToString("+0;-#")+" Lust"+ UtilityEX.StatValue(Mod_Lust, null).ToString("+0;-#"));
+
+        string moodSum = "", stressSum = "", lustSum = "";
+
+        if (Mod_Mood.Count > 3)
+        {
+            int sum = 0;
+            foreach (var i in Mod_Mood) sum += (int)UtilityEX.StatValue(i, null);
+            moodSum = $"...{sum.ToString("+0;-#")}";
+        }
+        else foreach (var i in Mod_Mood) moodSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
+
+        if (Mod_Stress.Count > 3)
+        {
+            int sum = 0;
+            foreach (var i in Mod_Stress) sum += (int)UtilityEX.StatValue(i, null);
+            stressSum = $"...{sum.ToString("+0;-#")}";
+        }
+        else foreach (var i in Mod_Stress) stressSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
+
+        if (Mod_Lust.Count > 0)
+        {
+            int sum = 0;
+            foreach (var i in Mod_Lust) sum += (int)UtilityEX.StatValue(i, null);
+            lustSum = $"...{sum.ToString("+0;-#")}";
+        }
+        else foreach (var i in Mod_Lust) lustSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
+
+        additional.Add($"Statmod: Check{cache_score.ToString("+0;-#")} Mood{moodSum} Stress{stressSum} Lust{lustSum}");
 
         if (scr_System_CampaignManager.current.DebugMode) additional.Add("Internal Duration " + Duration);
         box.memText.SetExternalTooltip(String.Join("\n", additional));
@@ -956,6 +861,11 @@ public class MemInstance
         get
         {
             var value = modMood + (float)Attitude - (float)Memory_Attitude.Neutral;
+
+            if (tags.Contains("recreation"))
+            {   // if recreation related, as long as its not bad, increase mood
+                if (Attitude >= Memory_Attitude.Neutral) value += 1;
+            }
             return (int)value; } }
 
     [JsonIgnore] public int Stress {
@@ -967,7 +877,7 @@ public class MemInstance
                 value -= 1;
                 if (Attitude < Memory_Attitude.Neutral) value -= 1;
             }
-            if (tags.Contains("recreation"))
+            if (tags.Contains("recreation") || tags.Contains("rest"))
             {   // if recreation related, as long as its not bad, decrease stress
                 if (Attitude >= Memory_Attitude.Neutral) value += 1;
             }

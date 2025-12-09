@@ -41,6 +41,9 @@ public interface I_IsJobGiver
     [JsonIgnore] public List<Character_Trainable> ManagedChara { get; }
     [JsonIgnore] public bool isPlayerFaction { get; }
     [JsonIgnore] public bool isPlayerRelatedFaction { get; }
+
+    public Manageable_GuestStatus GetStatus(Character_Trainable c);
+
     [JsonIgnore]
     public bool isMealHour { get ;  }
     /// <summary>
@@ -131,7 +134,7 @@ public class Manageable_Party : I_IsJobGiver
                 pauseHours.AddRange(SleepHours);
 
             }
-            pauseHours = pauseHours.Distinct().ToList();
+            pauseHours = Utility.Distinct(pauseHours);
             var error = 0;
 
             if (pauseHours.Count > 22) error = 999;
@@ -537,7 +540,7 @@ public class Manageable_Party : I_IsJobGiver
         string ss = "";
         List<int> rooms = new List<int>();
         foreach (var x in possibleJobs) rooms.Add(x.ParentRoom.RefID);
-        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsParallel(chara.RefID, rooms, randInsteadofShortest);
+        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsOptimized(chara, rooms, randInsteadofShortest);
         var list = sortedList.Count > 0 ? sortedList.Last().Value : new Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>();
         possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
 

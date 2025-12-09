@@ -590,9 +590,11 @@ public class Job : IDisposable, I_Disposable
         if (m == null) m = this.m;
         bool rightAlign = false;
         bool displayOngoing = false;
+        bool displayStrict = false;
         bool display = false;
         if (isPlayerRelatedJob || ap.isPlayerRelatedPackage) {
             display = true;
+            displayStrict = true;
             rightAlign = false;
         }
         else
@@ -604,20 +606,12 @@ public class Job : IDisposable, I_Disposable
 
        // Debug.LogError($"CollectLogs Duration {ap.Duration} rightAlign {rightAlign}");
 
-        if (ap.Duration >= 0)
-        {
-            foreach(EvaluationPackage ep in ap.ListEP)
-            {
-                if (ep.Doer != null && ep.Doer.Climaxing) { }
-                else if (ep.Receiver != null && ep.Receiver.Climaxing) { }
-                else continue;
-                LogMessage_Climax(ep, m);
-            }
-        }
+        if (ap.Duration >= 0) ap.LogMessage_Climax(m);
+        
 
         if (ap.Duration == -1 && packages_previous.FindAll(x => UtilityEX.ArePackagesEqual(x, ap)).Count < 1)
         {
-            if (display) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Abort(ep,rightAlign,m);
+            if (display) ap.LogMessage_Begin_Abort(rightAlign,m);
             ap.DisablePackage(true);
         }
         else if (ap.Duration == 0)
@@ -626,21 +620,17 @@ public class Job : IDisposable, I_Disposable
             if (display && !ap.executeSuccessful && !ap.LoggedBegin)
             {
                 var checkResult = ap.GetCheckResult(rightAlign);
-                if (checkResult.Length > 0) m.messages_checks.Add(checkResult);
-                foreach (EvaluationPackage ep in ap.ListEP)
-                {
-                    LogMessage_Kojo(ep, m);
-                    LogMessage_Begin_Refuse(ep, rightAlign, m);
-                }
+                if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult);
+                ap.LogMessage_Kojo(m);
+                ap.LogMessage_Begin_Refuse( rightAlign, m);
             }
             else if (display)
             {
                 //  Debug.LogError($"CollectLogs LogMessage_After on {ap.ListEP.Count} EPs");
-                foreach (EvaluationPackage ep in ap.ListEP)
-                {
-                    LogMessage_Kojo(ep, m);
-                    LogMessage_After(ep, rightAlign, m);
-                }
+                var checkResult = ap.GetCheckResult(rightAlign, true);
+                if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult);
+                ap.LogMessage_Kojo(m);
+                ap.LogMessage_After(rightAlign, m);
             }
             m.exp.leftAlignOverride = !rightAlign;
         }
@@ -649,18 +639,12 @@ public class Job : IDisposable, I_Disposable
         {   // one ticked
 
             var checkResult = ap.GetCheckResult(rightAlign);
-            if (checkResult.Length > 0) m.messages_checks.Add(checkResult);
+            if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult);
 
-            if (ap.repeated) foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin_Ongoing(ep, false, rightAlign, m);
-            else
-            {
-                foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Begin(ep, false, rightAlign, m);
-            }
+            if (ap.repeated) ap.LogMessage_Begin_Ongoing( false, rightAlign, m);
+            else ap.LogMessage_Begin(false, rightAlign, m);
         }
-        else if (rightAlign && displayOngoing && ap.Duration > 0)
-        {
-            foreach (EvaluationPackage ep in ap.ListEP) LogMessage_Ongoing(ep, rightAlign, m);
-        }
+        else if (rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(rightAlign, m);
     }
 
 
@@ -858,173 +842,12 @@ public class Job : IDisposable, I_Disposable
     [JsonIgnore] public string MessagesBefore { get { return m.messages_before.Count > 0 ? String.Join("\n", m.messages_before) : ""; } }
     [JsonIgnore] public string MessagesAfter { get { return m.messages_after.Count > 0 ? String.Join("\n", m.messages_after) : ""; } }
 
-    public void LogMessage_Begin(EvaluationPackage ep, bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
-    {
-        if (m == null) m = this.m;
-        if (!m.displayOverride && !isVisibleToPlayer) return;
-        if (!ignoreBegin && ep.Package.LoggedBegin) return;
-        if (ep.Doer.isTimeStopped) return;
-        ep.Package.LoggedBegin = true;
-
-        var s =  $"{ep.Description_Begin}";
-
-        if (s.Length > 0) {
-
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_before.Add(s);
-        }
-    }
-    /// <summary>
-    /// This one should be allowed to repeat on every player command input, so there is less check
-    /// </summary>
-    /// <param name="ep"></param>
-    public void LogMessage_Begin_Ongoing(EvaluationPackage ep, bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
-    {
-        if (m == null) m = this.m;
-        if (!ignoreBegin && ep.Package.LoggedBegin) return;
-        if (ep.Doer.isTimeStopped) return;
-        ep.Package.LoggedBegin = true;
-
-        var s1 = $"{ep.Description_Ongoing}";
-        if (s1.Length > 0)
-        {
-            if (rightAlign) s1 = "<align=\"right\">" + s1 + "</align>";
-            m.messages_before.Add(s1);
-        }
-    }
-    public void LogMessage_Ongoing(EvaluationPackage ep, bool rightAlign = false, MessageCollect m = null)
-    {
-        if (m == null) m = this.m;
-        //List<Character_Trainable> actors, string s
-        //.Actors, ep.Description_Ongoing
-        if (ep.Doer.isTimeStopped) return;
-        var s = ep.Description_Ongoing;
-        if (s.Length > 0)
-        {
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_after.Add(s);
-        }
-    }
-
-    public void LogMessage_Climax(EvaluationPackage ep, MessageCollect m = null)
-    {
-        if (m == null) m = this.m;
-        if (ep.Doer != null && ep.Doer.RefID != 0) ep.Doer.Relationships.GetKOJOMessage_Climax(true, ep, m);
-        if (ep.Receiver != null && ep.Receiver.RefID != 0) ep.Receiver.Relationships.GetKOJOMessage_Climax(false, ep, m);
-    }
+    
 
     public bool kojoLogged = false;
 
-    public void LogMessage_Kojo(EvaluationPackage ep, MessageCollect m = null)
-    {
-        if (m == null) m = this.m;
-        if (ep.Package.LoggedKojo) return;
-        ep.Package.LoggedKojo = true;
-        if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName +", tags: ["+String.Join("|",ep.DoerSelfTag)+"] -> ["+String.Join("|", ep.ReceiverTargetTag) + $"], epStatus [{ep.Response}]");
-        if (ep.Doer != null && ep.Doer.RefID != 0) ep.Doer.Relationships.GetKOJOMessage(true, ep, m);
-        if (ep.Receiver != null && ep.Receiver.RefID != 0) ep.Receiver.Relationships.GetKOJOMessage(false, ep, m);
-
-        var rel = ep.Receiver != null && ep.Doer != null && ep.Receiver != ep.Doer ? ep.Receiver.Relationships.FindRelationshipWith(ep.Doer) : null;
-        var s3 = rel == null ? null : ep.Receiver.isSleeping ? ep.Receiver.Relationships.Personality.GetKOJOMessage("DisruptSleep", rel) : null;
-        if (s3 != null) s3.message = s3.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
-
-        if (s3 != null && s3.message.Length > 0)
-        {
-            m.messages_kojo.Add(s3);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{s3.message}]");
-        }// 
-    }
-
     public MessageCollect m = new MessageCollect();
 
-    public void LogMessage_Begin_Refuse(EvaluationPackage ep, bool rightAlign = false, MessageCollect m = null)
-    {
-        if (m == null) m = this.m;
-        if (ep == null) return;
-        if (ep.Package.LoggedBegin) return;
-        if (!m.displayOverride && !isVisibleToPlayer) return;
-        if (ep.Doer.isTimeStopped) return;
-        if (ep.Response >= Memory_Response.Accept) return;
-        if (ep.Doer != null && ep.Package != null)
-        {
-            var s = this.ep_refuse.Replace("$self$", ep.Receiver.FirstName).Replace("$comdesc$", ep.targetCOM.DisplayName(ep.VariantID)); 
-            if (s.Length > 0)
-            {
-                if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-                m.messages_before.Add(s);
-            }
-        }
-    }
-
-
-
-    public void LogMessage_Begin_Replace(ActionPackage aprevious, ActionPackage anext, MessageCollect m = null)
-    {
-        if (m == null) m = this.m;
-        // Im not sure if this triggers at all, let's keep it for a while if it doesnt then delete
-        //Debug.Log("LogMessage_Begin_Replace");
-        if (!m.displayOverride && !isVisibleToPlayer) return;
-        foreach (var ep in aprevious.ListEP)
-        {
-            var s1 = ep.Description_Remove;
-            if (s1.Length > 0) m.messages_before.Add(s1);
-        }
-        aprevious.LoggedBegin = true;
-        // next AP has not executed so it does not have any EP
-        // need to inject 
-    }
-
-    public void LogMessage_Begin_Abort(EvaluationPackage ep, bool rightAlign = false, MessageCollect m = null)
-    {
-        if (m == null) m = this.m;
-        if (ep == null) return;
-        if (!m.displayOverride && !isVisibleToPlayer) return;
-        if (ep.Package.LoggedBegin) return;
-        if (ep.Doer.isTimeStopped) return;
-
-        var s = ep.Description_Remove;
-        if (s.Length > 0)
-        {
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_before.Add(s);
-        }
-    }
-
-    //public Tuple<int, string> MessagesOngoing { get { return messages_ongoing.Count > 0 ? String.Join("\n", messages_ongoing) : ""; } }
-
-
-    public void LogMessage_After(EvaluationPackage ep, bool rightAlign = false, MessageCollect m = null)
-    {
-        if (m == null) m = this.m;
-        if (ep == null) return;
-        var s = ep.Description_After;
-
-        var pOrderPackage = ep.Package as ActionPackage_ProductionOrder;
-
-        if (pOrderPackage != null && pOrderPackage.order != null && pOrderPackage.order.Recipe != null && pOrderPackage.order.Recipe.OutputItem != null)
-        {
-            s = s.Replace("$item$", pOrderPackage.order.Recipe.OutputItem.DisplayName);
-        }
-
-        if (s.Length > 0)
-        {
-            //Debug.LogError($"LogMessage_After with s > 0 {s}");
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_after.Add(s);
-        }
-        else if (rightAlign)
-        {
-            LogMessage_Ongoing(ep, rightAlign,m);
-        }
-        
-        /*
-        else if (ep.Actors != null)
-        {
-            List<string> s2 = new List<string>();
-            foreach (var a in ep.Actors) if (a != null) s2.Add(a.FirstName);
-            messages_after.Add(String.Join(", ", s2) + " finished doing " + ep.targetCOM.DisplayName(ep.VariantID));
-        }*/
-    }
 
     public void Dispose()
     {
@@ -1060,6 +883,23 @@ public class Job : IDisposable, I_Disposable
     }
 
 
+    public void LogMessage_Begin_Replace(ActionPackage aprevious, ActionPackage anext, MessageCollect m = null)
+    {
+        if (m == null) m = this.m;
+        // Im not sure if this triggers at all, let's keep it for a while if it doesnt then delete
+        //Debug.Log("LogMessage_Begin_Replace");
+        aprevious.LogMessage_Begin_Abort();
+        /*
+        if (!m.displayOverride && !isVisibleToPlayer) return;
+        foreach (var ep in aprevious.ListEP)
+        {
+            var s1 = ep.Description_Remove;
+            if (s1.Length > 0) m.messages_before.Add(s1);
+        }
+        aprevious.LoggedBegin = true;*/
+        // next AP has not executed so it does not have any EP
+        // need to inject 
+    }
 
 
     string _ep_begin = null, _ep_ongoing = null, _ep_abort = null, _ep_refuse = null, _ep_prep = null, _ep_replace = null;

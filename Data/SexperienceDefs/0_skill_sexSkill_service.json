@@ -23,7 +23,13 @@
                         [
            
                         ],
-                        "DisplayName":"1"
+                        "DisplayName":"1",
+                        "validUse": [
+                            { 
+                                "skillUseTags":"service",
+                                "requireCOMTags":["interaction"]
+                            }
+                        ]
                     },{
                         "requirements":{ 
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
@@ -126,7 +132,7 @@
             "zh-cn":
             {
                 "skill_sexSkill_service": "奉仕精神",
-                "skill_sexSkill_service_tooltip": "%%notimplemented%%"
+                "skill_sexSkill_service_tooltip": "适用范围：侍奉类指令（爱抚等），对方必须是清醒的"
             }
         }
     }

@@ -21,7 +21,8 @@
                     "statID":"Willpower",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
-            ]
+            ],
+            "requireRaceType":["humanrace"]
         },
         {
             "ID": "humanRaceAddon_Magician",
@@ -32,11 +33,11 @@
                     "statID":"Psyche",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"3"
                 }
-            ]
+            ],
+            "requireRaceType":["humanrace"]
         },
         {
             "ID": "humanRaceAddon_Mistaken",
-            "displayName": "Mist-Taken",
             "tooltip": "No longer capable of thought.\nSolely driven by their bestial hunger, not realizing they no longer need to feed.\nSTR+4 CON+4 PSY-8 WIL-8",
             "stat_modifiers": [
                 {
@@ -55,11 +56,11 @@
                     "statID":"Willpower",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"-8"
                 }
-            ]
+            ],
+            "requireRaceType":["humanrace"]
         },
         {
             "ID": "humanRaceAddon_Mistborn",
-            "displayName": "Mistborn",
             "tooltip": "Descendent of a Mist-Taken, has somehow kept a sliver of sanity and reason.\nSTR+3 CON+3 PSY-4 WIL-4",
             "stat_modifiers": [
                 {
@@ -78,7 +79,8 @@
                     "statID":"Willpower",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"-4"
                 }
-            ]
+            ],
+            "requireRaceType":["humanrace"]
         },
         {
             "ID": "humanRaceAddon_Android_Sirin",
@@ -94,8 +96,28 @@
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"2"
                 }
             ],
-            "addStatsKeyword":["mood"]
+            "addStatsKeyword":["mood"],
+            "requireRaceType":["android"]
         }
     ]
+    },
+    "Dictionary":{
+        "Entries":{
+            "zh-cn": {
+                "humanRaceAddon_standard": "无模板",
+                "humanRaceAddon_scavenger": "拾荒者",
+                "humanRaceAddon_Magician": "魔术师",
+                "humanRaceAddon_Mistaken": "迷者",
+                "humanRaceAddon_Mistborn": "迷子"
+            },
+            "en-us":{
+                
+                "humanRaceAddon_standard": "None",
+                "humanRaceAddon_scavenger": "Scavenger",
+                "humanRaceAddon_Magician": "Magician",
+                "humanRaceAddon_Mistaken": "Mistaken",
+                "humanRaceAddon_Mistborn": "Mistborn"
+            }
+        }
     }
 }

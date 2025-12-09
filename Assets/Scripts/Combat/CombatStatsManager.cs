@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Linq;
 using Newtonsoft.Json;
 
 public class CombatStatManager : I_StatsManager
@@ -87,9 +86,10 @@ public class CombatStatManager : I_StatsManager
         if (Owner.Body.AlwaysValidActions.Count > 0) allvalids.AddRange(Owner.Body.AlwaysValidActions);
         foreach (var kvp in Owner.Body.CombatActions) if (kvp.Value.Count > 0) allvalids.AddRange(kvp.Value);
         foreach(var kvp in Owner.Inventory.CombatActions) if (kvp.Value.Count > 0) allvalids.AddRange(kvp.Value);
-        allvalids = allvalids.Distinct().ToList();
 
-        foreach(var preset in scr_System_Serializer.current.MasterList.CombatActionPresets.list)
+        allvalids = Utility.Distinct(allvalids);
+
+        foreach (var preset in scr_System_Serializer.current.MasterList.CombatActionPresets.list)
         {
             if (preset.forbidUseInRandom) continue;
             if (Utility.ListContainsStrict(allvalids, preset.Actions) && !ValidPresets.ContainsKey(preset.ID)) ValidPresets.Add(preset.ID, preset);
@@ -188,7 +188,7 @@ public class CombatStatManager : I_StatsManager
         {
             for (int i = modifiers_combat.Count - 1; i >= 0; i--)
             {
-                if (modifiers_combat[i].statID == mod_instance.statID && modifiers_combat[i].modKey == mod_instance.modKey
+                if (modifiers_combat[i].statID == mod_instance.statID && modifiers_combat[i].ModKey == mod_instance.ModKey
                         && ((modifiers_combat[i].type == Stat_Modifier.StatMod_Type.setMult && modifiers_combat[i].type == mod_instance.type)
                             || (modifiers_combat[i].type == Stat_Modifier.StatMod_Type.setBase && modifiers_combat[i].type == mod_instance.type)))
                     modifiers_combat.RemoveAt(i);
@@ -282,9 +282,9 @@ public class CombatStatManager : I_StatsManager
     {
         return Owner.hasStatKeyword(statKeyword);
     }
-    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null)
+    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false)
     {
-        return GetModifiers(statID, contexts, true, false);
+        return GetModifiers(statID, contexts, !forbidStatus, false);
     }
     public List<Stat_Modifier> GetModifiers(Stats_Base obj, string statID, List<string> contexts = null)
     {
@@ -366,7 +366,7 @@ public class CombatStatManager : I_StatsManager
     {
         if (contexts != null)
         {
-            contexts = contexts.Distinct().ToList();
+            contexts = Utility.Distinct(contexts);
             contexts.Sort();
         }
 

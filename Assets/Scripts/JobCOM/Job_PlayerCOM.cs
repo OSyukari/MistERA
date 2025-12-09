@@ -1,8 +1,8 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
@@ -19,7 +19,14 @@ public class Job_PlayerCOM : Job
     public Job_PlayerCOM()
     {
     }
-
+    [JsonIgnore]
+    public override string DisplayName
+    {
+        get
+        {
+            return $"Player Job";
+        }
+    }
     [JsonIgnore] public override List<int> actorRefID
     {
         get

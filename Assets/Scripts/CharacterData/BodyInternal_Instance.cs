@@ -637,8 +637,8 @@ public class BodyInternal_Instance
         if (!this.canContain) return false;
         var comp = item.GetComp_Ingestible();
 
-
-        if (item as Item_Instance_Cum != null)
+        bool isCum = item is Item_Instance_Cum;
+        if (isCum)
         {
             var com = item as Item_Instance_Cum;
             if (!com.experienceTicked)
@@ -659,9 +659,9 @@ public class BodyInternal_Instance
 
         if (!forceFill)
         {
-            if (RemainingExpandingCapacity >= comp.amount || comp.amount < 1)
+            if (!isCum || (RemainingExpandingCapacity >= comp.amount || comp.amount < 1))
             {
-                Debug.Log($"{Owner.CallName} {this.DisplayName} ingest cum {comp.amount} ml, RemainingExpandingCapacity {RemainingExpandingCapacity}, full capacity ingest");
+                if (isCum) Debug.Log($"{Owner.CallName} {this.DisplayName} ingest {comp.amount} ml, RemainingExpandingCapacity {RemainingExpandingCapacity}, full capacity ingest");
                 IngestInternal(item, m);
                 return true;
             }

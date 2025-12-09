@@ -3,7 +3,6 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public enum StatusTags
 {
     consciousness_reduced,
@@ -12,7 +11,6 @@ public enum StatusTags
     drugged
 }
 
-[System.Serializable]
 public enum RandomSample
 {
     None,
@@ -59,6 +57,17 @@ public class Status_Instance
         this.maxed = true;
     }
 
+    Stats_Derived_Instance _variantThresholdMod = null;
+    [JsonIgnore]
+    public float VariantThresholdMod
+    {
+        get
+        {
+            if (_variantThresholdMod == null && BaseRef != null && BaseRef.variantThresholdModStat != "") _variantThresholdMod = Owner.GetDerivedStat(BaseRef.variantThresholdModStat);
+            return _variantThresholdMod == null ? 1f : _variantThresholdMod.FinalValue(null, true);
+        }
+    }
+
     protected Status_Base baseRef = null;
     [JsonIgnore] public string SeverityDisplayName 
     { 
@@ -90,14 +99,13 @@ public class Status_Instance
 
     [JsonIgnore] public List<string> Tags { get { return this.BaseRef.variants[SeverityIndex].tags; } }
 
-    [JsonIgnore] protected int SeverityIndex { get
+    [JsonProperty] protected int _severityIndex = -1;
+    protected int SeverityIndex { get
         {
-            for ( int i = 0; i < BaseRef.variants.Count ; i ++)
-            {
-                if (Math.Round( this.Severity, 1) <= BaseRef.variants[i].threshold) return i;
-            }
-            return BaseRef.variants.Count - 1;
-        } }
+            if (_severityIndex == -1) _severityIndex = UpdateSeverity();
+            return _severityIndex;
+        }
+    }
 
     [JsonIgnore] public float Severity
     {
@@ -142,6 +150,10 @@ public class Status_Instance
             else
             {
                 var threshold = this.BaseRef.variants[nextIndex].threshold;
+
+                var val = VariantThresholdMod;
+                if (val != 0) threshold *= val;
+
                 //Debug.Log($"tickTillDecay calc, prevIndex {nextIndex} decay {decay} nextThreshold {threshold}");
                 if (Math.Sign(threshold) == Math.Sign(decay)) return 0;
                 else return (int)(-(this.Severity - threshold) / decay);
@@ -173,8 +185,18 @@ public class Status_Instance
 
         severity += f;
 
-        var min = BaseRef.variants[0].threshold - Variation;
-        var max = BaseRef.variants[BaseRef.variants.Count - 1].threshold + Variation;
+        var min = BaseRef.variants[0].threshold;
+        var max = BaseRef.variants[BaseRef.variants.Count - 1].threshold;
+
+        var mmm = VariantThresholdMod;
+        if (mmm != 0)
+        {
+            min *= mmm;
+            max *= mmm;
+        }
+        
+        min -= Variation;
+        max += Variation;
 
         if (externalCap != -1) max = Math.Min(externalCap, max);
 
@@ -189,7 +211,24 @@ public class Status_Instance
 
         if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.Log($"{Owner.OwnerName()} addstatus {this.baseID} {f} min {min} max {max} externalcap {externalCap} final {severity}");
 
+        _severityIndex = UpdateSeverity();
+
         return this.SeverityIndex != initialS;
+    }
+
+    protected int UpdateSeverity()
+    {
+        for (int i = 0; i < BaseRef.variants.Count; i++)
+        {
+            var threshold = BaseRef.variants[i].threshold;
+
+            var val = VariantThresholdMod;
+            if (val == 0) return i;
+            threshold *= val;
+
+            if (Math.Round(this.Severity, 1) <= threshold) return i;
+        }
+        return BaseRef.variants.Count - 1;
     }
 
     [JsonIgnore] public Status_Base BaseRef

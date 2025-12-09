@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Linq;
 using Newtonsoft.Json;
 
 
@@ -18,7 +17,7 @@ public class MemoryManager
     [JsonProperty] protected SortedList<long, Memory_Entry> entries = null;
     [JsonIgnore] public List<Memory_Entry> Entries { get {
             if (entries == null) entries = new SortedList<long, Memory_Entry>();
-            return entries.Values.ToList(); } }
+            return new List<Memory_Entry>( entries.Values); } }
     [JsonIgnore] public Memory_Entry Last { get {
 
             if (Entries == null || Entries.Count < 1) return null;
@@ -196,7 +195,11 @@ public class MemoryManager
         return results;
     }
 
-
+    protected void AddMoodlet(ref List<int> compareList, List<Stat_Modifier> statmod)
+    {
+        foreach (var i in statmod) AddMoodlet(ref compareList, i);
+    }
+    /*
     protected void AddMoodlet(ref List<int> compareList, Stat_Modifier statmod)
     {
         if (statmod.valueType != Stat_Modifier_Type.number) return;
@@ -220,17 +223,50 @@ public class MemoryManager
             compareList.Add(newVal);
         }
         else return;
-        
-    }
-    protected Stat_Modifier duplicateMoodlet(Stat_Modifier statmod, int value)
+    }*/
+    protected void AddMoodlet(ref List<int> compareList, Stat_Modifier statmod)
     {
-        var newstuff = new Stat_Modifier();
-        newstuff.statID = statmod.statID;
-        newstuff.modKey = statmod.modKey;
-        newstuff.type = statmod.type;
-        newstuff.SetValueTypeAndString(statmod.valueType, value.ToString());
-        //newstuff.SetValueTypeAndString("number", value)
-        return newstuff;
+        if (statmod.valueType != Stat_Modifier_Type.number) return;
+
+        if (int.TryParse(statmod.valueString_backup, out int modvalue))
+        {
+            int oppCount = 0;
+            int newVal = 0;
+            int threshold = -modvalue; // Calculate this once to save math ops inside the loop
+
+            if (modvalue > 0)
+            {
+                // Optimization: Iterate manually to avoid creating a new List with FindAll
+                for (int i = 0; i < compareList.Count; i++)
+                {
+                    // Logic: Count existing moods that are 'stronger negatives' than this positive
+                    if (compareList[i] < threshold)
+                    {
+                        oppCount++;
+                    }
+                }
+                newVal = Math.Max(0, modvalue - oppCount);
+            }
+            else // modvalue < 0
+            {
+                // Optimization: Iterate manually
+                for (int i = 0; i < compareList.Count; i++)
+                {
+                    // Logic: Count existing moods that are 'stronger positives' than this negative
+                    if (compareList[i] > threshold)
+                    {
+                        oppCount++;
+                    }
+                }
+                newVal = Math.Min(0, modvalue + oppCount);
+            }
+
+            // Cache Logic
+            statmod.valueString = newVal.ToString();
+            recentMemoryCache.Add(statmod);
+
+            compareList.Add(newVal);
+        }
     }
 
     public int GetMemoryAdjustment(EvaluationPackage.Modifiers modifiers, int targetRef, COM com, List<string> tags = null, bool requireConsciousness = true)
@@ -299,7 +335,8 @@ public class MemoryManager
     {
         if (recentMemoryCache != null) recentMemoryCache.Clear();
         recentMemoryCache = null;
-        Owner.Stats.RefreshAllStats();
+        Owner.Stats.RefreshAttitude();
+        Owner.Relationships.RefreshAttitudes();
         UpdateBlacklist();
     }
 

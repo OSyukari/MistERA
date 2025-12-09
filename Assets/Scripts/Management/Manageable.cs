@@ -95,12 +95,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
         mainExit_cache = null;
         int newRef = MainExit == null ? -1 : MainExit.RefID;
     }
-
-    public Manageable_GuestStatus GetStatus(int chararef)
+    public Manageable_GuestStatus GetStatus(Character_Trainable c)
     {
-        if (charaGuestStatus.TryGetValue(chararef, out var guestStatus)) return guestStatus;
+        if (charaGuestStatus.TryGetValue(c.RefID, out var guestStatus)) return guestStatus;
         else return Manageable_GuestStatus.None;
     }
+
     public bool isManager(int charaRef)
     {
         return charaGuestStatus.ContainsKey(charaRef) && charaGuestStatus[charaRef] == Manageable_GuestStatus.Manager;
@@ -293,7 +293,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
-    protected void OnTimeUpdate(TimeSpan t)
+    protected void OnTimeUpdate(TimeSpan t, TimeSpan t_real)
     {
         // check daily reset
         DateTime currentTime = scr_System_Time.current.getCurrentTime();
@@ -575,10 +575,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
         if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "", tag, checkBlacklist))
         {
-            ss += $" found no valid [{tag}] instances offered by Furnitures from chara[" + chara.FirstName + "] currenthour[" + currentHour + "]";
+            ss += $" found no valid [{tag}] instances offered by Furnitures from chara[{chara.FirstName}] currenthour[{currentHour}], checkBlacklist[{checkBlacklist}]";
             if (s != null) s.Add(ss);
             return new List<Job_Furniture>();
         }
+
+        //if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} with {possibleJobs.Count} possible instances");
 
         if (skipPrivate)
         {
@@ -592,6 +594,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             return new List<Job_Furniture>();
         }
 
+        //if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} with {possibleJobs.Count} possible instances post validateall");
 
         //bool result = FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
         if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly))
@@ -601,6 +604,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
         else
         {
+            if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} no validpaths");
             //Debug.Log("GetValidPaths failed after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
             return new List<Job_Furniture>();
         }
@@ -671,7 +675,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         string ss = "";
         List<int> rooms = new List<int>();
         foreach (var x in possibleJobs) rooms.Add(x.ParentRoom.RefID);
-        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsParallel(chara.RefID, rooms, randInsteadofShortest);
+        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsOptimized(chara, rooms, randInsteadofShortest);
         var list = sortedList.Count > 0 ? sortedList.First().Value : new Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>() ;
         possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
 
@@ -1502,7 +1506,6 @@ public class Manageable : I_Disposable, I_IsJobGiver
         public void Set(string jobID, List<string> coms)
         {
             /*  this is executed on jobpost template creation
-            coms = coms.Distinct().ToList();
             coms.RemoveAll(x=>x.Length < 1);
             */
             if (coms.Count > 0)
@@ -2149,13 +2152,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
             this.workCommands = new List<string>();
             this.workCommands.AddRange(module.workCommands);
-            this.workCommands = this.workCommands.Distinct().ToList();
+            this.workCommands = Utility.Distinct(this.workCommands);
             this.workCommands.RemoveAll(x => x.Length < 1);
 
             //Debug.LogError($"new module {module.jobPostID} jobs |{String.Join(",", module.workCommands)}| selfcommands |{String.Join(",", this.workCommands)}|");
 
             this.activeHours = new List<int>(module.activeHours);
-            this.activeHours = this.activeHours.Distinct().ToList();
+            this.activeHours = Utility.Distinct(this.activeHours);
             this.activeHours.RemoveAll(x => x < 0 || x > 23);
 
             foreach (var item in module.hourlyPayout)
@@ -2216,7 +2219,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             manageLogs.Clear();
             tradeRegistry.Clear();
             tradeWarnings.Clear();
-
+            miscMessages.Clear();
         }
 
         Dictionary<string, int> tradeRegistry = new Dictionary<string, int>();

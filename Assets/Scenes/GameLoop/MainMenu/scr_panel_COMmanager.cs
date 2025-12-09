@@ -7,7 +7,7 @@ using System.Linq;
 public class scr_panel_COMmanager : scr_Menu
 {
 
-    public TMP_Text title_interaction, title_sex, title_inventory;
+    public TMP_Text title_interaction, title_touch, title_sex, title_inventory;
     public scr_HoverableText title_furnitures;
     public TMP_Text ongoingCOMs;
     public enum COMFilter
@@ -135,6 +135,8 @@ public class scr_panel_COMmanager : scr_Menu
             case COMTabs.Sex:
                 if (scr_System_CampaignManager.current.displaySex)
                 {
+                    Box_SexCOMs_Full.gameObject.SetActive(true);
+
                     Box_SexCOMs.gameObject.SetActive(true);
                     Box_MassageCOMs.gameObject.SetActive(false);
                     Box_TouchCOMs.gameObject.SetActive(false);
@@ -165,13 +167,14 @@ public class scr_panel_COMmanager : scr_Menu
                     Box_MassageCOMs.gameObject.SetActive(true);
                     Box_TouchCOMs.gameObject.SetActive(true);
                     Box_ServiceCOMs.gameObject.SetActive(true);
-                    if (refID > 0)
-                    {
-                        title_sex.text = $"{LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName)}\n{String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyDescription)}";
-                    }
-                    else title_sex.text = LocalizeDictionary.QueryThenParse("comManager_title_skinship_self");
+                    Box_SexCOMs_Full.gameObject.SetActive(false);
                 }
 
+                if (refID > 0)
+                {
+                    title_touch.text = $"{LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName)}\n{String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyDescription)}";
+                }
+                else title_touch.text = LocalizeDictionary.QueryThenParse("comManager_title_skinship_self");
 
                 break;
             case COMTabs.Inventory:
@@ -615,6 +618,7 @@ public class scr_panel_COMmanager : scr_Menu
 
     public RectTransform panel_InteractionCOMs, panel_SexCOMs, panel_InventoryCOMs, panel_CombatCOMs;
     public RectTransform Box_SexCOMs, Box_InteractionCOMs, Box_UndressCOMs, Box_FurnitureCOMs, Box_FurnitureCOMsList, Box_TouchCOMs, Box_SpecialCOMs, Box_MassageCOMs, Box_ServiceCOMs, buttonPrefab_COM, Box_InitiateSex;
+    public RectTransform Box_SexCOMs_Full;
     public RectTransform Box_Filters;
     public List<scr_SelectableText> filters_Sex, filters_Touch, filters_Interact, filters_Inventory, filters_Combat;
 
@@ -694,7 +698,8 @@ public class scr_panel_COMmanager : scr_Menu
         tempList.Add(scr_System_CampaignManager.current.jobRef_playerCOM);
         string s3 = "Tracking player interactionjob " + scr_System_CampaignManager.current.jobRef_playerCOM;
         /**/
-        if (scr_System_CampaignManager.current.Player.CurrentJob != null)
+        var curr = scr_System_CampaignManager.current.Player.CurrentJob;
+        if (curr != null && !curr.CanBeInterrupted)
         {
             s3 += "\nTracking player current job " + scr_System_CampaignManager.current.Player.CurrentJob.RefID;
             tempList.Add(scr_System_CampaignManager.current.Player.CurrentJob.RefID);
@@ -1359,6 +1364,8 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
+            scr_System_CentralControl.current.AutoSave();
+
             //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
             cachedAP.ResetRequest(package.DoerRefs, package.ReceiverRefs, package.masterRef);
             foreach (var actor in cachedAP.actorRefs)
@@ -1370,6 +1377,7 @@ public class scr_panel_COMmanager : scr_Menu
 
             // need to reset EP. Re-request should trigger EP rebuild on next update
             if (cachedAP.isPaused) scr_System_CampaignManager.current.Register(cachedAP, false);
+            cachedAP.LoggedBegin = false;
             scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
         }
     }
@@ -1446,7 +1454,7 @@ public class scr_panel_COMmanager : scr_Menu
                 }
                 else
                 {
-                    Debug.LogError("remake package called on invalid AP");
+                    Debug.LogError($"remake package called on invalid AP on com {com.ID}");
                     injectAP = null;
                 }
             }
@@ -1492,7 +1500,7 @@ public class scr_panel_COMmanager : scr_Menu
                 return false;
             }
 #if UNITY_EDITOR
-            tooltip += "COM " + package.DisplayName + " isSex[" + (package as ActionPackage_Sex != null) + "] isInteract [" + (package as ActionPackage_Interaction != null) + "]\n";
+            tooltip += $"COM {package.DisplayName} isSex[{(package as ActionPackage_Sex != null)}] isInteract [{(package as ActionPackage_Interaction != null)}], parentJob {this.job.DisplayName}\n";
 #endif
 
             if (parent.ValidateCOMByTags(com))
@@ -1534,6 +1542,7 @@ else */
                             }
 
                         }
+                        if (package is ActionPackage_Interaction && job is Job_CharaCOM) forbidInjectTarget = true;
 #if UNITY_EDITOR
                         if (false)
                         {
@@ -1648,6 +1657,8 @@ else */
 
         public void OnClickButton()
         {
+            scr_System_CentralControl.current.AutoSave();
+
             var ppp = package.Copy();
             //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
             //scr_System_CampaignManager.current.Player.ChangeCurrentJob(job);
@@ -2552,40 +2563,4 @@ else */
         }
     }
 
-
-    public class ButtonValidator_ModCharaPersonality : ButtonValidator, I_ButtonClickable
-    {
-
-        string targetStat;
-        new scr_panel_COMmanager parent;
-        int modValue;
-        public ButtonValidator_ModCharaPersonality(scr_panel_COMmanager parent, string key, int value) : base(parent)
-        {
-            this.parent = parent;
-            this.targetStat = key;
-            this.modValue = value;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return scr_System_CampaignManager.current.CurrentTargetRef > 0;
-        }
-
-        public void OnClickButton()
-        {
-            if (targetStat == "pride") scr_System_CampaignManager.current.CurrentTarget.Relationships._Pride += modValue;
-            else if (targetStat == "corruption") scr_System_CampaignManager.current.CurrentTarget.Relationships._Corruption += modValue;
-            else if (targetStat == "mood") scr_System_CampaignManager.current.CurrentTarget.Stats.Mood.DebugSeverityMod += modValue;
-            else if (targetStat == "stress") scr_System_CampaignManager.current.CurrentTarget.Stats.Stress.DebugSeverityMod += modValue;
-            else if (targetStat == "lust") scr_System_CampaignManager.current.CurrentTarget.Stats.Lust.DebugSeverityMod += modValue;
-            else if (targetStat == "trust") scr_System_CampaignManager.current.CurrentTarget.Relationships.FindRelationshipWith(0).ModRelationValue(RelationshipScoreType.Trust, modValue);
-            else if (targetStat == "fear") scr_System_CampaignManager.current.CurrentTarget.Relationships.FindRelationshipWith(0).ModRelationValue(RelationshipScoreType.Fear, modValue);
-            else if (targetStat == "goodwill") scr_System_CampaignManager.current.CurrentTarget.Relationships.FindRelationshipWith(0).ModRelationValue(RelationshipScoreType.Goodwill, modValue);
-            else if (targetStat == "badwill") scr_System_CampaignManager.current.CurrentTarget.Relationships.FindRelationshipWith(0).ModRelationValue(RelationshipScoreType.Badwill, modValue);
-            else if (targetStat == "desire") scr_System_CampaignManager.current.CurrentTarget.Relationships.FindRelationshipWith(0).ModRelationValue(RelationshipScoreType.Desire, modValue);
-            else { }
-
-            scr_System_CampaignManager.current.NotifyUpdate();
-        }
-    }
 }

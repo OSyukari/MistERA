@@ -5,6 +5,7 @@
         [
             {
                 "ID":"skill_addiction_masturbation",
+                "noDisplay":true,
                 "tags":["nsfw"],
                 "levels":
                 [   {

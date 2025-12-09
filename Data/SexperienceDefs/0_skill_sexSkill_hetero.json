@@ -1,0 +1,116 @@
+{
+    "Skills":
+    {
+        "list":
+        [
+            {
+                "ID":"skill_sexSkill_hetero",
+                "tags":["nsfw"], 
+                "levels":
+                [   {
+                        "DisplayName":"-"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":30 }] },
+                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":30 }] }
+                            ]
+                         },
+                        "stat_modifiers":
+                        [
+           
+                        ],
+                        "DisplayName":"1",
+                        "validUse": [
+                            { 
+                                "skillUseTags":"unsafe",
+                                "requireSelfTags":["human","male"],
+                                "requireCOMTags":["human","female"]
+                            } ,
+                            { 
+                                "skillUseTags":"unsafe",
+                                "requireSelfTags":["human","female"],
+                                "requireCOMTags":["human","male"]
+                            } ,
+                            { 
+                                "skillUseTags":"touch",
+                                "requireSelfTags":["human","male"],
+                                "requireCOMTags":["human","female"]
+                            } ,
+                            { 
+                                "skillUseTags":"touch",
+                                "requireSelfTags":["human","female"],
+                                "requireCOMTags":["human","male"]
+                            } 
+                        ]
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":100 }] },
+                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":100 }] }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+               
+                         ],
+                        "DisplayName":"2"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":230 }] },
+                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":230 }] }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+             
+                         ],
+                        "DisplayName":"3"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":430 }] },
+                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":430 }] }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+                   
+                         ],
+                        "DisplayName":"4"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireOne, Assembly-CSharp",
+                            "entries":[
+                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":830 }] },
+                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":830 }] }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+                
+                         ],
+                        "DisplayName":"5"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "skill_sexSkill_hetero": "异性",
+                "skill_sexSkill_hetero_tooltip":"适用范围：与异性的身体接触"
+            }
+        }
+    }
+}

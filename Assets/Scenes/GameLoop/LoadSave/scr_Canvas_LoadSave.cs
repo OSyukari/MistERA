@@ -13,6 +13,7 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
 
     public scr_SaveRect prefab_saveRect;
     public RectTransform saveList;
+    public RectTransform autoSave;
 
     protected override void Awake()
     {
@@ -67,25 +68,28 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
             DirectoryInfo d = new DirectoryInfo(scr_System_Serializer.SavePath);
             foreach (var file in d.GetFiles("*.json"))
             {
-                BuildSingleButton(file);
+                Debug.Log($"reading save file {file.Name}");
+                BuildSingleButton(file, file.Name == "AutoSave.json");
             }
         }
 
         ValidateAll();
     }
 
-    protected void BuildSingleButton(FileInfo file)
+    protected void BuildSingleButton(FileInfo file, bool isAutosave)
     {
         if (!file.Exists) return;
 
+        var rect = isAutosave ? autoSave : saveList;
+
         scr_SaveRect box = Instantiate(prefab_saveRect);
-        box.transform.SetParent(saveList, false);
+        box.transform.SetParent(rect, false);
 
 
         scr_SelectableText button1 = box.saveDescription;
 
         button1.optionID = GetID * 2;
-        button1.Initialize(this, new ButtonValidator_LoadSave(this, file, button1));
+        button1.Initialize(this, new ButtonValidator_LoadSave(this, file, button1, isAutosave));
 
         buttonsByID.Add(button1.optionID, button1);
         validatorsByID.Add(button1.optionID, button1.Validator);
@@ -93,13 +97,20 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
         //Debug.Log("ButtonCreated "+button.optionID+", isButton? " + (button.Validator is I_ButtonClickable) + " isButtonInDict? " + (validatorsByID[button.optionID] is I_ButtonClickable));
         //button.Validate();
 
-        scr_SelectableText button2 = box.saveDelete;
+        if (isAutosave)
+        {
+            box.saveDelete.Text.text = "";
+        }
+        else
+        {
+            scr_SelectableText button2 = box.saveDelete;
+            button2.optionID = button1.optionID + 1;
+            button2.Initialize(this, new ButtonValidator_DeleteSave(this, file, button2, box));
 
-        button2.optionID = button1.optionID + 1;
-        button2.Initialize(this, new ButtonValidator_DeleteSave(this, file, button2, box));
+            buttonsByID.Add(button2.optionID, button2);
+            validatorsByID.Add(button2.optionID, button2.Validator);
+        }
 
-        buttonsByID.Add(button2.optionID, button2);
-        validatorsByID.Add(button2.optionID, button2.Validator);
     }
 
 
@@ -138,7 +149,7 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
         scr_SelectableText text;
 
         SaveFileHolder s;
-        public ButtonValidator_LoadSave(scr_Canvas_LoadSave parent, FileInfo file, scr_SelectableText text) : base(parent)
+        public ButtonValidator_LoadSave(scr_Canvas_LoadSave parent, FileInfo file, scr_SelectableText text, bool isAutosave) : base(parent)
         {
             this.parent = parent;
             this.file = file;
@@ -147,10 +158,8 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
             s = UtilityEX.ReadSaveHolder(file);
             //s = JsonConvert.DeserializeObject<SaveFileHolder>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
             //s.FilePath = file.FullName;
-            this.text.SetText(s.SaveDescription.Replace("$filename$", file.Name));
+            this.text.SetText(s.SaveDescription.Replace("$filename$", isAutosave? LocalizeDictionary.QueryThenParse("ui_load_autosave") : file.Name));
         }
-
-
 
         public override bool IsButtonValid()
         {

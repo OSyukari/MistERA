@@ -11,7 +11,7 @@
     "teamRequirement":{
         "minTeamCount":1,
         "maxTeamCount":99,
-        "charaReq":{ "cost_EN":8, "cost_ST":4 }
+        "charaReq_Select":{ "cost_EN":8, "cost_ST":4 }
     },
     "possibleResults":[
         {

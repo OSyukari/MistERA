@@ -68,9 +68,10 @@
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
                     "baseValue":0,
-                    "decaySpeed":0.2
+                    "decaySpeed":0.05
                 }
             } ,
+            "variantThresholdModStat":"stats_derived_alcoholSensitivity",
             "variants":[
                 {
                     "displayable":false,  

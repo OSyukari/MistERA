@@ -34,8 +34,8 @@
                         { "entry_results":{  "moveItem":{ "itemTag":"trash", "maxCount":5}  } }
                     ]
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":10 },
-                "DifficultyCheck":{ "baseD20Check":0 },
+                "AcceptanceCheck":{ "baseAcceptanceValue":5 },
+                "DifficultyCheck":{ "baseD20Check":5 },
                 "description_begin":
                 {
                     "Entries":[ 
@@ -57,7 +57,7 @@
                 "comTags": [
                     "job",
                     "furniture",
-                    "production_cooking"
+                    "production_cooking", "cooking"
                 ],
                 "requirements": {
                     "requirement": {
@@ -97,7 +97,7 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": {
-                    "baseD20Check": 0
+                    "baseD20Check": 5
                 },
                 "description_after":
                 {
@@ -522,7 +522,8 @@
                 "comTags": [
                     "job",
                     "furniture",
-                    "farm_maintain"
+                    "farm_maintain",
+                    "farming"
                 ],
                 "requirements": {
                     "requirement": {
@@ -575,7 +576,7 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": {
-                    "baseD20Check": 0
+                    "baseD20Check": 5
                 },
                 "description_begin":
                 {
@@ -596,7 +597,8 @@
                 "displayName": "com_job_farm_remove_displayName_1",
                 "timeScale": 90,
                 "comTags": [
-                    "furniture"
+                    "furniture",
+                    "farming"
                 ],
                 "requirements": {
                     "requirement": {
@@ -637,7 +639,7 @@
                     "baseAcceptanceValue": 5
                 },
                 "DifficultyCheck": {
-                    "baseD20Check": 0
+                    "baseD20Check": 10
                 },
                 "description_after":
                 {
@@ -667,7 +669,8 @@
                 "displayName": "com_job_farm_cultivate_crop_displayName",
                 "timeScale": 120,
                 "comTags": [
-                    "furniture"
+                    "furniture",
+                    "farming"
                 ],
                 "requirements": {
                     "requirement": {
@@ -708,7 +711,7 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": {
-                    "baseD20Check": 0
+                    "baseD20Check": 10
                 },
                 "description_begin":
                 {
@@ -732,7 +735,8 @@
                 "displayName": "com_job_farm_cultivate_meat_displayName",
                 "timeScale": 90,
                 "comTags": [
-                    "furniture"
+                    "furniture",
+                    "farming"
                 ],
                 "requirements": {
                     "requirement": {
@@ -773,7 +777,7 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": {
-                    "baseD20Check": 0
+                    "baseD20Check": 10
                 },
                 "description_begin":
                 {

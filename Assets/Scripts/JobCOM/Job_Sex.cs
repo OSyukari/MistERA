@@ -407,7 +407,7 @@ public class Job_Sex_Group : Job
                         else if (UtilityEX.DetectConflict(p, packages_current[ii]))
                         {   // leave the conflict package in previous to use for COM text selection purposes.
 
-                            if (display) foreach (var ep in packages_current[ii].ListEP) LogMessage_Begin_Abort(ep);
+                            if (display) packages_current[ii].LogMessage_Begin_Abort();
 
                             replaced = true;
                             packages_current[ii].LoggedBegin = true;
@@ -424,7 +424,7 @@ public class Job_Sex_Group : Job
 
                         if (packages_previous[ii].Duration > 0 && UtilityEX.DetectConflict(p, packages_previous[ii]))
                         {   // leave the conflict package in previous to use for COM text selection purposes.
-                            if (display) foreach (var ep in packages_previous[ii].ListEP) LogMessage_Begin_Abort(ep);
+                            if (display) packages_previous[ii].LogMessage_Begin_Abort();
 
                             replaced = true;
                             packages_previous[ii].LoggedBegin = true;
@@ -759,14 +759,13 @@ public class Job_Sex_Group : Job
 
         List<string> currs = new List<string>();
         List<string> prevs = new List<string>();
-        foreach (var p in packages_current) currs.Add(p.DisplayName);
-        foreach (var p in packages_previous) prevs.Add(p.DisplayName);
+        foreach (var p in packages_current) currs.Add($"{p.DisplayName} {p.Duration}");
+        foreach (var p in packages_previous) prevs.Add($"{p.DisplayName} {p.Duration}");
 
         if (restrictDuration == 0) EndJob();
 
 
-        //Debug.Log("PostUpdateTime currentPackages: " + String.Join(" ", currs));
-        //Debug.Log("PostUpdateTime previousPackages: " + String.Join(" ", prevs));
+        //Debug.Log($"Sexjob postupdatetime\nPostUpdateTime currentPackages: {String.Join(" | ", currs)}\nPostUpdateTime previousPackages: {String.Join(" | ", prevs)}" );
     }
 
 }

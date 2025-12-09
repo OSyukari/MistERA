@@ -31,6 +31,16 @@ public class scr_System_Serializer : MonoBehaviour
         }
     }
 
+    string _autosavePath = "";
+    public static string AutosavePath
+    {
+        get
+        {
+            if (current._autosavePath == "") current._autosavePath = $"{SavePath}/AutoSave.json";
+            return current._autosavePath;
+        }
+    }
+
     string _presetPath = "";
     public static string PresetPath
     {
@@ -153,12 +163,20 @@ public class scr_System_Serializer : MonoBehaviour
     }
 
 
+    protected void CustomCalls()
+    {
+
+    }
+
     bool initialized = false;
     private void Update()
     {
         if (!initialized)
         {
             initialized = true;
+
+            CustomCalls();
+
             BuildAddressables(scr_System_CentralControl.current.isSafeMode);
 
             // before master dictionary load, central control player pref must exist to check language
@@ -271,9 +289,44 @@ public class scr_System_Serializer : MonoBehaviour
 
     public void SavePresetJSON(Character_Trainable obj)
     {
-        string s = JsonUtility.ToJson(obj);
-        if (!Directory.Exists(PresetPath)) Directory.CreateDirectory(PresetPath);
-        System.IO.File.WriteAllText($"{ PresetPath}/{ obj.FirstName}{ ((obj.MiddleName.Length < 1) ? " " : " " + obj.MiddleName + " ")}{ obj.LastName}.json", s);
+        string serialized_chara = JsonConvert.SerializeObject(obj, UtilityEX.SerializerSettings);
+        FileInfo filepath = new System.IO.FileInfo($"{PresetPath}/{obj.FirstName}_{(obj.MiddleName.Length < 1 ? "" : $"{obj.MiddleName}_")}{obj.LastName}.json");
+
+        if (scr_System_CentralControl.current.isSafeMode)
+        {
+            var chara = JsonConvert.DeserializeObject<Character_SerializableSafe>(serialized_chara, UtilityEX.SerializerSettings);
+            chara.Template = obj.Template as CharaSafeTemplate;
+            chara.playable = true;
+            chara.baseID = filepath.Name;
+            serialized_chara = JsonConvert.SerializeObject(chara, UtilityEX.SerializerSettings);
+
+            scr_System_Serializer.current.MasterList.Character_Bases.SetChara(chara);
+
+            var template = new CharaSerializableTemplate_Safe();
+            template.baseID = filepath.Name;
+            template.Template = obj.Template as CharaSafeTemplate;
+            scr_System_Serializer.current.MasterList.CharacterTemplates.SetTemplate(template);
+        }
+        else
+        {
+            var chara = JsonConvert.DeserializeObject<Character_SerializableTrainable>(serialized_chara, UtilityEX.SerializerSettings);
+            chara.Template = obj.Template as CharaTrainableTemplate;
+            chara.playable = true;
+            chara.baseID = filepath.Name;
+            serialized_chara = JsonConvert.SerializeObject(chara, UtilityEX.SerializerSettings);
+
+            scr_System_Serializer.current.MasterList.Character_Bases.SetChara(chara);
+
+            var template = new CharaSerializableTemplate_Trainable();
+            template.baseID = filepath.Name;
+            template.Template = obj.Template as CharaTrainableTemplate;
+            scr_System_Serializer.current.MasterList.CharacterTemplates.SetTemplate(template);
+        }
+
+
+        filepath.Directory.Create();
+        File.WriteAllText(filepath.FullName, serialized_chara);
+
     }
 
     protected void LoadCharactersFoldersJSON()

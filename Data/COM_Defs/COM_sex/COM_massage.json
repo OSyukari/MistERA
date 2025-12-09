@@ -19,7 +19,7 @@
                 }
             },
             "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":10 }
         },
         {
             "ID":"com_touch_hair",
@@ -38,7 +38,7 @@
                 }
             },
             "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":10 }
         },
         {
             "ID":"com_touch_sleeponthigh_ask",
@@ -52,8 +52,8 @@
                     "receiverCount":1
                 }
             },
-            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "DifficultyCheck":{ "baseD20Check":5 }
         },
         {
             "ID":"com_touch_hug",
@@ -72,7 +72,7 @@
                 }
             },
             "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":10 }
         },
         {
             "ID":"com_touch_sleeponthigh_give",
@@ -91,7 +91,7 @@
                 }
             },
             "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":10 }
         },
         {
             "ID":"com_touch_butt",
@@ -133,7 +133,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":10 }
         },
         {
             "ID":"com_touch_abdomen",
@@ -178,7 +178,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":5 }
         },
         {
             "ID":"com_touch_thigh",
@@ -219,7 +219,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":10 }
         },
         {
             "ID":"com_touch_back",
@@ -259,7 +259,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":10 }
         },
         {
             "ID":"com_touch_shoulders",
@@ -298,7 +298,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":10 }
         },
         {
             "ID":"com_touch_fingers",
@@ -322,7 +322,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":5 }
         },
         {
             "ID":"com_touch_foot_toes",
@@ -347,7 +347,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":10 }
         },
         {
             "ID":"com_touch_ears",
@@ -371,7 +371,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":0 }
+            "DifficultyCheck":{ "baseD20Check":5 }
         }
 
     ]

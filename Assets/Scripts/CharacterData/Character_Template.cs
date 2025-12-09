@@ -27,6 +27,19 @@ public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable, 
         }
 
     }
+
+    public void DelTemplate(CharaSerializableTemplate_Base t)
+    {
+        list.Remove(t);
+        ID_Dictionary.Remove(t.baseID);
+    }
+    public void SetTemplate(CharaSerializableTemplate_Base t)
+    {
+        if (ID_Dictionary.ContainsKey(t.baseID)) DelTemplate(ID_Dictionary[t.baseID]);
+        list.Add(t);
+        ID_Dictionary[t.baseID] = t;
+    }
+
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Character_Trainable_SerializableTemplate_Index;
@@ -177,10 +190,23 @@ public abstract class CharaTemplate
 
     public List<RelationshipManager.presetRelationship> initialRelationship = new List<RelationshipManager.presetRelationship>();
     public List<presetInventory> initialInventory = new List<presetInventory>();
+    public List<presetInventory> overrideInventory = new List<presetInventory>();
 
     public abstract CharaTemplate Copy();
 
     public abstract void SetGender(Humanoid_GenderAppearance gender);
+
+
+    [JsonIgnore] public abstract Traits Sensitivity_B { get; set; }
+    [JsonIgnore] public abstract Traits Sensitivity_M { get; set; }
+    [JsonIgnore] public abstract Traits Sensitivity_C { get; set; }
+    [JsonIgnore] public abstract Traits Sensitivity_V { get; set; }
+    [JsonIgnore] public abstract Traits Sensitivity_A { get; set; }
+
+    [JsonIgnore] public abstract Traits Size_B { get; set; }
+    [JsonIgnore] public abstract Traits Size_P { get; set; }
+    [JsonIgnore] public abstract Traits Size_V { get; set; }
+    [JsonIgnore] public abstract Traits Size_A { get; set; }
 }
 
 public class presetInventory
@@ -235,6 +261,17 @@ public class CharaSafeTemplate : CharaTemplate
     {
         Appearance = gender;
     }
+
+    [JsonIgnore] public override Traits Sensitivity_B { get { return null; } set { return; } }
+    [JsonIgnore] public override Traits Sensitivity_M { get { return null; } set { return; } }
+    [JsonIgnore] public override Traits Sensitivity_C { get { return null; } set { return; } }
+    [JsonIgnore] public override Traits Sensitivity_V { get { return null; } set { return; } }
+    [JsonIgnore] public override Traits Sensitivity_A { get { return null; } set { return; } }
+
+    [JsonIgnore] public override Traits Size_B { get { return null; } set { return; } }
+    [JsonIgnore] public override Traits Size_P { get { return null; } set { return; } }
+    [JsonIgnore] public override Traits Size_V { get { return null; } set { return; } }
+    [JsonIgnore] public override Traits Size_A { get { return null; } set { return; } }
 }
 
 public class CharaTrainableTemplate : CharaTemplate
@@ -326,31 +363,31 @@ public class CharaTrainableTemplate : CharaTemplate
 
 
     [JsonIgnore]
-    public Traits Sensitivity_B
+    public override Traits Sensitivity_B
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_B); }
         set { sensitivity_B = value.ID; }
     }
     [JsonIgnore]
-    public Traits Sensitivity_M
+    public override Traits Sensitivity_M
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_M); }
         set { sensitivity_M = value.ID; }
     }
     [JsonIgnore]
-    public Traits Sensitivity_C
+    public override Traits Sensitivity_C
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_C); }
         set { sensitivity_C = value.ID; }
     }
     [JsonIgnore]
-    public Traits Sensitivity_V
+    public override Traits Sensitivity_V
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_V); }
         set { sensitivity_V = value.ID; }
     }
     [JsonIgnore]
-    public Traits Sensitivity_A
+    public override Traits Sensitivity_A
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_A); }
         set { sensitivity_A = value.ID; }
@@ -358,25 +395,25 @@ public class CharaTrainableTemplate : CharaTemplate
 
 
     [JsonIgnore]
-    public Traits Size_B
+    public override Traits Size_B
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_B); }
         set { size_B = value.ID; }
     }
     [JsonIgnore]
-    public Traits Size_P
+    public override Traits Size_P
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_P); }
         set { size_P = value.ID; }
     }
     [JsonIgnore]
-    public Traits Size_V
+    public override Traits Size_V
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_V); }
         set { size_V = value.ID; }
     }
     [JsonIgnore]
-    public Traits Size_A
+    public override Traits Size_A
     {
         get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_A); }
         set { size_A = value.ID; }

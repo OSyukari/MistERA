@@ -139,7 +139,7 @@
                     }
                 ],
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 5
+                    "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
@@ -224,7 +224,7 @@
                     }
                 ],
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 5
+                    "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 0
@@ -249,7 +249,8 @@
                 "comTags": [
                     "furniture",
                     "TV",
-                    "recreation"
+                    "recreation",
+                    "operating","social"
                 ],
                 "requirements": {
                     "requirement": {
@@ -308,10 +309,10 @@
                     }
                 ],
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 10
+                    "baseAcceptanceValue": 5
                 },
                 "DifficultyCheck": {
-                    "baseD20Check": 5
+                    "baseD20Check": 10
                 },
                 "description_begin":
                 {
@@ -333,7 +334,8 @@
                 "comTags": [
                     "furniture",
                     "TV",
-                    "recreation"
+                    "recreation",
+                    "social"
                 ],
                 "requirements": {
                     "requirement": {
@@ -392,7 +394,7 @@
                     }
                 ],
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 10
+                    "baseAcceptanceValue": 5
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 5
@@ -619,7 +621,8 @@
                 "displayName": "com_furniture_getmeal_displayName",
                 "timeScale": 30,
                 "comTags": [
-                    "furniture"
+                    "furniture",
+                    "social"
                 ],
                 "requirements": {
                     "requirement": {

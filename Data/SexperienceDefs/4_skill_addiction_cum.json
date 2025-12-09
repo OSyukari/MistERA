@@ -5,6 +5,7 @@
         [
             {
                 "ID":"skill_addiction_cum",
+                "noDisplay":true,
                 "tags":["nsfw"],
                 "levels":
                 [   {

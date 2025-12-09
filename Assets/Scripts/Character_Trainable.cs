@@ -9,7 +9,8 @@ public enum Humanoid_GenderAppearance
 {
     Male,
     Female,
-    Ambiguous
+    Ambiguous,
+    Inhuman
 }
 
 public enum Character_BodyType
@@ -300,10 +301,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Body.UpdateTimeMinute(t);
         this.Memory.Tick(t);
     }
-    private void Observer_GlobalMinute(TimeSpan t)
+    private void Observer_GlobalMinute(TimeSpan t, TimeSpan t_real)
     {
         //Debug.Log($"Chara stat update globaltime {t.TotalMinutes}");
-        this.Stats.UpdateTimeMinute(t);
+        this.Stats.UpdateTimeMinute(t, t_real);
     }
     private void Observer_GlobalHour(TimeSpan t)
     {
@@ -424,7 +425,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                         this._template = new CharaTrainableTemplate();
                         this._template.GenderAppearance_Set(Humanoid_GenderAppearance.Female, true, true);
                     }
-                    Debug.LogError("Instantiating new Template for " + this.RefID);
+                    Debug.Log("Instantiating new Template for " + this.RefID);
                 }
             }
             return _template == null ? _templateS : _template;
@@ -577,25 +578,37 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return _cachedFullName;
         } }
 
-    [JsonProperty] private string origin = "charOrigin_EmissaryoftheTower";
+    [JsonProperty] private string origin = "charOrigin_none";
     [JsonIgnore] public Character_Origin Origin { 
         get { return scr_System_Serializer.current.MasterList.Character_Origins.GetByID(origin); } 
-        set { origin = value.ID; } }
+        set { 
+            origin = value.ID;
+            if (value.forceRace_ID != "") this.Race = scr_System_Serializer.current.MasterList.humanoid_Races.GetByID(value.forceRace_ID);
+            if (value.forceRaceTemplate_ID != "") this.RaceTemplate = scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetByID(value.forceRaceTemplate_ID);
+            
+            this.Stats.RefreshAllStats(true);
+        } }
 
     [JsonProperty] protected string race = "humanRace_human";
     [JsonIgnore] public Humanoid_Race Race { 
         get { return scr_System_Serializer.current.MasterList.humanoid_Races.GetByID(race); } 
-        set { race = value.ID; } }
+        set { race = value.ID;
+            this.Stats.RefreshAllStats(true);
+        } }
 
-    [JsonProperty] private string raceTemplate = "humanRaceAddon_Magician";
+    [JsonProperty] private string raceTemplate = "humanRaceAddon_standard";
     [JsonIgnore] public Humanoid_RaceTemplate RaceTemplate { 
         get { return scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetByID(raceTemplate); } 
-        set { raceTemplate = value.ID; } }
+        set { raceTemplate = value.ID;
+            this.Stats.RefreshAllStats(true);
+        } }
 
     [JsonProperty] private string startingGift = "charOriginGift_none";
     [JsonIgnore] public Character_Origin_startingOption StartingGift { 
         get { return scr_System_Serializer.current.MasterList.Character_Origin_StartingOptions.GetByID(startingGift); } 
-        set { startingGift = value.ID; } }
+        set { startingGift = value.ID;
+            this.Stats.RefreshAllStats(true);
+        } }
 
     [JsonProperty] private int currentJobRefID = -1;
 
@@ -1017,10 +1030,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             }
         }
 
-        
-
-
-
         if (shouldRest && TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(false, true, true)))
         {
             if (s != null) s.Add(ss);
@@ -1079,21 +1088,21 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
             
         }
-        else
+        else if(TryFindNonJobByTag(resetJob, "recreation", currentJobFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(true, false, true)))
         {
-            // if still no job, set to look for recreation
-            // need to find : is there location restriction ? search currently at ?
-            // include search : character currently at + home faction
-            if (TryFindNonJobByTag(resetJob, "recreation", currentJobFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(true, false, true)))
-            {
-                if (s != null) s.Add(ss);
-                return;
-            }else if (TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(false, true, true)))
-            {
-                if (s != null) s.Add(ss);
-                return;
-            }
+            if (s != null) s.Add(ss);
+            return;
         }
+        // if still no job, set to look for recreation
+        // need to find : is there location restriction ? search currently at ?
+        // include search : character currently at + home faction
+            
+        else if (TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(false, true, true)))
+        {
+            if (s != null) s.Add(ss);
+            return;
+        }
+        
     }
 
     public class NonJobSearchWrapper
@@ -1108,6 +1117,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
         public void Search(ref List<Job_Furniture> list, I_IsJobGiver faction, Character_Trainable c, int hour, string tag, List<string> s)
         {
+            list.Clear();
             list.AddRange(faction.GetValidJobs_nonJob_byTags(c, hour, tag, s, this.skipPrivate, this.shortestPathOnly, this.checkBlacklist));
         }
     }
@@ -1128,18 +1138,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             //possibleRecreations.AddRange(currentJobFaction.GetValidJobs_nonJob_byTags(this, currentHour, tag, s, true, false, true));
             //    break;
             //}
+            if (possibleRecreations.Count < 1) return false;
 
-            if (possibleRecreations.Count > 0)
-            {
-                Job job = Utility.GetRandomElement(possibleRecreations);
-                if (log) ss += $"Changing job to tag [{tag}] " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
+            Job job = Utility.GetRandomElement(possibleRecreations);
+            if (log) ss += $"Changing job to tag [{tag}] " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
 
-                ChangeCurrentJob(job, "", tag);
-                if (CurrentJob != job) Debug.LogError($"Error in changing job from {(CurrentJob == null ? "null" : CurrentJob.RefID)} to {(job == null ? "null" : job.RefID)}");
+            ChangeCurrentJob(job, "", tag);
+            if (CurrentJob != job) Debug.LogError($"Error in changing job from {(CurrentJob == null ? "null" : CurrentJob.RefID)} to {(job == null ? "null" : job.RefID)}");
 
-                return true;
-            }
-            else return false;
+            return true;
+
         }
         return false;
     }
@@ -1876,9 +1884,27 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
         s.Add("Character_Base_Index : registering ID with list length [" + baseCharacters.Count + "]");
         foreach (Character_SerializableBase o in this.baseCharacters)
         {
+            if (o.baseID == "") continue;
             if (!ID_Dictionary.ContainsKey(o.baseID)) ID_Dictionary[o.baseID] = o;
             else Debug.LogError($"Error registering allID in Character_Base_Index, {o.baseID} already registered");
         }
+    }
+
+
+    public void DeleteChara(Character_SerializableBase c)
+    {
+        baseCharacters.Remove(c);
+        ID_Dictionary.Remove(c.baseID);
+    }
+
+    public void SetChara(Character_SerializableBase c)
+    {
+        if (ID_Dictionary.ContainsKey(c.baseID))
+        {
+            DeleteChara(ID_Dictionary[c.baseID]);
+        }
+        baseCharacters.Add(c);
+        ID_Dictionary[c.baseID] = c;
     }
 
     public Character_SerializableBase GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }

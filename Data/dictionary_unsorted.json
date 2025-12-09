@@ -14,58 +14,10 @@
             "tooltip":"this trait does C, advance time by 1 hour."
         },
         {
-            "ID":"tooltip_originselection",
-            "tooltip":"First option is Origin selection.\nOrigin Selection is limited to player-made characters.\nSome origin might restrict Race or Race Modifier or Starting Gift selection.\nSecond Option is Starting Gift selection, based on the chosen Origin."
-        },
-        {
-            "ID":"tooltip_raceselection",
-            "tooltip":"First option determine Race, this will provide bonus or reduction in stat or skill.\nSecond option is a Modifier on top of Race."
-        },
-        {
-            "ID":"tooltip_reroll",
-            "tooltip":"Roll 3 times 3D6. Average 10.5, min value 3, max value 18"
-        },
-        {
-            "ID":"tooltip_reroll10",
-            "tooltip":"Do the stat reroll 10 times and keep the set of dice rolls with best score average."
-        },
-        {
-            "ID":"tooltip_rerollmax",
-            "tooltip":"So you're telling me you rolled 18 on all stats ?"
-        },
-        {
             "ID":"tooltip_skills",
             "tooltip":"Skill initial level is determined by the stat modifier of corresponding stat.\nSkill maximum level is 10 + related stat modifier."
-        },
-        {
-            "ID":"tooltip_statvalue",
-            "tooltip":"Final stat value after Race and Race Modifier.\nStat values are used when determining stat threshold for other options and for calculating derived stats.\nAll 4 stat must be above 0 after factoring in race and modifier bonus/penalties."
-        },
-        {
-            "ID":"tooltip_statmodifiers",
-            "tooltip":"Calculated by ((StatValue / 2) - 5) rounded down.\nUsed when calculating skill initial levels, this number wont be use often."
         }
         ,
-        {
-            "ID":"tooltip_GenderAppearance",
-            "tooltip":"Appearance according to gender stereotype. Does not limit genital selection.\nGender preference (homo, hetero) is based on many factors, appearance being only one among them.\nPlease change the related settings in Preference to suit your taste."
-        },
-        {
-            "ID":"tooltip_GenderAppearance_Male",
-            "tooltip":"You possess the characteristics of a male member of your race."
-        },
-        {
-            "ID":"tooltip_GenderAppearance_Female",
-            "tooltip":"You possess the characteristics of a female member of your race."
-        },
-        {
-            "ID":"tooltip_GenderAppearance_Ambiguous",
-            "tooltip":"You could either be a male or a female member of your race. It's hard to tell.\nYour appearance is considered to be male and female."
-        },
-        {
-            "ID":"tooltip_GenderAppearance_Inhuman",
-            "tooltip":"You are still humanoid, but your appearance does not look human-relatable at all.\nYour appearance is considered to not be male nor female."
-        },
         {
             "ID":"tooltip_personality",
             "tooltip":"This only takes effect if the character is selected as NPC."
@@ -77,9 +29,6 @@
         {
             "ID":"tooltip_selecttraits_singular",
             "tooltip":"Any of these traits can be selected or deselected at will."
-        },{
-            "ID":"tooltip_selecttraits_statbased",
-            "tooltip":"All of the stat-based traits belongs to one of 4 stat attribute category.\nEach trait has a score cost.\n\nFor all selected traits that belong to the same stat category, \nthe total of their score must be lesser or equal to the corresponding stat's modifier value,\nno limit on the number of traits chosen."
         },{
             "ID":"tooltip_COM_job_sex_debug",
             "tooltip":"Force all actor in current Room into Sex Job."

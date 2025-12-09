@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
+using System.Diagnostics;
 using Newtonsoft.Json;
+using UnityEngine;
+using static UnityEngine.UI.Image;
 
 [System.Serializable]
 public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
@@ -30,21 +32,41 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_Race>(ids);
     }
 
-    public Humanoid_Race GetItemBefore(Humanoid_Race o)
+    public Humanoid_Race GetItemBefore(Humanoid_Race o, bool playableOnly = true)
     {
         int index = list.IndexOf(o);
         if (index < 0) return null;
 
-        if (index - 1 < 0) return list[list.Count - 1];
-        else return list[index - 1];
+        Humanoid_Race returnitem = null;
+        int maxloop = list.Count;
+
+        int returnIndex = (index - 1 < 0) ? list.Count - 1 : index - 1;
+        while (returnIndex != index && maxloop > 0)
+        {
+            maxloop--;
+            returnitem = list[returnIndex];
+            if (!playableOnly || returnitem.RaceType.Contains("playableRace")) return returnitem;
+            else returnIndex = (returnIndex - 1 < 0) ? list.Count - 1 : returnIndex - 1;
+        }
+        return o;
+
     }
-    public Humanoid_Race GetItemAfter(Humanoid_Race o)
+    public Humanoid_Race GetItemAfter(Humanoid_Race o, bool playableOnly = true)
     {
         int index = list.IndexOf(o);
         if (index < 0) return null;
 
-        if (index + 1 >= list.Count) return list[0];
-        else return list[index + 1];
+        Humanoid_Race returnitem = null;
+        int maxloop = list.Count;
+        int returnIndex = (index + 1 >= list.Count) ? 0 : index + 1;
+        while (returnIndex != index && maxloop > 0)
+        {
+            maxloop--;
+            returnitem = list[returnIndex];
+            if (!playableOnly || returnitem.RaceType.Contains("playableRace")) return returnitem;
+            else returnIndex = (returnIndex + 1 >= list.Count) ? 0 : returnIndex + 1;
+        }
+        return o;
     }
 
     public Humanoid_Race GetByID(string id)
@@ -80,21 +102,64 @@ public class Humanoid_RaceTemplate_Index : I_IndexHasID, I_IndexMergeable
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_RaceTemplate>(ids);
     }
 
-    public Humanoid_RaceTemplate GetItemBefore(Humanoid_RaceTemplate o)
+    public bool isValid(Humanoid_RaceTemplate o, Character_Origin origin, Character_Origin_startingOption start, Humanoid_Race race)
     {
-        int index = list.IndexOf(o);
-        if (index < 0) return null;
-
-        if (index - 1 < 0) return list[list.Count - 1];
-        else return list[index - 1];
+        if (o == null) return false;
+        if (o.requireOriginID.Count > 0 && (origin == null || !o.requireOriginID.Contains(origin.ID))) return false;
+        if (o.requireRaceType.Count > 0 && (race == null || !Utility.ListContainsStrict(race.RaceType, o.requireRaceType))) return false;
+        return true;
     }
-    public Humanoid_RaceTemplate GetItemAfter(Humanoid_RaceTemplate o)
+
+    /// <summary>
+    /// Will validate internally
+    /// </summary>
+    /// <param name="o"></param>
+    /// <param name="origin"></param>
+    /// <param name="start"></param>
+    /// <param name="race"></param>
+    /// <returns></returns>
+    public Humanoid_RaceTemplate GetItemBefore(Humanoid_RaceTemplate o, Character_Origin origin = null, Character_Origin_startingOption start = null, Humanoid_Race race = null)
     {
         int index = list.IndexOf(o);
         if (index < 0) return null;
 
-        if (index + 1 >= list.Count) return list[0];
-        else return list[index + 1];
+        Humanoid_RaceTemplate returnitem = null;
+        int maxloop = list.Count;
+
+        int returnIndex = (index - 1 < 0) ? list.Count - 1 : index - 1;
+        while (returnIndex != index && maxloop > 0)
+        {
+            maxloop--;
+            returnitem = list[returnIndex];
+            if (isValid(returnitem, origin, start, race)) return returnitem;
+            else returnIndex = (returnIndex - 1 < 0) ? list.Count - 1 : returnIndex - 1;
+        }
+        return o;
+    }
+    /// <summary>
+    /// Will validate internally
+    /// </summary>
+    /// <param name="o"></param>
+    /// <param name="origin"></param>
+    /// <param name="start"></param>
+    /// <param name="race"></param>
+    /// <returns></returns>
+    public Humanoid_RaceTemplate GetItemAfter(Humanoid_RaceTemplate o, Character_Origin origin = null, Character_Origin_startingOption start = null, Humanoid_Race race = null)
+    {
+        int index = list.IndexOf(o);
+        if (index < 0) return null;
+
+        Humanoid_RaceTemplate returnitem = null;
+        int maxloop = list.Count;
+        int returnIndex = (index + 1 >= list.Count) ? 0 : index + 1;
+        while (returnIndex != index && maxloop > 0)
+        {
+            maxloop--;
+            returnitem = list[returnIndex];
+            if (isValid(returnitem, origin, start, race)) return returnitem;
+            else returnIndex = (returnIndex + 1 >= list.Count) ? 0 : returnIndex + 1;
+        }
+        return o;
     }
 
     public Humanoid_RaceTemplate GetByID(string id)
@@ -105,12 +170,10 @@ public class Humanoid_RaceTemplate_Index : I_IndexHasID, I_IndexMergeable
 }
 
 
-[System.Serializable]
 public class Humanoid_Race
 {
     public string ID = "";
-    [JsonProperty] protected string displayName = "";
-    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, ID); } }
     [JsonProperty] protected string tooltip = "";
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
     //public string[] bodyParts;
@@ -119,34 +182,20 @@ public class Humanoid_Race
     public List<string> addStatsKeyword = new List<string>();
     public List<string> removeStatsKeyword = new List<string>();
     public List<Needs> needs = new List<Needs>();
+    public List<string> RaceType = new List<string>();
 }
 
 
-[System.Serializable]
 public class Humanoid_RaceTemplate
 {
     public string ID = "";
-    [JsonProperty] protected string displayName = "";
-    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, ID); } }
     [JsonProperty] protected string tooltip = "";
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
     public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
     public List<string> addStatsKeyword = new List<string>();
     public List<string> removeStatsKeyword = new List<string>();
     public List<Needs> needs = new List<Needs>();
-}
-
-[System.Serializable]
-public class Humanoid_RaceTemplateAddon
-{
-    public string ID = "";
-    [JsonProperty] protected string displayName = "";
-    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
-    [JsonProperty] protected string tooltip = "";
-    [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
-    public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
-    public List<string> addStatsKeyword = new List<string>();
-    public List<string> removeStatsKeyword = new List<string>();
-
-    public List<Needs> needs = new List<Needs>();
+    public List<string> requireRaceType = new List<string>();
+    public List<string> requireOriginID = new List<string>();
 }

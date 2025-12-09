@@ -12,7 +12,7 @@
             "disallowRaceTemplate_ID": []
         },{
             "ID": "charOrigin_EmissaryoftheTower",
-            "displayname": "Emissary of the Tower",
+            "displayname": "",
             "tooltip": "Raised inside a Tower above clouds among your family.\nNow you've been selected by the Admin to go venture outside the Tower.\nStart with a cellphone.\nLimit: Race Modifier must be Magician.",
             "forceRaceTemplate_ID": "humanRaceAddon_Magician",
             "availableOptionsID": [
@@ -25,7 +25,7 @@
         },
         {
             "ID": "charOrigin_TraveleracrossGates",
-            "displayname": "Traveler across Gates",
+            "displayname": "",
             "tooltip": "You are not native of this realm, you merely stepped through a doorway and here you are.\nLimit: Race Modifier must not be Mist-taken or Mistborn.",
             "availableOptionsID": [
                 "charOriginGift_none",
@@ -40,7 +40,7 @@
         },
         {
             "ID": "charOrigin_ForestDweller",
-            "displayname": "Forest Dweller",
+            "displayname": "",
             "tooltip": "You are born in this world, this forest of steel and concrete engulfed by a mist.\nLimit: Race Modifier cannot be Magician.",
             "availableOptionsID": [
                 "charOriginGift_none",
@@ -52,6 +52,25 @@
             ]
         }
     ]
-    }
+    },
+    "Dictionary": {
+        "Entries": 
+        {
+            "zh-cn": 
+            {
+"charOrigin_none":"无",
+"charOrigin_EmissaryoftheTower":"高塔使节",
+"charOrigin_TraveleracrossGates":"域外来客",
+"charOrigin_ForestDweller":"森林住民"
+            },
+            "en-us": 
+            {
+"charOrigin_none":"None",
+"charOrigin_EmissaryoftheTower":"Tower Emissary",
+"charOrigin_TraveleracrossGates":"Gate Traveler",
+"charOrigin_ForestDweller":"Forest Dweller"
+            }
+        }
     
+    }
 }

@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 using Newtonsoft.Json;
-using System;
+using UnityEngine;
 
 [System.Serializable]
 public class Stats_Derived_Base_Index : I_IndexHasID, I_IndexMergeable
@@ -74,7 +75,7 @@ public class Stats_Derived_Base
 
 public interface I_StatsDisplayable
 {
-    public string ModStrings(List<string> contextKeys = null, string joinSymbol = "\n");
+    public string ModStrings(List<string> contextKeys = null);
     public float FinalValue(List<string> contextKeys = null);
 }
 
@@ -88,36 +89,48 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
     public Stats_Derived_Base Parent = null;
 
     protected string parentString = "";
-
+    protected StatModStorage storage = null;
     public Stats_Derived_Instance(Stats_Derived_Base baseStat, I_StatsManager parent)
     {
         this.owner = parent;
         this.Parent = baseStat;
-        this.parentString = baseStat.ID;
+        this.parentString = baseStat.ID; 
+        
+        storage = new StatModStorage(owner, Parent.valueBase.baseValue_value, Parent.valueBase.baseValue_mult, 
+                                    Parent.valueBase.finalMod_value, Parent.valueBase.finalMod_mult, 
+                                    this.Parent.valueBase.valueFloor, this.Parent.valueBase.valueCeiling, false, this.Parent.allowOvercap);
     }
     public void ClearCache(bool reset = false)
     {
-        cached_values.Clear();
+        _cache_string.Clear();
+        _cache_values.Clear();
     }
-    Dictionary<List<string>, StatRecord> cached_values = new Dictionary<List<string>, StatRecord>();
-    public string ModStrings(List<string> contextKeys = null, string joinSymbol = "\n")
+    public string ModStrings(List<string> contextKeys = null)
     {
-        var key = contextKeys == null ? new List<string>() : contextKeys;
-        if (!cached_values.ContainsKey(key)) GetValue(key);
-        return String.Join(joinSymbol, cached_values[key].Print());
+        var key = GetContextID(contextKeys);
+        if (!_cache_string.ContainsKey(key)) GetFinalValue(contextKeys);
+        return String.Join("\n", _cache_string[key]);
     }
 
     public float FinalValue(List<string> contextKeys = null)
     {
-        var key = contextKeys == null ? new List<string>() : contextKeys;
-        if (!cached_values.ContainsKey(key)) GetValue(key);
-        return cached_values[key].FinalValue + debugValue;
+        var key = GetContextID(contextKeys);
+        if (!_cache_values.ContainsKey(key)) GetFinalValue(contextKeys);
+        if (_cache_values[key] == -1)
+        {
+            // Debug.LogError($"maybe error, finalvalue is -1 on {parentString}, \nstats: {_cache_string[key]}");
+        }
+        return _cache_values[key] + debugValue;
     }
-    protected void GetValue(List<string> contextKeys)
+    public float FinalValue(List<string> contextKeys, bool forbidStatus)
     {
-        var modStrings = new StatRecord();
-        var value = GetFinalValue(contextKeys, modStrings);
-        cached_values.Add(contextKeys, modStrings);
+        var key = GetContextID(contextKeys);
+        if (!_cache_values.ContainsKey(key)) GetFinalValue(contextKeys, forbidStatus);
+        if (_cache_values[key] == -1)
+        {
+           // Debug.LogError($"maybe error, finalvalue is -1 on {parentString}, \nstats: {_cache_string[key]}");
+        }
+        return _cache_values[key] + debugValue;
     }
 
     int debugValue = 0;
@@ -127,25 +140,33 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         debugValue += i;
     }
 
-    protected float GetFinalValue(List<string> contextKeys, StatRecord modStrings = null)
+    Dictionary<string, float> _cache_values = new Dictionary<string, float>();
+    Dictionary<string, string> _cache_string = new Dictionary<string, string>();
+
+    protected string GetContextID(List<string> context)
+    {
+        if (context == null || context.Count < 1) return "";
+        context = context.Distinct().ToList();
+        context.RemoveAll(x => x.Length < 1);
+        context.Sort();
+        return String.Join("|", context);
+    }
+
+    protected void GetFinalValue(List<string> contextKeys, bool forbidStatus = false)
     {
         //var keys = new Tuple<string, List<string>>(ID, contextKeys);
         // collect valuebase from struct
         //if (c.sta.cached_values.ContainsKey(keys)) return (int)parent.cached_values[keys];
         // collect calculation mod from struct
 
+        var key = GetContextID(contextKeys);
+
         // collect calculation mod from c
-        Dictionary<string, StatsManager.ModStorage> StoredModifiers = new Dictionary<string, StatsManager.ModStorage>();
         var list = new List<Stat_Modifier>();
         list.AddRange(this.Parent.valueCalculations);
-        list.AddRange(owner.GetModifiers(this.Parent, ID, null));
+        list.AddRange(owner.GetModifiers(this.Parent, ID, null, forbidStatus));      
 
-        if (!StoredModifiers.ContainsKey("baseValue")) StoredModifiers.Add("baseValue", null);
-        if (!StoredModifiers.ContainsKey("finalMod")) StoredModifiers.Add("finalMod", null);
-
-        StoredModifiers["baseValue"] = new StatsManager.ModStorage(this.Parent.valueBase.baseValue_mult, this.Parent.valueBase.baseValue_value);
-        StoredModifiers["finalMod"] = new StatsManager.ModStorage(this.Parent.valueBase.finalMod_mult, this.Parent.valueBase.finalMod_value);
-
-        return UtilityEX.ParseStatMods(this.Parent, owner, StoredModifiers, list, modStrings, this.Parent.valueBase.valueFloor, this.Parent.valueBase.valueCeiling, false, this.Parent.allowOvercap);
+        _cache_values[key] = UtilityEX.ParseStatMods(this.Parent, storage, list);
+        _cache_string[key] = storage.Print();
     }
 }

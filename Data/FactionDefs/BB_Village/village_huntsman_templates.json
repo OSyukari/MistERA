@@ -11,7 +11,7 @@
     "Appearance":"Male",
     "inventoryOverride":[
         { "ID":"clothing_outer_hat"},
-        {"ID":"weapon_simple_scythe","nameOverwrite":""}
+        { "ID":"weapon_simple_scythe","nameOverwrite":""}
     ]
 },
 {
@@ -35,7 +35,7 @@
     "Appearance":"Male",
     "inventoryOverride":[
         { "ID":"clothing_outer_hat"},
-        {"ID":"weapon_simple_cleaver","nameOverwrite":""}
+        { "ID":"weapon_simple_cleaver","nameOverwrite":""}
     ]
 },
 {

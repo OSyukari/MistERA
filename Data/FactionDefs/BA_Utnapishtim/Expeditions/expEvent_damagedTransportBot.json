@@ -9,7 +9,7 @@
     "teamRequirement": {
         "minTeamCount": 1,
         "maxTeamCount": 99,
-        "charaReq": {
+        "charaReq_Select": {
             "cost_EN": 10,
             "cost_ST": 15
         }

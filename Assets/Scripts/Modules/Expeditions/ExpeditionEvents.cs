@@ -34,6 +34,37 @@ public class Index_ExpEvents : I_IndexHasID, I_IndexMergeable
     }
 }
 
+public class TeamReq
+{
+    public int minTeamCount = 1;
+    public int maxTeamCount = -1;
+
+    public bool allowMIA = true;
+
+    public bool allowVisitor = true;
+    public bool allowHidden = false;
+    public bool allowPrisoner = false;
+    public bool requireCombat = true;
+
+    public string debug_teamNameMatch = "";
+
+    public CharaReq charaReq_All = null;
+    public CharaReq charaReq_Any = null;
+    public CharaReq charaReq_Select = null;
+    //public ItemRequirement itemReq = new ItemRequirement();
+
+    public void Read(TeamReq parent)
+    {
+        this.allowMIA = this.allowMIA && parent.allowMIA;
+        this.allowVisitor = this.allowVisitor && parent.allowVisitor;
+        this.allowHidden = this.allowHidden || parent.allowHidden;
+        this.allowPrisoner = this.allowPrisoner || parent.allowPrisoner;
+        this.requireCombat = this.requireCombat && parent.requireCombat;
+    }
+
+
+}
+
 /// <summary>
 /// Encounter Event
 /// </summary>
@@ -44,32 +75,7 @@ public class ExpEvents
     public TeamReq teamRequirement = new TeamReq();
     public List<WeightModifier> weightMods = new List<WeightModifier>();
     public List<string> tags = new List<string>();
-    public class TeamReq
-    {
-        public int minTeamCount = 1;
-        public int maxTeamCount = -1;
-
-        public bool allowMIA = true;
-
-        public bool allowVisitor = true;
-        public bool allowHidden = false;
-        public bool allowPrisoner = false;
-        public bool requireCombat = true;
-
-        public string debug_teamNameMatch = "";
-
-        public CharaReq charaReq = new CharaReq();
-        //public ItemRequirement itemReq = new ItemRequirement();
-
-        public void Read(TeamReq parent)
-        {
-            this.allowMIA = this.allowMIA && parent.allowMIA;
-            this.allowVisitor = this.allowVisitor && parent.allowVisitor;
-            this.allowHidden = this.allowHidden || parent.allowHidden;
-            this.allowPrisoner = this.allowPrisoner || parent.allowPrisoner;
-            this.requireCombat = this.requireCombat && parent.requireCombat;
-        }
-    }
+    
     public class WeightModifier
     {
         public int modValue = 0;

@@ -150,7 +150,20 @@ public class Character_Personality
         }
     }
 
+    public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, ActionPackage ap, Character_Relationship relation, bool checkClimax = false)
+    {
+        string comID = ap.targetCOM.ID;
+        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
+        if (checkClimax) comID = $"{comID}_Climax";
+        if (!entries.ContainsKey(comID))
+        {
+            if (this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ap, relation);
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
+            return null;
+        }
 
+        return entries[comID].GetResponse(relation, ap.ActorSelfTags(relation.Owner.RefID), ap.ActorTargetTags(relation.Target.RefID));
+    }
     public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, EvaluationPackage ep, Character_Relationship relation, bool checkClimax = false)
     {
         string comID = ep.targetCOM.ID;

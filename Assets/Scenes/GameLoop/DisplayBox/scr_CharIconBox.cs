@@ -107,6 +107,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         this.CombatStats = combatHandler;
         if (this.CombatStats != null) isCombatBox = true;
 
+
         nameBox.gameObject.SetActive(!this.isCombatBox);
         rect_Combat.gameObject.SetActive(this.isCombatBox);
         rect_nonCombat.gameObject.SetActive(!this.isCombatBox);
@@ -119,8 +120,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         {
             Initialize();
             nameBox.text = chara.FirstName;
-            if (!isCombatBox) ReadCurrentChar(scr_System_CampaignManager.current.CurrentTargetRef, true);
-            updateImage();
+            ReadCurrentChar(scr_System_CampaignManager.current.CurrentTargetRef, true);
             return true;
         }
         else
@@ -208,6 +208,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         {
             if (!isCombatBox) chara.PortraitManager.DrawIcon(this);
         }
+        //Debug.Log($"updateImage {this.currentIcon}");
 
 
         if (scr_System_CentralControl.current.xray_mode > 0 && scr_System_CampaignManager.current.XrayMode)
@@ -275,20 +276,14 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     private void OnEnable()
     {
-        updateImage();
-    }
-
-    /// <summary>
-    /// Run Every Update 
-    /// </summary>
-    private IEnumerator co_updateImage()
-    {
-        if (scr_System_CampaignManager.current.ColdLoad) yield break;
-        
-        
-                
-       // this.picture.SetNativeSize();
-        //Debug.Log("refresh character " + chara.FirstName + " hp " + chara.Stats.HP.Value + "/" + chara.Stats.HP.MaxValue + " mp "+chara.Stats.MP.Value+"/"+ chara.Stats.MP.MaxValue+" st "+ chara.Stats.Stamina.Value+"/"+ chara.Stats.Stamina.MaxValue+" en "+ chara.Stats.Energy.Value+"/"+ chara.Stats.Energy.MaxValue);
+        if (this.currentIcon != "")
+        {
+           // Debug.Log($"OnEnable {this.currentIcon} reset");
+            this.currentIcon = "";
+            updateImage();
+        }
+        //Debug.Log($"ONENABLE {this.currentIcon}");
+       // updateImage();
     }
 
     public statBar hp, mp, st, en, posture;

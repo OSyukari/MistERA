@@ -1,0 +1,110 @@
+{
+    "Skills":
+    {
+        "list":
+        [
+            {
+                "ID":"skill_cooking",
+                "tags":[],
+                "levels":
+                [   
+                    {
+                        "DisplayName":"-"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_cooking", "operand":"gte", "value":10 }]
+                                }
+                            ]
+                         },
+                        "stat_modifiers":
+                        [
+
+                        ],
+                        "DisplayName":"1",
+                        "validUse": [
+                            { 
+                                "skillUseTags":"cooking",
+                                "requireCOMTags":[]
+                            } 
+                        ]
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_cooking", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+   
+                         ],
+                        "DisplayName":"2"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_cooking", "operand":"gte", "value":90 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+     
+                         ],
+                        "DisplayName":"3"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_cooking", "operand":"gte", "value":150 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+           
+                         ],
+                        "DisplayName":"4"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_cooking", "operand":"gte", "value":300 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+           
+                         ],
+                        "DisplayName":"5"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "skill_cooking": "厨艺",
+                "skill_cooking_tooltip": "适用范围：下厨"
+            }
+        }
+    }
+        
+    
+}

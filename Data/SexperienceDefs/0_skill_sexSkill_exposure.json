@@ -5,6 +5,7 @@
         [
             {
                 "ID":"skill_sexSkill_exposure",
+                "noDisplay":true,
                 "tags":["nsfw"],
                 "levels":
                 [   {

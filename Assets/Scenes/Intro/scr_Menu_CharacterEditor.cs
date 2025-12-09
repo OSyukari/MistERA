@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnityEngine.UI;
+using Cysharp.Threading.Tasks.Triggers;
 
 
 
@@ -25,18 +26,14 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             //Debug.Log("Button "+button + " " + button.optionID);
             switch (button.optionID)
             {
-                case 111: case 112:
-                    button.Initialize(this, new ButtonValidator_SelectOrigin(this));
-                    break;
-                case 113: case 114:
-                    button.Initialize(this, new ButtonValidator_SelectRace(this));
-                    break;
-                case 115: case 116:
-                    button.Initialize(this, new ButtonValidator_SelectraceTemplate(this));
-                    break;
-                case 117: case 118:
-                    button.Initialize(this, new ButtonValidator_SelectStartingOption(this));
-                    break;
+                case 111: button.Initialize(this, new ButtonValidator_SelectOrigin(this, true));  break;
+                case 112: button.Initialize(this, new ButtonValidator_SelectOrigin(this, false));  break;
+                case 113: button.Initialize(this, new ButtonValidator_SelectRace(this, true)); break;
+                case 114: button.Initialize(this, new ButtonValidator_SelectRace(this, false)); break;
+                case 115: button.Initialize(this, new ButtonValidator_SelectraceTemplate(this, true)); break;
+                case 116: button.Initialize(this, new ButtonValidator_SelectraceTemplate(this, false)); break;
+                case 117: button.Initialize(this, new ButtonValidator_SelectStartingOption(this, true)); break;
+                case 118: button.Initialize(this, new ButtonValidator_SelectStartingOption(this, false)); break;
                 case 121:
                 case 122:
                 case 123:
@@ -60,48 +57,51 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                 case 130: case 131: //age selection
                     button.Initialize(this, button_alwaysInvalid); break;
                 case 146:   //select trait
-                    button.Initialize(this, new ButtonValidator_selectTraitPanel(this, button.optionID)); break;
+                    button.Initialize(this, new ButtonValidator_selectTraitPanel(this, button));
+
+                    button.SetText("char_editor_selectTraitBTN"); 
+                    break;
                 //case 149:   //cancel select trait
                 //    button.Initialize(this, button_alwaysValid); break;
                 case 150:
                     button_confirmTraits = new ButtonValidator_selectTrait_Confirm(this, 150);
                     button.Initialize(this, button_confirmTraits); break;
                 case 200:   //sensitivity B left
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_B_left(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_B(this, true)); break;
                 case 201:   //sensitivity B right
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_B_right(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_B(this, false)); break;
                 case 202:   //size B left
-                    button.Initialize(this, new ButtonValidator_selectSize_B_left(this));  break;
+                    button.Initialize(this, new ButtonValidator_selectSize_B(this, true));  break;
                 case 203:   //size b right
-                    button.Initialize(this, new ButtonValidator_selectSize_B_right(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSize_B(this, false)); break;
                 case 210:   //sensitivity M left
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_M_left(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_M(this, true)); break;
                 case 211:   //sensitivity M right
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_M_right(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_M(this, false)); break;
                 case 220:   //sensitivity C left
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_C_left(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_C(this, true)); break;
                 case 221:   //sensitivity C right
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_C_right(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_C(this, false)); break;
                 case 222:   //size C left
-                    button.Initialize(this, new ButtonValidator_selectSize_P_left(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSize_P(this, true)); break;
                 case 223:   //size C right
-                    button.Initialize(this, new ButtonValidator_selectSize_P_right(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSize_P(this, false)); break;
                 case 230:   //sensitivity V left
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_V_left(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_V(this, true)); break;
                 case 231:   //sensitivity V right
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_V_right(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_V(this, false)); break;
                 case 232:   //size V left
-                    button.Initialize(this, new ButtonValidator_selectSize_V_left(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSize_V(this, true)); break;
                 case 233:   //size V right
-                    button.Initialize(this, new ButtonValidator_selectSize_V_right(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSize_V(this, false)); break;
                 case 240:   //sensitivity A left
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_A_left(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_A(this, true)); break;
                 case 241:   //sensitivity A right
-                    button.Initialize(this, new ButtonValidator_selectSensitivity_A_right(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSensitivity_A(this, false)); break;
                 case 242:   //size A left
-                    button.Initialize(this, new ButtonValidator_selectSize_A_left(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSize_A(this, true)); break;
                 case 243:   //size A right
-                    button.Initialize(this, new ButtonValidator_selectSize_A_right(this)); break;
+                    button.Initialize(this, new ButtonValidator_selectSize_A(this, false)); break;
 
                 case 9998:  //confirm and save character
                     button_confirmCharacter = new ButtonValidator_confirmCharacter(this, 9998);
@@ -122,9 +122,13 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             }
 
         }
-        //this.c = Instantiate(c);
-        Debug.LogError("REMOVED CODE CHARA INSTANTIATION");
-        this.c = null;
+        //this.c = 
+        //Debug.LogError("REMOVED CODE CHARA INSTANTIATION");
+        //this.c = null;
+        this.c = c;
+
+        c.OnAfterDeserialize();
+
         UpdatePanel();
         UpdateAllTexts();
         ValidateAll();
@@ -134,15 +138,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
     }
 
-    public TextMeshProUGUI firstName, middleName;
-    public TextMeshProUGUI lastName;
-    public TextMeshProUGUI origin, race, raceTemplate, startingGift;
+    public scr_HoverableText origin, race, raceTemplate, startingGift;
 
     public TextMeshProUGUI stat_strength_value, stat_constitution_value, stat_psyche_value, stat_willpower_value;
     public TextMeshProUGUI stat_strength_race, stat_constitution_race, stat_psyche_race, stat_willpower_race;
     public TextMeshProUGUI stat_strength_final, stat_constitution_final, stat_psyche_final, stat_willpower_final;
 
-    public RectTransform TraitsBlock;
     public TextMeshProUGUI Traits_Prefab;
 
     //public TextMeshProUGUI skill_shooting, skill_stealth, skill_survival;
@@ -154,68 +155,78 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
     public TextMeshProUGUI gender, personality, bodyType;
 
-    public TextMeshProUGUI sensitivity_b, sensitivity_m, sensitivity_c, sensitivity_v, sensitivity_a;
+    public scr_HoverableText sensitivity_b, sensitivity_m, sensitivity_c, sensitivity_v, sensitivity_a;
 
-    public TextMeshProUGUI size_b, size_p, size_v, size_a;
+    public scr_HoverableText size_b, size_p, size_v, size_a;
 
     public RectTransform TraitsSexBlock;
     protected ArrayList Traits_Sex;
     public TextMeshProUGUI TraitsSex_Prefab;
 
-    private void SetOrigin(string id, bool noForceGift = false)
+    private void LoadOrigin()
     {
-        this.Character.Origin = scr_System_Serializer.current.MasterList.Character_Origins.GetByID(id);
-        this.origin.text = "<link=" + id + "><u>" + Character.Origin.displayname + "</u></link>";
+        this.origin.SetText(Character.Origin == null ? " - " : Character.Origin.DisplayName);// = "<link=" + id + "><u>" + Character.Origin.DisplayName + "</u></link>";
         currentStartingOptionIndex = 0;
-        if (!noForceGift) SetStartingGift(this.Character.Origin.availableOptionsID[0]);
-        if (Character.Origin.forceRace_ID != "")
-        {
-            SetRace(Character.Origin.forceRace_ID);
-        }
-        if (Character.Origin.forceRaceTemplate_ID != "")
-        {
-            SetRaceTemplate(Character.Origin.forceRaceTemplate_ID);
-        }
-        LayoutRebuilder.ForceRebuildLayoutImmediate(this.origin.rectTransform);
+       // LayoutRebuilder.ForceRebuildLayoutImmediate(this.origin.rectTransform);
 
-        Debug.Log("Set Origin [" + this.Character.Origin.ID + "] with availableOptions ["+this.Character.Origin.availableOptionsID.Length+ "]");
+        //Debug.Log("Set Origin [" + this.Character.Origin.ID + "] with availableOptions ["+this.Character.Origin.availableOptionsID.Length+ "]");
     }
-    private void SetRace(string id)
+    private void LoadRace()
     {
-        this.Character.Race = scr_System_Serializer.current.MasterList.humanoid_Races.GetByID(id);
-        this.race.text = "<link=" + id + "><u>" + Character.Race.DisplayName + "</u></link>";
-        LayoutRebuilder.ForceRebuildLayoutImmediate(this.race.rectTransform);
-        Debug.Log("SetRace on [" + this.Character.Race.ID + "] as ["+id+"]");
+        this.race.SetText(Character.Race == null ? " - " : Character.Race.DisplayName);// = "<link=" + id + "><u>" + Character.Race.DisplayName + "</u></link>";
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(this.race.rectTransform);
+        //Debug.Log("SetRace on [" + this.Character.Race.ID + "] as ["+id+"]");
     }
 
-    private void SetRaceTemplate(string id)
+    private void LoadRaceTemplate()
     {
-        this.Character.RaceTemplate = scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetByID(id);
-        this.raceTemplate.text = "<link=" + id + "><u>" + Character.RaceTemplate.DisplayName + "</u></link>";
-        LayoutRebuilder.ForceRebuildLayoutImmediate(this.raceTemplate.rectTransform);
-        Debug.Log("SetRace on [" + this.Character.RaceTemplate.ID + "] as [" + id + "]");
+        this.raceTemplate.SetText(Character.RaceTemplate == null ? " - " : Character.RaceTemplate.DisplayName);// = "<link=" + id + "><u>" + Character.RaceTemplate.DisplayName + "</u></link>";
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(this.raceTemplate.rectTransform);
+        //Debug.Log("SetRace on [" + this.Character.RaceTemplate.ID + "] as [" + id + "]");
     }
 
-    private void SetStartingGift(string id)
+    private void LoadStartingGift()
     {
-        this.Character.StartingGift = scr_System_Serializer.current.MasterList.Character_Origin_StartingOptions.GetByID(id);
-        this.startingGift.text = "<link=" + id + "><u>" + Character.StartingGift.DisplayName + "</u></link>";
-        LayoutRebuilder.ForceRebuildLayoutImmediate(this.startingGift.rectTransform);
+        this.startingGift.SetText(Character.StartingGift == null ? " - " : Character.StartingGift.DisplayName);// = "<link=" + id + "><u>" + Character.StartingGift.DisplayName + "</u></link>";
+       // LayoutRebuilder.ForceRebuildLayoutImmediate(this.startingGift.rectTransform);
     }
 
     public TextMeshProUGUI stat1, stat2, stat3, stat4;
     public TextMeshProUGUI mod_str, mod_con, mod_psy, mod_will;
+
+    protected void UpdateNames()
+    {
+        if (c == null)
+        {
+            input_firstname.text = "";
+            input_middlename.text = "";
+            input_lastname.text = "";
+        }
+        else
+        {
+            input_firstname.text = c.FirstName;
+            input_middlename.text = c.MiddleName;
+            input_lastname.text = c.LastName;
+        }
+    }
+
     private void UpdatePanel()
     {
+        if (c == null)
+        {
+            Debug.LogError("chara null");
+        }
 
-        firstName.text = c.FirstName;
-        middleName.text = c.MiddleName;
-        lastName.text = c.LastName;
+        input_firstname.DeactivateInputField();
+        input_middlename.DeactivateInputField();
+        input_lastname.DeactivateInputField();
 
-        SetOrigin(c.Origin.ID, true);
-        SetRace(c.Race.ID);
-        SetRaceTemplate(c.RaceTemplate.ID);
-        SetStartingGift(c.StartingGift.ID);
+        UpdateNames();
+
+        LoadOrigin();
+        LoadRace();
+        LoadRaceTemplate();
+        LoadStartingGift();
 
         stat = new int[4] { c.Stats.Strength.BaseValue, c.Stats.Constitution.BaseValue, c.Stats.Psyche.BaseValue, c.Stats.Willpower.BaseValue };
         statGrid = new int[4] { 0, 1, 2, 3 };
@@ -226,12 +237,11 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         SetBirthday(c.Birthday);
 
         personality.text = "Personality - unimplemented";//c.Personality.DisplayName;
-       // bodyType.text = c.Template.BodyType.ToString();
+                                                         // bodyType.text = c.Template.BodyType.ToString();
 
         //Debug.Log("character sensitivity a [" + c.getSensitivity_A().ID + "] b [" + c.getSensitivity_B().ID + "] c [" + c.getSensitivity_C().ID + "] m [" + c.getSensitivity_M().ID + "] v [" + c.getSensitivity_V().ID + "]");
 
-        //SetGenderAppearance(c.GenderAppearance);
-        gender.text = "<link=tooltip_GenderAppearance_" + c.Template.Appearance.ToString() + "><u>" + c.Template.Appearance.ToString() + "</u></link>";
+        gender.text = $"<link=tooltip_GenderAppearance_{c.Template.Appearance.ToString()}>{LocalizeDictionary.QueryThenParse($"GenderAppearance_{c.Template.Appearance.ToString()}")}</link>";
 
         PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_STR, true, "STR Traits", "stats_base_Strength_tooltip");
         PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_STR_SEX, false);
@@ -252,7 +262,6 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         RebuildTraitsLeft();
 
         PopulateAllDerivedStats();
-        RefreshAllDerivedStats();
 
         //order by trait group, Str, strsex, con, consex, psy, psysex, wil, wilsex
         //
@@ -263,96 +272,33 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
     public void RefreshAllDerivedStats()
     {
+        if (c != null) c.Stats.RefreshAllStats(true);
         foreach (var s in DerivedStatValues.Keys)
         {
-
-            /*
-            var x = s as Stats_Derived_InstanceBase_Extend;
-            var y = s as Stats_Derived_InstanceBase;
-
-            if (x != null)
-            {
-                DerivedStatValues[s].text = x.Value.ToString() + " / " + x.MaxValue.ToString();
-            }
-            else if (y != null)
-            {
-                DerivedStatValues[s].text = y.Value.ToString();
-            }
-            else
-            {
-                DerivedStatValues[s].text = "No value";
-            }
-            */
-            if (s.Contains("stats_derived_extended_"))
-            {
-                var ex = c.Stats.GetStatEx(s);
-                DerivedStatValues[s].text = ex.Value.ToString() + " / " + ex.MaxValue.ToString();
-            }
-            else if (s.Contains("stats_derived_"))
-            {
-                var drv = c.Stats.GetStatValue(s);
-                DerivedStatValues[s].text = drv.ToString();
-
-            }
-            else
-            {
-                DerivedStatValues[s].text = "No value";
-            }
+            var drv = c == null ? null : c.Stats.GetDerivedStat(s);
+            if (drv != null) UI_Utility.Draw(drv, DerivedStatValues[s]);//.text = drv.FinalValue(null);
+            else DerivedStatValues[s].SetText(" - ");
         }
     }
 
 
     public RectTransform Panel_DerivedStats;
-    public RectTransform prefab_DerivedStatBox;
-    Dictionary<string, TMP_Text> DerivedStatValues;
+    Dictionary<string, scr_HoverableText> DerivedStatValues = new Dictionary<string, scr_HoverableText>();
     private void PopulateAllDerivedStats()
     {
-        DerivedStatValues = new Dictionary<string, TMP_Text>();
-
-        foreach (var s in c.Stats.StatsExtended)
-        {
-            if (s != null)
-            {
-                RectTransform box = Instantiate(prefab_DerivedStatBox);
-                box.SetParent(Panel_DerivedStats, false);
-                PopulateDerivedStats(box, s);
-            }
-        }
+        DerivedStatValues.Clear();
 
         foreach(var statderived in scr_System_Serializer.current.index_StatsDerived.list)
         {
-            if (!c.hasStatKeyword(statderived.StatKeyword)) continue;
-
-            RectTransform box = Instantiate(prefab_DerivedStatBox);
+            RectTransform box = Instantiate(prefab_text_link);
             box.SetParent(Panel_DerivedStats, false);
-            PopulateDerivedStats(box, statderived);
 
+            var hov = box.GetComponent<scr_HoverableText>();
+            DerivedStatValues.Add(statderived.ID, hov);
         }
-    }
-    private void PopulateDerivedStats(RectTransform box, Stats_Derived_Extended_Instance s)
-    {
 
-        RectTransform left = Instantiate(prefab_TraitLinkText);
-        left.SetParent(box, false);
-        left.GetComponent<scr_HoverableText>().SetText(s.DisplayName, false, s.ID);
 
-        RectTransform right = Instantiate(prefab_TraitText);
-        right.SetParent(box, false);
-
-        DerivedStatValues.Add(s.ID, right.GetComponent<TMP_Text>());
-    }
-
-    private void PopulateDerivedStats(RectTransform box, Stats_Derived_Base s)
-    {
-
-        RectTransform left = Instantiate(prefab_TraitLinkText);
-        left.SetParent(box, false);
-        left.GetComponent<scr_HoverableText>().SetText(s.DisplayName, false, s.ID);
-
-        RectTransform right = Instantiate(prefab_TraitText);
-        right.SetParent(box, false);
-
-        DerivedStatValues.Add(s.ID, right.GetComponent<TMP_Text>());
+        RefreshAllDerivedStats();
     }
 
     protected void SetBirthday(DateTime date)
@@ -364,8 +310,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
     protected void SetGenderAppearance(Humanoid_GenderAppearance app)
     {
-       // c.Template.GenderAppearance_Set(app,true,false);
-        gender.text = "<link=tooltip_GenderAppearance_" + c.Template.Appearance.ToString() + "><u>" + c.Template.Appearance.ToString() + "</u></link>";
+        c.Template.SetGender(app);
     }
 
     /// <summary>
@@ -498,6 +443,20 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
     private void PopulateTraits_Spectrum_GroupList(RectTransform boxLeft, RectTransform boxMiddle, RectTransform boxRight, scr_Traits_Group group)
     {
+        Traits trait = null;
+        foreach (Traits t in group.entries)
+        {
+            if (Character.HasTrait(t))
+            {
+                trait = t; break;
+            }
+        }
+        if (trait == null)
+        {
+            Debug.Log("Critical Error in PopulateTraits_Spectrum_GroupList, character contains trait null");
+            return;
+        }
+
         RectTransform name = Instantiate(prefab_TraitLinkText);
         name.SetParent(boxLeft, false);
         name.GetComponent<scr_HoverableText>().SetText(group.displayName, false, group.ID);
@@ -518,15 +477,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         RectTransform right = Instantiate(prefab_TraitButtonLeftRight);
         right.SetParent(buttonBox, false);
 
-        Traits trait = null;
-        foreach (Traits t in group.entries)
-        {
-            if (Character.HasTrait(t))
-            {
-                trait = t; break;
-            }
-        }
-        if (trait == null) Debug.Log("Critical Error in PopulateTraits_Spectrum_GroupList, character contains trait null");
+
 
         middle.GetComponent<scr_HoverableText>().SetText(trait.displayname, false, trait.ID);
 
@@ -586,12 +537,13 @@ public class scr_Canvas_CharacterEditor : scr_Menu
     public RectTransform SkillBox_WIL_left;
     public RectTransform SkillBox_WIL_right;
 
-    Dictionary<Skills, TMP_Text> SkillValues;
+    Dictionary<Skills, TMP_Text> SkillValues = new Dictionary<Skills, TMP_Text>();
 
     RectTransform prefab_SkillText, prefab_SkillNumber;
     private void PopulateAllSkills()
     {
-        SkillValues = new Dictionary<Skills, TMP_Text>();
+        if (c == null || c.Template == null || c.Template.Skills == null) return;
+        SkillValues.Clear();
         RectTransform boxLeft = null, boxRight = null;
         foreach(Skills s in c.Template.Skills)
         {
@@ -614,6 +566,10 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                     boxRight = SkillBox_WIL_right;
                     break;
             }
+
+            if (boxLeft == null || boxRight == null) return;
+            if (!boxLeft.gameObject.activeInHierarchy) return;
+            if (!boxRight.gameObject.activeInHierarchy) return;
 
             PopulateSkills(boxLeft, boxRight, s);
 
@@ -675,43 +631,20 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             {
 
                 case 0101:  //change first name
-                    InstantiateInputField(inputField, new Vector3(Screen.width / 2, Screen.height / 2), firstName);
+                   // InstantiateInputField(inputField, new Vector3(Screen.width / 2, Screen.height / 2), firstName);
                     //DisplaySingle(m_Camera, inputField, ContentSizeFitter.FitMode.PreferredSize, ContentSizeFitter.FitMode.PreferredSize, new Vector2(Screen.width, box2.sizeDelta.y), new Vector3(Screen.width / 2, Screen.height * 1 / 10), TextAnchor.UpperCenter);
                     break;
                 case 0102:  //random first name
                     break;
                 case 0103:  //change middle name
-                    InstantiateInputField(inputField, new Vector3(Screen.width / 2, Screen.height / 2), middleName);
+                    //InstantiateInputField(inputField, new Vector3(Screen.width / 2, Screen.height / 2), middleName);
                     break;
                 case 0104:  //random middle name
                     break;
                 case 0105:  //change last name
-                    InstantiateInputField(inputField, new Vector3(Screen.width / 2, Screen.height / 2), lastName);
+                   // InstantiateInputField(inputField, new Vector3(Screen.width / 2, Screen.height / 2), lastName);
                     break;
                 case 0106:  //random last name
-                    break;
-                case 0111:  //Origin left
-                    //Debug.Log("Getitembefore " + o.displayname);
-                    SetOrigin(scr_System_Serializer.current.MasterList.Character_Origins.GetItemBefore(this.Character.Origin).ID); break;
-                case 0112:  //Origin right
-                    SetOrigin(scr_System_Serializer.current.MasterList.Character_Origins.GetItemAfter(this.Character.Origin).ID); break;
-                case 0113:  //Race left
-                    SetRace(scr_System_Serializer.current.MasterList.humanoid_Races.GetItemBefore(this.Character.Race).ID); break;
-                case 0114:  //Race right
-                    SetRace(scr_System_Serializer.current.MasterList.humanoid_Races.GetItemAfter(this.Character.Race).ID); break;
-                case 0115:  //Addon left
-                    SetRaceTemplate(scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetItemBefore(this.Character.RaceTemplate).ID); break;
-                case 0116:  //Addon right
-                    SetRaceTemplate(scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetItemAfter(this.Character.RaceTemplate).ID); break;
-                case 0117:  //Gift left
-                    if (currentStartingOptionIndex - 1 >= 0) currentStartingOptionIndex -= 1;
-                    else currentStartingOptionIndex = Character.Origin.availableOptionsID.Length - 1;
-                    SetStartingGift(this.Character.Origin.availableOptionsID[currentStartingOptionIndex]);
-                    break;
-                case 0118:  //Gift right
-                    if (currentStartingOptionIndex + 1 < Character.Origin.availableOptionsID.Length) currentStartingOptionIndex += 1;
-                    else currentStartingOptionIndex = 0;
-                    SetStartingGift(this.Character.Origin.availableOptionsID[currentStartingOptionIndex]);
                     break;
                 case 121:   //reroll once
                     stat = UtilityEX.RollStat();
@@ -734,12 +667,15 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                     i = ((int)this.Character.Template.Appearance);
                     if ((i - 1) < 0)
                     {
+
                         SetGenderAppearance((Humanoid_GenderAppearance)(3));
                     }
                     else
                     {
                         SetGenderAppearance((Humanoid_GenderAppearance)(i - 1));
                     }
+                    gender.text = $"<link=tooltip_GenderAppearance_{c.Template.Appearance.ToString()}>{LocalizeDictionary.QueryThenParse($"GenderAppearance_{c.Template.Appearance.ToString()}")}</link>";
+
                     break;
                     
                 case 141:   //gender right
@@ -752,6 +688,8 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                     {
                         SetGenderAppearance((Humanoid_GenderAppearance)(i+1));
                     }
+                    gender.text = $"<link=tooltip_GenderAppearance_{c.Template.Appearance.ToString()}>{LocalizeDictionary.QueryThenParse($"GenderAppearance_{c.Template.Appearance.ToString()}")}</link>";
+
                     break;
 
                 case 1300:
@@ -796,7 +734,6 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                 case 9998:
                     SaveCharacter();
                     scr_System_Serializer.current.SavePresetJSON(c);
-                    //scr_System_Serializer.current.SaveDataContract(typeof(Character_Trainable), c as Character_Trainable);
                     if (refresh != null) refresh("something");
                     scr_System_SceneManager.current.UnloadLastCanvasFromScene();
                     break;
@@ -810,6 +747,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         UpdateStatsBase();
         UpdateAllTexts();
+        RefreshAllDerivedStats();
         ValidateAll();
         //
         //ValidateLate();
@@ -818,9 +756,9 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
     protected void SaveCharacter()
     {
-        c.FirstName = firstName.text;
-        c.MiddleName = middleName.text;
-        c.LastName = lastName.text;
+        c.FirstName = input_firstname.text;
+        c.MiddleName = input_middlename.text;
+        c.LastName = input_lastname.text;
 
         c.ResetTrait();
         // save traitlist into Character.traits
@@ -850,7 +788,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             if (t.isDisplayable)
             {
                 TMP_Text a = Instantiate(prefab_panel_TraitsLeft_Single);
-                a.text = "<link=" + t.ID + "><u>" + t.displayname + "</u></link>";
+                a.text = "<link=" + t.ID + ">" + t.displayname + "</link>";
                 a.transform.SetParent(panel_TraitsLeft.transform);
             }
         }
@@ -908,7 +846,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                 }
                 else
                 {
-                    GetButtonByID(statGridLayout[i, j]).SetText("X");
+                    GetButtonByID(statGridLayout[i, j]).SetText("-");
                 }
             }
         }
@@ -919,19 +857,19 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         stat4.text = stat[3].ToString();
 
         stat_strength_final.text = c.Stats.Strength.FinalValue().ToString();
-        stat_constitution_final.text = c.Stats.Constitution.GetStatMod().ToString();
-        stat_psyche_final.text = c.Stats.Psyche.GetStatMod().ToString();
-        stat_willpower_final.text = c.Stats.Willpower.GetStatMod().ToString();
+        stat_constitution_final.text = c.Stats.Constitution.FinalValue().ToString();
+        stat_psyche_final.text = c.Stats.Psyche.FinalValue().ToString();
+        stat_willpower_final.text = c.Stats.Willpower.FinalValue().ToString();
 
         stat_strength_value.text = c.Stats.Strength.BaseValue.ToString();
         stat_constitution_value.text = c.Stats.Constitution.BaseValue.ToString();
         stat_psyche_value.text = c.Stats.Psyche.BaseValue.ToString();
         stat_willpower_value.text = c.Stats.Willpower.BaseValue.ToString();
 
-        stat_strength_race.text = (c.Stats.Strength.FinalValue() - c.Stats.Strength.BaseValue).ToString();
-        stat_constitution_race.text = (c.Stats.Constitution.FinalValue() - c.Stats.Constitution.BaseValue).ToString();
-        stat_psyche_race.text = (c.Stats.Psyche.FinalValue() - c.Stats.Psyche.BaseValue).ToString();
-        stat_willpower_race.text = (c.Stats.Willpower.FinalValue() - c.Stats.Willpower.BaseValue).ToString();
+        stat_strength_race.text = (c.Stats.Strength.FinalValue() - c.Stats.Strength.BaseValue).ToString("+0;-#");
+        stat_constitution_race.text = (c.Stats.Constitution.FinalValue() - c.Stats.Constitution.BaseValue).ToString("+0;-#");
+        stat_psyche_race.text = (c.Stats.Psyche.FinalValue() - c.Stats.Psyche.BaseValue).ToString("+0;-#");
+        stat_willpower_race.text = (c.Stats.Willpower.FinalValue() - c.Stats.Willpower.BaseValue).ToString("+0;-#");
 
 
 
@@ -941,27 +879,27 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         mod_psy.text = (Character.Stats.Psyche.GetStatMod()).ToString("+0;-#");
         mod_will.text = (Character.Stats.Willpower.GetStatMod()).ToString("+0;-#");
 
-        /*
+        
 
-        RefreshTraitText(ref sensitivity_a, Character.Template.Sensitivity_A);
-        RefreshTraitText(ref sensitivity_b, Character.Template.Sensitivity_B);
-        RefreshTraitText(ref sensitivity_c, Character.Template.Sensitivity_C);
-        RefreshTraitText(ref sensitivity_m, Character.Template.Sensitivity_M);
-        RefreshTraitText(ref sensitivity_v, Character.Template.Sensitivity_V);
+        RefreshTraitText(sensitivity_a, Character.Template.Sensitivity_A);
+        RefreshTraitText(sensitivity_b, Character.Template.Sensitivity_B);
+        RefreshTraitText(sensitivity_c, Character.Template.Sensitivity_C);
+        RefreshTraitText(sensitivity_m, Character.Template.Sensitivity_M);
+        RefreshTraitText(sensitivity_v, Character.Template.Sensitivity_V);
 
-        RefreshTraitText(ref size_a, Character.Template.Size_A);
-        RefreshTraitText(ref size_b, Character.Template.Size_B);
-        RefreshTraitText(ref size_p, Character.Template.Size_P);
-        RefreshTraitText(ref size_v, Character.Template.Size_V);
-        */
+        RefreshTraitText(size_a, Character.Template.Size_A);
+        RefreshTraitText(size_b, Character.Template.Size_B);
+        RefreshTraitText(size_p, Character.Template.Size_P);
+        RefreshTraitText(size_v, Character.Template.Size_V);
+        
         RefreshAllSkills();
-        RefreshAllDerivedStats();
     }
 
-    protected void RefreshTraitText(ref TextMeshProUGUI box, Traits data)
+    protected void RefreshTraitText(scr_HoverableText box, Traits data)
     {
-        box.text = "<link=" + data.ID + "> " + ((data.tooltip == "") ? (data.displayname) : ("<u>" + data.displayname + "</u>")) + " </link>";
-        LayoutRebuilder.ForceRebuildLayoutImmediate(box.rectTransform);
+        if (data == null) box.SetText(" - ");
+        else box.SetText(data.ID, false, $"{data.ID}_tooltip", true);
+       // LayoutRebuilder.ForceRebuildLayoutImmediate(box.rectTransform);
     }
 
     protected void InstantiateInputField(RectTransform pointer, Vector3 Position, TextMeshProUGUI linkTarget)
@@ -1025,16 +963,20 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         //Debug.Log("Display box at x ["+ ScreenPointTo.x+ "] y [" + ScreenPointTo.y + "]");
     }
 
-    class ButtonValidator_SelectOrigin : ButtonValidator
+    class ButtonValidator_SelectOrigin : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_SelectOrigin(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_SelectOrigin(scr_Menu parent, bool isLeft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isLeft;
+            this.tooltip = LocalizeDictionary.QueryThenParse("wip_disabled");
         }
 
         public override bool IsButtonValid()
         {
+            return false;
             this.state = ButtonValidator_States.Valid;
             tooltip = "";
             foreach (string s in this.parent.Character.Origin.disallowRace_ID)
@@ -1042,7 +984,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                 if (this.parent.Character.Race.ID == s)
                 {
                     this.state = ButtonValidator_States.Conflict;
-                    string s2 = "Origin [" + parent.Character.Origin.displayname + "] conflict with Race [" + parent.Character.Race.DisplayName + "]\n";
+                    string s2 = "Origin [" + parent.Character.Origin.DisplayName + "] conflict with Race [" + parent.Character.Race.DisplayName + "]\n";
                     tooltip += s2;
                     parent.GetButton_ConfirmCharacter.NotifyConflict(s2);
                 }
@@ -1053,7 +995,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                 if (this.parent.Character.RaceTemplate.ID == s)
                 {
                     this.state = ButtonValidator_States.Conflict;
-                    string s2 = "Origin [" + parent.Character.Origin.displayname + "] conflict with Race Modifier [" + parent.Character.RaceTemplate.DisplayName + "]\n";
+                    string s2 = "Origin [" + parent.Character.Origin.DisplayName + "] conflict with Race Modifier [" + parent.Character.RaceTemplate.DisplayName + "]\n";
                     tooltip += s2;
                     parent.GetButton_ConfirmCharacter.NotifyConflict(s2);
                 }
@@ -1061,13 +1003,27 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
             return true;
         }
+
+        public void OnClickButton()
+        {
+            var next = isleft ? scr_System_Serializer.current.MasterList.Character_Origins.GetItemBefore(parent.Character.Origin) : scr_System_Serializer.current.MasterList.Character_Origins.GetItemAfter(parent.Character.Origin);
+            if (next != null)
+            {
+                parent.Character.Origin = next;
+                parent.Character.StartingGift = scr_System_Serializer.current.MasterList.Character_Origin_StartingOptions.GetByID( next.availableOptionsID[0]);
+            }
+            parent.LoadOrigin();
+            parent.LoadStartingGift();
+        }
     }
-    class ButtonValidator_SelectRace : ButtonValidator
+    class ButtonValidator_SelectRace : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_SelectRace(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_SelectRace(scr_Menu parent, bool isLeft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isLeft;
         }
 
         public override bool IsButtonValid()
@@ -1085,13 +1041,22 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                 return true;
             }
         }
+        public void OnClickButton()
+        {
+            var nextval = isleft ? scr_System_Serializer.current.MasterList.humanoid_Races.GetItemBefore(parent.Character.Race) : scr_System_Serializer.current.MasterList.humanoid_Races.GetItemAfter(parent.Character.Race);
+
+            if (nextval != null) parent.Character.Race = nextval;
+            parent.LoadRace();
+        }
     }
-    class ButtonValidator_SelectraceTemplate : ButtonValidator
+    class ButtonValidator_SelectraceTemplate : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_SelectraceTemplate(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_SelectraceTemplate(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
@@ -1109,20 +1074,51 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                 return true;
             }
         }
+        public void OnClickButton()
+        {
+            var c = parent.Character;
+            var nextval = isleft ? scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetItemBefore(c.RaceTemplate, c.Origin, c.StartingGift, c.Race) : 
+                                    scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetItemAfter(parent.Character.RaceTemplate, c.Origin, c.StartingGift, c.Race);
+            if (nextval != null) parent.Character.RaceTemplate = nextval;
+            parent.LoadRaceTemplate();
+        }
     }
-    class ButtonValidator_SelectStartingOption : ButtonValidator
+    class ButtonValidator_SelectStartingOption : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_SelectStartingOption(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_SelectStartingOption(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isleft;
+            this.tooltip = LocalizeDictionary.QueryThenParse("wip_disabled");
         }
 
         public override bool IsButtonValid()
         {
+            return false;
             this.state = ButtonValidator_States.Valid;
             tooltip = "";
             return true;
+        }
+        public void OnClickButton()
+        {
+            string nextgiftID = "";
+            Character_Origin_startingOption nextgift = null;
+            if (isleft) {
+                if (parent.currentStartingOptionIndex - 1 >= 0) parent.currentStartingOptionIndex -= 1;
+                else parent.currentStartingOptionIndex = parent.Character.Origin.availableOptionsID.Length - 1;
+                nextgiftID = parent.Character.Origin.availableOptionsID[parent.currentStartingOptionIndex];
+            } 
+            else {
+                if (parent.currentStartingOptionIndex + 1 < parent.Character.Origin.availableOptionsID.Length) parent.currentStartingOptionIndex += 1;
+                else parent.currentStartingOptionIndex = 0;
+                nextgiftID = parent.Character.Origin.availableOptionsID[parent.currentStartingOptionIndex];
+            }
+            nextgift = scr_System_Serializer.current.MasterList.Character_Origin_StartingOptions.GetByID(nextgiftID);
+            if (nextgift != null) parent.Character.StartingGift = nextgift;
+            parent.LoadStartingGift();
+
         }
     }
     class ButtonValidator_SelectGender : ButtonValidator
@@ -1144,23 +1140,25 @@ public class scr_Canvas_CharacterEditor : scr_Menu
     class ButtonValidator_selectTraitPanel : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        private int ButtonID;
-        public ButtonValidator_selectTraitPanel(scr_Menu parent, int ButtonID) : base(parent)
+        scr_SelectableText btn;
+        public ButtonValidator_selectTraitPanel(scr_Menu parent, scr_SelectableText btn) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
-            this.ButtonID = ButtonID;
+            this.btn = btn;
+
         }
 
         public override bool IsButtonValid()    // always valid
         {
+            return false;
             if (this.parent.panel_TraitSelect.gameObject.activeSelf == true)
             {
-                parent.GetButtonByID(this.ButtonID).Toggle(true, true);
+                btn.Toggle(true, true);
                 tooltip = "A Trait selection panel is already active!";
             }
             else
             {
-                parent.GetButtonByID(this.ButtonID).Toggle(true, false);
+                btn.Toggle(true, false);
                 tooltip = "";
             }
             this.state = ButtonValidator_States.Valid;
@@ -1179,341 +1177,227 @@ public class scr_Canvas_CharacterEditor : scr_Menu
     /// <summary>
     /// ////////////////
     /// </summary>
-
-    class ButtonValidator_selectSensitivity_B_left : ButtonValidator, I_ButtonClickable
+    class ButtonValidator_selectSensitivity_B : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_B_left(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_selectSensitivity_B(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
         {
-            return false;
-            //return (parent.Character.Template.Sensitivity_B.GetPreviousInGroup() != null);
-        }
-        public void OnClickButton()
-        {
-            //parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetPreviousInGroup();
-        }
-    }
-    class ButtonValidator_selectSensitivity_B_right : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_B_right(scr_Menu parent) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return false;
-            //return (parent.Character.Template.Sensitivity_B.GetNextInGroup() != null);
+            if (parent.Character.Template.Sensitivity_B == null) return false;
+            if (isleft) return parent.Character.Template.Sensitivity_B.GetPreviousInGroup() != null;
+            else return parent.Character.Template.Sensitivity_B.GetNextInGroup() != null;
         }
         public void OnClickButton()
         {
             //parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetNextInGroup();
+            if (parent.Character.Template.Sensitivity_B == null) return;
+            if (isleft) parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetPreviousInGroup();
+            else parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetNextInGroup();
         }
     }
-    class ButtonValidator_selectSensitivity_M_left : ButtonValidator, I_ButtonClickable
+
+    class ButtonValidator_selectSensitivity_M : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_M_left(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_selectSensitivity_M(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
         {
-            return false;
-            // return (parent.Character.Template.Sensitivity_M.GetPreviousInGroup() != null);
+            if (parent.Character.Template.Sensitivity_M == null) return false;
+            if (isleft) return parent.Character.Template.Sensitivity_M.GetPreviousInGroup() != null;
+            else return parent.Character.Template.Sensitivity_M.GetNextInGroup() != null;
         }
         public void OnClickButton()
         {
-            //parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetPreviousInGroup();
+            if (parent.Character.Template.Sensitivity_M == null) return;
+            if (isleft) parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetPreviousInGroup();
+            else parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetNextInGroup();
         }
     }
-    class ButtonValidator_selectSensitivity_M_right : ButtonValidator, I_ButtonClickable
+    class ButtonValidator_selectSensitivity_C : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_M_right(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_selectSensitivity_C(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
         {
-            return false;
-            //return (parent.Character.Template.Sensitivity_M.GetNextInGroup() != null);
-        }
-        public void OnClickButton()
-        {
-            //parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetNextInGroup();
-        }
-    }
-    class ButtonValidator_selectSensitivity_C_left : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_C_left(scr_Menu parent) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return false;
-            //return (parent.Character.Template.Sensitivity_C.GetPreviousInGroup() != null);
+            if (parent.Character.Template.Sensitivity_C == null) return false;
+            if (isleft) return (parent.Character.Template.Sensitivity_C.GetPreviousInGroup() != null);
+            else return (parent.Character.Template.Sensitivity_C.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
             //parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetPreviousInGroup();
+            if (parent.Character.Template.Sensitivity_C == null) return;
+            if (isleft) parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetPreviousInGroup();
+            else parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetNextInGroup();
         }
     }
-    class ButtonValidator_selectSensitivity_C_right : ButtonValidator, I_ButtonClickable
+
+    class ButtonValidator_selectSensitivity_V : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_C_right(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_selectSensitivity_V(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
         {
-            return false;
-            //return (parent.Character.Template.Sensitivity_C.GetNextInGroup() != null);
+            if (parent.Character.Template.Sensitivity_V == null) return false;
+            if (isleft) return (parent.Character.Template.Sensitivity_V.GetPreviousInGroup() != null);
+            else return (parent.Character.Template.Sensitivity_V.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
-            //parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetNextInGroup();
+            if (parent.Character.Template.Sensitivity_V == null) return;
+            if (isleft) parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetPreviousInGroup();
+            else parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetNextInGroup();
         }
     }
-    class ButtonValidator_selectSensitivity_V_left : ButtonValidator, I_ButtonClickable
+
+    class ButtonValidator_selectSensitivity_A : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_V_left(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_selectSensitivity_A(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
         {
-            return false;
-            //return (parent.Character.Template.Sensitivity_V.GetPreviousInGroup() != null);
+            if (parent.Character.Template.Sensitivity_A == null) return false;
+            //
+            if (isleft) return (parent.Character.Template.Sensitivity_A.GetPreviousInGroup() != null);
+            else return (parent.Character.Template.Sensitivity_A.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
-            //parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetPreviousInGroup();
+            if (parent.Character.Template.Sensitivity_A == null) return ;
+            if (isleft) parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetPreviousInGroup();
+            else parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetNextInGroup();
         }
     }
-    class ButtonValidator_selectSensitivity_V_right : ButtonValidator, I_ButtonClickable
+
+    class ButtonValidator_selectSize_B : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_V_right(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_selectSize_B(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.tooltip = LocalizeDictionary.QueryThenParse("ui_tooltip_trait_size");
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
         {
-            return false;
-            //return (parent.Character.Template.Sensitivity_V.GetNextInGroup() != null);
+            if (parent.Character.Template.Size_B == null) return false;
+            if (isleft) return (parent.Character.Template.Size_B.GetPreviousInGroup() != null);
+            else return (parent.Character.Template.Size_B.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
-            //parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetNextInGroup();
+            if (parent.Character.Template.Size_B == null) return;
+            if (isleft) parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetPreviousInGroup();
+            else parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetNextInGroup();
         }
     }
-    class ButtonValidator_selectSensitivity_A_left : ButtonValidator, I_ButtonClickable
+
+    class ButtonValidator_selectSize_P : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_A_left(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_selectSize_P(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.tooltip = LocalizeDictionary.QueryThenParse("ui_tooltip_trait_size");
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
         {
-            return false;
-            //return (parent.Character.Template.Sensitivity_A.GetPreviousInGroup() != null);
+            if (parent.Character.Template.Size_P == null) return false;
+            if (isleft) return (parent.Character.Template.Size_P.GetPreviousInGroup() != null);
+            else return (parent.Character.Template.Size_P.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
-            //parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetPreviousInGroup();
+            if (parent.Character.Template.Size_P == null) return;
+            if (isleft) parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetPreviousInGroup();
+            else parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetNextInGroup();
         }
     }
-    class ButtonValidator_selectSensitivity_A_right : ButtonValidator, I_ButtonClickable
+
+    class ButtonValidator_selectSize_V : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSensitivity_A_right(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_selectSize_V(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.tooltip = LocalizeDictionary.QueryThenParse("ui_tooltip_trait_size");
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
         {
-            return false;
-            //return (parent.Character.Template.Sensitivity_A.GetNextInGroup() != null);
+            if (parent.Character.Template.Size_V == null) return false;
+            if (isleft) return (parent.Character.Template.Size_V.GetPreviousInGroup() != null);
+            else return (parent.Character.Template.Size_V.GetNextInGroup() != null);
         }
-
         public void OnClickButton()
         {
-            //parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetNextInGroup();
+            if (parent.Character.Template.Size_V == null) return;
+            if (isleft) parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetPreviousInGroup();
+            else parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetNextInGroup();
         }
     }
 
-
-
-    class ButtonValidator_selectSize_B_left : ButtonValidator, I_ButtonClickable
+    class ButtonValidator_selectSize_A : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSize_B_left(scr_Menu parent) : base(parent)
+        bool isleft;
+        public ButtonValidator_selectSize_A(scr_Menu parent, bool isleft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
+            this.tooltip = LocalizeDictionary.QueryThenParse("ui_tooltip_trait_size");
+            this.isleft = isleft;
         }
 
         public override bool IsButtonValid()
         {
-            return false;
-            //return (parent.Character.Template.Size_B.GetPreviousInGroup() != null);
+            if (parent.Character.Template.Size_A == null) return false;
+            if (isleft) return (parent.Character.Template.Size_A.GetPreviousInGroup() != null);
+            else return (parent.Character.Template.Size_A.GetNextInGroup() != null);
         }
         public void OnClickButton()
         {
-            //parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetPreviousInGroup();
+            if (parent.Character.Template.Size_A == null) return;
+            if (isleft) parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetPreviousInGroup();
+            else parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetNextInGroup();
         }
     }
-    class ButtonValidator_selectSize_B_right : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSize_B_right(scr_Menu parent) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return false;
-            //return (parent.Character.Template.Size_B.GetNextInGroup() != null);
-        }
-
-        public void OnClickButton()
-        {
-            //parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetNextInGroup();
-        }
-    }
-    class ButtonValidator_selectSize_P_left : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSize_P_left(scr_Menu parent) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return false;
-            //return (parent.Character.Template.Size_P.GetPreviousInGroup() != null);
-        }
-        public void OnClickButton()
-        {
-            //parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetPreviousInGroup();
-        }
-    }
-    class ButtonValidator_selectSize_P_right : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSize_P_right(scr_Menu parent) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return false;
-            //return (parent.Character.Template.Size_P.GetNextInGroup() != null);
-        }
-
-        public void OnClickButton()
-        {
-            //parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetNextInGroup();
-        }
-    }
-    class ButtonValidator_selectSize_V_left : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSize_V_left(scr_Menu parent) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return false;
-            //return (parent.Character.Template.Size_V.GetPreviousInGroup() != null);
-        }
-        public void OnClickButton()
-        {
-            //parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetPreviousInGroup();
-        }
-    }
-    class ButtonValidator_selectSize_V_right : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSize_V_right(scr_Menu parent) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return false;
-            //return (parent.Character.Template.Size_V.GetNextInGroup() != null);
-        }
-
-        public void OnClickButton()
-        {
-            //parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetNextInGroup();
-        }
-    }
-    class ButtonValidator_selectSize_A_left : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSize_A_left(scr_Menu parent) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return false;
-            //return (parent.Character.Template.Size_A.GetPreviousInGroup() != null);
-        }
-        public void OnClickButton()
-        {
-            //parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetPreviousInGroup();
-        }
-    }
-    class ButtonValidator_selectSize_A_right : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        public ButtonValidator_selectSize_A_right(scr_Menu parent) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return false;
-            //return (parent.Character.Template.Size_A.GetNextInGroup() != null);
-        }
-
-        public void OnClickButton()
-        {
-            //parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetNextInGroup();
-        }
-    }
-
-
 
     class ButtonValidator_selectTrait_left_ordered : ButtonValidator, I_ButtonClickable
     {
@@ -1792,5 +1676,28 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             tooltip = "";
         }
     }
+
+    public TMP_InputField input_firstname, input_middlename, input_lastname;
+
+    public void OnValueChanged_FirstName(string s)
+    {
+        if (this.c == null) return;
+        this.c.FirstName = input_firstname.text;
+        UpdateNames();
+    }
+    public void OnValueChanged_MiddleName(string s)
+    {
+        if (this.c == null) return;
+        this.c.MiddleName = input_middlename.text;
+        UpdateNames();
+    }
+    public void OnValueChanged_LastName(string s)
+    {
+        if (this.c == null) return;
+        this.c.LastName = input_lastname.text;
+        UpdateNames();
+    }
+
+
 }
 

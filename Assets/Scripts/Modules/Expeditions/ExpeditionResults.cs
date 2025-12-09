@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 public class ExpResults
 {
     public int baseWeight = 0;
-    public ExpEvents.TeamReq teamRequirement = new ExpEvents.TeamReq();
+    public TeamReq teamRequirement = new TeamReq();
     public List<ExpEvents.WeightModifier> weightMods = new List<ExpEvents.WeightModifier>();
 
     public string resultText = "";

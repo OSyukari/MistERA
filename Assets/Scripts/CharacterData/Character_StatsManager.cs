@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 public interface I_StatsManager
 {
-    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null);
+    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false);
     public List<Stat_Modifier> GetModifiers(Stats_Base obj, string statID, List<string> contexts = null);
     public List<Stat_Modifier> GetModifiers(StatusEx_Instance obj, string statID, List<string> contexts = null);
 
@@ -105,9 +105,12 @@ public class StatsManager : I_StatsManager
             return _list_statDerived;
         } }
     protected List<Stats_Derived_Instance> _list_statDerived = null;
+
+    Dictionary<string, Stats_Derived_Extended_Instance> _statEX = new Dictionary<string, Stats_Derived_Extended_Instance>();
     public Stats_Derived_Extended_Instance GetStatEx(string statID)
     {
-        return StatsExtended.Find(x => x.ID == statID);
+        if (!_statEX.ContainsKey(statID)) _statEX[statID] = StatsExtended.Find(x => x.ID == statID);
+        return _statEX[statID];
     }
 
     public void ReEstablishParent(Character_Trainable chara)
@@ -184,7 +187,15 @@ public class StatsManager : I_StatsManager
             return baseStat_WIL; } }
 
 
-
+    /// <summary>
+    /// Only reset statusEX
+    /// </summary>
+    public void RefreshAttitude()
+    {
+        if (this.Mood != null) this.Mood.ClearCache();
+        if (this.Stress != null) this.Stress.ClearCache();
+        if (this.Lust != null) this.Lust.ClearCache();
+    }
 
     /// <summary>
     /// Lazy Refresh. Only update whats strictly necessary.
@@ -210,7 +221,14 @@ public class StatsManager : I_StatsManager
             AddStatModifier(Owner.Origin.stat_modifiers);
             AddStatModifier(Owner.Race.stat_modifiers); // get statMods from race
             if (Owner.RaceTemplate != null) AddStatModifier(Owner.RaceTemplate.stat_modifiers); // get statMods from racetemplate
-            foreach(var equipRef in Owner.EquippedItemRefs)    // addstatmod equipment
+
+            if (Owner.Template != null && Owner.Template.Sensitivity_A != null) AddStatModifier(Owner.Template.Sensitivity_A.stat_modifiers);
+            if (Owner.Template != null && Owner.Template.Sensitivity_B != null) AddStatModifier(Owner.Template.Sensitivity_B.stat_modifiers);
+            if (Owner.Template != null && Owner.Template.Sensitivity_C != null) AddStatModifier(Owner.Template.Sensitivity_C.stat_modifiers);
+            if (Owner.Template != null && Owner.Template.Sensitivity_M != null) AddStatModifier(Owner.Template.Sensitivity_M.stat_modifiers);
+            if (Owner.Template != null && Owner.Template.Sensitivity_V != null) AddStatModifier(Owner.Template.Sensitivity_V.stat_modifiers);
+
+            foreach (var equipRef in Owner.EquippedItemRefs)    // addstatmod equipment
             {
                 var equip = scr_System_CampaignManager.current.FindItemInstanceByID(equipRef);
                 if (equip.GetComp_Equippable().statModifiers.Count > 0)
@@ -233,6 +251,7 @@ public class StatsManager : I_StatsManager
                 {
                     var newstat = statEX.Instantiate(this);
                     StatsExtended.Add(newstat);
+                    _statEX[newstat.ID] = newstat;// Clear();
                 }
             }
 
@@ -241,6 +260,7 @@ public class StatsManager : I_StatsManager
             {
                 if (!Owner.hasStatKeyword(StatsExtended[i].Parent.StatKeyword))
                 {
+                    _statEX.Remove(StatsExtended[i].ID);
                     StatsExtended.RemoveAt(i);
                 }
             }
@@ -269,10 +289,29 @@ public class StatsManager : I_StatsManager
     [JsonIgnore] public float CumThreshold { get { return 100; } }
     [JsonIgnore] public int SleepHours { get { return Owner.hasStatKeyword("sleep") ? (int)GetStatValue("stats_derived_sleepNeed") : 0; } }
     [JsonIgnore] public float SleepDepth { get { return Owner.hasStatKeyword("sleep") ? (float)GetStatValue("stats_derived_sleepDepth") : 0; } }
-    [JsonIgnore] public Stats_Derived_Extended_Instance HP { get { return GetStatEx("stats_derived_extended_hp"); } }
-    [JsonIgnore] public Stats_Derived_Extended_Instance MP { get { return GetStatEx("stats_derived_extended_mp"); } }
-    [JsonIgnore] public Stats_Derived_Extended_Instance Stamina { get { return GetStatEx("stats_derived_extended_stamina"); } }
-    [JsonIgnore] public Stats_Derived_Extended_Instance Energy { get { return GetStatEx("stats_derived_extended_energy"); } }
+
+    Stats_Derived_Extended_Instance _hp = null;
+    [JsonIgnore] public Stats_Derived_Extended_Instance HP { get {
+            if (_hp == null) _hp = GetStatEx("stats_derived_extended_hp");
+            return _hp;
+        }
+    }
+    Stats_Derived_Extended_Instance _mp = null;
+    [JsonIgnore] public Stats_Derived_Extended_Instance MP { get { 
+            if (_mp == null) _mp =  GetStatEx("stats_derived_extended_mp");
+            return _mp;
+        }
+    }
+    Stats_Derived_Extended_Instance _st = null;
+    [JsonIgnore] public Stats_Derived_Extended_Instance Stamina { get {
+            if (_st == null) _st = GetStatEx("stats_derived_extended_stamina");
+            return _st;
+        } }
+    Stats_Derived_Extended_Instance _en = null;
+    [JsonIgnore] public Stats_Derived_Extended_Instance Energy { get {
+            if (_en == null) _en = GetStatEx("stats_derived_extended_energy");
+            return _en;
+        } }
 
     [JsonIgnore] public int MemoryLength { get { return Owner.hasStatKeyword("memory") ? (int) GetStatValue("stats_derived_memoryLength") : 0; } }
     [JsonIgnore] public int MemoryEntryCount { get { return Owner.hasStatKeyword("memory") ? (int) GetStatValue("stats_derived_memoryEntryCount") : 0; } }
@@ -329,9 +368,9 @@ public class StatsManager : I_StatsManager
     protected List<Stat_Modifier> modifiers_temporary = new List<Stat_Modifier>();
     public List<Stat_Modifier> Modifiers_Temporary { get { return this.modifiers_temporary; } }
 
-    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null)
+    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false)
     {
-        return GetModifiers(statID, contexts, true, false);
+        return GetModifiers(statID, contexts, !forbidStatus, false);
     }
     public List<Stat_Modifier> GetModifiers(Stats_Base obj, string statID, List<string> contexts = null)
     {
@@ -407,7 +446,7 @@ public class StatsManager : I_StatsManager
         {
             for (int i = modifiers.Count - 1; i >= 0; i--)
             {
-                if (modifiers[i].statID == mod_instance.statID && modifiers[i].modKey == mod_instance.modKey
+                if (modifiers[i].statID == mod_instance.statID && modifiers[i].ModKey == mod_instance.ModKey
                         && ((modifiers[i].type == Stat_Modifier.StatMod_Type.setMult && modifiers[i].type == mod_instance.type)
                             || (modifiers[i].type == Stat_Modifier.StatMod_Type.setBase && modifiers[i].type == mod_instance.type)))
                     modifiers.RemoveAt(i);
@@ -433,7 +472,7 @@ public class StatsManager : I_StatsManager
         //if (contexts == null) contexts = new List<string>();   
         if (contexts != null)
         {
-            contexts = contexts.Distinct().ToList();
+            contexts = Utility.Distinct(contexts);
             contexts.Sort();
         }
 
@@ -546,7 +585,7 @@ public class StatsManager : I_StatsManager
     /// Called by character update
     /// </summary>
     /// <param name="t"></param>
-    public void UpdateTimeMinute(TimeSpan t)
+    public void UpdateTimeMinute(TimeSpan t, TimeSpan t_real)
     {
         /*
         Strength.ClearCache();
@@ -562,7 +601,7 @@ public class StatsManager : I_StatsManager
 
         for (int i = StatusInstances.Count - 1; i >= 0; i--)
         {
-            int time = t.Minutes;
+            int time = Owner.isTimeStopped ? t.Minutes : t_real.Minutes;
 
             if (StatusInstances[i].BaseRef.variationMode.pauseXMinAfterMod > 0)
             {
@@ -896,20 +935,6 @@ public class StatsManager : I_StatsManager
     [JsonIgnore] private StatusEx_Instance mood = null;
 
 
-    public class ModStorage
-    {
-        public string modKey = string.Empty;
-        public float baseValue = 0.0f;
-        public float baseMult = 1.0f;
-        public float addValue = 0.0f;
-        public float addMult = 0.0f;
-        public ModStorage(float baseMult, float baseValue = 0.0f)
-        {
-            this.baseValue = baseValue;
-            this.baseMult = baseMult;
-            addMult = 0.0f;
-            addValue = 0.0f;
-        }
-    }
+
 }
 

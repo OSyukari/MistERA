@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public enum Trait_Type
 // decide which column trait gets displayed
 {
@@ -20,7 +19,6 @@ public enum Trait_Type
     Untyped// affect physical and biological 
 }
 
-[System.Serializable]
 public enum Trait_Group_Type
 // decide whether trait group is sorted or just random collection
 {
@@ -30,7 +28,6 @@ public enum Trait_Group_Type
     Untyped
 }
 
-[System.Serializable]
 public class Traits
 {
 
@@ -50,6 +47,8 @@ public class Traits
 
     [JsonIgnore] public string displayname { get { return trait_displayname; } }
     [JsonIgnore] public string tooltip { get { return trait_tooltip; } }
+
+    public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
 
     public bool isDisplayable = true;
     //-----------------

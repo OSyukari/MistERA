@@ -1,12 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
-using System.Xml;
-using System.Linq;
+using System.Collections.Generic;
 using Newtonsoft.Json;
-using System.Threading.Tasks;
-using System.Text;
 
 public interface I_CacheValues
 {
@@ -14,7 +8,6 @@ public interface I_CacheValues
 }
 
 // record base stats: str_base, str_final, str_mod, and the same for con psy and wil
-[System.Serializable]
 public class Stats_Base : I_CacheValues, I_StatsDisplayable
 {
     [JsonProperty] protected int value_base = 10;
@@ -32,30 +25,30 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
         result.SetValue(this.BaseValue);
         return result;
     }
+    protected StatModStorage storage = null;
 
 
     public Stats_Base() { }
     public void ReEstablishParent(I_StatsManager owner)
     {
         parentCache = owner;
+        storage = new StatModStorage(parentCache, value_base, 1, 0, 1);
     }
     public Stats_Base(I_StatsManager parent, string statID)
     {
-        ReEstablishParent(parent);
         stat_base_string = statID;
+        ReEstablishParent(parent);
     }
 
     public void ClearCache(bool reset = false)
     {
-        this.cached_values.Clear();
+        _cache_string.Clear();
+        _cache_values.Clear();
     }
 
-    private Dictionary<List<string>, StatRecord> cached_values_cache = null;
-    private Dictionary<List<string>, StatRecord> cached_values { get
-        {
-            if (cached_values_cache == null) cached_values_cache = new Dictionary<List<string>, StatRecord>();
-            return cached_values_cache;
-        } }
+    Dictionary<string, float> _cache_values = new Dictionary<string, float>();
+    Dictionary<string, string> _cache_string = new Dictionary<string, string>();
+
 
     public void Draw(scr_HoverableText text)
     {
@@ -68,105 +61,49 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
 
     }
 
-    Dictionary<string, StatsManager.ModStorage> StoredModifiers_cache = null;
-    Dictionary<string, StatsManager.ModStorage> StoredModifiers{
-        get
-        {
-            if (StoredModifiers_cache == null) StoredModifiers_cache = new Dictionary<string, StatsManager.ModStorage>();
-            return StoredModifiers_cache;
-        }
-    }
-
-    protected List<string> stringResults = new List<string>();
-    public string ModStrings(List<string> contextKeys = null, string joinSymbol = "\n") 
+    public string ModStrings(List<string> contextKeys = null) 
     {
-        var key = contextKeys == null ? new List<string>() : contextKeys;
-        if (!cached_values.ContainsKey(key)) GetValue(key);
-        return String.Join(joinSymbol, cached_values[key].Print());
+        var key = GetContextID(contextKeys);
+        if (!_cache_string.ContainsKey(key)) GetValue(contextKeys);
+        return String.Join("\n", _cache_string[key]);
     }
     [JsonIgnore] public int BaseValue { get { return value_base; } }
     public float FinalValue(List<string> contextKeys = null)
     {
-        var key = contextKeys == null ? new List<string>() : contextKeys;
-        if (!cached_values.ContainsKey(key)) GetValue(key);
-        return cached_values[key].FinalValue;
+        var key = GetContextID(contextKeys);
+        if (!_cache_values.ContainsKey(key)) GetValue(contextKeys);
+        return _cache_values[key];
     }
 
     protected void GetValue(List<string> contextKeys)
     {
-        var strings = new StatRecord();
-        StoredModifiers.Clear();
-        StoredModifiers.Add("baseValue", new StatsManager.ModStorage(1, value_base));
-        StoredModifiers.Add("finalMod", new StatsManager.ModStorage(1, 0));
+        var key = GetContextID(contextKeys);
+
         var list = Parent.GetModifiers(this, stat_base_string, contextKeys);
-        var finalResult = UtilityEX.ParseStatMods(this, Parent, StoredModifiers, list, strings);
-        cached_values.Add(contextKeys, strings);
+        var value = UtilityEX.ParseStatMods(this, storage, list);
+        _cache_values[key] = value;
+        _cache_string[key] = storage.Print();
     }
 
 
+    protected string GetContextID(List<string> context)
+    {
+        if (context == null || context.Count < 1) return "";
+        context = Utility.Distinct(context);
+        context.RemoveAll(x => x.Length < 1);
+        context.Sort();
+        return String.Join("|", context);
+    }
     public void SetValue(int i)
     {
         value_base = i;
+
+        if (this.storage != null) this.storage.SetBase(value_base, 1);
+        ClearCache();
     }
     public int GetStatMod(List<string> contextKeys = null)
     {
         return (int)FinalValue(contextKeys) / 2 - 5;
     }
 
-}
-
-public class StatRecord
-{
-    float basevalue = 0f;
-    float value = 0f;
-
-    public void SetValue(float val, float baseV = 0f)
-    {
-        this.value = val;
-        this.basevalue = baseV;
-    }
-
-    public float FinalValue { get { return basevalue + value; } }
-
-    public List<StatsManager.ModStorage> storages = new List<StatsManager.ModStorage>();
-    public List<string> extraTooltip = new List<string>();
-    public void AddEntry(string a, StatsManager.ModStorage b)
-    {
-        if (b.modKey == string.Empty) b.modKey = a;
-        this.storages.Add(b);
-    }
-
-    public void SetExternalTooltip(List<string> s)
-    {
-        this.extraTooltip = s;
-    }
-
-    public string Print()
-    {
-        StringBuilder sb = storages.Count > 0 ? UtilityEX.StringBuilderPool.Get() : null;
-        if (sb != null)
-        {
-            foreach (var mod in storages)
-            {
-                if (mod.modKey == string.Empty)
-                {
-                    sb.Append("finalMod * (")
-                      .Append(mod.baseMult).Append(" + ").Append(mod.addMult)
-                      .Append(") (").Append(mod.baseValue).Append('+').Append(mod.addValue).Append(')')
-                      .AppendLine();
-                }
-                else
-                {
-                    sb.Append(mod.modKey)
-                        .Append(" (").Append(mod.baseValue)
-                        .Append('+').Append(mod.addValue)
-                        .Append(")*(").Append(mod.baseMult)
-                        .Append('+').Append(mod.addMult).Append(')')
-                        .AppendLine();
-                }
-            }
-        }
-
-        return $"{(sb != null ? sb.ToString() : "")}{(sb != null && this.extraTooltip.Count > 0 ? "\n" : "")}{String.Join("\n", this.extraTooltip)}";
-    }
 }

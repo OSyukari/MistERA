@@ -47,11 +47,7 @@ public class Character_Origin_Index : I_IndexHasID, I_NeedLateInitialize, I_Inde
     {
         foreach (Character_Origin c in list)
         {
-            if (c.forceRace_ID != "") { c.ForceRace = CharaOrigins.Instance.Humanoid_Race_Index.GetByID(c.forceRace_ID); }
-            if (c.forceRaceTemplate_ID != "") { c.ForceRaceTemplate = CharaOrigins.Instance.RaceTemplateIndex.GetByID(c.forceRaceTemplate_ID); }
-            foreach (string s in c.availableOptionsID) { c.AvailableOptions.Add( CharaOrigins.Instance.StartingOption_Index.GetByID(s)); }
-            foreach (string s in c.disallowRace_ID) { c.DisallowRace.Add(CharaOrigins.Instance.Humanoid_Race_Index.GetByID(s)); }
-            foreach (string s in c.disallowRaceTemplate_ID) { c.DisallowRaceTemplate.Add(CharaOrigins.Instance.RaceTemplateIndex.GetByID(s)); }
+
         }
     }
 
@@ -88,11 +84,15 @@ public class Character_Origin_Index : I_IndexHasID, I_NeedLateInitialize, I_Inde
     }
 }
 
-[System.Serializable]
 public class Character_Origin
 {
     public string ID = "";
-    public string displayname = "";
+    [JsonIgnore] public string DisplayName { get
+        {
+            if (ID == "") return "missing_id";
+            else return LocalizeDictionary.QueryThenParse(ID);
+        }
+    }
     public string tooltip = "";
 
     public string forceRace_ID = "";
@@ -103,8 +103,6 @@ public class Character_Origin
     public string[] disallowRace_ID = new string[0];
     public string[] disallowRaceTemplate_ID = new string[0];
 
-    [JsonIgnore][NonSerialized] public Humanoid_Race ForceRace = null;
-    [JsonIgnore][NonSerialized] public Humanoid_RaceTemplate ForceRaceTemplate = null;
     [JsonIgnore][NonSerialized] public List<Character_Origin_startingOption> AvailableOptions = new List<Character_Origin_startingOption>();
     [JsonIgnore][NonSerialized] public List<Humanoid_Race> DisallowRace = new List<Humanoid_Race>();
     [JsonIgnore][NonSerialized] public List<Humanoid_RaceTemplate> DisallowRaceTemplate = new List<Humanoid_RaceTemplate>();

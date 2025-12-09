@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-using System.Linq;
 
 public class RelationshipType
 {
@@ -37,15 +36,16 @@ public class RelationshipType
             _upgradableRelationships = new List<RelationshipType>();
             foreach (var i in canUpgradeInto) _upgradableRelationships.Add(scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(i));
         }
-        foreach(var r in _upgradableRelationships)
+        var reverse = sourceRel.Target.Relationships.FindRelationshipWith(sourceRel.Owner);
+        foreach (var r in _upgradableRelationships)
         {
-            if (r.canPropose(false) && r.isValid(sourceRel, false))
+            if (r.canPropose(false) && r.isValid(sourceRel, false) && r.CanMaintain(reverse, true))
             {
                 rel = r;
                 isA = true;
                 return true;
             }
-            else if (!r.isEqualRelationship && r.canPropose(true) && r.isValid(sourceRel, true))
+            else if (!r.isEqualRelationship && r.canPropose(true) && r.isValid(sourceRel, true) && r.CanMaintain(reverse, false))
             {
                 rel = r;
                 isA = false;
@@ -136,6 +136,7 @@ public class RelationshipType
 
     public virtual bool CanMaintain(Character_Relationship rel, bool validateB = false)
     {
+        if (rel.Owner.RefID == 0) return true;
         var att = rel.GetCurrentAttitude();
 
         if (MainEmotionKey == "") return true;
@@ -316,7 +317,7 @@ public class Index_RelationshipTypes : I_IndexHasID, I_IndexMergeable
     {
         get
         {
-            return list_personal.FindAll(x => x.allowNaturalProposition).ToList();
+            return new List<RelationshipType>( list_personal.FindAll(x => x.allowNaturalProposition));
         }
     }
 

@@ -9,7 +9,7 @@
     {  "ExperienceID":"experience_sex_animal_climax", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["animal","unsafe","climax"] },
     {  "ExperienceID":"experience_sex_insect", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["insect","unsafe"]  },
     {  "ExperienceID":"experience_sex_nonhuman", "tags":["nsfw"], "RequiredOwnerTags":["human"],  "RequiredCOMTags":["creature","unsafe"]  },
-    {  "ExperienceID":"experience_sex_service", "tags":["nsfw"], "applyToReceiver":false, "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","service"]  },
+    {  "ExperienceID":"experience_sex_service", "tags":["nsfw"], "applyToReceiver":false, "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","service","interaction"]  },
     {  "ExperienceID":"experience_sex_maso", "tags":["nsfw"], "ApplyToDoer":false, "RequiredOwnerTags":["human","pain"], "RequiredCOMTags":["unsafe"]  },
     {  "ExperienceID":"experience_sex_sado", "tags":["nsfw"], "applyToReceiver":false,"RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","pain"] },
     {  "ExperienceID":"experience_sex_raped", "tags":["nsfw"], "ApplyToDoer":false, "RequiredOwnerTags":["human","raped"], "RequiredCOMTags":["unsafe"]  },

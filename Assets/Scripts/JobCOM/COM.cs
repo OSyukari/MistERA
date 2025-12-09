@@ -323,6 +323,11 @@ public class COM: I_SerializationCallbackReceiver
     //public Validator_Costs costs;
     public COM_Results results = new COM_Results();
 
+    /// <summary>
+    /// Only provide msg if this is visible
+    /// </summary>
+    /// <param name="m"></param>
+    /// <param name="msg"></param>
     public void ApplyCost(EvaluationPackage m, MessageCollect msg)
     {
         //Debug.Log("VariantIDs: AP["+p.COMVariantID+"] EP["+m.VariantID+"] param["+variantID+"]");
@@ -828,6 +833,12 @@ public class COM: I_SerializationCallbackReceiver
             //Debug.LogError("COMVARIANT create useBaseDsc?[ " + (useBaseDscription == 1) + "] useAnotherDesc?[" + (useAnotherVariantDescription > -1) + "]");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="m"></param>
+        /// <param name="msg">Only provide MessageCollect if this should be visible</param>
         public void ApplyCost(COM parent, EvaluationPackage m, MessageCollect msg)
         {
 

@@ -168,6 +168,28 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         else initialized_basicInfo = true;
 
         initScript_BasicInfo.InitData(chara);
+
+        initScript_BasicInfo.viewExpButton.SetExternalTooltip(String.Join("\n", chara.Skills.ExperiencesToString(false)));
+
+        foreach (SkillInstance si in chara.Skills.GetSkills(false))
+        {
+            int hash = AssertUniqueHash(si.GetHashCode());
+            //Debug.LogError(si.BaseRef.ID);
+
+            if (!ButtonsByID.ContainsKey(hash))
+            {
+                scr_SelectableText box = Instantiate(prefab_Button);
+                box.transform.SetParent(initScript_BasicInfo.SkillsGrid, false);
+                box.Initialize(this, new ButtonValidator_UpgradeSkill(this, box, chara, si));
+                box.optionID = hash;
+                box.showBrackets = false;
+
+                buttonsByID.Add(box.optionID, box);
+                validatorsByID.Add(box.optionID, box.Validator);
+
+                box.Validate();
+            }
+        }
     }
 
     private void UnInitializeBasicInfo()
@@ -373,8 +395,13 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
         if (initSexRecords != null) initSexRecords.Initialize(chara);
 
-        foreach(SkillInstance si in chara.Skills.Skills)
+        initSexRecords.viewEXPBTN.SetExternalTooltip(String.Join("\n", chara.Skills.ExperiencesToString(true)));
+
+        bool isdebug = scr_System_CampaignManager.current.DebugMode;
+        foreach (SkillInstance si in chara.Skills.GetSkills(true))
         {
+            if (si.BaseRef.noDisplay && !isdebug) continue;
+
             int hash = AssertUniqueHash(si.GetHashCode())  ;
             //Debug.LogError(si.BaseRef.ID);
             
@@ -630,7 +657,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             if (sk.CanUpgrade)
             {
                 text.SetText("[" + innerText +": "+sk.GetSkillLevel+ "] +");
-                this.tooltip = skillTooltip + "\n\n" + String.Join("\n", sk.TooltipCache+"\n\nThis skill has enough experience to level up, will be auto-updated on next day.");
+                this.tooltip = skillTooltip + "\n\n" + String.Join("\n", sk.TooltipCache)+"\n\nThis skill has enough experience to level up, will be auto-updated on next day.";
                 return false;
             }
             else

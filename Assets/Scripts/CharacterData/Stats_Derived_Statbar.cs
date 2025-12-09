@@ -109,7 +109,6 @@ public class Stats_Derived_Extended
     }
 }
 
-[System.Serializable]
 public class Stats_Derived_Extended_Instance
 {
     [JsonProperty] protected float value = 0f;
@@ -192,7 +191,8 @@ public class Stats_Derived_Extended_Instance
     [JsonIgnore] public float MaxValue { get {
             if (Parent == null) Debug.LogError("MaxValue Parent null");
             if (Owner == null) Debug.LogError("MaxValue Owner null");
-            return MaxValueStat.FinalValue(); } }
+            var value = MaxValueStat.FinalValue();
+            return value >= 0 ? value : 0; } }
 
     private Stats_Derived_Instance maxValueStat = null; 
     [JsonIgnore] public Stats_Derived_Instance MaxValueStat 

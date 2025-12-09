@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using QuikGraph;
 using QuikGraph.Algorithms;
-using Newtonsoft.Json;
-using System.Linq;
+using QuikGraph.Algorithms.Observers;
+using QuikGraph.Algorithms.ShortestPath;
 using Unity.Jobs;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Map_Instance
 {
@@ -40,7 +43,7 @@ public class Map_Instance
     }
     public void NotifyEventEnd()
     {
-       // if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Map NotifyEventEnd, dirtyAP {String.Join(",",dirtyCharaAPRef)} dirtyChara {String.Join(",", dirtyCharaRef)}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Map NotifyEventEnd, clearing... dirtyAP {String.Join(",",dirtyCharaAPRef)} dirtyChara {String.Join(",", dirtyCharaRef)}");
         this.dirtyCharaAPRef.Clear();
         this.dirtyCharaRef.Clear();
     }
@@ -57,7 +60,7 @@ public class Map_Instance
         }
     }
 
-    [JsonIgnore] public Dictionary<int, int> floorDoorQuickSearch;
+    [JsonIgnore] public Dictionary<int, int> floorDoorQuickSearch = new Dictionary<int, int>();
 
     public Map_Instance()
     {
@@ -68,15 +71,13 @@ public class Map_Instance
         Rooms = new Dictionary<int, Room_Instance>();
         floors = new Dictionary<int, Floor_Instance>();
 
-        floorDoorQuickSearch = new Dictionary<int, int>();
-        FloorLayout = new Dictionary<Tuple<int, int>, Vector2>();
     }
     public Map_Instance(string mapTemplateID):this()
     {
         AddMapTemplate(mapTemplateID);
     }
 
-    [JsonIgnore] public Dictionary<Tuple<int, int>, Vector2> FloorLayout;
+    [JsonIgnore] public Dictionary<Tuple<int, int>, Vector2> FloorLayout = new Dictionary<Tuple<int, int>, Vector2>();
 
     public Floor_Instance FindFloorByRefID(int refID)
     {
@@ -202,6 +203,7 @@ public class Map_Instance
         graphsImmutable = new Dictionary<int, ArrayAdjacencyGraph<int, TaggedEdge<int, Door_Instance>>>();
         foreach (var kvp in graphs) graphsImmutable.Add(kvp.Key, kvp.Value.ToArrayAdjacencyGraph());
 
+        _astar_cache.Clear();
         /*
          https://github.com/KeRNeLith/QuikGraph/wiki/Creating-Graphs
 
@@ -223,7 +225,7 @@ public class Map_Instance
     [JsonProperty] protected Dictionary<int, Floor_Instance> floors = new Dictionary<int, Floor_Instance>();
     [JsonIgnore] public List<Floor_Instance> Floors
     {
-        get { return floors.Values.ToList(); }
+        get { return new List<Floor_Instance>(floors.Values); }
     }
 
     /// <summary>
@@ -328,7 +330,7 @@ public class Map_Instance
 
             List<string> selfTags = new List<string>();
             foreach (var i in xxEPs) selfTags.AddRange(i.isDoer(xx) ? i.DoerTargetTag : i.ReceiverTargetTag);
-            selfTags = selfTags.Distinct().ToList();
+            selfTags = Utility.Distinct(selfTags);
 
             List<int> ignoreList = new List<int>();
 
@@ -415,7 +417,7 @@ public class Map_Instance
             {
                 names2.Add(i.DisplayName);
             }
-            Debug.Log($"UpdateAllRoom, check interrupt\nDirtyCharaRefs: {String.Join("|",names)}\nDirtyAPRefs: {String.Join("|", names2)}");
+            Debug.Log($"UpdateAllRoom, check interrupt\nDirtyCharaRefs {dirtyCharaRef.Count}: {String.Join("|",names)}\nDirtyAPRefs {dirtyCharaAPRef.Count}: {String.Join("|", names2)}");
         }
 
         foreach (var i in Rooms)
@@ -497,7 +499,7 @@ public class Map_Instance
         }
         charaRoomRef[charaRef.RefID] = newRoom.RefID;
         dirtyCharaRef.Add(charaRef.RefID);
-        dirtyCharaRef = dirtyCharaRef.Distinct().ToList();
+        dirtyCharaRef = Utility.Distinct(dirtyCharaRef);
 
         if (charaRef.RefID == 0)
         {
@@ -529,7 +531,7 @@ public class Map_Instance
     /// <param name="targetRoom"></param>
     /// <param name="imprisoned"></param>
     /// <returns></returns>
-    protected IEnumerable<TaggedEdge<int, Door_Instance>> Findpath(Room_Instance roomRef, Room_Instance targetRoom, bool imprisoned)
+    protected IEnumerable<TaggedEdge<int, Door_Instance>> Findpath(Room_Instance roomRef, Room_Instance targetRoom, bool imprisoned, VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>> observer = null)
     {
         if (roomRef == null || targetRoom == null)
         {
@@ -570,23 +572,58 @@ public class Map_Instance
         }
         else if (isConnectedFaction(fromFaction, toFaction))
         {
-            IEnumerable<TaggedEdge<int, Door_Instance>> path1 = null, path2 = null;
-            TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGet1 = fromFloor == -1 ? null : graphsImmutable[fromFloor].ShortestPathsAStar(edgeCost, heuristic, roomRef.RefID);
-            TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGet2 = toFloor == -1 ? null : graphsImmutable[toFloor].ShortestPathsAStar(edgeCost, heuristic, toFaction.MainExit.RefID);
+            IEnumerable<TaggedEdge<int, Door_Instance>> path1 = GetAStarPath(roomRef.RefID, fromFaction.MainExit.RefID, GetAStar(fromFloor));
+            IEnumerable<TaggedEdge<int, Door_Instance>> path2 = GetAStarPath(toFaction.MainExit.RefID, targetRoom.RefID, GetAStar(toFloor));
+            //TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGet1 = fromFloor == -1 ? null : graphsImmutable[fromFloor].ShortestPathsAStar(edgeCost, heuristic, roomRef.RefID);
+            //TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGet2 = toFloor == -1 ? null : graphsImmutable[toFloor].ShortestPathsAStar(edgeCost, heuristic, toFaction.MainExit.RefID);
             // different graph teleport pathfinding
-            if (tryGet1 == null || tryGet1(fromFaction.MainExit.RefID, out path1) && (tryGet2 == null || tryGet2(targetRoom.RefID, out path2)))
-            {
-                var path = new List<TaggedEdge<int, Door_Instance>>();
-                if (path1 != null) path.AddRange(path1.ToList());
-                path.Add(new TaggedEdge<int, Door_Instance>(fromFaction.MainExit.RefID, toFaction.MainExit.RefID, new Door_Instance(5)));
-                if (path2 != null) path.AddRange(path2.ToList());
+            //if ( !GetAStar(fromFloor, out var astar) || (GetAStarPath(roomRef.RefID, fromFaction.MainExit.RefID, astar, out path1) && ())
+            //if (tryGet1 == null || tryGet1(fromFaction.MainExit.RefID, out path1) && (tryGet2 == null || tryGet2(targetRoom.RefID, out path2)))
+            //{
+            var path = new List<TaggedEdge<int, Door_Instance>>();
+            if (path1 != null) path.AddRange(new List<TaggedEdge<int, Door_Instance>>(path1));
+            path.Add(new TaggedEdge<int, Door_Instance>(fromFaction.MainExit.RefID, toFaction.MainExit.RefID, new Door_Instance(5)));
+            if (path2 != null) path.AddRange(new List<TaggedEdge<int, Door_Instance>>(path2));
 
-                return path;
-            }
-            else return null;
+            return path;
+            //}
+            //else return null;
         }
         else return null;
         //else no path exist
+    }
+
+
+    Dictionary<int, AStarShortestPathAlgorithm<int, TaggedEdge<int, Door_Instance>>> _astar_cache = new Dictionary<int, AStarShortestPathAlgorithm<int, TaggedEdge<int, Door_Instance>>>();
+    protected AStarShortestPathAlgorithm<int, TaggedEdge<int, Door_Instance>> GetAStar(int floorRef)
+    {
+        if (floorRef == -1)
+        {
+            return null;
+        }
+        if (!_astar_cache.ContainsKey(floorRef)) _astar_cache[floorRef] =  new AStarShortestPathAlgorithm<int, TaggedEdge<int, Door_Instance>>(graphsImmutable[floorRef], edgeCost, heuristic);
+        return _astar_cache[floorRef];
+    }
+
+    protected IEnumerable<TaggedEdge<int, Door_Instance>> GetAStarPath(int sourceRoomRef, int targetRoomRef, VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>> astar_observer)
+    {
+        if (astar_observer.TryGetPath(targetRoomRef, out var path)) return path;
+        else return null;
+    }
+    protected IEnumerable<TaggedEdge<int, Door_Instance>> GetAStarPath(int sourceRoomRef, int targetRoomRef, AStarShortestPathAlgorithm<int, TaggedEdge<int, Door_Instance>> astar)
+    {
+        if (astar == null)
+        {
+            return null;
+        }
+        var observer = new VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>>();
+        using (observer.Attach(astar))
+        {
+            astar.Compute(sourceRoomRef);
+        }
+        if (observer.TryGetPath(targetRoomRef, out var path)) return path;
+        else return null;
+        //RunDirectedRootedAlgorithm<int, TaggedEdge<int, Door_Instance>, AStarShortestPathAlgorithm<int, TaggedEdge<int, Door_Instance>>(sourceRoomRef, astar);
     }
 
     public IEnumerable<TaggedEdge<int, Door_Instance>> Findpath(int charaRefID, int toRoomRefID, int roomRefID = -1)
@@ -632,63 +669,77 @@ public class Map_Instance
     }
 
 
+
+
+    /*
     public SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> FilterValidPaths(int charaRefID,  List<int> targetRooms, bool alwaysGetDifferentFloors = false)
     { 
 
-        targetRooms = targetRooms.Distinct().ToList();
+        targetRooms = Utility.Distinct(targetRooms);
+        List<Room_Instance> roomsInSameFloor = new List<Room_Instance>(), roomsInDifferentFloor = new List<Room_Instance>();
         // cost, roomref, path
         SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> resultsHolder = new SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>>();
 
         var roomRefID = FindRoomByChara(charaRefID).RefID;
         var roomFloorRef = GetFloorByRoomRefID(roomRefID);
-        var roomsInSameFloor = targetRooms.FindAll(x => roomFloorRef != null && GetFloorByRoomRefID(x) == roomFloorRef);
+        foreach(var i in targetRooms)
+        {
+            var room = GetRoomByRef(i);
+            if (room.parentFloor == roomFloorRef) roomsInSameFloor.Add(room);
+            else roomsInDifferentFloor.Add(room);
+        }
 
         foreach (var target in roomsInSameFloor)
         {   // first check rooms in same floor, if we have a value then dont check others
-            var path = Findpath(charaRefID, target, roomRefID);
-            if (path == null && roomRefID != target) continue;
+            // tance>> Findpath(int charaRefID, int toRoomRefID, int roomRefID = -1)
+            var path = Findpath(charaRefID, target.RefID, roomRefID);
+            if (path == null && roomRefID != target.RefID) continue;
             float x_cost = 0f;
             if (path != null) foreach (TaggedEdge<int, Door_Instance> e in path) x_cost += e.Tag.Cost;
 
             var key = (int)x_cost;
             if (!resultsHolder.ContainsKey(key)) resultsHolder.Add(key, new Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>());
-            resultsHolder[key].Add(target, path);
+            resultsHolder[key].Add(target.RefID, path);
         }
         if (!alwaysGetDifferentFloors && resultsHolder.Count > 0) return resultsHolder;
 
-        var roomsInDifferentFloor = targetRooms.FindAll(x=>!roomsInSameFloor.Contains(x));
         foreach (var target in roomsInDifferentFloor)
         {   // case where same floor has no path, will incur more costly calculations
-            var path = Findpath(charaRefID, target, roomRefID);
-            if (path == null && roomRefID != target) continue;
+            var path = Findpath(charaRefID, target.RefID, roomRefID);
+            if (path == null && roomRefID != target.RefID) continue;
             float x_cost = 0f;
             if (path != null) foreach (TaggedEdge<int, Door_Instance> e in path) x_cost += e.Tag.Cost;
 
             var key = (int)x_cost;
             if (!resultsHolder.ContainsKey(key)) resultsHolder.Add(key, new Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>());
-            resultsHolder[key].Add(target, path);
+            resultsHolder[key].Add(target.RefID, path);
         }
 
         return resultsHolder;
     }
-
-    public SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> FilterValidPathsParallel(int charaRefID, List<int> targetRooms, bool alwaysGetDifferentFloors = false)
+    */
+    /*
+    public SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> FilterValidPathsParallel(Character_Trainable  chara, List<int> targetRooms, bool randInsteadofShortest = false)
     {
 
-        targetRooms = targetRooms.Distinct().ToList();
+        targetRooms = Utility.Distinct(targetRooms);
         // cost, roomref, path
         var resultsHolder = new ConcurrentDictionary<int, ConcurrentDictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>>();
+        List<Room_Instance> roomsInSameFloor = new List<Room_Instance>(), roomsInDifferentFloor = new List<Room_Instance>();
 
-        var roomRef = FindRoomByChara(charaRefID);
+        var roomRef = FindRoomByChara(chara.RefID);
         var roomFloorRef = GetFloorByRoomRefID(roomRef.RefID);
 
-        var roomRefsInSameFloor = targetRooms.FindAll(x => roomFloorRef != null && GetFloorByRoomRefID(x) == roomFloorRef);
-        var roomsInSameFloor = new List<Room_Instance>();
-        foreach (var i in roomRefsInSameFloor) roomsInSameFloor.Add(GetRoomByRef(i));
+        bool imprisoned = chara.isRestrained;
+        foreach (var i in targetRooms)
+        {
+            var room = GetRoomByRef(i);
+            if (room.parentFloor == roomFloorRef) roomsInSameFloor.Add(room);
+            else roomsInDifferentFloor.Add(room);
+        }
 
-        bool imprisoned = scr_System_CampaignManager.current.FindInstanceByID(charaRefID).isRestrained;
 
-        
+
         Parallel.ForEach(roomsInSameFloor, target =>
         {
             var path = Findpath(roomRef, target, imprisoned);
@@ -703,7 +754,7 @@ public class Map_Instance
             roomDict.TryAdd(target.RefID, path);
         });
 
-        if (!alwaysGetDifferentFloors && resultsHolder.Count > 0)
+        if (!randInsteadofShortest && resultsHolder.Count > 0)
         {
             // Convert to regular dictionary
             return resultsHolder.ToDictionary(
@@ -711,12 +762,7 @@ public class Map_Instance
                 kvp => kvp.Value.ToDictionary(p => p.Key, p => p.Value)
             ).ToSortedDictionary();
         }
-
-        var roomRefsInDifferentFloor = targetRooms.FindAll(x => !roomRefsInSameFloor.Contains(x));
-        var roomsInDifferentFloor = new List<Room_Instance>();
-        foreach (var i in roomRefsInDifferentFloor) roomsInDifferentFloor.Add(GetRoomByRef(i));
-
-        
+                
         Parallel.ForEach(roomsInDifferentFloor, target =>
         {
             var path = Findpath(roomRef, target, imprisoned);
@@ -737,6 +783,222 @@ public class Map_Instance
             kvp => kvp.Key,
             kvp => kvp.Value.ToDictionary(p => p.Key, p => p.Value)
         ).ToSortedDictionary();
+    }*/
+
+
+
+    public SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> FilterValidPathsOptimized(Character_Trainable charaInstance, List<int> targetRooms, bool randInsteadofShortest = false)
+    {
+        // 1. Setup & Distinct Targets
+        var distinctTargets = new HashSet<int>(targetRooms);
+        var results = new ConcurrentDictionary<int, ConcurrentDictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>>();
+
+        var roomRef = FindRoomByChara(charaInstance.RefID);
+
+
+        // Prepare lists
+        var sameFloorTargets = new List<Room_Instance>();
+        var diffFloorTargets = new List<Room_Instance>();
+
+        var startFloorRef = GetFloorByRoomRefID(roomRef.RefID);
+
+        foreach (var tid in distinctTargets)
+        {
+            var tr = GetRoomByRef(tid);
+            if (tr == null) continue;
+
+            var tf = GetFloorByRoomRefID(tid);
+            if (startFloorRef != null && tf == startFloorRef)
+                sameFloorTargets.Add(tr);
+            else
+                diffFloorTargets.Add(tr);
+        }
+
+        // ==============================================================================
+        // PHASE 1: Same Floor Pathfinding (Batch Calculation)
+        // ==============================================================================
+
+        // We run the algorithm ONCE for the start node to find paths to ALL nodes on this floor.
+        VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>> startFloorObserver = null;
+
+        if (startFloorRef != null && graphsImmutable.ContainsKey(startFloorRef.mapTemplateInstanceID))
+        {
+            startFloorObserver = RunDijkstraForFloor(startFloorRef.mapTemplateInstanceID, roomRef.RefID);
+        }
+
+        // Now we extract the paths in parallel (Safe because we are only READING the observer)
+        Parallel.ForEach(sameFloorTargets, target =>
+        {
+            if (roomRef.RefID == target.RefID) AddResult(results, target.RefID, null); ; // Ignore self (cost 0)
+
+            IEnumerable<TaggedEdge<int, Door_Instance>> path = null;
+
+            // Try get path from our pre-calculated observer
+            if (startFloorObserver != null && startFloorObserver.TryGetPath(target.RefID, out path))
+            {
+                AddResult(results, target.RefID, path);
+            }
+        });
+
+        // If we found paths and don't need to check other floors, sort and return now
+        /*
+        if (!alwaysGetDifferentFloors && !results.IsEmpty)
+        {
+            return ConvertToSortedResult(results);
+        }*/
+
+        // ==============================================================================
+        // PHASE 2: Different Floor Pathfinding (Start -> Exit -> Teleport -> Entrance -> Target)
+        // ==============================================================================
+
+        // 1. Get Path to the Faction Exit on the current floor (Reuse the observer!)
+        IEnumerable<TaggedEdge<int, Door_Instance>> pathToExit = null;
+        var fromFaction = roomRef.FactionOwner?.FactionOwnerRoot;
+
+        // Ensure we have a valid start faction and path to its exit
+        if (fromFaction != null && startFloorObserver != null)
+        {
+            startFloorObserver.TryGetPath(fromFaction.MainExit.RefID, out pathToExit);
+        }
+
+        // Only proceed if we can actually leave the current floor (or if start floor is null/invalid)
+        if (pathToExit != null || startFloorRef == null)
+        {
+            // Group targets by their floor to batch process the "End" segment
+            var targetsByFloor = diffFloorTargets
+                .GroupBy(t => t.parentFloor == null ? -1 : t.parentFloor.mapTemplateInstanceID)
+                .ToList();
+
+            Parallel.ForEach(targetsByFloor, group =>
+            {
+                int targetFloorID = group.Key;
+                if (targetFloorID == -1) return;
+
+                // Find the faction entrance on this target floor
+                // Note: Simplification assuming all targets in this group belong to a faction connected to start
+                var firstTarget = group.First();
+                var toFaction = firstTarget.FactionOwner?.FactionOwnerRoot;
+
+                if (toFaction == null || !isConnectedFaction(fromFaction, toFaction)) return;
+
+                // Run Dijkstra ONCE for this target floor, starting from the Faction Entrance
+                var targetFloorObserver = RunDijkstraForFloor(targetFloorID, toFaction.MainExit.RefID);
+
+                if (targetFloorObserver == null) return;
+
+                // Create the teleport edge
+                var teleportEdge = new TaggedEdge<int, Door_Instance>(
+                    fromFaction.MainExit.RefID,
+                    toFaction.MainExit.RefID,
+                    new Door_Instance(5) // Your fixed cost
+                );
+
+                // For every target on this specific floor, stitch the path together
+                foreach (var target in group)
+                {
+                    if (targetFloorObserver.TryGetPath(target.RefID, out var pathFromEntrance))
+                    {
+                        // Combine: PathToExit + Teleport + PathFromEntrance
+                        var fullPath = CombinePaths(pathToExit, teleportEdge, pathFromEntrance);
+                        AddResult(results, target.RefID, fullPath);
+                    }
+                }
+            });
+        }
+
+        return ConvertToSortedResult(results);
+    }
+
+    // ------------------------------------------------------------------------------
+    // HELPER FUNCTIONS
+    // ------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Runs the A* Algorithm (configured as Dijkstra) on a specific floor graph.
+    /// Returns the Observer containing ALL shortest paths from the startNode.
+    /// </summary>
+    private VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>> RunDijkstraForFloor(int floorID, int startNodeID)
+    {
+        if (!graphsImmutable.ContainsKey(floorID)) return null;
+
+        var graph = graphsImmutable[floorID];
+
+        // 1. Create Algorithm
+        // We use Heuristic = 0 to force Dijkstra behavior (Uniform Cost Search).
+        // This ensures the tree is valid for ALL targets, not biased toward one specific target.
+        var algo = new AStarShortestPathAlgorithm<int, TaggedEdge<int, Door_Instance>>(
+            graph,
+            edgeCost,
+            _ => 0
+        );
+
+        // 2. Create and Attach Observer
+        var observer = new VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>>();
+        using (observer.Attach(algo))
+        {
+            // 3. Compute (Must be done sequentially on this thread)
+            try
+            {
+                algo.Compute(startNodeID);
+            }
+            catch (Exception ex)
+            {
+                // Debug.LogError($"Pathfinding failed for floor {floorID}: {ex.Message}");
+                return null;
+            }
+        }
+
+        return observer;
+    }
+
+    /// <summary>
+    /// Combines path segments into a single list efficiently.
+    /// </summary>
+    private IEnumerable<TaggedEdge<int, Door_Instance>> CombinePaths(
+        IEnumerable<TaggedEdge<int, Door_Instance>> part1,
+        TaggedEdge<int, Door_Instance> connection,
+        IEnumerable<TaggedEdge<int, Door_Instance>> part2)
+    {
+        // Estimate capacity to reduce resizing
+        var list = new List<TaggedEdge<int, Door_Instance>>();
+
+        if (part1 != null) list.AddRange(part1);
+        list.Add(connection);
+        if (part2 != null) list.AddRange(part2);
+
+        return list;
+    }
+
+    /// <summary>
+    /// Adds a path to the concurrent results dictionary, keyed by Total Cost.
+    /// </summary>
+    private void AddResult(
+        ConcurrentDictionary<int, ConcurrentDictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> results,
+        int targetID,
+        IEnumerable<TaggedEdge<int, Door_Instance>> path)
+    {
+        float totalCost = 0;
+        if (path != null) foreach (var edge in path) totalCost += edge.Tag.Cost;
+
+        int costKey = (int)totalCost;
+
+        var roomDict = results.GetOrAdd(costKey, _ => new ConcurrentDictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>());
+        roomDict.TryAdd(targetID, path);
+    }
+
+    /// <summary>
+    /// Converts the concurrent structure to the final SortedDictionary output.
+    /// </summary>
+    private SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> ConvertToSortedResult(
+        ConcurrentDictionary<int, ConcurrentDictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> results)
+    {
+        // Using LINQ here is fine as it's done once at the very end
+        return new SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>>(
+            results.ToDictionary(
+                kvp => kvp.Key,
+                kvp => new Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>(kvp.Value)
+            )
+        );
     }
 
     /// <summary>

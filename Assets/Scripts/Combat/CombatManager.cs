@@ -146,9 +146,8 @@ public class CombatManager
         return false;
     }
 
-    [JsonProperty]
-    protected Dictionary<string ,List<int>> combatDummyRefIDs = new Dictionary<string ,List<int>>();
-    Dictionary<int, Character_Trainable> combatDummyRefs = new Dictionary<int, Character_Trainable>();
+    [JsonProperty] protected Dictionary<string ,List<int>> combatDummyRefIDs = new Dictionary<string ,List<int>>();
+    Dictionary<int, Character_Trainable> combatDummyRefs = null;
 
     [JsonIgnore]
     public Character_Trainable Dummy { get
@@ -158,9 +157,20 @@ public class CombatManager
 
     public Character_Trainable GetCombatDummy(string baseID, List<int> generatedIDs = null)
     {
-
         if (!combatDummyRefIDs.ContainsKey(baseID)) combatDummyRefIDs.Add(baseID, new List<int>() {});
             
+        if (combatDummyRefs == null)
+        {
+            combatDummyRefs = new Dictionary<int, Character_Trainable>();
+            foreach(var list in combatDummyRefIDs.Values)
+            {
+                foreach(var entry in list)
+                {
+                    combatDummyRefs.Add(entry, scr_System_CampaignManager.current.FindInstanceByID(entry));
+                }
+            }
+        }
+
         var refList = combatDummyRefIDs[baseID];
         if (refList.Count < 1 || (generatedIDs != null && refList.Except(generatedIDs).ToList().Count < 1))
         {
@@ -172,7 +182,6 @@ public class CombatManager
         }
         else
         {
-            var intRef = -1;
             if (generatedIDs != null)
             {
                 var list = refList.Except(generatedIDs).ToList();

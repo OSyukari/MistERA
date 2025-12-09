@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Xml;
-using System.Runtime.Serialization;
 using System.Linq;
 using Newtonsoft.Json;
 

@@ -1,0 +1,107 @@
+{
+    "Skills":
+    {
+        "list":
+        [
+            {
+                "ID":"skill_operating",
+                "tags":[],
+                "levels":
+                [   
+                    {
+                        "DisplayName":"-"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_operating", "operand":"gte", "value":10 }]
+                                }
+                            ]
+                         },
+                        "stat_modifiers":
+                        [
+
+                        ],
+                        "DisplayName":"1",
+                        "validUse": [{ 
+                            "skillUseTags":"operating"
+                        } ]
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_operating", "operand":"gte", "value":30 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+   
+                         ],
+                        "DisplayName":"2"
+                    },{
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_operating", "operand":"gte", "value":90 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+     
+                         ],
+                        "DisplayName":"3"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_operating", "operand":"gte", "value":150 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+           
+                         ],
+                        "DisplayName":"4"
+                    },
+                    {
+                        "requirements":{ 
+                            "$type":"CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries":[
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_operating", "operand":"gte", "value":300 }]
+                                }
+                            ]
+                         },
+                         "stat_modifiers":
+                         [
+           
+                         ],
+                        "DisplayName":"5"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "skill_operating": "操作技术",
+                "skill_operating_tooltip": "适用范围：驾驶，遥控，打游戏"
+            }
+        }
+    }
+        
+    
+}

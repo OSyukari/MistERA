@@ -5,6 +5,7 @@
         [
             {
                 "ID":"skill_sexSkill_sado",
+                "noDisplay":true,
                 "tags":["nsfw"],
                 "levels":
                 [   {

@@ -673,7 +673,7 @@ public static class UtilityEX
             if (a.CurrentJob != null) a.CurrentJob.GetActorAPTags(a.RefID, ownerTags,  ownerAPs);   // get a currentjob all self
             foreach (var status in a.Stats.StatusInstances) ownerTags.AddRange(status.Tags);    // get a statsinstancekeywords
             GetActorTag(ref ownerTags, a);
-            ownerTags = ownerTags.Distinct().ToList();
+            ownerTags = Utility.Distinct(ownerTags);
         }
 
         if (b != null)
@@ -682,7 +682,7 @@ public static class UtilityEX
             if (b.CurrentJob != null) b.CurrentJob.GetActorAPTags(b.RefID, targetTags);  // get a currentjob all self
             foreach (var status in b.Stats.StatusInstances) targetTags.AddRange(status.Tags);    // get a statsinstancekeywords
             GetActorTag(ref targetTags, b);
-            targetTags = targetTags.Distinct().ToList();
+            targetTags = Utility.Distinct(targetTags);
         }
     }
     public static void GetEPsFrom(Character_Trainable a, Character_Trainable b, out List<EvaluationPackage> ownerEPs, out List<EvaluationPackage> targetEPs)
@@ -727,7 +727,7 @@ public static class UtilityEX
             if (a.CurrentJob != null) a.CurrentJob.GetActorAPs(a.RefID, APs);   // get a currentjob all self
         }
 
-        APs = APs.Distinct().ToList();
+        APs = Utility.Distinct(APs);
     }
 
     public static void GetInteractionTagsFrom(Character_Trainable a, Character_Trainable b, COM com, int variantID, ref List<string> ownerTags, ref List<string> extraComTags, ref List<string> extraTargetTags)
@@ -1040,158 +1040,21 @@ public static class UtilityEX
         if (parsedSuccessful) Debug.Log(s);
     }
 
-    public static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Base source)
+    static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Base source)
     {
         return modifier.ValidateAccess(isStatEx, isStatDerived, false, false);
     }
-    public static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Derived_Base source)
+    static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Derived_Base source)
     {
         return modifier.ValidateAccess(isStatEx, isStatDerived, true, false);
     }
-    public static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Derived_Extended_Instance source)
+    static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Derived_Extended_Instance source)
     {
         return modifier.ValidateAccess(isStatEx, isStatDerived, true, true);
     }
-    public static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, StatusEx_Instance source)
+    static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, StatusEx_Instance source)
     {
         return modifier.ValidateAccess(isStatEx, isStatDerived, true, true, true, true);
-    }
-
-
-
-    public static float _ParseStatMods(object source, StatsManager c, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, List<string> stringResults = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false )
-    {
-
-
-        string sourceID = "";
-
-        foreach (var modifier in list)
-        {
-            // baseValue do not allow GetValue to prevent recursive calls
-            // if (modifier.ValueType != "number") continue;
-            // this filter is done in statmanager getmodifier stage
-
-            bool isStatEx = scr_System_Serializer.current.index_StatsExtended.list.Find(x => x.ID == modifier.valueString) != null;
-            bool isStatDerived = scr_System_Serializer.current.index_StatsDerived.list.Find(x => x.ID == modifier.valueString) != null;
-
-            if (source == null)
-            {
-                // do nothing
-                Debug.LogError("source is null");
-            }
-            else if (source is Stats_Base)
-            {
-                sourceID = (source as Stats_Base).ID;
-                //Debug.LogError("source is Stats_Base " + sourceID);
-                if (!isValidQuery(isStatEx, isStatDerived, modifier,(Stats_Base)source)) continue;
-            }
-            else if (source is Stats_Derived_Base)
-            {
-                sourceID = (source as Stats_Derived_Base).ID;
-                //Debug.LogError("source is Stats_Derived_Base " + sourceID);
-                if (!isValidQuery(isStatEx, isStatDerived, modifier, (Stats_Derived_Base)source)) continue;
-            }
-            else if (source is Stats_Derived_Extended_Instance)
-            {
-                sourceID = (source as Stats_Derived_Extended_Instance).ID;
-                //Debug.LogError("source is Stats_Derived_Extended_Instance " + sourceID);
-                if (!isValidQuery(isStatEx, isStatDerived, modifier, (Stats_Derived_Extended_Instance)source)) continue;
-            }
-            else if (source is StatusEx_Instance)
-            {
-                sourceID = (source as StatusEx_Instance).BaseRef.statusID;
-                //Debug.LogError("source is StatusEx_Instance " + sourceID);
-                if (!isValidQuery(isStatEx, isStatDerived, modifier, (StatusEx_Instance)source)) continue;
-            }
-            else
-            {
-                Debug.LogError("source is else");
-                continue;
-            }
-
-            if (!storage.ContainsKey(modifier.modKey))
-            {
-                var newEntry = new StatsManager.ModStorage(1);
-                storage.Add(modifier.modKey, newEntry);
-            }
-            switch (modifier.type)
-            {
-                case Stat_Modifier.StatMod_Type.setBase:
-                    storage[modifier.modKey].baseValue = UtilityEX.StatValue(modifier, c);
-                    break;
-                case Stat_Modifier.StatMod_Type.setMult:
-                    storage[modifier.modKey].baseMult = UtilityEX.StatValue(modifier, c);
-                    break;
-                case Stat_Modifier.StatMod_Type.addMult:
-                    storage[modifier.modKey].addMult += UtilityEX.StatValue(modifier, c);
-                    break;
-                case Stat_Modifier.StatMod_Type.addBase:
-                    storage[modifier.modKey].addValue += UtilityEX.StatValue(modifier, c);
-                    break;
-            }
-        }
-
-        //ModStorage baseMod = modifiers["baseValue"];
-        //ModStorage finalMod = modifiers["finalMod"];
-        StatsManager.ModStorage finalMod = null;
-        float mods = 0f;
-
-        if (capModded) 
-        {
-            valueCeiling = 0f;
-            valueFloor = 0f;
-        }
-
-        foreach (var kvp in storage)
-        {
-            if (kvp.Key == "finalMod")
-            {
-                finalMod = storage["finalMod"];
-                continue;
-            }
-            if (stringResults != null) stringResults.Add(kvp.Key + " (" + kvp.Value.baseValue + "+" + kvp.Value.addValue + ")*(" + kvp.Value.baseMult + "+" + kvp.Value.addMult + ")");
-            var value = (kvp.Value.baseValue + kvp.Value.addValue) * (kvp.Value.baseMult + kvp.Value.addMult);
-            mods += value;
-            if (capModded)
-            {
-                valueCeiling = Math.Max(value, valueCeiling);
-                valueFloor = Math.Min(value, valueFloor);
-            }
-        }
-
-        if (finalMod != null)
-        {
-            if (stringResults != null) stringResults.Add("finalMod " + "* (" + finalMod.baseMult + " + " + finalMod.addMult + ") "+  "(" + finalMod.baseValue + "+" + finalMod.addValue + ")");
-            mods = mods * (finalMod == null ? 1 : (finalMod.baseMult + finalMod.addMult)) + (finalMod == null ? 0 : (finalMod.baseValue + finalMod.addValue));
-        }
-        else
-        {
-            //Debug.LogError("FinalMod not found for statID " + sourceID);
-        }
-
-        if (mods > valueCeiling) return valueCeiling;
-        else if (mods < valueFloor) return valueFloor;
-        else return mods;
-
-    }
-
-    public static bool Stat_Modifier_isStatEx(Stat_Modifier mod)
-    {
-        if (!mod.initialized)
-        {
-            mod.initialized = true;
-            mod._isStatEX = scr_System_Serializer.current.index_StatsExtended.list.Any(x => x.ID == mod.valueString);
-            mod._isStatDerived = scr_System_Serializer.current.index_StatsDerived.list.Any(x => x.ID == mod.valueString);
-        }
-        return mod._isStatEX;
-    }
-    public static bool Stat_Modifier_isStatDerived(Stat_Modifier mod)
-    {
-        if (!mod.initialized)
-        {
-            mod.initialized = true;
-        }
-        return mod._isStatDerived;
     }
 
     public static ObjectPool<StringBuilder> StringBuilderPool = new DefaultObjectPoolProvider().CreateStringBuilderPool(); 
@@ -1209,13 +1072,25 @@ public static class UtilityEX
     /// <param name="capModded">Restrict valueFloor and valueCeiling to the max magnitude of every single mod, used for mood related.</param>
     /// <param name="allowOvercap">Allow value calculation to ge above min or max cap during calculation stage, will only take effect if capModded == false<br/>true: will only clamp value after all calculations<br/>false: will clamp after every step</param>
     /// <returns></returns>
-    public static float ParseStatMods(object source, I_StatsManager stats, Dictionary<string, StatsManager.ModStorage> storage, List<Stat_Modifier> list, StatRecord record = null, float valueFloor = 0f, float valueCeiling = 999f, bool capModded = false, bool allowOvercap = true)
+    public static float ParseStatMods(object source, StatModStorage storage, List<Stat_Modifier> list)
     {
-
-
-        string sourceID = string.Empty;
         var statsExtList = scr_System_Serializer.current.index_StatsExtended.list;
         var statsDerivedList = scr_System_Serializer.current.index_StatsDerived.list;
+
+        storage.Reset();
+        // pre-assigne validator function
+        Func<Stat_Modifier, bool> validator = null;
+        // Assign the correct validator based on type
+        if (source is Stats_Base sb)                            validator = (m) => isValidQuery(m._isStatEX, m._isStatDerived, m, sb);
+        else if (source is Stats_Derived_Base db)               validator = (m) => isValidQuery(m._isStatEX, m._isStatDerived, m, db);
+        else if (source is Stats_Derived_Extended_Instance ex)  validator = (m) => isValidQuery(m._isStatEX, m._isStatDerived, m, ex);
+        else if (source is StatusEx_Instance sex)               validator = (m) => isValidQuery(m._isStatEX, m._isStatDerived, m, sex);
+        else
+        {
+            Debug.LogError("source is of unknown type");
+            return 0f;
+        }
+
 
         foreach (var modifier in list)
         {
@@ -1226,112 +1101,18 @@ public static class UtilityEX
             if (!modifier.initialized)
             {
                 modifier.initialized = true;
-                modifier._isStatEX = statsExtList.Any(x => x.ID == modifier.valueString);
-                modifier._isStatDerived = statsDerivedList.Any(x => x.ID == modifier.valueString);
+                foreach (var i in statsExtList) if (modifier.valueString == i.ID) { modifier._isStatEX = true; break; }
+                foreach (var i in statsDerivedList) if (modifier.valueString == i.ID) { modifier._isStatDerived = true; break; }
             }
 
-            switch (source)
+            if (!validator(modifier))
             {
-                case null:
-                    Debug.LogError("source is null");
-                    continue;
-
-                case Stats_Base statsBase:
-                    sourceID = statsBase.ID;
-                    if (!isValidQuery(modifier._isStatEX, modifier._isStatDerived, modifier, statsBase)) continue;
-                    break;
-
-                case Stats_Derived_Base derivedBase:
-                    sourceID = derivedBase.ID;
-                    if (!isValidQuery(modifier._isStatEX, modifier._isStatDerived, modifier, derivedBase)) continue;
-                    break;
-
-                case Stats_Derived_Extended_Instance extended:
-                    sourceID = extended.ID;
-                    if (!isValidQuery(modifier._isStatEX, modifier._isStatDerived, modifier, extended)) continue;
-                    break;
-
-                case StatusEx_Instance statusEx:
-                    sourceID = statusEx.BaseRef.statusID;
-                    if (!isValidQuery(modifier._isStatEX, modifier._isStatDerived, modifier, statusEx)) continue;
-                    break;
-
-                default:
-                    Debug.LogError("source is of unknown type");
-                    continue;
-            }
-
-            if (!storage.TryGetValue(modifier.modKey, out var entry))
-            {
-                entry = new StatsManager.ModStorage(1);
-                storage.Add(modifier.modKey, entry);
-            }
-
-            float value = UtilityEX.StatValue(modifier, stats); // avoid calling this 4x
-            switch (modifier.type)
-            {
-                case Stat_Modifier.StatMod_Type.setBase:
-                    entry.baseValue = value;
-                    break;
-                case Stat_Modifier.StatMod_Type.setMult:
-                    entry.baseMult = value;
-                    break;
-                case Stat_Modifier.StatMod_Type.addMult:
-                    entry.addMult += value;
-                    break;
-                case Stat_Modifier.StatMod_Type.addBase:
-                    entry.addValue += value;
-                    break;
-            }
-        }
-
-        //ModStorage baseMod = modifiers["baseValue"];
-        //ModStorage finalMod = modifiers["finalMod"];
-        if (capModded)
-        {
-            valueCeiling = 0f;
-            valueFloor = 0f;
-        }
-
-        float mods = 0f;
-        StatsManager.ModStorage finalMod = null;
-
-
-        foreach (var kvp in storage)
-        {
-            if (kvp.Key == "finalMod")
-            {
-                finalMod = kvp.Value;
                 continue;
             }
 
-            float v = (kvp.Value.baseValue + kvp.Value.addValue) * (kvp.Value.baseMult + kvp.Value.addMult);
-            mods += v;
-
-
-            if (capModded)
-            {
-                valueCeiling = Math.Max(v, valueCeiling);
-                valueFloor = Math.Min(v, valueFloor);
-            }
-            else if (!allowOvercap)
-            {
-                mods = Mathf.Clamp(mods, valueFloor, valueCeiling);
-            }
-
-            if (record != null) record.AddEntry(kvp.Key, kvp.Value);
+            storage.Merge(modifier);
         }
-
-
-        if (finalMod != null)
-        {
-            if (record != null) record.AddEntry(string.Empty, finalMod);
-            mods = mods * (finalMod.baseMult + finalMod.addMult) + (finalMod.baseValue + finalMod.addValue);
-        }
-
-        var final = Mathf.Clamp(mods, valueFloor, valueCeiling);
-        if (record != null) record.SetValue(final);// .value = final;
-        return final;
+        return storage.Value;
     }
 
     

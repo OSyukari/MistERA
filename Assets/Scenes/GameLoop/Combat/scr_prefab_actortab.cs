@@ -135,7 +135,13 @@ public class scr_prefab_actortab : MonoBehaviour, IPointerEnterHandler
             preset_strs.Add(preset.Value.ID);
         }
 
-        this.action.SetExternalTooltip($"Valid Presets:\n{String.Join("\n", preset_strs)}");
+        var ss = new List<string>();
+        foreach(var i in c.Inventory.Contents)
+        {
+            ss.Add(i.Print());
+        }
+
+        this.action.SetExternalTooltip($"Inventory: {String.Join("|", ss)}\nValid Presets:\n{String.Join("\n", preset_strs)}");
 
         var actorActions = Handler.ActionsByCharaRef(c.RefID);
         maxIndex = Handler.MaxActionsByCharaRef(c.RefID);// actorActions.Count < 2 ? 2 : actorActions.Last().ActionSlotIndex;

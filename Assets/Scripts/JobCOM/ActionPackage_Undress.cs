@@ -91,7 +91,7 @@ public class ActionPackage_Undress : ActionPackage
         //Debug.Log("ActionPackage_Undress Evaluate on " + DisplayName);
         return true;
     }
-    protected override bool Request(bool rebuildPackage = true)
+    protected override bool Request(bool rebuildPackage = true, bool forceAccept = false)
     {
         if (rebuildPackage)
         {

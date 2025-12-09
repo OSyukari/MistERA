@@ -761,6 +761,27 @@ public static class EventUtility
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
 
                     var randpackage = Utility.GetRandomElement(packages);
+                    return randpackage.JoinAP(owner.Self, true);
+                }
+                else
+                {
+                    return false;
+                }
+            case Event.EventEntry.ExecutionType.TryJoinTargetJob:
+                if (exec.arguments.Count >= 2)
+                {
+                    var targetList = owner.Targets[exec.arguments[0]];
+                    var target = targetList.Count < 1 ? null : Utility.GetRandomElement(targetList);
+                    var targetJob = target == null ? null : target.CurrentJob;
+                    var packages = targetJob == null ? new List<ActionPackage>() : targetJob.GetExistingPackages(target, false, false, false).FindAll(x => x.AllowJoining && (exec.arguments[1] == "" || x.ComTags.Contains(exec.arguments[1])));
+                    if (packages.Count < 1)
+                    {
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob cannot find package containg keyword [{exec.arguments[1]}], key[{exec.arguments[0]}] targs[{targetList.Count} targ[{(target == null ? "null" : target.FirstName)}");
+                        return false;
+                    }
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
+
+                    var randpackage = Utility.GetRandomElement(packages);
                     return randpackage.JoinAP(owner.Self);
                 }
                 else
@@ -786,7 +807,7 @@ public static class EventUtility
                         return false;
                     }
 
-                    Debug.Log($"CheckRelationship between {exec.arguments[0]} and {exec.arguments[1]}");
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Relationships) Debug.Log($"CheckRelationship between {exec.arguments[0]} and {exec.arguments[1]}");
 
                     foreach(var a in ca)
                     {

@@ -5,6 +5,7 @@
         [
             {
                 "ID":"skill_addiction_sex",
+                "noDisplay":true,
                 "tags":["nsfw"],
                 "levels":
                 [   {

@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public class COM_Requirements
 {
 
@@ -91,11 +90,19 @@ public class COM_Requirements
         {
             //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
             //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
+            var actorSet = new HashSet<int>();
+            foreach (var id in doerRefIDs) { if (id >= 0) actorSet.Add(id); }
+            if (TreatReceiverAsDoer)
+            {
+                foreach (var id in receiverRefIDs) { if (id >= 0) actorSet.Add(id); }
+            }
+            var actorCount = new List<int> (actorSet);
+            /*
             var actorCount = new List<int>();
             actorCount.AddRange(doerRefIDs);
             if (TreatReceiverAsDoer) actorCount.AddRange(receiverRefIDs);
-            actorCount = actorCount.Distinct().ToList();
             actorCount.RemoveAll(x=>x < 0);
+            */
 
             if (doerCount == -1) { }
             else if (doerCount == 0 && doerRefIDs.Count == 0 && (!treatReceiverAsDoer || receiverRefIDs.Count == 0)) { }
@@ -178,7 +185,7 @@ public class COM_Requirements
         public bool ValidateCondition(ref List<string> tooltip, List<int> doerRefIDs, List<int> receiverRefIDs, COM com, COM.COM_Variant variant = null)
         {
 
-            int actorRef = doerRefIDs.Count > 0 ? doerRefIDs.First(x => x > -1) : (receiverRefIDs.Count > 0 ? receiverRefIDs.First(x => x > -1) : -1);
+            int actorRef = doerRefIDs.Count > 0 ? doerRefIDs[0] : (receiverRefIDs.Count > 0 ? receiverRefIDs[0] : -1);
 
             List<string> comtgs = (variant != null && variant.requirements.requireExisting.isValid && variant.requirements.requireExisting.comTags.Count > 0 ?
                 variant.requirements.requireExisting.comTags : com.requirements.requireExisting.comTags);

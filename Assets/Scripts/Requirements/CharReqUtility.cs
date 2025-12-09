@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
-using System.Linq;
 
 public static class CharaReqUtility
 {
@@ -131,7 +130,7 @@ public static class CharaReqUtility
     }
     public static bool Validate(CharaReq q, ref List<string> _tooltip, List<int> actorRefIDs)
     {
-        var list = new List<Character_Trainable>();
+        var list = new List<Character_Trainable>(actorRefIDs.Count);
         foreach (var i in actorRefIDs)
         {
             list.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
@@ -147,12 +146,12 @@ public static class CharaReqUtility
         //Debug.Log("ApplyCOST for com " + m.targetCOM.DisplayName(m.VariantID) + " on chara " + c.FirstName);
         if (q != null && q.cost_EN != 0f)
         {
-            msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
+            if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
             c.Stats.Energy.ModValue(-q.cost_EN);
         }
         if (q != null && q.cost_ST != 0f)
         {
-            msg.exp.AddStats(c.RefID, "stats_derived_extended_stamina", -q.cost_ST);
+            if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_stamina", -q.cost_ST);
             c.Stats.Stamina.ModValue(-q.cost_ST);
         }
 
@@ -161,7 +160,7 @@ public static class CharaReqUtility
         if (tags.Contains("interaction") && (!tags.Contains("service") || isDoer) && !tags.Contains("NonInteraction") && (!tags.Contains("ignored")) && !(c.Stats.isConsciousnessUnconscious))
         {
             // interaction cost
-            msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
+            if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
             c.Stats.Energy.ModValue(c.Stats.Energy_InteractionCost);
         }
     }

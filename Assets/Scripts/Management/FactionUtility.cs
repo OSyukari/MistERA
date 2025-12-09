@@ -33,6 +33,9 @@ public static class FactionUtility
     public static bool TryFindValidNonJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, Dictionary<int, List<int>> managedRoomRefs, out List<Job_Furniture> list, Character_Trainable c, string comID = "", string comTag = "", bool checkBlacklist = false)
     {
         list = new List<Job_Furniture>();
+        var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+        var prisonRefID = c.isImprisoned && charaRoom.isRoomPrison ? charaRoom.RefID : -1;
+
         foreach (var key in jobs.Keys)
         {
             //Debug.Log("TryFindValidNonJobInstances checking nonjobpost [" + key.ID + "] with [" + nonjobPosts[key].Count +"] entries");
@@ -43,18 +46,31 @@ public static class FactionUtility
             {
                 if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
                 {
+                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job blacklisted");
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                     continue;
                 }
                 else if (!post.ValidateActor(c, key))
                 {
+                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError($"Error jail job ValidateActor Fail on {post.DisplayName}");
                     continue;
                 }
                 else if (post.ParentRoom.isRoomPrivate && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID))
                 {
+                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job isRoomPrivate Fail");
                     continue;
                 }
-                else if (c.isImprisoned != post.ParentRoom.isRoomPrison) continue;
+                else if (c.isImprisoned != post.ParentRoom.isRoomPrison)
+                {
+                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job isRoomPrison Fail");
+                    continue;
+                }
+                else if (prisonRefID != -1 && prisonRefID != post.ParentRoom.RefID)
+                {
+                    //Debug.Log($"Chara {c.CallName} is in jail{prisonRefID}{charaRoom.DisplayName}, cannot leave to {post.ParentRoom.RefID}{post.ParentRoom.DisplayName}");
+                   // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job prisonRefID != post.ParentRoom.RefID Fail");
+                    continue;
+                }
                 else if (c.isRestrained && c.Jail.ownerJob != post)
                 {
                     continue;
@@ -129,7 +145,7 @@ public static class FactionUtility
 
         List<int> rooms = new List<int>();
         foreach (var x in possibleJobs) rooms.Add(x.ParentRoom.RefID);
-        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsParallel(chara.RefID, rooms, randInsteadofShortest);
+        SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> sortedList = scr_System_CampaignManager.current.Map.FilterValidPathsOptimized(chara, rooms, randInsteadofShortest);
 
         Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>> list = null;
 
@@ -142,15 +158,11 @@ public static class FactionUtility
             list = sortedList.First().Value;
             possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
         }
-        else if (randInsteadofShortest)
+        else
         {
             var randIndex = Utility.GetRandomElement(sortedList.Keys.ToList());
             list = sortedList[randIndex];
             possibleJobs = possibleJobs.FindAll(x => list.ContainsKey(x.ParentRoom.RefID));
-        }
-        else
-        {
-            possibleJobs = new List<Job_Furniture>();
         }
 
 

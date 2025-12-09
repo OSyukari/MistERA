@@ -6,7 +6,6 @@
             "ID":"campaign_starfarers",
             "displayName":"Starfarers",
             "tooltip":"A limited-scope campaign aimed at learning or experimenting with game systems.\nAll combat and adult contents are not available in this campaign.\nScope: Settlement (NPC management, social interactions, survival)\nLimit: Player Character Origin must be Traveler across Gates, all starting gifts are disabled.\n\nThis is a parody of Blue Archive.",
-            "requireOriginID":"charOrigin_TraveleracrossGates",
             "extraOptions":[
                 {
                     "ID":"campaign1_start_default",
@@ -70,7 +69,11 @@
 {
     "initClass":"campaign_init_factionVisitor",
     "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Cinderella","External","Prisoner"]
-}
+},
+
+{ "initClass":"campaign_init_factionVisitor", "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Rapi","External","Prisoner"]},
+{ "initClass":"campaign_init_factionVisitor", "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Neon","External","Prisoner"]},
+{ "initClass":"campaign_init_factionVisitor", "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Anis","External","Prisoner"]}
                     ]
                 }
             ]
@@ -89,7 +92,8 @@
                     "statID":"Willpower",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
-            ] 
+            ] ,
+            "requireOriginID":["charOrigin_KivotosStudent"]
         },
         {
             "ID": "humanRaceAddon_Kivotos_Gehenna",
@@ -100,7 +104,8 @@
                     "statID":"Strength",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
-            ] 
+            ] ,
+            "requireOriginID":["charOrigin_KivotosStudent"]
         },
         {
             "ID": "humanRaceAddon_Kivotos_Millenium",
@@ -111,7 +116,8 @@
                     "statID":"Psyche",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
-            ] 
+            ] ,
+            "requireOriginID":["charOrigin_KivotosStudent"]
         },
         {
             "ID": "humanRaceAddon_Kivotos_GSC",
@@ -122,7 +128,8 @@
                     "statID":"Willpower",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
-            ] 
+            ] ,
+            "requireOriginID":["charOrigin_KivotosStudent"]
         },
         {
             "ID": "humanRaceAddon_Kivotos_Abydos",
@@ -133,7 +140,8 @@
                     "statID":"Constitution",
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
-            ] 
+            ] ,
+            "requireOriginID":["charOrigin_KivotosStudent"]
         }
     ]
     },

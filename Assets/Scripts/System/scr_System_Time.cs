@@ -136,7 +136,7 @@ public class scr_System_Time : MonoBehaviour
     /// <summary>
     /// This update timespan already takes care of timestop calculation
     /// </summary>
-    public event Action<TimeSpan> Observer_globalTime;
+    public event Action<TimeSpan, TimeSpan> Observer_globalTime;
     /// <summary>
     /// Day update happens after Hours update
     /// </summary>
@@ -162,11 +162,11 @@ public class scr_System_Time : MonoBehaviour
         Observer_globalTime_Day?.Invoke(3);
     }
 
-    private void UpdateMinute(int amount)
+    private void UpdateMinute(int amount, int realTime)
     {
         // handle single tick, observers might need local last_updated tracker if they dont want update
         currentDate += TimeSpan.FromMinutes(amount);
-        Observer_globalTime?.Invoke(TimeSpan.FromMinutes(amount));
+        Observer_globalTime?.Invoke(TimeSpan.FromMinutes(amount), TimeSpan.FromMinutes(realTime));
         if (amount != 0 && (currentDate.Minute % 5) == 0) Observer_globalTime_5min?.Invoke(TimeSpan.FromMinutes(5));
     }
 
@@ -197,14 +197,14 @@ public class scr_System_Time : MonoBehaviour
 
         if (timeStop != TimestopState.normal)
         {
-            UpdateMinute(0);
+            UpdateMinute(0, 1);
         }
         else
         {
             for (int i = 0; i < counter_minutes; i += timescale)
             {
                 
-                UpdateMinute(timescale);
+                UpdateMinute(timescale, timescale);
 
                 if (currentDate.Hour != CurrentHour)
                 {

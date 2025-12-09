@@ -377,7 +377,7 @@ public class Event : I_SerializationCallbackReceiver
             /// [Self/targetlabel, eventid, eventlabel, originalSelfLabel]
             /// </summary>
             StartEvent,
-            JoinTargetJob,
+            JoinTargetJob, TryJoinTargetJob,
             /// <summary>
             /// require Targets containing scopeKeys: teamA_frontline, teamA_backline, teamB_frontline, teamB_backline
             /// </summary>

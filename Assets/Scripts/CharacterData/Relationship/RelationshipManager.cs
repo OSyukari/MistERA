@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -20,6 +19,11 @@ public class RelationshipManager
             }
             return _personality;
         }
+    }
+
+    public void RefreshAttitudes()
+    {
+        foreach (var rel in this.Relationships) rel.ResetAttitude();
     }
 
     public void HourlyRefresh()
@@ -105,7 +109,8 @@ public class RelationshipManager
     {
         get
         {
-            var list = relationships.Values.Where(x => x.displayable).ToList();
+            var list = new List<Character_Relationship>( relationships.Count);
+            foreach(var rel in relationships.Values) if (rel.displayable) list.Add(rel);
             list.Sort(SortRelationship);
             return list;
         }
@@ -116,7 +121,8 @@ public class RelationshipManager
     {
         get
         {
-            var list = relationships.Values.Where(x => x.displayable).ToList();
+            var list = new List<Character_Relationship>(relationships.Count);
+            foreach (var rel in relationships.Values) if (rel.displayable) list.Add(rel);
             list.Sort(SortDesire);
             return list;
         }
@@ -259,7 +265,7 @@ public class RelationshipManager
         foreach (var i in relationships) i.Value.PostReloadUpdate();
     }
 
-    public void IncreaseRelationshipWith(int targetRef, RelationshipScoreType relID, float amount, ExperienceLog exp = null)
+    public void IncreaseRelationshipWith(int targetRef, RelationshipScoreType relID, float amount, ExperienceLog exp = null, bool silent= true)
     {
         if (targetRef == ownerRef) return;
         Character_Relationship targetRel = FindRelationshipWith(targetRef);
@@ -272,7 +278,7 @@ public class RelationshipManager
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Relationships) Debug.Log($"{Owner.FirstName} relationship increase {relID}{amount} with {targetRel.Target.FirstName}");
         }
-        targetRel.ModRelationValue(relID, amount);
+        targetRel.ModRelationValue(relID, amount, silent);
 
         if (exp != null) exp.AddRelations(ownerRef, targetRef, relID, (int)amount);
     }
@@ -283,11 +289,12 @@ public class RelationshipManager
     /// <param name="ep"></param>
     /// <param name="m"></param>
     /// <returns></returns>
-    public void GetKOJOMessage(bool isDoer, EvaluationPackage ep, MessageCollect m)
+    public void GetKOJOMessage(bool isDoer, EvaluationPackage ep, MessageCollect m, Character_Relationship injectRel = null)
     {
         if (Owner.RefID == 0) return;
         Character_Relationship rel = null;
-        if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
+        if (injectRel != null) rel = injectRel;
+        else if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
         else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
 
         string cleanedID = ep.targetCOM.ID;
@@ -300,7 +307,6 @@ public class RelationshipManager
         {
             m.messages_kojo.Add(message);
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
-
         }
     }
 

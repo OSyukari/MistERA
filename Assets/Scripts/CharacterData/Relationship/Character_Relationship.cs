@@ -116,12 +116,12 @@ public class Character_Relationship
             return _currentAttitudeTooltip;
         } }
 
-    public RelationshipAttitude GetCurrentAttitude(bool forceRefresh = true)
+    public RelationshipAttitude GetCurrentAttitude(bool forceRefresh = false)
     {
         if (forceRefresh || _currentAttitude == null)
         {
-            if (forceRefresh || currentAttitude == "") UpdateAttitude(forceRefresh);
-            else SetCurrentAttitude(scr_System_Serializer.current.MasterList.Character_RelationshipAttitudes.GetByID(currentAttitude));
+            if (forceRefresh || currentAttitude == "") UpdateAttitude(forceRefresh, true);
+            else SetCurrentAttitude(scr_System_Serializer.current.MasterList.Character_RelationshipAttitudes.GetByID(currentAttitude), true);
         }
         return _currentAttitude;
     }
@@ -130,7 +130,7 @@ public class Character_Relationship
     /// Contains attitude change event trigger
     /// </summary>
     /// <param name="value"></param>
-    public void SetCurrentAttitude(RelationshipAttitude value, bool silent = false)
+    public void SetCurrentAttitude(RelationshipAttitude value, bool silent)
     {
         if (_currentAttitude == value) return;
         else if (value == null) return;
@@ -149,19 +149,6 @@ public class Character_Relationship
                         .Replace("$newAttitude$", value.DisplayName);
                     scr_System_CampaignManager.current.AddLog(Owner.RefID, s, true);
                 }
-
-                if (RelationshipCooldown == 0)
-                {
-                    var eventInstance = new EventInstance(this.Owner, "AttitudeChange", "");
-                    eventInstance.Targets.Add("target", new List<Character_Trainable>() { Target });
-
-                    _callback = new Action(() => {
-                        CheckMaintainRelationship();
-                    });
-                    scr_UpdateHandler.current.EventHandler.StartEventAuto(eventInstance);
-
-                }
-                
             }
             _currentAttitude = value;
             currentAttitude = value.ID;
@@ -178,7 +165,7 @@ public class Character_Relationship
     /// </summary>
     public void PostUpdateCallback()
     {
-        Debug.Log($"{Owner.CallName} Relationship PostUpdateCallback, existCallback? {_callback != null}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Relationships) Debug.Log($"{Owner.CallName} Relationship PostUpdateCallback, existCallback? {_callback != null}");
         if (!_callbackExecute && _callback != null)
         {
             _callbackExecute = true;
@@ -196,33 +183,30 @@ public class Character_Relationship
         {
             if (this.Relationship_Personal.CanUpgradeInto(this, out var relation, out var isA))
             {
+
                 RelationshipCooldown = 6;
                 TryChangeRelationship(relation, isA);
-                return;
+                
             }
-            else
-            {
-                //Debug.Log($"{Owner.CallName} Relationship CanMaintain {this.Relationship_Personal.displayName}");
-                return;
-            }
+            return;
         }
         else
         {
-            RelationshipCooldown = 6;
             //Debug.Log($"{Owner.CallName} Relationship CANNOT MAINTAIN RELATIONSHIP ");
             bool isA = false;
             RelationshipType relation = null;
+            var reverse = Target.Relationships.FindRelationshipWith(Owner);
             foreach (var rel in scr_System_Serializer.current.MasterList.RelationshipTypes.ProposableRelationships)
             {
                 if (rel == this.Relationship_Personal) continue;
-                if (rel.canPropose(false) && rel.isValid(this, false))
+                if (rel.canPropose(false) && rel.isValid(this, false) && rel.CanMaintain(reverse, true))
                 {
                     // event propose relationship change
                     relation = rel;
                     isA = true;
                     break;
                 }
-                else if (!rel.isEqualRelationship && rel.canPropose(true) && rel.isValid(this, true))
+                else if (!rel.isEqualRelationship && rel.canPropose(true) && rel.isValid(this, true) && rel.CanMaintain(reverse, false))
                 {
                     // event propose relationship change
                     relation = rel;
@@ -239,6 +223,7 @@ public class Character_Relationship
     {
         if (relation != null)
         {
+            RelationshipCooldown = 6;
             if (relation.requireTargetValidation(!isA))
             {
                 Debug.Log($"{Owner.CallName} new Relationship {relation.displayName} require validation, setting up event");
@@ -282,6 +267,7 @@ public class Character_Relationship
             }
             else
             {   // break
+                RelationshipCooldown = 6;
                 SetPersonalRelationship(null, isA, true);
             }
         }
@@ -446,7 +432,7 @@ public class Character_Relationship
     protected void OnRelationshioChange()
     {
         _trustCap_cached = false;
-        UpdateAttitude();
+        UpdateAttitude(false, true);
     }
 
 
@@ -891,6 +877,11 @@ public class Character_Relationship
         relationText = LocalizeDictionary.QueryThenParse("UI_chara_relationship_text");
     }
 
+    public void ResetAttitude()
+    {
+        _currentAttitude = null;
+    }
+
     public void PostReloadUpdate()
     {
         UpdateAttitude(false, true);
@@ -920,7 +911,7 @@ public class Character_Relationship
         }
     }
 
-    public void ModRelationValue(RelationshipScoreType type, float value)
+    public void ModRelationValue(RelationshipScoreType type, float value, bool silent = true)
     {
         if (type == RelationshipScoreType.Goodwill || type == RelationshipScoreType.Badwill)
         {
@@ -935,7 +926,24 @@ public class Character_Relationship
             relationshipScores[(int)type] += value;
         }
         _currentAttitudeTooltip.Clear();
-        if (Target != null) UpdateAttitude();
+        if (Target != null)
+        {
+            UpdateAttitude(false, silent);
+
+
+            if (!silent && RelationshipCooldown == 0)
+            {
+                var eventInstance = new EventInstance(this.Owner, "AttitudeChange", "");
+                eventInstance.Targets.Add("target", new List<Character_Trainable>() { Target });
+
+                _callback = new Action(() =>
+                {
+                    CheckMaintainRelationship();
+                });
+                scr_UpdateHandler.current.EventHandler.StartEventAuto(eventInstance);
+
+            }
+        }
     }
 
 }

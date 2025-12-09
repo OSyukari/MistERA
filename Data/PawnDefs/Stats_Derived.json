@@ -245,6 +245,12 @@
                 "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":-9999, "valueCeiling":9999 }
             },
             {
+                "id": "stats_derived_alcoholSensitivity",
+                "statKeyword":"",
+                "displayName":"Alcohol Sensitivity",
+                "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
+            },
+            {
                 "id": "stats_derived_carryCapacity",
                 "displayName":"Carry Capacity",
                 "statKeyword":"physical",
@@ -320,5 +326,80 @@
                 "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
             }
         ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+
+                "stats_derived_extended_hp": "HP",
+                "stats_derived_extended_hp_tooltip": "当该数值归零后，角色会无法战斗\n上限为10+%%stats_base_Constitution%%\n能在长休和睡觉中回复",
+                "stats_derived_extended_mp": "MP",
+                "stats_derived_extended_mp_tooltip": "%%notimplemented%%\n\nMana Point, required for casting spells.\nMaximum score is 0 + PSY Modifier + others.\nNaturally recovers during sleep or rest.",
+                "stats_derived_extended_energy": "精力",
+                "stats_derived_extended_energy_tooltip": "执行需要社交、脑力、和集中的工作时消耗\n上限为%%stats_base_Willpower%%*10+其他补正\n能通过睡眠或休息回复\n当精力过低时角色心情会降低，%%notimplemented%%",
+                "stats_derived_extended_stamina": "耐力",
+                "stats_derived_extended_stamina_tooltip": "执行体力劳动时消耗\n上限为%%stats_base_Constitution%%*10+其他补正\n能通过睡眠或休息回复\n当角色体力过低时会陷入疲劳状态，%%notimplemented%%",
+
+                "stats_derived_hp_max": "HP上限",
+                "stats_derived_hp_max_tooltip": "%%stats_derived_extended_hp_tooltip%%",
+                "stats_derived_damageReduction_HP": "伤害减免",
+                "stats_derived_damageReduction_HP_tooltip": "受到HP伤害时，能减去等同于该数值的伤害",
+                "stats_derived_mp_max": "MP上限",
+                "stats_derived_mp_max_tooltip": "%%notimplemented%%\n\n%%stats_derived_extended_energy%%",
+                "stats_derived_mp_dailyRecovery": "每日MP回复",
+                "stats_derived_mp_dailyRecovery_tooltip": "%%notimplemented%%",
+
+                "stats_derived_stamina_max": "体力上限",
+                "stats_derived_stamina_max_tooltip": "%%stats_derived_extended_stamina_tooltip%%",
+                "stats_derived_energy_max": "精力上限",
+                "stats_derived_energy_max_tooltip": "%%stats_derived_extended_energy_tooltip%%",
+                "stats_derived_fatigueThreshold": "疲劳阈值",
+                "stats_derived_fatigueThreshold_tooltip": "%%notimplemented%%",
+                "stats_derived_evasionBase": "闪避",
+                "stats_derived_evasionBase_tooltip": "用作战斗中计算角色的闪避基础值",
+                "stats_derived_speedMods": "速度",
+                "stats_derived_speedMods_tooltip": "用作战斗中计算角色的先攻基础值",
+                "stats_derived_foodConsumption": "食物消耗",
+                "stats_derived_foodConsumption_tooltip": "每日结算时，角色会消耗多少份食物\n\n只有需要食物的角色才会有该属性",
+                "stats_derived_waterConsumption": "水分消耗",
+                "stats_derived_waterConsumption_tooltip": "%%notimplemented%%",
+                "stats_derived_baselineObedience": "服从度加值",
+                "stats_derived_baselineObedience_tooltip": "决定角色间的人际关系和态度时，会加算该数值",
+                "stats_derived_carryCapacity": "负重能力",
+                "stats_derived_carryCapacity_tooltip": "%%notimplemented%%",
+
+
+                "stats_derived_sleepNeed": "睡眠需求",
+                "stats_derived_sleepNeed_tooltip": "角色每日需要的睡眠时间（小时单位）\n对该数值的修正只会在角色开始睡觉时取用",
+                "stats_derived_sleepDepth": "睡眠深度",
+                "stats_derived_sleepDepth_tooltip": "角色的睡眠深度，决定角色的睡眠有多容易被打断\n该数值不会低于1.0\n对该数值的修正只会在角色开始睡觉时取用",
+                "stats_derived_memoryEntryCount": "记忆数量",
+                "stats_derived_memoryEntryCount_tooltip": "该数值决定了角色的心情会受到多少项记忆条目影响（从新到旧）",
+                "stats_derived_memoryLength": "记忆时长",
+                "stats_derived_memoryLength_tooltip": "该数值决定了角色的每项（非永久的）记忆条目会在记忆中保留多久（分钟单位）\n默认24小时",
+                "stats_derived_alcoholSensitivity":"酒精耐受",
+                "stats_derived_alcoholSensitivity_tooltip": "该数值（倍率）决定角色有多容易醉，越低越易醉\n默认1.0"
+            },
+            "en-us": {
+                "stats_derived_extended_hp": "HP",
+                "stats_derived_extended_hp_tooltip": "%%notimplemented%%\n\nHealth Point.\nIf this reaches 0, character will become unconscious\nIf it reaches negative Constitution score, character dies.\nTemporary injury will decrese score, permanent injury will decrease maximum.\nMaximum score is 10 + CON Modifier + others.\nNaturally recovers during sleep.",
+                "stats_derived_extended_mp": "MP",
+                "stats_derived_extended_mp_tooltip": "%%notimplemented%%\n\nMana Point, required for casting spells.\nMaximum score is 0 + PSY Modifier + others.\nNaturally recovers during sleep or rest.",
+                "stats_derived_extended_energy": "Energy",
+                "stats_derived_extended_energy_tooltip": "Consumed when performing tasks requiring social interaction, mental effort, and concentration.\nCapped at %%stats_base_Willpower%% * 10 + other modifiers\nCan be restored through sleep or rest.\nWhen a character's energy is too low, their mood will decrease. %%notimplemented%%",
+                "stats_derived_extended_stamina": "Stamina",
+                "stats_derived_extended_stamina_tooltip": "Consumed when performing physical labor.\nCapped at %%stats_base_Constitution%% * 10 + other modifiers\nCan be restored through sleep or rest.\nWhen a character's stamina is too low, they will become fatigued. %%notimplemented%%",
+   
+                "stats_derived_sleepNeed": "Sleep Need",
+                "stats_derived_sleepNeed_tooltip": "The amount of sleep hours a character needs daily.\nAny modifications to this value will only take effect when the character starts sleeping.",
+                "stats_derived_sleepDepth": "Sleep Depth",
+                "stats_derived_sleepDepth_tooltip": "The character's sleep depth, which determines how easily the character's sleep can be interrupted.\nThis value cannot go lower than 1.0.\nAny modifications to this value will take effect when the character starts sleeping.",
+                "stats_derived_memoryEntryCount": "Memory Entry Count",
+                "stats_derived_memoryEntryCount_tooltip": "This value determines how many memory entries (from newest to oldest) will affect the character's mood.",
+                "stats_derived_memoryLength": "Memory Duration",
+                "stats_derived_memoryLength_tooltip": "This value determines how long each (non-permanent) memory entry will remain in memory (in minutes)."
+
+            }
+        }
     }
 }

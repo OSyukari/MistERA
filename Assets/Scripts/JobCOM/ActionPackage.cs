@@ -1,9 +1,15 @@
+using System;
+using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 using System.Linq;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.UIElements;
+using static Character_Personality;
+using static EvaluationPackage;
 
 
 public enum AP_Priority
@@ -222,7 +228,7 @@ public abstract class ActionPackage
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    public virtual bool JoinAP(Character_Trainable c)
+    public virtual bool JoinAP(Character_Trainable c, bool forceAccept = false)
     {
         var variantID = canJoinAP(c, out var doers1, out var receivers1);
         if (variantID >= 0)
@@ -239,7 +245,7 @@ public abstract class ActionPackage
             this.ResetRequest(doers1, receivers1, this.masterRef);
             this.validVariant = variantID;
 
-            bool result = Request(true);
+            bool result = Request(true, forceAccept);
 
             foreach (var p in packages)
             {
@@ -547,7 +553,7 @@ public abstract class ActionPackage
 
         if (!timeStop && allUnconscious && targetCOM != null && !targetCOM.comTags.Contains("sleep") && this.duration > 0)
         {
-            Debug.LogError("Alert All DOERS Unconscious on job (without sleep tag) " + targetCOM.DisplayName(COMVariantID) +$" remaintime {this.Duration} in room "+ (job.ParentRoom != null ? job.ParentRoom.DisplayName : ""));
+            //Debug.LogError("Alert All DOERS Unconscious on job (without sleep tag) " + targetCOM.DisplayName(COMVariantID) +$" remaintime {this.Duration} in room "+ (job.ParentRoom != null ? job.ParentRoom.DisplayName : ""));
         }
 
         if (!timeStop && !allUnconscious)
@@ -1063,7 +1069,7 @@ public abstract class ActionPackage
     /// making EP is still required for one to get reactions
     /// </summary>
     /// <returns></returns>
-    protected virtual bool Request(bool rebuildPackage = true)
+    protected virtual bool Request(bool rebuildPackage = true, bool forceAccept = false)
     {
         requested = true;
 
@@ -1077,24 +1083,29 @@ public abstract class ActionPackage
             ep.Evaluate(true);
             if (!returnVal) break;
 
-            if (!ep.Request()) returnVal = false;
+            if (!ep.Request(false, forceAccept)) returnVal = false;
         }
 
         requestAccepted = returnVal;
         return returnVal;
     }
 
-    public string GetCheckResult(bool rightAlign)
+    public string GetCheckResult(bool rightAlign, bool resultOnly = false)
     {
         List<string> checkResults = new List<string>();
 
-        foreach (var ep in packages)
+        if (!resultOnly)
         {
-            if (ep.skipCheckResult) continue; // skip player alone package
-            var res = ep.GetCheckResult(!rightAlign);
-            if (res.Length < 1) continue;
-            checkResults.Add(res);
+            foreach (var ep in packages)
+            {
+                if (ep.skipCheckResult) continue; // skip player alone package
+                var res = ep.GetCheckResult(!rightAlign);
+                if (res.Length < 1) continue;
+                checkResults.Add(res);
+            }
         }
+
+        if (this.checkResults_result != "") checkResults.Add(this.checkResults_result);
 
         string finalResults = String.Join("\n", checkResults);
         if (rightAlign && finalResults.Length > 0) finalResults = "<align=\"right\">" + finalResults + "</align>";
@@ -1132,8 +1143,8 @@ public abstract class ActionPackage
             foreach (var ep in this.packages)
             {
                 ep.AddExtraActorTags(ep.isDoer(c) ? extraTag : "", ep.isReceiver(c) ? extraTag : "");
-                if (returnValue) this.job.LogMessage_Kojo(ep);
             }
+            if (returnValue) LogMessage_Kojo();
             return returnValue;
         }
 
@@ -1176,10 +1187,59 @@ public abstract class ActionPackage
             //Debug.LogError("executing meal AP");
         }
 
+        Memory_Response injectResult = Memory_Response.None;
+
+        if (this.targetCOM != null && targetCOM.baseD20Check > 0)
+        {
+            Modifiers dcMods = new Modifiers();
+            bool success = true;
+            int bonus = 0;
+            int baseDC = targetCOM.baseD20Check;
+            var tags = new List<string>();
+            tags.AddRange(targetCOM.comTags);
+            bool multiActor = (packages.Count > 0 && this.actorRefs.Count > 1) ? true : false;
+            foreach (var ep in packages)
+            {
+                tags.AddRange(ep.ExtraCOMTags);
+                if (multiActor) ep.AddExtraCOMTags("interaction");
+            }
+            tags = Utility.Distinct(tags);
+
+            foreach (var ep in packages)
+            {
+                if (ep.Response < Memory_Response.Accept)
+                {
+                    success = false;
+                    break;
+                }
+                if (ep.Receiver == null || ep.Receiver == ep.Doer)
+                {
+                    bonus += ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods);
+                }
+                else
+                {
+                    bonus += ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods);
+                    bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
+                }
+            }
+
+            if (success)
+            {
+                int diceRoll = Dice(1, 21, 1);
+                if (baseDC == 0) injectResult = Memory_Response.Success;
+                else if (diceRoll >= 20) injectResult = Memory_Response.CriticalSuccess;
+                else if (diceRoll <= 1) injectResult = Memory_Response.CriticalFailure;
+                else injectResult = diceRoll + bonus >= baseDC ? Memory_Response.Success : Memory_Response.Failure;
+
+                List<string> mods = dcMods == null ? new List<string>() : dcMods.GetAllModifiers();
+                checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20 = {diceRoll}{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} = {diceRoll + bonus} {(injectResult >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {injectResult}";
+            }
+        }
 
         foreach (var ep in packages)
         {
-            ep.Execute(m);
+            ep.Execute(m, injectResult);
             bool executed = ep.Response >= Memory_Response.Accept;
             executeSuccessful = executed && executeSuccessful;
 
@@ -1190,65 +1250,50 @@ public abstract class ActionPackage
                // ep.ApplyCost(m);
                 if (ep.ReceiverTargetTag.Contains("job"))
                 {
-                    // ------------- if is JOB COM, increase trust
-                    if(ep.Response >= Memory_Response.Success)
-                    {
-                        // increase or decrease manager's attitude toward participating actors if their work result is at least neutral
-                        foreach (var manager in job.FactionOwner.Managers){
-                            if(ep.Doer != null) manager.Relationships.IncreaseRelationshipWith(ep.DoerRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, m.exp);
-                            if(ep.Receiver != null) manager.Relationships.IncreaseRelationshipWith(ep.ReceiverRef, RelationshipScoreType.Trust, (int) (ep.Response - Memory_Response.Success) + 1, m.exp);
-                        }
-                    }
-                    
-                    if (ep.Receiver != null && ep.Doer != null && ep.Response >= Memory_Response.Success)
-                    {   // if job has helper, increase mutual trust if the other one put up at least neutral work result
-                        // helper is less forgiving on work result
-                        // make it possible here to decrease?
-                        ep.Receiver.Relationships.IncreaseRelationshipWith(ep.DoerRef, RelationshipScoreType.Trust, (int)ep.DoerAttitude - 2, m.exp);
-                        ep.Doer.Relationships.IncreaseRelationshipWith(ep.ReceiverRef, RelationshipScoreType.Trust, (int)ep.ReceiverAttitude - 2, m.exp);
-                    }
-
-
                     // ---------------- increase self esteem here
-                    if(ep.Response >= Memory_Response.Success)
+                    if (ep.Response >= Memory_Response.Success)
                     {
-                        if(ep.Doer != null)ep.Doer.Relationships.ModSelfEsteem(1);   
-                        if(ep.Receiver != null)ep.Receiver.Relationships.ModSelfEsteem(1);
+                        if(ep.Doer != null) ep.Doer.Relationships.ModSelfEsteem(1);   
+                        if(ep.Receiver != null && ep.Receiver != ep.Doer) ep.Receiver.Relationships.ModSelfEsteem(1);
                     }                  
                 }
 
             }
         }
 
+        var actors = new List<Character_Trainable>();
+        actors.AddRange(this.doer);
+        actors.AddRange(this.receiver);
         // Treat receiver as doer will separate all actors and make them individually do task
         // so we need to collect group and parse as group
         if (executeSuccessful)// && targetCOM.requirements.requirement.TreatReceiverAsDoer)         // this behavior does not need to be limited to treatreceiverasdoer, right ?
         {   // if job is recreation and result at least neutral, increase relationship between all participating actors
-            var actors = new List<Character_Trainable>();
-            actors.AddRange(this.doer);
-            actors.AddRange(this.receiver);
-
             foreach (var ep in packages)
             {
-                foreach(var participant in actors)  // comparing with all actor in the parent AP before subdividing into EPs
+                foreach (var participant in actors)  // comparing with all actor in the parent AP before subdividing into EPs
                 {
-                    if (!ep.DoerTargetTag.Contains("NonInteraction") && ep.Doer.canAct && participant.RefID != ep.Doer.RefID && ep.DoerAttitude != Memory_Attitude.None) 
-                    {   // normal success increase by 1, crit succes increase by two and decrease bad by 1. reverse apply.
-                        if(ep.DoerAttitude > Memory_Attitude.Neutral || ep.DoerAttitude <= Memory_Attitude.Hate) ep.Doer.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Goodwill, (int)(ep.DoerAttitude - Memory_Attitude.Neutral), m.exp);
-                        if(ep.DoerAttitude < Memory_Attitude.Neutral || ep.DoerAttitude >= Memory_Attitude.Love) ep.Doer.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, (int)(Memory_Attitude.Neutral - ep.DoerAttitude), m.exp);
-                    }
-                    // since its treat receiver as doer AP, we can assume there will not be Receiver in any ep (since it will be 1-0 EP creation)
-                    // but just in case we change how this works in the future...
-                    if (!ep.ReceiverTargetTag.Contains("NonInteraction") && ep.Receiver != null && ep.Receiver.canAct && participant.RefID != ep.Receiver.RefID && ep.ReceiverAttitude != Memory_Attitude.None)
-                    {
-                        if (ep.ReceiverAttitude > Memory_Attitude.Neutral || ep.ReceiverAttitude <= Memory_Attitude.Hate) ep.Receiver.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Goodwill, (int)(ep.ReceiverAttitude - Memory_Attitude.Neutral), m.exp);
-                        if (ep.ReceiverAttitude < Memory_Attitude.Neutral || ep.ReceiverAttitude >= Memory_Attitude.Love) ep.Receiver.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, (int)(Memory_Attitude.Neutral - ep.ReceiverAttitude), m.exp);
-                    }
+                    CheckRelationshipChange(participant, ep.Doer, ep.DoerAttitude, ep.Response, ep.DoerTargetTag, m);
+                    if (ep.Doer != ep.Receiver) CheckRelationshipChange(participant, ep.Receiver, ep.ReceiverAttitude, ep.Response, ep.ReceiverTargetTag, m);
                 }
             }
         }
-        else if (!isForced) SendRefuseEvent();
+        else
+        {// refused
 
+            // first, for each ep, reduce
+            foreach (var participant in actors)  // comparing with all actor in the parent AP before subdividing into EPs
+            {
+                foreach (var ep in packages)
+                {
+                    if (ep.RecentRefusalPenalty == 0) continue;
+                    if (ep.Receiver == null || ep.Receiver == ep.Doer) continue;
+                    if (participant != ep.Doer) ep.Doer.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, ep.RecentRefusalPenalty, m.exp, false);
+                    if (ep.Receiver != null && ep.Receiver != ep.Doer && participant != ep.Receiver) ep.Receiver.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, ep.RecentRefusalPenalty, m.exp, false);
+                }
+            }
+
+            if (!isForced) SendRefuseEvent();
+        }
 
 
 
@@ -1435,15 +1480,205 @@ public abstract class ActionPackage
     }
 
     MessageCollect temporaryM = null;
+    string checkResults_result = "";
+    string checkResults_result_short = "";
+
+
+    protected void CheckRelationshipChange(Character_Trainable A, Character_Trainable B, Memory_Attitude b_attitude, Memory_Response response, List<string> tags, MessageCollect m)
+    {
+        if (B != null && A != B && !B.Stats.isConsciousnessUnconscious && b_attitude != Memory_Attitude.None)
+        {
+            if (!tags.Contains("NonInteraction"))
+            {
+                var goodwill = b_attitude > Memory_Attitude.Neutral ? (int)(b_attitude - Memory_Attitude.Neutral) : 0;
+                var badwill = b_attitude < Memory_Attitude.Neutral ? (int)(Memory_Attitude.Neutral - b_attitude) : 0;
+
+                if (goodwill != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, false);
+                if (badwill > 0 || (badwill < 0 && B.Stats.Mood.Severity >= 2)) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false);
+            }
+
+            if (tags.Contains("job") && response > Memory_Response.Accept)
+            {
+                var trust = response >= Memory_Response.Success ? 1 : response < Memory_Response.Failure ? -1 : 0;
+                if (trust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, false);
+            }
+        }
+    }
+
+
+    protected bool initializedRand = false;
+    protected Unity.Mathematics.Random Random;
+    protected int Dice(int count, int maxVal, int minVal)
+    {
+        if (!initializedRand)
+        {
+            Random = new Unity.Mathematics.Random((uint)GetHashCode());
+            initializedRand = true;
+        }
+        int counter = 0;
+        for (int i = 0; i < count; i++)
+        {
+            counter += Random.NextInt(minVal, maxVal);
+        }
+        return counter;
+    }
+
+    public void LogMessage_Kojo(MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        if (LoggedKojo) return;
+        LoggedKojo = true;
+        //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName + ", tags: [" + String.Join("|", ep.DoerSelfTag) + "] -> [" + String.Join("|", ep.ReceiverTargetTag) + $"], epStatus [{ep.Response}]");
+
+        var kojoTarget = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
+
+        foreach (var ep in this.ListEP)
+        {
+            if (ep.Receiver == null && kojoTarget != null && ep.Doer != kojoTarget)
+            {
+                // special handling
+                var rel = ep.Doer.Relationships.FindRelationshipWith(kojoTarget);
+                ep.LogMessage_Kojo(m, rel);
+            }
+            else ep.LogMessage_Kojo(m);
+        }
+    }
+
+    public void LogMessage_Begin( bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        if (!m.displayOverride && !job.isVisibleToPlayer) return;
+        if (!ignoreBegin && LoggedBegin) return;
+        LoggedBegin = true;
+
+        foreach (var ep in this.ListEP)
+        {
+            ep.LogMessage_Begin(ignoreBegin, rightAlign, m);
+        }
+    }
+    /// <summary>
+    /// This one should be allowed to repeat on every player command input, so there is less check
+    /// </summary>
+    /// <param name="ep"></param>
+    public void LogMessage_Begin_Ongoing(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        if (!ignoreBegin && LoggedBegin) return;
+        LoggedBegin = true;
+
+        foreach (var ep in this.ListEP)
+        {
+            ep.LogMessage_Begin_Ongoing(ignoreBegin, rightAlign, m);
+        }
+    }
+
+    public void LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        //List<Character_Trainable> actors, string s
+        //.Actors, ep.Description_Ongoing
+        foreach (var ep in this.ListEP)
+        {
+            ep.LogMessage_Ongoing(rightAlign, m);
+        }
+    }
+
+
+    public void LogMessage_Climax(MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        foreach (var ep in this.ListEP)
+        {
+            ep.LogMessage_Climax( m);
+        }
+
+    }
+
+    public void LogMessage_Begin_Refuse(bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        if (LoggedBegin) return;
+        if (!m.displayOverride && !this.job.isVisibleToPlayer) return;
+        foreach (var ep in this.ListEP)
+        {
+            ep.LogMessage_Begin_Refuse(rightAlign, m);
+        }
+    }
+
+    public void LogMessage_Begin_Abort(bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        if (!m.displayOverride && !this.job.isVisibleToPlayer) return;
+        //if (LoggedBegin) return;
+        foreach (var ep in this.ListEP)
+        {
+            ep.LogMessage_Begin_Abort(rightAlign, m);
+        }
+        this.LoggedBegin = true;
+    }
+
+
+    public void LogMessage_After(bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        foreach (var ep in this.ListEP)
+        {
+            ep.LogMessage_After(rightAlign, m);
+        }
+    }
+
+    public List<string> ActorTargetTags(int refID)
+    {
+        var list = new List<string>();
+        foreach(var ep in this.ListEP)
+        {
+            if (ep.DoerRef == refID) list.AddRange(ep.DoerTargetTag);
+            else if (ep.ReceiverRef == refID) list.AddRange(ep.ReceiverTargetTag);
+        }
+        list = Utility.Distinct(list);
+        return list;
+    }
+
+    public List<string> ActorSelfTags(int refID)
+    {
+        var list = new List<string>();
+        foreach (var ep in this.ListEP)
+        {
+            if (ep.DoerRef == refID) list.AddRange(ep.DoerSelfTag);
+            else if (ep.ReceiverRef == refID) list.AddRange(ep.ReceiverSelfTag);
+        }
+        list = Utility.Distinct(list);
+        return list;
+    }
+
+
+    protected bool isActorDoer(Character_Trainable c)
+    {
+        return this.doer.Contains(c);
+    }
+
 
     protected void SendRefuseEvent()
     {
-        
-        if (this.doer.Count == 1 && this.receiver.Count > 0)
+        var targetDoer = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
+        var targetReceivers = new List<Character_Trainable>(this.Actors);
+        if (targetDoer != null) targetReceivers.Remove(targetDoer);
+
+        if (!this.actorRefs.Contains(0))
         {
-            var refuseEV = new EventInstance(this.doer[0], "OnAPRefuse", "");
-            var appends = new List<string>();
             var description = new List<string>();
+            foreach(var ep in this.ListEP)
+            {
+                description.Add($"ep {ep.targetCOM.DisplayName()} Response[{ep.Response}] Doer[{ep.Doer.CallName} {ep.DoerAttitude}] Receiver[{(ep.Receiver == null ? "-" :ep.Receiver.CallName )} {ep.ReceiverAttitude}], results {ep.GetCheckResult(true)}");
+            }
+            Debug.Log($"SendRefuseEvent for package {this.DisplayName}, doer {this.doer.Count} receiver {this.receiver.Count}, isupdating? {scr_UpdateHandler.current.Updating}\n {String.Join("\n", description)}");
+        }
+
+        if (targetDoer != null && targetReceivers.Count > 0)
+        {
+
+            var refuseEV = new EventInstance(targetDoer, "OnAPRefuse", "");
+            var appends = new List<string>();
            // var refuseInfo = new List<string>();
             var callbacks = new List<Action>();
             var failCallbacks = new List<Action>();
@@ -1453,14 +1688,15 @@ public abstract class ActionPackage
             refuseEV.FunctionCalls.Add("failCallback", failCallbacks);
             refuseEV.AppendStrings.Add("apTooltip", appends);
             //refuseEV.AppendStrings.Add("refuseInfo", refuseInfo);
-            refuseEV.Targets.Add("evTarget", this.receiver);
+            refuseEV.Targets.Add("evTarget", targetReceivers);
 
             MessageCollect mm = new MessageCollect();
             this.job.CollectLogs(this, mm);
 
-            //mm.Merge(this.job.m, false);
+            mm.Merge(this.job.m, false);
             mm.exp.leftAlignOverride = mm.exp.isPlayerLog;
             this.job.m.Clear();
+
             failCallbacks.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm, false));// .m.Merge(mm, false));
             //failCallbacks.Add(() => scr_UpdateHandler.current.NotifyLogsSingleUpdate());
 
@@ -1481,22 +1717,21 @@ public abstract class ActionPackage
             //Debug.Log($"adding force AP, isrepeat? {forceAP.PackageRepeat}");
             if (forceAP.Validate())
             {
-                description.Add(forceAP.targetCOM.DisplayName(forceAP.COMVariantID));
-                MemInstance pressured = new MemInstance(new List<int>() { doer[0].RefID }, new List<string>(), "", -1, -1, false, Memory_Response.None, Memory_Attitude.None, "pressured by " + doer[0].FirstName);
+                MemInstance pressured = new MemInstance(new List<int>() { targetDoer.RefID }, new List<string>(), "", -1, -1, false, Memory_Response.None, Memory_Attitude.None, "pressured by " + targetDoer.FirstName);
                 pressured.AddMoodletScore(-1, -1, 0);
                 appends.Add(forceAP.GetSuccessRateString());
-                if (doer[0] == scr_System_CampaignManager.current.Player || forceAP.SuccessRate >= 65)
+                if (targetDoer == scr_System_CampaignManager.current.Player || forceAP.SuccessRate >= 65)
                 {
-                    foreach (var c in forceAP.receiver)
+                    foreach (var c in targetReceivers)
                     {
                         callbacks.Add(() => c.Memory.AddEntry(pressured, new List<string>() { "forced" }, -1, true));
                     }
-                    callbacks.Add(() => doer[0].ChangeCurrentJob(job));
+                    callbacks.Add(() => targetDoer.ChangeCurrentJob(job));
                     callbacks.Add(() => job.InjectPackage( forceAP ));
-                    if (doer[0] == scr_System_CampaignManager.current.Player) callbacks.Add(() => scr_UpdateHandler.current.ToggleCallbackUpdate());
+                    if (targetDoer == scr_System_CampaignManager.current.Player) callbacks.Add(() => scr_UpdateHandler.current.ToggleCallbackUpdate());
                 }
             }// else do not add callback
-            Debug.Log($"SendRefuseEvent  for package {this.DisplayName}, doercount {this.doer.Count}, isupdating? {scr_UpdateHandler.current.Updating}, SUCCESS : com_variant_name {String.Join("|", description)}, {this.DisplayName}");
+
             refuseEV.AppendStrings.Add("com_variant_name", new List<string>(){ this.DisplayName });
             appends.AddRange(forceAP.tooltip);
 
@@ -1504,7 +1739,7 @@ public abstract class ActionPackage
         }
         else
         {
-            Debug.LogError($"Sending refuse event failed, Doercount {this.doer.Count} exceeding 1, abort launch");
+            Debug.Log($"Sending refuse event failed, Doercount {this.doer.Count} exceeding 1 and no player, abort launch");
         }
     }
 

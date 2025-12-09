@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using NUnit.Framework.Constraints;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
-
+using UnityEngine.Tilemaps;
 public class scr_System_CampaignManager_Serializable
 {
     public Dictionary<int, Job> Jobs;
@@ -205,7 +203,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     protected void PreSaveCleanup()
     {
         var listC = new List<int>( Map.CharaInRoom(TemporaryRoom.RefID));
-        Debug.Log($"PreSaveCleanup tempRefs [{String.Join("|",listC)}]");
+        if (listC.Count > 0) Debug.Log($"PreSaveCleanup tempRefs [{String.Join("|",listC)}]");
         foreach(var i in listC)
         {
             var chara = FindInstanceByID(i);
@@ -285,7 +283,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         this.statisRoomID = obj.statisRoomRef;
         this.tempRoomID = obj.tempRoomRef;
-        this._statisRoom = null;
+        this.StasisRoom = null;
         this._tempRoom = null;
         this.debugRoomRef = obj.debugRoomRef;
 
@@ -380,7 +378,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void AddLog(MessageCollect_KojoEntry m, bool animate = false, bool rightAlign = false, string tooltip = "")
     {
-        if (m.message.Length < 1) return;
+        if (m == null || m.message == null || m.message.Length < 1) return;
         var chara = FindInstanceByID(m.portraitRefID);
         Message_Text msg = new Message_Text(chara, m.portraitTags, m.message, rightAlign, tooltip);
         Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
@@ -1277,7 +1275,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
     }
 
-    public Party party;
+    public Party party = new Party();
 
     Map_Instance map;
     public Map_Instance Map { get { return map; } }
@@ -1307,7 +1305,11 @@ public class scr_System_CampaignManager : MonoBehaviour
                 }
             } 
             return _statisRoom;
-        } }
+        }set
+        {
+            _statisRoom = null;
+        }
+    }
 
     protected int tempRoomID = -1;
     Room_Instance _tempRoom = null;
@@ -1355,8 +1357,6 @@ public class scr_System_CampaignManager : MonoBehaviour
         main = InstantiateCharacter(main, debugRoom,0);
         //main = Register(main);
         if (sub != null) sub = InstantiateCharacter(sub, debugRoom);
-
-        party = new Party();
 
         scr_System_Time.current.initializeTime();
 
@@ -1735,7 +1735,8 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         return i == 0 || PlayerPartyMembers.Contains(i);
     }
-    public List<int> PlayerPartyMembers { get { return party.MemberRefIDs; } }
+    public List<int> PlayerPartyMembers { get { 
+            return party.MemberRefIDs; } }
     public void MoveCharacterTo(Character_Trainable charaRef, int targetRoomRef)
     {
         MoveCharacterTo(charaRef, Map.GetRoomByRef(targetRoomRef));
@@ -1848,6 +1849,24 @@ public class scr_System_CampaignManager : MonoBehaviour
             }
 
         }
+        foreach (presetInventory p in c.Template.overrideInventory)
+        {
+            Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
+            //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
+            if (i == null) continue;
+            if (i.GetComp_Equippable() == null)
+            {   // add to inv
+                c.Inventory.AddItem(i);
+            }
+            else
+            {   // is equippable
+                if (!c.EquipItem(i.RefID, false))
+                {//
+                    Debug.LogError($"error equipping {i.DisplayName} on {c.FirstName}");
+                }
+            }
+
+        }
         return c;
     }
 
@@ -1857,13 +1876,30 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (genTemplate != null && genTemplate.TargetBaseID != "")
         {
             //Debug.Log($"CampaignManager: Instantiate request for [{ID}] found genTemplate, generating instead [{genTemplate.TargetBaseID}]");
-            var template = GetCharaTemplate(genTemplate.TargetBaseID);
+            var original_template = GetCharaTemplate(genTemplate.TargetBaseID);
+
+            var str = JsonConvert.SerializeObject(original_template, UtilityEX.SerializerSettings);
+            var template = JsonConvert.DeserializeObject<Character_Trainable>(str, UtilityEX.SerializerSettings);
+
             // template.BaseID = ID;
             if (genTemplate.title != "") template.Title = genTemplate.title;
+            template.Template.overrideInventory = genTemplate.inventoryOverride;
             if (genTemplate.useNameGen)
             {
                 scr_System_Serializer.current.MasterList.CharGenTemplates.GenerateNamesFor(template, genTemplate.Appearance, genTemplate.nameGen_firstName, genTemplate.nameGen_middleName, genTemplate.nameGen_lastName, genTemplate.nameDisplayFormat);
             }
+            template.Template.SetGender(genTemplate.Appearance);
+            template.Template.stat_STR = (int)Utility.RandVariation(genTemplate.str_base == 0 ? template.Template.stat_STR : genTemplate.str_base, genTemplate.str_var);
+            template.Template.stat_CON = (int)Utility.RandVariation(genTemplate.con_base == 0 ? template.Template.stat_CON : genTemplate.con_base, genTemplate.con_var);
+            template.Template.stat_PSY = (int)Utility.RandVariation(genTemplate.psy_base == 0 ? template.Template.stat_PSY : genTemplate.psy_base, genTemplate.psy_var);
+            template.Template.stat_WIL = (int)Utility.RandVariation(genTemplate.wil_base == 0 ? template.Template.stat_WIL : genTemplate.wil_base, genTemplate.wil_var);
+
+            if (genTemplate.setHeight > 0) template.Template.Height = genTemplate.setHeight;
+            if (genTemplate.heightVariation > 0) template.Template.Height = (int)Utility.RandVariation(template.Template.Height, genTemplate.heightVariation);
+
+            if (genTemplate.setWeight > 0) template.Template.Weight = genTemplate.setWeight;
+            if (genTemplate.weightVariation > 0) template.Template.Weight = (int)Utility.RandVariation(template.Template.Weight, genTemplate.weightVariation);
+
             return template;
             // operate on template
             //return template
@@ -1906,6 +1942,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public bool DeterministicRolls { get { return deterministicRolls; } set { deterministicRolls = value; } }
 
     [NonSerialized][JsonIgnore] public string QuickSaveFilePath = "";
+
 
     public void Unregister(Item_Instance i)
     {

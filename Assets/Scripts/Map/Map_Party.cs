@@ -4,10 +4,9 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 
-[System.Serializable]
 public class Party { 
 
-    [JsonProperty] private List<int> memberRefIDs;
+    [JsonProperty] List<int> memberRefIDs = new List<int>();
     [JsonIgnore] public List<int> MemberRefIDs
     {
         get { return memberRefIDs; }
@@ -38,7 +37,7 @@ public class Party {
     [JsonIgnore] private List<Item_Instance> items;
 
     public Party(){
-        memberRefIDs = new List<int>();
+
     }
     
 

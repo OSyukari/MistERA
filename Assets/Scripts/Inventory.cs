@@ -381,8 +381,11 @@ public class Inventory
         foreach (var item in Contents)
         {
             if (item.BaseID != baseID) continue; // && !item.markForDelete) i += item.Count;
+            else if (item.markForDelete) continue;
+            else i += item.Count;
+            /*
             if (!item.isToken && !item.markForDelete) i += item.Count;
-            else if (item.isToken && !item.markForDelete) i += item.InnerCount;
+            else if (item.isToken && !item.markForDelete) i += item.InnerCount;*/
         }
 
         //Debug.Log("Faction check item [" + baseID + "] count result [" + i + "]");
