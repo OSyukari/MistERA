@@ -415,7 +415,7 @@ public class ResponseEntry
                 if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError("KOJO CHECKINTERRUPT TRUE IS VALID: " + String.Join("|", responses));
 
                 allChara = new List<int>();
-                foreach (var ep in allEPs)
+                foreach (var ep in newlist)
                 {
                     if (ep.Doer != null && !allChara.Contains(ep.Doer.RefID))
                     {

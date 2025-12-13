@@ -17,11 +17,18 @@ public class scr_bgImageSwapper : MonoBehaviour
         if (monitorCurrentRoom)
         {
             scr_System_CampaignManager.current.Observer_CurrentRoom += OnRoomChange;
+            scr_System_Time.current.Observer_globalTime_Day += OnDailyUpdate;
             OnRoomChange(0, scr_System_CampaignManager.current.CurrentRoom);
         }
     }
 
+    private void OnDailyUpdate(int i)
+    {
+        scr_System_CentralControl.current.GetSprite(lastImagePath, out var sprite);
+    }
+
     public Coroutine co = null;
+    string lastImagePath = "";
 
     private void OnRoomChange(int updateSequence, Room_Instance room)
     {
@@ -29,6 +36,7 @@ public class scr_bgImageSwapper : MonoBehaviour
         if (!this.gameObject.activeInHierarchy) return;
         if (room.Base.roomImagePath != "")
         {
+            lastImagePath = room.Base.roomImagePath;
             image.color = activeColor;
             if (co != null)
             {

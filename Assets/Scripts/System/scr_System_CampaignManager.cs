@@ -155,12 +155,23 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// </summary>
     public FactionInventory Recycler = new FactionInventory();
 
+    /// <summary>
+    /// This will skip temporary aps
+    /// </summary>
+    /// <param name="roomID"></param>
+    /// <param name="getExecutedAPs"></param>
+    /// <returns></returns>
     public List<ActionPackage> GetRegisteredAPByRoom(int roomID, bool getExecutedAPs = true)
     {
         //LocalizeDictionary.Instance.Set();
-       // LocalizeDictionary
+        // LocalizeDictionary
+        var length = Math.Max(registeredPackagesByRoom.ContainsKey(roomID) ? registeredPackagesByRoom[roomID].Count : 0, executedPackagesByRoom.Count);
 
-        var returnVal = (registeredPackagesByRoom.ContainsKey(roomID) ? registeredPackagesByRoom[roomID] : new List<ActionPackage>());
+        var returnVal = new List<ActionPackage>(length);
+        if (registeredPackagesByRoom.ContainsKey(roomID))
+        {
+            foreach (var p in registeredPackagesByRoom[roomID]) if (!p.isTemporaryAP) returnVal.Add(p);
+        }
         if (getExecutedAPs)
         {
             foreach (var i in executedPackagesByRoom) if (i.Value == roomID) returnVal.Add(i.Key);
@@ -1105,18 +1116,6 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             job.PreUpdateTime(currentMinute);
         }
-
-/*
-        foreach (var list in registeredPackagesByRoom.Values)
-        {
-            list.Sort(delegate (ActionPackage a, ActionPackage b)
-            {
-                if (a.PackagePriority == b.PackagePriority) return 0;
-                else if (a.PackagePriority > b.PackagePriority) return 1;
-                else if (a.PackagePriority < b.PackagePriority) return -1;
-                else return 0;
-            });
-        }*/
     }
 
 
