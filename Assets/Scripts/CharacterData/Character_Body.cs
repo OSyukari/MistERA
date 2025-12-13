@@ -505,8 +505,8 @@ public class Character_Body
                     cumKeywords = "yes";
                     if (part.canFuck && part.CumVolume > 0)
                     {
-                        cumAmount = part.CumVolume;
-                        cum = part.Cum(part.CumVolume, exp);
+                        cumAmount = part.CumVolume * (scr_System_CampaignManager.current.DebugMode ? 5 : 1);
+                        cum = part.Cum(cumAmount, exp);
                     }
                     else
                     {

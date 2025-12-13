@@ -114,7 +114,7 @@
 
 
 "ui_debug": "<link=\"ui_debug_tooltip\">DEBUG</link>",
-"ui_debug_tooltip": "开启该选项后，\n1. 追加显示一些本不应显示的数据（方便debug）\n2. 允许玩家随时睡觉\n3. 玩家执行指令不消耗耐力和精力\n4. 战斗中可以一键结束战斗并选择结果",
+"ui_debug_tooltip": "开启该选项后，\n1. 追加显示一些本不应显示的数据（方便debug）\n2. 允许玩家随时睡觉\n3. 玩家执行指令不消耗耐力和精力\n4. 战斗中可以一键结束战斗并选择结果\n5. 全局射精量X5",
 
 "ui_quicksave": "快速保存",
 "ui_quicksave_tooltip": "将当前的游戏数据保存到本地存取",
