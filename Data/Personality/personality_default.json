@@ -957,48 +957,9 @@
     "responses":[ "($self$) 被舔乳头口上文"] 
 }
         ]
-    },{
-    "ID": "com_sex_oral_kiss_Climax",
-    "tags":["nsfw"],
-    "variants":[
-        { "responses":[ "($self$) 亲吻 高潮 口上文"] }
-    ]
-},
-    {
-        "ID": "com_sex_oral_kiss",
-        "tags":["nsfw"],
-        "variants":[
-            {
-                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
-                "requirements":  [ { "requireSelfAction":false, "selfTags":["sleeping"] }  ],
-                "responses":[ "($self$) 睡眠中 亲吻口上文"]
-            },
-            {   "requirements": [ { "requireSelfAction":false, "selfTags":["timestop"] } ],
-                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
-                "responses":[ "($self$) 时停中 被亲吻口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true, "selfTags":["justWokenUp"] } ],
-    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
-                "responses":[ "($self$) 刚睡醒时的指令失败拒绝口上文" ]
-            },
-            {   "requirements": [ { "requireEPFailure":true } ],
-    "extraPortraitTags":["sorry","disgusted","disappointed"], "useActiveTags":false,
-                "responses":[ "($self$) 指令失败拒绝口上文" ]
-            },
-            {
-                "requirements": [ { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ],
-                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
-                "responses":[ "($self$) 玩家专用 刚睡醒时的 亲吻口上文" ]
-            },
-            {   "requirements": [ { "targetBaseID":"PLAYER"  } ],
-                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
-                "responses":["($self$) 玩家专用 亲吻口上文"]
-            },
-            { 
-                "extraPortraitTags":["sex","kiss"], "useActiveTags":false,
-                "responses":[ "($self$) 亲吻口上文"] }
-        ]
-    },{
+    }
+
+    ,{
     "ID": "com_sex_oral_P_Force_Climax",
     "tags":["nsfw"],
     "variants":[
@@ -1826,91 +1787,6 @@
         ]
     },  
     {
-        "ID": "com_furniture_takingBreak",
-        "variants":
-        [
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "extraPortraitTags":["doubt","apology"], "useActiveTags":false,
-                "_comment":"failure variant",
-                "responses":[   "kojo_default_com_furniture_takingBreak_refuse_1", 
-                                "kojo_default_com_furniture_takingBreak_refuse_2" ]
-            },
-            {   "requirements": [ { "requireSelfAction":true } ],
-                "extraPortraitTags":["thinking","happy","resting"], "useActiveTags":false,
-                "_comment":"barely success variant",
-                "responses":[   "kojo_default_com_furniture_takingBreak_accept_success_1",
-                                "kojo_default_com_furniture_takingBreak_accept_success_2",
-                                "kojo_default_com_furniture_takingBreak_accept_success_3" ,
-                                "kojo_default_com_furniture_takingBreak_accept_success_4"  ]
-            }
-        ]
-    }, 
-    {
-        "ID": "com_furniture_takingLongBreak",
-        "variants":
-        [
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "extraPortraitTags":["doubt","apology"], "useActiveTags":false,
-                "_comment":"failure variant",
-                "responses":[   "kojo_default_com_furniture_takingBreak_refuse_1", 
-                                "kojo_default_com_furniture_takingBreak_refuse_2" ]
-            },
-            {   "requirements": [ { "requireSelfAction":true } ],
-                "extraPortraitTags":["thinking","happy","resting"], "useActiveTags":false,
-                "_comment":"barely success variant",
-                "responses":[   "kojo_default_com_furniture_takingBreak_accept_success_1",
-                                "kojo_default_com_furniture_takingBreak_accept_success_2",
-                                "kojo_default_com_furniture_takingBreak_accept_success_3" ,
-                                "kojo_default_com_furniture_takingBreak_accept_success_4"  ]
-            }
-        ]
-    },
-    {
-        "ID": "com_furniture_playVideoGames",
-        "interruptSelfJob":true,
-        "variants":
-        [
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "extraPortraitTags":["apology","shy"], "useActiveTags":false,
-                "_comment":"failure variant",
-                "responses":[ "kojo_default_com_furniture_playVideoGames_refuse_1", "kojo_default_com_furniture_playVideoGames_refuse_2" ]
-            },
-            {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
-                "extraPortraitTags":["happy","excited", "surprised"], "useActiveTags":false,
-                "_comment":"great success variant",
-                "responses":[ "kojo_default_com_furniture_playVideoGames_accept_success_1", "kojo_default_com_furniture_playVideoGames_accept_success_2" ]
-            },
-            {   "requirements": [ { "requireSelfAction":true } ],
-                "extraPortraitTags":["pouting", "doubt"], "useActiveTags":false,
-                "_comment":"barely success variant",
-                "responses":[ "kojo_default_com_furniture_playVideoGames_accept_failure_1", "kojo_default_com_furniture_playVideoGames_accept_failure_2" ]
-            }
-        ]
-    },
-    {
-        "ID": "com_furniture_watchVideo",
-        "interruptSelfJob":true,
-        "variants":
-        [
-            {   "requirements": [ { "requireEPFailure":true } ],
-                "extraPortraitTags":["apology","shy"], "useActiveTags":false,
-                "_comment":"failure variant",
-                "responses":[ "kojo_default_com_furniture_watchVideo_refuse_1" ]
-            },
-            {   "requirements": [ { "requireEPSuccessGTE":"Success" } ],
-                "extraPortraitTags":["happy","excited", "surprised"], "useActiveTags":false,
-                "_comment":"great success variant",
-                "responses":[ "kojo_default_com_furniture_watchVideo_accept_success_1", 
-                                "kojo_default_com_furniture_watchVideo_accept_success_2" ]
-            },
-            {   "requirements": [ { "requireSelfAction":true } ],
-                "extraPortraitTags":["pouting", "doubt"], "useActiveTags":false,
-                "_comment":"barely success variant",
-                "responses":[ "kojo_default_com_furniture_watchVideo_accept_failure_1" ]
-            }
-        ]
-    },
-    {
         "ID": "com_interaction_talk",
         "variants":
         [
@@ -2282,9 +2158,6 @@
             }
         ]
     },
-
-
-
     {
         "ID": "Descriptor",
         "tags":["nsfw"],

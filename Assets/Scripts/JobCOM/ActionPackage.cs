@@ -749,7 +749,7 @@ public abstract class ActionPackage
     {
         //Debug.Log("ActionPackage Base Evaluate on "+DisplayName);
 
-        validVariant = targetCOM.GetValidVariant(ref tooltip, DoerRefs, ReceiverRefs);
+        validVariant = targetCOM.GetValidVariant(ref tooltip, this.doer, this.receiver);
 
         if (validVariant >= 0)
         {
@@ -1090,6 +1090,12 @@ public abstract class ActionPackage
         return returnVal;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="rightAlign"></param>
+    /// <param name="resultOnly">if true, return AP result.<br/>if false, return EP result</param>
+    /// <returns></returns>
     public string GetCheckResult(bool rightAlign, bool resultOnly = false)
     {
         List<string> checkResults = new List<string>();
@@ -1104,8 +1110,9 @@ public abstract class ActionPackage
                 checkResults.Add(res);
             }
         }
+        else if (this.checkResults_result != "") checkResults.Add(this.checkResults_result);
+        
 
-        if (this.checkResults_result != "") checkResults.Add(this.checkResults_result);
 
         string finalResults = String.Join("\n", checkResults);
         if (rightAlign && finalResults.Length > 0) finalResults = "<align=\"right\">" + finalResults + "</align>";
@@ -1551,9 +1558,17 @@ public abstract class ActionPackage
         if (!ignoreBegin && LoggedBegin) return;
         LoggedBegin = true;
 
+        var kojoTarget = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
+
         foreach (var ep in this.ListEP)
         {
-            ep.LogMessage_Begin(ignoreBegin, rightAlign, m);
+            if (ep.Receiver == null && kojoTarget != null && ep.Doer != kojoTarget)
+            {
+                // special handling
+                var rel = ep.Doer.Relationships.FindRelationshipWith(kojoTarget);
+                ep.LogMessage_Begin(ignoreBegin, rightAlign, m, rel);
+            }
+            else ep.LogMessage_Begin(ignoreBegin, rightAlign, m);
         }
     }
     /// <summary>
@@ -1660,6 +1675,7 @@ public abstract class ActionPackage
 
     protected void SendRefuseEvent()
     {
+
         var targetDoer = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
         var targetReceivers = new List<Character_Trainable>(this.Actors);
         if (targetDoer != null) targetReceivers.Remove(targetDoer);

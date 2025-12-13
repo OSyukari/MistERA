@@ -151,6 +151,8 @@ public class Character_Relationship
                 }
             }
             _currentAttitude = value;
+            currentAttitude = "";
+
             currentAttitude = value.ID;
         }
         _currentAttitudeTooltip.Clear();
@@ -340,6 +342,7 @@ public class Character_Relationship
         if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Follow(!isA_Bio)) return true;
         if (this.Relationship_Social != null && this.Relationship_Social.HasPermission_Follow(!isA_Social)) return true;
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Follow(!isA_Personal)) return true;
+        if (this.Owner.Relationships.Pride < 75) return true;
         return false;
     }
     public bool HasPermission_Intimacy_Low()
@@ -347,6 +350,7 @@ public class Character_Relationship
         if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Intimacy_Low(!isA_Bio)) return true;
         if (this.Relationship_Social != null && this.Relationship_Social.HasPermission_Intimacy_Low(!isA_Social)) return true;
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_Low(!isA_Personal)) return true;
+        if (this.Owner.Relationships.Pride < 50) return true;
         return false;
     }
     public bool HasPermission_Intimacy_High()
@@ -354,6 +358,7 @@ public class Character_Relationship
         if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Intimacy_High(!isA_Bio)) return true;
         if (this.Relationship_Social != null && this.Relationship_Social.HasPermission_Intimacy_High(!isA_Social)) return true;
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_High(!isA_Personal)) return true;
+        if (this.Owner.Relationships.Pride < 25) return true;
         return false;
     }
 
@@ -880,6 +885,7 @@ public class Character_Relationship
     public void ResetAttitude()
     {
         _currentAttitude = null;
+        currentAttitude = "";
     }
 
     public void PostReloadUpdate()
@@ -928,8 +934,7 @@ public class Character_Relationship
         _currentAttitudeTooltip.Clear();
         if (Target != null)
         {
-            UpdateAttitude(false, silent);
-
+            _currentAttitude = null;
 
             if (!silent && RelationshipCooldown == 0)
             {

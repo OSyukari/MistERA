@@ -278,6 +278,16 @@ public class EvaluationPackage
     [JsonIgnore] public int ReceiverRef { get { return receiverRef; } }
     [JsonIgnore] public ActionPackage Package { get { return p; } }
 
+    [JsonIgnore]
+    public bool isStrongP
+    {
+        get
+        {
+            var pp = this.Package as ActionPackage_Sex;
+            return pp == null ? false : pp.isStrongPenetration;
+        }
+    }
+
     public Memory_Attitude GetActorAttitude(int actorRef)
     {
         if (Doer != null && Doer.RefID == actorRef) return DoerAttitude;
@@ -402,6 +412,8 @@ public class EvaluationPackage
         attitudeRate_pos_doer = Math.Min(p1, p2);
     }
 
+    public bool hasPermission = true;
+
     /// <summary>
     /// Calculate the willingness for 'self' to do targetCOM under influence of 'target'.<br/>
     /// Target can be nulla
@@ -427,15 +439,18 @@ public class EvaluationPackage
 
         int baseValue = targetCOM.baseAcceptanceValue;
         int bonus = 0;
+        hasPermission = true;
 
-        if (targetCOM.isSexCOM && (rel == null || !rel.HasPermission_Intimacy_High()))
+        if ((targetCOM.isSexCOM || targetCOM.isUnsafe) && (rel == null || !rel.HasPermission_Intimacy_High()))
         {
             mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_high")}]", -4);
+            hasPermission = false;
             bonus -= 4;
         }
         else if (targetCOM.isTouchCOM && (rel == null || !rel.HasPermission_Intimacy_Low()))
         {
             mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_low")}]", -2);
+            hasPermission = false;
             bonus -= 2;
         }
 
@@ -1029,8 +1044,8 @@ public class EvaluationPackage
         }
     }
 
-    [JsonProperty] protected Memory_Attitude attitude_doer, attitude_receiver;
-    [JsonProperty] Memory_Response response;
+    [JsonProperty] protected Memory_Attitude attitude_doer = Memory_Attitude.None, attitude_receiver = Memory_Attitude.None;
+    [JsonProperty] Memory_Response response = Memory_Response.None;
 
     [JsonIgnore] public Memory_Response Response { get { return response; } 
     }
@@ -1148,7 +1163,7 @@ public class EvaluationPackage
         }// 
     }
 
-    public void LogMessage_Begin(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
+    public void LogMessage_Begin(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null, Character_Relationship injectRel = null)
     {
         if (m == null) m = this.job.m;
         if (Doer.isTimeStopped) return;
@@ -1157,9 +1172,17 @@ public class EvaluationPackage
 
         if (s.Length > 0)
         {
-
             if (rightAlign) s = "<align=\"right\">" + s + "</align>";
             m.messages_before.Add(s);
+        }
+
+        if (Doer != null && Doer.RefID != 0)
+        {
+            Doer.Relationships.GetKOJOMessage_Begin(true, this, m, injectRel);
+        }
+        if (Receiver != null && Receiver.RefID != 0)
+        {
+            Receiver.Relationships.GetKOJOMessage_Begin(false, this, m, injectRel);
         }
     }
 
@@ -1466,13 +1489,13 @@ public class EvaluationPackage
             else UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, visibility ? m.exp : null);
         }
 
-        Memory_Attitude fucked_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + (int)(fuckedPleasure / 5)));
-        Memory_Attitude fucker_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_doer + (int)(fuckerPleasure / 5)));
-        DoerAttitude = fucker == Doer ? fucker_att : fucked_att;
-        ReceiverAttitude = internal_fucked.Owner == Receiver ? fucked_att : fucker_att;
+        //Memory_Attitude fucked_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + (int)(fuckedPleasure / 5)));
+        //Memory_Attitude fucker_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_doer + (int)(fuckerPleasure / 5)));
+        //DoerAttitude = fucker == Doer ? fucker_att : fucked_att;
+        //ReceiverAttitude = internal_fucked.Owner == Receiver ? fucked_att : fucker_att;
 
         if (DoerAttitude != Memory_Attitude.None) Doer.Memory.AddEntry(this);
-        if (ReceiverAttitude != Memory_Attitude.None && Receiver != null && Receiver != Doer && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry(this);
+        if (ReceiverAttitude != Memory_Attitude.None && Receiver != null && Receiver != Doer) Receiver.Memory.AddEntry(this);
 
         //if (fucked_att != Memory_Attitude.None && logMessage) internal_fucked.Owner.Memory.AddEntry(this);
         //internal_fucked.Owner.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, fucker.RefID, com, VariantID, false, null, internal_fucked.Owner.canAct ? Memory_Response.Success : Memory_Response.Accept, fucked_att, internal_fucked.Owner.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
@@ -1480,7 +1503,7 @@ public class EvaluationPackage
 
         //if (fucker != null && fucker_att != Memory_Attitude.None && logMessage) fucker.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, internal_fucked.Owner.RefID, com, VariantID, true, null, fucker.canAct ? Memory_Response.Success : Memory_Response.Accept, fucker_att, fucker.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
 
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Sex) Debug.Log("Fuck_3 final interaction result fuckerPleasure["+fuckerPleasure+"] initA["+attitude_doer.ToString()+"] endA["+fucker_att.ToString()+"] fuckedPleasure["+fuckedPleasure+ "] initA["+attitude_receiver.ToString()+"] endA[" + fucked_att.ToString()+"]");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Sex) Debug.Log("Fuck_3 final interaction result fuckerPleasure["+fuckerPleasure+"] initA["+attitude_doer.ToString()+"] fuckedPleasure["+fuckedPleasure+ "] initA["+attitude_receiver.ToString()+"]");
         //attitude_receiver = fucked_att;
         //attitude_doer = fucker_att;
         return true;
@@ -1655,7 +1678,7 @@ public class EvaluationPackage
     /// <param name="sourceBody"></param>
     /// <param name="pain"></param>
     /// <param name="expansion"></param>
-    private void Stimulate(MessageCollect m,bool isDoer, ref List<string> ownerTags, COM com, int variantID, ref int pleasureTotal, BodyInternal_Instance body, Character_Trainable source, float pleasure, BodyInternal_Instance sourceBody = null, float pain = 0, float expansion = 0)
+    private void Stimulate(MessageCollect m,bool isDoer, ref List<string> ownerTags, COM com, int variantID, ref int pleasureTotal, BodyInternal_Instance body, Character_Trainable source, double pleasure, BodyInternal_Instance sourceBody = null, double pain = 0, float expansion = 0)
     {
         string debug = "Stimulating body part [" + body.DisplayName + "] from [" + body.Owner.FirstName + "], error ";
         /* pleasure will factor in sensitivity data
@@ -1678,24 +1701,24 @@ public class EvaluationPackage
         switch (isDoer ? this.attitude_doer : this.attitude_receiver)
         {
             case Memory_Attitude.Love:
-                pleasure *= 1.5f;
+                pleasure *= 1.5;
                 pain *= 0.5f;
                 expansion *= 0.5f;
                 break;
             case Memory_Attitude.Like:
-                pleasure *= 1.2f;
+                pleasure *= 1.2;
                 pain *= 0.8f;
                 expansion *= 0.8f;
                 break;
-            case Memory_Attitude.Hate:
-                pleasure /= 1.5f;
-                pain /= 0.5f;
-                expansion /= 0.5f;
-                break;
             case Memory_Attitude.Dislike:
-                pleasure /= 1.2f;
-                pain /= 0.8f;
-                expansion /= 0.8f;
+                pleasure *= 0.5;
+                pain *= 1.5f;
+                expansion *= 1.2f;
+                break;
+            case Memory_Attitude.Hate:
+                pleasure *= 0.2;
+                pain *= 2f;
+                expansion *= 1.5f;
                 break;
         }
 
@@ -1704,7 +1727,7 @@ public class EvaluationPackage
         logExps.Add(new DelayedExpLogging( body, source.RefID,  sourceBody == null ? source.FirstName : sourceBody.DisplayNameFull, com.ID, com.DisplayName(variantID), 
                                 targetCOM.comTags, sourceBody == null ? null : sourceBody.Base.tags ));
 
-        body.Stimulate(ref ownerTags, ref pleasureTotal,ref pleasure,ref pain);
+        body.Stimulate(ref ownerTags, ref pleasureTotal,ref pleasure, ref pain);
 
         if (sourceBody != null) body.LogLastInteractedRef(sourceBody);
 
@@ -1736,13 +1759,13 @@ public class EvaluationPackage
         {
             var newTags2 = new List<string>(newTags);
             newTags2.Add("pleasure");
-            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, pleasure, isDoer, visibility ? m.exp : null);
+            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, (float)pleasure, isDoer, visibility ? m.exp : null);
         }
         if (pain > 0)
         {
             var newTags2 = new List<string>(newTags);
             newTags2.Add("pain");
-            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, pain, isDoer, visibility ? m.exp : null);
+            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, (float)pain, isDoer, visibility ? m.exp : null);
         }
         if (expansion > 0)
         {

@@ -21,8 +21,6 @@ public enum Ranking
 public class BodyInternal_Instance
 {
 
-    private Sexperience experiences = new Sexperience();
-
     [JsonProperty] protected long firstExperience = 0, lastExperience = 0;
     [JsonProperty] protected string firstExpDesc = "", lastExpDesc = "";
 
@@ -215,7 +213,6 @@ public class BodyInternal_Instance
 
         basePointer = scr_System_Serializer.current.GetByNameOrID_BodyInternal_Base(baseID);
         if (Base == null) return false;
-        this.experiences = new Sexperience();
 
         if (Base.depthRatio != 0)
         {
@@ -377,6 +374,33 @@ public class BodyInternal_Instance
         }
     }
 
+    protected Status_Instance GetOwnerStimulationStatus(string s)
+    {
+        switch (Base.sensitivityClassString)
+        {
+            case "C": return Owner.Stats.Sex_C;
+            case "V": return Owner.Stats.Sex_V;
+            case "A": return Owner.Stats.Sex_A;
+            case "B": return Owner.Stats.Sex_B;
+            case "W": return Owner.Stats.Sex_W;
+            case "M": return Owner.Stats.Sex_M;
+            default: return null;
+        }
+    }
+
+    bool _cached_status = false;
+    Status_Instance _status_cache = null;
+
+    public void TryModOwnerStimulationStatus(float value)
+    {
+        if (!_cached_status)
+        {
+            _cached_status = true;
+            _status_cache = GetOwnerStimulationStatus(this.Base.sensitivityClassString);
+        }
+        if (_status_cache == null) return;
+        Owner.Stats.AddOrModStatus(_status_cache.ID, value);
+    }
 
     [JsonIgnore]public int MaxSensitivity
     {
@@ -384,8 +408,9 @@ public class BodyInternal_Instance
         {
             if (Base.maxSensitivityStatString == "") return 0;
             //Debug.Log("Fetching " + Base.maxSensitivityStatString+", does it exist "+(scr_System_Serializer.current.GetByNameOrID_StatsDerivedBase(Base.maxSensitivityStatString) != null));
-
-            return (int)Owner.Stats.GetDerivedStat(Base.maxSensitivityStatString).FinalValue();
+            var stat = Owner.Stats.GetDerivedStat(Base.maxSensitivityStatString);
+            if (stat == null) return 0;
+            return (int)(stat.FinalValue() * 100);
         }
     }
 
@@ -626,7 +651,7 @@ public class BodyInternal_Instance
         var tags = new List<string>();
         tags.AddRange(this.Base.tags);
         if (extra != null) tags.AddRange(extra);
-        if (Owner.Body.isClimaxing(false)) tags.Add("climax");
+        if (Owner.Body.isClimaxing(false, true)) tags.Add("climax");
         if (this.Sensitivity != "") tags.Add(this.Sensitivity);
         Owner.Skills.CheckExperienceGain(tags, amount, m);
     }
@@ -995,7 +1020,7 @@ public class BodyInternal_Instance
         else return -1;
     }
 
-    public void Stimulate(ref List<string> ownerTags, ref int pleasureTotal, ref float pleasure, ref float pain)
+    public void Stimulate(ref List<string> ownerTags, ref int pleasureTotal, ref double pleasure, ref double pain)
     {
         string sensitivity = Sensitivity;
         bool Maso = false;
@@ -1009,8 +1034,9 @@ public class BodyInternal_Instance
 
             ownerTags.Add(Sensitivity);
 
-            int i = Math.Min((int)pleasure, MaxSensitivity - (int)Owner.Stats.GetStatusSeverityByStringMatch(sensitivity));
-            Owner.Stats.AddOrModStatus(sensitivity, pleasure,-1, MaxSensitivity);
+            //int i = Math.Min((int)pleasure, MaxSensitivity - (int)Owner.Stats.GetStatusSeverityByStringMatch(sensitivity));
+            Owner.Stats.AddOrModStatus(sensitivity, (float)pleasure, -1);
+            Owner.Body.NotifyStimulated();
             //Debug.Log(debug);
             pleasureTotal += (int)pleasure;
         }

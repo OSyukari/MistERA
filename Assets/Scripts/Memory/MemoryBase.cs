@@ -860,12 +860,21 @@ public class MemInstance
     [JsonIgnore] public int Mood {
         get
         {
-            var value = modMood + (float)Attitude - (float)Memory_Attitude.Neutral;
-
-            if (tags.Contains("recreation"))
-            {   // if recreation related, as long as its not bad, increase mood
-                if (Attitude >= Memory_Attitude.Neutral) value += 1;
+            var value = modMood;
+            if (tags.Contains("unsafe") || tags.Contains("ignored"))
+            {
+               // Debug.Log($"logging memory {this.description} mood {modMood}, response {response} attitude {attitude}");
             }
+            else
+            {
+                value += ((float)Attitude - (float)Memory_Attitude.Neutral);
+
+                if (tags.Contains("recreation"))
+                {   // if recreation related, as long as its not bad, increase mood
+                    if (Attitude >= Memory_Attitude.Neutral) value += 1;
+                }
+            }
+
             return (int)value; } }
 
     [JsonIgnore] public int Stress {
@@ -887,7 +896,7 @@ public class MemInstance
         get
         {
             var value = modLust;
-            if (Attitude > Memory_Attitude.Neutral && (tags.Contains("sex") || tags.Contains("massage") || tags.Contains("touch")) && !tags.Contains("safe")) value += 1;
+            //if (Attitude > Memory_Attitude.Neutral && (tags.Contains("sex") || tags.Contains("massage") || tags.Contains("touch")) && !tags.Contains("safe")) value += 1;
             return (int)value;
         } }
 

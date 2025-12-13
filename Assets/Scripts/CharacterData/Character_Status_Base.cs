@@ -160,15 +160,20 @@ public class Status_Base
     public class BaselineVariation_Linear : BaselineVariation
     {
         public string statID = "";
+        /// <summary>
+        /// The target value decay will get toward
+        /// </summary>
         public float baseValue = 0;
         public float decaySpeed = 0;
         public override float Decay(StatsManager Stats, float value)
         {
+           // bool logging = this.baseValue == 10;
             if (decaySpeed == 0) return 0;
-            var targetValue = statID == "" ? baseValue : Stats.GetDerivedStat(statID).FinalValue();
-            var diff = (targetValue - value);
+            float targetValue = statID == "" ? baseValue : Stats.GetDerivedStat(statID).FinalValue();
+            float diff = (targetValue - value);
+            float abs = Mathf.Abs(decaySpeed);
+            //if (logging) Debug.Log($"decay tick {value} {baseValue} {decaySpeed} {diff} {abs}");
             if (diff == 0) return 0;
-            var abs = Math.Abs(decaySpeed);
             return diff >= abs ? abs : diff <= -abs ? -abs : 0;
             //var lerpStep = Math.Abs( decaySpeed/(targetValue - value));
             //return (float) Unity.Mathematics.math.lerp(value, targetValue, lerpStep) - value;

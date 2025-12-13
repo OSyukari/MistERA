@@ -1,9 +1,10 @@
-using System.Collections.Generic;
-using UnityEngine;
 using System;
-using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public enum Humanoid_GenderAppearance
 {
@@ -740,7 +741,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return;
         }
         bool log = s != null;
-        bool debugLog = isImprisoned;
+        bool debugLog = isRestrained;
 
         string ss = FirstName + ": ";
         string jobInternalStatus;
@@ -1036,7 +1037,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return;
         }
 
-        if (isAnimal && !scr_System_CentralControl.current.isSafeMode && isRestrained)
+        if ((isAnimal || isCreature) && !scr_System_CentralControl.current.isSafeMode && isRestrained)
         {        // try find interaction job (rape job)
             if (CurrentJob != null && !resetJob)
             {
@@ -1054,13 +1055,17 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     return;
                 }
             }
+            else if (Stats.Energy.ValuePercentile < 0.9 || Stats.Stamina.ValuePercentile < 0.9)
+            {
+
+            }
             else if (currentJobFaction != null)
             {
                 //Debug.LogError("Animal looking for new target");
                 List<Job_CharaCOM> possibletargets = new List<Job_CharaCOM>();
 
                 //foreach (Manageable faction in FactionManager.HomeFactions)
-                possibletargets.AddRange(currentJobFaction.GetValidCharaCOMByTag(this, "initSex",  ref ss));
+                possibletargets.AddRange(currentJobFaction.GetValidCharaCOMByTag(this, "initSex", ref ss));
 
                 if (possibletargets.Count > 0)
                 {
@@ -1088,6 +1093,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
             
         }
+        
+        if (Jail != null && Jail.ownerJob != null)
+        {
+            ChangeCurrentJob(Jail.ownerJob, "", "rest");
+            return;
+        }
         else if(TryFindNonJobByTag(resetJob, "recreation", currentJobFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(true, false, true)))
         {
             if (s != null) s.Add(ss);
@@ -1097,7 +1108,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         // need to find : is there location restriction ? search currently at ?
         // include search : character currently at + home faction
             
-        else if (TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(false, true, true)))
+        else if (TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, debugLog, s, new NonJobSearchWrapper(false, true, false)))
         {
             if (s != null) s.Add(ss);
             return;
@@ -1390,7 +1401,17 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (comp != null)
             {
                 //Stats.RefreshAllStats(true);
-                return Body.EquipItem(itemRefID, comp.equipCount, forceEquip);
+                if ( Body.EquipItem(itemRefID, comp.equipCount, forceEquip))
+                {
+                    Skills.RefreshAvailableSkillChecks();
+                    if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
+                    this.PortraitManager.ClearHandlerCache();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
@@ -1661,6 +1682,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 Inventory.AddItem(instance);
                 //inventory_ref.Add(itemRefID);
                 if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
+                Skills.RefreshAvailableSkillChecks();
                 this.PortraitManager.ClearHandlerCache();
             }
         }
@@ -1752,9 +1774,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             ItemComponent_Equippable comp = item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
             if (comp != null && (layerFilter == BodyEquipLayer.None || comp.equipLayer == layerFilter))
             {
-                Body.EquipItem(item.RefID, comp.equipCount, true);
-                Inventory.Remove(item);
-                this.PortraitManager.ClearHandlerCache();
+                if (Body.EquipItem(item.RefID, comp.equipCount, true))
+                {
+                    Skills.RefreshAvailableSkillChecks();
+                    if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
+                    Inventory.Remove(item);
+                    this.PortraitManager.ClearHandlerCache();
+                }
             }
         }
     }

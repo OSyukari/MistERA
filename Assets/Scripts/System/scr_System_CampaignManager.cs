@@ -511,31 +511,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void UpdateScene()
     {
-        /*
-        foreach (int s in CharaInCurrentRoom)
-        {
-
-            Character_Trainable o;
-            if (Index_referenceID.TryGetValue(s, out o))
-            {
-                // depend on the type of c
-                Character_Trainable c = o as Character_Trainable;
-               // scr_System_CentralControl.current.AddPortraitCache(c.RefID);
-                //if (display != null && c != null && c.RefID > 0 ) display.AddChara(c.RefID);
-            }
-        }
-
-        foreach (int s in party.MemberRefIDs)
-        {
-
-        }
-        var exceptList = new List<int>();
-        foreach(var i in Player.FactionManager.HomeFactions ) exceptList.AddRange(i.ManagedRefs);
-        exceptList = exceptList.Distinct().ToList();
-        //scr_System_CentralControl.current.UnloadAllPortraitExcept(exceptList);
-        */
         NotifyUpdate();
-
     }
 
     public void RegisterExecutedAP(ActionPackage ap)
@@ -1161,6 +1137,20 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void Job_PostUpdateTime()
     {
         System.Threading.Tasks.Parallel.ForEach(this.Index_JobReferenceID.Values, job => job.PostUpdateTime());
+    }
+
+    public void ResetAllActorJobs()
+    {
+        foreach(var c in this.Index_referenceID.Values)
+        {
+            c.ChangeCurrentJob(null);// = null;
+        }
+        this.registeredPackagesByRoom.Clear();
+        foreach(var j in this.Index_JobReferenceID.Values)
+        {
+            j.Clear();
+        }
+        this.Map.Clear();
     }
 
     public bool DisplayPortrait(int refID)

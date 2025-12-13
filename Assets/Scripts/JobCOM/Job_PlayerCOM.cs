@@ -31,11 +31,7 @@ public class Job_PlayerCOM : Job
     {
         get
         {
-            if (actorRefIDStorage == null)
-            {
-                actorRefIDStorage = new Dictionary<int, COM_Match>();
-                actorRefIDStorage.Add(0, new COM_Match());
-            }
+            if (!actorRefIDStorage.ContainsKey(0)) actorRefIDStorage.Add(0, new COM_Match());
             return actorRefIDStorage.Keys.ToList();
         }
     }

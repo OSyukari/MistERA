@@ -478,7 +478,7 @@ public class scr_System_CentralControl : MonoBehaviour
 
 
 
-    public bool CanHaveSex(List<int> doers, List<int> receivers)
+    public bool CanHaveSex(List<Character_Trainable> doers, List<Character_Trainable> receivers)
     {
         List<InteractionGenderType> doersG = new List<InteractionGenderType>();
         List<InteractionGenderType> receiversG = new List<InteractionGenderType>();

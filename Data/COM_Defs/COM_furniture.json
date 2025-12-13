@@ -305,7 +305,7 @@
                                 "doerCount": 99
                             }
                         },
-                        "displayName": "com_furniture_playVideoGames_displayName_3"
+                        "displayName": "com_furniture_playVideoGames_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -390,7 +390,7 @@
                                 "doerCount": 99
                             }
                         },
-                        "displayName": "com_furniture_watchVideo_displayName_3"
+                        "displayName": "com_furniture_watchVideo_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -788,13 +788,11 @@
                 
                 "com_furniture_playVideoGames_displayName_1": "打游戏",
                 "com_furniture_playVideoGames_displayName_2": "一起打游戏",
-                "com_furniture_playVideoGames_displayName_3": "打游戏",
                 "com_furniture_playVideoGames_begin_1": "$doer.firstname$拿起手柄，沉浸在了游戏里。",
                 "com_furniture_playVideoGames_begin_2": "$doer.firstname$盯着游戏画面，眼神专注",
                 
                 "com_furniture_watchVideo_displayName_1": "看影片",
                 "com_furniture_watchVideo_displayName_2": "一起看影片",
-                "com_furniture_watchVideo_displayName_3": "看影片",
                 "com_furniture_watchVideo_begin_1": "$doer.firstname$拿起遥控器，打开电视，开始观看自己喜欢的节目。",
                 "com_furniture_watchVideo_begin_2": "$doer.firstname$窝在沙发里，盖上毯子，舒服地看起了电视。",
                 "com_furniture_watchVideo_begin_3": "$doer.firstname$调整好姿势，眼睛一眨不眨地盯着电视屏幕，完全被剧情吸引住了。",

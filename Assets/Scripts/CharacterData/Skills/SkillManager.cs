@@ -227,10 +227,15 @@ public class SkillManager
         _availableSkillChecks = null;
     }
 
+    public void RefreshAvailableSkillChecks()
+    {
+        _availableSkillChecks = null;
+    }
 
     Dictionary<string, List<SkillInstance>> _availableSkillChecks = null;
     Dictionary<string, List<SkillInstance>> availableSkillChecks
-    { get
+    { 
+        get
         {
             if (_availableSkillChecks == null)
             {
@@ -241,6 +246,7 @@ public class SkillManager
                     foreach (var u in uses)
                     {
                         if (u.skillUseTags == "") continue;
+                        if (u.requirePermanentTags.Count > 0 && !Utility.ListContainsStrict(Owner.Stats.PermanentTags, u.requirePermanentTags)) continue;
                         if (!_availableSkillChecks.ContainsKey(u.skillUseTags)) _availableSkillChecks.Add(u.skillUseTags, new List<SkillInstance>());
                         _availableSkillChecks[u.skillUseTags].Add(sk.Value);
                     }
@@ -269,6 +275,8 @@ public class SkillManager
                 if (sk.Check(selftags, actiontags, ref mod, ref skillName, ref extratags, pastskills))
                 {
                     //Debug.Log($"{Owner.CallName} skillcheck {skillName} success, {finalmod} {String.Join("|", extratags)} ");
+
+                    // extra tags not used... and probably not containing desired extratags.
                 }
             }
             if (mod != 0)

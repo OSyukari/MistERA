@@ -570,9 +570,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false)
     {
         //Debug.Log("Begin getvalidRecreation");
+
         List<Job_Furniture> possibleJobs;
         string ss = " (" + ID + ")";
         if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
+        if (chara.Jail != null && chara.Jail.ownerJob != null)
+        {
+
+        }
         if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "", tag, checkBlacklist))
         {
             ss += $" found no valid [{tag}] instances offered by Furnitures from chara[{chara.FirstName}] currenthour[{currentHour}], checkBlacklist[{checkBlacklist}]";
@@ -728,7 +733,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         if (targetCOM.comTags.Contains("job") && allowJobPostSearch)
         {
-            if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, chara, comID, false))
+            if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs,this.managedRoomRefs,  chara, comID, false))
             {
                 ss += " found no valid ["+comID+ "] instances offered by Furnitures";
                 if(s != null) s.Add(ss);
@@ -792,7 +797,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         // chara job is null, try give job
         // first find a valid instance of job
         List<Job_Furniture> possibleJobs;
-        if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, chara, GetSchedule(chara).Get(currentHour), checkBlacklist))
+        if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, this.managedRoomRefs, chara, GetSchedule(chara).Get(currentHour), checkBlacklist))
         {
             ss += " found no valid jobinstances offered by Furnitures";
             if (s != null) s += ss;

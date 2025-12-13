@@ -42,16 +42,28 @@ public class Job_Furniture : Job
     }
 
     //public List<COM> validNonJobCOMs. This is a cache value holder, dont need to serialize
+    protected List<COM> _validCOMs_room_cache = null;
     protected List<COM> validCOMs = null;
+    bool _validCOMs_cached = false;
     [JsonIgnore] public List<COM> ValidCOMs { 
         get { 
-            
-            if (validCOMs == null)
+            if (!_validCOMs_cached)
             {
-                validCOMs = new List<COM>();
-                foreach(var com in allusableCOMs)
+                _validCOMs_cached = true;
+                if (_validCOMs_room_cache == null)
                 {
-                    if (com.ValidateRoom(ParentRoom) && com.ValidateJob(this, out var msg) && CanCOMAcceptMoreActor(com)) validCOMs.Add(com);
+                    _validCOMs_room_cache = new List<COM>(allusableCOMs.Count);
+                    foreach (var com in allusableCOMs)
+                    {
+                        if (com.ValidateRoom(ParentRoom)) _validCOMs_room_cache.Add(com);
+                    }
+                }
+                if (validCOMs == null) validCOMs = new List<COM>(allusableCOMs.Count);
+                else validCOMs.Clear();
+
+                foreach(var com in _validCOMs_room_cache)
+                {
+                    if (com.ValidateJob(this, out var msg) && CanCOMAcceptMoreActor(com)) validCOMs.Add(com);
                 }
             }
             return validCOMs; } 
@@ -137,7 +149,7 @@ public class Job_Furniture : Job
     public void RefreshValidCOMs(bool allowLazyRefresh = true)
     {
         if (allowLazyRefresh && this.actorRefID.Count < 1 && (this.Container == null || !this.Container.HasContent)) return;
-        validCOMs = null;
+        _validCOMs_cached = false;
     }
 
     public bool ValidateActor(Character_Trainable c, COM com = null)
@@ -145,10 +157,10 @@ public class Job_Furniture : Job
         //bool validJob = true;
         //bool validNonJob = true;
         if (com != null && !this.ValidCOMs.Contains(com)) return false;
-        if (com != null) return com.GetValidVariant(new List<Character_Trainable>() { c }, new List<Character_Trainable>()) >= 0;
+        if (com != null) return com.GetValidVariant(c) >= 0;
         foreach (COM com2 in this.ValidCOMs)
         {
-            if (com2.GetValidVariant(new List<Character_Trainable>() { c }, new List<Character_Trainable>()) >= 0) return true;//validJob = false;
+            if (com2.GetValidVariant(c) >= 0) return true;//validJob = false;
         }
         //Debug.Log("JobFurniture ValidateActor 4");
         return false;
@@ -390,7 +402,7 @@ public class Job_Furniture : Job
     public override void PreUpdateTime(int currentMinute)
     {
         if(this.validCOMs != null) this.validCOMs.Clear();
-        this.validCOMs = null;  //lazy refresh
+        _validCOMs_cached = false;
         base.PreUpdateTime(currentMinute);
     }
 

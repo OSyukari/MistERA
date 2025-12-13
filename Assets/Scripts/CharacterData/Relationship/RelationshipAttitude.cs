@@ -56,7 +56,7 @@ public class RelationshipAttitude
 
     public bool isValidAttitude(Character_Relationship rel)
     {
-
+        
         switch (rel.MaxScoreType())
         {
             case RelationshipScoreType.Trust:
@@ -111,7 +111,10 @@ public class RelationshipRequirement
         {
             return Utility.CompareValue(statEx == null ? 0 : statEx.Severity, operand, value);
         }
-
+        public bool Validate(Character_Relationship rel, Status_Instance status)
+        {
+            return Utility.CompareValue(status == null ? 0 : status.Severity, operand, value);
+        }
         public string Tooltip(StatusEx_Base statbase)
         {
             if (statbase == null) return "";

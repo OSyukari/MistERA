@@ -528,7 +528,7 @@ public class Job_Expedition : Job
                 p.DisablePackage();
                 if (! scr_System_CampaignManager.current.Unregister(p))
                 {
-                    Debug.LogError($"EXPEDITION REMOVEACTOR Unregister ERROR package {p.DisplayName}");
+                   // Debug.LogError($"EXPEDITION REMOVEACTOR Unregister ERROR package {p.DisplayName}");
                 }
                 else
                 {
@@ -545,11 +545,11 @@ public class Job_Expedition : Job
                 p.DisablePackage();
                 if (!scr_System_CampaignManager.current.Unregister(p))
                 {
-                    Debug.LogError($"EXPEDITION REMOVEACTOR Unregister ERROR package {p.DisplayName}");
+                    //Debug.LogError($"EXPEDITION REMOVEACTOR Unregister ERROR package {p.DisplayName}");
                 }
                 else
                 {
-                    Debug.Log($"EXPEDITION REMOVEACTOR disabling package {p.DisplayName}");
+                    //Debug.Log($"EXPEDITION REMOVEACTOR disabling package {p.DisplayName}");
                 }
                 packages_current.RemoveAt(index);
             }

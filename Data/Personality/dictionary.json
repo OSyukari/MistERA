@@ -40,30 +40,11 @@
 "kojo_default_event_disruptsleep_06":"<color=#373737>睡眠中的$self$对$epDescription$没有任何反应</color>",
 "kojo_default_event_disruptsleep_08":"<color=#373737>浅眠中的$self$被$epDescription$的动静干扰到</color>",
 
-"kojo_default_com_furniture_playVideoGames_refuse_1":"$self$：\"抱歉，我现在没什么心情玩游戏\"",
-"kojo_default_com_furniture_playVideoGames_refuse_2":"$self$：\"你玩吧，我今天就不參加了。\"",
-"kojo_default_com_furniture_playVideoGames_accept_failure_1":"\"唉……又输了\" $self$把手柄扔到一旁。\"",
-"kojo_default_com_furniture_playVideoGames_accept_failure_2":"$self$：\"这个游戏……不太适合我。\"",
-"kojo_default_com_furniture_playVideoGames_accept_success_1":"$self$：\"这比我想象中好玩多了！\"",
-"kojo_default_com_furniture_playVideoGames_accept_success_2":"$self$：\"你挺厉害的嘛！下次我一定赢回来！\"",
-
 "kojo_default_com_interaction_talk_accept_failure_1":"\"嗯……是啊，挺好的。\"$self$说着却目光飘忽，明显没在听。",
 "kojo_default_com_interaction_talk_accept_failure_2":"\"所以……你到底想说什么？\"$self$微微歪头，语气中带着一丝不耐。",
 "kojo_default_com_interaction_talk_accept_failure_3":"\"嗯……大概吧。\"$self$含糊地回应，看起来只是想快点结束话题。",
 "kojo_default_com_interaction_talk_accept_success_1":"\"真的假的？太搞笑了吧！\"$self$笑出声来",
 "kojo_default_com_interaction_talk_accept_success_2":"$self$：\"「你讲得挺有意思的，不继续了吗？\"",
-
-"kojo_default_com_furniture_watchVideo_refuse_1":"$self$：「我现在不太想看东西。」",
-"kojo_default_com_furniture_watchVideo_accept_failure_1":"「……这半小时真是浪费人生。」$self$一脸精疲力尽。",
-"kojo_default_com_furniture_watchVideo_accept_success_1":"「这部影片意外地不错哎！」$self$露出灿烂的笑容",
-"kojo_default_com_furniture_watchVideo_accept_success_2":"「好久没笑得这么开心了。」 $self$边笑边擦眼角的泪水",
-
-"kojo_default_com_furniture_takingBreak_refuse_1":"$self$：「我不累，你先休息吧。」",
-"kojo_default_com_furniture_takingBreak_refuse_2":"$self$：「我没事，坐着反而让我心烦。」",
-"kojo_default_com_furniture_takingBreak_accept_success_1":"$self$轻轻滑动解锁手机屏幕，然后单手随意地刷着内容。",
-"kojo_default_com_furniture_takingBreak_accept_success_2":"$self$从小包装里抓了点脆零食放进嘴里。",
-"kojo_default_com_furniture_takingBreak_accept_success_3":"$self$解开耳机线，戴上后轻轻点着头跟着节奏。",
-"kojo_default_com_furniture_takingBreak_accept_success_4":"$self$慢慢地抿了一口咖啡，然后双手静静地握着杯子。",
 
 "kojo_default_event_interrupt_01":"<color=#373737>$self$看到$epDescription$</color>",
 "kojo_default_event_interrupt_02":"<color=#373737>$self$看到$target$$epDescription$</color>",
@@ -101,30 +82,12 @@
 "kojo_default_event_disruptsleep_06":"<color=#373737>($self$) 睡眠中的$self$对$epDescription$没有任何反应</color>",
 "kojo_default_event_disruptsleep_08":"<color=#373737>$self$, lightly asleep, is disturbed by the noise of $epDescription$</color>",
 
-"kojo_default_com_furniture_playVideoGames_refuse_1":"$self$: \"Sorry, I'm not really in the mood for games right now.\"",
-"kojo_default_com_furniture_playVideoGames_refuse_2":"$self$: \"You go ahead. I'll pass today.\"",
-"kojo_default_com_furniture_playVideoGames_accept_failure_1":"\"Ugh… I can't believe I lost again\" $self$ tosses the controller to the side",
-"kojo_default_com_furniture_playVideoGames_accept_failure_2":"$self$: \"That was… rough. Not really my kind of game.\"",
-"kojo_default_com_furniture_playVideoGames_accept_success_1":"$self$: \"That was way more fun than I expected!\"",
-"kojo_default_com_furniture_playVideoGames_accept_success_2":"$self$: \"You're pretty good at this! I'll get you next time.\"",
 
 "kojo_default_com_interaction_talk_accept_failure_1":"\"Uh-huh… yeah. Sounds great.\" $self$ glances at something else mid-conversation, clearly tuned out.",
 "kojo_default_com_interaction_talk_accept_failure_2":"\"Is there a point to this, or…?\" $self$ tilts her head slightly, impatience creeping into her tone.",
 "kojo_default_com_interaction_talk_accept_failure_3":"\"Mmm… I guess.\" $self$ replies vaguely, clearly just trying to end the topic.",
 "kojo_default_com_interaction_talk_accept_success_1":"\"Wait, seriously? That’s hilarious.\" $self$ laughs out loud",
 "kojo_default_com_interaction_talk_accept_success_2":"$self$: \"You’ve got good stories. Not gonna keep going?\"",
-
-"kojo_default_com_furniture_watchVideo_refuse_1":"$self$: “Not really feeling like watching anything right now.”",
-"kojo_default_com_furniture_watchVideo_accept_failure_1":"“...That was 30 minutes of my life I’m not getting back.”  $self$ looks utterly drained.",
-"kojo_default_com_furniture_watchVideo_accept_success_1":"“Okay, that was actually really good!” $self$ smiles brightly",
-"kojo_default_com_furniture_watchVideo_accept_success_2":"“I haven’t laughed that hard in ages.” $self$ wipes away a tear",
-
-"kojo_default_com_furniture_takingBreak_refuse_1":"$self$: “I’m not tired. You go ahead.”",
-"kojo_default_com_furniture_takingBreak_refuse_2":"$self$: “I’m fine. Sitting still just makes me restless.”",
-"kojo_default_com_furniture_takingBreak_accept_success_1":"$self$ unlocks her cellphone screen with a flick, then idly scrolls with one thumb.",
-"kojo_default_com_furniture_takingBreak_accept_success_2":"$self$ pulls something crunchy from a small pack and pops it into her mouth without looking.",
-"kojo_default_com_furniture_takingBreak_accept_success_3":"$self$ untangles her earbuds and slips them in, nodding slightly to the beat.",
-"kojo_default_com_furniture_takingBreak_accept_success_4":"$self$ takes a long sip from her cup, then quietly holds it with both hands.",
 
 
 "kojo_default_event_interrupt_01":"<color=#373737>$self$ sees $epDescription$</color>",

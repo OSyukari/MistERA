@@ -366,7 +366,7 @@ public class COM: I_SerializationCallbackReceiver
         {
             return false;
         }
-        if (j is Job_Furniture && !(j as Job_Furniture).CanCOMAcceptMoreActor(this))
+        if (false && j is Job_Furniture && !(j as Job_Furniture).CanCOMAcceptMoreActor(this))
         {
             msg = "furniture cannot accept more actor";
             return false;
@@ -404,23 +404,31 @@ public class COM: I_SerializationCallbackReceiver
             return returnVal;
         }*/
 
-    
-
-    
-
-    public virtual bool ValidateCondition(ref List<string> _tooltip, List<int> doerRefIDs, List<int> receiverRefIDs, COM com, COM_Variant variant = null)
+  
+    public virtual bool ValidateCondition(List<string> _tooltip, List<Character_Trainable> doerRefs, List<Character_Trainable> receiverRefs, COM com, COM_Variant variant = null)
     {
-        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefIDs, receiverRefIDs, null);
-        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefIDs, receiverRefIDs, com.requirements.requirement);
-       // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
+        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, null);
+        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, com.requirements.requirement);
+        // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
         if (!(value1 && value2))
         {
-            _tooltip.Add("ValidateCondition failed value1[" + value1 + "] value2[" + value2 + "]");
-        } 
+            if (_tooltip != null) _tooltip.Add("ValidateCondition failed value1[" + value1 + "] value2[" + value2 + "]");
+        }
+        return value1 && value2;
+    }
+    public virtual bool ValidateCondition(List<string> _tooltip, Character_Trainable doerRefs, COM com, COM_Variant variant = null)
+    {
+        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, null);
+        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, com.requirements.requirement);
+        // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
+        if (!(value1 && value2))
+        {
+           if (_tooltip != null) _tooltip.Add("ValidateCondition failed value1[" + value1 + "] value2[" + value2 + "]");
+        }
         return value1 && value2;
     }
 
-    public virtual string DisplayName(List<int> doerRefIDs, List<int> receiverRefIDs = null, bool excludeRequireExisting = false)
+    public virtual string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false)
     {
         int index = GetValidVariant(doerRefIDs, receiverRefIDs, excludeRequireExisting);
         if (index < 0) return LocalizeDictionary.QueryThenParse(this.displayName);
@@ -444,62 +452,93 @@ public class COM: I_SerializationCallbackReceiver
     [JsonIgnore] public bool isSleepCOM { get { return ID == "com_furniture_sleep"; } }
     [JsonIgnore] public bool isRecreationCOM { get { return !isSleepCOM && !isJobCOM; } }
 
-    public int GetValidVariant(List<Character_Trainable> doers, List<Character_Trainable> receivers, bool excludeRequireExisting = false)
-    {
-        List<int> doerRefIDs = new List<int>();
-        foreach (var c in doers) doerRefIDs.Add(c.RefID);
-
-        List< int > receiverRefIDs = new List<int>();
-        foreach (var c in receivers) receiverRefIDs.Add(c.RefID);
-
-        return GetValidVariant(doerRefIDs, receiverRefIDs, excludeRequireExisting);
-    }
-
-    public int GetValidVariant(List<int> doerRefIDs, List<int> receiverRefIDs, bool excludeRequireExisting = false)
+    public int GetValidVariant(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false)
     {
         List<string> s = new List<string>();
         return GetValidVariant(ref s, doerRefIDs, receiverRefIDs, excludeRequireExisting);
     }
 
-    public int GetValidVariant(Character_Trainable doer, Character_Trainable receiver)
-    {
-        List<int> doerRefIDs = new List<int>();
-        if (doer != null) doerRefIDs.Add(doer.RefID);
-
-        List<int> receiverRefIDs = new List<int>();
-        if (receiver != null) receiverRefIDs.Add(receiver.RefID);
-
-        return GetValidVariant(doerRefIDs, receiverRefIDs);
-    }
-
-    [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex"); } }
-
-    public int GetValidVariant(ref List<string> tooltip, List<int> doerRefIDs, List<int> receiverRefIDs, bool excludeRequireExisting = false)
+    public int GetValidVariant(Character_Trainable doerRefIDs, bool excludeRequireExisting = false)
     {
         int index = -1;
         //if (receiverRefIDs == null || receiverRefIDs.Count < 1) receiverRefIDs = doerRefIDs;
-        List<string> s2 = new List<string>();
-        if (!requirements.requireExisting.ValidateCondition(ref s2, doerRefIDs, receiverRefIDs, this) && s2.Count > 0)
+        if (!requirements.requireExisting.ValidateCondition(null, doerRefIDs, this))
         {
-            tooltip.Add("Command GetValidVariant invalid: missing required pre-existing command"); 
-            tooltip.AddRange(s2);
             return -1;
         }
         if (variants.Count < 1)
         {
-            tooltip.Add("Command GetValidVariant invalid: no variant in command"); 
+            return -1;
+        }
+
+        if (!AllowDuringSex)
+        {
+
+        }
+        else if (comTags.Contains("initSex"))
+        {
+
+        }
+        else if (comTags.Contains("endSex"))
+        {
+
+        }
+        if (!ValidateCondition(null, doerRefIDs, this))
+        {
+            return -1;
+        }
+
+        foreach (COM_Variant var in variants)
+        {
+            //s.Clear();
+            if (!requirements.requireExisting.ValidateCondition(null, doerRefIDs, this, var)) continue;
+            if (!ValidateCondition(null, doerRefIDs, this, var)) continue;
+            if (excludeRequireExisting && var.requirements.requireExisting.isValid) continue;
+            //if( !comTags.Contains("sex") && !comTags.Contains("touch")) Debug.Log("validate com " + displayName + " return true valid variant id "+ variants.IndexOf(var));
+            index = Math.Max(index, variants.IndexOf(var));
+            if (index > -1)
+            {
+                return index;
+            }
+        }
+        return index;
+    }
+
+    [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex"); } }
+
+    public int GetValidVariant(ref List<string> tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false)
+    {
+        int index = -1;
+        bool logging = tooltip != null && !scr_UpdateHandler.current.Updating;
+        //if (receiverRefIDs == null || receiverRefIDs.Count < 1) receiverRefIDs = doerRefIDs;
+        if (!requirements.requireExisting.ValidateCondition(logging ? tooltip : null, doerRefIDs, receiverRefIDs, this))
+        {
+            if (logging)
+            {
+                tooltip.Add("Command GetValidVariant invalid: missing required pre-existing command");
+            }
+            return -1;
+        }
+        if (variants.Count < 1)
+        {
+            if (logging)
+            {
+                tooltip.Add("Command GetValidVariant invalid: no variant in command");
+            }
             return -1;
         }
         if (doerRefIDs.Count < 1)
         {
-            tooltip.Add("Command GetValidVariant invalid: no participant"); 
+            if (logging)
+            {
+                tooltip.Add("Command GetValidVariant invalid: no participant");
+            }
             return -1;
         }
         if (!AllowDuringSex)
         {
-            foreach (var i in receiverRefIDs)
+            foreach (var receiver in receiverRefIDs)
             {
-                var receiver = scr_System_CampaignManager.current.FindInstanceByID(i);
                 if (receiver == null) return -1;
                 else if (receiver.CurrentJob is Job_Sex_Group)
                 {
@@ -512,8 +551,8 @@ public class COM: I_SerializationCallbackReceiver
         {
             foreach (var i in receiverRefIDs)
             {
-                var targetJob = scr_System_CampaignManager.current.FindInstanceByID(i).CurrentJob;
-                if (targetJob is Job_Sex_Group && Utility.ListContainsStrict(targetJob.actorRefID,doerRefIDs))
+                var targetJob = i.CurrentJob;
+                if (targetJob is Job_Sex_Group && Utility.ListContainsStrict(targetJob.Actors,doerRefIDs))
                 {
                     tooltip.Add("Command GetValidVariant invalid: both actors already in sex");
                     return -1;
@@ -524,14 +563,14 @@ public class COM: I_SerializationCallbackReceiver
         {
             foreach (var i in receiverRefIDs)
             {
-                if (!(scr_System_CampaignManager.current.FindInstanceByID(i).CurrentJob is Job_Sex_Group))
+                if (!(i.CurrentJob is Job_Sex_Group))
                 {
                     tooltip.Add("Command GetValidVariant invalid: no sex act can be ended");
                     return -1;
                 }
             }
         }
-        if (!ValidateCondition(ref tooltip, doerRefIDs, receiverRefIDs, this))
+        if (!ValidateCondition(logging ? tooltip : null, doerRefIDs, receiverRefIDs, this))
         {
             tooltip.Add("Command GetValidVariant invalid: requirement not met");
             return -1;
@@ -553,9 +592,9 @@ public class COM: I_SerializationCallbackReceiver
         List<string> s = new List<string>();
         foreach (COM_Variant var in variants)
         {
-            //s.Clear();
-            if (!requirements.requireExisting.ValidateCondition(ref s, doerRefIDs, receiverRefIDs, this, var)) continue;
-            if (!ValidateCondition(ref s, doerRefIDs, receiverRefIDs, this, var)) continue;
+            s.Clear();
+            if (!requirements.requireExisting.ValidateCondition(s, doerRefIDs, receiverRefIDs, this, var)) continue;
+            if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, var)) continue;
             if (excludeRequireExisting && var.requirements.requireExisting.isValid) continue;
             //if( !comTags.Contains("sex") && !comTags.Contains("touch")) Debug.Log("validate com " + displayName + " return true valid variant id "+ variants.IndexOf(var));
             index = Math.Max(index, variants.IndexOf(var));
@@ -569,14 +608,7 @@ public class COM: I_SerializationCallbackReceiver
         return index;
     }
 
-    public int GetValidVariant(int doerRefID, int receiverRefID = -1)
-    {
-        if (receiverRefID == -1) return GetValidVariant(new List<int>() { doerRefID }, new List<int>());
-        else return GetValidVariant(new List<int>() { doerRefID }, new List<int>() { receiverRefID });
-    }
-
-
-    public virtual bool ValidateActors(ref List<string> tooltip, List<int> doerRefIDs, List<int> receiverRefIDs = null)
+    public virtual bool ValidateActors(ref List<string> tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null)
     {
         //if (!comTags.Contains("sex") && !comTags.Contains("touch")) Debug.Log("validate com " + displayName + " doers[" + String.Join(" ", doerRefIDs) + "] receivers[" +String.Join(" ",receiverRefIDs)+"]");
         if ( GetValidVariant(ref tooltip, doerRefIDs, receiverRefIDs) > -1) return true;

@@ -298,18 +298,12 @@ public static class Utility
     /// <returns></returns>
     public static bool ListContainsLoose<T>(List<T> L1, List<T> L2, IEqualityComparer<T> comparer = null)
     {
-        if (L2 == null || L2.Count == 0)
-            return true;
-        if (L1 == null)
-            return false;
+        if (L2 == null || L2.Count == 0) return true;
+        if (L1 == null) return false;
 
-        comparer = comparer ?? EqualityComparer<T>.Default;
-
-        var distinctL1 = new HashSet<T>(L1, comparer); 
         foreach (var item in L2)
         {
-            if (distinctL1.Contains(item))
-                return true;
+            if (L1.Contains(item)) return true;
         }
         return false;
         //return !distinctL2.Except(distinctL1, comparer).Any();
@@ -331,29 +325,19 @@ public static class Utility
     }
 
     /// <summary>
-    /// Check if L2 is contained in L1
+    /// Check if L2 is contained in L1. Also return true if L2 is empty
     /// </summary>
     /// <returns></returns>
     public static bool ListContainsStrict<T>(List<T> L1, List<T> L2, IEqualityComparer<T> comparer = null)
     {
-        if (L2 == null || L2.Count == 0)
-            return true;
-        if (L1 == null)
-            return false;
-
-        comparer = comparer ?? EqualityComparer<T>.Default;
-
-        HashSet<T> setL1 = new(L1, comparer);
-        HashSet<T> seen = new(comparer);
+        if (L2 == null || L2.Count == 0) return true;
+        if (L1 == null) return false;
 
         foreach (var item in L2)
         {
-            if (!seen.Add(item))
-                continue;
-            if (!setL1.Contains(item))
+            if (!L1.Contains(item))
                 return false;
         }
-
         return true;
     }
     // Stores the mapping from the human-readable string key to the unique integer ID.

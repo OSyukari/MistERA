@@ -4,143 +4,76 @@
         {
             "statusID":"chara_status_lust",
             "displayName":"chara_status_lust",
-            "noDisplay":true,
-            "stringFormat":"N0",
-            "constant":true,
-            "capModded":true,
-            "variationMode":
-                { "variationType":"statModifiers", "value": 0  }
-            ,
+            "noDisplay":true, "stringFormat":"N0", "constant":true, "capModded":true,
+            "variationMode": { "variationType":"statModifiers", "value": 0  } ,
             "variants":[
                 { "displayName":"chara_status_lust_satisfied",     "threshold":-3.0 },
                 { "displayName":"chara_status_lust_satisfied",     "threshold":-0.9 },
                 { "displayable":false,       "threshold":0.9 },
                 { "displayName":"chara_status_lust_low",     "threshold":1.9 },
                 { "displayName":"chara_status_lust_high",     "threshold":2.9 },
-                { "displayName":"chara_status_lust_high",     "threshold":3.0 }
+                { "displayName":"chara_status_lust_high",     "threshold":5.0 }
             ]
         },
         {
             "statusID":"chara_status_sex_stimulation",
             "displayName":"chara_status_sex_stimulation",
-            "constant":true,
-            "stringFormat":"N0",
-            "noDisplay":false,
-            "variationMode":
-            {
-                "variationType":"summation",
-                "stringData":"chara_status_sex"
-            },
+            "constant":true, "stringFormat":"N0", "noDisplay":false, "DeferredTooltipStatusEXID":"chara_status_sex_stimulation_pos",
+            "variationMode": { "variationType":"summation", "stringData":"chara_status_sex" },
             "variants":[
-                {
-                    "displayName":"chara_status_sex_stimulation_climaxed",
-                    "threshold":-20
-                },
-                {
-                    "displayable":false,  
-                    "threshold":0
-                },
-                {
-                    "displayName":"chara_status_sex_stimulation_verylow",
-                    "threshold":19
-                },
-                {
-                    "displayName":"chara_status_sex_stimulation_low",
-                    "threshold":39,
-                    "stat_modifiers":[
-                        {
-                            "statID":"chara_status_lust",
-                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"1"
-                        }
-                    ]
-                },
-                {
-                    "displayName":"chara_status_sex_stimulation_medium",
-                    "threshold":59,
-                    "stat_modifiers":[
-                        {
-                            "statID":"chara_status_lust",
-                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"2"
-                        }
-                    ]
-                },
-                {
-                    "displayName":"chara_status_sex_stimulation_high",
-                    "threshold":79,
-                    "stat_modifiers":[
-                        {
-                            "statID":"chara_status_lust",
-                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"2"
-                        },
-                        {
-                            "statID":"chara_status_stress",
-                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"1"
-                        }
-                    ]
-                },
-                {
-                    "displayName":"chara_status_sex_stimulation_veryhigh",
-                    "threshold":1000,
-                    "stat_modifiers":[
-                        {
-                            "statID":"chara_status_lust",
-                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"3"
-                        },
-                        {
-                            "statID":"chara_status_stress",
-                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"2"
-                        },
-                        {
-                            "statID":"chara_status_mood",
-                            "modKey":"chara_status_sex_stimulation", "type":"setBase", "valueType":"number", "valueString":"1"
-                        }
-                    ]
-                }
+                { "displayName":"chara_status_sex_stimulation_climaxed", "threshold":-20 },
+                { "displayable":false, "threshold":0 },
+                { "displayName":"chara_status_sex_stimulation_verylow", "threshold":19 },
+                { "displayName":"chara_status_sex_stimulation_low", "threshold":39 },
+                { "displayName":"chara_status_sex_stimulation_medium", "threshold":59 },
+                { "displayName":"chara_status_sex_stimulation_high", "threshold":79 },
+                { "displayName":"chara_status_sex_stimulation_veryhigh", "threshold":120 }
             ]
         },
         {
-            "statusID":"chara_status_orificelubrication",
-            "displayName":"chara_status_orificelubrication",
-            "constant":true,
-            "stringFormat":"N0",
-            "noDisplay":false,
-            "capModded":true,
-            "variationMode":
-            { "variationType":"statModifiers", "value": 0 },
+            "statusID":"chara_status_sex_stimulation_pos",
+            "constant":true, "stringFormat":"N0", "noDisplay":true,
+            "variationMode": { "variationType":"summation", "stringData":"chara_status_sex_" },
             "variants":[
-                {
-                    "displayable":false,  
-                    "threshold":0
-                },
-                {
-                    "displayName":"chara_status_orificelubrication_verylow",
-                    "threshold":19
-                },
-                {
-                    "displayName":"chara_status_orificelubrication_low",
-                    "threshold":39,
-                    "stat_modifiers":[
-                    ]
-                },
-                {
-                    "displayName":"chara_status_orificelubrication_medium",
-                    "threshold":59,
-                    "stat_modifiers":[
-                    ]
-                },
-                {
-                    "displayName":"chara_status_orificelubrication_high",
-                    "threshold":79,
-                    "stat_modifiers":[
-                    ]
-                }
+                { "displayable":false,   "threshold":0 },
+                { "displayName":"chara_status_orificelubrication_verylow", "threshold":19 },
+                { "displayName":"chara_status_orificelubrication_low", "threshold":39 },
+                { "displayName":"chara_status_orificelubrication_medium", "threshold":59 },
+                { "displayName":"chara_status_orificelubrication_high", "threshold":79 },
+                { "displayName":"chara_status_orificelubrication_high", "threshold":1000 }
             ]
         }
     ]
     },
-    
     "Status":{
         "list":[
+        {
+            "statusID":"chara_status_lust_hidden",
+            "displayName":"chara_status_lust_hidden",
+            "noDisplay":false, "stringFormat":"F1", "constant":true,
+            "variationMode":{ 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":10, "decaySpeed":0.001
+                }
+            } ,
+            "variants":[
+                {  "displayName":"chara_status_lust_satisfied",   "threshold":0.0 },
+                {   "displayName":"chara_status_lust_satisfied",   "threshold":3.9  },
+                {   
+                    "displayName":"chara_status_lust_low",   "threshold":6.9  ,
+                    "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_lust_hidden", "type":"setBase", "valueType":"number", "valueString":"1" } ] 
+                },
+                { 
+                    "displayName":"chara_status_lust_high",     "threshold":7.9 ,
+                    "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_lust_hidden", "type":"setBase", "valueType":"number", "valueString":"2" } ] 
+                },
+                { 
+                    "displayName":"chara_status_lust_high",     "threshold":9999 ,
+                    "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_lust_hidden", "type":"setBase", "valueType":"number", "valueString":"2" } ] 
+                }
+            ]
+        },
         {
             "statusID":"chara_status_aphrodisiac",
             "variationMode": { 
@@ -399,7 +332,7 @@
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_lust",
-                            "modKey":"chara_status_climaxing", "type":"setBase", "valueType":"number", "valueString":"-3"
+                            "modKey":"chara_status_climaxing", "type":"setBase", "valueType":"number", "valueString":"3"
                         },
                         {
                             "statID":"chara_status_stress",
@@ -411,7 +344,7 @@
                         },
                         {
                             "statID":"chara_status_consciousness",
-                            "modKey":"chara_status_climaxing", "type":"setBase", "valueType":"number", "valueString":"-0.3"
+                            "modKey":"chara_status_climaxing", "type":"setBase", "valueType":"number", "valueString":"-0.1"
                         }
                     ]
                 }
@@ -431,7 +364,25 @@
             "variants":[
                 {
                     "displayName":"chara_status_sexual_climax_after_high",
-                    "threshold":-500,
+                    "threshold":-1000,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_lust",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_sexual_climax_after_high",
+                    "threshold":-200,
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_lust",
@@ -452,10 +403,6 @@
                     "threshold":-100,
                     "stat_modifiers":[
                         {
-                            "statID":"chara_status_lust",
-                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"-3"
-                        },
-                        {
                             "statID":"chara_status_stress",
                             "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"2"
                         },
@@ -467,12 +414,8 @@
                 },
                 {
                     "displayName":"chara_status_sexual_climax_after_low",
-                    "threshold":-1,
+                    "threshold":-5,
                     "stat_modifiers":[
-                        {
-                            "statID":"chara_status_lust",
-                            "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"-1"
-                        },
                         {
                             "statID":"chara_status_stress",
                             "modKey":"chara_status_sexual_climax_after", "type":"setBase", "valueType":"number", "valueString":"1"
@@ -485,9 +428,8 @@
                 },
                 {
                     "displayable":false,  
-                    "threshold":0,
-                    "stat_modifiers":[
-                    ]
+                    "threshold":10,
+                    "stat_modifiers":[ ]
                 }
             ]
         },
@@ -576,25 +518,19 @@
             "variationMode": { 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
-                    "baseValue":0,
-                    "decaySpeed":1
+                    "baseValue":0, "decaySpeed":1
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"B",
-                    "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"B", "pauseXMinAfterMod":1
                 }
-            } ,
-            "variants":[
+            },
+            "variantThresholdModStat":"stats_derived_maxSensitivity_B",
+            "variants":[ 
                 { "threshold":0 },
-                { "threshold":1 ,
-                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                             "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_B" } ]
-                },
-                { "threshold":1000,
-                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                             "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_B" } ] 
-                }
+                { "threshold":39 },
+                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -604,23 +540,19 @@
             "variationMode": { 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
-                    "baseValue":0,
-                    "decaySpeed":1
+                    "baseValue":0, "decaySpeed":1
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"M",
-                    "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"M", "pauseXMinAfterMod":1
                 }
-            } ,
-            "variants":[
-                { "threshold":0,
-                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                         "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_M" } ]  },
-                { "threshold":1000,
-                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                             "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_M" } ] 
-                }
+            },
+            "variantThresholdModStat":"stats_derived_maxSensitivity_M",
+            "variants":[ 
+                { "threshold":0 },
+                { "threshold":39 },
+                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -630,23 +562,19 @@
             "variationMode": { 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
-                    "baseValue":0,
-                    "decaySpeed":1
+                    "baseValue":0, "decaySpeed":1
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"C",
-                    "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"C", "pauseXMinAfterMod":1
                 }
-            } ,
-            "variants":[
-                { "threshold":0,
-                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                         "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_C" } ] },
-                { "threshold":1000,
-                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                             "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_C" } ] 
-                }
+            },
+            "variantThresholdModStat":"stats_derived_maxSensitivity_C",
+            "variants":[ 
+                { "threshold":0 },
+                { "threshold":39 },
+                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -656,23 +584,19 @@
             "variationMode": { 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
-                    "baseValue":0,
-                    "decaySpeed":1
+                    "baseValue":0, "decaySpeed":1
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"V",
-                    "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"V", "pauseXMinAfterMod":1
                 }
             } ,
-            "variants":[
-                { "threshold":0 ,
-                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                         "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_V" } ] },
-                { "threshold":1000,
-                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                             "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_V" } ] 
-                }
+            "variantThresholdModStat":"stats_derived_maxSensitivity_V",
+            "variants":[ 
+                { "threshold":0 },
+                { "threshold":39 },
+                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -682,23 +606,19 @@
             "variationMode": { 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
-                    "baseValue":0,
-                    "decaySpeed":1
+                    "baseValue":0, "decaySpeed":1
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"A",
-                    "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"A", "pauseXMinAfterMod":1
                 }
             } ,
-            "variants":[
-                { "threshold":0,
-                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                         "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_A" } ]  },
-                { "threshold":1000,
-                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                             "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_A" } ] 
-                }
+            "variantThresholdModStat":"stats_derived_maxSensitivity_A",
+            "variants":[ 
+                { "threshold":0 },
+                { "threshold":39 },
+                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -708,23 +628,40 @@
             "variationMode": { 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
-                    "baseValue":0,
-                    "decaySpeed":1
+                    "baseValue":0, "decaySpeed":1
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"W",
-                    "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"W", "pauseXMinAfterMod":1
                 }
-            } ,
-            "variants":[
-                { "threshold":0,
-                "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                         "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_W" } ]  },
-                { "threshold":1000,
-                    "stat_modifiers":[ { "statID":"chara_status_orificelubrication",
-                             "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"getStatusValue", "valueString":"chara_status_sex_W" } ] 
+            },
+            "variantThresholdModStat":"stats_derived_maxSensitivity_W",
+            "variants":[ 
+                { "threshold":0 },
+                { "threshold":39 },
+                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
+            ]
+        },
+        {
+            "statusID":"chara_status_sex_Mind",
+            "constant":true,
+            "noDisplay":true,
+            "variationMode": { 
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0, "decaySpeed":1
+                },
+                "randomVariation":{
+                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp", "sensitivityKeyword":"Mind", "pauseXMinAfterMod":1
                 }
+            },
+            "variantThresholdModStat":"stats_derived_maxSensitivity_Mind",
+            "variants":[ 
+                { "threshold":0 },
+                { "threshold":39 },
+                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_Mind", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_Mind", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         }
     ]
@@ -745,11 +682,12 @@
                 "chara_status_sex_stimulation_tooltip": "角色的当前快感数值，会因为高潮而被扣除。\n当快感数值达到100时将执行高潮判定，如果此时部位的刺激度也达到了100将会强绝顶。",
 
                 "chara_status_lust": "欲望",
-                "chara_status_lust_satisfied": "满足",
-                "chara_status_lust_low": "不满",
-                "chara_status_lust_high": "发情",
+                "chara_status_lust_satisfied": "%%chara_status_lust%%：满足",
+                "chara_status_lust_low": "%%chara_status_lust%%：不满",
+                "chara_status_lust_high": "%%chara_status_lust%%：发情",
                 "chara_status_lust_tooltip": "影响角色对肢体接触的接受度\n影响角色态度计算中的欲望数值\n影响角色在做爱时的扩张能力\n%%statsEX_capModded%%",
 
+                "chara_status_sex_stimulation_pos":"%%chara_status_orificelubrication%%",
                 "chara_status_orificelubrication":"润滑",
                 "chara_status_orificelubrication_none":"%%chara_status_orificelubrication%%：无",
                 "chara_status_orificelubrication_verylow":"%%chara_status_orificelubrication%%：微弱",
@@ -794,6 +732,7 @@
                 "chara_status_sex_C":"C快感",
                 "chara_status_sex_M":"M快感",
                 "chara_status_sex_B":"B快感",
+                "chara_status_sex_Mind":"精神快感",
 
                 "stats_derived_maxSensitivity_tooltip": "相关身体部位的快感数值无法超过上限",
                 "stats_derived_maxSensitivity_C": "C敏感",

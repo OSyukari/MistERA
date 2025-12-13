@@ -110,19 +110,30 @@ public class Job : IDisposable, I_Disposable
         else return DateTime.MinValue;
     }
     //[NonSerialized] public Manageable FactionOwner = null;
-    [JsonProperty] protected Dictionary<int, COM_Match> actorRefIDStorage = null;
+    [JsonProperty] protected Dictionary<int, COM_Match> actorRefIDStorage = new Dictionary<int, COM_Match>();
     [JsonProperty] protected Dictionary<int, DateTime> actorJoinTime = new Dictionary<int, DateTime>();
     [JsonIgnore] public virtual List<int> actorRefID 
     { 
         get 
         {
-            if (actorRefIDStorage == null)
-            {
-                actorRefIDStorage = new Dictionary<int, COM_Match>();
-                return actorRefIDStorage.Keys.ToList();
-            }else return actorRefIDStorage.Keys.ToList(); 
+            return actorRefIDStorage.Keys.ToList(); 
         } 
     }
+
+    List<Character_Trainable> _actors_cache = null;
+    [JsonIgnore] public List<Character_Trainable> Actors
+    {
+        get
+        {
+            if (_actors_cache  == null)
+            {
+                _actors_cache = new List<Character_Trainable>(actorRefID.Count);
+                foreach (var i in actorRefID) _actors_cache.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
+            }
+            return _actors_cache;
+        }
+    }
+
     [JsonProperty] protected int jobRefID = -1;
     protected string jobBaseID;
     protected COM getActorPriorityCOM(int refID)
@@ -257,12 +268,7 @@ public class Job : IDisposable, I_Disposable
     {
         if (!actorRefID.Contains(charaRef))
         {
-            if (actorRefIDStorage == null)
-            {
-                actorRefIDStorage = new Dictionary<int, COM_Match>();
-                actorRefIDStorage.Add(charaRef, new COM_Match(priorityCOMID, priorityCOMTag));
-            }
-            else actorRefIDStorage.Add(charaRef, new COM_Match(priorityCOMID, priorityCOMTag));
+            actorRefIDStorage.Add(charaRef, new COM_Match(priorityCOMID, priorityCOMTag));
             //Debug.Log("Job Add Actor " + charaRef + " result " + String.Join("|", actorRefID));
         }
         else
@@ -271,6 +277,7 @@ public class Job : IDisposable, I_Disposable
         }
         actorJoinTime[charaRef] = scr_System_Time.current.getCurrentTime();
         actorJobComplete.Remove(charaRef);
+        _actors_cache = null;
     }
 
     public class COM_Match
@@ -316,7 +323,7 @@ public class Job : IDisposable, I_Disposable
             if (p.actorRefs.Contains(charaRef)) p.NotifyInterrupted();
         }
         //if (this.actorRefID.Contains(charaRef) && this.actorRefIDStorage != null && this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
-        if (this.actorRefIDStorage != null && this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
+        if (this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
         for (int i = packages_current.Count - 1; i >= 0; i--) if (packages_current[i].actorRefs.Contains(charaRef)) packages_current.RemoveAt(i);
         for (int i = packages_previous.Count - 1; i >= 0; i--)
         {
@@ -332,6 +339,7 @@ public class Job : IDisposable, I_Disposable
             }
         }
         actorJobComplete.Remove(charaRef);
+        _actors_cache = null;
     }
 
     [JsonIgnore] public int RefID { get { return jobRefID; } }
@@ -513,6 +521,17 @@ public class Job : IDisposable, I_Disposable
         this.packages_current.Remove(ap);
     }
 
+    public virtual void Clear()
+    {
+        this.packages_previous.Clear();
+        this.packages_current.Clear();
+        this.actorJobComplete.Clear();
+        this.actorJoinTime.Clear();
+        if (this.actorRefIDStorage == null) this.actorRefIDStorage = new Dictionary<int, COM_Match>();
+        else this.actorRefIDStorage.Clear();
+        this.packages_completed.Clear();
+        this.m.Clear();
+    }
     [JsonIgnore] public List<ActionPackage> CurrentPackages { get { return packages_current; } }
     [JsonIgnore] public List<ActionPackage> ActivePackages { get
         {
@@ -842,9 +861,6 @@ public class Job : IDisposable, I_Disposable
     [JsonIgnore] public string MessagesBefore { get { return m.messages_before.Count > 0 ? String.Join("\n", m.messages_before) : ""; } }
     [JsonIgnore] public string MessagesAfter { get { return m.messages_after.Count > 0 ? String.Join("\n", m.messages_after) : ""; } }
 
-    
-
-    public bool kojoLogged = false;
 
     public MessageCollect m = new MessageCollect();
 

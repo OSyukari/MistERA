@@ -47,6 +47,7 @@ public class StatusEx_Base
     public bool noDisplay = false;
     public bool constant = false;
     public string stringFormat = "N1";
+    public string DeferredTooltipStatusEXID = "";
     public bool allowOvercap = false;
     public bool capModded = false;
     [JsonIgnore] public bool isValid
@@ -174,7 +175,18 @@ public class StatusEx_Instance : I_CacheValues
     {
         string data = $"{SeverityDisplayName}({Severity.ToString(BaseRef.stringFormat)})";
         text.SetText(data, false, baseRef.statusID+"_tooltip");
-        text.SetExternalTooltip(String.Join("\n",ModString));
+
+        var tooltip = String.Join("\n", ModString);
+        if (BaseRef.DeferredTooltipStatusEXID != "")
+        {
+            var deferred = owner.GetStatusEXByStringMatch(BaseRef.DeferredTooltipStatusEXID);
+            if (deferred != null)
+            {
+                tooltip += $"\n\n{deferred.SeverityDisplayName}({deferred.Severity.ToString(deferred.BaseRef.stringFormat)})\n{String.Join("\n", deferred.ModString)}";
+            }
+        }
+
+        text.SetExternalTooltip(tooltip);
     }
 
     [JsonIgnore] public float Severity

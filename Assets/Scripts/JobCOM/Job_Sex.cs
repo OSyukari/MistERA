@@ -402,7 +402,17 @@ public class Job_Sex_Group : Job
                             // queueing identical package, second package will require re-validation and thats not desired behavior
                             // keep the first one, do edit, and disable it.
                             if (p.targetCOM.variants[p.COMVariantID].setForce) (packages_current[ii] as ActionPackage_Sex).isStrongPenetration = true;
-                            p.DisablePackage();                            
+                            p.DisablePackage();                       
+
+                            var temp = packages_current[ii];
+                            var last = packages_current[packages_current.Count - 1];
+
+                            if (temp != last)
+                            {
+                                packages_current[ii] = last;
+                                packages_current[packages_current.Count - 1] = temp;
+                            }
+                            
                         }
                         else if (UtilityEX.DetectConflict(p, packages_current[ii]))
                         {   // leave the conflict package in previous to use for COM text selection purposes.
@@ -564,7 +574,7 @@ public class Job_Sex_Group : Job
         {
             if (Utility.ListContainsStrict(forceFucking, p.DoerRefs))
             {
-                Debug.Log("Preupdatetime isStrongPenetration");
+               // Debug.Log("Preupdatetime isStrongPenetration");
                 (p as ActionPackage_Sex).isStrongPenetration = true;
             }
             //else (p as ActionPackage_Sex).isStrongPenetration = false;
@@ -645,6 +655,11 @@ public class Job_Sex_Group : Job
             ss += "|sexjob timer runs out|";
             return false;
         }
+        else if (c.Climaxing)
+        {
+            ss += "|sexjob climaxing|";
+            return true;
+        }
         else
         {
             if (!c.canAct) ss += "|cannot act|";
@@ -656,21 +671,20 @@ public class Job_Sex_Group : Job
                 {
                     occupiedBodyTags.Clear();
                     actionCount = 0;
-                }else if (actionCount >= 2 || occupiedBodyTags.Count >= 4)
+                } else if (actionCount >= 2 || occupiedBodyTags.Count >= 4)
                 {
                     // dont need to perform too much actions
                     return true;
                 }
                 if (validTarget.Count < 1)
                 {
-                    if (actorRefIDStorage != null && actorRefIDStorage.ContainsKey(c.RefID) && actorRefIDStorage[c.RefID].comID == "com_interaction_endOngoingSex")
+                    if (actorRefIDStorage.ContainsKey(c.RefID) && actorRefIDStorage[c.RefID].comID == "com_interaction_endOngoingSex")
                     {
                         ss += "|job has no valid target, already waited, aborting|";
                         return false;
                     }
                     else
                     {
-                        if (actorRefIDStorage == null) actorRefIDStorage = new Dictionary<int, COM_Match>();
                         ss += "|job has no valid target, waiitng for one round|";
                         actorRefIDStorage[c.RefID] = new COM_Match("com_interaction_endOngoingSex");
                         return true;
@@ -680,7 +694,7 @@ public class Job_Sex_Group : Job
                 // gender doesnt matter, what matter is valid body tag
                 //Debug.Log($"OccupiedBodyTags {String.Join("|", occupiedBodyTags)}");
                 Dictionary<BodyInternal_Instance, int> internals = new Dictionary<BodyInternal_Instance, int>();
-                foreach(var part in c.Body.Internals)
+                foreach (var part in c.Body.Internals)
                 {
                     if (occupiedBodyTags.Count > 0 && (Utility.ListContainsLoose(part.Base.tags, occupiedBodyTags) || Utility.ListContainsLoose(part.Parent.Base.tags, occupiedBodyTags))) continue;
                     var sens = part.MaxSensitivity;
@@ -707,19 +721,19 @@ public class Job_Sex_Group : Job
                 if (!c.Climaxing) CollectConflictTags(c.RefID, randomTarget, out conflictTags);
 
                 //Debug.Log($"actor {c.CallName} looking to add sex, actionCount {actionCount} tags {String.Join("|", occupiedBodyTags)}");
-                var listAll = this.allusableCOMs.FindAll(x => 
+                var listAll = this.allusableCOMs.FindAll(x =>
                     (restrictTags.Count < 1 || Utility.ListContainsStrict(x.comTags, restrictTags))
-                    && (selected == null ? true : Utility.ListContainsLoose(selected.Base.tags, x.requirements.requirement.doerBodyTags)) 
+                    && (selected == null ? true : Utility.ListContainsLoose(selected.Base.tags, x.requirements.requirement.doerBodyTags))
                     && (occupiedBodyTags.Count < 1 || !Utility.ListContainsLoose(x.requirements.requirement.doerBodyTags, occupiedBodyTags))
-                    && (conflictTags.Count < 1 || !Utility.ListContainsLoose( x.comTags, conflictTags)));
-                
+                    && (conflictTags.Count < 1 || !Utility.ListContainsLoose(x.comTags, conflictTags)));
+
                 Utility.ShuffleList(listAll);
 
-                for(int i = 0; i < 5 && i < listAll.Count; i++)
+                for (int i = 0; i < 5 && i < listAll.Count; i++)
                 {
                     COM randomCOM = listAll[i];
-                    ActionPackage_Sex newP = new ActionPackage_Sex(this, randomCOM, new List<int>() { c.RefID }, new List<int>() { randomTarget }, c.RefID);
-                    ActionPackage_Sex newPM = new ActionPackage_Sex(this, randomCOM, new List<int>() { c.RefID }, new List<int>() { }, c.RefID); 
+                    ActionPackage_Sex newP = new ActionPackage_Sex(this, randomCOM, new List<int>() { c.RefID }, new List<int>() { randomTarget }, c.RefID, Rapist.Contains(c.RefID));
+                    ActionPackage_Sex newPM = new ActionPackage_Sex(this, randomCOM, new List<int>() { c.RefID }, new List<int>() { }, c.RefID, Rapist.Contains(c.RefID));
 
                     if (newP.Validate())
                     {

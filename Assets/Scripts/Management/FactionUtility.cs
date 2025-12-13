@@ -30,6 +30,7 @@ public static class FactionUtility
     }
 
 
+
     public static bool TryFindValidNonJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, Dictionary<int, List<int>> managedRoomRefs, out List<Job_Furniture> list, Character_Trainable c, string comID = "", string comTag = "", bool checkBlacklist = false)
     {
         list = new List<Job_Furniture>();
@@ -46,13 +47,13 @@ public static class FactionUtility
             {
                 if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
                 {
-                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job blacklisted");
+                   // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job blacklisted");
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                     continue;
                 }
                 else if (!post.ValidateActor(c, key))
                 {
-                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError($"Error jail job ValidateActor Fail on {post.DisplayName}");
+                   // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError($"Error {c.CallName} jail job ValidateActor Fail on {post.DisplayName} {String.Join("|", post.allusableCOMStrings)}");
                     continue;
                 }
                 else if (post.ParentRoom.isRoomPrivate && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID))
@@ -68,11 +69,12 @@ public static class FactionUtility
                 else if (prisonRefID != -1 && prisonRefID != post.ParentRoom.RefID)
                 {
                     //Debug.Log($"Chara {c.CallName} is in jail{prisonRefID}{charaRoom.DisplayName}, cannot leave to {post.ParentRoom.RefID}{post.ParentRoom.DisplayName}");
-                   // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job prisonRefID != post.ParentRoom.RefID Fail");
+                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job prisonRefID != post.ParentRoom.RefID Fail");
                     continue;
                 }
                 else if (c.isRestrained && c.Jail.ownerJob != post)
                 {
+                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job prisonRefID != post.ParentRoom.RefID Fail");
                     continue;
                 }
                 list.Add(post);
@@ -86,7 +88,7 @@ public static class FactionUtility
     }
 
 
-    public static bool TryFindValidJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, out List<Job_Furniture> list, Character_Trainable c, Manageable.HourlySchedule schedule, bool checkBlacklist)
+    public static bool TryFindValidJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, out List<Job_Furniture> list, Dictionary<int, List<int>> managedRoomRefs, Character_Trainable c, Manageable.HourlySchedule schedule, bool checkBlacklist)
     {
         var rnd = schedule.getRandCOM;
         if (rnd == null)
@@ -94,10 +96,10 @@ public static class FactionUtility
             list = new List<Job_Furniture>();
             return false;
         }
-        else return TryFindValidJobInstances(jobs, out list, c, rnd.ID, checkBlacklist);
+        else return TryFindValidJobInstances(jobs, out list, managedRoomRefs, c, rnd.ID, checkBlacklist);
     }
 
-    public static bool TryFindValidJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, out List<Job_Furniture> list, Character_Trainable c, string comID, bool checkBlacklist)
+    public static bool TryFindValidJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, out List<Job_Furniture> list, Dictionary<int, List<int>> managedRoomRefs, Character_Trainable c, string comID, bool checkBlacklist)
     {
         COM targetCOM = null;
         list = new List<Job_Furniture>();
@@ -122,7 +124,8 @@ public static class FactionUtility
                 Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                 continue;
             }
-            else if (post.ValidateActor(c, targetCOM) && (!c.isRestrained || c.Jail.ownerJob ==  post)) list.Add(post);
+            else if (post.ParentRoom.isRoomPrivate && managedRoomRefs != null && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID)) continue;
+            else if (post.ValidateActor(c, targetCOM) && (!c.isRestrained || c.Jail.ownerJob == post)) list.Add(post);
         }
 
         //list = jobPosts[targetCOM];

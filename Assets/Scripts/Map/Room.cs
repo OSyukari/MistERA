@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 using Newtonsoft.Json;
+using QuikGraph;
+using QuikGraph.Algorithms.Observers;
+using UnityEngine;
 
 /// <summary>
 /// Parent owner of the room handle initialization,
@@ -45,6 +47,19 @@ public class Room_Instance: IDisposable, I_Disposable
         RoomChara.Add(c);
         roomCharaRefs.Add(c.RefID);
     }
+
+    VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>> _graph = null;
+
+    [JsonIgnore]
+    public VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>> SameFloorGraphObserver { get
+        {
+            return _graph;
+        } set {
+            _graph = value;
+            //Debug.Log($"Setting SameFloorGraphObserver for {this.refID}");
+        }
+    }
+
     public void RemoveChara(Character_Trainable c)
     {
         RoomChara.Remove(c);
@@ -374,11 +389,24 @@ public class Room_Instance: IDisposable, I_Disposable
 
     bool _isRoomPrison = false;
     bool _isRoomPrison_cached = false;
-    [JsonIgnore] public bool isRoomPrison { get { 
-            if (!_isRoomPrison_cached) _isRoomPrison = Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_prison")) != null;
+    [JsonIgnore] public bool isRoomPrison { get {
+            if (!_isRoomPrison_cached)
+            {
+                _isRoomPrison_cached = true;
+                _isRoomPrison = Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_prison")) != null;
+            }
             return _isRoomPrison;
-        } }
-    [JsonIgnore] public bool isRoomPrivate{ get { return !isRoomPrison && Furnitures.Find(x=>x.FurnitureBase.ID.Contains( "furniture_bed")) != null; } }
+        }
+    }
+    bool _isRoomPrivate = false;
+    bool _isRoomPrivate_cached = false;
+    [JsonIgnore] public bool isRoomPrivate{ get {
+            if (!_isRoomPrivate_cached)
+            {
+                _isRoomPrivate_cached = true;
+                _isRoomPrivate = !isRoomPrison && Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_bed")) != null;
+            }
+            return _isRoomPrivate; } }
 
     [JsonProperty] private List<int> roomItemsRefs = new List<int>();
     private List<Item_Instance> roomItemsCache = null;

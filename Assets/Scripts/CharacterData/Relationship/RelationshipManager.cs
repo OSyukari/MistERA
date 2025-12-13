@@ -310,10 +310,34 @@ public class RelationshipManager
         }
     }
 
+    public bool GetKOJOMessage_Begin(bool isDoer, EvaluationPackage ep, MessageCollect m, Character_Relationship injectRel = null)
+    {
+        if (Owner.RefID == 0) return false;
+        Character_Relationship rel = null;
+        if (injectRel != null) rel = injectRel;
+        else if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
+        else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
+
+        string cleanedID = ep.targetCOM.ID;
+        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
+
+        MessageCollect_KojoEntry message = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}_Begin", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
+            : this.Personality.GetKOJOMessage_Begin(isDoer, ep, rel);
+
+        if (message != null && message.message.Length > 0)
+        {
+            m.messages_before.Add(message.message);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
+            return true;
+        }
+        else return false;
+    }
+
     public void GetKOJOMessage_Climax(bool isDoer, EvaluationPackage ep, MessageCollect m)
     {
         if (Owner.RefID == 0) return;
         if (!Owner.Climaxing) return;
+        if (!Owner.Body.isClimaxing()) return;
         Character_Relationship rel = null;
         if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
         else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);

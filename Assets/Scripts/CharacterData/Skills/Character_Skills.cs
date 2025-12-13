@@ -276,6 +276,7 @@ public class CharaSkill
         public string skillUseTags = "";
         public List<string> requireSelfTags = new List<string>();
         public List<string> requireCOMTags = new List<string>();
+        public List<string> requirePermanentTags = new List<string>();
         public bool ApplyTo(List<string> self, List<string> action)
         {
             if (skillUseTags == "") return false;

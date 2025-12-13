@@ -1,11 +1,13 @@
-using System.Collections.Generic;
-using UnityEngine;
-using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using Newtonsoft.Json;
+using UnityEngine;
 
 public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize, I_RemoveElemByTag
 {
     public List<Character_Personality> list = new List<Character_Personality>();
+    public List<Character_Personality_LooseEntry> looselist = new List<Character_Personality_LooseEntry>();
 
     Dictionary<string, Character_Personality> ID_Dictionary = new Dictionary<string, Character_Personality>();
     public void RegisterAllID(List<string> messages)
@@ -15,17 +17,27 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
         foreach (Character_Personality o in this.list)
         {
             //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
-            ID_Dictionary.Add(o.ID, o);
+            if (!ID_Dictionary.ContainsKey(o.ID)) ID_Dictionary[o.ID] = o;
+            else Debug.LogError($"error registering personality {o.ID} failed");
+        }
+
+        foreach(var i in looselist)
+        {
+            if (!ID_Dictionary.ContainsKey(i.ID)) Debug.LogError($"error registering personality {i.ID} loose entry failed");
+            else
+            {
+                ID_Dictionary[i.ID].AddEntry(i.Entry);
+            }
         }
     }
     
     public void MergeWith(I_IndexMergeable list){
         var l = list as Character_Personality_Index;
         if (l == null) return;
-        else if (l.list == null) return;
         else
         {
-            this.list.AddRange(l.list);
+            if (l.list != null) this.list.AddRange(l.list);
+            if (l.looselist != null) this.looselist.AddRange(l.looselist);
         }
     }
 
@@ -63,6 +75,11 @@ public enum KojoEventCalls
     Pregnancy
 }
 
+public class Character_Personality_LooseEntry
+{
+    public string ID;
+    public ResponseEntry Entry;
+}
 
 public class Character_Personality
 {
@@ -103,6 +120,12 @@ public class Character_Personality
     {
 
     }
+
+    public void AddEntry(ResponseEntry entry)
+    {
+        this.entries_list.Add(entry);
+    }
+
     public void CacheEntries()
     {
         if (entries_list == null) return;
@@ -124,6 +147,8 @@ public class Character_Personality
             return null;
         }
         if (!entries[eventID].Validate(rel.Owner)) return null;
+
+        eventID = entries[eventID].CheckRedirect(eventID);
         return entries[eventID].GetResponse(rel, selfEPs, targetEPs);
     }
 
@@ -146,6 +171,8 @@ public class Character_Personality
         else
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt && eventID == "Interrupt") Debug.LogError("validation success");
+
+            eventID = entries[eventID].CheckRedirect(eventID);
             return entries[eventID].GetResponse(owner, selfTags, allEPs);
         }
     }
@@ -162,6 +189,7 @@ public class Character_Personality
             return null;
         }
 
+        comID = entries[comID].CheckRedirect(comID);
         return entries[comID].GetResponse(relation, ap.ActorSelfTags(relation.Owner.RefID), ap.ActorTargetTags(relation.Target.RefID));
     }
     public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, EvaluationPackage ep, Character_Relationship relation, bool checkClimax = false)
@@ -176,6 +204,22 @@ public class Character_Personality
             return null;
         }
 
+        comID = entries[comID].CheckRedirect(comID);
+        return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
+    }
+    public MessageCollect_KojoEntry GetKOJOMessage_Begin(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
+    {
+        string comID = ep.targetCOM.ID;
+        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
+        comID = $"{comID}_Begin";
+        if (!entries.ContainsKey(comID))
+        {
+            if (this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ep, relation);
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
+            return null;
+        }
+
+        comID = entries[comID].CheckRedirect(comID);
         return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
     }
 
@@ -195,6 +239,7 @@ public class Character_Personality
 
         UtilityEX.GetEPsFrom(xx, yy, out List<EvaluationPackage> xxEPs, out List<EvaluationPackage> yyEPs);
 
+        eventID = entries[eventID].CheckRedirect(eventID);
         return entries[eventID].GetResponse(rel, xxEPs, yyEPs);
     }
 
@@ -214,485 +259,14 @@ public class Character_Personality
         var yy = rel.Target;
         if (xx == null || yy == null) return null;
 
+        eventID = entries[eventID].CheckRedirect(eventID);
         return entries[eventID].GetResponse(rel, selfTags, targetTags);
     }
 
     /// <summary>
     /// //////////////////////////////////////////////////////////////////
     /// </summary>
-    public class ResponseEntry
-    {
-        /// <summary>
-        /// ID could either be comID or eventID
-        /// </summary>
-        public string ID = "";
-        public List<string> tags = new List<string>();
-        public List<Variant> variants = new List<Variant>();
-        public bool interruptSelfJob = false;
-        public bool interruptTargetJob = false;
-        public bool debugLogging = false;
-
-        public bool Validate(Character_Trainable owner, Character_Trainable target = null)
-        {
-            if (interruptSelfJob && owner.CurrentJob != null && (owner.CurrentJob is Job_Sex_Group )) return false;
-            if (interruptTargetJob && target != null && target.CurrentJob != null && (target.CurrentJob is Job_Sex_Group )) return false;
-            return true;
-        }
-
-        public MessageCollect_KojoEntry GetResponse(Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep = null)
-        {
-            if (!Validate(rel.Owner, rel.Target)) return null;
-
-            if (debugLogging && scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojoResponse ["+ID+"] req [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
-
-
-
-            MessageCollect_KojoEntry responses = null;
-            foreach (var i in variants)
-            {
-                if (i.isValid(rel, selfTags, targetTags, ep))
-                {
-                    bool playerInvolved = ep != null && ep.Package != null && ep.Package.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID);
-                    var result = i.GetRandomResponse(rel, selfTags, targetTags, playerInvolved);
-                    if (result != null)
-                    {
-                        if (responses == null) responses = result;
-                        else responses.nexts.Add(result);
-                        if (!i.keepLooking) break;
-                    }
-                }
-            }
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents && responses != null) Debug.Log($"kojoResponse [{responses.message}]");
-            return responses;
-        }
-
-        public MessageCollect_KojoEntry GetResponse(Character_Trainable owner, List<string> selfTags, List<EvaluationPackage> allEPs)
-        {
-            if (!Validate(owner)) return null;
-
-            Character_Relationship relDoer, relReceiver, relSelf;
-            List<int> allChara = null;
-            MessageCollect_KojoEntry responses = null;
-            bool isValid = false;
-            foreach (var i in variants)
-            {   // allEP might all have different doer receivers. Validate all in variant priority order, if any one is valid, then everyone in EP will get same treatment (cuz here we assume they all acting together
-
-                isValid = false;
-                foreach (var ep in allEPs)
-                {
-                    relSelf = owner == ep.Doer ? owner.Relationships.FindRelationshipWith(ep.Doer) : null;
-                    relDoer = owner == ep.Doer ? null : owner.Relationships.FindRelationshipWith(ep.Doer);
-                    relReceiver = owner == ep.Receiver ? null : owner.Relationships.FindRelationshipWith(ep.Receiver);
-                    bool playerInvolved = ep != null && ep.Package != null && ep.Package.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID);
-
-                    if (!Validate(owner, ep.Doer)) continue;
-                    if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log(owner.FirstName+  " kojo getresponse past validate before doer/receiver validate, relOwner ["+(relDoer == null ? "null "+(ep.Doer == null?"":ep.Doer.FirstName):relDoer.Owner.FirstName +"->"+relDoer.Target.FirstName)+"] relreceiver["+(relReceiver == null ? "null " + (ep.Receiver == null ? "" : ep.Receiver.FirstName) : relReceiver.Owner.FirstName +"->"+ relReceiver.Target.FirstName)+"]");
-                    if (relDoer != null && i.isValid(relDoer, selfTags, ep.DoerTargetTag, ep))
-                    {
-                        isValid = true;
-                        var v = i.GetRandomResponse(relDoer, selfTags, ep.DoerTargetTag, playerInvolved, true);
-                        if (v == null) break;
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v + ", replace with " + ep.Description_Ongoing);
-                        v.message = v.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
-                        if (responses == null) responses = v;
-                        else responses.nexts.Add(v);
-                        break;
-                    }
-                    else if (relReceiver != null && i.isValid(relReceiver, selfTags, ep.ReceiverTargetTag, ep))
-                    {
-                        isValid = true;
-                        var v = i.GetRandomResponse(relReceiver, selfTags, ep.ReceiverTargetTag, playerInvolved, true);
-                        if (v == null) break;
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v + ", replace with " + ep.Description_Ongoing);
-                        v.message = v.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
-                        if (responses == null) responses = v;
-                        else responses.nexts.Add(v);
-                        break;
-                    }
-                    else if (relSelf != null && relDoer == null && relReceiver == null && ep.Receiver == null && i.isValid(relSelf, selfTags, ep.DoerTargetTag, ep))
-                    {   // relDoer == null && relReceiver == null
-                        // self referencing package, both null, ep.doer is relOwner and ep.receiver == null
-
-                        isValid = true;
-                        var v = i.GetRandomResponse(relSelf, selfTags, ep.ReceiverTargetTag, playerInvolved, true);
-                        if (v == null) break;
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v + ", replace with " + ep.Description_Ongoing);
-                        v.message = v.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
-                        if (responses == null) responses = v;
-                        else responses.nexts.Add(v);
-                        break;
-
-                    }
-                }
-
-                if (isValid)
-                {
-                    // do execution
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError("KOJO CHECKINTERRUPT TRUE IS VALID: "+String.Join("|", responses));
-
-                    allChara = new List<int>();
-                    foreach(var ep in allEPs)
-                    {
-                        if (ep.Doer != null && !allChara.Contains(ep.Doer.RefID))
-                        {
-                            relDoer = owner.Relationships.FindRelationshipWith(ep.Doer);
-                            foreach (var ii in i.results) ii.Execute(relDoer, selfTags, ep.DoerTargetTag);
-                            allChara.Add(ep.Doer.RefID);
-                        }
-                        if(ep.Receiver != null && !allChara.Contains(ep.Receiver.RefID))
-                        {
-                            relReceiver = owner.Relationships.FindRelationshipWith(ep.Receiver);
-                            foreach (var ii in i.results) ii.Execute(relReceiver, selfTags, ep.ReceiverTargetTag);
-                            allChara.Add(ep.Receiver.RefID);
-                        }
-                    }
-                    
-                    if (!i.keepLooking) break;// String.Join("\n", responses);
-                }
-            }
-            //if (!isValid) Debug.LogError($"cannot find response for {owner.FirstName} on ID {ID}, listEP_count: {allEPs.Count}");
-                
-
-           //var str = String.Join("\n", responses);
-            return responses;
-        }
-
-        public void RemoveVariantsByTag(string tag)
-        {
-            this.variants.RemoveAll(x=>x.tags.Contains(tag));
-        }
-        public MessageCollect_KojoEntry GetResponse(Character_Relationship rel, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
-        {
-            if (!Validate(rel.Owner, rel.Target)) return null;
-
-            List<string> ss1 = new List<string>();
-            List<string> ss2 = new List<string>();
-            foreach (var i in selfEPs) ss1.Add(i.ToString());
-            foreach (var i in targetEPs) ss2.Add(i.ToString());
-            if(scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req Multiple EPs [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self["+String.Join("|", ss1) +"] target["+String.Join("|", ss2) +"]");
-
-
-
-            var sTags = new List<string>();
-            var tTags = new List<string>();
-
-            MessageCollect_KojoEntry ss = null;
-
-
-            foreach (var ep in selfEPs)
-            {
-                sTags = (rel.Owner.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Owner.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
-                tTags = (rel.Target.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Target.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
-
-                ss = GetResponse(rel, sTags, tTags, ep);
-                if (ss != null) return ss;
-            }
-
-            foreach (var ep in targetEPs)
-            {
-                sTags = (rel.Owner.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Owner.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
-                tTags = (rel.Target.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Target.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
-
-                ss = GetResponse(rel, sTags, tTags, ep);
-                if (ss != null) return ss;
-            }
-
-            UtilityEX.GetInteractionTagsFrom(rel.Owner, rel.Target, null, -1, ref sTags, ref tTags, ref tTags);
-            return GetResponse(rel, sTags, tTags, null);
-        }
-
-        public MessageCollect_KojoEntry GetResponse(Character_Relationship rel, List<string> selfTags, List<string> targetTags )
-        {
-            if (!Validate(rel.Owner, rel.Target)) return null;
-            return GetResponse(rel, selfTags, targetTags, null);
-        }
-
-        public class Variant
-        {
-            public bool requireSelfDoer = false;
-            public bool requireSelfReceiver = false;
-
-            public CharaReq selfReq = null;
-            public CharaReq targetReq = null;
-
-            public List<string> tags = new List<string>();
-            public List<string> extraPortraitTags = new List<string>();
-            public bool useActiveTags = false;
-            public bool forbidPortaitDisplay = false;
-            public List<Requirement> requirements = new List<Requirement>();
-            public List<string> responses = new List<string>();
-            public List<Results> results = new List<Results>();
-            public bool keepLooking = false;
-            public string selfEventCall = "";
-            public bool hideWhenNotFocused = true;  // Do not display message if Owner is not CurrentTarget (not focused) or Target is not Player nor CurrentTarget (not focused)
-            public MessageCollect_KojoEntry GetRandomResponse(Character_Relationship rel, List<string> selfTags, List<string> targetTags, bool isPlayerInvolved = false, bool skipExecute = false)
-            {
-                // first apply cost
-                if(!skipExecute) foreach(var i in results) i.Execute(rel, selfTags, targetTags);
-
-                MessageCollect_KojoEntry returnV = null;
-                string result = "";
-                if (responses.Count > 0)
-                {
-                    result = LocalizeDictionary.QueryThenParse(Utility.GetRandomElement(responses));
-                    result = result.Replace("$self$", rel.Owner.FirstName).Replace("$target$", rel.Target.FirstName);
-                }
-
-                var sss = selfEventCall == "" ? null : rel.Owner.Relationships.Personality.GetKOJOMessage(selfEventCall, rel, selfTags, targetTags);
-
-                var target = scr_System_CampaignManager.current.CurrentTarget;
-                var player = scr_System_CampaignManager.current.Player;
-                if (hideWhenNotFocused && !isPlayerInvolved &&
-                    rel.Owner != target && rel.Target != target && rel.Owner != player && rel.Target != player)
-                {
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log(rel.Owner.FirstName + " kojo text skipped, no display");
-                }
-                else
-                {
-                    if (result != "" && result.Replace("\n", "").Length > 0)
-                    {
-                        returnV = new MessageCollect_KojoEntry();
-                        if (!forbidPortaitDisplay)
-                        {
-                            returnV.portraitRefID = rel.Owner.RefID;
-                            returnV.portraitTags = new List<string>(extraPortraitTags);
-                            if (useActiveTags) returnV.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
-                        }
-
-                        returnV.message = result;
-                    }
-                    if (sss != null)
-                    {
-                        if (returnV == null) returnV = sss;
-                        else returnV.nexts.Add(sss);
-                    }
-                }
-
-                return returnV;
-            }
-
-            public bool isValid(Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
-            {
-                if ( ep != null && rel != null)
-                {
-                    if (requireSelfDoer && ep.Doer != rel.Owner) return false;
-                    else if (requireSelfReceiver)
-                    {
-                        if (ep.Receiver == null && ep.Doer != rel.Owner) return false;
-                        else if (ep.Receiver != null && ep.Receiver != rel.Owner) return false;
-                    }
-                }
-                List<string> ttips = new List<string>();
-                if (this.selfReq != null && !CharaReqUtility.Validate(this.selfReq, ref ttips, rel.Owner)) return false;
-                if (this.targetReq != null && ! CharaReqUtility.Validate(this.targetReq, ref ttips, rel.Target)) return false;
-
-                foreach (var requirement in requirements)
-                {
-                    if (!requirement.Validate(rel, selfTags, targetTags, ep)) return false;
-                }
-                return true;
-            }
-
-            public class Requirement
-            {
-                public string targetBaseID = "";
-                public bool requireSelfAction = true;
-                public bool requireTargetAction = true;
-                public bool requireEPSuccess = true;
-                /// <summary>
-                /// requireEPFailure takes priority over requireEPSuccess, and both conditions are mutually exclusive.
-                /// if require failure, then success is ignored
-                /// require success only valid when not requiring failure
-                /// </summary>
-                public bool requireEPFailure = false;
-                public Memory_Response requireEPSuccessGTE = Memory_Response.None;
-                public List<string> selfTags = new List<string>();
-                public List<string> targetTags = new List<string>();
-                public int variantID = -1;
-                public RequireKojoVariable requireKojoVariable = new RequireKojoVariable();
-                public RequireStatusValue requireSelfStatusValue = new RequireStatusValue();
-                public RequireStatValue requireSelfStatValue = new RequireStatValue();
-                public RequireMemory requireSelfMemory = new RequireMemory();
-
-                public bool Validate(Character_Trainable self, Character_Trainable target, List<string> selfTags, List<string> targetTags, EvaluationPackage ep, Character_Relationship rel = null)
-                {
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req [" + (self == null?"null":self.FirstName) + "->" + (target == null ? "null":target.FirstName) + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
-
-                    if (ep != null)
-                    {
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"validating EP reqFailure? {requireEPFailure && ep.Response > Memory_Response.Refuse} reqSuccess? {!requireEPFailure && requireEPSuccess && ep.Response < Memory_Response.Accept} ");
-                        if (requireEPFailure && ep.Response != Memory_Response.Refuse) return false;
-                        else if (!requireEPFailure && requireEPSuccess && ep.Response < Memory_Response.Accept) return false;
-
-                        var selfAttitude = ep.Response;
-                        if (selfAttitude == Memory_Response.None && requireEPSuccessGTE != Memory_Response.None)
-                        {
-                            Debug.LogError("SelfAttitude None in Validating kojo req [" + (self == null ? "null" : self.FirstName) + "->" + (target == null ? "null" : target.FirstName) + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
-                            return false;
-                        }
-                        else if (requireEPSuccessGTE != Memory_Response.None && selfAttitude < requireEPSuccessGTE) return false;
-                    }
-                    if (this.targetBaseID != "")
-                    {
-                        if (target == null) return false;
-                        else if (targetBaseID == "PLAYER" && target != scr_System_CampaignManager.current.Player) return false;
-                        else if (targetBaseID != "PLAYER" && target.BaseID != this.targetBaseID) return false;
-                    }
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"validating requireSelfAction {requireSelfAction} {self.canAct} {self.Stats.isConsciousnessUnconscious}");
-                    if (requireSelfAction && (self == null || !self.canAct)) return false;
-                    if (requireTargetAction && (target == null || !target.canAct)) return false;
-                    //if (selfTags.Count < this.selfTags.Count) return false;
-                    if (this.selfTags.Count > 0 && !Utility.ListContainsStrict(selfTags, this.selfTags)) return false;
-                    //if (targetTags.Count < this.targetTags.Count) return false;
-                    if (this.targetTags.Count > 0 && !Utility.ListContainsStrict(targetTags, this.targetTags)) return false;
-                    if (this.variantID > -1 && (ep == null || ep.VariantID != this.variantID)) return false;
-                    if (this.requireKojoVariable != null && this.requireKojoVariable.isValid && rel != null && !this.requireKojoVariable.Validate(rel)) return false;
-                    if (this.requireSelfStatValue != null && this.requireSelfStatValue.isValid && rel != null && !this.requireSelfStatValue.Validate(rel.Owner)) return false;
-                    if (this.requireSelfStatusValue != null && this.requireSelfStatusValue.isValid && rel != null && !this.requireSelfStatusValue.Validate(rel.Owner)) return false;
-                    if (this.requireSelfMemory != null && this.requireSelfMemory.isValid && rel != null && !this.requireSelfMemory.Validate(rel.Owner)) return false;
-                    return true;
-
-                }
-                public bool Validate(Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
-                {
-                    //var v = 
-                    //if (!v && (rel.ownerRefID == 0 || rel.TargetID == 0)) Debug.LogError("failed validation");
-                    return Validate(rel.Owner, rel.Target, selfTags, targetTags, ep, rel);
-                }
-
-                public class RequireMemory
-                {
-                    public int minuteRollback = 0;
-                    public List<string> selfTags = new List<string>();
-                    public List<string> targetTags  = new List<string>();
-                    [JsonIgnore] public bool isValid { get { return minuteRollback > 0 && (selfTags.Count > 0 || targetTags.Count > 0); } }
-                    public bool Validate(Character_Trainable chara)
-                    {
-                        List<Memory_Entry> list = chara.Memory.GetAllMemoryMatch(selfTags, targetTags, minuteRollback);
-                        return list.Count > 0;
-                    }
-
-                }
-
-                public class RequireStatValue
-                {
-                    public string statID = "";
-                    public LogicalOperand operand = LogicalOperand.none;
-                    public string value = "";
-                    [JsonIgnore] public bool isValid { get { return this.statID != "" && operand != LogicalOperand.none && value != ""; } }
-                    public bool Validate(Character_Trainable chara)
-                    {
-                        return chara.CompareStatValue(statID, operand, value);
-                    }
-
-                }
-
-                public class RequireStatusValue
-                {
-                    public string statusID = "";
-                    public bool checkExistOnly = false;
-                    public LogicalOperand operand = LogicalOperand.none;
-                    public float value = 0;
-                    [JsonIgnore] public bool isValid { get { return this.statusID != "" && (checkExistOnly || operand != LogicalOperand.none); } }
-                    public bool Validate(Character_Trainable chara)
-                    {
-                        var status = chara.Stats.GetStatusByStringMatch(statusID);
-                        if (checkExistOnly) return status != null;
-                        else return status != null && Utility.CompareValue(chara.Stats.GetStatusByStringMatch(statusID).Severity, operand, value);
-                    }
-                }
-
-                public class RequireKojoVariable
-                {
-                    public bool isDailyVariable = false;
-                    public string variableID = "";
-                    public bool checkExistOnly = false;
-                    public LogicalOperand operand = LogicalOperand.none;
-                    public int value = 0;
-
-                    [JsonIgnore] public bool isValid { get { return this.variableID != "" && (checkExistOnly || operand != LogicalOperand.none); } }
-                    public bool Validate(Character_Relationship rel)
-                    {
-                        if (checkExistOnly) return (rel.Owner.Relationships.GetKojoVariableExist(isDailyVariable, rel, variableID) == (value != 0));
-                        else return Utility.CompareValue(rel.Owner.Relationships.GetKojoVariable(isDailyVariable, rel, variableID), operand, value);
-
-                    }
-                }
-            }
-
-            public class Results
-            {   // mainly use to manipulate kojo variables
-
-                public ModKojoVariable modifyKojoVariables = new ModKojoVariable();
-                public EventInitializer launchEvent = new EventInitializer();
-                public ModStatusValue modifyStatusValue = new ModStatusValue();
-                public void Execute(Character_Relationship rel, List<string> selfTags, List<string> targetTags)
-                {
-                    if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel);
-                    if (this.launchEvent != null && this.launchEvent.isValid) launchEvent.Execute(rel);
-                    if (modifyStatusValue != null && modifyStatusValue.isValid) modifyStatusValue.Execute(rel.Owner);
-                }
-
-                [System.Serializable]
-                public class ModStatusValue
-                {
-                    public string statusID = "";
-                    public float value = 0;
-                    [JsonIgnore] public bool isValid { get { return this.statusID != "" && value != 0; } }
-                    public void Execute(Character_Trainable chara)
-                    {
-                        chara.Stats.AddOrModStatus(statusID, value);
-                    }
-
-                }
-
-                public class EventInitializer
-                {
-                    public string eventID = "";
-                    public string eventLabel = "";
-                    public bool reverseTargets = false;
-                    public string targetKeyword = "";
-
-                    [JsonIgnore] public bool isValid { get { return this.eventID != ""; } }
-
-                    public void Execute(Character_Relationship rel)
-                    {
-                        //Debug.LogError($"Startevent execute {reverseTargets} {rel.Owner.FirstName} {rel.Target.FirstName} {eventID} {eventLabel}");
-                        EventInstance newEvent = null;
-                        if (reverseTargets)
-                        {
-                            newEvent = new EventInstance(rel.Target, eventID, eventLabel);
-                            if (targetKeyword != "") newEvent.Targets.Add(targetKeyword, new List<Character_Trainable>() { rel.Owner });
-                        }
-                        else
-                        {
-                            newEvent = new EventInstance(rel.Owner, eventID, eventLabel);
-                            if (targetKeyword != "") newEvent.Targets.Add(targetKeyword, new List<Character_Trainable>() { rel.Target });
-                        }
-
-                        if (newEvent != null) scr_UpdateHandler.current.EventHandler.StartEvent(newEvent, false);
-                    }
-                }
-
-                [System.Serializable]
-                public class ModKojoVariable
-                {
-                    public bool isDailyVariable = false;
-                    public string variableID = "";
-                    public bool isSetValue = false;
-                    public int value = 0;
-
-                    [JsonIgnore] public bool isValid { get { return this.variableID != ""; } }
-                    public void Execute(Character_Relationship rel)
-                    {
-                        if (isSetValue) rel.Owner.Relationships.SetKojoVariable(isDailyVariable, rel, variableID, value);
-                        else rel.Owner.Relationships.ModKojoVariable(isDailyVariable, rel, variableID, value);
-                    }
-                }
-
-            }
-        }
-    }
+    
 
 
 
@@ -725,3 +299,500 @@ public class Character_Personality
 }
 
 
+public class ResponseEntry
+{
+    /// <summary>
+    /// ID could either be comID or eventID
+    /// </summary>
+    public string ID = "";
+    public List<string> tags = new List<string>();
+    public List<Variant> variants = new List<Variant>();
+    public bool interruptSelfJob = false;
+    public bool interruptTargetJob = false;
+    public bool debugLogging = false;
+    public string RedirectID = "";
+
+
+    public string CheckRedirect(string original)
+    {
+        if (this.RedirectID != "") return this.RedirectID;
+        else return original;
+    }
+
+    public bool Validate(Character_Trainable owner, Character_Trainable target = null)
+    {
+        if (interruptSelfJob && owner.CurrentJob != null && (owner.CurrentJob is Job_Sex_Group)) return false;
+        if (interruptTargetJob && target != null && target.CurrentJob != null && (target.CurrentJob is Job_Sex_Group)) return false;
+        return true;
+    }
+
+    public MessageCollect_KojoEntry GetResponse(Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep = null)
+    {
+        if (!Validate(rel.Owner, rel.Target)) return null;
+
+        if (debugLogging && scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojoResponse [" + ID + "] req [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
+
+
+
+        MessageCollect_KojoEntry responses = null;
+        foreach (var i in variants)
+        {
+            bool playerInvolved = ep != null && ep.Package != null && ep.Package.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID);
+            if (i.GetRandomResponse(out var result, rel, ep,  selfTags, targetTags, playerInvolved) && result != null)
+            {
+                if (responses == null) responses = result;
+                else responses.nexts.Add(result);
+                if (!i.keepLooking) break;
+            }
+        }
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents && responses != null) Debug.Log($"kojoResponse [{responses.message}]");
+        return responses;
+    }
+
+    public MessageCollect_KojoEntry GetResponse(Character_Trainable owner, List<string> selfTags, List<EvaluationPackage> allEPs)
+    {
+        if (!Validate(owner)) return null;
+
+        Character_Relationship relDoer, relReceiver, relSelf;
+        List<int> allChara = null;
+        MessageCollect_KojoEntry responses = null;
+        bool isValid = false;
+        var newlist = new List<EvaluationPackage>(allEPs);
+        foreach (var i in variants)
+        {   // allEP might all have different doer receivers. Validate all in variant priority order, if any one is valid, then everyone in EP will get same treatment (cuz here we assume they all acting together
+
+            isValid = false;
+            foreach (var ep in newlist)
+            {
+                relSelf = owner == ep.Doer ? owner.Relationships.FindRelationshipWith(ep.Doer) : null;
+                relDoer = owner == ep.Doer ? null : owner.Relationships.FindRelationshipWith(ep.Doer);
+                relReceiver = owner == ep.Receiver ? null : owner.Relationships.FindRelationshipWith(ep.Receiver);
+                bool playerInvolved = ep != null && ep.Package != null && ep.Package.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID);
+
+                if (!Validate(owner, ep.Doer)) continue;
+                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log(owner.FirstName + " kojo getresponse past validate before doer/receiver validate, relOwner [" + (relDoer == null ? "null " + (ep.Doer == null ? "" : ep.Doer.FirstName) : relDoer.Owner.FirstName + "->" + relDoer.Target.FirstName) + "] relreceiver[" + (relReceiver == null ? "null " + (ep.Receiver == null ? "" : ep.Receiver.FirstName) : relReceiver.Owner.FirstName + "->" + relReceiver.Target.FirstName) + "]");
+                if (relDoer != null && i.GetRandomResponse(out var v1, relDoer, ep,  selfTags, ep.DoerTargetTag, playerInvolved, true))
+                {
+                    isValid = true;
+                    if (v1 == null) break;
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v1 + ", replace with " + ep.Description_Ongoing);
+                    v1.message = v1.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
+                    if (responses == null) responses = v1;
+                    else responses.nexts.Add(v1);
+                    break;
+                }
+                else if (relReceiver != null && i.GetRandomResponse(out var v2, relReceiver, ep, selfTags, ep.ReceiverTargetTag, playerInvolved, true))
+                {
+                    isValid = true;
+                    if (v2 == null) break;
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v2 + ", replace with " + ep.Description_Ongoing);
+                    v2.message = v2.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
+                    if (responses == null) responses = v2;
+                    else responses.nexts.Add(v2);
+                    break;
+                }
+                else if (relSelf != null && relDoer == null && relReceiver == null && ep.Receiver == null &&  i.GetRandomResponse(out var v3, relSelf, ep, selfTags, ep.DoerTargetTag, playerInvolved, true))
+                {   // relDoer == null && relReceiver == null
+                    // self referencing package, both null, ep.doer is relOwner and ep.receiver == null
+
+                    // i.isValid(relSelf, selfTags, ep.DoerTargetTag, ep) &&
+
+                    isValid = true;
+                    //var v = i.GetRandomResponse(relSelf, ep, selfTags, ep.ReceiverTargetTag, playerInvolved, true);
+                    if (v3 == null) break;
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v3 + ", replace with " + ep.Description_Ongoing);
+                    v3.message = v3.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
+                    if (responses == null) responses = v3;
+                    else responses.nexts.Add(v3);
+                    break;
+
+                }
+            }
+
+            if (isValid)
+            {
+                // do execution
+                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError("KOJO CHECKINTERRUPT TRUE IS VALID: " + String.Join("|", responses));
+
+                allChara = new List<int>();
+                foreach (var ep in allEPs)
+                {
+                    if (ep.Doer != null && !allChara.Contains(ep.Doer.RefID))
+                    {
+                        relDoer = owner.Relationships.FindRelationshipWith(ep.Doer);
+                        foreach (var ii in i.results) ii.Execute(relDoer, selfTags, ep.DoerTargetTag);
+                        allChara.Add(ep.Doer.RefID);
+                    }
+                    if (ep.Receiver != null && !allChara.Contains(ep.Receiver.RefID))
+                    {
+                        relReceiver = owner.Relationships.FindRelationshipWith(ep.Receiver);
+                        foreach (var ii in i.results) ii.Execute(relReceiver, selfTags, ep.ReceiverTargetTag);
+                        allChara.Add(ep.Receiver.RefID);
+                    }
+                }
+
+                if (!i.keepLooking) break;// String.Join("\n", responses);
+            }
+        }
+        //if (!isValid) Debug.LogError($"cannot find response for {owner.FirstName} on ID {ID}, listEP_count: {allEPs.Count}");
+
+
+        //var str = String.Join("\n", responses);
+        return responses;
+    }
+
+    public void RemoveVariantsByTag(string tag)
+    {
+        this.variants.RemoveAll(x => x.tags.Contains(tag));
+    }
+    public MessageCollect_KojoEntry GetResponse(Character_Relationship rel, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
+    {
+        if (!Validate(rel.Owner, rel.Target)) return null;
+
+        List<string> ss1 = new List<string>();
+        List<string> ss2 = new List<string>();
+        foreach (var i in selfEPs) ss1.Add(i.ToString());
+        foreach (var i in targetEPs) ss2.Add(i.ToString());
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req Multiple EPs [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", ss1) + "] target[" + String.Join("|", ss2) + "]");
+
+
+
+        var sTags = new List<string>();
+        var tTags = new List<string>();
+
+        MessageCollect_KojoEntry ss = null;
+
+
+        foreach (var ep in selfEPs)
+        {
+            sTags = (rel.Owner.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Owner.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
+            tTags = (rel.Target.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Target.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
+
+            ss = GetResponse(rel, sTags, tTags, ep);
+            if (ss != null) return ss;
+        }
+
+        foreach (var ep in targetEPs)
+        {
+            sTags = (rel.Owner.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Owner.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
+            tTags = (rel.Target.RefID == ep.DoerRef ? ep.DoerTargetTag : (rel.Target.RefID == ep.ReceiverRef ? ep.ReceiverTargetTag : new List<string>()));
+
+            ss = GetResponse(rel, sTags, tTags, ep);
+            if (ss != null) return ss;
+        }
+
+        UtilityEX.GetInteractionTagsFrom(rel.Owner, rel.Target, null, -1, ref sTags, ref tTags, ref tTags);
+        return GetResponse(rel, sTags, tTags, null);
+    }
+
+    public MessageCollect_KojoEntry GetResponse(Character_Relationship rel, List<string> selfTags, List<string> targetTags)
+    {
+        if (!Validate(rel.Owner, rel.Target)) return null;
+        return GetResponse(rel, selfTags, targetTags, null);
+    }
+
+    public class Variant
+    {
+        public bool requireCOMStrongVariant = false;
+
+        public bool requireSelfDoer = false;
+        public bool requireSelfReceiver = false;
+
+        public CharaReq selfReq = null;
+        public CharaReq targetReq = null;
+
+        public List<string> tags = new List<string>();
+        public List<string> extraPortraitTags = new List<string>();
+        public bool useActiveTags = false;
+        public bool forbidPortaitDisplay = false;
+        public List<Requirement> requirements = new List<Requirement>();
+        public List<string> responses = new List<string>();
+        public List<Results> results = new List<Results>();
+        public bool keepLooking = false;
+        public string selfEventCall = "";
+        public bool hideWhenNotFocused = true;  // Do not display message if Owner is not CurrentTarget (not focused) or Target is not Player nor CurrentTarget (not focused)
+        
+        public List<Variant> variants = new List<Variant>();
+        
+        public bool GetRandomResponse(out MessageCollect_KojoEntry response, Character_Relationship rel, EvaluationPackage ep, List<string> selfTags, List<string> targetTags, bool isPlayerInvolved = false, bool skipExecute = false)
+        {
+            // first apply cost
+            if (!isValid(rel, selfTags, targetTags, ep)) {
+                response = null;
+                return false;
+            }
+            if (!skipExecute) foreach (var i in results) i.Execute(rel, selfTags, targetTags);
+
+            if (this.variants.Count > 0) 
+            {
+                foreach (var variant in variants)
+                {
+                    if (variant.GetRandomResponse(out response, rel, ep, selfTags, targetTags, isPlayerInvolved, skipExecute)) return true;
+                }
+            }
+
+            MessageCollect_KojoEntry returnV = null;
+
+            string result = "";
+            if (responses.Count > 0)
+            {
+                result = LocalizeDictionary.QueryThenParse(Utility.GetRandomElement(responses));
+                result = result.Replace("$self$", rel.Owner.FirstName).Replace("$target$", rel.Target.FirstName);
+            }
+
+            var sss = selfEventCall == "" ? null : rel.Owner.Relationships.Personality.GetKOJOMessage(selfEventCall, rel, selfTags, targetTags);
+
+            var target = scr_System_CampaignManager.current.CurrentTarget;
+            var player = scr_System_CampaignManager.current.Player;
+            if (hideWhenNotFocused && !isPlayerInvolved &&
+                rel.Owner != target && rel.Target != target && rel.Owner != player && rel.Target != player)
+            {
+                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log(rel.Owner.FirstName + " kojo text skipped, no display");
+            }
+            else
+            {
+                if (result != "" && result.Replace("\n", "").Length > 0)
+                {
+                    returnV = new MessageCollect_KojoEntry();
+                    if (!forbidPortaitDisplay)
+                    {
+                        returnV.portraitRefID = rel.Owner.RefID;
+                        returnV.portraitTags = new List<string>(extraPortraitTags);
+                        if (useActiveTags) returnV.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                    }
+
+                    returnV.message = result;
+                }
+                if (sss != null)
+                {
+                    if (returnV == null) returnV = sss;
+                    else returnV.nexts.Add(sss);
+                }
+            }
+            response = returnV;
+            return true;
+        }
+
+        protected bool isValid(Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
+        {
+            if (ep != null && rel != null)
+            {
+                if (requireCOMStrongVariant && !ep.isStrongP) return false;
+                if (requireSelfDoer && ep.Doer != rel.Owner) return false;
+                else if (requireSelfReceiver)
+                {
+                    if (ep.Receiver == null && ep.Doer != rel.Owner) return false;
+                    else if (ep.Receiver != null && ep.Receiver != rel.Owner) return false;
+                }
+            }
+            List<string> ttips = new List<string>();
+            if (this.selfReq != null && !CharaReqUtility.Validate(this.selfReq, ref ttips, rel.Owner)) return false;
+            if (this.targetReq != null && !CharaReqUtility.Validate(this.targetReq, ref ttips, rel.Target)) return false;
+
+            foreach (var requirement in requirements)
+            {
+                if (!requirement.Validate(rel, selfTags, targetTags, ep)) return false;
+            }
+
+            return true;
+        }
+
+        public class Requirement
+        {
+            public string targetBaseID = "";
+            public bool requireSelfAction = true;
+            public bool requireTargetAction = true;
+            public bool requireEPSuccess = true;
+            /// <summary>
+            /// requireEPFailure takes priority over requireEPSuccess, and both conditions are mutually exclusive.
+            /// if require failure, then success is ignored
+            /// require success only valid when not requiring failure
+            /// </summary>
+            public bool requireEPFailure = false;
+            public Memory_Response requireEPSuccessGTE = Memory_Response.None;
+            public Memory_Attitude requireSelfAttitudeGTE = Memory_Attitude.None;
+            public bool requirePermission = false;
+            public List<string> selfTags = new List<string>();
+            public List<string> targetTags = new List<string>();
+            public int variantID = -1;
+            public RequireKojoVariable requireKojoVariable = new RequireKojoVariable();
+            public RequireStatusValue requireSelfStatusValue = new RequireStatusValue();
+            public RequireStatValue requireSelfStatValue = new RequireStatValue();
+            public RequireMemory requireSelfMemory = new RequireMemory();
+
+            public bool Validate(Character_Trainable self, Character_Trainable target, List<string> selfTags, List<string> targetTags, EvaluationPackage ep, Character_Relationship rel = null)
+            {
+                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req [" + (self == null ? "null" : self.FirstName) + "->" + (target == null ? "null" : target.FirstName) + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
+
+                if (ep != null)
+                {
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"validating EP reqFailure? {requireEPFailure && ep.Response > Memory_Response.Refuse} reqSuccess? {!requireEPFailure && requireEPSuccess && ep.Response < Memory_Response.Accept} ");
+                    if (requireEPFailure && ep.Response != Memory_Response.Refuse) return false;
+                    else if (!requireEPFailure && requireEPSuccess && ep.Response < Memory_Response.Accept) return false;
+                    if (requirePermission && !ep.hasPermission) return false;
+
+                    if (requireEPSuccessGTE != Memory_Response.None && ep.Response < requireEPSuccessGTE) return false;
+                    if (requireSelfAttitudeGTE != Memory_Attitude.None && ep.GetActorAttitude(self.RefID) < requireSelfAttitudeGTE) return false;
+
+                }
+                if (this.targetBaseID != "")
+                {
+                    if (target == null) return false;
+                    else if (targetBaseID == "PLAYER" && target != scr_System_CampaignManager.current.Player) return false;
+                    else if (targetBaseID != "PLAYER" && target.BaseID != this.targetBaseID) return false;
+                }
+                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"validating requireSelfAction {requireSelfAction} {self.canAct} {self.Stats.isConsciousnessUnconscious}");
+                if (requireSelfAction && (self == null || !self.canAct)) return false;
+                if (requireTargetAction && (target == null || !target.canAct)) return false;
+                //if (selfTags.Count < this.selfTags.Count) return false;
+                if (this.selfTags.Count > 0 && !Utility.ListContainsStrict(selfTags, this.selfTags)) return false;
+                //if (targetTags.Count < this.targetTags.Count) return false;
+                if (this.targetTags.Count > 0 && !Utility.ListContainsStrict(targetTags, this.targetTags)) return false;
+                if (this.variantID > -1 && (ep == null || ep.VariantID != this.variantID)) return false;
+                if (this.requireKojoVariable != null && this.requireKojoVariable.isValid && rel != null && !this.requireKojoVariable.Validate(rel)) return false;
+                if (this.requireSelfStatValue != null && this.requireSelfStatValue.isValid && rel != null && !this.requireSelfStatValue.Validate(rel.Owner)) return false;
+                if (this.requireSelfStatusValue != null && this.requireSelfStatusValue.isValid && rel != null && !this.requireSelfStatusValue.Validate(rel.Owner)) return false;
+                if (this.requireSelfMemory != null && this.requireSelfMemory.isValid && rel != null && !this.requireSelfMemory.Validate(rel.Owner)) return false;
+                return true;
+
+            }
+            public bool Validate(Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
+            {
+                //var v = 
+                //if (!v && (rel.ownerRefID == 0 || rel.TargetID == 0)) Debug.LogError("failed validation");
+                return Validate(rel.Owner, rel.Target, selfTags, targetTags, ep, rel);
+            }
+
+            public class RequireMemory
+            {
+                public int minuteRollback = 0;
+                public List<string> selfTags = new List<string>();
+                public List<string> targetTags = new List<string>();
+                [JsonIgnore] public bool isValid { get { return minuteRollback > 0 && (selfTags.Count > 0 || targetTags.Count > 0); } }
+                public bool Validate(Character_Trainable chara)
+                {
+                    List<Memory_Entry> list = chara.Memory.GetAllMemoryMatch(selfTags, targetTags, minuteRollback);
+                    return list.Count > 0;
+                }
+
+            }
+
+            public class RequireStatValue
+            {
+                public string statID = "";
+                public LogicalOperand operand = LogicalOperand.none;
+                public string value = "";
+                [JsonIgnore] public bool isValid { get { return this.statID != "" && operand != LogicalOperand.none && value != ""; } }
+                public bool Validate(Character_Trainable chara)
+                {
+                    return chara.CompareStatValue(statID, operand, value);
+                }
+
+            }
+
+            public class RequireStatusValue
+            {
+                public string statusID = "";
+                public bool checkExistOnly = false;
+                public LogicalOperand operand = LogicalOperand.none;
+                public float value = 0;
+                [JsonIgnore] public bool isValid { get { return this.statusID != "" && (checkExistOnly || operand != LogicalOperand.none); } }
+                public bool Validate(Character_Trainable chara)
+                {
+                    var status = chara.Stats.GetStatusByStringMatch(statusID);
+                    if (checkExistOnly) return status != null;
+                    else return status != null && Utility.CompareValue(chara.Stats.GetStatusByStringMatch(statusID).Severity, operand, value);
+                }
+            }
+
+            public class RequireKojoVariable
+            {
+                public bool isDailyVariable = false;
+                public string variableID = "";
+                public bool checkExistOnly = false;
+                public LogicalOperand operand = LogicalOperand.none;
+                public int value = 0;
+
+                [JsonIgnore] public bool isValid { get { return this.variableID != "" && (checkExistOnly || operand != LogicalOperand.none); } }
+                public bool Validate(Character_Relationship rel)
+                {
+                    if (checkExistOnly) return (rel.Owner.Relationships.GetKojoVariableExist(isDailyVariable, rel, variableID) == (value != 0));
+                    else return Utility.CompareValue(rel.Owner.Relationships.GetKojoVariable(isDailyVariable, rel, variableID), operand, value);
+
+                }
+            }
+        }
+
+        public class Results
+        {   // mainly use to manipulate kojo variables
+
+            public ModKojoVariable modifyKojoVariables = new ModKojoVariable();
+            public EventInitializer launchEvent = new EventInitializer();
+            public ModStatusValue modifyStatusValue = new ModStatusValue();
+            public void Execute(Character_Relationship rel, List<string> selfTags, List<string> targetTags)
+            {
+                if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel);
+                if (this.launchEvent != null && this.launchEvent.isValid) launchEvent.Execute(rel);
+                if (modifyStatusValue != null && modifyStatusValue.isValid) modifyStatusValue.Execute(rel.Owner);
+            }
+
+            [System.Serializable]
+            public class ModStatusValue
+            {
+                public string statusID = "";
+                public float value = 0;
+                [JsonIgnore] public bool isValid { get { return this.statusID != "" && value != 0; } }
+                public void Execute(Character_Trainable chara)
+                {
+                    chara.Stats.AddOrModStatus(statusID, value);
+                }
+
+            }
+
+            public class EventInitializer
+            {
+                public string eventID = "";
+                public string eventLabel = "";
+                public bool reverseTargets = false;
+                public string targetKeyword = "";
+
+                [JsonIgnore] public bool isValid { get { return this.eventID != ""; } }
+
+                public void Execute(Character_Relationship rel)
+                {
+                    //Debug.LogError($"Startevent execute {reverseTargets} {rel.Owner.FirstName} {rel.Target.FirstName} {eventID} {eventLabel}");
+                    EventInstance newEvent = null;
+                    if (reverseTargets)
+                    {
+                        newEvent = new EventInstance(rel.Target, eventID, eventLabel);
+                        if (targetKeyword != "") newEvent.Targets.Add(targetKeyword, new List<Character_Trainable>() { rel.Owner });
+                    }
+                    else
+                    {
+                        newEvent = new EventInstance(rel.Owner, eventID, eventLabel);
+                        if (targetKeyword != "") newEvent.Targets.Add(targetKeyword, new List<Character_Trainable>() { rel.Target });
+                    }
+
+                    if (newEvent != null) scr_UpdateHandler.current.EventHandler.StartEvent(newEvent, false);
+                }
+            }
+
+            [System.Serializable]
+            public class ModKojoVariable
+            {
+                public bool isDailyVariable = false;
+                public string variableID = "";
+                public bool isSetValue = false;
+                public int value = 0;
+
+                [JsonIgnore] public bool isValid { get { return this.variableID != ""; } }
+                public void Execute(Character_Relationship rel)
+                {
+                    if (isSetValue) rel.Owner.Relationships.SetKojoVariable(isDailyVariable, rel, variableID, value);
+                    else rel.Owner.Relationships.ModKojoVariable(isDailyVariable, rel, variableID, value);
+                }
+            }
+
+        }
+    }
+}

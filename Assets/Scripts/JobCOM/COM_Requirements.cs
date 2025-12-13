@@ -85,18 +85,69 @@ public class COM_Requirements
             treatDoerAsReceiver = treatDoerAsReceiver || req.treatDoerAsReceiver;
             treatReceiverAsDoer = treatReceiverAsDoer || req.treatReceiverAsDoer;
         }
+        public bool Validate(ref List<string> _tooltip, Character_Trainable doerRefIDs, Requirement extraCondition = null)
+        {
+            //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
+            //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
+            /*
+            var actorCount = new List<int>();
+            actorCount.AddRange(doerRefIDs);
+            if (TreatReceiverAsDoer) actorCount.AddRange(receiverRefIDs);
+            actorCount.RemoveAll(x=>x < 0);
+            */
+            bool logging = !scr_UpdateHandler.current.Updating;
+            var actorCount = 1;
 
-        public bool Validate(ref List<string> _tooltip, List<int> doerRefIDs, List<int> receiverRefIDs, Requirement extraCondition = null)
+            if (doerCount == -1) { }
+            else if (doerCount == 0) { }
+            else if (doerCount > 0 && actorCount == doerCount) { }
+            else if (doerCount > 9) { }
+            else
+            {
+                //_tooltip.Add("Command invalid: command doer number below requirement : treatRasD[" + treatReceiverAsDoer + "] dCount[" + 1 + "] rCount[" + 0 + "] finalEval[" + (treatReceiverAsDoer && ((doerRefIDs.Count + receiverRefIDs.Count) <= doerCount)) + "]");
+                return false;
+            }
+
+            if (receiverCount > 0)
+            {
+                if (logging) _tooltip.Add("Command invalid: command cannot be done alone");
+                return false;
+            }
+
+            // Debug.Log("Command (Variant) Requirement Validating [" + String.Join(",", doerRefIDs) + "] and [" + String.Join(",", receiverRefIDs) + "]");
+
+            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs))
+            {
+                if (logging) _tooltip.Add("doer failed doer req validation");
+                return false;
+            }
+            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs))
+            {
+                if (logging) _tooltip.Add("doer failed receiver req validation");
+                return false;
+            }
+            if (receiverCount == 0)
+            {
+                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs);
+                if (!value && logging) _tooltip.Add("doer failed receiver == 0 req validation");
+                return value;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        public bool Validate(ref List<string> _tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, Requirement extraCondition = null)
         {
             //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
             //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
             var actorSet = new HashSet<int>();
-            foreach (var id in doerRefIDs) { if (id >= 0) actorSet.Add(id); }
-            if (TreatReceiverAsDoer)
-            {
-                foreach (var id in receiverRefIDs) { if (id >= 0) actorSet.Add(id); }
-            }
-            var actorCount = new List<int> (actorSet);
+            bool logging = !scr_UpdateHandler.current.Updating;
+            foreach (var id in doerRefIDs) { actorSet.Add(id.RefID); }
+            if (TreatReceiverAsDoer) foreach (var id in receiverRefIDs) { actorSet.Add(id.RefID); }
+            
+            int actorCount = actorSet.Count;
+
             /*
             var actorCount = new List<int>();
             actorCount.AddRange(doerRefIDs);
@@ -106,63 +157,62 @@ public class COM_Requirements
 
             if (doerCount == -1) { }
             else if (doerCount == 0 && doerRefIDs.Count == 0 && (!treatReceiverAsDoer || receiverRefIDs.Count == 0)) { }
-            else if (doerCount > 0 && actorCount.Count == doerCount) { }
+            else if (doerCount > 0 && actorCount == doerCount) { }
             else if (doerCount > 9) { }
             else
             {
-                _tooltip.Add("Command invalid: command doer number below requirement : treatRasD["+treatReceiverAsDoer+"] dCount["+doerRefIDs.Count+"] rCount["+receiverRefIDs.Count+"] finalEval["+ (treatReceiverAsDoer && ((doerRefIDs.Count + receiverRefIDs.Count) <= doerCount)) + "]");
+                if (logging) _tooltip.Add("Command invalid: command doer number below requirement : treatRasD[" + treatReceiverAsDoer + "] dCount[" + doerRefIDs.Count + "] rCount[" + receiverRefIDs.Count + "] finalEval[" + (treatReceiverAsDoer && ((doerRefIDs.Count + receiverRefIDs.Count) <= doerCount)) + "]");
                 return false;
             }
 
             if (receiverCount == 0 && receiverRefIDs.Count != 0)
             {
-                _tooltip.Add("Command invalid: command can only be done alone");
+                if (logging) _tooltip.Add("Command invalid: command can only be done alone");
                 return false;
             }
 
             if (receiverCount > 0 && receiverRefIDs.Count == 0)
             {
-                _tooltip.Add("Command invalid: command cannot be done alone");
+                if (logging) _tooltip.Add("Command invalid: command cannot be done alone");
                 return false;
             }
 
             if (receiverCount > 0 && receiverRefIDs.Count > receiverCount)
             {
-                _tooltip.Add("Command invalid: too many receivers");
+                if (logging) _tooltip.Add("Command invalid: too many receivers");
                 return false;
             }
 
             //            Debug.Log("Command (Variant) Requirement Validating [" + String.Join(",", doerRefIDs) + "] and [" + String.Join(",", receiverRefIDs) + "]");
 
-            if (!CharaReqUtility.Validate( req_Doers,ref _tooltip, doerRefIDs)) 
+            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs))
             {
-                _tooltip.Add("doer failed doer req validation");
+                if (logging) _tooltip.Add("doer failed doer req validation");
                 return false;
             }
-            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers,ref _tooltip, doerRefIDs))
+            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs))
             {
-                _tooltip.Add("doer failed receiver req validation");
+                if (logging) _tooltip.Add("doer failed receiver req validation");
                 return false;
-            } 
-            if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers,ref _tooltip, receiverRefIDs))
+            }
+            if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers, ref _tooltip, receiverRefIDs))
             {
-                _tooltip.Add("receiver failed doer req validation");
+                if (logging) _tooltip.Add("receiver failed doer req validation");
                 return false;
-            } 
-            if (receiverCount == 0) 
-            {   
+            }
+            if (receiverCount == 0)
+            {
                 bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs);
-                if (!value) _tooltip.Add("doer failed receiver == 0 req validation");
+                if (!value && logging) _tooltip.Add("doer failed receiver == 0 req validation");
                 return value;
             }
-            else{
+            else
+            {
                 bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, receiverRefIDs);
-                if (!value) _tooltip.Add("receiver failed receiver req validation");
+                if (!value && logging) _tooltip.Add("receiver failed receiver req validation");
                 return value;
-            } 
-        }
-
-        
+            }
+        }        
     }
 
 
@@ -182,10 +232,10 @@ public class COM_Requirements
             get { return comTags.Count > 0 || doerBodyTags.Count > 0 || receiverBodyTags.Count > 0 || OverPenetration || requireCOMID != ""; }
         }
 
-        public bool ValidateCondition(ref List<string> tooltip, List<int> doerRefIDs, List<int> receiverRefIDs, COM com, COM.COM_Variant variant = null)
+        public bool ValidateCondition(List<string> tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, COM com, COM.COM_Variant variant = null)
         {
-
-            int actorRef = doerRefIDs.Count > 0 ? doerRefIDs[0] : (receiverRefIDs.Count > 0 ? receiverRefIDs[0] : -1);
+            bool logging = tooltip != null && !scr_UpdateHandler.current.Updating;
+            int actorRef = doerRefIDs.Count > 0 ? doerRefIDs[0].RefID : (receiverRefIDs.Count > 0 ? receiverRefIDs[0].RefID : -1);
 
             List<string> comtgs = (variant != null && variant.requirements.requireExisting.isValid && variant.requirements.requireExisting.comTags.Count > 0 ?
                 variant.requirements.requireExisting.comTags : com.requirements.requireExisting.comTags);
@@ -227,7 +277,7 @@ public class COM_Requirements
 
             if (existing.Count < 1)
             {
-                tooltip.Add("Command invalid: missing pre-req command by filter 1");
+                if (logging) tooltip.Add("Command invalid: missing pre-req command by filter 1");
                 return false;
             }
 
@@ -235,53 +285,53 @@ public class COM_Requirements
             {
                 if (existing[i] == null)
                 {
-                    tooltip.Add("remove by 1");
+                   // tooltip.Add("remove by 1");
                     existing.RemoveAt(i);
                     continue;
                 }
 
                 if (comID != "" && ((existing[i].targetCOM == null || existing[i].targetCOM.ID != comID)))
                 {
-                    tooltip.Add("remove by 2");
+                   // tooltip.Add("remove by 2");
                     existing.RemoveAt(i);
                     continue;
                 }
 
                 //if (existing[i] == null) continue;
-                if (!Utility.ListEquals(existing[i].DoerRefs, doerRefIDs))
+                if (!Utility.ListEquals(existing[i].doer, doerRefIDs))
                 {
-                    tooltip.Add("remove by 3");
+                   // tooltip.Add("remove by 3");
                     existing.RemoveAt(i);
                     continue;
                 }
-                if (!Utility.ListEquals(existing[i].ReceiverRefs, receiverRefIDs))
+                if (!Utility.ListEquals(existing[i].receiver, receiverRefIDs))
                 {
-                    tooltip.Add("remove by 4");
+                   // tooltip.Add("remove by 4");
                     existing.RemoveAt(i);
                     continue;
                 }
                 if (comtgs.Count > 0 && comtgs.Except(existing[i].targetCOM.comTags).Count() != 0)
                 {
-                    tooltip.Add("remove by 5");
+                   // tooltip.Add("remove by 5");
                     existing.RemoveAt(i);
                     continue;
                 }
                 if (doerBTag.Count > 0 && doerBTag.Except(existing[i].doerBodyTags).Count() != 0)
                 {
-                    tooltip.Add("remove by 6");
+                   // tooltip.Add("remove by 6");
                     existing.RemoveAt(i);
                     continue;
                 }
                 if (receiverBTag.Count > 0 && receiverBTag.Except(existing[i].receiverBodyTags).Count() != 0)
                 {
-                    tooltip.Add("remove by 7");
+                   // tooltip.Add("remove by 7");
                     existing.RemoveAt(i);
                     continue;
                 }
                 List<string> s = new List<string>();
                 if (overpen && !(existing[i].targetCOM as COM_Sex).ValidateActorLength(ref s, existing[i].DoerRefs, existing[i].ReceiverRefs))
                 {
-                    tooltip.Add($"remove by 8, doerRefs {String.Join("|", existing[i].DoerRefs)}, receiveRefs {String.Join("|", existing[i].ReceiverRefs)}");
+                   // tooltip.Add($"remove by 8, doerRefs {String.Join("|", existing[i].DoerRefs)}, receiveRefs {String.Join("|", existing[i].ReceiverRefs)}");
                     existing.RemoveAt(i);
                     continue;
                 }
@@ -289,7 +339,116 @@ public class COM_Requirements
 
             if (existing.Count < 1)
             {
-                tooltip.Add("Command invalid: missing pre-req command by filter 2");
+                if (logging) tooltip.Add("Command invalid: missing pre-req command by filter 2");
+                return false;
+            }
+            else return true;
+
+        }
+
+        public bool ValidateCondition(List<string> tooltip, Character_Trainable doerRefIDs, COM com, COM.COM_Variant variant = null)
+        {
+            bool logging = tooltip != null && !scr_UpdateHandler.current.Updating;
+
+            int actorRef = doerRefIDs.RefID;
+
+            List<string> comtgs = (variant != null && variant.requirements.requireExisting.isValid && variant.requirements.requireExisting.comTags.Count > 0 ?
+                variant.requirements.requireExisting.comTags : com.requirements.requireExisting.comTags);
+
+            List<string> doerBTag = (variant != null && variant.requirements.requireExisting.isValid && variant.requirements.requireExisting.doerBodyTags.Count > 0 ?
+                variant.requirements.requireExisting.doerBodyTags : com.requirements.requireExisting.doerBodyTags);
+
+            List<string> receiverBTag = (variant != null && variant.requirements.requireExisting.isValid && variant.requirements.requireExisting.receiverBodyTags.Count > 0 ?
+                variant.requirements.requireExisting.receiverBodyTags : com.requirements.requireExisting.receiverBodyTags);
+
+            bool overpen = (variant != null && variant.requirements.requireExisting.isValid ?
+                (variant.requirements.requireExisting.OverPenetration || com.requirements.requireExisting.OverPenetration) : com.requirements.requireExisting.OverPenetration);
+
+            string comID = (variant != null && variant.requirements.requireExisting.isValid && variant.requirements.requireExisting.requireCOMID != "" ? variant.requirements.requireExisting.requireCOMID : this.requireCOMID);
+
+            if (comtgs.Count < 1 && doerBTag.Count < 1 && receiverBTag.Count < 1 && OverPenetration == false && comID == "") return true;
+
+
+
+            Job_Sex_Group jsex = actorRef != -1 ? scr_System_CampaignManager.current.FindInstanceByID(actorRef).CurrentJob as Job_Sex_Group : null;
+
+            if (jsex == null) return false;
+
+            // from here on, we know its sex job
+            List<ActionPackage_Sex> existing = new List<ActionPackage_Sex>();
+            foreach (var package in jsex.CurrentPackages)
+            {
+                if (package is ActionPackage_Sex)
+                {
+                    if (package.targetCOM == null) continue;
+                    if (comID != "" && package.targetCOM.ID != comID) continue;
+                    existing.Add(package as ActionPackage_Sex);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            if (existing.Count < 1)
+            {
+                if (logging) tooltip.Add("Command invalid: missing pre-req command by filter 1");
+                return false;
+            }
+
+            for (int i = existing.Count - 1; i >= 0; i--)
+            {
+                if (existing[i] == null)
+                {
+                    //tooltip.Add("remove by 1");
+                    existing.RemoveAt(i);
+                    continue;
+                }
+
+                if (comID != "" && ((existing[i].targetCOM == null || existing[i].targetCOM.ID != comID)))
+                {
+                    //tooltip.Add("remove by 2");
+                    existing.RemoveAt(i);
+                    continue;
+                }
+
+                //if (existing[i] == null) continue;
+                if (existing[i].doer.Count != 1 || existing[i].doer[0] != doerRefIDs)
+                {
+                   // tooltip.Add("remove by 3");
+                    existing.RemoveAt(i);
+                    continue;
+                }
+                if (comtgs.Count > 0 && comtgs.Except(existing[i].targetCOM.comTags).Count() != 0)
+                {
+                   // tooltip.Add("remove by 5");
+                    existing.RemoveAt(i);
+                    continue;
+                }
+                if (doerBTag.Count > 0 && doerBTag.Except(existing[i].doerBodyTags).Count() != 0)
+                {
+                   // tooltip.Add("remove by 6");
+                    existing.RemoveAt(i);
+                    continue;
+                }
+                if (receiverBTag.Count > 0 && receiverBTag.Except(existing[i].receiverBodyTags).Count() != 0)
+                {
+                  //  tooltip.Add("remove by 7");
+                    existing.RemoveAt(i);
+                    continue;
+                }
+                List<string> s = new List<string>();
+                if (overpen && !(existing[i].targetCOM as COM_Sex).ValidateActorLength(ref s, existing[i].DoerRefs, existing[i].ReceiverRefs))
+                {
+                   // tooltip.Add($"remove by 8, doerRefs {String.Join("|", existing[i].DoerRefs)}, receiveRefs {String.Join("|", existing[i].ReceiverRefs)}");
+                    existing.RemoveAt(i);
+                    continue;
+                }
+            }
+
+            if (existing.Count < 1)
+            {
+                if (logging) tooltip.Add("Command invalid: missing pre-req command by filter 2");
                 return false;
             }
             else return true;

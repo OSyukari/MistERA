@@ -81,7 +81,11 @@ public class initScript_basicInfo : MonoBehaviour
         if (chara.Stats.Stress != null) chara.Stats.Stress.Draw(this.stress);
         else this.stress.SetText(" - ");
 
-        if (chara.Stats.Lust != null) chara.Stats.Lust.Draw(this.lust);
+        if (chara.Stats.Lust != null) 
+        {
+            chara.Stats.Lust.Draw(this.lust);
+            //UI_Utility.Draw(chara.Stats.Lust, this.lust);
+        }
         else this.lust.SetText(" - ");
 
 

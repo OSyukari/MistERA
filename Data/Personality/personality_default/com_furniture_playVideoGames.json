@@ -1,0 +1,275 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_playVideoGames_Begin",
+                    "variants": [
+                        {
+                            "requirements": [
+                                {
+                                    "requireSelfAttitudeGTE": "Like"
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "relaxed",
+                                "leaning",
+                                "confident",
+                                "smug",
+                                "excited",
+                                "happy"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "$self$几乎是抢过了手柄，眼睛里闪烁着期待的光芒。",
+                                "$self$：\"好久没玩这个了！快点快点，$target$！\"",
+                                "$self$熟练地转动了一下摇杆，嘴角勾起一抹自信的笑意。",
+                                "$self$：\"哼哼，今天就让你见识一下我的真实实力。\"",
+                                "$self$整个人放松地靠在沙发上，自然地把脚翘了起来。",
+                                "$self$侧过头对$target$眨了眨眼：\"准备好被我带飞了吗？\""
+                            ]
+                        },
+                        {
+                            "requirements": [
+                                {}
+                            ],
+                            "extraPortraitTags": [
+                                "focused",
+                                "neutral",
+                                "serious",
+                                "thinking",
+                                "calm",
+                                "observation"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "($self$) 开始接吻 未允许 口上文",
+                            "responses": [
+                                "$self$没有什么多余的动作，只是默默拿起了放在桌边的手柄。",
+                                "$self$礼貌性地接过控制器，视线随即移向屏幕，不再说话。",
+                                "$self$抿着嘴唇，似乎在研究操作说明，神情显得有些拘谨。",
+                                "$self$：\"既然开始了，我会认真对待。\"",
+                                "$self$并没有表现出太大的兴致，只是按部就班地进入了开始界面。",
+                                "$self$调整了一下坐姿，与屏幕保持着标准的距离。"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_playVideoGames",
+                    "interruptSelfJob": true,
+                    "variants": [
+                        {
+                            "requirements": [
+                                {
+                                    "requireEPFailure": true
+                                }
+                            ],
+                            "variants": [
+                                {
+                                    "requirements": [
+                                        {
+                                            "requireSelfAttitudeGTE": "Like"
+                                        }
+                                    ],
+                                    "_comment": "failure variant",
+                                    "extraPortraitTags": [
+                                        "apology",
+                                        "shy",
+                                        "gentle"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "$self$苦笑着指了指手边的活：\"我也想玩呀！但这堆事做不完我心里不踏实。\"",
+                                        "$self$轻轻拍了拍你的肩膀：\"亲爱的，今天太累了，改天一定陪你玩个通宵好吗？\"",
+                                        "$self$凑近看了看屏幕：\"哇，这关看着好难……但我现在真的抽不开身，晚点再说？\"",
+                                        "$self$做了个鬼脸：\"饶了我吧，上次输给你的阴影还在呢，让我缓缓！\"",
+                                        "$self$温和地推着你的背：\"你先自己练练技术，等我忙完这阵子就来检验成果。\"",
+                                        "$self$有些遗憾地看着手柄：\"啊……好想玩。可是答应了别人的事得先做完才行。\"",
+                                        "$self$双手合十做了一个抱歉的姿势，脸上带着无奈的笑。",
+                                        "$self$：\"啊……饶了我吧，$target$，今天真的没状态。\"",
+                                        "$self$像一只慵懒的猫一样瘫在椅子上，连手指都不想动一下。",
+                                        "$self$：\"不行不行，今天连拿手柄的力气都没有了……\"",
+                                        "$self$一边快速处理着手头的事，一边头也不回地摆了摆手。",
+                                        "$self$：\"下次一定！现在真的脱不开身啦！\""
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "apology",
+                                "awkward",
+                                "busy",
+                                "uninterested",
+                                "cold",
+                                "tired",
+                                "distant"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "kojo_default_com_furniture_playVideoGames_refuse_1",
+                                "kojo_default_com_furniture_playVideoGames_refuse_2",
+                                "$self$别开了视线：\"我现在有点忙，下次吧。\"",
+                                "$self$没有停下手里的动作：\"你自己玩不行吗？我没兴趣。\"",
+                                "$self$看了一眼时间：\"不好意思，我还有别的事要处理。\"",
+                                "$self$皱了皱眉：\"游戏？我现在没那个心情陪你消遣。\"",
+                                "$self$摆了摆手：\"这种事情还是找别人吧，我不擅长。\"",
+                                "$self$叹了口气：\"我现在只想一个人静一静，抱歉。\"",
+                                "$self$避开了$target$的视线，轻轻摇了摇头。",
+                                "$self$：\"抱歉，我现在不太想碰这些东西。\"",
+                                "$self$揉了揉眉心，声音听起来有些疲惫。",
+                                "$self$：\"改天吧，我现在只想一个人静一静。\"",
+                                "$self$瞥了一眼屏幕，随即又低头看向手中的书本。",
+                                "$self$：\"我对这个没什么兴趣，你自己玩吧。\""
+                            ]
+                        },
+                        {
+                            "requirements": [
+                                {
+                                    "requireEPSuccessGTE": "Success"
+                                }
+                            ],
+                            "_comment": "great success variant",
+                            "variants": [
+                                {
+                                    "requirements": [
+                                        {
+                                            "requireSelfAttitudeGTE": "Like"
+                                        }
+                                    ],
+                                    "extraPortraitTags": [
+                                        "happy",
+                                        "excited",
+                                        "sparkling",
+                                        "admiring"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "$self$兴奋地跳起来跟你击掌：\"太棒了！我们简直就是黄金搭档！无敌！\"",
+                                        "$self$一把抱住你的胳膊：\"赢啦！刚才那波配合太帅了，我简直要爱死你了！\"",
+                                        "$self$眼睛亮晶晶地看着你：\"再来一局再来一局！趁着手感火热，我们直接通关！\"",
+                                        "$self$心满意足地伸了个懒腰：\"这就是默契啊~ 和你一起玩果然是最开心的。\"",
+                                        "$self$得意洋洋地挥舞着手柄：\"看到没？我刚才那波操作是不是神级反应？快夸我！\"",
+                                        "$self$靠在你的肩膀上笑个不停：\"哈哈哈哈，刚才对手被我们耍得团团转，太解气了！\"",
+                                        "$self$开心地抱住$target$的胳膊晃来晃去。",
+                                        "$self$：\"再来一局再来一局！这种赢的感觉太棒了！\"",
+                                        "$self$双手捧着脸，眼睛亮晶晶地盯着$target$。",
+                                        "$self$：\"哇！刚才那个救场简直帅呆了！教教我嘛！\"",
+                                        "$self$兴奋地跳了起来，举起手掌等着$target$击掌。",
+                                        "$self$：\"太强了！我们简直就是无敌的组合！\""
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "happy",
+                                "excited",
+                                "surprised",
+                                "intrigued",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "kojo_default_com_furniture_playVideoGames_accept_success_1",
+                                "kojo_default_com_furniture_playVideoGames_accept_success_2",
+                                "$self$意外地挑了挑眉：\"哦？看来这游戏确实有点意思，不全是给小孩玩的。\"",
+                                "$self$嘴角微微上扬：\"这把配合得还算不错。你也并非一无是处嘛。\"",
+                                "$self$盯着屏幕若有所思：\"刚才那个连招……你是怎么做到的？教教我。\"",
+                                "$self$活动了一下手腕：\"呼，出了一身汗。没想到居然能过关，谢了。\"",
+                                "$self$看着你的眼神多了一丝认可：\"技术不错。下次如果不忙的话，可以再叫我。\"",
+                                "$self$难得地露出了笑容：\"赢了的感觉确实不赖。这次算我承你的人情。\"",
+                                "$self$原本紧绷的嘴角放松下来，露出一个淡淡的微笑。",
+                                "$self$：\"这局配合得还可以，还算有趣。\"",
+                                "$self$身体不由自主地前倾，似乎完全被刚才的操作吸引了。",
+                                "$self$：\"刚才那招是怎么做到的？再演示一遍。\"",
+                                "$self$有些意外地挑了挑眉，看向$target$的眼神多了几分认可。",
+                                "$self$：\"操作还不错，比我预想的要专业。\""
+                            ]
+                        },
+                        {
+                            "requirements": [
+                                {
+                                    "requireSelfAction": true
+                                }
+                            ],
+                            "_comment": "barely success variant",
+                            "variants": [
+                                {
+                                    "requirements": [
+                                        {
+                                            "requireSelfAttitudeGTE": "Like"
+                                        }
+                                    ],
+                                    "extraPortraitTags": [
+                                        "frustrated",
+                                        "pouting",
+                                        "complaining",
+                                        "glare",
+                                        "teary"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "$self$整个人瘫在沙发上：\"啊啊啊！气死我了！明明只差一点点就要通关的！\"",
+                                        "$self$鼓起脸颊盯着你：\"你是故意的吧？怎么每次关键时刻都掉链子呀！\"",
+                                        "$self$有些沮丧地抱着膝盖：\"我是不是真的很笨？连这么简单的关卡都过不去……\"",
+                                        "$self$不甘心地咬着嘴唇：\"不行，这把不算！现在的状态太差了，不玩了不玩了。\"",
+                                        "$self$把头埋进抱枕里：\"再也不玩恐怖游戏了……吓得我现在心还在跳。\"",
+                                        "$self$把手柄塞回你手里：\"这游戏针对我！我不玩了，我要去吃点好吃的平复一下心情。\"",
+                                        "$self$整个人垮了下来，把脸埋进了靠枕里，\"啊啊啊——气死我了！不玩了不玩了！\"",
+                                        "$self$轻轻推了一下$target$的肩膀，眼神里满是幽怨。\"你是故意的吧？怎么能在那种地方失误啦！\"",
+                                        "$self$鼓着脸颊，不甘心地用手指戳着手柄上的按键。\"呜……怎么会这样！明明刚才只要你再快一点点的！\""
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "pouting",
+                                "doubt",
+                                "bored",
+                                "annoyed",
+                                "disappointed"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "kojo_default_com_furniture_playVideoGames_accept_failure_1",
+                                "kojo_default_com_furniture_playVideoGames_accept_failure_2",
+                                "$self$把手柄扔到桌上：\"这种操作手感太糟糕了，简直是浪费时间。\"",
+                                "$self$打了个哈欠：\"这就结束了？感觉比我想象中无聊多了。\"",
+                                "$self$冷淡地看着屏幕上的结算画面：\"配合成这样，根本没法玩下去吧。\"",
+                                "$self$揉了揉太阳穴：\"头好晕……我不该答应陪你玩这个的。\"",
+                                "$self$面无表情地站起身：\"算了，看来我和电子游戏八字不合。\"",
+                                "$self$瞥了你一眼：\"你一直都这么玩游戏的吗？真是让人着急。\"",
+                                "$self$有些烦躁地把手柄丢在桌上，抱起了双臂。",
+                                "$self$：\"这就结束了吗？比预想的还要无聊。\"",
+                                "$self$沉默地退出了游戏界面，甚至没有看$target$一眼。",
+                                "$self$：\"感觉有点浪费时间了……\"",
+                                "$self$看着屏幕上的Game Over字样，眉头微微皱起。",
+                                "$self$放下手柄，轻轻叹了口气：\"看来我们配合得不是很好。\""
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "kojo_default_com_furniture_playVideoGames_refuse_1": "$self$：\"抱歉，我现在没什么心情玩游戏\"",
+                "kojo_default_com_furniture_playVideoGames_refuse_2": "$self$：\"你玩吧，我今天就不參加了。\"",
+                "kojo_default_com_furniture_playVideoGames_accept_failure_1": "\"唉……又输了\" $self$把手柄扔到一旁。\"",
+                "kojo_default_com_furniture_playVideoGames_accept_failure_2": "$self$：\"这个游戏……不太适合我。\"",
+                "kojo_default_com_furniture_playVideoGames_accept_success_1": "$self$：\"这比我想象中好玩多了！\"",
+                "kojo_default_com_furniture_playVideoGames_accept_success_2": "$self$：\"你挺厉害的嘛！下次我一定赢回来！\""
+            },
+            "en-us": {
+                "kojo_default_com_furniture_playVideoGames_refuse_1": "$self$: \"Sorry, I'm not really in the mood for games right now.\"",
+                "kojo_default_com_furniture_playVideoGames_refuse_2": "$self$: \"You go ahead. I'll pass today.\"",
+                "kojo_default_com_furniture_playVideoGames_accept_failure_1": "\"Ugh… I can't believe I lost again\" $self$ tosses the controller to the side",
+                "kojo_default_com_furniture_playVideoGames_accept_failure_2": "$self$: \"That was… rough. Not really my kind of game.\"",
+                "kojo_default_com_furniture_playVideoGames_accept_success_1": "$self$: \"That was way more fun than I expected!\"",
+                "kojo_default_com_furniture_playVideoGames_accept_success_2": "$self$: \"You're pretty good at this! I'll get you next time.\""
+            }
+        }
+    }
+}

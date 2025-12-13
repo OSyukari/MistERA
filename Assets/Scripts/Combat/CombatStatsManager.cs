@@ -5,7 +5,12 @@ using Newtonsoft.Json;
 
 public class CombatStatManager : I_StatsManager
 {
-
+    public StatusEx_Instance GetStatusEXByStringMatch(string s)
+    {
+        StatusEx_Instance si = this.statusInstancesEx.Find(x => x.ID.Contains(s));
+        if (si != null) return si;
+        else return null;
+    }
     public enum PostureState
     {
         Broken,

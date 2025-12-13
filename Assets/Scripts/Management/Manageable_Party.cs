@@ -588,7 +588,7 @@ public class Manageable_Party : I_IsJobGiver
 
         if (targetCOM.comTags.Contains("job") && allowJobPostSearch)
         {
-            if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, chara, comID, false))
+            if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, null, chara, comID, false))
             {
                 ss += " found no valid [" + comID + "] instances offered by Furnitures";
                 if (s != null) s.Add(ss);

@@ -18,8 +18,10 @@ public class ActionPackage_Sex : ActionPackage
     {
 
     }
-    public ActionPackage_Sex(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef)
+    [JsonProperty] protected bool is_Forced = false;
+    public ActionPackage_Sex(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef, bool isforced = false)
     {
+        this.is_Forced = isforced;
         ReInitializeCOM(job, targetCOM, doer, receiver, masterRef);
     }
 
@@ -90,6 +92,7 @@ public class ActionPackage_Sex : ActionPackage
         copy.toggleRepeat = this.toggleRepeat;
         copy.LoggedBegin = this.LoggedBegin;
         copy.duration = this.duration;
+        copy.is_Forced = this.is_Forced;
         //Debug.LogError($"copy sexAP, target togglerepeat? {copy.toggleRepeat}");
         return copy;
     }
@@ -145,6 +148,12 @@ public class ActionPackage_Sex : ActionPackage
                 }
             }
         }
+    }
+
+    protected override bool Request(bool rebuildPackage = true, bool forceAccept = false)
+    {
+        forceAccept = forceAccept || this.is_Forced;
+        return base.Request(rebuildPackage, forceAccept);
     }
 }
 

@@ -898,8 +898,10 @@ public static class UtilityEX
                             parsedSuccessful = true;
                             break;
                         case "lust":
-                            if(scr_System_CampaignManager.current.CurrentTarget.Stats.Lust != null){
-                            scr_System_CampaignManager.current.CurrentTarget.Stats.Lust.DebugSeverityMod += numbers;}
+                            if(scr_System_CampaignManager.current.CurrentTarget.Stats.Lust != null)
+                            {
+                            scr_System_CampaignManager.current.CurrentTarget.Stats.Lust.DebugSeverityMod += numbers;
+                            }
                             parsedSuccessful = true;
                             break;
                     }
@@ -990,6 +992,11 @@ public static class UtilityEX
                         }
                     }
                 }
+                break;
+            case "resetAllActorJobs":
+
+                scr_System_CampaignManager.current.ResetAllActorJobs();
+
                 break;
             case "spawnChara":
                 if (parsed.Count() >= 2)

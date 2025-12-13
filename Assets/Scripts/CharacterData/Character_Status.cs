@@ -111,7 +111,7 @@ public class Status_Instance
     {
         get
         {
-            return severity + Variation;
+            return (float)Math.Round( severity + Variation, 2);
         }
     }
 
@@ -119,8 +119,8 @@ public class Status_Instance
     [JsonIgnore]
     public float Decay { get
         {
-            if (this.BaseRef.variationMode.baselineVariation is not Status_Base.BaselineVariation_Linear) return 0;
-            return (this.BaseRef.variationMode.baselineVariation as Status_Base.BaselineVariation_Linear).decaySpeed;
+            var linear = (this.BaseRef.variationMode.baselineVariation as Status_Base.BaselineVariation_Linear);
+            return linear == null ? 0 : linear.decaySpeed;
         } }
 
     [JsonIgnore]
@@ -206,8 +206,8 @@ public class Status_Instance
         if (severity == max) maxed = true;
         else maxed = false;
 
-        severity = (float) Math.Round(severity, 2);
-        if (Math.Abs( severity) < 0.01) severity = 0;
+        //severity = (float) Math.Round(severity, 2);
+        //if (Math.Abs( severity) < 0.01) severity = 0;
 
         if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.Log($"{Owner.OwnerName()} addstatus {this.baseID} {f} min {min} max {max} externalcap {externalCap} final {severity}");
 
@@ -270,7 +270,8 @@ public class Status_Instance
     {
         get
         {
-            if (BaseRef == null || BaseRef.variants == null) Debug.LogError($"severityModifier error, bref null? {BaseRef == null}, variants null? {BaseRef == null || BaseRef.variants == null}");
+            if (BaseRef == null || BaseRef.variants == null ) Debug.LogError($"severityModifier error, bref null? {BaseRef == null}, variants null? {BaseRef == null || BaseRef.variants == null}");
+           
             return BaseRef.variants[SeverityIndex].stat_modifiers;
         }
     }

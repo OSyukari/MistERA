@@ -1,13 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
-using QuikGraph;
-using UnityEngine.UI;
 using System.IO;
-using QuikGraph.Algorithms;
 using Newtonsoft.Json;
+using QuikGraph;
+using QuikGraph.Algorithms;
+using QuikGraph.Algorithms.Observers;
 using QuikGraph.Algorithms.ShortestPath;
+using UnityEngine;
+using UnityEngine.UI;
 
 // Instantiate floor with floorplan
 // campaignmanager dispense floor uid
@@ -65,6 +66,26 @@ public class Floor_Instance : IDisposable, I_Disposable
     {
         var result = this.rooms.Find(x=>x.RefID == roomRef);
         return result;
+    }
+
+    VertexPredecessorRecorderObserver<Floor_Instance, TaggedEdge<Floor_Instance, Door_Instance>> _graph = null;
+
+    [JsonIgnore]
+    public VertexPredecessorRecorderObserver<Floor_Instance, TaggedEdge<Floor_Instance, Door_Instance>> FloorsGraphObserver
+    {
+        get
+        {
+            if (_graph == null)
+            {
+                _graph = scr_System_CampaignManager.current.Map.RunDijkstraForFloor(this);
+            }
+            return _graph;
+        }
+        set
+        {
+            _graph = value;
+            //Debug.Log($"Setting FloorsGraphObserver for {this.refID}");
+        }
     }
 
     //GameObject floor = null;
@@ -184,6 +205,10 @@ public class Floor_Instance : IDisposable, I_Disposable
 
     }
 
+    /// <summary>
+    /// Store the room where the door is at
+    /// </summary>
+    [JsonIgnore] public Dictionary<Door_Instance, Room_Instance> ConnectedDoors = new Dictionary<Door_Instance, Room_Instance>();
 
     Func<TaggedEdge<int, Door_Instance>, double> edgeCost = entry => entry.Tag.Cost;
     AdjacencyGraph<int, TaggedEdge<int, Door_Instance>> graph = null;
@@ -241,21 +266,45 @@ public class Floor_Instance : IDisposable, I_Disposable
         // Verify if every room is connected. Unconnected room might need to be removed 
         foreach(var i in rooms){
             if (!i.connectedInFloor) Debug.LogError("Room " + refID + " is orphaned after serialization, please handle.");
+            else
+            {
+                i.SameFloorGraphObserver = RunDijkstraForFloor(i.RefID);
+            }
         }
     }
 
-    public IEnumerable<TaggedEdge<int, Door_Instance>> Findpath(int charaRefID, int fromRefID, int toRefID)
+
+
+
+    private VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>> RunDijkstraForFloor(int startNodeID)
     {
-        Debug.Log("Floor Findpath from ["+fromRefID+"] to ["+toRefID+ "]");
-        if (graph != null)
+
+        // 1. Create Algorithm
+        // We use Heuristic = 0 to force Dijkstra behavior (Uniform Cost Search).
+        // This ensures the tree is valid for ALL targets, not biased toward one specific target.
+        var algo = new AStarShortestPathAlgorithm<int, TaggedEdge<int, Door_Instance>>(
+            this.graph,
+            edgeCost,
+            _ => 0
+        );
+
+        // 2. Create and Attach Observer
+        var observer = new VertexPredecessorRecorderObserver<int, TaggedEdge<int, Door_Instance>>();
+        using (observer.Attach(algo))
         {
-            TryFunc<int, IEnumerable<TaggedEdge<int, Door_Instance>>> tryGetPaths = graph.ShortestPathsDijkstra(edgeCost, fromRefID);
-            if (tryGetPaths(toRefID, out IEnumerable<TaggedEdge<int, Door_Instance>> path))
+            // 3. Compute (Must be done sequentially on this thread)
+            try
             {
-                return path;
+                algo.Compute(startNodeID);
+            }
+            catch (Exception ex)
+            {
+                // Debug.LogError($"Pathfinding failed for floor {floorID}: {ex.Message}");
+                return null;
             }
         }
-        return null;
+
+        return observer;
     }
 
     public void Dispose()

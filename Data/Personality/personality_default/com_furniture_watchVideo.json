@@ -1,0 +1,81 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_watchVideo",
+                    "interruptSelfJob": true,
+                    "variants": [
+                        {
+                            "requirements": [
+                                {
+                                    "requireEPFailure": true
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "apology",
+                                "shy"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "failure variant",
+                            "responses": [
+                                "kojo_default_com_furniture_watchVideo_refuse_1"
+                            ]
+                        },
+                        {
+                            "requirements": [
+                                {
+                                    "requireEPSuccessGTE": "Success"
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "happy",
+                                "excited",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "great success variant",
+                            "responses": [
+                                "kojo_default_com_furniture_watchVideo_accept_success_1",
+                                "kojo_default_com_furniture_watchVideo_accept_success_2"
+                            ]
+                        },
+                        {
+                            "requirements": [
+                                {
+                                    "requireSelfAction": true
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "pouting",
+                                "doubt"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "barely success variant",
+                            "responses": [
+                                "kojo_default_com_furniture_watchVideo_accept_failure_1"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "kojo_default_com_furniture_watchVideo_refuse_1": "$self$：「我现在不太想看东西。」",
+                "kojo_default_com_furniture_watchVideo_accept_failure_1": "「……这半小时真是浪费人生。」$self$一脸精疲力尽。",
+                "kojo_default_com_furniture_watchVideo_accept_success_1": "「这部影片意外地不错哎！」$self$露出灿烂的笑容",
+                "kojo_default_com_furniture_watchVideo_accept_success_2": "「好久没笑得这么开心了。」 $self$边笑边擦眼角的泪水"
+            },
+            "en-us": {
+                "kojo_default_com_furniture_watchVideo_refuse_1": "$self$: “Not really feeling like watching anything right now.”",
+                "kojo_default_com_furniture_watchVideo_accept_failure_1": "“...That was 30 minutes of my life I’m not getting back.”  $self$ looks utterly drained.",
+                "kojo_default_com_furniture_watchVideo_accept_success_1": "“Okay, that was actually really good!” $self$ smiles brightly",
+                "kojo_default_com_furniture_watchVideo_accept_success_2": "“I haven’t laughed that hard in ages.” $self$ wipes away a tear"
+            }
+        }
+    }
+}

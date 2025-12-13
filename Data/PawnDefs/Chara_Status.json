@@ -11,13 +11,11 @@
                 { "variationType":"statModifiers", "value": 0 }
             ,
             "variants":[
-                { "displayName":"chara_status_mood_m2",     "threshold":-3.0 },
-                { "displayName":"chara_status_mood_m2",     "threshold":-1.9 },
+                { "displayName":"chara_status_mood_m2",     "threshold":-4.0 },
                 { "displayName":"chara_status_mood_m1",     "threshold":-0.9 }, 
                 { "displayName":"chara_status_mood_0",     "threshold":0.9 }, 
                 { "displayName":"chara_status_mood_1",   "threshold":1.9 },
-                { "displayName":"chara_status_mood_2",     "threshold":2.9 },
-                { "displayName":"chara_status_mood_2",     "threshold":3.0 }
+                { "displayName":"chara_status_mood_2",     "threshold":4.0 }
             ]
         },
         {
@@ -30,13 +28,10 @@
                 { "variationType":"statModifiers", "value": 0 }
             ,
             "variants":[
-                { "displayName":"chara_status_stress_m2",     "threshold":-3.0 },
-                { "displayName":"chara_status_stress_m2",     "threshold":-1.9 },
+                { "displayName":"chara_status_stress_m2",     "threshold":-4.0 },
                 { "displayName":"chara_status_stress_m1",     "threshold":-0.9 },
-                { "displayName":"chara_status_stress_0",     "threshold":0.9 },
                 { "displayName":"chara_status_stress_0",     "threshold":1.9 },
-                { "displayName":"chara_status_stress_1",     "threshold":2.9 },
-                { "displayName":"chara_status_stress_1",     "threshold":3.0 }
+                { "displayName":"chara_status_stress_1",     "threshold":4.0 }
             ]
         },
         {

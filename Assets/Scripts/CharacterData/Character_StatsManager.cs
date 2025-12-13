@@ -23,6 +23,7 @@ public interface I_StatsManager
     public Stats_Base Psyche { get; }
     public Stats_Base Willpower { get; }
     public Status_Instance GetStatusByStringMatch(string s);
+    public StatusEx_Instance GetStatusEXByStringMatch(string s);
     public Stats_Derived_Instance GetDerivedStat(string statID);
     public List<Status_Instance> FindStatusByID(string statID);
 
@@ -159,7 +160,7 @@ public class StatsManager : I_StatsManager
 
         foreach(var status in scr_System_Serializer.current.index_Status.list)
         {
-            if (status.constant) StatusInstances.Add(status.Instantiate(this));
+            if (status.constant) AddStatus(status.statusID);// StatusInstances.Add(status.Instantiate(this));
         }
 
         if (Strength == null) Debug.LogError("Strength null");
@@ -194,8 +195,31 @@ public class StatsManager : I_StatsManager
     {
         if (this.Mood != null) this.Mood.ClearCache();
         if (this.Stress != null) this.Stress.ClearCache();
-        if (this.Lust != null) this.Lust.ClearCache();
     }
+
+    List<string> _permanentTags = new List<string>();
+    bool _permanentTags_cached = false;
+    [JsonIgnore]
+    public List<string> PermanentTags { get
+        {
+            if (!_permanentTags_cached)
+            {
+                _permanentTags.Clear();
+                _permanentTags_cached = true;
+                foreach(var i in this.Owner.Body.Body)
+                {
+                    // add item tag
+                    foreach(var j in i.EquippedItems)
+                    {
+                        _permanentTags.AddRange(j.Tags);
+                    }
+                    _permanentTags = Utility.Distinct(_permanentTags);
+                }
+                // add owner race origin template tags
+                //
+            }
+            return _permanentTags;
+        } }
 
     /// <summary>
     /// Lazy Refresh. Only update whats strictly necessary.
@@ -213,7 +237,7 @@ public class StatsManager : I_StatsManager
         {
             // this also force clear the modifiers and recollect all of them
             modifiers.Clear();
-
+            _permanentTags_cached = false;
             //if (Owner == null) Debug.LogError("Owner Null");
             if (Owner.Race == null) Debug.LogError("Owner " + Owner.FirstName + " Race Null");
 
@@ -317,6 +341,14 @@ public class StatsManager : I_StatsManager
     [JsonIgnore] public int MemoryEntryCount { get { return Owner.hasStatKeyword("memory") ? (int) GetStatValue("stats_derived_memoryEntryCount") : 0; } }
 
 
+    public StatusEx_Instance GetStatusEXByStringMatch(string s)
+    {
+        StatusEx_Instance si = this.statusInstancesEx.Find(x => x.ID.Contains(s));
+        if (si != null) return si;
+        else return null;
+    }
+
+
     private Status_Instance climaxing = null;
     [JsonIgnore] public Status_Instance Climaxing { get { if (climaxing == null) climaxing = GetStatusByStringMatch("chara_status_climaxing"); return climaxing; } }
 
@@ -341,7 +373,7 @@ public class StatsManager : I_StatsManager
     {
         get
         {
-            if (_lubrication == null) _lubrication = statusInstancesEx.Find(x => x.ID == "chara_status_orificelubrication");
+            if (_lubrication == null) _lubrication = statusInstancesEx.Find(x => x.ID == "chara_status_sex_stimulation_pos");
             return _lubrication;
         }
     }
@@ -602,6 +634,7 @@ public class StatsManager : I_StatsManager
         for (int i = StatusInstances.Count - 1; i >= 0; i--)
         {
             int time = Owner.isTimeStopped ? t.Minutes : t_real.Minutes;
+            var curr = StatusInstances[i];
 
             if (StatusInstances[i].BaseRef.variationMode.pauseXMinAfterMod > 0)
             {
@@ -620,12 +653,11 @@ public class StatsManager : I_StatsManager
                 var decay = StatusInstances[i].BaseRef.variationMode.baselineVariation.Decay(this, StatusInstances[i].Severity);
                 if (decay != 0)
                 {
-                    StatusInstances[i].SeverityAdd(decay * time);
-                    refresh = true;
+                    var final = decay * time;
+                    if (StatusInstances[i].SeverityAdd(final)) refresh = true;
                 }
             }
 
-            var curr = StatusInstances[i];
 
             if (!curr.BaseRef.constant)
             {   // on status disappear
@@ -634,13 +666,15 @@ public class StatsManager : I_StatsManager
                 {
                     if (curr.BaseRef.allowNaturalRemoval)
                     {
+                        refresh = curr.SeverityMods.Count > 0;
                         Debug.LogError($"status {curr.ID} severity at 0 while duration still at {curr.duration}");
                         StatusInstances.RemoveAt(i);
                     }
                     else if (curr.BaseRef.statusID == "chara_status_sleeping")
                     {
+                        refresh = true;
                         // remove sleep special
-                        Owner.Stats.AddOrModStatus("chara_status_sleep_deprived", curr.duration, -1);
+                        Owner.Stats.AddOrModStatus("chara_status_sleep_deprived", curr.duration);
                         Debug.Log($"status {curr.ID} severity at 0 while duration still at {curr.duration}, replacing with chara_status_sleep_deprived");
                         Owner.WakeUp(false);
                     }
@@ -650,7 +684,6 @@ public class StatsManager : I_StatsManager
                         Debug.LogError($"status {curr.ID} does not allow natural removal but lacking removal handling");
                     }
 
-                    refresh = true;
                 }
                 
                 // expired with time, allow removal with no calls
@@ -664,20 +697,19 @@ public class StatsManager : I_StatsManager
 
                         if (curr.BaseRef.allowNaturalRemoval)
                         {
+                            refresh = curr.SeverityMods.Count > 0;
                             StatusInstances.RemoveAt(i);
                         }
                         else if (curr.BaseRef.statusID == "chara_status_sleeping")
                         {
                             Owner.FullRest();
                             Owner.WakeUp(false);
+                            refresh = true;
                         }
                         else
                         {
                             Debug.LogError($"status {curr.ID} does not allow natural removal but lacking removal handling");
                         }
-
-                        refresh = true;
-
                     }
                     else if (curr.hasRandomVariation && time > 0)
                     {
@@ -836,22 +868,22 @@ public class StatsManager : I_StatsManager
         }
         else if (instance != null)
         {
-
             if (instance == AfterClimax)
             {
                 consecutiveClimaxCount += 1;
                 //Debug.LogError("SETTING CURRENTLYCLIMAXED TO TRUE");
                 //if (currentlyClimaxed == 0) currentlyClimaxed = 2;
                 //else currentlyClimaxed += 1;
-                if (Climaxing.Severity < 1) Climaxing.SeverityAdd(2, severityCap);
-                else Climaxing.SeverityAdd(1, severityCap);
             }
-            else if (instance.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex && AfterClimax != null && AfterClimax.Severity < 0)
-            {
-                
+            else if (instance.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
+            {   // climax_count, sex_BMCVAW
+                if (Climaxing.Severity >= 1) return;
+                else if (AfterClimax != null && AfterClimax.Severity < 0)
+                {
+                    AfterClimax.SeverityAdd(Math.Min(Math.Abs(AfterClimax.Severity), modSeverity), severityCap);
+                    pauseXMinAfterMod = Math.Max(pauseXMinAfterMod, 1);
+                }
                 //Debug.LogError("MATH MIN ["+Math.Abs(afterClimax.Severity).ToString()+"] ["+ modSeverity.ToString() + "]");
-                AfterClimax.SeverityAdd(Math.Min(Math.Abs(AfterClimax.Severity), modSeverity), severityCap);
-                pauseXMinAfterMod = Math.Max(pauseXMinAfterMod, 1);
             }
 
             //Debug.LogError("Stimulating status " + s + " with severityCap at " + severityCap);
@@ -911,6 +943,17 @@ public class StatsManager : I_StatsManager
         }
     }
     [JsonIgnore] private StatusEx_Instance lust = null;
+    [JsonIgnore]
+    public Status_Instance Lust_Hidden
+    {
+        get
+        {
+            if (!Owner.hasStatKeyword("lust")) return null;
+            if (lust_hidden == null) lust_hidden = StatusInstances.Find(x => x.ID == "chara_status_lust_hidden");
+            return lust_hidden;
+        }
+    }
+    [JsonIgnore] private Status_Instance lust_hidden = null;
 
     [JsonIgnore] public StatusEx_Instance Stress
     {

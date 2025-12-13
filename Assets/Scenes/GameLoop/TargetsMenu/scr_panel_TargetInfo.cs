@@ -113,8 +113,9 @@ public class scr_panel_TargetInfo : scr_Menu
         else this.moodBox.SetText(" - ");
             if (chara.Stats.Stress != null) chara.Stats.Stress.Draw(stressBox);
         else this.stressBox.SetText(" - ");
+
             if (chara.Stats.Lust != null) chara.Stats.Lust.Draw(lustBox);
-        else this.lustBox.SetText(" - ");
+            else this.lustBox.SetText(" - ");
 
             RefreshStatusBox();
 

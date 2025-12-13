@@ -18,6 +18,10 @@ public class Character_Body
     {
         _cached_internals_description = false;
     }
+    public void NotifyStimulated()
+    {
+        Stimulated = true;
+    }
 
     [JsonIgnore]
     public List<string> BodyDescription
@@ -190,6 +194,7 @@ public class Character_Body
     {
         Climax = false;
         Cum = false;
+        Stimulated = false;
         foreach (var organ in Internals) organ.ClearLastInteractedRefs();
     }
 
@@ -294,11 +299,13 @@ public class Character_Body
 
     [JsonProperty] protected bool Climax = false;
     [JsonProperty] protected bool Cum = false;
+    [JsonProperty] protected bool Stimulated = false;
 
-    public bool isClimaxing(bool checkCum)
+    public bool isClimaxing(bool maleOnly = false, bool femaleOnly = false)
     {
-        if (checkCum) return Cum;
-        else return Climax;
+        if (maleOnly) return Cum;
+        else if (femaleOnly) return Climax;
+        else return Cum || Climax;
     }
 
     [JsonIgnore] public List<int> EquippedItemRefs
@@ -457,12 +464,16 @@ public class Character_Body
         ExperienceLog exp = new ExperienceLog();
         string climaxKeywords = "";
         string cumKeywords = "";
+
+        if (Owner.Stats.Climaxing == null) return;
+        if (!Stimulated) return;
+        if (isClimaxing()) return;
         if (Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold) 
         {
             // forbid climax if timestopped
             // BUT!! ALLOW CLIMAX DURING RESUME
             if (scr_System_Time.current.TimeStopStrict && !Owner.CanActInTimeStop) return;
-            if (Owner.Climaxing) return;
+            if (Owner.Stats.Climaxing.Severity > 0) return; // block repeat climax if still lingering
             if (Owner.CurrentJob != null && Owner.CurrentJob is Job_Sex_Group)
             {
                 List<int> relevantActorRefs = Owner.CurrentJob.GetLastInteractedActorRefs(Owner.RefID);
@@ -569,6 +580,7 @@ public class Character_Body
                             part.Owner.Memory.AddEntry(memInst4, selfTag, -1, true);
                         }
                         climaxDebuff -= 200;
+                        part.TryModOwnerStimulationStatus(-200);
 
 
                         var desc1 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
@@ -583,6 +595,7 @@ public class Character_Body
                     else
                     {
                         climaxDebuff -= 50;
+                        part.TryModOwnerStimulationStatus(-40);
 
                         var desc1 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_climax_keyworded").Replace("$part$", part.DisplayName);
 
@@ -594,12 +607,18 @@ public class Character_Body
                 }
             }
 
-
+            if (Climax) Owner.Stats.Climaxing.SeverityAdd(Cum ? 2 : 7);
+            
             if (climaxDebuff != 0 && climaxKeywords.Length > 0) 
             {
+                //if (!Cum) climaxDebuff = Math.Clamp(climaxDebuff, -200, 0);
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.Log($"Adding climax status on {Owner.FirstName} debuffstrength {climaxDebuff}");
 
                 Owner.Stats.AddOrModStatus("chara_status_sexual_climax_after", climaxDebuff);
+                if (Owner.Stats.Lust_Hidden != null)
+                {
+                    Owner.Stats.AddOrModStatus(Owner.Stats.Lust_Hidden.ID, climaxDebuff * 0.05f);
+                }
 
                 var disassemble = climaxKeywords.Split("||");
                 climaxKeywords = LocalizeDictionary.QueryThenParse(disassemble[0])

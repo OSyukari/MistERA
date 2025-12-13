@@ -7,22 +7,23 @@ public static class CharaReqUtility
 {
     public static bool Validate(CharaReq q, ref List<string> _tooltip, Character_Trainable c)
     {
+        bool logging = _tooltip != null && !scr_UpdateHandler.current.Updating;
         if (q.cost_EN != 0 && (c.Stats.Energy.Value - q.cost_EN) < 0)
         {
-            _tooltip.Add("Command invalid: actor [" + c.FirstName + "] does not have enough energy");
+            if (logging) _tooltip.Add("Command invalid: actor [" + c.FirstName + "] does not have enough energy");
             return false;
         }
 
         if (q.cost_ST != 0 && (c.Stats.Stamina.Value - q.cost_ST) < 0)
         {
-            _tooltip.Add("Command invalid: actor [" + c.FirstName + "] does not have enough stamina");
+            if (logging) _tooltip.Add("Command invalid: actor [" + c.FirstName + "] does not have enough stamina");
             return false;
         }
 
 
         if (q.BodyTags.Count > 0 && !c.Body.HasBodyTag(q.BodyTags))
         {
-            _tooltip.Add("Command invalid: actor body missing required part");
+            if (logging) _tooltip.Add("Command invalid: actor body missing required part");
             return false;
         }
         
@@ -31,93 +32,93 @@ public static class CharaReqUtility
         {
             if (c.Body.GetMaxRevealingScoreByTags(q.BodyTags, BodyEquipLayer.None) > q.minRevealingScore)
             {
-                _tooltip.Add("Command invalid: actor body exposure below requirement");
+                if (logging) _tooltip.Add("Command invalid: actor body exposure below requirement");
                 return false;
             }
         }
 
         if (!q.allowPlayer && c.RefID == 0)
         {
-            _tooltip.Add("Command invalid: command not allowed for player");
+            if (logging) _tooltip.Add("Command invalid: command not allowed for player");
             return false;
         }
         if (!q.allowNPC && c.RefID > 0)
         {
-            _tooltip.Add("Command invalid: command not allowed for NPC");
+            if (logging) _tooltip.Add("Command invalid: command not allowed for NPC");
             return false;
         }
         if (q.requireConscious && c.Stats.isConsciousnessUnconscious)
         {
-            _tooltip.Add("Command invalid: target must be conscious");
+            if (logging) _tooltip.Add("Command invalid: target must be conscious");
             return false;
         }
         if (q.requireUnrestrained && (c.isRestrained))
         {
-            _tooltip.Add("Command invalid: target must not be restrained");
+            if (logging) _tooltip.Add("Command invalid: target must not be restrained");
             return false;
         }
         if (q.requireAction && !c.canAct)
         {
             if (c.isTimeStopped)
             {
-                _tooltip.Add("Command invalid: target cannot act in timestop");
+                if (logging) _tooltip.Add("Command invalid: target cannot act in timestop");
                 return false;
             }
             else
             {
-                _tooltip.Add("Command invalid: target is not able to act due to external factors");
+                if (logging) _tooltip.Add("Command invalid: target is not able to act due to external factors");
                 return false;
             }
         }
         if (q.requireMovement && !c.canMove)
         {
-            _tooltip.Add("Command invalid: target must be able to move");
+            if (logging) _tooltip.Add("Command invalid: target must be able to move");
             return false;
         }
         if (q.requireUndressed && !c.isUndressed)
         {
-            _tooltip.Add("Command invalid, target is wearing too much");
+            if (logging) _tooltip.Add("Command invalid, target is wearing too much");
             return false;
         }
         if (q.requireMale && !c.isMale)
         {
-            _tooltip.Add($"Command invalid, {c.CallName} must be male");
+            if (logging) _tooltip.Add($"Command invalid, {c.CallName} must be male");
             return false;
         }
         if (q.requireFemale && !c.isFemale)
         {
-            _tooltip.Add($"Command invalid, {c.CallName} must be female");
+            if (logging) _tooltip.Add($"Command invalid, {c.CallName} must be female");
             return false;
         }
         //if (q.requireAroused && c.Body.)
         if (q.requireNoTeammate && scr_System_CampaignManager.current.party.Members.Count > 0)
         {
-            _tooltip.Add("Command invalid, player cannot have other teammate");
+            if (logging) _tooltip.Add("Command invalid, player cannot have other teammate");
             return false;
         }
         if (q.requireExistingJobwithCOMTag.Count > 0 && (c.CurrentJob == null || !c.CurrentJob.HasAvailableCOMwithCOMTags(q.requireExistingJobwithCOMTag)))
         {
-            _tooltip.Add("Requires existing Job with required tags");
+            if (logging) _tooltip.Add("Requires existing Job with required tags");
             return false;
         }
         if (q.requireAbsentJobwithCOMTag.Count > 0 && (c.CurrentJob != null && c.CurrentJob.HasAvailableCOMwithCOMTags(q.requireAbsentJobwithCOMTag)))
         {
-            _tooltip.Add("Cannot be performed while existing Job with conflicting tags");
+            if (logging) _tooltip.Add("Cannot be performed while existing Job with conflicting tags");
             return false;
         }
         if (q.requireCombat && !c.canFight)
         {
-            _tooltip.Add("Chara cannot fight");
+            if (logging) _tooltip.Add("Chara cannot fight");
             return false;
         }
         if (q.requireFullHP && c.Stats.HP != null && c.Stats.HP.ValuePercentile < 0.9)
         {
-            _tooltip.Add("Chara is injured and cannot execute");
+            if (logging) _tooltip.Add("Chara is injured and cannot execute");
             return false;
         }
         if (q.requireMissingHP && (c.Stats.HP == null || c.Stats.HP.ValuePercentile >= 1))
         {
-            _tooltip.Add("Chara is not injured and cannot execute");
+            if (logging) _tooltip.Add("Chara is not injured and cannot execute");
             return false;
         }
         return true;
@@ -157,11 +158,27 @@ public static class CharaReqUtility
 
         var tags = (isDoer ? m.ReceiverTargetTag : m.DoerTargetTag);
 
-        if (tags.Contains("interaction") && (!tags.Contains("service") || isDoer) && !tags.Contains("NonInteraction") && (!tags.Contains("ignored")) && !(c.Stats.isConsciousnessUnconscious))
+        if (!tags.Contains("NonInteraction") && !c.Stats.isConsciousnessUnconscious)
         {
-            // interaction cost
-            if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
-            c.Stats.Energy.ModValue(c.Stats.Energy_InteractionCost);
+            if (tags.Contains("service"))
+            {
+                // service cost no matter what
+                var cost = (int)Math.Floor(c.Stats.Energy_InteractionCost / 2f);
+                if (cost != 0)
+                {
+                    if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", cost);
+                    c.Stats.Energy.ModValue(cost);
+                }
+            }
+            else if (tags.Contains("interaction"))
+            {
+                if (isDoer || !tags.Contains("ignored"))
+                {
+                    // interaction cost
+                    if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
+                    c.Stats.Energy.ModValue(c.Stats.Energy_InteractionCost);
+                }
+            }
         }
     }
     public static void ApplyCost(CharaReq q, Character_Trainable c, List<string> tooltip = null)

@@ -1,0 +1,78 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak",
+                    "variants": [
+                        {
+                            "requirements": [
+                                {
+                                    "requireEPFailure": true
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "doubt",
+                                "apology"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "failure variant",
+                            "responses": [
+                                "kojo_default_com_furniture_takingBreak_refuse_1",
+                                "kojo_default_com_furniture_takingBreak_refuse_2"
+                            ]
+                        },
+                        {
+                            "requirements": [
+                                {
+                                    "requireSelfAction": true
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "thinking",
+                                "happy",
+                                "resting"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "barely success variant",
+                            "responses": [
+                                "kojo_default_com_furniture_takingBreak_accept_success_1",
+                                "kojo_default_com_furniture_takingBreak_accept_success_2",
+                                "kojo_default_com_furniture_takingBreak_accept_success_3",
+                                "kojo_default_com_furniture_takingBreak_accept_success_4"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingLongBreak",
+                    "RedirectID": "com_furniture_takingBreak"
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "kojo_default_com_furniture_takingBreak_refuse_1": "$self$：「我不累，你先休息吧。」",
+                "kojo_default_com_furniture_takingBreak_refuse_2": "$self$：「我没事，坐着反而让我心烦。」",
+                "kojo_default_com_furniture_takingBreak_accept_success_1": "$self$轻轻滑动解锁手机屏幕，然后单手随意地刷着内容。",
+                "kojo_default_com_furniture_takingBreak_accept_success_2": "$self$从小包装里抓了点脆零食放进嘴里。",
+                "kojo_default_com_furniture_takingBreak_accept_success_3": "$self$解开耳机线，戴上后轻轻点着头跟着节奏。",
+                "kojo_default_com_furniture_takingBreak_accept_success_4": "$self$慢慢地抿了一口咖啡，然后双手静静地握着杯子。"
+            },
+            "en-us": {
+                "kojo_default_com_furniture_takingBreak_refuse_1": "$self$: “I’m not tired. You go ahead.”",
+                "kojo_default_com_furniture_takingBreak_refuse_2": "$self$: “I’m fine. Sitting still just makes me restless.”",
+                "kojo_default_com_furniture_takingBreak_accept_success_1": "$self$ unlocks her cellphone screen with a flick, then idly scrolls with one thumb.",
+                "kojo_default_com_furniture_takingBreak_accept_success_2": "$self$ pulls something crunchy from a small pack and pops it into her mouth without looking.",
+                "kojo_default_com_furniture_takingBreak_accept_success_3": "$self$ untangles her earbuds and slips them in, nodding slightly to the beat.",
+                "kojo_default_com_furniture_takingBreak_accept_success_4": "$self$ takes a long sip from her cup, then quietly holds it with both hands."
+            }
+        }
+    }
+}
