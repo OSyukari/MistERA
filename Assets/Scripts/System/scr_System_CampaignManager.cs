@@ -936,7 +936,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
-               // list.RemoveAt(list.Count); -> used to launch a CTD error
+                list.RemoveAt(list.Count);// -> used to launch a CTD error
                 //Debug.Log("list count " + i + " " + String.Join("|", list));
                 if (i >= list.Count) continue;  // list might get modified
                 ActionPackage p = list[i];
