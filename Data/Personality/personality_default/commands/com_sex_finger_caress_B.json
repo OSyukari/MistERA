@@ -1,0 +1,254 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_finger_caress_B_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                
+                "requireSelfDoer": true,
+                "_comment":"攻方 B抚摸 高潮" ,
+                "responses": [
+                    "($self$) B抚摸 高潮 口上文"
+                ]
+            },
+            {
+                
+                "requireSelfReceiver": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","breasts", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 受方 被B抚摸 高潮 有允许 口上文" ,
+                        "responses": [
+"$self$猛地弓起腰，双手死死抓着$target$的肩膀，瞳孔涣散，口中发出不成调的尖叫。\"啊啊啊！到了！要丢了！哈啊……哈啊……❤\""
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver","breasts", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 受方 被B抚摸 高潮 无允许 口上文" ,
+                "responses": [
+"$self$试图咬住嘴唇忍耐，但高潮的快感瞬间冲垮了理智，整个人瘫软下来，伴随着哭腔达到了顶峰。\"不行……哪怕是这种关系……啊啊！脑袋要坏掉了！呜呜呜……❤\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_finger_caress_B_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","receiver","breasts", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被B抚摸 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$的呼吸变得有些急促，双手主动覆上$target$正在揉捏自己乳房的手背，腰肢配合着抽插的节奏摆动。\"嗯……好舒服……再用力一点揉……\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","receiver","breasts", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被B抚摸 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$满脸通红，虽然身体还在被侵犯，但对于胸前的触碰并没有躲闪，只是咬着嘴唇发出细碎的呻吟。\"如果是$target$的话……这种事……也……啊……\""
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","receiver","breasts", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被B抚摸 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$紧闭着双眼，身体因为恐惧而微微颤抖，完全不敢反抗胸前那粗暴的抓揉。\"呜……不敢了……我会听话的……请轻一点……\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_finger_caress_B",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","receiver","breasts","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被B抚摸 口上文",
+                "responses":
+                [ 
+"$self$发出平稳的呼吸声，完全没有察觉到体内的入侵和胸前的爱抚，只是偶尔会因为刺激而无意识地皱眉。", 
+"$self$像个婴儿般熟睡着，任由$target$亵玩着她的身体，偶尔发出几声无意义的梦呓。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","receiver","breasts","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被B抚摸 口上文",
+                "responses":
+                [ 
+"$self$保持着静止的姿态，只有被揉捏变形的乳肉和随着抽插溢出的体液证明着正在发生的暴行。", 
+"在这凝固的时间里，$self$毫无知觉地承受着一切，那对乳房在$target$手中被随意塑形。"
+
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 被B抚摸 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$烦躁地推开了$target$的手，翻身背对着$target$，把被子拉过头顶。\"好困……别闹了，明天还要早起呢……\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 被B抚摸 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$猛地惊醒，意识到正在发生什么后，剧烈地挣扎起来，试图推开$target$。\"你在干什么？！疯了吗？！快出去！\""
+
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被B抚摸 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$按住了$target$在胸前作乱的手，身体僵硬地向后缩了缩。\"痛……别弄了，今天感觉不太对劲，先停下来好吗？\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被B抚摸 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$有些尴尬地抓住了$target$的手腕，试图让动作停下来，脸上带着勉强的笑。\"等等……这样真的太奇怪了，我们不是朋友吗？快停下……\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被B抚摸 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$猛地拍掉了$target$的手，眼神冰冷地瞪视着对方。\"别碰我！把你的脏手拿开！恶心死了！\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 B抚摸口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","receiver","breasts","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 被B抚摸 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地睁开眼，感受到体内的异物和胸前的触感后，慵懒地哼了一声，顺从地抱住了$target$的脖子。\"唔……坏心眼……既然醒了那就继续吧……\""
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","receiver","breasts","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 被B抚摸 无允许 好意 口上文",
+                        "responses":[
+"$self$被快感惊醒，看清身上的人是$target$后，惊讶转为了一种复杂的羞涩，并没有推开。\"诶？$target$？……既然都进来了……那就这样吧……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 被B抚摸 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","receiver","breasts","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$在惊恐中醒来，发现无法挣脱后，只能绝望地承受着胸部的蹂躏，泪水从眼角滑落。\"不要……为什么是你……救命……呜呜……\""
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","breasts", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被B抚摸 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$迷离的双眼充满爱意地看着$target$，胸部随着剧烈的喘息上下起伏。\"哈啊……你今天……真的好棒……就这样不要停……♡\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被B抚摸 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","breasts", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$的眼神逐渐失去了焦距，原本抗拒的手慢慢变成了抓紧床单的姿势。\"明明不该这样的……可是……哈啊……身体好奇怪……\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","breasts", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被B抚摸 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$任由$target$摆弄着身体，眼神却有些游离地看向天花板，语气平淡。\"还没好吗？稍微有点累了……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被B抚摸 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","breasts", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$像个木偶一样毫无反应，只是死死盯着$target$，眼底只有厌恶。\"做完了吗？做完了就滚出去。\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

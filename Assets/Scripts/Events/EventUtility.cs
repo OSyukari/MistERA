@@ -1340,11 +1340,28 @@ public static class EventUtility
         if (kidnapLoc == null || kidnapLoc.MainExit == null) return false;
 
         ExpeditionInstance kidnapExp = scr_System_CampaignManager.current.CreateExpedition(kidnapExpID);
+        kidnapLoc.SetExpedition(kidnapExp);
+        kidnapLoc.ForceStartExpedition();
         kidnapLoc.FactionDisplayName = kidnapExp.Base.DisplayName;
 
         bool isLockedTransfer = false;
         var stringmsg = LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_notifyMemoryKidnapped");
         var kdnpmsg = LocalizeDictionary.QueryThenParse(kidnapMessage).Replace("$names$", "");
+
+        bool kidnapExtra = true;
+        List<Character_Trainable> victims_extra = new List<Character_Trainable>();
+        foreach (var i in victimsFaction.ManagedChara)
+        {
+            if (victims.Contains(i)) continue;
+            if (victimsFaction.isPrisoner(i)) victims_extra.Add(i);
+            else if (victimsFaction.isMember(i)) kidnapExtra = false;
+        }
+
+        if (kidnapExtra && victims_extra.Count > 0)
+        {
+            victims.AddRange(victims_extra);
+            Debug.Log("all team members kidnapped, adding extra prisoners");
+        }
         foreach (var i in victims)
         {
             //Debug.Log($"Kidnap message {i.CallName} {finalMSG}");
@@ -1365,8 +1382,7 @@ public static class EventUtility
             kidnapLoc.AddToFaction(i, Manageable_GuestStatus.Hidden);
         }
 
-        kidnapLoc.SetExpedition(kidnapExp);
-        kidnapLoc.ForceStartExpedition();
+        Debug.Log($"Starting new Exploration {kidnapExpID} exist? {kidnapExp != null} job exist? {kidnapLoc.Job != null} expexist? {kidnapLoc.Job != null && kidnapLoc.Job.Expedition != null}\nEndresult jobname {kidnapLoc.Job.DisplayName} jobref {kidnapLoc.Job.RefID} expref {kidnapLoc.Job.Expedition.RefID} roomref {kidnapLoc.Room.RefID} roomname {kidnapLoc.Room.DisplayName}");
         if (victimsFaction != null && isLockedTransfer)
         {
             victimsFaction.Job.DumpLogInto(kidnapLoc.Job);

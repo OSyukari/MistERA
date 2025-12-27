@@ -1,0 +1,308 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_oral_P_Force_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                
+                "requireSelfDoer": true,
+                "_comment":"攻方 强制口交 高潮" ,
+                "responses": [
+                    "($self$) 强制口交 高潮 口上文"
+                ]
+            },
+            {
+                
+                "requireSelfReceiver": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","blowjob","forced", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 受方 被强制口交 高潮 有允许 口上文" ,
+                        "responses": [
+"喉咙深处传来咕啾咕啾的水声，$self$的眼神逐渐涣散，身体猛地绷紧，在窒息与充实感的双重刺激下，大脑一片空白，口涎失禁般地喷涌而出，整个人瘫软在$target$胯下达到了高潮。",
+
+"$self$突然浑身僵硬，喉咙深处发出一声高亢的呜咽。她的双眼失神地上翻，身体剧烈颤抖着，即便嘴里还含着东西，强烈的快感依然让她的下体不受控制地喷出了爱液。", 
+"$self$的手指死死扣进$target$的大腿肌肉里，眼泪止不住地流淌。随着一阵猛烈的痉挛，她的大脑一片空白，完全沉浸在了灭顶的高潮余韵中。"
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver","blowjob","forced", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 受方 被强制口交 高潮 无允许 口上文" ,
+                "responses": [
+"$self$的眼泪混着口水糊满了脸，明明心理上极度抗拒，身体却在$target$无情的深喉抽插下背叛了意志。伴随着喉咙里一声变调的呜咽，她的瞳孔猛地收缩，耻辱地迎来了剧烈的高潮痉挛。",
+
+"$self$带着屈辱的表情，身体却背叛了意志。随着一阵剧烈的哆嗦，她的眼神变得涣散，大腿内侧 uncontrollably 地痉挛着，无法置信自己竟然在这种情况下达到了高潮。", 
+"$self$绝望地呜咽着，但身体的敏感度却达到了顶峰。伴随着屈辱的泪水，她的身体猛地弓起，在$target$的控制下迎来了一波羞耻至极的绝顶。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_oral_P_Force_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","receiver","blowjob","forced", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被强制口交 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$顺从地跪在$target$腿间，双手扶着他的膝盖，主动张开嘴含住了那根昂扬的肉棒，眼神里满是爱意与包容。",
+
+"$self$顺从地被$target$按住后脑，温顺地张开嘴唇，在这个有些粗暴的动作中甚至感受到了一丝被掌控的安心感，主动伸出舌头去迎接那即将到来的入侵。", 
+"$self$并没有抵抗头顶传来的压力，反而配合着$target$的动作跪了下来，眼神迷离地看着对方，嘴唇微张，发出一声轻柔的鼻音表示默许。"
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","receiver","blowjob","forced", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被强制口交 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$瞪大了眼睛看着$target$突然的动作，虽然有些不知所措，但在$target$强硬的态度下，还是试探性地张开了嘴唇。",
+
+"$self$瞪大了眼睛，被这一突然的举动吓了一跳。虽然双手无措地悬在半空，但最终没有推开，只是红着脸僵硬地张开了嘴。", 
+"$self$因为头顶的压力被迫低下头，看着那近在咫尺的器官，大脑一片空白，身体却鬼使神差地没有反抗，顺从地含住了它。"
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","receiver","blowjob","forced", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被强制口交 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$浑身颤抖着被按住后脑勺，眼泪在眼眶里打转，却因为害怕$target$的威胁而不敢合拢牙齿，只能发出呜呜的悲鸣。",
+
+"$self$浑身颤抖着，眼泪在眼眶里打转。面对$target$强硬的态度，她只能紧闭双眼，屈辱地张开嘴，任由对方摆布。", 
+"$self$发出恐惧的呜咽声，双手紧紧抓着自己的衣角。在绝对的力量差距面前，她放弃了抵抗，颤颤巍巍地低下头去服侍。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_oral_P_Force",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","receiver","blowjob","forced","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被强制口交 口上文",
+                "responses":
+                [ 
+"$self$发出沉闷的呼吸声，在睡梦中无意识地吞咽着，喉咙随着肉棒的进出而起伏，完全不知道自己正在被侵犯。",
+
+"$self$发出均匀的呼吸声，完全没有意识到嘴里正在发生的侵犯。偶尔因为喉咙的不适皱一下眉，随即又舒展开来。", 
+"$self$像个婴儿一样毫无防备地睡着，温热的口腔包裹着异物，随着呼吸的起伏被动地给予着温暖。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","receiver","blowjob","forced","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被强制口交 口上文",
+                "responses":
+                [ 
+"$self$依然保持着静止的姿态，但嘴角已经被撑到了极限，大量的唾液顺着无法闭合的嘴角不受控制地流淌下来，濡湿了胸前的衣襟。",
+
+"$self$依然保持着原本的姿势一动不动，甚至连眼神都没有焦距。只是随着$target$的抽插动作，她那静止的身体被动地摇晃着，嘴角机械地溢出唾液。", 
+"$self$就像一尊精美的人偶，毫无知觉地张着嘴，任由$target$将她的口腔当做发泄的容器，只有被撑变形的脸颊证明着正在发生的事实。"
+
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 被强制口交 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$皱着眉头推开了$target$的手，翻个身背对着他。\"嗯唔……困死了……别闹……明天再说……\"",
+
+"$self$猛地惊醒，剧烈的异物感让她本能地推开了$target$。\"你疯了吗？！让人睡觉啊！\" 她捂着嘴，眼神里满是起床气的愤怒。", 
+"$self$在窒息感中醒来，慌乱地挣扎着后退，眼神中充满了不可置信：\"这种玩笑一点都不好笑！快拿出去！\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 被强制口交 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$猛地咬了下去——或者试图这么做，随后剧烈地挣扎起来，手脚并用地想要把$target$从身上推开。\"放开我！！你在干什么？！\"",
+
+"$self$发出凄厉的尖叫，拼命地想要咬合牙齿或者推开对方。\"滚开！救命！你这个变态！\"", 
+"$self$在极度的惊恐中剧烈挣扎，手脚并用地踢打着$target$，完全顾不上可能会激怒对方。"
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被强制口交 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$偏过头避开了$target$的手，脸颊微红。\"别……今天嘴巴有点累，换个别的做好不好？\"",
+
+"$self$双手抵住$target$的大腿，用力向后仰起脖子试图挣脱那只按在头上的手。\"不行……今天真的不想这样，这种方式太难受了。\"", 
+"$self$眉头紧锁，抓住了$target$的手腕：\"停下！我知道你想做什么，但我现在一点心情都没有，别逼我生气。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被强制口交 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$僵硬地抓住了$target$的手腕，勉强挤出一个笑容。\"那个……不管是作为玩笑还是别的，这样都有点过火了吧？\"",
+
+"$self$有些尴尬地侧过头避开了$target$的手，勉强挤出一个笑容。\"那个……这个玩笑有点过头了吧？我们还没到这种地步。\"", 
+"$self$轻轻推了推$target$：\"别闹了，这种事只有情侣才能做吧？我会当做没发生过的。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被强制口交 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$猛地甩开了$target$的手，眼神冰冷地盯着他。\"你要是敢再进一步，我就报警了。给我滚开！\"",
+
+"$self$厌恶地一把打掉$target$的手，像看垃圾一样看着对方。\"别碰我！真恶心，你以为你是谁？\"", 
+"$self$冰冷地盯着$target$，语气里满是警告：\"如果你再敢动手动脚，我就不客气了。收起你那恶心的东西。\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 强制口交口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","receiver","blowjob","forced","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 被强制口交 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地哼了一声，感受到嘴边的热度后本能地张开嘴，在半梦半醒间开始笨拙地吞吐起来。",
+
+"$self$迷迷糊糊地睁开眼，还没反应过来嘴里就已经被塞进了异物。看清是$target$后，她眼中的惊恐散去，顺从地闭上眼，含糊不清地开始配合吞吐。", 
+"$self$在半梦半醒间发出慵懒的哼声，感受到头顶熟悉的压力后，只是本能地调整了一下姿势，让对方能更方便地使用自己的口腔。"
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","receiver","blowjob","forced","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 被强制口交 无允许 好意 口上文",
+                        "responses":[
+"$self$惊醒过来，发现嘴里的异物后先是一惊，看清是$target$后，眼里的惊恐竟慢慢转变为了一种隐秘的兴奋，默默地开始配合。",
+
+"$self$在迷茫中醒来，发现嘴里的状况后惊讶得瞪圆了眼。但在看清是$target$后，这种惊讶转变成了某种羞涩的默许，尝试着笨拙地动了动舌头。", 
+"$self$大脑还没完全清醒，身体却先于理智接受了现状。即使意识到这种关系越界了，还是因为某种莫名的刺激感而没有停下。"
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 被强制口交 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","receiver","blowjob","forced","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$在窒息感中惊醒，惊恐地想要挣扎，却被$target$冰冷的眼神吓得僵在原地，只能含着泪水任由他在自己嘴里肆虐。",
+
+"$self$惊恐地呜咽出声，但在感受到按在头顶那不容置疑的力量后，刚睡醒的无力感让她只能流着泪选择了顺从。", 
+"$self$在黑暗中颤抖着，对于这种趁人之危的行为感到深深的恐惧，只能被迫含着泪水吞下那根侵入的异物。"
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","blowjob","forced", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被强制口交 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$擦了擦嘴角的银丝，凑上去亲了亲$target$的脸颊。\"虽然有点深，但只要你舒服就好……味道并不讨厌呢。\"",
+
+"$self$的眼角因为持续的吞吐而泛起泪光，但眼神中却满是爱意。她双手不再是被动地垂下，而是环抱住了$target$的腰，似乎在享受这种被填满的窒息感。", 
+"$self$发出呜呜的闷哼声，虽然嘴巴被塞得满满的，但她依然努力用脸颊蹭着$target$的手掌，似乎在鼓励对方更深入一些。"
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被强制口交 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","blowjob","forced", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$有些失神地瘫坐在地上，摸了摸自己发麻的嘴唇。\"明明不该做的……可是……被那样对待……\" $self$低下头，掩饰住眼底的一丝异样。",
+
+"$self$原本抗拒的双手不知何时抓住了$target$的裤腿。这种强硬的侵犯似乎唤醒了她某种潜在的受虐欲望，眼神逐渐变得迷离而湿润。", 
+"$self$的喉咙适应了这种节奏，开始主动收缩口腔壁去挤压异物。虽然身份上不应该，但身体显然已经沉迷于被掌控的快感中。"
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","blowjob","forced", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被强制口交 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$捂着喉咙干呕了几声，眼角渗出生理性的泪水。\"太粗暴了……下次如果你再这样按着我的头，我就真的生气了。\"",
+
+"$self$痛苦地拍打着$target$的大腿，喉咙里发出难受的干呕声，生理性的泪水沾湿了睫毛。这种粗暴的对待让她感到的只有不适，而不是快感。", 
+"$self$的眼神变得有些冷淡和委屈，利用换气的间隙偏过头，大口喘息着，身体僵硬地抗拒着下一次的插入。"
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被强制口交 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","blowjob","forced", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$冲进洗手间拼命漱口，对着镜子里的自己和门外的$target$露出了厌恶的神情。\"别靠近我……你这个变态！\"",
+
+"$self$狼狈地咳嗽着，嘴角挂着无法吞咽的唾液。她绝望地闭着眼睛，忍受着这漫长的折磨，心中对$target$仅剩的一点好感也荡然无存。", 
+"$self$的身体因为持续的干呕而痉挛，眼神空洞地盯着地板。这种单方面的发泄只是让她感到无比的恶心和痛苦。"
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

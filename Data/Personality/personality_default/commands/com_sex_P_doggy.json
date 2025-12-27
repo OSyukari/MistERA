@@ -1,0 +1,271 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_P_doggy_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                
+                "requireSelfDoer": true,
+                "_comment":"攻方 后背位V 高潮" ,
+                "responses": [
+                    "($self$) 后背位V 高潮 口上文"
+                ]
+            },
+            {
+                
+                "requireSelfReceiver": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","doggy", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 受方 被后背位V 高潮 有允许 口上文" ,
+                        "responses": [
+"$self$猛地仰起头，双手死死抓紧床单，背部弓起优美的弧线。\"啊啊——！不行了！要丢了！那一起来吧……哈啊——！♡\"",
+"$self$浑身剧烈颤抖，内壁疯狂收缩，回头送上一个迷离的眼神。\"好深……全都给我……这就是……最棒的……嗯啊啊啊！♡\""
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver","doggy", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 受方 被后背位V 高潮 无允许 口上文" ,
+                "responses": [
+"$self$拼命想要忍耐，但身体还是诚实地绷紧，脚趾蜷缩在一起。\"不要……别看……这种事……居然在这个人面前……咿呀呀呀！♡\"",
+"$self$眼泪夺眶而出，理智被快感彻底冲垮，发出不知是哭泣还是呻吟的叫声。\"明明讨厌的……身体却……停不下来……脑子要坏掉了……哈啊啊！♡\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_P_doggy_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","receiver","doggy", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被后背位V 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$顺从地转过身去，双手撑在床单上，主动翘起了臀部等待着。\"嗯……如果是$target$的话，从后面也可以哦……\"",
+"$self$回头看了一眼，腰肢微微下塌，摆出了方便进入的姿势。\"轻一点哦……只要你喜欢这个姿势就好。\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","receiver","doggy", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被后背位V 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$全身僵硬，不知所措地任由$target$摆布，脑子似乎还没转过弯来。\"等等……为什么突然……如果是$target$的话……\"",
+"$self$脸涨得通红，虽然没有反抗，但羞耻得不敢回头。\"这种事……如果是开玩笑的话就太过分了……\""
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","receiver","doggy", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被后背位V 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$颤抖着咬住嘴唇，因为害怕而不敢发出声音，只能绝望地趴在桌上。\"我知道了……我听话就是了……请不要伤害我……\"",
+"$self$紧闭着双眼，像个玩偶一样任由摆布，眼角渗出了泪水。\"只要做完这个就可以了吗……求你了，快点结束……\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_P_doggy",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","receiver","doggy","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被后背位V 口上文",
+                "responses":
+                [ 
+"$self$发出均匀的呼吸声，身体随着撞击有节奏地晃动，似乎完全沉浸在梦乡。", "（睡得很死，偶尔发出无意识的呢喃，完全不知道身体正在被使用）",
+"$self$眉头微微皱起又舒展，身体本能地对强烈的刺激做出微弱的抽搐反应。", "（在毫无防备的睡梦中，私处正被肆意侵犯，淫液打湿了床单）"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","receiver","doggy","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被后背位V 口上文",
+                "responses":
+                [ 
+"$self$依然保持着之前的姿势一动不动，只有下体随着抽插被动变形，发出淫靡的水声。", "（时间静止中，无法做出反应，只能任由肉棒在体内肆虐）",
+"$self$就像一尊精美的人偶，毫无知觉地接纳着侵犯，眼神凝固在上一秒。", "（没有任何抵抗，肉穴完全敞开，成为了纯粹的容器）"
+
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 被后背位V 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$猛地惊醒，条件反射地把身后的人推开。\"你在干什么啊！让人好好睡觉行不行！\"",
+"$self$被吓了一跳，紧紧抓着枕头缩成一团。\"别碰我……我很累了，这种玩笑一点都不好笑。\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 被后背位V 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$发出一声尖叫，疯狂地踢打着身后的人。\"滚开！救命啊！有变态！\"",
+"$self$不可置信地看着这一幕，拼命想要爬走。\"你疯了吗？！这可是犯罪！快停下！\""
+
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被后背位V 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$有些抗拒地夹紧了双腿，避开了$target$的手。\"不要……今天腰好酸，换个姿势好不好？\"",
+"$self$难为情地往前爬了几步，试图逃离$target$的控制。\"那种姿势太羞耻了啦……我不想做那个。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被后背位V 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$尴尬地笑着，不动声色地拉开了距离。\"哈哈，这个玩笑有点过火了哦，$target$。\"",
+"$self$轻轻推开$target$的手，语气尽量保持平和。\"请自重，$target$。我们要保持界限。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被后背位V 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$像看垃圾一样回头瞪着$target$，眼中满是厌恶。\"别用你的脏手碰我，恶心死了。\"",
+"$self$愤怒地甩开$target$，声音变得尖锐刺耳。\"你在发什么疯？信不信我报警！\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 后背位V口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","receiver","doggy","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 被后背位V 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地哼了一声，感受到异物入侵后本能地迎合了一下。\"嗯……？$target$……？真是的……大半夜做这种事……\"",
+"$self$在睡梦中发出甜腻的鼻音，顺势抬高了臀部。\"哈……既然都醒了……那就随你喜欢吧……\""
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","receiver","doggy","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 被后背位V 无允许 好意 口上文",
+                        "responses":[
+"$self$意识模糊中被快感捕获，本能地缠上了对方的身体。\"嗯哈……虽然不知道是谁……但是好舒服……\"",
+"$self$被下体的刺激弄醒，惊讶之余却发出了娇喘。\"呀……！这感觉……不行……身体擅自就……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 被后背位V 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","receiver","doggy","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$醒来发现状况后吓得不敢动弹，只能僵硬地承受着。\"不想死……不要杀我……你想怎么样都行……\"",
+"$self$将脸埋在枕头里呜咽，完全放弃了抵抗。\"呜呜……为什么是我……只要不反抗就不会被打了吧……\""
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","doggy", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被后背位V 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$瘫软在床上，虽然呼吸急促，但脸上带着满足的红晕。\"哈……虽然很深……但感觉意外地不错呢……\"",
+"$self$转身钻进$target$的怀里，温顺地蹭了蹭。\"刚才那样……与其说是舒服，不如说是有种被填满的安心感。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被后背位V 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","doggy", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$整理着凌乱的衣物，看向$target$的眼神变得有些复杂。\"这种感觉……还是第一次……也许我不讨厌这样。\"",
+"$self$低着头不敢看$target$，声音细若蚊蝇。\"身体……变得奇怪了……以后……还可以找你吗？\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","doggy", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被后背位V 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$痛苦地皱着眉，手一直捂着小腹的位置。\"太深了……刚才撞得我好痛……下次不要这样了。\"",
+"$self$默默地拉过被子盖住身体，背对着$target$不再说话。\"你只顾着自己舒服……完全没在意我的感受。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被后背位V 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","doggy", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$蜷缩在角落里不停地擦拭身体，仿佛沾染了什么脏东西。\"我会恨你一辈子的……你是最差劲的人渣。\"",
+"$self$双眼无神地盯着虚空，对$target$的存在视若无睹。\"已经……无所谓了……反正我就是这种人……\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

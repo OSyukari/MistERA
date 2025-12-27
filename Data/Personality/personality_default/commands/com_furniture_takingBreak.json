@@ -7,11 +7,9 @@
                     "ID": "com_furniture_takingBreak",
                     "variants": [
                         {
-                            "requirements": [
-                                {
-                                    "requireEPFailure": true
-                                }
-                            ],
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
                             "extraPortraitTags": [
                                 "doubt",
                                 "apology"
@@ -24,11 +22,9 @@
                             ]
                         },
                         {
-                            "requirements": [
-                                {
-                                    "requireSelfAction": true
-                                }
-                            ],
+                            "requirement": {
+                                "requireSelfAction": true
+                            },
                             "extraPortraitTags": [
                                 "thinking",
                                 "happy",

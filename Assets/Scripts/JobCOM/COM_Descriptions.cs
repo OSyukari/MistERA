@@ -36,8 +36,28 @@ public class COM_Descriptions
 
         return String.Join("\n", list);
     }
- 
-    [System.Serializable]
+    public string GetText(ref ActionPackage ap)
+    {
+        if (Entries == null) return "$DEFAULT$";
+
+        List<string> list = new List<string>();
+
+        //Debug.LogError("GetText FOR COM " + evp.Package.targetCOM.displayName);
+        bool keepLooking = true;
+        foreach (var entry in Entries)
+        {
+            if (entry == null)
+            {
+                Debug.LogError("comdescription entry null");
+                continue;
+            }
+            keepLooking = entry.GetValidText(ref list, ref ap);
+            if (!keepLooking) break;
+        }
+
+        return String.Join("\n", list);
+    }
+
     public class Description_Entry
     {
         public bool keepLooking = false;
@@ -48,7 +68,6 @@ public class COM_Descriptions
 
         public List<Description_Entry> Entries = new List<Description_Entry>();
 
-        [System.Serializable]
         public class COMDesc_Conditions
         {
             public Validator_RandChance validatorChance = null;
@@ -66,7 +85,6 @@ public class COM_Descriptions
                 return returnVal;
             }
 
-            [System.Serializable]
             public class Validator_RandChance
             {
 
@@ -78,7 +96,6 @@ public class COM_Descriptions
                 }
             }
 
-            [System.Serializable]
             public class Validator_Chara
             {
                 public string target = "";
@@ -101,7 +118,6 @@ public class COM_Descriptions
                 }
             }
 
-            [System.Serializable]
             public class Validator_Job
             {
                 public string existsPreviousCOM = "";
@@ -113,7 +129,6 @@ public class COM_Descriptions
                 }
             }
 
-            [System.Serializable]
             public class Validator_Package
             {
                 public bool existsMaster = false;
@@ -141,12 +156,49 @@ public class COM_Descriptions
             for (int i = texts.Count - 1; i >= 0; i--) texts[i] += suffix;
             foreach (var entry in this.Entries) entry.AppendToText(suffix);
         }
+        public bool GetValidText(ref List<string> list, ref ActionPackage ap)
+        {
+            //Debug.LogError("GetValidText options [" + String.Join("\n", texts) + "]");
+            bool hasvalid = false;
+            foreach (var ep in ap.ListEP)
+            {
+                if (ValidateConditions(ep)) hasvalid = true;
+            }
 
+            if (!hasvalid) return true;
+            else
+            {
+                // first add text to list
+                if (texts.Count > 0)
+                {// meaning we do add text here
+                    var randIndex = Utility.GetRandIndexFromListCount(texts);
 
+                    if (_texts.TryGetValue(randIndex, out string value)) list.Add(value);
+                    else
+                    {
+                        var s2 = LocalizeDictionary.QueryThenParse(texts[randIndex]);
+                        if (_texts.ContainsKey(randIndex)) _texts.Add(randIndex, s2);
+                        list.Add(s2);
+                    }
+                }
+
+                if (Entries != null && Entries.Count > 0)
+                {
+                    bool _keepLooking = true;
+                    foreach (var entry in Entries)
+                    {
+                        _keepLooking = (entry as Description_Entry).GetValidText(ref list, ref ap);
+                        if (!_keepLooking) break;
+                    }
+                }
+                // then if this.stoplooking == true return this to block searching on the same level
+                return keepLooking;
+            }
+        }
         public bool GetValidText(ref List<string> list, ref EvaluationPackage evp)
         {
             //Debug.LogError("GetValidText options [" + String.Join("\n", texts) + "]");
-            if (!ValidateConditions(ref evp)) return true;
+            if (!ValidateConditions(evp)) return true;
             else
             {
                 // first add text to list
@@ -177,7 +229,7 @@ public class COM_Descriptions
             }
         }
 
-        private bool ValidateConditions(ref EvaluationPackage evp)
+        private bool ValidateConditions(EvaluationPackage evp)
         {
             if (conditions == null || conditions.Count < 1) return true;
             foreach (var cond in conditions) if (!cond.Validate(ref evp)) return false;

@@ -369,7 +369,7 @@ public class EvaluationPackage
         extraReceiverTags = new List<string>();
 
         UtilityEX.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
-
+        UtilityEX.GetJobInteractionTagsFrom(Doer, Receiver, this.job, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
         CalculateRequestRate();
         CalculateResponseRate();
 
@@ -803,9 +803,10 @@ public class EvaluationPackage
         extraCOMTags = new List<string>();
         extraReceiverTags = new List<string>();
         UtilityEX.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+        UtilityEX.GetJobInteractionTagsFrom(Doer, Receiver, this.job, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+
 
         bool visibility = this.Package.job.isPlayerRelatedJob;
-
         if (response == Memory_Response.None || response == Memory_Response.Refuse)
         {// doer unwilling
             Doer.Memory.AddEntry(this);
@@ -817,8 +818,6 @@ public class EvaluationPackage
         {
             Doer.Memory.AddEntry_Request(DoerSelfTag, ReceiverTargetTag, Receiver == null ? Doer.RefID : Receiver.RefID, targetCOM, VariantID, true, null, attitude_doer, response, Doer.Stats.MemoryLength, p.masterRef);
             if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_Request(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, attitude_receiver, response, Receiver.Stats.MemoryLength, p.masterRef);
-
-            
         }*/
         else if (response >= Memory_Response.Accept)
         {
@@ -853,15 +852,19 @@ public class EvaluationPackage
 
         foreach(var entry in logExps)
         {
-            if (entry.body.NotifySexExperience(entry.targetName, entry.comName, entry.comtags, entry.targetBodytags))
+            if (entry.body.NotifySexExperience(hasPermission, entry.targetName, entry.comName, entry.comtags, entry.targetBodytags))
             {
                 //Debug.LogError($"FirstExperience {entry.body.DisplayNameFull}");
                 // first experience loss
                 string s = LocalizeDictionary.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
                 UtilityEX.StringReplace(entry.body.Owner, ref s);
                 if (visibility) m.exp.AddMessage(entry.body.Owner.RefID, s);
-                
-                var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Refuse, Memory_Attitude.Hate, entry.body.FirstExperienceDesc);
+
+                var att = isReceiver(entry.body.Owner) ? attitude_receiver : attitude_doer;
+                if (hasPermission) att = (Memory_Attitude)Math.Min((int)(att+1), (int)Memory_Attitude.Love);
+                else att = (Memory_Attitude)Math.Max((int)(att - 1), (int)Memory_Attitude.Hate);
+
+                var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Accept, att, entry.body.FirstExperienceDesc);
                 var mem = entry.body.Owner.Memory.AddEntry(memInst2, new List<string>() { "important" }, -2, true);
             }
             else
@@ -1186,6 +1189,78 @@ public class EvaluationPackage
         }
     }
 
+
+
+    public void LogMessage_Interrupt(bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
+    {
+        if (m == null) m = this.job.m;
+        //List<Character_Trainable> actors, string s
+        //.Actors, ep.Description_Ongoing
+        if (Doer.isTimeStopped) return;
+        /*
+        var s = Description_Ongoing;
+        if (s.Length > 0)
+        {
+            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
+            m.messages_after.Add(s);
+        }*/
+        Debug.Log("EP LogMessage_Interrupt");
+
+        if (Doer != null && Doer.RefID != 0)
+        {
+            Character_Relationship rel = null;
+
+            if (injectChara != null && Doer != injectChara) rel = Doer.Relationships.FindRelationshipWith(injectChara);
+            else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
+
+            Doer.Relationships.GetKOJOMessage_Ongoing(rightAlign, true, this, m, rel);
+        }
+        if (Receiver != null && Receiver.RefID != 0)
+        {
+            Character_Relationship rel = null;
+
+            if (injectChara != null && Receiver != injectChara) rel = Receiver.Relationships.FindRelationshipWith(injectChara);
+            else if (Receiver != Doer) rel = Receiver.Relationships.FindRelationshipWith(Doer);
+
+            Receiver.Relationships.GetKOJOMessage_Ongoing(rightAlign, false, this, m, rel);
+        }
+    }
+
+    public void LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
+    {
+        if (m == null) m = this.job.m;
+        //List<Character_Trainable> actors, string s
+        //.Actors, ep.Description_Ongoing
+        if (Doer.isTimeStopped) return;
+        /*
+        var s = Description_Ongoing;
+        if (s.Length > 0)
+        {
+            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
+            m.messages_after.Add(s);
+        }*/
+        Debug.Log("EP LogMessage_Ongoing");
+
+        if (Doer != null && Doer.RefID != 0)
+        {
+            Character_Relationship rel = null;
+
+            if (injectChara != null && Doer != injectChara) rel = Doer.Relationships.FindRelationshipWith(injectChara);
+            else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
+
+            Doer.Relationships.GetKOJOMessage_Ongoing(rightAlign, true, this, m, rel);
+        }
+        if (Receiver != null && Receiver.RefID != 0)
+        {
+            Character_Relationship rel = null;
+
+            if (injectChara != null && Receiver != injectChara) rel = Receiver.Relationships.FindRelationshipWith(injectChara);
+            else if (Receiver != Doer) rel = Receiver.Relationships.FindRelationshipWith(Doer);
+
+            Receiver.Relationships.GetKOJOMessage_Ongoing(rightAlign, false, this, m, rel);
+        }
+    }
+
     /// <summary>
     /// This one should be allowed to repeat on every player command input, so there is less check
     /// </summary>
@@ -1200,19 +1275,6 @@ public class EvaluationPackage
         {
             if (rightAlign) s1 = "<align=\"right\">" + s1 + "</align>";
             m.messages_before.Add(s1);
-        }
-    }
-    public void LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null)
-    {
-        if (m == null) m = this.job.m;
-        //List<Character_Trainable> actors, string s
-        //.Actors, ep.Description_Ongoing
-        if (Doer.isTimeStopped) return;
-        var s = Description_Ongoing;
-        if (s.Length > 0)
-        {
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_after.Add(s);
         }
     }
 

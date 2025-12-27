@@ -168,57 +168,18 @@
                 "com_sex_P_cowgirl_A_displayName_3": "轮流骑乘位A",
                 "com_sex_P_cowgirl_A_displayName_4": "同时骑乘位A",
                 
-                "com_touch_butt_displayName_1": "揉捏屁股",
-                "com_touch_butt_displayName_2": "抚摸屁股",
-                "com_touch_abdomen_displayName_1": "揉捏腹部",
-                "com_touch_abdomen_displayName_2": "抚摸腹部",
-                "com_touch_thigh_displayName_1": "揉捏大腿",
-                "com_touch_thigh_displayName_2": "抚摸大腿",
-                "com_touch_back_displayName_1": "揉捏腰部",
-                "com_touch_back_displayName_2": "抚摸背部",
-                "com_touch_shoulders_displayName_1": "揉捏肩部",
-                "com_touch_shoulders_displayName_2": "抚摸肩部",
-                "com_touch_fingers_displayName_1": "撫摸手指",
-                "com_touch_foot_toes_displayName_1": "撫摸脚趾",
-                "com_touch_ears_displayName_1": "撫摸耳朵",
-
                 "com_special_initSex_tooltip": "邀请当前房间内全部角色做爱\n意识清醒的角色会判定接受度（目前未实装）\n全员接受了的话，所有清醒的角色（包括玩家）会脱光自身的衣服，耗费5分钟",
                 "com_special_initSex_start": "推倒",
                 "com_special_initSex_end": "结束做爱",
                 "com_special_initSex_sleeping_start": "睡眠奸",
                 "com_special_initSex_sleeping_end": "结束眠奸",
                 "com_special_initSex_timestop_start": "时停奸",
-                "com_special_initSex_timestop_end": "结束时奸",
-
-                
-                "com_touch_cheek_displayName": "捏脸蛋",
-                "com_touch_cheek_displayName_1": "捏脸蛋",
-
-                "com_touch_hair_displayName": "抚摸头发",
-                "com_touch_hair_displayName_1": "抚摸头发",
-                "com_touch_hug_displayName": "拥抱",
-                "com_touch_hug_displayName_1": "拥抱",
-                "com_touch_sleeponthigh_give_displayName": "给予膝枕",
-                "com_touch_sleeponthigh_give_displayName_1": "给予膝枕",
-                "com_touch_sleeponthigh_ask_displayName": "索求膝枕",
-                "com_touch_sleeponthigh_ask_displayName_1": "索求膝枕"
-
-
+                "com_special_initSex_timestop_end": "结束时奸"
             },
             "en-us":
             {
 
-                "com_touch_cheek_displayName": "Pinch cheek",
-                "com_touch_cheek_displayName_1": "Pinch cheek",
-
-                "com_touch_hair_displayName": "Stroke hair",
-                "com_touch_hair_displayName_1": "Stroke hair",
-                "com_touch_hug_displayName": "Hug",
-                "com_touch_hug_displayName_1": "Hug",
-                "com_touch_sleeponthigh_give_displayName": "Offer lap pillow",
-                "com_touch_sleeponthigh_give_displayName_1": "Offer lap pillow",
-                "com_touch_sleeponthigh_ask_displayName": "Request lap pillow",
-                "com_touch_sleeponthigh_ask_displayName_1": "Request lap pillow"
+                
             }
         }
     }

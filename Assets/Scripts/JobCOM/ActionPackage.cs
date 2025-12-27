@@ -31,15 +31,17 @@ public enum AP_Status
     waitingForRequest,
     accepted
 }
+
+
 /// <summary>
 /// Store and manipulate a single interaction instance.
 /// should be the smallest executable instance of a command/job
 /// let job make interaction package
 /// let campaign store all packages and iterate them 
 /// </summary>
-
 public abstract class ActionPackage
 {
+    public bool timestopTick = false;
     string cache_refusedResponse = "";
     string RefuseResponse { get
         {
@@ -529,6 +531,8 @@ public abstract class ActionPackage
     public bool Ticked = false;
     // package refused by C_MANAGER due to low package priority
 
+
+
     /// <summary>
     /// Tick by 1 minute but with List of all actors in room <br/>
     /// Timestop && !canActInTimeStop will prevent this from ticking <br/>
@@ -557,8 +561,9 @@ public abstract class ActionPackage
         }
 
         if (!timeStop && !allUnconscious)
-        {   
+        {
             if (!Ticked) StartTime = scr_System_Time.current.getCurrentTime() - TimeSpan.FromMinutes(tickDuration);
+            else LoggedBegin = true;
 
             this.duration = Math.Max(0, this.duration - tickDuration);
             if (this.isPaused)
@@ -908,6 +913,7 @@ public abstract class ActionPackage
     /// </summary>
     protected void ExecutePackage(MessageCollect m = null)
     {
+        this.timestopTick = scr_System_Time.current.TimeStopStrict;
         PreExecution();
         // evaluate acceptance
 
@@ -1500,14 +1506,14 @@ public abstract class ActionPackage
                 var goodwill = b_attitude > Memory_Attitude.Neutral ? (int)(b_attitude - Memory_Attitude.Neutral) : 0;
                 var badwill = b_attitude < Memory_Attitude.Neutral ? (int)(Memory_Attitude.Neutral - b_attitude) : 0;
 
-                if (goodwill != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, false);
+                if (goodwill != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, !job.CanBeInterrupted);
                 if (badwill > 0 || (badwill < 0 && B.Stats.Mood.Severity >= 2)) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false);
             }
 
             if (tags.Contains("job") && response > Memory_Response.Accept)
             {
                 var trust = response >= Memory_Response.Success ? 1 : response < Memory_Response.Failure ? -1 : 0;
-                if (trust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, false);
+                if (trust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, !job.CanBeInterrupted);
             }
         }
     }
@@ -1587,14 +1593,22 @@ public abstract class ActionPackage
         }
     }
 
-    public void LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null)
+    public void LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null, Character_Trainable target = null)
     {
         if (m == null) m = this.job.m;
-        //List<Character_Trainable> actors, string s
+        string s = targetCOM.variants[COMVariantID].GetDescription_Ongoing(targetCOM, this);
+        Debug.Log("AP LogMessage_Ongoing");
+        UtilityEX.StringReplace(this, ref s);
         //.Actors, ep.Description_Ongoing
+        if (s.Length > 0)
+        {
+            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
+            m.messages_after.Add(s);
+        }
+        
         foreach (var ep in this.ListEP)
         {
-            ep.LogMessage_Ongoing(rightAlign, m);
+            ep.LogMessage_Ongoing(rightAlign, m, target);
         }
     }
 

@@ -654,16 +654,19 @@ public class Job : IDisposable, I_Disposable
             m.exp.leftAlignOverride = !rightAlign;
         }
         //else if ( ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
-        else if (display && !ap.LoggedBegin)
+        else if (!ap.LoggedBegin && !ap.isPaused)
         {   // one ticked
+            if (display)
+            {
+                var checkResult = ap.GetCheckResult(rightAlign);
+                if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult);
 
-            var checkResult = ap.GetCheckResult(rightAlign);
-            if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult);
-
-            if (ap.repeated) ap.LogMessage_Begin_Ongoing( false, rightAlign, m);
-            else ap.LogMessage_Begin(false, rightAlign, m);
+                if (ap.repeated) ap.LogMessage_Begin_Ongoing(false, rightAlign, m);
+                else ap.LogMessage_Begin(false, rightAlign, m);
+            }
+            else ap.LoggedBegin = true;
         }
-        else if (rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(rightAlign, m);
+        else if (!ap.isPaused && display && rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(rightAlign, m, scr_System_CampaignManager.current.Player);
     }
 
 
@@ -833,7 +836,8 @@ public class Job : IDisposable, I_Disposable
             var package = packages_previous[i];
             if (package.isPaused)
             {
-                if (package.Validate())
+                if (package.isTimeStopped) continue;
+                else if (package.Validate())
                 {
                     scr_System_CampaignManager.current.Register(package, avoidConflict);
                     if (package.isPaused && !package.isTimeStopped) package.pausedTick += 1;
@@ -862,7 +866,7 @@ public class Job : IDisposable, I_Disposable
     [JsonIgnore] public string MessagesAfter { get { return m.messages_after.Count > 0 ? String.Join("\n", m.messages_after) : ""; } }
 
 
-    public MessageCollect m = new MessageCollect();
+    [JsonIgnore] public MessageCollect m = new MessageCollect();
 
 
     public void Dispose()

@@ -50,7 +50,7 @@ public class BodyInternal_Instance
         }
     }
 
-    public bool NotifySexExperience(string targetName, string comName, List<string> comtags, List<string> targetBodyTag)
+    public bool NotifySexExperience(bool hasPermission, string targetName, string comName, List<string> comtags, List<string> targetBodyTag)
     {
         this.lastExperience = Owner.Memory.Last.EndTime.Ticks;
         this.lastExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName);
@@ -64,14 +64,14 @@ public class BodyInternal_Instance
         {
             Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on targetBodytags {String.Join(" ", targetBodyTag)}");
             this.firstExperience = lastExperience;
-            this.firstExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
             return true;
         }
         else if (Utility.ListContainsLoose(comtags, this.Base.virginityLossTags))
         {
             Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on comtags {String.Join(" ", comtags)}");
             this.firstExperience = lastExperience;
-            this.firstExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission ? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
             return true;
         }
         else

@@ -118,7 +118,16 @@ public class Character_Personality
 
     public void LateInitialize()
     {
-
+        foreach(var i in this.entries_list)
+        {
+            foreach(var j in i.variants)
+            {
+                if (j.requirement == null)
+                {
+                    j.requirement = new ResponseEntry.Variant.Requirement();
+                }
+            }
+        }
     }
 
     public void AddEntry(ResponseEntry entry)
@@ -222,6 +231,40 @@ public class Character_Personality
         comID = entries[comID].CheckRedirect(comID);
         return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
     }
+    public MessageCollect_KojoEntry GetKOJOMessage_Ongoing(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
+    {
+        string comID = ep.targetCOM.ID;
+        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
+        comID = $"{comID}_Ongoing";
+
+        //Debug.Log($"GetKOJOMessage_Ongoing {comID}");
+
+        if (!entries.ContainsKey(comID))
+        {
+            if (this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ep, relation);
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
+            return null;
+        }
+        comID = entries[comID].CheckRedirect(comID);
+        return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
+    }
+    public MessageCollect_KojoEntry GetKOJOMessage_Interrupt(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
+    {
+        string comID = ep.targetCOM.ID;
+        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
+        comID = $"{comID}_Interrupt";
+
+        //Debug.Log($"GetKOJOMessage_Interrupt {comID}");
+
+        if (!entries.ContainsKey(comID))
+        {
+            if (this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ep, relation);
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
+            return null;
+        }
+        comID = entries[comID].CheckRedirect(comID);
+        return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
+    }
 
     public MessageCollect_KojoEntry GetKOJOMessage(string eventID, Character_Relationship rel)
     {
@@ -247,6 +290,7 @@ public class Character_Personality
     {
         if (selfTags == null) selfTags = new List<string>();
         if (targetTags == null) targetTags = new List<string>();
+        if (eventID == "Descriptor") Debug.Log($"Descriptor called on {rel.Owner.CallName}");
         if (!entries.ContainsKey(eventID))
         {
 
@@ -355,7 +399,7 @@ public class ResponseEntry
 
         Character_Relationship relDoer, relReceiver, relSelf;
         List<int> allChara = null;
-        MessageCollect_KojoEntry responses = null;
+        MessageCollect_KojoEntry responses = null, responses2 = null;
         bool isValid = false;
         var newlist = new List<EvaluationPackage>(allEPs);
         foreach (var i in variants)
@@ -378,7 +422,11 @@ public class ResponseEntry
                     if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v1 + ", replace with " + ep.Description_Ongoing);
                     v1.message = v1.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
                     if (responses == null) responses = v1;
-                    else responses.nexts.Add(v1);
+                    else
+                    {
+                        responses.nexts.Add(v1);
+                        responses2 = v1;
+                    }
                     break;
                 }
                 else if (relReceiver != null && i.GetRandomResponse(out var v2, relReceiver, ep, selfTags, ep.ReceiverTargetTag, playerInvolved, true))
@@ -388,7 +436,10 @@ public class ResponseEntry
                     if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v2 + ", replace with " + ep.Description_Ongoing);
                     v2.message = v2.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
                     if (responses == null) responses = v2;
-                    else responses.nexts.Add(v2);
+                    else{
+                        responses.nexts.Add(v2);
+                        responses2 = v2;
+                    }
                     break;
                 }
                 else if (relSelf != null && relDoer == null && relReceiver == null && ep.Receiver == null &&  i.GetRandomResponse(out var v3, relSelf, ep, selfTags, ep.DoerTargetTag, playerInvolved, true))
@@ -403,7 +454,10 @@ public class ResponseEntry
                     if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v3 + ", replace with " + ep.Description_Ongoing);
                     v3.message = v3.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
                     if (responses == null) responses = v3;
-                    else responses.nexts.Add(v3);
+                    else{
+                        responses.nexts.Add(v3);
+                        responses2 = v3;
+                    }
                     break;
 
                 }
@@ -412,7 +466,7 @@ public class ResponseEntry
             if (isValid)
             {
                 // do execution
-                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError("KOJO CHECKINTERRUPT TRUE IS VALID: " + String.Join("|", responses));
+                //Debug.LogError("KOJO CHECKINTERRUPT TRUE IS VALID: " + String.Join("|", responses));
 
                 allChara = new List<int>();
                 foreach (var ep in newlist)
@@ -420,13 +474,13 @@ public class ResponseEntry
                     if (ep.Doer != null && !allChara.Contains(ep.Doer.RefID))
                     {
                         relDoer = owner.Relationships.FindRelationshipWith(ep.Doer);
-                        foreach (var ii in i.results) ii.Execute(relDoer, selfTags, ep.DoerTargetTag);
+                        foreach (var ii in i.results) ii.Execute(responses2 != null ? responses2 : responses,  relDoer, selfTags, ep.DoerTargetTag);
                         allChara.Add(ep.Doer.RefID);
                     }
                     if (ep.Receiver != null && !allChara.Contains(ep.Receiver.RefID))
                     {
                         relReceiver = owner.Relationships.FindRelationshipWith(ep.Receiver);
-                        foreach (var ii in i.results) ii.Execute(relReceiver, selfTags, ep.ReceiverTargetTag);
+                        foreach (var ii in i.results) ii.Execute(responses2 != null ? responses2 : responses, relReceiver, selfTags, ep.ReceiverTargetTag);
                         allChara.Add(ep.Receiver.RefID);
                     }
                 }
@@ -505,7 +559,7 @@ public class ResponseEntry
         public List<string> extraPortraitTags = new List<string>();
         public bool useActiveTags = false;
         public bool forbidPortaitDisplay = false;
-        public List<Requirement> requirements = new List<Requirement>();
+        public Requirement requirement = new Requirement();
         public List<string> responses = new List<string>();
         public List<Results> results = new List<Results>();
         public bool keepLooking = false;
@@ -521,7 +575,6 @@ public class ResponseEntry
                 response = null;
                 return false;
             }
-            if (!skipExecute) foreach (var i in results) i.Execute(rel, selfTags, targetTags);
 
             if (this.variants.Count > 0) 
             {
@@ -560,8 +613,8 @@ public class ResponseEntry
                         returnV.portraitTags = new List<string>(extraPortraitTags);
                         if (useActiveTags) returnV.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
                     }
-
                     returnV.message = result;
+
                 }
                 if (sss != null)
                 {
@@ -569,7 +622,9 @@ public class ResponseEntry
                     else returnV.nexts.Add(sss);
                 }
             }
+            if (!skipExecute) foreach (var i in results) i.Execute(returnV, rel, selfTags, targetTags);
             response = returnV;
+
             return true;
         }
 
@@ -589,10 +644,8 @@ public class ResponseEntry
             if (this.selfReq != null && !CharaReqUtility.Validate(this.selfReq, ref ttips, rel.Owner)) return false;
             if (this.targetReq != null && !CharaReqUtility.Validate(this.targetReq, ref ttips, rel.Target)) return false;
 
-            foreach (var requirement in requirements)
-            {
-                if (!requirement.Validate(rel, selfTags, targetTags, ep)) return false;
-            }
+
+            if (!requirement.Validate(rel, selfTags, targetTags, ep)) return false;
 
             return true;
         }
@@ -615,14 +668,29 @@ public class ResponseEntry
             public List<string> selfTags = new List<string>();
             public List<string> targetTags = new List<string>();
             public int variantID = -1;
+            public CharaReq selfReq = null;
+            public CharaReq targetReq = null;
+            public string requireSelfAttitudeKey = "";
             public RequireKojoVariable requireKojoVariable = new RequireKojoVariable();
             public RequireStatusValue requireSelfStatusValue = new RequireStatusValue();
             public RequireStatValue requireSelfStatValue = new RequireStatValue();
             public RequireMemory requireSelfMemory = new RequireMemory();
 
-            public bool Validate(Character_Trainable self, Character_Trainable target, List<string> selfTags, List<string> targetTags, EvaluationPackage ep, Character_Relationship rel = null)
+            public bool Validate(Character_Trainable self, Character_Trainable target, List<string> selfTags, List<string> targetTags, EvaluationPackage ep, Character_Relationship rel)
             {
                 if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req [" + (self == null ? "null" : self.FirstName) + "->" + (target == null ? "null" : target.FirstName) + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
+
+                List<string> tooltips = new List<string>();
+
+                if (selfReq != null && !CharaReqUtility.Validate(selfReq, ref tooltips, self)) return false;
+                if (targetReq != null && !CharaReqUtility.Validate(targetReq, ref tooltips, target)) return false;
+
+                if (requireSelfAttitudeKey != "")
+                {
+                    if (rel == null) return false;
+                    var att = rel.GetCurrentAttitude();
+                    if (att == null || att.MainEmotionKey != requireSelfAttitudeKey) return false;
+                }
 
                 if (ep != null)
                 {
@@ -729,8 +797,13 @@ public class ResponseEntry
             public ModKojoVariable modifyKojoVariables = new ModKojoVariable();
             public EventInitializer launchEvent = new EventInitializer();
             public ModStatusValue modifyStatusValue = new ModStatusValue();
-            public void Execute(Character_Relationship rel, List<string> selfTags, List<string> targetTags)
+            public bool flushLog = false;
+            public void Execute(MessageCollect_KojoEntry message, Character_Relationship rel, List<string> selfTags, List<string> targetTags)
             {
+                if (flushLog)
+                {
+                    scr_System_CampaignManager.current.AddLogSingle(message);
+                }
                 if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel);
                 if (this.launchEvent != null && this.launchEvent.isValid) launchEvent.Execute(rel);
                 if (modifyStatusValue != null && modifyStatusValue.isValid) modifyStatusValue.Execute(rel.Owner);
@@ -792,7 +865,6 @@ public class ResponseEntry
                     else rel.Owner.Relationships.ModKojoVariable(isDailyVariable, rel, variableID, value);
                 }
             }
-
         }
     }
 }

@@ -91,7 +91,7 @@ public class Room_Instance: IDisposable, I_Disposable
     protected string _displayNameCache = "";
     [JsonIgnore] public string DisplayName { get
         {
-            if (isNameDynamic && this.FactionOwner is Manageable_Party)
+            if (isNameDynamic)
             {
                 return (this.FactionOwner as Manageable_Party).ExpeditionName;
             }

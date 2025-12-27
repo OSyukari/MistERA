@@ -1,0 +1,98 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "relationship_bully_propose_A",
+                    "variants": [
+                        {
+                            "_comment:": "($self$) (this should never trigger) 口上文",
+                            "responses": 
+                            [
+                                "($self$) (this should never trigger) relationship_bully_propose_A 口上文"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "relationship_bully_set_A",
+                    "variants": [
+                        {
+                            "_comment:": "($self$) 成为欺凌者 口上文",
+                            "responses": 
+                            [
+"$self$经过$target$身边时，故意用肩膀狠狠撞了一下，随后发出了一声轻蔑的嗤笑。", "$self$抱着双臂站在走廊尽头，看向$target$的眼神里充满了毫不掩饰的恶意与嘲弄。", "$self$当着众人的面，把$target$放在桌上的东西随手扫到了地上。\"哎呀，手滑了。\"", "$self$在$target$说话时大声打断，并不屑地翻了个白眼。\"有人在说话吗？我怎么只听到了噪音。\"", "$self$用手指卷着发梢，对身边的朋友指着$target$窃窃私语，随即爆发出一阵刺耳的笑声。", "$self$走到$target$面前，居高临下地看着对方，嘴角勾起一抹残忍的弧度。\"这就受不了了？好戏才刚开始呢。\""
+                            ]
+                        }
+                    ]
+                }
+            },{
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "relationship_bully_break_A",
+                    "variants": [
+                        {
+                            "_comment:": "($self$) 欺凌关系结束 口上文",
+                            "responses": 
+                            [
+"$self$远远地看了一眼$target$，随后面无表情地转身离开了，没有像往常一样上前找茬。", "$self$在走廊相遇时移开了视线，假装没有看到$target$，脚步匆匆地擦肩而过。", "$self$有些烦躁地挥了挥手，制止了同伴对$target$的挑衅。\"算了，今天没心情，放过这家伙。\"", "$self$看着$target$的背影，原本想要伸出的脚又默默收了回来，抿着嘴唇没有说话。", "$self$路过$target$的桌子时停顿了一下，最终什么也没做，只是轻轻哼了一声走开了。", "$self$避开了$target$投来的目光，神情显得有些不自然，似乎在极力回避之前的冲突。"
+                            ]
+                        }
+                    ]
+                }
+            },{
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "relationship_bully_propose_B",
+                    "variants": [
+                        {
+                            "_comment:": "($self$) (this should never trigger) 口上文",
+                            "responses": 
+                            [
+                                "($self$) (this should never trigger) relationship_bully_propose_B 口上文"
+                            ]
+                        }
+                    ]
+                }
+            },{
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "relationship_bully_set_B",
+                    "variants": [
+                        {
+                            "_comment:": "($self$) 成为被欺凌者 口上文",
+                            "responses": 
+                            [
+"看到$target$靠近，$self$的身体不由自主地瑟缩了一下，下意识地想要寻找躲藏的地方。", "$self$紧紧抱着书本护在胸前，低着头不敢与$target$对视，脚步慌乱地向后退去。", "$self$被$target$逼到了墙角，脸色苍白，嘴唇颤抖着却发不出任何声音。", "$self$眼眶泛红，在这个曾经被自己轻视的人面前，她第一次感到了深深的无力与恐惧。", "$self$慌张地收拾着散落在地上的物品，一边偷偷观察$target$的动作，生怕再次招致对方的攻击。", "$self$听到$target$的名字时，整个人猛地僵住，眼神中流露出掩饰不住的惊恐。"
+                            ]
+                        }
+                    ]
+                }
+            },{
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "relationship_bully_break_B",
+                    "variants": [
+                        {
+                            "_comment:": "($self$) 欺凌关系结束 口上文",
+                            "responses": 
+                            [
+"发现$target$径直走过并没有停留，$self$靠在墙上长出了一口气，一直紧绷的肩膀终于垮了下来。", "$self$疑惑地看着$target$离去的背影，眼神里充满了不解和某种劫后余生的庆幸。", "$self$小心翼翼地抬起头，确认$target$真的没有恶意后，才敢试探性地迈出脚步。", "$self$虽然$target$已经停止了针对，但$self$依然保持着警惕，像一只受惊的小动物般时刻准备逃跑。", "$self$愣在原地许久，似乎不敢相信那无休止的折磨就这样莫名其妙地结束了。", "$self$用复杂的眼神注视着$target$，手里紧紧攥着的衣角也慢慢松开了。"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {},
+            "en-us": {}
+        }
+    }
+}

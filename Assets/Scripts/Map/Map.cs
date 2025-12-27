@@ -11,6 +11,7 @@ using QuikGraph.Algorithms.Observers;
 using QuikGraph.Algorithms.ShortestPath;
 using UnityEngine;
 using static scr_Menu;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class Map_Instance
 {
@@ -40,9 +41,11 @@ public class Map_Instance
             BuildPath();
         }
     }
+
     public void NotifyEventEnd()
     {
         if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Map NotifyEventEnd, clearing... dirtyAP {String.Join(",",dirtyCharaAPRef)} dirtyChara {String.Join(",", dirtyCharaRef)}");
+        
         this.dirtyCharaAPRef.Clear();
         this.dirtyCharaRef.Clear();
     }
@@ -365,7 +368,7 @@ public class Map_Instance
             var xxEPs = tempDicts[xx];
 
             bool interrupted = false;
-            bool isDirty = dirtyCharaRef.Contains(xx.RefID);
+            bool isDirty = dirtyCharaRef.Contains(xx.RefID) || (xx.CanActInTimeStop && xx.MovedInTimeStop && scr_System_Time.current.TimeResume);
 
             List<string> selfTags = new List<string>();
             foreach (var i in xxEPs) selfTags.AddRange(i.isDoer(xx) ? i.DoerTargetTag : i.ReceiverTargetTag);
@@ -387,7 +390,7 @@ public class Map_Instance
                 if (xx.CurrentJob != null && i.job != null && i.job.RefID == xx.CurrentJobRefID) continue;//{ Debug.LogError("dirtychararef currentjob identical [" + i.job.DisplayName + "]"); continue; }
                 if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
                 if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
-
+                if (i.timestopTick && !xx.CanActInTimeStop) continue;
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
                 if (xx.Relationships.CheckInterrupt(i, selfTags) && xx.RefID != 0)
                 {
@@ -412,14 +415,23 @@ public class Map_Instance
                     /*
                     Prioritise self or target.
                      */
-                    if ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume)
+                    bool greeting = (forceGreeting || isDirty || dirtyCharaRef.Contains(yy.RefID)) && scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) != scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID);
+                    if ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume && xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "OnTimestopEnd"))
                     {
-                        xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "OnTimestopEnd");
+                        Debug.Log($"OnTimestopEnd on {yy.CallName}");
                     }
-                    else if ((forceGreeting || isDirty || dirtyCharaRef.Contains(yy.RefID)) && !(scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) && scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID)))
+                    else if (greeting && xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "Greeting"))
                     {
-                       // Debug.LogError($"Greeting {xx.CallName} -> {yy.CallName}");
-                        xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "Greeting");
+                        Debug.Log($"Greeting on {xx.CallName} -> {yy.CallName}");
+                    }
+                    else if (greeting && CheckReverseInterrupt(yyEPs, yy, xx))
+                    {
+                        Debug.Log($"CheckReverseInterrupt on {yy.CallName} by {xx.CallName}");
+                    }
+                    else if (greeting && yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "DailyGreeting"))
+                    {
+                        // Debug.LogError($"Greeting {xx.CallName} -> {yy.CallName}");
+                        Debug.Log($"DailyGreeting on{xx.CallName} ->  {yy.CallName}");
                         //yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "Greeting");
                     }
                     else
@@ -439,6 +451,28 @@ public class Map_Instance
             }
         }
     }
+
+    protected bool CheckReverseInterrupt(List<EvaluationPackage> eps, Character_Trainable self, Character_Trainable target)
+    {
+        if (self == null || target == null) return false;
+        if (self.RefID == 0) return false;
+        var rel = self.Relationships.FindRelationshipWith(target);
+        if (rel == null) return false;
+
+        foreach(var ep in eps)
+        {
+            if (ep.job.Actors.Contains(self) && ep.job.Actors.Contains(target)) continue;
+            var msg = self.Relationships.Personality.GetKOJOMessage_Interrupt(ep.isDoer(self), ep, rel);
+            if (msg == null) continue;
+            if (!scr_System_CampaignManager.current.isCharaVisibleToPlayer(self.RefID)) continue;
+            msg.message = msg.message.Replace("$self$", self.FirstName).Replace("$target$", target.FirstName);
+            scr_UpdateHandler.current.AppendKojoMessage(msg);
+            return true;
+
+        }
+        return false;
+    }
+
 
     public void UpdateAllRoom()
     {
@@ -540,6 +574,8 @@ public class Map_Instance
         dirtyCharaRef.Add(charaRef.RefID);
         dirtyCharaRef = Utility.Distinct(dirtyCharaRef);
 
+        if (charaRef.CanActInTimeStop && scr_System_Time.current.TimeStop) charaRef.MovedInTimeStop = true;
+
         if (charaRef.RefID == 0)
         {
             var job = scr_System_CampaignManager.current.Player.CurrentJob;
@@ -616,6 +652,10 @@ public class Map_Instance
         TaggedEdge<int, Door_Instance> append = null;
         if (roomRef.parentFloor == null)
         {   // we are in an orphaned room
+            if (roomRef.FactionOwner.FactionOwnerRoot.MainExit == null)
+            {
+                return false;
+            }
 
             if (roomRef != roomRef.FactionOwner.FactionOwnerRoot.MainExit)
             {
@@ -626,6 +666,10 @@ public class Map_Instance
         
         if (targetRoom.parentFloor == null)
         {
+            if (targetRoom.FactionOwner.FactionOwnerRoot.MainExit == null)
+            {
+                return false;
+            }
             if (targetRoom != targetRoom.FactionOwner.FactionOwnerRoot.MainExit) {
                 append = new TaggedEdge<int, Door_Instance>(targetRoom.FactionOwner.FactionOwnerRoot.MainExit.RefID, targetRoom.RefID, new Door_Instance(roomRef.FactionOwner.FactionOwnerRoot.MainExitCost));
                 targetRoom = targetRoom.FactionOwner.FactionOwnerRoot.MainExit;

@@ -15,7 +15,7 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     public CanvasGroup selfCanvas, parentCanvas;
     public int consoleCount;
 
-    public scr_HoverableText targetName, baseID, targetCurrentJob;
+    public scr_HoverableText targetName, baseID, targetCurrentJob, targetparty;
     public scr_HoverableText currentRoom;
     public scr_HoverableText blacklist;
 
@@ -104,11 +104,14 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     {
         consoleCount = 0;
         consoleInput.ActivateInputField();
-        CurrentTarget = scr_System_CampaignManager.current.CurrentTarget;
-        var room = scr_System_CampaignManager.current.CurrentRoom;
+        CurrentTarget = scr_System_CampaignManager.current.ConsoleTargetEX && scr_System_CampaignManager.current.CurrentTargetEX != null ? scr_System_CampaignManager.current.CurrentTargetEX : scr_System_CampaignManager.current.CurrentTarget;
+        var room = scr_System_CampaignManager.current.Map.FindRoomByChara(CurrentTarget.RefID);// scr_System_CampaignManager.current.CurrentRoom;
         targetName.SetText("CurrentTarget: " + (CurrentTarget == null ? "null" : $"{CurrentTarget.RefID} {CurrentTarget.FullName}, isImprisoned {CurrentTarget.isImprisoned} isRestrained {CurrentTarget.isRestrained}"));
         baseID.SetText($"BaseID [{(CurrentTarget == null ? "null" :CurrentTarget.BaseID)}]");
         targetCurrentJob.SetText("CurrentJob: " + (CurrentTarget.CurrentJob == null ? "null" : CurrentTarget.CurrentJob.RefID + " " + CurrentTarget.CurrentJob.DisplayName + " " + (CurrentTarget.CurrentJob.ParentRoom == null ? "nullRoom" : CurrentTarget.CurrentJob.ParentRoom.RefID + " " + CurrentTarget.CurrentJob.ParentRoom.DisplayName)));
+
+        targetparty.SetText($"CurrentParty {(CurrentTarget.FactionManager.CurrentParty == null ? "null" : CurrentTarget.FactionManager.CurrentParty.Job.RefID)}, LockedParty {(CurrentTarget.FactionManager.CurrentLockedParty == null ? "null" : CurrentTarget.FactionManager.CurrentLockedParty.Job.RefID)}, CurrentActive {(CurrentTarget.FactionManager.CurrentActiveParty == null ? "null" : CurrentTarget.FactionManager.CurrentActiveParty.Job.RefID)} isLocked {(CurrentTarget.FactionManager.isPartyLocked)}");
+
         currentRoom.SetText($"CurrentRoom: {(room == null ? "null" : $"{room.RefID} {room.DisplayName}, isPrison? {room.isRoomPrison} isPrivate? {room.isRoomPrivate}")}");
 
         portrait_neutral.SetText($"Neutral Portrait Tags [{(CurrentTarget == null ? "null" : String.Join(" ", CurrentTarget.PortraitManager.tags_neutral))}]");

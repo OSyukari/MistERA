@@ -28,10 +28,16 @@
 "ui_entry_memory_description_ordered_by": "听从$master$的指令",
 "ui_entry_memory_description_multiple_counts": "了$counts$次",
 
+
 "ui_entry_memory_withRoomName": "在$roomname$$desc$",
 "ui_entry_memory_sleep_begin": "在$room$睡觉",
 "ui_entry_memory_sleep_end": "睡醒了",
 "ui_entry_multipleCount": "$item$x$count$",
+
+"ui_fatalError":"遭遇致命错误！游戏无法继续\n上为游戏的Error log\n请与制作者汇报该BUG！",
+"ui_fatalError_exit":"退出游戏",
+"ui_fatalError_copy":"复制LOG到剪切板",
+"ui_fatalError_copy_over":"复制成功",
 
 "ui_comPanel_filters_deterministicRolls": "非随机判定",
 "ui_comPanel_filters_deterministicRolls_tooltip": "判定NPC的指令接受度时，若成功率>=65%则必定成功，反之必定失败",

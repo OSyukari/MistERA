@@ -1,0 +1,250 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_legs_P_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                
+                "requireSelfReceiver": true,
+                "_comment":"受方 被足交 高潮" ,
+                "responses": [
+                    "($self$) 被足交 高潮 口上文"
+                ]
+            },
+            {
+                
+                "requireSelfDoer": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","doer","footjob", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 攻方 足交 高潮 有允许 口上文" ,
+                        "responses": [
+"$self$仰起头，双手死死抓着床单，脚下的动作因为剧烈的快感而变得杂乱无章。\"啊！不行了！脚心……好像有电流窜上来了！啊啊——！\"", "$self$浑身紧绷，脚趾狠狠扣紧了$target$的肉柱，大腿内侧剧烈痉挛。\"去了！要去了！仅仅是用脚……为什么会这么爽！哈啊——！\"", "$self$眼神迷离，口水顺着嘴角流下，双腿在大高潮中无力地颤抖，却还本能地夹着不放。\"亲爱的……我不行了……脑袋要融化了……♡\""
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","doer","footjob", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 攻方 足交 高潮 无允许 口上文" ,
+                "responses": [
+"$self$难以置信地瞪大了眼睛，身体背叛了意志开始剧烈抽搐。\"不、不可能……明明只是脚……为什么下面会湿透了……呀啊啊啊！\"", "$self$羞耻地捂住脸，却无法控制从喉咙里溢出的高亢浪叫。\"住手……不要看！竟然被这样弄高潮了……杀了你！哈啊……！\"", "$self$整个人像虾米一样弓起，脚底的敏感点被疯狂刺激导致大脑一片空白。\"不要碰那里！啊！奇怪的感觉……要坏掉了！呜咿——！\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_legs_P_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","doer","footjob", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始足交 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$俏皮地把脚伸进了$target$的被子里，脚趾轻轻挠着他的大腿内侧。\"既然你这么想要，那今天就用这里帮你吧？\"", "$self$熟练地用双脚夹住了那个昂扬的部位，嘴角带着一丝宠溺的笑。\"真拿你没办法，要夹紧咯？\"", "$self$背靠着床头，把脚搭在了$target$的胸口，慢慢向下滑动。\"先说好，我的脚底可是很敏感的。\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","doer","footjob", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始足交 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$僵硬地坐在椅子上，不可置信地看着$target$捧起自己的脚。\"等等……你是认真的吗？用……脚？\"", "$self$虽然脸涨得通红，但没有把脚抽回来。\"这、这种事……只能做一次哦……\"", "$self$尴尬地偏过头，不知道该把手放在哪里。\"如果不嫌弃有味道的话……随你吧。\""
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","doer","footjob", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始足交 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$浑身发抖，死死抓着裙摆，眼泪在眼眶里打转。\"我做……我做就是了……请不要把那个视频发出去……\"", "$self$紧紧闭着眼睛，脚趾因为恐惧而痉挛。\"只要这样你就放过我对吧？好、好吧……\"", "$self$脸色苍白，强忍着恶心把脚伸向了$target$。\"恶心……变态……\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_legs_P",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","doer","footjob","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 足交 口上文",
+                "responses":
+                [ 
+"$self$发出均匀的呼吸声，对正在被侵犯的双脚毫无察觉，偶尔因为痒而无意识地抽动一下。", "$self$睡得很沉，脚底传来的摩擦让她在梦中皱了皱眉，但并没有醒来。", "$self$翻了个身，无意间用脚背蹭过$target$的顶端，嘴里说着模糊的梦话。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","doer","footjob","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 足交 口上文",
+                "responses":
+                [ 
+"（静止画面）$self$保持着原本的姿势一动不动，唯独双脚被摆弄成了紧紧夹住的样子，脚趾间挤压着异物。", "（静止画面）$self$毫无知觉地张开双腿，脚底板紧贴着勃起的阴茎，仿佛一尊精美的人偶。", "（静止画面）$self$悬在空中的脚被强行按压在龟头上，脚背弓起优美的弧度。"
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 足交 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$被弄醒后恼火地一脚踹开了$target$。\"有病啊！让人睡觉行不行！\"", "$self$烦躁地把脚缩回被窝，甚至带上了哭腔。\"我很困啊……不要碰我……\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 足交 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$一脚狠狠踹在$target$脸上，发出惊恐的尖叫。\"谁？！滚出去！变态！\"", "$self$慌乱地抓起枕头砸过去，蜷缩在床角。\"你在干什么！我要报警了！\""
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 足交 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$缩回了脚，把被子裹得严严实实。\"不要啦，今天走了一天路，脚好酸。\"", "$self$轻轻踢了一下$target$凑过来的手。\"不行，刚刚涂了足霜，会弄得黏糊糊的。\"", "$self$翻了个身，避开了$target$的视线。\"我现在只想睡觉，别闹了亲爱的。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 足交 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$像触电一样缩回脚，尴尬地笑了笑。\"哈哈，这个玩笑有点过头了哦，$target$。\"", "$self$不动声色地把腿盘了起来。\"那个，我们还是聊聊工作的事情吧？\"", "$self$按住了$target$的手，语气温和但坚定。\"虽然我们关系不错，但这个不行，真的不行。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 足交 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$猛地站起身，一杯水泼在$target$脸上。\"你脑子里装的都是什么大便？离我远点！\"", "$self$眼神冰冷地看着$target$，仿佛在看一只蟑螂。\"想死的话直说，别用你的脏手碰我。\"", "$self$直接拿起了手机准备报警。\"我已经录音了，这就是你是性骚扰的证据。\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 足交口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","doer","footjob","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 足交 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地睁开眼，感觉到脚心的异样后慵懒地笑了。\"嗯……大半夜的……真是个坏孩子……随你便吧。\"", "$self$在半梦半醒间配合着$target$的动作蹭了蹭。\"呼……是你啊……那就快点结束哦……\""
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","doer","footjob","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 足交 无允许 好意 口上文",
+                        "responses":[
+"$self$迷茫地看着正在摆弄自己脚的$target$，大脑死机了片刻后反而放弃了抵抗。\"呃……这是梦吗？算了，如果是梦的话……\"", "$self$半睡半醒间把这当成了某种按摩，舒服地哼哼了两声。\"嗯……那里……再用力点……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 足交 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","doer","footjob","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$惊醒后刚想尖叫，就被捂住了嘴，只能绝望地流泪配合。\"呜呜……(点头)……\"", "$self$在黑暗中颤抖着，因为害怕受到伤害而不敢动弹。\"我不叫……别打我……我用脚帮你……\""
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","doer","footjob", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 足交 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$的脚趾因为快感而微微蜷缩，脸颊泛起红晕。\"嗯……这种温度，感觉脚心热乎乎的，好舒服。\"", "$self$看着$target$沉醉的表情，动作变得更加轻柔。\"你好像很喜欢刚才那样？那我再用力一点……\"", "$self$忍不住发出轻笑，脚掌更加紧密地贴合着那处滚烫。\"呵呵，变大了好多，在我的脚底下跳动呢。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 足交 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","doer","footjob", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$原本抗拒的表情逐渐软化，甚至发出了一声意外的低吟。\"唔……好像……并没有想象中那么讨厌……\"", "$self$看着$target$专注服侍自己双脚的样子，眼神里多了一丝异样的情绪。\"没想到你会露出这种表情……真是个怪人。\"", "$self$的脚趾试探性地动了动，主动去摩擦那处突起。\"既然都做到这一步了……帮你弄出来也不是不行。\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","doer","footjob", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 足交 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$皱着眉头换了个姿势，小腿肌肉有些发颤。\"好累……腿都要抽筋了，还没好吗？\"", "$self$的动作变得机械而敷衍，眼神飘向了时钟。\"还要多久啊，我的脚踝好酸。\"", "$self$有些嫌弃地想把脚抽回来。\"啧，弄得我脚上全是这种味道……不想弄了。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 足交 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","doer","footjob", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$眼中的厌恶越来越浓，甚至做出了干呕的动作。\"够了没有？那种触感简直让人作呕。\"", "$self$冷漠地看着这一幕，心里只剩下对这个人的鄙夷。\"快点结束吧，以后别再跟我说话了。\"", "$self$咬着嘴唇，感觉自己的尊严被踩在脚下。\"不仅是变态，还是个快枪手吗？真无聊。\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

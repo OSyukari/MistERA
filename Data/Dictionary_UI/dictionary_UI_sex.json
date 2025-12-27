@@ -190,6 +190,7 @@
 "messagelog_lose_first_experience": "$color_error_begin$$firstname$失去了$bodypart$初体验$color_error_end$",
 
 "bodyPart_internal_lastExpFormat": "最近体验：与$target$的$command$",
+"bodyPart_internal_expVirginLoss_cons": "在与$target$的$command$中献出了$partname$初体验",
 "bodyPart_internal_expVirginLoss": "在与$target$的$command$中失去了$partname$初体验",
 "bodyPart_internal_virgin_silent": "",
 "bodyPart_internal_virgin": "未经人事",

@@ -1,15 +1,16 @@
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using UnityEngine.UI;
-using System.Linq;
-using Newtonsoft.Json;
-using UnityEngine.EventSystems;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.ObjectPool;
+using Newtonsoft.Json;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public static class UtilityEX
 {                                               //  F      E      D      C      B      A      S    
@@ -584,6 +585,63 @@ public static class UtilityEX
         s = s.Replace("$firstname$", c.FirstName);
     }
 
+    public static void StringReplace(ActionPackage ap, ref string s)
+    {
+        StringReplace(ref s);
+        // %% ____ %% refers to static entry in dictionary
+        // $ ____ $ refers to local variable
+        //Debug.LogError("isDoerNull["+(evp.Doer == null) + "] isReceiverNull[" + (evp.Receiver == null) + "] isMasterNull[" + (evp.Master == null) + "]");
+
+        List<string> doers = new List<string>(), receivers = new List<string>(), actors = new List<string>();
+
+        foreach(var ep in ap.ListEP)
+        {
+            if (ep.Doer != null) doers.Add(ep.Doer.CallName);
+            if (ep.Receiver != null && ep.Receiver != ep.Doer) receivers.Add(ep.Receiver.CallName);
+        }
+        doers = Utility.Distinct(doers);
+        receivers = Utility.Distinct(receivers);
+        actors.AddRange(doers);
+        actors.AddRange(receivers);
+        actors = Utility.Distinct(actors);
+
+        if (doers.Count > 0)
+        {
+            if (s.Contains("$doer.firstname$")) { s = s.Replace("$doer.firstname$", String.Join(", ", doers)); }
+            if (s.Contains("$doer$")) { s = s.Replace("$doer$", String.Join(", ",doers)); }
+
+            s = s.Replace("$doer.p$", LocalizeDictionary.QueryThenParse("bodyPart_internal_penis"));
+            s = s.Replace("$doer.v$", LocalizeDictionary.QueryThenParse("bodyPart_internal_vagina"));
+        }
+
+
+        
+
+        if (receivers.Count > 0)
+        {
+            s = s.Replace("$receiver.firstname$", String.Join(", ", receivers));
+
+            s = s.Replace("$receiver.p$", LocalizeDictionary.QueryThenParse("bodyPart_internal_penis"));
+            s = s.Replace("$receiver.v$", LocalizeDictionary.QueryThenParse("bodyPart_internal_vagina"));
+        }
+
+        if (ap.Master != null)
+        {
+            s = s.Replace("$master.firstname$", ap.Master.FirstName);
+        }
+
+        if (actors.Count > 0)
+        {
+            s = s.Replace("$actors.firstname", String.Join(", ", actors));
+        }
+
+        if (s.Contains("$comdesc$"))
+        {
+            Debug.LogError("STRING REPLACE COMDESC [" + s + "] with [" + (ap.targetCOM == null ? "" : ap.targetCOM.DisplayName(ap.COMVariantID)) + "]");
+            s = s.Replace("$comdesc$", ap.targetCOM == null ? "" : ap.targetCOM.DisplayName(ap.COMVariantID));
+        }
+    }
+
     public static void StringReplace(EvaluationPackage evp, ref string s)
     {
         //if (evp == null) return s;
@@ -728,6 +786,30 @@ public static class UtilityEX
         }
 
         APs = Utility.Distinct(APs);
+    }
+
+    public static void GetJobInteractionTagsFrom(Character_Trainable a, Character_Trainable b, Job job, ref List<string> ownerTags, ref List<string> extraComTags, ref List<string> extraTargetTags)
+    {
+        var jobSex = job as Job_Sex_Group;
+        if (jobSex != null && a != null && b != null)
+        {
+            bool doer_isr = jobSex.isRapist(a) || a.canAct || a.isRestrained;
+            bool receiver_isr = jobSex.isRapist(b) || !b.canAct || b.isRestrained;
+            bool doer_canact = a.canAct && !a.isRestrained;
+            bool receiver_canact = b.canAct && !b.isRestrained;
+            if (doer_isr != receiver_isr)
+            {
+                ownerTags.Add(doer_isr ? "rape" : "raped");
+                extraTargetTags.Add(receiver_isr ? "rape" : "raped");
+            }
+            else if (doer_canact != receiver_canact)
+            {
+                ownerTags.Add(doer_canact ? "rape" : "raped");
+                extraTargetTags.Add(receiver_canact ? "rape" : "raped");
+            }
+        }
+        ownerTags = ownerTags.Distinct().ToList();
+        extraTargetTags = extraTargetTags.Distinct().ToList();
     }
 
     public static void GetInteractionTagsFrom(Character_Trainable a, Character_Trainable b, COM com, int variantID, ref List<string> ownerTags, ref List<string> extraComTags, ref List<string> extraTargetTags)

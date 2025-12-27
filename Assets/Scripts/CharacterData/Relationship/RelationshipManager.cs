@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -192,13 +193,13 @@ public class RelationshipManager
         if (exp != null && newValue - _Pride != 0) exp.AddStats(this.Owner.RefID, "personality_selfesteem", newValue - _Pride);
     }
 
-    public void NotifyMeeting(Character_Trainable c, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs, string triggerEventID = "")
+    public bool NotifyMeeting(Character_Trainable c, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs, string triggerEventID = "")
     {
-        if (c == null || c.RefID < 0) return;
+        if (c == null || c.RefID < 0) return false;
         if (Owner.RefID == 0)
         {
             //Debug.LogError("Player NotifyMeeting break!");
-            return;
+            return false;
         }
         string s = "selfEPs: ";
         foreach (var i in selfEPs) s += i.targetCOM.ID + "_";
@@ -211,25 +212,26 @@ public class RelationshipManager
         //Utility.GetEventTagsFrom(Owner, c, out List<string> selfTags, out List<string> targetTags ,out List<EvaluationPackage> selfEPs);
         //Utility.GetEPsFrom(owner, c, out List<EvaluationPackage> selfEPs, out List<EvaluationPackage> targetEPs);
 
-        if (triggerEventID != "")
+        if (triggerEventID == "") return false;
+        
+        var msg = this.Personality.GetKOJOMessage(triggerEventID, selfEPs, targetEPs, rel);
+        if (msg != null)
         {
-            var msg = this.Personality.GetKOJOMessage(triggerEventID, selfEPs, targetEPs, rel);
-            if (msg != null)
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("[" + Owner.FirstName + "] -> [" + c.FirstName + "] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
+            if (Owner.RefID == 0 || c.RefID == 0)
             {
-                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("[" + Owner.FirstName + "] -> [" + c.FirstName + "] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
-                if (Owner.RefID == 0 || c.RefID == 0)
-                {
-                    msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
-                    scr_UpdateHandler.current.AppendKojoMessage(msg);
-                }
-                else if (scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
-                {
-                    msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
-                    scr_UpdateHandler.current.AppendKojoMessage_NonVisible(msg);
-                }
-
+                msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
+                scr_UpdateHandler.current.AppendKojoMessage(msg);
             }
+            else if (scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+            {
+                msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
+                scr_UpdateHandler.current.AppendKojoMessage_NonVisible(msg);
+            }
+            return true;
         }
+        return false;
+
     }
 
     /// <summary>
@@ -243,7 +245,11 @@ public class RelationshipManager
         // if any EP satisfy interrupt condition, every actor in ap are checked for relationship mod
         var triggerEventID = "Interrupt";
         var msg = Personality.GetKOJOMessage(triggerEventID, Owner, selfTags, ap.ListEP);
-        if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.message.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+        if (msg == null)
+        {
+            // for each ep check interrupt
+        }
+        if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.message != null && msg.message.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
         {
             msg.message = $"<align=\"right\">{msg.message.Replace("$self$", Owner.FirstName)}</align>";//.Replace("$target$", c.FirstName);
             scr_UpdateHandler.current.AppendKojoMessage(msg);
@@ -327,6 +333,32 @@ public class RelationshipManager
         if (message != null && message.message.Length > 0)
         {
             m.messages_before.Add(message.message);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
+            return true;
+        }
+        else return false;
+    }
+
+    public bool GetKOJOMessage_Ongoing(bool rightAlign, bool isDoer, EvaluationPackage ep, MessageCollect m, Character_Relationship injectRel = null)
+    {
+        if (Owner.RefID == 0) return false;
+        Character_Relationship rel = null;
+        if (injectRel != null) rel = injectRel;
+        else if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
+        else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
+
+        string cleanedID = ep.targetCOM.ID;
+        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
+
+       // Debug.Log($"GetKOJOMessage_Ongoing {cleanedID}, rel null ? {rel == null}");
+
+
+        MessageCollect_KojoEntry message = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}_Ongoing", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
+            : this.Personality.GetKOJOMessage_Ongoing(isDoer, ep, rel);
+
+        if (message != null && message.message.Length > 0)
+        {
+            m.messages_after.Add(rightAlign ? $"<align=\"right\">{message.message}</align>" : message.message);
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
             return true;
         }

@@ -1,0 +1,252 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_P_V_outside_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                
+                "requireSelfDoer": true,
+                "_comment":"攻方 素股 高潮" ,
+                "responses": [
+                    "($self$) 素股 高潮 口上文"
+                ]
+            },
+            {
+                
+                "requireSelfReceiver": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","intercrural", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 受方 被素股 高潮 有允许 口上文" ,
+                        "responses": [
+"$self$猛地仰起脖子，双手死死掐进$target$的后背。\"啊！不行！就算没进去……也要丢了！去了啊啊啊！\"", "$self$大腿剧烈痉挛着，死死夹住那根东西，整个人仿佛触电般颤抖。\"呜呜……太激烈了……脑子要坏掉了……高潮了！\"", "$self$失神地张着嘴，口水顺着嘴角流下，身体在一阵剧烈的抽搐后彻底瘫软。\"哈啊……哈啊……明明只是素股……为什么会这么舒服……\""
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver","intercrural", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 受方 被素股 高潮 无允许 口上文" ,
+                "responses": [
+"$self$不想承认地捂住嘴，但身体却诚实地弓成了一张虾米，伴随着一阵剧烈的颤抖达到了顶峰。", "$self$眼泪夺眶而出，在羞耻与快感的双重夹击下崩溃地尖叫出声。\"不要……不要看！呜呜呜……去了……竟然这样去了……\"", "$self$尽管拼命想要合拢双腿，却在那灭顶的快感袭来时无助地敞开了一切，浑身泛起情欲的潮红。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_P_V_outside_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","receiver","intercrural", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被素股 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$笑着解开了裤扣，主动挺起胯部迎合上去。\"这种事……其实我也很喜欢呢。\"", "$self$双腿缠上$target$的腰，将湿润的私处紧紧贴住那根热烫的肉棒。\"就在外面蹭蹭吗？真坏……\"", "$self$发出一声满足的叹息，熟练地用大腿夹住了$target$的东西。\"嗯……这个温度，刚刚好。\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","receiver","intercrural", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被素股 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$身体猛地一僵，眼睛瞪大看着$target$，却没有任何推拒的动作。\"等等……你这是……？\"", "$self$不知所措地抓着床单，脸颊瞬间涨红。\"既然是$target$的话……只、只是蹭蹭大概没关系……\"", "$self$犹豫着没有合拢双腿，声音细若蚊蝇。\"这算是……特别服务吗？\""
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","receiver","intercrural", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被素股 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$浑身颤抖着，紧紧咬着嘴唇不让自己哭出声来，任由那根东西在腿间肆虐。", "$self$别过头去不敢看$target$的眼睛，身体僵硬得像块石头。\"我知道了……请快一点结束……\"", "$self$带着哭腔吸了吸鼻子，绝望地松开了抵抗的手。\"只要不进去……就可以了吗？\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_P_V_outside",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","receiver","intercrural","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被素股 口上文",
+                "responses":
+                [ 
+"$self$发出平稳的呼吸声，对大腿间的侵犯毫无察觉，只是偶尔因为刺激而不适地皱皱眉。", "$self$像个布娃娃一样任人摆布，随着撞击的频率，身体在床单上无意识地摇晃。", "$self$睡得死沉，就连敏感点被反复碾过也只是发出几声含糊不清的梦呓。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","receiver","intercrural","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被素股 口上文",
+                "responses":
+                [ 
+"$self$保持着原本的姿势一动不动，唯有大腿内侧被摩擦得通红，透明的爱液顺着肉棒缓缓流下。", "$self$僵硬在半空中的手仿佛在拒绝，但私处却因为持续的刺激而不断收缩吐露着蜜汁。", "$self$毫无知觉地敞开着身体，任由那根热铁在娇嫩的缝隙间进进出出，带出一片泥泞的声响。"
+
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 被素股 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$惊醒后恼火地把$target$踹到一边。\"你有病啊！让人好好睡觉行不行！\"", "$self$烦躁地翻了个身，背对着$target$。\"别碰我……困死了……\"", "$self$迷茫地睁开眼，随即用力推开了压在身上的重量。\"不要……现在没心情做这个。\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 被素股 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$发出一声尖叫，用力把枕头砸向$target$。\"变态！你想干什么！\"", "$self$连滚带爬地逃下床，警惕地盯着对方。\"你疯了吗？！我要喊人了！\"", "$self$愤怒地推搡着$target$，眼中满是难以置信。\"我们是朋友吧？你怎么能做这种事！\""
+
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被素股 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$轻轻按住了$target$想要乱动的手，嗔怪地瞪了一眼。\"不行啦，今天真的很累。\"", "$self$扭动着身体避开了那根硬物的顶撞。\"别闹了，明天还要早起呢。\"", "$self$把被子裹紧了一些，只露出一双眼睛。\"这种半吊子的事情最讨厌了，下次吧。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被素股 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$尴尬地笑着往后缩了缩，试图用玩笑化解气氛。\"喂喂，这个玩笑有点过火了哦？\"", "$self$不动声色地拉开了距离，整理了一下裙摆。\"我觉得我们还是保持点距离比较好，你说呢？\"", "$self$轻轻挡住了$target$的手，语气坚定却温和。\"虽然我不讨厌你，但这种事还是留给你的女朋友吧。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被素股 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$眼神冰冷地看着$target$，猛地站起身来。\"恶心。离我远点。\"", "$self$毫不客气地甩开$target$的手，语气充满了厌恶。\"你是不是脑子有问题？报警了。\"", "$self$像是看到了什么脏东西一样拍打着被碰过的地方。\"别以为我不敢动手，滚！\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 素股口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","receiver","intercrural","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 被素股 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地哼了一声，感受到下身的异样后反而顺从地张开了腿。\"嗯……是你啊……随你便吧……\"", "$self$半梦半醒间抱住了$target$的脖子，慵懒地蹭了蹭。\"大半夜的……真是精力旺盛……\"", "$self$在睡梦中发出一声甜腻的鼻音，下意识地配合起对方的动作。\"唔……好热……\""
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","receiver","intercrural","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 被素股 无允许 好意 口上文",
+                        "responses":[
+"$self$被弄醒后惊讶地看着$target$，随即露出一个复杂的笑容。\"居然偷袭……胆子不小嘛。\"", "$self$没有推开对方，反而好奇地打量着那根作恶的东西。\"虽然吓了一跳……但这尺寸看起来不错？\"", "$self$无奈地叹了口气，主动抬高了腰。\"既然都被弄醒了……那就做到底吧。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 被素股 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","receiver","intercrural","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$惊恐地看着压在身上的$target$，在对方的威慑下不敢出声。\"不、不敢动……\"", "$self$瑟瑟发抖地缩成一团，绝望地闭上了眼睛。\"既然你要这样……那就快点……\"", "$self$因为恐惧而全身发软，只能任由摆布。\"别打我……我听话……我听话……\""
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","intercrural", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被素股 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$的呼吸变得急促，大腿内侧的肌肉开始微微痉挛。\"哈啊……虽然没有进去，但是……好舒服……\"", "$self$紧紧抓着$target$的肩膀，私处渗出的蜜液让摩擦变得更加顺滑。\"嗯……别停……就这样……磨那里……\"", "$self$眼神迷离，主动加快了摆腰的频率。\"这算什么嘛……弄得人家越来越想要了……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被素股 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","intercrural", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$原本抗拒的手逐渐变成了拥抱，呼吸也变得滚烫。\"不妙……这种感觉……明明不应该的……\"", "$self$咬着手指，眼神中原本的清明逐渐被情欲吞噬。\"如果是$target$的话……也许……可以更多一点……\"", "$self$羞耻地夹紧了双腿，却反而让龟头被包裹得更紧。\"呜……身体……变得奇怪了……\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","intercrural", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被素股 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$有些不耐烦地推了推$target$的胸口。\"只是这样磨来磨去的，皮都要破了。\"", "$self$干涩地皱着眉，身体僵硬地承受着摩擦。\"有点疼……今天状态不太好，算了吧。\"", "$self$长叹了一口气，松开了夹紧的双腿。\"除了痒什么感觉都没有，还是睡觉吧。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被素股 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","intercrural", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$眼角噙着泪水，死死地抓着床单忍受着。\"够了吧……放开我……\"", "$self$面无表情地看着天花板，仿佛灵魂已经出窍。\"快点结束……求你了……\"", "$self$极力忍耐着想要呕吐的冲动，身体因为厌恶而不断瑟缩。\"好恶心……只感到恶心……\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

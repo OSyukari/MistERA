@@ -71,7 +71,7 @@ public class Manageable_Party : I_IsJobGiver
     {
         get
         {
-            return this.Job.Expedition == null ? " - " : this.Job.Expedition.Base.DisplayName;
+            return this.Job.ExpeditionName;
         }
     }
 

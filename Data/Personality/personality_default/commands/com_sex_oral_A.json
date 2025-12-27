@@ -1,0 +1,252 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_oral_A_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                
+                "requireSelfDoer": true,
+                "_comment":"攻方 舔肛 高潮" ,
+                "responses": [
+                    "($self$) 舔肛 高潮 口上文"
+                ]
+            },
+            {
+                
+                "requireSelfReceiver": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 受方 被舔肛 高潮 有允许 口上文" ,
+                        "responses": [
+"$self$猛地仰起头，十指死死抓破了床单，身体像拉满的弓一样绷紧。\"啊啊——不行了！要到了！$target$！\"", "$self$浑身剧烈痉挛，从喉咙里发出一声尖锐而变调的叫喊，眼前一片空白。\"去了……呜呜……真的去了……\"", "$self$无力地瘫软下来，大口喘息着，身体还在余韵中不住地颤抖。"
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 受方 被舔肛 高潮 无允许 口上文" ,
+                "responses": [
+"$self$尽管拼命咬住嘴唇想要忍耐，但身体还是在达到顶点的瞬间背叛了意志，猛烈地抽搐起来。\"不……不要……这种事……啊啊啊！\"", "$self$绝望地抓着头发，眼泪随着高潮一同喷涌而出，理智在快感的冲击下彻底粉碎。\"怎么会……这种感觉……呜……杀了我吧……\"", "$self$眼神涣散，嘴角流出口水，整个人在一波又一波的快感浪潮中彻底失神，看起来狼狈不堪。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_oral_A_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被舔肛 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$自觉地把长发拨到胸前，双手撑在床上抬高了腰部。\"如果是$target$想做的话……只有这一次哦。\"", "$self$回头看了一眼，轻轻咬住下唇，顺从地分开臀瓣。\"真拿你没办法……那里要洗干净才行。\"", "$self$虽然有些难为情，但还是按照$target$的要求趴伏下来，把最隐秘的部位暴露出来。"
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被舔肛 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$整个人僵住，眼睛瞪大，完全没料到事情会发展成这样，但也没有推开。\"等、等等……$target$？这是在做什么？\"", "$self$张了张嘴想说什么，最后却只是尴尬地抓住了衣角。\"如果是开玩笑的话……有点过分了……\"", "$self$不知所措地看着天花板，任由$target$摆布，大脑似乎宕机了。"
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被舔肛 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$浑身发抖，紧紧闭着眼睛不敢看身后，眼角渗出生理性的泪水。\"我知道了……我会听话的……请别伤害我……\"", "$self$死死咬着嘴唇，双手用力绞在一起，屈辱地将身体摆成了对方要求的姿势。\"只要做完这个……就会放过我对吧？\"", "$self$脸色苍白，像个木偶一样机械地趴着，完全放弃了抵抗。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_oral_A",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被舔肛 口上文",
+                "responses":
+                [ 
+"$self$在睡梦中皱了皱眉，似乎做了一个奇怪的梦，嘴里发出无意义的呢喃。", "$self$的身体因为敏感点的刺激偶尔抽动一下，呼吸节奏变得有些紊乱，但依然沉睡着。", "$self$完全没有察觉到正在发生的事，只有那不断分泌的爱液证明身体并非无动于衷。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被舔肛 口上文",
+                "responses":
+                [ 
+"$self$保持着原本的姿势一动不动，唯有那里的肌肉随着$target$的舌头本能地收缩与舒张。", "$self$毫无知觉地承受着侵犯，私处在反复的舔舐下逐渐充血变红。", "$self$像是一尊精美的雕塑，被$target$肆意地摆弄，没有任何精神层面的反馈，只有纯粹的肉体反应。"
+
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 被舔肛 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$被刺激惊醒，下意识地一脚踢开了$target$。\"干什么啊！让人睡觉行不行！\"", "$self$慌乱地裹紧被子缩到床角，一脸惊魂未定。\"你疯了吗？我有起床气的！\"", "$self$烦躁地拍开身后的手，把头蒙进被子里。\"别碰我……累死了……\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 被舔肛 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$像触电一样弹起来，抓起枕头就砸向$target$。\"变态！滚出去！\"", "$self$惊慌失措地推搡着身后的人，大声呼救。\"救命！你在干什么！\"", "$self$连滚带爬地逃下床，缩在角落里瑟瑟发抖。\"别过来！我会喊人的！\""
+
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被舔肛 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$迅速并拢双腿，有些好笑地推了推$target$的脑袋。\"别闹了，那种地方怎么可以……\"", "$self$抓紧了裤腰，一脸难以置信地看着$target$。\"你是认真的吗？绝对不行，太脏了。\"", "$self$用枕头挡住身后，语气坚决。\"除了那里，其他地方都可以，唯独这个不行。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被舔肛 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$尴尬地笑了笑，不动声色地拉开了距离。\"哈哈哈，$target$你喝多了吧？这个玩笑一点都不好笑。\"", "$self$按住$target$的手，语气尽量保持轻松。\"这种事还是留给你的女朋友吧，我们只是朋友。\"", "$self$有些困扰地挠了挠头。\"抱歉，我接受不了这种尺度的接触。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被舔肛 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$猛地站起身，眼神冰冷地盯着$target$。\"你让我感到恶心。离我远点。\"", "$self$毫不客气地甩开$target$的手，语气尖锐。\"你有病吗？信不信我报警？\"", "$self$抱胸冷笑一声，满脸鄙夷。\"也不照照镜子看看自己是谁。滚。\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 舔肛口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 被舔肛 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地哼了一声，感觉到身后的异样后只是慵懒地舒展了一下身体。\"嗯……大半夜的……真是坏心眼……\"", "$self$半梦半醒间本能地翘起臀部，含混不清地嘟囔着。\"随你喜欢吧……轻点弄……\"", "$self$困倦地揉了揉眼睛，侧过身方便$target$动作。\"真是的……明天再做不行吗……\""
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 被舔肛 无允许 好意 口上文",
+                        "responses":[
+"$self$被身后的触感弄醒，惊讶之余却发出了一声舒服的叹息。\"呃？$target$？这种事……居然趁我不注意……\"", "$self$虽然醒了，却装作还在睡，只是身体配合地放松了括约肌。", "$self$迷茫地眨了眨眼，适应了刺激后反而向后贴近了$target$。\"既然都开始了……那就继续吧……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 被舔肛 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$惊恐地醒来，刚想尖叫就被捂住了嘴，只能发出呜呜的悲鸣。\"（点头表示顺从）\"", "$self$发现现状后绝望地闭上眼，身体因为恐惧而僵硬。\"不要打我……我做……我做……\"", "$self$在这突如其来的侵犯中吓得不敢动弹，只能无声地流泪。"
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被舔肛 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$原本紧抓床单的手指慢慢松开，腰肢开始随着$target$的动作无意识地迎合。\"唔……好像，变得奇怪起来了……\"", "$self$发出细碎的鼻音，大腿内侧开始轻微颤抖。\"没想过……那里也会有感觉……$target$……\"", "$self$把脸埋进臂弯里，呼吸明显变得急促。\"再……深一点……也没关系……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被舔肛 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$原本抗拒的手慢慢抓住了$target$的肩膀，眼神变得迷离。\"这、这是什么感觉……停不下来……\"", "$self$咬住自己的手背试图压抑声音，但喉咙深处还是漏出了低吟。\"不行的……我们不能这样……呜……\"", "$self$身体软得像一摊水，刚才的立场似乎完全崩塌了。\"明明不应该的……可是……好舒服……\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被舔肛 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$难受地扭动了一下身体，试图避开$target$的动作。\"好了没……我有点受不了了。\"", "$self$的声音听起来有些干涩，身体僵硬得像块石头。\"感觉怪怪的……能不能停下来？\"", "$self$没有发出任何声音，只是死死抓着身下的床单，默默忍受着倒计时。"
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被舔肛 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","rimjob","spread_pussy","spread_ass", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$忍着强烈的不适感，指甲深深掐进掌心。\"还没有结束吗……我要吐了。\"", "$self$身体不断地轻微抽搐，那是生理性排斥的反应。\"快点滚开……求你了……\"", "$self$眼神空洞地盯着墙壁，仿佛灵魂已经出窍，只剩躯壳在忍受折磨。"
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

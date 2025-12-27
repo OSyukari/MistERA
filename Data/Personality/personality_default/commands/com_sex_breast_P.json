@@ -1,0 +1,248 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_breast_P_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                "requireSelfReceiver": true,
+                "_comment":"受方 被乳交 高潮" ,
+                "responses": [
+                    "($self$) 被乳交 高潮 口上文"
+                ]
+            },
+            {
+                "requireSelfDoer": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","doer","boobjob", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 攻方 乳交 高潮 有允许 口上文" ,
+                        "responses": [
+"$self$突然仰起脖子，双手死死抱紧$target$的头，身体剧烈痉挛。\"啊！那是……不行了！要去啦！啊啊啊——♡\"", "$self$眼神瞬间涣散，乳房剧烈收缩挤压着那根肉棒，口中发出不成调的尖叫。\"我不行了……哪怕只是摩擦……也……啊哈——！♡\""
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","doer","boobjob", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 攻方 乳交 高潮 无允许 口上文" ,
+                "responses": [
+"$self$不敢置信地瞪大了眼睛，身体背叛理智迎来了高潮。\"不……怎么会这样……我是被强迫的……为什么会……呀啊啊啊！\"", "$self$咬紧牙关试图忍耐，却在最后一刻崩溃地弓起身子。\"别看！不要看我这样……呜呜……好奇怪……有什么东西坏掉了……啊啊！\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_breast_P_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","doer","boobjob", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始乳交 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$温柔地揽住$target$的脖子，将胸前的柔软贴了上去。\"既然你想要的话……这就让你舒服起来。\"", "$self$拉开领口，脸上带着纵容的笑意。\"真拿你没办法，快点进来吧，这里已经准备好了。\"", "$self$主动把$target$的手按在自己的乳房上，轻轻吐着热气。\"只要用这里就可以了吗？那就好好看着哦。\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","doer","boobjob", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始乳交 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$愣了一下，脸瞬间红到了耳根，却并没有推开。\"诶？这、这种事情……如果是$target$的话……只做一次哦。\"", "$self$有些手足无措地看着$target$逼近，最终还是闭上了眼睛。\"真不敢相信我会答应这种事……稍微轻一点。\""
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","doer","boobjob", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始乳交 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$颤抖着解开了衣扣，眼眶里噙着泪水不敢看$target$。\"我做……我做就是了……求你别伤害我。\"", "$self$僵硬地夹紧双臂，身体因为恐惧而瑟瑟发抖。\"只要这样你就满意了吗……快点结束吧。\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_breast_P",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","doer","boobjob","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 乳交 口上文",
+                "responses":
+                [ 
+"$self$发出平稳的呼吸声，偶尔因为胸部的刺激而皱一下眉，翻了个身继续睡。\"嗯……不要闹……\"", "（$self$完全沉浸在梦乡中，身体随着$target$的动作无意识地晃动，口中偶尔溢出无意义的梦呓。）"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","doer","boobjob","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 乳交 口上文",
+                "responses":
+                [ 
+"（$self$保持着原本的姿势一动不动，唯有胸部的软肉在$target$的抽插下剧烈变形，发出淫靡的水声。）", "（$self$毫无知觉地被摆弄成淫荡的姿势，眼神空洞地注视着前方，乳房被肆意玩弄却没有任何反应。）"
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 乳交 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$被惊醒后猛地坐起身，恼火地拍掉了$target$的手。\"你疯了吗！让人好好睡觉行不行！\"", "$self$带着哭腔蜷缩起身体，拉过被子盖住自己。\"我很困啊……不要这样……走开！\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 乳交 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$惊恐地尖叫起来，手脚并用地踢打着$target$。\"救命！滚开！谁来救救我！\"", "$self$抓起身边的台灯或枕头就砸了过去，满脸惊恐。\"变态！你怎么进来的！滚出去！\""
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 乳交 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$轻轻推开了$target$凑过来的身体，在他脸颊上亲了一下。\"还在做饭呢，别闹啦。\"", "$self$捂住胸口，嗔怪地瞪了$target$一眼。\"胸部今天胀得有点疼，下次吧好不好？\"", "$self$有些无奈地抓住了$target$乱动的手。\"我很累了，只想让你抱抱我，不做那个。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 乳交 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$尴尬地笑了笑，不动声色地拉开了距离。\"哈哈，这个玩笑有点过火了哦，$target$。\"", "$self$按住了$target$的手，语气坚定但温和。\"我们可以是很好的朋友，但不能越过这条线。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 乳交 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$厌恶地后退一步，眼神冷得像冰。\"离我远点！你这种想法真让人恶心。\"", "$self$毫不客气地甩开了$target$的手。\"你以为我是什么人？再碰我一下我就报警了！\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 乳交口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","doer","boobjob","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 乳交 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地睁开眼，感觉到胸前的异样后反而抱住了$target$的头。\"唔……坏蛋……大半夜的……嗯哼……\"", "$self$在半梦半醒间发出一声甜腻的鼻音，顺从地用胸部夹住了那根火热。\"好热……是你吗？那就……随你吧……\""
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","doer","boobjob","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 乳交 无允许 好意 口上文",
+                        "responses":[
+"$self$惊讶地看着胸前的状况，随即脸红心跳地默认了这种行为。\"天哪……怎么会……但是……嗯……\"", "$self$在一种莫名的背德感刺激下，并未反抗而是配合了起来。\"如果是梦的话……稍微放纵一下也可以吧……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 乳交 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","doer","boobjob","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$刚想尖叫就被捂住了嘴，只能绝望地流着泪任由摆布。\"唔唔……（只有细微的啜泣声）\"", "$self$看清局势后绝望地闭上了眼，放弃了无谓的挣扎。\"不要……求求你……这一天终于还是来了吗……\""
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","doer","boobjob", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 乳交 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$的脸颊泛起红晕，眼神迷离地看着$target$。\"嗯……你也变得好热……这种感觉还不赖。\"", "$self$更加卖力地收紧了双臂，发出黏腻的水声。\"虽然有点累，但看你这么舒服的样子……我也好开心。\"", "$self$低下头亲吻着$target$的额头，动作变得更加柔和。\"喜欢吗？我会一直夹紧的……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 乳交 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","doer","boobjob", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$原本紧绷的身体慢慢放松下来，呼吸也变得急促。\"其实……并没有想象中那么讨厌……\"", "$self$有些羞耻地咬着嘴唇，但乳房却主动迎合着动作。\"奇怪……为什么身体会变得这么热……\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","doer","boobjob", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 乳交 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$皱着眉头调整了一下姿势，显然有些疲惫。\"还要多久……胳膊有点酸了。\"", "$self$的动作变得有些敷衍，眼神飘向了别处。\"差不多了吧？这种事情总是很无聊。\"", "$self$叹了口气，松开了紧贴的双乳。\"你太用力了，弄得我有点疼，轻一点行不行？\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 乳交 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","doer","boobjob", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$死死地盯着天花板，眼中满是屈辱和不耐。\"还没完吗？真的够了。\"", "$self$发出一声痛苦的闷哼，试图推开$target$的头。\"我想吐……放开我，现在就放开！\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

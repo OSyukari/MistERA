@@ -85,11 +85,14 @@ public class ActionPackage_Expedition : ActionPackage
         actorRefs = null;
         doer_cache = null;
         this.weight = GetWeight(job.FactionOwner_Party, out var tooltip);
+
         if (false && SourceEV.eventID == "exp_event_caveGoblinCaptive")
         {
             Debug.LogError($"exp_event_caveGoblinCaptive weight {weight} ModifiedWeight {JobExp.Expedition.GetWeightModifiers(SourceEV.tags, this.weight)}\n{String.Join("\n", tooltip)}");
         }
-        this.weight = JobExp.Expedition.GetWeightModifiers(SourceEV.tags, this.weight);
+
+        if (JobExp != null && JobExp.Expedition != null && SourceEV != null) this.weight = JobExp.Expedition.GetWeightModifiers(SourceEV.tags, this.weight);
+
         this.duration = SourceEV.DurationMinutes;
 
         this.memEntryName = JobExp.FactionOwner_Party.Job.DisplayName;

@@ -160,24 +160,33 @@ public static class CharaReqUtility
 
         if (!tags.Contains("NonInteraction") && !c.Stats.isConsciousnessUnconscious)
         {
-            if (tags.Contains("service"))
+            int cost = 0;
+            if (tags.Contains("unsafe") || tags.Contains("safe"))
             {
-                // service cost no matter what
-                var cost = (int)Math.Floor(c.Stats.Energy_InteractionCost / 2f);
-                if (cost != 0)
+                if (tags.Contains("rape"))
                 {
-                    if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", cost);
-                    c.Stats.Energy.ModValue(cost);
+                    // getting raped, interaction cost
+                    cost = (int)Math.Floor(c.Stats.Energy_InteractionCost / 2f);
+                }
+                else if (tags.Contains("service"))
+                {   // getting serviced or offering service, service cost no matter what
+                    cost = (int)Math.Floor(c.Stats.Energy_InteractionCost / 2f);
                 }
             }
             else if (tags.Contains("interaction"))
             {
+               // Debug.Log($"interaction cost, isdoer {isDoer} tags {String.Join("|",tags)}");
                 if (isDoer || !tags.Contains("ignored"))
                 {
-                    // interaction cost
-                    if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", (int)c.Stats.Energy_InteractionCost);
-                    c.Stats.Energy.ModValue(c.Stats.Energy_InteractionCost);
+                    cost = (int)c.Stats.Energy_InteractionCost;
                 }
+            }
+
+            if (cost != 0)
+            {
+                Debug.Log($"interaction cost {cost} for {String.Join("|", tags)}");
+                if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", cost);
+                c.Stats.Energy.ModValue(cost);
             }
         }
     }

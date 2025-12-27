@@ -8,7 +8,16 @@ using TMPro;
 
 public class ExpeditionInstance
 {
-    [JsonIgnore] public int UsageCount = 0;
+    int UsageCount = 0;
+
+    public void ResetUsage()
+    {
+        this.UsageCount = 0;
+    }
+    public void NotifyUsage()
+    {
+        UsageCount += 1;
+    }
 
     [JsonIgnore]
     public bool CanDelete

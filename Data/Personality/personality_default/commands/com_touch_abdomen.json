@@ -1,0 +1,160 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_abdomen_Begin",
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被抚摸腹部 有允许 口上文" ,
+                "responses":
+                [ 
+                    "$self$并没有躲闪，而是放松了腹部的肌肉，任由$target$的手掌贴了上来。\"别乱挠哦，我很怕痒的。\"", "$self$顺势向后靠去，露出毫无防备的小腹，嘴角带着笑意。\"要在那里取暖吗？真是个像孩子一样的习惯。\"", "$self$轻轻抓住了$target$放在自己肚子上的手，却没有移开的意思。\"刚吃饱不久，小心点摸。\"", "$self$低头看着那只手，眼中流露出一丝安心的神色。\"嗯……这种感觉还不赖。\"", "$self$并没有说话，只是配合着$target$的动作调整了一下呼吸，身体显得很柔软。", "$self$主动拉起衣服下摆（如果穿着的话），大方地展示出肌肤。\"仅限两分钟哦？\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":[ "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被抚摸腹部 未允许 好意 口上文" ,
+                "responses":
+                [ 
+                    "$self$身体明显僵硬了一下，露出错愕的表情。\"呃？这、这是什么新的打招呼方式吗？\"", "$self$愣在原地，视线在$target$的手和脸之间来回游移，一时忘了反应。\"那个……您在做什么？\"", "$self$虽然感到意外，但并没有立刻推开，只是困惑地眨了眨眼。\"如果是检查身体的话……请快一点。\"", "$self$紧张地屏住了呼吸，双手不知道该放在哪里。\"如果不疼的话……倒是没关系……\"", "$self$有些迟疑地看着$target$，似乎在判断对方的意图。\"这就是所谓的……治疗吗？\""
+                ]
+            },
+            {
+                
+                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被抚摸腹部 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+                    "$self$浑身颤抖着，死死咬住下唇，不敢发出一点声音。\"……我知道了，请不要伤害我。\"", "$self$紧闭着双眼，身体绷得像石头一样硬，任由那只手在腹部游走。\"只要……只要这样就可以了吗？\"", "$self$脸色苍白，眼神空洞地看着别处，双手紧紧抓着身下的布料。\"……随意吧。\"", "$self$发出了一声短促的惊呼，随即立刻捂住嘴，惊恐地看着$target$。\"对不起……我不会反抗的。\"", "$self$像是放弃了挣扎一般垂下头，身体随着$target$的动作因为恐惧而细微抽搐。\"……请轻一点。\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_abdomen",
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被抚摸腹部 口上文",
+                "responses":
+                [ 
+                    "$self$发出含糊不清的呓语，下意识地想要翻身躲避腹部的异样感，却被按住。", "$self$眉头微微皱起，但在手掌温暖的抚慰下很快又舒展开，呼吸变得平稳。", "$self$迷迷糊糊地伸出手，像是赶苍蝇一样挥了一下，随即又沉沉睡去。", "$self$似乎把那只手当成了抱枕的一部分，主动抱住并蹭了蹭，嘴里嘟囔着什么。", "$self$受到刺激，身体本能地缩了一下，随后发出沉重的呼吸声，依然没醒。", "$self$完全没有察觉，只是随着腹部被按压的节奏，喉咙里发出轻微的呼噜声。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被抚摸腹部 口上文",
+                "responses":
+                [ 
+                    "$self$静止在原地，唯有腹部的肌肤随着$target$的手指按压而凹陷，没有任何生理性回弹。", "$self$保持着上一秒的姿势，完全不知道有一只手正在她的皮肤上肆意游走描绘。", "$self$的表情凝固在微笑的瞬间，对于小腹上传来的触感和温度毫无知觉。", "$self$腹部的软肉被随意揉捏成各种形状，像是一块静止的柔软粘土。", "$self$毫无反应地承受着一切，只有皮肤表面因为摩擦微微泛红，却没有任何神经信号传达。", "$self$连呼吸都被冻结，那只手掌在她腹部的抚摸如同幽灵穿过静止的雕塑。"
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被抚摸腹部 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$像是触电般缩了一下身子，笑着拍掉了$target$的手。\"呀！好痒！别碰那里！\"", "$self$捂着肚子退后半步，脸上带着戏谑的警惕。\"你手太凉了！绝对不行！\"", "$self$抓住了$target$的手腕，坚定地摇了摇头。\"刚吃完饭肚子不舒服，别闹。\"", "$self$有些难为情地侧过身去，避开了接触。\"这里……最近胖了一点，不想被碰。\"", "$self$叹了口气，把$target$的手拿开并塞了个抱枕过去。\"摸这个吧，手感差不多。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被抚摸腹部 无允许 善意 口上文",
+                        "responses":
+                        [ 
+                            "$self$礼貌而坚定地挡住了$target$的手，带着职业化的微笑。\"先生/小姐，请注意您的手，这个部位不太合适。\"", "$self$不动声色地后退一步，拉开了安全距离。\"不好意思，我不习惯和人这么亲近。\"", "$self$有些尴尬地抓了抓头发，侧身避过。\"那个，能不能别碰肚子？感觉怪怪的。\"", "$self$伸手轻轻架住了$target$的手臂。\"虽然不想扫兴，但这有点越过我的舒适圈了。\"", "$self$用开玩笑的语气化解了尴尬。\"哎呀，肚子上全是肉，可没什么好摸的。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被抚摸腹部 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":
+                 [
+                    "$self$猛地拍掉了伸过来的手，眼神瞬间冷了下来。\"你想干什么？离我远点！\"", "$self$厌恶地皱起眉头，迅速倒退几步并做出了防御姿态。\"别用你的脏手碰我！\"", "$self$直接发出了一声响亮的咋舌声，毫不掩饰眼中的鄙夷。\"谁允许你碰这里的？真恶心。\"", "$self$冰冷地盯着$target$，语气里充满了警告意味。\"再往前伸一寸，我就报警了。\"", "$self$甚至没有正眼看$target$，只是嫌弃地拍了拍刚才被碰到的衣服位置。\"下次注意点分寸。\""
+                 ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被抚摸腹部 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$的呼吸变得有些绵长，整个人像猫一样蜷缩起来。\"嗯……意外地很舒服，手掌热热的……\"", "$self$半眯着眼睛，甚至发出了一声轻哼。\"你的按摩技术什么时候变得这么好了？\"", "$self$把手覆在$target$的手背上，引导着动作。\"再往旁边一点……对，就是那里。\"", "$self$脸上泛起淡淡的红晕，声音变得有些黏糊。\"稍微……有点困了。继续这样也没关系。\"", "$self$发出一声满足的叹息，完全放松了警惕。\"感觉胃暖暖的，真神奇。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被抚摸腹部 结果正面 未允许 口上文",
+                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+                    "$self$原本紧绷的肩膀逐渐放松下来，眼神中的戒备消散了不少。\"……不得不承认，你的手法很专业。\"", "$self$有些意外地低头看了看，似乎不再排斥这种接触。\"原来不是恶作剧吗？抱歉刚才误会你了。\"", "$self$长出了一口气，神情变得柔和了一些。\"这种热度……倒是正好缓解了我的胃痛。\"", "$self$有些不好意思地别过头，声音变小了。\"稍微……没那么讨厌了。\"", "$self$竟然在不知不觉中适应了这个距离。\"如果不乱动的话，再放一会儿也可以。\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被抚摸腹部 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$还是没忍住笑场了，扭动着身体躲开了手。\"不行不行！还是太痒了，受不了了！\"", "$self$有些僵硬地坐直了身子，轻轻推开了$target$。\"好了……一直摸这里感觉怪怪的。\"", "$self$皱了皱眉，似乎感到了一丝不适。\"是不是按得太重了？有点疼。\"", "$self$尴尬地清了清嗓子，把衣服拉了下来。\"那个……时间太长了吧？有点难为情。\"", "$self$抓住了$target$乱动的手指，语气稍微严肃了一些。\"越界了哦。只是摸摸的话已经够了吧。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被抚摸腹部 结果负面 未允许 口上文",
+                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+                    "$self$忍无可忍地挥开了$target$的手，呼吸有些急促。\"够了！你是变态吗？还要摸多久！\"", "$self$浑身的不适感达到了顶点，脸色变得非常难看。\"不仅没有变好，反而更让人火大了。\"", "$self$强忍着反胃的感觉，迅速整理好衣服退开。\"我真是疯了才会让你继续。\"", "$self$眼中的厌恶几乎要溢出来，冷冷地瞪着$target$。\"现在的流氓都这么有耐心吗？滚开。\"", "$self$咬牙切齿地低语，身体因为愤怒而轻微发抖。\"利用别人的容忍度也是有限度的……\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

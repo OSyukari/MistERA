@@ -14,7 +14,7 @@
                         "maxTeamCount": 99,
                         "charaReq_Select": { "cost_EN": 4, "cost_ST": 6 }
                     },
-                "weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"goblin_guardpost" } } ],
+"weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"goblin_guardpost" } } ],
                 "possibleResults": [
                     {
                         "baseWeight": 6,
@@ -33,7 +33,7 @@
                                 "frontlineKeys":["enemy","teamB_frontline"], "supportKeys":["enemy","teamB_backline"]
                             }]
                         } ],
-                        "weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"Encounter" } } ]
+"weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"Encounter" } } ]
                     },
                     {
                         "baseWeight": 2,

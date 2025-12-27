@@ -95,6 +95,12 @@ public class Job_Sex_Group : Job
     public List<int> rapistActorList = new List<int>();
     List<int> _rapistActorList = new List<int>();
 
+    public bool isRapist(Character_Trainable c)
+    {
+        if (c == null) return false;
+        return this.Rapist.Contains(c.RefID);
+    }
+
     [JsonIgnore]
     public List<int> Rapist
     {

@@ -1,0 +1,160 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_ears_Begin",
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被撫摸耳朵 有允许 口上文" ,
+                "responses":
+                [ 
+                    "$self$很自然地把头靠向了$target$的手掌，发出一声舒服的鼻音。\"嗯……那里好痒。\"", "$self$没有停下手里的动作，只是微微侧过头，任由$target$的手指把玩着耳垂。", "$self$缩了缩脖子，笑着躲了一下，随即又主动凑了过去。\"别闹……好啦，让你摸一会儿。\"", "$self$闭上眼睛，脸上浮现出放松的神情，像只被顺毛的猫咪。"
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":[ "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被撫摸耳朵 未允许 好意 口上文" ,
+                "responses":
+                [ 
+                    "$self$整个人僵在原地，甚至忘记了躲避，眼睛瞪得大大的。\"诶？那个……这是在做什么？\"", "$self$的肩膀猛地耸起，不可置信地看着$target$。\"请、请等一下……！\"", "$self$慌乱地想要退后，却因为太过震惊而没能第一时间做出反应。"
+                ]
+            },
+            {
+                
+                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被撫摸耳朵 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+                    "$self$紧紧咬着嘴唇，身体因为恐惧而微微发抖，却不敢反抗$target$的动作。", "$self$死死盯着地面，眼眶微红，强忍着想要尖叫的冲动任由对方触碰。", "$self$虽然满脸厌恶，但在$target$冰冷的注视下，只能僵硬地垂下双手。\"……如果您非要这样的话。\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_ears",
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被撫摸耳朵 口上文",
+                "responses":
+                [ 
+                    "$self$在睡梦中皱了皱眉，下意识地想要抓挠耳朵，却抓住了$target$的手指。", "$self$发出一声含糊不清的呓语，翻了个身把头埋进枕头里，试图躲避骚扰。", "$self$的呼吸节奏被打乱了，睫毛轻颤，似乎因为耳朵上的异样感即将醒来。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被撫摸耳朵 口上文",
+                "responses":
+                [ 
+                    "$self$依然保持着静止的姿势，但被揉捏的耳垂已经充血变红，这是身体本能的生理反应。", "$self$毫无知觉地凝固在空气中，只有耳朵随着$target$的手指形状发生着形变。", "$self$僵直的身体无法做出回应，但受刺激的耳道内壁开始微微分泌出湿润的体液。"
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被撫摸耳朵 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$轻轻拍掉了$target$的手，嗔怪地瞪了一眼。\"痒死啦，快放手。\"", "$self$捂着耳朵跳到一边，脸上带着开玩笑的嫌弃。\"你的手好冰！绝对不要！\"", "$self$偏头躲开了$target$的触碰，有些无奈地叹气。\"我现在没空陪你玩这个，正忙着呢。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被撫摸耳朵 无允许 善意 口上文",
+                        "responses":
+                        [ 
+                            "$self$礼貌但不失坚定地挡开了$target$的手，尴尬地笑了笑。\"那个……我不太习惯这种接触，抱歉。\"", "$self$不动声色地拉开了距离，整理了一下头发掩盖耳朵。\"如果是玩笑的话，有点过火了哦。\"", "$self$后退半步，用疑惑的眼神看着$target$。\"我想我们要讨论的不是我的耳朵吧？\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被撫摸耳朵 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":
+                 [
+                    "$self$猛地挥手打开了$target$的手臂，眼神瞬间冷了下来。\"别碰我！\"", "$self$像看垃圾一样看着$target$，声音里充满了警告。\"你这是性骚扰，请自重。\"", "$self$立刻退到安全距离，警惕地护住耳朵。\"我有权报警，如果你再靠近的话。\""
+                 ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被撫摸耳朵 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$的呼吸变得稍微有些急促，脸颊泛起淡淡的红晕。\"嗯……$target$的手法……意外地让人不想停下来……\"", "$self$彻底放下了手里的东西，软软地靠在$target$怀里。\"再多摸一会儿……那边也要……\"", "$self$抓住$target$的手腕，不让对方离开。\"怎么停了？继续嘛。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被撫摸耳朵 结果正面 未允许 口上文",
+                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+                    "$self$原本抗拒的手逐渐垂下，眼里的警惕被一种迷茫取代。\"这是……什么感觉……\"", "$self$的喘息声变得沉重，虽然还在试图推拒，力气却越来越小。\"不……不行……这种事……\"", "$self$咬着手指，眼神开始变得涣散，身体不由自主地迎合着$target$的动作。"
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被撫摸耳朵 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$有些不耐烦地推开了$target$的手，揉了揉发红的耳廓。\"够了吧？有点痛了。\"", "$self$皱着眉头，身体僵硬地往后缩了缩。\"这种感觉怪怪的……我不喜欢，停下吧。\"", "$self$叹了口气，把$target$的手拿下来放在一边。\"玩够了吗？我的耳朵都要被你捏肿了。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被撫摸耳朵 结果负面 未允许 口上文",
+                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+                    "$self$忍无可忍地爆发了，用力推开$target$转身就跑。\"变态！离我远点！\"", "$self$的眼泪终于掉了下来，用袖子拼命擦拭着耳朵。\"恶心……太恶心了……\"", "$self$浑身颤抖地缩在角落里，看向$target$的眼神充满了恐惧和憎恨。"
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

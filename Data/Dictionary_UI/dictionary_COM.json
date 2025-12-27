@@ -7,7 +7,7 @@
         "ActionPackage_ProductionOrder_join": "帮$target$$apName$",
         "ActionPackage_ProductionOrder_joinEX": "协助$apName$$target$",
         "ActionPackage_join": "与$target$$apName$",
-        "ActionPackage_joinEX": "一起$apName$$target$",
+        "ActionPackage_joinEX": "$apName$$target$",
                 "ep_Description_preparing": "准备$comdescription$",
                 "ep_Description_replace": "然后……",
                 "ep_Description_start": "$doer$开始$comdesc$$receiver$",

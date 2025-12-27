@@ -1,0 +1,160 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_shoulders_Begin",
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被抚摸肩部 有允许 口上文" ,
+                "responses":
+                [ 
+                    "$self$很自然地向$target$身边靠了靠，肩膀微微下沉以迎合对方的手掌。", "$self$感受到肩膀上的温度，嘴角不自觉地上扬。\"嗯？怎么突然这么粘人？\"", "$self$没有回头，只是反手轻轻覆在$target$的手背上拍了拍。", "$self$发出一声舒服的叹息，紧绷的肩部肌肉在$target$的触碰下瞬间放松下来。", "$self$侧过头，脸颊在$target$的手指上蹭了蹭，像只温顺的小动物。", "$self$笑着耸了耸肩，却没有躲开。\"怎么，想给我按摩吗？\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":[ "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被抚摸肩部 未允许 好意 口上文" ,
+                "responses":
+                [ 
+                    "$self$被触碰的瞬间明显僵了一下，随即困惑地看向$target$。", "$self$有些不知所措地停下了手中的动作，眼神游移不定。\"呃……有什么事吗？\"", "$self$虽然没有躲开，但身体维持着一种尴尬的僵硬姿态。", "$self$睁大了眼睛盯着肩上的手，似乎在确认发生了什么。\"那个……请问？\"", "$self$迟疑地张了张嘴，最终还是保持了沉默，只是视线不敢与$target$接触。", "$self$小心翼翼地缩了缩脖子，表现出一种试探性的顺从。"
+                ]
+            },
+            {
+                
+                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被抚摸肩部 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+                    "$self$感受到肩膀上的重量，脸色瞬间变得苍白，身体止不住地轻颤。", "$self$紧紧咬着下唇，不敢反抗，只能低头盯着地面。", "$self$像个木偶一样任由$target$触碰，眼中满是惊恐的水雾。", "$self$全身紧绷，呼吸变得急促而浅短，仿佛随时会窒息。", "$self$强忍着想要尖叫的冲动，手指死死抓着衣角。\"对、对不起……\"", "$self$闭紧双眼，试图在脑海中屏蔽掉肩上传来的触感。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_shoulders",
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被抚摸肩部 口上文",
+                "responses":
+                [ 
+                    "$self$发出轻微的呓语，翻了个身背对着$target$，似乎在躲避骚扰。", "$self$皱了皱鼻子，迷迷糊糊地用手挥了一下，像是在赶苍蝇。\"嗯……别闹……\"", "$self$呼吸依旧平稳深长，对肩上的触碰完全没有察觉。", "$self$在睡梦中似乎感觉到了舒适，无意识地向着温暖的源头蹭了蹭。", "$self$睫毛微微颤动，嘴里含糊不清地嘟囔着什么，但并没有醒来。", "$self$身体本能地缩成一团，将被子拉高盖住了肩膀。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被抚摸肩部 口上文",
+                "responses":
+                [ 
+                    "$self$保持着上一秒的姿势一动不动，对手指在肩上的游走毫无反应。", "$self$像一尊精致的人偶，肩部肌肤在$target$的揉捏下凹陷变形，却无法回弹。", "$self$僵滞在空中的发丝随着$target$的动作轻微晃动，除此之外一片死寂。", "$self$毫无生气的瞳孔注视着虚空，身体任由$target$摆弄成任意形状。", "$self$皮肤上传来某种违和的触感，但神经信号无法传递到被冻结的大脑。", "$self$在静止的世界里，$self$的肩膀成了$target$手中唯一的‘活物’。"
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被抚摸肩部 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$笑着抓住了$target$的手腕，将其轻轻拿开。\"好啦，别闹，正忙着呢。\"", "$self$夸张地抖了一下肩膀，像是在躲避瘙痒。\"哎呀，好痒！快停下！\"", "$self$转过身，用手指戳了戳$target$的额头。\"现在不是撒娇的时候哦。\"", "$self$轻轻推了一下$target$，语气里带着笑意。\"去去去，别在这儿碍手碍脚的。\"", "$self$虽然没有生气，但还是侧身避开了接触。\"身上全是汗，别碰我啦。\"", "$self$无奈地叹了口气，把$target$的手从肩膀上摘了下来。\"严肃点，还有正事要做呢。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被抚摸肩部 无允许 善意 口上文",
+                        "responses":
+                        [ 
+                            "$self$礼貌地后退半步，拉开了社交距离。\"不好意思，我不习惯别人碰我。\"", "$self$微笑着轻轻挡开了$target$的手。\"请自重，$target$先生/小姐。\"", "$self$神色淡然地侧过身，巧妙地化解了这次接触。\"有什么话请直接说就好。\"", "$self$用一种得体但坚决的眼神制止了$target$的动作。\"我想我们还没熟到这种程度。\"", "$self$虽然还在笑，但身体明显地向后仰去。\"哎呀，您这是做什么？\"", "$self$整理了一下肩上的衣服，不动声色地移开了位置。\"请不要开这种玩笑。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被抚摸肩部 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":
+                 [
+                    "$self$猛地甩开$target$的手，眼神如刀般锋利。\"别碰我！\"", "$self$厌恶地拍打着刚才被触碰的地方，仿佛沾染了什么脏东西。\"滚开，真恶心。\"", "$self$冷冷地瞪着$target$，语气降到了冰点。\"把你的脏手拿开。\"", "$self$毫不客气地一把推开$target$。\"谁允许你碰我的？\"", "$self$后退几步，做出了防御的姿态，脸上写满了警惕与愤怒。\"你想干什么？！\"", "$self$嘲弄地瞥了一眼$target$的手。\"怎么？想性骚扰吗？\""
+                 ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被抚摸肩部 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$完全放松地靠在$target$怀里，眼睛半眯着。\"手法不错嘛……再按一会儿？\"", "$self$发出慵懒的鼻音，身体软绵绵地任由$target$摆布。\"嗯……那边也酸，再用力一点……\"", "$self$转过头，眼神迷离地看着$target$。\"你今天怎么这么体贴？\"", "$self$的手不自觉地攀上了$target$的手臂，似乎在寻求更多的接触。\"这就累了吗？不要停……\"", "$self$舒服地哼哼着，把脸埋进了$target$的臂弯里。", "$self$：\"感觉一天的疲劳都消失了……谢谢你，$target$。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被抚摸肩部 结果正面 未允许 口上文",
+                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+                    "$self$原本僵硬的肩膀慢慢放松下来，神情变得有些复杂。\"意外地……还不坏。\"", "$self$偷瞄了$target$一眼，脸颊泛起一丝不易察觉的红晕。\"手法倒是挺专业的……\"", "$self$不再抗拒，甚至微微调整姿势配合$target$的动作。", "$self$低声嘟囔了一句：\"看在你这么卖力的份上，这次就算了。\"", "$self$原本紧抿的嘴唇松开了，发出了一声细微的叹息。", "$self$眼神中的警惕逐渐消退，取而代之的是一种困惑的安逸。"
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被抚摸肩部 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$稍微扭动了一下身体，似乎觉得这个姿势有些不舒服。\"好了，有点疼了。\"", "$self$轻轻拍了拍$target$的手背，示意停止。\"即使是你，一直这样捏我也受不了啊。\"", "$self$皱了皱眉，肩膀不由自主地绷紧了。\"这里好像越按越酸了……\"", "$self$叹了口气，坐直了身体脱离接触。\"够了够了，我的肩膀都要被你捏碎了。\"", "$self$有些不耐烦地抖了抖肩膀。\"你是想把我的皮搓下来吗？\"", "$self$推开$target$的手，揉着自己的肩膀抱怨道：\"你的手劲太大了，下次轻点。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被抚摸肩部 结果负面 未允许 口上文",
+                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+                    "$self$终于忍无可忍地站起身，椅子发出刺耳的摩擦声。\"我说够了没有？！\"", "$self$眼中的厌恶已经掩饰不住，身体极度紧绷。\"你打算摸到什么时候？\"", "$self$咬牙切齿地低吼，声音里充满了压抑的怒火。\"放手！现在！\"", "$self$感觉受到了极大的冒犯，眼眶发红地瞪着前方。\"这算什么？职场霸凌吗？\"", "$self$身体剧烈颤抖，仿佛再也无法承受这种精神折磨。\"求你……别碰我了……\"", "$self$用尽全力甩动肩膀，试图摆脱那只令人作呕的手。"
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

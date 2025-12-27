@@ -1,0 +1,264 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_finger_caress_C_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                
+                "requireSelfDoer": true,
+                "_comment":"攻方 C抚摸 高潮" ,
+                "responses": [
+                    "($self$) C抚摸 高潮 口上文"
+                ]
+            },
+            {
+                
+                "requireSelfReceiver": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 受方 被C抚摸 高潮 有允许 口上文" ,
+                        "responses": [
+"$self$猛地弓起腰，十指紧紧扣住$target$的肩膀，发出高亢的尖叫。\"啊！那是……要坏掉了！一起……哈啊啊啊！！\"全身剧烈颤抖，爱液如喷泉般涌出。",
+"在一阵剧烈的痉挛中，$self$眼前炸开一片白光，大脑彻底断片，只剩下纯粹的快乐。她大张着嘴，无声地抽搐着，直至瘫软。"
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver","spread_pussy", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 受方 被C抚摸 高潮 无允许 口上文" ,
+                "responses": [
+"$self$绝望地摇着头，泪水狂飙，身体却背叛了意志，迎来了最为强烈的爆发。\"不要！不要看！这种事……呜哇啊啊啊！\"",
+"即使死死咬住嘴唇，$self$还是没能忍住那羞耻的悲鸣。身体在极致的快感中绷紧如弓，耻辱的高潮将她的理智冲击得粉碎。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_finger_caress_C_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","receiver","spread_pussy", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被C抚摸 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$并没有推开这只手，反而微微分开了双腿，声音细若蚊蝇：\"如果是$target$的话……没关系的。\"",
+"$self$顺从地向后仰去，将身体最私密的部分完全展露出来，眼神迷离地看着对方：\"嗯……轻一点哦……\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","receiver","spread_pussy", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被C抚摸 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$浑身僵硬地坐在那里，大脑似乎一片空白，任由那只手探入了裙底。\"等等……为什么……怎么会……\"",
+"完全没料到会发生这种事，$self$甚至忘记了反抗，只是睁大眼睛看着对方，身体因陌生的触感而微微发抖。"
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","receiver","spread_pussy", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被C抚摸 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$紧紧咬着下唇，不敢发出一点声音，眼角噙着泪水，绝望地任由对方摆布。\"我会听话的……请不要……伤害我……\"",
+"在某种无形的威压下，$self$颤抖着松开了护住裙摆的手，闭上眼睛不敢看对方的脸。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_finger_caress_C",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","receiver","spread_pussy","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被C抚摸 口上文",
+                "responses":
+                [ 
+"伴随着手指的抽插，$self$的呼吸变得沉重，胸口剧烈起伏，晶莹的口水顺着嘴角流下，却依然沉浸在深沉的睡眠中。",
+"$self$在睡梦中发出无意识的哼唧声，眉头微蹙，似乎做了一个羞耻的梦。双腿在本能的驱使下无意识地磨蹭着对方的手掌。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","receiver","spread_pussy","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被C抚摸 口上文",
+                "responses":
+                [ 
+"在凝固的时间里，$self$保持着上一秒的姿势，完全不知道自己的身体正在被肆意玩弄。唯有那逐渐充血红肿的阴唇，记录着此刻发生的暴行。",
+"$self$就像一尊精美的人偶，对侵入体内的手指毫无反应，但那紧致的肉壁却在本能地收缩、痉挛，贪婪地吞吐着异物。"
+
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 被C抚摸 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$一把拍开了那只作乱的手，翻过身背对着$target$，语气里满是起床气。\"我很累了！别闹！睡觉！\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 被C抚摸 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$发出一声尖叫，手脚并用地将对方踹开，抓起被子紧紧裹住自己。\"滚出去！你在干什么！变态！\""
+
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被C抚摸 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$红着脸并拢了双腿，阻止了进一步的动作：\"不行啦……明天还要早起，今晚就饶了我吧。\"",
+"$self$轻轻抓住了那只不安分的手，歉意地摇了摇头：\"抱歉亲爱的，今天身体不太舒服，只要抱抱好吗？\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被C抚摸 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$不动声色地向后退了一步，用开玩笑的口吻化解了尴尬。\"哎呀，这种玩笑可开不得，$target$你喝多了吧？\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被C抚摸 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$猛地站起身，用力甩开了那只手，眼神冰冷如刀。\"请你自重！再这样我就报警了！\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 C抚摸口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 被C抚摸 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地睁开眼，感受到下半身的异样后反而蹭了蹭枕头。\"嗯……大半夜的……真是个坏心眼的人……随你喜欢吧……\""
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 被C抚摸 无允许 好意 口上文",
+                        "responses":[
+"被快感唤醒的$self$发出一声短促的惊呼，看清来人后，脸上闪过一丝复杂的红晕，却并没有推开。\"如果是你的话……也不是不行……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 被C抚摸 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","receiver","spread_pussy","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$惊恐地缩成一团，但感受到对方不容置疑的动作后，只能绝望地停止了挣扎，低声啜泣起来。"
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被C抚摸 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$的呼吸变得急促，双手不自觉地抱住了$target$的脖子，腰肢开始随着手指的律动而摆动。\"哈……好舒服……再深一点……\"",
+"淫靡的水声在房间里回荡，$self$眼神涣散地依偎在$target$怀里，早已忘记了羞耻。\"这种感觉……停不下来了……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被C抚摸 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","spread_pussy", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"尽管理智告诉自己应该拒绝，但$self$的身体却诚实地软了下来，口中溢出破碎的呻吟。\"不对……明明不该是这样的……哈啊……\"",
+"$self$双手无助地抓着床单，原本抗拒的眼神逐渐变得迷离。\"不要……别碰那里……呜……好奇怪的感觉……\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被C抚摸 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$难受地扭动了一下身体，试图躲避那粗鲁的动作。\"疼……有点干涩……能不能先停一下？\"",
+"$self$咬着嘴唇，眉头紧锁，显然并没有享受到快感。\"根本就没有感觉……你今天太急躁了。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被C抚摸 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","spread_pussy", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$像一具尸体般躺在那里，毫无反应，只是冷冷地盯着天花板，眼中满是无声的抗议。",
+"$self$极力压抑着呕吐的欲望，身体僵硬得像块石头。\"还没结束吗？这简直是恶心透顶。\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

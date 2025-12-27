@@ -1,0 +1,160 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_foot_toes_Begin",
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被撫摸脚趾 有允许 口上文" ,
+                "responses":
+                [ 
+                    "$self$觉得有些痒，忍不住缩了一下脚，但随即又把脚伸了回来，脸上带着宠溺的笑意。\"真是的，你也太喜欢这里了吧？\"", "$self$没有抽回脚，只是把视线移向别处，耳根有些发红。\"轻一点……那里很敏感的。\"", "$self$用另一只脚轻轻蹭了蹭$target$的手背，像是在默许这个行为。\"好吧，仅限今天哦。\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":[ "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被撫摸脚趾 未允许 好意 口上文" ,
+                "responses":
+                [ 
+                    "$self$整个人僵住了，眼睛瞪得大大的，似乎大脑还没处理完当前的状况。\"等等……你要做什么？\"", "$self$看着握住自己脚踝的那只手，完全忘记了反抗，只有脚趾在尴尬地抓地。\"那个……我的鞋……？\"", "$self$张了张嘴，却因为太过震惊而没能发出声音，只是呆滞地任由$target$摆布。"
+                ]
+            },
+            {
+                
+                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被撫摸脚趾 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+                    "$self$浑身颤抖着，拼命咬住嘴唇不让自己叫出声，眼泪在眼眶里打转。\"求你……别这样……\"", "$self$死死抓着裙摆，不敢看$target$的眼睛，只能绝望地闭上眼。\"我知道了……我不动……请快点结束……\"", "$self$的脚在$target$手里不受控制地痉挛，脸色惨白。\"对不起……对不起……我听话……\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_foot_toes",
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被撫摸脚趾 口上文",
+                "responses":
+                [ 
+                    "$self$发出含糊不清的梦呓，眉头微蹙，本能地想要把脚缩回被子里。\"唔……好痒……别闹……\"", "$self$睡得很沉，只是随着动作偶尔轻微抽搐一下脚趾，呼吸依旧平稳绵长。", "$self$似乎在梦中感到了某种异样，不安地翻了个身，一条腿无意识地搭在了$target$身上，脚背紧绷了一瞬又松弛下来。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被撫摸脚趾 口上文",
+                "responses":
+                [ 
+                    "$self$静止在半空中，没有任何反应，只有脚趾间的软肉随着$target$的动作被挤压变形。", "$self$维持着迈步的姿势一动不动，唯有被抚摸的足底皮肤因体温传递而微微泛红。", "$self$像一尊精美的人偶，毫无知觉地任由$target$将手指插入趾缝深处，连条件反射的抽动都不曾发生。"
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被撫摸脚趾 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$触电般地收回了脚，甚至不小心踢到了$target$一下。\"呀！别闹，好痒！\"", "$self$用脚趾抵住了$target$的手掌，眉头微皱。\"不行，今天走了很多路，还没洗澡呢……脏。\"", "$self$灵活地把脚抽走，盘腿坐在沙发上护住了自己的脚踝。\"你是变态吗？快放手啦！\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被撫摸脚趾 无允许 善意 口上文",
+                        "responses":
+                        [ 
+                            "$self$尴尬地笑了笑，试图不动声色地把脚抽回来。\"呃，这样不太好吧？我们还没熟到这种程度……\"", "$self$轻轻推了推$target$的手，语气礼貌却疏离。\"那个，我不习惯别人碰我的脚，抱歉。\"", "$self$往后缩了缩身子，保持着社交距离。\"这玩笑开得有点过了哦，哈哈。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被撫摸脚趾 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":
+                 [
+                    "$self$毫不客气地一脚踹向$target$的面门，眼神冰冷。\"滚开！别用你的脏手碰我！\"", "$self$猛地站起身，一脸嫌恶地拍打着刚才被碰过的地方。\"真恶心……我要报警了！\"", "$self$像是看垃圾一样看着$target$，声音里充满了鄙夷。\"你有病吧？离我远点！\""
+                 ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被撫摸脚趾 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$原本紧绷的脚背完全放松下来，脚趾无意识地在$target$掌心微微蜷曲。\"嗯……意外地……挺舒服的……\"", "$self$的呼吸变得有些急促，眼神迷离地看着$target$。\"再按一下脚心……对，就是那里……\"", "$self$发出一声轻哼，主动把另一只脚也递了过来。\"这边也要……不能偏心。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被撫摸脚趾 结果正面 未允许 口上文",
+                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+                    "$self$原本抗拒的挣扎渐渐停止了，脸颊染上一层不自然的绯红，喘息声变得沉重。\"奇、奇怪……为什么会……\"", "$self$咬着手指，眼神变得有些涣散，原本推拒的手无力地垂下。\"哈啊……不管了……随你便吧……\"", "$self$羞耻地捂住脸，但脚趾却诚实地夹住了$target$的手指。\"别看我……呜……只有脚……舒服……\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被撫摸脚趾 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$猛地抽回脚，有些恼火地瞪着$target$。\"够了！一直弄那里真的很奇怪啊！\"", "$self$脸上的笑意消失了，语气变得僵硬。\"我说了很痒……你听不懂吗？\"", "$self$烦躁地用脚背拍打了一下$target$的肩膀。\"好无聊……我要去睡觉了，放开我。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被撫摸脚趾 结果负面 未允许 口上文",
+                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+                    "$self$终于爆发了，歇斯底里地尖叫起来，用尽全力乱踢乱蹬。\"放开我！你这个变态！疯子！！\"", "$self$眼里的恐惧转变成了纯粹的恨意，死死盯着$target$。\"我绝对……绝对不会原谅你……\"", "$self$因为极度的厌恶而干呕了一声，脸色铁青。\"碰够了吗？我想吐……滚啊！\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

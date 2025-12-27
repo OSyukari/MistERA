@@ -7,11 +7,9 @@
                     "ID": "com_furniture_playVideoGames_Begin",
                     "variants": [
                         {
-                            "requirements": [
-                                {
-                                    "requireSelfAttitudeGTE": "Like"
-                                }
-                            ],
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
                             "extraPortraitTags": [
                                 "relaxed",
                                 "leaning",
@@ -31,9 +29,6 @@
                             ]
                         },
                         {
-                            "requirements": [
-                                {}
-                            ],
                             "extraPortraitTags": [
                                 "focused",
                                 "neutral",
@@ -63,18 +58,14 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirements": [
-                                {
-                                    "requireEPFailure": true
-                                }
-                            ],
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
                             "variants": [
                                 {
-                                    "requirements": [
-                                        {
-                                            "requireSelfAttitudeGTE": "Like"
-                                        }
-                                    ],
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "_comment": "failure variant",
                                     "extraPortraitTags": [
                                         "apology",
@@ -126,19 +117,15 @@
                             ]
                         },
                         {
-                            "requirements": [
-                                {
-                                    "requireEPSuccessGTE": "Success"
-                                }
-                            ],
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
                             "_comment": "great success variant",
                             "variants": [
                                 {
-                                    "requirements": [
-                                        {
-                                            "requireSelfAttitudeGTE": "Like"
-                                        }
-                                    ],
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "happy",
                                         "excited",
@@ -188,19 +175,15 @@
                             ]
                         },
                         {
-                            "requirements": [
-                                {
-                                    "requireSelfAction": true
-                                }
-                            ],
+                            "requirement": {
+                                "requireSelfAction": true
+                            },
                             "_comment": "barely success variant",
                             "variants": [
                                 {
-                                    "requirements": [
-                                        {
-                                            "requireSelfAttitudeGTE": "Like"
-                                        }
-                                    ],
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "frustrated",
                                         "pouting",

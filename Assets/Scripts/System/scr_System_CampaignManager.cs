@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using static UnityEngine.UI.GridLayoutGroup;
 public class scr_System_CampaignManager_Serializable
 {
     public Dictionary<int, Job> Jobs;
@@ -125,7 +126,12 @@ public class scr_System_CampaignManager : MonoBehaviour
     public ExpeditionInstance FindExpeditionByID(int id)
     {
         if (_uniqueExpeditionInstances == null) RebuildExpeditionsList();
-        if (Index_ExpeditionInstances.TryGetValue(id, out var expinst)) return expinst;
+        if (Index_ExpeditionInstances.TryGetValue(id, out var expinst))
+        {
+            //Debug.Log($"findExpeditionbyID {id}");
+            return expinst;
+        }
+        //Debug.Log($"cannot findExpeditionbyID {id}");
         return null;
     }
     public ExpeditionInstance CreateExpedition(string id)
@@ -221,8 +227,8 @@ public class scr_System_CampaignManager : MonoBehaviour
             if (chara == null) continue;
             if (chara.CurrentJob == null) Unregister(chara);
         }
-        ExpeditionInstancesCleanup();
         PartyCleanup();
+        ExpeditionInstancesCleanup();
     }
 
     protected void PartyCleanup()
@@ -317,16 +323,17 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     protected void ExpeditionInstancesCleanup()
     {
-        foreach(var ex in this.Index_ExpeditionInstances)
+        //Debug.LogError($"ExpeditionInstancesCleanup");
+        foreach (var ex in this.Index_ExpeditionInstances)
         {
-            ex.Value.UsageCount = 0;
+            ex.Value.ResetUsage();// = 0;
         }
         foreach(var m in Factions)
         {
             foreach(var p in m.SubFactions)
             {
                 if (!p.hasExpeditionSet) continue;
-                p.Job.Expedition.UsageCount++;
+                p.Job.Expedition.NotifyUsage();
             }
         }
         var list = this.Index_ExpeditionInstances.Keys.ToList();
@@ -335,11 +342,11 @@ public class scr_System_CampaignManager : MonoBehaviour
             if (this.Index_ExpeditionInstances[k].CanDelete)
             {
 
-                Debug.Log($"Cleanup: Removing ExpeditionInstance {this.Index_ExpeditionInstances[k].Base.DisplayName}");
+                Debug.LogError($"Cleanup: Removing ExpeditionInstance {this.Index_ExpeditionInstances[k].Base.DisplayName}");
                 this.Index_ExpeditionInstances.Remove(k);
             }
         }
-        this._uniqueExpeditionInstances = null;
+        RebuildExpeditionsList();
     }
 
     private MessageLogManager LogManager;
@@ -389,12 +396,27 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void AddLog(MessageCollect_KojoEntry m, bool animate = false, bool rightAlign = false, string tooltip = "")
     {
-        if (m == null || m.message == null || m.message.Length < 1) return;
-        var chara = FindInstanceByID(m.portraitRefID);
-        Message_Text msg = new Message_Text(chara, m.portraitTags, m.message, rightAlign, tooltip);
-        Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
-
+        if (m == null) return;
+        if (m.message != null && m.message.Length > 0)
+        {
+            var chara = FindInstanceByID(m.portraitRefID);
+            Message_Text msg = new Message_Text(chara, m.portraitTags, m.message, rightAlign, tooltip);
+            Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
+        }
         foreach(var next in m.nexts) AddLog(next, animate, rightAlign);
+    }
+
+    public void AddLogSingle(MessageCollect_KojoEntry m)
+    {
+        if (m == null) return;
+        if (m.message != null && m.message.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(m.portraitRefID))
+        {
+            var chara = FindInstanceByID(m.portraitRefID);
+            var rightAlign = chara != null && chara != Player;
+            Message_Text msg = new Message_Text(chara, m.portraitTags, m.message, rightAlign);
+            Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), true);
+            m.message = null;
+        }
     }
 
     public void NotifyEventEnd()
@@ -914,6 +936,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
+               // list.RemoveAt(list.Count); -> used to launch a CTD error
                 //Debug.Log("list count " + i + " " + String.Join("|", list));
                 if (i >= list.Count) continue;  // list might get modified
                 ActionPackage p = list[i];
@@ -1182,6 +1205,8 @@ public class scr_System_CampaignManager : MonoBehaviour
             i = i.Distinct().ToList();
             return i;
         } }
+
+    public bool ConsoleTargetEX = false;
 
     public Character_Trainable CurrentTarget { get { if (currentTarget >= 0) return this.FindInstanceByID(currentTarget);
             else return this.FindInstanceByID(0);
@@ -1711,13 +1736,9 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     private void UpdateCurrentTarget()
     {
-
+        if (currentTarget == 0) return;
         if (currentTarget > 0 && CharaRefInCurrentRoom.Contains(currentTarget)) return;
-        var charaInRoom = CharaRefInCurrentRoom;
-        charaInRoom.Remove(0);
-
-
-        ChangeCurrentTarget(charaInRoom.Count > 0 ? charaInRoom[0] : 0);
+        ChangeCurrentTarget(0);
     }
 
     public bool isPlayerPartyMember(int i)

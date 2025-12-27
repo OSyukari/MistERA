@@ -1,0 +1,279 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_P_cowgirl_A_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                
+                "requireSelfReceiver": true,
+                "_comment":"受方 被骑乘位A 高潮" ,
+                "responses": [
+                    "($self$) 被骑乘位A 高潮 口上文"
+                ]
+            },
+            {
+                
+                "requireSelfDoer": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","doer","cowgirl","anal", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 攻方 骑乘位A 高潮 有允许 口上文" ,
+                        "responses": [
+"$self$猛地仰起脖子，发出一声高亢的尖叫，后穴剧烈痉挛，死死咬住体内的异物，整个人像触电般抽搐。", "$self$眼前炸开一片白光，失神地张着嘴流下口水，大腿内侧疯狂颤抖，一股温热的液体失禁般喷洒在$target$的小腹上。",
+
+"$self$猛地仰起头，脊背弯成一道夸张的弧度，脚趾紧紧蜷缩。\"啊啊——不行了！那里……要坏掉了！哈啊——！\"", "$self$双手胡乱地抓着$target$的大腿，身体剧烈地痉挛着。\"到了……一起……我也要……嗯啊啊啊！！\"", "$self$眼前一片空白，只能感受到从尾椎炸开的电流，嘴里发出破碎的尖叫。\"我不行了……哪怕是后面也……好舒服！\""
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","doer","cowgirl","anal", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 攻方 骑乘位A 高潮 无允许 口上文" ,
+                "responses": [
+"$self$一边哭喊着不要一边达到了顶峰，身体违背意志地弓起，极度的羞耻感让高潮来得比平时更加猛烈且绝望。", "$self$理智彻底崩断，翻着白眼吐出舌头，身体像坏掉的人偶一样剧烈弹动，在极度厌恶中迎来了可悲的极乐。",
+
+"$self$即使拼命捂住嘴，破碎的呻吟还是从指缝里漏了出来，身体羞耻地达到了顶峰。\"不要……明明不想的……为什么会……啊啊啊！\"", "$self$绝望地流着泪，身体却背叛了意志迎来了高潮。\"杀了我吧……竟然被这样弄到高潮……唔嗯嗯嗯！！\"", "$self$身体像触电一样弹起又重重落下，眼神瞬间失去了焦距。\"不……这种事……身体变得好奇怪……停不下来了！\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_P_cowgirl_A_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","doer","cowgirl","anal", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始骑乘位A 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$撩起裙摆跨坐在$target$身上，深吸一口气，扶着那根昂扬对准自己生涩的后穴，缓缓坐了下去。", "$self$咬着下唇，眼神迷离地看着$target$，双手撑在对方胸膛上，主动将屁股沉下，吞没那滚烫的头部。", "$self$虽然有些紧张，但还是顺从地背过手去拨开臀瓣，引导着$target$进入那个从未被开发的地方。",
+
+"$self$背对着$target$慢慢坐下，双手向后撑在$target$的大腿上找寻支点。\"可能会有点紧……你慢一点进来。\"", "$self$深吸了一口气，主动抬起臀部对准了位置，声音有些颤抖。\"好……我已经准备好了，全部交给你。\"", "$self$扭过头确认了一下位置，随后缓缓下沉腰肢。\"嗯……这种感觉，无论做多少次都觉得好充实。\"", "$self$咬着下唇，试探性地吞吐着那庞大的异物感。\"没关系的，这一步我会自己来控制。\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","doer","cowgirl","anal", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始骑乘位A 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$惊讶地瞪大了眼睛，没想到$target$会提出这种要求，但犹豫片刻后，还是红着脸慢慢转过身去。", "$self$显得有些手足无措，在$target$的注视下，颤抖着手指解开了衣扣，试探性地跨坐上去。\"只、只有这一次哦……\"",
+
+"$self$惊讶地回过头，身体僵硬了一下，但没有推开。\"等等……你是认真的吗？这种事……\"", "$self$有些不知所措地抓紧了身下的床单，声音干涩。\"如果是$target$的话……也许……并不讨厌……\"", "$self$咬着嘴唇，默认了$target$的动作，没有发出拒绝的声音。\"只这一次……我会当做没发生过的。\""
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","doer","cowgirl","anal", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始骑乘位A 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$浑身颤抖着，不敢直视$target$的眼睛，在威胁下不得不分开双腿，带着哭腔将那可怕的凶器纳入体内。", "$self$紧咬着嘴唇直到出血，屈辱地按照命令摆好姿势，任由那个不属于这里的粗大硬物强行撑开私处。",
+
+"$self$颤抖着不敢回头，眼泪在眼眶里打转。\"我知道了……我会听话的……请不要伤害我……\"", "$self$绝望地闭上了眼睛，身体任由$target$摆布。\"只要照做就可以了吧……求你快点结束……\"", "$self$死死咬住手背，试图压抑住羞耻的呜咽声，身体完全僵直。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_P_cowgirl_A",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","doer","cowgirl","anal","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 骑乘位A 口上文",
+                "responses":
+                [ 
+"$self$对此刻发生的事一无所知，只是偶尔因为过于猛烈的撞击而皱眉哼哼两声。", "$self$如同失去意识的人偶般任由摆布，温热的内壁在本能地收缩，却无法传达给沉睡的大脑。",
+
+"$self$发出无意识的梦呓，眉头微皱，似乎在梦中感到了不适。\"嗯……好涨……\"", "$self$沉睡中的身体随着每一次撞击而微微前倾，呼吸变得略显急促，却依旧没有醒来的迹象。", "$self$完全处于毫无防备的状态，平日里严防死守的部位此刻毫无保留地展现在$target$眼前。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","doer","cowgirl","anal","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 骑乘位A 口上文",
+                "responses":
+                [ 
+"$self$保持着僵硬的姿势悬停在半空，只有那紧致的后穴随着肉棒的抽插而被迫开合，媚肉毫无防备地外翻。", "$self$定格在惊恐表情的瞬间，身体却成了最诚实的容器，完全接纳了$target$的每一次深顶，没有任何反抗的余地。",
+
+"（$self$保持着原本的姿势一动不动，唯有臀部的肌肉随着$target$的抽插而被动地发生形变。）", "（$self$无神的双眼直视前方，对于体内正在发生的激烈侵犯毫无知觉，像是一尊精美的人偶。）", "（随着时间的静止，$self$甚至连生理性的收缩都无法做到，只能任由$target$肆意扩张。）"
+
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 骑乘位A 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$被痛感惊醒，下意识地想要往前爬走。\"痛！你在干什么……快出去！\"", "$self$带着哭腔推拒着身后的动作。\"好困……不要在这个时候弄那里，让我睡觉……\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 骑乘位A 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$尖叫着踹向身后，也不管有没有踢到人。\"变态！滚开！你要干什么！\"", "$self$惊慌失措地试图蜷缩起身体保护自己。\"救命……谁来救救我！\""
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 骑乘位A 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$感觉到异样后立刻向前挪动身体，避开了接触。\"不行……今天肚子不太舒服，那里绝对不可以。\"", "$self$按住了$target$想要扶住她腰的手，轻轻摇头。\"抱歉，我还没做好这种心理准备，换个地方好吗？\"", "$self$有些慌张地想要起身。\"太痛了……今天真的不行，不要勉强我。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 骑乘位A 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$尴尬地笑了笑，试图用玩笑化解气氛。\"喂喂，这个玩笑开大了吧？我不玩这个的。\"", "$self$轻轻推了推$target$的膝盖，语气很坚决。\"我们只是朋友吧？这个界限不能越过。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 骑乘位A 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$猛地推开$target$，眼中满是不可置信和厌恶。\"你有病吗？别用那种脏东西碰我！\"", "$self$冷笑一声，迅速整理好衣服站起来，居高临下地看着$target$。\"你以为我是什么人？滚开。\"",
+
+"$self$猛地站起身，眼神冰冷地盯着$target$。\"恶心。离我远点。\"", "$self$毫不客气地拍开了$target$的手。\"你把我看成什么人了？别碰我！\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 骑乘位A口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","doer","cowgirl","anal","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 骑乘位A 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地睁开眼，感受到后身被入侵的异样感，随即慵懒地哼了一声，配合地扭了扭腰。\"坏人……趁我睡觉做这种事……\"", "$self$在半梦半醒间被快感捕获，本能地夹紧了双腿，将那个正在作怪的东西吃得更深。",
+
+"$self$迷迷糊糊地揉了揉眼睛，感受到身后的异物感后没有反抗，只是慵懒地哼了一声。\"嗯……是大半夜的袭击吗？真拿你没办法……\"", "$self$在半梦半醒间顺从地调整了一下姿势方便$target$动作。\"唔……是你啊……那就轻一点哦……\""
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","doer","cowgirl","anal","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 骑乘位A 无允许 好意 口上文",
+                        "responses":[
+"$self$被身后的动作弄醒，发觉是$target$后，惊讶之余竟有一丝隐秘的期待。\"……是你？……怎么偏偏是那里……\"", "$self$没有大喊大叫，只是红着脸咬住了枕头。\"如果是你的话……也不是不行……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 骑乘位A 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","doer","cowgirl","anal","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$被剧痛惊醒，刚想尖叫就被捂住了嘴，看清现状后绝望地闭上了眼睛，任由泪水流淌。", "$self$在黑暗中颤栗着，不敢发出一点声音，只能无助地承受着后庭被无情贯穿的暴行。",
+
+"$self$惊恐地想要尖叫，但被某种威慑力吓得收了声。\"我不动……我不敢动了……求你轻点……\"", "$self$抽泣着把脸埋进臂弯里，身体即使在颤抖也不敢逃离。\"对不起……我不知道……我会听话的……\""
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","doer","cowgirl","anal", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 骑乘位A 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$渐渐适应了体内的尺寸，原本紧皱的眉头舒展开来，腰肢开始尝试着主动起伏吞吐。\"嗯……好像，没那么疼了……\"", "$self$俯下身抱住$target$的脖子，在耳边发出甜腻的喘息，后穴也不自觉地收缩夹紧。\"好涨……但是……好舒服……\"", "$self$沉迷在这种被填满的充实感中，动作变得大胆起来，故意用内壁去研磨那坚硬的柱身。",
+
+"$self$原本紧绷的背部线条逐渐放松，向后仰起头靠在$target$肩膀上。\"哈啊……好像，适应那个粗度了……再深一点也可以哦。\"", "$self$开始主动配合着节奏摆动腰肢，发出了甜腻的鼻音。\"嗯哼……这个角度……意外地能顶到很舒服的地方呢。\"", "$self$反手抓住了$target$的手臂，指甲轻轻嵌入皮肤。\"别停……刚才那一下，感觉好像要融化了……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 骑乘位A 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","doer","cowgirl","anal", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$原本抗拒的身体开始软化，口中溢出无法抑制的呻吟，眼神变得涣散而淫靡。\"不……不行……怎么会……好爽……\"", "$self$似乎忘记了身份的隔阂，本能地追求着快感，腰肢疯狂地摆动起来，贪婪地索取着更多。\"啊……毁掉了……我要被弄坏了……\"",
+
+"$self$原本抗拒的手慢慢松开，开始不自觉地迎合$target$的动作。\"奇怪……明明应该拒绝的……为什么身体会变热……\"", "$self$脸上泛起不正常的潮红，声音变得断断续续。\"既然已经这样了……那就……再用力一点……\"", "$self$羞耻地捂住了脸，但腰肢却诚实地往下坐。\"完了……要是变得离不开这种感觉怎么办……\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","doer","cowgirl","anal", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 骑乘位A 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$的动作停了下来，额头上渗出细密的冷汗，有些痛苦地抓紧了$target$的肩膀。\"停一下……太深了……我不行……\"", "$self$无力地趴在$target$身上，大口喘着气，后穴传来的撕裂感让她想要逃离。\"真的好疼……我们要不换个地方吧？\"", "$self$眼角泛起了泪花，原本支撑身体的双臂开始打颤，那是身体达到极限的信号。",
+
+"$self$的动作变得僵硬，发出了痛苦的闷哼。\"停一下……太深了，我有种想吐的感觉……\"", "$self$无力地垂下头，身体甚至在微微发抖。\"还是很痛……我们能结束了吗？求你了。\"", "$self$一直没有回头，声音听起来很压抑。\"根本没有感觉……只觉得肚子涨得难受。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 骑乘位A 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","doer","cowgirl","anal", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$像一条死鱼一样瘫软在$target$身上，眼神空洞，只有身体随着对方的顶撞而被动摇晃。\"快点结束吧……求你了……\"", "$self$痛苦地抓挠着床单，每一次撞击都像是在遭受酷刑，生理性的泪水打湿了面颊。\"好恶心……把这东西拿出去……\"",
+
+"$self$死死地抓着床单，指节发白，一言不发地忍受着。\"……还没好吗？\"", "$self$的身体随着动作像个破布娃娃一样晃动，眼神空洞。\"随便你吧……反正我也没有拒绝的权利。\"", "$self$发出干呕的声音，身体因为生理性的排斥而痉挛。\"好恶心……不管身体有什么反应，我都觉得好恶心……\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

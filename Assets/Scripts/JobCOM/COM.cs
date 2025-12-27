@@ -311,6 +311,12 @@ public class COM: I_SerializationCallbackReceiver
         else if (variantID >= variants.Count) return "GetDescription_Ongoing ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Ongoing(this, evp);
     }
+    public virtual string GetDescription_Ongoing(ActionPackage ap, int variantID)
+    {
+        if (variantID == -1) return description_ongoing.GetText(ref ap);
+        else if (variantID >= variants.Count) return "GetDescription_Ongoing ERROR variantID out of bound";
+        else return variants[variantID].GetDescription_Ongoing(this, ap);
+    }
 
     public virtual string GetDescription_After(EvaluationPackage evp, int variantID)
     {
@@ -780,6 +786,21 @@ public class COM: I_SerializationCallbackReceiver
             if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_Ongoing(evp, useAnothersDescription));
             if (evp == null || ownerCOM == null) Debug.LogError($"evp null? {evp == null} ownercom null? {ownerCOM == null}");
             if (useBaseDescription) s.Add(ownerCOM.GetDescription_Ongoing(evp, -1));
+
+            if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
+            s.RemoveAll(x => x.Length < 1);
+            string s2 = String.Join("\n", s);
+            //s2 = Utility.StringReplace(ref evp, s2);
+            return s2;
+        }
+        public string GetDescription_Ongoing(COM ownerCOM, ActionPackage ap)
+        {
+            List<string> s = new List<string>();
+            s.Add(description_ongoing.GetText(ref ap));
+            // prevent infinite loop
+            if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_Ongoing(ap, useAnothersDescription));
+            if (ap == null || ownerCOM == null) Debug.LogError($"ap null? {ap == null} ownercom null? {ownerCOM == null}");
+            if (useBaseDescription) s.Add(ownerCOM.GetDescription_Ongoing(ap, -1));
 
             if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
             s.RemoveAll(x => x.Length < 1);

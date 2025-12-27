@@ -396,41 +396,52 @@ public class Job_Expedition : Job
             }
         }
 
-        if (this.status == ExpeditionStatus.returning && this.actorRefID.Count < 1)
+        if (this.status == ExpeditionStatus.returning)
         {
-            var charaList = this.FactionOwner_Party.Room.RoomChara;
-            var remaining = new List<int>();
-            if (charaList.Count > 0)
+            for(var i = packages_previous.Count - 1; i >= 0; i--)
             {
-                foreach (var c in charaList)
-                {
-                    if (c.isTemporaryActor && (c.CurrentJob == null || c.CurrentJobRefID == -1) && !c.FactionManager.HasPlayerFaction)
-                    {
-                       // Debug.Log($"Checking Charalist {c.CallName} is removable");
+                var p = packages_previous[i];
+                if (p.isTemporaryAP) continue;
+                scr_System_CampaignManager.current.Unregister(p);
+                this.packages_previous.RemoveAt(i);
+            }
 
-                    }
-                    else
+            if (this.actorRefID.Count < 1)
+            {
+                var charaList = this.FactionOwner_Party.Room.RoomChara;
+                var remaining = new List<int>();
+                if (charaList.Count > 0)
+                {
+                    foreach (var c in charaList)
                     {
-                        remaining.Add(c.RefID);
+                        if (c.isTemporaryActor && (c.CurrentJob == null || c.CurrentJobRefID == -1) && !c.FactionManager.HasPlayerFaction)
+                        {
+                            // Debug.Log($"Checking Charalist {c.CallName} is removable");
+
+                        }
+                        else
+                        {
+                            remaining.Add(c.RefID);
+                        }
                     }
                 }
-            }
 
-            if (remaining.Count < 1)
-            {
-                properExitRefs.Clear();
-                this.ExpeditionActive = FactionOwner_Party.IsRecurring;
-                this.status = this.ExpeditionActive ? ExpeditionStatus.queued : ExpeditionStatus.inactive;
-                this.statusTooltip = "expedition concluded";
-                var result = AddResult(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_end"), new List<string>(), new List<int>());
-                List<string> obtained = new List<string>();
-                FactionOwner_Party.Inventory.Dump(FactionOwner_Party.OwnerFaction.Inventory, obtained);
-                result.Tooltips.Add($"obtained {String.Join(", ", obtained)}");
-                FactionOwner_Party.ExpeditionEnd();
-            }
-            else
-            {
-                Debug.Log($"Actor remain [{String.Join("|", remaining)}]");
+                if (remaining.Count < 1)
+                {
+                    properExitRefs.Clear();
+                    this.ExpeditionActive = FactionOwner_Party.IsRecurring;
+                    this.status = this.ExpeditionActive ? ExpeditionStatus.queued : ExpeditionStatus.inactive;
+                    this.statusTooltip = "expedition concluded";
+                    var result = AddResult(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_end"), new List<string>(), new List<int>());
+                    List<string> obtained = new List<string>();
+                    FactionOwner_Party.Inventory.Dump(FactionOwner_Party.OwnerFaction.Inventory, obtained);
+                    result.Tooltips.Add($"obtained {String.Join(", ", obtained)}");
+                    FactionOwner_Party.ExpeditionEnd();
+                }
+                else
+                {
+                    Debug.Log($"Actor remain [{String.Join("|", remaining)}]");
+                }
             }
         }
     }
@@ -491,18 +502,12 @@ public class Job_Expedition : Job
     {
         storedResults.Add(res);
     }
-    /// <summary>
-    /// Please call this from Party
-    /// </summary>
-    public void SetExpedition(ExpeditionInstance exp)
-    {
-        this.Expedition = exp;
-    }
 
     public int RemainingMinutes = -1;
 
 
-    [JsonProperty] int expeditionRefID = -1;
+    [JsonProperty] protected int expeditionRefID = -1;
+
     ExpeditionInstance _exp = null;
 
     public override void RemoveActor(int charaRef)
@@ -556,6 +561,18 @@ public class Job_Expedition : Job
         }
         base.RemoveActor(charaRef);
     }
+    /// <summary>
+    /// Please call this from Party
+    /// </summary>
+    public void SetExpedition(ExpeditionInstance exp)
+    {
+
+        _exp = null;
+        if (exp == null) this.expeditionRefID = -1;
+        else this.expeditionRefID = exp.RefID;
+
+        Debug.LogError($"SetExpedition! {this.expeditionRefID}");
+    }
 
     [JsonIgnore]
     public ExpeditionInstance Expedition
@@ -568,10 +585,15 @@ public class Job_Expedition : Job
             }
             return _exp;
         }
-        set
+    }
+
+    [JsonIgnore]
+    public string ExpeditionName
+    {
+        get
         {
-            _exp = value;
-            expeditionRefID = value == null ? -1 : value.RefID;
+            if (this.Expedition == null) return "no exp";
+            else return this.Expedition.Base.DisplayName;
         }
     }
 
@@ -663,95 +685,90 @@ public class Job_Expedition : Job
         var parentFaction = FactionOwner_Party;
         var parentPlusFaction = FactionOwner.FactionOwnerRoot;
 
-        if (isActive && status == ExpeditionStatus.returning && !canReturn)
+        if (!isActive)
         {
-            // dont do anything
-            return true;
+            ss += "expedition not active, waiting ||";
+            return false;
         }
-        else if (canReturn)
-        {
-            
-            int exitRef = -1;
-            if (parentPlusFaction.MainExit != null && parentPlusFaction.isManagedChara(c.RefID)) exitRef = parentPlusFaction.MainExit.RefID;
+        else if (this.status == ExpeditionStatus.returning)
+        {   // if existing exploration package, break existing '
 
-            if (exitRef == -1)
+            if (hasUnresolvedResult)
             {
-                if (!this.Expedition.Base.CanBeRescued) Debug.LogError("ERROR!!!!");
-
-                // require rescue
+                ss += "expedition hasUnresolvedResult, waiting ||";
                 return true;
             }
-            else if (charaRoom.RefID != exitRef)
-            {   // return chara
-                AddResult(LocalizeDictionary.QueryThenParse("exp_event_returning"), new List<string>(), new List<int> { c.RefID });
-                ActionPackage_TeleportTo package = new ActionPackage_TeleportTo(this, c.RefID, exitRef);
-                if (!package.Validate())
+            else // canreturn
+            {
+                int exitRef = -1;
+                if (parentPlusFaction.MainExit != null && parentPlusFaction.isManagedChara(c.RefID)) exitRef = parentPlusFaction.MainExit.RefID;
+
+                if (exitRef == -1)
                 {
-                    ss += "actor pathing package creation failed ||";
+                    if (!this.Expedition.Base.CanBeRescued) Debug.LogError("ERROR!!!!");
+
+                    ss += "actor require rescue ||";
+
+                    // require rescue
+                    return true;
+                }
+                else if (charaRoom == parentFaction.MainExit)
+                {   // return chara
+                    AddResult(LocalizeDictionary.QueryThenParse("exp_event_returning"), new List<string>(), new List<int> { c.RefID });
+                    ActionPackage_PathTo package = new ActionPackage_PathTo(this, c.RefID, exitRef);
+                    if (!package.Validate())
+                    {
+                        ss += "actor pathing package creation failed ||";
+                        return false;
+                    }
+                    ss += "actor return pathing created ||";
+                    AddPackage(new List<ActionPackage>() { package });
+
+                    var memStr = LocalizeDictionary.QueryThenParse("exp_event_return_memory").Replace("$loc$", Expedition.Base.DisplayName);
+                    var newMem = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, memStr);
+
+                    var entry = c.Memory.AddEntry(newMem, new List<string>() { "expeditionEnd" });
+                    entry.disableRoomName = true;
+
+                    return true;
+                }
+                else if (charaRoom.RefID == exitRef)
+                {   // release chara
+                    //Debug.LogError($"Error fail to return {c.CallName} from party {FactionOwner_Party.FullFactionDisplayName}");
+                    properExitRefs.Add(c.RefID);
                     return false;
                 }
-                ss += "actor pathing created ||";
-                AddPackage(new List<ActionPackage>() { package });
-
-                var memStr = LocalizeDictionary.QueryThenParse("exp_event_return_memory").Replace("$loc$", Expedition.Base.DisplayName);
-                var newMem = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, memStr);
-
-                var entry = c.Memory.AddEntry(newMem, new List<string>() { "expeditionEnd" });
-                entry.disableRoomName = true;
-
-                return true;
-            }
-            else
-            {   // release chara
-                //Debug.LogError($"Error fail to return {c.CallName} from party {FactionOwner_Party.FullFactionDisplayName}");
-                properExitRefs.Add(c.RefID);
-                return false;
             }
         }
-        else if (charaRoom.RefID != parentFaction.MainExit.RefID)
+        else if (parentFaction.MainExit != null && charaRoom != parentFaction.MainExit)
         {
             //Debug.Log("JobFurniture : trying to add pathing package to ["+c.FirstName+"]");
             // 1 - if actor not in job room, set go to room.
             // make movement package
             if (parentPlusFaction == null || parentPlusFaction.MainExit == null)
-            {
-                Debug.LogError($"{c.CallName} UpdateActorPackage Error!: {FactionOwner.FactionDisplayName} hasNullOwner? {parentPlusFaction == null} hasNullMainExit? {(parentPlusFaction == null || parentPlusFaction.MainExit == null)}");
-                return false;
-            }
-            else if (charaRoom.RefID != parentPlusFaction.MainExit.RefID)
-            {
+            {   // owner faction does not exist, teleporting
                 //AddResult(LocalizeDictionary.QueryThenParse("exp_event_gathering"), new List<string>(), new List<int> { c.RefID });
-                ActionPackage_PathTo package = new ActionPackage_PathTo(this, c.RefID, parentPlusFaction.MainExit.RefID);
+                ActionPackage_TeleportTo package = new ActionPackage_TeleportTo(this, c.RefID, parentFaction.MainExit.RefID);
                 if (!package.Validate())
                 {
-                    ss += "actor pathing package creation failed ||";
+                    ss += "actor teleport package creation failed ||";
                     return false;
                 }
-                ss += "actor pathing created ||";
+                ss += "actor teleport departure pathing created ||";
                 AddPackage(new List<ActionPackage>() { package });
                 return true;
             }
             else
             {
-                
-                //AddResult(LocalizeDictionary.QueryThenParse("exp_event_departure"), new List<string>(), new List<int> { c.RefID });
-                ActionPackage_TeleportTo package = new ActionPackage_TeleportTo(this, c.RefID, parentFaction.MainExit.RefID);
+                //AddResult(LocalizeDictionary.QueryThenParse("exp_event_gathering"), new List<string>(), new List<int> { c.RefID });
+                ActionPackage_PathTo package = new ActionPackage_PathTo(this, c.RefID, parentFaction.MainExit.RefID);
                 if (!package.Validate())
                 {
                     ss += "actor pathing package creation failed ||";
                     return false;
                 }
-                ss += "actor pathing created ||";
+                ss += "actor departure pathing created ||";
                 AddPackage(new List<ActionPackage>() { package });
-
-                /*
-                var newMem = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral,
-                                    LocalizeDictionary.QueryThenParse("exp_event_departure_memory").Replace("$loc$", this.Expedition.DisplayName));
-
-                var entry = c.Memory.AddEntry(newMem, new List<string>() { "expedition" });
-                entry.entryDescription = LocalizeDictionary.QueryThenParse("exp_event_departure_memory").Replace("$loc$", this.Expedition.DisplayName);
-                entry.disableRoomName = true;
-                */
                 return true;
             }
         }
@@ -777,18 +794,13 @@ public class Job_Expedition : Job
             ss += "expedition on break! ||";
             return false;
         }
-        else if (this.status == ExpeditionStatus.returning && canReturn)
-        {
-            ss += "expedition concluded, returning ||";
-            return false;
-        }
         else if (packageCooldown > 0)
         {
-            ss += "expedition active, exploring, no event ||";
+            ss += $"expedition active, exploring, cooldown {packageCooldown} no event ||";
             return true;
         }
-        else if (false && FactionOwner_Party.isPrisoner(c))
-        {
+        else if (FactionOwner_Party.isPlayerFaction && FactionOwner_Party.isPrisoner(c))
+        {   // forbid player party captured prisoner from exploring
             ss += "is being imprisoned, cannot explore ||";
             return true;
         }
@@ -822,11 +834,10 @@ public class Job_Expedition : Job
                 return false;
             }
         }
-        else
-        {
-            // idle
+
+            ss += $"expedition no package, remaining minutes {RemainingMinutes}, explore rate {Expedition.ExploreRate}";
             return true;
-        }
+        
     }
 
     public void StartCooldown()

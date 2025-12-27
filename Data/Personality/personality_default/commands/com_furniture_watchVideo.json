@@ -1,0 +1,166 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_watchVideo",
+                    "interruptSelfJob": true,
+                    "variants": [
+                        {
+                            "requirement": { "requireEPFailure": true },
+                            "variants":[
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
+                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "_comment": "failure variant positive",
+                                    "responses": [
+                                        "kojo_default_com_furniture_watchVideo_refuse_1"
+                                    ]
+                                }
+                            ],
+                            "_comment": "failure variant negative",
+                            "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                            "responses": [
+                                "kojo_default_com_furniture_watchVideo_refuse_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "extraPortraitTags": [
+                                "happy",
+                                "excited",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "great success variant",
+                            "responses": [
+                                "kojo_default_com_furniture_watchVideo_accept_success_1",
+                                "kojo_default_com_furniture_watchVideo_accept_success_2",
+
+                                "$self$伸了个大大的懒腰，满足地关掉了电视。\"呼，这期节目做得真不错。\"", "$self$意犹未尽地哼着片尾曲，脸上挂着轻松的笑容。\"感觉心情变好了不少呢。\"", "$self$从沙发上弹起来，精神抖擞地活动了一下脖子。\"果然放松一下是对的！\""
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": true
+                            },
+                            "extraPortraitTags": [
+                                "pouting",
+                                "doubt"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "barely success variant",
+                            "responses": [
+                                "kojo_default_com_furniture_watchVideo_accept_failure_1",
+
+                                "$self$一脸晦气地关掉电源，把遥控器丢在一边。\"浪费时间，这剧情简直是灾难。\"", "$self$揉了揉有些发酸的眼睛，叹了口气。\"越看越无聊，还不如去睡觉。\"", "$self$面无表情地盯着黑掉的屏幕，显得有些空虚。\"全是些没营养的东西……\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_watchVideo_Begin",
+                    "interruptSelfJob": false,
+                    "variants": [
+                        {
+                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "responses": [
+"$self$蜷缩在沙发的角落里，随手按下了遥控器的开关键。", "$self$找了个舒服的姿势躺好，视线聚焦在屏幕上跳动的画面。", "$self$有些无聊地切换着频道，最终停在了一个综艺节目上。", "$self$抱起抱枕，把下巴抵在上面，眼睛一眨不眨地盯着电视屏幕。", "$self$心不在焉地看着电视里播放的广告，似乎只是想让屋子里有点声音。",
+
+"$self$陷进柔软的沙发里，随手按下了遥控器的电源键，房间里顿时充满了电视节目的背景音。", "$self$抱着抱枕蜷缩在角落，视线慵懒地投向了屏幕上跳动的画面。", "$self$一边漫不经心地换着台，一边寻找着能打发时间的内容。", "$self$把音量调到了适中的位置，屏幕的光映照在她毫无防备的脸上。"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_watchVideo_Ongoing",
+                    "variants": [
+                        {
+                            "responses": [
+"$self$单手托着下巴，面无表情地看着屏幕上的画面。", "$self$偶尔拿起杯子喝一口水，视线始终没有离开电视。", "$self$的表情很平静，似乎并没有完全沉浸在剧情中。", "$self$机械地往嘴里送着爆米花，眼神有些放空。", "$self$微微皱眉，似乎对电视里播放的内容不太感冒。", "$self$保持着同一个姿势坐了很久，只有眼珠随着画面转动。"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_watchVideo_Interrupt",
+                    "variants": [
+                        {
+                            "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
+                            "requirement":{ "requireSelfAttitudeKey": "Fear" },
+                            "responses": [
+"$self$浑身一僵，原本摇晃的小腿瞬间停住，有些慌乱地想要站起来却又不敢动弹，视线在屏幕和$target$之间游移。\"", "$self$下意识地缩起脖子，把遥控器紧紧抱在怀里，像是在寻求某种防御。\"我……我马上就关掉……\"", "$self$迅速坐正了身体，有些局促地拉扯着自己的衣角，连大气都不敢出。\"对不起，我不知道您这个时候会来……\"", "$self$眼神闪烁着不敢直视$target$，身体不由自主地往沙发的角落里缩去，试图降低自己的存在感。", "$self$尽管电视里播放着喜剧，$self$的脸上却没有任何笑意，反而因为$target$的靠近而微微发抖。",
+
+"$self$听到脚步声的瞬间，身体僵硬了一下，抓着抱枕的手指微微发白。", "$self$慌乱地想要关掉电视，眼神游移不定，不敢直视$target$。", "$self$缩起脖子，尽可能地减小自己的存在感，连呼吸都变得小心翼翼。"
+                            ]
+                        },
+                        {
+                            "requirement":{ "requireSelfAttitudeKey": "Badwill" },
+                            "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
+                            "responses": [
+"$self$注意到了$target$的到来，随即烦躁地咂了一下舌，把电视音量调大了好几格，仿佛是为了盖过对方的存在感。", "$self$翻了个白眼，身体刻意背对着$target$，像是在构建一道无形的墙壁。\"别挡着我看电视，碍眼。\"", "$self$冷笑一声，目光在屏幕上游离，语气里满是嘲讽。\"哟，大忙人还有空来视察工作啊？\"", "$self$像是没看到人一样，只是把原本放在茶几上的脚翘得更高了，完全没有让开的意思。", "$self$瞥见$target$的身影后，原本放松的肩膀瞬间紧绷起来，脸色阴沉地抓紧了遥控器。",
+
+"$self$通过余光瞥见$target$，随即冷着脸把身子转了过去，只留给对方一个后脑勺。", "$self$盯着电视的眼神变得锐利起来，故意无视了$target$的存在。", "$self$冷哼一声，抓起遥控器直接换了个频道，仿佛在宣示某种领地权。"
+                            ]
+                        },
+                        {
+                            "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
+                            "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
+                            "_comment": "barely success variant",
+                            "responses": [
+"$self$听到了动静，视线虽然还黏在电视屏幕上，却腾出一只手拍了拍身边的沙发空位。\"快来快来，$target$！这集超精彩的！\"", "$self$嘴角上扬，一边盯着剧情一边随手把自己吃了一半的零食袋递了过去。\"给，特意给你留的。\"", "$self$稍微往旁边挪了挪身体，给$target$腾出一个舒服的位置，眼睛依然亮晶晶地盯着屏幕。\"等你半天了，刚开始播广告呢。\"", "$self$头也不回地晃了晃脚丫，语气轻快。\"这节目简直就是为你量身定做的，不看亏大了哦。\"", "$self$虽然眼睛没离开画面，但身体却自然地向$target$的方向倾斜了一些。\"回来啦？正好赶上高潮部分。\"",
+
+"$self$听到动静，从屏幕前转过头，眼睛弯成了月牙。\"哎？是你呀，$target$！快来，这个超好笑的！\"", "$self$往沙发旁边挪了挪，拍了拍身边的空位。\"要一起看吗？正好刚开始。\"", "$self$虽然还在看电视，但嘴角已经不自觉地上扬。\"你来了？稍微等我一下，这块马上演完了。\""
+                            ]
+                        },
+                        {
+                            "requirement":{ "requireSelfAttitudeKey": "Desire" },
+                            "extraPortraitTags": [ "shy" ], "useActiveTags": false,
+                            "responses": [
+"$self$慵懒地换了个姿势，故意展露出曲线，眼神虽然看着电视，余光却在那粘腻地在$target$身上打转。\"嗯哼~这里的剧情好无聊啊，不如我们做点更有趣的事？\"", "$self$用手指卷着发梢，嘴唇微张，发出意味不明的轻哼声，完全不在意电视里演了什么。\"$target$，过来陪我坐会儿嘛~贴着我坐。\"", "$self$双腿交叠摩擦了一下，脸颊泛起不自然的红晕，视线虽然盯着屏幕，呼吸却变得急促起来。\"你在那边看着我……让我怎么专心看电视啊……\"", "$self$咬着下唇，眼神迷离地瞥向$target$，一只手不知何时已经悄悄伸向了自己的领口。\"电视里的男主角……完全没法和你比呢。\"", "$self$故意发出甜腻的叹息声，身体像蛇一样在沙发上扭动，试图吸引$target$的注意。",
+
+"$self$虽然眼睛看着电视，但修长的双腿却有意无意地换了个更撩人的姿势，朝向$target$。", "$self$咬着嘴唇，眼神变得迷离，视线虽然在屏幕上，心思却显然飘到了$target$身上。", "$self$发出了一声轻微的嘤咛，借着伸懒腰的动作，展示出身体优美的曲线，偷偷观察$target$的反应。"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "responses": [
+"$self$只是淡淡地瞥了一眼门口，随后便若无其事地继续盯着屏幕，仿佛进来的是一团空气。", "$self$机械地往嘴里塞着薯片，目光呆滞地看着广告，对$target$的出现没有任何特别的反应。", "$self$保持着原本的姿势一动不动，只有眼珠子随着屏幕上的画面转动了一下。\"哦，是你啊。\"", "$self$随手抓过旁边的抱枕垫在脑后，调整了一个更舒服的姿势，完全把$target$当成了背景板。", "$self$打了个哈欠，眼神有些涣散，显然比起看来人是谁，她更在意现在的节目有多无聊。",
+
+"$self$只是淡淡地扫了$target$一眼，便又重新关注起电视里的内容。\"哦，是你啊。\"", "$self$一边盯着字幕，一边随口问道：\"有什么事吗？\"", "$self$继续看着屏幕，甚至没有调整坐姿，只是微微点了点头算是打招呼。"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "kojo_default_com_furniture_watchVideo_refuse_1": "$self$：「我现在不太想看东西。」",
+                "kojo_default_com_furniture_watchVideo_accept_failure_1": "「……这半小时真是浪费人生。」$self$一脸精疲力尽。",
+                "kojo_default_com_furniture_watchVideo_accept_success_1": "「这部影片意外地不错哎！」$self$露出灿烂的笑容",
+                "kojo_default_com_furniture_watchVideo_accept_success_2": "「好久没笑得这么开心了。」 $self$边笑边擦眼角的泪水"
+            },
+            "en-us": {
+                "kojo_default_com_furniture_watchVideo_refuse_1": "$self$: “Not really feeling like watching anything right now.”",
+                "kojo_default_com_furniture_watchVideo_accept_failure_1": "“...That was 30 minutes of my life I’m not getting back.”  $self$ looks utterly drained.",
+                "kojo_default_com_furniture_watchVideo_accept_success_1": "“Okay, that was actually really good!” $self$ smiles brightly",
+                "kojo_default_com_furniture_watchVideo_accept_success_2": "“I haven’t laughed that hard in ages.” $self$ wipes away a tear"
+            }
+        }
+    }
+}

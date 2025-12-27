@@ -1,0 +1,158 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_fingers_Begin",
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被撫摸手指 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$没有抽回手，反而顺势将手指嵌入了$target$的指缝中，十指相扣。", "$self$感觉到指尖传来的温度，嘴角不自觉地上扬，轻轻回握了一下。", "$self$低头看着两人交叠的手，用拇指轻轻摩挲着$target$的手背，神情柔和。", "$self$并没有说话，只是将身体重心稍微向$target$那边倾斜了一些，默许了这个动作。"                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":[ "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被撫摸手指 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$显然被这突如其来的触碰吓了一跳，身体僵硬了一下，但并没有立刻躲开。", "$self$瞪大了眼睛看着$target$的动作，似乎大脑还在处理这个超乎社交礼仪的行为。", "$self$的手指微微颤抖，眼神中充满了困惑，却因为某种原因没有反抗。", "$self$有些尴尬地张了张嘴，最后什么也没说，只是任由$target$握着。"
+                ]
+            },
+            {
+                
+                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被撫摸手指 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$的脸色瞬间变得苍白，身体止不住地轻微发抖，却不敢把手抽回来。", "$self$死死地咬着下唇，视线恐惧地盯着地面，像是一只受惊却不敢逃跑的小动物。", "$self$的手指冰凉且僵硬，全身肌肉紧绷，显然正在忍受极大的心理不适。", "$self$眼眶微红，呼吸急促，在$target$的视线下被迫保持着这个姿势。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_fingers",
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被撫摸手指 口上文",
+                "responses":
+                [ 
+"$self$发出均匀的呼吸声，对手指上传来的触感毫无察觉，睡颜依旧恬静。", "$self$的手被随意摆弄着，偶尔手指会因为神经反射而轻微抽动一下，但并没有醒来的迹象。", "$self$完全沉浸在深层睡眠中，任由手指被一根根分开、抚摸，毫无防备。", "$self$在这个漫长的过程中只是翻了个身，手依旧软绵绵地任人宰割。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被撫摸手指 口上文",
+                "responses":
+                [ 
+"$self$保持着原本的姿势一动不动，对手指上发生的任何猥亵或把玩没有任何反应。", "$self$的世界是静止的，无论手指被摆弄成什么羞耻的形状，表情依旧凝固在上一秒。", "$self$就像一尊精美的人偶，毫无知觉地任由$target$的手指在她指尖游走、摩挲。", "$self$指尖的触感无法传递给大脑，$self$只是静止在这个瞬间，成为$target$手中的玩物。"
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被撫摸手指 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$像是触电般迅速缩回了手，有些慌乱地把手藏到了身后。", "$self$轻轻拍掉了$target$的手，嗔怪地瞪了一眼：\"别闹，很痒。\"", "$self$不动声色地抽回手，拿起旁边的水杯抿了一口，假装什么都没发生。", "$self$叹了口气，把手抽出来并在衣服上擦了擦：\"手上全是汗，黏糊糊的。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被撫摸手指 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$礼貌而不失尴尬地笑了笑，巧妙地借着整理文件的动作抽回了手。", "$self$后退了半步，保持着社交距离：\"我想我们还没熟到这种程度。\"", "$self$温和地挡开了$target$的手，语气客气却疏离：\"请自重。\"", "$self$有些为难地看着$target$：\"这样不太好吧，会被别人误会的。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被撫摸手指 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$像是碰到了脏东西一样猛地甩开手，眼神凌厉地瞪着$target$。", "$self$冷笑一声，后退一步并嫌恶地拍了拍被碰过的地方。\"你有病吗？\"", "$self$毫不客气地一把推开$target$，声音冰冷：\"别用你的脏手碰我。\"", "$self$警惕地抱紧双臂，做出了防御姿态：\"再动手动脚我就报警了。\""
+                 ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被撫摸手指 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$的呼吸变得有些急促，脸颊染上了一层红晕，手指无意识地在$target$掌心画圈。", "$self$完全放松下来，头轻轻靠在了$target$的肩膀上，享受着这份静谧的亲昵。", "$self$像是玩上瘾了，开始反过来把玩$target$的手指关节，眼神里满是依赖。", "$self$轻声嘟囔了一句：\"你的手真的很暖和……\" 然后握得更紧了。"
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被撫摸手指 结果正面 未允许 口上文",
+                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$原本僵硬的肩膀慢慢放松下来，看向$target$的眼神中少了几分戒备，多了几分探究。", "$self$似乎适应了这个温度，手指不再紧绷，甚至表现出了一丝微妙的好奇。", "$self$脸上的尴尬逐渐消退，取而代之的是一种复杂的沉默，任由时间流逝。", "$self$低着头，原本想要抽回的意图似乎随着时间的推移而动摇了。"
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被撫摸手指 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$终于忍受不了这种无意义的接触，用力抽回了手并甩了甩。\"好了，差不多行了。\"", "$self$眉头紧锁，这种长时间的接触让$self$感到一种莫名的焦躁。\"一直这样你不觉得奇怪吗？\"", "$self$变得僵硬起来，眼神开始游移，显然已经在这个动作中耗尽了耐心。", "$self$借着撩头发的动作强行中断了接触，身子往旁边挪了挪。"
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被撫摸手指 结果负面 未允许 口上文",
+                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$忍耐到了极限，猛地站起身，椅子在地板上划出刺耳的声响。\"够了！\"", "$self$眼里的恐惧逐渐转变为厌恶，用力挣脱了束缚，呼吸急促不稳。", "$self$虽然没有说话，但眼泪已经在眼眶里打转，屈辱感让$self$浑身发冷。", "$self$咬牙切齿地盯着$target$：\"这下你满意了吗？放开我！\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

@@ -1,0 +1,263 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_finger_caress_A_Climax",
+        "tags":["nsfw"],
+        "variants":[
+            {
+                
+                "requireSelfDoer": true,
+                "_comment":"攻方 A抚摸 高潮" ,
+                "responses": [
+                    "($self$) A抚摸 高潮 口上文"
+                ]
+            },
+            {
+                
+                "requireSelfReceiver": true,
+                "variants":[
+                    {
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass", "climax"], "useActiveTags":false,
+                        "_comment":"2.4.1 受方 被A抚摸 高潮 有允许 口上文" ,
+                        "responses": [
+"$self$猛地弓起背，双手死死抓着床单，发出一声变调的尖叫。\"啊！哈啊——！不、不行了！即使没有进去……那个地方……要去了！♡\"",
+"$self$的臀部剧烈痉挛着，大腿内侧不住地颤抖。\"好奇怪！屁股变得好奇怪！呜……嗯啊啊啊——！要坏掉了！♡\""
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass", "climax"], "useActiveTags":false,
+                "_comment":"2.4.2 受方 被A抚摸 高潮 无允许 口上文" ,
+                "responses": [
+"$self$绝望地咬住手背试图压抑声音，但身体却诚实地剧烈抽搐起来。\"呜呜……明明不想的……为什么屁股会……啊啊啊！这种事情……太丢脸了……！♡\"",
+"$self$眼神失去了焦距，身体违背意志地在$target$手中达到了顶峰。\"不要……停下……我不承认……这种快感……呀啊啊啊——！♡\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_finger_caress_A_Begin",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被A抚摸 有允许 口上文" ,
+                "responses":
+                [ 
+"$self$咬着下唇，顺从地转过身去，双手扶着墙壁翘起了臀部。\"如果是$target$想做的话……那里也是可以的……\"",
+"$self$趴在床上，回头看了一眼，脸上带着一丝期待的红晕。\"只限于外面哦……这种奇怪的地方，还是第一次……\""
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass", "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被A抚摸 未允许 好意 口上文" ,
+                "responses":
+                [ 
+"$self$身体猛地一僵，瞪大了眼睛看着$target$，完全没想到会被触碰这种地方。\"等、等等！$target$？你在摸哪里啊？！\"",
+"$self$的声音因为震惊而走了调，但没有立刻推开。\"骗人的吧……这算是在恶作剧吗？手指……还在动……\""
+                ]
+            },
+            {
+                
+                "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被A抚摸 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+"$self$瑟瑟发抖地抓紧了衣角，不敢反抗那只侵犯私处的手。\"我知道了……请、请不要告诉别人……只要这样就可以了吗……\"",
+"$self$紧紧闭着眼睛，忍受着臀肉被揉捏的耻辱感，声音带着哭腔。\"如果不反抗的话……你就会放过我吗……呜……\""
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_sex_finger_caress_A",
+        "tags":["nsfw"],
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被A抚摸 口上文",
+                "responses":
+                [ 
+"$self$发出轻微的呼吸声，似乎把臀部的爱抚当成了某种梦境，偶尔无意识地扭动一下腰肢。",
+"随着手指在穴口的画圈，$self$在睡梦中皱了皱眉，发出一声含糊不清的鼻音，但并没有醒来的迹象。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被A抚摸 口上文",
+                "responses":
+                [ 
+"$self$依然保持着原来的姿势，没有任何反应，只有臀部的软肉随着$target$的抚摸和揉捏而变形，泛起不自然的红晕。",
+"时间静止的世界里，$self$对此一无所知，私密的褶皱正毫无防备地暴露在$target$的视线下被肆意玩弄。"
+
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[
+                    {
+                        "requirement":  { "selfTags":["justWokenUp"] } ,
+                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                        "variants":[
+                            {
+                                "requirement":  {  "requirePermission":true } ,
+                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
+                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 被A抚摸 口上文 有允许",
+                                "responses":
+                                [ 
+"$self$有些生气地拍开了那只作乱的手，翻身背对着$target$。\"唔……好痒……别闹了，真的很困……\""
+                                ]
+
+                            }
+                        ],
+                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 被A抚摸 口上文 无允许",
+                        "responses":
+                        [ 
+"$self$尖叫着坐起来，一脚把$target$踹下了床。\"你在干什么？！你是变态吗？！滚出去！\""
+
+                        ]
+                    },
+                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被A抚摸 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$下意识地夹紧了双腿，有些慌乱地推开了$target$的手。\"不、不行！那里脏……而且感觉好奇怪……\"",
+"$self$难为情地捂住了臀部，往后退了一步。\"饶了我吧，$target$。今天不想被碰那种地方。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被A抚摸 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$有些尴尬地抓住了$target$的手腕，试图让气氛不那么僵硬。\"哈哈……这个玩笑开得有点过火了哦，$target$。这里可不是能随便摸的地方。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被A抚摸 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$像触电一样猛地跳开，眼神冰冷地盯着$target$。\"你疯了吗？再敢碰我一下，我就报警了！\"",
+"$self$毫不客气地一巴掌拍掉了那只手，满脸厌恶。\"恶心。给我离远点，变态。\""
+                 ]
+            },
+            {
+
+                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
+                "_comment1":"玩家专用 刚睡醒时的 A抚摸口上文",
+                "variants":[
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 被A抚摸 有允许 口上文",
+                        "responses":[
+"$self$迷迷糊糊地哼了一声，感受到臀部的异样后反而主动迎合了上来。\"嗯……$target$？这么晚了还要弄那里吗……随你喜欢吧……\""
+                        ]
+
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
+                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 被A抚摸 无允许 好意 口上文",
+                        "responses":[
+"$self$在睡梦中被刺激醒来，发现是$target$后，意外地没有反抗。\"啊……是$target$吗？居然趁我睡着……这算是……性骚扰吗？不过……如果是你的话……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.8 玩家专用 刚睡醒时的 被A抚摸 无允许 敌意 口上文",
+                "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass","scared","submissive"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$惊醒后发现处境，眼泪瞬间涌了出来，但身体却不敢动弹。\"呜……为什么……不要……求求你……不要进去……\""
+                ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被A抚摸 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$瘫软在$target$怀里，呼吸还有些急促。\"哈……没想到只是摸那里也会这么舒服……如果是你的话，以后也可以……\"",
+"$self$脸颊潮红，眼神迷离地蹭了蹭$target$的胸口。\"感觉身体变得好奇怪……即使没有进去，也好像被填满了一样……\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被A抚摸 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$有些不知所措地低着头，似乎在回味刚才的感觉。\"明明应该生气的……但是……身体却……我是怎么了……\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被A抚摸 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$整理好衣服，表情有些僵硬地坐在一旁。\"总觉得……只有一种想上厕所的奇怪感觉，完全不舒服。\"",
+"$self$有些埋怨地看了$target$一眼，揉了揉红肿的皮肤。\"手法太粗暴了……以后还是不要碰那里比较好。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被A抚摸 结果负面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver","spread_pussy","spread_ass", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+"$self$一言不发地整理好衣服，与$target$拉开了明显的距离。\"虽然不知道你出于什么目的……但我希望这是最后一次。\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

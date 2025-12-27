@@ -1,0 +1,160 @@
+{
+    "Character_Personalities":
+    {
+        "looselist":
+        [
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_hair_Begin",
+        "variants":
+        [
+            {
+                "requirement":   {  "requirePermission":true }    ,
+                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
+                "_comment":"2.1.1 开始被抚摸头发 有允许 口上文" ,
+                "responses":
+                [ 
+                    "$self$像是习惯了一样，顺势把头靠在了$target$的手掌心里，发出一声舒服的鼻音。", "$self$没有停下手中的事，只是微微侧过头，方便$target$的手指穿过发丝。", "$self$嘴角上扬，像只被顺毛的猫一样眯起了眼睛。\"嗯？又要撒娇了吗？\"", "$self$主动把头顶往$target$怀里蹭了蹭。\"力度正好，别停哦。\"", "$self$轻轻哼着歌，任由$target$摆弄她的头发，神情满是信任与放松。"
+                ]
+
+            },
+            {
+                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                "extraPortraitTags":[ "blush"], "useActiveTags":false,
+                "_comment":"2.2.1 开始被抚摸头发 未允许 好意 口上文" ,
+                "responses":
+                [ 
+                    "$self$整个人僵了一下，眼睛睁大，似乎没料到$target$会有这种举动，但没有躲开。", "$self$愣在原地，有些手足无措地眨着眼，任由$target$的手落在头顶。", "$self$张了张嘴似乎想说什么，但最终只是红着脸低下了头，手指紧张地绞在一起。", "$self$身体微微颤抖了一下，眼神里充满了困惑，却并不讨厌这种触感。"
+                ]
+            },
+            {
+                
+                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
+                "_comment":"2.2.2 开始被抚摸头发 未允许 敌意 口上文" ,
+                "responses":
+                [ 
+                    "$self$咬紧了嘴唇，身体绷得笔直，强忍着想要躲开的冲动，眼角泛起屈辱的泪光。", "$self$死死盯着地面，双手紧紧抓着衣角，像是一个等待惩罚结束的人偶。", "$self$屏住了呼吸，不敢发出一点声音，生怕激怒面前的$target$。", "$self$闭上眼睛，睫毛剧烈颤抖着，脸上写满了抗拒与恐惧，却不敢动弹分毫。"
+                ]
+            }
+        ]
+    }
+},
+{
+    "ID":"personality_default",
+    "Entry":
+    {
+        "ID": "com_touch_hair",
+        "variants":
+        [
+            {
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.3.2 睡眠中 被抚摸头发 口上文",
+                "responses":
+                [ 
+                    "$self$发出轻微的呓语，无意识地在枕头上蹭了蹭，似乎把抚摸当成了梦境的一部分。", "$self$皱了皱眉，翻了个身背对着$target$，嘴里嘟囔着听不清的话。\"唔……别闹……\"", "$self$并没有醒来，只是呼吸的节奏稍微乱了一拍，随后又陷入了沉睡。", "$self$在睡梦中抓住了$target$的手指，把它当成抱枕一样压在了脸颊下。"
+                ]
+            },
+            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.3.1 时停中 被抚摸头发 口上文",
+                "responses":
+                [ 
+                    "（静止画面）$self$依然保持着刚才的姿势，发丝在$target$的手指间静止悬浮，仿佛一尊精致的雕塑。", "（静止画面）$self$毫无知觉，眼神停留在上一秒的焦点处，任由$target$肆意玩弄她的长发。", "（静止画面）$target$的手指穿过发丝，$self$没有任何反应，只有被改变形状的发型证明了行为的发生。", "（静止画面）就像是被按下了暂停键的电影，$self$完全无法感知头顶传来的触碰。"
+                ]
+            },
+            {   
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[                    
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.1.2 指令失败拒绝 被抚摸头发 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$笑着抓住了$target$的手腕，轻轻推开。\"别闹啦，刚做好的发型会乱的。\"", "$self$敏捷地缩了缩脖子，躲开了伸过来的手。\"痒！快住手，今天不想被摸头。\"", "$self$有些无奈地叹了口气，把$target$的手拿下来握在手里。\"乖，现在不是玩的时候。\"", "$self$护住自己的刘海，佯装生气地瞪了$target$一眼。\"只有今天不行，头发还没干透呢。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.2.3 指令失败拒绝 被抚摸头发 无允许 善意 口上文",
+                        "responses":
+                        [ 
+                            "$self$礼貌地后退半步，保持了社交距离，脸上带着尴尬而不失礼貌的微笑。\"抱歉，我不习惯这样。\"", "$self$抬手挡在了头顶，轻轻摇了摇头。\"这个动作似乎不太合适，请自重。\"", "$self$干笑了两声，不动声色地转身去拿东西。\"哎呀，突然想起来还有事没做。\"", "$self$用开玩笑的口吻说道：\"摸头是要收费的哦？开玩笑的，请别这样。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.2.4 指令失败拒绝 被抚摸头发 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":
+                 [
+                    "$self$猛地挥开了$target$的手，眼神冰冷如刀。\"别碰我！\"", "$self$像触电一样弹开，一脸嫌恶地拍打着刚才被触碰的地方。\"恶心，离我远点。\"", "$self$冷笑一声，后退几步摆出了防御姿态。\"你以为你是谁？这种举动很失礼。\"", "$self$深吸一口气，压抑着怒火低吼道：\"如果你不想你的手断掉，就最好收回去。\""
+                 ]
+            },
+            { 
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.1.3 ($self$) 被抚摸头发 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$此时已经完全放松下来，呼吸变得绵长而平稳，身体软绵绵地靠在$target$身上。", "$self$伸手环住了$target$的腰，声音变得慵懒粘人。\"再多摸一会儿……感觉好安心。\"", "$self$抬起头，眼神亮晶晶地看着$target$，脸上带着红晕。\"你的手是有魔力吗？完全不想动了。\"", "$self$发出一声满足的叹息，主动抓着$target$的手指引导向耳后的敏感处。\"这里也要。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.5 ($self$) 被抚摸头发 结果正面 未允许 口上文",
+                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+                    "$self$原本紧绷的身体逐渐软化，低垂的眼帘下，防备的神色正在消退。\"……算了，好像也没那么讨厌。\"", "$self$有些别扭地偷偷瞄了$target$一眼，脸颊泛红。\"你是把我看作小孩子了吗？真是的……\"", "$self$沉默了许久，发出一声极轻的叹息，不再抗拒手掌的温度。\"只这一次……下不为例。\"", "$self$有些恍惚地喃喃自语：\"好奇怪……为什么会觉得有点温暖？\""
+                ]
+            },
+            { 
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
+                        "_comment":"2.1.4 ($self$) 被抚摸头发 结果负面 有允许 口上文",
+                        "responses":
+                        [ 
+                            "$self$的肩膀开始变得僵硬，终于忍不住抓住了$target$的手。\"好了，头皮都被你摸得有点痛了。\"", "$self$不着痕迹地往旁边挪了挪，避开了$target$的手。\"我想去喝杯水，先停一下吧。\"", "$self$有些烦躁地理了理被弄乱的头发，皱着眉说道：\"差不多行了，一直这样有点烦人。\"", "$self$直接站起身来，语气冷淡了几分。\"有点闷，我去透透气。\""
+                        ]
+                    }
+                ],
+                "_comment":"2.2.6 ($self$) 被抚摸头发 结果负面 未允许 口上文",
+                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
+                "responses":
+                [ 
+                    "$self$忍无可忍地一把推开了$target$，胸口剧烈起伏。\"够了！你到底想羞辱我到什么时候！\"", "$self$脸色苍白，像是接触了什么脏东西一样剧烈颤抖。\"别碰我……求你了，别再碰我了……\"", "$self$眼里的厌恶几乎要溢出来，冷冷地转身就走。\"令人作呕。\"", "$self$捂着头蹲了下去，声音里带着哭腔和极度的愤怒。\"滚开！都说了不要碰我！\""
+                ]
+            }
+        ]
+    }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+"zh-cn":
+{
+
+},
+"en-us":
+{
+    
+
+}
+        }
+    }
+}

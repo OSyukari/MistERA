@@ -132,6 +132,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     public CharacterInventory Inventory = new CharacterInventory();
 
     [JsonIgnore] public bool CanActInTimeStop { get { return this.RefID == 0; } }
+    public bool MovedInTimeStop = false;
     [JsonIgnore] public bool isTimeStopped { get { return scr_System_Time.current.TimeStopStrict && !CanActInTimeStop; } }
 
     /// <summary>
@@ -295,6 +296,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Skills.FinalizeExperience();
         this._cachedJobDescription = string.Empty;
         this.PortraitManager.ClearHandlerCache();
+        if (!scr_System_Time.current.TimeStop) MovedInTimeStop = false;
     }
 
     private void Observer_GlobalMinute5(TimeSpan t)
@@ -745,6 +747,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
         string ss = FirstName + ": ";
         string jobInternalStatus;
+        if (interrupted)
+        {
+            if (log) ss += $" | interrupted, delaying job search |";
+            interrupted = false;
+            if (s != null) s.Add(ss);
+            return;
+        }
         if (CurrentJob != null)
         {   // has job, but job cannot give a valid package
             bool hasPackage = CurrentJob.UpdateActorPackage(this, out jobInternalStatus);
@@ -951,13 +960,24 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
             //}
         }
+
         if (currentJobFaction is Manageable_Party)
         {
             var party = currentJobFaction as Manageable_Party;
-            if (party != null && ((FactionManager.isPartyLocked && party.hasExpeditionSet) || party.isActive) && !party.Job.isResting && !party.skipTryGetJob(this))
+            if (party == null)
+            {
+
+            }
+            else if ((FactionManager.isPartyLocked || party.isActive) && !party.Job.isResting && !party.skipTryGetJob(this))
             {
                 
-                if (this.CurrentJob == party.Job && party.Job.canReturn && party.Job.canExit(this.RefID))
+                if (FactionManager.isPartyLocked && !party.hasExpeditionSet)
+                {
+                    if (log) ss += $"party locked {party.FactionDisplayName} !hasExpeditionSet {(party.Job == null ? "-" : "exist")} {(party.Job == null || party.Job.Expedition == null ? "-" : "exist")}";
+                    if (s != null) s.Add(ss);
+                    return;
+                }
+                else if (this.CurrentJob == party.Job && party.Job.canReturn && party.Job.canExit(this.RefID))
                 {
                     this.FactionManager.RemoveFromParty(party);
                     ChangeCurrentJob();
@@ -984,7 +1004,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     if (log) ss += "exploration shouldRest? TRUE ||";
                     if (s != null) s.Add(ss);
                 }
-                else if (party.Job.HasCooldown() || party.Job.status == Job_Expedition.ExpeditionStatus.returning)
+                else
                 {
                     // be careful actorjobcomplete list, but here not necessary as camp ignore the list
                     if (log) ss += $"working on party exploration job, inCooldown? {party.Job.HasCooldown()} or returning? {party.Job.status == Job_Expedition.ExpeditionStatus.returning}, faction {party.FactionDisplayName} {party.Job.DisplayName}";
@@ -1311,6 +1331,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return interactionJobPointer;
         } }
 
+    [JsonIgnore] public bool interrupted = false;
 
     /// <summary>
     /// Wipe cached description

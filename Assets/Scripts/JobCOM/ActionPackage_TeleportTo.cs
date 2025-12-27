@@ -40,7 +40,7 @@ public class ActionPackage_TeleportTo : ActionPackage
     {
 
     }
-    public ActionPackage_TeleportTo(Job job, int doerRef, int targetRoomRef, int duration = 5) : this()
+    public ActionPackage_TeleportTo(Job job, int doerRef, int targetRoomRef, int duration = 5) : base()
     {
         ReEstablishParent(job);
 
