@@ -29,17 +29,23 @@ public class ActionPackage_ProductionOrder : ActionPackage
     {
         var tempPackage = this.Copy();
 
-        doers = new List<int>(DoerRefs);
-        receivers = new List<int>(ReceiverRefs);
-
-        if (doers.Count < 1) doers.Add(c.RefID);
-        else if (!doers.Contains(c.RefID) && !receivers.Contains(c.RefID)) receivers.Add(c.RefID);
+        base.canJoinAP(c, out doers, out receivers);
 
         tempPackage.ResetRequest(doers, receivers, this.masterRef);
         if (tempPackage.Validate()) return tempPackage.COMVariantID;
         else return -1;
     }
 
+    public override int canJoinAP(List<Character_Trainable> cs, out List<int> doers, out List<int> receivers)
+    {
+        var tempPackage = this.Copy();
+
+        base.canJoinAP(cs, out doers, out receivers);
+
+        tempPackage.ResetRequest(doers, receivers, this.masterRef);
+        if (tempPackage.Validate()) return tempPackage.COMVariantID;
+        else return -1;
+    }
     private Job_Furniture jobFurn { get { return job as Job_Furniture; } }
 
     /*

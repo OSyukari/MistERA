@@ -297,6 +297,13 @@ public class COM: I_SerializationCallbackReceiver
         else if (variantID >= variants.Count) return "GetDescription_Begin ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Begin(this, evp);
     }
+    public virtual string GetDescription_Begin(ActionPackage ap, int variantID)
+    {
+        //Debug.LogError("GetDescription_Begin with variantID " + variantID);
+        if (variantID == -1) return description_begin.GetText(ap);
+        else if (variantID >= variants.Count) return "GetDescription_Begin ERROR variantID out of bound";
+        else return variants[variantID].GetDescription_Begin(this, ap);
+    }
 
     public virtual string GetDescription_Remove(EvaluationPackage evp, int variantID)
     {
@@ -313,7 +320,7 @@ public class COM: I_SerializationCallbackReceiver
     }
     public virtual string GetDescription_Ongoing(ActionPackage ap, int variantID)
     {
-        if (variantID == -1) return description_ongoing.GetText(ref ap);
+        if (variantID == -1) return description_ongoing.GetText(ap);
         else if (variantID >= variants.Count) return "GetDescription_Ongoing ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Ongoing(this, ap);
     }
@@ -761,6 +768,22 @@ public class COM: I_SerializationCallbackReceiver
             //s2 = Utility.StringReplace(ref evp, s2);
             return s2;
         }
+        public string GetDescription_Begin(COM ownerCOM, ActionPackage ap)
+        {
+            //Debug.LogError("GetDescription_Begin Variant isOwnerNull?["+ (ownerCOM == null )+ "] useAnotherDesc?["+ useAnothersDescription + "]");
+            //if (ownerCOM == null) Debug.LogError("ownerCOM is null");
+            List<string> s = new List<string>();
+            s.Add(description_begin.GetText(ap));
+            // prevent infinite loop
+            if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_Begin(ap, useAnothersDescription));
+            if (useBaseDescription) s.Add(ownerCOM.GetDescription_Begin(ap, -1));
+
+            if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
+            s.RemoveAll(x => x.Length < 1);
+            string s2 = String.Join("\n", s);
+            //s2 = Utility.StringReplace(ref evp, s2);
+            return s2;
+        }
 
         public string GetDescription_Remove(COM ownerCOM, EvaluationPackage evp)
         {
@@ -796,7 +819,7 @@ public class COM: I_SerializationCallbackReceiver
         public string GetDescription_Ongoing(COM ownerCOM, ActionPackage ap)
         {
             List<string> s = new List<string>();
-            s.Add(description_ongoing.GetText(ref ap));
+            s.Add(description_ongoing.GetText(ap));
             // prevent infinite loop
             if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_Ongoing(ap, useAnothersDescription));
             if (ap == null || ownerCOM == null) Debug.LogError($"ap null? {ap == null} ownercom null? {ownerCOM == null}");

@@ -292,7 +292,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         foreach (var i in Index_referenceID) i.Value.OnAfterDeserialize();
 
-        party = obj.Party;
+        this.party = obj.Party;
+        this.party.Clear();
 
         this.Index_ExpeditionInstances = obj.ExpeditionInstances;
 
@@ -419,6 +420,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
     }
 
+    public bool shortenLogsPrint = true;
+
     public void NotifyEventEnd()
     {
         this.Map.NotifyEventEnd();
@@ -476,6 +479,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("null AddLog_Question portraitref");
             PortraitManager portraitRef = null;
             log = LogManager.AddLog(new Message_Question(portraitRef, question.portraitTagsOverride, parent, question));
         }
@@ -936,13 +940,13 @@ public class scr_System_CampaignManager : MonoBehaviour
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
-                list.RemoveAt(list.Count);// -> used to launch a CTD error
+               // list.RemoveAt(list.Count);// -> used to launch a CTD error
                 //Debug.Log("list count " + i + " " + String.Join("|", list));
                 if (i >= list.Count) continue;  // list might get modified
                 ActionPackage p = list[i];
                 int roomKey = p.RoomKey;
                 int duration = p.Duration;
-
+                if (p.isPaused) continue;
                 if (p.Tick(ref freeActors, updateDuration))
                 {
                     // check package has room-wide effect
@@ -1223,6 +1227,19 @@ public class scr_System_CampaignManager : MonoBehaviour
             Observer_CurrentTargetEX?.Invoke(_currentTargetEX.RefID, false);
         }
     }
+    /// <summary>
+    /// call for currentTargetEX to reload
+    /// </summary>
+    public void NotifyCurrentTargetEXReset()
+    {
+        //Observer_CurrentTarget?.Invoke(currentTarget, true);
+        Observer_CurrentTargetEX?.Invoke(_currentTargetEX.RefID, true);
+    }
+    public void NotifyCurrentTargetReset()
+    {
+        Observer_CurrentTarget?.Invoke(currentTarget, true);
+    }
+
     public PortraitManager.CharaPortrait CurrentTargetEXPortrait = null;
 
 
@@ -1629,6 +1646,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             m.RemoveFromFaction(c);
         }
+        c.DisposeInternal();
     }
 
     public Character_Trainable Register(Character_Trainable c, int forceRefID = -1)

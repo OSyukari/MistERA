@@ -12,7 +12,7 @@
                 },
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options":[
                             {   
                                 "target_chara_conditions":
@@ -27,19 +27,19 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Events",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_hasTeam",
                         "line": "$self.name$ starts combat training with $teammates.name$",
                         "nextEntryLabel":"end"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Events",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_solo",
                         "line": "$self.name$ starts combat training",
                         "nextEntryLabel":"end"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "end",
                         "isLast": true,
                         "options":[

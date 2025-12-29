@@ -49,6 +49,7 @@ public class scr_SpineLoader : MonoBehaviour
         parentWidth = parentRect.rect.width;
     }
 
+    /*
     public RectTransform getLoaderRect
     {
         get
@@ -56,13 +57,25 @@ public class scr_SpineLoader : MonoBehaviour
             if (spineLoader != null) return spineLoader.GetComponent<RectTransform>();
             return null;
         }
-
+    }*/
+    public Transform GetLoaderRect
+    {
+        get
+        {
+            if (tiny != null && tiny.GameObject != null) return tiny.GameObject.transform;
+            return null;
+        }
     }
-    protected SpineLoader PREV;
-    public SpineLoader spineLoader;
-    TextAsset spineLoader_skeletonJSON;
 
-    SpineLoader spineLoader_previous = null;
+    public SpineLoaderTiny tiny;
+
+    protected void OnDestroy()
+    {
+        loader40.Clear();
+        loader41.Clear();
+        loader42.Clear();
+    }
+
     /// <summary>
     /// PATH VALUES WILL HAVE APPLICATION_DATAPATH APPENDED TO IT 
     /// </summary>
@@ -71,56 +84,69 @@ public class scr_SpineLoader : MonoBehaviour
     /// <param name="skeletonJSON_path"></param>
     /// <param name="skeletonScale"></param>
     /// <param name="idleAnimName"></param>
-    public IEnumerator SetBase(List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName, string addonAnimName)
+    public IEnumerator SetBase(PortraitManager.CharaPortrait_Spine manager, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName, string addonAnimName)
     {
-
-        TextAsset ta = null;
-        yield return AssetsLoader.LoadTextCoroutine(skeletonJSON_path, text => ta = text);
-
         var version = "";
-        if (ta.text.Contains("4.0.")) version = "4.0";
-        else if (ta.text.Contains("4.1.")) version = "4.1";
-        else if (ta.text.Contains("4.2.")) version = "4.2";
+        if (manager.dataHolder != null)
+        {
+            var ta =  manager.dataHolder.skeletonTA;
+            if (ta.text.Contains("4.0.")) version = "4.0";
+            else if (ta.text.Contains("4.1.")) version = "4.1";
+            else if (ta.text.Contains("4.2.")) version = "4.2";
+        }
+        else
+        {
+            TextAsset ta = null;
+            yield return AssetsLoader.LoadTextCoroutine(skeletonJSON_path, text => ta = text);
+            if (ta.text.Contains("4.0.")) version = "4.0";
+            else if (ta.text.Contains("4.1.")) version = "4.1";
+            else if (ta.text.Contains("4.2.")) version = "4.2";
+            Destroy(ta);
+        }
+
+
 
         // this need full path
-        if (spineLoader == null || (spineLoader.Version != version || spineLoader.atlasPath != atlasJSON_path || spineLoader.skeletonPath != skeletonJSON_path))
-        {   // then call this one
-            spineLoader_previous = spineLoader;
-            
-            spineLoader = scr_System_CentralControl.current.GetSpineLoader(version);
-        }
-
-        yield return spineLoader.Initialize(materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName);
-
-        if (spineLoader_previous != null && spineLoader_previous != spineLoader)
+        /**/
+        if (tiny == null || tiny.Version != version)
         {
-            spineLoader_previous.gameObject.SetActive(false);
-            UnityEngine.Object.Destroy(spineLoader_previous.gameObject);
-            spineLoader_previous = null;
+           // StoreTiny();
+            tiny = GetAnimator(version);
         }
+
+        var animator = scr_System_CentralControl.current.GetSpineAnimator(tiny.Version);
+        yield return animator.Initialize(manager, tiny, materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName);
+        // yield return spineLoader.Initialize(materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName);
+        HideAnimator(version);
     }
 
-    public void Store()
+    SpineLoaderTiny_40 loader40 = new SpineLoaderTiny_40();
+    SpineLoaderTiny_41 loader41 = new SpineLoaderTiny_41();
+    SpineLoaderTiny_42 loader42 = new SpineLoaderTiny_42();
+
+    protected void HideAnimator(string version)
     {
-        if (spineLoader == null) return;
-        spineLoader_previous = spineLoader;
-        spineLoader = null;
-        if (spineLoader_previous != null)
+        if (loader40.GameObject != null) loader40.GameObject.SetActive(version == "4.0");
+        if (loader41.GameObject != null) loader41.GameObject.SetActive(version == "4.1");
+        if (loader42.GameObject != null) loader42.GameObject.SetActive(version == "4.2");
+    }
+    protected SpineLoaderTiny GetAnimator(string version)
+    {
+        switch (version)
         {
-            spineLoader_previous.gameObject.SetActive(false);
-            Destroy(spineLoader_previous.gameObject);
-            spineLoader_previous = null;
+            case "4.0": return loader40;
+            case "4.1": return loader41;
+            case "4.2": return loader42;
+            default: return null;
         }
     }
 
-    public void Destroy()
+    public void Clean()
     {
-        if (spineLoader_previous == null) return;
-        spineLoader_previous.gameObject.SetActive(false);
-        Destroy(spineLoader_previous);
-        spineLoader_previous = null;
+        loader40.Clear();
+        loader41.Clear();
+        loader42.Clear();
     }
-
 
     public void AddAnimation(string animationName, bool loop)
     {

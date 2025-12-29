@@ -14,7 +14,7 @@
                 ],
 "events": [
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "options":[
         {   
             "target_chara_conditions":
@@ -33,7 +33,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Question, Events",
+    "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_choice",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "question":"$party.name$在洞穴中遇到了哥布林巡逻队，冲突已无法避免\n敌方队伍的构成为：$enemy.nameCount$",
@@ -53,7 +53,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label":"br_combat",
     "options":[
         {   
@@ -69,7 +69,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Question, Events",
+    "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_combat_scare",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "question":"$party.name$的迎战姿态吓唬住了哥布林，哥布林开始四处逃窜！",
@@ -86,7 +86,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_scare_end",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "$party.name$吓跑了哥布林巡逻队",
@@ -94,7 +94,7 @@
     "isLast": true
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_scare_chase",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "$party.name$追击四处逃窜的哥布林们",
@@ -103,7 +103,7 @@
     "nextEntryLabel":"br_combat_start"
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label": "br_combat_ambush_validator",
     "options":[
         {   
@@ -123,7 +123,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_ambush",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "$party.name$偷袭了哥布林！（敌方全员HP-1）",
@@ -132,7 +132,7 @@
     "nextEntryLabel":"br_combat_start"
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_combat",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "$party.name$与哥布林们展开战斗！",
@@ -140,7 +140,7 @@
     "nextEntryLabel":"br_combat_start"
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label": "br_combat_combat_validator",
     "options":[
         {   
@@ -159,7 +159,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label": "br_combat_start",
     "isLast": true,
     "options":[
@@ -171,7 +171,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
     "line": "警告！由于内容缺失，该事件强制终止。",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],

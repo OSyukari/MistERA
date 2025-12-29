@@ -11,7 +11,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 {
     public Image picture;
     public scr_SpineLoader spineLoader;
-    public RectTransform spineRect { get { return (spineLoader == null ? null : spineLoader.getLoaderRect); } }
+    public Transform spineRect { get { return (spineLoader == null ? null : spineLoader.GetLoaderRect); } }
 
     public RectTransform box_Xray;
     public RectTransform box_lust;
@@ -28,6 +28,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void Awake()
     {
+
         if (isCurrentTargetBox)
         {
             scr_System_CampaignManager.current.Observer_CurrentTarget += ReadCurrentChar;
@@ -82,7 +83,13 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         else if (!this.gameObject.activeInHierarchy) return;
         else if (this.isCurrentTargetBox && scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Room) return;
         //else if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Logs) return;
-        else CheckCharaChange(id);
+
+        if (foceUpdate)
+        {
+            currentHandler = null;
+            currentPortrait = "";
+        }
+        CheckCharaChange(id);
     }
     /*
     Character_Trainable chara { get
@@ -134,7 +141,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         if (this.spineRect != null)
         {
             spineRect.localScale = new Vector3(p.portrait_offset_size, p.portrait_offset_size, p.portrait_offset_size);
-            spineRect.anchoredPosition = new Vector2(p.portrait_offset_x, p.portrait_offset_y);
+            spineRect.position = new Vector2(p.portrait_offset_x, p.portrait_offset_y);
             spineRect.localPosition = new Vector3(picture.rectTransform.localPosition.x, picture.rectTransform.localPosition.y, 0);
         }
 
@@ -167,7 +174,6 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         if (currentlyRunning != null)
         {
             StopCoroutine(currentlyRunning);
-            spineLoader.Store();
             currentlyRunning = null;
         }
         _storedPortrait = this.currentPortrait;
@@ -184,7 +190,6 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         {
             if (isCurrentTargetBox || isCombatBox) scr_System_CentralControl.current.UnloadTextureCache(_storedPortrait);
         }
-        this.spineLoader.Destroy();
         _storedPortrait = "";
         currentlyRunning = null;
     }
@@ -197,6 +202,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         //Debug.Log("scr_CharPortraitBox: OnDestroy Called!");
         //Destroy(SpriteTexture);
+
     }
 
     //public RectTransform prefab_Canvas_charaDetail;

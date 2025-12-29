@@ -93,11 +93,6 @@ public class scr_Panel_BodyDetail : MonoBehaviour
         else if (instance.hasTag("mouth")) LoadSprite(XraySprite.widget_oral1);
     }*/
 
-    private void LoadSprite(Texture2D texture)
-    {
-        if (image.sprite == null || image.sprite.texture != texture) UtilityEX.LoadSprite(texture, image);
-    }
-
     public Image image;
     public TMP_Text boxName, boxSize, boxDepth, boxSensitivity;
     public scr_HoverableText boxVolume;

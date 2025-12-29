@@ -14,7 +14,7 @@
                 },
                 "events": [
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "options":[
         {   
             "target_chara_conditions":{
@@ -38,7 +38,8 @@
                 ]
             },
             "option": "player branch",
-            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
+            "Results": [    
+                { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
         },
         {      
             "option": "silent fail branch",
@@ -48,7 +49,7 @@
     "isLast": true
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label": "br_join_ops_try",
     "options":[
         {   
@@ -63,9 +64,8 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Question, Events",
+    "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_choice",
-    
     "portraitRefKey":"self", "portraitTagsOverride":["curious"],
     "question":"event_RequestJoin_Job_ev01",
     "options":[
@@ -80,7 +80,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label": "br_refuse_ops",
     "options":[
         {   
@@ -91,14 +91,14 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_refuse",
     "portraitRefKey":"self", "portraitTagsOverride":["awkward","disappointed"],
     "isLast": true,
     "line": "event_RequestJoin_Job_ev02"
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label": "br_join_ops",
     "options":[
         {   
@@ -113,14 +113,14 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_join",
     "portraitRefKey":"self", "portraitTagsOverride":["happy","confident"],
     "isLast": true,
     "line": "event_RequestJoin_Job_ev03"
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_join_fail",
     "isLast": true,
     "line": "event_RequestJoin_Job_ev04"
@@ -135,11 +135,11 @@
         {
             "zh-cn":
             {
-                "event_RequestJoin_Job_ev01":"$self.name$想加入$evTarget.name$的行动",
+                "event_RequestJoin_Job_ev01":"$kojo_tryjoin$\n$self.name$想加入$evTarget.name$的行动",
                 "event_RequestJoin_Job_ev01_op1":"接受",
                 "event_RequestJoin_Job_ev01_op2":"拒绝",
-                "event_RequestJoin_Job_ev02":"$evTarget.name$拒绝了$self.name$的提议",
-                "event_RequestJoin_Job_ev03":"$self.name$加入了$evTarget.name$的行动",
+                "event_RequestJoin_Job_ev02":"$evTarget.name$拒绝了$self.name$的提议\n$kojo_join_refused$",
+                "event_RequestJoin_Job_ev03":"$self.name$加入了$evTarget.name$的行动\n$kojo_joined$",
                 "event_RequestJoin_Job_ev04":"由于$evTarget.name$的行动不可加入，该行为被终止了"
             },
             "en-us":

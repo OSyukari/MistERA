@@ -11,52 +11,80 @@
                             "requirement": { "requireEPFailure": true },
                             "variants":[
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
+                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
                                     "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
-                                    "_comment": "failure variant positive",
+                                    "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
                                     "responses": [
-                                        "kojo_default_com_furniture_watchVideo_refuse_1"
+"$self$笑着摆了摆手：\"今天太累啦，怕坑了你，改天吧。\"", "$self$指了指手边的书：\"正看到精彩的地方呢，下次一定陪你。\"", "$self$有些遗憾地耸耸肩：\"我也想玩，可惜还有作业没写完。\"", "$self$温和地推辞道：\"现在眼睛有点酸，我想休息一会儿。\"", "$self$做个了鬼脸：\"要是玩了肯定停不下来，我明天还得早起呢。\"", "$self$拍拍$target$的肩膀：\"你去玩吧，我在旁边给你加油就好。\""
                                     ]
                                 }
                             ],
-                            "_comment": "failure variant negative",
-                            "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                            "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
+                            "extraPortraitTags": [ "troubled","angry", "disgust" ], "useActiveTags": false,
                             "responses": [
-                                "kojo_default_com_furniture_watchVideo_refuse_1"
+"$self$头都没抬，冷淡地回绝：\"没兴趣。\"", "$self$翻了个白眼：\"跟你玩？算了吧，我不想被气死。\"", "$self$嗤笑一声：\"这种小孩子的游戏你自己玩去吧。\"", "$self$不耐烦地挥挥手：\"忙着呢，别来烦我。\"", "$self$皱着眉头看着$target$：\"你是不是很闲？但我不是。\"", "$self$直接戴上耳机，把$target$的声音隔绝在外。"
                             ]
                         },
                         {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "extraPortraitTags": [
-                                "happy",
-                                "excited",
-                                "surprised"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "great success variant",
-                            "responses": [
-                                "kojo_default_com_furniture_watchVideo_accept_success_1",
-                                "kojo_default_com_furniture_watchVideo_accept_success_2",
+                            "variants":[
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "extraPortraitTags": [
+                                        "happy",
+                                        "excited",
+                                        "surprised"
+                                    ], "useActiveTags": false,
+                                    "_comment": "2.5.3 成功（正面反馈）行动结束结果",
+                                    "responses": [
+"kojo_default_com_furniture_watchVideo_accept_success_1",
+"kojo_default_com_furniture_watchVideo_accept_success_2",
 
-                                "$self$伸了个大大的懒腰，满足地关掉了电视。\"呼，这期节目做得真不错。\"", "$self$意犹未尽地哼着片尾曲，脸上挂着轻松的笑容。\"感觉心情变好了不少呢。\"", "$self$从沙发上弹起来，精神抖擞地活动了一下脖子。\"果然放松一下是对的！\""
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": true
-                            },
+"$self$伸了个大大的懒腰，满足地关掉了电视。\"呼，这期节目做得真不错。\"", "$self$意犹未尽地哼着片尾曲，脸上挂着轻松的笑容。\"感觉心情变好了不少呢。\"", "$self$从沙发上弹起来，精神抖擞地活动了一下脖子。\"果然放松一下是对的！\"",
+
+"$self$激动地跳起来，一把抱住身边的$target$：\"赢了！我们赢了！太棒了！\"", "$self$看着通关画面，脸上洋溢着自豪的笑容：\"哼哼，不愧是我，完美通关！\"", "$self$兴奋地举起双手欢呼：\"YoooHooo！这个记录估计没人能破了吧！\"", "$self$满眼崇拜地看着$target$：\"刚才最后那一下太帅了！我们简直是最佳拍档！\"", "$self$心满意足地靠在沙发上，嘴角挂着笑意：\"终于过了，这种成就感真是无与伦比。\"", "$self$开心地哼着胜利的小调，心情肉眼可见地变好了。\"今晚必须吃顿好的庆祝一下！\""
+                                    ]
+                                }
+                            ],
                             "extraPortraitTags": [
                                 "pouting",
                                 "doubt"
                             ],
                             "useActiveTags": false,
-                            "_comment": "barely success variant",
+                            "_comment": "2.5.4 成功（负面反馈）行动结束结果",
                             "responses": [
-                                "kojo_default_com_furniture_watchVideo_accept_failure_1",
+"kojo_default_com_furniture_watchVideo_accept_failure_1",
 
-                                "$self$一脸晦气地关掉电源，把遥控器丢在一边。\"浪费时间，这剧情简直是灾难。\"", "$self$揉了揉有些发酸的眼睛，叹了口气。\"越看越无聊，还不如去睡觉。\"", "$self$面无表情地盯着黑掉的屏幕，显得有些空虚。\"全是些没营养的东西……\""
+"$self$一脸晦气地关掉电源，把遥控器丢在一边。\"浪费时间，这剧情简直是灾难。\"", "$self$揉了揉有些发酸的眼睛，叹了口气。\"越看越无聊，还不如去睡觉。\"", "$self$面无表情地盯着黑掉的屏幕，显得有些空虚。\"全是些没营养的东西……\"",
+
+"$self$面无表情地看着通关动画，淡淡地说：\"也就这样吧，比想象中无聊。\"", "$self$揉了揉酸痛的手腕，叹了口气：\"为了这点奖励累成这样，真不值得。\"", "$self$有些嫌弃地看着$target$：\"虽然赢了，但你刚才的操作真的很下饭。\"", "$self$关掉游戏，感到一阵空虚：\"通关了又能怎么样呢？浪费时间。\"", "$self$皱着眉头抱怨：\"这结局也太烂了吧，早知道不玩了。\"", "$self$冷淡地回应$target$的欢呼：\"差不多行了，也不是什么大不了的事。\""
+                            ]
+                        },
+                        {
+                            "variants":[
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "extraPortraitTags": [
+                                        "happy",
+                                        "excited",
+                                        "surprised"
+                                    ], "useActiveTags": false,
+                                    "_comment": "2.5.1 失败但正面反馈",
+                                    "responses": [
+"$self$虽然看着‘失败’字样，却笑得前仰后合：\"哈哈哈哈！刚才那个死法也太搞笑了！\"", "$self$长出一口气，脸上带着意犹未尽的表情：\"虽然输了，但这过程真是太刺激了。\"", "$self$拍了拍$target$的肩膀，眼神明亮：\"没事没事，我们配合得越来越好了，再来一把肯定赢！\"", "$self$伸了个懒腰：\"虽然没通关，但今天玩得真开心，谢啦！\"", "$self$并不气馁，反而兴致勃勃地分析起来：\"刚才那波只差一点点，我有思路了！\"", "$self$笑着感叹：\"这种挑战性才有趣嘛，输了也痛快！\""
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "pouting",
+                                "doubt"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.2 失败且负面反馈",
+                            "responses": [ 
+"$self$脸色阴沉地摔下手柄，一言不发地盯着黑掉的屏幕。", "$self$狠狠地抓了抓头发，烦躁地吼道：\"这什么垃圾判定！根本没法玩！\"", "$self$冷冷地瞥了$target$一眼，语气中满是责备：\"如果你刚才不冲动，我们就不会输。\"", "$self$颓废地瘫在椅子上，眼神空洞：\"没意思，打了半天全是白费功夫。\"", "$self$咬牙切齿地关掉电源：\"再也不碰这破游戏了，气死我了。\"", "$self$直接起身离开，留下一句冰冷的：\"你自己玩吧，我累了。\""
                             ]
                         }
                     ]
@@ -69,11 +97,156 @@
                     "interruptSelfJob": false,
                     "variants": [
                         {
-                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "requireMaster":true,
+                            "requireSelfNotMaster": true,
+                            "requirement":  {   "requireSelfAttitudeGTE":"Like" } ,
+                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "_comment":"2.3.3 主动接受" ,
+                            "responses":
+                            [ 
+"$self$立刻把遥控器递了过去：\"好啊！正好一个人看有点无聊。\"", "$self$开心地往旁边挪了挪：\"快来快来，这个节目超有意思的！\"", "$self$拍了拍大腿：\"只要你不抢我的零食，一起看当然没问题。\"",
+
+"$self$眼睛一亮，立刻跳了起来：\"正合我意！我手正痒呢！\"", "$self$二话不说抢过另一个手柄：\"来来来，谁怕谁！\"", "$self$开心地拍手：\"好啊！我也正无聊呢，快开始！\"", "$self$兴奋地凑过去：\"带我一个带我一个！这游戏我馋好久了！\"", "$self$一边挽起袖子一边笑道：\"输了的人要请客喝奶茶哦！\"", "$self$立刻把手头的事丢到一边：\"这种好事怎么能少了我？\""
+                            ]
+                        },
+                        {
+                            "requireMaster":true,
+                            "requireSelfNotMaster": true,
+                            "requirement":{"requireSelfForced":true},
+                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "_comment":"2.3.5 被动接受（屈服）" ,
+                            "responses":
+                            [ 
+"$self$咬着嘴唇低下了头，虽然不情愿但还是挪开了一些位置。", "$self$身体微微颤抖着，不敢说出一个\"不\"字。", "$self$默默地缩在沙发的角落里，尽可能降低自己的存在感。",
+
+"$self$颤抖着接过手柄，声音细若蚊蝇：\"我……我知道了，我会玩的。\"", "$self$低着头不敢反抗，默默地坐到了$target$指定的位置。", "$self$眼神惊恐地看着$target$，慌乱地点头：\"别，别生气，我玩就是了。\"", "$self$僵硬地拿着手柄，手指因为紧张而发白，完全不敢看屏幕以外的地方。", "$self$虽然满脸抗拒，但在$target$的注视下还是不得不拿起了控制器。", "$self$像是执行命令的机器一样，机械地开始操作，没有任何多余的动作。"
+                            ]
+                        },
+                        {
+                            "requireMaster":true,
+                            "requireSelfNotMaster": true,
+                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "_comment":"2.3.4 被动接受（惊讶不反感）" ,
+                            "responses":
+                            [ 
+"$self$愣了一下，随即耸耸肩：\"呃……如果你坚持的话，也不是不行。\"", "$self$有些意外地眨了眨眼：\"只要你不嫌弃这个节目无聊就好。\"", "$self$默默地把遥控器放在了茶几上，算是默许了$target$的加入。",
+
+"$self$愣了一下，随即有些迟疑地接过手柄：\"额，我是没玩过，如果不介意我菜的话……\"", "$self$眨了眨眼，有些意外：\"邀请我吗？好吧，那就试一试。\"", "$self$有些手足无措地坐下：\"虽然不太懂规则，但既然你都这么说了。\"", "$self$好奇地看着屏幕：\"这个看起来好复杂，不过既然你教我，那我就玩两把。\"", "$self$抓了抓头发：\"本来打算睡了……好吧，就陪你一小会儿。\"", "$self$有些生疏地握着手柄：\"是按这个键吗？好像也没那么难？\""
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "relaxed",
+                                "leaning",
+                                "happy"
+                            ],
+                            "useActiveTags": false,
+                            "_comment":"2.1.1 行动开始" ,
                             "responses": [
 "$self$蜷缩在沙发的角落里，随手按下了遥控器的开关键。", "$self$找了个舒服的姿势躺好，视线聚焦在屏幕上跳动的画面。", "$self$有些无聊地切换着频道，最终停在了一个综艺节目上。", "$self$抱起抱枕，把下巴抵在上面，眼睛一眨不眨地盯着电视屏幕。", "$self$心不在焉地看着电视里播放的广告，似乎只是想让屋子里有点声音。",
 
-"$self$陷进柔软的沙发里，随手按下了遥控器的电源键，房间里顿时充满了电视节目的背景音。", "$self$抱着抱枕蜷缩在角落，视线慵懒地投向了屏幕上跳动的画面。", "$self$一边漫不经心地换着台，一边寻找着能打发时间的内容。", "$self$把音量调到了适中的位置，屏幕的光映照在她毫无防备的脸上。"
+"$self$陷进柔软的沙发里，随手按下了遥控器的电源键，房间里顿时充满了电视节目的背景音。", "$self$抱着抱枕蜷缩在角落，视线慵懒地投向了屏幕上跳动的画面。", "$self$一边漫不经心地换着台，一边寻找着能打发时间的内容。", "$self$把音量调到了适中的位置，屏幕的光映照在她毫无防备的脸上。",
+
+"$self$慵懒地陷进沙发里，随手按下了遥控器的电源键。", "$self$盘腿坐在地毯上，打开电视试图寻找一些背景音。", "$self$有些无聊地抓起遥控器，漫无目的地开始切换频道。",
+
+"$self$伸了个懒腰，熟练地抓起手柄盘腿坐在了地毯上。\"好久没动真格的了，希望手没生。\"", "$self$戴上耳机，隔绝了周围的声音，眼神瞬间变得犀利起来。", "$self$打开主机电源，看着熟悉的登录界面，嘴角不自觉地上扬。\"今晚就把这一关通了。\"", "$self$把零食和饮料摆在触手可及的地方，摆出了一副要打持久战的架势。", "$self$深吸一口气，握紧了手柄，神情严肃得像是在进行某种仪式。", "$self$快速浏览了一遍攻略，自信满满地点进了‘开始游戏’。"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_watchVideo_Tryjoin",
+                    "variants": [
+                        {
+                            "_comment":"2.3.6 NPC请求加入" ,
+                            "responses": [
+"$self$眼巴巴地看着屏幕，忍不住问道：\"那个……能不能加我一个？\"", "$self$凑到$target$身边，试探性地说：\"看起来好好玩，带带我呗？\"", "$self$拿起闲置的手柄晃了晃：\"缺队友吗？职业辅助申请出战！\"", "$self$有些不好意思地挠挠脸颊：\"我在旁边看半天了，手有点痒……\"", "$self$自信地扬起下巴：\"这一关很难哦，需要我帮忙吗？\"", "$self$轻轻戳了戳$target$：\"双人模式更有意思吧？一起？\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_watchVideo_Joined",
+                    "variants": [
+                        {
+                            "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
+                            "responses": [ 
+"$self$欢呼一声，迅速挤进沙发里：\"好耶！看我大展身手！\"", "$self$立刻进入状态，眼神变得专注：\"谢啦！绝对不会拖后腿的！\"", "$self$开心地哼起了小曲，熟练地调整设置。\"那我就不客气咯。\"", "$self$感激地看了$target$一眼：\"还是两个人玩有意思！\"", "$self$搓着手掌跃跃欲试：\"终于轮到我了，看好了！\"", "$self$笑着撞了一下$target$的肩膀：\"合作愉快！\""
+                             ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_watchVideo_Join_Refused",
+                    "variants": [
+                        {
+                            "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
+                            "responses": [ 
+"$self$有些失落地垂下手，勉强笑了笑：\"啊，这样啊，那没事。\"", "$self$撇了撇嘴，把手柄放回原处：\"小气鬼，不玩就不玩。\"", "$self$尴尬地收回手，假装不在意地看向别处：\"我也就随口一问。\"", "$self$默默地退到一边，眼神里闪过一丝落寞。\"那你们玩，我先走了。\"", "$self$有些不甘心地嘟囔：\"一个人玩多没劲啊……\"", "$self$耸耸肩试图缓解尴尬：\"行吧，我去看看别的。\""
+                             ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_watchVideo_Join",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants":[
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
+                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
+                                    "responses": [
+"$self$抱歉地指了指屏幕：\"这关是单人限定剧情，下次再带你联机好不好？\"", "$self$专心致志地操作着，头也不回地说：\"稍微等一下，我现在精神高度紧张，怕顾不上你。\"", "$self$苦笑着说：\"我现在自身难保，带上你会一起团灭的，还是让我先练练手吧。\"", "$self$温和地解释：\"我想先一个人体验完这段剧情，晚点再一起玩对战？\"", "$self$摇摇头：\"这游戏手感太怪了，我还没摸透，怕影响你体验。\"", "$self$眨眨眼说：\"今天我想当独行侠，明天再组队怎么样？\""
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+"$self$立刻护住手柄，警惕地看着$target$：\"别碰，这是我的存档。\"", "$self$冷淡地回了一句：\"没空带新手。\"", "$self$嫌弃地看了一眼：\"你水平太菜了，会拉低我评分的。\"", "$self$毫不客气地说：\"我想一个人玩，别来烦我。\"", "$self$暂停游戏，不爽地指着门：\"我想静静，出去。\"", "$self$嗤笑一声：\"加你？你是想来捣乱的吧？\""
+                            ]
+                        },
+                        {
+                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses":
+                            [ 
+"$self$立刻递过去一个手柄：\"来得正是时候！这BOSS太难打了，快帮我！\"", "$self$惊喜地挪开位置：\"快快快！Player2即将加入战场！\"", "$self$松了一口气：\"救星来了！我自己玩得都快自闭了。\"", "$self$笑着把手柄抛过去：\"接着！正愁没人陪我对战呢。\"", "$self$兴奋地指着屏幕：\"你也玩这个？太好了，一起来刷副本！\"", "$self$立刻退回主菜单切换双人模式：\"早就等你这句话了！\""
+                            ]
+
+                        },
+                        {
+                            "requirement":{"requireSelfForced":true},
+                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
+                            "responses":
+                            [ 
+"$self$被吓了一跳，慌忙把手柄递过去：\"给你！都给你玩！\"", "$self$身体缩成一团，唯唯诺诺地说：\"好、好的，你想怎么玩都可以。\"", "$self$虽然满脸写着不愿意，但在对方的威压下还是默默开启了双人模式。", "$self$手指发抖地操作着，生怕自己哪里做得不对惹怒了对方。", "$self$低着头不敢说话，只能机械地配合着对方的动作。", "$self$眼眶微红，即使不想玩了也不敢放下手柄。"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
+                            "responses":
+                            [ 
+"$self$愣了一下，随即递出手柄：\"你想玩？也可以，我不介意。\"", "$self$有些意外地看着$target$：\"你也感兴趣？那就一起吧。\"", "$self$稍微迟疑了一下，还是点头同意了：\"好吧，不过我玩得不是很好。\"", "$self$让出一半沙发：\"既然你都开口了……坐吧。\"", "$self$有些好奇地看着$target$拿起手柄：\"没想到你也好这口，那就试试配合吧。\"", "$self$虽然有些被打断的不适，但还是接受了：\"行吧，多个人多份力。\""
                             ]
                         }
                     ]
@@ -85,8 +258,11 @@
                     "ID": "com_furniture_watchVideo_Ongoing",
                     "variants": [
                         {
+                            "_comment":"2.1.2 行动中途" ,
                             "responses": [
-"$self$单手托着下巴，面无表情地看着屏幕上的画面。", "$self$偶尔拿起杯子喝一口水，视线始终没有离开电视。", "$self$的表情很平静，似乎并没有完全沉浸在剧情中。", "$self$机械地往嘴里送着爆米花，眼神有些放空。", "$self$微微皱眉，似乎对电视里播放的内容不太感冒。", "$self$保持着同一个姿势坐了很久，只有眼珠随着画面转动。"
+"$self$单手托着下巴，面无表情地看着屏幕上的画面。", "$self$偶尔拿起杯子喝一口水，视线始终没有离开电视。", "$self$的表情很平静，似乎并没有完全沉浸在剧情中。", "$self$机械地往嘴里送着爆米花，眼神有些放空。", "$self$微微皱眉，似乎对电视里播放的内容不太感冒。", "$self$保持着同一个姿势坐了很久，只有眼珠随着画面转动。",
+
+"$self$全神贯注地盯着屏幕，手指在按键上飞快舞动，发出清脆的声响。", "$self$随着角色的动作左右摇晃着身体，嘴里念念有词：\"对……就是那里，躲开！\"", "$self$眉头紧锁，额头上渗出了细密的汗珠，显然正处于关键时刻。", "$self$完全沉浸在光影交错的世界里，连外面的天色变暗都没有察觉。", "$self$偶尔会因为操作失误而发出懊恼的咂舌声，但视线从未离开过屏幕。", "$self$保持着高度的专注，瞳孔中映射着游戏画面不断变换的色彩。"
                             ]
                         }
                     ]
@@ -100,46 +276,60 @@
                         {
                             "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
                             "requirement":{ "requireSelfAttitudeKey": "Fear" },
+                            "_comment":"2.2.3 态度：恐惧 有他人登场" ,
                             "responses": [
 "$self$浑身一僵，原本摇晃的小腿瞬间停住，有些慌乱地想要站起来却又不敢动弹，视线在屏幕和$target$之间游移。\"", "$self$下意识地缩起脖子，把遥控器紧紧抱在怀里，像是在寻求某种防御。\"我……我马上就关掉……\"", "$self$迅速坐正了身体，有些局促地拉扯着自己的衣角，连大气都不敢出。\"对不起，我不知道您这个时候会来……\"", "$self$眼神闪烁着不敢直视$target$，身体不由自主地往沙发的角落里缩去，试图降低自己的存在感。", "$self$尽管电视里播放着喜剧，$self$的脸上却没有任何笑意，反而因为$target$的靠近而微微发抖。",
 
-"$self$听到脚步声的瞬间，身体僵硬了一下，抓着抱枕的手指微微发白。", "$self$慌乱地想要关掉电视，眼神游移不定，不敢直视$target$。", "$self$缩起脖子，尽可能地减小自己的存在感，连呼吸都变得小心翼翼。"
+"$self$听到脚步声的瞬间，身体僵硬了一下，抓着抱枕的手指微微发白。", "$self$慌乱地想要关掉电视，眼神游移不定，不敢直视$target$。", "$self$缩起脖子，尽可能地减小自己的存在感，连呼吸都变得小心翼翼。",
+
+"$self$的手猛地抖了一下，屏幕上的角色随即掉下了悬崖。", "$self$立刻放下手柄站了起来，低着头不敢看来人的眼睛。\"我……我马上就关掉。\"", "$self$身体僵硬地缩在角落里，手里紧紧攥着手柄像是那是唯一的防身武器。", "$self$眼神慌乱地在屏幕和来人之间游移，声音微微发颤。\"对不起，我没注意时间……\"", "$self$下意识地想要藏起游戏机，动作显得笨拙又惊慌。", "$self$屏住呼吸，尽力降低自己的存在感，祈祷对方快点离开。"
                             ]
                         },
                         {
                             "requirement":{ "requireSelfAttitudeKey": "Badwill" },
                             "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
+                            "_comment":"2.2.2 态度：恶意 有他人登场" ,
                             "responses": [
 "$self$注意到了$target$的到来，随即烦躁地咂了一下舌，把电视音量调大了好几格，仿佛是为了盖过对方的存在感。", "$self$翻了个白眼，身体刻意背对着$target$，像是在构建一道无形的墙壁。\"别挡着我看电视，碍眼。\"", "$self$冷笑一声，目光在屏幕上游离，语气里满是嘲讽。\"哟，大忙人还有空来视察工作啊？\"", "$self$像是没看到人一样，只是把原本放在茶几上的脚翘得更高了，完全没有让开的意思。", "$self$瞥见$target$的身影后，原本放松的肩膀瞬间紧绷起来，脸色阴沉地抓紧了遥控器。",
 
-"$self$通过余光瞥见$target$，随即冷着脸把身子转了过去，只留给对方一个后脑勺。", "$self$盯着电视的眼神变得锐利起来，故意无视了$target$的存在。", "$self$冷哼一声，抓起遥控器直接换了个频道，仿佛在宣示某种领地权。"
+"$self$通过余光瞥见$target$，随即冷着脸把身子转了过去，只留给对方一个后脑勺。", "$self$盯着电视的眼神变得锐利起来，故意无视了$target$的存在。", "$self$冷哼一声，抓起遥控器直接换了个频道，仿佛在宣示某种领地权。",
+
+"$self$啧了一声，把耳机的音量调大，假装没有看到来人。", "$self$冷冷地斜了一眼，手中的操作变得更加粗暴。\"别挡着屏幕，碍眼。\"", "$self$背过身去，用只有自己能听见的声音嘟囔了一句：\"真晦气。\"", "$self$暂停了游戏，双手抱胸，一脸不耐烦。\"有事？没事别在这晃。\"", "$self$完全无视了对方的存在，只是原本轻松的表情瞬间冷了下来。", "$self$重重地按下暂停键，把手柄往沙发上一丢。\"这游戏没法玩了。\""
                             ]
                         },
                         {
                             "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
                             "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
-                            "_comment": "barely success variant",
+                            "_comment":"2.2.1 态度：好意 有他人登场" ,
                             "responses": [
 "$self$听到了动静，视线虽然还黏在电视屏幕上，却腾出一只手拍了拍身边的沙发空位。\"快来快来，$target$！这集超精彩的！\"", "$self$嘴角上扬，一边盯着剧情一边随手把自己吃了一半的零食袋递了过去。\"给，特意给你留的。\"", "$self$稍微往旁边挪了挪身体，给$target$腾出一个舒服的位置，眼睛依然亮晶晶地盯着屏幕。\"等你半天了，刚开始播广告呢。\"", "$self$头也不回地晃了晃脚丫，语气轻快。\"这节目简直就是为你量身定做的，不看亏大了哦。\"", "$self$虽然眼睛没离开画面，但身体却自然地向$target$的方向倾斜了一些。\"回来啦？正好赶上高潮部分。\"",
 
-"$self$听到动静，从屏幕前转过头，眼睛弯成了月牙。\"哎？是你呀，$target$！快来，这个超好笑的！\"", "$self$往沙发旁边挪了挪，拍了拍身边的空位。\"要一起看吗？正好刚开始。\"", "$self$虽然还在看电视，但嘴角已经不自觉地上扬。\"你来了？稍微等我一下，这块马上演完了。\""
+"$self$听到动静，从屏幕前转过头，眼睛弯成了月牙。\"哎？是你呀，$target$！快来，这个超好笑的！\"", "$self$往沙发旁边挪了挪，拍了拍身边的空位。\"要一起看吗？正好刚开始。\"", "$self$虽然还在看电视，但嘴角已经不自觉地上扬。\"你来了？稍微等我一下，这块马上演完了。\"",
+
+"$self$瞥见来人，立刻展颜一笑，拍了拍身边的位置。\"你来啦？快坐，这关超精彩！\"", "$self$虽然视线还黏在屏幕上，但语气明显轻快了起来。\"帮我看看那个宝箱在哪，我腾不出手。\"", "$self$顺手拿起一块零食递到来人嘴边。\"张嘴~这个味道不错吧？\"", "$self$把耳机摘下一半，俏皮地眨了眨眼。\"正想着你呢，这就来了？\"", "$self$身体自然地向来人的方向倾斜了一下。\"稍微等我一下哦，马上就存档。\"", "$self$笑着抱怨道：\"你一来我就分心了，待会输了算你的。\""
                             ]
                         },
                         {
                             "requirement":{ "requireSelfAttitudeKey": "Desire" },
                             "extraPortraitTags": [ "shy" ], "useActiveTags": false,
+                            "_comment":"2.2.4 态度：欲望 有他人登场" ,
                             "responses": [
 "$self$慵懒地换了个姿势，故意展露出曲线，眼神虽然看着电视，余光却在那粘腻地在$target$身上打转。\"嗯哼~这里的剧情好无聊啊，不如我们做点更有趣的事？\"", "$self$用手指卷着发梢，嘴唇微张，发出意味不明的轻哼声，完全不在意电视里演了什么。\"$target$，过来陪我坐会儿嘛~贴着我坐。\"", "$self$双腿交叠摩擦了一下，脸颊泛起不自然的红晕，视线虽然盯着屏幕，呼吸却变得急促起来。\"你在那边看着我……让我怎么专心看电视啊……\"", "$self$咬着下唇，眼神迷离地瞥向$target$，一只手不知何时已经悄悄伸向了自己的领口。\"电视里的男主角……完全没法和你比呢。\"", "$self$故意发出甜腻的叹息声，身体像蛇一样在沙发上扭动，试图吸引$target$的注意。",
 
-"$self$虽然眼睛看着电视，但修长的双腿却有意无意地换了个更撩人的姿势，朝向$target$。", "$self$咬着嘴唇，眼神变得迷离，视线虽然在屏幕上，心思却显然飘到了$target$身上。", "$self$发出了一声轻微的嘤咛，借着伸懒腰的动作，展示出身体优美的曲线，偷偷观察$target$的反应。"
+"$self$虽然眼睛看着电视，但修长的双腿却有意无意地换了个更撩人的姿势，朝向$target$。", "$self$咬着嘴唇，眼神变得迷离，视线虽然在屏幕上，心思却显然飘到了$target$身上。", "$self$发出了一声轻微的嘤咛，借着伸懒腰的动作，展示出身体优美的曲线，偷偷观察$target$的反应。",
+
+"$self$脸颊微微泛红，眼神变得有些游离，心思显然已经不在游戏上了。", "$self$故意调整了一下坐姿，展示出更优美的身体曲线。\"你要不要……教教我这一段怎么过？\"", "$self$咬着下唇，偷偷用余光观察着来人的一举一动。", "$self$声音变得软糯起来，带着一丝撒娇的意味。\"哎呀，你看着我玩，我都紧张得操作变形了。\"", "$self$把手柄递过去，指尖似有若无地触碰到了对方的手。\"这关太难了，帮帮我好不好？\"", "$self$有些期待地抬起头，眼睛里仿佛有星星在闪烁。\"你是一直在看我吗？\""
                             ]
                         },
                         {
                             "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "_comment":"2.2.5 态度：普通 有他人登场" ,
                             "responses": [
 "$self$只是淡淡地瞥了一眼门口，随后便若无其事地继续盯着屏幕，仿佛进来的是一团空气。", "$self$机械地往嘴里塞着薯片，目光呆滞地看着广告，对$target$的出现没有任何特别的反应。", "$self$保持着原本的姿势一动不动，只有眼珠子随着屏幕上的画面转动了一下。\"哦，是你啊。\"", "$self$随手抓过旁边的抱枕垫在脑后，调整了一个更舒服的姿势，完全把$target$当成了背景板。", "$self$打了个哈欠，眼神有些涣散，显然比起看来人是谁，她更在意现在的节目有多无聊。",
 
-"$self$只是淡淡地扫了$target$一眼，便又重新关注起电视里的内容。\"哦，是你啊。\"", "$self$一边盯着字幕，一边随口问道：\"有什么事吗？\"", "$self$继续看着屏幕，甚至没有调整坐姿，只是微微点了点头算是打招呼。"
+"$self$只是淡淡地扫了$target$一眼，便又重新关注起电视里的内容。\"哦，是你啊。\"", "$self$一边盯着字幕，一边随口问道：\"有什么事吗？\"", "$self$继续看着屏幕，甚至没有调整坐姿，只是微微点了点头算是打招呼。",
+
+"$self$只是淡淡地点了点头算是打招呼，注意力很快又回到了屏幕上。", "$self$随口问了一句：\"你也还没睡啊？\"", "$self$往旁边挪了挪，腾出一点空间，但没有说话。", "$self$平静地说道：\"再等我五分钟，这局马上结束。\"", "$self$并没有因为对方的出现而改变坐姿或表情，依旧专注于游戏。", "$self$头也不回地问：\"冰箱里有喝的，自己拿。\""
                             ]
                         }
                     ]
@@ -150,12 +340,20 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "com_furniture_watchVideo_begin_1": "$doer.firstname$拿起遥控器，打开电视，开始观看自己喜欢的节目。",
+                "com_furniture_watchVideo_begin_2": "$doer.firstname$窝在沙发里，盖上毯子，舒服地看起了电视。",
+                "com_furniture_watchVideo_begin_3": "$doer.firstname$调整好姿势，眼睛一眨不眨地盯着电视屏幕，完全被剧情吸引住了。",
+
                 "kojo_default_com_furniture_watchVideo_refuse_1": "$self$：「我现在不太想看东西。」",
                 "kojo_default_com_furniture_watchVideo_accept_failure_1": "「……这半小时真是浪费人生。」$self$一脸精疲力尽。",
                 "kojo_default_com_furniture_watchVideo_accept_success_1": "「这部影片意外地不错哎！」$self$露出灿烂的笑容",
                 "kojo_default_com_furniture_watchVideo_accept_success_2": "「好久没笑得这么开心了。」 $self$边笑边擦眼角的泪水"
             },
             "en-us": {
+                "com_furniture_watchVideo_begin_1": "$doer.firstname$ picked up the remote, turned on the TV, and started watching their favorite program.",
+                "com_furniture_watchVideo_begin_2": "$doer.firstname$ nestled on the sofa, covered with a blanket, and comfortably started watching TV.",
+                "com_furniture_watchVideo_begin_3": "$doer.firstname$ adjusted their posture, stared unblinkingly at the TV screen, completely captivated by the storyline.",
+
                 "kojo_default_com_furniture_watchVideo_refuse_1": "$self$: “Not really feeling like watching anything right now.”",
                 "kojo_default_com_furniture_watchVideo_accept_failure_1": "“...That was 30 minutes of my life I’m not getting back.”  $self$ looks utterly drained.",
                 "kojo_default_com_furniture_watchVideo_accept_success_1": "“Okay, that was actually really good!” $self$ smiles brightly",

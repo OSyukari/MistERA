@@ -88,12 +88,6 @@ public class Floor_Instance : IDisposable, I_Disposable
         }
     }
 
-    //GameObject floor = null;
-    //RectTransform rect;
-    //Image picture;
-    //Texture2D texture = null;
-    //Sprite sprite;
-
     public Floor_Instance()
     {
         this.rooms = new List<Room_Instance>();

@@ -184,7 +184,7 @@ public static class CharaReqUtility
 
             if (cost != 0)
             {
-                Debug.Log($"interaction cost {cost} for {String.Join("|", tags)}");
+               // Debug.Log($"interaction cost {cost} for {String.Join("|", tags)}");
                 if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", cost);
                 c.Stats.Energy.ModValue(cost);
             }

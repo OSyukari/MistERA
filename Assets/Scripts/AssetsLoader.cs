@@ -16,7 +16,7 @@ public class AssetsLoader
         {
             onComplete?.Invoke(resourceTex);
             yield break;
-        }
+        }else MonoBehaviour.Destroy(resourceRequest.asset);
 
         var fullPath = $"file://{scr_System_Serializer.current.GetFullPath(path)}";
         string extension = Path.GetExtension(path).ToLower();
@@ -83,6 +83,7 @@ public class AssetsLoader
             onComplete?.Invoke(resourceTex);
             yield break;
         }
+        else MonoBehaviour.Destroy(resourceRequest.asset);
 
         var fullPath = $"file://{scr_System_Serializer.current.GetFullPath(path)}";
 

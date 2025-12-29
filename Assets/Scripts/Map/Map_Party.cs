@@ -12,6 +12,12 @@ public class Party {
         get { return memberRefIDs; }
         
     }
+
+    public void Clear()
+    {
+        members_cache = null;
+        Debug.Log($"party clear, current data {DebugInfo()}");
+    }
     [JsonIgnore] private List<Character_Trainable> members_cache = null;
     [JsonIgnore] public List<Character_Trainable> Members { get
         {

@@ -10,20 +10,29 @@
                             "requirement": {
                                 "requireEPFailure": true
                             },
-                            "extraPortraitTags": [
-                                "doubt",
-                                "apology"
+                            "variants":[
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
+                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
+                                    "responses": [
+"$self$有些抱歉地摆摆手。\"那个……我想一个人静静，改天吧？\"","$self$苦笑着指了指自己的状态。\"我现在完全动不了了，下次一定陪你。\"","$self$轻轻推了推对方的手臂。\"让我再赖会儿床嘛，好不好？\"","$self$摇了摇头，语气温和却坚定。\"现在不太想动呢，你自己去吧。\"","$self$做个了求饶的手势。\"放过我吧，我真的需要充电。\"","$self$笑着拒绝道：\"这个姿势太舒服了，哪怕是你也别想让我起来。\"",
+
+"$self$摆摆手笑道：\"谢啦，但我现在精神满满，不需要休息。\"", "$self$指了指手头的东西：\"稍微有点忙，下次吧。\"", "$self$轻轻摇头：\"你去吧，我还要等人。\"", "$self$歉意地笑了笑：\"坐久了腰疼，我想站会儿。\"", "$self$虽然拒绝了，但语气很温柔：\"我现在不累，你可以自己去。\"", "$self$拍了拍$target$的肩膀：\"改天吧，现在有点事。\""
+                                    ]
+                                }
                             ],
-                            "useActiveTags": false,
-                            "_comment": "failure variant",
+                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
-                                "kojo_default_com_furniture_takingBreak_refuse_1",
-                                "kojo_default_com_furniture_takingBreak_refuse_2"
+"$self$冷笑一声。\"你哪只眼睛看到我想和你一起？\"","$self$直接把抱枕砸了过去。\"滚远点，别烦我。\"","$self$翻了个大大的白眼。\"没空，没心情，没兴趣。\"","$self$语气生硬地回应。\"我拒绝，听不懂吗？\"","$self$看都没看对方一眼。\"别做梦了。\"","$self$厌恶地皱起眉头。\"离我远点就是最好的休息。\"",
+
+"$self$翻了个白眼：\"没空，别烦我。\"", "$self$冷冷地回了一句：\"没兴趣。\"便转身离开。", "$self$像是听到了笑话一样嗤笑一声：\"和你一起？算了吧。\"", "$self$不耐烦地挥手像是在赶苍蝇：\"离我远点。\"", "$self$无视了$target$的邀请，直接走开了。", "$self$双手抱胸，一脸抗拒：\"不想去，尤其是不想和你去。\""
                             ]
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": true
+                                "requireEPSuccessGTE": "Success"
                             },
                             "extraPortraitTags": [
                                 "thinking",
@@ -31,13 +40,222 @@
                                 "resting"
                             ],
                             "useActiveTags": false,
-                            "_comment": "barely success variant",
-                            "responses": [
-                                "kojo_default_com_furniture_takingBreak_accept_success_1",
-                                "kojo_default_com_furniture_takingBreak_accept_success_2",
-                                "kojo_default_com_furniture_takingBreak_accept_success_3",
-                                "kojo_default_com_furniture_takingBreak_accept_success_4"
+                            "_comment": "2.5.3 成功（正面反馈）行动结束结果",
+                            "responses": ["$self$自然地靠在了$target$的肩膀上，脸上带着满足的笑。\"感觉比一个人舒服多了。\"","$self$偷偷抓住了$target$的手指，轻轻晃了晃。\"下次还要一起哦。\"","$self$侧过身看着$target$，眼神里多了一份依赖。\"原来和你在一起这么放松啊。\"","$self$主动凑近了一些，嗅着$target$身上的味道。\"安心的感觉……\"","$self$打了个哈欠，像小猫一样蹭了蹭$target$。\"困了……借你的肩膀用一下。\"","$self$闭着眼睛，嘴角却上扬着。\"嗯……不讨厌这种感觉。\"" ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": true
+                            },
+                            "extraPortraitTags": [
+                                "pouting",
+                                "doubt"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.4 成功（负面反馈）行动结束结果",
+                            "responses": [ "$self$迅速坐直身体，拉开了与$target$的距离。\"好了，差不多了吧。\"","$self$有些烦躁地整理着衣服，眉头紧锁。\"太挤了，我不习惯。\"","$self$直接起身下床，拍了拍身上的灰尘。\"我要走了。\"","$self$背对着$target$，语气冷淡下来。\"下次别再这样了。\"","$self$揉着太阳穴，似乎在压抑着不快。\"比我想象中要累。\"","$self$推开$target$的手，没有任何解释就转身离开。"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak_Begin",
+                    "interruptSelfJob": false,
+                    "variants": [
+                        {
+                            "requireMaster":true,
+                            "requireSelfNotMaster": true,
+                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "_comment":"2.3.3 主动接受" ,
+                            "responses":
+                            [ 
+"$self$立刻放下了手里的活：\"好啊！正好我也累了。\"", "$self$开心地挽住$target$的手臂：\"走吧走吧，我也想休息一下。\"", "$self$点头如捣蒜：\"求之不得！我都快累散架了。\"", "$self$眼睛一亮：\"正合我意！\"", "$self$二话不说就跟着$target$走了。", "$self$笑着回应：\"那我们就去那边坐会儿聊聊。\""
                             ]
+
+                        },
+                        {
+                            "requireMaster":true,
+                            "requireSelfNotMaster": true,
+                            "requirement":{"requireSelfForced":true},
+                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "_comment":"2.3.5 被动接受（屈服）" ,
+                            "responses":
+                            [ 
+"$self$身体颤抖了一下，低着头小声说：\"我……我知道了。\"", "$self$虽然满脸不愿意，但在$target$的注视下还是点了点头。", "$self$不敢直视$target$的眼睛，默默地跟在后面。", "$self$咬着嘴唇，像是在忍受极大的压力。\"好……听你的。\"", "$self$眼神躲闪，脚步沉重地挪动着。", "$self$像是认命般叹了口气，没有反抗。"
+                            ]
+                        },
+                        {
+                            "requireMaster":true,
+                            "requireSelfNotMaster": true,
+                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "_comment":"2.3.4 被动接受（惊讶不反感）" ,
+                            "responses":
+                            [ 
+"$self$愣了一下，随即点点头：\"额……好啊，反正也没事。\"", "$self$有些意外地指了指自己：\"邀请我吗？嗯……行吧。\"", "$self$虽然有些迟疑，但还是跟上了脚步。\"那就稍微休息一下吧。\"", "$self$眨了眨眼，似乎在思考，最后还是同意了。", "$self$耸耸肩：\"既然你都这么说了。\"", "$self$挠挠头：\"也不是不行……\""
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [ "relaxed" ], "useActiveTags": false,
+                            "_comment":"2.1.1 行动开始" ,
+                            "responses": [ "$self$打了个哈欠，顺势倒在了身后的柔软之中，发出惬意的叹息。","$self$慢吞吞地挪到位置上，像一只准备冬眠的动物一样蜷缩起来。","$self$抱着膝盖坐下，把下巴抵在膝盖上，眼神逐渐放空。","$self$伸了个大大的懒腰，随后整个人陷进了靠垫里。","$self$踢掉鞋子，毫无形象地把自己大字型摊开。","$self$揉了揉酸痛的肩膀，找了个舒服的姿势躺了下来。"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak_Tryjoin",
+                    "variants": [
+                        {
+                            "_comment":"2.3.6 NPC请求加入" ,
+                            "responses": ["$self$走到正在休息的$target$身边：\"介意我也坐这儿吗？\"", "$self$有些疲惫地指了指旁边的空位：\"能拼个座吗？\"", "$self$笑着问：\"这里有人吗？我也想歇会儿。\"", "$self$自然地走过去：\"一个人休息多无聊，加我一个呗。\"", "$self$探头问道：\"方便凑个热闹吗？\"", "$self$有些不好意思地开口：\"那个……我也能坐下吗？\""]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak_Joined",
+                    "variants": [
+                        {
+                            "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
+                            "responses": [
+                                
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak_Join_Refused",
+                    "variants": [
+                        {
+                            "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
+                            "responses": [ 
+
+
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak_Join",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants":[
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
+                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
+                                    "responses": [
+ "$self$充满歉意地指了指旁边的包：\"抱歉，这里有人了。\"", "$self$有些为难地笑了笑：\"不好意思，我想一个人静静。\"", "$self$双手合十：\"下次吧，现在稍微有点不方便。\"", "$self$摇摇头：\"这里太挤了，你可以去那边坐。\"", "$self$温和地拒绝：\"我想自己待会儿，抱歉啦。\"", "$self$指了指耳机，示意自己正在听东西不方便被打扰。"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+ "$self$立刻把腿架在了空位上：\"这儿有人了，滚。\"", "$self$冷冷地吐出一个字：\"不。\"", "$self$嫌弃地皱眉：\"别坐我对面，看着烦。\"", "$self$直接戴上眼罩，彻底无视了$target$。", "$self$嘲讽地笑了笑：\"你是听不懂人话还是看不懂眼色？\"", "$self$用力拍了一下桌子：\"别来烦我！\""
+                            ]
+                        },
+                        {
+                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses":
+                            [ 
+"$self$立刻把占座的东西拿开：\"快坐快坐！\"", "$self$往里面挪了挪，拍着身边的位置：\"来，坐这儿。\"", "$self$笑着抬头：\"正如我意，一个人正好无聊呢。\"", "$self$热情地招手：\"当然可以！\"", "$self$主动帮$target$拉开了椅子。", "$self$看起来很高兴有人来陪：\"请坐请坐！\""
+                            ]
+
+                        },
+                        {
+                            "requirement":{"requireSelfForced":true},
+                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
+                            "responses":
+                            [ 
+"$self$吓得立刻缩成一团，让出了大半个位置。", "$self$虽然害怕，但还是颤抖着点了点头。", "$self$低着头不敢看$target$，身体尽量往角落里缩。", "$self$脸色苍白，紧紧抱着自己的膝盖，默许了$target$的行为。", "$self$像是受惊的小动物一样，一动不敢动。", "$self$屏住呼吸，眼神里满是恐惧，却不敢说不。"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
+                            "responses":
+                            [ 
+"$self$略显惊讶地抬头，然后点了点头。\"嗯，你随意。\"", "$self$虽然有些意外，但还是默默挪开了一点位置。", "$self$从书本后探出头看了看，没说什么便默许了。", "$self$有些发愣，反应过来后才说：\"哦……可以啊。\"", "$self$耸了耸肩表示无所谓。", "$self$看着$target$坐下，并没有表示反对。"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak_Ongoing",
+                    "variants": [
+                        {
+                            "_comment":"2.1.2 行动中途" ,
+                            "responses": [ "$self$安静地闭着眼睛，呼吸平稳而绵长。","$self$手里拿着手机漫无目的地滑动，身体一动不动。","$self$盯着天花板发呆，似乎完全沉浸在自己的世界里。","$self$抱着抱枕翻了个身，嘴里嘟囔着听不清的梦话。","$self$像雕塑一样维持着瘫倒的姿势，只有手指偶尔动弹一下。","$self$把脸埋在枕头里，享受着片刻的宁静。"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak_Interrupt",
+                    "variants": [
+                        {
+                            "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
+                            "_comment":"2.2.3 态度：恐惧 有他人登场" ,
+                            "requirement":{ "requireSelfAttitudeKey": "Fear" },
+                            "responses": [
+"$self$看到$target$靠近，下意识地缩起了肩膀，显得有些不知所措。", "$self$慌乱地站起身想要离开，眼神游移不定。", "$self$坐在位置上瑟瑟发抖，甚至不敢与$target$对视。", "$self$紧紧抓着沙发的扶手，指节因为用力而发白。", "$self$屏住了呼吸，尽量降低自己的存在感。", "$self$眼神里充满了警惕，身体处于随时准备逃跑的状态。"
+                        ]
+                        },
+                        {
+                            "requirement":{ "requireSelfAttitudeKey": "Badwill" },
+                            "_comment":"2.2.2 态度：恶意 有他人登场" ,
+                            "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
+                            "responses": [
+"$self$看到是$target$，立刻把脸别向了一边，假装没看见。", "$self$原本放松的身体瞬间紧绷，眉头不自觉地皱了起来。", "$self$甚至没有抬头，直接掏出耳机戴上，隔绝了外界。", "$self$冷哼一声，故意把腿伸长，挡住了$target$的路。", "$self$用眼角的余光瞥了$target$一眼，眼神里满是不屑。", "$self$烦躁地啧了一声，换了个背对$target$的坐姿。"
+                                ]
+                        },
+                        {
+                            "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
+                            "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
+                            "_comment":"2.2.1 态度：好意 有他人登场" ,
+                            "responses": [
+"$self$看到$target$，立刻坐直了身体，脸上露出了开心的笑容。", "$self$往旁边挪了挪，拍拍身边的空位示意$target$坐下。", "$self$原本有些困倦的眼神在看到$target$后瞬间有了神采。", "$self$笑着对$target$挥了挥手：\"这么巧，你也来休息？\"", "$self$并没有起身，而是懒洋洋地对$target$打了个招呼。", "$self$指了指桌上的水，似乎想问$target$要不要喝点什么。"
+                            ]
+                        },
+                        {
+                            "requirement":{ "requireSelfAttitudeKey": "Desire" },
+                            "_comment":"2.2.4 态度：欲望 有他人登场" ,
+                            "extraPortraitTags": [ "shy" ], "useActiveTags": false,
+                            "responses": [
+"$self$上下打量着$target$，嘴角勾起一抹意味深长的弧度。", "$self$故意换了个更显身材的慵懒姿势，眼神火热地盯着$target$。", "$self$轻咬着下唇，视线黏在$target$身上移不开。", "$self$用一种甜腻的声音主动开口：\"既然来了，不陪我坐会儿吗？\"", "$self$双腿交叠，脚尖若有若无地指向$target$的方向。", "$self$脸颊微红，看着$target$的眼神里仿佛能滴出水来。"
+                            ]
+                        },
+                        {
+                            "_comment":"2.2.5 态度：普通 有他人登场" ,
+                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "responses": [
+"$self$只是淡淡地看了$target$一眼，便收回了目光。", "$self$礼貌性地点了点头，没有说话。", "$self$继续玩着手机，并没有因为$target$的出现而改变什么。", "$self$稍微往旁边让了一点位置，算是打过招呼。", "$self$打了个哈欠，眼神依旧有些迷离。", "$self$并没有太大的反应，继续维持着原本的姿势。"
+                        ]
                         }
                     ]
                 }
@@ -48,12 +266,64 @@
                     "ID": "com_furniture_takingLongBreak",
                     "RedirectID": "com_furniture_takingBreak"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingLongBreak_Begin",
+                    "RedirectID": "com_furniture_takingBreak_Begin"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingLongBreak_Tryjoin",
+                    "RedirectID": "com_furniture_takingBreak_Tryjoin"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingLongBreak_Joined",
+                    "RedirectID": "com_furniture_takingBreak_Joined"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingLongBreak_Join_Refused",
+                    "RedirectID": "com_furniture_takingBreak_Join_Refused"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingLongBreak_Join",
+                    "RedirectID": "com_furniture_takingBreak_Join"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingLongBreak_Ongoing",
+                    "RedirectID": "com_furniture_takingBreak_Ongoing"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingLongBreak_Interrupt",
+                    "RedirectID": "com_furniture_takingBreak_Interrupt"
+                }
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "com_furniture_takingBreak_begin_1": "$doer.firstname$伸了个懒腰，开始放松休息",
+                "com_furniture_takingBreak_begin_2": "$doer.firstname$享受着片刻的安静",
+
                 "kojo_default_com_furniture_takingBreak_refuse_1": "$self$：「我不累，你先休息吧。」",
                 "kojo_default_com_furniture_takingBreak_refuse_2": "$self$：「我没事，坐着反而让我心烦。」",
                 "kojo_default_com_furniture_takingBreak_accept_success_1": "$self$轻轻滑动解锁手机屏幕，然后单手随意地刷着内容。",
@@ -62,6 +332,8 @@
                 "kojo_default_com_furniture_takingBreak_accept_success_4": "$self$慢慢地抿了一口咖啡，然后双手静静地握着杯子。"
             },
             "en-us": {
+                "com_furniture_takingBreak_begin_1": "$doer.firstname$ stretches a bit, then begins to relax and rest",
+                "com_furniture_takingBreak_begin_2": "$doer.firstname$ enjoys a moment of quiet",
                 "kojo_default_com_furniture_takingBreak_refuse_1": "$self$: “I’m not tired. You go ahead.”",
                 "kojo_default_com_furniture_takingBreak_refuse_2": "$self$: “I’m fine. Sitting still just makes me restless.”",
                 "kojo_default_com_furniture_takingBreak_accept_success_1": "$self$ unlocks her cellphone screen with a flick, then idly scrolls with one thumb.",

@@ -424,6 +424,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
     protected void SaveImageTransform()
     {
+        scr_System_CampaignManager.current.NotifyCurrentTargetReset();
         //Debug.LogError("fail saving image transform");
         /*
         if (currentPortrait != null)
@@ -591,6 +592,8 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             this.tooltip = "portrait reset!";
             clicked = true;
             parent.chara.PortraitManager.ResetPortraits();
+            // call for ex watcher to re-update
+            scr_System_CampaignManager.current.NotifyCurrentTargetEXReset();
         }
     }
 

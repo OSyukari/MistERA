@@ -728,6 +728,26 @@ public static class EventUtility
                     c.Stats.ModStatValue(exec.arguments[1], value);
                 }
                 return true;
+            case Event.EventEntry.ExecutionType.GetKojoEntry:
+                if (exec.arguments.Count >= 4)
+                {
+                    var requestlist = owner.Targets[exec.arguments[0]];
+                    var targetlist = owner.Targets[exec.arguments[1]];
+                    if (requestlist.Count < 1 || targetlist.Count < 1) return false;
+                    if (exec.arguments[2].Length < 1 || exec.arguments[3].Length < 1) return false;
+                    List<string> texts = new List<string>();
+                    foreach(var i in requestlist)
+                    {
+                        var randtarget = Utility.GetRandomElement(targetlist);
+                        var rel = i.Relationships.FindRelationshipWith(randtarget);
+                        var msg = i.Relationships.Personality.GetKOJOMessage(exec.arguments[2], new List<EvaluationPackage>(), new List<EvaluationPackage>(), rel);
+                        msg.message = msg.message.Replace("$self$", i.FirstName).Replace("$target$", randtarget.FirstName);
+                        if (msg.message.Length > 0) texts.Add(msg.message);
+                    }
+                    if (texts.Count > 0) owner.AppendStrings.Add(exec.arguments[3], texts);
+                    return texts.Count > 0;
+                }
+                else return false;
             case Event.EventEntry.ExecutionType.JumpToLabel:
                 if (exec.arguments.Count != 2)
                 {

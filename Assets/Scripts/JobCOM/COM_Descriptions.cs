@@ -36,7 +36,7 @@ public class COM_Descriptions
 
         return String.Join("\n", list);
     }
-    public string GetText(ref ActionPackage ap)
+    public string GetText( ActionPackage ap)
     {
         if (Entries == null) return "$DEFAULT$";
 
@@ -51,7 +51,7 @@ public class COM_Descriptions
                 Debug.LogError("comdescription entry null");
                 continue;
             }
-            keepLooking = entry.GetValidText(ref list, ref ap);
+            keepLooking = entry.GetValidText( list,  ap);
             if (!keepLooking) break;
         }
 
@@ -156,7 +156,7 @@ public class COM_Descriptions
             for (int i = texts.Count - 1; i >= 0; i--) texts[i] += suffix;
             foreach (var entry in this.Entries) entry.AppendToText(suffix);
         }
-        public bool GetValidText(ref List<string> list, ref ActionPackage ap)
+        public bool GetValidText( List<string> list,  ActionPackage ap)
         {
             //Debug.LogError("GetValidText options [" + String.Join("\n", texts) + "]");
             bool hasvalid = false;
@@ -187,7 +187,7 @@ public class COM_Descriptions
                     bool _keepLooking = true;
                     foreach (var entry in Entries)
                     {
-                        _keepLooking = (entry as Description_Entry).GetValidText(ref list, ref ap);
+                        _keepLooking = (entry as Description_Entry).GetValidText( list,  ap);
                         if (!_keepLooking) break;
                     }
                 }

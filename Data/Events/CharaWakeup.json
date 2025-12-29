@@ -8,7 +8,7 @@
                 },
                 "events": [
                     {
-                        "$type":"Event+EventEntry+EventEntry_Branch, Events",
+                        "$type":"Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options":[
                             {
                                 "option": "silent branch event, this shouldnt be displayed",
@@ -23,11 +23,11 @@
                 "ID": "OnCharaWakeUp",
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Events",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "line": "event_OnCharaWakeUp_ev01"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options":[
                             {
                                 "option": "silent branch event, this shouldnt be displayed...unless",

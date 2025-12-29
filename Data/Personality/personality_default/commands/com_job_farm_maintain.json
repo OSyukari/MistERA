@@ -4,7 +4,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Begin",
+                    "ID": "com_job_farm_maintain_Begin",
                     "variants": [
                         {
                             "requireMaster":true,
@@ -16,10 +16,7 @@
                             "useActiveTags": false,
                             "_comment":"2.3.3 主动接受" ,
                             "responses": [
-"$self$二话不说扔过来一个副手柄，眼里满是兴奋：\"就等你这句话了！快上号！\"",
-"$self$往旁边挪了挪位置，期待地看着$target$：\"一个人正无聊呢，两个人肯定更有意思。\"",
-
-"$self$眼睛一亮，立刻站了起来。\"好啊！我正愁没事做呢！\"", "$self$开心地凑了过来：\"看什么看什么？我也要看！\""
+"$self$眼睛一亮，立刻跳了起来。\"好啊！我正想去看看那边的草莓长得怎么样了！\"", "$self$利落地挽起头发。\"没问题，正好我也需要活动活动筋骨，走吧！\""
                             ]
                         },
                         {
@@ -30,10 +27,7 @@
                             "useActiveTags": false,
                             "_comment":"2.3.5 被动接受（屈服）" ,
                             "responses": [ 
-                                "$self$的身体微微发颤，虽然满脸写着抗拒，但还是默默让出了半个屏幕的位置。\"……知道了，我会配合的。\"",
-"$self$低下头，不敢直视对方的眼睛，颤抖着声音说道：\"只要陪你玩……就可以了吗？\"",
-
-"$self$咬着嘴唇，犹豫了一会儿还是低下了头。\"……知道了，我看就是了。\"", "$self$看起来很想拒绝，但最终还是僵硬地坐了下来。\"好……请不要生气。\""
+"$self$咬着下唇，眼神中充满了抗拒，但还是颤巍巍地站了起来。\"我知道了……我会去的……请别生气。\"", "$self$低着头，不敢直视$target$的眼睛，声音细若蚊蝇。\"只要我去……你就不会那样对我了吗？……好。\""
                             ]
                         },
                         {
@@ -43,11 +37,8 @@
                             "_comment":"2.3.4 被动接受（惊讶不反感）" ,
                             "responses":
                             [ 
-"$self$愣了一下，显得有些意外：\"欸？你要和我一起玩？那……好吧，如果不嫌弃我技术烂的话。\"",
-"$self$眨了眨眼，似乎没料到会被邀请，迟疑片刻后还是递出了手柄：\"行啊，那就试试看。\"",
-
-"$self$愣了一下，随即耸耸肩。\"诶？找我吗？行吧，反正我也闲着。\"", "$self$有些意外地眨眨眼：\"既然你都邀请了……那就陪你一会吧。\""
-]
+"$self$愣了一下，指了指自己。\"诶？我也要去吗？……好吧，既然你都这么说了。\"", "$self$挠了挠头，有些困惑。\"我不太擅长那个……不过如果你坚持的话，我可以试试。\""
+                            ]
                         },
                         {
                     
@@ -62,10 +53,7 @@
                             "useActiveTags": false,
                             "_comment":"2.1.1 行动开始" ,
                             "responses": [
-"$self$盘腿坐在地毯上，随手抓起手柄，按下电源键。",
-"$self$熟练地戴上耳机，将长发撩到耳后，眼神瞬间变得锐利起来。",
-
-"$self$拿起遥控器，陷进了柔软的沙发里。\"看看今天有什么新闻吧。\"", "$self$打开电视，熟练地切换到了收藏的频道。", "$self$抱起一包零食，盘起腿坐在了电视机前。\"终于到了追剧时间了！\""
+"$self$换上了一双耐脏的长靴，把帽檐压低了一些。\"好了，今天要把这片杂草清理干净。\"", "$self$深吸了一口带着泥土芬芳的空气，拿起了放在墙角的喷壶。\"这些小家伙应该渴坏了。\"", "$self$挽起袖子，露出白皙的小臂，眼神在田垄间扫视。\"嗯……先从修剪枯枝开始吧。\"", "$self$拍了拍脸颊给自己打气，提着沉甸甸的肥料袋走向田地。"
                             ]
                         }
                     ]
@@ -74,12 +62,12 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Tryjoin",
+                    "ID": "com_job_farm_maintain_Tryjoin",
                     "variants": [
                         {
                             "_comment":"2.3.6 NPC请求加入" ,
                             "responses": [
-"$self$探头探脑地凑过来：\"这是那个新出的电影吗？能不能加我一个？\"", "$self$有些不好意思地抓抓头发：\"那个……介意我一起看吗？看起来很有趣的样子。\""
+"$self$看着忙碌的$target$，有些手痒地凑了过去。\"看起来挺有意思的，我也能来帮把手吗？\"", "$self$提着自己的小工具箱走近。\"那个……如果不介意的话，我可以负责那边的除草工作。\""
                             ]
                         }
                     ]
@@ -88,14 +76,13 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Joined",
+                    "ID": "com_job_farm_maintain_Joined",
                     "variants": [
                         {
                             "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
                             "responses": [ 
-"$self$欢呼一声，直接跳到了沙发上。\"太棒了！我就知道你最好了！\"", "$self$立刻找了个舒服的姿势坐好，脸上挂满了期待。"
-
-                             ]
+"$self$开心地比了个胜利的手势。\"太好了！那这片区域就交给我吧！\"", "$self$立刻投入了工作，显得干劲十足。\"谢啦！我会让你刮目相看的。\""
+                            ]
                         }
                     ]
                 }
@@ -103,14 +90,13 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Join_Refused",
+                    "ID": "com_job_farm_maintain_Join_Refused",
                     "variants": [
                         {
                             "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
                             "responses": [
-"$self$失望地垂下肩膀，撇了撇嘴。\"小气鬼……不看就不看。\"", "$self$尴尬地笑了笑，慢慢退了出去。\"啊，这样啊，那我不打扰了。\""
-
-                             ]
+"$self$失落地垂下肩膀，踢了踢路边的小石子。\"什么嘛……小气鬼。\"", "$self$尴尬地收回手，强颜欢笑。\"啊，这样啊……那我就不打扰你了，加油哦。\""
+                            ]
                         }
                     ]
                 }
@@ -118,7 +104,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Join",
+                    "ID": "com_job_farm_maintain_Join",
                     "variants": [
                         {
                             "requirement": {
@@ -130,14 +116,14 @@
                                     "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
- "$self$歉意地笑了笑：\"抱歉呀，我想一个人安静地把这部剧看完。\"", "$self$摇摇头：\"现在不太方便，下次再一起吧。\""
+"$self$擦了把汗，笑着摇摇头。\"谢谢你的好意，不过这片地我已经快弄完了，你在旁边歇着就好。\"", "$self$温柔地推开$target$伸过来的手。\"别弄脏手了，这点小事我自己能搞定。\""
                                     ]
                                 }
                             ],
                             "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
- "$self$不耐烦地啧了一声：\"这沙发容不下两个人，去别处待着。\"", "$self$冷冷地说道：\"我在享受独处时间，请勿打扰。\""
+"$self$警惕地护住身下的幼苗。\"别碰！你根本不懂怎么弄，只会帮倒忙。\"", "$self$不耐烦地挥手像赶苍蝇一样。\"走开走开，你在这里只会碍手碍脚。\""
                             ]
                         },
                         {
@@ -146,7 +132,7 @@
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
                             "responses":
                             [ 
- "$self$立刻往旁边挪了挪，拍着身边的空位。\"当然可以！快来快来！\"", "$self$笑着递过遥控器：\"正好多个人讨论剧情更有意思。\""
+"$self$惊喜地递过一把铲子。\"求之不得！我都快累死了，快来帮帮我！\"", "$self$往旁边挪了挪位置，拍了拍身边的空地。\"来得正好，两个人干活肯定快多了。\""
                             ]
 
                         },
@@ -156,7 +142,7 @@
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
                             "responses":
                             [ 
- "$self$身体僵硬了一下，默默地缩到了沙发的另一头。\"……随你便。\"", "$self$不敢直视$target$的眼睛，把遥控器放在了桌上。\"您坐这里……\""
+"$self$身体僵硬了一下，默默地往旁边退开。\"这是你的地盘……你想怎么样都可以……\"", "$self$不敢反驳，只能低头继续手中的动作，尽量减少存在感。\"如果你坚持的话……请便……\""
                             ]
                         },
                         {
@@ -164,7 +150,7 @@
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
                             "responses":
                             [ 
- "$self$有些诧异地看了$target$一眼，然后默默挪开了一些位置。\"呃……你想看就看吧。\"", "$self$虽然没有说话，但还是默许了$target$坐在身边。"
+"$self$有些惊讶地眨了眨眼。\"你是认真的吗？这可是很累的脏活……随你便吧。\"", "$self$迟疑了一下，还是把多余的手套递了过去。\"没想到你会对这个感兴趣……好吧。\""
                             ]
                         }
                     ]
@@ -173,15 +159,13 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Ongoing",
+                    "ID": "com_job_farm_maintain_Ongoing",
                     "variants": [
                         {
                             "_comment":"2.1.2 行动中途" ,
                             "responses": [ 
-"$self$的手指在按键上飞快舞动，屏幕的光映在她的脸上，神情异常专注。",
-"$self$嘴里咬着一根棒棒糖，身体随着游戏角色的动作左右轻晃。",
-
-"电视屏幕的光影映在$self$专注的脸上，她甚至忘记了吃手里的薯片。", "$self$随着剧情的发展时而皱眉，时而微笑。", "$self$慵懒地换了个姿势，目不转睛地盯着屏幕。"
+                                "kojo_default_com_job_farm_maintain_accept_success_1",
+"$self$蹲在作物旁，专注地查看着叶片背面的虫卵，额头上沁出细密的汗珠", "$self$有节奏地挥动着锄头，翻开湿润的泥土，嘴里哼着不知名的小调", "$self$小心翼翼地用剪刀去除多余的侧芽，动作轻柔得像是在对待易碎的艺术品", "$self$提着水桶穿梭在田垄间，清澈的水流随着她的动作均匀地洒在根部"
                             ]
                         }
                     ]
@@ -190,59 +174,46 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Interrupt",
+                    "ID": "com_job_farm_maintain_Interrupt",
                     "variants": [
                         {
                             "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
                             "requirement":{ "requireSelfAttitudeKey": "Fear" },
                             "_comment":"2.2.3 态度：恐惧 有他人登场" ,
                             "responses": [
-"察觉到有人靠近，$self$猛地瑟缩了一下，手中的操作出现明显的失误，眼神惊慌地游移。",
-"$self$立刻按下了暂停键，甚至不敢回头确认，双手紧紧攥着手柄，指节泛白。",
-
-"$self$浑身一僵，下意识地想要关掉电视，手指有些发抖。\"啊……我、我马上就关掉……\"", "$self$缩在沙发角落里，眼神闪躲着不敢看$target$。"
-
-]
+"$self$听到脚步声猛地颤抖了一下，手中的铲子差点掉落在地，眼神闪烁地看向$target$。\"我……我正在努力工作，没有偷懒……\"", "$self$下意识地退后半步，把自己缩在茂密的玉米秆阴影里。\"请、请不要过来……这里都是泥……\""
+                            ]
                         },
                         {
                             "requirement":{ "requireSelfAttitudeKey": "Badwill" },
                             "_comment":"2.2.2 态度：恶意 有他人登场" ,
                             "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
                             "responses": [ 
-"$self$透过屏幕的反光看到了来人，原本放松的肩膀瞬间紧绷，冷冷地\"啧\"了一声。",
-"$self$完全无视了身后的动静，只是按键的声音变得更加粗暴响亮，仿佛在宣泄不满。",
-
-"$self$瞥见$target$进来，故意调高了电视的音量，假装没看见。", "$self$冷冷地翻了个白眼，身体背对着$target$侧躺下去。\"真扫兴，哪都能碰到。\""
-]
+"$self$手中的剪刀发出咔嚓一声脆响，冷冷地瞥了$target$一眼。\"如果你是来捣乱的，我手里的家伙可不长眼睛。\"", "$self$没有停下手中的活，只是背对着$target$啧了一声。\"真晦气，这片田里的害虫好像变多了。\""
+                            ]
                         },
                         {
                             "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
                             "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
                             "_comment":"2.2.1 态度：好意 有他人登场" ,
-                            "responses": ["听到脚步声，$self$摘下一侧耳机，回头露出灿烂的笑容：\"稍微等我一下，这关马上就过了！\"",
-"$self$拍了拍身边的空位，眼睛都没离开屏幕，却自然地说道：\"来得正好，帮我看个点。\"",
-
-"$self$听到动静，转过头拍了拍身边的空位。\"快来，$target$，这一集刚好演到精彩的地方！\"", "$self$笑着把手里的零食递了过去。\"要一起看吗？这个综艺超好笑的。\""
-]
+                            "responses": [
+"$self$直起腰，看到$target$时露出了灿烂的笑容，举起沾满泥土的手挥了挥。\"嘿！你看！番茄已经开始变红了！\"", "$self$擦了擦汗，眼神温柔地注视着走近的$target$。\"你怎么来了？小心别踩到刚播下的种子。\""
+                            ]
                         },
                         {
                             "requirement":{ "requireSelfAttitudeKey": "Desire" },
                             "_comment":"2.2.4 态度：欲望 有他人登场" ,
                             "extraPortraitTags": [ "shy" ], "useActiveTags": false,
-                            "responses": ["$self$的视线虽然还在屏幕上，脸颊却泛起红晕，咬着下唇偷偷用余光瞥向来人。",
-"$self$故意伸了个懒腰，展示出身体的曲线，声音变得有些黏糊：\"怎么？是想看我玩，还是想玩我？\"",
-
-"$self$的视线从屏幕移到$target$身上，眼神变得黏糊糊的。\"电视哪有你好看呀……过来陪我嘛？\"", "$self$故意伸了个懒腰，展示着自己的曲线，声音甜腻。\"一个人看电视好寂寞哦，$target$不来陪陪人家吗？\""
-]
+                            "responses": [
+"$self$故意挺直了身体，让汗水顺着脖颈滑入衣领深处，眼神迷离地望向$target$。\"在这种地方见面……你是想看我满身大汗的样子吗？\"", "$self$咬着嘴唇，用带着泥土腥味的手指轻轻勾弄着自己的领口。\"比起照顾这些植物……我更想让你来‘照顾’一下我呢……\""
+                            ]
                         },
                         {
                             "_comment":"2.2.5 态度：普通 有他人登场" ,
                             "extraPortraitTags": [ "focused" ], "useActiveTags": false,
-                            "responses": ["$self$只是淡淡瞥了一眼来人，随即又将注意力转回游戏中。\"有事吗？我现在有点忙。\"",
-"$self$没有过多的反应，依旧维持着之前的姿势，仿佛周围的一切都与她无关。",
-
-"$self$只是淡淡看了一眼$target$，又转回了头。\"你要用客厅吗？我还要看一会儿。\"", "$self$点了点头算是打招呼，视线没有离开屏幕。"
-]
+                            "responses": [
+"$self$只是淡淡地点了点头，算是打过招呼，随即又低头继续摆弄手中的幼苗。\"如果不帮忙的话，请站远一点。\"", "$self$有些意外地挑了挑眉，语气平淡。\"借过一下，你挡住阳光了。\""
+                            ]
                         }
                     ]
                 }
@@ -250,7 +221,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames",
+                    "ID": "com_job_farm_maintain",
                     "interruptSelfJob": true,
                     "variants": [
                         {
@@ -268,10 +239,7 @@
                                     ],
                                     "useActiveTags": false,
                                     "responses": [
-"$self$晃了晃手中的手柄，歉意地笑了笑：\"这可是单人剧情模式，下次再一起吧。\"",
-"$self$歪着头思考了一下，还是摇了摇头：\"现在手感正热，我想先自己通关试试。\"",
-
-"$self$摆摆手笑道：\"谢啦，但我现在的精神头只够听听音乐。\"", "$self$指了指手里的书：\"下次吧，我想先把这一章看完。\""
+"$self$歉意地笑了笑，指了指自己干净的衣服。\"抱歉，$target$，我刚洗完澡，实在不想弄脏了。\"", "$self$摆了摆手。\"今天腰有点酸，我就不去凑热闹了，祝你们丰收。\""
                                     ]
                                 }
                             ],
@@ -287,10 +255,7 @@
                             "useActiveTags": false,
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
-"$self$冷哼一声，连正眼都没给一个：\"我不习惯和菜鸟组队，别来碍事。\"",
-"$self$直接调大了耳机的音量，用行动表明了不想被打扰的态度。",
-
-"$self$头也不抬地哼了一声：\"没兴趣，别来烦我。\"", "$self$嫌弃地挥挥手：\"和你一起看？得了吧，品味差太多了。\""
+"$self$翻了个白眼，嫌弃地看了一眼$target$指甲里的泥土。\"在那大太阳底下暴晒？你是想毁了我的皮肤吗？\"", "$self$冷笑一声。\"这种粗活还是你自己干吧，别把我想象成廉价劳动力。\""
                             ]
                         },
                         {
@@ -309,7 +274,7 @@
                                     ], "useActiveTags": false,
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
- "$self$意犹未尽地盯着片尾字幕。\"太精彩了！神作！下次一定要二刷！\"", "$self$兴奋地抓着$target$的手臂：\"刚才那个反转你看到了吗？太厉害了！\""
+"$self$看着整齐划一的田垄，满意地叉起腰。\"完美！看来今年的收成不用发愁了！\"", "$self$捧起一颗刚摘下的果实，脸上洋溢着成就感。\"这就是劳动的汗水换来的甜美啊！\""
                                     ]
                                 }
                             ],
@@ -327,7 +292,7 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
- "虽然看完了全集，但$self$看起来并不开心。\"结局竟然是这样？感觉被喂了屎……\"", "$self$揉了揉有些干涩的眼睛，疲惫地说道：\"虽然是好剧，但这剧情也太致郁了，心情好差。\""
+"$self$虽然完成了目标，但看着指甲里的污垢，眉头紧锁。\"下次绝对不干这种活了，累得腰都快断了。\"", "$self$把工具重重地扔进箱子里，揉着酸痛的肩膀。\"终于结束了……付出的代价完全不值得。\""
                             ]
                         },
                         {
@@ -343,7 +308,8 @@
                                     ], "useActiveTags": false,
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
- "虽然节目很无聊，$self$却笑得很开心。\"剧情烂透了，不过和你一起吐槽还挺有意思的。\"", "$self$伸了个懒腰：\"完全没看懂在讲什么，但放松一下也不错。\""
+                                        "kojo_default_com_job_farm_maintain_accept_failure_1",
+"$self$看着枯萎的叶子，无奈地笑了笑，却并没有太沮丧。\"虽然失败了，但在阳光下流汗的感觉还不坏嘛。\"", "$self$拍了拍身上的泥土。\"至少学到了怎么施肥，下次一定能种好的！\""
                                     ]
                                 }
                             ],
@@ -361,7 +327,7 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
- "$self$关掉电视，脸上的表情很微妙。\"这简直是浪费生命的30分钟……\"", "$self$叹了口气，揉着酸痛的脖子。\"早知道就不看这个了，无聊透顶。\""
+"$self$看着被虫子啃食殆尽的叶片，气得眼眶发红。\"我明明那么努力了……为什么还是救不活它们！\"", "$self$颓废地坐在田埂上，把枯枝折断。\"浪费了整整一下午……我真是个笨蛋。\""
                             ]
                         }
                     ]
@@ -372,28 +338,22 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "kojo_default_com_furniture_playVideoGames_refuse_1": "$self$：\"抱歉，我现在没什么心情玩游戏\"",
-                "kojo_default_com_furniture_playVideoGames_refuse_2": "$self$：\"你玩吧，我今天就不參加了。\"",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_1": "\"唉……又输了\" $self$把手柄扔到一旁。\"",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_2": "$self$：\"这个游戏……不太适合我。\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_1": "$self$：\"这比我想象中好玩多了！\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_2": "$self$：\"你挺厉害的嘛！下次我一定赢回来！\"",
 
+
+"kojo_default_com_job_farm_maintain_accept_success_1":"$self$ 一边哼着歌，一边认真地给作物浇水施肥。",
+"kojo_default_com_job_farm_maintain_accept_failure_1":"$self$：\"完了，刚才除草的时候，不小心把菜苗也拔掉了！\" "
                 
-                "com_furniture_playVideoGames_begin_1": "$doer.firstname$ picked up the controller, and immersed themselves in a video game.",
-                "com_furniture_playVideoGames_begin_2": "$doer.firstname$ stared at a video game screen with focused eyes"
+
+
             },
             "en-us": {
-                
-                "com_furniture_playVideoGames_begin_1": "$doer.firstname$拿起手柄，沉浸在了游戏里。",
-                "com_furniture_playVideoGames_begin_2": "$doer.firstname$盯着游戏画面，眼神专注",
 
-                "kojo_default_com_furniture_playVideoGames_refuse_1": "$self$: \"Sorry, I'm not really in the mood for games right now.\"",
-                "kojo_default_com_furniture_playVideoGames_refuse_2": "$self$: \"You go ahead. I'll pass today.\"",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_1": "\"Ugh… I can't believe I lost again\" $self$ tosses the controller to the side",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_2": "$self$: \"That was… rough. Not really my kind of game.\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_1": "$self$: \"That was way more fun than I expected!\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_2": "$self$: \"You're pretty good at this! I'll get you next time.\""
+
+"kojo_default_com_job_farm_maintain_accept_success_1":"$self$ hummed a song as they carefully watered and fertilized the crops.",
+"kojo_default_com_job_farm_maintain_accept_failure_1":"$self$: \"Oops, I accidentally pulled out the vegetable seedlings thinking they were weeds!\""
+
+
+                
             }
         }
     }

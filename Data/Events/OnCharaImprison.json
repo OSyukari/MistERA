@@ -10,7 +10,7 @@
                 },
                 "events": [
     {
-        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
         "_comment":"npc handling, check auto push but default cancel",
         "options":[
             {   
@@ -31,13 +31,13 @@
         ]
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_party",
         "isLast": true,
         "line": "$self.name$被$factionName$的$partyName$小队捕获了！"
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_noparty",
         "isLast": true,
         "line": "$self.name$被$factionName$捕获了！"

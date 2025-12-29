@@ -278,7 +278,7 @@ public class scr_UpdateHandler : MonoBehaviour
         //var copy = updateTime;
         bool timestop = scr_System_Time.current.TimeStop;
 
-        WaitForSeconds wait = new WaitForSeconds(waitTime);
+        //WaitForSeconds wait = new WaitForSeconds(waitTime);
 
         while (updateTime > 0 && !EventHandler.Waiting)  // updatetime can be 0 if there is no player package
         {   // if indeed 0 updatetime, then none of the below preupdate postupdate will be called.
@@ -333,7 +333,7 @@ public class scr_UpdateHandler : MonoBehaviour
             scr_System_Time.current.NotifyTimeResumeEnd();
            // if (scr_System_Time.current.TimeResume) scr_System_Time.current.timeStop = TimestopState.normal;
 
-            yield return wait;
+            //yield return wait;
             //yield return new WaitForSecondsRealtime(waitTime);
             //yield return 
 #if UNITY_EDITOR

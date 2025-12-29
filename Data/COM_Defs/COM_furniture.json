@@ -69,16 +69,7 @@
                         }
                     ]
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": ["com_furniture_sleep_begin_1","com_furniture_sleep_begin_2"]
-                        }
-                    ]
-                    
-                },
+                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始睡觉"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在睡觉"]}], "keepLooking":false }
             },
             {
@@ -144,16 +135,7 @@
                 "DifficultyCheck": {
                     "baseD20Check": 0
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": [  "com_furniture_takingBreak_begin_1",
-                                        "com_furniture_takingBreak_begin_2" ]
-                        }
-                    ]
-                },
+                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始休息"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在休息"]}], "keepLooking":false }
             },
             {
@@ -229,16 +211,7 @@
                 "DifficultyCheck": {
                     "baseD20Check": 0
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": [  "com_furniture_takingBreak_begin_1",
-                                        "com_furniture_takingBreak_begin_2" ]
-                        }
-                    ]
-                },
+                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始休息"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在休息"]}], "keepLooking":false }
             },
             {
@@ -314,16 +287,7 @@
                 "DifficultyCheck": {
                     "baseD20Check": 10
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": [  "com_furniture_playVideoGames_begin_1",
-                                        "com_furniture_playVideoGames_begin_2" ]
-                        }
-                    ]
-                },
+                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始玩游戏"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在玩游戏"]}], "keepLooking":false }
             },
             {
@@ -399,18 +363,8 @@
                 "DifficultyCheck": {
                     "baseD20Check": 5
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": [  "com_furniture_watchVideo_begin_1",
-                                        "com_furniture_watchVideo_begin_2",
-                                        "com_furniture_watchVideo_begin_3" ]
-                        }
-                    ]
-                },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在看电视"]}], "keepLooking":false }
+                "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "$doer.firstname$开始看电视" ] } ] },
+                "description_ongoing":{ "Entries":[ { "texts":["$doer.firstname$正在看电视"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_takeShower",
@@ -464,17 +418,7 @@
                         }
                     ]
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": [  "com_furniture_takeShower_begin_1",
-                                        "com_furniture_takeShower_begin_2",
-                                        "com_furniture_takeShower_begin_3" ]
-                        }
-                    ]
-                },
+                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始洗澡"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在洗澡"]}], "keepLooking":false }
             },
             {
@@ -675,16 +619,7 @@
                 "DifficultyCheck": {
                     "baseD20Check": 0
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": ["com_furniture_getmeal_begin_1", "com_furniture_getmeal_begin_2"]
-                        }
-                    ]
-                    
-                },
+                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始吃饭"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在吃饭"]}], "keepLooking":false }
             },
             {
@@ -783,26 +718,16 @@
                 "com_furniture_takingBreak_displayName_2": "一起休息",
                 "com_furniture_takingLongBreak_displayName_1": "长休",
                 "com_furniture_takingLongBreak_displayName_2": "一起长休",
-                "com_furniture_takingBreak_begin_1": "$doer.firstname$伸了个懒腰，开始放松休息",
-                "com_furniture_takingBreak_begin_2": "$doer.firstname$享受着片刻的安静",
                 
                 "com_furniture_playVideoGames_displayName_1": "打游戏",
                 "com_furniture_playVideoGames_displayName_2": "一起打游戏",
-                "com_furniture_playVideoGames_begin_1": "$doer.firstname$拿起手柄，沉浸在了游戏里。",
-                "com_furniture_playVideoGames_begin_2": "$doer.firstname$盯着游戏画面，眼神专注",
                 
                 "com_furniture_watchVideo_displayName_1": "看影片",
                 "com_furniture_watchVideo_displayName_2": "一起看影片",
-                "com_furniture_watchVideo_begin_1": "$doer.firstname$拿起遥控器，打开电视，开始观看自己喜欢的节目。",
-                "com_furniture_watchVideo_begin_2": "$doer.firstname$窝在沙发里，盖上毯子，舒服地看起了电视。",
-                "com_furniture_watchVideo_begin_3": "$doer.firstname$调整好姿势，眼睛一眨不眨地盯着电视屏幕，完全被剧情吸引住了。",
                 
                 "com_furniture_takeShower_displayName_1": "洗澡",
                 "com_furniture_takeShower_displayName_2": "一起洗澡",
                 "com_furniture_takeShower_displayName_3": "全员一起洗澡",
-                "com_furniture_takeShower_begin_1": "$doer.firstname$走进浴室，打开花洒，让温暖的水流冲刷着全身。",
-                "com_furniture_takeShower_begin_2": "$doer.firstname$关上浴室门，水声哗哗响起，开始享受沐浴的放松时刻。",
-                "com_furniture_takeShower_begin_3": "$doer.firstname$走进浴室，蒸汽氤氲，准备洗去一天的疲惫。",
 
                 "com_furniture_cryosleep_displayName_REMOVE": "解除休眠",
                 "com_furniture_cryosleep_displayName_ADD": "冷冻休眠",
@@ -848,25 +773,15 @@
                 "com_furniture_takingBreak_displayName_2": "Take a Break",
                 "com_furniture_takingLongBreak_displayName_1": "Take a longer break",
                 "com_furniture_takingLongBreak_displayName_2": "Take a longer break",
-                "com_furniture_takingBreak_begin_1": "$doer.firstname$ stretches a bit, then begins to relax and rest",
-                "com_furniture_takingBreak_begin_2": "$doer.firstname$ enjoys a moment of quiet",
                 "com_furniture_playVideoGames_displayName_1": "Play video games",
                 "com_furniture_playVideoGames_displayName_2": "Play video games",
                 "com_furniture_playVideoGames_displayName_3": "Play video games",
-                "com_furniture_playVideoGames_begin_1": "$doer.firstname$ picked up the controller, and immersed themselves in a video game.",
-                "com_furniture_playVideoGames_begin_2": "$doer.firstname$ stared at a video game screen with focused eyes",
                 "com_furniture_watchVideo_displayName_1": "Watch video",
                 "com_furniture_watchVideo_displayName_2": "Watch video",
                 "com_furniture_watchVideo_displayName_3": "Watch video",
-                "com_furniture_watchVideo_begin_1": "$doer.firstname$ picked up the remote, turned on the TV, and started watching their favorite program.",
-                "com_furniture_watchVideo_begin_2": "$doer.firstname$ nestled on the sofa, covered with a blanket, and comfortably started watching TV.",
-                "com_furniture_watchVideo_begin_3": "$doer.firstname$ adjusted their posture, stared unblinkingly at the TV screen, completely captivated by the storyline.",
                 "com_furniture_takeShower_displayName_1": "Take shower",
                 "com_furniture_takeShower_displayName_2": "Take shower",
                 "com_furniture_takeShower_displayName_3": "Take shower",
-                "com_furniture_takeShower_begin_1": "$doer.firstname$ walked into the bathroom, turned on the showerhead, and let the warm water wash over their entire body.",
-                "com_furniture_takeShower_begin_2": "$doer.firstname$ closed the bathroom door, the sound of rushing water filled the air, and they began to enjoy a relaxing shower moment.",
-                "com_furniture_takeShower_begin_3": "$doer.firstname$ walked into the bathroom, filled with steam, preparing to wash away the fatigue of the day.",
                 "com_furniture_cryosleep": "Crypsleep",
                 "com_furniture_cryosleep_displayName_REMOVE": "Terminate cryosleep",
                 "com_furniture_cryosleep_displayName_ADD": "Cryosleep",

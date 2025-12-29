@@ -13,11 +13,11 @@
                 },
                 "events":[
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Events",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "line": "Player OnEnterRoom!"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Events",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "line": "Event END",
                         "isLast": true
                     }
@@ -43,7 +43,7 @@
                 ],
                 "events":[
                     {
-                        "$type": "Event+EventEntry+EventEntry_Question, Events",
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "interruptSelf",
                         "portraitRefKey":"targets",
                         "question":"event_OnEnterRoom_interrupt_ev01",
@@ -59,7 +59,7 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Events",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "end",
                         "isLast": true,
                         "line": "event_OnEnterRoom_interrupt_ev02"

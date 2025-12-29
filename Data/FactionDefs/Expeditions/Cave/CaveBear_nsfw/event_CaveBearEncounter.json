@@ -17,7 +17,7 @@
 ],
                 "events": [
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "options":[
         {   
             "target_chara_conditions":
@@ -36,7 +36,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Question, Events",
+    "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_choice",
     "question":"$party.name$在洞穴深处遭遇了一头巨大的穴熊",
     "options":[
@@ -56,7 +56,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label":"br_appease",
     "options":[
         {   
@@ -79,7 +79,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label":"br_combat",
     "options":[
         {   
@@ -95,21 +95,21 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_scare",
     "line": "$party.name$的迎战姿态吓唬住了野兽，避免了冲突",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_combat",
     "line": "$party.name$与暴怒的穴熊展开战斗！",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "nextEntryLabel":"br_combat_start"
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label": "br_combat_start",
     "isLast": true,
     "options":[
@@ -121,33 +121,33 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_appease_fail",
     "line": "$trainer.name$的安抚尝试反而激怒了野兽！",
     "nextEntryLabel": "br_combat_combat"
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_appease_success",
     "line": "$trainer.name$成功安抚了狂躁的野兽。",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
     "line": "警告！由于内容缺失，该事件强制终止。",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_appease_fail_female",
     "line": "$trainer.name$的安抚尝试失败了！",
     "nextEntryLabel":"br_appease_fail_female_event"
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Question, Events",
+    "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_appease_fail_female_event",
     "question":"被激怒的野兽将$trainer.name$扑倒，将她当成了发泄欲望的对象。",
     "options":[
@@ -169,7 +169,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_event_skip",
     "line": "安抚失败的$trainer.name$被穴熊按在了身下强奸",
     "isLast":true,
@@ -177,27 +177,27 @@
                 { "Type":"StartSexJobInParty" , "arguments":["enemy","trainer","trainer","120","","","","event_caveBearEncounter_ev09_text"]}]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_event_begin",
     "line": "穴熊扒光了$trainer.name$的衣服", 
     "Results": [ { "Type":"Undress", "arguments":["trainer","None","SeeThrough","true"]} ] 
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "line": "本番插入", 
     "Results": [ { "Type":"ExecuteAPOnSingleChara", "arguments":["enemy","trainer","com_sex_P_missionary"]},
                     { "Type":"FlushMessageAll"}   ]  
 
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "line": "肛门插入", 
     "Results": [ { "Type":"ExecuteAPOnSingleChara", "arguments":["enemy","trainer","com_sex_P_doggy_A"]},
                     { "Type":"FlushMessageAll"}   ] 
 
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "line": "事件结束（可重复）",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["RetryEvent"]} ],
     "isLast": true

@@ -78,7 +78,7 @@
                 "ID": "exp_event_Utnapishtim_crumblingFloor_MIA",
                 "events": [
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "options":[
         {   
             "self_chara_conditions":[
@@ -105,7 +105,7 @@
 },
 
 {
-    "$type": "Event+EventEntry+EventEntry_Question, Events",
+    "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_choice",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "question":"exp_event_Utnapishtim_crumblingFloor_MIA_ev01",
@@ -123,7 +123,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_avoid",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev02",
@@ -131,7 +131,7 @@
     "isLast": true
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_mia",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev03",
@@ -142,7 +142,7 @@
     "isLast": true
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev99",
     "isLast": true

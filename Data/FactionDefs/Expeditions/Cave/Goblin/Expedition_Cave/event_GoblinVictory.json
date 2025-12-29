@@ -19,7 +19,7 @@
 ],
 "events": [
     {
-        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
         "options":[
             {   
                 "target_chara_conditions":
@@ -45,7 +45,7 @@
         ]
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_victory",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
         "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
@@ -53,7 +53,7 @@
         "nextEntryLabel":""
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Question, Events",
+        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
         "question":"搜刮战利品？",
         "options":[
             {   
@@ -69,14 +69,14 @@
         ]
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_victory_hasVictim",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
         "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
         "line": "$party.name$击败了哥布林"
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_lootEnd",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
         "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
@@ -84,7 +84,7 @@
         "isLast": true
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_noLootEnd",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
         "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
@@ -92,7 +92,7 @@
         "isLast": true
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_error",
         "line": "警告！由于内容缺失，该事件强制终止。",
         "isLast": true

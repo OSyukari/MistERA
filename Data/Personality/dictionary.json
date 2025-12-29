@@ -11,20 +11,6 @@
 "Exposed_Vagina":"阴部露出",
 "Exposed_Anus":"肛门露出",
 
-"kojo_default_com_job_farm_cultivate_crop_refuse_1":"$self$：\"种田啊…… 要不你找个更有经验的？\"",
-"kojo_default_com_job_farm_cultivate_crop_refuse_2":"$self$：\"一起种田？ 还是算了吧, 我怕我会拖你后腿\"",
-"kojo_default_com_job_farm_cultivate_crop_accept_failure_1":"\"这苗是不是埋得太浅了点？\" $self$看着歪歪扭扭的幼苗，忍不住皱起了眉头",
-"kojo_default_com_job_farm_cultivate_crop_accept_failure_2":"\"……算了，就这样吧，反正能长出来就行。\" $self$看着参差不齐的田地叹了口气",
-"kojo_default_com_job_farm_maintain_accept_success_1":"$self$ 一边哼着歌，一边认真地给作物浇水施肥。",
-"kojo_default_com_job_farm_maintain_accept_failure_1":"$self$：\"完了，刚才除草的时候，不小心把菜苗也拔掉了！\" ",
-
-"kojo_default_com_job_production_cooking_accept_failure_1":"$self$：“完了，盐放太多了！要不还是吃泡面吧……” ",
-"kojo_default_com_job_production_cooking_accept_success_1":"$self$：“呼…总算按着菜谱一步一步做出来了” ",
-"kojo_default_com_job_production_cooking_accept_success_2":"$self$：“完成了！嗯，至少外观是对的……希望味道别太奇怪。”",
-
-"kojo_default_com_job_cleaning_accept_failure_1":"$self$在吸尘的时候不小心把某些重要的资料吸进去了！",
-"kojo_default_com_job_cleaning_accept_failure_2":"$self$在整理桌子的时候不小心打翻了水杯！",
-"kojo_default_com_job_cleaning_accept_success_1":"$self$看着整洁的房间，满意地点了点头。",
 
 "kojo_default_event_greeting_04":"$self$今天第一次问候$target$",
 
@@ -32,11 +18,6 @@
 "kojo_default_event_disruptsleep_06":"<color=#373737>睡眠中的$self$对$epDescription$没有任何反应</color>",
 "kojo_default_event_disruptsleep_08":"<color=#373737>浅眠中的$self$被$epDescription$的动静干扰到</color>",
 
-"kojo_default_com_interaction_talk_accept_failure_1":"\"嗯……是啊，挺好的。\"$self$说着却目光飘忽，明显没在听。",
-"kojo_default_com_interaction_talk_accept_failure_2":"\"所以……你到底想说什么？\"$self$微微歪头，语气中带着一丝不耐。",
-"kojo_default_com_interaction_talk_accept_failure_3":"\"嗯……大概吧。\"$self$含糊地回应，看起来只是想快点结束话题。",
-"kojo_default_com_interaction_talk_accept_success_1":"\"真的假的？太搞笑了吧！\"$self$笑出声来",
-"kojo_default_com_interaction_talk_accept_success_2":"$self$：\"「你讲得挺有意思的，不继续了吗？\"",
 
 "kojo_default_event_interrupt_01":"<color=#373737>$self$看到$epDescription$</color>",
 "kojo_default_event_interrupt_02":"<color=#373737>$self$看到$target$$epDescription$</color>",
@@ -44,20 +25,6 @@
             },
             "en-us":
             {
-"kojo_default_com_job_farm_cultivate_crop_refuse_1":"$self$: \"Planting crops, huh... why don't you find someone more experienced to work with?\"",
-"kojo_default_com_job_farm_cultivate_crop_refuse_2":"$self$: \"Planting crops together? Let's not do that, I'll probably be holding you back.\"",
-"kojo_default_com_job_farm_cultivate_crop_accept_failure_1":"\"isn't this seedling buried a little too shallow?\" $self$ couldn't help but frown looking at the crooked seedling",
-"kojo_default_com_job_farm_cultivate_crop_accept_failure_2":"\"…whatever, let's just leave it like this, it'll grow just fine... hopefully.\" $self$ sighed, looking at the uneven field",
-"kojo_default_com_job_farm_maintain_accept_success_1":"$self$ hummed a song as they carefully watered and fertilized the crops.",
-"kojo_default_com_job_farm_maintain_accept_failure_1":"$self$: \"Oops, I accidentally pulled out the vegetable seedlings thinking they were weeds!\"",
-
-"kojo_default_com_job_production_cooking_accept_failure_1":"$self$: \"God no, I put too much salt! I should probably serve instant noodles instead...\"",
-"kojo_default_com_job_production_cooking_accept_success_1":"$self$: \"Phew… finally made it step by step according to the recipe。\"",
-"kojo_default_com_job_production_cooking_accept_success_2":"$self$: \"Finished! Hmm, at least it has the right looks… hope it also taste right.\" ",
-
-"kojo_default_com_job_cleaning_accept_failure_1":"$self$ accidentally sucked up some important documents with the vacuum cleaner!",
-"kojo_default_com_job_cleaning_accept_failure_2":"$self$ knocked over a glass of water while cleaning the desk!",
-"kojo_default_com_job_cleaning_accept_success_1":"$self$ looked at the tidied up room and nodded in satisfaction.",
 
 "kojo_default_event_greeting_04":"$self$ greets $target$ for the first time today.",
 
@@ -65,12 +32,6 @@
 "kojo_default_event_disruptsleep_06":"<color=#373737>($self$) 睡眠中的$self$对$epDescription$没有任何反应</color>",
 "kojo_default_event_disruptsleep_08":"<color=#373737>$self$, lightly asleep, is disturbed by the noise of $epDescription$</color>",
 
-
-"kojo_default_com_interaction_talk_accept_failure_1":"\"Uh-huh… yeah. Sounds great.\" $self$ glances at something else mid-conversation, clearly tuned out.",
-"kojo_default_com_interaction_talk_accept_failure_2":"\"Is there a point to this, or…?\" $self$ tilts her head slightly, impatience creeping into her tone.",
-"kojo_default_com_interaction_talk_accept_failure_3":"\"Mmm… I guess.\" $self$ replies vaguely, clearly just trying to end the topic.",
-"kojo_default_com_interaction_talk_accept_success_1":"\"Wait, seriously? That’s hilarious.\" $self$ laughs out loud",
-"kojo_default_com_interaction_talk_accept_success_2":"$self$: \"You’ve got good stories. Not gonna keep going?\"",
 
 
 "kojo_default_event_interrupt_01":"<color=#373737>$self$ sees $epDescription$</color>",

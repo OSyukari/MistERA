@@ -345,6 +345,20 @@ public class Job_Furniture : Job
                     ev.Self = c;
                     ev.Targets.Add("evTarget", new List<Character_Trainable>() { scr_System_CampaignManager.current.Player });
 
+                    var rel = c.Relationships.FindRelationshipWith(scr_System_CampaignManager.current.Player);
+                    var comstring = pl2.targetCOM.ID;
+
+                    var empty = new List<string>() { "" };
+
+                    var msg1 = c.Relationships.GetKOJOMessage_Suffix(pl2.targetCOM.ID, "_Tryjoin", rel.Target);
+                    ev.AppendStrings.Add("kojo_tryjoin", msg1 == null || msg1.message.Length < 1 ? empty : new List<string>() { msg1.message });
+
+                    var msg2 = c.Relationships.GetKOJOMessage_Suffix(pl2.targetCOM.ID, "_Joined", rel.Target);
+                    ev.AppendStrings.Add("kojo_joined", msg2 == null || msg2.message.Length < 1 ? empty : new List<string>() { msg2.message });
+
+                    var msg3 = c.Relationships.GetKOJOMessage_Suffix(pl2.targetCOM.ID, "_Join_Refused", rel.Target);
+                    ev.AppendStrings.Add("kojo_join_refused", msg3 == null || msg3.message.Length < 1 ? empty : new List<string>() { msg3.message });
+
                     var addMems = new List<Action>();
                     ev.FunctionCalls.Add("OnRefusedJoin", addMems);
                     string desc = $"failed to join {pl2.DescriptionText()}";
@@ -354,7 +368,7 @@ public class Job_Furniture : Job
 #endif
                     addMems.Add(() => c.Memory.AddEntry(mem, new List<string>()));
                     addMems.Add(() => c.ChangeCurrentJob(null));
-                    addMems.Add(() => Debug.LogError($"changing {c.FirstName} job to null"));
+                   // addMems.Add(() => Debug.LogError($"changing {c.FirstName} job to null"));
 
                     scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
                     actorJobComplete.Add(c.RefID);

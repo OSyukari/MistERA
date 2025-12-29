@@ -339,6 +339,7 @@ public class Event : I_SerializationCallbackReceiver
         {
             None,
             JumpToLabel,
+            GetKojoEntry,
             EventEnd,
             /// <summary>
             /// [self/targetkey, autoQuitJob?, typefilter]

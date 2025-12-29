@@ -33,6 +33,9 @@ public class Job : IDisposable, I_Disposable
         }
     }
     [JsonIgnore] public virtual int targetActorRef { get { return scr_System_CampaignManager.current.CurrentTargetRef; } }
+    /// <summary>
+    /// AP also use this to determine whether they can shorten EP description
+    /// </summary>
     [JsonIgnore] public virtual bool CanBeInterrupted { get { return true; } }
     
     [JsonIgnore]
@@ -662,7 +665,7 @@ public class Job : IDisposable, I_Disposable
                 if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult);
 
                 if (ap.repeated) ap.LogMessage_Begin_Ongoing(false, rightAlign, m);
-                else ap.LogMessage_Begin(false, rightAlign, m);
+                else ap.LogMessage_Begin(false, rightAlign, m, scr_System_CampaignManager.current.Player);
             }
             else ap.LoggedBegin = true;
         }
@@ -834,30 +837,32 @@ public class Job : IDisposable, I_Disposable
         for (var i = packages_previous.Count - 1; i >= 0; i--)
         {
             var package = packages_previous[i];
-            if (package.isPaused)
-            {
-                if (package.isTimeStopped) continue;
-                else if (package.Validate())
-                {
-                    scr_System_CampaignManager.current.Register(package, avoidConflict);
-                    if (package.isPaused && !package.isTimeStopped) package.pausedTick += 1;
-                    if (package.isPaused && package.pausedTick > 3)
-                    {
-                        packages_previous.RemoveAt(i);
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to failing 3 times reregistration");
-                        package.NotifyInterrupted();
-                        this.actorJobComplete.AddRange(package.actorRefs);
+            if (!package.isPaused) continue;
 
-                    }
-                }
-                else
+            if (package.isTimeStopped) continue;
+            package.pausedTick += 1;
+
+            if (package.pausedTick < 6) continue;
+            else if (package.Validate())
+            {
+                scr_System_CampaignManager.current.Register(package, avoidConflict);
+                if (package.isPaused)
                 {
-                    Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to no longer passing internal validation check");
-                    package.NotifyInterrupted();
                     packages_previous.RemoveAt(i);
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to failing 3 times reregistration");
+                    package.NotifyInterrupted();
                     this.actorJobComplete.AddRange(package.actorRefs);
+
                 }
             }
+            else
+            {
+                Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to no longer passing internal validation check");
+                package.NotifyInterrupted();
+                packages_previous.RemoveAt(i);
+                this.actorJobComplete.AddRange(package.actorRefs);
+            }
+            
         }
     }
 

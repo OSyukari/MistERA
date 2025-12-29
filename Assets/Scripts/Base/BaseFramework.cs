@@ -37,10 +37,6 @@ public  interface I_RemoveNonExisting
 {
     public void RemoveNonExisting();
 }
-public interface SpineAssetHandler
-{
-    public void LoadSpineJSON(string materialTexturePath, string atlasJSON_path, string skeletonJSON_path, out Texture2D spineLoader_Texture, out TextAsset spineLoader_atlasJSON, out TextAsset spineLoader_skeletonJSON);
-}
 
 public class JSON_SO_Converter<T> : CustomCreationConverter<T> where T : ScriptableObject
 {   // Reference: https://discussions.unity.com/t/how-to-use-json-net-to-deserialize-into-a-scriptable-object/778840/20

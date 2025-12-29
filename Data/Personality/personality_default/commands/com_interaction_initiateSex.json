@@ -1,0 +1,145 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_initiateSex",
+                    "variants": [
+            {
+                "requireMaster":true,
+                "requireSelfNotMaster": true,
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "extraPortraitTags":["sex","receiver","sleeping", "relaxed"], "useActiveTags":false,
+                "_comment":"2.1.1 睡眠中 口上文",
+                "responses":
+                [ 
+"$self$发出均匀而绵长的呼吸声，完全没有察觉到衣物已经被褪去。当温热的触感触及私处时，她只是无意识地皱了皱眉，翻了个身发出模糊的哼唧声。","$self$还在梦乡之中，身体随着床垫的下陷而微微倾斜。对于即将到来的入侵，她毫无防备，松弛的四肢就这样大开着展示在空气中。",
+
+"$self$发出一声含糊不清的鼻音，身体本能地在被窝里缩成一团，完全没有意识到睡衣已经被掀开。", "$self$的呼吸依旧绵长均匀，直到那个异物抵住身体的瞬间，眉心才微微皱了一下，嘴里嘟囔着听不清的梦话。", "$self$无意识地翻了个身，温热的大腿正好夹住了那个入侵者，完全把它当成了抱枕的一部分。"
+                ]
+            },
+            {   
+                "requireMaster":true,
+                "requireSelfNotMaster": true,
+                "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
+                "extraPortraitTags":["sex","receiver","doll", "empty", "silence", "idle"], "useActiveTags":false,
+                "_comment":"2.1.2 时停中 口上文",
+                "responses":
+                [ 
+"$self$维持着伸手拿杯子的动作僵在半空，眼神依旧聚焦在远处的虚像上。在这个凝固的世界里，只有她的私密部位正在被手指肆意拨弄，而那惊恐的表情永远无法浮现在脸上。","$self$的笑容凝固在嘴角，完全不知道自己的双腿已经被强行分开。毫无抵抗的肉体像是一具精美的人偶，任由摆布成最屈辱的姿势。",
+
+"$self$保持着原本伸手拿杯子的动作，眼神凝固在虚空中，对于正被缓缓推开的双腿毫无知觉。", "$self$僵硬的身体像是一具精美的人偶，即使那滚烫的触感已经贴上了最私密的肌肤，在那凝滞的时间里，连一丝颤抖都无法产生。", "$self$脸上还挂着上一秒的微笑，完全不知道自己的身体正在被肆意摆布，即将被侵犯的事实与她此刻的表情形成了残酷的静止画面。"
+                ]
+            },
+            {   
+                "requireMaster":true,
+                "requireSelfNotMaster": true,
+                "requirement":  { "requireEPFailure":true } ,                 
+                 "variants":[                   
+                    {
+                        "requirement":  {  "requirePermission":true } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
+                        "_comment":"2.3.2 指令失败拒绝 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$轻轻按住了$target$不规矩的手，带着歉意摇了摇头。\"亲爱的，今晚太累了，抱歉。\"","$self$往后缩了缩身子，拉起被子盖住自己。\"今天身体不太舒服……下次好吗？\"","$self$温柔地吻了吻$target$的额头，然后坚决地推开了他。\"不行哦，明天还要早起呢。\"",
+
+"$self$轻轻推了推$target$的胸膛，侧过头避开了亲吻。\"不行，亲爱的，今天真的没心情。\"", "$self$抓住了那只乱动的手，有些歉意地笑了笑。\"改天好吗？我想先好好睡一觉。\"", "$self$叹了口气，把被子拉高盖住自己。\"别闹了……我很累，别逼我发火。\""
+                        ]
+                    },
+                    {
+                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
+                        "_comment":"2.4.3 指令失败拒绝 无允许 善意 口上文",
+                        "responses":
+                        [ 
+"$self$尴尬地笑了笑，不动声色地拉开了两人的距离。\"哈哈，$target$你喝多了吧？别开这种玩笑啦。\"","$self$有些困扰地抓了抓头发，语气尽量保持轻松。\"那个……我觉得我们的关系还没到这一步呢。\"","$self$虽然被吓了一跳，但还是礼貌地推开了对方的手。\"抱歉，我只把$target$当朋友看。\"",
+
+"$self$尴尬地向后退了一步，用开玩笑的语气试图缓解气氛。\"喂喂，这个玩笑可开过头了哦，$target$。\"", "$self$礼貌地挡开了伸过来的手，表情变得有些严肃。\"请自重，$target$，我一直把你当朋友。\"", "$self$摇了摇头，坚定地拉开了两人的距离。\"不行，我们不能这样，这对谁都不好。\""
+                        ]
+                    }
+                 ],
+                 "_comment":"2.4.4 指令失败拒绝 无允许 敌意 口上文" ,
+                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
+                 "responses":[
+"$self$猛地甩开了$target$的手，眼神瞬间冷了下来。\"别碰我！真恶心！\"","$self$厌恶地擦了擦被碰过的地方，像是沾上了什么脏东西。\"你也太自以为是了，离我远点！\"","$self$毫不客气地一巴掌扇了过去，愤怒地瞪着对方。\"你把我当成什么人了？！滚开！\"",
+
+"$self$猛地甩开了$target$的手，眼神里充满了厌恶。\"别碰我！真让人恶心！\"", "$self$冷冷地盯着对方，后退的同时随手抓起了身边的防身物。\"再敢靠近一步，我就报警了。\"", "$self$像是听到了什么荒谬的笑话，发出一声嗤笑。\"你脑子坏了吗？也不照照镜子看看自己是谁。\""
+                 ]
+            },
+            { 
+                "requireMaster":true,
+                "requireSelfNotMaster": true,
+                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
+                "useActiveTags":false,
+                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
+                "_strong com variant":{ "requireCOMStrongVariant":true },
+                "variants":[
+                    { 
+                        "requirement":   {  "requirePermission":true }    ,
+                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.3.1 结果正面 有允许 口上文",
+                        "responses":
+                        [ 
+"$self$脸颊泛红，但眼神却大胆地迎上了$target$的目光。她主动张开双臂，环住了对方的脖子。\"嗯……我已经准备好了，来吧。\"","$self$轻轻咬了一下$target$的耳朵，手指在他的后背游走。\"如果是你的话……无论做什么都可以哦。\"","$self$将身体紧紧贴向$target$，感受着彼此的温度。\"我也……想要你了。\"",
+
+"$self$顺从地躺了下去，双臂自然地环住$target$的脖子，眼神迷离地轻声说：\"轻一点……今天有点累。\"", "$self$主动分开了双腿，用脚背轻轻蹭着$target$的小腿，嘴角带着一丝调皮的笑意。\"还在等什么？嗯？\"", "$self$仰起头迎合着吻，双手急切地去解$target$的扣子，呼吸早已乱了节奏。\"我想你了……快给我。\""
+                        ]
+                    },
+                    { 
+                        "requirement":{"requireSelfForced":true},
+                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.4.2 结果正面 未允许 屈服 口上文",
+                        "responses":
+                        [ 
+"$self$浑身颤抖着缩成一团，眼泪在眼眶里打转，却不敢发出一点声音。\"求求你……轻一点……\"","$self$死死抓着床单，指节因用力而发白。面对无法反抗的暴力，她只能绝望地闭上眼放弃抵抗。\"只要听话……就会结束的吧……\"","$self$咬破了嘴唇，强忍着恶心感张开了双腿。\"我知道了……我会做的，请不要伤害我……\"",
+
+"$self$死死咬着嘴唇，眼眶里蓄满了泪水，颤抖着松开了护在胸前的手，不敢去看$target$那充满侵略性的眼神。", "$self$绝望地闭上了眼睛，身体止不住地发抖，像是一只放弃抵抗的猎物。\"求你……快点结束……\"", "$self$哽咽着点了点头，僵硬地按照命令跪了下去，指甲深深地掐进了掌心里。"
+                        ]
+                    }
+                ],
+                "_comment":"2.4.1 结果正面 未允许 口上文",
+                "extraPortraitTags":["sex","receiver", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$的眼睛惊讶地睁大，身体瞬间僵硬了一下，但并没有推开对方。\"等等……在这里？可是我们……\"","$self$有些手足无措地任由$target$抱住，脸上满是慌乱的红晕，却并没有逃跑的意思。\"这太突然了……我不知道该不该……\"","$self$的声音因为紧张而微微颤抖，但最终还是闭上了眼睛，默许了对方的动作。\"如果是$target$的话……也许……并不讨厌。\"",
+
+"$self$整个人愣住了，眼睛瞪得大大的，身体虽然因为惊讶而僵硬，却并没有推开凑近的$target$。", "$self$的脸瞬间涨得通红，不知所措地抓着衣角，声音细若游蚊：\"在这里……？可是……\"", "$self$有些慌乱地看向四周，在确信没有别人后，半推半就地放松了紧绷的大腿。\"只、只有这一次哦……\""
+                ]
+            },
+            {
+                "useActiveTags":false,
+                "_comment":"2.2.1 独自一人 口上文",
+                "extraPortraitTags":["sex","receiver", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$咬着下唇，一只手难以忍受般地探入了自己的腿间。伴随着急促的喘息，指尖触碰到了那片湿润的软肉。\"哈……怎么会这么想要……\"","$self$眼神迷离地靠在墙角，双手不受控制地揉捏着自己的胸部。那是只有在深夜才会展露出的、被欲望折磨的姿态。",
+"$self$难耐地咬着下唇，手指颤抖着探入了湿热的腿间，指尖触碰到那一点的瞬间，喉咙里溢出了一声压抑的低喘。", "$self$有些焦躁地并在床上磨蹭着双腿，最终还是输给了身体深处的空虚，手缓缓伸向了床头柜里的那个小道具。", "$self$看着镜子里满脸潮红的自己，羞耻地闭上眼，另一只手却诚实地揉上了胸前已经挺立的红豆。"
+                ]
+
+            }
+                       
+                       
+                        
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+
+
+            },
+            "en-us": {
+
+
+                
+            }
+        }
+    }
+}

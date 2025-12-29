@@ -28,7 +28,7 @@
                 ],
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options":[
                             {   "option": "silent branch event, this shouldnt be displayed",
                                 "Results": [ { "Type":"StartEvent", "arguments":["targets","CharaLeaveRoom","","requestFrom"]} ] 
@@ -47,7 +47,7 @@
                 },
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Question, Events",
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "question":"event_CharaLeaveRoom_ev01",
             "portraitRefKey":"self", "portraitTagsOverride":["worry","sorry"],
                         "options":[
@@ -60,14 +60,14 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Events",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "end2",
             "portraitRefKey":"self", "portraitTagsOverride":["disappointed"],
                         "isLast": true,
                         "line": "event_CharaLeaveRoom_ev02"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "select1",
                         "options":[
                             {   
@@ -85,19 +85,19 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Events",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "end4",
                         "line": "event_CharaLeaveRoom_ev04",
                         "isLast": true
                     },
                                         {
-                        "$type": "Event+EventEntry+EventEntry_Line, Events",
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "end3",
             "portraitRefKey":"self", "portraitTagsOverride":["relaxed"],
                         "line": "event_CharaLeaveRoom_ev03"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options":[
                             {   
                                 "option": "silent branch after successful interrupts",

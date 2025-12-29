@@ -10,7 +10,7 @@
                 },
                 "events": [
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "options":[
         {   
             "self_chara_conditions":[
@@ -43,7 +43,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Question, Events",
+    "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_choice",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "question":"exp_event_Utnapishtim_combat_avoidable_ev01",
@@ -59,7 +59,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "exp_event_Utnapishtim_combat_avoidable_ev03",
@@ -67,7 +67,7 @@
     "nextEntryLabel":"br_combat_start"
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "label": "br_combat_start",
     "isLast": true,
     "options":[
@@ -78,7 +78,7 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_avoid",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
     "line": "exp_event_Utnapishtim_combat_avoidable_ev02",
@@ -86,7 +86,7 @@
     "isLast": true
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
     "line": "exp_event_Utnapishtim_combat_avoidable_ev99",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],

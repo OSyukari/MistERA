@@ -9,9 +9,10 @@ using TMPro;
 /// 
 /// TMPRO guide https://www.youtube.com/watch?v=xm6rVhFqTVU
 /// </summary>
-public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler
 {
     bool updating = false;
+    /*
     public void LateUpdate()
     {
         if (updating)
@@ -25,7 +26,7 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
                 Handler.NotifyExit(); 
             }
         }
-    }
+    }*/
     public RectTransform SelfRect { get { return this.GetComponent<RectTransform>(); } } 
 
     scr_Canvas_tooltipHandler Handler;
@@ -39,11 +40,6 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
     string tooltip_external = null;
     protected scr_SelectableText button;
     private string holder;
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        updating = true;
-
-    }
 
     int lastTrackedIndex = -1;
 
@@ -87,14 +83,24 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
         this.tooltip_external = s;
     }
 
-    
+
+    public void OnPointerMove(PointerEventData eventData)
+    {
+        //Debug.Log("OnPointerMove");
+        RefreshHover();
+    }
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        updating = true;
+        //Debug.Log("OnPointerEnter");
+
+    }
     public void OnPointerExit(PointerEventData eventData)
     {
-        /*
         updating = false;
         lastTrackedIndex = -1;
         //Debug.Log("OnPointerExit");
-        Handler.NotifyExit();*/
+        Handler.NotifyExit();
     }
 
     void Awake()
@@ -134,21 +140,6 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
     void OnEnable()
     {
         //this.m_TextMeshPro.text = scr_System_Serializer.current.Dictionary.Parse(this.m_TextMeshPro.text);
-    }
-
-    RectTransform parent;
-    private void GetParentCanvasRecursive()
-    {
-        parent = GetComponent<RectTransform>();
-        int counter = 0;
-        do
-        {
-            Debug.Log("Current Recursion Layer :" + parent.name);
-            parent = parent.GetComponentInParent<RectTransform>(true);
-            m_Canvas = parent.GetComponent<Canvas>();
-            counter += 1;
-        }
-        while (m_Canvas == null && counter < 5);
     }
 
     public string replaceText = "";

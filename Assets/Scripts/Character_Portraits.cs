@@ -54,11 +54,32 @@ public class PortraitManager
             return true;
         }
     }
+
+    /// <summary>
+    /// Call when destory
+    /// </summary>
+    public void ClearInternal()
+    {
+        foreach(var i in portraitPriorityList)
+        {
+            i.Destroy();
+        }
+    }
+
     public void ResetPortraits()
     {
-        var baseTemplate = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(this.Owner.BaseID);
-        this.portraitPriorityList = new List<CharaPortrait>(baseTemplate.Portrait.portraitPriorityList);
 
+        ClearInternal();
+        ClearHandlerCache();
+        var baseTemplate = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(this.Owner.BaseID);
+
+        this.portraitPriorityList.Clear();
+        foreach(var pp in baseTemplate.Portrait.portraitPriorityList)
+        {
+            this.portraitPriorityList.Add(pp.Copy());
+        }
+
+       // Debug.Log($"Portrait reset, preReset count {i} target template count {baseTemplate.Portrait.portraitPriorityList.Count} final count {this.portraitPriorityList.Count}");
         RebuildInternal(this.Owner);
     }
 
@@ -295,6 +316,14 @@ public class PortraitManager
 
     public class CharaPortrait
     {
+        /// <summary>
+        /// Destroy cached spine assets
+        /// </summary>
+        public virtual void Destroy()
+        {
+
+        }
+
         [JsonIgnore] public PortraitManager Owner;
 
         public float portrait_offset_x;
@@ -361,6 +390,12 @@ public class PortraitManager
         }
 
         // More internal condition validation with shared portrait position data
+
+        public virtual CharaPortrait Copy()
+        {
+            Debug.Log("Portrait Copy on " + Owner.Owner.FirstName);
+            return null;
+        }
     }
 
     public class CharaPortrait_Image : CharaPortrait
@@ -376,6 +411,26 @@ public class PortraitManager
             {
                 this.random_portrait_path = scr_System_Serializer.current.GetAllImageFilesInFolder(this.random_portrait_folder);
             }
+        }
+        public override CharaPortrait Copy()
+        {
+            var newEntry = new CharaPortrait_Image();
+            newEntry.portrait_offset_size = this.portrait_offset_size;
+            newEntry.portrait_offset_x  = this.portrait_offset_x;
+            newEntry.portrait_offset_y  = this.portrait_offset_y;
+            newEntry.portrait_path = this.portrait_path;
+            newEntry.random_portrait_folder = this.random_portrait_folder;
+            newEntry.random_portrait_path = this.random_portrait_path;
+            newEntry.icon_offset_size = this.icon_offset_size;
+            newEntry.icon_offset_x = this.icon_offset_x;
+            newEntry.icon_offset_y = this.icon_offset_y;
+            newEntry.AllowXAxisFlip = this.AllowXAxisFlip;
+            newEntry.Disable = this.Disable;
+            newEntry.icon_path = this.icon_path;
+            newEntry.Variants = this.Variants;
+            newEntry.RequireContextKeys = this.RequireContextKeys;
+
+            return newEntry;
         }
         public CharaPortrait_Image()
         {
@@ -494,6 +549,31 @@ public class PortraitManager
         {
 
         }
+        public override CharaPortrait Copy()
+        {
+            var newEntry = new CharaPortrait_Spine();
+            newEntry.portrait_offset_size = this.portrait_offset_size;
+            newEntry.portrait_offset_x = this.portrait_offset_x;
+            newEntry.portrait_offset_y = this.portrait_offset_y;
+
+            newEntry.materialTexturePaths = this.materialTexturePaths;
+            newEntry.atlasJSON_path = this.atlasJSON_path;
+            newEntry.skeletonJSON_path = this.skeletonJSON_path;
+            newEntry.idleAnimName = this.idleAnimName;
+            newEntry.addonAnimName = this.addonAnimName;
+            newEntry.straightAlpha = this.straightAlpha;
+
+            newEntry.icon_offset_size = this.icon_offset_size;
+            newEntry.icon_offset_x = this.icon_offset_x;
+            newEntry.icon_offset_y = this.icon_offset_y;
+            newEntry.AllowXAxisFlip = this.AllowXAxisFlip;
+            newEntry.Disable = this.Disable;
+            newEntry.icon_path = this.icon_path;
+            newEntry.Variants = this.Variants;
+            newEntry.RequireContextKeys = this.RequireContextKeys;
+
+            return newEntry;
+        }
         /*
         public CharaPortrait_Spine(string icon_path, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, float skeletonScale, string idleAnimName)
         {
@@ -512,6 +592,12 @@ public class PortraitManager
             icon_offset_y = 0;
             icon_offset_size = 1;
         }*/
+
+        public override void Destroy()
+        {
+            if (dataHolder != null) dataHolder.Clear();
+            dataHolder = null;
+        }
 
         public override bool isValid() { return !Disable; }
         public override IEnumerator DrawIcon(scr_CharIconBox iconBox, string pathOverride )
@@ -535,6 +621,8 @@ public class PortraitManager
                 iconBox.picture.rectTransform.localScale = new Vector3(icon_offset_size, icon_offset_size, icon_offset_size);
             }
         }
+
+        [JsonIgnore] public SpineDataTiny dataHolder = null;
 
         internal override string IconPath(List<string> tags)
         {
@@ -572,15 +660,15 @@ public class PortraitManager
             {
                 if (idleAnimName == "")
                 {
-                    yield return portraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, pathOverride, "");
+                    yield return portraitBox.spineLoader.SetBase(this, materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, pathOverride, "");
                 }
                 else
                 {
-                    yield return portraitBox.spineLoader.SetBase(materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, pathOverride);
+                    yield return portraitBox.spineLoader.SetBase(this, materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, pathOverride);
                 }
-               // Debug.Log($"spine drawportrait [{pathOverride}]");
+                // Debug.Log($"spine drawportrait [{pathOverride}]");
                 //Debug.LogError($"PortraitAnimation name {PortraitAnimName}");
-                
+                if (portraitBox == null || portraitBox.spineRect == null || !portraitBox.spineRect.gameObject.activeInHierarchy) yield break;
                 portraitBox.spineRect.gameObject.SetActive(true);
                 portraitBox.picture.gameObject.SetActive(false);
                 portraitBox.currentPortrait = pathOverride;

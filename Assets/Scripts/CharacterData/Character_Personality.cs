@@ -216,6 +216,66 @@ public class Character_Personality
         comID = entries[comID].CheckRedirect(comID);
         return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
     }
+    public MessageCollect_KojoEntry GetKOJOMessage_Tryjoin(ActionPackage ep, Character_Relationship relation)
+    {
+        string comID = ep.targetCOM.ID;
+        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
+        comID = $"{comID}_Tryjoin";
+        if (!entries.ContainsKey(comID))
+        {
+            if (this.Fallback != null) return Fallback.GetKOJOMessage_Tryjoin(ep, relation);
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
+            return null;
+        }
+
+        comID = entries[comID].CheckRedirect(comID);
+        return entries[comID].GetResponse(relation, new List<string>(), new List<string>());
+    }
+    public MessageCollect_KojoEntry GetKOJOMessage_Suffix(string id, string suffix, Character_Relationship relation)
+    {
+        string comID = id;
+        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
+        comID = $"{comID}{suffix}";
+        if (!entries.ContainsKey(comID))
+        {
+            if (this.Fallback != null) return Fallback.GetKOJOMessage_Suffix(id, suffix, relation);
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
+            return null;
+        }
+
+        comID = entries[comID].CheckRedirect(comID);
+        return entries[comID].GetResponse(relation, new List<string>(), new List<string>());
+    }
+    public MessageCollect_KojoEntry GetKOJOMessage_Suffix(string suffix, bool isDoer, bool isReceiver, EvaluationPackage ep, Character_Relationship relation)
+    {
+        string comID = ep.targetCOM.ID;
+        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
+        comID = $"{comID}{suffix}";
+        if (!entries.ContainsKey(comID))
+        {
+            if (this.Fallback != null) return Fallback.GetKOJOMessage_Suffix(suffix, isDoer, isReceiver, ep, relation);
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
+            return null;
+        }
+
+        comID = entries[comID].CheckRedirect(comID);
+        return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : isReceiver ? ep.ReceiverSelfTag : new List<string>(), isDoer ? ep.ReceiverTargetTag : isReceiver ? ep.DoerTargetTag : new List<string>(), ep);
+    }
+    public MessageCollect_KojoEntry GetKOJOMessage_Join(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
+    {
+        string comID = ep.targetCOM.ID;
+        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
+        comID = $"{comID}_Join";
+        if (!entries.ContainsKey(comID))
+        {
+            if (this.Fallback != null) return Fallback.GetKOJOMessage_Join(isDoer, ep, relation);
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
+            return null;
+        }
+
+        comID = entries[comID].CheckRedirect(comID);
+        return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
+    }
     public MessageCollect_KojoEntry GetKOJOMessage_Begin(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
     {
         string comID = ep.targetCOM.ID;
@@ -223,7 +283,7 @@ public class Character_Personality
         comID = $"{comID}_Begin";
         if (!entries.ContainsKey(comID))
         {
-            if (this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ep, relation);
+            if (this.Fallback != null) return Fallback.GetKOJOMessage_Begin(isDoer, ep, relation);
             else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
             return null;
         }
@@ -241,7 +301,7 @@ public class Character_Personality
 
         if (!entries.ContainsKey(comID))
         {
-            if (this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ep, relation);
+            if (this.Fallback != null) return Fallback.GetKOJOMessage_Ongoing(isDoer, ep, relation);
             else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
             return null;
         }
@@ -258,7 +318,7 @@ public class Character_Personality
 
         if (!entries.ContainsKey(comID))
         {
-            if (this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ep, relation);
+            if (this.Fallback != null) return Fallback.GetKOJOMessage_Interrupt(isDoer, ep, relation);
             else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
             return null;
         }
@@ -552,6 +612,20 @@ public class ResponseEntry
         public bool requireSelfDoer = false;
         public bool requireSelfReceiver = false;
 
+        public bool requireSelfAPDoer = false;
+        public bool requireSelfAPReceiver = false;
+
+
+        public bool requireMaster = false;
+        /// <summary>
+        /// Valid when self is master or when no master
+        /// </summary>
+        public bool requireSelfMaster = false;
+        /// <summary>
+        /// Valid when self is not master or when no master
+        /// </summary>
+        public bool requireSelfNotMaster = false;
+
         public CharaReq selfReq = null;
         public CharaReq targetReq = null;
 
@@ -639,6 +713,14 @@ public class ResponseEntry
                     if (ep.Receiver == null && ep.Doer != rel.Owner) return false;
                     else if (ep.Receiver != null && ep.Receiver != rel.Owner) return false;
                 }
+
+                if (requireSelfAPDoer && !ep.Package.doer.Contains(rel.Owner)) return false;
+                if (requireSelfAPReceiver && !ep.Package.receiver.Contains(rel.Owner)) return false;
+
+                if (requireMaster && ep.Package.Master == null) return false;
+
+                if (requireSelfMaster && ep.Package.Master != null && ep.Package.Master != rel.Owner) return false;
+                if (requireSelfNotMaster && ep.Package.Master != null && ep.Package.Master == rel.Owner) return false;
             }
             List<string> ttips = new List<string>();
             if (this.selfReq != null && !CharaReqUtility.Validate(this.selfReq, ref ttips, rel.Owner)) return false;
@@ -667,6 +749,7 @@ public class ResponseEntry
             public bool requirePermission = false;
             public List<string> selfTags = new List<string>();
             public List<string> targetTags = new List<string>();
+            public bool requireSelfForced = false;
             public int variantID = -1;
             public CharaReq selfReq = null;
             public CharaReq targetReq = null;
@@ -695,8 +778,8 @@ public class ResponseEntry
                 if (ep != null)
                 {
                     if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"validating EP reqFailure? {requireEPFailure && ep.Response > Memory_Response.Refuse} reqSuccess? {!requireEPFailure && requireEPSuccess && ep.Response < Memory_Response.Accept} ");
-                    if (requireEPFailure && ep.Response != Memory_Response.Refuse) return false;
-                    else if (!requireEPFailure && requireEPSuccess && ep.Response < Memory_Response.Accept) return false;
+                    if (requireEPFailure && (ep.Package.requestAccepted || ep.Response != Memory_Response.Refuse)) return false;
+                    else if (!requireEPFailure && requireEPSuccess && (!ep.Package.requestAccepted || ep.Response < Memory_Response.Accept) ) return false;
                     if (requirePermission && !ep.hasPermission) return false;
 
                     if (requireEPSuccessGTE != Memory_Response.None && ep.Response < requireEPSuccessGTE) return false;
@@ -712,6 +795,17 @@ public class ResponseEntry
                 if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"validating requireSelfAction {requireSelfAction} {self.canAct} {self.Stats.isConsciousnessUnconscious}");
                 if (requireSelfAction && (self == null || !self.canAct)) return false;
                 if (requireTargetAction && (target == null || !target.canAct)) return false;
+                if (requireSelfForced)
+                {
+                    //Debug.Log($"requireSelfForced on {rel.Owner.CallName}");
+                    if (rel.Owner.cannotRefuse || rel.Owner.isImprisoned)
+                    {
+
+                    } else if (ep != null && ep.Package.isForced)
+                    {
+
+                    } else return false;
+                }
                 //if (selfTags.Count < this.selfTags.Count) return false;
                 if (this.selfTags.Count > 0 && !Utility.ListContainsStrict(selfTags, this.selfTags)) return false;
                 //if (targetTags.Count < this.targetTags.Count) return false;

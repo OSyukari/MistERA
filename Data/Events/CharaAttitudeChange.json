@@ -13,7 +13,7 @@
         },
         "events": [
             {
-                "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                 "options":[
                     {   
                         "Results": [ { "Type":"CheckRelationship", "arguments":["self","target"]} ] 
@@ -35,7 +35,7 @@
         },
         "events": [
             {
-                "$type": "Event+EventEntry+EventEntry_Branch, Events",
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                 "options":[
                     {   
                         "target_chara_conditions":{
@@ -67,7 +67,7 @@
                 ]
             },
             {
-                "$type": "Event+EventEntry+EventEntry_Question, Events",
+                "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                 "label":"br_choice",
                 "question":"$self.name$请求将二人的关系从$original$变更为$new$",
                 "options":[

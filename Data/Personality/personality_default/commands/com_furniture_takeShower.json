@@ -1,0 +1,316 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower",
+                    "interruptSelfJob": true,
+                    "variants": [
+                        {
+                            "requirement": { "requireEPFailure": true },
+                            "variants":[
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
+                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
+                                    "responses": [
+"$self$笑着把水泼向$target$。\"讨厌啦，现在太挤了，下次吧。\"", "$self$温柔地把$target$推向门口。\"乖，让我先洗完，之后再陪你玩。\"", "$self$有些不好意思地挠挠脸颊。\"虽然我不介意，但是今天真的想一个人泡会儿。\"",
+
+"$self$笑着摆了摆手。\"我现在还不脏呢，你自己去享受吧。\"", "$self$指了指手里的书。\"等我看完这章再说，你们先去。\"", "$self$虽然有些心动，但还是摇了摇头。\"下次吧，今天实在太累了，只想睡觉。\""
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
+                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "responses": [
+"$self$冷笑一声，直接把湿毛巾甩在$target$脸上。\"做梦去吧，变态。\"", "$self$重重地关上了玻璃门，甚至懶得多说一个字。\"……\"", "$self$抱臂站在花洒下，眼神充满了鄙夷。\"你脑子里装的都是些什么？离我远点。\"",
+
+"$self$皱着眉头后退了一步。\"我对混浴没兴趣，别来烦我。\"", "$self$冷笑一声，上下打量着对方。\"和你一起？别开玩笑了。\"", "$self$直接无视了邀请，转身就走。\"无聊的提议。\""
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "extraPortraitTags": [
+                                "happy",
+                                "excited",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.3 成功（正面反馈）行动结束结果",
+                            "responses": [
+"$self$擦着湿漉漉的头发，脸上洋溢着满足的红晕。\"刚才……感觉还不赖嘛。\"", "$self$亲昵地靠在$target$肩膀上，身上带着同款沐浴露的香气。\"下次还要一起洗哦！\"", "$self$主动帮$target$整理好浴袍，眼神变得更加柔和。\"皮肤变得好滑呢，谢谢你帮忙。\"" ,
+
+"$self$神清气爽地走了出来，皮肤泛着健康的粉色。\"真是太舒服了！\"", "$self$一边擦着头发一边哼着歌，看起来心情大好。\"感觉整个人都活过来了。\"", "$self$给自己倒了一杯牛奶，脸上挂着满足的微笑。\"完美的沐浴时间。\""
+                    ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": true
+                            },
+                            "extraPortraitTags": [
+                                "pouting",
+                                "doubt"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.4 成功（负面反馈）行动结束结果",
+                            "responses": [
+"$self$一言不发地裹紧浴巾，迅速离开了浴室，甚至不愿意看$target$一眼。", "$self$用力擦拭着身体，仿佛想洗掉什么脏东西一样，表情阴郁。\"别跟我说话，我现在很烦。\"", "$self$背对着$target$穿好衣服，声音冷得像冰。\"希望没有下一次了。\"",
+
+"$self$虽然洗完了，但脸上依旧没什么表情。\"水温不太稳定，体验一般。\"", "$self$有些烦躁地抱怨道：\"那个沐浴露的味道我不喜欢。\"", "$self$裹紧了浴巾，打了个喷嚏。\"好像有点着凉了……倒霉。\""
+                                ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower_Begin",
+                    "interruptSelfJob": false,
+                    "variants": [
+                        {
+                            "requireMaster":true,
+                            "requireSelfNotMaster": true,
+                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "_comment":"2.3.3 主动接受" ,
+                            "responses":
+                            [ 
+"$self$往旁边挪了挪，拍了拍身边的空位。\"水温刚好哦，快进来吧。\"", "$self$主动帮$target$解开了衣扣，眼神中充满了期待。\"那……要互相擦背吗？\"", "$self$开心地拉住$target$的手，将对方拽进充满蒸汽的浴室。\"太好了！一个人洗正好有点无聊呢！\"",
+
+"$self$眼睛一亮，立刻放下了手里的活。\"好啊好啊！我也正想去呢！\"", "$self$挽住对方的手臂，笑得灿烂。\"那我要用你新买的那个沐浴球！\"", "$self$干脆利落地起身。\"走吧，谁最后脱完谁请客！\""
+                            ]
+
+                        },
+                        {
+                            "requireMaster":true,
+                            "requireSelfNotMaster": true,
+                            "requirement":{"requireSelfForced":true},
+                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "_comment":"2.3.5 被动接受（屈服）" ,
+                            "responses":
+                            [ 
+"$self$紧紧咬着下唇，虽然身体在抗拒，但还是慢慢松开了护在胸前的手。\"……我知道了。\"", "$self$绝望地闭上眼睛，不敢反抗$target$的入侵。\"只要……只要你答应不伤害我……\"", "$self$像个木偶一样僵硬地站在原地，任由$target$摆布。\"是……如果这是你的命令……\"",
+
+"$self$咬着嘴唇，低着头不敢反抗。\"我知道了……我去就是了……\"", "$self$身体僵硬，眼神闪躲着不敢看对方。\"请……请不要伤害我……\"", "$self$像个木偶一样站起来，机械地跟在后面。"
+                            ]
+                        },
+                        {
+                            "requireMaster":true,
+                            "requireSelfNotMaster": true,
+                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "_comment":"2.3.4 被动接受（惊讶不反感）" ,
+                            "responses":
+                            [ 
+"$self$愣了一下，随即无奈地叹了口气。\"真拿你没办法……进来吧，别着凉了。\"", "$self$有些手足无措地遮挡了一下关键部位，脸颊微红。\"诶？现在吗？唔……好吧。\"", "$self$犹豫了片刻，最终还是侧身让出了位置。\"既然你坚持的话……只能洗澡哦。\"",
+
+"$self$愣了一下，随即无奈地笑了笑。\"诶？现在吗？好吧，既然你都这么说了。\"", "$self$有些不好意思地挠了挠头。\"如果你不介意的话……我也无所谓啦。\"", "$self$犹豫了几秒，最终还是点了点头。\"那……我就恭敬不如从命了。\""
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [ "relaxed" ], "useActiveTags": false,
+                            "_comment":"2.1.1 行动开始" ,
+                            "responses": [ 
+"$self$试探性地伸出脚尖点了点水面，确认温度适宜后，才缓缓将身体浸入水中。", "$self$将头发随手盘在脑后，任由温热的水流漫过脚踝，发出舒服的叹息。", "$self$解开了身上的束缚，毫无保留地让肌肤暴露在氤氲的热气中，镜子上已经蒙了一层薄雾。", "$self$关上了浴室的门，将外界的喧嚣隔绝在外，只剩下水流撞击地面的声音。", "$self$有些笨拙地跨进浴缸，温热的水瞬间包裹了她的膝盖，带来一阵酥麻的暖意。", "$self$站在淋浴头下，仰起头闭上眼睛，任由第一股水流冲刷过脸颊。",
+"$self$哼着不成调的小曲，把准备好的浴巾搭在肩膀上，推开了浴室的门。", "$self$试了试水温，满意地舒了一口气，随即解开了身上的衣扣。", "$self$将头发高高挽起，露出白皙的脖颈，眼神中透着对放松时刻的期待。",
+"$self$哼着不成调的小曲，开始解开衣扣。\"终于可以放松一下了。\"", "$self$试了试水温，满意地舒了一口气。\"呼……温度刚刚好。\"", "$self$将头发盘起，赤着脚走进了浴室。\"希望能洗掉这一身的疲惫。\"", "$self$看着镜子里的自己，伸手抹去了镜面上的水雾。"
+                    ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower_Tryjoin",
+                    "variants": [
+                        {
+                            "_comment":"2.3.6 NPC请求加入" ,
+                            "responses": [
+"$self$抱着换洗衣服站在浴室门口，试探性地问道：\"那个……我可以一起吗？\"", "$self$在门外大声喊道：\"我也想洗！给我留个位置！\"", "$self$有些害羞地敲了敲门。\"水温怎么样？我也想进来泡泡……\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower_Joined",
+                    "variants": [
+                        {
+                            "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
+                            "responses": [
+"$self$欢呼一声，迅速推门而入。\"太棒了！谢谢！\"", "$self$脸上露出了幸福的笑容。\"嘿嘿，那我就不客气啦！\"", "$self$哼着歌开始脱衣服，显得十分开心。"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower_Join_Refused",
+                    "variants": [
+                        {
+                            "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
+                            "responses": [ 
+"$self$失望地垂下肩膀。\"小气鬼……明明浴缸那么大。\"", "$self$撇了撇嘴，转身离开了。\"切，稀罕谁呢。\"", "$self$叹了口气，把衣服放回了篮子里。\"好吧好吧，那我等下一轮。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower_Join",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants":[
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
+                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
+                                    "responses": [
+"$self$从浴帘后探出头，歉意地笑了笑。\"抱歉哦，这里已经满了。\"", "$self$把门锁得更紧了一些，语气调皮。\"这是淑女的私人时间，请勿打扰~\"", "$self$把沐浴露扔了出去。\"你先用这个去隔壁冲冲吧，这里挤不下两个人。\""
+                                     ]
+                                }
+                            ],
+                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+"$self$直接把水泼向门口。\"滚！变态！\"", "$self$的声音充满了怒气。\"再不走我就报警了！\"", "$self$冷冷地盯着门口的影子。\"想死的话就进来试试。\""
+                            ]
+                        },
+                        {
+                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
+                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses":
+                            [ 
+"$self$往里挪了挪，腾出一块空地。\"快进来，水还是热的呢！\"", "$self$笑着把门锁打开。\"正如我所愿，进来帮我擦擦背？\"", "$self$从水中伸出手，做了一个邀请的姿势。\"等你很久了。\""
+                            ]
+
+                        },
+                        {
+                            "requirement":{"requireSelfForced":true},
+                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
+                            "responses":
+                            [ 
+"$self$绝望地闭上眼睛，不再做无谓的抵抗。\"随你便吧……\"", "$self$蜷缩在浴缸角落，声音细若蚊蝇。\"不……不要……好吧……\"", "$self$颤抖着松开了护在胸前的手。"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
+                            "responses":
+                            [ 
+"$self$吓了一跳，随后红着脸点了点头。\"诶？这……好吧，如果你坚持的话。\"", "$self$有些慌乱地遮住关键部位。\"真是拿你没办法……进来吧。\"", "$self$叹了口气。\"只准泡澡，不准乱动哦。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower_Ongoing",
+                    "variants": [
+                        {
+                            "_comment":"2.1.2 行动中途" ,
+                            "responses": [ 
+"$self$慵懒地靠在浴缸边缘，手指无聊地拨弄着水面上的泡沫，眼神有些放空。", "$self$用沾满泡沫的海绵缓缓擦拭着手臂，白色的泡沫在光洁的肌肤上滑落。", "$self$深吸了一口气，整个人都没入水中，只留半张脸露在外面，像是一只从水底窥视的生物。", "$self$哼着不成调的小曲，指尖轻轻梳理着湿透的长发，水珠顺着发丝滴落在锁骨上。", "$self$低头看着被热水泡得微微发红的指尖，在这独处的私密时间里，卸下了所有的防备。", "$self$哪怕只是一个人，她也仔细地清洗着每一个角落，动作轻柔得像是在对待一件易碎品。",
+"浴室里雾气缭绕，$self$正闭着眼靠在浴缸边缘，任由温水漫过胸口。", "$self$用海绵细致地擦洗着手臂，泡沫顺着肌肤滑落，由于水声太大，并未注意到周围的动静。", "$self$正专心致志地往身上涂抹着沐浴露，空气中弥漫着一股淡淡的花香。",
+"$self$闭着眼睛靠在浴缸边缘，任由热水漫过肩膀。", "浴室里充满了沐浴露的香气，$self$正用毛巾轻轻擦拭着手臂。", "水声哗啦啦地响着，$self$正全神贯注地清洗着头发。", "$self$在水中伸展着双腿，享受着被温暖包裹的感觉。"
+                    ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower_Interrupt",
+                    "variants": [
+                        {
+                            "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
+                            "_comment":"2.2.3 态度：恐惧 有他人登场" ,
+                            "requirement":{ "requireSelfAttitudeKey": "Fear" },
+                            "responses": [
+"$self$惊恐地缩成一团，双手死死抱住膝盖，身体在水中止不住地颤抖。\"别……别过来……\"", "$self$的脸色瞬间变得煞白，眼神游移不定，似乎在寻找逃跑的路线。\"对不起……我不知道你会来……\"", "$self$低下头不敢与$target$对视，声音细若蚊蝇。\"我会听话的……请不要……\"" ,
+
+"$self$惊慌失措地缩进水里，只露出一双颤抖的眼睛。\"别、别过来……求你了……\"", "$self$双手护在胸前，身体不住地往角落里缩。\"对不起……我马上就出去……\"", "听到脚步声，$self$吓得连呼吸都屏住了，脸色瞬间变得苍白。"
+                            ]
+                        },
+                        {
+                            "requirement":{ "requireSelfAttitudeKey": "Badwill" },
+                            "_comment":"2.2.2 态度：恶意 有他人登场" ,
+                            "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
+                            "responses": [ 
+"$self$猛地抓起浴巾挡在身前，眼神变得尖锐而冰冷。\"谁允许你进来的？滚出去！\"", "$self$厌恶地咋舌，身体紧绷，随时准备做出攻击的姿态。\"你这种人真是让人作呕，连这点礼貌都不懂吗？\"", "$self$背过身去，声音里充满了压抑的怒火。\"别用那种眼神看我，趁我还没发火之前消失。\"",
+
+"$self$迅速拉过浴帘遮住身体，声音冷硬如冰。\"出去！谁让你进来的？\"", "$self$抓起手边的沐浴露瓶子当作武器，眼神充满了警惕。\"滚出去，别逼我动手。\"", "$self$背过身去，根本不想看对方一眼。\"真恶心，别弄脏了我的浴室。\""
+                            ]
+                        },
+                        {
+                            "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
+                            "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
+                            "_comment":"2.2.1 态度：好意 有他人登场" ,
+                            "responses": [
+"$self$听到开门声，有些惊讶地护住胸口，但在看清来人是$target$后，放松地笑了出来。\"是你啊，吓我一跳。\"", "$self$从浴帘后探出半个脑袋，脸上带着戏谑的笑容。\"怎么？想一起洗吗？\"", "$self$并没有遮掩身体的意思，只是自然地往浴缸里缩了缩。\"帮我把那边的肥皂递过来一下好吗？\"" ,
+
+"看到来人，$self$并没有遮掩，反而笑着泼了一把水过去。\"呀，你也想来一起洗吗？\"", "$self$往旁边挪了挪位置，拍了拍身后的浴缸边缘。\"要不要帮我擦擦背？\"", "$self$眨了眨被水汽熏湿的眼睛，语气轻快：\"刚好水还是热的呢。\""
+                            ]
+                        },
+                        {
+                            "requirement":{ "requireSelfAttitudeKey": "Desire" },
+                            "_comment":"2.2.4 态度：欲望 有他人登场" ,
+                            "extraPortraitTags": [ "shy" ], "useActiveTags": false,
+                            "responses": [
+"$self$看到$target$的瞬间，脸颊染上了红晕，眼神变得迷离湿润。\"啊……你来了……\"", "$self$故意挺起湿漉漉的胸脯，指尖轻轻划过锁骨，发出一声诱人的轻喘。\"门没有锁哦……\"", "$self$咬着嘴唇，眼神直勾勾地盯着$target$，原本遮挡的手慢慢放了下来。\"如果$target$想看的话……也不是不可以……\"" ,
+
+"$self$故意挺起湿漉漉的胸膛，眼神迷离地看向门口。\"既然来了……不进来帮帮我吗？\"", "$self$咬着下唇，指尖顺着锁骨慢慢向下滑动。\"只有我一个人洗……好寂寞啊。\"", "$self$发出了一声甜腻的喘息，声音带着明显的邀请意味。\"水温刚好……你的身体也是热的吗？\""
+                            ]
+                        },
+                        {
+                            "_comment":"2.2.5 态度：普通 有他人登场" ,
+                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "responses": [
+"$self$淡漠地瞥了一眼门口，动作没有丝毫停顿。\"这里有人了，请稍等。\"", "$self$平静地拉上浴帘，隔绝了视线。\"麻烦关一下门，谢谢。\"", "$self$只是简单地确认了一下情况，便继续着洗头的动作，仿佛$target$并不存在。",
+
+"$self$淡定地继续洗着头发，仿佛对方只是空气。\"如果你要找东西，柜子在左边。\"", "$self$瞥了一眼门口，语气平淡。\"还要多久？我快洗完了。\"", "$self$没有太大的反应，只是稍微侧了侧身子。\"门记得关好，有点冷。\""
+                    ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+
+
+                "com_furniture_takeShower_begin_1": "$doer.firstname$走进浴室，打开花洒，让温暖的水流冲刷着全身。",
+                "com_furniture_takeShower_begin_2": "$doer.firstname$关上浴室门，水声哗哗响起，开始享受沐浴的放松时刻。",
+                "com_furniture_takeShower_begin_3": "$doer.firstname$走进浴室，蒸汽氤氲，准备洗去一天的疲惫。"
+
+            },
+            "en-us": {
+
+                "com_furniture_takeShower_begin_1": "$doer.firstname$ walked into the bathroom, turned on the showerhead, and let the warm water wash over their entire body.",
+                "com_furniture_takeShower_begin_2": "$doer.firstname$ closed the bathroom door, the sound of rushing water filled the air, and they began to enjoy a relaxing shower moment.",
+                "com_furniture_takeShower_begin_3": "$doer.firstname$ walked into the bathroom, filled with steam, preparing to wash away the fatigue of the day."
+
+            }
+        }
+    }
+}

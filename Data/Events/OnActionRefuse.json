@@ -10,7 +10,7 @@
                 },
                 "events": [
     {
-        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
         "_comment":"silent branch player/npc split",
         "options":[
             {   
@@ -46,7 +46,7 @@
         "isLast": true
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
         "_comment":"npc handling, check auto push but default cancel",
         "label": "br_npc_ops",
         "options":[
@@ -62,7 +62,7 @@
         ]
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Question, Events",
+        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
         "label":"br_choice",
         "portraitRefKey":"evTarget", "portraitTagsOverride":["sorry"],
         "question":"event_OnAPRefuse_ev01",
@@ -80,7 +80,7 @@
         ]
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_end",
         "portraitRefKey":"evTarget", "portraitTagsOverride":["sorry","awkward"],
         "isLast":true,
@@ -88,14 +88,14 @@
         "Results": [ {"Type":"ExecuteCallback","arguments":["failCallback"]} ] 
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_push",
         "line": "event_OnAPRefuse_ev03",
         "portraitRefKey":"evTarget", "portraitTagsOverride":["surprised","worry"],
         "nextEntryLabel":"br_push_ops"
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Branch, Events",
+        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
         "_comment":"execute callbacks (push), in case of player, add callbacks depending on option. in case of npc, predetermined callbacks.",
         "label": "br_push_ops",
         "options":[
@@ -107,7 +107,7 @@
         ]
     },
     {
-        "$type": "Event+EventEntry+EventEntry_Line, Events",
+        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "end",
         "isLast": true,
         "line": ""

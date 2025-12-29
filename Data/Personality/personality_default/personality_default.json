@@ -92,222 +92,6 @@
                         ]
                     },
                     {
-                        "ID": "com_interaction_initiateSex",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "variants": [
-                            {
-                                "responses": [
-                                    "($self$) 推倒 口上文1",
-                                    "($self$) 推倒 口上文2",
-                                    "($self$) 推倒 口上文3"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "com_interaction_endOngoingSex",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "variants": [
-                            {
-                                "responses": [
-                                    "($self$) 结束调教 口上文1",
-                                    "($self$) 结束调教 口上文2",
-                                    "($self$) 结束调教 口上文3"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "com_job_farm_maintain",
-                        "variants": [
-                            {
-                                "requirement": {
-                                    "requireEPFailure": true
-                                },
-                                "extraPortraitTags": [
-                                    "doubt",
-                                    "apology"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "failure variant",
-                                "responses": [
-                                    "kojo_default_com_job_farm_cultivate_crop_refuse_1",
-                                    "kojo_default_com_job_farm_cultivate_crop_refuse_2"
-                                ]
-                            },
-                            {
-                                "requirement": {
-                                    "requireEPSuccessGTE": "Success"
-                                },
-                                "extraPortraitTags": [
-                                    "happy",
-                                    "confident"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "great success variant",
-                                "responses": [
-                                    "kojo_default_com_job_farm_maintain_accept_success_1"
-                                ]
-                            },
-                            {
-                                "requirement": {
-                                    "requireSelfAction": true
-                                },
-                                "extraPortraitTags": [
-                                    "surprised",
-                                    "apology"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "barely success variant",
-                                "responses": [
-                                    "kojo_default_com_job_farm_maintain_accept_failure_1"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "com_interaction_talk",
-                        "variants": [
-                            {
-                                "requirement": {
-                                    "requireEPSuccessGTE": "Success"
-                                },
-                                "extraPortraitTags": [
-                                    "happy"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "great success variant",
-                                "responses": [
-                                    "kojo_default_com_interaction_talk_accept_success_1",
-                                    "kojo_default_com_interaction_talk_accept_success_2"
-                                ]
-                            },
-                            {
-                                "requirement": {
-                                    "requireSelfAction": true
-                                },
-                                "extraPortraitTags": [
-                                    "doubt",
-                                    "scheming"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "barely success variant",
-                                "responses": [
-                                    "kojo_default_com_interaction_talk_accept_failure_1",
-                                    "kojo_default_com_interaction_talk_accept_failure_2",
-                                    "kojo_default_com_interaction_talk_accept_failure_3"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "com_job_farm_cultivate_crop",
-                        "variants": [
-                            {
-                                "requirement": {
-                                    "requireEPFailure": true
-                                },
-                                "extraPortraitTags": [
-                                    "doubt",
-                                    "apology"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "failure variant",
-                                "responses": [
-                                    "kojo_default_com_job_farm_cultivate_crop_refuse_1",
-                                    "kojo_default_com_job_farm_cultivate_crop_refuse_2"
-                                ]
-                            },
-                            {
-                                "requirement": {
-                                    "requireSelfAction": true
-                                },
-                                "extraPortraitTags": [
-                                    "thinking",
-                                    "doubt"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "barely success variant",
-                                "responses": [
-                                    "kojo_default_com_job_farm_cultivate_crop_accept_failure_2",
-                                    "kojo_default_com_job_farm_cultivate_crop_accept_failure_1"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "com_job_production_cooking",
-                        "variants": [
-                            {
-                                "requirement": {
-                                    "requireEPSuccessGTE": "Success"
-                                },
-                                "extraPortraitTags": [
-                                    "confident",
-                                    "happy"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "great success variant",
-                                "responses": [
-                                    "kojo_default_com_job_production_cooking_accept_success_1",
-                                    "kojo_default_com_job_production_cooking_accept_success_2"
-                                ]
-                            },
-                            {
-                                "requirement": {
-                                    "requireSelfAction": true
-                                },
-                                "extraPortraitTags": [
-                                    "thinking",
-                                    "doubt"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "barely success variant",
-                                "responses": [
-                                    "kojo_default_com_job_production_cooking_accept_failure_1"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "com_job_cleaning",
-                        "variants": [
-                            {
-                                "requirement": {
-                                    "requireEPSuccessGTE": "Success"
-                                },
-                                "extraPortraitTags": [
-                                    "confident",
-                                    "happy"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "great success variant",
-                                "responses": [
-                                    "kojo_default_com_job_cleaning_accept_success_1"
-                                ]
-                            },
-                            {
-                                "requirement": {
-                                    "requireSelfAction": true
-                                },
-                                "extraPortraitTags": [
-                                    "apology",
-                                    "surprised"
-                                ],
-                                "useActiveTags": false,
-                                "_comment": "barely success variant",
-                                "responses": [
-                                    "kojo_default_com_job_cleaning_accept_failure_1",
-                                    "kojo_default_com_job_cleaning_accept_failure_2"
-                                ]
-                            }
-                        ]
-                    },
-                    {
                         "ID": "com_touch_sleeponthigh_ask",
                         "tags": [
                             "nsfw"
@@ -607,6 +391,7 @@
                                         "job"
                                     ]
                                 },
+                                "_comment":"this should not be triggered due to reverse Interrupt calls",
                                 "responses": [
                                     "($self$) 触发了$target$撞见$self$工作中的口上"
                                 ]
@@ -617,6 +402,7 @@
                                         "rest"
                                     ]
                                 },
+                                "_comment":"this should not be triggered due to reverse Interrupt calls",
                                 "responses": [
                                     "($self$) 触发了$target$撞见$self$休息的口上"
                                 ]
@@ -627,7 +413,7 @@
                                         "recreation"
                                     ]
                                 },
-                                
+                                "_comment":"this should not be triggered due to reverse Interrupt calls",
                                 "responses": [
                                     "($self$) 触发了$target$撞见$self$玩耍的口上"
                                 ]

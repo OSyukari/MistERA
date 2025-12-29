@@ -1,11 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 using System.IO;
-using TMPro;
-using Newtonsoft.Json;
 using System.Linq;
+using Newtonsoft.Json;
+using TMPro;
+using UnityEngine;
 
 [System.Serializable]
 public class scr_System_CentralControl_Serializable
@@ -45,7 +45,9 @@ public class DebugLogSettings
 public class scr_System_CentralControl : MonoBehaviour
 {
 
-
+    public SpineAnimator42 SpineAnim42;
+    public SpineAnimator41 SpineAnim41;
+    public SpineAnimator40 SpineAnim40;
 
     // Singleton
     public static scr_System_CentralControl current;
@@ -101,7 +103,7 @@ public class scr_System_CentralControl : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
-
+        Application.targetFrameRate = 60;
     }
 
     public bool DisplayNSFW { get { return !isSafeMode && ContentSetting.SexMode > Sex_Mode.disabled && ContentSetting.SexPresenceMode > Sex_Presence_Mode.minimal; } }
@@ -156,20 +158,16 @@ public class scr_System_CentralControl : MonoBehaviour
         return obj;
     }
 
-    public SpineLoader spine40, spine41, spine42;
-
-    public SpineLoader GetSpineLoader(string version)
+    public SpineAnimatorBase GetSpineAnimator(string version)
     {
-        //Debug.Log("Getting spine loader version " + GetSkelVersion(skelPath));
         switch (version)
         {
-            case "4.0": return Instantiate(spine40);
-            case "4.1": return Instantiate(spine41);
-            case "4.2": return Instantiate(spine42);
+            case "4.0": return SpineAnim40;
+            case "4.1": return SpineAnim41;
+            case "4.2": return SpineAnim42;
             default: return null;
         }
     }
-
 
     protected void Start()
     {
@@ -247,9 +245,16 @@ public class scr_System_CentralControl : MonoBehaviour
             OnDayUpdate(1);
             Debug.Log($"Clearing Sprite cache, new size {textureUseCounter.Count}");
         }
+        if (!this.textures.ContainsKey(path)) this.textures.Add(path, tex);
+        else if (this.textures[path] != tex)
+        {
+            Destroy(tex);
+            tex = this.textures[path];
+        }
+
 
         if (!this.texSprites.ContainsKey(path)) this.texSprites.Add(path, Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 100.0f));
-        if (!this.textures.ContainsKey(path)) this.textures.Add(path, tex);
+
         this.textureUseCounter[path] = PortraitCacheHour;
         return this.texSprites[path];
     }
@@ -269,13 +274,12 @@ public class scr_System_CentralControl : MonoBehaviour
     }
     public void UnloadTextureCache(string path)
     {
+       //Debug.LogError($"UnloadTextureCache [{path}]");
         textureUseCounter[path] = 0;
     }
 
     Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
     Dictionary<string, int> textureUseCounter = new Dictionary<string, int>();
-    //Dictionary<string, Texture2D> SpriteTextures = new Dictionary<string, Texture2D>();
-    //Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
     Dictionary<string, Sprite> texSprites = new Dictionary<string, Sprite>();
 
     private void Initialize()
@@ -1012,128 +1016,6 @@ public static class DataPath
 
     
 }
-/*
-public static class XraySpritePath
-{
-    public static string widget_ass0 = "/Images/SSE_iWant_SLWidget/apropos2/ass0.png";
-    public static string widget_ass1 = "/Images/SSE_iWant_SLWidget/apropos2/ass1.png";
-    public static string widget_ass2 = "/Images/SSE_iWant_SLWidget/apropos2/ass2.png";
-    public static string widget_ass3 = "/Images/SSE_iWant_SLWidget/apropos2/ass3.png";
-    public static string widget_ass4 = "/Images/SSE_iWant_SLWidget/apropos2/ass4.png";
-    public static string widget_ass5 = "/Images/SSE_iWant_SLWidget/apropos2/ass5.png";
-    public static string widget_ass6 = "/Images/SSE_iWant_SLWidget/apropos2/ass6.png";
-    public static string widget_ass7 = "/Images/SSE_iWant_SLWidget/apropos2/ass7.png";
-    public static string widget_ass8 = "/Images/SSE_iWant_SLWidget/apropos2/ass8.png";
-
-    public static string widget_oral0 = "/Images/SSE_iWant_SLWidget/apropos2/oral0.png";
-    public static string widget_oral1 = "/Images/SSE_iWant_SLWidget/apropos2/oral1.png";
-    public static string widget_oral2 = "/Images/SSE_iWant_SLWidget/apropos2/oral2.png";
-    public static string widget_oral3 = "/Images/SSE_iWant_SLWidget/apropos2/oral3.png";
-    public static string widget_oral4 = "/Images/SSE_iWant_SLWidget/apropos2/oral4.png";
-    public static string widget_oral5 = "/Images/SSE_iWant_SLWidget/apropos2/oral5.png";
-    public static string widget_oral6 = "/Images/SSE_iWant_SLWidget/apropos2/oral6.png";
-    public static string widget_oral7 = "/Images/SSE_iWant_SLWidget/apropos2/oral7.png";
-    public static string widget_oral8 = "/Images/SSE_iWant_SLWidget/apropos2/oral8.png";
-
-    public static string widget_vag0 = "/Images/SSE_iWant_SLWidget/apropos2/vag0.png";
-    public static string widget_vag1 = "/Images/SSE_iWant_SLWidget/apropos2/vag1.png";
-    public static string widget_vag2 = "/Images/SSE_iWant_SLWidget/apropos2/vag2.png";
-    public static string widget_vag3 = "/Images/SSE_iWant_SLWidget/apropos2/vag3.png";
-    public static string widget_vag4 = "/Images/SSE_iWant_SLWidget/apropos2/vag4.png";
-    public static string widget_vag5 = "/Images/SSE_iWant_SLWidget/apropos2/vag5.png";
-    public static string widget_vag6 = "/Images/SSE_iWant_SLWidget/apropos2/vag6.png";
-    public static string widget_vag7 = "/Images/SSE_iWant_SLWidget/apropos2/vag7.png";
-    public static string widget_vag8 = "/Images/SSE_iWant_SLWidget/apropos2/vag8.png";
-
-    public static string eratw_a1 = "Images/EraTW_Xray/A_1.png";
-
-    public static string eratw_w1 = "Images/EraTW_Xray/W.png";
-
-    public static string eratw_v1 = "Images/EraTW_Xray/V_1.png";
-
-    public static string rjw_ovary1 = "Images/RJW_ovu/Ovary_00.png";
-    public static string rjw_ovary2 = "Images/RJW_ovu/Ovary_01.png";
-    public static string rjw_ovary3 = "Images/RJW_ovu/Ovary_02.png";
-    public static string rjw_egg1 = "Images/RJW_ovu/Egg.png";
-    public static string rjw_eggFertilized1 = "Images/RJW_ovu/Egg_Fertilized00.png";
-    public static string rjw_eggFertilized2 = "Images/RJW_ovu/Egg_Fertilized01.png";
-    public static string rjw_eggFertilized3 = "Images/RJW_ovu/Egg_Fertilized02.png";
-    public static string rjw_eggInseminate1 = "Images/RJW_ovu/Egg_Fertilizing00.png";
-    public static string rjw_eggInseminate2 = "Images/RJW_ovu/Egg_Fertilizing01.png";
-    public static string rjw_eggInseminate3 = "Images/RJW_ovu/Egg_Fertilizing02.png";
-    public static string rjw_eggPlanted = "Images/RJW_ovu/Egg_Implanted00.png";
-}
-
-public static class XraySprite
-{
-    public static Texture2D widget_ass0 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/ass0.png");
-    public static Texture2D widget_ass1 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/ass1.png");
-    public static Texture2D widget_ass2 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/ass2.png");
-    public static Texture2D widget_ass3 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/ass3.png");
-    public static Texture2D widget_ass4 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/ass4.png");
-    public static Texture2D widget_ass5 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/ass5.png");
-    public static Texture2D widget_ass6 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/ass6.png");
-    public static Texture2D widget_ass7 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/ass7.png");
-    public static Texture2D widget_ass8 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/ass8.png");
-
-    public static Texture2D widget_oral0 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/oral0.png");
-    public static Texture2D widget_oral1 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/oral1.png");
-    public static Texture2D widget_oral2 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/oral2.png");
-    public static Texture2D widget_oral3 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/oral3.png");
-    public static Texture2D widget_oral4 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/oral4.png");
-    public static Texture2D widget_oral5 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/oral5.png");
-    public static Texture2D widget_oral6 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/oral6.png");
-    public static Texture2D widget_oral7 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/oral7.png");
-    public static Texture2D widget_oral8 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/oral8.png");
-
-    public static Texture2D widget_vag0 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/vag0.png");
-    public static Texture2D widget_vag1 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/vag1.png");
-    public static Texture2D widget_vag2 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/vag2.png");
-    public static Texture2D widget_vag3 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/vag3.png");
-    public static Texture2D widget_vag4 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/vag4.png");
-    public static Texture2D widget_vag5 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/vag5.png");
-    public static Texture2D widget_vag6 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/vag6.png");
-    public static Texture2D widget_vag7 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/vag7.png");
-    public static Texture2D widget_vag8 = LoadTexture(Application.dataPath+"/"+"/Images/SSE_iWant_SLWidget/apropos2/vag8.png");
-
-    public static Texture2D eratw_a1 = LoadTexture(Application.dataPath+"/"+"Images/EraTW_Xray/A_1.png");
-
-    public static Texture2D eratw_w1 = LoadTexture(Application.dataPath+"/"+"Images/EraTW_Xray/W.png");
-
-    public static Texture2D eratw_v1 = LoadTexture(Application.dataPath+"/"+"Images/EraTW_Xray/V_1.png");
-
-    public static Texture2D rjw_ovary1 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Ovary_00.png");
-    public static Texture2D rjw_ovary2 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Ovary_01.png");
-    public static Texture2D rjw_ovary3 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Ovary_02.png");
-    public static Texture2D rjw_egg1 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Egg.png");
-    public static Texture2D rjw_eggFertilized1 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Egg_Fertilized00.png");
-    public static Texture2D rjw_eggFertilized2 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Egg_Fertilized01.png");
-    public static Texture2D rjw_eggFertilized3 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Egg_Fertilized02.png");
-    public static Texture2D rjw_eggInseminate1 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Egg_Fertilizing00.png");
-    public static Texture2D rjw_eggInseminate2 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Egg_Fertilizing01.png");
-    public static Texture2D rjw_eggInseminate3 = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Egg_Fertilizing02.png");
-    public static Texture2D rjw_eggPlanted = LoadTexture(Application.dataPath+"/"+"Images/RJW_ovu/Egg_Implanted00.png");
-
-    private static Texture2D LoadTexture(string FilePath)
-    {
-
-        // Load a PNG or JPG file from disk to a Texture2D
-        // Returns null if load fails
-
-        Texture2D Tex2D;
-        byte[] FileData;
-
-        if (File.Exists(FilePath))
-        {
-            FileData = File.ReadAllBytes(FilePath);
-            Tex2D = new Texture2D(2, 2);           // Create new "empty" texture
-            if (Tex2D.LoadImage(FileData))           // Load the imagedata into the texture (size is set automatically)
-                return Tex2D;                 // If data = readable -> return texture
-        }
-        return null;                     // Return null if load failed
-
-    }
-}*/
 
 public static class SpriteAsset
 {

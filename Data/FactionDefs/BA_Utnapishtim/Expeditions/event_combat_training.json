@@ -5,7 +5,7 @@
                 "ID": "exp_event_Utnapishtim_combat_training_end",
                 "events": [
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Events",
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
     "options":[
         {   
             "target_chara_conditions":
@@ -27,13 +27,13 @@
     ]
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_result",
     "line": "exp_event_Utnapishtim_combat_training_end_ev01",
     "isLast": true
 },
 {
-    "$type": "Event+EventEntry+EventEntry_Line, Events",
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
     "line": "exp_event_Utnapishtim_combat_training_end_ev99",
     "isLast": true

@@ -695,17 +695,6 @@ public static class UtilityEX
         Debug.Log("MacroExecute : [" + command + "] do skip [" + skip + "]");
     }
 
-    public static void LoadSprite(Texture2D SpriteTexture, Image image)
-    {
-        if (SpriteTexture == null)
-        {
-            image.sprite = SpriteAsset.transparent;
-            return;
-        }
-        Sprite NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), 100.0f);
-        image.sprite = NewSprite;
-    }
-
     public static TimeSpan ReinitStopWatch(System.Diagnostics.Stopwatch stopwatch)
     {
         stopwatch.Reset();

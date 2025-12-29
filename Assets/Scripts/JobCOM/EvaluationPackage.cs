@@ -47,6 +47,12 @@ public class EvaluationPackage
             return doerCache;
         } }
 
+    [JsonIgnore]
+    public bool isPlayerEP { get
+        {
+            return receiverRef == 0 || doerRef == 0;
+        } }
+
     [JsonProperty] private int receiverRef = -1;
     private Character_Trainable receiverCache = null;
 
@@ -1166,28 +1172,6 @@ public class EvaluationPackage
         }// 
     }
 
-    public void LogMessage_Begin(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null, Character_Relationship injectRel = null)
-    {
-        if (m == null) m = this.job.m;
-        if (Doer.isTimeStopped) return;
-
-        var s = $"{Description_Begin}";
-
-        if (s.Length > 0)
-        {
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_before.Add(s);
-        }
-
-        if (Doer != null && Doer.RefID != 0)
-        {
-            Doer.Relationships.GetKOJOMessage_Begin(true, this, m, injectRel);
-        }
-        if (Receiver != null && Receiver.RefID != 0)
-        {
-            Receiver.Relationships.GetKOJOMessage_Begin(false, this, m, injectRel);
-        }
-    }
 
 
 
@@ -1226,20 +1210,73 @@ public class EvaluationPackage
         }
     }
 
+
+    public void LogMessage_Join(Character_Trainable injectChara, bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        if (Doer.isTimeStopped) return;
+        if (injectChara == null) return;
+
+
+        if (Doer != null && Doer.RefID != 0)
+        {
+            Character_Relationship rel = null;
+            if (Doer != injectChara) rel = Doer.Relationships.FindRelationshipWith(injectChara);
+            else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
+
+            Doer.Relationships.GetKOJOMessage_Join(true, rightAlign, this, m, rel);
+        }
+        if (Receiver != null && Receiver.RefID != 0)
+        {
+            Character_Relationship rel = null;
+
+            if (Receiver != injectChara) rel = Receiver.Relationships.FindRelationshipWith(injectChara);
+            else if (Receiver != Doer) rel = Receiver.Relationships.FindRelationshipWith(Doer);
+
+            Receiver.Relationships.GetKOJOMessage_Join(false, rightAlign, this, m, rel);
+        }
+
+        if (Doer != null && Doer.RefID != 0 && Doer != injectChara)
+        {
+            Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Doer);
+            injectChara.Relationships.GetKOJOMessage_Suffix("_Joined", rightAlign, this, m, rel);
+        }
+        else if (Receiver != null && Receiver.RefID != 0 && Receiver != injectChara && Receiver != Doer)
+        {
+            Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Receiver);
+            injectChara.Relationships.GetKOJOMessage_Suffix("_Joined", rightAlign, this, m, rel);
+        }
+    }
+
+    public void LogMessage_Begin(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
+    {
+        if (m == null) m = this.job.m;
+        if (Doer.isTimeStopped) return;
+
+        if (Doer != null && Doer.RefID != 0)
+        {
+            Character_Relationship rel = null;
+            if (injectChara != null && Doer != injectChara) rel = Doer.Relationships.FindRelationshipWith(injectChara);
+            else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
+
+            Doer.Relationships.GetKOJOMessage_Begin(true, rightAlign, this, m, rel);
+        }
+        if (Receiver != null && Receiver.RefID != 0)
+        {
+            Character_Relationship rel = null;
+
+            if (injectChara != null && Receiver != injectChara) rel = Receiver.Relationships.FindRelationshipWith(injectChara);
+            else if (Receiver != Doer) rel = Receiver.Relationships.FindRelationshipWith(Doer);
+
+            Receiver.Relationships.GetKOJOMessage_Begin(false, rightAlign, this, m, rel);
+        }
+    }
     public void LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
     {
         if (m == null) m = this.job.m;
         //List<Character_Trainable> actors, string s
         //.Actors, ep.Description_Ongoing
         if (Doer.isTimeStopped) return;
-        /*
-        var s = Description_Ongoing;
-        if (s.Length > 0)
-        {
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_after.Add(s);
-        }*/
-        Debug.Log("EP LogMessage_Ongoing");
 
         if (Doer != null && Doer.RefID != 0)
         {

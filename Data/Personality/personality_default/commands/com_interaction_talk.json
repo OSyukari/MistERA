@@ -4,7 +4,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Begin",
+                    "ID": "com_interaction_talk_Begin",
                     "variants": [
                         {
                             "requireMaster":true,
@@ -16,10 +16,7 @@
                             "useActiveTags": false,
                             "_comment":"2.3.3 主动接受" ,
                             "responses": [
-"$self$二话不说扔过来一个副手柄，眼里满是兴奋：\"就等你这句话了！快上号！\"",
-"$self$往旁边挪了挪位置，期待地看着$target$：\"一个人正无聊呢，两个人肯定更有意思。\"",
-
-"$self$眼睛一亮，立刻站了起来。\"好啊！我正愁没事做呢！\"", "$self$开心地凑了过来：\"看什么看什么？我也要看！\""
+                                "$self$立刻合上手中的书：\"好啊！正好我无聊死了！\"","$self$爽快地站起身：\"聊什么呢？算我一个！\""
                             ]
                         },
                         {
@@ -30,10 +27,7 @@
                             "useActiveTags": false,
                             "_comment":"2.3.5 被动接受（屈服）" ,
                             "responses": [ 
-                                "$self$的身体微微发颤，虽然满脸写着抗拒，但还是默默让出了半个屏幕的位置。\"……知道了，我会配合的。\"",
-"$self$低下头，不敢直视对方的眼睛，颤抖着声音说道：\"只要陪你玩……就可以了吗？\"",
-
-"$self$咬着嘴唇，犹豫了一会儿还是低下了头。\"……知道了，我看就是了。\"", "$self$看起来很想拒绝，但最终还是僵硬地坐了下来。\"好……请不要生气。\""
+                                "$self$僵硬地点点头，低着头默默地走了过去。","$self$似乎想拒绝，但看到对方的眼神后又把话咽了回去。"
                             ]
                         },
                         {
@@ -43,11 +37,8 @@
                             "_comment":"2.3.4 被动接受（惊讶不反感）" ,
                             "responses":
                             [ 
-"$self$愣了一下，显得有些意外：\"欸？你要和我一起玩？那……好吧，如果不嫌弃我技术烂的话。\"",
-"$self$眨了眨眼，似乎没料到会被邀请，迟疑片刻后还是递出了手柄：\"行啊，那就试试看。\"",
-
-"$self$愣了一下，随即耸耸肩。\"诶？找我吗？行吧，反正我也闲着。\"", "$self$有些意外地眨眨眼：\"既然你都邀请了……那就陪你一会吧。\""
-]
+                                "$self$愣了一下，随即指着自己：\"诶？叫我吗？好吧……\"","$self$有些意外地眨眨眼，但还是跟了上去。"
+                            ]
                         },
                         {
                     
@@ -62,10 +53,7 @@
                             "useActiveTags": false,
                             "_comment":"2.1.1 行动开始" ,
                             "responses": [
-"$self$盘腿坐在地毯上，随手抓起手柄，按下电源键。",
-"$self$熟练地戴上耳机，将长发撩到耳后，眼神瞬间变得锐利起来。",
-
-"$self$拿起遥控器，陷进了柔软的沙发里。\"看看今天有什么新闻吧。\"", "$self$打开电视，熟练地切换到了收藏的频道。", "$self$抱起一包零食，盘起腿坐在了电视机前。\"终于到了追剧时间了！\""
+                                "$self$笑着向身边的$target$搭话：\"这天气真不错，不是吗？\"","$self$似乎对$target$的话题很感兴趣，主动凑近了一些。","$self$手里拿着饮料，顺势在$target$对面坐了下来。\"介意我坐这儿吗？\""
                             ]
                         }
                     ]
@@ -74,12 +62,12 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Tryjoin",
+                    "ID": "com_interaction_talk_Tryjoin",
                     "variants": [
                         {
                             "_comment":"2.3.6 NPC请求加入" ,
                             "responses": [
-"$self$探头探脑地凑过来：\"这是那个新出的电影吗？能不能加我一个？\"", "$self$有些不好意思地抓抓头发：\"那个……介意我一起看吗？看起来很有趣的样子。\""
+                                "$self$凑到一个正在聊天的小圈子旁：\"听起来很有趣，介意加我一个吗？\"","$self$试探性地问道：\"你们在聊那个新游戏吗？我也在玩！\""
                             ]
                         }
                     ]
@@ -88,14 +76,13 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Joined",
+                    "ID": "com_interaction_talk_Joined",
                     "variants": [
                         {
                             "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
                             "responses": [ 
-"$self$欢呼一声，直接跳到了沙发上。\"太棒了！我就知道你最好了！\"", "$self$立刻找了个舒服的姿势坐好，脸上挂满了期待。"
-
-                             ]
+                                "$self$开心地拉开椅子坐下：\"太好了！我跟你们说……\"","$self$松了一口气，脸上露出了融入集体的轻松笑容。"
+                            ]
                         }
                     ]
                 }
@@ -103,14 +90,13 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Join_Refused",
+                    "ID": "com_interaction_talk_Join_Refused",
                     "variants": [
                         {
                             "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
                             "responses": [
-"$self$失望地垂下肩膀，撇了撇嘴。\"小气鬼……不看就不看。\"", "$self$尴尬地笑了笑，慢慢退了出去。\"啊，这样啊，那我不打扰了。\""
-
-                             ]
+                                "$self$尴尬地收回手，讪讪地笑了笑：\"啊……没事，你们继续。\"","$self$有些失落地垂下眼帘，默默地转身离开了。"
+                            ]
                         }
                     ]
                 }
@@ -118,7 +104,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Join",
+                    "ID": "com_interaction_talk_Join",
                     "variants": [
                         {
                             "requirement": {
@@ -130,14 +116,14 @@
                                     "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
- "$self$歉意地笑了笑：\"抱歉呀，我想一个人安静地把这部剧看完。\"", "$self$摇摇头：\"现在不太方便，下次再一起吧。\""
+                                        "$self$歉意地笑了笑：\"抱歉，我们在聊一些私事，不太方便。\"","$self$做了一个‘暂停’的手势：\"稍微等一下好吗？我们需要一点私人空间。\""
                                     ]
                                 }
                             ],
                             "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
- "$self$不耐烦地啧了一声：\"这沙发容不下两个人，去别处待着。\"", "$self$冷冷地说道：\"我在享受独处时间，请勿打扰。\""
+                                "$self$冷冷地瞥了对方一眼：\"我们在忙，没看到吗？\"","$self$直接无视了对方的存在，提高音量继续之前的话题。"
                             ]
                         },
                         {
@@ -146,7 +132,7 @@
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
                             "responses":
                             [ 
- "$self$立刻往旁边挪了挪，拍着身边的空位。\"当然可以！快来快来！\"", "$self$笑着递过遥控器：\"正好多个人讨论剧情更有意思。\""
+                                "$self$热情地招手：\"来来来！正缺人呢！\"","$self$往旁边挤了挤，腾出一个位置：\"快坐！\""
                             ]
 
                         },
@@ -156,7 +142,7 @@
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
                             "responses":
                             [ 
- "$self$身体僵硬了一下，默默地缩到了沙发的另一头。\"……随你便。\"", "$self$不敢直视$target$的眼睛，把遥控器放在了桌上。\"您坐这里……\""
+                                "$self$的话语戛然而止，紧张地看了一眼对方，默默点头。","$self$身体僵硬地往旁边挪开，不敢有任何异议。"
                             ]
                         },
                         {
@@ -164,7 +150,7 @@
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
                             "responses":
                             [ 
- "$self$有些诧异地看了$target$一眼，然后默默挪开了一些位置。\"呃……你想看就看吧。\"", "$self$虽然没有说话，但还是默许了$target$坐在身边。"
+                                "$self$有些诧异地停下话头，点了点头：\"呃……如果你想听的话。\"","$self$虽然有些不解，但还是礼貌地让出了位置。"
                             ]
                         }
                     ]
@@ -173,15 +159,12 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Ongoing",
+                    "ID": "com_interaction_talk_Ongoing",
                     "variants": [
                         {
                             "_comment":"2.1.2 行动中途" ,
                             "responses": [ 
-"$self$的手指在按键上飞快舞动，屏幕的光映在她的脸上，神情异常专注。",
-"$self$嘴里咬着一根棒棒糖，身体随着游戏角色的动作左右轻晃。",
-
-"电视屏幕的光影映在$self$专注的脸上，她甚至忘记了吃手里的薯片。", "$self$随着剧情的发展时而皱眉，时而微笑。", "$self$慵懒地换了个姿势，目不转睛地盯着屏幕。"
+                                "$self$时不时点头附和，看起来聊得很投机。","$self$捂着嘴轻笑出声，显然是被$target$的笑话逗乐了。","$self$神情专注地倾听着，偶尔插上一两句自己的见解。"
                             ]
                         }
                     ]
@@ -190,59 +173,46 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames_Interrupt",
+                    "ID": "com_interaction_talk_Interrupt",
                     "variants": [
                         {
                             "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
                             "requirement":{ "requireSelfAttitudeKey": "Fear" },
                             "_comment":"2.2.3 态度：恐惧 有他人登场" ,
                             "responses": [
-"察觉到有人靠近，$self$猛地瑟缩了一下，手中的操作出现明显的失误，眼神惊慌地游移。",
-"$self$立刻按下了暂停键，甚至不敢回头确认，双手紧紧攥着手柄，指节泛白。",
-
-"$self$浑身一僵，下意识地想要关掉电视，手指有些发抖。\"啊……我、我马上就关掉……\"", "$self$缩在沙发角落里，眼神闪躲着不敢看$target$。"
-
-]
+                                "$self$下意识地缩了缩脖子，说话的声音都变小了。","$self$有些慌乱地避开视线，手指不安地绞在一起。","$self$脸色变得有些苍白，身体微微发抖，似乎想找个借口离开。"
+                            ]
                         },
                         {
                             "requirement":{ "requireSelfAttitudeKey": "Badwill" },
                             "_comment":"2.2.2 态度：恶意 有他人登场" ,
                             "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
                             "responses": [ 
-"$self$透过屏幕的反光看到了来人，原本放松的肩膀瞬间紧绷，冷冷地\"啧\"了一声。",
-"$self$完全无视了身后的动静，只是按键的声音变得更加粗暴响亮，仿佛在宣泄不满。",
-
-"$self$瞥见$target$进来，故意调高了电视的音量，假装没看见。", "$self$冷冷地翻了个白眼，身体背对着$target$侧躺下去。\"真扫兴，哪都能碰到。\""
-]
+                                "看到对方的瞬间，$self$脸上的笑容僵了一下，随即别过头去。","$self$压低了声音，眉头微皱：\"怎么偏偏这个时候来……\"","$self$抱着双臂，原本放松的姿态瞬间变得充满防御性。"
+                            ]
                         },
                         {
                             "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
                             "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
                             "_comment":"2.2.1 态度：好意 有他人登场" ,
-                            "responses": ["听到脚步声，$self$摘下一侧耳机，回头露出灿烂的笑容：\"稍微等我一下，这关马上就过了！\"",
-"$self$拍了拍身边的空位，眼睛都没离开屏幕，却自然地说道：\"来得正好，帮我看个点。\"",
-
-"$self$听到动静，转过头拍了拍身边的空位。\"快来，$target$，这一集刚好演到精彩的地方！\"", "$self$笑着把手里的零食递了过去。\"要一起看吗？这个综艺超好笑的。\""
-]
+                            "responses": [
+                                "看到来人，$self$的眼睛亮了一下，兴奋地挥手：\"嘿！这儿！快过来一起！\"","$self$往旁边挪了挪位置，拍拍身边的空位示意对方坐下。","$self$露出了惊喜的表情：\"正说到你呢，你就来了！\""
+                            ]
                         },
                         {
                             "requirement":{ "requireSelfAttitudeKey": "Desire" },
                             "_comment":"2.2.4 态度：欲望 有他人登场" ,
                             "extraPortraitTags": [ "shy" ], "useActiveTags": false,
-                            "responses": ["$self$的视线虽然还在屏幕上，脸颊却泛起红晕，咬着下唇偷偷用余光瞥向来人。",
-"$self$故意伸了个懒腰，展示出身体的曲线，声音变得有些黏糊：\"怎么？是想看我玩，还是想玩我？\"",
-
-"$self$的视线从屏幕移到$target$身上，眼神变得黏糊糊的。\"电视哪有你好看呀……过来陪我嘛？\"", "$self$故意伸了个懒腰，展示着自己的曲线，声音甜腻。\"一个人看电视好寂寞哦，$target$不来陪陪人家吗？\""
-]
+                            "responses": [
+                                "$self$的视线立刻黏在了对方身上，眼神变得有些迷离。","$self$无意识地咬了咬嘴唇，脸颊泛起一抹红晕。","$self$调整了一下坐姿，试图展现出自己最迷人的角度。"
+                            ]
                         },
                         {
                             "_comment":"2.2.5 态度：普通 有他人登场" ,
                             "extraPortraitTags": [ "focused" ], "useActiveTags": false,
-                            "responses": ["$self$只是淡淡瞥了一眼来人，随即又将注意力转回游戏中。\"有事吗？我现在有点忙。\"",
-"$self$没有过多的反应，依旧维持着之前的姿势，仿佛周围的一切都与她无关。",
-
-"$self$只是淡淡看了一眼$target$，又转回了头。\"你要用客厅吗？我还要看一会儿。\"", "$self$点了点头算是打招呼，视线没有离开屏幕。"
-]
+                            "responses": [
+                                "$self$礼貌性地对其点点头，随后继续之前的话题。","$self$只是瞥了一眼来人，并没有太大的反应。","$self$平静地打了个招呼：\"哟，你也在这儿啊。\""
+                            ]
                         }
                     ]
                 }
@@ -250,7 +220,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_playVideoGames",
+                    "ID": "com_interaction_talk",
                     "interruptSelfJob": true,
                     "variants": [
                         {
@@ -268,10 +238,7 @@
                                     ],
                                     "useActiveTags": false,
                                     "responses": [
-"$self$晃了晃手中的手柄，歉意地笑了笑：\"这可是单人剧情模式，下次再一起吧。\"",
-"$self$歪着头思考了一下，还是摇了摇头：\"现在手感正热，我想先自己通关试试。\"",
-
-"$self$摆摆手笑道：\"谢啦，但我现在的精神头只够听听音乐。\"", "$self$指了指手里的书：\"下次吧，我想先把这一章看完。\""
+                                        "$self$抱歉地摆摆手：\"下次吧，我现在手头有点事。\"","$self$指了指自己的耳朵：\"我想先听完这首歌，你们聊。\""
                                     ]
                                 }
                             ],
@@ -287,10 +254,7 @@
                             "useActiveTags": false,
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
-"$self$冷哼一声，连正眼都没给一个：\"我不习惯和菜鸟组队，别来碍事。\"",
-"$self$直接调大了耳机的音量，用行动表明了不想被打扰的态度。",
-
-"$self$头也不抬地哼了一声：\"没兴趣，别来烦我。\"", "$self$嫌弃地挥挥手：\"和你一起看？得了吧，品味差太多了。\""
+                                "$self$不耐烦地啧了一声：\"没空，别烦我。\"","$self$戴上耳机，假装没听到对方的邀请。"
                             ]
                         },
                         {
@@ -309,7 +273,12 @@
                                     ], "useActiveTags": false,
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
- "$self$意犹未尽地盯着片尾字幕。\"太精彩了！神作！下次一定要二刷！\"", "$self$兴奋地抓着$target$的手臂：\"刚才那个反转你看到了吗？太厉害了！\""
+                                        
+                                    "kojo_default_com_interaction_talk_accept_success_1",
+                                    "kojo_default_com_interaction_talk_accept_success_2",
+
+                                    "$self$满足地伸了个懒腰：\"这正是我想要的答案！太棒了！\"","$self$眼含笑意地看着对方：\"谢谢你，这对我帮助很大。\""
+
                                     ]
                                 }
                             ],
@@ -327,7 +296,7 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
- "虽然看完了全集，但$self$看起来并不开心。\"结局竟然是这样？感觉被喂了屎……\"", "$self$揉了揉有些干涩的眼睛，疲惫地说道：\"虽然是好剧，但这剧情也太致郁了，心情好差。\""
+                                "$self$虽然得到了信息，但脸色依旧阴沉。\"知道了，你可以走了。\"","$self$勉强挤出一个笑容，眼神却很冷淡。\"行吧，就这样。\""
                             ]
                         },
                         {
@@ -343,7 +312,12 @@
                                     ], "useActiveTags": false,
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
- "虽然节目很无聊，$self$却笑得很开心。\"剧情烂透了，不过和你一起吐槽还挺有意思的。\"", "$self$伸了个懒腰：\"完全没看懂在讲什么，但放松一下也不错。\""
+                                        
+                                    "kojo_default_com_interaction_talk_accept_failure_1",
+                                    "kojo_default_com_interaction_talk_accept_failure_2",
+                                    "kojo_default_com_interaction_talk_accept_failure_3",
+
+                                    "虽然没聊出结果，但$self$还是笑得很开心：\"和你聊天真有意思！\"","$self$意犹未尽地舔了舔嘴唇：\"时间过得真快，下次再继续吧。\""
                                     ]
                                 }
                             ],
@@ -361,7 +335,7 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
- "$self$关掉电视，脸上的表情很微妙。\"这简直是浪费生命的30分钟……\"", "$self$叹了口气，揉着酸痛的脖子。\"早知道就不看这个了，无聊透顶。\""
+                                "$self$叹了口气，脸上写满了疲惫：\"完全不知道你在说什么……\"","$self$有些恼火地揉了揉太阳穴：\"算了，这就是对牛弹琴。\""
                             ]
                         }
                     ]
@@ -372,28 +346,24 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "kojo_default_com_furniture_playVideoGames_refuse_1": "$self$：\"抱歉，我现在没什么心情玩游戏\"",
-                "kojo_default_com_furniture_playVideoGames_refuse_2": "$self$：\"你玩吧，我今天就不參加了。\"",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_1": "\"唉……又输了\" $self$把手柄扔到一旁。\"",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_2": "$self$：\"这个游戏……不太适合我。\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_1": "$self$：\"这比我想象中好玩多了！\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_2": "$self$：\"你挺厉害的嘛！下次我一定赢回来！\"",
 
-                
-                "com_furniture_playVideoGames_begin_1": "$doer.firstname$ picked up the controller, and immersed themselves in a video game.",
-                "com_furniture_playVideoGames_begin_2": "$doer.firstname$ stared at a video game screen with focused eyes"
+"kojo_default_com_interaction_talk_accept_failure_1":"\"嗯……是啊，挺好的。\"$self$说着却目光飘忽，明显没在听。",
+"kojo_default_com_interaction_talk_accept_failure_2":"\"所以……你到底想说什么？\"$self$微微歪头，语气中带着一丝不耐。",
+"kojo_default_com_interaction_talk_accept_failure_3":"\"嗯……大概吧。\"$self$含糊地回应，看起来只是想快点结束话题。",
+"kojo_default_com_interaction_talk_accept_success_1":"\"真的假的？太搞笑了吧！\"$self$笑出声来",
+"kojo_default_com_interaction_talk_accept_success_2":"$self$：\"「你讲得挺有意思的，不继续了吗？\""
+
             },
             "en-us": {
-                
-                "com_furniture_playVideoGames_begin_1": "$doer.firstname$拿起手柄，沉浸在了游戏里。",
-                "com_furniture_playVideoGames_begin_2": "$doer.firstname$盯着游戏画面，眼神专注",
 
-                "kojo_default_com_furniture_playVideoGames_refuse_1": "$self$: \"Sorry, I'm not really in the mood for games right now.\"",
-                "kojo_default_com_furniture_playVideoGames_refuse_2": "$self$: \"You go ahead. I'll pass today.\"",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_1": "\"Ugh… I can't believe I lost again\" $self$ tosses the controller to the side",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_2": "$self$: \"That was… rough. Not really my kind of game.\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_1": "$self$: \"That was way more fun than I expected!\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_2": "$self$: \"You're pretty good at this! I'll get you next time.\""
+"kojo_default_com_interaction_talk_accept_failure_1":"\"Uh-huh… yeah. Sounds great.\" $self$ glances at something else mid-conversation, clearly tuned out.",
+"kojo_default_com_interaction_talk_accept_failure_2":"\"Is there a point to this, or…?\" $self$ tilts her head slightly, impatience creeping into her tone.",
+"kojo_default_com_interaction_talk_accept_failure_3":"\"Mmm… I guess.\" $self$ replies vaguely, clearly just trying to end the topic.",
+"kojo_default_com_interaction_talk_accept_success_1":"\"Wait, seriously? That’s hilarious.\" $self$ laughs out loud",
+"kojo_default_com_interaction_talk_accept_success_2":"$self$: \"You’ve got good stories. Not gonna keep going?\""
+
+
+                
             }
         }
     }

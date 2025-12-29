@@ -40,7 +40,13 @@
 "ui_fatalError_copy_over":"复制成功",
 
 "ui_comPanel_filters_deterministicRolls": "非随机判定",
-"ui_comPanel_filters_deterministicRolls_tooltip": "判定NPC的指令接受度时，若成功率>=65%则必定成功，反之必定失败",
+"ui_comPanel_filters_deterministicRolls_tooltip": "判定NPC的指令接受度时，若成功率>=65%则必定成功，反之必定失败\n\n推荐开启",
+
+"ui_comPanel_filters_shortenLogs": "简化口上",
+"ui_comPanel_filters_shortenLogs_tooltip": "开启后，参与多人指令时只会打印一条随机参与者的口上\n未开启时，会打印所有参与者的口上（人多时会刷屏，且刷到重复口上的可能性非常大\n\n推荐开启）",
+
+
+
 "comManager_tab_skinship": "触摸",
 
 "ui_main_comtab_title": "指令界面\n指令过滤",
@@ -444,6 +450,8 @@
 "msg_tradeSuccess":"全部贸易订单都顺利结算",
 "msg_tradeFailure":"部分订单没能结算",
 
+"ui_ap_join_success":"$names$成功加入",
+"ui_ap_join_fail":"$names$加入失败",
 
 "ui_map_floor_roomsList":"房间列表",
 "ui_map_floor_charaInRoom":"房间内成员",

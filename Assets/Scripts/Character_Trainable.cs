@@ -847,16 +847,30 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         {   // if current job is not pathing and less than 15 min then keep doing it
             List<ActionPackage> p = CurrentJob.ActivePackages.FindAll(x => x.actorRefs.Contains(RefID));
 
-            bool allInterrupted = p.Count > 0 && p.Find(x=>!x.isPaused) == null;
-            tryFinishJob = p.Count > 0 && !allInterrupted;
+            bool allInterrupted = p.Count > 0;
+            int maxWait = 5;
+            int maxInterruptWait = 0;
+            foreach (var pp in p)
+            {
+                allInterrupted = allInterrupted && pp.isPaused;
+                maxInterruptWait = Math.Max(maxInterruptWait, pp.pausedTick);
+            }
+
+            tryFinishJob = p.Count > 0 && (!allInterrupted || maxInterruptWait <= maxWait);
             foreach (var package in p)
             {
                 //if (package is ActionPackage_PathTo || (package.Duration > 10 && package.targetCOM.comTags.Contains("recreation"))) tryFinishJobUrgent = false;
                 if (package is ActionPackage_PathTo) tryFinishJob = false;
             }
-            if (allInterrupted)
+            if (tryFinishJob && allInterrupted && maxInterruptWait <= maxWait)
             {
-                if (log) s.Add(", aborting current job due to interrupt");
+                if (log) ss += "| waiting for interrupt to end |";
+                if (s != null) s.Add(ss);
+                return;
+            }
+            if (allInterrupted && maxInterruptWait > maxWait)
+            {
+                if (log) ss += "| aborting current job due to interrupt |";
                 resetJob = true;
             }
             else if (tryFinishJob) 
@@ -1806,9 +1820,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
     }
 
+    /// <summary>
+    /// Call when destroy
+    /// </summary>
     public void DisposeInternal()
     {
         RemoveObservers();
+        if (PortraitManager != null) PortraitManager.ClearInternal();
     }
 
     public void PostReloadUpdate()

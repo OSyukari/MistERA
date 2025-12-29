@@ -15,6 +15,7 @@ public class scr_panel_COMmanager : scr_Menu
     {
         Debug,
         DeterministicRolls,
+        ShorterLogs,
         Sex_Touch,
         Sex_Undress,
         Sex_Oral,
@@ -340,6 +341,7 @@ public class scr_panel_COMmanager : scr_Menu
                     break;
                 case -6500: button.Initialize(this, new ButtonValidator_ChangeDebugFilter(this, COMFilter.Debug, button)); break;
                 case -6511: button.Initialize(this, new ButtonValidator_ChangeDeterministicRollsFilter(this, COMFilter.DeterministicRolls, button)); break;
+                case -6512: button.Initialize(this, new ButtonValidator_ChangeShorterLogs(this, COMFilter.ShorterLogs, button)); break;
                 case -6509:
                     if (safeMode) button.gameObject.SetActive(false);
                     else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Touch, button)); 
@@ -1366,16 +1368,27 @@ public class scr_panel_COMmanager : scr_Menu
         {
             scr_System_CentralControl.current.AutoSave();
 
+            List<Character_Trainable> actors = new List<Character_Trainable>();
+            actors.Add(scr_System_CampaignManager.current.Player);
+            actors.AddRange(scr_System_CampaignManager.current.party.Members);
+            actors.Add(scr_System_CampaignManager.current.CurrentTarget);
+            actors.Remove(null);
+            actors = actors.Distinct().ToList();
+
             //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
+            //
+            /*
             cachedAP.ResetRequest(package.DoerRefs, package.ReceiverRefs, package.masterRef);
             foreach (var actor in cachedAP.actorRefs)
             {
                 scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(job, cachedAP.targetCOM.ID);
             }
-
+            */
             // modify cachedAP doers and receivers
 
+
             // need to reset EP. Re-request should trigger EP rebuild on next update
+            cachedAP.JoinAP(actors);
             if (cachedAP.isPaused) scr_System_CampaignManager.current.Register(cachedAP, false);
             cachedAP.LoggedBegin = false;
             scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
@@ -1414,9 +1427,12 @@ public class scr_panel_COMmanager : scr_Menu
 
         bool COMRepeat;
 
+        ActionPackage innerAP = null;
+
         public ButtonValidator_validateCOM(scr_Menu parent, ActionPackage AP, scr_SelectableText text, bool COMRepeat = false, bool hidingOverride = false):base(parent)
         {
-            this.package_cache = RemakePackage(AP);
+            innerAP = AP;
+            this.package_cache = RemakePackage();
             this.parent = parent as scr_panel_COMmanager;
             this.jobRefID = AP.job.RefID;
             this.comID = AP.targetCOM.ID;
@@ -1434,12 +1450,17 @@ public class scr_panel_COMmanager : scr_Menu
             this.hidingOverride = hidingOverride;
         }
 
-        private ActionPackage RemakePackage(ActionPackage injectAP = null)
+
+        private ActionPackage RemakePackage()
         {
             // if (com == null) return null;
-            
 
-            if(injectAP == null && com != null)
+            var injectAP = innerAP;
+            if (innerAP != null)
+            {
+                injectAP = innerAP.Copy();
+            }
+            else if (com != null)
             {
                 if (com.ActionPackageClass == "ActionPackage_Sex" && com is COM_Sex)
                 {
@@ -1448,14 +1469,12 @@ public class scr_panel_COMmanager : scr_Menu
                 else if (!com.comTags.Contains("furniture"))
                 {
                     List<int> targets = new List<int>() { job.targetActorRef };
-                    if (com.requirements.TreatReceiverAsDoer) targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
                     targets = targets.Distinct().ToList();
                     injectAP = com.MakePackage(job, new List<int>() { scr_System_CampaignManager.current.Player.RefID }, targets, 0);
                 }
                 else
                 {
                     Debug.LogError($"remake package called on invalid AP on com {com.ID}");
-                    injectAP = null;
                 }
             }
 
@@ -1470,8 +1489,6 @@ public class scr_panel_COMmanager : scr_Menu
                 cachedReceivers.Clear();
             }
             return injectAP;
-
-            
         }
 
         /// <summary>
@@ -1955,6 +1972,37 @@ else */
         }
     }
 
+    public class ButtonValidator_ChangeShorterLogs : ButtonValidator, I_ButtonClickable
+    {
+        COMFilter filter;
+        new scr_panel_COMmanager parent;
+        scr_SelectableText text;
+        public ButtonValidator_ChangeShorterLogs(scr_panel_COMmanager parent, COMFilter filter, scr_SelectableText text) : base(parent)
+        {
+            this.filter = filter;
+            this.parent = parent;
+            this.text = text;
+
+            text.isButtonToggle = true;
+            text.useDisabledColorWhenUntoggled = true;
+        }
+
+        public override bool IsButtonValid()
+        {
+            var currentVal = scr_System_CampaignManager.current.shortenLogsPrint;
+            parent.ChangeCOMFilter(filter, currentVal);
+            if (currentVal) text.Toggle(true, true);
+            else text.Toggle(true, false);
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            var resultValue = !parent.GetCOMFilter(filter);
+            parent.ChangeCOMFilter(filter, resultValue);
+            scr_System_CampaignManager.current.shortenLogsPrint = resultValue;
+        }
+    }
     public class ButtonValidator_ChangeDeterministicRollsFilter : ButtonValidator, I_ButtonClickable
     {
         COMFilter filter;

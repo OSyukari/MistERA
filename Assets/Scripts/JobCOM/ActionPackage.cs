@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static Character_Personality;
 using static EvaluationPackage;
+using static UnityEngine.GraphicsBuffer;
 
 
 public enum AP_Priority
@@ -219,12 +220,41 @@ public abstract class ActionPackage
     /// <returns></returns>
     public virtual int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers)
     {
-        doers = new List<int>();
-        receivers = new List<int>();
-        Debug.LogError("Error calling canJoinAP on default APs");
+        doers = new List<int>(this.DoerRefs);
+        receivers = new List<int>(this.ReceiverRefs);
+
+        if (!doers.Contains(c.RefID) && !receivers.Contains(c.RefID))
+        {
+            if (doers.Count < 1) doers.Add(c.RefID);
+            else receivers.Add(c.RefID);
+        }
+        //Debug.LogError("Error calling canJoinAP on default APs");
         return -1;
     }
 
+    /// <summary>
+    /// if invalid, return -1. else return valid COMvariantID
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="doers"></param>
+    /// <param name="receivers"></param>
+    /// <returns></returns>
+    public virtual int canJoinAP(List<Character_Trainable> cs, out List<int> doers, out List<int> receivers)
+    {
+        doers = new List<int>(this.DoerRefs);
+        receivers = new List<int>(this.ReceiverRefs);
+
+        foreach(var c in cs)
+        {
+            if (!doers.Contains(c.RefID) && !receivers.Contains(c.RefID))
+            {
+                if (doers.Count < 1) doers.Add(c.RefID);
+                else receivers.Add(c.RefID);
+            }
+        }
+        //Debug.LogError("Error calling canJoinAP on default APs");
+        return -1;
+    }
     /// <summary>
     /// immediate join without redo check
     /// </summary>
@@ -235,27 +265,92 @@ public abstract class ActionPackage
         var variantID = canJoinAP(c, out var doers1, out var receivers1);
         if (variantID >= 0)
         {
-            List<string> before = new List<string>();
-            List<string> after = new List<string>();
+            var old_d = this.DoerRefs;
+            var old_r = this.ReceiverRefs;
+            var old_varID = this.COMVariantID;
 
-            foreach(var p in packages)
-            {
-                before.Add($"EP: [{(p.Doer == null ? "null" : p.Doer.FirstName)} {(p.Doer == null ? "" : this.actorRefs.Contains(p.Doer.RefID))}] - [{(p.Receiver == null ? "null" : p.Receiver.FirstName)} {(p.Receiver == null ? "" : this.actorRefs.Contains(p.Receiver.RefID))}] by [{(p.Master == null ? "null" : p.Master.FirstName)} {(p.Master == null ? "" : this.actorRefs.Contains(p.Master.RefID))}]");
-            }
+            string comname = this.DisplayName;
+            List<Character_Trainable> newchara = new List<Character_Trainable>();
 
-            c.ChangeCurrentJob(this.job, this.targetCOMID);
+            if (!this.actorRefs.Contains(c.RefID)) newchara.Add(c);
+
             this.ResetRequest(doers1, receivers1, this.masterRef);
             this.validVariant = variantID;
-
             bool result = Request(true, forceAccept);
 
-            foreach (var p in packages)
+            foreach(var c2 in newchara)
             {
-                after.Add($"EP: [{(p.Doer == null ? "null" : p.Doer.FirstName)} {(p.Doer == null ? "" : this.actorRefs.Contains(p.Doer.RefID))}] - [{(p.Receiver == null ? "null" : p.Receiver.FirstName)} {(p.Receiver == null ? "" : this.actorRefs.Contains(p.Receiver.RefID))}] by [{(p.Master == null ? "null" : p.Master.FirstName)} {(p.Master == null ? "" : this.actorRefs.Contains(p.Master.RefID))}]");
+                if (result) c2.ChangeCurrentJob(this.job, this.targetCOMID);
+                this.job.m.messages_before.Add(LocalizeDictionary.QueryThenParse(result ? "ui_ap_join_success" : "ui_ap_join_fail")
+                    .Replace("$names$", c2.FirstName)
+                    .Replace("$comname$", comname));
+                LogMessage_Join(c2);
             }
 
-            if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"JoinEP Result {result}\n--Before--\n{String.Join("\n", before)}\n--After--\n{String.Join("\n", after)}");
+            if (!result)
+            {
+                this.ResetRequest(old_d, old_r, this.masterRef);
+                this.validVariant = old_varID;
+                Request(true, true);
+            }
 
+            return result;
+        }
+        else return false;
+    }
+
+    public virtual bool JoinAP(List<Character_Trainable> cs, bool forceAccept = false)
+    {
+        var variantID = canJoinAP(cs, out var doers1, out var receivers1);
+        if (variantID >= 0)
+        {
+            var old_d = this.DoerRefs;
+            var old_r = this.ReceiverRefs;
+            var old_varID = this.COMVariantID;
+
+            string comname = this.DisplayName;
+            List<Character_Trainable> newchara = new List<Character_Trainable>();
+
+            foreach (var c in cs)
+            {
+                if (this.actorRefs.Contains(c.RefID)) continue;
+                newchara.Add(c);
+            }
+
+            this.ResetRequest(doers1, receivers1, this.masterRef);
+            this.validVariant = variantID;
+            bool result = Request(true, forceAccept);
+
+            var names = new List<string>();
+            foreach (var c in newchara)
+            {
+                names.Add(c.FirstName);
+                if (result) c.ChangeCurrentJob(this.job, this.targetCOMID);
+            }
+
+            this.job.m.messages_before.Add( LocalizeDictionary.QueryThenParse(result ? "ui_ap_join_success" : "ui_ap_join_fail")
+                .Replace("$names$", String.Join(", ", names))
+                .Replace("$comname$", comname));
+
+            if (this.job.CanBeInterrupted && scr_System_CampaignManager.current.shortenLogsPrint)
+            {
+                if (newchara.Count > 0) LogMessage_Join(Utility.GetRandomElement(newchara));
+            }
+            else
+            {
+                foreach (var c2 in newchara)
+                {
+                    LogMessage_Join(c2);
+                }
+            }
+
+            if (!result)
+            {
+                this.ResetRequest(old_d, old_r, this.masterRef);
+                this.validVariant = old_varID;
+                Request(true, true);
+            }
+            
             return result;
         }
         else return false;
@@ -375,7 +470,8 @@ public abstract class ActionPackage
     [JsonProperty] protected int duration;
     [JsonProperty] protected bool paused = false;
     [JsonProperty] public int pausedTick = 0;
-    [JsonIgnore] public bool isPaused { get { return paused; } set { 
+    [JsonIgnore] public bool isPaused { get { return paused; } 
+        set { 
             paused = value; if (!paused)
             {
                 pausedTick = 0;
@@ -919,8 +1015,8 @@ public abstract class ActionPackage
 
         Execution(m);
 
+        shuffledList = new List<EvaluationPackage>(ListEP);
 
-        
 
 
         //Debug.Log("doer ["+doer.FirstName+"] is unwilling to do ask for com ["+targetCOM.displayName+"] on target ["+receiver.FirstName+"]");
@@ -971,7 +1067,7 @@ public abstract class ActionPackage
         actorRefs = null;
         //actorRefs
     }
-    [JsonProperty] protected bool requestAccepted = false;
+    [JsonProperty] public bool requestAccepted = false;
     //Dictionary<int, Dictionary<string, int>> result_stats;
 
     //Dictionary<int, Dictionary<string, int>> result_experiences;
@@ -1536,6 +1632,8 @@ public abstract class ActionPackage
         return counter;
     }
 
+    protected List<EvaluationPackage> shuffledList = new List<EvaluationPackage>();
+
     public void LogMessage_Kojo(MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
@@ -1545,36 +1643,63 @@ public abstract class ActionPackage
 
         var kojoTarget = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
 
-        foreach (var ep in this.ListEP)
+        Utility.Shuffle(shuffledList);
+        bool single = this.job.CanBeInterrupted && scr_System_CampaignManager.current.shortenLogsPrint;
+        foreach (var ep in shuffledList)
         {
-            if (ep.Receiver == null && kojoTarget != null && ep.Doer != kojoTarget)
-            {
-                // special handling
-                var rel = ep.Doer.Relationships.FindRelationshipWith(kojoTarget);
-                ep.LogMessage_Kojo(m, rel);
-            }
-            else ep.LogMessage_Kojo(m);
+            LogMessage_Kojo2(ep, kojoTarget, m);
+            if (single && !ep.isPlayerEP) break;
         }
     }
 
-    public void LogMessage_Begin( bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
+    protected void LogMessage_Kojo2(EvaluationPackage ep, Character_Trainable kojoTarget, MessageCollect m)
+    {
+        if (ep.Receiver == null && kojoTarget != null && ep.Doer != kojoTarget)
+        {
+            // special handling
+            var rel = ep.Doer.Relationships.FindRelationshipWith(kojoTarget);
+            ep.LogMessage_Kojo(m, rel);
+        }
+        else ep.LogMessage_Kojo(m);
+    }
+
+    public void LogMessage_Join(Character_Trainable target, bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        if (!m.displayOverride && !job.isVisibleToPlayer) return;
+
+        foreach (var ep in this.ListEP)
+        {
+            if (!requestAccepted && ep.Response != Memory_Response.Refuse) continue;
+            if (ep.Doer == target) continue;
+            ep.LogMessage_Join(target, rightAlign, m);
+            break;
+        }
+    }
+
+    public void LogMessage_Begin( bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null, Character_Trainable target = null)
     {
         if (m == null) m = this.job.m;
         if (!m.displayOverride && !job.isVisibleToPlayer) return;
         if (!ignoreBegin && LoggedBegin) return;
+        if (targetCOM == null || COMVariantID < 0) return;
+        
         LoggedBegin = true;
 
-        var kojoTarget = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
-
-        foreach (var ep in this.ListEP)
+        string s = targetCOM.variants[COMVariantID].GetDescription_Begin(targetCOM, this);
+        UtilityEX.StringReplace(this, ref s);
+        if (s.Length > 0)
         {
-            if (ep.Receiver == null && kojoTarget != null && ep.Doer != kojoTarget)
-            {
-                // special handling
-                var rel = ep.Doer.Relationships.FindRelationshipWith(kojoTarget);
-                ep.LogMessage_Begin(ignoreBegin, rightAlign, m, rel);
-            }
-            else ep.LogMessage_Begin(ignoreBegin, rightAlign, m);
+            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
+            m.messages_before.Add(s);
+        }
+
+        Utility.Shuffle(shuffledList);
+        bool single = this.job.CanBeInterrupted && scr_System_CampaignManager.current.shortenLogsPrint;
+        foreach (var ep in shuffledList)
+        {
+            ep.LogMessage_Begin(ignoreBegin, rightAlign, m, target);
+            if (single && !ep.isPlayerEP) break;
         }
     }
     /// <summary>
@@ -1597,7 +1722,7 @@ public abstract class ActionPackage
     {
         if (m == null) m = this.job.m;
         string s = targetCOM.variants[COMVariantID].GetDescription_Ongoing(targetCOM, this);
-        Debug.Log("AP LogMessage_Ongoing");
+        //Debug.Log("AP LogMessage_Ongoing");
         UtilityEX.StringReplace(this, ref s);
         //.Actors, ep.Description_Ongoing
         if (s.Length > 0)
@@ -1605,10 +1730,13 @@ public abstract class ActionPackage
             if (rightAlign) s = "<align=\"right\">" + s + "</align>";
             m.messages_after.Add(s);
         }
-        
-        foreach (var ep in this.ListEP)
+
+        Utility.Shuffle(shuffledList);
+        bool single = this.job.CanBeInterrupted && scr_System_CampaignManager.current.shortenLogsPrint;
+        foreach (var ep in shuffledList)
         {
             ep.LogMessage_Ongoing(rightAlign, m, target);
+            if (single && !ep.isPlayerEP) break;
         }
     }
 
@@ -1650,9 +1778,13 @@ public abstract class ActionPackage
     public void LogMessage_After(bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        foreach (var ep in this.ListEP)
+
+        Utility.Shuffle(shuffledList);
+        bool single = this.job.CanBeInterrupted && scr_System_CampaignManager.current.shortenLogsPrint;
+        foreach (var ep in shuffledList)
         {
             ep.LogMessage_After(rightAlign, m);
+            if (single && !ep.isPlayerEP) break;
         }
     }
 
