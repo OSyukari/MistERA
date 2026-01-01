@@ -8,12 +8,24 @@
             "timeScale":2,
             "VariantDoNotReadRequirement":true,
             "HideWhenInvalid":true,
-            "comTags":["action","interaction","initSex"],
+            "comTags":["action","interaction","initSex","unsafe"],
             "requirements":{
                 "requirement":{ 
                     "req_Receivers":{ "requireConscious":false, "requireAction": false } }
             },
             "variants":[
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":1, "receiverCount":0,
+                            "req_Receivers":{ "requireMovement":true, "requireUnrestrained":true } 
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_0",
+                    "description_doer_1_n":"comDescription_1_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_1_receiver_passive"
+                },
                 {
                     "requirements":{
                         "requirement":
@@ -110,7 +122,7 @@
             "timeScale":1,
             "VariantDoNotReadRequirement":true,
             "HideWhenInvalid":true,
-            "comTags":["action","endSex","NonInteraction"],
+            "comTags":["action","endSex","NonInteraction","unsafe"],
             "ExitJobOnExecution":true,
             "requirements":{
                 "requirement":{ 
@@ -118,6 +130,16 @@
                 }
             },
             "variants":[
+                {
+                    "requirements":{
+                        "requirement":
+                        { 
+                            "doerCount":1, "receiverCount":0,
+                            "req_Receivers":{ "requireMovement":true, "requireUnrestrained":true } 
+                        }
+                    },
+                    "displayName":"com_interaction_endOngoingSex_displayName_0"
+                },
                 {
                     "requirements":{
                         "requirement":
@@ -208,6 +230,7 @@
             "zh-cn":
             {
                 "com_interaction_initiateSex": "邀请性交",
+                "com_interaction_initiateSex_displayName_0": "自慰",
                 "com_interaction_initiateSex_displayName_1": "推倒",
                 "com_interaction_initiateSex_displayName_2": "强奸",
                 "com_interaction_initiateSex_displayName_3": "时停奸",
@@ -217,6 +240,7 @@
                 "com_interaction_initiateSex_displayName_7": "时停轮奸",
                 "com_interaction_initiateSex_displayName_8": "睡眠轮奸",
                 "com_interaction_endOngoingSex": "结束性交",
+                "com_interaction_endOngoingSex_displayName_0": "结束自慰",
                 "com_interaction_endOngoingSex_displayName_1": "结束做爱",
                 "com_interaction_endOngoingSex_displayName_2": "结束强奸",
                 "com_interaction_endOngoingSex_displayName_3": "结束时奸",

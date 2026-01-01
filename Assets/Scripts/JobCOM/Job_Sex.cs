@@ -11,6 +11,15 @@ using Newtonsoft.Json;
 
 public class Job_Sex_Group : Job
 {
+
+    [JsonIgnore]
+    public override string DisplayName
+    {
+        get
+        {
+            return $"|Sex Job actors {String.Join("|",actorRefID)} rapists {String.Join("|", Rapist)}|";
+        }
+    }
     public override void DisposeInternal()
     {
         base.DisposeInternal();
@@ -196,12 +205,6 @@ public class Job_Sex_Group : Job
                 if (i.Value != "") this.m.messages_after.Add(i.Value);
             }
         }
-
-        if (this.actorRefID.Count < 2)
-        {
-            this.EndJob(Utility.WrapTextColor("job ended due to actor count < 2", scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
-        }
-
     }
 
     protected bool ended = false;
@@ -331,12 +334,17 @@ public class Job_Sex_Group : Job
             }
             packages_previous.RemoveAt(i);
         }
+
+        endjob = false;
+
         UpdateActors();
     }
 
+    bool endjob = false;
     public override void RemoveActor(int charaRef)
     {
         //if (this.actorRefID.Contains(charaRef)) this.actorRefID.Remove(charaRef);
+
         if (this.actorJoinTime.ContainsKey(charaRef))
         {
             var chara = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
@@ -345,6 +353,14 @@ public class Job_Sex_Group : Job
         }
         base.RemoveActor(charaRef);
         //Observer_JobUpdate?.Invoke(true);
+
+
+        if (!endjob && this.actorRefID.Count < 2)
+        {
+            endjob = true;
+            //this.EndJob(Utility.WrapTextColor("job ended due to actor count < 2 and no player involved", scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
+        }
+
         UpdateActors();
     }
 
@@ -769,6 +785,8 @@ public class Job_Sex_Group : Job
         return true;
     }
 
+    int endjobCountdown = -1;
+
     public override void PostUpdateTime()
     {
         //Debug.Log("PostUpdateTime");
@@ -782,8 +800,14 @@ public class Job_Sex_Group : Job
         foreach (var p in packages_current) currs.Add($"{p.DisplayName} {p.Duration}");
         foreach (var p in packages_previous) prevs.Add($"{p.DisplayName} {p.Duration}");
 
-        if (restrictDuration == 0) EndJob();
+        if (endjob)
+        {
+            if (endjobCountdown < 0) endjobCountdown = 3;
+            else if (endjobCountdown > 0) endjobCountdown -= 1;
+        }else endjobCountdown = -1;
 
+        if (restrictDuration == 0 || (endjob && endjobCountdown == 0)) EndJob();
+       
 
         //Debug.Log($"Sexjob postupdatetime\nPostUpdateTime currentPackages: {String.Join(" | ", currs)}\nPostUpdateTime previousPackages: {String.Join(" | ", prevs)}" );
     }

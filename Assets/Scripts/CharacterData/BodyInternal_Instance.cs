@@ -546,8 +546,14 @@ public class BodyInternal_Instance
             }
             return contains_cache;
         }
-
     }
+    [JsonIgnore]
+    public bool ContainsCum { get
+        {
+            if (this.Contains == null) return false;
+            foreach (var i in this.Contains) if (i is Item_Instance_Cum && i.GetComp_Ingestible().amount > 0) return true;
+            return false;
+        } }
     [JsonProperty] Dictionary<int, int> ContainedRefs_Delays = new Dictionary<int, int>();
     public float volume_capacity = 0;
     [JsonIgnore] public bool containsOverCapacity

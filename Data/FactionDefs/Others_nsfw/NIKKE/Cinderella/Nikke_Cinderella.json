@@ -149,7 +149,7 @@
     "middleName": "",
     "lastName": "",
     "nameDisplayFormat": "chara_fullname_firstToLast",
-    "characterComment":"Campaign1_Nikke_Cinderella_charaComment",
+    "characterComment":"Campaign1_Nikke_charaComment",
     "origin": "charOrigin_none",
     "race": "humanRace_android_complex",
     "raceTemplate": "humanRaceAddon_Android_Nikke",

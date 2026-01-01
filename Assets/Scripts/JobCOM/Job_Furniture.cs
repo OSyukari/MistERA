@@ -378,12 +378,19 @@ public class Job_Furniture : Job
                 {
                     ss += "join existing pkg " + pl2.DescriptionText(c.RefID);
 
+                    var empty = new List<string>() { "" };
+
                     // make an event that skip straight to join print since joining is already handled
                     var ev = new EventInstance(c, "RequestJoin", "br_join");
                     ev.Self = c;
                     var tActors = new List<Character_Trainable>();
                     foreach (var a in pl2.actorRefs) if (a != c.RefID) tActors.Add(scr_System_CampaignManager.current.FindInstanceByID(a));
                     ev.Targets.Add("evTarget", tActors);
+                    ev.AppendStrings.Add("kojo_joined", empty);
+                    ev.AppendStrings.Add("kojo_join_refused", empty);
+                    ev.AppendStrings.Add("kojo_tryjoin", empty);
+
+
                     scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
 
                     if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");

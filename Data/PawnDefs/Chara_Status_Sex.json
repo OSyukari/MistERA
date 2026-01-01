@@ -10,9 +10,9 @@
                 { "displayName":"chara_status_lust_satisfied",     "threshold":-3.0 },
                 { "displayName":"chara_status_lust_satisfied",     "threshold":-0.9 },
                 { "displayable":false,       "threshold":0.9 },
-                { "displayName":"chara_status_lust_low",     "threshold":1.9 },
-                { "displayName":"chara_status_lust_high",     "threshold":2.9 },
-                { "displayName":"chara_status_lust_high",     "threshold":5.0 }
+                { "displayName":"chara_status_lust_low",        "threshold":1.9 },
+                { "displayName":"chara_status_lust_high",       "threshold":2.9 },
+                { "displayName":"chara_status_lust_high",       "threshold":5.0 }
             ]
         },
         {
@@ -58,8 +58,8 @@
                 }
             } ,
             "variants":[
-                {  "displayName":"chara_status_lust_satisfied",   "threshold":0.0 },
-                {   "displayName":"chara_status_lust_satisfied",   "threshold":3.9  },
+                {  "displayable":false,       "displayName":"chara_status_lust_satisfied",   "threshold":0.0 },
+                {   "displayable":false,       "displayName":"chara_status_lust_satisfied",   "threshold":3.9  },
                 {   
                     "displayName":"chara_status_lust_low",   "threshold":6.9  ,
                     "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_lust_hidden", "type":"setBase", "valueType":"number", "valueString":"1" } ] 
@@ -644,7 +644,7 @@
             ]
         },
         {
-            "statusID":"chara_status_sex_Mind",
+            "statusID":"chara_status_sex__Mind",
             "constant":true,
             "noDisplay":true,
             "variationMode": { 
@@ -660,8 +660,8 @@
             "variants":[ 
                 { "threshold":0 },
                 { "threshold":39 },
-                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_Mind", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
-                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_Mind", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
+                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex__Mind", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex__Mind", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         }
     ]
@@ -732,7 +732,7 @@
                 "chara_status_sex_C":"C快感",
                 "chara_status_sex_M":"M快感",
                 "chara_status_sex_B":"B快感",
-                "chara_status_sex_Mind":"精神快感",
+                "chara_status_sex__Mind":"精神快感",
 
                 "stats_derived_maxSensitivity_tooltip": "相关身体部位的快感数值无法超过上限",
                 "stats_derived_maxSensitivity_C": "C敏感",

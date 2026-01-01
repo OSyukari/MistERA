@@ -95,10 +95,10 @@ public class scr_panel_TargetInfo : scr_Menu
             else this.mp.SetText(" - ");
 
             if (chara.Stats.Stamina != null) chara.Stats.Stamina.Draw(st);
-        else this.st.SetText(" - ");
+            else this.st.SetText(" - ");
 
             if (chara.Stats.Energy != null) chara.Stats.Energy.Draw(en);
-        else this.en.SetText(" - ");
+            else this.en.SetText(" - ");
 
             //if (chara.FactionManager.CurrentlyActiveFaction != null) socialStatusBox.SetText(chara.FactionManager.CurrentlyActiveFactionStatus);
 
@@ -110,9 +110,9 @@ public class scr_panel_TargetInfo : scr_Menu
             }
 
             if (chara.Stats.Mood != null) chara.Stats.Mood.Draw(moodBox);
-        else this.moodBox.SetText(" - ");
+            else this.moodBox.SetText(" - ");
             if (chara.Stats.Stress != null) chara.Stats.Stress.Draw(stressBox);
-        else this.stressBox.SetText(" - ");
+            else this.stressBox.SetText(" - ");
 
             if (chara.Stats.Lust != null) chara.Stats.Lust.Draw(lustBox);
             else this.lustBox.SetText(" - ");
@@ -168,9 +168,9 @@ public class scr_panel_TargetInfo : scr_Menu
             DestroyImmediate(StatusBox.transform.GetChild(0).gameObject);
         }
 
-        foreach (var si in chara.Stats.statusInstancesEx_Displayable)
+        foreach (var si in chara.Stats.statusInstancesEx)
         {
-
+            if (!si.Displayable) continue;
             RectTransform box = Instantiate(prefab_text_link);
             box.SetParent(StatusBox, false);
 
@@ -179,9 +179,9 @@ public class scr_panel_TargetInfo : scr_Menu
             //text.text = si.BaseRef.displayName + ":" + si.SeverityDisplayName;
         }
 
-        foreach ( var si in chara.Stats.StatusInstances_Displayable)
+        foreach ( var si in chara.Stats.StatusInstances)
         {
-
+            if (!si.Displayable) continue;
             RectTransform box = Instantiate(prefab_text_link);
             box.SetParent(StatusBox, false);
 

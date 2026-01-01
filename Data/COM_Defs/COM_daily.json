@@ -29,7 +29,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":0 },
-            "DifficultyCheck":{ "baseD20Check":0 },
+            "DifficultyCheck":{ "baseD20Check": -1 },
             "description_begin":
             {
                 "Entries":[ 
@@ -129,9 +129,7 @@
             "AcceptanceCheck": {
                 "baseAcceptanceValue": 0
             },
-            "DifficultyCheck": {
-                "baseD20Check": 0
-            },
+            "DifficultyCheck": { "baseD20Check": 0 },
 
             "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在模拟战"]}], "keepLooking":false },
             "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始模拟战"]}], "keepLooking":false }

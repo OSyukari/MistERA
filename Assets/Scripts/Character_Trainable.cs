@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public enum Humanoid_GenderAppearance
 {
@@ -29,6 +27,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     [JsonProperty]
     protected int furnitureLockJobRef = -1;
+
+    [JsonIgnore] public int FurnitureLockRef { get { return furnitureLockJobRef; } }
 
     Job_Furniture furnitureLockJobCache = null;
     [JsonIgnore] protected Job_Furniture furniturLockJob
@@ -134,6 +134,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonIgnore] public bool CanActInTimeStop { get { return this.RefID == 0; } }
     public bool MovedInTimeStop = false;
     [JsonIgnore] public bool isTimeStopped { get { return scr_System_Time.current.TimeStopStrict && !CanActInTimeStop; } }
+    [JsonIgnore] public bool isTimeStoppedLoose { get { return scr_System_Time.current.TimeStop && !CanActInTimeStop; } }
 
     /// <summary>
     /// This field is empty in chara data, if chara data is re-deserealized then this field need to be manually copied
@@ -233,7 +234,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     private void PreUpdateTime()
     {
-        queuedWakeup = false;
+        if (!isTimeStoppedLoose)
+        {
+            queuedWakeup = false;
+        }
         this._cachedJobDescription = string.Empty;
         Body.ClearLastInteractedRefs();
         this.Stats.PreUpdateTimeTick();
@@ -296,7 +300,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Skills.FinalizeExperience();
         this._cachedJobDescription = string.Empty;
         this.PortraitManager.ClearHandlerCache();
-        if (!scr_System_Time.current.TimeStop) MovedInTimeStop = false;
+        if (!isTimeStoppedLoose)
+        {
+            MovedInTimeStop = false;
+            forbidGreeting = false;
+        }
     }
 
     private void Observer_GlobalMinute5(TimeSpan t)
@@ -1460,6 +1468,143 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         return false;
     }
 
+    
+
+
+    public void TimestopStart()
+    {
+        if (this.isTemporaryActor) return;
+        // Memorize chara current status if applicable
+
+        if (!CanActInTimeStop)
+        {
+            this.Memory.TimestopStart();
+            // timestop start kojo
+            //Debug.Log($"{FirstName} cannot act in timestop");
+            var rel = Relationships.FindRelationshipWith(scr_System_CampaignManager.current.Player);
+            var m = Relationships.Personality.GetKOJOMessage("OnTimestopStart", rel, new List<string>(), new List<string>());
+
+            if (m != null)
+            {
+                this.InteractionJob.m.AddKojo(m);
+                //Debug.Log($"timestop start {m.message}");
+            }
+
+            this.InteractionJob.NotifyDescriptionsOutOfUpdate();
+        }
+    }
+
+    public bool forbidGreeting = false;
+
+    public void TimestopEnd()
+    {
+        if (this.isTemporaryActor) return;
+
+        var mem = Memory.timestopMemory;
+        if (mem != null)
+        {
+            List<string> tags = new List<string>();
+            tags.Add("timestop");
+            bool skip = false;
+
+            // Check Climax
+            if (!Body.isClimaxing())
+            {
+                Body.CheckClimax(this.InteractionJob.m);
+                if (Body.isClimaxing())
+                {
+                    tags.Add("climax");
+                    // skip others check
+                }
+            }
+            else
+            {
+                tags.Add("climaxing");
+            }
+            
+            // Check restraint
+            if (this.FurnitureLockRef != mem.furnitureLock) tags.Add(this.FurnitureLockRef == -1 ? "unlocked" : "locked");
+            
+            // check location
+            var currentRoomRef = scr_System_CampaignManager.current.GetCharaRoomInstance(this.RefID).RefID;
+            if (currentRoomRef != mem.lastLocationRef) tags.Add("location_change");
+
+            var pleasure = Stats.SexStimulation;
+            var pain = Stats.FindStatusByExactID("chara_status_pain");
+            var pleasureSeverity = pleasure == null ? 0 : (int)pleasure.Severity;
+            var painSeverity = pain == null ? 0 : (int)pain.Severity;
+
+            if (pleasureSeverity > mem.pleasureSeverity) tags.Add("pleasure");
+            if (painSeverity > mem.painSeverity) tags.Add("pain");
+
+            bool checkClothes = false;
+            if (!Utility.ListEquals(mem.lastEquipRefs, EquippedItemRefs))
+            {
+                tags.Add("undressed");
+                checkClothes = true;
+            }
+            
+            foreach (var part in this.Body.Internals)
+            {
+                if (checkClothes && part.Base.exposedKojoID != "")
+                {
+                    var score = part.Parent.GetRevealingScore(BodyEquipLayer.None);
+                    if (score < 1 && score < mem.exposedBodyRefs[part.baseID])
+                    {
+                        tags.Add(part.Base.exposedKojoID);
+                        if (!tags.Contains("nudity")) tags.Add("nudity");
+                    }
+                }
+                if (part.canContain)
+                {
+                    if ((int)part.CurrentlyContained > mem.container[part.baseID]) 
+                    {
+                        if (part.ContainsCum && !tags.Contains("cum")) tags.Add("cum");
+                        if (part.isExtremelyExpanded)
+                        {
+                            tags.Add($"{part.baseID}_Expansion_Extreme");
+                            tags.Add("Expansion_Extreme");
+                            tags.Add("Expansion");
+                        }
+                        else if (part.isVisiblyExpanded)
+                        {
+                            tags.Add($"{part.baseID}_Expansion");
+                            tags.Add("Expansion");
+                        }
+                    }
+                }
+            }
+            tags = Utility.Distinct(tags);
+
+
+            if (tags.Count > 1)
+            {
+                if (!Body.isClimaxing() && Stats.isConsciousnessUnconscious) tags.Add("sleeping_noclimax");
+                forbidGreeting = true;
+            }
+
+            if (tags.Count > 1) Debug.Log($"Timestop End, {FirstName} tags [{String.Join("|", tags)}]");
+
+            var rel = Relationships.FindRelationshipWith(scr_System_CampaignManager.current.Player);
+            var m = Relationships.Personality.GetKOJOMessage("OnTimestopEnd", rel, tags, new List<string>());
+
+
+            if (m != null) this.InteractionJob.m.AddKojo(m);
+
+            this.InteractionJob.NotifyDescriptionsOutOfUpdate();
+
+        }
+        Memory.TimestopEnd();
+        /*
+         * first, change timestop toggle to resuming
+         * 
+         * then, call timestopend to all chara (do everything here)
+         * - check climax (if resuming then call the resuming kojo)
+         * then, change timestop toggle to normal
+         */
+    }
+
+
     /// <summary>
     /// If not immediate, then queue event and over <br/>
     /// if immediate, then actually execute
@@ -1471,7 +1616,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (!queuedWakeup)
             {
                 queuedWakeup = true;
-                scr_UpdateHandler.current.EventHandler.StartEvent(this, "QueuedWakeupEvent", "", false);
+                scr_UpdateHandler.current.EventHandler.StartEvent(this, "QueuedWakeupEvent", "", RefID == 0);
             }
         }
         else

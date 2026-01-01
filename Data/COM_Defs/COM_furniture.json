@@ -57,9 +57,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 15
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_after":
                 {
                     "Entries":[
@@ -132,9 +130,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始休息"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在休息"]}], "keepLooking":false }
             },
@@ -208,9 +204,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始休息"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在休息"]}], "keepLooking":false }
             },
@@ -284,9 +278,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 5
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 10
-                },
+                "DifficultyCheck":{ "baseD20Check":10 },
                 "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始玩游戏"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在玩游戏"]}], "keepLooking":false }
             },
@@ -360,9 +352,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 5
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 5
-                },
+                "DifficultyCheck":{ "baseD20Check":5 },
                 "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "$doer.firstname$开始看电视" ] } ] },
                 "description_ongoing":{ "Entries":[ { "texts":["$doer.firstname$正在看电视"]}], "keepLooking":false }
             },
@@ -393,9 +383,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 25
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "results": {
                     "results_character": [
                         {
@@ -473,9 +461,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 25
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_restroom_fix_ongoing_1"]}], "keepLooking":false },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_restroom_fix_begin_1"]}], "keepLooking":false }
             },
@@ -533,9 +519,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 20
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_after":
                 {
                     "Entries":[
@@ -616,9 +600,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始吃饭"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在吃饭"]}], "keepLooking":false }
             },
@@ -675,9 +657,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 30
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_after":
                 {
                     "Entries":[

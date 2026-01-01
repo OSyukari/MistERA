@@ -32,9 +32,19 @@
 "$self$保持着原本伸手拿杯子的动作，眼神凝固在虚空中，对于正被缓缓推开的双腿毫无知觉。", "$self$僵硬的身体像是一具精美的人偶，即使那滚烫的触感已经贴上了最私密的肌肤，在那凝滞的时间里，连一丝颤抖都无法产生。", "$self$脸上还挂着上一秒的微笑，完全不知道自己的身体正在被肆意摆布，即将被侵犯的事实与她此刻的表情形成了残酷的静止画面。"
                 ]
             },
+            {
+                "requireSelfOnly":true,
+                "useActiveTags":false,
+                "_comment":"2.2.1 独自一人 口上文",
+                "extraPortraitTags":["sex","receiver", "blush", "shy", "surprised","happy","aroused"], 
+                "responses":
+                [ 
+"$self$咬着下唇，一只手难以忍受般地探入了自己的腿间。伴随着急促的喘息，指尖触碰到了那片湿润的软肉。\"哈……怎么会这么想要……\"","$self$眼神迷离地靠在墙角，双手不受控制地揉捏着自己的胸部。那是只有在深夜才会展露出的、被欲望折磨的姿态。",
+"$self$难耐地咬着下唇，手指颤抖着探入了湿热的腿间，指尖触碰到那一点的瞬间，喉咙里溢出了一声压抑的低喘。", "$self$有些焦躁地并在床上磨蹭着双腿，最终还是输给了身体深处的空虚，手缓缓伸向了床头柜里的那个小道具。", "$self$看着镜子里满脸潮红的自己，羞耻地闭上眼，另一只手却诚实地揉上了胸前已经挺立的红豆。"
+                ]
+
+            },
             {   
-                "requireMaster":true,
-                "requireSelfNotMaster": true,
                 "requirement":  { "requireEPFailure":true } ,                 
                  "variants":[                   
                     {
@@ -69,9 +79,6 @@
                  ]
             },
             { 
-                "requireMaster":true,
-                "requireSelfNotMaster": true,
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
                 "useActiveTags":false,
                 "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
                 "_strong com variant":{ "requireCOMStrongVariant":true },
@@ -109,17 +116,6 @@
 
 "$self$整个人愣住了，眼睛瞪得大大的，身体虽然因为惊讶而僵硬，却并没有推开凑近的$target$。", "$self$的脸瞬间涨得通红，不知所措地抓着衣角，声音细若游蚊：\"在这里……？可是……\"", "$self$有些慌乱地看向四周，在确信没有别人后，半推半就地放松了紧绷的大腿。\"只、只有这一次哦……\""
                 ]
-            },
-            {
-                "useActiveTags":false,
-                "_comment":"2.2.1 独自一人 口上文",
-                "extraPortraitTags":["sex","receiver", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$咬着下唇，一只手难以忍受般地探入了自己的腿间。伴随着急促的喘息，指尖触碰到了那片湿润的软肉。\"哈……怎么会这么想要……\"","$self$眼神迷离地靠在墙角，双手不受控制地揉捏着自己的胸部。那是只有在深夜才会展露出的、被欲望折磨的姿态。",
-"$self$难耐地咬着下唇，手指颤抖着探入了湿热的腿间，指尖触碰到那一点的瞬间，喉咙里溢出了一声压抑的低喘。", "$self$有些焦躁地并在床上磨蹭着双腿，最终还是输给了身体深处的空虚，手缓缓伸向了床头柜里的那个小道具。", "$self$看着镜子里满脸潮红的自己，羞耻地闭上眼，另一只手却诚实地揉上了胸前已经挺立的红豆。"
-                ]
-
             }
                        
                        

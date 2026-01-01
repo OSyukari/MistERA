@@ -25,7 +25,7 @@
                     }
                 },
                 "AcceptanceCheck":{ "baseAcceptanceValue":25 },
-                "DifficultyCheck":{ "baseD20Check":0 },
+                "DifficultyCheck":{ "baseD20Check":10 },
                 "variants":[
                     {
                         "requirements":{

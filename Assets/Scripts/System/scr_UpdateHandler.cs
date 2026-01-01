@@ -268,11 +268,11 @@ public class scr_UpdateHandler : MonoBehaviour
         Updating = true;
         int loopCount = 0;
         firstLoopCounter = 2;
-        FlushCollectedLogs(false, oneLoop);
-        // update per room
 
         Job playerJob = null;
         cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
+        FlushCollectedLogs(true, oneLoop);
+        // update per room
         //Debug.Log($"Singleupdate : eventhandler end, updatetime? {updateTime}");
         //NotifyLogsSingleUpdate();
         //var copy = updateTime;

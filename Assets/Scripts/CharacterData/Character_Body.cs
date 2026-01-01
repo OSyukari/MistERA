@@ -192,10 +192,13 @@ public class Character_Body
 
     public void ClearLastInteractedRefs()
     {
-        Climax = false;
-        Cum = false;
-        Stimulated = false;
         foreach (var organ in Internals) organ.ClearLastInteractedRefs();
+        if (!Owner.isTimeStoppedLoose)
+        {
+            Climax = false;
+            Cum = false;
+            Stimulated = false;
+        }
     }
 
     public void AddMissing()
@@ -465,20 +468,19 @@ public class Character_Body
         string climaxKeywords = "";
         string cumKeywords = "";
 
+#if UNITY_EDITOR
+        if (Owner.Stats.SexStimulation.Severity >= 5) Debug.Log($"Checking climax on {Owner.FirstName}, {Owner.Stats.Climaxing == null} {!Stimulated} {isClimaxing()} {Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold}");
+#endif
         if (Owner.Stats.Climaxing == null) return;
         if (!Stimulated) return;
         if (isClimaxing()) return;
         if (Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold) 
         {
+           // Debug.Log($"canclimax, checking timestop {scr_System_Time.current.TimeStopStrict && !Owner.CanActInTimeStop} or {Owner.Stats.Climaxing.Severity > 0}");
             // forbid climax if timestopped
             // BUT!! ALLOW CLIMAX DURING RESUME
-            if (scr_System_Time.current.TimeStopStrict && !Owner.CanActInTimeStop) return;
+            if (Owner.isTimeStopped) return;
             if (Owner.Stats.Climaxing.Severity > 0) return; // block repeat climax if still lingering
-            if (Owner.CurrentJob != null && Owner.CurrentJob is Job_Sex_Group)
-            {
-                List<int> relevantActorRefs = Owner.CurrentJob.GetLastInteractedActorRefs(Owner.RefID);
-            }
-
 
             List<string> climaxTags = new List<string>();
             UtilityEX.GetActorTag(ref climaxTags, Owner);
@@ -647,9 +649,27 @@ public class Character_Body
                 List<string> tags = new List<string>();
                 UtilityEX.GetActorTag(ref tags, this.Owner);
 
+                bool logged = false;
 
-                //exp.AddMessage(Owner.RefID, "kojo message here");
-                message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax", this.Owner, tags, listEP));
+                if (Owner.CurrentJob != null && Owner.CurrentJob is Job_Sex_Group)
+                {
+                    List<int> relevantActorRefs = Owner.CurrentJob.GetLastInteractedActorRefs(Owner.RefID);
+                    if (relevantActorRefs.Count > 0)
+                    {
+                        var target = scr_System_CampaignManager.current.FindInstanceByID( Utility.GetRandomElement(relevantActorRefs));
+                        var rel = target == null ? null : Owner.Relationships.FindRelationshipWith(target);
+                        if (rel != null)
+                        {
+                            message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_target", rel, tags, null));
+                            logged = true;
+                        }
+                    }
+                }
+                if (!logged)
+                {
+                    //exp.AddMessage(Owner.RefID, "kojo message here");
+                    message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_single", this.Owner, tags, listEP));
+                }
 
             }
 

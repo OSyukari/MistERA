@@ -213,10 +213,7 @@ public class scr_Panel_CurrentCharList : scr_Menu
                 {
                     scr_System_CampaignManager.current.ChangeCurrentTarget(refID);
                 }
-                else if (!scr_System_CampaignManager.current.displaySex)
-                {
-                    scr_System_CampaignManager.current.ChangeCurrentTarget(0);
-                }
+                else scr_System_CampaignManager.current.ChangeCurrentTarget(0);
                 scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
             }
         }

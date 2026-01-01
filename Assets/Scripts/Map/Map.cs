@@ -399,8 +399,9 @@ public class Map_Instance
                 }
                 //interrupted = xx.Relationships.CheckInterrupt(i, selfTags) || interrupted;
             }
-           // }
+            // }
 
+            //bool partyMember = false;// scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) && xx.RefID != 0;
 
             if (!interrupted)
             {                // check greeting
@@ -410,28 +411,34 @@ public class Map_Instance
                     if (xx == yy) continue;
                     if (yy == null) continue;
 
-                    var yyEPs = tempDicts[yy];
 
+                    var yyEPs = tempDicts[yy];
+                    var log = scr_System_CentralControl.current.LogPrefs.DLog_Interrupt;
                     /*
                     Prioritise self or target.
                      */
                     bool greeting = (forceGreeting || isDirty || dirtyCharaRef.Contains(yy.RefID)) && scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) != scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID);
-                    if ((xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume && xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "OnTimestopEnd"))
+                    if (false && (xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume && xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "OnTimestopEnd"))
                     {
-                        Debug.Log($"OnTimestopEnd on {yy.CallName}");
+                        if (log) Debug.Log($"OnTimestopEnd on {yy.CallName}");
                     }
-                    else if (greeting && xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "Greeting"))
+                    else if (greeting && yy.Relationships.NotifyMeeting(xx,  yyEPs, xxEPs, "Greeting"))
                     {
-                        Debug.Log($"Greeting on {xx.CallName} -> {yy.CallName}");
+                        // allow party member to trigger each other greeting (and log relationship)
+                        if (log) Debug.Log($"Greeting from {yy.FirstName} to {xx.FirstName}");
+                    }
+                    else if (greeting && yy.forbidGreeting)
+                    {
+                        if (log) Debug.Log($"forbidGreeting from {yy.CallName} to {xx.CallName}");
                     }
                     else if (greeting && CheckReverseInterrupt(yyEPs, yy, xx))
                     {
-                        Debug.Log($"CheckReverseInterrupt on {yy.CallName} by {xx.CallName}");
+                        if (log) Debug.Log($"CheckReverseInterrupt from {yy.CallName} to {xx.CallName}");
                     }
                     else if (greeting && yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "DailyGreeting"))
                     {
                         // Debug.LogError($"Greeting {xx.CallName} -> {yy.CallName}");
-                        Debug.Log($"DailyGreeting on{xx.CallName} ->  {yy.CallName}");
+                        if (log) Debug.Log($"DailyGreeting from {yy.FirstName} to {xx.FirstName}");
                         //yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "Greeting");
                     }
                     else
@@ -464,11 +471,18 @@ public class Map_Instance
             if (ep.job.Actors.Contains(self) && ep.job.Actors.Contains(target)) continue;
             var msg = self.Relationships.Personality.GetKOJOMessage_Interrupt(ep.isDoer(self), ep, rel);
             if (msg == null) continue;
-            if (!scr_System_CampaignManager.current.isCharaVisibleToPlayer(self.RefID)) continue;
-            msg.message = msg.message.Replace("$self$", self.FirstName).Replace("$target$", target.FirstName);
-            scr_UpdateHandler.current.AppendKojoMessage(msg);
-            return true;
-
+            if (self.RefID == 0 || target.RefID == 0)
+            {
+                msg.message = msg.message.Replace("$self$", self.FirstName).Replace("$target$", target.FirstName);
+                scr_UpdateHandler.current.AppendKojoMessage(msg);
+                return true;
+            }
+            else if (scr_System_CampaignManager.current.isCharaVisibleToPlayer(self.RefID))
+            {
+                //msg.message = msg.message.Replace("$self$", self.FirstName).Replace("$target$", target.FirstName);
+                scr_UpdateHandler.current.AppendKojoMessage_NonVisible(msg);
+                return true;
+            }
         }
         return false;
     }

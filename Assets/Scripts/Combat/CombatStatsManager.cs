@@ -439,21 +439,6 @@ public class CombatStatManager : I_StatsManager
 
 
     [JsonIgnore]
-    public List<StatusEx_Instance> statusInstancesEx_Displayable
-    {
-        get
-        {
-            List<StatusEx_Instance> list = new List<StatusEx_Instance>();
-            foreach (StatusEx_Instance i in statusInstancesEx)
-            {
-                if (i.BaseRef.noDisplay) continue;
-                if (!i.SeverityDisplayable) continue;
-                list.Add(i);
-            }
-            return list;
-        }
-    }
-    [JsonIgnore]
     public List<StatusEx_Instance> statusInstancesEx
     {
         get
@@ -463,21 +448,7 @@ public class CombatStatManager : I_StatsManager
     }
 
     [JsonIgnore] public List<Status_Instance> StatusInstances { get { return _statusInstances; } }
-    [JsonIgnore]
-    public List<Status_Instance> StatusInstances_Displayable
-    {
-        get
-        {
-            List<Status_Instance> list = new List<Status_Instance>();
-            foreach (Status_Instance i in StatusInstances)
-            {
-                if (i.BaseRef.noDisplay) continue;
-                if (!i.SeverityDisplayable) continue;
-                list.Add(i);
-            }
-            return list;
-        }
-    }
+
 
     [JsonIgnore]
     public Stats_Base Strength

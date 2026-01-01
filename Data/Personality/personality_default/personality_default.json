@@ -14,7 +14,7 @@
                         "variants": [
                             {
                                 "responses": [
-                                    "（胸部露出描述文）"
+                                    "胸部露出"
                                 ]
                             }
                         ]
@@ -27,7 +27,7 @@
                         "variants": [
                             {
                                 "responses": [
-                                    "（阴茎露出描述文）"
+                                    "阴茎露出"
                                 ]
                             }
                         ]
@@ -40,7 +40,7 @@
                         "variants": [
                             {
                                 "responses": [
-                                    "（阴蒂露出描述文）"
+                                    "阴蒂露出"
                                 ]
                             }
                         ]
@@ -58,7 +58,7 @@
                                     ]
                                 },
                                 "responses": [
-                                    "（阴道露出 精液灌满 描述文）"
+                                    "阴道露出（精液灌满）"
                                 ]
                             },
                             {
@@ -68,25 +68,12 @@
                                     ]
                                 },
                                 "responses": [
-                                    "（阴道露出 小腹膨胀 描述文）"
+                                    "阴道露出（小腹膨胀）"
                                 ]
                             },
                             {
                                 "responses": [
-                                    "（阴道露出描述文）"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "OnClimax",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "variants": [
-                            {
-                                "responses": [
-                                    "($self$) 高潮 口上文"
+                                    "阴道露出"
                                 ]
                             }
                         ]
@@ -118,182 +105,6 @@
                                     "($self$) 给予膝枕 口上文2",
                                     "($self$) 给予膝枕 口上文3"
                                 ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "OnTimestopEnd",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "_comment": "This triggers on Map.UpdateRoom charaTimestopped resume, this will replace Greeting calls",
-                        "variants": [
-                            {
-                                "requirement": {
-                                    "requireSelfAction": false,
-                                    "requireSelfMemory": {
-                                        "minuteRollback": 1,
-                                        "selfTags": [
-                                            "timestop",
-                                            "climax"
-                                        ]
-                                    }
-                                },
-                                "selfEventCall": "OnTimestopEnd_Climax"
-                            },
-                            {
-                                "requirement": {
-                                    "requireSelfAction": true,
-                                    "requireSelfMemory": {
-                                        "minuteRollback": 1,
-                                        "selfTags": [
-                                            "timestop",
-                                            "pain"
-                                        ]
-                                    }
-                                },
-                                "selfEventCall": "OnTimestopEnd_Pain"
-                            },
-                            {
-                                "requirement": {
-                                    "requireSelfAction": true,
-                                    "requireSelfMemory": {
-                                        "minuteRollback": 1,
-                                        "selfTags": [
-                                            "timestop",
-                                            "cum"
-                                        ]
-                                    }
-                                },
-                                "selfEventCall": "OnTimestopEnd_Cum"
-                            },
-                            {
-                                "requirement": {
-                                    "requireSelfAction": false,
-                                    "requireSelfMemory": {
-                                        "minuteRollback": 1,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    }
-                                },
-                                "responses": [
-                                    "($self$) 完全没察觉到被$target$做了什么"
-                                ],
-                                "keepLooking": true
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "OnTimestopEnd_Climax",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "_comment": "make variant for climax intensity",
-                        "variants": [
-                            {
-                                "tags": [
-                                    "nsfw"
-                                ],
-                                "requirement": {
-                                    "requireSelfAction": false,
-                                    "selfTags": [
-                                        "sleeping"
-                                    ]
-                                },
-                                "responses": [
-                                    "($self$) 在熟睡中迎来了绝顶"
-                                ],
-                                "keepLooking": true
-                            },
-                            {
-                                "tags": [
-                                    "nsfw"
-                                ],
-                                "requirement": {
-                                    "requireSelfAction": true
-                                },
-                                "responses": [
-                                    "($self$) 在时停解除的瞬间迎来了绝顶"
-                                ],
-                                "keepLooking": true
-                            },
-                            {
-                                "tags": [
-                                    "nsfw"
-                                ],
-                                "requirement": {
-                                    "requireSelfAction": true,
-                                    "requireSelfMemory": {
-                                        "minuteRollback": 1,
-                                        "selfTags": [
-                                            "timestop",
-                                            "cum"
-                                        ]
-                                    }
-                                },
-                                "selfEventCall": "OnTimestopEnd_Cum"
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "OnTimestopEnd_Cum",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "_comment": "This triggers when OnTimestopEnd has detected anything unusual",
-                        "variants": [
-                            {
-                                "tags": [
-                                    "nsfw"
-                                ],
-                                "responses": [
-                                    "($self$) 察觉到了身上的精液，面色变得惨白"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "OnTimestopEnd_Pain",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "_comment": "This triggers when OnTimestopEnd has detected anything unusual",
-                        "variants": [
-                            {
-                                "tags": [
-                                    "nsfw"
-                                ],
-                                "requirement": {
-                                    "requireSelfAction": true,
-                                    "requireSelfMemory": {
-                                        "minuteRollback": 1,
-                                        "selfTags": [
-                                            "timestop",
-                                            "cum"
-                                        ]
-                                    }
-                                },
-                                "responses": [
-                                    "($self$) 察觉到了身上的痛楚"
-                                ],
-                                "keepLooking": true
-                            },
-                            {
-                                "tags": [
-                                    "nsfw"
-                                ],
-                                "requirement": {
-                                    "requireSelfAction": true,
-                                    "requireSelfMemory": {
-                                        "minuteRollback": 1,
-                                        "selfTags": [
-                                            "timestop",
-                                            "cum"
-                                        ]
-                                    }
-                                },
-                                "selfEventCall": "OnTimestopEnd_Cum"
                             }
                         ]
                     },
@@ -333,6 +144,7 @@
                                 ]
                             },
                             {
+                                "forbidPortaitDisplay":true,
                                 "tags": [
                                     "nsfw"
                                 ],
@@ -346,6 +158,7 @@
                                 ]
                             },
                             {
+                                "forbidPortaitDisplay":true,
                                 "tags": [
                                     "nsfw"
                                 ],
@@ -359,6 +172,7 @@
                                 ]
                             },
                             {
+                                "forbidPortaitDisplay":true,
                                 "tags": [
                                     "nsfw"
                                 ],
@@ -372,6 +186,7 @@
                                 ]
                             },
                             {
+                                "forbidPortaitDisplay":true,
                                 "tags": [
                                     "nsfw"
                                 ],
@@ -386,6 +201,7 @@
                                 ]
                             },
                             {
+                                "forbidPortaitDisplay":true,
                                 "requirement": {
                                     "selfTags": [
                                         "job"
@@ -397,6 +213,7 @@
                                 ]
                             },
                             {
+                                "forbidPortaitDisplay":true,
                                 "requirement": {
                                     "selfTags": [
                                         "rest"
@@ -408,6 +225,7 @@
                                 ]
                             },
                             {
+                                "forbidPortaitDisplay":true,
                                 "requirement": {
                                     "selfTags": [
                                         "recreation"

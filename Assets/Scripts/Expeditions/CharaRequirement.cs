@@ -31,6 +31,9 @@ public class CharaReq
     public bool requireMale = false;
     public bool requireFemale = false;
 
+    public List<string> requireInflatedBodyTags = new List<string>();
+    public List<string> requireExtremeInflatedBodyTags = new List<string>();
+
     public List<string> requireAbsentJobwithCOMTag = new List<string>();
     public List<string> requireExistingJobwithCOMTag = new List<string>();
     public void Read(CharaReq req)

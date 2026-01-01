@@ -42,7 +42,7 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
             ID_Dictionary2.Add(o.ID, o);
         }
 
-        var keys = ID_Dictionary1.Keys;
+        var keys = ID_Dictionary1.Keys.ToArray();
         foreach (var key in keys)
         {
             if (!ID_Dictionary1[key].isValid)

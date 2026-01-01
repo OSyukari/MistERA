@@ -246,8 +246,14 @@
             },
             {
                 "id": "stats_derived_alcoholSensitivity",
-                "statKeyword":"",
+                "statKeyword":"physical",
                 "displayName":"Alcohol Sensitivity",
+                "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
+            },
+            {
+                "id": "stats_derived_painSensitivity",
+                "statKeyword":"physical",
+                "displayName":"Pain Sensitivity",
                 "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
             },
             {
@@ -365,7 +371,9 @@
                 "stats_derived_memoryLength": "记忆时长",
                 "stats_derived_memoryLength_tooltip": "该数值决定了角色的每项（非永久的）记忆条目会在记忆中保留多久（分钟单位）\n默认24小时",
                 "stats_derived_alcoholSensitivity":"酒精耐受",
-                "stats_derived_alcoholSensitivity_tooltip": "该数值（倍率）决定角色有多容易醉，越低越易醉\n默认1.0"
+                "stats_derived_alcoholSensitivity_tooltip": "该数值（倍率）决定角色有多容易醉，越低越易醉\n默认1.0",
+                "stats_derived_painSensitivity":"疼痛耐受",
+                "stats_derived_painSensitivity_tooltip": "该数值（倍率）决定角色有多容易疼痛，越低疼痛越剧烈\n默认1.0"
             },
             "en-us": {
                 "stats_derived_extended_hp": "HP",

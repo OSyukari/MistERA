@@ -129,9 +129,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 0
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 10
-                },
+                "DifficultyCheck":{ "baseD20Check":10 },
                 "description_ongoing":{
                     "Entries":
                     [

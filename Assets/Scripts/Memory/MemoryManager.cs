@@ -11,6 +11,62 @@ using Newtonsoft.Json;
 public class MemoryManager
 {
 
+    /// <summary>
+    /// Used for timestop
+    /// </summary>
+    public class MemoryPackage
+    {
+        public MemoryPackage() { }
+        public MemoryPackage(Character_Trainable c)
+        {
+            lastLocationRef = scr_System_CampaignManager.current.GetCharaRoomInstance(c.RefID).RefID;
+
+            lastEquipRefs.Clear();
+            lastEquipRefs.AddRange(c.EquippedItemRefs);
+
+            foreach (var part in c.Body.Internals)
+            {
+                if (part.Base.exposedKojoID != "")
+                {
+                    if (!exposedBodyRefs.ContainsKey(part.baseID)) exposedBodyRefs.Add(part.baseID, 2);
+                    exposedBodyRefs[part.baseID] = Math.Min(part.Parent.GetRevealingScore(BodyEquipLayer.None), exposedBodyRefs[part.baseID]);
+                }
+
+                if (part.canContain)
+                {
+                    if (!container.ContainsKey(part.baseID)) container.Add(part.baseID, 0);
+                    container[part.baseID] = Math.Max(container[part.baseID], (int)part.CurrentlyContained);
+                }
+            }
+
+            furnitureLock = c.FurnitureLockRef;
+            var pleasure = c.Stats.SexStimulation;
+            var pain = c.Stats.FindStatusByExactID("chara_status_pain");
+            pleasureSeverity = pleasure == null ? 0 : (int)pleasure.Severity;
+            painSeverity = pain == null ? 0 : (int)pain.Severity;
+        }
+
+        public int lastLocationRef = -1;
+        public List<int> lastEquipRefs = new List<int>();
+        public Dictionary<string, int> exposedBodyRefs = new Dictionary<string, int>();
+        public int painSeverity = 0;
+        public int pleasureSeverity = 0;
+        public Dictionary<string, int> container = new Dictionary<string, int>();
+        public int furnitureLock = 0;
+        
+    }
+
+    public MemoryPackage timestopMemory = null;
+    public void TimestopStart()
+    {
+        timestopMemory = new MemoryPackage(Owner);
+    }
+
+    public void TimestopEnd()
+    {
+        timestopMemory = null;
+    }
+
     //public ExperienceManager Experience;
     //public SexLogManager SexLogManager;
 

@@ -96,9 +96,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 5
-                },
+                "DifficultyCheck":{ "baseD20Check":5 },
                 "description_after":
                 {
                     "Entries":[
@@ -168,9 +166,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_after":
                 {
                     "Entries":[
@@ -241,9 +237,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在制造工程道具"]}], "keepLooking":false }
             },
             {
@@ -290,9 +284,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在研究工程项目"]}], "keepLooking":false }
             },
             {
@@ -339,9 +331,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在研究物理"]}], "keepLooking":false }
             },
             {
@@ -388,9 +378,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在研究生物化学"]}], "keepLooking":false }
             },
             {
@@ -438,9 +426,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin":
                 {
                     "Entries":[ 
@@ -498,9 +484,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 0
-                },
+                "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin":
                 {
                     "Entries":[ 
@@ -575,9 +559,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 5
-                },
+                "DifficultyCheck":{ "baseD20Check":5 },
                 "description_begin":
                 {
                     "Entries":[ 
@@ -638,9 +620,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 5
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 10
-                },
+                "DifficultyCheck":{ "baseD20Check":10 },
                 "description_after":
                 {
                     "Entries":[
@@ -710,9 +690,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 10
-                },
+                "DifficultyCheck":{ "baseD20Check":10 },
                 "description_begin":
                 {
                     "Entries":[ 
@@ -776,9 +754,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": {
-                    "baseD20Check": 10
-                },
+                "DifficultyCheck":{ "baseD20Check":10 },
                 "description_begin":
                 {
                     "Entries":[ 

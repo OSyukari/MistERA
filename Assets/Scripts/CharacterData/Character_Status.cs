@@ -80,6 +80,9 @@ public class Status_Instance
     }
 
     [JsonIgnore]
+    public bool Displayable { get { return !BaseRef.noDisplay && SeverityDisplayable; } }
+
+    [JsonIgnore]
     public bool SeverityDisplayable
     {
         get
@@ -100,7 +103,7 @@ public class Status_Instance
     [JsonIgnore] public List<string> Tags { get { return this.BaseRef.variants[SeverityIndex].tags; } }
 
     [JsonProperty] protected int _severityIndex = -1;
-    protected int SeverityIndex { get
+    [JsonIgnore] public int SeverityIndex { get
         {
             if (_severityIndex == -1) _severityIndex = UpdateSeverity();
             return _severityIndex;
@@ -114,7 +117,6 @@ public class Status_Instance
             return (float)Math.Round( severity + Variation, 2);
         }
     }
-
 
     [JsonIgnore]
     public float Decay { get

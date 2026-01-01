@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize, I_RemoveElemByTag
@@ -77,8 +77,8 @@ public enum KojoEventCalls
 
 public class Character_Personality_LooseEntry
 {
-    public string ID;
-    public ResponseEntry Entry;
+    public string ID = "";
+    public ResponseEntry Entry = null;
 }
 
 public class Character_Personality
@@ -415,6 +415,7 @@ public class ResponseEntry
     public bool interruptTargetJob = false;
     public bool debugLogging = false;
     public string RedirectID = "";
+    public bool requirePlayer = true;
 
 
     public string CheckRedirect(string original)
@@ -439,9 +440,11 @@ public class ResponseEntry
 
 
         MessageCollect_KojoEntry responses = null;
+        bool playerInvolved = ep != null && ep.Package != null && ep.Package.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID);
+        if (!requirePlayer) playerInvolved = true;
+
         foreach (var i in variants)
         {
-            bool playerInvolved = ep != null && ep.Package != null && ep.Package.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID);
             if (i.GetRandomResponse(out var result, rel, ep,  selfTags, targetTags, playerInvolved) && result != null)
             {
                 if (responses == null) responses = result;
@@ -612,6 +615,8 @@ public class ResponseEntry
         public bool requireSelfDoer = false;
         public bool requireSelfReceiver = false;
 
+        public bool requireSelfOnly = false;
+
         public bool requireSelfAPDoer = false;
         public bool requireSelfAPReceiver = false;
 
@@ -625,9 +630,6 @@ public class ResponseEntry
         /// Valid when self is not master or when no master
         /// </summary>
         public bool requireSelfNotMaster = false;
-
-        public CharaReq selfReq = null;
-        public CharaReq targetReq = null;
 
         public List<string> tags = new List<string>();
         public List<string> extraPortraitTags = new List<string>();
@@ -650,15 +652,22 @@ public class ResponseEntry
                 return false;
             }
 
+            MessageCollect_KojoEntry returnV = new MessageCollect_KojoEntry();
+
             if (this.variants.Count > 0) 
             {
                 foreach (var variant in variants)
                 {
-                    if (variant.GetRandomResponse(out response, rel, ep, selfTags, targetTags, isPlayerInvolved, skipExecute)) return true;
+                    if (variant.GetRandomResponse(out response, rel, ep, selfTags, targetTags, isPlayerInvolved, skipExecute))
+                    {
+                         if ( !variant.keepLooking) return true;
+                        returnV.Merge(response);
+                    }
                 }
             }
 
-            MessageCollect_KojoEntry returnV = null;
+
+            MessageCollect_KojoEntry returnV2 = null;
 
             string result = "";
             if (responses.Count > 0)
@@ -680,23 +689,25 @@ public class ResponseEntry
             {
                 if (result != "" && result.Replace("\n", "").Length > 0)
                 {
-                    returnV = new MessageCollect_KojoEntry();
+                    returnV2 = new MessageCollect_KojoEntry();
                     if (!forbidPortaitDisplay)
                     {
-                        returnV.portraitRefID = rel.Owner.RefID;
-                        returnV.portraitTags = new List<string>(extraPortraitTags);
-                        if (useActiveTags) returnV.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                        returnV2.portraitRefID = rel.Owner.RefID;
+                        returnV2.portraitTags = new List<string>(extraPortraitTags);
+                        if (useActiveTags) returnV2.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
                     }
-                    returnV.message = result;
+                    returnV2.message = result;
 
                 }
                 if (sss != null)
                 {
-                    if (returnV == null) returnV = sss;
-                    else returnV.nexts.Add(sss);
+                    if (returnV2 == null) returnV2 = sss;
+                    else returnV2.nexts.Add(sss);
                 }
             }
-            if (!skipExecute) foreach (var i in results) i.Execute(returnV, rel, selfTags, targetTags);
+            if (!skipExecute) foreach (var i in results) i.Execute(returnV2, rel, selfTags, targetTags);
+
+            returnV.Merge(returnV2);
             response = returnV;
 
             return true;
@@ -706,6 +717,7 @@ public class ResponseEntry
         {
             if (ep != null && rel != null)
             {
+                if (requireSelfOnly && (ep.job.Actors.Count != 1 || ep.job.Actors[0] != rel.Owner)) return false;
                 if (requireCOMStrongVariant && !ep.isStrongP) return false;
                 if (requireSelfDoer && ep.Doer != rel.Owner) return false;
                 else if (requireSelfReceiver)
@@ -723,9 +735,6 @@ public class ResponseEntry
                 if (requireSelfNotMaster && ep.Package.Master != null && ep.Package.Master == rel.Owner) return false;
             }
             List<string> ttips = new List<string>();
-            if (this.selfReq != null && !CharaReqUtility.Validate(this.selfReq, ref ttips, rel.Owner)) return false;
-            if (this.targetReq != null && !CharaReqUtility.Validate(this.targetReq, ref ttips, rel.Target)) return false;
-
 
             if (!requirement.Validate(rel, selfTags, targetTags, ep)) return false;
 
@@ -756,7 +765,7 @@ public class ResponseEntry
             public string requireSelfAttitudeKey = "";
             public RequireKojoVariable requireKojoVariable = new RequireKojoVariable();
             public RequireStatusValue requireSelfStatusValue = new RequireStatusValue();
-            public RequireStatValue requireSelfStatValue = new RequireStatValue();
+            public List<RequireStatValue> requireSelfStatValue = new List<RequireStatValue>();
             public RequireMemory requireSelfMemory = new RequireMemory();
 
             public bool Validate(Character_Trainable self, Character_Trainable target, List<string> selfTags, List<string> targetTags, EvaluationPackage ep, Character_Relationship rel)
@@ -812,7 +821,14 @@ public class ResponseEntry
                 if (this.targetTags.Count > 0 && !Utility.ListContainsStrict(targetTags, this.targetTags)) return false;
                 if (this.variantID > -1 && (ep == null || ep.VariantID != this.variantID)) return false;
                 if (this.requireKojoVariable != null && this.requireKojoVariable.isValid && rel != null && !this.requireKojoVariable.Validate(rel)) return false;
-                if (this.requireSelfStatValue != null && this.requireSelfStatValue.isValid && rel != null && !this.requireSelfStatValue.Validate(rel.Owner)) return false;
+                if (this.requireSelfStatValue.Count > 0) {
+                    foreach (var i in this.requireSelfStatValue)
+                    {
+                        //Debug.Log($"{self.FirstName} RequireStatValue isvalid? {i.isValid} {i.statID} {i.operand} {i.value} == {self.CompareStatValue(i.statID, i.operand, i.value)}");
+                        if (!i.isValid) continue;
+                        if (!i.Validate(self)) return false;
+                    }
+                }
                 if (this.requireSelfStatusValue != null && this.requireSelfStatusValue.isValid && rel != null && !this.requireSelfStatusValue.Validate(rel.Owner)) return false;
                 if (this.requireSelfMemory != null && this.requireSelfMemory.isValid && rel != null && !this.requireSelfMemory.Validate(rel.Owner)) return false;
                 return true;
@@ -847,23 +863,31 @@ public class ResponseEntry
                 [JsonIgnore] public bool isValid { get { return this.statID != "" && operand != LogicalOperand.none && value != ""; } }
                 public bool Validate(Character_Trainable chara)
                 {
+                    if (chara == null) return false;
+                    //Debug.Log($"{chara.FirstName} RequireStatValue {statID} {operand} {value} == {chara.CompareStatValue(statID, operand, value)}");
                     return chara.CompareStatValue(statID, operand, value);
                 }
-
             }
 
             public class RequireStatusValue
             {
                 public string statusID = "";
                 public bool checkExistOnly = false;
+                public bool checkSeverityIndex = false;
                 public LogicalOperand operand = LogicalOperand.none;
                 public float value = 0;
-                [JsonIgnore] public bool isValid { get { return this.statusID != "" && (checkExistOnly || operand != LogicalOperand.none); } }
+                [JsonIgnore] public bool isValid { get {
+                        if (this.statusID == "") return false;
+                        if (!checkExistOnly && operand == LogicalOperand.none) return false;
+                        if (checkSeverityIndex && value < 0) return false;
+                        return true; } }
                 public bool Validate(Character_Trainable chara)
                 {
                     var status = chara.Stats.GetStatusByStringMatch(statusID);
                     if (checkExistOnly) return status != null;
-                    else return status != null && Utility.CompareValue(chara.Stats.GetStatusByStringMatch(statusID).Severity, operand, value);
+                    if (status == null) return false;
+                    if (checkSeverityIndex) return Utility.CompareValue(status.SeverityIndex, operand, value);
+                    else return Utility.CompareValue(status.Severity, operand, value);
                 }
             }
 

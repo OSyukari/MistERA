@@ -588,19 +588,19 @@ public class EvaluationPackage
 
         if (self.isTimeStopped)
         {
-            mod.Clear();
+            //mod.Clear();
             mod.AddModifier(self.RefID, "Timestopped!", 0);
             _responseRate = self == Receiver ? 100 : 0;
         }
         else if (self.Climaxing)
         {
-            mod.Clear();
+            //mod.Clear();
             mod.AddModifier(self.RefID, "Climaxing!", 0);
             _responseRate = self == Receiver ? 100 : 0;
         }
         else if (self.Stats.isConsciousnessUnconscious)
         {
-            mod.Clear();
+            //mod.Clear();
             mod.AddModifier(self.RefID, $"{LocalizeDictionary.QueryThenParse("comLogs_causes_unconscious")} {self.Stats.Consciousness.Severity} {self.Stats.isConsciousnessUnconscious}", 0);
 
             if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = 100;
@@ -609,7 +609,7 @@ public class EvaluationPackage
         }
         else if (self.isRestrained || self.isImprisoned || self.cannotRefuse)
         {
-            mod.Clear();
+            //mod.Clear();
             mod.AddModifier(self.RefID, "Restrained", 0);
             _responseRate = 100;
         }
@@ -1864,6 +1864,7 @@ public class EvaluationPackage
         {
             var newTags2 = new List<string>(newTags);
             newTags2.Add("pain");
+            body.Owner.Stats.AddOrModStatus("chara_status_pain", (float)pain);
             body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, (float)pain, isDoer, visibility ? m.exp : null);
         }
         if (expansion > 0)
@@ -1929,7 +1930,7 @@ public class ExperienceLog
     public void PrependClimaxMSG(int chararef, string msg)
     {
         AddChara(chararef);
-        if (!climaxMessage.ContainsKey(chararef)) climaxMessage[chararef] = msg.Replace("$append$", "");
+        if (!climaxMessage.ContainsKey(chararef)) climaxMessage[chararef] = msg.Replace("/$append$", "");
         else climaxMessage[chararef] = msg.Replace("$append$", climaxMessage[chararef]);
     }
 
@@ -2091,7 +2092,7 @@ public class ExperienceLog
                 if (s.Length < 1) continue;
 
                 s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
-                lines.Add(RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
+                lines.Add(RightAlign.ContainsKey(kvp_refID.Key) && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
             }
         }
         return String.Join('\n', lines.ToArray());

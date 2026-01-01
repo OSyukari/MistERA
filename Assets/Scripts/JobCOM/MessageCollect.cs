@@ -103,6 +103,22 @@ public class MessageCollect
         exp.Clear();
     }
 
+    public void AddKojo(MessageCollect_KojoEntry kojo, bool tryMerge = true)
+    {
+        if (tryMerge)
+        {
+            foreach (var kj in this.messages_kojo)
+            {
+                if (kj.portraitRefID == kojo.portraitRefID)
+                {
+                    kj.Merge(kojo);
+                    return;
+                }
+            }
+        }
+        messages_kojo.Add(kojo);
+    }
+
     public void Merge(MessageCollect m, bool shorten)
     {
         if (m.messages_checks.Count > 0)
@@ -132,4 +148,20 @@ public class MessageCollect_KojoEntry
     public string message = "";
 
     public List<MessageCollect_KojoEntry> nexts = new List<MessageCollect_KojoEntry>();
+
+    public void Merge(MessageCollect_KojoEntry m)
+    {
+        if (m == null) return;
+        if (this.message == "" && portraitTags.Count < 1 && portraitRefID == -1 && this.nexts.Count < 1)
+        {
+            this.message = m.message;
+            this.portraitTags = m.portraitTags;
+            this.portraitRefID = m.portraitRefID;
+            this.nexts = m.nexts;
+        }
+        else
+        {
+            this.nexts.Add(m);
+        }
+    }
 }

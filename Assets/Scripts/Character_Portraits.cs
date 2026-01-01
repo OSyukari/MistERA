@@ -259,7 +259,7 @@ public class PortraitManager
         {
             // Debug.Log("clicked!");
             DrawActivityPortrait(box, tags_active, true);
-            //_cache_ActivityPortrait.Click();
+           // _cache_ActivityPortrait.Click();
         }
     }
     public void DrawPortrait(scr_CharPortraitBox box, List<string> tags = null)

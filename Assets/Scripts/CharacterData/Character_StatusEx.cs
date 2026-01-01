@@ -274,6 +274,10 @@ public class StatusEx_Instance : I_CacheValues
             return BaseRef.variants[SeverityIndex].displayable;
         } }
 
+    [JsonIgnore] public bool Displayable { get
+        {
+            return !BaseRef.noDisplay && SeverityDisplayable;
+        } }
     [JsonIgnore] public List<string> Tags { get { return this.BaseRef.variants[SeverityIndex].tags; } }
 
 

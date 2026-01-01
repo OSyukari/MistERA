@@ -1,0 +1,153 @@
+{
+    "baseID": "Campaign1_Nikke_Dorothy",
+    "Portrait":{
+        "portraitPriorityList":[
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+    "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
+    "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
+
+    "RequireContextKeys":["sex","doer"],
+    "Variants":
+    [    
+        {  "tagsMatch":["rimjob"], "PortraitVariantData":[ "dorothy/492.webp","dorothy/493.webp", "dorothy/494.webp" ] },
+        {  "tagsMatch":["handjob"], "PortraitVariantData":[ "dorothy/468.webp","dorothy/469.webp", "dorothy/470.webp"] },
+        {  "tagsMatch":["blowjob","boobjob"], "PortraitVariantData":[ "dorothy/437.webp","dorothy/490.webp" ] },
+        {  "tagsMatch":["boobjob"], "PortraitVariantData":[ "dorothy/489.webp","dorothy/491.webp" ] },
+        {  "tagsMatch":["blowjob"], "PortraitVariantData":[ "dorothy/436.webp","dorothy/438.webp","dorothy/469.webp" ] },   
+        {  "tagsMatch":["masturbate"], "PortraitVariantData":[ "dorothy/474.webp","dorothy/475.webp","dorothy/476.webp" ] },      
+        {  "tagsMatch":["cowgirl"], "PortraitVariantData":[ "dorothy/430.webp","dorothy/431.webp","dorothy/432.webp" ] },      
+        {  "tagsMatch":["cunnilingus"], "PortraitVariantData":[ "dorothy/454.webp","dorothy/455.webp","dorothy/456.webp" ] }
+        
+    ],
+
+    "portrait_path":"",
+    "icon_path":"Dorothy/si_c233_00_s.png"
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+    "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
+    "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
+
+    "RequireContextKeys":["sex","receiver"],
+    "Variants":
+    [    
+        {  "tagsMatch":["doggy"], "PortraitVariantData":[ "dorothy/433.webp","dorothy/434.webp","dorothy/435.webp" ] },   
+        {  "tagsMatch":["missionary"], "PortraitVariantData":[ "dorothy/486.webp","dorothy/487.webp","dorothy/488.webp" ] }
+    ],
+
+    "portrait_path":"",
+    "icon_path":"Dorothy/si_c233_00_s.png"
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+    "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
+    "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
+
+    "RequireContextKeys":["sex"],
+    "Variants":
+    [    
+        {  "tagsMatch":["cum"], "PortraitVariantData":[ "dorothy/428.webp","dorothy/429.webp" ] },
+        {  "tagsMatch":["spread_pussy"], "PortraitVariantData":[ "dorothy/495.webp","dorothy/496.webp" ] },
+        {  "tagsMatch":["kiss"], "PortraitVariantData":[ "dorothy/471.webp","dorothy/472.webp","dorothy/473.webp"] }
+        
+    ],
+
+    "portrait_path":"",
+    "icon_path":"Dorothy/si_c233_00_s.png"
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+    "portrait_offset_x": 29.53345,
+    "portrait_offset_y": -978.0911,
+    "portrait_offset_size": 0.65,
+
+    "icon_offset_x":0.0,
+    "icon_offset_y":0.0,
+    "icon_offset_size":1.13,
+
+    "RequireContextKeys":["combat"],
+    "icon_path":"Dorothy/si_c233_00_s.png",
+    "Variants":
+    [  
+        {  "tagsMatch":["happy"], "PortraitVariantData":["smile_02"] },   
+        {  "tagsMatch":["surprised"], "PortraitVariantData":["worry_02"] },
+        {  "tagsMatch":["angry"], "PortraitVariantData":["angry_02"] },    
+        {  "tagsMatch":["hostile"], "PortraitVariantData":["angry_02"] },    
+        {  "tagsMatch":["think"], "PortraitVariantData":["think_02"] },    
+        {  "tagsMatch":["worry"], "PortraitVariantData":["worry_02"] },    
+        {  "tagsMatch":["pain"], "PortraitVariantData":["pain_02"] },    
+        {  "tagsMatch":["sad"], "PortraitVariantData":["sad_02","cry_02"] },   
+        { "PortraitVariantData":["idle_alt"] }
+    ],
+    "materialTexturePaths":["c233/c233_00.png","c233/c233_00_2.png"],
+    "atlasJSON_path":"c233/c233_00.atlas",
+    "skeletonJSON_path":"c233/c233_00.skel",
+    "idleAnimName":""
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+    "portrait_offset_x": 29.53345, "portrait_offset_y": -978.0911, "portrait_offset_size": 0.65,
+    "icon_offset_x":0.0, "icon_offset_y":0.0, "icon_offset_size":1.13,
+    "Variants":
+    [    
+        {  "tagsMatch":["happy"], "PortraitVariantData":["smile"] },
+        {  "tagsMatch":["surprised"], "PortraitVariantData":["worry"] },
+        {  "tagsMatch":["angry"], "PortraitVariantData":["angry"] },    
+        {  "tagsMatch":["hostile"], "PortraitVariantData":["angry"] },  
+        {  "tagsMatch":["think"], "PortraitVariantData":["think"] },    
+        {  "tagsMatch":["worry"], "PortraitVariantData":["worry"] },    
+        {  "tagsMatch":["pain"], "PortraitVariantData":["pain"] },    
+        {  "tagsMatch":["sad"], "PortraitVariantData":["sad","cry"] },  
+        {  "Enable":false, "_comment":"transition into combat, then back to neutral -> click animation", "PortraitVariantData":["action"] },
+        {  "Enable":false, "_comment":"transition into combat", "PortraitVariantData":["expression_0"] },
+        {  "Enable":false, "_comment":"transition into neutral", "PortraitVariantData":["expression_0_alt"] },
+        { "PortraitVariantData":["idle"] }
+    ],
+
+    "icon_path":"Dorothy/si_c233_00_s.png",
+
+    "materialTexturePaths":["c233/c233_00.png","c233/c233_00_2.png"],
+    "atlasJSON_path":"c233/c233_00.atlas", "skeletonJSON_path":"c233/c233_00.skel",
+    "idleAnimName":""
+}
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 14,
+      "stat_CON": 18,
+      "stat_PSY": 12,
+      "stat_WIL": 12,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_A",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":145,
+      "initialInventory":[
+        
+        ],
+      "Skills": null
+    },
+    "firstName": "Campaign1_Nikke_Dorothy_firstname",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "characterComment":"Campaign1_Nikke_charaComment",
+    "origin": "charOrigin_none",
+    "race": "humanRace_android_complex",
+    "raceTemplate": "humanRaceAddon_Android_Nikke",
+    "startingGift": "charOriginGift_none"
+}
+    

@@ -1298,51 +1298,59 @@ public abstract class ActionPackage
 
         Memory_Response injectResult = Memory_Response.None;
 
-        if (this.targetCOM != null && targetCOM.baseD20Check > 0)
+        if (this.targetCOM != null)
         {
-            Modifiers dcMods = new Modifiers();
-            bool success = true;
-            int bonus = 0;
-            int baseDC = targetCOM.baseD20Check;
-            var tags = new List<string>();
-            tags.AddRange(targetCOM.comTags);
-            bool multiActor = (packages.Count > 0 && this.actorRefs.Count > 1) ? true : false;
-            foreach (var ep in packages)
+            if (targetCOM.baseD20Check == 0)
             {
-                tags.AddRange(ep.ExtraCOMTags);
-                if (multiActor) ep.AddExtraCOMTags("interaction");
+                checkResults_result = $"{targetCOM.DisplayName(COMVariantID)}, {LocalizeDictionary.QueryThenParse($"Memory_Response_Success")}";
+                checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {LocalizeDictionary.QueryThenParse($"Memory_Response_Success")}";
             }
-            tags = Utility.Distinct(tags);
-
-            foreach (var ep in packages)
+            else if (targetCOM.baseD20Check > 0)
             {
-                if (ep.Response < Memory_Response.Accept)
+                Modifiers dcMods = new Modifiers();
+                bool success = true;
+                int bonus = 0;
+                int baseDC = targetCOM.baseD20Check;
+                var tags = new List<string>();
+                tags.AddRange(targetCOM.comTags);
+                bool multiActor = (packages.Count > 0 && this.actorRefs.Count > 1) ? true : false;
+                foreach (var ep in packages)
                 {
-                    success = false;
-                    break;
+                    tags.AddRange(ep.ExtraCOMTags);
+                    if (multiActor) ep.AddExtraCOMTags("interaction");
                 }
-                if (ep.Receiver == null || ep.Receiver == ep.Doer)
-                {
-                    bonus += ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods);
-                }
-                else
-                {
-                    bonus += ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods);
-                    bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
-                }
-            }
+                tags = Utility.Distinct(tags);
 
-            if (success)
-            {
-                int diceRoll = Dice(1, 21, 1);
-                if (baseDC == 0) injectResult = Memory_Response.Success;
-                else if (diceRoll >= 20) injectResult = Memory_Response.CriticalSuccess;
-                else if (diceRoll <= 1) injectResult = Memory_Response.CriticalFailure;
-                else injectResult = diceRoll + bonus >= baseDC ? Memory_Response.Success : Memory_Response.Failure;
+                foreach (var ep in packages)
+                {
+                    if (ep.Response < Memory_Response.Accept)
+                    {
+                        success = false;
+                        break;
+                    }
+                    if (ep.Receiver == null || ep.Receiver == ep.Doer)
+                    {
+                        bonus += ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods);
+                    }
+                    else
+                    {
+                        bonus += ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods);
+                        bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
+                    }
+                }
 
-                List<string> mods = dcMods == null ? new List<string>() : dcMods.GetAllModifiers();
-                checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20 = {diceRoll}{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} = {diceRoll + bonus} {(injectResult >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
-                checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {injectResult}";
+                if (success)
+                {
+                    int diceRoll = Dice(1, 21, 1);
+                    if (baseDC == 0) injectResult = Memory_Response.Success;
+                    else if (diceRoll >= 20) injectResult = Memory_Response.CriticalSuccess;
+                    else if (diceRoll <= 1) injectResult = Memory_Response.CriticalFailure;
+                    else injectResult = diceRoll + bonus >= baseDC ? Memory_Response.Success : Memory_Response.Failure;
+
+                    List<string> mods = dcMods == null ? new List<string>() : dcMods.GetAllModifiers();
+                    checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20 = {diceRoll}{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} = {diceRoll + bonus} {(injectResult >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                    checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                }
             }
         }
 
@@ -1452,22 +1460,32 @@ public abstract class ActionPackage
 
                 // find existing job in room and merge into it
                 var allchara = scr_System_CampaignManager.current.CharaInCurrentRoom;
+
+                List<string> names = new List<string>();
+
                 foreach (var i in allchara)
                 {
-                    if (i.RefID == 0) continue;
                     var targetJob = i.CurrentJob;
-                    if (targetJob is Job_Sex_Group)
-                    {
-                        existingJob = targetJob as Job_Sex_Group;
-                        break;
-                    }
+                    names.Add(i.FirstName);
+                    if (targetJob == null) continue;
+                    if (targetJob is not Job_Sex_Group) continue;
+                    if (existingJob == null) existingJob = targetJob as Job_Sex_Group;
                 }
+                Debug.Log($"iniSex found existing [{existingJob != null}] among {String.Join("|", names)}");
                 if (existingJob == null)
                 {
                     existingJob = new Job_Sex_Group(this.actorRefs, scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey), true);
                     scr_System_CampaignManager.current.Register(existingJob);
                 }
-                else foreach (var actor in this.actorRefs) scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(existingJob);// existingJob.AddActor(actor);
+                else
+                {
+                    foreach (var actor in allchara)
+                    {
+                        if (!this.actorRefs.Contains(actor.RefID)) continue;
+                        if (actor.CurrentJob == existingJob) continue;
+                        actor.ChangeCurrentJob(existingJob);// existingJob.AddActor(actor);
+                    }
+                }
                 /*
                 var doerCurrentJob = evp.Doer.CurrentJob;
                 var receiverCurrentJob = evp.Receiver == null ? null : evp.Receiver.CurrentJob;
@@ -1720,6 +1738,7 @@ public abstract class ActionPackage
 
     public void LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null, Character_Trainable target = null)
     {
+        if (this.isTemporaryAP) return;
         if (m == null) m = this.job.m;
         string s = targetCOM.variants[COMVariantID].GetDescription_Ongoing(targetCOM, this);
         //Debug.Log("AP LogMessage_Ongoing");

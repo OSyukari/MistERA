@@ -1,8 +1,9 @@
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using NUnit.Framework;
+using UnityEngine;
 
 public interface I_StatsManager
 {
@@ -40,11 +41,27 @@ public interface I_StatsManager
 public class StatsManager : I_StatsManager
 {
 
+    /// <summary>
+    /// Return all status with id match
+    /// </summary>
+    /// <param name="statID"></param>
+    /// <returns></returns>
     public List<Status_Instance> FindStatusByID(string statID)
     {
-        return this.StatusInstances.FindAll(x => x.ID.Contains(statID));
+        var l = new List<Status_Instance>();
+        foreach (var i in _statusInstances) if (i.Key.Contains(statID)) l.Add(i.Value);
+        return l;
     }
-
+    public Status_Instance FindStatusByExactID(string statID)
+    {
+        if (_statusInstances.TryGetValue(statID, out var value)) return value;
+        else return null;
+    }
+    public StatusEx_Instance FindStatusEXByExactID(string statID)
+    {
+        if (_statusInstancesEx.TryGetValue(statID, out var value)) return value;
+        else return null;
+    }
     public CombatStatManager MakeCombatHandler()
     {
         var handler = new CombatStatManager(Owner, this);
@@ -123,9 +140,9 @@ public class StatsManager : I_StatsManager
         this.Psyche.ReEstablishParent(this);
         this.Willpower.ReEstablishParent(this);
 
-        if (this.StatusInstances != null) foreach (var i in StatusInstances) i.ReEstablishParent(chara.Stats);
+        if (this._statusInstances != null) foreach (var i in _statusInstances) i.Value.ReEstablishParent(chara.Stats);
         foreach (var i in list_statsExtended) i.ReEstablishParent(chara.Stats);
-        if (this.statusInstancesEx != null) foreach (var i in _statusInstancesEx) i.ReEstablishParent(chara.Stats);
+        if (this._statusInstancesEx != null) foreach (var i in _statusInstancesEx) i.Value.ReEstablishParent(chara.Stats);
 
         this.RefreshAllStats(true);
     }
@@ -146,21 +163,20 @@ public class StatsManager : I_StatsManager
         this.owner = ownerRef;;
         //generate all stat_derived_extended
 
-        //Debug.LogError("Initializing ID "+ownerRefID);
-        //if (this.statusInstancesEx == null) this._statusInstancesEx = new List<StatusEx_Instance>();
-        //if (this.StatusInstances == null) this._statusInstances = new List<Status_Instance>();
         this.modifiers.Clear();
         this.modifiers_temporary.Clear();
 
         foreach (var statusEX in scr_System_Serializer.current.index_StatusEX.list)
         {
             //Debug.Log("adding statusEx " + statusEX.statusID + " to chara " + Owner.FullName+" on list isNull? "+(statusInstancesEx == null));
-            statusInstancesEx.Add(statusEX.Instantiate(this));
+            var ss = statusEX.Instantiate(this);
+            _statusInstancesEx.Add(ss.ID, ss);
         }
+        ClearStatusEXCache();
 
         foreach(var status in scr_System_Serializer.current.index_Status.list)
         {
-            if (status.constant) AddStatus(status.statusID);// StatusInstances.Add(status.Instantiate(this));
+            if (status.constant) AddStatus(status.statusID);
         }
 
         if (Strength == null) Debug.LogError("Strength null");
@@ -297,7 +313,7 @@ public class StatsManager : I_StatsManager
 
 
 
-        foreach (var ex in this.statusInstancesEx) ex.ClearCache();
+        foreach (var ex in this._statusInstancesEx) ex.Value.ClearCache();
         needsList_cache = null;
     }
 
@@ -340,12 +356,18 @@ public class StatsManager : I_StatsManager
     [JsonIgnore] public int MemoryLength { get { return Owner.hasStatKeyword("memory") ? (int) GetStatValue("stats_derived_memoryLength") : 0; } }
     [JsonIgnore] public int MemoryEntryCount { get { return Owner.hasStatKeyword("memory") ? (int) GetStatValue("stats_derived_memoryEntryCount") : 0; } }
 
-
+    /// <summary>
+    /// Return first match
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
     public StatusEx_Instance GetStatusEXByStringMatch(string s)
     {
-        StatusEx_Instance si = this.statusInstancesEx.Find(x => x.ID.Contains(s));
-        if (si != null) return si;
-        else return null;
+        foreach(var k in this._statusInstancesEx)
+        {
+            if (k.Key == s || k.Key.Contains(s)) return k.Value;
+        }
+        return null;
     }
 
 
@@ -373,7 +395,7 @@ public class StatsManager : I_StatsManager
     {
         get
         {
-            if (_lubrication == null) _lubrication = statusInstancesEx.Find(x => x.ID == "chara_status_sex_stimulation_pos");
+            if (_lubrication == null) _lubrication = GetStatusEXByStringMatch("chara_status_sex_stimulation_pos");
             return _lubrication;
         }
     }
@@ -631,30 +653,31 @@ public class StatsManager : I_StatsManager
 
         bool refresh = false;
 
-        for (int i = StatusInstances.Count - 1; i >= 0; i--)
+        var keys = _statusInstances.Keys.ToArray();
+        foreach (var key in keys)
         {
             int time = Owner.isTimeStopped ? t.Minutes : t_real.Minutes;
-            var curr = StatusInstances[i];
+            var curr = _statusInstances[key];
 
-            if (StatusInstances[i].BaseRef.variationMode.pauseXMinAfterMod > 0)
+            if (curr.BaseRef.variationMode.pauseXMinAfterMod > 0)
             {
-                StatusInstances[i].pauseXMinAfterMod += pauseXMinAfterMod;
+                curr.pauseXMinAfterMod += pauseXMinAfterMod;
             }
 
-            if (StatusInstances[i].pauseXMinAfterMod > 0)
+            if (curr.pauseXMinAfterMod > 0)
             {
-                time -= Math.Min(t.Minutes, StatusInstances[i].pauseXMinAfterMod);
-                StatusInstances[i].pauseXMinAfterMod -= Math.Min(t.Minutes, StatusInstances[i].pauseXMinAfterMod);
+                time -= Math.Min(t.Minutes, curr.pauseXMinAfterMod);
+                curr.pauseXMinAfterMod -= Math.Min(t.Minutes, curr.pauseXMinAfterMod);
             }
 
 
-            if (StatusInstances[i].pauseXMinAfterMod == 0 && time > 0 && StatusInstances[i].Decay != 0)
+            if (curr.pauseXMinAfterMod == 0 && time > 0 && curr.Decay != 0)
             {
-                var decay = StatusInstances[i].BaseRef.variationMode.baselineVariation.Decay(this, StatusInstances[i].Severity);
+                var decay = curr.BaseRef.variationMode.baselineVariation.Decay(this, curr.Severity);
                 if (decay != 0)
                 {
                     var final = decay * time;
-                    if (StatusInstances[i].SeverityAdd(final)) refresh = true;
+                    if (curr.SeverityAdd(final)) refresh = true;
                 }
             }
 
@@ -668,7 +691,7 @@ public class StatsManager : I_StatsManager
                     {
                         refresh = curr.SeverityMods.Count > 0;
                         Debug.LogError($"status {curr.ID} severity at 0 while duration still at {curr.duration}");
-                        StatusInstances.RemoveAt(i);
+                        RemoveStatusByStringMatch(key);
                     }
                     else if (curr.BaseRef.statusID == "chara_status_sleeping")
                     {
@@ -687,7 +710,7 @@ public class StatsManager : I_StatsManager
                 }
                 
                 // expired with time, allow removal with no calls
-                else if (curr.pauseXMinAfterMod == 0 && curr.duration > 0)
+                else if (curr.pauseXMinAfterMod <= 0 && curr.duration >= 0)
                 {   // status tick
                     curr.duration = Math.Max(0, curr.duration - time);
                     if (curr.duration == 0)
@@ -698,7 +721,7 @@ public class StatsManager : I_StatsManager
                         if (curr.BaseRef.allowNaturalRemoval)
                         {
                             refresh = curr.SeverityMods.Count > 0;
-                            StatusInstances.RemoveAt(i);
+                            RemoveStatusByStringMatch(key);
                         }
                         else if (curr.BaseRef.statusID == "chara_status_sleeping")
                         {
@@ -742,7 +765,7 @@ public class StatsManager : I_StatsManager
     {
         get
         {
-            if (_sexStimulation == null) _sexStimulation = statusInstancesEx.Find(x => x.ID == "chara_status_sex_stimulation");
+            if (_sexStimulation == null) _sexStimulation = GetStatusEXByStringMatch("chara_status_sex_stimulation");
             return _sexStimulation;
         }
     }
@@ -752,19 +775,27 @@ public class StatsManager : I_StatsManager
     {
         get
         {
-            if (fatigue == null) fatigue = StatusInstances.Find(x => x.ID == "chara_status_fatigue");
+            if (fatigue == null) fatigue = FindStatusByExactID("chara_status_fatigue");
             return fatigue;
         }
     }
 
 
-
+    private Status_Instance _pain = null;
+    [JsonIgnore] public Status_Instance Pain
+    {
+        get
+        {
+            if (_pain == null) _pain = FindStatusByExactID("chara_status_pain");
+            return _pain;
+        }
+    }
 
     [JsonIgnore] public StatusEx_Instance Consciousness
     {
         get
         {
-            if (consciousness == null) consciousness = statusInstancesEx.Find(x => x.ID == "chara_status_consciousness");
+            if (consciousness == null) consciousness = FindStatusEXByExactID("chara_status_consciousness");
             return consciousness;
         }
     }
@@ -783,74 +814,81 @@ public class StatsManager : I_StatsManager
 
 
 
-    [JsonProperty] protected List<Status_Instance> _statusInstances = new List<Status_Instance>();
-    [JsonProperty] protected List<StatusEx_Instance> _statusInstancesEx = new List<StatusEx_Instance>();
-    [JsonIgnore] public List<StatusEx_Instance> statusInstancesEx_Displayable
+    [JsonProperty] protected Dictionary<string, Status_Instance> _statusInstances = new Dictionary<string, Status_Instance>();
+    [JsonProperty] protected Dictionary<string, StatusEx_Instance> _statusInstancesEx = new Dictionary<string, StatusEx_Instance>();
+
+    void ClearStatusEXCache()
     {
-        get
-        {
-            List<StatusEx_Instance> list = new List<StatusEx_Instance>();
-            foreach(StatusEx_Instance i in statusInstancesEx)
-            {
-                if (i.BaseRef.noDisplay) continue;
-                if (!i.SeverityDisplayable) continue;
-                list.Add(i);
-            }
-            return list;
-        }
+        _list_statusInstacesEX = null;
     }
+
+    //List<StatusEx_Instance> _list_statusInstacesEX_Displayable = null;
+    List<StatusEx_Instance> _list_statusInstacesEX = null;
     [JsonIgnore] public List<StatusEx_Instance> statusInstancesEx
     {
         get
         {
-            return _statusInstancesEx;
+            if (_list_statusInstacesEX == null) _list_statusInstacesEX = _statusInstancesEx.Values.ToList();
+            return _list_statusInstacesEX;
         }
     }
 
-    [JsonIgnore] public List<Status_Instance> StatusInstances { get { return _statusInstances; } }
-    [JsonIgnore] public List<Status_Instance> StatusInstances_Displayable
-    {
-        get
-        {
-            List<Status_Instance> list = new List<Status_Instance>();
-            foreach (Status_Instance i in StatusInstances)
+    List<Status_Instance> _StatusInstances = null;
+    [JsonIgnore] public List<Status_Instance> StatusInstances { get { 
+            if (_StatusInstances == null)
             {
-                if (i.BaseRef.noDisplay) continue;
-                if (!i.SeverityDisplayable) continue;
-                list.Add(i);
+                _StatusInstances = _statusInstances.Values.ToList();
             }
-            return list;
-        }
+            return _StatusInstances; } }
+
+
+    void ClearStatusInstanceCache()
+    {
+        _StatusInstances = null;
     }
 
     public bool HasStatusByStringMatch(string s)
     {
-        return (this.StatusInstances.Find(x => x.ID.Contains(s)) != null);
+        var candidates = FindStatusByID(s);
+        return candidates.Count > 0;
     }
 
     public Status_Instance GetStatusByStringMatch(string s)
     {
-        Status_Instance si = this.StatusInstances.Find(x => x.ID.Contains(s));
-        if (si != null) return si;
-        else return null;
+        var candidates = FindStatusByID(s);
+        if (candidates.Count < 1) return null;
+        else if (candidates.Count > 1)
+        {
+            Debug.LogError($"Warning GetStatusByStringMatch {s} has found {candidates.Count} candidates, returning first");
+
+        }
+        return candidates[0];
     }
 
     public float GetStatusSeverityByStringMatch(string s)
     {
-        Status_Instance si = this.StatusInstances.Find(x => x.ID.Contains(s));
-        if (si != null) return si.Severity;
-        else return -1;
+        var candidates = FindStatusByID(s);
+        if (candidates.Count < 1) return -1;
+        else if (candidates.Count > 1)
+        {
+            Debug.LogError($"Warning GetStatusSeverityByStringMatch {s} has found {candidates.Count} candidates, returning first");
+
+        }
+        return candidates[0].Severity;
     }
 
     public void RemoveStatusByStringMatch(string s)
     {
-        List<Status_Instance> removelist = this.StatusInstances.FindAll(x => x.ID.Contains(s));
-
         bool update = false;
-        foreach (Status_Instance status in removelist)
+        var keys = _statusInstances.Keys.ToArray();
+        foreach(var k in keys)
         {
-            StatusInstances.Remove(status);
-            update = true;
+            if (k.Contains(s))
+            {
+                this._statusInstances.Remove(k);
+                ClearStatusInstanceCache();
+                update = true;
+            }
         }
 
         if (update) UpdateStatus();
@@ -860,7 +898,7 @@ public class StatsManager : I_StatsManager
     public void AddOrModStatus(string s, float modSeverity = 0f, int modDuration = -1, float severityCap = -1f)
     {
         if (s == null || s == "" || s.Length < 1) return;
-        Status_Instance instance = GetStatusByStringMatch(s);// this.StatusInstances.Find(x => x.ID == s);
+        Status_Instance instance = GetStatusByStringMatch(s);
         if (instance != null && instance.BaseRef.constant && modSeverity == 0f)
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.LogError($"ERROR modding constant statusInstance {s} with null severity");
@@ -910,7 +948,7 @@ public class StatsManager : I_StatsManager
     {
         previouslyUnconscious = isConsciousnessUnconscious;
         this.modifiers_temporary.Clear();
-        foreach (var i in statusInstancesEx) i.ClearCache(true);
+        foreach (var i in _statusInstancesEx) i.Value.ClearCache(true);
 
         RefreshAllStats();
     }
@@ -921,9 +959,20 @@ public class StatsManager : I_StatsManager
         if (target != null)
         {
             Status_Instance si = target.Instantiate(this, initialSeverity, durationMinute);
-            this.StatusInstances.Add(si);
+            this._statusInstances.Add(si.ID, si);
 
-            if (si.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex) foreach (var inst in StatusInstances) if (inst.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex) inst.pauseXMinAfterMod = inst.BaseRef.variationMode.pauseXMinAfterMod;
+            ClearStatusInstanceCache();
+
+            if (si.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
+            {
+                foreach (var inst in _statusInstances)
+                {
+                    if (inst.Value.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
+                    {
+                        inst.Value.pauseXMinAfterMod = inst.Value.BaseRef.variationMode.pauseXMinAfterMod;
+                    }
+                }
+            }
         }
         else Debug.LogError("AddStatus Failed cuz target status ["+s+"] unfound");
     }
@@ -938,7 +987,7 @@ public class StatsManager : I_StatsManager
         get
         {
             if (!Owner.hasStatKeyword("lust")) return null;
-            if (lust == null ) lust = statusInstancesEx.Find(x => x.ID == "chara_status_lust");
+            if (lust == null ) lust = FindStatusEXByExactID("chara_status_lust");
             return lust;
         }
     }
@@ -949,7 +998,7 @@ public class StatsManager : I_StatsManager
         get
         {
             if (!Owner.hasStatKeyword("lust")) return null;
-            if (lust_hidden == null) lust_hidden = StatusInstances.Find(x => x.ID == "chara_status_lust_hidden");
+            if (lust_hidden == null) lust_hidden = FindStatusByExactID("chara_status_lust_hidden");
             return lust_hidden;
         }
     }
@@ -960,7 +1009,7 @@ public class StatsManager : I_StatsManager
         get
         {
             if (!Owner.hasStatKeyword("stress")) return null;
-            if (stress == null) stress = statusInstancesEx.Find(x => x.ID == "chara_status_stress");
+            if (stress == null) stress = FindStatusEXByExactID("chara_status_stress");
             return stress;
         }
     }
@@ -971,7 +1020,7 @@ public class StatsManager : I_StatsManager
         get
         {
             if (!Owner.hasStatKeyword("mood")) return null;
-            if (mood == null ) mood = statusInstancesEx.Find(x => x.ID == "chara_status_mood");
+            if (mood == null ) mood = FindStatusEXByExactID("chara_status_mood");
             return mood;
         }
     }

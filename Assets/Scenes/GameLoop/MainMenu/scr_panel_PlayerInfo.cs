@@ -91,7 +91,7 @@ public class scr_panel_PlayerInfo : MonoBehaviour
 
     private void RefreshStatusBox()
     {
-        var displayables = Chara.Stats.StatusInstances_Displayable;
+        var displayables = Chara.Stats.StatusInstances;
 
         var tracked = trackedStatus.Keys.ToList();
 
@@ -107,6 +107,7 @@ public class scr_panel_PlayerInfo : MonoBehaviour
 
         foreach(var a in added)
         {
+            if (!a.Displayable) continue;
             RectTransform box = Instantiate(prefab_text_link);
             box.SetParent(StatusBox, false);
             trackedStatus.Add(a, box.GetComponent<scr_HoverableText>());

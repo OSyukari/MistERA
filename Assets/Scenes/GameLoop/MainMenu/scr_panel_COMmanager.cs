@@ -96,7 +96,7 @@ public class scr_panel_COMmanager : scr_Menu
     {
         if (!this.gameObject.activeInHierarchy) return;
         RefreshEquips(refID);
-        if (refID == 0) ChangeCurrentTab(COMTabs.Interaction);
+        //if (refID == 0) ChangeCurrentTab(COMTabs.Interaction);
         ValidateAll();
     }
 
@@ -162,6 +162,14 @@ public class scr_panel_COMmanager : scr_Menu
                     title_sex.text = body.Replace("$doer$", doers).Replace("$receiver$", receivers);
                 
                 }
+                else if (refID == 0)
+                {
+                    Box_SexCOMs.gameObject.SetActive(false);
+                    Box_MassageCOMs.gameObject.SetActive(false);
+                    Box_TouchCOMs.gameObject.SetActive(false);
+                    Box_ServiceCOMs.gameObject.SetActive(false);
+                    Box_SexCOMs_Full.gameObject.SetActive(false);
+                }
                 else
                 {
                     Box_SexCOMs.gameObject.SetActive(false);
@@ -170,12 +178,20 @@ public class scr_panel_COMmanager : scr_Menu
                     Box_ServiceCOMs.gameObject.SetActive(true);
                     Box_SexCOMs_Full.gameObject.SetActive(false);
                 }
-
+                List<string> team = new List<string>();
+                foreach (var c in scr_System_CampaignManager.current.party.Members)
+                {
+                    if (c == scr_System_CampaignManager.current.CurrentTarget) continue;
+                    team.Add(c.FirstName);
+                }
+                                
                 if (refID > 0)
                 {
-                    title_touch.text = $"{LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName)}\n{String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyDescription)}";
+                    title_touch.text = $"{LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName)}{(team.Count > 0 ? LocalizeDictionary.QueryThenParse("comManager_title_skinship_teammate").Replace("$teammates$", String.Join(" ", team)): "")}\n{String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyDescription)}";
                 }
-                else title_touch.text = LocalizeDictionary.QueryThenParse("comManager_title_skinship_self");
+                else title_touch.text = $"{LocalizeDictionary.QueryThenParse("comManager_title_skinship_self")}{(team.Count > 0 ? LocalizeDictionary.QueryThenParse("comManager_title_skinship_teammate").Replace("$teammates$", String.Join(" ", team)) : "")}";
+
+
 
                 break;
             case COMTabs.Inventory:
@@ -200,7 +216,13 @@ public class scr_panel_COMmanager : scr_Menu
         {
             //self_internal_descriptor.SetText("");
             self_internal_descriptor.SetText(String.Join(", ", scr_System_CampaignManager.current.Player.Body.BodyRevealingDesriptors));
-            undress_player_name.text = scr_System_CampaignManager.current.Player.FirstName;
+            undress_player_name.SetText(scr_System_CampaignManager.current.Player.FirstName);
+            List<string> gear = new List<string>();
+            foreach(var c in scr_System_CampaignManager.current.Player.Inventory.Contents)
+            {
+                if (!c.Equippable && c.Displayable) gear.Add(c.Print());
+            }
+            undress_player_name.SetExternalTooltip($"Inventory: {String.Join("|", gear)}");
         }
 
         target_UndressBox.gameObject.SetActive(targetbox);
@@ -208,7 +230,14 @@ public class scr_panel_COMmanager : scr_Menu
         if (targetbox)
         {
             target_internal_descriptor.SetText(String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyRevealingDesriptors));
-            undress_target_name.text = scr_System_CampaignManager.current.CurrentTarget.FirstName;
+            undress_target_name.SetText(scr_System_CampaignManager.current.CurrentTarget.FirstName);
+            List<string> gear = new List<string>();
+            foreach (var c in scr_System_CampaignManager.current.CurrentTarget.Inventory.Contents)
+            {
+                if (!c.Equippable && c.Displayable) gear.Add(c.Print());
+            }
+            undress_target_name.SetExternalTooltip($"Inventory: {String.Join("|", gear)}");
+
         }
     }
 
@@ -229,7 +258,11 @@ public class scr_panel_COMmanager : scr_Menu
         if (chara == null) return;
 
         managedList.AddRange(chara.EquippedItemRefs);
-        managedList.AddRange(chara.Inventory.ContentRefs);
+        foreach(var i in chara.Inventory.Contents)
+        {
+            if (i.Equippable) managedList.Add(i.RefID);
+        }
+        //managedList.AddRange(chara.Inventory.ContentRefs);
 
         managedList = managedList.Distinct().ToList();
         managedList.Sort();
@@ -681,7 +714,7 @@ public class scr_panel_COMmanager : scr_Menu
 
     Dictionary<int, scr_IndividualCOMBox> furnitureRectList = new Dictionary<int, scr_IndividualCOMBox>();
 
-    public TMP_Text undress_player_name, undress_target_name;
+    public scr_HoverableText undress_player_name, undress_target_name;
     public RectTransform player_UndressBox, player_UndressEquipList, target_UndressBox, target_UndressEquipList;
 
     private void UpdateJobCOM()
@@ -709,7 +742,7 @@ public class scr_panel_COMmanager : scr_Menu
 
 
         var currentTarget = scr_System_CampaignManager.current.CurrentTarget;
-        if (currentTarget != null && currentTarget.RefID != 0 && currentTarget.InteractionJob != null)
+        if (currentTarget != null && currentTarget.InteractionJob != null)
         {   
             tempList.Add(currentTarget.InteractionJob.RefID);
             s3 += "\nTracking CurrentTarget interact job " + currentTarget.InteractionJob.RefID;
@@ -1559,7 +1592,8 @@ else */
                             }
 
                         }
-                        if (package is ActionPackage_Interaction && job is Job_CharaCOM) forbidInjectTarget = true;
+                        if (package is ActionPackage_Interaction && job is Job_CharaCOM && !package.ComTags.Contains("endSex") && !package.ComTags.Contains("initSex")) forbidInjectTarget = true;
+                        
 #if UNITY_EDITOR
                         if (false)
                         {
@@ -1586,7 +1620,7 @@ else */
                         Debug.LogError("COMMANAGER package typecheck failed");
                     }
 
-
+                    tooltip += $"{(package.targetCOM == null?"null":String.Join("|", package.targetCOM.comTags))}\n";
                     tooltip += "doer [" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
                     //text.SetText(package.DisplayName);
 
@@ -2526,7 +2560,12 @@ else */
                 return false;
             }
 
-            return true;
+            foreach(var i in chara.Inventory.Contents)
+            {
+                if (i.Equippable) return true;
+            }
+
+            return false;
         }
 
         public void OnClickButton()

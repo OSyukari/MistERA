@@ -811,11 +811,26 @@ public class scr_System_CampaignManager : MonoBehaviour
         scr_System_Time.current.ToggleTimeStop();
 
         string s = "";
-        if (!scr_System_Time.current.NotTimetop) s = "TIMESTOP!";
-        else s = "TIMESTOP ended.";
-        
+        if (!scr_System_Time.current.NotTimetop)
+        {
+            s = "TIMESTOP!";
+            foreach(var c in this.Index_referenceID)
+            {
+                c.Value.TimestopStart();
+            }
+            // updatehandler flush logs
+        }
+        else
+        {
+            s = "TIMESTOP ended.";
+            foreach (var c in this.Index_referenceID)
+            {
+                c.Value.TimestopEnd();
+            }
+            // updatehandler flush logs
+        }
+        //scr_UpdateHandler.current.Message.FlushCollectLogsCallback();
         FreeUpdate(-1, s);
-
     }
 
     public enum displayAP_Reason

@@ -492,10 +492,13 @@ public class COM: I_SerializationCallbackReceiver
         {
 
         }
-        else if (comTags.Contains("endSex"))
-        {
 
+        if (comTags.Contains("endSex"))
+        {
+            Debug.Log("endSex checking doer currentjob");
+            if (doerRefIDs.CurrentJob is not Job_Sex_Group) return -1;
         }
+
         if (!ValidateCondition(null, doerRefIDs, this))
         {
             return -1;
@@ -560,21 +563,40 @@ public class COM: I_SerializationCallbackReceiver
                 }
             }
         }
-        else if (comTags.Contains("initSex"))
+        if (comTags.Contains("initSex"))
         {
-            foreach (var i in receiverRefIDs)
+            Job existing = null;
+            bool existJoinable = false;
+            var targetlist = receiverRefIDs.Count > 0 ? receiverRefIDs : doerRefIDs;
+            foreach (var i in targetlist)
             {
                 var targetJob = i.CurrentJob;
-                if (targetJob is Job_Sex_Group && Utility.ListContainsStrict(targetJob.Actors,doerRefIDs))
+                if (targetJob != null && targetJob is Job_Sex_Group)
                 {
-                    tooltip.Add("Command GetValidVariant invalid: both actors already in sex");
-                    return -1;
+                    if (existing == null) existing = targetJob;
+                    else if (existing == targetJob) continue;
+                    else 
+                    {
+                        tooltip.Add("Command GetValidVariant invalid: both actors already in sex");
+                        return -1;
+                    }
                 }
+                else existJoinable = true;
+            }
+            if (!existJoinable)
+            {
+                tooltip.Add("Command GetValidVariant invalid: no additional joinable actor");
+                return -1;
+            }
+            if (existing != null)
+            {   // this line will not be triggered
+                tooltip.Add("Inviting target to existing job");
             }
         }
-        else if (comTags.Contains("endSex"))
+        if (comTags.Contains("endSex"))
         {
-            foreach (var i in receiverRefIDs)
+            var targetlist = receiverRefIDs.Count > 0 ? receiverRefIDs : doerRefIDs;
+            foreach (var i in targetlist)
             {
                 if (!(i.CurrentJob is Job_Sex_Group))
                 {

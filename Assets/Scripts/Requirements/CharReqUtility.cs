@@ -27,6 +27,28 @@ public static class CharaReqUtility
             return false;
         }
         
+        if (q.requireExtremeInflatedBodyTags.Count > 0)
+        {
+            var list = c.Body.GetInternalsWithTags(q.requireExtremeInflatedBodyTags);
+            if (list == null || list.Count < 1) return false;
+            bool result = false;
+            foreach (var i in list)
+            {
+                if (i.isExtremelyExpanded) result = true;
+            }
+            if (!result) return false;
+        }
+        if (q.requireInflatedBodyTags.Count > 0)
+        {
+            var list = c.Body.GetInternalsWithTags(q.requireInflatedBodyTags);
+            if (list == null || list.Count < 1) return false;
+            bool result = false;
+            foreach (var i in list)
+            {
+                if (i.isVisiblyExpanded) result = true;
+            }
+            if (!result) return false;
+        }
 
         if (q.minRevealingScore != -1)
         {

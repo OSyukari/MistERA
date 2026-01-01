@@ -101,6 +101,7 @@
 "comManager_filter_work": "工作",
 "comManager_title_skinship_self": "肌肤接触 - 无目标",
 "comManager_title_skinship_target": "肌肤接触 - 目标[$name$]",
+"comManager_title_skinship_teammate": "，额外参与者[$teammates$]",
 "comManager_title_interact_self": "行动 - 无目标",
 "comManager_title_interact_target": "互动 - 目标[$name$]",
 "comManager_title_inventory_self": "道具 - 目标自身",

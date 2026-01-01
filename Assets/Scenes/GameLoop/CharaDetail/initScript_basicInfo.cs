@@ -128,10 +128,12 @@ public class initScript_basicInfo : MonoBehaviour
             link.GetComponent<RectTransform>().SetParent(traitsList, false);
         }
 
+        var debug = scr_System_CampaignManager.current.DebugMode;
+
         while (statusEXGrid.transform.childCount > 0) DestroyImmediate(statusEXGrid.transform.GetChild(0).gameObject);
-        var siex_list = scr_System_CampaignManager.current.DebugMode ? chara.Stats.statusInstancesEx : chara.Stats.statusInstancesEx_Displayable;
-        foreach (var stat in siex_list)
+        foreach (var stat in chara.Stats.statusInstancesEx)
         {
+            if (!debug && !stat.Displayable) continue;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
             stat.Draw(link);
             link.GetComponent<RectTransform>().SetParent(statusEXGrid, false);
@@ -140,9 +142,9 @@ public class initScript_basicInfo : MonoBehaviour
 
         while (statusGrid.transform.childCount > 0) DestroyImmediate(statusGrid.transform.GetChild(0).gameObject);
         //int ii = 0;
-        var si_list = scr_System_CampaignManager.current.DebugMode ? chara.Stats.StatusInstances : chara.Stats.StatusInstances_Displayable;
-        foreach (Status_Instance i in si_list)
+        foreach (Status_Instance i in chara.Stats.StatusInstances)
         {
+            if (!debug && !i.Displayable) continue;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
             
             UI_Utility.Draw(i, link);

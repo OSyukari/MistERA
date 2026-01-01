@@ -7,20 +7,22 @@
                     "ID": "com_interaction_endOngoingSex",
                     "variants": [
             {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
+                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] },
                 "variants":[
                     { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"追加 精液",
+                        "requirement":{
+                            "selfReq":{ "requireConscious":false, "requireAction":false, "requireInflatedBodyTags":["vagina"] }
+                        },
+                        "useActiveTags":false, "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "_comment":"2.1 追加 精液",
                         "responses":
                         [ 
 "$self$翻身时感到一股温热粘稠的液体顺着大腿内侧滑落，这种异样的触感让她在睡梦中不安地蹭了蹭腿，嘴里嘟囔着听不清的梦话，却并不知道那是一大滩浓稠的精液。", "随着$self$的呼吸，从两腿之间溢出的白色浊液已经浸透了身下的床单。她在这个充满石楠花气味的被窝里睡得毫无防备，浑然不知自己体内已经被灌得满满当当。"
-                        ]
+                        ],
+                        "keepLooking": true
                     },
                     { 
-                        "requirement":   {  "requirePermission":true }    ,
+                        "requireSelfStatValue":[ { "statID":"currentClimaxCount","operand":"gte","value":"3" } ],
                         "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
                         "useActiveTags":false,
                         "_comment":"2.1.1 睡眠 满足",
@@ -31,7 +33,7 @@
                     }
                 ],
                 "extraPortraitTags":["sex","receiver","sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.1 睡眠中",
+                "_comment":"2.1.2 睡眠中",
                 "responses":
                 [ 
 "$self$只是皱了皱眉，感觉下半身有些莫名其妙的凉意，下意识地扯过被子盖住了身体。沉重的睡意很快淹没了这点细微的不适，她调整了一个舒服的姿势，呼吸再次变得绵长而均匀。", "$self$在睡梦中无意识地并拢了双腿，眉头微微舒展。刚才那种仿佛有异物入侵的奇怪感觉消失了，取而代之的是一种沉沉的疲惫感，让她根本不想睁开眼睛确认状况。"
@@ -39,121 +41,178 @@
             },
             {
                 "requirement":   { "requireSelfAction":false, "selfTags":["timestop"] }  ,
+                "variants":[
+                    { 
+                        "requirement":{
+                            "selfReq":{ "requireConscious":false, "requireAction":false, "requireInflatedBodyTags":["vagina"] }
+                        },
+                        "useActiveTags":false, "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "_comment":"2.2 追加 精液",
+                        "responses":
+                        [ 
+"在静止的时间里，液体本该停止流动，但$self$的小腹却因为被灌入了过量的异物而微微隆起。在那紧闭的腿根深处，浓稠的白浊已经积蓄到了极限，正无视重力规则地在那紧窄的肉壁间挤压，只等时间流动的那一秒，就会如决堤般从裙底喷涌而出。", "尽管$self$的内裤已经被重新穿好，但布料的纤维已经因吸收了过多满溢的精液而变得半透明。那股湿热沉重的液体填满了她体内的每一寸空隙，沉甸甸地坠在她的耻骨之间，随时准备在时间恢复的瞬间，给她带来一场毁灭性的羞耻洗礼。"
+                        ],
+                        "keepLooking": true
+                    }
+                ],
                 "extraPortraitTags":["sex","receiver"], "useActiveTags":false,
-                "_comment":"2.2 时停中",
+                "_comment":"2.2.1 时停中",
                 "responses":
                 [ 
-                  "com_interaction_endOngoingSex 时停中"  
+"$self$依旧保持着原本的姿势僵立在原地，眼皮都没有眨动一下。然而如果仔细观察，会发现原本整洁的衣领下透出一抹不自然的潮红，胸口的起伏被强行定格，但皮肤表面却覆盖着一层细密的汗珠，仿佛刚刚经历了一场剧烈的运动。", "$self$手中的文件还停留在翻页的那一瞬间，神情专注而平静。唯有她的双腿因为刚才被强行分开太久，此刻即便被摆回了并拢的姿势，肌肉依然处于某种奇怪的僵硬状态，膝盖处有着几道未消退的指痕，在静止的时空里显得触目惊心。", "$self$就像一尊精美的蜡像，连发丝飘动的角度都纹丝未动。但在那看起来毫无破绽的衣物遮蔽下，私处的软肉因为过度摩擦而处于充血肿胀的状态，那里的温度高得吓人，在这凝固的时间里独自滚烫着。"
+                ]
+            },
+            {
+                "requireSelfOnly":true,
+                "variants":[
+                    { 
+                        "requireSelfStatValue":[ { "statID":"currentClimaxCount","operand":"gte","value":"3" } ],
+                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.6.1 自慰 满足",
+                        "responses":
+                        [ 
+"$self$浑身瘫软地躺在床上，手指上还沾着亮晶晶的液体。刚才的高潮来得猛烈而彻底，让她的大脑一片空白。虽然房间里只有她一个人，但那种自我给予的快乐已经足够让她心满意足地睡个好觉。", "$self$抽出玩具扔在一边，大口大口地呼吸着新鲜空气。汗水打湿了她的刘海，她看着天花板，嘴角勾起一抹慵懒的笑。不需要男人，她依然能让自己爽上天。"
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver"], "useActiveTags":false,
+                "_comment":"2.6.2 自慰 不满",
+                "responses":
+                [ 
+"$self$有些烦躁地把手从裙底抽出来，无论怎么弄都差了那么一点感觉。那种空虚感像个无底洞，越是想要填满就越是觉得寂寞。她把脸埋进枕头里，发出了一声挫败的叹息。", "$self$看着自己湿漉漉的手指，心里涌起一股难以言喻的悲哀。仅仅是这种程度的刺激根本无法平息体内的躁动，反而让那种渴望被填满的欲望变得更加强烈。"
                 ]
             },
             {
                 "requirement":{"requireSelfForced":true},
-                "extraPortraitTags":["sex","receiver"], "useActiveTags":false,
-                "_comment":"2.3 无法拒绝",
-                "responses":
-                [ 
-                  "com_interaction_endOngoingSex 无法拒绝"  
-                ]
-            },
-            {   
-                "requireMaster":true,
-                "requireSelfNotMaster": true,
-                "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","receiver","doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.1.2 时停中 口上文",
-                "responses":
-                [ 
-                    
-                ]
-            },
-            {   
-                "requireMaster":true,
-                "requireSelfNotMaster": true,
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[                   
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.3.2 指令失败拒绝 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$轻轻按住了$target$不规矩的手，带着歉意摇了摇头。\"亲爱的，今晚太累了，抱歉。\"","$self$往后缩了缩身子，拉起被子盖住自己。\"今天身体不太舒服……下次好吗？\"","$self$温柔地吻了吻$target$的额头，然后坚决地推开了他。\"不行哦，明天还要早起呢。\"",
-
-"$self$轻轻推了推$target$的胸膛，侧过头避开了亲吻。\"不行，亲爱的，今天真的没心情。\"", "$self$抓住了那只乱动的手，有些歉意地笑了笑。\"改天好吗？我想先好好睡一觉。\"", "$self$叹了口气，把被子拉高盖住自己。\"别闹了……我很累，别逼我发火。\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.4.3 指令失败拒绝 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$尴尬地笑了笑，不动声色地拉开了两人的距离。\"哈哈，$target$你喝多了吧？别开这种玩笑啦。\"","$self$有些困扰地抓了抓头发，语气尽量保持轻松。\"那个……我觉得我们的关系还没到这一步呢。\"","$self$虽然被吓了一跳，但还是礼貌地推开了对方的手。\"抱歉，我只把$target$当朋友看。\"",
-
-"$self$尴尬地向后退了一步，用开玩笑的语气试图缓解气氛。\"喂喂，这个玩笑可开过头了哦，$target$。\"", "$self$礼貌地挡开了伸过来的手，表情变得有些严肃。\"请自重，$target$，我一直把你当朋友。\"", "$self$摇了摇头，坚定地拉开了两人的距离。\"不行，我们不能这样，这对谁都不好。\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.4.4 指令失败拒绝 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$猛地甩开了$target$的手，眼神瞬间冷了下来。\"别碰我！真恶心！\"","$self$厌恶地擦了擦被碰过的地方，像是沾上了什么脏东西。\"你也太自以为是了，离我远点！\"","$self$毫不客气地一巴掌扇了过去，愤怒地瞪着对方。\"你把我当成什么人了？！滚开！\"",
-
-"$self$猛地甩开了$target$的手，眼神里充满了厌恶。\"别碰我！真让人恶心！\"", "$self$冷冷地盯着对方，后退的同时随手抓起了身边的防身物。\"再敢靠近一步，我就报警了。\"", "$self$像是听到了什么荒谬的笑话，发出一声嗤笑。\"你脑子坏了吗？也不照照镜子看看自己是谁。\""
-                 ]
-            },
-            { 
-                "requireMaster":true,
-                "requireSelfNotMaster": true,
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
                 "variants":[
                     { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.3.1 结果正面 有允许 口上文",
+                        "requirement":{
+                            "selfReq":{ "requireConscious":false, "requireAction":false, "requireInflatedBodyTags":["vagina"] }
+                        },
+                        "useActiveTags":false, "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "_comment":"2.3 追加 精液",
                         "responses":
                         [ 
-"$self$脸颊泛红，但眼神却大胆地迎上了$target$的目光。她主动张开双臂，环住了对方的脖子。\"嗯……我已经准备好了，来吧。\"","$self$轻轻咬了一下$target$的耳朵，手指在他的后背游走。\"如果是你的话……无论做什么都可以哦。\"","$self$将身体紧紧贴向$target$，感受着彼此的温度。\"我也……想要你了。\"",
-
-"$self$顺从地躺了下去，双臂自然地环住$target$的脖子，眼神迷离地轻声说：\"轻一点……今天有点累。\"", "$self$主动分开了双腿，用脚背轻轻蹭着$target$的小腿，嘴角带着一丝调皮的笑意。\"还在等什么？嗯？\"", "$self$仰起头迎合着吻，双手急切地去解$target$的扣子，呼吸早已乱了节奏。\"我想你了……快给我。\""
-                        ]
+"$self$绝望地看着对方离开的背影，而自己还得独自处理这满身的狼藉。那个混蛋留在她体内的东西太多了，多到她根本合不拢腿，稍微一动就会有令人作呕的液体涌出来，提醒着她刚才被当作精液容器的事实。", "$self$机械地用纸巾擦拭着大腿，但那源源不断的白浊依然从红肿的穴口溢出。她一边擦一边干呕，那种被彻底填满、弄脏的感觉让她觉得自己从里到外都散发着一股洗不掉的腥臭味。"
+                        ],
+                        "keepLooking": true
                     },
                     { 
-                        "requirement":{"requireSelfForced":true},
+                        "requirement":{
+                            "requireSelfStatValue":[ { "statID":"currentClimaxCount","operand":"gte","value":"3" } ]
+                        },
                         "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
                         "useActiveTags":false,
-                        "_comment":"2.4.2 结果正面 未允许 屈服 口上文",
+                        "_comment":"2.3.1 无法拒绝 满足",
                         "responses":
                         [ 
-"$self$浑身颤抖着缩成一团，眼泪在眼眶里打转，却不敢发出一点声音。\"求求你……轻一点……\"","$self$死死抓着床单，指节因用力而发白。面对无法反抗的暴力，她只能绝望地闭上眼放弃抵抗。\"只要听话……就会结束的吧……\"","$self$咬破了嘴唇，强忍着恶心感张开了双腿。\"我知道了……我会做的，请不要伤害我……\"",
-
-"$self$死死咬着嘴唇，眼眶里蓄满了泪水，颤抖着松开了护在胸前的手，不敢去看$target$那充满侵略性的眼神。", "$self$绝望地闭上了眼睛，身体止不住地发抖，像是一只放弃抵抗的猎物。\"求你……快点结束……\"", "$self$哽咽着点了点头，僵硬地按照命令跪了下去，指甲深深地掐进了掌心里。"
+"$self$瘫软在凌乱的床褥间，眼神空洞地盯着天花板，身体却还在因为刚才的高潮而时不时抽搐一下。泪水早已干涸在眼角，她羞耻地发现，比起被侵犯的恐惧，此刻占据大脑的竟然是那股难以启齿的满足感。", "$self$咬着嘴唇，试图遮掩住喉咙里那声尚未散去的呻吟。尽管理智在尖叫着拒绝，但身体却背叛了意志，在那粗暴的对待下诚实地达到了顶峰。她无力地垂下手，不想去面对这个因为快感而彻底堕落的自己。"
                         ]
                     }
                 ],
-                "_comment":"2.4.1 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","receiver", "blush", "shy", "surprised","happy","aroused"], 
+                "extraPortraitTags":["sex","receiver"], "useActiveTags":false,
+                "_comment":"2.3.2 无法拒绝",
                 "responses":
                 [ 
-"$self$的眼睛惊讶地睁大，身体瞬间僵硬了一下，但并没有推开对方。\"等等……在这里？可是我们……\"","$self$有些手足无措地任由$target$抱住，脸上满是慌乱的红晕，却并没有逃跑的意思。\"这太突然了……我不知道该不该……\"","$self$的声音因为紧张而微微颤抖，但最终还是闭上了眼睛，默许了对方的动作。\"如果是$target$的话……也许……并不讨厌。\"",
-
-"$self$整个人愣住了，眼睛瞪得大大的，身体虽然因为惊讶而僵硬，却并没有推开凑近的$target$。", "$self$的脸瞬间涨得通红，不知所措地抓着衣角，声音细若游蚊：\"在这里……？可是……\"", "$self$有些慌乱地看向四周，在确信没有别人后，半推半就地放松了紧绷的大腿。\"只、只有这一次哦……\""
+"$self$像个破布娃娃一样被扔在一边，身上布满了青紫色的淤痕。那种被当作排泄工具使用的屈辱感让她浑身发抖，下身的撕裂痛楚时刻提醒着她刚才经历了什么，而对方早已提上裤子转身离去。", "$self$蜷缩在角落里，双手死死抱住膝盖。体内没有一丝快感，只有干涩的摩擦带来的火辣痛楚。她把脸埋进膝盖，听着对方整理衣物的声音，感觉自己像是一块被嚼烂后吐掉的口香糖。"
                 ]
             },
             {
-                "useActiveTags":false,
-                "_comment":"2.2.1 独自一人 口上文",
-                "extraPortraitTags":["sex","receiver", "blush", "shy", "surprised","happy","aroused"], 
+                "requirement":  {  "requirePermission":true } ,
+                "variants":[
+                    { 
+                        "requirement":{
+                            "selfReq":{ "requireConscious":false, "requireAction":false, "requireInflatedBodyTags":["vagina"] }
+                        },
+                        "useActiveTags":false, "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "_comment":"2.4 追加 精液",
+                        "responses":
+                        [ 
+"$self$有些苦恼地夹着腿走向浴室，嘴里虽然在抱怨'你怎么弄了这么多在里面啊'，但眉眼间却带着一丝羞涩的笑意。那一地蜿蜒的痕迹不仅没有让她生气，反而成了两人亲密的证明。", "$self$拿过毛巾想要擦拭，却发现那股热流怎么也止不住。'$target$，你这次是不是太夸张了点……'她红着脸嗔怪道，看着那满溢而出的爱液，心里泛起一股奇异的满足感。"
+                        ],
+                        "keepLooking": true
+                    },
+                    { 
+                        "requirement":{
+                            "requireSelfStatusValue": {
+                                "statusID": "chara_status_pain",
+                                "checkSeverityIndex":true , "operand": "gte", "value": 3
+                            }
+                        },
+                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.4.3 合意 疼痛",
+                        "responses":
+                        [ 
+"$self$皱着眉头把$target$伸过来的手拍开，翻身背对着他。'别碰我，疼死了。'她没好气地抱怨道，下身传来的不适感让她此刻心情极差，完全不想理会对方的温存。", "$self$一边穿衣服一边揉着被捏痛的手臂，脸上的表情冷若冰霜。'下次如果是这种水准，就别来找我了。'她冷冷地丢下这句话，径直走出了房间，连头都没回。"
+                        ]
+                    },
+                    { 
+                        "requireSelfStatValue":[ { "statID":"currentClimaxCount","operand":"gte","value":"3" } ],
+                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.4.1 合意 满足",
+                        "responses":
+                        [ 
+"$self$懒洋洋地趴在$target$的胸口，手指在对方的锁骨上画着圈。刚刚那场激烈的欢爱耗尽了她所有的力气，现在的她只想在这温暖的怀抱里多赖一会儿，享受这份身心交融后的宁静余韵。", "$self$在$target$穿衣服的时候从背后抱住了对方，脸颊贴在那宽阔的背上蹭了蹭。'下次还要这么用力哦……'她小声嘟囔着，语气里满是撒娇和依恋，显然对刚才的表现食髓知味。"
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver"], "useActiveTags":false,
+                "_comment":"2.4.2 合意 欲望",
                 "responses":
                 [ 
-"$self$咬着下唇，一只手难以忍受般地探入了自己的腿间。伴随着急促的喘息，指尖触碰到了那片湿润的软肉。\"哈……怎么会这么想要……\"","$self$眼神迷离地靠在墙角，双手不受控制地揉捏着自己的胸部。那是只有在深夜才会展露出的、被欲望折磨的姿态。",
-"$self$难耐地咬着下唇，手指颤抖着探入了湿热的腿间，指尖触碰到那一点的瞬间，喉咙里溢出了一声压抑的低喘。", "$self$有些焦躁地并在床上磨蹭着双腿，最终还是输给了身体深处的空虚，手缓缓伸向了床头柜里的那个小道具。", "$self$看着镜子里满脸潮红的自己，羞耻地闭上眼，另一只手却诚实地揉上了胸前已经挺立的红豆。"
+"$self$看着已经在穿裤子的$target$，有些失落地抿了抿嘴。身体里的火还没完全熄灭，对方却已经结束了。她只能默默地拉过被子盖住自己，心里盘算着等会儿是不是该去浴室自己解决一下。", "$self$轻轻叹了口气，虽然嘴上说着'辛苦了'，但眼神却依然有些幽怨地飘向$target$的下半身。那种不上不下的感觉实在太难受了，让她在这一刻对枕边人产生了一丝微妙的嫌弃。"
                 ]
-
+            },
+            {
+                "requirement":  {  "requirePermission":true } ,
+                "variants":[
+                    { 
+                        "requirement":{
+                            "selfReq":{ "requireConscious":false, "requireAction":false, "requireInflatedBodyTags":["vagina"] }
+                        },
+                        "useActiveTags":false, "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "_comment":"2.5 追加 精液",
+                        "responses":
+                        [ 
+"$self$惊恐地发现即使穿好了内裤，那黏腻的感觉依然存在。这下麻烦大了，要是被别人发现她带着这种东西去上班……她焦急地在洗手间里处理着，心里把那个不知节制的家伙骂了一万遍。", "$self$感觉那股热流顺着大腿流了下来，差点弄脏了她的职业装。'你是疯了吗？射在里面让我怎么清理！'她压低声音怒吼道，对于这种可能留下证据的行为感到异常愤怒和恐慌。"
+                        ],
+                        "keepLooking": true
+                    },
+                    { 
+                        "requirement":{
+                            "requireSelfStatusValue": {
+                                "statusID": "chara_status_pain",
+                                "checkSeverityIndex":true , "operand": "gte", "value": 3
+                            }
+                        },
+                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.5.3 无合意 疼痛",
+                        "responses":
+                        [ 
+"$self$狠狠地瞪了$target$一眼，用力擦了擦嘴角。'简直是灾难。'她低声咒骂了一句，对自己竟然同意和这种人发生关系感到无比恶心和后悔。现在的她只想赶紧回家洗个澡，把这糟糕的记忆冲刷干净。", "$self$面无表情地穿上外套，眼神里满是轻蔑。'作为同事你很优秀，但在这方面……以后还是保持距离吧。'她毫不留情地给出了差评，那种冷漠的态度瞬间拉开了两人的距离。"
+                        ]
+                    },
+                    { 
+                        "requireSelfStatValue":[ { "statID":"currentClimaxCount","operand":"gte","value":"3" } ],
+                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
+                        "useActiveTags":false,
+                        "_comment":"2.5.1 无合意 满足",
+                        "responses":
+                        [ 
+"$self$有些慌乱地整理着凌乱的衣领，脸上还带着尚未褪去的潮红。哪怕心里知道这不对，但刚才那种背德的快感确实让她爽到了极点。她不敢看$target$的眼睛，只能低头匆匆说了句'忘掉刚才的事'。", "$self$背靠着门板大口喘息，试图平复剧烈的心跳。这次越界的行为意外地合拍，让她在事后的贤者时间里既感到后悔，又隐隐期待着下一次的错误。"
+                        ]
+                    }
+                ],
+                "extraPortraitTags":["sex","receiver"], "useActiveTags":false,
+                "_comment":"2.5.2 无合意 欲望",
+                "responses":
+                [ 
+"$self$迅速地扣好扣子，脸上恢复了平时的冷淡。既然只是一次意外的冲动，没爽到也就没必要纠缠。她像没事人一样整理好裙摆，仿佛刚才那个赤身裸体的人根本不是她。'以后别再提这件事了。'", "$self$有些尴尬地避开了$target$的视线，空气中弥漫着一种说不出的别扭。既然双方都没有得到想要的结果，那这场荒唐的闹剧就该到此为止。她拿起包，头也不回地离开了现场。"
+                ]
             }
                        
                        

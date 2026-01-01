@@ -162,10 +162,8 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
             {
                 scr_System_CampaignManager.current.ChangeCurrentTarget(chara_refID);
             }
-            else if (!scr_System_CampaignManager.current.displaySex)
-            {
-                scr_System_CampaignManager.current.ChangeCurrentTarget(0);
-            }           
+            else  scr_System_CampaignManager.current.ChangeCurrentTarget(0);
+                    
         }
     }
 
