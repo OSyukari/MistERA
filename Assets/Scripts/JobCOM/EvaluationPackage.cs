@@ -852,7 +852,7 @@ public class EvaluationPackage
             }
 
             //apply results later cuz results require COM attitude end
-            if (response >= Memory_Response.Success)
+            if (response == Memory_Response.Accept || response >= Memory_Response.Success)
             {
                 if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer, m.exp);
                 if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver, m.exp);

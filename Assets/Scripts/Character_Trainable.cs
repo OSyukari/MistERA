@@ -1936,7 +1936,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             var contentrefs = new List<Item_Instance>( Inventory.Contents );
             foreach (var refere in contentrefs)
             {
-                Reequip(refere, layer);
+                if (refere.Equippable) Reequip(refere, layer);
             }
         }
     }

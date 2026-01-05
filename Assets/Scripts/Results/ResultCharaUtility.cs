@@ -57,6 +57,7 @@ public static class ResultCharaUtility
                 if (log != null && i != 0) log.AddStats(c.RefID, "stats_derived_extended_mp", i);
                 break;
             case CharaResultType.redress:
+                Debug.Log($"{c.FirstName} redress");
                 c.Redress();
                 break;
             default: break;
