@@ -394,9 +394,9 @@ public class scr_System_CentralControl : MonoBehaviour
 
     public bool isFemale(CharaTemplate c)
     {
-        if (isSafeMode) return false;
+        if (isSafeMode || ContentSetting == null) return false;
         // template calls should never be executed when safemode -> this whole menu shouldnt show at all
-
+        Debug.Log($"{c}");
         bool cond1 = (ContentSetting.Female_Appearance == Gender_App_Condition.female_only && c.Appearance == Humanoid_GenderAppearance.Female)
     || (ContentSetting.Female_Appearance == Gender_App_Condition.female_or_ambi && c.Appearance != Humanoid_GenderAppearance.Male)
     || (ContentSetting.Female_Appearance == Gender_App_Condition.dont_care);
@@ -865,7 +865,6 @@ public class BoolSetting
 }
 
 
-[System.Serializable]
 public class EnumSetting
 {
     public int enumValue;

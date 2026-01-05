@@ -132,9 +132,9 @@
 
                 
                 "Self": "Self",
-                "Male": "Male",
-                "Female": "Female",
-                "Ambiguous": "Ambiguous",
+                "Male": "Male Gender",
+                "Female": "Female Gender",
+                "Ambiguous": "Ambiguous Gender",
                 "humanRace_human": "Human",
                 "humanRace_elf": "Elf",
                 "humanRace_angel": "Angel",

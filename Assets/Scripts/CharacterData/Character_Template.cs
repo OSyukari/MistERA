@@ -165,7 +165,7 @@ public class CharaSerializableTemplate_Trainable : CharaSerializableTemplate_Bas
 }
 
 
-
+[System.Serializable]
 public abstract class CharaTemplate
 {
     public List<Skills> Skills = new List<Skills>();
@@ -274,6 +274,7 @@ public class CharaSafeTemplate : CharaTemplate
     [JsonIgnore] public override Traits Size_A { get { return null; } set { return; } }
 }
 
+[System.Serializable]
 public class CharaTrainableTemplate : CharaTemplate
 { 
 
@@ -281,16 +282,16 @@ public class CharaTrainableTemplate : CharaTemplate
 
     public Character_BodyType BodyType = Character_BodyType.Default;
 
-    [JsonProperty] private string sensitivity_B = "trait_Sensitivity_B_default";
-    [JsonProperty] private string sensitivity_M = "trait_Sensitivity_M_default";
-    [JsonProperty] private string sensitivity_C = "trait_Sensitivity_C_default";
-    [JsonProperty] private string sensitivity_V = "trait_Sensitivity_V_default";
-    [JsonProperty] private string sensitivity_A = "trait_Sensitivity_A_default";
+    [JsonProperty] public string sensitivity_B = "trait_Sensitivity_B_default";
+    [JsonProperty] public string sensitivity_M = "trait_Sensitivity_M_default";
+    [JsonProperty] public string sensitivity_C = "trait_Sensitivity_C_default";
+    [JsonProperty] public string sensitivity_V = "trait_Sensitivity_V_default";
+    [JsonProperty] public string sensitivity_A = "trait_Sensitivity_A_default";
 
-    [JsonProperty] private string size_B = "trait_Size_B_none";
-    [JsonProperty] private string size_P = "trait_Size_P_none";
-    [JsonProperty] private string size_V = "trait_Size_V_none";
-    [JsonProperty] private string size_A = "trait_Size_A_none";
+    [JsonProperty] public string size_B = "trait_Size_B_none";
+    [JsonProperty] public string size_P = "trait_Size_P_none";
+    [JsonProperty] public string size_V = "trait_Size_V_none";
+    [JsonProperty] public string size_A = "trait_Size_A_none";
 
     public override void SetGender(Humanoid_GenderAppearance gender)
     {
