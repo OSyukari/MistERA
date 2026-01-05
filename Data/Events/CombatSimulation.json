@@ -29,13 +29,13 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_hasTeam",
-                        "line": "$self.name$ starts combat training with $teammates.name$",
+                        "line": "CombatSimulation_event_ev01",
                         "nextEntryLabel":"end"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_solo",
-                        "line": "$self.name$ starts combat training",
+                        "line": "CombatSimulation_event_ev02",
                         "nextEntryLabel":"end"
                     },
                     {
@@ -59,7 +59,15 @@
         {
             "zh-cn":
             {
-
+"CombatSimulation":"战斗模拟",
+"CombatSimulation_event_ev01":"$self.name$与$teammates.name$一同开始模拟战斗",
+"CombatSimulation_event_ev02":"$self.name$开始模拟战斗"
+            },
+            "en-us":
+            {
+"CombatSimulation":"Combat Simulation",
+"CombatSimulation_event_ev01":"$self.name$ starts combat training with $teammates.name$",
+"CombatSimulation_event_ev02":"$self.name$ starts combat training"
             }
         }
     }

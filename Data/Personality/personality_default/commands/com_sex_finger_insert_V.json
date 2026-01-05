@@ -1,252 +1,536 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_finger_insert_V_Climax",
-        "tags":["nsfw"],
-        "variants":[
+    "Character_Personalities": {
+        "looselist": [
             {
-                
-                "requireSelfDoer": true,
-                "_comment":"攻方 V指入 高潮" ,
-                "responses": [
-                    "($self$) V指入 高潮 口上文"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_insert_V_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "攻方 V指入 高潮",
+                            "responses": [
+                                "com_sex_finger_insert_V_Climax_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "climax"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 受方 被V指入 高潮 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_Climax_2",
+                                        "com_sex_finger_insert_V_Climax_3"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 受方 被V指入 高潮 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_V_Climax_4",
+                                "com_sex_finger_insert_V_Climax_5"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                
-                "requireSelfReceiver": true,
-                "variants":[
-                    {
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver","fingering","spread_pussy", "climax"], "useActiveTags":false,
-                        "_comment":"2.4.1 受方 被V指入 高潮 有允许 口上文" ,
-                        "responses": [
-"$self$猛地弓起身体，十指紧紧抓住了床单，高昂着头颅尖叫：\"啊——！！去了！！要坏掉了！！亲爱的……哈啊……♡\"", "$self$全身剧烈痉挛，阴道死死咬住了手指，大量爱液喷涌而出：\"不行了……太深了……脑子一片空白……爱你……最喜欢你了……♡\""
-                        ]
-                    }
-                ],
-                "extraPortraitTags":["sex","receiver","fingering","spread_pussy", "climax"], "useActiveTags":false,
-                "_comment":"2.4.2 受方 被V指入 高潮 无允许 口上文" ,
-                "responses": [
-"$self$哭喊着试图摇头，但身体却诚实地达到了顶峰：\"不要……不要看！！呜呜……竟然被这种事……去……去了啊啊啊！！\"", "$self$咬住嘴唇直到出血，却无法阻止身体剧烈的抽搐和快感的浪潮：\"明明不想的……不可以舒服……啊……啊啊啊！！（眼神失焦，彻底崩溃）\""
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_finger_insert_V_Begin",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":["sex","receiver","fingering","spread_pussy", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始被V指入 有允许 口上文" ,
-                "responses":
-                [ 
-"$self$顺从地张开了双腿，脸上泛起红晕，轻声说道：\"如果是$target$的话……没关系的，进来吧。\"", "$self$主动握住$target$的手腕，引导着手指滑向自己湿润的腿间：\"我也……一直在等你做这种事呢。\""
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_insert_V_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始被V指入 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_V_Begin_1",
+                                "com_sex_finger_insert_V_Begin_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始被V指入 未允许 好意 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_V_Begin_3",
+                                "com_sex_finger_insert_V_Begin_4"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始被V指入 未允许 敌意 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_V_Begin_5",
+                                "com_sex_finger_insert_V_Begin_6"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":["sex","receiver","fingering","spread_pussy", "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始被V指入 未允许 好意 口上文" ,
-                "responses":
-                [ 
-"$self$浑身僵硬了一下，难以置信地看着$target$：\"等、等一下……我们在做什么……？\"", "$self$完全没反应过来，直到异物感传来才发出一声短促的惊呼：\"啊！你怎么突然……这、这太奇怪了……\""
-                ]
-            },
-            {
-                
-                "extraPortraitTags":["sex","receiver","fingering","spread_pussy", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
-                "_comment":"2.2.2 开始被V指入 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-"$self$咬着嘴唇，身体在微微颤抖，却不敢反抗：\"如果不反抗的话……你就会快点结束吗？\"", "$self$紧闭着双眼，眼角渗出泪花，声音带着哭腔：\"求你了……轻一点……不要弄坏我……\""
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_finger_insert_V",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sex","receiver","fingering","spread_pussy","sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 被V指入 口上文",
-                "responses":
-                [ 
-"$self$在睡梦中皱了皱眉，发出一声无意识的嘤咛，身体本能地夹紧了手指。", "$self$呼吸变得稍微急促了一些，脸颊泛红，腰部随着手指的动作微微摆动，似乎正在做一个旖旎的梦。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","receiver","fingering","spread_pussy","doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 被V指入 口上文",
-                "responses":
-                [ 
-"（$self$保持着静止的姿态，只有下体随着手指的抽插泛起淫靡的水声）", "（没有任何反应，身体像是一个精致的人偶，任由手指在体内翻搅，原本紧致的肉壁被动地接纳着入侵）"
-
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[
-                    {
-                        "requirement":  { "selfTags":["justWokenUp"] } ,
-                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                        "variants":[
-                            {
-                                "requirement":  {  "requirePermission":true } ,
-                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 被V指入 口上文 有允许",
-                                "responses":
-                                [ 
-"$self$不满地翻了个身，夹紧双腿把手指挤了出去：\"好困……别闹了……明天再说……\"", "$self$迷茫地揉了揉眼睛，随即有些生气地拍开了那只手：\"让人好好睡觉啦！真是的！\""
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_insert_V",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
                                 ]
-
-                            }
-                        ],
-                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 被V指入 口上文 无允许",
-                        "responses":
-                        [ 
-"$self$发出一声尖叫，本能地一脚踹向$target$：\"滚开！变态！你在干什么？！\"", "$self$惊慌失措地向后退缩，抓起枕头砸了过去：\"出去！马上给我出去！！\""
-
-                        ]
-                    },
-                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 被V指入 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$轻轻合拢双腿，挡住了$target$的手，带着歉意笑了笑：\"抱歉，今天身体不太舒服，下次好吗？\"", "$self$抓住那只作乱的手，放在嘴边亲了一下：\"不是不想……只是现在有点累了，饶了我吧？\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 被V指入 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$尴尬地抓住了$target$的手腕，强行将其拉开：\"哈哈哈，这个玩笑有点过头了哦，$target$。\"", "$self$向后退了一步，整理了一下裙摆：\"如果是恶作剧的话，我会生气的哦。我们是朋友吧？\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 被V指入 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$猛地甩了一巴掌过去，眼神冰冷：\"别碰我！真让人恶心！\"", "$self$用力推开$target$，满脸厌恶地擦拭着被碰过的地方：\"你疯了吗？如果你再敢乱来，我就报警了！\""
-                 ]
-            },
-            {
-
-                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
-                "_comment1":"玩家专用 刚睡醒时的 V指入口上文",
-                "variants":[
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":["sex","receiver","fingering","spread_pussy","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 被V指入 有允许 口上文",
-                        "responses":[
-"$self$迷迷糊糊地睁开眼，感觉到体内的异物后反而放松了身体：\"嗯……坏心眼……趁人家睡觉的时候……\"", "$self$发出一声软糯的鼻音，在此闭上眼享受起来：\"呼……是$target$啊……随你喜欢吧……\""
-                        ]
-
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":["sex","receiver","fingering","spread_pussy","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 被V指入 无允许 好意 口上文",
-                        "responses":[
-"$self$惊醒过来，发现现状后并没有推开，而是羞耻地捂住了脸：\"天哪……怎么会变成这样……但是……不讨厌……\"", "$self$喘息着看着$target$，眼神复杂：\"竟然趁我睡着……你这家伙……算了，继续吧。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.8 玩家专用 刚睡醒时的 被V指入 无允许 敌意 口上文",
-                "extraPortraitTags":["sex","receiver","fingering","spread_pussy","scared","submissive"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$醒来后发现被侵犯，刚想尖叫却被恐惧扼住了喉咙：\"呜……！！（身体僵硬不敢动弹）\"", "$self$惊恐地看着$target$，眼泪无声地流了下来，放弃了挣扎。"
-                ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver","fingering","spread_pussy", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 被V指入 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$的呼吸变得急促，腰肢开始无意识地配合手指的抽插扭动：\"哈啊……那里……好舒服……再深一点……\"", "$self$双眼迷离地看着$target$，双腿缠上了对方的腰：\"嗯……指技变得越来越好了呢……我有感觉了……\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 被V指入 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","receiver","fingering","spread_pussy", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$咬着手背试图压抑声音，但眼神已经开始涣散：\"不……不可以……这种感觉……呜……\"", "$self$原本推拒的双手无力地抓住了$target$的衣服，脸颊通红：\"明明不应该这样的……为什么身体……变热了……\""
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver","fingering","spread_pussy", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 被V指入 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$看着天花板叹了口气，身体有些僵硬：\"是不是没有找对位置？感觉有点干涩……\"", "$self$皱了皱眉，轻轻推了一下$target$的手臂：\"有点痛……今天就到这里吧，好吗？\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 被V指入 结果负面 未允许 口上文",
-                "extraPortraitTags":["sex","receiver","fingering","spread_pussy", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$痛苦地蜷缩起身体，指甲深深陷入掌心：\"好痛……停下来……求求你停下来……\"", "$self$眼神空洞地望着虚空，仿佛灵魂已经抽离：\"快点结束吧……随便怎样都好……\""
-                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 被V指入 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_V_1",
+                                "com_sex_finger_insert_V_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 被V指入 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_V_3",
+                                "com_sex_finger_insert_V_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被V指入 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_finger_insert_V_5",
+                                                "com_sex_finger_insert_V_6"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被V指入 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_7",
+                                        "com_sex_finger_insert_V_8"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被V指入 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_9",
+                                        "com_sex_finger_insert_V_10"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被V指入 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_11",
+                                        "com_sex_finger_insert_V_12"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被V指入 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_insert_V_13",
+                                "com_sex_finger_insert_V_14"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment1": "玩家专用 刚睡醒时的 V指入口上文",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被V指入 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_15",
+                                        "com_sex_finger_insert_V_16"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被V指入 无允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_17",
+                                        "com_sex_finger_insert_V_18"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被V指入 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "scared",
+                                "submissive"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_insert_V_19",
+                                "com_sex_finger_insert_V_20"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 被V指入 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_21",
+                                        "com_sex_finger_insert_V_22"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被V指入 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_finger_insert_V_23",
+                                "com_sex_finger_insert_V_24"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 被V指入 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_25",
+                                        "com_sex_finger_insert_V_26"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 被V指入 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_insert_V_27",
+                                "com_sex_finger_insert_V_28"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_finger_insert_V_Climax_1": "($self$) V指入 高潮 口上文",
+                "com_sex_finger_insert_V_Climax_2": "$self$猛地弓起身体，十指死死抓紧床单，高昂着头颅尖叫道：\"啊——！！去了！！要坏掉了！！亲爱的……哈啊……♡\"",
+                "com_sex_finger_insert_V_Climax_3": "$self$全身剧烈痉挛，阴道死死咬住了手指，大量爱液喷涌而出：\"不行了……太深了……脑子里一片空白……爱你……最喜欢你了……♡\"",
+                "com_sex_finger_insert_V_Climax_4": "$self$哭喊着试图摇头，但身体却诚实地达到了顶峰：\"不要……不要看！！呜呜……竟然被做这种事……去……去了啊啊啊！！\"",
+                "com_sex_finger_insert_V_Climax_5": "$self$咬住嘴唇直到出血，却无法阻止身体剧烈的抽搐和快感的浪潮：\"明明不想的……不可以舒服……啊……啊啊啊！！（眼神失焦，彻底崩溃）\"",
+                "com_sex_finger_insert_V_Begin_1": "$self$顺从地张开了双腿，脸上泛起红晕，轻声说道：\"如果是$target$的话……没关系的，进来吧。\"",
+                "com_sex_finger_insert_V_Begin_2": "$self$主动握住$target$的手腕，引导着手指滑向自己湿润的腿间：\"我也……一直在等你做这种事呢。\"",
+                "com_sex_finger_insert_V_Begin_3": "$self$浑身僵硬了一下，难以置信地看着$target$：\"等、等一下……我们在做什么……？\"",
+                "com_sex_finger_insert_V_Begin_4": "$self$完全没反应过来，直到异物感传来才发出一声短促的惊呼：\"啊！你怎么突然……这、这太奇怪了……\"",
+                "com_sex_finger_insert_V_Begin_5": "$self$咬着嘴唇，身体在微微颤抖，却不敢反抗：\"如果不反抗的话……你就会快点结束吗？\"",
+                "com_sex_finger_insert_V_Begin_6": "$self$紧闭着双眼，眼角渗出泪花，声音带着哭腔：\"求你了……轻一点……不要弄坏我……\"",
+                "com_sex_finger_insert_V_1": "$self$在睡梦中皱了皱眉，发出一声无意识的嘤咛，身体本能地夹紧了入侵的手指。",
+                "com_sex_finger_insert_V_2": "$self$呼吸变得稍微急促了一些，脸颊泛红，腰部随着手指的动作微微摆动，似乎正在做一个旖旎的梦。",
+                "com_sex_finger_insert_V_3": "（$self$保持着静止的姿态，只有下体随着手指的抽插泛起淫靡的水声）",
+                "com_sex_finger_insert_V_4": "（没有任何反应，身体像是一个精致的人偶，任由手指在体内翻搅，原本紧致的肉壁被动地接纳着入侵）",
+                "com_sex_finger_insert_V_5": "$self$不满地翻了个身，夹紧双腿把手指挤了出去：\"好困……别闹了……明天再说……\"",
+                "com_sex_finger_insert_V_6": "$self$迷茫地揉了揉眼睛，随即有些生气地拍开了那只手：\"让人好好睡觉啦！真是的！\"",
+                "com_sex_finger_insert_V_7": "$self$发出一声尖叫，本能地一脚踹向$target$：\"滚开！变态！你在干什么？！\"",
+                "com_sex_finger_insert_V_8": "$self$惊慌失措地向后退缩，抓起枕头砸了过去：\"出去！马上给我出去！！\"",
+                "com_sex_finger_insert_V_9": "$self$轻轻合拢双腿，挡住了$target$的手，带着歉意笑了笑：\"抱歉，今天身体不太舒服，下次好吗？\"",
+                "com_sex_finger_insert_V_10": "$self$抓住那只作乱的手，放在嘴边亲了一下：\"不是不想……只是现在有点累了，饶了我吧？\"",
+                "com_sex_finger_insert_V_11": "$self$尴尬地抓住了$target$的手腕，强行将其拉开：\"哈哈哈，这个玩笑有点过头了哦，$target$。\"",
+                "com_sex_finger_insert_V_12": "$self$向后退了一步，整理了一下裙摆：\"如果是恶作剧的话，我会生气的哦。我们是朋友吧？\"",
+                "com_sex_finger_insert_V_13": "$self$猛地甩了一巴掌过去，眼神冰冷：\"别碰我！真让人恶心！\"",
+                "com_sex_finger_insert_V_14": "$self$用力推开$target$，满脸厌恶地擦拭着被碰过的地方：\"你疯了吗？如果你再敢乱来，我就报警了！\"",
+                "com_sex_finger_insert_V_15": "$self$迷迷糊糊地睁开眼，感觉到体内的异物后反而放松了身体：\"嗯……坏心眼……趁人家睡觉的时候……\"",
+                "com_sex_finger_insert_V_16": "$self$发出一声软糯的鼻音，再次闭上眼享受起来：\"呼……是$target$啊……随你喜欢吧……\"",
+                "com_sex_finger_insert_V_17": "$self$惊醒过来，发现现状后并没有推开，而是羞耻地捂住了脸：\"天哪……怎么会变成这样……但是……不讨厌……\"",
+                "com_sex_finger_insert_V_18": "$self$喘息着看着$target$，眼神复杂：\"竟然趁我睡着……你这家伙……算了，继续吧。\"",
+                "com_sex_finger_insert_V_19": "$self$醒来后发现被侵犯，刚想尖叫却被恐惧扼住了喉咙：\"呜……！！（身体僵硬不敢动弹）\"",
+                "com_sex_finger_insert_V_20": "$self$惊恐地看着$target$，眼泪无声地流了下来，放弃了挣扎。",
+                "com_sex_finger_insert_V_21": "$self$的呼吸变得急促，腰肢开始无意识地配合手指的抽插扭动：\"哈啊……那里……好舒服……再深一点……\"",
+                "com_sex_finger_insert_V_22": "$self$双眼迷离地看着$target$，双腿缠上了对方的腰：\"嗯……指技变得越来越好了呢……我有感觉了……\"",
+                "com_sex_finger_insert_V_23": "$self$咬着手背试图压抑声音，但眼神已经开始涣散：\"不……不可以……这种感觉……呜……\"",
+                "com_sex_finger_insert_V_24": "$self$原本推拒的双手无力地抓住了$target$的衣服，脸颊通红：\"明明不应该这样的……为什么身体……变热了……\"",
+                "com_sex_finger_insert_V_25": "$self$看着天花板叹了口气，身体有些僵硬：\"是不是没有找对位置？感觉有点干涩……\"",
+                "com_sex_finger_insert_V_26": "$self$皱了皱眉，轻轻推了一下$target$的手臂：\"有点痛……今天就到这里吧，好吗？\"",
+                "com_sex_finger_insert_V_27": "$self$痛苦地蜷缩起身体，指甲深深陷入掌心：\"好痛……停下来……求求你停下来……\"",
+                "com_sex_finger_insert_V_28": "$self$眼神空洞地望着虚空，仿佛灵魂已经抽离：\"快点结束吧……随便怎样都好……\""
+            },
+            "en-us": {
+                "com_sex_finger_insert_V_Climax_1": "($self$) Fingering vaginal climax dialogue",
+                "com_sex_finger_insert_V_Climax_2": "$self$ arched her back abruptly, gripping the sheets tightly, screaming with her head thrown back: \"Ah—!! I'm coming!! I'm going to break!! Darling... Haaah...♡\"",
+                "com_sex_finger_insert_V_Climax_3": "$self$'s body convulsed violently, her pussy clamping down on your fingers as love juices gushed out: \"No more... too deep... my mind is going blank... I love you... I love you so much...♡\"",
+                "com_sex_finger_insert_V_Climax_4": "$self$ cried out, trying to shake her head, but her body honestly reached its peak: \"No... don't look!! Uuu... to be doing this... I'm... coming ahhh!!\"",
+                "com_sex_finger_insert_V_Climax_5": "$self$ bit her lip until it bled, unable to stop the violent spasms and waves of pleasure: \"I didn't want this... I shouldn't feel good... Ah... Ahhh!! (Eyes losing focus, completely broken)\"",
+                "com_sex_finger_insert_V_Begin_1": "$self$ obediently spread her legs, blushing, and whispered: \"If it's you, $target$... it's okay. Come inside.\"",
+                "com_sex_finger_insert_V_Begin_2": "$self$ actively took your wrist, guiding your fingers to her wet crotch: \"I've been... waiting for you to do this too.\"",
+                "com_sex_finger_insert_V_Begin_3": "$self$ stiffened, looking at you in disbelief: \"W-wait... what are we doing...?\"",
+                "com_sex_finger_insert_V_Begin_4": "$self$ didn't react at all until she felt the intrusion, letting out a short gasp: \"Ah! Why are you suddenly... T-this is too weird...\"",
+                "com_sex_finger_insert_V_Begin_5": "$self$ bit her lip, body trembling slightly, daring not to resist: \"If I don't resist... will you finish quickly?\"",
+                "com_sex_finger_insert_V_Begin_6": "$self$ squeezed her eyes shut, tears leaking from the corners, her voice sobbing: \"Please... be gentle... don't break me...\"",
+                "com_sex_finger_insert_V_1": "$self$ frowned in her sleep, letting out an unconscious moan as her body instinctively clamped around the intruding fingers.",
+                "com_sex_finger_insert_V_2": "$self$'s breathing quickened slightly, cheeks flushing, hips swaying gently with the movement of your fingers, seemingly having a lewd dream.",
+                "com_sex_finger_insert_V_3": "($self$ remains motionless, only the wet sounds from her lower body echoing as your fingers thrust in and out)",
+                "com_sex_finger_insert_V_4": "(No reaction at all, her body like an exquisite doll, allowing your fingers to churn inside, the originally tight walls passively accepting the invasion)",
+                "com_sex_finger_insert_V_5": "$self$ rolled over in dissatisfaction, squeezing her legs to push your fingers out: \"So sleepy... stop it... let's do it tomorrow...\"",
+                "com_sex_finger_insert_V_6": "$self$ rubbed her eyes in confusion, then slapped your hand away angrily: \"Let me sleep properly! Seriously!\"",
+                "com_sex_finger_insert_V_7": "$self$ screamed, instinctively kicking at you: \"Get away! Pervert! What are you doing?!\"",
+                "com_sex_finger_insert_V_8": "$self$ backed away in panic, grabbing a pillow and throwing it at you: \"Get out! Get out right now!!\"",
+                "com_sex_finger_insert_V_9": "$self$ gently closed her legs, blocking your hand, smiling apologetically: \"Sorry, I'm not feeling well today. Next time, okay?\"",
+                "com_sex_finger_insert_V_10": "$self$ grabbed your wandering hand and kissed it: \"It's not that I don't want to... I'm just a bit tired. Let me off the hook?\"",
+                "com_sex_finger_insert_V_11": "$self$ awkwardly grabbed your wrist, pulling it away: \"Hahaha, this joke is going a bit too far, $target$.\"",
+                "com_sex_finger_insert_V_12": "$self$ stepped back, adjusting her skirt: \"If this is a prank, I'm going to get angry. We're friends, right?\"",
+                "com_sex_finger_insert_V_13": "$self$ slapped you fiercely, eyes cold: \"Don't touch me! Disgusting!\"",
+                "com_sex_finger_insert_V_14": "$self$ pushed you away forcefully, wiping the spot you touched with disgust: \"Are you crazy? If you dare do that again, I'm calling the police!\"",
+                "com_sex_finger_insert_V_15": "$self$ opened her eyes groggily, relaxing her body upon feeling the intrusion: \"Mmm... so mean... doing this while people are sleeping...\"",
+                "com_sex_finger_insert_V_16": "$self$ let out a soft nasal sound, closing her eyes again to enjoy it: \"Haa... it's just you, $target$... do whatever you like...\"",
+                "com_sex_finger_insert_V_17": "$self$ woke up with a start, realizing the situation but not pushing you away, covering her face in shame: \"Oh god... how did it come to this... but... I don't hate it...\"",
+                "com_sex_finger_insert_V_18": "$self$ gasped, looking at you with complicated eyes: \"Taking advantage while I was asleep... you jerk... whatever, keep going.\"",
+                "com_sex_finger_insert_V_19": "$self$ woke up to find herself being violated, fear choking her scream: \"Ugh...!! (Body stiffens, daring not to move)\"",
+                "com_sex_finger_insert_V_20": "$self$ looked at you in terror, tears flowing silently, giving up the struggle.",
+                "com_sex_finger_insert_V_21": "$self$'s breathing became rapid, waist unconsciously twisting to match the thrusting of your fingers: \"Haa... right there... feels so good... deeper...\"",
+                "com_sex_finger_insert_V_22": "$self$ looked at you with glazed eyes, wrapping her legs around your waist: \"Mmm... your finger skills are getting better... I'm feeling it...\"",
+                "com_sex_finger_insert_V_23": "$self$ bit the back of her hand trying to suppress the sound, but her eyes began to lose focus: \"N-no... can't... this feeling... ugh...\"",
+                "com_sex_finger_insert_V_24": "$self$'s pushing hands weakly grabbed your clothes, cheeks flushed: \"It shouldn't be like this... why is my body... getting hot...\"",
+                "com_sex_finger_insert_V_25": "$self$ sighed looking at the ceiling, body somewhat stiff: \"Did you miss the spot? It feels a bit dry...\"",
+                "com_sex_finger_insert_V_26": "$self$ frowned, gently pushing your arm: \"It hurts a bit... let's stop here for today, okay?\"",
+                "com_sex_finger_insert_V_27": "$self$ curled up in pain, nails digging deep into her palms: \"It hurts... stop... please stop...\"",
+                "com_sex_finger_insert_V_28": "$self$ stared blankly into the void, as if her soul had detached: \"Just finish quickly... whatever...\""
+            }
         }
     }
 }

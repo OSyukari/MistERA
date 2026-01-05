@@ -67,8 +67,8 @@
                         }
                     ]
                 },
-                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始睡觉"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在睡觉"]}], "keepLooking":false }
+                "description_begin":{ "Entries":[{"texts":["com_furniture_sleep_description_begin_1"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_sleep_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_takingBreak",
@@ -131,8 +131,8 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始休息"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在休息"]}], "keepLooking":false }
+                "description_begin":{ "Entries":[{"texts":["com_furniture_takingBreak_description_begin_1"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takingBreak_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_takingLongBreak",
@@ -205,8 +205,8 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始休息"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在休息"]}], "keepLooking":false }
+                "description_begin":{ "Entries":[{"texts":["com_furniture_takingBreak_description_begin_1"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takingBreak_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_playVideoGames",
@@ -279,8 +279,8 @@
                     "baseAcceptanceValue": 5
                 },
                 "DifficultyCheck":{ "baseD20Check":10 },
-                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始玩游戏"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在玩游戏"]}], "keepLooking":false }
+                "description_begin":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_begin_1"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_watchVideo",
@@ -353,8 +353,8 @@
                     "baseAcceptanceValue": 5
                 },
                 "DifficultyCheck":{ "baseD20Check":5 },
-                "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "$doer.firstname$开始看电视" ] } ] },
-                "description_ongoing":{ "Entries":[ { "texts":["$doer.firstname$正在看电视"]}], "keepLooking":false }
+                "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "com_furniture_watchVideo_description_begin_1" ] } ] },
+                "description_ongoing":{ "Entries":[ { "texts":["com_furniture_watchVideo_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_takeShower",
@@ -406,8 +406,8 @@
                         }
                     ]
                 },
-                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始洗澡"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在洗澡"]}], "keepLooking":false }
+                "description_begin":{ "Entries":[{"texts":["com_furniture_takeShower_description_begin_1"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takeShower_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_restroom_fix",
@@ -539,7 +539,7 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在冷冻休眠"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_cryosleep_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_getmeal",
@@ -601,8 +601,8 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始吃饭"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在吃饭"]}], "keepLooking":false }
+                "description_begin":{ "Entries":[{"texts":["com_furniture_getmeal_begin_1","com_furniture_getmeal_begin_2","com_furniture_getmeal_begin_3"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_prison",
@@ -689,36 +689,52 @@
             {
                 "com_furniture_sleep_displayName_1": "睡觉",
                 "com_furniture_sleep_displayName_2": "一起睡觉",
-                "com_furniture_sleep": "睡觉。玩家只有在可睡眠时间段（默认为23H-6H）才可睡眠，可以在阵营管理-工作分配界面检查玩家的时间表确认。\n\n该指令执行后，参与者会获得时长等于参与者自身%%stats_derived_sleepNeed%%分钟的睡眠状态。当该状态结束时角色会立刻醒来\n",
+                "com_furniture_sleep": "玩家只有在可睡眠时间段（默认为23H-6H）才可睡眠，可以在阵营管理-工作分配界面检查玩家的时间表确认。\n该指令执行后，参与者会获得时长等于参与者自身%%stats_derived_sleepNeed%%分钟的睡眠状态。当该状态结束时角色会立刻醒来",
                 "com_furniture_sleep_begin_1": "$doer.firstname$舒服地把自己埋进被子里",
                 "com_furniture_sleep_begin_2": "$doer.firstname$关掉床头灯后缓缓闭上眼睛",
                 "com_furniture_sleep_after_1": "$doer.firstname$睡着了",
+                "com_furniture_sleep_description_begin_1": "$doer.firstname$开始睡觉",
+                "com_furniture_sleep_description_ongoing_1": "$doer.firstname$正在睡觉",
 
+                "com_furniture_takingBreak": "休息一下，缓解角色压力",
                 "com_furniture_takingBreak_displayName_1": "休息",
                 "com_furniture_takingBreak_displayName_2": "一起休息",
+                "com_furniture_takingBreak_description_begin_1": "$doer.firstname$开始休息",
+                "com_furniture_takingBreak_description_ongoing_1": "$doer.firstname$正在休息",
+
+                "com_furniture_takingLongBreak": "缓解角色压力的同时，还会回复HP，代价是耗时翻倍",
                 "com_furniture_takingLongBreak_displayName_1": "长休",
                 "com_furniture_takingLongBreak_displayName_2": "一起长休",
                 
                 "com_furniture_playVideoGames_displayName_1": "打游戏",
                 "com_furniture_playVideoGames_displayName_2": "一起打游戏",
+                "com_furniture_playVideoGames_description_begin_1": "$doer.firstname$开始玩游戏",
+                "com_furniture_playVideoGames_description_ongoing_1": "$doer.firstname$正在玩游戏",
                 
                 "com_furniture_watchVideo_displayName_1": "看影片",
                 "com_furniture_watchVideo_displayName_2": "一起看影片",
+                "com_furniture_watchVideo_description_begin_1": "$doer.firstname$开始看电视",
+                "com_furniture_watchVideo_description_ongoing_1": "$doer.firstname$正在看电视",
                 
                 "com_furniture_takeShower_displayName_1": "洗澡",
                 "com_furniture_takeShower_displayName_2": "一起洗澡",
                 "com_furniture_takeShower_displayName_3": "全员一起洗澡",
+                "com_furniture_takeShower_description_begin_1": "$doer.firstname$开始洗澡",
+                "com_furniture_takeShower_description_ongoing_1": "$doer.firstname$正在洗澡",
 
                 "com_furniture_cryosleep_displayName_REMOVE": "解除休眠",
                 "com_furniture_cryosleep_displayName_ADD": "冷冻休眠",
                 "com_furniture_cryosleep_displayName": "冷冻休眠",
-                "com_furniture_cryosleep": "冷冻休眠",
+                "com_furniture_cryosleep_description_ongoing_1_ADD": "$doer.firstname$正在冷冻休眠",
+                "com_furniture_cryosleep_description_ongoing_1_REMOVE": "$doer.firstname$正在解除冷冻休眠",
                 "com_furniture_cryosleep_begin_1_ADD": "$doer.firstname$将$receiver.firstname$安置在冷冻休眠装置中",
                 "com_furniture_cryosleep_after_1_ADD": "$receiver.firstname$陷入了冷冻休眠中",
                 "com_furniture_cryosleep_begin_1_REMOVE": "$doer.firstname$开始解除$receiver.firstname$的冷冻休眠",
                 "com_furniture_cryosleep_after_1_REMOVE": "$receiver.firstname$从冷冻休眠中醒来了",
 
                 "com_furniture_prison_displayname": "监禁",
+                "com_furniture_prison_ADD": "将对象监禁在此处（无法自由行动），且只能与此处的家具互动",
+                "com_furniture_prison_REMOVE": "将监禁于此处的对象释放",
                 "com_furniture_prison_displayname_ADD": "监禁对象",
                 "com_furniture_prison_displayname_REMOVE": "移出监牢",
                 "com_furniture_prison_begin_1_ADD": "$doer.firstname$将$receiver.firstname$关押在监牢中",
@@ -733,8 +749,10 @@
 
                 "com_furniture_getmeal": "用餐",
                 "com_furniture_getmeal_displayName": "用餐",
+                "com_furniture_getmeal_begin_3": "$doer.firstname$开始吃饭",
                 "com_furniture_getmeal_begin_1": "$doer.firstname$在桌边坐下，拿起一份$name$吃了起来。",
                 "com_furniture_getmeal_begin_2": "$doer.firstname$将$name$移到面前，开始了进食。",
+                "com_furniture_getmeal_ongoing_1": "$doer.firstname$正在吃饭",
                 "com_furniture_getmeal_displayName_1": "吃$name$",
                 "com_furniture_getmeal_displayName_2": "一起吃$name$"
                 
@@ -745,7 +763,7 @@
                 "com_furniture_getmeal": "Get Meal",
                 "com_furniture_sleep_displayName_1": "Sleep",
                 "com_furniture_sleep_displayName_2": "Sleep",
-                "com_furniture_sleep": "Sleep. Can be executed only during sleep hours (for Player, default value is 23H-6H, can be confirmed in Player Schedules in Management-Work Assignment tab)\n\nOn execution, every participant will fall into sleep status with duration equal to %%stats_derived_sleepNeed%% in minutes, and will wake up on status removal",
+                "com_furniture_sleep": "Sleep. Can be executed only during sleep hours (for Player, default value is 23H-6H, can be confirmed in Player Schedules in Management-Work Assignment tab)\nOn execution, every participant will fall into sleep status with duration equal to %%stats_derived_sleepNeed%% in minutes, and will wake up on status removal",
                 "com_furniture_sleep_begin_1": "$doer.firstname$ comfortably snuggled into the blanket",
                 "com_furniture_sleep_begin_2": "$doer.firstname$ turned off the bedside lamp and slowly closed their eyes",
                 "com_furniture_sleep_after_1": "$doer.firstname$ fell asleep",
@@ -785,7 +803,34 @@
                 "com_furniture_getmeal_begin_1": "$doer.firstname$ sat down at the table, picked up a portion of $name$ and began to eat.",
                 "com_furniture_getmeal_begin_2": "$doer.firstname$ brought the $name$ closer and began eating.",
                 "com_furniture_getmeal_displayName_1": "Eat $name$",
-                "com_furniture_getmeal_displayName_2": "Eat $name$"
+                "com_furniture_getmeal_displayName_2": "Eat $name$",
+
+    "com_furniture_sleep_description_begin_1": "$doer.firstname$ starts sleeping",
+    "com_furniture_sleep_description_ongoing_1": "$doer.firstname$ is sleeping",
+
+    "com_furniture_takingBreak": "Take a break to relieve character stress",
+    "com_furniture_takingBreak_description_begin_1": "$doer.firstname$ starts taking a break",
+    "com_furniture_takingBreak_description_ongoing_1": "$doer.firstname$ is taking a break",
+
+    "com_furniture_takingLongBreak": "Relieves character stress and recovers HP, at the cost of double the time",
+
+    "com_furniture_playVideoGames_description_begin_1": "$doer.firstname$ starts playing video games",
+    "com_furniture_playVideoGames_description_ongoing_1": "$doer.firstname$ is playing video games",
+
+    "com_furniture_watchVideo_description_begin_1": "$doer.firstname$ starts watching TV",
+    "com_furniture_watchVideo_description_ongoing_1": "$doer.firstname$ is watching TV",
+
+    "com_furniture_takeShower_description_begin_1": "$doer.firstname$ starts taking a shower",
+    "com_furniture_takeShower_description_ongoing_1": "$doer.firstname$ is taking a shower",
+
+    "com_furniture_cryosleep_description_ongoing_1_ADD": "$doer.firstname$ is in cryosleep",
+    "com_furniture_cryosleep_description_ongoing_1_REMOVE": "$doer.firstname$ is waking up from cryosleep",
+    "com_furniture_prison_ADD": "Imprison the target here (unable to move freely), can only interact with furniture in this location",
+    "com_furniture_prison_REMOVE": "Release the target imprisoned here",
+
+
+    "com_furniture_getmeal_begin_3": "$doer.firstname$ starts eating",
+    "com_furniture_getmeal_ongoing_1": "$doer.firstname$ is eating"
             }
         }
     }

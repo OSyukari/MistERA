@@ -18,13 +18,6 @@ public class ActionPackage_Interaction : ActionPackage
 
     }
 
-    protected override bool PreEvaluate()
-    {
-        base.PreEvaluate();
-
-        return isValid;
-    }
-
     [JsonIgnore]
     public override bool AllowJoining
     {

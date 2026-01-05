@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 using System.Linq;
+using System.Xml.Linq;
 using Newtonsoft.Json;
+using UnityEngine;
 
 public class COM_Requirements
 {
@@ -104,13 +105,13 @@ public class COM_Requirements
             else if (doerCount > 9) { }
             else
             {
-                //_tooltip.Add("Command invalid: command doer number below requirement : treatRasD[" + treatReceiverAsDoer + "] dCount[" + 1 + "] rCount[" + 0 + "] finalEval[" + (treatReceiverAsDoer && ((doerRefIDs.Count + receiverRefIDs.Count) <= doerCount)) + "]");
+                //if (logging) _tooltip.Add("Command invalid: command doer number below requirement : treatRasD[" + treatReceiverAsDoer + "] dCount[" + 1 + "] rCount[" + 0 + "] finalEval[" + (treatReceiverAsDoer && ((doerRefIDs.Count + receiverRefIDs.Count) <= doerCount)) + "]");
                 return false;
             }
 
             if (receiverCount > 0)
             {
-                if (logging) _tooltip.Add("Command invalid: command cannot be done alone");
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireReceiver"));
                 return false;
             }
 
@@ -118,19 +119,16 @@ public class COM_Requirements
 
             if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs))
             {
-                if (logging) _tooltip.Add("doer failed doer req validation");
+                //if (logging) _tooltip.Add("doer failed doer req validation");
                 return false;
             }
             if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs))
             {
-                if (logging) _tooltip.Add("doer failed receiver req validation");
                 return false;
             }
             if (receiverCount == 0)
             {
-                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs);
-                if (!value && logging) _tooltip.Add("doer failed receiver == 0 req validation");
-                return value;
+                return CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs);
             }
             else
             {
@@ -159,6 +157,13 @@ public class COM_Requirements
             else if (doerCount == 0 && doerRefIDs.Count == 0 && (!treatReceiverAsDoer || receiverRefIDs.Count == 0)) { }
             else if (doerCount > 0 && actorCount == doerCount) { }
             else if (doerCount > 9) { }
+            else if (actorCount > doerCount)
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_doerCountInvalid")
+                                    .Replace("$count$", $"{actorCount}")
+                                    .Replace("$req$", $"{doerCount}"));
+                return false;
+            }
             else
             {
                 if (logging) _tooltip.Add("Command invalid: command doer number below requirement : treatRasD[" + treatReceiverAsDoer + "] dCount[" + doerRefIDs.Count + "] rCount[" + receiverRefIDs.Count + "] finalEval[" + (treatReceiverAsDoer && ((doerRefIDs.Count + receiverRefIDs.Count) <= doerCount)) + "]");
@@ -167,19 +172,21 @@ public class COM_Requirements
 
             if (receiverCount == 0 && receiverRefIDs.Count != 0)
             {
-                if (logging) _tooltip.Add("Command invalid: command can only be done alone");
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireNoReceiver"));
                 return false;
             }
 
             if (receiverCount > 0 && receiverRefIDs.Count == 0)
             {
-                if (logging) _tooltip.Add("Command invalid: command cannot be done alone");
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireReceiver"));
                 return false;
             }
 
             if (receiverCount > 0 && receiverRefIDs.Count > receiverCount)
             {
-                if (logging) _tooltip.Add("Command invalid: too many receivers");
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_toomanyReceiver")
+                                            .Replace("$target$", $"{receiverRefIDs.Count}")
+                                            .Replace("$count$",$"{receiverCount}"));
                 return false;
             }
 
@@ -187,29 +194,29 @@ public class COM_Requirements
 
             if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs))
             {
-                if (logging) _tooltip.Add("doer failed doer req validation");
+                //if (logging) _tooltip.Add("doer failed doer req validation");
                 return false;
             }
             if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs))
             {
-                if (logging) _tooltip.Add("doer failed receiver req validation");
+                //if (logging) _tooltip.Add("doer failed receiver req validation");
                 return false;
             }
             if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers, ref _tooltip, receiverRefIDs))
             {
-                if (logging) _tooltip.Add("receiver failed doer req validation");
+               // if (logging) _tooltip.Add("receiver failed doer req validation");
                 return false;
             }
             if (receiverCount == 0)
             {
                 bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs);
-                if (!value && logging) _tooltip.Add("doer failed receiver == 0 req validation");
+                //if (!value && logging) _tooltip.Add("doer failed receiver == 0 req validation");
                 return value;
             }
             else
             {
                 bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, receiverRefIDs);
-                if (!value && logging) _tooltip.Add("receiver failed receiver req validation");
+                //if (!value && logging) _tooltip.Add("receiver failed receiver req validation");
                 return value;
             }
         }        
@@ -257,8 +264,11 @@ public class COM_Requirements
 
             Job_Sex_Group jsex = actorRef != -1 ? scr_System_CampaignManager.current.FindInstanceByID(actorRef).CurrentJob as Job_Sex_Group : null;
 
-            if (jsex == null) return false;
-
+            if (jsex == null)
+            {
+                if (logging) tooltip.Add("Command invalid: missing pre-req job type");
+                return false;
+            }
             // from here on, we know its sex job
             List<ActionPackage_Sex> existing = new List<ActionPackage_Sex>();
             foreach (var package in jsex.CurrentPackages)
@@ -277,7 +287,7 @@ public class COM_Requirements
 
             if (existing.Count < 1)
             {
-                if (logging) tooltip.Add("Command invalid: missing pre-req command by filter 1");
+                if (logging) tooltip.Add(LocalizeDictionary.QueryThenParse("ui_RequireExisting_missingPrereq")+"(1)");
                 return false;
             }
 
@@ -339,7 +349,7 @@ public class COM_Requirements
 
             if (existing.Count < 1)
             {
-                if (logging) tooltip.Add("Command invalid: missing pre-req command by filter 2");
+                if (logging) tooltip.Add(LocalizeDictionary.QueryThenParse("ui_RequireExisting_missingPrereq")+"(2)");
                 return false;
             }
             else return true;
@@ -372,7 +382,11 @@ public class COM_Requirements
 
             Job_Sex_Group jsex = actorRef != -1 ? scr_System_CampaignManager.current.FindInstanceByID(actorRef).CurrentJob as Job_Sex_Group : null;
 
-            if (jsex == null) return false;
+            if (jsex == null)
+            {
+                if (logging) tooltip.Add("Command invalid: missing pre-req job type");
+                return false;
+            }
 
             // from here on, we know its sex job
             List<ActionPackage_Sex> existing = new List<ActionPackage_Sex>();
@@ -392,7 +406,7 @@ public class COM_Requirements
 
             if (existing.Count < 1)
             {
-                if (logging) tooltip.Add("Command invalid: missing pre-req command by filter 1");
+                if (logging) tooltip.Add(LocalizeDictionary.QueryThenParse("ui_RequireExisting_missingPrereq") + "(1)");
                 return false;
             }
 
@@ -448,7 +462,7 @@ public class COM_Requirements
 
             if (existing.Count < 1)
             {
-                if (logging) tooltip.Add("Command invalid: missing pre-req command by filter 2");
+                if (logging) tooltip.Add(LocalizeDictionary.QueryThenParse("ui_RequireExisting_missingPrereq") + "(2)");
                 return false;
             }
             else return true;
@@ -484,10 +498,11 @@ public class COM_Requirements
             }
         }
 
-        public bool Validate(Room_Instance targetRoom)
+        public bool Validate(Room_Instance targetRoom, out string tooltip)
         {
-            if (this.requiresFurniture != null) foreach (var req in requiresFurniture) if (!req.Validate(targetRoom)) return false;
-            if (this.requiresItem != null) foreach (var req in requiresItem) if (!req.Validate(targetRoom)) return false;
+            if (this.requiresFurniture != null) foreach (var req in requiresFurniture) if (!req.Validate(targetRoom, out tooltip)) return false;
+            if (this.requiresItem != null) foreach (var req in requiresItem) if (!req.Validate(targetRoom, out tooltip)) return false;
+            tooltip = "";
             return true;
         }
 
@@ -501,8 +516,9 @@ public class COM_Requirements
             // - job com carniculture check if theres carni plant in room
             public string furnitureBaseID = "";
             public int minimumCount = 0;
-            public bool Validate(Room_Instance targetRoom)
+            public bool Validate(Room_Instance targetRoom, out string tooltip)
             {
+                tooltip = "";
                 if (minimumCount == 0) return true;
                 if (furnitureBaseID == "") return true;
 
@@ -511,7 +527,17 @@ public class COM_Requirements
                 {
                     if (fi.FurnitureBase.ID == furnitureBaseID) i++;
                 }
-                return i >= minimumCount;
+                if( i >= minimumCount) return true;
+                else
+                {
+                    var furn = scr_System_Serializer.current.MasterList.Furnitures.GetByID(furnitureBaseID);
+                    var name = furn == null ? furnitureBaseID : furn.DisplayName;
+                    tooltip = LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_RequireRoomExisting_itemBaseID")
+                            .Replace("$name$", name)
+                            .Replace("$requirement$", $"{i}")
+                            .Replace("$count$", $"{minimumCount}");
+                    return false;
+                }
             }
 
         }
@@ -523,27 +549,40 @@ public class COM_Requirements
             public string itemTag = "";
             public int minimumCount = 0;
 
-            public bool Validate(Room_Instance targetRoom)
+            public bool Validate(Room_Instance targetRoom, out string tooltip)
             {
+                tooltip = "";
                 if (minimumCount == 0) return true;
                 if (itemBaseID == "" && itemTag == "") return true;
-
-
 
                 if (itemBaseID != "")
                 {
                     int i = targetRoom.HasItem_BaseID_Count(itemBaseID);
                     //Debug.LogError("RequireRoomExisting_ItemBase Validating itemBaseID[" + itemBaseID + "] itemTag[" + itemTag + "] minCount[" + minimumCount + "] actualCount["+i+"]");
-                    if (i >= minimumCount) return true;
-                    else return false;
+                    if (i < minimumCount) 
+                    {
+                        var item = Masterlist_Items.GetByID(itemBaseID);
+                        var name = item == null ? itemBaseID : item.DisplayName;
+                        tooltip = LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_RequireRoomExisting_itemBaseID")
+                                .Replace("$name$", name)
+                                .Replace("$requirement$", $"{minimumCount}")
+                                .Replace("$count$", $"{i}");
+                        return false;
+                    }
                 }
 
                 if (itemTag != "")
                 {
                     int i = targetRoom.HasItem_Tag_Count(itemTag);
                     //Debug.LogError("RequireRoomExisting_ItemBase Validating itemBaseID[" + itemBaseID + "] itemTag[" + itemTag + "] minCount[" + minimumCount + "] actualCount[" + i + "]");
-                    if (i >= minimumCount) return true;
-                    else return false;
+                    if (i < minimumCount) 
+                    {
+                        tooltip = LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_RequireRoomExisting_itemTag")
+                            .Replace("$tags$", itemTag)
+                            .Replace("$requirement$", $"{minimumCount}")
+                            .Replace("$count$", $"{i}");
+                        return false;
+                    }
                 }
 
                 return true;
@@ -573,17 +612,37 @@ public class COM_Requirements
         public string jobKeyword = "";
         public string inventoryItemBaseID = "";
 
-        public bool Validate(I_IsJobGiver m)
+        public bool Validate(I_IsJobGiver m, out string tooltip)
         {
+            tooltip = "";
             var mm = m as Manageable;
-            if (jobKeyword != "" && (mm == null || !mm.ExistOngoingProductionOrder(jobKeyword))) return false;
-
-            if (!allowInNonPlayerFaction && !m.isPlayerFaction) return false;
-            if (!allowInPlayerFaction && m.isPlayerFaction) return false;
+            if (jobKeyword != "" && (mm == null || !mm.ExistOngoingProductionOrder(jobKeyword)))
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_jobKeyword")
+                        .Replace("$faction$", mm == null ? "-" : mm.FactionDisplayName)
+                        .Replace("$keywords$", jobKeyword);
+                return false;
+            }
+            if (!allowInNonPlayerFaction && !m.isPlayerFaction)
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_disallowInNonPlayerFaction")
+                        .Replace("$faction$", mm == null ? "-" : mm.FactionDisplayName);
+                return false;
+            }
+            if (!allowInPlayerFaction && m.isPlayerFaction)
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_disallowInPlayerFaction")
+                        .Replace("$faction$", mm == null ? "-" : mm.FactionDisplayName);
+                return false;
+            }
 
             if (inventoryItemBaseID != "" && (m == null || m.Inventory == null || m.Inventory.GetItemCount(inventoryItemBaseID) < 1))
             {
-                //Debug.LogError($"validate inventory for {(m == null ? "null" : m.FactionDisplayName)} error, does not contain item {inventoryItemBaseID} or low count {m.Inventory.GetItemCount(inventoryItemBaseID)}");
+                var name = scr_System_Serializer.current.index_Item_Base.GetByID(inventoryItemBaseID);
+                var replace = name == null ? inventoryItemBaseID : name.DisplayName;
+                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_inventoryItemBaseID")
+                        .Replace("$faction$", mm == null ? "-" : mm.FactionDisplayName)
+                        .Replace("$name$", replace);
                 return false;
             }
             return true;
@@ -602,19 +661,40 @@ public class COM_Requirements
         public List<string> allowPlanting = null;
         public bool requireCanMaintain = false;
 
-        public bool Validate(Job j)
+        public bool Validate(Job j, out string tooltip)
         {
-            if (j is Job_Furniture) return Validate(j as Job_Furniture);
+            tooltip = "";
+            if (j is Job_Furniture) return Validate(j as Job_Furniture, out tooltip);
             else return true;
 
         }
 
-        public bool Validate(Job_Furniture targetJob)
+        public bool Validate(Job_Furniture targetJob, out string tooltip)
         {
-            if (targetJob == null) return false;
-            if (this.requireContentAbsent && !targetJob.CanContain) return false;
-            if (this.requireContentExist && (targetJob.Container == null || !targetJob.Container.HasContent)) return false;
-            if (requireCanMaintain && (targetJob.Container == null || !targetJob.Container.RequireMaintenance)) return false;
+            tooltip = "";
+            if (targetJob == null)
+            {
+                tooltip = "source job null";
+                return false;
+            }
+            if (this.requireContentAbsent && !targetJob.CanContain)
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireContaining_requireContentAbsent")
+                    .Replace("$contents$", targetJob.Container == null ? "-" : targetJob.Container.DisplayName);
+                return false;
+            }
+            if (this.requireContentExist && (targetJob.Container == null || !targetJob.Container.HasContent))
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireContaining_requireContentExist")
+                    .Replace("$contents$", targetJob.Container == null ? "-" : targetJob.Container.DisplayName);
+                return false;
+            }
+            if (requireCanMaintain && (targetJob.Container == null || !targetJob.Container.RequireMaintenance))
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireContaining_requireCanMaintain")
+                    .Replace("$contents$", targetJob.Container == null ? "-" : targetJob.Container.DisplayName);
+                return false;
+            }
 
             return true;
         }

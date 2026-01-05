@@ -74,7 +74,17 @@
                 "exp_event_caveBearEncounter_result_stealth_success": "$names$屏住呼吸，成功地从野兽身边溜了过去。",
                 "exp_event_caveBearEncounter_result_stealth_fail": "$names$在潜行时发出的微小声响惊动了野兽！",
                 "exp_event_caveBearEncounter_result_distracted": "$names$成功用携带的口粮引开了穴熊的注意"
-            }
+            },
+"en-us":
+{
+                "exp_event_caveBearEncounter": "Encounter with Cave Bear",
+                "exp_event_caveBearEncounter_ongoing": "$names$ encounters a massive cave bear deep in the cave.",
+
+                "exp_event_caveBearEncounter_result_stealth_success": "$names$ holds breath and successfully sneaks past the beast.",
+                "exp_event_caveBearEncounter_result_stealth_fail": "$names$ makes a slight noise while sneaking, alerting the beast!",
+                "exp_event_caveBearEncounter_result_distracted": "$names$ successfully distracts the cave bear with carried rations."
+
+}
         }
     }
 }

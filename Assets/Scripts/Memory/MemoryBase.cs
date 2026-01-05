@@ -221,16 +221,19 @@ public class Memory_Entry
     public Memory_Entry(Character_Trainable c, Job job, int roomRef, List<string> selfTags, MemInstance mem, string entryDescription = "", int duration = -1) : this()
     {
         int comTime = mem == null || mem.comID == "" ? 0 : scr_System_Serializer.current.index_COM.GetByID(mem.comID).TimeScale;
-
+        
         this.EndTime = scr_System_Time.current.getCurrentTime();
         this.StartTime = EndTime - new TimeSpan(0, comTime, 0);
         this.ownerRef = c.RefID;
         this.interactions.Add(mem);
 
-        this.duration = selfTags.Contains("important") ? -1 : duration < -1 ? -2 : Owner.Stats.MemoryLength; 
+        this.duration = selfTags != null && selfTags.Contains("important") ? -1 : duration < -1 ? -2 : Owner.Stats.MemoryLength; 
         this.roomRef = roomRef;
-        this.selfTags.AddRange(selfTags);
-        this.selfTags = selfTags.Distinct().ToList();
+        if (selfTags != null)
+        {
+            this.selfTags.AddRange(selfTags);
+            this.selfTags = this.selfTags.Distinct().ToList();
+        }
         this.entryDescription = entryDescription;
         if (job != null) this.jobRefID = job.RefID;
         this.softMerge = job == null || job.MemoryEntrySoftMerge;

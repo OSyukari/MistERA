@@ -52,7 +52,11 @@
             },
             "en-us":
             {
-"base_backstep":"Backstep"
+"base_evade":"Evade",
+"base_posture_broken":"Posture Broken",
+"base_observe":"Observe",
+"move_base_forward":"Move Forward",
+"move_base_backward":"Move Backward"
             }
         }
     }

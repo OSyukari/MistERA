@@ -68,7 +68,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$正在愛撫$receiver.firstname$的阴蒂" ]
+                            "texts": [ "com_sex_finger_caress_C_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -77,7 +77,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$的手从$receiver.firstname$的阴蒂上抽离开来" ]
+                            "texts":[ "com_sex_finger_caress_C_description_remove_1" ]
                         }
                     ]
                 },
@@ -87,7 +87,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$receiver.firstname$的阴蒂由于高潮凸起来" ]
+                            "texts":[ "com_sex_finger_caress_C_description_after_1" ]
                         }
                     ]
                 },
@@ -97,12 +97,52 @@
                         {
                             "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$的手指捏拿住了$receiver.firstname$的阴蒂，开始有规律地揉搓着"]
+                            "texts": ["com_sex_finger_caress_C_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_finger_caress_C":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_caress_C_displayName_1": "阴蒂自慰",
+                "com_sex_finger_caress_C_displayName_2": "一起阴蒂自慰",
+                "com_sex_finger_caress_C_displayName_3": "愛撫阴蒂",
+                "com_sex_finger_caress_C_displayName_4": "交替愛撫阴蒂",
+                "com_sex_finger_caress_C_displayName_5": "轮流愛撫阴蒂",
+                "com_sex_finger_caress_C_displayName_6": "同时愛撫阴蒂",
+
+                "com_sex_finger_caress_C_description_begin_1":"$doer.firstname$的手指捏拿住了$receiver.firstname$的阴蒂，开始有规律地揉搓着",
+                "com_sex_finger_caress_C_description_after_1":"$receiver.firstname$的阴蒂由于高潮凸起来",
+                "com_sex_finger_caress_C_description_remove_1":"$doer.firstname$的手从$receiver.firstname$的阴蒂上抽离开来",
+                "com_sex_finger_caress_C_description_ongoing_1":"$doer.firstname$正在愛撫$receiver.firstname$的阴蒂"
+
+            },
+            "en-us":
+            {
+                "com_sex_finger_caress_C":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_caress_C_displayName_1": "Clitoral Masturbation",
+                "com_sex_finger_caress_C_displayName_2": "Alt. Clitoral Masturbation",
+                "com_sex_finger_caress_C_displayName_3": "Caressing Clitoris",
+                "com_sex_finger_caress_C_displayName_4": "Alt. Clitoral Caress",
+                "com_sex_finger_caress_C_displayName_5": "Alt. Turns Clitoral Caress",
+                "com_sex_finger_caress_C_displayName_6": "Alt. Clitoral Caress",
+
+                "com_sex_finger_caress_C_description_begin_1":"$doer.firstname$'s fingers pinch $receiver.firstname$'s clitoris and begin to rub it rhythmically",
+                "com_sex_finger_caress_C_description_after_1":"$receiver.firstname$'s clitoris swells due to orgasm",
+                "com_sex_finger_caress_C_description_remove_1":"$doer.firstname$'s hand withdraws from $receiver.firstname$'s clitoris",
+                "com_sex_finger_caress_C_description_ongoing_1":"$doer.firstname$ is caressing $receiver.firstname$'s clitoris"
+
+            }
+        }
     }
 }

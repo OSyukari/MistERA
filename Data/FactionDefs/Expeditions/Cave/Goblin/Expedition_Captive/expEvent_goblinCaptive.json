@@ -99,6 +99,12 @@
                 "exp_event_caveGoblinCaptive": "哥布林囚犯",
                 "exp_event_caveGoblinCaptive_ongoing": "$names$被哥布林们囚禁在了洞穴深处",
                 "exp_event_caveGoblinCaptive_result_rape": "$names$被哥布林们侵犯"
+            },
+            "en-us":
+            {
+                "exp_event_caveGoblinCaptive": "Goblin Captive",
+                "exp_event_caveGoblinCaptive_ongoing": "$names$ is imprisoned deep within the cave by goblins",
+                "exp_event_caveGoblinCaptive_result_rape": "$names$ is being violated by goblins"
             }
         }
     }

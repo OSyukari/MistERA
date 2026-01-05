@@ -229,6 +229,19 @@ public class Stats_Derived_Extended_Instance
         this.value = Math.Clamp(this.value + amount, 0, MaxValue);
     }
 
+    public int ModValue(int amount)
+    {
+        if (amount < 0 && this.Owner.Owner.RefID == 0 && scr_System_CampaignManager.current.DebugMode) return 0;
+
+        if (amount < 0 && ReductionStat != null)
+        {
+            //Debug.Log($"{Owner.Owner.FirstName} Reduction Stat exist on {this.ID}, clamping reduction fron {amount}+{ReductionStat.FinalValue()}={amount + ReductionStat.FinalValue()} to {amount} {0} -> {Math.Clamp(amount + (int)ReductionStat.FinalValue(), amount, 0)}");
+            amount = Math.Clamp(amount + (int)ReductionStat.FinalValue(), amount, 0);
+        }
+        if (amount != 0) this.value = Math.Clamp(this.value + amount, 0, MaxValue);
+        return amount;
+    }
+
     public void RestorePercent(float percent)
     {
         this.value = Math.Clamp(this.value + MaxValue * percent, 0, MaxValue);

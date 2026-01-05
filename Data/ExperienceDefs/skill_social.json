@@ -100,6 +100,11 @@
             {
                 "skill_social": "社交",
                 "skill_social_tooltip": "适用范围：多人休闲活动"
+            },
+            "en-us":
+            {
+                "skill_social": "Social",
+                "skill_social_tooltip": "Applies to: Group recreation activities"
             }
         }
     }

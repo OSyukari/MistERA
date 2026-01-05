@@ -236,6 +236,10 @@ public class COM: I_SerializationCallbackReceiver
     public bool COMRepeat = false;
     public bool HideWhenInvalid = false;
     public string ID = "";
+    [JsonIgnore] public virtual string tooltipID { get
+        {
+            return ID;
+        } }
 
     public string tooltip = "";
     public string displayName = "";
@@ -246,6 +250,10 @@ public class COM: I_SerializationCallbackReceiver
     public List<COM_Variant> variants = new List<COM_Variant>();
     //public List<string> conflictCOMIDs = new List<string>();
     [JsonIgnore] public bool isInteraction { get { return comTags.Contains("interaction") || comTags.Contains("sex"); } }
+    [JsonIgnore] public bool isSpecialInteraction { get
+        {
+            return comTags.Contains("initSex") || comTags.Contains("endSex");
+        } }
 
     public Acceptance AcceptanceCheck = new Acceptance();
     public Difficulty DifficultyCheck = new Difficulty();
@@ -365,9 +373,8 @@ public class COM: I_SerializationCallbackReceiver
     public bool ValidateJob(Job j, out string msg)
     {
         msg = "";
-        if (this.requirements.requireContaining != null && !requirements.requireContaining.Validate(j))
+        if (this.requirements.requireContaining != null && !requirements.requireContaining.Validate(j, out msg))
         {
-            msg = "missing require containing item";
             return false;
         }
         if (hasFactionReq && j.FactionOwner == null)
@@ -375,7 +382,7 @@ public class COM: I_SerializationCallbackReceiver
             msg = "missing faction owner";
             return false;
         }
-        if (j.FactionOwner != null && !ValidateFaction(j.FactionOwner))
+        if (j.FactionOwner != null && !ValidateFaction(j.FactionOwner, out msg))
         {
             return false;
         }
@@ -387,19 +394,19 @@ public class COM: I_SerializationCallbackReceiver
         return true;
     }
 
-    public bool ValidateRoom(Room_Instance r)
+    public bool ValidateRoom(Room_Instance r, out string tooltips)
     {
-        if (this.requirements.requireRoomExisting != null && !requirements.requireRoomExisting.Validate(r)) return false;
-        foreach(var variant in this.variants) if (variant.requirements.requireRoomExisting != null && !variant.requirements.requireRoomExisting.Validate(r)) return false;
-
+        if (this.requirements.requireRoomExisting != null && !requirements.requireRoomExisting.Validate(r, out tooltips)) return false;
+        foreach(var variant in this.variants) if (variant.requirements.requireRoomExisting != null && !variant.requirements.requireRoomExisting.Validate(r, out tooltips)) return false;
+        tooltips = "";
         return true;
     }
 
-    protected bool ValidateFaction(I_IsJobGiver m)
+    protected bool ValidateFaction(I_IsJobGiver m, out string tooltips)
     {
-        if (this.requirements.requireFactionExisting != null && !requirements.requireFactionExisting.Validate(m)) return false;
-        foreach (var variant in this.variants) if (variant.requirements.requireFactionExisting != null && !variant.requirements.requireFactionExisting.Validate(m)) return false;
-
+        if (this.requirements.requireFactionExisting != null && !requirements.requireFactionExisting.Validate(m, out tooltips)) return false;
+        foreach (var variant in this.variants) if (variant.requirements.requireFactionExisting != null && !variant.requirements.requireFactionExisting.Validate(m, out tooltips)) return false;
+        tooltips = "";
         return true;
     }
 
@@ -418,29 +425,30 @@ public class COM: I_SerializationCallbackReceiver
         }*/
 
   
-    public virtual bool ValidateCondition(List<string> _tooltip, List<Character_Trainable> doerRefs, List<Character_Trainable> receiverRefs, COM com, COM_Variant variant = null)
+    protected virtual bool ValidateCondition(List<string> _tooltip, List<Character_Trainable> doerRefs, List<Character_Trainable> receiverRefs, COM com, COM_Variant variant = null)
     {
         bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, null);
         bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, com.requirements.requirement);
         // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
         if (!(value1 && value2))
         {
-            if (_tooltip != null) _tooltip.Add("ValidateCondition failed value1[" + value1 + "] value2[" + value2 + "]");
+            //if (_tooltip != null) _tooltip.Add("ValidateCondition failed value1[" + value1 + "] value2[" + value2 + "]");
         }
         return value1 && value2;
     }
-    public virtual bool ValidateCondition(List<string> _tooltip, Character_Trainable doerRefs, COM com, COM_Variant variant = null)
+    protected virtual bool ValidateCondition(List<string> _tooltip, Character_Trainable doerRefs, COM com, COM_Variant variant = null)
     {
         bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, null);
         bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, com.requirements.requirement);
         // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
         if (!(value1 && value2))
         {
-           if (_tooltip != null) _tooltip.Add("ValidateCondition failed value1[" + value1 + "] value2[" + value2 + "]");
+           //if (_tooltip != null) _tooltip.Add("ValidateCondition failed value1[" + value1 + "] value2[" + value2 + "]");
         }
         return value1 && value2;
     }
 
+    public bool allowInPrivateRoom = false;
     public virtual string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false)
     {
         int index = GetValidVariant(doerRefIDs, receiverRefIDs, excludeRequireExisting);
@@ -527,12 +535,8 @@ public class COM: I_SerializationCallbackReceiver
         int index = -1;
         bool logging = tooltip != null && !scr_UpdateHandler.current.Updating;
         //if (receiverRefIDs == null || receiverRefIDs.Count < 1) receiverRefIDs = doerRefIDs;
-        if (!requirements.requireExisting.ValidateCondition(logging ? tooltip : null, doerRefIDs, receiverRefIDs, this))
+        if (!requirements.requireExisting.ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this))
         {
-            if (logging)
-            {
-                tooltip.Add("Command GetValidVariant invalid: missing required pre-existing command");
-            }
             return -1;
         }
         if (variants.Count < 1)
@@ -547,7 +551,7 @@ public class COM: I_SerializationCallbackReceiver
         {
             if (logging)
             {
-                tooltip.Add("Command GetValidVariant invalid: no participant");
+                tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requireDoer"));
             }
             return -1;
         }
@@ -555,10 +559,14 @@ public class COM: I_SerializationCallbackReceiver
         {
             foreach (var receiver in receiverRefIDs)
             {
-                if (receiver == null) return -1;
+                if (receiver == null)
+                {
+                    tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireReceiver"));
+                    return -1;
+                }
                 else if (receiver.CurrentJob is Job_Sex_Group)
                 {
-                    tooltip.Add("Command GetValidVariant invalid: not allowed during sex");
+                    tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_notAllowedDuringS"));
                     return -1;
                 }
             }
@@ -577,7 +585,7 @@ public class COM: I_SerializationCallbackReceiver
                     else if (existing == targetJob) continue;
                     else 
                     {
-                        tooltip.Add("Command GetValidVariant invalid: both actors already in sex");
+                        tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_initS_exist"));
                         return -1;
                     }
                 }
@@ -585,12 +593,8 @@ public class COM: I_SerializationCallbackReceiver
             }
             if (!existJoinable)
             {
-                tooltip.Add("Command GetValidVariant invalid: no additional joinable actor");
+                tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_initS_noJoinable"));
                 return -1;
-            }
-            if (existing != null)
-            {   // this line will not be triggered
-                tooltip.Add("Inviting target to existing job");
             }
         }
         if (comTags.Contains("endSex"))
@@ -600,14 +604,13 @@ public class COM: I_SerializationCallbackReceiver
             {
                 if (!(i.CurrentJob is Job_Sex_Group))
                 {
-                    tooltip.Add("Command GetValidVariant invalid: no sex act can be ended");
+                    tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_endS"));
                     return -1;
                 }
             }
         }
-        if (!ValidateCondition(logging ? tooltip : null, doerRefIDs, receiverRefIDs, this))
+        if (!ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this))
         {
-            tooltip.Add("Command GetValidVariant invalid: requirement not met");
             return -1;
         }
 
@@ -615,9 +618,10 @@ public class COM: I_SerializationCallbackReceiver
         // check gender combination
         if (doerRefIDs.Count > 0 && receiverRefIDs.Count > 0 &&( comTags.Contains("sex") || comTags.Contains("service") || comTags.Contains("massage") || comTags.Contains("initSex")))
         {
-            if (!scr_System_CentralControl.current.CanHaveSex(doerRefIDs, receiverRefIDs))
+            if (!scr_System_CentralControl.current.CanHaveSex(doerRefIDs, receiverRefIDs, out var ttip))
             {
-                tooltip.Add("gender interaction forbidden by user");
+                tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_forbiddenGenderInteraction")
+                                    .Replace("$interaction$", ttip));
                 return -1;
             }
         }
@@ -625,21 +629,33 @@ public class COM: I_SerializationCallbackReceiver
 
 
         List<string> s = new List<string>();
-        foreach (COM_Variant var in variants)
+        List<string> s2 = new List<string>();
+        for(int i = 0; i < variants.Count; i++)
         {
+            var var = variants[i];
+            if (!requirements.requireExisting.ValidateCondition(s, doerRefIDs, receiverRefIDs, this, var))
+            {
+                s2.Add($"{DisplayName(i)}: {String.Join("|", s)}");
+                continue;
+            }
             s.Clear();
-            if (!requirements.requireExisting.ValidateCondition(s, doerRefIDs, receiverRefIDs, this, var)) continue;
-            if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, var)) continue;
-            if (excludeRequireExisting && var.requirements.requireExisting.isValid) continue;
+            if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, var))
+            {
+                s2.Add($"{DisplayName(i)}: {String.Join("|", s)}");
+                continue;
+            }
+            s.Clear();
+            if (excludeRequireExisting && var.requirements.requireExisting.isValid)
+            {
+                s2.Add($"{DisplayName(i)}: excludeRequireExisting");
+                continue;
+            }
             //if( !comTags.Contains("sex") && !comTags.Contains("touch")) Debug.Log("validate com " + displayName + " return true valid variant id "+ variants.IndexOf(var));
             index = Math.Max(index, variants.IndexOf(var));
-            if (index > -1)
-            {
-                tooltip.AddRange(s);
-                return index;
-            }
+            if (index > -1) return index;
         }
-        if (s.Count > 0) tooltip.AddRange(s);
+
+        tooltip.AddRange(s2);
         return index;
     }
 
@@ -1004,5 +1020,8 @@ public class COM: I_SerializationCallbackReceiver
         return returnValue;
     }
 
-   
+   public virtual string Replace(string s)
+    {
+        return s;
+    }
 }

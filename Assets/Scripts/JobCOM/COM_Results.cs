@@ -26,7 +26,7 @@ public class COM_Results
 
     // modify stuff in job container, need to know who is interacting with
     // modify container parameter
-    public List<Result_JobContainer> results_jobContainer;
+    public List<Result_JobContainer> results_jobContainer = null;
 
     public List<Result_Faction_Home> results_home = null;
     public List<Result_Faction_JobOwner> results_jobOwner = null;

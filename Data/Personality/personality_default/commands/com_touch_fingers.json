@@ -1,158 +1,369 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_fingers_Begin",
-        "variants":
-        [
+    "Character_Personalities": {
+        "looselist": [
             {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始被撫摸手指 有允许 口上文" ,
-                "responses":
-                [ 
-"$self$没有抽回手，反而顺势将手指嵌入了$target$的指缝中，十指相扣。", "$self$感觉到指尖传来的温度，嘴角不自觉地上扬，轻轻回握了一下。", "$self$低头看着两人交叠的手，用拇指轻轻摩挲着$target$的手背，神情柔和。", "$self$并没有说话，只是将身体重心稍微向$target$那边倾斜了一些，默许了这个动作。"                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_fingers_Begin",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始被撫摸手指 有允许 口上文",
+                            "responses": [
+                                "com_touch_fingers_Begin_1",
+                                "com_touch_fingers_Begin_2",
+                                "com_touch_fingers_Begin_3",
+                                "com_touch_fingers_Begin_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始被撫摸手指 未允许 好意 口上文",
+                            "responses": [
+                                "com_touch_fingers_Begin_5",
+                                "com_touch_fingers_Begin_6",
+                                "com_touch_fingers_Begin_7",
+                                "com_touch_fingers_Begin_8"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始被撫摸手指 未允许 敌意 口上文",
+                            "responses": [
+                                "com_touch_fingers_Begin_9",
+                                "com_touch_fingers_Begin_10",
+                                "com_touch_fingers_Begin_11",
+                                "com_touch_fingers_Begin_12"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":[ "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始被撫摸手指 未允许 好意 口上文" ,
-                "responses":
-                [ 
-"$self$显然被这突如其来的触碰吓了一跳，身体僵硬了一下，但并没有立刻躲开。", "$self$瞪大了眼睛看着$target$的动作，似乎大脑还在处理这个超乎社交礼仪的行为。", "$self$的手指微微颤抖，眼神中充满了困惑，却因为某种原因没有反抗。", "$self$有些尴尬地张了张嘴，最后什么也没说，只是任由$target$握着。"
-                ]
-            },
-            {
-                
-                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
-                "_comment":"2.2.2 开始被撫摸手指 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-"$self$的脸色瞬间变得苍白，身体止不住地轻微发抖，却不敢把手抽回来。", "$self$死死地咬着下唇，视线恐惧地盯着地面，像是一只受惊却不敢逃跑的小动物。", "$self$的手指冰凉且僵硬，全身肌肉紧绷，显然正在忍受极大的心理不适。", "$self$眼眶微红，呼吸急促，在$target$的视线下被迫保持着这个姿势。"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_fingers",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 被撫摸手指 口上文",
+                            "responses": [
+                                "com_touch_fingers_1",
+                                "com_touch_fingers_2",
+                                "com_touch_fingers_3",
+                                "com_touch_fingers_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 被撫摸手指 口上文",
+                            "responses": [
+                                "com_touch_fingers_5",
+                                "com_touch_fingers_6",
+                                "com_touch_fingers_7",
+                                "com_touch_fingers_8"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被撫摸手指 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_9",
+                                        "com_touch_fingers_10",
+                                        "com_touch_fingers_11",
+                                        "com_touch_fingers_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被撫摸手指 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_13",
+                                        "com_touch_fingers_14",
+                                        "com_touch_fingers_15",
+                                        "com_touch_fingers_16"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被撫摸手指 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_fingers_17",
+                                "com_touch_fingers_18",
+                                "com_touch_fingers_19",
+                                "com_touch_fingers_20"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 被撫摸手指 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_21",
+                                        "com_touch_fingers_22",
+                                        "com_touch_fingers_23",
+                                        "com_touch_fingers_24"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被撫摸手指 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_fingers_25",
+                                "com_touch_fingers_26",
+                                "com_touch_fingers_27",
+                                "com_touch_fingers_28"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 被撫摸手指 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_29",
+                                        "com_touch_fingers_30",
+                                        "com_touch_fingers_31",
+                                        "com_touch_fingers_32"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 被撫摸手指 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_fingers_33",
+                                "com_touch_fingers_34",
+                                "com_touch_fingers_35",
+                                "com_touch_fingers_36"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_fingers",
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 被撫摸手指 口上文",
-                "responses":
-                [ 
-"$self$发出均匀的呼吸声，对手指上传来的触感毫无察觉，睡颜依旧恬静。", "$self$的手被随意摆弄着，偶尔手指会因为神经反射而轻微抽动一下，但并没有醒来的迹象。", "$self$完全沉浸在深层睡眠中，任由手指被一根根分开、抚摸，毫无防备。", "$self$在这个漫长的过程中只是翻了个身，手依旧软绵绵地任人宰割。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 被撫摸手指 口上文",
-                "responses":
-                [ 
-"$self$保持着原本的姿势一动不动，对手指上发生的任何猥亵或把玩没有任何反应。", "$self$的世界是静止的，无论手指被摆弄成什么羞耻的形状，表情依旧凝固在上一秒。", "$self$就像一尊精美的人偶，毫无知觉地任由$target$的手指在她指尖游走、摩挲。", "$self$指尖的触感无法传递给大脑，$self$只是静止在这个瞬间，成为$target$手中的玩物。"
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 被撫摸手指 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$像是触电般迅速缩回了手，有些慌乱地把手藏到了身后。", "$self$轻轻拍掉了$target$的手，嗔怪地瞪了一眼：\"别闹，很痒。\"", "$self$不动声色地抽回手，拿起旁边的水杯抿了一口，假装什么都没发生。", "$self$叹了口气，把手抽出来并在衣服上擦了擦：\"手上全是汗，黏糊糊的。\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 被撫摸手指 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$礼貌而不失尴尬地笑了笑，巧妙地借着整理文件的动作抽回了手。", "$self$后退了半步，保持着社交距离：\"我想我们还没熟到这种程度。\"", "$self$温和地挡开了$target$的手，语气客气却疏离：\"请自重。\"", "$self$有些为难地看着$target$：\"这样不太好吧，会被别人误会的。\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 被撫摸手指 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$像是碰到了脏东西一样猛地甩开手，眼神凌厉地瞪着$target$。", "$self$冷笑一声，后退一步并嫌恶地拍了拍被碰过的地方。\"你有病吗？\"", "$self$毫不客气地一把推开$target$，声音冰冷：\"别用你的脏手碰我。\"", "$self$警惕地抱紧双臂，做出了防御姿态：\"再动手动脚我就报警了。\""
-                 ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 被撫摸手指 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$的呼吸变得有些急促，脸颊染上了一层红晕，手指无意识地在$target$掌心画圈。", "$self$完全放松下来，头轻轻靠在了$target$的肩膀上，享受着这份静谧的亲昵。", "$self$像是玩上瘾了，开始反过来把玩$target$的手指关节，眼神里满是依赖。", "$self$轻声嘟囔了一句：\"你的手真的很暖和……\" 然后握得更紧了。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 被撫摸手指 结果正面 未允许 口上文",
-                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$原本僵硬的肩膀慢慢放松下来，看向$target$的眼神中少了几分戒备，多了几分探究。", "$self$似乎适应了这个温度，手指不再紧绷，甚至表现出了一丝微妙的好奇。", "$self$脸上的尴尬逐渐消退，取而代之的是一种复杂的沉默，任由时间流逝。", "$self$低着头，原本想要抽回的意图似乎随着时间的推移而动摇了。"
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 被撫摸手指 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$终于忍受不了这种无意义的接触，用力抽回了手并甩了甩。\"好了，差不多行了。\"", "$self$眉头紧锁，这种长时间的接触让$self$感到一种莫名的焦躁。\"一直这样你不觉得奇怪吗？\"", "$self$变得僵硬起来，眼神开始游移，显然已经在这个动作中耗尽了耐心。", "$self$借着撩头发的动作强行中断了接触，身子往旁边挪了挪。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 被撫摸手指 结果负面 未允许 口上文",
-                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$忍耐到了极限，猛地站起身，椅子在地板上划出刺耳的声响。\"够了！\"", "$self$眼里的恐惧逐渐转变为厌恶，用力挣脱了束缚，呼吸急促不稳。", "$self$虽然没有说话，但眼泪已经在眼眶里打转，屈辱感让$self$浑身发冷。", "$self$咬牙切齿地盯着$target$：\"这下你满意了吗？放开我！\""
-                ]
-            }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_touch_fingers_Begin_1": "$self$没有抽回手，反而顺势将手指嵌入了$target$的指缝中，与$target$十指紧扣。",
+                "com_touch_fingers_Begin_2": "$self$感觉到指尖传来的温度，嘴角不自觉地上扬，轻轻回握了一下。",
+                "com_touch_fingers_Begin_3": "$self$低头看着两人交叠的手，用拇指轻轻摩挲着$target$的手背，神情变得柔和。",
+                "com_touch_fingers_Begin_4": "$self$并没有说话，只是将身体重心稍微向$target$那边倾斜，默许了这个亲昵的动作。",
+                "com_touch_fingers_Begin_5": "$self$显然被这突如其来的触碰吓了一跳，身体僵硬了一下，但并没有立刻躲开。",
+                "com_touch_fingers_Begin_6": "$self$瞪大了眼睛看着$target$的动作，似乎大脑还在处理这个超乎常规社交礼仪的行为。",
+                "com_touch_fingers_Begin_7": "$self$的手指微微颤抖，眼神中充满了困惑，却不知为何没有反抗。",
+                "com_touch_fingers_Begin_8": "$self$有些尴尬地张了张嘴，最后什么也没说，只是任由$target$握着手。",
+                "com_touch_fingers_Begin_9": "$self$的脸色瞬间变得苍白，身体止不住地轻微发抖，却不敢把手抽回来。",
+                "com_touch_fingers_Begin_10": "$self$死死地咬着下唇，视线恐惧地盯着地面，像是一只受惊却不敢逃跑的小动物。",
+                "com_touch_fingers_Begin_11": "$self$的手指冰凉且僵硬，全身肌肉紧绷，显然正在忍受极大的心理不适。",
+                "com_touch_fingers_Begin_12": "$self$眼眶微红，呼吸急促，在$target$的视线下被迫保持着这个姿势。",
+                "com_touch_fingers_1": "$self$发出均匀的呼吸声，对手指上传来的触感毫无察觉，睡颜依旧恬静。",
+                "com_touch_fingers_2": "$self$的手被$target$随意摆弄着，偶尔手指会因为神经反射而轻微抽动，但并没有醒来的迹象。",
+                "com_touch_fingers_3": "$self$完全沉浸在深层睡眠中，任由手指被一根根分开、抚摸，毫无防备。",
+                "com_touch_fingers_4": "$self$在这个漫长的过程中只是翻了个身，手依旧软绵绵地任人宰割。",
+                "com_touch_fingers_5": "$self$保持着原本的姿势一动不动，对手指上发生的任何猥亵或把玩没有任何反应。",
+                "com_touch_fingers_6": "$self$的世界是静止的，无论手指被摆弄成什么羞耻的形状，表情依旧凝固在上一秒。",
+                "com_touch_fingers_7": "$self$就像一尊精美的人偶，毫无知觉地任由$target$的手指在她指尖游走、摩挲。",
+                "com_touch_fingers_8": "$self$指尖的触感无法传递给大脑，$self$只是静止在这个瞬间，成为$target$手中的玩物。",
+                "com_touch_fingers_9": "$self$像是触电般迅速缩回了手，有些慌乱地把手藏到了身后。",
+                "com_touch_fingers_10": "$self$轻轻拍掉了$target$的手，嗔怪地瞪了$target$一眼：\"别闹，很痒。\"",
+                "com_touch_fingers_11": "$self$不动声色地抽回手，拿起旁边的水杯抿了一口，假装什么都没发生。",
+                "com_touch_fingers_12": "$self$叹了口气，把手抽出来并在衣服上擦了擦：\"手上全是汗，黏糊糊的。\"",
+                "com_touch_fingers_13": "$self$礼貌而不失尴尬地笑了笑，巧妙地借着整理文件的动作抽回了手。",
+                "com_touch_fingers_14": "$self$后退了半步，刻意保持着社交距离：\"我想我们还没熟到这种程度。\"",
+                "com_touch_fingers_15": "$self$温和地挡开了$target$的手，语气客气却带着疏离感：\"请自重。\"",
+                "com_touch_fingers_16": "$self$有些为难地看着$target$：\"这样不太好吧，会被别人误会的。\"",
+                "com_touch_fingers_17": "$self$像是碰到了脏东西一样猛地甩开手，眼神凌厉地瞪着$target$。",
+                "com_touch_fingers_18": "$self$冷笑一声，后退一步并嫌恶地拍了拍被碰过的地方：\"你有病吗？\"",
+                "com_touch_fingers_19": "$self$毫不客气地一把推开$target$，声音冰冷刺骨：\"别用你的脏手碰我。\"",
+                "com_touch_fingers_20": "$self$警惕地抱紧双臂，做出了防御姿态：\"再动手动脚我就报警了。\"",
+                "com_touch_fingers_21": "$self$的呼吸变得有些急促，脸颊染上了一层红晕，手指无意识地在$target$掌心画圈。",
+                "com_touch_fingers_22": "$self$完全放松下来，头轻轻靠在了$target$的肩膀上，享受着这份静谧的亲昵。",
+                "com_touch_fingers_23": "$self$像是玩上瘾了，开始反过来把玩$target$的手指关节，眼神里满是依赖。",
+                "com_touch_fingers_24": "$self$轻声嘟囔了一句：\"你的手真的很暖和……\" 然后将手握得更紧了。",
+                "com_touch_fingers_25": "$self$原本僵硬的肩膀慢慢放松下来，看向$target$的眼神中少了几分戒备，多了几分探究。",
+                "com_touch_fingers_26": "$self$似乎适应了这个温度，手指不再紧绷，甚至表现出了一丝微妙的好奇。",
+                "com_touch_fingers_27": "$self$脸上的尴尬逐渐消退，取而代之的是一种复杂的沉默，任由时间流逝。",
+                "com_touch_fingers_28": "$self$低着头，原本想要抽回手的意图似乎随着时间的推移而动摇了。",
+                "com_touch_fingers_29": "$self$终于忍受不了这种无意义的接触，用力抽回了手并甩了甩：\"好了，差不多行了。\"",
+                "com_touch_fingers_30": "$self$眉头紧锁，这种长时间的接触让$self$感到一种莫名的焦躁：\"一直这样你不觉得奇怪吗？\"",
+                "com_touch_fingers_31": "$self$变得僵硬起来，眼神开始游移，显然已经在这个动作中耗尽了耐心。",
+                "com_touch_fingers_32": "$self$借着撩头发的动作强行中断了接触，身子往旁边挪了挪。",
+                "com_touch_fingers_33": "$self$忍耐到了极限，猛地站起身，椅子在地板上划出刺耳的声响：\"够了！\"",
+                "com_touch_fingers_34": "$self$眼里的恐惧逐渐转变为厌恶，用力挣脱了束缚，呼吸急促不稳。",
+                "com_touch_fingers_35": "$self$虽然没有说话，但眼泪已经在眼眶里打转，屈辱感让$self$浑身发冷。",
+                "com_touch_fingers_36": "$self$咬牙切齿地盯着$target$：\"这下你满意了吗？放开我！\""
+            },
+            "en-us": {
+                "com_touch_fingers_Begin_1": "$self$ didn't pull back; instead, she interlaced her fingers with $target$'s, holding hands tightly.",
+                "com_touch_fingers_Begin_2": "Feeling the warmth from the fingertips, $self$'s lips curled up involuntarily, gently squeezing back.",
+                "com_touch_fingers_Begin_3": "$self$ looked down at their intertwined hands, gently rubbing the back of $target$'s hand with her thumb, her expression softening.",
+                "com_touch_fingers_Begin_4": "$self$ didn't say a word, simply leaning her weight slightly towards $target$, silently permitting the intimate gesture.",
+                "com_touch_fingers_Begin_5": "$self$ was clearly startled by the sudden touch, her body stiffening for a moment, but she didn't pull away immediately.",
+                "com_touch_fingers_Begin_6": "$self$ stared wide-eyed at $target$'s action, her brain seemingly struggling to process this breach of social etiquette.",
+                "com_touch_fingers_Begin_7": "$self$'s fingers trembled slightly, her eyes filled with confusion, yet for some reason, she didn't resist.",
+                "com_touch_fingers_Begin_8": "$self$ opened her mouth awkwardly but said nothing in the end, simply letting $target$ hold her hand.",
+                "com_touch_fingers_Begin_9": "$self$'s face instantly turned pale, her body trembling uncontrollably, yet she dared not pull her hand back.",
+                "com_touch_fingers_Begin_10": "$self$ bit her lower lip hard, staring fearfully at the ground like a startled small animal too scared to run.",
+                "com_touch_fingers_Begin_11": "$self$'s fingers were ice-cold and stiff, her muscles tense, clearly enduring immense psychological discomfort.",
+                "com_touch_fingers_Begin_12": "$self$'s eyes turned red, her breathing rapid, forced to maintain this posture under $target$'s gaze.",
+                "com_touch_fingers_1": "$self$ breathed evenly, completely unaware of the touch on her fingers, her sleeping face remaining peaceful.",
+                "com_touch_fingers_2": "$self$'s hand was manipulated by $target$ at will; occasionally her fingers twitched from reflex, but she showed no sign of waking.",
+                "com_touch_fingers_3": "$self$ was deep in slumber, defenseless as her fingers were separated and caressed one by one.",
+                "com_touch_fingers_4": "$self$ merely turned over during the long process, her hand remaining limp and at anyone's mercy.",
+                "com_touch_fingers_5": "$self$ remained motionless in her original pose, showing no reaction to any molestation or play with her fingers.",
+                "com_touch_fingers_6": "$self$'s world was frozen; no matter what shameful shapes her fingers were bent into, her expression remained stuck in the previous second.",
+                "com_touch_fingers_7": "$self$ was like an exquisite doll, insensate as $target$'s fingers wandered over and rubbed her fingertips.",
+                "com_touch_fingers_8": "The tactile sensation on her fingertips couldn't reach her brain; $self$ simply stood frozen in time, a plaything in $target$'s hands.",
+                "com_touch_fingers_9": "$self$ retracted her hand as if shocked by electricity, hurriedly hiding it behind her back.",
+                "com_touch_fingers_10": "$self$ gently slapped $target$'s hand away, glaring reproachfully: \"Stop it, that tickles.\"",
+                "com_touch_fingers_11": "$self$ quietly withdrew her hand and took a sip from a nearby cup, pretending nothing had happened.",
+                "com_touch_fingers_12": "$self$ sighed, pulling her hand out and wiping it on her clothes: \"My hands are sweaty and sticky.\"",
+                "com_touch_fingers_13": "$self$ gave a polite but awkward smile, skillfully using the pretext of organizing documents to withdraw her hand.",
+                "com_touch_fingers_14": "$self$ took a half-step back, maintaining social distance: \"I don't think we're close enough for this.\"",
+                "com_touch_fingers_15": "$self$ gently blocked $target$'s hand, her tone polite but distant: \"Please show some respect.\"",
+                "com_touch_fingers_16": "$self$ looked at $target$ with difficulty: \"This isn't appropriate, people might get the wrong idea.\"",
+                "com_touch_fingers_17": "$self$ flung her hand away as if touching something filthy, glaring sharply at $target$.",
+                "com_touch_fingers_18": "$self$ sneered, stepped back, and disgustedly patted the spot that was touched: \"Is there something wrong with you?\"",
+                "com_touch_fingers_19": "$self$ pushed $target$ away rudely, her voice icy cold: \"Don't touch me with your dirty hands.\"",
+                "com_touch_fingers_20": "$self$ vigilantly crossed her arms in a defensive posture: \"Touch me again and I'm calling the police.\"",
+                "com_touch_fingers_21": "$self$'s breathing quickened slightly, a blush coloring her cheeks as her fingers unconsciously traced circles in $target$'s palm.",
+                "com_touch_fingers_22": "$self$ relaxed completely, resting her head gently on $target$'s shoulder, enjoying the quiet intimacy.",
+                "com_touch_fingers_23": "$self$ seemed to get addicted to it, starting to play with $target$'s knuckles in return, her eyes full of dependence.",
+                "com_touch_fingers_24": "$self$ murmured softly: \"Your hands are really warm...\" and then held on tighter.",
+                "com_touch_fingers_25": "$self$'s previously stiff shoulders slowly relaxed, her gaze towards $target$ holding less wariness and more curiosity.",
+                "com_touch_fingers_26": "$self$ seemed to adapt to the temperature, her fingers no longer tense, even showing a hint of subtle curiosity.",
+                "com_touch_fingers_27": "$self$'s embarrassment faded, replaced by a complex silence as she let time pass.",
+                "com_touch_fingers_28": "$self$ lowered her head; her initial intention to pull back seemed to waver as time went on.",
+                "com_touch_fingers_29": "$self$ finally couldn't stand the meaningless contact, pulling her hand back forcefully and shaking it: \"Alright, that's enough.\"",
+                "com_touch_fingers_30": "$self$ frowned, the prolonged contact causing an inexplicable irritation: \"Don't you find it weird doing this for so long?\"",
+                "com_touch_fingers_31": "$self$ stiffened, her eyes wandering, clearly having lost patience with the gesture.",
+                "com_touch_fingers_32": "$self$ used the excuse of tucking her hair back to forcibly break the contact, shuffling her body away.",
+                "com_touch_fingers_33": "$self$ reached her limit and stood up abruptly, the chair scraping harshly against the floor: \"Enough!\"",
+                "com_touch_fingers_34": "$self$'s fear turned into disgust as she forcefully broke free, her breathing rapid and unsteady.",
+                "com_touch_fingers_35": "$self$ didn't speak, but tears were welling up in her eyes, humiliation making her whole body cold.",
+                "com_touch_fingers_36": "$self$ stared at $target$ through gritted teeth: \"Are you satisfied now? Let me go!\""
+            }
         }
     }
 }

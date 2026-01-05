@@ -18,19 +18,19 @@
                 "possibleResults": [
                     {
                         "baseWeight": 7,
-                        "resultText": "$names$提前注意到了捕网陷阱，并且将其回避"
+                        "resultText": "exp_event_goblin_netTrap_result_1"
                     },
                     {
                         "baseWeight": 4,
-                        "resultText": "$names$不小心触发了捕网陷阱，但反应够快躲开了"
+                        "resultText": "exp_event_goblin_netTrap_result_2"
                     },
                     {
                         "baseWeight": 3,
-                        "resultText": "一张从天而降的捕网将$names$全部罩住并吊了起来\n但在哥布林赶来前$names$迅速割开捕网逃了出来"
+                        "resultText": "exp_event_goblin_netTrap_result_3"
                     },
                     {
                         "baseWeight": 1,
-                        "resultText": "一张从天而降的捕网将$names$全部罩住并吊了起来\n动弹不得的队员们就这样被哥布林抓住了",
+                        "resultText": "exp_event_goblin_netTrap_result_4",
                         "eventID":"event_goblin_combatDefeat", "eventLabel":"", "overrideTargetGeneration":true,
                         "TargetGenerations":
                         [ {
@@ -49,8 +49,21 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "exp_event_goblin_netTrap": "捕网陷阱"
-            }
+                "exp_event_goblin_netTrap": "捕网陷阱",
+                "exp_event_goblin_netTrap_result_1": "$names$提前注意到了捕网陷阱，并且将其回避",
+                "exp_event_goblin_netTrap_result_2": "$names$不小心触发了捕网陷阱，但反应够快躲开了",
+                "exp_event_goblin_netTrap_result_3": "一张从天而降的捕网将$names$全部罩住并吊了起来\n但在哥布林赶来前$names$迅速割开捕网逃了出来",
+                "exp_event_goblin_netTrap_result_4": "一张从天而降的捕网将$names$全部罩住并吊了起来\n动弹不得的队员们就这样被哥布林抓住了"
+            },
+"en-us":
+{
+                "exp_event_goblin_netTrap": "Net Trap",
+                "exp_event_goblin_netTrap_result_1": "$names$ noticed the net trap in advance and avoided it",
+                "exp_event_goblin_netTrap_result_2": "$names$ accidentally triggered the net trap but reacted quickly enough to dodge",
+                "exp_event_goblin_netTrap_result_3": "A net falling from above covered $names$ and hoisted them up\nBut before the Goblins arrived, $names$ quickly cut the net and escaped",
+                "exp_event_goblin_netTrap_result_4": "A net falling from above covered $names$ and hoisted them up\nThe immobilized members were thus captured by the Goblins"
+
+}
         }
     }
 }

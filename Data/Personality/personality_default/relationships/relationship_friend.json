@@ -9,9 +9,18 @@
                         {
                             "_comment:": "($self$) 申请成为朋友 口上文。分为关系好版本和关系没那么好版本，之后差分",
                             "responses": [
-"$self$犹豫了一下，从口袋里拿出一块有些融化的糖果递过去。\"这个……给你。\"", "$self$看着$target$，似乎想说什么，但最后只是指了指旁边的空位。\"如果不介意的话，坐这里？\"", "$self$在路过时稍微放慢了脚步，简短地打了个招呼。\"我们要去同一个方向吗？\"", "$self$并没有直视$target$，只是将手中的资料多复印了一份放在桌角。\"顺手多弄的。\"", "$self$显得有些局促，清了清嗓子。\"那个……关于刚才的话题，我想听听你的看法。\"", "$self$停下手中的动作，用余光瞥向$target$。\"以后……可以叫你的名字吗？\"",
-
-"$self$笑着凑近，甚至能感觉到对方的呼吸。\"喂，我们也算是共犯了吧？以后多多关照啦，朋友！\"", "$self$大大方方地把手搭在$target$的肩膀上拍了拍。\"既然这么合拍，那我们就正式结盟吧！\"", "$self$从包里掏出两罐饮料，单手拉开一罐递过去。\"干杯！为了我们的友谊！\"", "$self$直接抓起$target$的手晃了晃，笑得眉眼弯弯。\"那说好了，以后我们就是一伙的！\"", "$self$做了一个夸张的敬礼动作。\"以后请多指教啦，好搭档！\"", "$self$兴奋地拿手肘顶了顶$target$的腰。\"以后有好事可别忘了叫上我这个朋友哦！\""
+                                "relationship_friend_propose_1",
+                                "relationship_friend_propose_2",
+                                "relationship_friend_propose_3",
+                                "relationship_friend_propose_4",
+                                "relationship_friend_propose_5",
+                                "relationship_friend_propose_6",
+                                "relationship_friend_propose_7",
+                                "relationship_friend_propose_8",
+                                "relationship_friend_propose_9",
+                                "relationship_friend_propose_10",
+                                "relationship_friend_propose_11",
+                                "relationship_friend_propose_12"
                             ]
                         }
                     ]
@@ -25,9 +34,18 @@
                         {
                             "_comment:": "($self$) 成为朋友 口上文",
                             "responses": [
-"$self$紧绷的肩膀明显放松下来，嘴角露出一个极浅的弧度。\"好吧，听你的。\"", "$self$点了点头，虽然没有说话，但眼神中的戒备消散了不少。", "$self$默默地将自己的物品往旁边挪了挪，留出了更多的空间。", "$self$接过了$target$递来的东西，指尖短暂接触并未避开。\"谢谢。\"", "$self$低头看着地面，声音很轻。\"那就……麻烦你了。\"", "$self$稍微调整了站姿，不再是防御性的姿态，而是侧身面向$target$。",
-
-"$self$开心地击了一下掌，声音清脆。\"太棒了！我就知道你会答应！\"", "$self$直接揽住了$target$的脖子，仿佛认识了多年的老友。\"走走走，为了庆祝我们的友谊，去吃顿好的！\"", "$self$从口袋里掏出手机，快速点开二维码。\"快快快，加个好友，以后随时联系！\"", "$self$笑得前仰后合，伸手揉了揉$target$的头发。\"以后你就是我的人了，谁欺负你报我名字！\"", "$self$兴奋地在原地转了个圈。\"这是我今天听到的最好的消息！\"", "$self$向$target$比了一个大大的拇指，眼神亮晶晶的。\"我就知道我们合得来！\""
+                                "relationship_friend_set_1",
+                                "relationship_friend_set_2",
+                                "relationship_friend_set_3",
+                                "relationship_friend_set_4",
+                                "relationship_friend_set_5",
+                                "relationship_friend_set_6",
+                                "relationship_friend_set_7",
+                                "relationship_friend_set_8",
+                                "relationship_friend_set_9",
+                                "relationship_friend_set_10",
+                                "relationship_friend_set_11",
+                                "relationship_friend_set_12"
                             ]
                         }
                     ]
@@ -41,9 +59,18 @@
                         {
                             "_comment:": "($self$) 拒绝成为朋友 口上文",
                             "responses": [
-"$self$礼貌性地后退了半步，保持着安全的社交距离。\"抱歉，我不太习惯和人走得太近。\"", "$self$没有接过伸来的手，只是微微鞠了一躬。\"我们现在这样保持工作关系就挺好的。\"", "$self$看了一眼手机，仿佛突然想起了什么急事。\"不好意思，我还有点事，先失陪了。\"", "$self$脸上的笑容淡去，语气变得公事公办。\"我不觉得这是个好主意。\"", "$self$将双手插在口袋里，视线越过$target$看向远方。\"我不擅长交朋友，还是算了吧。\"", "$self$轻轻摇了摇头，没有过多的解释，转身离开。",
-
-"$self$夸张地摆了摆手，脸上带着戏谑的笑。\"哇，别这么肉麻好不好？我鸡皮疙瘩都起来了！\"", "$self$用手指轻轻弹了一下$target$的额头。\"想做我的朋友？那还得再修炼一百年呢！\"", "$self$哈哈大笑起来，仿佛听到了什么笑话。\"别闹了，我们这样互损不是更有趣吗？\"", "$self$假装没听见，吹着口哨看向别处。\"啊？风太大听不清——\"", "$self$俏皮地眨了眨眼，做了一个鬼脸。\"才不要呢，做朋友多无聊啊。\"", "$self$双手交叉在胸前比了一个‘X’。\"驳回驳回！现在的距离感刚刚好！\""
+                                "relationship_friend_refuse_1",
+                                "relationship_friend_refuse_2",
+                                "relationship_friend_refuse_3",
+                                "relationship_friend_refuse_4",
+                                "relationship_friend_refuse_5",
+                                "relationship_friend_refuse_6",
+                                "relationship_friend_refuse_7",
+                                "relationship_friend_refuse_8",
+                                "relationship_friend_refuse_9",
+                                "relationship_friend_refuse_10",
+                                "relationship_friend_refuse_11",
+                                "relationship_friend_refuse_12"
                             ]
                         }
                     ]
@@ -57,9 +84,18 @@
                         {
                             "_comment:": "($self$) 被拒绝成为朋友 口上文",
                             "responses": [
-"$self$伸在半空中的手僵硬了一下，随后尴尬地收回挠了挠头。\"啊……也是，是我唐突了。\"", "$self$眼中的光芒黯淡下来，低头看着自己的脚尖。\"抱歉，打扰你了。\"", "$self$抿了抿嘴唇，强撑着维持表面的平静。\"没关系，我理解。\"", "$self$迅速地收拾好心情，恢复了平日的冷淡表情。\"忘掉我刚才说的话吧。\"", "$self$有些不知所措地摩挲着衣角。\"那……就当我没说。\"", "$self$甚至不敢看$target$的眼睛，匆忙转身想要逃离这个尴尬的氛围。",
-
-"$self$脸上的笑容僵了一瞬，随即用更大的笑声掩盖过去。\"开玩笑的啦！看把你吓的！\"", "$self$故作轻松地耸了耸肩。\"切，不当就不当，稀罕吗？\"", "$self$别过头去，声音有些发闷。\"真无情啊……不过算了，本小姐也不缺朋友。\"", "$self$用力拍了一下$target$的背。\"这么严肃干嘛？拒绝就拒绝呗，我又不会吃了你。\"", "$self$虽然嘴上说着‘没事’，但眼神明显在躲闪。\"好啦好啦，翻篇翻篇！\"", "$self$深吸了一口气，努力让声音听起来正常。\"没关系，反正来日方长嘛。\""
+                                "relationship_friend_refused_1",
+                                "relationship_friend_refused_2",
+                                "relationship_friend_refused_3",
+                                "relationship_friend_refused_4",
+                                "relationship_friend_refused_5",
+                                "relationship_friend_refused_6",
+                                "relationship_friend_refused_7",
+                                "relationship_friend_refused_8",
+                                "relationship_friend_refused_9",
+                                "relationship_friend_refused_10",
+                                "relationship_friend_refused_11",
+                                "relationship_friend_refused_12"
                             ]
                         }
                     ]
@@ -73,9 +109,18 @@
                         {
                             "_comment:": "($self$) 朋友关系破裂 口上文",
                             "responses": [
-"$self$面无表情地将借来的书放在桌上，发出‘啪’的一声轻响。\"还给你，以后别来找我了。\"", "$self$在走廊相遇时直接把头扭向一边，仿佛旁边是一团空气。\"……\"", "$self$冷冷地注视着$target$，眼神里没有一丝温度。\"我们之间没什么好说的了。\"", "$self$删除了通讯记录，将手机屏幕熄灭。\"到此为止吧。\"", "$self$平静地收拾着自己的东西，将原本混在一起的物品分得清清楚楚。\"这些是你的，拿走。\"", "$self$侧身让开道路，动作中充满了拒绝交流的意味。",
-
-"$self$红着眼眶，死死地盯着$target$，胸口剧烈起伏。\"我真是看错你了……滚！\"", "$self$抓起手边的东西狠狠摔在地上，碎片四溅。\"别叫我的名字！你不配！\"", "$self$原本想要争辩什么，但在对视的一瞬间突然泄了气，露出一抹苦笑。\"算了……真的没意思。\"", "$self$用力地擦过$target$的肩膀走过去，甚至撞得对方一个趔趄。\"别挡路。\"", "$self$声音颤抖着，指着门口的方向。\"趁我还没发火之前，消失在我面前。\"", "$self$看着曾经的合照，沉默许久后将其撕成了两半扔进垃圾桶。\"再见。\""
+                                "relationship_friend_break_1",
+                                "relationship_friend_break_2",
+                                "relationship_friend_break_3",
+                                "relationship_friend_break_4",
+                                "relationship_friend_break_5",
+                                "relationship_friend_break_6",
+                                "relationship_friend_break_7",
+                                "relationship_friend_break_8",
+                                "relationship_friend_break_9",
+                                "relationship_friend_break_10",
+                                "relationship_friend_break_11",
+                                "relationship_friend_break_12"
                             ]
                         }
                     ]
@@ -85,8 +130,130 @@
     },
     "Dictionary": {
         "Entries": {
-            "zh-cn": {},
-            "en-us": {}
+            "zh-cn": {
+                "relationship_friend_propose_1": "$self$犹豫了一下，从口袋里拿出一块有些融化的糖果递过去。\"那个……这个给你。\"",
+                "relationship_friend_propose_2": "$self$看着$target$，似乎想说什么，最后只是指了指旁边的空位。\"如果不介意的话，要坐这里吗？\"",
+                "relationship_friend_propose_3": "$self$在路过时稍微放慢了脚步，简短地打了个招呼。\"我们要去同一个方向吗？\"",
+                "relationship_friend_propose_4": "$self$并没有直视$target$，只是将手中的资料多复印了一份放在桌角。\"顺手多弄了一份。\"",
+                "relationship_friend_propose_5": "$self$显得有些局促，清了清嗓子。\"那个……关于刚才的话题，我想听听你的看法。\"",
+                "relationship_friend_propose_6": "$self$停下手中的动作，用余光瞥向$target$。\"以后……可以直接叫你的名字吗？\"",
+                "relationship_friend_propose_7": "$self$笑着凑近，甚至能感觉到呼吸扑面而来。\"喂，我们也算是共犯了吧？以后多多关照啦，朋友！\"",
+                "relationship_friend_propose_8": "$self$大大方方地把手搭在$target$的肩膀上拍了拍。\"既然这么合拍，那我们就正式结盟吧！\"",
+                "relationship_friend_propose_9": "$self$从包里掏出两罐饮料，单手拉开一罐递过去。\"干杯！为了我们的友谊！\"",
+                "relationship_friend_propose_10": "$self$直接抓起$target$的手晃了晃，笑得眉眼弯弯。\"那说好了，以后我们就是一伙的！\"",
+                "relationship_friend_propose_11": "$self$做了一个夸张的敬礼动作。\"以后请多指教啦，好搭档！\"",
+                "relationship_friend_propose_12": "$self$兴奋地拿手肘顶了顶$target$的腰。\"以后有好事可别忘了叫上我这个朋友哦！\"",
+                "relationship_friend_set_1": "$self$紧绷的肩膀明显放松下来，嘴角露出一个极浅的弧度。\"好吧，听你的。\"",
+                "relationship_friend_set_2": "$self$点了点头，虽然没有说话，但眼神中的戒备消散了不少。",
+                "relationship_friend_set_3": "$self$默默地将自己的物品往旁边挪了挪，特意留出了更多的空间。",
+                "relationship_friend_set_4": "$self$接过了$target$递来的东西，指尖短暂接触并未避开。\"谢谢你。\"",
+                "relationship_friend_set_5": "$self$低头看着地面，声音很轻。\"那就……麻烦你了。\"",
+                "relationship_friend_set_6": "$self$稍微调整了站姿，不再是防御性的姿态，而是微微侧身面向$target$。",
+                "relationship_friend_set_7": "$self$开心地击了一下掌，声音清脆。\"太棒了！我就知道你会答应！\"",
+                "relationship_friend_set_8": "$self$直接揽住了$target$的脖子，仿佛认识了多年的老友。\"走走走，为了庆祝我们的友谊，去吃顿好的！\"",
+                "relationship_friend_set_9": "$self$从口袋里掏出手机，快速点开二维码。\"快快快，加个好友，以后随时联系！\"",
+                "relationship_friend_set_10": "$self$笑得前仰后合，伸手揉了揉$target$的头发。\"以后你就是我的人了，谁欺负你报我名字！\"",
+                "relationship_friend_set_11": "$self$兴奋地在原地转了个圈。\"这是我今天听到的最好的消息！\"",
+                "relationship_friend_set_12": "$self$向$target$比了一个大大的拇指，眼神亮晶晶的。\"我就知道我们合得来！\"",
+                "relationship_friend_refuse_1": "$self$礼貌性地后退了半步，保持着安全的社交距离。\"抱歉，我不太习惯和人走得太近。\"",
+                "relationship_friend_refuse_2": "$self$没有接过伸来的手，只是微微鞠了一躬。\"我们现在这样保持工作关系就挺好的。\"",
+                "relationship_friend_refuse_3": "$self$看了一眼手机，仿佛突然想起了什么急事。\"不好意思，我还有点事，先失陪了。\"",
+                "relationship_friend_refuse_4": "$self$脸上的笑容淡去，语气变得公事公办。\"我不觉得这是个好主意。\"",
+                "relationship_friend_refuse_5": "$self$将双手插在口袋里，视线越过$target$看向远方。\"我不擅长交朋友，还是算了吧。\"",
+                "relationship_friend_refuse_6": "$self$轻轻摇了摇头，没有过多的解释，转身离开。",
+                "relationship_friend_refuse_7": "$self$夸张地摆了摆手，脸上带着戏谑的笑。\"哇，别这么肉麻好不好？我鸡皮疙瘩都起来了！\"",
+                "relationship_friend_refuse_8": "$self$用手指轻轻弹了一下$target$的额头。\"想做我的朋友？那还得再修炼一百年呢！\"",
+                "relationship_friend_refuse_9": "$self$哈哈大笑起来，仿佛听到了什么笑话。\"别闹了，我们这样互损不是更有趣吗？\"",
+                "relationship_friend_refuse_10": "$self$假装没听见，吹着口哨看向别处。\"啊？风太大听不清——\"",
+                "relationship_friend_refuse_11": "$self$俏皮地眨了眨眼，做了一个鬼脸。\"才不要呢，做朋友多无聊啊。\"",
+                "relationship_friend_refuse_12": "$self$双手交叉在胸前比了一个‘X’。\"驳回驳回！现在的距离感刚刚好！\"",
+                "relationship_friend_refused_1": "$self$伸在半空中的手僵硬了一下，随后尴尬地收回挠了挠头。\"啊……也是，是我唐突了。\"",
+                "relationship_friend_refused_2": "$self$眼中的光芒黯淡下来，低头看着自己的脚尖。\"抱歉，打扰你了。\"",
+                "relationship_friend_refused_3": "$self$抿了抿嘴唇，强撑着维持表面的平静。\"没关系，我理解。\"",
+                "relationship_friend_refused_4": "$self$迅速地收拾好心情，恢复了平日的冷淡表情。\"忘掉我刚才说的话吧。\"",
+                "relationship_friend_refused_5": "$self$有些不知所措地摩挲着衣角。\"那……就当我没说。\"",
+                "relationship_friend_refused_6": "$self$甚至不敢看$target$的眼睛，匆忙转身想要逃离这个尴尬的氛围。",
+                "relationship_friend_refused_7": "$self$脸上的笑容僵了一瞬，随即用更大的笑声掩盖过去。\"开玩笑的啦！看把你吓的！\"",
+                "relationship_friend_refused_8": "$self$故作轻松地耸了耸肩。\"切，不当就不当，稀罕吗？\"",
+                "relationship_friend_refused_9": "$self$别过头去，声音有些发闷。\"真无情啊……不过算了，本小姐也不缺朋友。\"",
+                "relationship_friend_refused_10": "$self$用力拍了一下$target$的背。\"这么严肃干嘛？拒绝就拒绝呗，我又不会吃了你。\"",
+                "relationship_friend_refused_11": "$self$虽然嘴上说着‘没事’，但眼神明显在躲闪。\"好啦好啦，翻篇翻篇！\"",
+                "relationship_friend_refused_12": "$self$深吸了一口气，努力让声音听起来正常。\"没关系，反正来日方长嘛。\"",
+                "relationship_friend_break_1": "$self$面无表情地将借来的书放在桌上，发出‘啪’的一声轻响。\"还给你，以后别来找我了。\"",
+                "relationship_friend_break_2": "$self$在走廊相遇时直接把头扭向一边，仿佛旁边是一团空气。\"……\"",
+                "relationship_friend_break_3": "$self$冷冷地注视着$target$，眼神里没有一丝温度。\"我们之间没什么好说的了。\"",
+                "relationship_friend_break_4": "$self$删除了通讯记录，将手机屏幕熄灭。\"到此为止吧。\"",
+                "relationship_friend_break_5": "$self$平静地收拾着自己的东西，将原本混在一起的物品分得清清楚楚。\"这些是你的，拿走。\"",
+                "relationship_friend_break_6": "$self$侧身让开道路，动作中充满了拒绝交流的意味。",
+                "relationship_friend_break_7": "$self$红着眼眶，死死地盯着$target$，胸口剧烈起伏。\"我真是看错你了……滚！\"",
+                "relationship_friend_break_8": "$self$抓起手边的东西狠狠摔在地上，碎片四溅。\"别叫我的名字！你不配！\"",
+                "relationship_friend_break_9": "$self$原本想要争辩什么，但在对视的一瞬间突然泄了气，露出一抹苦笑。\"算了……真的没意思。\"",
+                "relationship_friend_break_10": "$self$用力地擦过$target$的肩膀走过去，甚至撞得对方一个趔趄。\"别挡路。\"",
+                "relationship_friend_break_11": "$self$声音颤抖着，指着门口的方向。\"趁我还没发火之前，消失在我面前。\"",
+                "relationship_friend_break_12": "$self$看着曾经的合照，沉默许久后将其撕成了两半扔进垃圾桶。\"再见。\""
+            },
+            "en-us": {
+                "relationship_friend_propose_1": "$self$ hesitated, then took out a slightly melted candy from her pocket. \"Here... this is for you.\"",
+                "relationship_friend_propose_2": "$self$ looked at $target$, seeming to want to say something, but finally just pointed to the empty seat nearby. \"If you don't mind... would you like to sit here?\"",
+                "relationship_friend_propose_3": "$self$ slowed down slightly while passing by, offering a brief greeting. \"Are we heading in the same direction?\"",
+                "relationship_friend_propose_4": "$self$ didn't look directly at $target$, simply placing an extra copy of the document on the corner of the table. \"Just happened to make an extra one.\"",
+                "relationship_friend_propose_5": "$self$ seemed a bit awkward, clearing her throat. \"Um... about that topic just now, I'd like to hear your thoughts.\"",
+                "relationship_friend_propose_6": "$self$ paused her work, glancing at $target$ from the corner of her eye. \"Can I... call you by your name from now on?\"",
+                "relationship_friend_propose_7": "$self$ smiled and leaned in close, her breath almost palpable. \"Hey, we're partners in crime now, right? Let's get along, friend!\"",
+                "relationship_friend_propose_8": "$self$ boldly placed her hand on $target$'s shoulder and patted it. \"Since we hit it off so well, let's make this alliance official!\"",
+                "relationship_friend_propose_9": "$self$ pulled two cans of soda from her bag, popped one open, and handed it over. \"Cheers! To our friendship!\"",
+                "relationship_friend_propose_10": "$self$ grabbed $target$'s hand and shook it, eyes curving with a smile. \"It's a deal then! We're on the same team from now on!\"",
+                "relationship_friend_propose_11": "$self$ gave an exaggerated salute. \"Looking forward to working with you, partner!\"",
+                "relationship_friend_propose_12": "$self$ excitedly nudged $target$'s waist with her elbow. \"Don't forget to include your friend when something good happens!\"",
+                "relationship_friend_set_1": "$self$'s tense shoulders visibly relaxed, and a faint smile appeared on her lips. \"Alright, I'll listen to you.\"",
+                "relationship_friend_set_2": "$self$ nodded. Though she didn't speak, the wariness in her eyes dissipated significantly.",
+                "relationship_friend_set_3": "$self$ silently moved her belongings aside, deliberately leaving more space.",
+                "relationship_friend_set_4": "$self$ took the item $target$ handed over, her fingertips briefly touching yours without pulling away. \"Thank you.\"",
+                "relationship_friend_set_5": "$self$ looked down at the ground, her voice very soft. \"Then... I'll trouble you with that.\"",
+                "relationship_friend_set_6": "$self$ adjusted her stance slightly, no longer defensive, but turning sideways to face $target$.",
+                "relationship_friend_set_7": "$self$ clapped her hands happily, the sound crisp. \"Awesome! I knew you'd agree!\"",
+                "relationship_friend_set_8": "$self$ threw her arm around $target$'s neck as if they were old friends. \"Let's go, let's go! To celebrate our friendship, let's get some good food!\"",
+                "relationship_friend_set_9": "$self$ pulled out her phone and quickly opened a QR code. \"Hurry, hurry! Add me so we can stay in touch!\"",
+                "relationship_friend_set_10": "$self$ laughed heartily, reaching out to ruffle $target$'s hair. \"You're mine now! If anyone bullies you, just drop my name!\"",
+                "relationship_friend_set_11": "$self$ spun around excitedly on the spot. \"That's the best news I've heard all day!\"",
+                "relationship_friend_set_12": "$self$ gave $target$ a big thumbs up, her eyes sparkling. \"I knew we'd get along!\"",
+                "relationship_friend_refuse_1": "$self$ politely took half a step back, maintaining a safe social distance. \"Sorry, I'm not used to getting too close to people.\"",
+                "relationship_friend_refuse_2": "$self$ didn't take the offered hand, just bowing slightly. \"I think it's better if we keep things professional.\"",
+                "relationship_friend_refuse_3": "$self$ checked her phone as if suddenly remembering something urgent. \"Sorry, I have something to do. Excuse me.\"",
+                "relationship_friend_refuse_4": "$self$'s smile faded, her tone becoming businesslike. \"I don't think that's a good idea.\"",
+                "relationship_friend_refuse_5": "$self$ put her hands in her pockets, looking past $target$ into the distance. \"I'm not good at making friends, so let's just forget it.\"",
+                "relationship_friend_refuse_6": "$self$ shook her head gently and turned to leave without further explanation.",
+                "relationship_friend_refuse_7": "$self$ waved her hand dismissively, a teasing smile on her face. \"Whoa, don't be so cheesy! You're giving me goosebumps!\"",
+                "relationship_friend_refuse_8": "$self$ lightly flicked $target$'s forehead with a finger. \"Want to be my friend? You'll need another hundred years of training for that!\"",
+                "relationship_friend_refuse_9": "$self$ burst out laughing as if she'd heard a joke. \"Come on, isn't it more fun for us to just roast each other?\"",
+                "relationship_friend_refuse_10": "$self$ pretended not to hear, whistling and looking away. \"Huh? The wind's too loud, I can't hear you—\"",
+                "relationship_friend_refuse_11": "$self$ winked playfully and made a face. \"No way, being friends is so boring.\"",
+                "relationship_friend_refuse_12": "$self$ crossed her arms in an 'X' shape. \"Rejected! The current distance between us is just right!\"",
+                "relationship_friend_refused_1": "$self$'s hand froze in mid-air, then she awkwardly pulled it back to scratch her head. \"Ah... right, I was being presumptuous.\"",
+                "relationship_friend_refused_2": "$self$'s eyes dimmed as she looked down at her toes. \"Sorry to bother you.\"",
+                "relationship_friend_refused_3": "$self$ pursed her lips, struggling to maintain a calm facade. \"It's okay, I understand.\"",
+                "relationship_friend_refused_4": "$self$ quickly composed herself, returning to her usual cool expression. \"Just forget what I said.\"",
+                "relationship_friend_refused_5": "$self$ rubbed the hem of her clothes, looking somewhat lost. \"Then... pretend I didn't say anything.\"",
+                "relationship_friend_refused_6": "$self$ didn't even dare to look $target$ in the eye, turning hurriedly to escape the awkward atmosphere.",
+                "relationship_friend_refused_7": "$self$'s smile froze for a split second, then she covered it up with loud laughter. \"Just kidding! Look how scared you got!\"",
+                "relationship_friend_refused_8": "$self$ shrugged, feigning nonchalance. \"Tch, whatever. Who cares?\"",
+                "relationship_friend_refused_9": "$self$ turned her head away, her voice muffled. \"So heartless... but whatever, I'm not lacking in friends anyway.\"",
+                "relationship_friend_refused_10": "$self$ slapped $target$'s back hard. \"Why so serious? A rejection is just a rejection, I'm not gonna eat you.\"",
+                "relationship_friend_refused_11": "$self$ said 'it's fine,' but her eyes were clearly avoiding contact. \"Okay, okay! moving on!\"",
+                "relationship_friend_refused_12": "$self$ took a deep breath, trying to make her voice sound normal. \"It's fine, there's always plenty of time in the future.\"",
+                "relationship_friend_break_1": "$self$ expressionlessly placed the borrowed book on the table with a soft 'thud'. \"Returning this. Don't come looking for me again.\"",
+                "relationship_friend_break_2": "$self$ turned her head away when passing in the hallway, as if there was nothing but air beside her. \"...\"",
+                "relationship_friend_break_3": "$self$ stared coldly at $target$, her eyes devoid of warmth. \"We have nothing left to say to each other.\"",
+                "relationship_friend_break_4": "$self$ deleted the chat history and turned off her phone screen. \"Let's end this here.\"",
+                "relationship_friend_break_5": "$self$ calmly packed her things, separating the mixed items clearly. \"These are yours. Take them.\"",
+                "relationship_friend_break_6": "$self$ stepped aside, her movements full of refusal to communicate.",
+                "relationship_friend_break_7": "$self$, with red-rimmed eyes, stared intensely at $target$, her chest heaving. \"I was so wrong about you... Get out!\"",
+                "relationship_friend_break_8": "$self$ grabbed something nearby and smashed it on the floor, fragments flying. \"Don't say my name! You don't deserve to!\"",
+                "relationship_friend_break_9": "$self$ wanted to argue, but the moment their eyes met, she deflated, revealing a bitter smile. \"Forget it... this is meaningless.\"",
+                "relationship_friend_break_10": "$self$ brushed past $target$ forcefully, nearly making you stumble. \"Out of my way.\"",
+                "relationship_friend_break_11": "$self$ pointed towards the door, her voice trembling. \"Disappear from my sight before I lose my temper.\"",
+                "relationship_friend_break_12": "$self$ looked at an old photo of the two of you, then tore it in half and threw it in the trash after a long silence. \"Goodbye.\""
+            }
         }
     }
 }

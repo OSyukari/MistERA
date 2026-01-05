@@ -69,7 +69,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$的头埋在$receiver.firstname$的股间舔着对方的阴部" ]
+                            "texts": [ "com_sex_oral_V_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -78,7 +78,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$将埋在$receiver.firstname$股间的头抬了起来" ]
+                            "texts":[ "com_sex_oral_V_description_remove_1" ]
                         }
                     ]
                 },
@@ -88,7 +88,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "高潮中的$receiver.firstname$的双腿紧紧夹住了$doer.firstname$的脑袋" ]
+                            "texts":[ "com_sex_oral_V_description_after_1" ]
                         }
                     ]
                 },
@@ -97,12 +97,48 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$的脸贴上了$receiver.firstname$的小穴，开始舔弄着对方的阴部"]
+                            "texts": ["com_sex_oral_V_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_oral_V":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_V_displayName_1": "舔阴",
+                "com_sex_oral_V_displayName_2": "交替舔阴",
+                "com_sex_oral_V_displayName_3": "轮流舔阴",
+                "com_sex_oral_V_displayName_4": "同时舔阴",
+
+                "com_sex_oral_V_description_begin_1":"$doer.firstname$的脸贴上了$receiver.firstname$的小穴，开始舔弄着对方的阴部",
+                "com_sex_oral_V_description_after_1":"高潮中的$receiver.firstname$的双腿紧紧夹住了$doer.firstname$的脑袋",
+                "com_sex_oral_V_description_remove_1":"$doer.firstname$将埋在$receiver.firstname$股间的头抬了起来",
+                "com_sex_oral_V_description_ongoing_1":"$doer.firstname$的头埋在$receiver.firstname$的股间舔着对方的阴部"
+
+            },
+            "en-us":
+            {
+                "com_sex_oral_V":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_V_displayName_1": "Cunnilingus",
+                "com_sex_oral_V_displayName_2": "Alt. Cunnilingus",
+                "com_sex_oral_V_displayName_3": "Alt. Cunnilingus",
+                "com_sex_oral_V_displayName_4": "Alt. Cunnilingus",
+
+                "com_sex_oral_V_description_begin_1":"$doer.firstname$ presses their face against $receiver.firstname$'s pussy and begins to lick their vulva",
+                "com_sex_oral_V_description_after_1":"Orgasming, $receiver.firstname$'s legs tightly clamp around $doer.firstname$'s head",
+                "com_sex_oral_V_description_remove_1":"$doer.firstname$ lifts their head from $receiver.firstname$'s crotch",
+                "com_sex_oral_V_description_ongoing_1":"$doer.firstname$ has their head buried in $receiver.firstname$'s crotch, licking their vulva"
+
+            }
+        }
     }
 }

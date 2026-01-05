@@ -1,160 +1,372 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_cheek_Begin",
-        "variants":
-        [
+    "Character_Personalities": {
+        "looselist": [
             {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始被捏脸蛋 有允许 口上文" ,
-                "responses":
-                [ 
-                    "$self$没有躲闪，反而主动把脸颊贴向$target$的手心，像只索求抚摸的小动物。", "$self$微微眯起眼睛，任由$target$的手指触碰脸颊，嘴角勾起温暖的弧度。", "$self$轻笑了一声，并没有阻止$target$的动作，眼神里满是宠溺。", "$self$把手中的东西放下，专心地享受起$target$的触碰。\"怎么突然这么黏人？\"", "$self$侧过脸，方便$target$捏得更顺手一些。"
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_cheek_Begin",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始被捏脸蛋 有允许 口上文",
+                            "responses": [
+                                "com_touch_cheek_Begin_1",
+                                "com_touch_cheek_Begin_2",
+                                "com_touch_cheek_Begin_3",
+                                "com_touch_cheek_Begin_4",
+                                "com_touch_cheek_Begin_5"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始被捏脸蛋 未允许 好意 口上文",
+                            "responses": [
+                                "com_touch_cheek_Begin_6",
+                                "com_touch_cheek_Begin_7",
+                                "com_touch_cheek_Begin_8",
+                                "com_touch_cheek_Begin_9"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始被捏脸蛋 未允许 敌意 口上文",
+                            "responses": [
+                                "com_touch_cheek_Begin_10",
+                                "com_touch_cheek_Begin_11",
+                                "com_touch_cheek_Begin_12",
+                                "com_touch_cheek_Begin_13"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":[ "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始被捏脸蛋 未允许 好意 口上文" ,
-                "responses":
-                [ 
-                    "$self$整个人僵在原地，眼睛瞪得大大的，完全没反应过来发生了什么。", "$self$张了张嘴似乎想说什么，但最终只是错愕地盯着$target$的手。", "$self$身体紧绷，视线游移不定，显得手足无措。\"那个……这是在做什么？\"", "$self$像是被定住了一样，连呼吸都屏住了，只有眼睫毛在微微颤抖。"
-                ]
-            },
-            {
-                
-                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
-                "_comment":"2.2.2 开始被捏脸蛋 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-                    "$self$浑身颤抖着，死死咬住下唇，不敢发出一点声音，眼泪在眼眶里打转。", "$self$绝望地闭上眼睛，身体缩成一团，任由$target$摆布。\"对不起……只要不打我就好……\"", "$self$脸色苍白，眼神空洞地看着地面，放弃了所有抵抗。", "$self$极力克制着想要呕吐的冲动，指甲深深嵌入了自己的掌心。"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_cheek",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 被捏脸蛋 口上文",
+                            "responses": [
+                                "com_touch_cheek_Sleep_1",
+                                "com_touch_cheek_Sleep_2",
+                                "com_touch_cheek_Sleep_3",
+                                "com_touch_cheek_Sleep_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 被捏脸蛋 口上文",
+                            "responses": [
+                                "com_touch_cheek_TimeStop_1",
+                                "com_touch_cheek_TimeStop_2",
+                                "com_touch_cheek_TimeStop_3",
+                                "com_touch_cheek_TimeStop_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被捏脸蛋 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_cheek_Fail_Allow_1",
+                                        "com_touch_cheek_Fail_Allow_2",
+                                        "com_touch_cheek_Fail_Allow_3",
+                                        "com_touch_cheek_Fail_Allow_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被捏脸蛋 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_cheek_Fail_Like_1",
+                                        "com_touch_cheek_Fail_Like_2",
+                                        "com_touch_cheek_Fail_Like_3",
+                                        "com_touch_cheek_Fail_Like_4"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被捏脸蛋 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_cheek_Fail_Hate_1",
+                                "com_touch_cheek_Fail_Hate_2",
+                                "com_touch_cheek_Fail_Hate_3",
+                                "com_touch_cheek_Fail_Hate_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 被捏脸蛋 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_cheek_Success_Allow_1",
+                                        "com_touch_cheek_Success_Allow_2",
+                                        "com_touch_cheek_Success_Allow_3",
+                                        "com_touch_cheek_Success_Allow_4"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被捏脸蛋 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_cheek_Success_NoAllow_1",
+                                "com_touch_cheek_Success_NoAllow_2",
+                                "com_touch_cheek_Success_NoAllow_3",
+                                "com_touch_cheek_Success_NoAllow_4"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 被捏脸蛋 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_cheek_Bad_Allow_1",
+                                        "com_touch_cheek_Bad_Allow_2",
+                                        "com_touch_cheek_Bad_Allow_3",
+                                        "com_touch_cheek_Bad_Allow_4"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 被捏脸蛋 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_cheek_Bad_NoAllow_1",
+                                "com_touch_cheek_Bad_NoAllow_2",
+                                "com_touch_cheek_Bad_NoAllow_3",
+                                "com_touch_cheek_Bad_NoAllow_4"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_cheek",
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 被捏脸蛋 口上文",
-                "responses":
-                [ 
-                    "$self$发出一声含糊的梦呓，眉头微皱，翻了个身试图躲避骚扰。", "$self$并没有醒来，只是本能地用手蹭了蹭被捏的地方，继续沉睡。", "$self$呼吸依旧平稳绵长，完全不知道自己的睡颜正在被把玩。", "$self$嘴巴微张，随着脸颊被捏住而发出可爱的呼噜声，毫无防备。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 被捏脸蛋 口上文",
-                "responses":
-                [ 
-                    "$self$保持着上一秒的动作僵立在原地，被手指按压的肌肤呈现出诡异的静止状态。", "$self$毫无知觉地任由脸颊被拉扯变形，松手后皮肤也没有立刻回弹。", "$self$像是一尊精美的人偶，对外界的肆意侵犯没有任何生理反馈。", "$self$静止的眼球上倒映着$target$肆无忌惮的动作，却无法做出任何眨眼的反应。"
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 被捏脸蛋 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$笑着拍掉了$target$的手。\"别闹啦，痒死了！\"", "$self$向后仰头避开了$target$的手指，做了个鬼脸。\"刚化好的妆，不准碰！\"", "$self$抓住$target$的手腕轻轻推回去。\"现在没空陪你玩这个，乖。\"", "$self$鼓起脸颊，含糊不清地抗议道：\"脸都要被你捏大了！\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 被捏脸蛋 无允许 善意 口上文",
-                        "responses":
-                        [ 
-                            "$self$礼貌地向后退了一步，拉开了安全距离。\"抱歉，我不习惯这样的接触。\"", "$self$尴尬地笑了笑，轻轻挡开了$target$的手。\"我们还没熟到这个地步吧？\"", "$self$有些为难地偏过头。\"请自重，$target$先生/小姐。\"", "$self$用开玩笑的口吻化解了尴尬，但身体明显在抗拒。\"这是另外的价钱哦，开玩笑的。\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 被捏脸蛋 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":
-                 [
-                    "$self$猛地打掉$target$的手，眼神冰冷如刀。\"别碰我！真恶心！\"", "$self$像是被脏东西碰到一样迅速擦拭着脸颊，满脸嫌恶。\"你有病吗？滚远点！\"", "$self$后退的同时摆出了防御姿态，厉声喝道：\"再动手动脚我就报警了！\"", "$self$死死盯着$target$，从牙缝里挤出几个字：\"把你的脏手拿开。\""
-                 ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 被捏脸蛋 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$舒服地闭上了眼睛，整个身体的重心都倚靠在$target$身上。", "$self$发出一声满足的叹息，双手覆在$target$的手背上，不想让这种接触停下。", "$self$的呼吸变得平稳而放松，脸颊因长时间的抚摸而泛起淡淡的红晕。\"手法不错嘛……再捏一会儿？\"", "$self$像猫一样蹭着$target$的掌心。\"嗯……感觉一整天的疲惫都消失了。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 被捏脸蛋 结果正面 未允许 口上文",
-                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-                    "$self$原本紧绷的身体慢慢放松下来，看向$target$的眼神变得复杂。\"奇怪……竟然不讨厌……\"", "$self$脸红到了耳根，虽然嘴上没说，但不再躲避$target$的视线。", "$self$低下头，手指紧张地绞着衣角，却并没有推开$target$。\"如果是你的话……稍微一下也可以……\"", "$self$有些别扭地嘟囔着：\"你是对谁都这么做吗？\""
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 被捏脸蛋 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$皱着眉头推开了$target$的手，揉了揉有些发红的脸颊。\"好痛……你下手太重了。\"", "$self$眼里的笑意消失了，语气变得有些生硬。\"玩够了吗？已经很久了。\"", "$self$叹了口气，有些无奈地转过身去。\"我的脸不是面团，能不能别一直捏？\"", "$self$显得有些不耐烦，频繁地查看时间。\"差不多可以了吧？\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 被捏脸蛋 结果负面 未允许 口上文",
-                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-                    "$self$忍无可忍地一把推开$target$，呼吸急促。\"够了！你到底想羞辱我到什么时候！\"", "$self$眼里的厌恶已经掩饰不住，冷冷地看着$target$。\"摸够了吗？我可以走了吗？\"", "$self$不再掩饰自己的反感，直接转身离开，留下一个决绝的背影。", "$self$虽然没有反抗，但眼神已经完全死寂，把$target$当成了透明人。"
-                ]
-            }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_touch_cheek_Begin_1": "$self$没有躲闪，反而主动把脸颊贴向$target$的手心，像只索求抚摸的小动物。",
+                "com_touch_cheek_Begin_2": "$self$微微眯起眼睛，任由$target$的手指触碰脸颊，嘴角勾起温暖的弧度。",
+                "com_touch_cheek_Begin_3": "$self$轻笑了一声，并没有阻止$target$的动作，眼神里满是宠溺。",
+                "com_touch_cheek_Begin_4": "$self$把手中的东西放下，专心地享受起$target$的触碰。\"怎么突然这么黏人？\"",
+                "com_touch_cheek_Begin_5": "$self$侧过脸，方便$target$捏得更顺手一些。",
+                "com_touch_cheek_Begin_6": "$self$整个人僵在原地，眼睛瞪得大大的，完全没反应过来发生了什么。",
+                "com_touch_cheek_Begin_7": "$self$张了张嘴似乎想说什么，但最终只是错愕地盯着$target$的手。",
+                "com_touch_cheek_Begin_8": "$self$身体紧绷，视线游移不定，显得手足无措。\"那个……这是在做什么？\"",
+                "com_touch_cheek_Begin_9": "$self$像是被定住了一样，连呼吸都屏住了，只有眼睫毛在微微颤抖。",
+                "com_touch_cheek_Begin_10": "$self$浑身颤抖着，死死咬住下唇，不敢发出一点声音，眼泪在眼眶里打转。",
+                "com_touch_cheek_Begin_11": "$self$绝望地闭上眼睛，身体缩成一团，任由$target$摆布。\"对不起……只要不打我就好……\"",
+                "com_touch_cheek_Begin_12": "$self$脸色苍白，眼神空洞地看着地面，放弃了所有抵抗。",
+                "com_touch_cheek_Begin_13": "$self$极力克制着想要呕吐的冲动，指甲深深嵌入了自己的掌心。",
+                "com_touch_cheek_Sleep_1": "$self$发出一声含糊的梦呓，眉头微皱，翻了个身试图躲避骚扰。",
+                "com_touch_cheek_Sleep_2": "$self$并没有醒来，只是本能地用手蹭了蹭被捏的地方，继续沉睡。",
+                "com_touch_cheek_Sleep_3": "$self$呼吸依旧平稳绵长，完全不知道自己的睡颜正在被把玩。",
+                "com_touch_cheek_Sleep_4": "$self$嘴巴微张，随着脸颊被捏住而发出可爱的呼噜声，毫无防备。",
+                "com_touch_cheek_TimeStop_1": "$self$保持着上一秒的动作僵立在原地，被手指按压的肌肤呈现出诡异的静止状态。",
+                "com_touch_cheek_TimeStop_2": "$self$毫无知觉地任由脸颊被拉扯变形，松手后皮肤也没有立刻回弹。",
+                "com_touch_cheek_TimeStop_3": "$self$像是一尊精美的人偶，对外界的肆意侵犯没有任何生理反馈。",
+                "com_touch_cheek_TimeStop_4": "$self$静止的眼球上倒映着$target$肆无忌惮的动作，却无法做出任何眨眼的反应。",
+                "com_touch_cheek_Fail_Allow_1": "$self$笑着拍掉了$target$的手。\"别闹啦，痒死了！\"",
+                "com_touch_cheek_Fail_Allow_2": "$self$向后仰头避开了$target$的手指，做了个鬼脸。\"刚化好的妆，不准碰！\"",
+                "com_touch_cheek_Fail_Allow_3": "$self$抓住$target$的手腕轻轻推回去。\"现在没空陪你玩这个，乖。\"",
+                "com_touch_cheek_Fail_Allow_4": "$self$鼓起脸颊，含糊不清地抗议道：\"脸都要被你捏大了！\"",
+                "com_touch_cheek_Fail_Like_1": "$self$礼貌地向后退了一步，拉开了安全距离。\"抱歉，我不习惯这样的接触。\"",
+                "com_touch_cheek_Fail_Like_2": "$self$尴尬地笑了笑，轻轻挡开了$target$的手。\"我们还没熟到这个地步吧？\"",
+                "com_touch_cheek_Fail_Like_3": "$self$有些为难地偏过头。\"请自重，$target$先生/小姐。\"",
+                "com_touch_cheek_Fail_Like_4": "$self$用开玩笑的口吻化解了尴尬，但身体明显在抗拒。\"这是另外的价钱哦，开玩笑的。\"",
+                "com_touch_cheek_Fail_Hate_1": "$self$猛地打掉$target$的手，眼神冰冷如刀。\"别碰我！真恶心！\"",
+                "com_touch_cheek_Fail_Hate_2": "$self$像是被脏东西碰到一样迅速擦拭着脸颊，满脸嫌恶。\"你有病吗？滚远点！\"",
+                "com_touch_cheek_Fail_Hate_3": "$self$后退的同时摆出了防御姿态，厉声喝道：\"再动手动脚我就报警了！\"",
+                "com_touch_cheek_Fail_Hate_4": "$self$死死盯着$target$，从牙缝里挤出几个字：\"把你的脏手拿开。\"",
+                "com_touch_cheek_Success_Allow_1": "$self$舒服地闭上了眼睛，整个身体的重心都倚靠在$target$身上。",
+                "com_touch_cheek_Success_Allow_2": "$self$发出一声满足的叹息，双手覆在$target$的手背上，不想让这种接触停下。",
+                "com_touch_cheek_Success_Allow_3": "$self$的呼吸变得平稳而放松，脸颊因长时间的抚摸而泛起淡淡的红晕。\"手法不错嘛……再捏一会儿？\"",
+                "com_touch_cheek_Success_Allow_4": "$self$像猫一样蹭着$target$的掌心。\"嗯……感觉一整天的疲惫都消失了。\"",
+                "com_touch_cheek_Success_NoAllow_1": "$self$原本紧绷的身体慢慢放松下来，看向$target$的眼神变得复杂。\"奇怪……竟然不讨厌……\"",
+                "com_touch_cheek_Success_NoAllow_2": "$self$脸红到了耳根，虽然嘴上没说，但不再躲避$target$的视线。",
+                "com_touch_cheek_Success_NoAllow_3": "$self$低下头，手指紧张地绞着衣角，却并没有推开$target$。\"如果是你的话……稍微一下也可以……\"",
+                "com_touch_cheek_Success_NoAllow_4": "$self$有些别扭地嘟囔着：\"你是对谁都这么做吗？\"",
+                "com_touch_cheek_Bad_Allow_1": "$self$皱着眉头推开了$target$的手，揉了揉有些发红的脸颊。\"好痛……你下手太重了。\"",
+                "com_touch_cheek_Bad_Allow_2": "$self$眼里的笑意消失了，语气变得有些生硬。\"玩够了吗？已经很久了。\"",
+                "com_touch_cheek_Bad_Allow_3": "$self$叹了口气，有些无奈地转过身去。\"我的脸不是面团，能不能别一直捏？\"",
+                "com_touch_cheek_Bad_Allow_4": "$self$显得有些不耐烦，频繁地查看时间。\"差不多可以了吧？\"",
+                "com_touch_cheek_Bad_NoAllow_1": "$self$忍无可忍地一把推开$target$，呼吸急促。\"够了！你到底想羞辱我到什么时候！\"",
+                "com_touch_cheek_Bad_NoAllow_2": "$self$眼里的厌恶已经掩饰不住，冷冷地看着$target$。\"摸够了吗？我可以走了吗？\"",
+                "com_touch_cheek_Bad_NoAllow_3": "$self$不再掩饰自己的反感，直接转身离开，留下一个决绝的背影。",
+                "com_touch_cheek_Bad_NoAllow_4": "$self$虽然没有反抗，但眼神已经完全死寂，把$target$当成了透明人。"
+            },
+            "en-us": {
+                "com_touch_cheek_Begin_1": "$self$ doesn't shy away, but instead leans her cheek into $target$'s palm, like a small animal seeking affection.",
+                "com_touch_cheek_Begin_2": "$self$ squints slightly, letting $target$'s fingers touch her cheek as a warm smile curls her lips.",
+                "com_touch_cheek_Begin_3": "$self$ chuckles lightly, not stopping $target$'s movements, her eyes filled with doting affection.",
+                "com_touch_cheek_Begin_4": "$self$ puts down what she was holding and fully focuses on enjoying $target$'s touch. \"Why so clingy all of a sudden?\"",
+                "com_touch_cheek_Begin_5": "$self$ turns her face to the side, making it easier for $target$ to pinch.",
+                "com_touch_cheek_Begin_6": "$self$ freezes in place, eyes wide open, completely unable to process what is happening.",
+                "com_touch_cheek_Begin_7": "$self$ opens her mouth as if to speak, but ends up just staring at $target$'s hand in bewilderment.",
+                "com_touch_cheek_Begin_8": "$self$'s body tenses up, her gaze darting around, looking flustered. \"Um... what are you doing?\"",
+                "com_touch_cheek_Begin_9": "$self$ looks frozen, even holding her breath, with only her eyelashes trembling slightly.",
+                "com_touch_cheek_Begin_10": "$self$ is trembling all over, biting her lower lip hard, daring not to make a sound as tears well up in her eyes.",
+                "com_touch_cheek_Begin_11": "$self$ closes her eyes in despair, curling into a ball and letting $target$ do as they please. \"I'm sorry... as long as you don't hit me...\"",
+                "com_touch_cheek_Begin_12": "$self$ turns pale, staring blankly at the ground, having given up all resistance.",
+                "com_touch_cheek_Begin_13": "$self$ tries hard to suppress the urge to vomit, her fingernails digging deep into her palms.",
+                "com_touch_cheek_Sleep_1": "$self$ mumbles something incoherent in her sleep, frowning slightly, and rolls over trying to escape the disturbance.",
+                "com_touch_cheek_Sleep_2": "$self$ doesn't wake up, but instinctively nuzzles her cheek against where she was pinched, continuing to sleep.",
+                "com_touch_cheek_Sleep_3": "$self$'s breathing remains steady and deep, completely unaware that her sleeping face is being played with.",
+                "com_touch_cheek_Sleep_4": "$self$'s mouth parts slightly, letting out a cute snoring sound as her cheek is pinched, totally defenseless.",
+                "com_touch_cheek_TimeStop_1": "$self$ remains frozen in her previous action, the skin pressed by the fingers showing an eerie stillness.",
+                "com_touch_cheek_TimeStop_2": "$self$ unwittingly lets her cheek be pulled and distorted; the skin doesn't immediately bounce back after release.",
+                "com_touch_cheek_TimeStop_3": "$self$ is like an exquisite doll, showing no physiological response to the violation from the outside world.",
+                "com_touch_cheek_TimeStop_4": "$self$'s motionless eyes reflect $target$'s brazen actions, yet she cannot even blink in reaction.",
+                "com_touch_cheek_Fail_Allow_1": "$self$ laughs and swats $target$'s hand away. \"Stop it, that tickles!\"",
+                "com_touch_cheek_Fail_Allow_2": "$self$ tilts her head back to dodge $target$'s fingers, making a funny face. \"I just did my makeup, don't touch!\"",
+                "com_touch_cheek_Fail_Allow_3": "$self$ grabs $target$'s wrist and gently pushes it back. \"No time to play right now, be good.\"",
+                "com_touch_cheek_Fail_Allow_4": "$self$ puffs out her cheeks and protests mumblingly, \"You're going to make my face huge!\"",
+                "com_touch_cheek_Fail_Like_1": "$self$ politely takes a step back, creating a safe distance. \"Sorry, I'm not used to this kind of contact.\"",
+                "com_touch_cheek_Fail_Like_2": "$self$ smiles awkwardly and gently blocks $target$'s hand. \"We aren't that close yet, are we?\"",
+                "com_touch_cheek_Fail_Like_3": "$self$ turns her head away, looking troubled. \"Please have some respect, Mr./Ms. $target$.\"",
+                "com_touch_cheek_Fail_Like_4": "$self$ tries to diffuse the awkwardness with a joke, but her body is clearly resisting. \"That'll cost you extra... just kidding.\"",
+                "com_touch_cheek_Fail_Hate_1": "$self$ abruptly slaps $target$'s hand away, her eyes cold as ice. \"Don't touch me! That's disgusting!\"",
+                "com_touch_cheek_Fail_Hate_2": "$self$ wipes her cheek quickly as if touched by something dirty, looking full of revulsion. \"Are you sick? Get away from me!\"",
+                "com_touch_cheek_Fail_Hate_3": "$self$ steps back into a defensive stance, shouting sternly, \"Touch me again and I'm calling the police!\"",
+                "com_touch_cheek_Fail_Hate_4": "$self$ stares daggers at $target$, squeezing out the words through gritted teeth, \"Get your dirty hands off me.\"",
+                "com_touch_cheek_Success_Allow_1": "$self$ closes her eyes comfortably, leaning her entire body weight against $target$.",
+                "com_touch_cheek_Success_Allow_2": "$self$ lets out a satisfied sigh, placing her hands over $target$'s, not wanting the contact to stop.",
+                "com_touch_cheek_Success_Allow_3": "$self$'s breathing becomes steady and relaxed, a faint blush rising on her cheeks from the prolonged caress. \"You're pretty good at this... keep going?\"",
+                "com_touch_cheek_Success_Allow_4": "$self$ nuzzles against $target$'s palm like a cat. \"Mmm... feels like all the day's fatigue is melting away.\"",
+                "com_touch_cheek_Success_NoAllow_1": "$self$'s previously tense body slowly relaxes, her gaze at $target$ becoming complex. \"Strange... I don't actually hate this...\"",
+                "com_touch_cheek_Success_NoAllow_2": "$self$ blushes to her ears, and although she says nothing, she no longer avoids $target$'s gaze.",
+                "com_touch_cheek_Success_NoAllow_3": "$self$ lowers her head, fingers nervously twisting the hem of her clothes, but doesn't push $target$ away. \"If it's you... maybe just a little bit is okay...\"",
+                "com_touch_cheek_Success_NoAllow_4": "$self$ mumbles somewhat awkwardly, \"Do you do this to everyone?\"",
+                "com_touch_cheek_Bad_Allow_1": "$self$ pushes $target$'s hand away with a frown, rubbing her slightly reddened cheek. \"Ouch... you're too rough.\"",
+                "com_touch_cheek_Bad_Allow_2": "$self$'s smile disappears, her tone becoming a bit stiff. \"Had enough? It's been a while now.\"",
+                "com_touch_cheek_Bad_Allow_3": "$self$ sighs and turns away helplessly. \"My face isn't dough, could you stop pinching it?\"",
+                "com_touch_cheek_Bad_Allow_4": "$self$ looks impatient, checking the time frequently. \"That's about enough, right?\"",
+                "com_touch_cheek_Bad_NoAllow_1": "$self$ pushes $target$ away, unable to take it anymore, breathing heavily. \"Enough! How long do you plan to humiliate me!\"",
+                "com_touch_cheek_Bad_NoAllow_2": "$self$ can no longer hide the disgust in her eyes, staring coldly at $target$. \"Done touching? Can I go now?\"",
+                "com_touch_cheek_Bad_NoAllow_3": "$self$ stops hiding her aversion and turns to leave, showing a resolute back.",
+                "com_touch_cheek_Bad_NoAllow_4": "$self$ doesn't resist, but her eyes have gone completely dead, treating $target$ as if they were transparent."
+            }
         }
     }
 }

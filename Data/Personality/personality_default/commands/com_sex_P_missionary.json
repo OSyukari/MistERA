@@ -1,264 +1,587 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_P_missionary_Climax",
-        "tags":["nsfw"],
-        "variants":[
+    "Character_Personalities": {
+        "looselist": [
             {
-                
-                "requireSelfDoer": true,
-                "responses": [
-                    "($self$) 正面位V 高潮 口上文"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_missionary_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "responses": [
+                                "com_sex_P_missionary_Climax_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "climax"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 高潮 有允许",
+                                    "responses": [
+                                        "com_sex_P_missionary_Climax_2",
+                                        "com_sex_P_missionary_Climax_3"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 高潮 无允许",
+                            "responses": [
+                                "com_sex_P_missionary_Climax_4",
+                                "com_sex_P_missionary_Climax_5"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                
-                "requireSelfReceiver": true,
-                "variants":[
-                    {
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver","missionary", "climax"], "useActiveTags":false,
-                        "_comment":"2.4.1 高潮 有允许" ,
-                        "responses": [
-"$self$猛地仰起头，手指死死抓着$target$的背，瞳孔涣散：“啊——！不行了！要到了！哈啊……全部……全部都要坏掉了——！♡”", "$self$身体剧烈痉挛，阴道疯狂收缩绞紧肉棒，语无伦次地尖叫：“去了！真的去了！老公……啊啊啊♡……脑子要融化了……♡”"
-                        ]
-                    }
-                ],
-                "extraPortraitTags":["sex","receiver","missionary", "climax"], "useActiveTags":false,
-                "_comment":"2.4.2 高潮 无允许" ,
-                "responses": [
-"$self$咬着自己的手背试图忍耐，但身体却不受控制地弓起：“唔唔……！不可以……明明不想的……身体……擅自……啊啊啊——！♡”", "$self$眼泪不停地流下来，嘴里说着拒绝的话，下体却诚实地喷出了淫液：“不要……别看我……这种感觉……好奇怪……要泄了……呜呜呜……♡”"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_P_missionary_Begin",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":["sex","receiver","missionary", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 ($self$) 开始正面位V 有允许 口上文" ,
-                "responses":
-                [ 
-"$self$双腿紧紧缠在$target$腰间，随着抽插的节奏主动抬起腰肢迎合。", "$self$捧着$target$的脸颊，迷离的眼眸中满是爱意：\"嗯……好深……全部进来了……再用力一点……♡\"",
-"$self$脸颊微红，顺从地分开双腿，轻声说道：“嗯……如果是$target$的话，可以哦。”", "$self$主动搂住$target$的脖子，眼神迷离：“轻一点……我已经准备好了。”"
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_missionary_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 ($self$) 开始正面位V 有允许 口上文",
+                            "responses": [
+                                "com_sex_P_missionary_Begin_1",
+                                "com_sex_P_missionary_Begin_2",
+                                "com_sex_P_missionary_Begin_3",
+                                "com_sex_P_missionary_Begin_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 ($self$) 开始正面位V 未允许 口上文",
+                            "responses": [
+                                "com_sex_P_missionary_Begin_5",
+                                "com_sex_P_missionary_Begin_6",
+                                "com_sex_P_missionary_Begin_7",
+                                "com_sex_P_missionary_Begin_8"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 ($self$) 开始正面位V 未允许 口上文",
+                            "responses": [
+                                "com_sex_P_missionary_Begin_9",
+                                "com_sex_P_missionary_Begin_10",
+                                "com_sex_P_missionary_Begin_11",
+                                "com_sex_P_missionary_Begin_12",
+                                "com_sex_P_missionary_Begin_13",
+                                "com_sex_P_missionary_Begin_14"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":["sex","receiver","missionary", "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 ($self$) 开始正面位V 未允许 口上文" ,
-                "responses":
-                [ 
-"$self$羞耻地用手背遮住眼睛，却顺从地打开了身体，任由$target$将硬热的东西埋入深处。", "$self$发出破碎的喘息，断断续续地说道：\"只有这一次……哈……别顶那么深……\"",
-"$self$完全愣住了，身体僵硬地承受着侵入：“等、等等……怎么突然……哈啊……但是……并不讨厌……”", "$self$咬着嘴唇，眼神慌乱却无法抗拒：“如果是$target$的话……也许……没关系吧……”"
-                ]
-            },
-            {
-                
-                "extraPortraitTags":["sex","receiver","missionary", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
-                "_comment":"2.2.2 ($self$) 开始正面位V 未允许 口上文" ,
-                "responses":
-                [ 
-"$self$把头偏向一边，死死盯着床单的一角，默默承受着$target$在体内的抽插。", "$self$的双腿僵硬地架在$target$肩上，不仅没有迎合，反而随着每一次撞击而本能地想要后退。",
-"$self$被压在身下，随着肉棒的每一次强制顶入而发出短促的惊叫，双手无助地抓紧了身下的床单。", "$self$紧咬着下唇，试图忍住羞耻的悲鸣，但身体已经在$target$的强硬攻势下颤抖不已。",
-"$self$身体颤抖着，紧闭着双眼不敢看$target$：“不……不要……求你了……轻一点……”", "$self$绝望地抓着床单，声音带着哭腔：“既然逃不掉……那就快点结束吧……你要是敢说出去我就杀了你。”"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_P_missionary",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sex","receiver","missionary","sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 ($self$) 睡眠中 正面位V口上文",
-                "responses":
-                [ 
-"$self$在睡梦中发出无意识的嘤咛，身体随着$target$的动作被动摇晃，眉头因为下体的异物感而微微皱起。", "$self$并没有醒来，只是本能地收缩着阴道壁，紧紧裹住了正在侵犯她的肉棒。",
-"$self$发出均匀的呼吸声，似乎完全没有察觉到肉棒正在体内进出，只有眉头偶尔因为过深的顶撞而微微皱起。", "$self$像个坏掉的人偶一样沉睡着，随着抽插的动作，身体在床铺上无意识地晃动，口角流出一丝晶莹的唾液。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","receiver","missionary","doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 ($self$) 时停中 被正面位V口上文",
-                "responses":
-                [ 
-"$self$像一具精致的充气娃娃般毫无反应，任由$target$提起她的双腿，将肉棒狠狠贯穿到底。", 
-"$self$那凝固的表情与下体激烈的抽插形成了诡异的对比，随着$target$的撞击，只有乳房在机械地晃动。",
-"$self$保持着原本的姿势一动不动，肉棒肆意地在毫无防备的阴道内抽插，发出噗嗤噗嗤的水声。", "完全静止的$self$，脸上还挂着上一秒的微笑，而下体却正被粗暴地侵犯，穴肉只能被动地裹紧入侵者。"
-
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[
-                    {
-                        "requirement":  { "selfTags":["justWokenUp"] } ,
-                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                        "variants":[
-                            {
-                                "requirement":  {  "requirePermission":true } ,
-                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                                "_comment":"2.1.6 刚睡醒时的指令失败拒绝口上文 有允许",
-                                "responses":
-                                [ 
- "$self$猛地惊醒，一把推开$target$，抓紧了床单：“你在做什么！快停下！即使是我们也不能这样！”", "$self$皱着眉头挣扎着坐起来，语气严厉：“别碰我！我很困，这种玩笑一点都不好笑！”"
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_missionary",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
                                 ]
-
-                            }
-                        ],
-                        "_comment":"2.2.9 刚睡醒时的指令失败拒绝口上文 无允许",
-                        "responses":
-                        [ 
-"$self$猛地睁开眼，感受到体内的充实感后惊恐地尖叫出声，手忙脚乱地想要推开压在身上的人。", "$self$：\"你在干什么？！疯了吗？快拿出去！呜……不准动！\"",
-"$self$发出尖锐的尖叫，拼命踢打着$target$：“变态！强奸犯！从我身上滚下去！”", "$self$慌乱地推开$target$，也不管衣服没穿好就往外跑：“救命！有人吗！这人疯了！”"
-
-                        ]
-                    },
-                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 有允许 口上文",
-                        "responses":
-                        [ 
- "$self$轻轻推拒着$target$的胸膛，歉意地摇摇头：“抱歉亲爱的，今天身体有点不舒服，下次好吗？”", "$self$打了个哈欠，翻过身背对着$target$：“太累了……让我睡会儿吧，别闹了。”"
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$尴尬地抓住了$target$的手，勉强挤出一丝笑容：“喂喂，这种玩笑过火了哦，我们只是朋友吧？”", "$self$像泥鳅一样从$target$身下钻出来：“不行不行！即使是你也不能越过这条线！”"
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$拼命并拢双腿，试图将那硬挺的东西挤出体外：\"出去！谁允许你进来了！\"", "$self$用手掌死死抵住$target$的腹部，满脸通红地怒斥：\"别碰那里！简直……太差劲了！\"",
-"$self$狠狠地甩了$target$一巴掌，眼神冰冷刺骨：“别用你的脏手碰我，恶心。”", "$self$用看垃圾一样的眼神盯着$target$：“你脑子里只有这种下流的事吗？滚开。”"
-                 ]
-            },
-            {
-
-                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
-                "_comment1":"玩家专用 刚睡醒时的 正面位V口上文",
-                "variants":[
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":["sex","receiver","missionary","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.1.5",
-                        "responses":[
-"$self$迷迷糊糊地哼了一声，适应了体内的尺寸后，慵懒地伸手抱住了$target$的脖子。", 
-"$self$嘴角勾起一抹坏笑，腰部配合着动了起来：\"趁人家睡觉做坏事……罚你要射在里面哦……♡\"",
-"$self$迷迷糊糊地睁开眼，感觉到体内的异物后反而缠了上来：“唔……坏心眼……趁人家睡觉偷袭……”", "$self$半梦半醒间发出甜腻的哼声，配合着$target$的动作：“哈……是$target$吗……那就……随你喜欢吧……”"
-                        ]
-
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":["sex","receiver","missionary","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.2.7",
-                        "responses":[
-"$self$睁开眼看到身上的$target$，惊讶之后反而发出了一声娇喘：“呀……！居然……既然都已经进来了……那就继续吧……”", "$self$不可置信地看着结合处，随即羞涩地抱住了$target$：“真是的……没想到你这么色……嗯……可以哦。”"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.8 玩家专用 刚睡醒时的 正面位V口上文 （无论结果好坏）",
-                "extraPortraitTags":["sex","receiver","missionary","scared","submissive"], "useActiveTags":false,
-                "responses":
-                [ 
-                    "$self$惊恐地看着压在身上的$target$，但在威胁的目光下停止了挣扎：“唔……我知道了……我不动……请不要伤害我……”", "$self$眼里含着泪水，绝望地承受着冲击"
-                ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver","missionary", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 正面位V 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$还在微微喘息，脸上带着满足的红晕，紧紧抱住$target$：“哈……好舒服……最喜欢你了。”", "$self$瘫软在床上，手指在$target$胸口画圈：“刚才那几下……简直要命……下次还要……”"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 正面位V 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","receiver","missionary", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$瘫软在床上，大口喘息着，看向$target$的眼神里多了一丝湿润的迷离。", "$self$下意识地夹紧了还残留着$target$体温的私处，脸红得像要滴血：\"竟然……这种感觉……\"",
-"$self$用被子遮住半张脸，不敢直视$target$：“这算什么啊……身体……变得奇怪了……”", "$self$眼神有些躲闪，脸红得像熟透的苹果：“虽然是第一次……但好像……并没有想象中那么糟糕。”"
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver","missionary", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 正面位V 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$默默拉过被子盖住身体，声音有些冷淡：“这就结束了吗？……算了，我去洗澡。”", "$self$没有看$target$，只是别过脸去整理凌乱的头发：“怎么说呢……稍微有点没感觉。”"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 正面位V 结果负面 未允许 口上文",
-                "extraPortraitTags":["sex","receiver","missionary", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$皱着眉头推开了$target$，有些痛苦地蜷缩起身体。", "$self$：\"抱歉……稍微有点痛……我不确定我们是不是该继续……\"",
-"$self$蜷缩在床角无声地抽泣，拒绝任何触碰：“最差劲了……我不想再看到你的脸。”", "$self$面无表情地穿上衣服，声音冷得像冰：“这就当作没发生过。以后别再跟我说话。”"
-                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 ($self$) 睡眠中 正面位V口上文",
+                            "responses": [
+                                "com_sex_P_missionary_1",
+                                "com_sex_P_missionary_2",
+                                "com_sex_P_missionary_3",
+                                "com_sex_P_missionary_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 ($self$) 时停中 被正面位V口上文",
+                            "responses": [
+                                "com_sex_P_missionary_5",
+                                "com_sex_P_missionary_6",
+                                "com_sex_P_missionary_7",
+                                "com_sex_P_missionary_8"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的指令失败拒绝口上文 有允许",
+                                            "responses": [
+                                                "com_sex_P_missionary_9",
+                                                "com_sex_P_missionary_10"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的指令失败拒绝口上文 无允许",
+                                    "responses": [
+                                        "com_sex_P_missionary_11",
+                                        "com_sex_P_missionary_12",
+                                        "com_sex_P_missionary_13",
+                                        "com_sex_P_missionary_14"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_missionary_15",
+                                        "com_sex_P_missionary_16"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_P_missionary_17",
+                                        "com_sex_P_missionary_18"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_missionary_19",
+                                "com_sex_P_missionary_20",
+                                "com_sex_P_missionary_21",
+                                "com_sex_P_missionary_22"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment1": "玩家专用 刚睡醒时的 正面位V口上文",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.5",
+                                    "responses": [
+                                        "com_sex_P_missionary_23",
+                                        "com_sex_P_missionary_24",
+                                        "com_sex_P_missionary_25",
+                                        "com_sex_P_missionary_26"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.7",
+                                    "responses": [
+                                        "com_sex_P_missionary_27",
+                                        "com_sex_P_missionary_28"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.8 玩家专用 刚睡醒时的 正面位V口上文 （无论结果好坏）",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "scared",
+                                "submissive"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_missionary_29",
+                                "com_sex_P_missionary_30"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 正面位V 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_missionary_31",
+                                        "com_sex_P_missionary_32"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 正面位V 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_P_missionary_33",
+                                "com_sex_P_missionary_34",
+                                "com_sex_P_missionary_35",
+                                "com_sex_P_missionary_36"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 正面位V 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_missionary_37",
+                                        "com_sex_P_missionary_38"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 正面位V 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_missionary_39",
+                                "com_sex_P_missionary_40",
+                                "com_sex_P_missionary_41",
+                                "com_sex_P_missionary_42"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_P_missionary_Climax_1": "($self$) 正面位V 高潮 口上文",
+                "com_sex_P_missionary_Climax_2": "$self$猛地仰起头，手指死死抓着$target$的背，瞳孔涣散：“啊——！不行了！要到了！哈啊……全部……全部都要坏掉了——！♡”",
+                "com_sex_P_missionary_Climax_3": "$self$身体剧烈痉挛，阴道疯狂收缩绞紧肉棒，语无伦次地尖叫：“去了！真的去了！老公……啊啊啊♡……脑子要融化了……♡”",
+                "com_sex_P_missionary_Climax_4": "$self$咬着自己的手背试图忍耐，但身体却不受控制地弓起：“唔唔……！不可以……明明不想的……身体……擅自……啊啊啊——！♡”",
+                "com_sex_P_missionary_Climax_5": "$self$眼泪不停地流下来，嘴里说着拒绝的话，下体却诚实地喷出了淫液：“不要……别看我……这种感觉……好奇怪……要泄了……呜呜呜……♡”",
+                "com_sex_P_missionary_Begin_1": "$self$双腿紧紧缠在$target$腰间，随着抽插的节奏主动抬起腰肢迎合。",
+                "com_sex_P_missionary_Begin_2": "$self$捧着$target$的脸颊，迷离的眼眸中满是爱意：\"嗯……好深……全部进来了……再用力一点……♡\"",
+                "com_sex_P_missionary_Begin_3": "$self$脸颊微红，顺从地分开双腿，轻声说道：“嗯……如果是$target$的话，可以哦。”",
+                "com_sex_P_missionary_Begin_4": "$self$主动搂住$target$的脖子，眼神迷离：“轻一点……我已经准备好了。”",
+                "com_sex_P_missionary_Begin_5": "$self$羞耻地用手背遮住眼睛，却顺从地打开了身体，任由$target$将硬热的东西埋入深处。",
+                "com_sex_P_missionary_Begin_6": "$self$发出破碎的喘息，断断续续地说道：\"只有这一次……哈……别顶那么深……\"",
+                "com_sex_P_missionary_Begin_7": "$self$完全愣住了，身体僵硬地承受着侵入：“等、等等……怎么突然……哈啊……但是……并不讨厌……”",
+                "com_sex_P_missionary_Begin_8": "$self$咬着嘴唇，眼神慌乱却无法抗拒：“如果是$target$的话……也许……没关系吧……”",
+                "com_sex_P_missionary_Begin_9": "$self$把头偏向一边，死死盯着床单的一角，默默承受着$target$在体内的抽插。",
+                "com_sex_P_missionary_Begin_10": "$self$的双腿僵硬地架在$target$肩上，不仅没有迎合，反而随着每一次撞击而本能地想要后退。",
+                "com_sex_P_missionary_Begin_11": "$self$被压在身下，随着肉棒的每一次强制顶入而发出短促的惊叫，双手无助地抓紧了身下的床单。",
+                "com_sex_P_missionary_Begin_12": "$self$紧咬着下唇，试图忍住羞耻的悲鸣，但身体已经在$target$的强硬攻势下颤抖不已。",
+                "com_sex_P_missionary_Begin_13": "$self$身体颤抖着，紧闭着双眼不敢看$target$：“不……不要……求你了……轻一点……”",
+                "com_sex_P_missionary_Begin_14": "$self$绝望地抓着床单，声音带着哭腔：“既然逃不掉……那就快点结束吧……你要是敢说出去我就杀了你。”",
+                "com_sex_P_missionary_1": "$self$在睡梦中发出无意识的嘤咛，身体随着$target$的动作被动摇晃，眉头因为下体的异物感而微微皱起。",
+                "com_sex_P_missionary_2": "$self$并没有醒来，只是本能地收缩着阴道壁，紧紧裹住了正在侵犯她的肉棒。",
+                "com_sex_P_missionary_3": "$self$发出均匀的呼吸声，似乎完全没有察觉到肉棒正在体内进出，只有眉头偶尔因为过深的顶撞而微微皱起。",
+                "com_sex_P_missionary_4": "$self$像个坏掉的人偶一样沉睡着，随着抽插的动作，身体在床铺上无意识地晃动，口角流出一丝晶莹的唾液。",
+                "com_sex_P_missionary_5": "$self$像一具精致的充气娃娃般毫无反应，任由$target$提起她的双腿，将肉棒狠狠贯穿到底。",
+                "com_sex_P_missionary_6": "$self$那凝固的表情与下体激烈的抽插形成了诡异的对比，随着$target$的撞击，只有乳房在机械地晃动。",
+                "com_sex_P_missionary_7": "$self$保持着原本的姿势一动不动，肉棒肆意地在毫无防备的阴道内抽插，发出噗嗤噗嗤的水声。",
+                "com_sex_P_missionary_8": "完全静止的$self$，脸上还挂着上一秒的微笑，而下体却正被粗暴地侵犯，穴肉只能被动地裹紧入侵者。",
+                "com_sex_P_missionary_9": "$self$猛地惊醒，一把推开$target$，抓紧了床单：“你在做什么！快停下！即使是我们也不能这样！”",
+                "com_sex_P_missionary_10": "$self$皱着眉头挣扎着坐起来，语气严厉：“别碰我！我很困，这种玩笑一点都不好笑！”",
+                "com_sex_P_missionary_11": "$self$猛地睁开眼，感受到体内的充实感后惊恐地尖叫出声，手忙脚乱地想要推开压在身上的人。",
+                "com_sex_P_missionary_12": "$self$：\"你在干什么？！疯了吗？快拿出去！呜……不准动！\"",
+                "com_sex_P_missionary_13": "$self$发出尖锐的尖叫，拼命踢打着$target$：“变态！强奸犯！从我身上滚下去！”",
+                "com_sex_P_missionary_14": "$self$慌乱地推开$target$，也不管衣服没穿好就往外跑：“救命！有人吗！这人疯了！”",
+                "com_sex_P_missionary_15": "$self$轻轻推拒着$target$的胸膛，歉意地摇摇头：“抱歉亲爱的，今天身体有点不舒服，下次好吗？”",
+                "com_sex_P_missionary_16": "$self$打了个哈欠，翻过身背对着$target$：“太累了……让我睡会儿吧，别闹了。”",
+                "com_sex_P_missionary_17": "$self$尴尬地抓住了$target$的手，勉强挤出一丝笑容：“喂喂，这种玩笑过火了哦，我们只是朋友吧？”",
+                "com_sex_P_missionary_18": "$self$像泥鳅一样从$target$身下钻出来：“不行不行！即使是你也不能越过这条线！”",
+                "com_sex_P_missionary_19": "$self$拼命并拢双腿，试图将那硬挺的东西挤出体外：\"出去！谁允许你进来了！\"",
+                "com_sex_P_missionary_20": "$self$用手掌死死抵住$target$的腹部，满脸通红地怒斥：\"别碰那里！简直……太差劲了！\"",
+                "com_sex_P_missionary_21": "$self$狠狠地甩了$target$一巴掌，眼神冰冷刺骨：“别用你的脏手碰我，恶心。”",
+                "com_sex_P_missionary_22": "$self$用看垃圾一样的眼神盯着$target$：“你脑子里只有这种下流的事吗？滚开。”",
+                "com_sex_P_missionary_23": "$self$迷迷糊糊地哼了一声，适应了体内的尺寸后，慵懒地伸手抱住了$target$的脖子。",
+                "com_sex_P_missionary_24": "$self$嘴角勾起一抹坏笑，腰部配合着动了起来：\"趁人家睡觉做坏事……罚你要射在里面哦……♡\"",
+                "com_sex_P_missionary_25": "$self$迷迷糊糊地睁开眼，感觉到体内的异物后反而缠了上来：“唔……坏心眼……趁人家睡觉偷袭……”",
+                "com_sex_P_missionary_26": "$self$半梦半醒间发出甜腻的哼声，配合着$target$的动作：“哈……是$target$吗……那就……随你喜欢吧……”",
+                "com_sex_P_missionary_27": "$self$睁开眼看到身上的$target$，惊讶之后反而发出了一声娇喘：“呀……！居然……既然都已经进来了……那就继续吧……”",
+                "com_sex_P_missionary_28": "$self$不可置信地看着结合处，随即羞涩地抱住了$target$：“真是的……没想到你这么色……嗯……可以哦。”",
+                "com_sex_P_missionary_29": "$self$惊恐地看着压在身上的$target$，但在威胁的目光下停止了挣扎：“唔……我知道了……我不动……请不要伤害我……”",
+                "com_sex_P_missionary_30": "$self$眼里含着泪水，绝望地承受着冲击",
+                "com_sex_P_missionary_31": "$self$还在微微喘息，脸上带着满足的红晕，紧紧抱住$target$：“哈……好舒服……最喜欢你了。”",
+                "com_sex_P_missionary_32": "$self$瘫软在床上，手指在$target$胸口画圈：“刚才那几下……简直要命……下次还要……”",
+                "com_sex_P_missionary_33": "$self$瘫软在床上，大口喘息着，看向$target$的眼神里多了一丝湿润的迷离。",
+                "com_sex_P_missionary_34": "$self$下意识地夹紧了还残留着$target$体温的私处，脸红得像要滴血：\"竟然……这种感觉……\"",
+                "com_sex_P_missionary_35": "$self$用被子遮住半张脸，不敢直视$target$：“这算什么啊……身体……变得奇怪了……”",
+                "com_sex_P_missionary_36": "$self$眼神有些躲闪，脸红得像熟透的苹果：“虽然是第一次……但好像……并没有想象中那么糟糕。”",
+                "com_sex_P_missionary_37": "$self$默默拉过被子盖住身体，声音有些冷淡：“这就结束了吗？……算了，我去洗澡。”",
+                "com_sex_P_missionary_38": "$self$没有看$target$，只是别过脸去整理凌乱的头发：“怎么说呢……稍微有点没感觉。”",
+                "com_sex_P_missionary_39": "$self$皱着眉头推开了$target$，有些痛苦地蜷缩起身体。",
+                "com_sex_P_missionary_40": "$self$：\"抱歉……稍微有点痛……我不确定我们是不是该继续……\"",
+                "com_sex_P_missionary_41": "$self$蜷缩在床角无声地抽泣，拒绝任何触碰：“最差劲了……我不想再看到你的脸。”",
+                "com_sex_P_missionary_42": "$self$面无表情地穿上衣服，声音冷得像冰：“这就当作没发生过。以后别再跟我说话。”"
+            },
+            "en-us": {
+                "com_sex_P_missionary_Climax_1": "($self$) Missionary Position Climax Dialogue",
+                "com_sex_P_missionary_Climax_2": "$self$ suddenly throws her head back, her fingers digging deeply into $target$'s back, eyes losing focus: \"Ah—! I can't...! I'm cumming! Haa... everything... everything is going to break—!♡\"",
+                "com_sex_P_missionary_Climax_3": "$self$'s body spasms violently, her vagina frantically contracting to grip the cock, screaming incoherently: \"Cumming! I'm really cumming! Hubby... aahhhh♡... my brain is melting...♡\"",
+                "com_sex_P_missionary_Climax_4": "$self$ bites the back of her hand trying to endure, but her body arches uncontrollably: \"Mmph...! No... I didn't want this... my body... on its own... aaahhhh—!♡\"",
+                "com_sex_P_missionary_Climax_5": "Tears stream down $self$'s face as she utters words of refusal, yet her lower body honestly squirts love juices: \"No... don't look at me... this feeling... is so strange... I'm going to squirt... uuuuh...♡\"",
+                "com_sex_P_missionary_Begin_1": "$self$ wraps her legs tightly around $target$'s waist, actively lifting her hips to match the rhythm of the thrusts.",
+                "com_sex_P_missionary_Begin_2": "$self$ cups $target$'s cheeks, her glazed eyes full of love: \"Mmm... so deep... it's all in... harder...♡\"",
+                "com_sex_P_missionary_Begin_3": "$self$'s cheeks flush slightly as she obediently spreads her legs, speaking softly: \"Mmm... if it's $target$, then it's okay.\"",
+                "com_sex_P_missionary_Begin_4": "$self$ actively wraps her arms around $target$'s neck, eyes hazy: \"Be gentle... I'm ready.\"",
+                "com_sex_P_missionary_Begin_5": "$self$ covers her eyes with the back of her hand in shame, yet obediently opens her body, allowing $target$ to bury his hard heat deep inside.",
+                "com_sex_P_missionary_Begin_6": "$self$ lets out a broken gasp, speaking intermittently: \"Just this once... haa... don't go so deep...\"",
+                "com_sex_P_missionary_Begin_7": "$self$ freezes completely, body stiffly accepting the intrusion: \"W-wait... why so suddenly... haa... but... I don't hate it...\"",
+                "com_sex_P_missionary_Begin_8": "$self$ bites her lip, eyes panic-stricken but unable to resist: \"If it's $target$... maybe... it'll be okay...\"",
+                "com_sex_P_missionary_Begin_9": "$self$ turns her head away, staring fixatedly at a corner of the sheet, silently enduring $target$'s thrusting inside her.",
+                "com_sex_P_missionary_Begin_10": "$self$'s legs rest stiffly on $target$'s shoulders; instead of welcoming him, she instinctively tries to retreat with every impact.",
+                "com_sex_P_missionary_Begin_11": "Pinned beneath, $self$ lets out short screams with every forced thrust of the cock, hands helplessly clutching the sheets beneath her.",
+                "com_sex_P_missionary_Begin_12": "$self$ bites her lower lip hard, trying to hold back cries of shame, but her body is already trembling under $target$'s forceful assault.",
+                "com_sex_P_missionary_Begin_13": "$self$'s body trembles, eyes squeezed shut, not daring to look at $target$: \"No... don't... please... be gentle...\"",
+                "com_sex_P_missionary_Begin_14": "$self$ clutches the sheets in despair, voice trembling with tears: \"Since I can't escape... just finish it quickly... if you dare tell anyone, I'll kill you.\"",
+                "com_sex_P_missionary_1": "$self$ lets out unconscious moans in her sleep, her body shaken passively by $target$'s movements, brow slightly furrowing from the foreign sensation below.",
+                "com_sex_P_missionary_2": "$self$ does not wake up, merely instinctively contracting her vaginal walls, tightly wrapping around the cock invading her.",
+                "com_sex_P_missionary_3": "$self$ breathes evenly, seemingly unaware of the cock moving in and out of her, only occasionally furrowing her brow at deeper thrusts.",
+                "com_sex_P_missionary_4": "$self$ sleeps like a broken doll; as the thrusting continues, her body sways unconsciously on the bed, a trail of saliva escaping her lips.",
+                "com_sex_P_missionary_5": "$self$ remains unresponsive like an exquisite sex doll, allowing $target$ to lift her legs and drive his cock deep inside.",
+                "com_sex_P_missionary_6": "Her frozen expression contrasts eerily with the intense pumping below; with each of $target$'s impacts, only her breasts shake mechanically.",
+                "com_sex_P_missionary_7": "$self$ remains motionless in her original pose, the cock thrusting wantonly into her defenseless vagina, making wet squelching sounds.",
+                "com_sex_P_missionary_8": "Completely still, $self$ retains the smile from a second ago, while her lower body is being brutally violated, her flesh only able to passively grip the invader.",
+                "com_sex_P_missionary_9": "$self$ wakes with a start, pushing $target$ away and clutching the sheets: \"What are you doing! Stop! Even us, we can't do this!\"",
+                "com_sex_P_missionary_10": "$self$ frowns and struggles to sit up, tone stern: \"Don't touch me! I'm sleepy, this kind of joke isn't funny at all!\"",
+                "com_sex_P_missionary_11": "$self$'s eyes fly open, screaming in terror at the feeling of fullness inside, scrambling to push away the person on top of her.",
+                "com_sex_P_missionary_12": "$self$: \"What are you doing?! Are you crazy? Get it out! Ugh... don't move!\"",
+                "com_sex_P_missionary_13": "$self$ screams shrilly, desperately kicking and hitting $target$: \"Pervert! Rapist! Get off me!\"",
+                "com_sex_P_missionary_14": "$self$ frantically pushes $target$ away, running out without even dressing properly: \"Help! Anyone! He's crazy!\"",
+                "com_sex_P_missionary_15": "$self$ gently pushes against $target$'s chest, shaking her head apologetically: \"Sorry darling, I'm not feeling well today, maybe next time?\"",
+                "com_sex_P_missionary_16": "$self$ yawns, turning her back to $target$: \"I'm too tired... let me sleep, stop fooling around.\"",
+                "com_sex_P_missionary_17": "$self$ awkwardly grabs $target$'s hand, forcing a smile: \"Hey, this joke is going too far, we're just friends, right?\"",
+                "com_sex_P_missionary_18": "$self$ slips out from under $target$ like an eel: \"No, no! Even you can't cross this line!\"",
+                "com_sex_P_missionary_19": "$self$ desperately clamps her legs together, trying to squeeze the hard object out: \"Get out! Who allowed you inside!\"",
+                "com_sex_P_missionary_20": "$self$ presses her palms firmly against $target$'s abdomen, face flushed with anger: \"Don't touch there! It's just... awful!\"",
+                "com_sex_P_missionary_21": "$self$ slaps $target$ hard, eyes cold as ice: \"Don't touch me with your dirty hands, disgusting.\"",
+                "com_sex_P_missionary_22": "$self$ stares at $target$ like he's trash: \"Is that all you have in your brain? Get lost.\"",
+                "com_sex_P_missionary_23": "$self$ groans groggily, adjusting to the size inside, then lazily reaches out to hug $target$'s neck.",
+                "com_sex_P_missionary_24": "$self$'s lips curl into a smirk, hips moving in rhythm: \"Doing bad things while I sleep... I punish you to cum inside...♡\"",
+                "com_sex_P_missionary_25": "$self$ opens her eyes dazedly, feeling the foreign object inside and wrapping herself around him: \"Mmm... meanie... sneaking up while I sleep...\"",
+                "com_sex_P_missionary_26": "$self$ hums sweetly while half-asleep, matching $target$'s movements: \"Haa... is it $target$? Then... do as you please...\"",
+                "com_sex_P_missionary_27": "$self$ opens her eyes to see $target$ on top of her, gasping in surprise then pleasure: \"Ah...! You actually... since you're already in... just keep going...\"",
+                "com_sex_P_missionary_28": "$self$ looks at their joined bodies in disbelief, then shyly hugs $target$: \"Really... I didn't know you were so perverted... Mmm... it's okay.\"",
+                "com_sex_P_missionary_29": "$self$ looks at $target$ on top of her in terror, but stops struggling under his threatening gaze: \"Ugh... I understand... I won't move... please don't hurt me...\"",
+                "com_sex_P_missionary_30": "$self$ endures the impact in despair, eyes filled with tears.",
+                "com_sex_P_missionary_31": "$self$, still panting slightly, hugs $target$ tightly with a satisfied blush: \"Haa... that felt so good... I love you the most.\"",
+                "com_sex_P_missionary_32": "$self$ collapses on the bed, tracing circles on $target$'s chest: \"Those last few strokes... were killer... I want more next time...\"",
+                "com_sex_P_missionary_33": "$self$ lies limp on the bed, gasping for air, looking at $target$ with eyes moist and glazed.",
+                "com_sex_P_missionary_34": "$self$ instinctively clamps her privates, still warm from $target$, face red as if bleeding: \"To think... this feeling...\"",
+                "com_sex_P_missionary_35": "$self$ covers half her face with the blanket, daring not look at $target$: \"What was that... my body... became strange...\"",
+                "com_sex_P_missionary_36": "$self$'s eyes dart away, face red as a ripe apple: \"Even though it was my first time... it seems... it wasn't as bad as I imagined.\"",
+                "com_sex_P_missionary_37": "$self$ silently pulls the blanket over her body, voice somewhat cold: \"Is that it? ...Never mind, I'm going to shower.\"",
+                "com_sex_P_missionary_38": "$self$ doesn't look at $target$, turning her face away to fix her messy hair: \"How should I say this... I didn't really feel much.\"",
+                "com_sex_P_missionary_39": "$self$ frowns and pushes $target$ away, curling up in pain.",
+                "com_sex_P_missionary_40": "$self$: \"Sorry... it hurts a little... I'm not sure if we should continue...\"",
+                "com_sex_P_missionary_41": "$self$ curls up in the corner of the bed sobbing silently, rejecting any touch: \"The worst... I don't want to see your face again.\"",
+                "com_sex_P_missionary_42": "$self$ puts on her clothes expressionlessly, voice cold as ice: \"Let's pretend this never happened. Don't talk to me again.\""
+            }
         }
     }
 }

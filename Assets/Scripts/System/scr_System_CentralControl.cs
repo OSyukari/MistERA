@@ -144,7 +144,11 @@ public class scr_System_CentralControl : MonoBehaviour
 
     protected void LoadSerializable(scr_System_CentralControl_Serializable obj)
     {
+#if UNITY_EDITOR
+// NOTHING HAPPENS
+#else
         this._logPrefs = obj.DebugLogPref;
+#endif
         this._content = obj.ContentSettings;
         this._display = obj.DisplaySettings;
     }
@@ -482,7 +486,7 @@ public class scr_System_CentralControl : MonoBehaviour
 
 
 
-    public bool CanHaveSex(List<Character_Trainable> doers, List<Character_Trainable> receivers)
+    public bool CanHaveSex(List<Character_Trainable> doers, List<Character_Trainable> receivers, out string tooltip)
     {
         List<InteractionGenderType> doersG = new List<InteractionGenderType>();
         List<InteractionGenderType> receiversG = new List<InteractionGenderType>();
@@ -493,7 +497,20 @@ public class scr_System_CentralControl : MonoBehaviour
         doersG = doersG.Distinct().ToList();
         receiversG = receiversG.Distinct().ToList();
 
-        foreach (var i in doersG) foreach (var j in receiversG) if (!CanHaveSex(i, j)) return false;
+        foreach (var i in doersG)
+        {
+            foreach (var j in receiversG)
+            {
+                if (!CanHaveSex(i, j))
+                {
+                    tooltip = LocalizeDictionary.QueryThenParse("ui_GetValidVariant_InteractionGenderType")
+                        .Replace("$doer$", $"{i}")
+                        .Replace("$receiver$", $"{j}");
+                    return false;
+                }
+            }
+        }
+        tooltip = "";
         return true;
 
     }

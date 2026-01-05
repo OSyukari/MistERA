@@ -9,9 +9,14 @@
                         {
                             "_comment:": "($self$) 求婚 口上文",
                             "responses": [
-"$self$的手指不安地搅动着衣角，视线游移不定。\"那个……虽然不知道现在说合不合适，但我想一直留在$target$身边。\"", "$self$从口袋里掏出一个略显陈旧的小盒子，动作有些僵硬。\"这对我来说很重要……希望你能收下。\"", "$self$深吸了一口气，声音比平时低了很多。\"我们……要不要试着成为家人？\"", "$self$把一份填好的申请表递到桌上，眼神却盯着别处。\"手续我都查过了，如果你不反感的话……\"" ,
-
-"$self$突然单膝跪地，脸上带着灿烂到有些刺眼的笑容。\"抓住你了！以后你就是我的人了，$target$！\"", "$self$直接抓起$target$的手，将戒指强行套了上去。\"尺寸完美！不允许退货哦！\"", "$self$紧紧抱住$target$的脖子，在耳边大声宣告。\"我决定了！我要做你的新娘！现在！立刻！马上！\"", "$self$从身后拿出一大捧花，笑嘻嘻地凑近。\"怎么样？要是答应的话，附赠一个超级可爱的老婆哦！\""
+                                "relationship_marriage_propose_1",
+                                "relationship_marriage_propose_2",
+                                "relationship_marriage_propose_3",
+                                "relationship_marriage_propose_4",
+                                "relationship_marriage_propose_5",
+                                "relationship_marriage_propose_6",
+                                "relationship_marriage_propose_7",
+                                "relationship_marriage_propose_8"
                             ]
                         }
                     ]
@@ -25,9 +30,12 @@
                         {
                             "_comment:": "($self$) 求婚成功 口上文",
                             "responses": [
-"$self$似乎还没反应过来，呆呆地眨了眨眼，随即眼眶瞬间红了。\"真、真的吗？没有在骗我？\"", "$self$捂住嘴巴，肩膀微微颤抖着，发出了压抑的呜咽声。\"太好了……我以为……太好了……\"", "$self$什么也没说，只是默默地把额头抵在$target$的肩膀上，抓着衣服的手指用力到发白。",
-
-"$self$兴奋地尖叫一声，直接扑到了$target$身上，两人一起摔在地毯上。\"我就知道！你也离不开我对不对！\"", "$self$捧着$target$的脸用力亲了一口，笑得合不拢嘴。\"这是你这辈子做过最正确的决定！我保证！\"", "$self$原地转了个圈，向着周围并不存在的观众挥手致意。\"听到了吗！$target$答应了！他是我的了！\""
+                                "relationship_marriage_set_1",
+                                "relationship_marriage_set_2",
+                                "relationship_marriage_set_3",
+                                "relationship_marriage_set_4",
+                                "relationship_marriage_set_5",
+                                "relationship_marriage_set_6"
                             ]
                         }
                     ]
@@ -41,9 +49,12 @@
                         {
                             "_comment:": "($self$) 拒绝求婚 口上文",
                             "responses": [
-"$self$像是被烫到一样缩回了手，眼神里充满了慌乱。\"对不起……我现在还没办法回应这种期待。\"", "$self$苦笑着摇了摇头，轻轻推回了那个盒子。\"你值得更好的，$target$。而不是像我这样的人。\"", "$self$避开了视线，声音干涩。\"太快了……再给我一点时间，好吗？\"",
-
-"$self$看着那个戒指，就像看着什么无关紧要的垃圾，发出一声轻嗤。\"你是不是误会了什么？我们只是玩玩而已。\"", "$self$双手抱胸，冷冷地打断了$target$的话。\"收回去吧。这种束缚对我来说没有任何意义。\"", "$self$叹了口气，眼神变得毫无温度。\"别做傻事了，$target$。我们之间永远不可能有那种未来。\""
+                                "relationship_marriage_refuse_1",
+                                "relationship_marriage_refuse_2",
+                                "relationship_marriage_refuse_3",
+                                "relationship_marriage_refuse_4",
+                                "relationship_marriage_refuse_5",
+                                "relationship_marriage_refuse_6"
                             ]
                         }
                     ]
@@ -57,9 +68,12 @@
                         {
                             "_comment:": "($self$) 被拒绝求婚 口上文",
                             "responses": [
-"$self$手中的盒子掉落在地上，发出一声清脆的声响。她像是失去了所有力气。\"啊……是这样啊。抱歉，是我自作多情了。\"", "$self$勉强挤出一个比哭还难看的笑容。\"没关系！没关系的……我早就猜到了……\"", "$self$低着头，以此掩饰眼角的湿润。\"忘了吧。就当我今天……什么都没说过。\"",
-
-"$self$难以置信地瞪大了眼睛，声音尖锐起来。\"为什么？明明我们相处得这么好！还有谁能比我更适合你？\"", "$self$一把将手中的花束摔向墙角。\"开什么玩笑！你在耍我吗，$target$？\"", "$self$死死盯着$target$，眼中的爱意瞬间转化为了某种执念。\"你逃不掉的。哪怕你不愿意，我也不会放手。\""
+                                "relationship_marriage_refused_1",
+                                "relationship_marriage_refused_2",
+                                "relationship_marriage_refused_3",
+                                "relationship_marriage_refused_4",
+                                "relationship_marriage_refused_5",
+                                "relationship_marriage_refused_6"
                             ]
                         }
                     ]
@@ -73,9 +87,12 @@
                         {
                             "_comment:": "($self$) 婚姻关系破裂 口上文",
                             "responses": [
-"$self$看着窗外，声音平静得像是在谈论天气。\"这种日子，我一天也过不下去了。签字吧。\"", "$self$将最后一件行李放入箱子，连头也没回。\"钥匙放在玄关了。以后别再联系我。\"", "$self$看着曾经的合照，面无表情地将其扣在桌上。\"我们之间已经什么都不剩了。除了互相折磨，还有什么意义？\"",
-
-"$self$红着眼睛，将手中的杯子狠狠砸向地面，碎片飞溅。\"滚！带着你的东西全部滚出去！\"", "$self$跪坐在地上，双手掩面痛哭，声音嘶哑。\"为什么会变成这样……把我的青春还给我啊！\"", "$self$抓着$target$的衣领，一边摇晃一边大喊。\"是你毁了一切！是你把这个家毁了！我恨你！\""
+                                "relationship_marriage_break_1",
+                                "relationship_marriage_break_2",
+                                "relationship_marriage_break_3",
+                                "relationship_marriage_break_4",
+                                "relationship_marriage_break_5",
+                                "relationship_marriage_break_6"
                             ]
                         }
                     ]
@@ -85,8 +102,74 @@
     },
     "Dictionary": {
         "Entries": {
-            "zh-cn": {},
-            "en-us": {}
+            "zh-cn": {
+                "relationship_marriage_propose_1": "$self$的手指不安地绞着衣角，视线游移不定。\"那个……虽然不知道现在说合不合适，但我想一直留在$target$身边。\"",
+                "relationship_marriage_propose_2": "$self$从口袋里掏出一个略显陈旧的小盒子，动作有些僵硬。\"这对我来说很重要……希望你能收下。\"",
+                "relationship_marriage_propose_3": "$self$深吸了一口气，声音比平时低了很多。\"我们……要不要试着成为家人？\"",
+                "relationship_marriage_propose_4": "$self$把一份填好的申请表递到桌上，眼神却盯着别处。\"手续我都查过了，如果你不反感的话……\"",
+                "relationship_marriage_propose_5": "$self$突然单膝跪地，脸上带着灿烂到有些刺眼的笑容。\"抓住你了！以后你就是我的人了，$target$！\"",
+                "relationship_marriage_propose_6": "$self$直接抓起$target$的手，将戒指强行套了上去。\"尺寸完美！不允许退货哦！\"",
+                "relationship_marriage_propose_7": "$self$紧紧抱住$target$的脖子，在耳边大声宣告。\"我决定了！我要做你的新娘！现在！立刻！马上！\"",
+                "relationship_marriage_propose_8": "$self$从身后拿出一大捧花，笑嘻嘻地凑近。\"怎么样？要是答应的话，附赠一个超级可爱的老婆哦！\"",
+                "relationship_marriage_set_1": "$self$似乎还没反应过来，呆呆地眨了眨眼，随即眼眶瞬间红了。\"真、真的吗？没有在骗我？\"",
+                "relationship_marriage_set_2": "$self$捂住嘴巴，肩膀微微颤抖着，发出了压抑的呜咽声。\"太好了……我以为……太好了……\"",
+                "relationship_marriage_set_3": "$self$什么也没说，只是默默地把额头抵在$target$的肩膀上，抓着衣服的手指用力到发白。",
+                "relationship_marriage_set_4": "$self$兴奋地尖叫一声，直接扑到了$target$身上，两人一起摔在地毯上。\"我就知道！你也离不开我对不对！\"",
+                "relationship_marriage_set_5": "$self$捧着$target$的脸用力亲了一口，笑得合不拢嘴。\"这是你这辈子做过最正确的决定！我保证！\"",
+                "relationship_marriage_set_6": "$self$原地转了个圈，向着周围并不存在的观众挥手致意。\"听到了吗！$target$答应了！他是我的了！\"",
+                "relationship_marriage_refuse_1": "$self$像是被烫到一样缩回了手，眼神里充满了慌乱。\"对不起……我现在还没办法回应这种期待。\"",
+                "relationship_marriage_refuse_2": "$self$苦笑着摇了摇头，轻轻推回了那个盒子。\"你值得更好的，$target$。而不是像我这样的人。\"",
+                "relationship_marriage_refuse_3": "$self$避开了视线，声音干涩。\"太快了……再给我一点时间，好吗？\"",
+                "relationship_marriage_refuse_4": "$self$看着那个戒指，就像看着什么无关紧要的垃圾，发出一声轻嗤。\"你是不是误会了什么？我们只是玩玩而已。\"",
+                "relationship_marriage_refuse_5": "$self$双手抱胸，冷冷地打断了$target$的话。\"收回去吧。这种束缚对我来说没有任何意义。\"",
+                "relationship_marriage_refuse_6": "$self$叹了口气，眼神变得毫无温度。\"别做傻事了，$target$。我们之间永远不可能有那种未来。\"",
+                "relationship_marriage_refused_1": "$self$手中的盒子掉落在地上，发出一声清脆的声响。她像是失去了所有力气。\"啊……是这样啊。抱歉，是我自作多情了。\"",
+                "relationship_marriage_refused_2": "$self$勉强挤出一个比哭还难看的笑容。\"没关系！没关系的……我早就猜到了……\"",
+                "relationship_marriage_refused_3": "$self$低着头，以此掩饰眼角的湿润。\"忘了吧。就当我今天……什么都没说过。\"",
+                "relationship_marriage_refused_4": "$self$难以置信地瞪大了眼睛，声音尖锐起来。\"为什么？明明我们相处得这么好！还有谁能比我更适合你？\"",
+                "relationship_marriage_refused_5": "$self$一把将手中的花束摔向墙角。\"开什么玩笑！你在耍我吗，$target$？\"",
+                "relationship_marriage_refused_6": "$self$死死盯着$target$，眼中的爱意瞬间转化为了某种执念。\"你逃不掉的。哪怕你不愿意，我也不会放手。\"",
+                "relationship_marriage_break_1": "$self$看着窗外，声音平静得像是在谈论天气。\"这种日子，我一天也过不下去了。签字吧。\"",
+                "relationship_marriage_break_2": "$self$将最后一件行李放入箱子，连头也没回。\"钥匙放在玄关了。以后别再联系我。\"",
+                "relationship_marriage_break_3": "$self$看着曾经的合照，面无表情地将其扣在桌上。\"我们之间已经什么都不剩了。除了互相折磨，还有什么意义？\"",
+                "relationship_marriage_break_4": "$self$红着眼睛，将手中的杯子狠狠砸向地面，碎片飞溅。\"滚！带着你的东西全部滚出去！\"",
+                "relationship_marriage_break_5": "$self$跪坐在地上，双手掩面痛哭，声音嘶哑。\"为什么会变成这样……把我的青春还给我啊！\"",
+                "relationship_marriage_break_6": "$self$抓着$target$的衣领，一边摇晃一边大喊。\"是你毁了一切！是你把这个家毁了！我恨你！\""
+            },
+            "en-us": {
+                "relationship_marriage_propose_1": "$self$'s fingers nervously fidget with the hem of her clothes, her gaze shifting uncertainly. \"Um... I don't know if this is the right time, but I want to stay by your side forever, $target$.\"",
+                "relationship_marriage_propose_2": "$self$ pulls a slightly worn small box from her pocket, her movements stiff. \"This is important to me... I hope you'll accept it.\"",
+                "relationship_marriage_propose_3": "$self$ takes a deep breath, her voice much quieter than usual. \"Shall we... try to become a family?\"",
+                "relationship_marriage_propose_4": "$self$ slides a completed application form across the table, avoiding eye contact. \"I've checked all the procedures. If you're not opposed to it...\"",
+                "relationship_marriage_propose_5": "$self$ suddenly drops to one knee, a dazzling smile on her face. \"Gotcha! You're mine now, $target$!\"",
+                "relationship_marriage_propose_6": "$self$ grabs $target$'s hand and forcibly slips the ring onto it. \"Perfect fit! No returns allowed!\"",
+                "relationship_marriage_propose_7": "$self$ hugs $target$'s neck tightly, declaring loudly into your ear. \"I've decided! I'm going to be your bride! Now! Right now! Immediately!\"",
+                "relationship_marriage_propose_8": "$self$ reveals a huge bouquet of flowers from behind her back, leaning in with a grin. \"So? If you say yes, you get a super cute wife as a bonus!\"",
+                "relationship_marriage_set_1": "$self$ seems stunned, blinking blankly before her eyes suddenly turn red. \"R-really? You're not lying to me?\"",
+                "relationship_marriage_set_2": "$self$ covers her mouth, shoulders trembling slightly as she lets out a suppressed sob. \"Thank goodness... I thought... Thank goodness...\"",
+                "relationship_marriage_set_3": "$self$ says nothing, simply resting her forehead against $target$'s shoulder, her fingers gripping your clothes until her knuckles turn white.",
+                "relationship_marriage_set_4": "$self$ lets out an excited scream and tackles $target$, sending both of you tumbling onto the carpet. \"I knew it! You can't live without me either, right?!\"",
+                "relationship_marriage_set_5": "$self$ cups $target$'s face and plants a firm kiss on it, grinning from ear to ear. \"This is the best decision you've ever made in your life! I promise!\"",
+                "relationship_marriage_set_6": "$self$ spins around in a circle, waving to an imaginary audience. \"Did you hear that?! $target$ said yes! He's mine!\"",
+                "relationship_marriage_refuse_1": "$self$ pulls her hand back as if burned, panic filling her eyes. \"I'm sorry... I can't respond to those kinds of expectations right now.\"",
+                "relationship_marriage_refuse_2": "$self$ smiles bitterly and shakes her head, gently pushing the box back. \"You deserve better, $target$. Not someone like me.\"",
+                "relationship_marriage_refuse_3": "$self$ looks away, her voice dry. \"It's too soon... Just give me a little more time, okay?\"",
+                "relationship_marriage_refuse_4": "$self$ looks at the ring as if it were trash, letting out a scoff. \"Did you misunderstand something? We're just having fun.\"",
+                "relationship_marriage_refuse_5": "$self$ crosses her arms, coldly cutting off $target$. \"Take it back. That kind of commitment means nothing to me.\"",
+                "relationship_marriage_refuse_6": "$self$ sighs, her gaze turning cold. \"Don't be stupid, $target$. There's no future like that for us.\"",
+                "relationship_marriage_refused_1": "The box drops from $self$'s hand, hitting the floor with a crisp sound. She looks drained of all strength. \"Ah... I see. Sorry, I got ahead of myself.\"",
+                "relationship_marriage_refused_2": "$self$ forces a smile that looks worse than crying. \"It's okay! It's totally okay... I kind of guessed it anyway...\"",
+                "relationship_marriage_refused_3": "$self$ lowers her head to hide the moisture in her eyes. \"Forget it. Just pretend I... never said anything today.\"",
+                "relationship_marriage_refused_4": "$self$'s eyes widen in disbelief, her voice turning shrill. \"Why? We get along so well! Who could possibly be better for you than me?\"",
+                "relationship_marriage_refused_5": "$self$ throws the bouquet violently into the corner. \"Are you kidding me?! Are you playing with me, $target$?\"",
+                "relationship_marriage_refused_6": "$self$ stares intently at $target$, the love in her eyes instantly twisting into obsession. \"You can't escape. Even if you don't want to, I won't let go.\"",
+                "relationship_marriage_break_1": "$self$ stares out the window, her voice as calm as if discussing the weather. \"I can't go on like this for another day. Just sign the papers.\"",
+                "relationship_marriage_break_2": "$self$ packs the last item into her suitcase without looking back. \"The key is in the entryway. Don't contact me again.\"",
+                "relationship_marriage_break_3": "$self$ looks at an old photo of you two, then places it face down on the table, expressionless. \"There's nothing left between us. What's the point, other than torturing each other?\"",
+                "relationship_marriage_break_4": "$self$ with red eyes, smashes the cup in her hand onto the floor, shards flying everywhere. \"Get out! Take your stuff and get the hell out!\"",
+                "relationship_marriage_break_5": "$self$ sits on the floor, burying her face in her hands and sobbing, her voice hoarse. \"Why did it turn out like this... Give me back my youth!\"",
+                "relationship_marriage_break_6": "$self$ grabs $target$ by the collar, shaking you while screaming. \"You ruined everything! You destroyed this family! I hate you!\""
+            }
         }
     }
 }

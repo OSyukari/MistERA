@@ -36,18 +36,18 @@
     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_choice",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-    "question":"$party.name$在洞穴中遇到了哥布林巡逻队，冲突已无法避免\n敌方队伍的构成为：$enemy.nameCount$",
+    "question":"event_caveGoblinEncounter_event_ev01",
     "options":[
         {   
             "target_chara_conditions":
             {
                 "target":[{"parameters":["exists"]}]
             },
-            "option": "让$decoy.name$断后，其他人撤离",
+            "option": "event_caveGoblinEncounter_event_ev01_op01",
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_escape"]} ] 
         },
         {   
-            "option": "准备战斗", 
+            "option": "event_caveGoblinEncounter_event_ev01_op02", 
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_combat"]} ] 
         }
     ]
@@ -72,15 +72,15 @@
     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_combat_scare",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-    "question":"$party.name$的迎战姿态吓唬住了哥布林，哥布林开始四处逃窜！",
+    "question":"event_caveGoblinEncounter_event_ev02",
     "options":[
         {   
-            "option": "追杀",
-            "tooltip": "敌方全员HP-2，然后开始战斗",
+            "option": "event_caveGoblinEncounter_event_ev02_op01",
+            "tooltip": "event_caveGoblinEncounter_event_ev02_op01_tooltip",
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_combat_scare_chase"]} ] 
         },
         {   
-            "option": "放弃", 
+            "option": "event_caveGoblinEncounter_event_ev02_op02", 
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_combat_scare_end"]} ] 
         }
     ]
@@ -89,7 +89,7 @@
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_scare_end",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-    "line": "$party.name$吓跑了哥布林巡逻队",
+    "line": "event_caveGoblinEncounter_event_ev03",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
@@ -97,7 +97,7 @@
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_scare_chase",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-    "line": "$party.name$追击四处逃窜的哥布林们",
+    "line": "event_caveGoblinEncounter_event_ev04",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-2"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "nextEntryLabel":"br_combat_start"
@@ -126,7 +126,7 @@
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_ambush",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-    "line": "$party.name$偷袭了哥布林！（敌方全员HP-1）",
+    "line": "event_caveGoblinEncounter_event_ev05",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-1"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "nextEntryLabel":"br_combat_start"
@@ -135,7 +135,7 @@
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_combat",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-    "line": "$party.name$与哥布林们展开战斗！",
+    "line": "event_caveGoblinEncounter_event_ev06",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "nextEntryLabel":"br_combat_start"
 },
@@ -173,7 +173,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
-    "line": "警告！由于内容缺失，该事件强制终止。",
+    "line": "exp_event_error99",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 }
@@ -184,7 +184,33 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-"event_caveGoblinEncounter":"哥布林遭遇"
+"event_caveGoblinEncounter":"哥布林遭遇",
+"event_caveGoblinEncounter_event_ev01":"$party.name$在洞穴中遇到了哥布林巡逻队，冲突已无法避免\n敌方队伍的构成为：$enemy.nameCount$",
+"event_caveGoblinEncounter_event_ev01_op01":"让$decoy.name$断后，其他人撤离",
+"event_caveGoblinEncounter_event_ev01_op02":"准备战斗",
+"event_caveGoblinEncounter_event_ev02":"$party.name$的迎战姿态吓唬住了哥布林，哥布林开始四处逃窜！",
+"event_caveGoblinEncounter_event_ev02_op01":"追杀",
+"event_caveGoblinEncounter_event_ev02_op01_tooltip":"敌方全员HP-2，然后开始战斗",
+"event_caveGoblinEncounter_event_ev02_op02":"放弃",
+"event_caveGoblinEncounter_event_ev03":"$party.name$吓跑了哥布林巡逻队",
+"event_caveGoblinEncounter_event_ev04":"$party.name$追击四处逃窜的哥布林们",
+"event_caveGoblinEncounter_event_ev05":"$party.name$偷袭了哥布林！（敌方全员HP-1）",
+"event_caveGoblinEncounter_event_ev06":"$party.name$与哥布林们展开战斗！"
+            },
+            "en-us": 
+            {
+"event_caveGoblinEncounter":"Goblin Encounter",
+"event_caveGoblinEncounter_event_ev01":"$party.name$ encountered a goblin patrol in the cave, conflict is unavoidable\nEnemy party composition: $enemy.nameCount$",
+"event_caveGoblinEncounter_event_ev01_op01":"Let $decoy.name$ cover the rear, others evacuate",
+"event_caveGoblinEncounter_event_ev01_op02":"Prepare for combat",
+"event_caveGoblinEncounter_event_ev02":"$party.name$'s battle stance intimidated the goblins, and they started scattering!",
+"event_caveGoblinEncounter_event_ev02_op01":"Pursue",
+"event_caveGoblinEncounter_event_ev02_op01_tooltip":"Enemy All HP-2, then start combat",
+"event_caveGoblinEncounter_event_ev02_op02":"Give up",
+"event_caveGoblinEncounter_event_ev03":"$party.name$ scared off the goblin patrol",
+"event_caveGoblinEncounter_event_ev04":"$party.name$ pursued the scattering goblins",
+"event_caveGoblinEncounter_event_ev05":"$party.name$ ambushed the goblins! (Enemy All HP-1)",
+"event_caveGoblinEncounter_event_ev06":"$party.name$ engaged in combat with the goblins!"
             }
         }
     }

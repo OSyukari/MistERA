@@ -1,250 +1,564 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_finger_P_Climax",
-        "tags":["nsfw"],
-        "variants":[
+    "Character_Personalities": {
+        "looselist": [
             {
-                
-                "requireSelfReceiver": true,
-                "_comment":"受方 被手淫 高潮" ,
-                "responses": [
-                    "($self$) 被手淫 高潮 口上文"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_P_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 被手淫 高潮",
+                            "responses": [
+                                "com_sex_finger_P_Climax_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "climax"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 攻方 手淫 高潮 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_Climax_2",
+                                        "com_sex_finger_P_Climax_3",
+                                        "com_sex_finger_P_Climax_4"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 攻方 手淫 高潮 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Climax_5",
+                                "com_sex_finger_P_Climax_6",
+                                "com_sex_finger_P_Climax_7"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                
-                "requireSelfDoer": true,
-                "variants":[
-                    {
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","handjob", "climax"], "useActiveTags":false,
-                        "_comment":"2.4.1 攻方 手淫 高潮 有允许 口上文" ,
-                        "responses": [
-"$self$猛地仰起头，十指深深掐入$target$的背部，喉咙深处发出一声绵长的、不成调的尖叫，内壁开始疯狂痉挛。", "$self$的双眼瞬间失神，身体像触电般剧烈颤抖，大腿内侧肌肉紧绷，一股温热的液体不受控制地喷涌而出。", "$self$张大嘴巴却发不出声音，整个人瘫软如泥，只有下身还在随着余韵通过一阵阵的收缩死死绞紧$target$。"
-                        ]
-                    }
-                ],
-                "extraPortraitTags":["sex","doer","handjob", "climax"], "useActiveTags":false,
-                "_comment":"2.4.2 攻方 手淫 高潮 无允许 口上文" ,
-                "responses": [
-"$self$带着屈辱的泪水，身体却背叛了意志，脊背猛地弓起，脚趾蜷缩，在那一瞬间彻底沦为了欲望的奴隶。", "$self$紧咬着下唇直到出血，试图压抑那羞耻的声音，但最终还是在一阵剧烈的抽搐中崩溃，双眼翻白，失去了理智。", "$self$一边哭喊着不要，一边却迎来了最强烈的痉挛，耻丘一片狼藉，整个人都在因为这违背意愿的快感而崩溃抽泣。"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_finger_P_Begin",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":["sex","doer","handjob", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始手淫 有允许 口上文" ,
-                "responses":
-                [ 
-"$self$温柔地握住了$target$挺立的欲望，指尖轻轻在冠状沟处打转，嘴角含笑：\"看来它已经等不及了呢。\"", "$self$没有说话，只是默默地将手探入被子，随后$target$感觉到一阵温热紧致的包裹感传来。", "$self$将身体贴近$target$，手掌熟练地套弄起来，呼吸喷洒在对方耳边：\"只要这样……就会舒服吗？\""
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_P_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始手淫 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Begin_1",
+                                "com_sex_finger_P_Begin_2",
+                                "com_sex_finger_P_Begin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始手淫 未允许 好意 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Begin_4",
+                                "com_sex_finger_P_Begin_5",
+                                "com_sex_finger_P_Begin_6"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始手淫 未允许 敌意 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Begin_7",
+                                "com_sex_finger_P_Begin_8",
+                                "com_sex_finger_P_Begin_9"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":["sex","doer","handjob", "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始手淫 未允许 好意 口上文" ,
-                "responses":
-                [ 
-"$self$被突如其来的触碰吓了一跳，身体僵硬，但并没有抽回手，只是脸颊迅速染红：\"等等……这是……\"", "$self$瞪大了眼睛看着$target$，手中的动作虽然生涩却并未停下，呼吸变得急促起来。", "$self$咬着嘴唇，视线游移不定，似乎在进行激烈的思想斗争，最终还是默认了这荒唐的行为。"
-                ]
-            },
-            {
-                
-                "extraPortraitTags":["sex","doer","handjob", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
-                "_comment":"2.2.2 开始手淫 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-"$self$颤抖着伸出手，指尖冰凉，眼眶里蓄满了泪水，根本不敢抬头看$target$一眼。", "$self$紧闭着双眼，像是在触碰什么可怕的东西一样，僵硬而机械地握住了那一处。", "$self$发出细微的呜咽声，身体缩成一团，完全是在胁迫下勉强地配合着动作。"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_finger_P",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sex","doer","handjob","sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 手淫 口上文",
-                "responses":
-                [ 
-"$self$发出无意识的梦呓，身体随着冲撞微微晃动，但并没有醒来的迹象，只是眉头偶尔轻轻皱起。", "$self$沉睡中的呼吸变得有些急促，身体本能地产生了一些收缩反应，却依旧沉浸在梦乡之中。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","doer","handjob","doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 手淫 口上文",
-                "responses":
-                [ 
-"$self$依然保持着原本的姿势一动不动，唯有那处私密部位随着$target$的抽插而被迫变形，飞溅的汁液凝固在空中。", "$self$毫无知觉地承受着猛烈的撞击，眼中的神采凝固在上一秒，这副肉体此刻彻底沦为了$target$的玩物。"
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[
-                    {
-                        "requirement":  { "selfTags":["justWokenUp"] } ,
-                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                        "variants":[
-                            {
-                                "requirement":  {  "requirePermission":true } ,
-                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 手淫 口上文 有允许",
-                                "responses":
-                                [ 
-"$self$烦躁地拍开了$target$的手，翻个身把头埋进枕头里：\"别闹……困死了……\"", "$self$发出一声不满的呻吟，将被子死死裹紧，用背影表达着抗议。", "$self$迷茫地睁眼看了看，随即推拒着$target$的胸膛：\"不管是几次……现在绝对不行……\""
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_P",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
                                 ]
-
-                            }
-                        ],
-                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 手淫 口上文 无允许",
-                        "responses":
-                        [ 
-"$self$尖叫着惊醒，手脚并用地将$target$踹下床，抓起枕头就砸了过去：\"变态！滚出去！\"", "$self$惊恐地缩到床角，抓紧衣领，语无伦次地大喊救命。"
-                        ]
-                    },
-                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 手淫 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$按住了$target$不规矩的手，轻声哄道：\"亲爱的，今晚太累了，抱抱着睡好吗？\"", "$self$皱了皱鼻子，把身子转过去背对着$target$：\"不行哦，明天还要早起呢，快睡觉。\"", "$self$笑着躲开了$target$的触碰，拉过被子把自己裹成一个蚕然：\"休战牌已挂起！今晚禁止通行！\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 手淫 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$尴尬地笑着后退了一步，举起双手示意：\"那个……这种玩笑有点过了哦。\"", "$self$轻轻拨开了$target$的手，语气尽量保持轻松：\"虽然我不讨厌你，但这种事还是留给你的女朋友吧。\"", "$self$挠了挠脸颊，顾左右而言他：\"啊，对了，工作的事情还没说完呢……\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 手淫 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$猛地甩开了$target$的手，眼神瞬间变得冰冷：\"请自重！我在你眼里就是这种人吗？\"", "$self$厌恶地后退几步，像是看到了脏东西一样拍打着衣服：\"别碰我！真恶心！\"", "$self$毫不客气地一巴掌拍落了那只伸过来的手，冷笑道：\"想死的话直说。\""
-                 ]
-            },
-            {
-
-                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
-                "_comment1":"玩家专用 刚睡醒时的 手淫口上文",
-                "variants":[
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":["sex","doer","handjob","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 手淫 有允许 口上文",
-                        "responses":[
-"$self$迷迷糊糊地睁开眼，感觉到下身的异样后反而顺从地张开了腿，呢喃道：\"唔……坏蛋……\"", "$self$在半梦半醒间抱住了$target$的脖子，本能地迎合着对方的动作，发出一声慵懒的鼻音。", "$self$揉着惺忪的睡眼，虽然困倦却还是露出了一个宠溺的笑：\"真拿你没办法……\""
-                        ]
-
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":["sex","doer","handjob","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 手淫 无允许 好意 口上文",
-                        "responses":[
-"$self$惊醒后发现现状，本能地想要尖叫，但看清是$target$后，身体反而软了下来，发出一声复杂的叹息。", "$self$愣了几秒，随后有些自暴自弃般地闭上眼，手却鬼使神差地配合了起来。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.8 玩家专用 刚睡醒时的 手淫 无允许 敌意 口上文",
-                "extraPortraitTags":["sex","doer","handjob","scared","submissive"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$被惊醒的瞬间充满了恐惧，但在$target$的压迫感下，只能含着泪默默承受这侵犯。", "$self$浑身僵硬地躺着，任由$target$摆布，像是一个失去了灵魂的布偶。"
-                ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","handjob", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 手淫 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$观察着$target$迷乱的神情，手上的动作更加卖力，眼神里满是爱意：\"看起来你很喜欢这样……\"", "$self$凑过去吻了吻$target$的脸颊，轻笑道：\"你的反应真可爱，让我忍不住想欺负得更狠一点。\"", "$self$的手腕有些酸，但看到$target$享受的样子，她反而加快了套弄的速度。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 手淫 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","doer","handjob", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$原本抗拒的表情逐渐软化，看着手中勃发的器官，眼中闪过一丝奇异的光芒：\"没想到……居然会变成这样。\"", "$self$的手指开始主动探索那些敏感的褶皱，声音变得有些沙哑：\"如果是你的话……好像也不坏。\"", "$self$脸上带着潮红，不再回避视线，反而有些好奇地加重了力道。"
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","handjob", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 手淫 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$甩了甩酸痛的手腕，动作明显慢了下来，眉头微蹙：\"还得多久呀……手好酸。\"", "$self$有些走神地看着天花板，机械地重复着套弄的动作，显然心思已经不在床上了。", "$self$叹了口气，停下动作揉了揉自己的虎口：\"今天状态不太好，要不先这样？\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 手淫 结果负面 未允许 口上文",
-                "extraPortraitTags":["sex","doer","handjob", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$忍着强烈的不适感，眉头紧锁，眼神中满是煎熬：\"还没结束吗……\"", "$self$偏过头去，屏住呼吸，手指仅仅是用最小的接触面积在敷衍了事。", "$self$眼中的厌恶越来越浓，甚至产生了一些生理性的干呕冲动。"
-                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 手淫 口上文",
+                            "responses": [
+                                "com_sex_finger_P_1",
+                                "com_sex_finger_P_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 手淫 口上文",
+                            "responses": [
+                                "com_sex_finger_P_3",
+                                "com_sex_finger_P_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 手淫 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_finger_P_5",
+                                                "com_sex_finger_P_6",
+                                                "com_sex_finger_P_7"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 手淫 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_finger_P_8",
+                                        "com_sex_finger_P_9"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 手淫 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_10",
+                                        "com_sex_finger_P_11",
+                                        "com_sex_finger_P_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 手淫 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_13",
+                                        "com_sex_finger_P_14",
+                                        "com_sex_finger_P_15"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 手淫 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_P_16",
+                                "com_sex_finger_P_17",
+                                "com_sex_finger_P_18"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment1": "玩家专用 刚睡醒时的 手淫口上文",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 手淫 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_19",
+                                        "com_sex_finger_P_20",
+                                        "com_sex_finger_P_21"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 手淫 无允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_22",
+                                        "com_sex_finger_P_23"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.8 玩家专用 刚睡醒时的 手淫 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "scared",
+                                "submissive"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_P_24",
+                                "com_sex_finger_P_25"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 手淫 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_26",
+                                        "com_sex_finger_P_27",
+                                        "com_sex_finger_P_28"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 手淫 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_finger_P_29",
+                                "com_sex_finger_P_30",
+                                "com_sex_finger_P_31"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 手淫 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_32",
+                                        "com_sex_finger_P_33",
+                                        "com_sex_finger_P_34"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 手淫 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_P_35",
+                                "com_sex_finger_P_36",
+                                "com_sex_finger_P_37"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_finger_P_Climax_1": "($self$) 被手淫 高潮 口上文",
+                "com_sex_finger_P_Climax_2": "$self$猛地向后仰起脖颈，十指深深掐入$target$的背部皮肉，喉咙深处被挤出一声绵长变调的尖叫，内壁开始不受控地疯狂痉挛。",
+                "com_sex_finger_P_Climax_3": "$self$的双眼瞬间失神上翻，身体像触电般剧烈颤抖，大腿内侧的肌肉紧绷得如石头一般，一股温热的液体不受控制地喷涌而出。",
+                "com_sex_finger_P_Climax_4": "$self$张大嘴巴大口喘息却发不出声音，整个人瘫软如泥，只有下身还在随着高潮的余韵，通过一阵阵的收缩死死绞紧$target$。",
+                "com_sex_finger_P_Climax_5": "$self$眼中含着屈辱的泪水，身体却可悲地背叛了意志，脊背猛地弓起，脚趾死死蜷缩，在那一瞬间彻底沦为了欲望的奴隶。",
+                "com_sex_finger_P_Climax_6": "$self$紧咬着下唇直到渗出血丝，试图压抑那羞耻的声音，但最终还是在一阵剧烈的抽搐中崩溃，双眼翻白，失去了理智。",
+                "com_sex_finger_P_Climax_7": "$self$一边哭喊着不要，一边却迎来了最强烈的痉挛，耻丘被爱液弄得一片狼藉，整个人都在因为这违背意愿的快感而崩溃抽泣。",
+                "com_sex_finger_P_Begin_1": "$self$温柔地握住了$target$那根挺立的欲望，指尖轻轻在敏感的冠状沟处打转，嘴角含着一丝笑意：\"看来它已经忍耐很久了呢。\"",
+                "com_sex_finger_P_Begin_2": "$self$没有说话，只是默默地将手探入被子，随后$target$感觉到一阵温热紧致的包裹感传来，那是她掌心特有的温度。",
+                "com_sex_finger_P_Begin_3": "$self$将身体紧贴近$target$，手掌熟练地套弄起来，湿热的呼吸喷洒在对方耳边：\"只要这样……就会舒服吗？\"",
+                "com_sex_finger_P_Begin_4": "$self$被突如其来的触碰吓了一跳，身体瞬间僵硬，但并没有抽回手，只是脸颊迅速染上了绯红：\"等等……这是……\"",
+                "com_sex_finger_P_Begin_5": "$self$瞪大了眼睛看着$target$，手中的动作虽然因生涩显得有些笨拙却并未停下，呼吸也随之变得急促起来。",
+                "com_sex_finger_P_Begin_6": "$self$咬着嘴唇，视线游移不定，似乎在进行激烈的思想斗争，最终还是顺从了这荒唐的行为。",
+                "com_sex_finger_P_Begin_7": "$self$颤抖着伸出手，指尖冰凉，眼眶里蓄满了泪水，根本不敢抬头看$target$一眼。",
+                "com_sex_finger_P_Begin_8": "$self$紧闭着双眼，像是在触碰什么可怕的东西一样，僵硬而机械地握住了那一处。",
+                "com_sex_finger_P_Begin_9": "$self$喉咙里发出细微的呜咽声，身体害怕地缩成一团，完全是在胁迫下勉强地配合着动作。",
+                "com_sex_finger_P_1": "$self$发出无意识的梦呓，身体随着冲撞的节奏微微晃动，但并没有醒来的迹象，只是眉头偶尔轻轻皱起。",
+                "com_sex_finger_P_2": "$self$沉睡中的呼吸变得有些急促粗重，身体本能地产生了一些收缩反应，却依旧沉浸在梦乡之中。",
+                "com_sex_finger_P_3": "$self$依然保持着原本的姿势一动不动，唯有那处私密部位随着$target$的抽插而被迫变形，飞溅的汁液凝固在半空中。",
+                "com_sex_finger_P_4": "$self$毫无知觉地承受着猛烈的撞击，眼中的神采凝固在上一秒，这副肉体此刻彻底沦为了$target$随意使用的玩物。",
+                "com_sex_finger_P_5": "$self$烦躁地拍开了$target$的手，翻个身把头埋进枕头里，声音闷闷的：\"别闹……困死了……\"",
+                "com_sex_finger_P_6": "$self$发出一声不满的呻吟，将被子死死裹紧，用背影表达着无声的抗议。",
+                "com_sex_finger_P_7": "$self$迷茫地睁眼看了看，随即推拒着$target$的胸膛，声音软糯却坚定：\"不管是几次……现在绝对不行……\"",
+                "com_sex_finger_P_8": "$self$尖叫着惊醒，手脚并用地将$target$踹下床，抓起枕头就砸了过去：\"变态！滚出去！\"",
+                "com_sex_finger_P_9": "$self$惊恐地缩到床角，双手死死抓紧衣领，语无伦次地大喊救命。",
+                "com_sex_finger_P_10": "$self$按住了$target$不规矩的手，轻声哄道：\"亲爱的，今晚太累了，抱抱着睡好吗？\"",
+                "com_sex_finger_P_11": "$self$皱了皱鼻子，把身子转过去背对着$target$：\"不行哦，明天还要早起呢，快睡觉。\"",
+                "com_sex_finger_P_12": "$self$笑着躲开了$target$的触碰，拉过被子把自己裹成一个蚕茧：\"休战牌已挂起！今晚禁止通行！\"",
+                "com_sex_finger_P_13": "$self$尴尬地笑着后退了一步，举起双手示意：\"那个……这种玩笑有点过了哦。\"",
+                "com_sex_finger_P_14": "$self$轻轻拨开了$target$的手，语气尽量保持轻松：\"虽然我不讨厌你，但这种事还是留给你的女朋友吧。\"",
+                "com_sex_finger_P_15": "$self$有些慌乱地挠了挠脸颊，顾左右而言他：\"啊，对了，工作的事情还没说完呢……\"",
+                "com_sex_finger_P_16": "$self$猛地甩开了$target$的手，眼神瞬间变得冰冷刺骨：\"请自重！我在你眼里就是这种人吗？\"",
+                "com_sex_finger_P_17": "$self$厌恶地后退几步，像是看到了脏东西一样拍打着衣服：\"别碰我！真恶心！\"",
+                "com_sex_finger_P_18": "$self$毫不客气地一巴掌拍落了那只伸过来的手，冷笑道：\"想死的话直说。\"",
+                "com_sex_finger_P_19": "$self$迷迷糊糊地睁开眼，感觉到下身的异样后反而顺从地张开了腿，呢喃道：\"唔……坏蛋……\"",
+                "com_sex_finger_P_20": "$self$在半梦半醒间抱住了$target$的脖子，本能地迎合着对方的动作，发出一声慵懒满足的鼻音。",
+                "com_sex_finger_P_21": "$self$揉着惺忪的睡眼，虽然困倦却还是露出了一个宠溺的笑：\"真拿你没办法……\"",
+                "com_sex_finger_P_22": "$self$惊醒后发现现状，本能地想要尖叫，但看清是$target$后，身体反而软了下来，发出一声复杂的叹息。",
+                "com_sex_finger_P_23": "$self$愣了几秒，随后有些自暴自弃般地闭上眼，手却鬼使神差地配合了起来。",
+                "com_sex_finger_P_24": "$self$被惊醒的瞬间充满了恐惧，但在$target$的压迫感下，只能含着泪默默承受这突如其来的侵犯。",
+                "com_sex_finger_P_25": "$self$浑身僵硬地躺着，任由$target$摆布，像是一个失去了灵魂的破败布偶。",
+                "com_sex_finger_P_26": "$self$观察着$target$迷乱的神情，手上的动作更加卖力，眼神里满是浓得化不开的爱意：\"看起来你很喜欢这样……\"",
+                "com_sex_finger_P_27": "$self$凑过去吻了吻$target$的脸颊，轻笑道：\"你的反应真可爱，让我忍不住想欺负得更狠一点。\"",
+                "com_sex_finger_P_28": "$self$的手腕有些酸，但看到$target$享受的样子，她反而不知疲倦地加快了套弄的速度。",
+                "com_sex_finger_P_29": "$self$原本抗拒的表情逐渐软化，看着手中勃发的器官，眼中闪过一丝奇异的光芒：\"没想到……居然会变成这样。\"",
+                "com_sex_finger_P_30": "$self$的手指开始主动探索那些敏感的褶皱，声音变得有些沙哑：\"如果是你的话……好像也不坏。\"",
+                "com_sex_finger_P_31": "$self$脸上带着潮红，不再回避视线，反而有些好奇地加重了手上的力道。",
+                "com_sex_finger_P_32": "$self$甩了甩酸痛的手腕，动作明显慢了下来，眉头微蹙：\"还得多久呀……手好酸。\"",
+                "com_sex_finger_P_33": "$self$有些走神地看着天花板，机械地重复着套弄的动作，显然心思已经不在床上了。",
+                "com_sex_finger_P_34": "$self$叹了口气，停下动作揉了揉自己的虎口：\"今天状态不太好，要不先这样？\"",
+                "com_sex_finger_P_35": "$self$忍着强烈的不适感，眉头紧锁，眼神中满是煎熬：\"还没结束吗……\"",
+                "com_sex_finger_P_36": "$self$偏过头去，屏住呼吸，手指仅仅是用最小的接触面积在敷衍了事。",
+                "com_sex_finger_P_37": "$self$眼中的厌恶越来越浓，甚至产生了一些生理性的干呕冲动。"
+            },
+            "en-us": {
+                "com_sex_finger_P_Climax_1": "($self$) Handjob Climax Dialogue",
+                "com_sex_finger_P_Climax_2": "$self$ violently arches her neck back, her ten fingers digging deep into $target$'s back skin. A long, distorted scream is squeezed from the depths of her throat as her inner walls begin to spasm uncontrollably.",
+                "com_sex_finger_P_Climax_3": "$self$'s eyes instantly lose focus and roll back. Her body trembles violently as if electrocuted, the muscles of her inner thighs tightening like rocks, while a stream of warm fluid gushes out uncontrollably.",
+                "com_sex_finger_P_Climax_4": "$self$ opens her mouth wide, gasping for air but unable to make a sound. Her entire body goes limp like mud, only her lower body still tightly constricting around $target$ with rhythmic contractions in the aftershocks of orgasm.",
+                "com_sex_finger_P_Climax_5": "With tears of humiliation in her eyes, $self$'s body pitifully betrays her will. Her spine arches sharply and her toes curl tight, completely becoming a slave to desire in that instant.",
+                "com_sex_finger_P_Climax_6": "$self$ bites her lower lip until it bleeds, trying to suppress the shameful sounds, but finally collapses in a violent fit of convulsions, her eyes rolling back as she loses her reason.",
+                "com_sex_finger_P_Climax_7": "While crying out 'no', $self$ is hit by the strongest spasms yet. Her mound is left in a mess of love juices, her whole body sobbing in breakdown from this pleasure that violates her will.",
+                "com_sex_finger_P_Begin_1": "$self$ gently grasps $target$'s erect desire, her fingertips lightly circling the sensitive corona. A smile plays on her lips: \"It seems it's been waiting for a long time.\"",
+                "com_sex_finger_P_Begin_2": "$self$ stays silent, simply sliding her hand under the covers. Soon, $target$ feels a warm, tight sensation enveloping him—the unique warmth of her palm.",
+                "com_sex_finger_P_Begin_3": "$self$ presses her body close to $target$, her hand working skillfully. Her hot breath sprays against his ear: \"Does it feel good... when I do this?\"",
+                "com_sex_finger_P_Begin_4": "$self$ is startled by the sudden touch, her body stiffening instantly. But she doesn't pull her hand away, her cheeks quickly flushing red: \"Wait... this is...\"",
+                "com_sex_finger_P_Begin_5": "$self$ stares wide-eyed at $target$. Although her movements are clumsy from inexperience, they don't stop, and her breathing becomes rapid.",
+                "com_sex_finger_P_Begin_6": "$self$ bites her lip, her gaze shifting uncertainly as if in an intense internal struggle, but finally, she acquiesces to this absurd act.",
+                "com_sex_finger_P_Begin_7": "$self$ reaches out with a trembling hand, her fingertips ice-cold. Her eyes are brimming with tears, daring not to look up at $target$ even once.",
+                "com_sex_finger_P_Begin_8": "$self$ keeps her eyes tightly shut, as if touching something terrible, gripping that part stiffly and mechanically.",
+                "com_sex_finger_P_Begin_9": "A quiet whimper escapes $self$'s throat. She curls into a ball in fear, barely cooperating with the movements under total duress.",
+                "com_sex_finger_P_1": "$self$ mumbles unconsciously in her sleep. Her body sways slightly with the rhythm of the thrusts, but she shows no sign of waking, only frowning slightly now and then.",
+                "com_sex_finger_P_2": "$self$'s breathing in her sleep becomes heavy and rapid. Her body instinctively produces some contraction reactions, yet she remains immersed in dreamland.",
+                "com_sex_finger_P_3": "$self$ remains motionless in her original pose, only her private parts forced to deform with $target$'s thrusts, the splashing juices freezing in mid-air.",
+                "com_sex_finger_P_4": "$self$ endures the violent impact without any sensation, the light in her eyes frozen in the previous second. This body has now completely become a plaything for $target$ to use at will.",
+                "com_sex_finger_P_5": "$self$ irritably swats $target$'s hand away, turning over to bury her face in the pillow, her voice muffled: \"Don't... I'm so sleepy...\"",
+                "com_sex_finger_P_6": "$self$ lets out a groan of dissatisfaction, wrapping the blanket tightly around herself, expressing silent protest with her back.",
+                "com_sex_finger_P_7": "$self$ opens her eyes in confusion, then pushes against $target$'s chest, her voice soft but firm: \"No matter how many times... absolutely not right now...\"",
+                "com_sex_finger_P_8": "$self$ wakes up screaming, kicking $target$ off the bed with hands and feet, grabbing a pillow and throwing it: \"Pervert! Get out!\"",
+                "com_sex_finger_P_9": "$self$ shrinks back to the corner of the bed in terror, clutching her collar tightly, shouting incoherently for help.",
+                "com_sex_finger_P_10": "$self$ holds down $target$'s unruly hand, coaxing softly: \"Darling, I'm too tired tonight. Can we just cuddle and sleep?\"",
+                "com_sex_finger_P_11": "$self$ wrinkles her nose and turns her back to $target$: \"No way, we have to get up early tomorrow. Go to sleep.\"",
+                "com_sex_finger_P_12": "$self$ laughs and dodges $target$'s touch, pulling the blanket to wrap herself like a cocoon: \"Truce flag is up! No entry tonight!\"",
+                "com_sex_finger_P_13": "$self$ steps back with an awkward smile, raising both hands: \"Um... this joke is going a bit too far.\"",
+                "com_sex_finger_P_14": "$self$ gently pushes $target$'s hand aside, trying to keep her tone light: \"Although I don't dislike you, you should save this kind of thing for your girlfriend.\"",
+                "com_sex_finger_P_15": "$self$ scratches her cheek in a flustered manner, changing the subject: \"Ah, right, we haven't finished talking about work...\"",
+                "com_sex_finger_P_16": "$self$ abruptly throws off $target$'s hand, her eyes instantly turning bone-chillingly cold: \"Have some self-respect! Is that the kind of person I am to you?\"",
+                "com_sex_finger_P_17": "$self$ backs away in disgust, patting her clothes as if she had touched something dirty: \"Don't touch me! It's disgusting!\"",
+                "com_sex_finger_P_18": "$self$ slaps away the reaching hand without hesitation, sneering: \"Just say it if you want to die.\"",
+                "com_sex_finger_P_19": "$self$ opens her eyes groggily. Feeling the sensation below, she obediently spreads her legs instead, murmuring: \"Mm... bad boy...\"",
+                "com_sex_finger_P_20": "$self$ hugs $target$'s neck while half-asleep, instinctively catering to his movements, letting out a lazy, satisfied nasal sound.",
+                "com_sex_finger_P_21": "$self$ rubs her sleepy eyes. Although drowsy, she reveals a doting smile: \"I really can't do anything with you...\"",
+                "com_sex_finger_P_22": "$self$ wakes up with a start, instinctively wanting to scream, but upon seeing it's $target$, her body goes soft, releasing a complex sigh.",
+                "com_sex_finger_P_23": "$self$ freezes for a few seconds, then closes her eyes as if giving up, her hand inexplicably starting to cooperate.",
+                "com_sex_finger_P_24": "$self$ is filled with terror the moment she wakes, but under $target$'s oppression, she can only endure this sudden violation in silence with tears in her eyes.",
+                "com_sex_finger_P_25": "$self$ lies there stiffly, letting $target$ have his way, like a broken doll that has lost its soul.",
+                "com_sex_finger_P_26": "$self$ watches $target$'s bewildered expression, working her hand even harder, her eyes full of love so thick it won't dissolve: \"Looks like you really enjoy this...\"",
+                "com_sex_finger_P_27": "$self$ leans in to kiss $target$'s cheek, chuckling lightly: \"Your reaction is so cute, it makes me want to bully you even harder.\"",
+                "com_sex_finger_P_28": "$self$'s wrist is a bit sore, but seeing $target$ enjoy it, she tirelessly speeds up the stroking.",
+                "com_sex_finger_P_29": "$self$'s originally resistant expression softens. Looking at the throbbing organ in her hand, a strange light flashes in her eyes: \"I didn't expect... it would turn out like this.\"",
+                "com_sex_finger_P_30": "$self$ begins to actively explore those sensitive folds with her fingers, her voice becoming a bit husky: \"If it's you... it doesn't seem so bad.\"",
+                "com_sex_finger_P_31": "$self$'s face is flushed. She no longer avoids eye contact, instead curiously increasing the strength of her hand.",
+                "com_sex_finger_P_32": "$self$ shakes her sore wrist, her movements slowing noticeably, brows furrowed: \"How much longer... my hand is so tired.\"",
+                "com_sex_finger_P_33": "$self$ looks at the ceiling absent-mindedly, mechanically repeating the stroking motion, clearly with her mind elsewhere.",
+                "com_sex_finger_P_34": "$self$ sighs, stopping to rub the web of her thumb: \"Not in the mood today, how about we stop here?\"",
+                "com_sex_finger_P_35": "$self$ endures the intense discomfort with a frown, her eyes full of torment: \"Is it not over yet...\"",
+                "com_sex_finger_P_36": "$self$ turns her head away, holding her breath, her fingers barely touching, doing the bare minimum to get it over with.",
+                "com_sex_finger_P_37": "$self$ eyes are filled with increasing disgust, even feeling a physiological urge to retch."
+            }
         }
     }
 }

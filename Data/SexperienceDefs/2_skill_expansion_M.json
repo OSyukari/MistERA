@@ -153,6 +153,11 @@
             {
                 "skill_expansion_M": "深喉扩张",
                 "skill_expansion_M_tooltip": "%%skill_expansion_tooltip1%%"
+            },
+            "en-us":
+            {
+                "skill_expansion_M": "Throat Expansion",
+                "skill_expansion_M_tooltip": "%%skill_expansion_tooltip1%%"
             }
         }
     }

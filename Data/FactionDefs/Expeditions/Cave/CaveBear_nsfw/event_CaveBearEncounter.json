@@ -38,7 +38,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_choice",
-    "question":"$party.name$在洞穴深处遭遇了一头巨大的穴熊",
+    "question":"event_caveBearEncounter_ev01",
     "options":[
         {   
             "target_chara_conditions":
@@ -46,11 +46,11 @@
                 "trainer":[{"parameters":["exists"]}]
             },
             "_comment":"scope a trainer chara",
-            "option": "让$trainer.name$尝试安抚野兽",
+            "option": "event_caveBearEncounter_ev01_op01",
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_appease"]} ] 
         },
         {   
-            "option": "准备战斗，驱赶野兽。", 
+            "option": "event_caveBearEncounter_ev01_op02", 
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_combat"]} ] 
         }
     ]
@@ -97,14 +97,14 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_scare",
-    "line": "$party.name$的迎战姿态吓唬住了野兽，避免了冲突",
+    "line": "event_caveBearEncounter_ev02",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_combat",
-    "line": "$party.name$与暴怒的穴熊展开战斗！",
+    "line": "event_caveBearEncounter_ev03",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "nextEntryLabel":"br_combat_start"
 },
@@ -123,47 +123,47 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_appease_fail",
-    "line": "$trainer.name$的安抚尝试反而激怒了野兽！",
+    "line": "event_caveBearEncounter_ev04",
     "nextEntryLabel": "br_combat_combat"
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_appease_success",
-    "line": "$trainer.name$成功安抚了狂躁的野兽。",
+    "line": "event_caveBearEncounter_ev05",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
-    "line": "警告！由于内容缺失，该事件强制终止。",
+    "line": "exp_event_error99",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_appease_fail_female",
-    "line": "$trainer.name$的安抚尝试失败了！",
+    "line": "event_caveBearEncounter_ev06",
     "nextEntryLabel":"br_appease_fail_female_event"
 },
 {
     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_appease_fail_female_event",
-    "question":"被激怒的野兽将$trainer.name$扑倒，将她当成了发泄欲望的对象。",
+    "question":"event_caveBearEncounter_ev07",
     "options":[
         {   
-            "option": "激烈反抗",
-            "tooltip":"$trainer.name$ HP-1，然后开始战斗",
+            "option": "event_caveBearEncounter_ev07_op01",
+            "tooltip":"event_caveBearEncounter_ev07_op01_tooltip",
             "Results": [ 
                 { "Type":"ModStatEXValue", "arguments":["trainer","stats_derived_extended_hp","-1"]},
                 { "Type":"JumpToLabel", "arguments":["","br_combat_combat"]} ] 
         },
         {   
-            "option": "屈服", 
+            "option": "event_caveBearEncounter_ev07_op02", 
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_event_begin"]} ] 
         },
         {   
-            "option": "屈服（省略事件）", 
+            "option": "event_caveBearEncounter_ev07_op03", 
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_event_skip"]} ] 
         }
     ]
@@ -171,34 +171,34 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_event_skip",
-    "line": "安抚失败的$trainer.name$被穴熊按在了身下强奸",
+    "line": "event_caveBearEncounter_ev08",
     "isLast":true,
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
-                { "Type":"StartSexJobInParty" , "arguments":["enemy","trainer","trainer","120","","","","event_caveBearEncounter_ev09_text"]}]
+                { "Type":"StartSexJobInParty" , "arguments":["enemy","trainer","trainer","120","","","","event_caveBearEncounter_ev08_text"]}]
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_event_begin",
-    "line": "穴熊扒光了$trainer.name$的衣服", 
+    "line": "event_caveBearEncounter_ev07_op02_1", 
     "Results": [ { "Type":"Undress", "arguments":["trainer","None","SeeThrough","true"]} ] 
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-    "line": "本番插入", 
+    "line": "event_caveBearEncounter_ev07_op02_2", 
     "Results": [ { "Type":"ExecuteAPOnSingleChara", "arguments":["enemy","trainer","com_sex_P_missionary"]},
                     { "Type":"FlushMessageAll"}   ]  
 
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-    "line": "肛门插入", 
+    "line": "event_caveBearEncounter_ev07_op02_3", 
     "Results": [ { "Type":"ExecuteAPOnSingleChara", "arguments":["enemy","trainer","com_sex_P_doggy_A"]},
                     { "Type":"FlushMessageAll"}   ] 
 
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-    "line": "事件结束（可重复）",
+    "line": "event_caveBearEncounter_ev07_op02_4",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["RetryEvent"]} ],
     "isLast": true
 }
@@ -210,8 +210,50 @@
         "Entries": {
             "zh-cn": {
                 "event_caveBearEncounter": "穴熊遭遇",
-                "event_caveBearEncounter_ev09_text": "$names$被穴熊强奸"
-            }
+                "event_caveBearEncounter_ev01": "$party.name$在洞穴深处遭遇了一头巨大的穴熊",
+                "event_caveBearEncounter_ev01_op01": "让$trainer.name$尝试安抚野兽",
+                "event_caveBearEncounter_ev01_op02": "准备战斗，驱赶野兽。",
+                "event_caveBearEncounter_ev02": "$party.name$的迎战姿态吓唬住了野兽，避免了冲突",
+                "event_caveBearEncounter_ev03": "$party.name$与暴怒的穴熊展开战斗！",
+                "event_caveBearEncounter_ev04": "$trainer.name$的安抚尝试反而激怒了野兽！",
+                "event_caveBearEncounter_ev05": "$trainer.name$成功安抚了狂躁的野兽。",
+                "event_caveBearEncounter_ev06": "$trainer.name$的安抚尝试失败了！",
+                "event_caveBearEncounter_ev07": "被激怒的野兽将$trainer.name$扑倒，将她当成了发泄欲望的对象。",
+                "event_caveBearEncounter_ev07_op01": "激烈反抗",
+                "event_caveBearEncounter_ev07_op01_tooltip": "$trainer.name$ HP-1，然后开始战斗",
+                "event_caveBearEncounter_ev07_op02": "屈服",
+                "event_caveBearEncounter_ev07_op03": "屈服（省略事件）",
+                "event_caveBearEncounter_ev08": "安抚失败的$trainer.name$被穴熊按在了身下强奸",
+                "event_caveBearEncounter_ev08_text": "$names$被穴熊强奸",
+                "event_caveBearEncounter_ev07_op02_1": "穴熊扒光了$trainer.name$的衣服",
+                "event_caveBearEncounter_ev07_op02_2": "本番插入",
+                "event_caveBearEncounter_ev07_op02_3": "肛门插入",
+                "event_caveBearEncounter_ev07_op02_4": "事件结束（可重复）"
+            },
+"en-us":
+{
+                "event_caveBearEncounter": "Cave Bear Encounter",
+                "event_caveBearEncounter_ev01": "$party.name$ encounters a massive cave bear deep in the cave.",
+                "event_caveBearEncounter_ev01_op01": "Let $trainer.name$ try to soothe the beast.",
+                "event_caveBearEncounter_ev01_op02": "Prepare for battle and drive the beast away.",
+                "event_caveBearEncounter_ev02": "$party.name$'s combat stance intimidates the beast, avoiding conflict.",
+                "event_caveBearEncounter_ev03": "$party.name$ engages in battle with the enraged cave bear!",
+                "event_caveBearEncounter_ev04": "$trainer.name$'s attempt to soothe the beast only enrages it further!",
+                "event_caveBearEncounter_ev05": "$trainer.name$ successfully soothes the frantic beast.",
+                "event_caveBearEncounter_ev06": "$trainer.name$'s attempt to soothe failed!",
+                "event_caveBearEncounter_ev07": "The enraged beast pounces on $trainer.name$, treating her as an object to vent its lust.",
+                "event_caveBearEncounter_ev07_op01": "Resist fiercely",
+                "event_caveBearEncounter_ev07_op01_tooltip": "$trainer.name$ HP-1, then combat starts.",
+                "event_caveBearEncounter_ev07_op02": "Submit",
+                "event_caveBearEncounter_ev07_op03": "Submit (Skip Event)",
+                "event_caveBearEncounter_ev08": "$trainer.name$, having failed to soothe it, is pinned down and raped by the cave bear.",
+                "event_caveBearEncounter_ev08_text": "$names$ is raped by the cave bear.",
+                "event_caveBearEncounter_ev07_op02_1": "The cave bear strips $trainer.name$ naked.",
+                "event_caveBearEncounter_ev07_op02_2": "Actual Insertion",
+                "event_caveBearEncounter_ev07_op02_3": "Anal Insertion",
+                "event_caveBearEncounter_ev07_op02_4": "Event Ends (Repeatable)"
+
+}
         }
     }
 }

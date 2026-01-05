@@ -58,7 +58,7 @@
                         "ID":"store_1F_kitchen",
                         "displayName":"Kitchen",
                         "offsetX":144.4,
-                        "offsetY":129.1,
+                        "offsetY":132,
                         "connects": [ { "ID":"store_1F_storage", "cost":1.0  } ],
                         "furnitureIDs":["furniture_galley"],
                         "roomImagePath":"SunMart/interior.png"
@@ -67,7 +67,7 @@
                         "ID":"store_1F_storage",
                         "displayName":"Storage",
                         "offsetX":245.2,
-                        "offsetY":124.7,
+                        "offsetY":100,
                         "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
                         "furnitureIDs":["furniture_marker_jp_convenience_store_storageCleaning"],
                         "roomImagePath":"SunMart/interior.png"
@@ -130,8 +130,8 @@
                     {
                         "ID":"store_2F_hallway",
                         "displayName":"2F Hallway",
-                        "offsetX":-281.2,
-                        "offsetY":24.5,
+                        "offsetX":-272.6,
+                        "offsetY":0,
                         "connects": [ { "ID":"store_1F_hallway", "cost":1.0  } ],
                         "furnitureIDs":[],
                         "roomImagePath":"SunMart/interior.png"

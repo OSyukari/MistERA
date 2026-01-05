@@ -133,6 +133,11 @@
             {
                 "skill_sexSkill_service": "奉仕精神",
                 "skill_sexSkill_service_tooltip": "适用范围：侍奉类指令（爱抚等），对方必须是清醒的"
+            },
+            "en-us":
+            {
+                "skill_sexSkill_service": "Service",
+                "skill_sexSkill_service_tooltip": "Applies to: all service commands (such as caress), target must be conscious"
             }
         }
     }

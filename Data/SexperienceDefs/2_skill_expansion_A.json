@@ -153,6 +153,11 @@
             {
                 "skill_expansion_A": "肛门扩张",
                 "skill_expansion_A_tooltip": "%%skill_expansion_tooltip1%%"
+            },
+            "en-us":
+            {
+                "skill_expansion_A": "Anal Expansion",
+                "skill_expansion_A_tooltip": "%%skill_expansion_tooltip1%%"
             }
         }
     }

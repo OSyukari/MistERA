@@ -40,7 +40,7 @@
                 ]
                 
             },
-            "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在发呆"]}], "keepLooking":false }
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_waste_time_description_ongoing_1"]}], "keepLooking":false }
 
         },
         {
@@ -92,7 +92,7 @@
                     }
                 ]
             },
-            "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在与$receiver.firstname$交谈"]}], "keepLooking":false }
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_talk_description_ongoing_1"]}], "keepLooking":false }
         },
         {
             "ID": "com_furniture_combat_sim",
@@ -131,8 +131,8 @@
             },
             "DifficultyCheck": { "baseD20Check": 0 },
 
-            "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在模拟战"]}], "keepLooking":false },
-            "description_begin":{ "Entries":[{"texts":["$doer.firstname$开始模拟战"]}], "keepLooking":false }
+            "description_ongoing":{ "Entries":[{"texts":["com_furniture_combat_sim_description_ongoing_1"]}], "keepLooking":false },
+            "description_begin":{ "Entries":[{"texts":["com_furniture_combat_sim_description_begin_1"]}], "keepLooking":false }
         }
     ]
     },
@@ -145,14 +145,19 @@
                 "com_interaction_waste_time": "玩家限定，NPC不可执行。跟NPC组队时请请先解散NPC",
                 "com_interaction_waste_time_displayName": "什么都不做",
                 "com_interaction_waste_time_begin_1": "$doer.firstname$什么都没做",
+                "com_interaction_waste_time_description_ongoing_1": "$doer.firstname$正在发呆",
 
                 "com_interaction_talk_begin_1": "$doer.firstname$有一搭没一搭地和$receiver.firstname$聊了起来",
                 "com_interaction_talk_begin_2": "$doer.firstname$漫不经心地和$receiver.firstname$聊了起来",
                 "com_interaction_talk_begin_3": "$doer.firstname$随意地和$receiver.firstname$聊着天",
                 "com_interaction_talk_displayName_1": "闲聊",
                 "com_interaction_talk_displayName_2": "大家一起闲聊",
+                "com_interaction_talk_description_ongoing_1": "$doer.firstname$正在与$receiver.firstname$交谈",
+
                 "com_furniture_combat_sim_displayName_1":"模拟战斗",
-                "com_furniture_combat_sim_displayName_2":"一同模拟战斗"
+                "com_furniture_combat_sim_displayName_2":"一同模拟战斗",
+                "com_furniture_combat_sim_description_ongoing_1":"$doer.firstname$正在模拟战",
+                "com_furniture_combat_sim_description_begin_1":"$doer.firstname$开始模拟战"
                 
             },
             "en-us":
@@ -160,12 +165,19 @@
                 "com_interaction_waste_time": "Player only, cannot be performed by NPC. Will require dismissing any teammate before being allowed to perform this action.",
                 "com_interaction_waste_time_displayName": "Do Nothing",
                 "com_interaction_waste_time_begin_1": "$doer.firstname$ stands around and do nothing",
+                "com_interaction_waste_time_description_ongoing_1": "$doer.firstname$ is zoning out",
 
                 "com_interaction_talk_begin_1": "$doer.firstname$ started chatting with $receiver.firstname$ without much focus",
                 "com_interaction_talk_begin_2": "$doer.firstname$ started chatting with $receiver.firstname$ nonchalantly",
                 "com_interaction_talk_begin_3": "$doer.firstname$ casually chatted with $receiver.firstname$",
                 "com_interaction_talk_displayName_1": "Chat",
-                "com_interaction_talk_displayName_2": "Chat"
+                "com_interaction_talk_displayName_2": "Chat Together",
+                "com_interaction_talk_description_ongoing_1": "$doer.firstname$ is chatting with $receiver.firstname$",
+
+                "com_furniture_combat_sim_displayName_1":"Combat Simulation",
+                "com_furniture_combat_sim_displayName_2":"Simulate Combat Together",
+                "com_furniture_combat_sim_description_ongoing_1":"$doer.firstname$ is running combat simulation",
+                "com_furniture_combat_sim_description_begin_1":"$doer.firstname$ starts combat simulation"
             }
         }
     }

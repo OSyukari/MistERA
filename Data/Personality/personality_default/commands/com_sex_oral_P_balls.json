@@ -1,345 +1,764 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_P_balls_Climax",
-        "tags":["nsfw"],
-        "variants":[
+    "Character_Personalities": {
+        "looselist": [
             {
-                
-                "requireSelfReceiver": true,
-                "_comment":"受方 被舔睾丸 高潮" ,
-                "responses": [
-                    "($self$) 被舔睾丸 高潮 口上文"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_balls_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 被舔睾丸 高潮",
+                            "responses": [
+                                "com_sex_oral_P_balls_Climax_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "climax"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 攻方 舔睾丸 高潮 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_Climax_2",
+                                        "com_sex_oral_P_balls_Climax_3",
+                                        "com_sex_oral_P_balls_Climax_4",
+                                        "com_sex_oral_P_balls_Climax_5",
+                                        "com_sex_oral_P_balls_Climax_6",
+                                        "com_sex_oral_P_balls_Climax_7"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 攻方 舔睾丸 高潮 无允许 口上文",
+                            "responses": [
+                                "com_sex_oral_P_balls_Climax_8",
+                                "com_sex_oral_P_balls_Climax_9",
+                                "com_sex_oral_P_balls_Climax_10",
+                                "com_sex_oral_P_balls_Climax_11",
+                                "com_sex_oral_P_balls_Climax_12",
+                                "com_sex_oral_P_balls_Climax_13"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                
-                "requireSelfDoer": true,
-                "variants":[
-                    {
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","blowjob","balls", "climax"], "useActiveTags":false,
-                        "_comment":"2.4.1 攻方 舔睾丸 高潮 有允许 口上文" ,
-                        "responses": [
-"$self$猛地弓起背，喉咙深处发出一声高亢的尖叫，内壁剧烈痉挛，死死绞住了$target$。",
-"$self$眼神瞬间失焦，身体像触电一样抽搐，口中无意识地溢出大量的爱液，混合着吞咽声。",
-"$self$双手紧紧抓着$target$的大腿，指甲几乎陷入肉里，全身泛起潮红，在极致的快感中颤抖不已。",
-"$self$的大脑一片空白，只剩下本能的抽搐，眼泪夺眶而出，嘴里语无伦次地喊着$target$的名字。",
-"$self$达到了顶峰，整个人瘫软下来，眼神迷离，嘴角挂着满足的笑容，身体还在余韵中微微抽动。",
-"$self$发出一声长长的叹息，全身的肌肉紧绷到极致后瞬间放松，像是融化了一般贴在$target$身上。"
-                        ]
-                    }
-                ],
-                "extraPortraitTags":["sex","doer","blowjob","balls", "climax"], "useActiveTags":false,
-                "_comment":"2.4.2 攻方 舔睾丸 高潮 无允许 口上文" ,
-                "responses": [
-"$self$屈辱地咬着嘴唇，但身体却背叛了意志，在这个瞬间剧烈颤抖，羞耻的快感冲垮了理智。",
-"\"不……不要……\"$self$哭喊着，却无法控制高潮带来的痉挛，眼神中充满了绝望和自我厌恶。",
-"$self$死死瞪着$target$，眼泪狂流，但身体却在快感的浪潮中无法自拔地迎合着动作。",
-"$self$崩溃地尖叫出声，这种被迫的快感让她感到无比恶心，却又无法停止身体的剧烈反应。",
-"$self$眼神空洞，仿佛灵魂出窍，身体机械地抽搐着，承受着那一波波违背意愿的高潮。",
-"$self$在极度的矛盾中达到了顶峰，一边哭泣一边颤抖，羞耻感让她恨不得立刻死去。"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_P_balls_Begin",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":["sex","doer","blowjob","balls", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始舔睾丸 有允许 口上文" ,
-                "responses":
-                [ 
-"$self$轻笑着跪在$target$两腿之间，双手温柔地托起那沉甸甸的囊袋。\"今天要从这里开始吗？遵命，亲爱的。\"",
-"$self$没有说话，只是眼神迷离地低下头，伸出舌尖轻轻触碰了一下$target$紧绷的阴囊，随即张口含住。",
-"$self$熟练地分开$target$的双腿，脸颊贴大腿内侧蹭了蹭。\"这里好像已经很期待了呢……那我开动啰。\"",
-"$self$抬眼媚如丝地看了$target$一眼，伸出手指在睾丸表面打着圈，然后缓缓俯下身去。",
-"\"既然是你想要的……\"$self$温顺地埋首于$target$的胯间，温热的呼吸喷洒在敏感的皮肤上。",
-"$self$像是对待珍宝一样，小心翼翼地捧起那一对球体，伸出舌头沿着中间的缝隙舔舐。"
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_balls_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始舔睾丸 有允许 口上文",
+                            "responses": [
+                                "com_sex_oral_P_balls_Begin_1",
+                                "com_sex_oral_P_balls_Begin_2",
+                                "com_sex_oral_P_balls_Begin_3",
+                                "com_sex_oral_P_balls_Begin_4",
+                                "com_sex_oral_P_balls_Begin_5",
+                                "com_sex_oral_P_balls_Begin_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始舔睾丸 未允许 好意 口上文",
+                            "responses": [
+                                "com_sex_oral_P_balls_Begin_7",
+                                "com_sex_oral_P_balls_Begin_8",
+                                "com_sex_oral_P_balls_Begin_9",
+                                "com_sex_oral_P_balls_Begin_10",
+                                "com_sex_oral_P_balls_Begin_11",
+                                "com_sex_oral_P_balls_Begin_12"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始舔睾丸 未允许 敌意 口上文",
+                            "responses": [
+                                "com_sex_oral_P_balls_Begin_13",
+                                "com_sex_oral_P_balls_Begin_14",
+                                "com_sex_oral_P_balls_Begin_15",
+                                "com_sex_oral_P_balls_Begin_16",
+                                "com_sex_oral_P_balls_Begin_17",
+                                "com_sex_oral_P_balls_Begin_18"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":["sex","doer","blowjob","balls", "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始舔睾丸 未允许 好意 口上文" ,
-                "responses":
-                [ 
-"$self$瞪大了眼睛看着$target$突然凑近的脸，身体僵硬了一下，但没有推开。\"欸？等、等等……在这里？\"",
-"$self$的手不知所措地悬在半空，脸瞬间涨红，最终还是顺从地张开了嘴。\"如果是$target$的话……也可、可以……\"",
-"$self$显得非常慌乱，眼神四处乱瞟，但当$target$提出要求时，她还是颤抖着跪了下去。",
-"\"只、只有这一次哦……\"$self$紧紧闭上眼睛，像是下定决心般低下了头。",
-"$self$惊讶地捂住了嘴，但在$target$的注视下，她缓缓移开了手，露出了复杂的表情。\"真拿你没办法……\"",
-"$self$全身僵硬地任由$target$摆布，虽然羞耻得浑身发抖，却没有逃跑。"
-                ]
-            },
-            {
-                
-                "extraPortraitTags":["sex","doer","blowjob","balls", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
-                "_comment":"2.2.2 开始舔睾丸 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-"$self$浑身颤抖着，眼泪在眼眶里打转，在$target$冰冷的注视下被迫张开了嘴。",
-"\"不、不要……求你了……\"$self$带着哭腔求饶，但在$target$的威胁下只能绝望地低下头。",
-"$self$紧紧抓着自己的衣角，脸色惨白，机械地按照$target$的命令跪了下来。",
-"$self$闭着眼睛不敢看那个部位，强忍着恶心感凑了过去，身体止不住地后缩。",
-"\"只要做了这个……就会放过我吗？\"$self$声音颤抖，眼神中充满了恐惧。",
-"$self$像是失去了灵魂的人偶，麻木地完成了指令动作，眼泪无声地滑落。"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_P_balls",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sex","doer","blowjob","balls","sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 舔睾丸 口上文",
-                "responses":
-                [ 
-"$self$发出轻微的鼾声，完全不知道自己的嘴正在被使用，随着动作无意识地晃动着脑袋。",
-"$self$嘴角流出津液，眉头微微皱起似乎感觉到了不适，但沉重的睡意让她无法醒来。",
-"$self$像个婴儿一样毫无防备，任由$target$拨开她的嘴唇，在她的口腔里进进出出。",
-"$self$在睡梦中砸吧了一下嘴，似乎把那东西当成了食物，无意识地吸吮了两下。",
-"$self$翻了个身，正好将脸埋得更深，发出几声含糊不清的梦呓。",
-"$self$呼吸平稳，即使被如此对待，只要动作轻柔，她依然沉浸在黑甜的梦乡中。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","doer","blowjob","balls","doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 舔睾丸 口上文",
-                "responses":
-                [ 
-"$self$保持着原本的姿势一动不动，眼神呆滞，嘴巴被强行张开，毫无知觉地接受着侵犯。",
-"$self$就像一尊精美的人偶，即使口腔被填满，脸上依旧维持着被定格前那一秒的微笑。",
-"$self$静止在半空中，只能被动地容纳$target$的抽送，无法做出任何吞咽或呼吸的反应。",
-"$self$僵硬的舌头被$target$随意摆弄，口水顺着嘴角不受控制地流淌下来，滴落在静止的空气中。",
-"$self$毫无防备地暴露着一切，任由$target$在她的口腔内肆意妄为，仿佛只是一个精致的容器。",
-"$self$被定格在惊恐的一瞬间，瞳孔放大，却无法阻止$target$将那东西塞入她的口中。"
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[
-                    {
-                        "requirement":  { "selfTags":["justWokenUp"] } ,
-                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                        "variants":[
-                            {
-                                "requirement":  {  "requirePermission":true } ,
-                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 舔睾丸 口上文 有允许",
-                                "responses":
-                                [ 
-"$self$猛地惊醒，下意识地一脚踹开了$target$。\"你有病啊！让人好好睡觉行不行！\"",
-"$self$烦躁地拍开了$target$的手，卷起被子把自己裹成一团。\"滚开，烦死了。\"",
-"$self$在黑暗中瞪了$target$一眼，语气冷硬。\"立刻停止，我现在非常生气。\"",
-"$self$用力推着$target$的胸膛，声音里带着起床气。\"不做！绝对不做！给我下去！\"",
-"$self$发出愤怒的低吼，翻身背对$target$并用力扯回被子。\"别碰我！\"",
-"$self$迷迷糊糊中感觉到异样，立刻清醒过来并大声呵斥。\"你在干什么！住手！\""
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_balls",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
                                 ]
-
-                            }
-                        ],
-                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 舔睾丸 口上文 无允许",
-                        "responses":
-                        [ 
-"$self$发出一声刺耳的尖叫，拼命踢打着$target$。\"你是谁！滚出去！\"",
-"$self$惊慌失措地从床上滚下来，抓起台灯就砸了过去。\"变态！\"",
-"$self$死命地咬住$target$的手，趁机冲向门口大喊救命。",
-"$self$愤怒地扇了$target$一耳光，气的浑身发抖。\"你这个人渣！\"",
-"$self$歇斯底里地哭喊着，用尽全力抗拒着$target$的靠近。",
-"$self$慌乱中抓起电话就要报警，眼神里充满了极度的恐慌和厌恶。"
-                        ]
-                    },
-                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 舔睾丸 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$轻轻推开了$target$的手，带着歉意吻了吻他的脸颊。\"抱歉，亲爱的，今天真的太累了，下次好吗？\"",
-"$self$缩回了身子，拉过被子盖住自己。\"不行……今天身体不太舒服，不想做。\"",
-"$self$有些撒娇地摇摇头，避开了$target$的动作。\"只有今天放过我吧，明天不管要做什么都依你。\"",
-"$self$叹了口气，抓住了$target$不安分的手。\"真的没心情，我们在床上只抱抱好不好？\"",
-"$self$皱着眉翻了个身，背对着$target$。\"我很困了，别闹。\"",
-"\"不是现在。\"$self$语气虽然柔和但坚定，按住了$target$想要压下来的肩膀。"
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 舔睾丸 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$尴尬地笑了笑，不动声色地后退了一步。\"哈哈，$target$你喝多了吧？这个玩笑有点过火了哦。\"",
-"$self$轻轻推开$target$，表情有些严肃但还算客气。\"请自重，$target$，我们只是朋友。\"",
-"$self$别过头去避开了$target$的动作。\"抱歉，我不能做这种事，这对我们都不好。\"",
-"$self$抓住了$target$的手腕，坚定地摇了摇头。\"如果你再继续，我会生气的。\"",
-"$self$叹了口气，像是对待不懂事的孩子一样。\"别闹了，快点把裤子穿好。\"",
-"\"这个……稍微有点越界了呢。\"$self$苦笑着摆摆手，试图缓解尴尬的气氛。"
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 舔睾丸 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$厌恶地皱起眉头，像看垃圾一样看着$target$。\"恶心，离我远点！\"",
-"\"你疯了吗？信不信我报警！\"$self$尖叫着后退，随手抓起手边的东西做防御状。",
-"$self$冷笑一声，直接一巴掌扇了过去。\"也不撒泡尿照照自己，滚！\"",
-"$self$满脸鄙夷地上下打量着$target$。\"就凭你？别做梦了，变态。\"",
-"$self$毫不客气地吐了一口唾沫。\"再敢靠近一步，我就废了你。\"",
-"\"如果你想死的话可以继续试试。\"$self$眼神冰冷，散发出危险的气息。"
-                 ]
-            },
-            {
-
-                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
-                "_comment1":"玩家专用 刚睡醒时的 舔睾丸口上文",
-                "variants":[
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":["sex","doer","blowjob","balls","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 舔睾丸 有允许 口上文",
-                        "responses":[
-"$self$迷迷糊糊地睁开眼，看清是$target$后，顺从地张开了嘴。\"唔……真是个坏心眼的人……\"",
-"$self$在睡梦中发出几声嘤咛，感觉到胯间的动作后，本能地伸手抱住了$target$的头。",
-"$self$半梦半醒间露出一丝微笑，慵懒地调整了一下姿势方便$target$动作。\"半夜搞突袭吗……真拿你没办法。\"",
-"$self$困倦地揉了揉眼睛，但还是乖巧地配合着$target$的节奏抬起了下巴。",
-"\"嗯……几点了？\"$self$虽然还在打哈欠，但身体已经诚实地打开，接纳了$target$的索求。",
-"$self$没有完全清醒，只是凭着本能回应着$target$的亲吻，并在他向下移动时发出软糯的鼻音。"
-                        ]
-
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":["sex","doer","blowjob","balls","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 舔睾丸 无允许 好意 口上文",
-                        "responses":[
-"$self$惊醒后迷茫地看着$target$，在搞清楚状况后脸红到了耳根。\"如果是$target$的话……没、没关系……\"",
-"$self$不知所措地被按着头，但在认出对方后放弃了抵抗，羞涩地闭上了眼。",
-"\"欸？欸？！既然都这样了……\"$self$虽然慌乱，但还是红着脸张开了嘴。",
-"$self$紧张地抓紧了床单，心跳加速，但没有拒绝$target$的侵入。",
-"\"这是梦吗……\"$self$喃喃自语着，顺从了内心深处对$target$的好感。",
-"$self$在惊讶过后，竟然表现出了一丝隐秘的兴奋，颤抖着配合了起来。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.8 玩家专用 刚睡醒时的 舔睾丸 无允许 敌意 口上文",
-                "extraPortraitTags":["sex","doer","blowjob","balls","scared","submissive"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$在黑暗中被惊醒，看到压在身上的人影后吓得瑟瑟发抖，不敢反抗。",
-"$self$刚想尖叫就被捂住了嘴，看清$target$凶狠的眼神后，只能流着泪屈服。",
-"$self$恐惧地呜咽着，在暴力的胁迫下，颤颤巍巍地低下头去。",
-"$self$全身瘫软无力，因为过度的惊吓而失去了反抗的勇气，任人宰割。",
-"\"别打我……我做……我做……\"$self$哭着求饶，机械地张开了嘴。",
-"$self$像是受惊的小动物一样缩成一团，但在威胁下不得不伸出舌头。"
-                ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","blowjob","balls", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 舔睾丸 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$吞吐的动作变得更加主动，喉咙里发出含糊不清的呜咽声，似乎很享受$target$的气味。",
-"$self$抬起头换气的瞬间，嘴角牵出一道银丝，看着$target$的眼神充满了爱意。\"你的味道……真好闻。\"",
-"$self$一边继续着舌头的动作，一边伸手抚摸着$target$的小腹，身体不由自主地贴得更近了。",
-"$self$的脸颊泛起红晕，眼角因为持续的动作而微微湿润，但她依然卖力地吸吮着。",
-"听着$target$的喘息声，$self$似乎受到了鼓励，舌尖在褶皱处更加卖力地钻探。",
-"$self$停下来稍微休息了一下，随即主动用脸颊蹭着那温热的部位，发出一声满足的叹息。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 舔睾丸 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","doer","blowjob","balls", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$原本抗拒的双手慢慢抓住了$target$的衣角，眼中的警惕逐渐被一种异样的迷离取代。",
-"\"唔……好像……也不是那么讨厌……\"$self$含糊地说着，舌头的动作变得不那么僵硬了。",
-"$self$惊讶地发现自己竟然有了生理反应，脸颊绯红，偷看着$target$的表情。",
-"$self$不再试图推开，反而试探性地加深了喉咙的吞吐，发出了一声压抑的鼻音。",
-"\"奇怪……身体好热……\"$self$眼神变得有些涣散，开始主动配合$target$的节奏。",
-"$self$似乎沉浸在某种背德的快感中，原本紧皱的眉头舒展开来，动作也变得柔顺。"
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","blowjob","balls", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 舔睾丸 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$的动作慢了下来，微微蹙眉，似乎因为长时间保持这个姿势而感到下颚酸痛。",
-"$self$停下动作，有些敷衍地用舌头扫了两下。\"还没好吗？嘴巴好酸……\"",
-"$self$眼神有些游离，时不时瞥向墙上的时钟，显然心思已经不在这种亲密行为上了。",
-"$self$轻轻干呕了一下，随后有些抗拒地松开了口。\"味道有点重……我去喝口水。\"",
-"$self$推了推$target$的大腿，含糊不清地抱怨着。\"太深了……我不喜欢这样。\"",
-"$self$停下了嘴里的动作，只是单纯地用手握着，脸上露出一丝疲惫的不耐烦。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 舔睾丸 结果负面 未允许 口上文",
-                "extraPortraitTags":["sex","doer","blowjob","balls", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$猛地推开$target$，趴在旁边剧烈地干呕起来。\"不行……太恶心了……\"",
-"$self$眼里的泪水越来越多，最后终于忍不住崩溃大哭。\"放开我……我不行了……\"",
-"$self$用力咬了一下$target$以此反抗，眼神中充满了恨意。\"混蛋！去死吧！\"",
-"$self$趁着$target$放松警惕，拼命挣扎着想要逃离。\"救命！谁来救救我！\"",
-"$self$身体因为极度的厌恶而僵硬得像块石头，嘴里发出抗拒的呜呜声。",
-"$self$绝望地闭上眼，像死尸一样停止了所有主动的动作，任由$target$摆布。"
-                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 舔睾丸 口上文",
+                            "responses": [
+                                "com_sex_oral_P_balls_1",
+                                "com_sex_oral_P_balls_2",
+                                "com_sex_oral_P_balls_3",
+                                "com_sex_oral_P_balls_4",
+                                "com_sex_oral_P_balls_5",
+                                "com_sex_oral_P_balls_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 舔睾丸 口上文",
+                            "responses": [
+                                "com_sex_oral_P_balls_7",
+                                "com_sex_oral_P_balls_8",
+                                "com_sex_oral_P_balls_9",
+                                "com_sex_oral_P_balls_10",
+                                "com_sex_oral_P_balls_11",
+                                "com_sex_oral_P_balls_12"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 舔睾丸 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_oral_P_balls_13",
+                                                "com_sex_oral_P_balls_14",
+                                                "com_sex_oral_P_balls_15",
+                                                "com_sex_oral_P_balls_16",
+                                                "com_sex_oral_P_balls_17",
+                                                "com_sex_oral_P_balls_18"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 舔睾丸 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_19",
+                                        "com_sex_oral_P_balls_20",
+                                        "com_sex_oral_P_balls_21",
+                                        "com_sex_oral_P_balls_22",
+                                        "com_sex_oral_P_balls_23",
+                                        "com_sex_oral_P_balls_24"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 舔睾丸 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_25",
+                                        "com_sex_oral_P_balls_26",
+                                        "com_sex_oral_P_balls_27",
+                                        "com_sex_oral_P_balls_28",
+                                        "com_sex_oral_P_balls_29",
+                                        "com_sex_oral_P_balls_30"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 舔睾丸 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_31",
+                                        "com_sex_oral_P_balls_32",
+                                        "com_sex_oral_P_balls_33",
+                                        "com_sex_oral_P_balls_34",
+                                        "com_sex_oral_P_balls_35",
+                                        "com_sex_oral_P_balls_36"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 舔睾丸 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_balls_37",
+                                "com_sex_oral_P_balls_38",
+                                "com_sex_oral_P_balls_39",
+                                "com_sex_oral_P_balls_40",
+                                "com_sex_oral_P_balls_41",
+                                "com_sex_oral_P_balls_42"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment1": "玩家专用 刚睡醒时的 舔睾丸口上文",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 舔睾丸 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_43",
+                                        "com_sex_oral_P_balls_44",
+                                        "com_sex_oral_P_balls_45",
+                                        "com_sex_oral_P_balls_46",
+                                        "com_sex_oral_P_balls_47",
+                                        "com_sex_oral_P_balls_48"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 舔睾丸 无允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_49",
+                                        "com_sex_oral_P_balls_50",
+                                        "com_sex_oral_P_balls_51",
+                                        "com_sex_oral_P_balls_52",
+                                        "com_sex_oral_P_balls_53",
+                                        "com_sex_oral_P_balls_54"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.8 玩家专用 刚睡醒时的 舔睾丸 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "scared",
+                                "submissive"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_balls_55",
+                                "com_sex_oral_P_balls_56",
+                                "com_sex_oral_P_balls_57",
+                                "com_sex_oral_P_balls_58",
+                                "com_sex_oral_P_balls_59",
+                                "com_sex_oral_P_balls_60"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 舔睾丸 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_61",
+                                        "com_sex_oral_P_balls_62",
+                                        "com_sex_oral_P_balls_63",
+                                        "com_sex_oral_P_balls_64",
+                                        "com_sex_oral_P_balls_65",
+                                        "com_sex_oral_P_balls_66"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 舔睾丸 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_oral_P_balls_67",
+                                "com_sex_oral_P_balls_68",
+                                "com_sex_oral_P_balls_69",
+                                "com_sex_oral_P_balls_70",
+                                "com_sex_oral_P_balls_71",
+                                "com_sex_oral_P_balls_72"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 舔睾丸 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_73",
+                                        "com_sex_oral_P_balls_74",
+                                        "com_sex_oral_P_balls_75",
+                                        "com_sex_oral_P_balls_76",
+                                        "com_sex_oral_P_balls_77",
+                                        "com_sex_oral_P_balls_78"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 舔睾丸 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_balls_79",
+                                "com_sex_oral_P_balls_80",
+                                "com_sex_oral_P_balls_81",
+                                "com_sex_oral_P_balls_82",
+                                "com_sex_oral_P_balls_83",
+                                "com_sex_oral_P_balls_84"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_P_balls_Climax_1": "($self$) 被舔睾丸 高潮 口上文",
+                "com_sex_oral_P_balls_Climax_2": "$self$猛地弓起脊背，喉咙深处爆发出一声高亢的尖吟，湿热的内壁剧烈痉挛，死死绞住了$target$。",
+                "com_sex_oral_P_balls_Climax_3": "$self$眼神瞬间涣散失焦，身体像触电般剧烈抽搐，口中无意识地溢出大量爱液，混合着情色的吞咽声。",
+                "com_sex_oral_P_balls_Climax_4": "$self$双手死死抓着$target$的大腿，指甲几乎嵌入肉里，全身泛起情欲的潮红，在极致的灭顶快感中颤抖不已。",
+                "com_sex_oral_P_balls_Climax_5": "$self$的大脑一片空白，只剩下兽性的本能抽搐，生理性的泪水夺眶而出，嘴里语无伦次地喊着$target$的名字。",
+                "com_sex_oral_P_balls_Climax_6": "$self$达到了快感的巅峰，整个人如烂泥般瘫软下来，眼神迷离恍惚，嘴角挂着满足的痴笑，身体还在余韵中微微抽动。",
+                "com_sex_oral_P_balls_Climax_7": "$self$发出一声长长的叹息，全身紧绷到极致的肌肉瞬间松弛，像是融化了的奶油一般软软地贴在$target$身上。",
+                "com_sex_oral_P_balls_Climax_8": "$self$屈辱地咬着下唇，但身体却诚实地背叛了意志，在这个瞬间剧烈战栗，羞耻的快感彻底冲垮了理智的防线。",
+                "com_sex_oral_P_balls_Climax_9": "“不……不要……去了……！”$self$哭喊着，却无法控制高潮带来的剧烈痉挛，眼神中交织着绝望与自我厌恶。",
+                "com_sex_oral_P_balls_Climax_10": "$self$死死瞪着$target$，眼泪狂流不止，但身体却在快感的浪潮中无法自拔地迎合着对方的动作。",
+                "com_sex_oral_P_balls_Climax_11": "$self$崩溃地尖叫出声，这种被迫的快感让她感到无比恶心，却又无法停止身体那淫荡的剧烈反应。",
+                "com_sex_oral_P_balls_Climax_12": "$self$眼神空洞呆滞，仿佛灵魂出窍，身体机械地抽搐着，麻木地承受着那一波波违背意愿的强力高潮。",
+                "com_sex_oral_P_balls_Climax_13": "$self$在极度的矛盾中被送上了顶峰，一边哭泣一边颤抖，强烈的羞耻感让她恨不得立刻晕厥过去。",
+                "com_sex_oral_P_balls_Begin_1": "$self$轻笑着跪在$target$两腿之间，双手温柔地托起那沉甸甸的囊袋。“今天要从这里开始侍奉吗？遵命，亲爱的。”",
+                "com_sex_oral_P_balls_Begin_2": "$self$没有说话，只是眼神迷离地低下头，伸出粉嫩的舌尖轻轻触碰了一下$target$紧绷的阴囊，随即顺从地张口含住。",
+                "com_sex_oral_P_balls_Begin_3": "$self$熟练地分开$target$的双腿，脸颊贴着大腿内侧亲昵地蹭了蹭。“这里好像已经很期待了呢……那我开动啰。”",
+                "com_sex_oral_P_balls_Begin_4": "$self$抬眼媚眼如丝地看了$target$一眼，伸出纤细的手指在睾丸表面打着圈，然后顺着动作缓缓俯下身去。",
+                "com_sex_oral_P_balls_Begin_5": "“既然是你想要的……”$self$温顺地埋首于$target$的胯间，温热湿润的呼吸喷洒在敏感的皮肤上。",
+                "com_sex_oral_P_balls_Begin_6": "$self$像是对待稀世珍宝一样，小心翼翼地捧起那一对球体，伸出灵巧的舌头沿着中间的缝隙细细舔舐。",
+                "com_sex_oral_P_balls_Begin_7": "$self$瞪大了眼睛看着$target$突然凑近的胯下，身体僵硬了一下，但并没有推开。“欸？等、等等……在这里做吗？”",
+                "com_sex_oral_P_balls_Begin_8": "$self$的手不知所措地悬在半空，脸瞬间涨红，最终还是顺从地张开了樱桃小嘴。“如果是$target$的话……也可、可以……”",
+                "com_sex_oral_P_balls_Begin_9": "$self$显得非常慌乱，眼神四处乱瞟，但当$target$提出要求时，她还是颤抖着双腿跪了下去。",
+                "com_sex_oral_P_balls_Begin_10": "“只、只有这一次哦……”$self$紧紧闭上眼睛，像是下定了某种决心般低下了头。",
+                "com_sex_oral_P_balls_Begin_11": "$self$惊讶地捂住了嘴，但在$target$的注视下，她缓缓移开了手，露出了复杂的表情。“真拿你没办法……”",
+                "com_sex_oral_P_balls_Begin_12": "$self$全身僵硬地任由$target$摆布，虽然羞耻得浑身发抖，却没有选择逃跑。",
+                "com_sex_oral_P_balls_Begin_13": "$self$浑身颤抖着，眼泪在眼眶里打转，在$target$冰冷的注视下被迫张开了嘴。",
+                "com_sex_oral_P_balls_Begin_14": "“不、不要……求你了……”$self$带着哭腔求饶，但在$target$的威胁下只能绝望地低下头。",
+                "com_sex_oral_P_balls_Begin_15": "$self$紧紧抓着自己的衣角，脸色惨白，机械地按照$target$的命令跪了下来。",
+                "com_sex_oral_P_balls_Begin_16": "$self$闭着眼睛不敢看那个部位，强忍着生理性的恶心感凑了过去，身体止不住地后缩。",
+                "com_sex_oral_P_balls_Begin_17": "“只要做了这个……就会放过我吗？”$self$声音颤抖，眼神中充满了恐惧。",
+                "com_sex_oral_P_balls_Begin_18": "$self$像是失去了灵魂的人偶，麻木地完成了指令动作，眼泪无声地滑落。",
+                "com_sex_oral_P_balls_1": "$self$发出轻微的鼾声，完全不知道自己的嘴正在被使用，随着动作无意识地晃动着脑袋。",
+                "com_sex_oral_P_balls_2": "$self$嘴角流出晶莹的津液，眉头微微皱起似乎感觉到了不适，但沉重的睡意让她无法醒来。",
+                "com_sex_oral_P_balls_3": "$self$像个婴儿一样毫无防备，任由$target$拨开她的嘴唇，在她的口腔里进进出出。",
+                "com_sex_oral_P_balls_4": "$self$在睡梦中砸吧了一下嘴，似乎把那东西当成了美味的食物，无意识地吸吮了两下。",
+                "com_sex_oral_P_balls_5": "$self$翻了个身，正好将脸埋得更深，发出几声含糊不清的诱人梦呓。",
+                "com_sex_oral_P_balls_6": "$self$呼吸平稳，即使被如此粗暴对待，只要动作轻柔，她依然沉浸在黑甜的梦乡中。",
+                "com_sex_oral_P_balls_7": "$self$保持着原本的姿势一动不动，眼神呆滞，嘴巴被强行张开，毫无知觉地接受着侵犯。",
+                "com_sex_oral_P_balls_8": "$self$就像一尊精美的人偶，即使口腔被填满，脸上依旧维持着被定格前那一秒的微笑。",
+                "com_sex_oral_P_balls_9": "$self$静止在半空中，只能被动地容纳$target$的抽送，无法做出任何吞咽或呼吸的反应。",
+                "com_sex_oral_P_balls_10": "$self$僵硬的舌头被$target$随意摆弄，口水顺着嘴角不受控制地流淌下来，滴落在静止的空气中。",
+                "com_sex_oral_P_balls_11": "$self$毫无防备地暴露着一切，任由$target$在她的口腔内肆意妄为，仿佛只是一个精致的容器。",
+                "com_sex_oral_P_balls_12": "$self$被定格在惊恐的一瞬间，瞳孔放大，却无法阻止$target$将那东西塞入她的口中。",
+                "com_sex_oral_P_balls_13": "$self$猛地惊醒，下意识地一脚踹开了$target$。“你有病啊！让人好好睡觉行不行！”",
+                "com_sex_oral_P_balls_14": "$self$烦躁地拍开了$target$的手，卷起被子把自己裹成一团。“滚开，烦死了。”",
+                "com_sex_oral_P_balls_15": "$self$在黑暗中瞪了$target$一眼，语气冷硬。“立刻停止，我现在非常生气。”",
+                "com_sex_oral_P_balls_16": "$self$用力推着$target$的胸膛，声音里带着浓重的起床气。“不做！绝对不做！给我下去！”",
+                "com_sex_oral_P_balls_17": "$self$发出愤怒的低吼，翻身背对$target$并用力扯回被子。“别碰我！”",
+                "com_sex_oral_P_balls_18": "$self$迷迷糊糊中感觉到异样，立刻清醒过来并大声呵斥。“你在干什么！住手！”",
+                "com_sex_oral_P_balls_19": "$self$发出一声刺耳的尖叫，拼命踢打着$target$。“你是谁！滚出去！”",
+                "com_sex_oral_P_balls_20": "$self$惊慌失措地从床上滚下来，抓起台灯就砸了过去。“变态！”",
+                "com_sex_oral_P_balls_21": "$self$死命地咬住$target$的手，趁机冲向门口大喊救命。",
+                "com_sex_oral_P_balls_22": "$self$愤怒地扇了$target$一耳光，气得浑身发抖。“你这个人渣！”",
+                "com_sex_oral_P_balls_23": "$self$歇斯底里地哭喊着，用尽全力抗拒着$target$的靠近。",
+                "com_sex_oral_P_balls_24": "$self$慌乱中抓起电话就要报警，眼神里充满了极度的恐慌和厌恶。",
+                "com_sex_oral_P_balls_25": "$self$轻轻推开了$target$的手，带着歉意吻了吻他的脸颊。“抱歉，亲爱的，今天真的太累了，下次好吗？”",
+                "com_sex_oral_P_balls_26": "$self$缩回了身子，拉过被子盖住自己。“不行……今天身体不太舒服，不想做。”",
+                "com_sex_oral_P_balls_27": "$self$有些撒娇地摇摇头，避开了$target$的动作。“只有今天放过我吧，明天不管要做什么都依你。”",
+                "com_sex_oral_P_balls_28": "$self$叹了口气，抓住了$target$不安分的手。“真的没心情，我们在床上只抱抱好不好？”",
+                "com_sex_oral_P_balls_29": "$self$皱着眉翻了个身，背对着$target$。“我很困了，别闹。”",
+                "com_sex_oral_P_balls_30": "“不是现在。”$self$语气虽然柔和但坚定，按住了$target$想要压下来的肩膀。",
+                "com_sex_oral_P_balls_31": "$self$尴尬地笑了笑，不动声色地后退了一步。“哈哈，$target$你喝多了吧？这个玩笑有点过火了哦。”",
+                "com_sex_oral_P_balls_32": "$self$轻轻推开$target$，表情有些严肃但还算客气。“请自重，$target$，我们只是朋友。”",
+                "com_sex_oral_P_balls_33": "$self$别过头去避开了$target$的动作。“抱歉，我不能做这种事，这对我们都不好。”",
+                "com_sex_oral_P_balls_34": "$self$抓住了$target$的手腕，坚定地摇了摇头。“如果你再继续，我会生气的。”",
+                "com_sex_oral_P_balls_35": "$self$叹了口气，像是对待不懂事的孩子一样。“别闹了，快点把裤子穿好。”",
+                "com_sex_oral_P_balls_36": "“这个……稍微有点越界了呢。”$self$苦笑着摆摆手，试图缓解尴尬的气氛。",
+                "com_sex_oral_P_balls_37": "$self$厌恶地皱起眉头，像看垃圾一样看着$target$。“恶心，离我远点！”",
+                "com_sex_oral_P_balls_38": "“你疯了吗？信不信我报警！”$self$尖叫着后退，随手抓起手边的东西做防御状。",
+                "com_sex_oral_P_balls_39": "$self$冷笑一声，直接一巴掌扇了过去。“也不撒泡尿照照自己，滚！”",
+                "com_sex_oral_P_balls_40": "$self$满脸鄙夷地上下打量着$target$。“就凭你？别做梦了，变态。”",
+                "com_sex_oral_P_balls_41": "$self$毫不客气地吐了一口唾沫。“再敢靠近一步，我就废了你。”",
+                "com_sex_oral_P_balls_42": "“如果你想死的话可以继续试试。”$self$眼神冰冷，散发出危险的气息。",
+                "com_sex_oral_P_balls_43": "$self$迷迷糊糊地睁开眼，看清是$target$后，顺从地张开了嘴。“唔……真是个坏心眼的人……”",
+                "com_sex_oral_P_balls_44": "$self$在睡梦中发出几声嘤咛，感觉到胯间的动作后，本能地伸手抱住了$target$的头。",
+                "com_sex_oral_P_balls_45": "$self$半梦半醒间露出一丝微笑，慵懒地调整了一下姿势方便$target$动作。“半夜搞突袭吗……真拿你没办法。”",
+                "com_sex_oral_P_balls_46": "$self$困倦地揉了揉眼睛，但还是乖巧地配合着$target$的节奏抬起了下巴。",
+                "com_sex_oral_P_balls_47": "“嗯……几点了？”$self$虽然还在打哈欠，但身体已经诚实地打开，接纳了$target$的索求。",
+                "com_sex_oral_P_balls_48": "$self$没有完全清醒，只是凭着本能回应着$target$的亲吻，并在他向下移动时发出软糯的鼻音。",
+                "com_sex_oral_P_balls_49": "$self$惊醒后迷茫地看着$target$，在搞清楚状况后脸红到了耳根。“如果是$target$的话……没、没关系……”",
+                "com_sex_oral_P_balls_50": "$self$不知所措地被按着头，但在认出对方后放弃了抵抗，羞涩地闭上了眼。",
+                "com_sex_oral_P_balls_51": "“欸？欸？！既然都这样了……”$self$虽然慌乱，但还是红着脸张开了嘴。",
+                "com_sex_oral_P_balls_52": "$self$紧张地抓紧了床单，心跳加速，但没有拒绝$target$的侵入。",
+                "com_sex_oral_P_balls_53": "“这是梦吗……”$self$喃喃自语着，顺从了内心深处对$target$的好感。",
+                "com_sex_oral_P_balls_54": "$self$在惊讶过后，竟然表现出了一丝隐秘的兴奋，颤抖着配合了起来。",
+                "com_sex_oral_P_balls_55": "$self$在黑暗中被惊醒，看到压在身上的人影后吓得瑟瑟发抖，不敢反抗。",
+                "com_sex_oral_P_balls_56": "$self$刚想尖叫就被捂住了嘴，看清$target$凶狠的眼神后，只能流着泪屈服。",
+                "com_sex_oral_P_balls_57": "$self$恐惧地呜咽着，在暴力的胁迫下，颤颤巍巍地低下头去。",
+                "com_sex_oral_P_balls_58": "$self$全身瘫软无力，因为过度的惊吓而失去了反抗的勇气，任人宰割。",
+                "com_sex_oral_P_balls_59": "“别打我……我做……我做……”$self$哭着求饶，机械地张开了嘴。",
+                "com_sex_oral_P_balls_60": "$self$像是受惊的小动物一样缩成一团，但在威胁下不得不伸出舌头。",
+                "com_sex_oral_P_balls_61": "$self$吞吐的动作变得更加主动，喉咙里发出含糊不清的呜咽声，似乎很享受$target$的气味。",
+                "com_sex_oral_P_balls_62": "$self$抬起头换气的瞬间，嘴角牵出一道银丝，看着$target$的眼神充满了爱意。“你的味道……真好闻。”",
+                "com_sex_oral_P_balls_63": "$self$一边继续着舌头的动作，一边伸手抚摸着$target$的小腹，身体不由自主地贴得更近了。",
+                "com_sex_oral_P_balls_64": "$self$的脸颊泛起红晕，眼角因为持续的动作而微微湿润，但她依然卖力地吸吮着。",
+                "com_sex_oral_P_balls_65": "听着$target$的喘息声，$self$似乎受到了鼓励，舌尖在褶皱处更加卖力地钻探。",
+                "com_sex_oral_P_balls_66": "$self$停下来稍微休息了一下，随即主动用脸颊蹭着那温热的部位，发出一声满足的叹息。",
+                "com_sex_oral_P_balls_67": "$self$原本抗拒的双手慢慢抓住了$target$的衣角，眼中的警惕逐渐被一种异样的迷离取代。",
+                "com_sex_oral_P_balls_68": "“唔……好像……也不是那么讨厌……”$self$含糊地说着，舌头的动作变得不那么僵硬了。",
+                "com_sex_oral_P_balls_69": "$self$惊讶地发现自己竟然有了生理反应，脸颊绯红，偷看着$target$的表情。",
+                "com_sex_oral_P_balls_70": "$self$不再试图推开，反而试探性地加深了喉咙的吞吐，发出了一声压抑的鼻音。",
+                "com_sex_oral_P_balls_71": "“奇怪……身体好热……”$self$眼神变得有些涣散，开始主动配合$target$的节奏。",
+                "com_sex_oral_P_balls_72": "$self$似乎沉浸在某种背德的快感中，原本紧皱的眉头舒展开来，动作也变得柔顺。",
+                "com_sex_oral_P_balls_73": "$self$的动作慢了下来，微微蹙眉，似乎因为长时间保持这个姿势而感到下颚酸痛。",
+                "com_sex_oral_P_balls_74": "$self$停下动作，有些敷衍地用舌头扫了两下。“还没好吗？嘴巴好酸……”",
+                "com_sex_oral_P_balls_75": "$self$眼神有些游离，时不时瞥向墙上的时钟，显然心思已经不在这种亲密行为上了。",
+                "com_sex_oral_P_balls_76": "$self$轻轻干呕了一下，随后有些抗拒地松开了口。“味道有点重……我去喝口水。”",
+                "com_sex_oral_P_balls_77": "$self$推了推$target$的大腿，含糊不清地抱怨着。“太深了……我不喜欢这样。”",
+                "com_sex_oral_P_balls_78": "$self$停下了嘴里的动作，只是单纯地用手握着，脸上露出一丝疲惫的不耐烦。",
+                "com_sex_oral_P_balls_79": "$self$猛地推开$target$，趴在旁边剧烈地干呕起来。“不行……太恶心了……”",
+                "com_sex_oral_P_balls_80": "$self$眼里的泪水越来越多，最后终于忍不住崩溃大哭。“放开我……我不行了……”",
+                "com_sex_oral_P_balls_81": "$self$用力咬了一下$target$以此反抗，眼神中充满了恨意。“混蛋！去死吧！”",
+                "com_sex_oral_P_balls_82": "$self$趁着$target$放松警惕，拼命挣扎着想要逃离。“救命！谁来救救我！”",
+                "com_sex_oral_P_balls_83": "$self$身体因为极度的厌恶而僵硬得像块石头，嘴里发出抗拒的呜呜声。",
+                "com_sex_oral_P_balls_84": "$self$绝望地闭上眼，像死尸一样停止了所有主动的动作，任由$target$摆布。"
+            },
+            "en-us": {
+                "com_sex_oral_P_balls_Climax_1": "($self$) Ball-Licking Climax Context",
+                "com_sex_oral_P_balls_Climax_2": "$self$ suddenly arches her back, letting out a high-pitched scream from deep within her throat as her wet inner walls spasm violently, tightly gripping $target$.",
+                "com_sex_oral_P_balls_Climax_3": "$self$'s eyes instantly lose focus, her body twitching as if electrocuted, while saliva mixed with the sounds of swallowing uncontrollably spills from her mouth.",
+                "com_sex_oral_P_balls_Climax_4": "$self$ clutches $target$'s thighs tightly, her nails almost digging into the flesh, her entire body flushed with lust as she trembles in the throes of ultimate pleasure.",
+                "com_sex_oral_P_balls_Climax_5": "$self$'s mind goes blank, leaving only primal spasms as physiological tears well up in her eyes, incoherently calling out $target$'s name.",
+                "com_sex_oral_P_balls_Climax_6": "$self$ reaches the peak of ecstasy, her body going limp like mud, eyes glazed and unfocused, a satisfied silly smile on her lips as her body continues to twitch in the afterglow.",
+                "com_sex_oral_P_balls_Climax_7": "$self$ lets out a long sigh, her muscles, previously tense to the extreme, instantly relaxing, melting against $target$ like soft butter.",
+                "com_sex_oral_P_balls_Climax_8": "$self$ bites her lower lip in humiliation, but her body honestly betrays her will, trembling violently in this moment as the shameful pleasure completely breaks down her rational defenses.",
+                "com_sex_oral_P_balls_Climax_9": "\"No... No... I'm cumming...!\" $self$ cries out, unable to control the intense spasms brought on by the orgasm, her eyes filled with a mix of despair and self-loathing.",
+                "com_sex_oral_P_balls_Climax_10": "$self$ stares dead at $target$, tears streaming down her face, yet her body helplessly responds to their movements amidst the waves of pleasure.",
+                "com_sex_oral_P_balls_Climax_11": "$self$ screams in a breakdown, disgusted by this forced pleasure, yet unable to stop her body's lewd and violent reaction.",
+                "com_sex_oral_P_balls_Climax_12": "$self$'s eyes are vacant and dull, as if her soul has left her body, mechanically twitching as she numbly endures wave after wave of unwanted, powerful orgasms.",
+                "com_sex_oral_P_balls_Climax_13": "$self$ is sent over the edge in a state of extreme contradiction, weeping and trembling, the intense shame making her wish she could pass out immediately.",
+                "com_sex_oral_P_balls_Begin_1": "$self$ chuckles lightly and kneels between $target$'s legs, gently cupping the heavy sack with both hands. \"Shall I start serving you from here today? As you command, darling.\"",
+                "com_sex_oral_P_balls_Begin_2": "$self$ says nothing, simply lowering her head with glazed eyes, lightly touching the tip of her pink tongue to $target$'s tense scrotum before obediently opening her mouth to take it in.",
+                "com_sex_oral_P_balls_Begin_3": "$self$ skillfully parts $target$'s legs, nuzzling her cheek intimately against his inner thigh. \"It seems this part is already looking forward to it... I'll dig in then.\"",
+                "com_sex_oral_P_balls_Begin_4": "$self$ looks up at $target$ with seductive eyes, tracing circles on the surface of his testicles with her slender fingers, then slowly leans down following the motion.",
+                "com_sex_oral_P_balls_Begin_5": "\"Since it's what you want...\" $self$ submissively buries her face in $target$'s crotch, her warm, moist breath spraying over his sensitive skin.",
+                "com_sex_oral_P_balls_Begin_6": "$self$ carefully cups the pair of spheres as if they were a rare treasure, extending her nimble tongue to lick meticulously along the seam between them.",
+                "com_sex_oral_P_balls_Begin_7": "$self$'s eyes widen as she looks at $target$'s suddenly approaching crotch, her body stiffening for a moment but not pushing him away. \"Eh? W-Wait... do it here?\"",
+                "com_sex_oral_P_balls_Begin_8": "$self$'s hands hover helplessly in mid-air, her face flushing instantly, but she eventually opens her small mouth obediently. \"If it's $target$... then... it's o-okay...\"",
+                "com_sex_oral_P_balls_Begin_9": "$self$ appears very flustered, her eyes darting around, but when $target$ makes the request, she tremblingly kneels down.",
+                "com_sex_oral_P_balls_Begin_10": "\"Just... just this once, okay...\" $self$ shuts her eyes tightly, bowing her head as if having made a resolve.",
+                "com_sex_oral_P_balls_Begin_11": "$self$ covers her mouth in surprise, but under $target$'s gaze, she slowly moves her hand away, revealing a complex expression. \"I really can't say no to you...\"",
+                "com_sex_oral_P_balls_Begin_12": "$self$ stiffly allows $target$ to do as he pleases, trembling with shame but choosing not to run away.",
+                "com_sex_oral_P_balls_Begin_13": "$self$ trembles all over, tears welling in her eyes, forced to open her mouth under $target$'s cold gaze.",
+                "com_sex_oral_P_balls_Begin_14": "\"No, no... please...\" $self$ begs with a sobbing tone, but can only despairingly lower her head under $target$'s threat.",
+                "com_sex_oral_P_balls_Begin_15": "$self$ tightly grips the hem of her clothes, face pale, mechanically kneeling down as ordered by $target$.",
+                "com_sex_oral_P_balls_Begin_16": "$self$ closes her eyes, afraid to look at that part, forcing herself closer despite the physiological nausea, her body shrinking back uncontrollably.",
+                "com_sex_oral_P_balls_Begin_17": "\"If I do this... will you let me go?\" $self$'s voice trembles, her eyes filled with fear.",
+                "com_sex_oral_P_balls_Begin_18": "$self$ seems like a puppet without a soul, numbly completing the commanded action as tears silently slide down.",
+                "com_sex_oral_P_balls_1": "$self$ snores lightly, completely unaware that her mouth is being used, her head bobbing unconsciously with the movement.",
+                "com_sex_oral_P_balls_2": "$self$ drools crystal clear saliva from the corner of her mouth, brows slightly furrowed in discomfort, but heavy sleepiness prevents her from waking.",
+                "com_sex_oral_P_balls_3": "$self$ is defenseless like a baby, allowing $target$ to part her lips and thrust in and out of her mouth.",
+                "com_sex_oral_P_balls_4": "$self$ smacks her lips in her sleep, seemingly mistaking the object for delicious food, and sucks on it unconsciously a couple of times.",
+                "com_sex_oral_P_balls_5": "$self$ turns over, burying her face deeper, muttering a few indistinct, alluring sleeptalk sounds.",
+                "com_sex_oral_P_balls_6": "$self$'s breathing is steady; even treated so roughly, as long as the movements are gentle, she remains immersed in deep slumber.",
+                "com_sex_oral_P_balls_7": "$self$ remains motionless in her original pose, eyes vacant, mouth forced open, accepting the violation without any sensation.",
+                "com_sex_oral_P_balls_8": "$self$ is like an exquisite doll, maintaining the smile she had the second before being frozen even as her mouth is filled.",
+                "com_sex_oral_P_balls_9": "$self$ is suspended in mid-air, only able to passively accommodate $target$'s thrusts, unable to swallow or breathe.",
+                "com_sex_oral_P_balls_10": "$self$'s stiff tongue is manipulated at will by $target$, saliva flowing uncontrollably from the corner of her mouth, dripping into the still air.",
+                "com_sex_oral_P_balls_11": "$self$ is completely exposed and defenseless, allowing $target$ to do whatever he wants inside her mouth, as if she is merely an exquisite vessel.",
+                "com_sex_oral_P_balls_12": "$self$ is frozen in a moment of terror, pupils dilated, yet unable to stop $target$ from shoving that thing into her mouth.",
+                "com_sex_oral_P_balls_13": "$self$ wakes up with a start, instinctively kicking $target$ away. \"Are you crazy?! Can't you let a person sleep!\"",
+                "com_sex_oral_P_balls_14": "$self$ irritably swats $target$'s hand away, rolling herself up in the quilt. \"Go away, you're annoying.\"",
+                "com_sex_oral_P_balls_15": "$self$ glares at $target$ in the darkness, her tone cold and hard. \"Stop immediately, I am very angry right now.\"",
+                "com_sex_oral_P_balls_16": "$self$ pushes $target$'s chest hard, her voice heavy with morning grumpiness. \"No! Absolutely not! Get off me!\"",
+                "com_sex_oral_P_balls_17": "$self$ lets out an angry growl, turning her back to $target$ and yanking the quilt back. \"Don't touch me!\"",
+                "com_sex_oral_P_balls_18": "$self$ senses something wrong in her daze, waking up immediately and shouting sternly. \"What are you doing! Stop!\"",
+                "com_sex_oral_P_balls_19": "$self$ lets out a piercing scream, kicking $target$ desperately. \"Who are you! Get out!\"",
+                "com_sex_oral_P_balls_20": "$self$ rolls off the bed in a panic, grabbing the table lamp to throw it. \"Pervert!\"",
+                "com_sex_oral_P_balls_21": "$self$ bites $target$'s hand fiercely, taking the chance to rush towards the door shouting for help.",
+                "com_sex_oral_P_balls_22": "$self$ slaps $target$ furiously, trembling with rage. \"You scumbag!\"",
+                "com_sex_oral_P_balls_23": "$self$ cries hysterically, resisting $target$'s approach with all her might.",
+                "com_sex_oral_P_balls_24": "$self$ frantically grabs the phone to call the police, her eyes filled with extreme panic and disgust.",
+                "com_sex_oral_P_balls_25": "$self$ gently pushes $target$'s hand away, kissing his cheek apologetically. \"Sorry, darling, I'm really too tired today. Next time, okay?\"",
+                "com_sex_oral_P_balls_26": "$self$ shrinks back, pulling the quilt over herself. \"No... I'm not feeling well today, I don't want to do it.\"",
+                "com_sex_oral_P_balls_27": "$self$ shakes her head coquettishly, avoiding $target$'s movements. \"Let me off just for today, I'll do whatever you want tomorrow.\"",
+                "com_sex_oral_P_balls_28": "$self$ sighs and grabs $target$'s restless hand. \"I'm really not in the mood, can we just cuddle in bed?\"",
+                "com_sex_oral_P_balls_29": "$self$ frowns and turns over, back to $target$. \"I'm very sleepy, don't fuss.\"",
+                "com_sex_oral_P_balls_30": "\"Not now.\" $self$ says, her tone soft but firm, holding down $target$'s shoulder as he tries to press down.",
+                "com_sex_oral_P_balls_31": "$self$ laughs awkwardly, stepping back casually. \"Haha, $target$, did you drink too much? This joke is going a bit too far.\"",
+                "com_sex_oral_P_balls_32": "$self$ gently pushes $target$ away, expression somewhat serious but polite. \"Please respect yourself, $target$, we are just friends.\"",
+                "com_sex_oral_P_balls_33": "$self$ turns her head away to avoid $target$'s movement. \"Sorry, I can't do this kind of thing, it's not good for either of us.\"",
+                "com_sex_oral_P_balls_34": "$self$ grabs $target$'s wrist, shaking her head firmly. \"If you continue, I will get angry.\"",
+                "com_sex_oral_P_balls_35": "$self$ sighs, as if dealing with an ignorant child. \"Stop it, put your pants back on quickly.\"",
+                "com_sex_oral_P_balls_36": "\"This... is crossing the line a bit.\" $self$ smiles bitterly and waves her hand, trying to ease the awkward atmosphere.",
+                "com_sex_oral_P_balls_37": "$self$ frowns in disgust, looking at $target$ like he is trash. \"Disgusting, stay away from me!\"",
+                "com_sex_oral_P_balls_38": "\"Are you crazy? Believe it or not, I'll call the police!\" $self$ screams and retreats, grabbing whatever is at hand for defense.",
+                "com_sex_oral_P_balls_39": "$self$ sneers and slaps him directly. \"Look at yourself in the mirror, get lost!\"",
+                "com_sex_oral_P_balls_40": "$self$ looks $target$ up and down with contempt. \"You? Keep dreaming, pervert.\"",
+                "com_sex_oral_P_balls_41": "$self$ spits unceremoniously. \"Come one step closer and I'll ruin you.\"",
+                "com_sex_oral_P_balls_42": "\"If you want to die, you can keep trying.\" $self$'s eyes are cold, emitting a dangerous aura.",
+                "com_sex_oral_P_balls_43": "$self$ opens her eyes dazedly, and upon seeing it is $target$, obediently opens her mouth. \"Mm... what a mean person...\"",
+                "com_sex_oral_P_balls_44": "$self$ whimpers in her sleep, and feeling the movement at her crotch, instinctively reaches out to hug $target$'s head.",
+                "com_sex_oral_P_balls_45": "$self$ reveals a faint smile in her half-awake state, lazily adjusting her posture to facilitate $target$'s movements. \"A midnight raid... I really can't say no to you.\"",
+                "com_sex_oral_P_balls_46": "$self$ rubs her eyes sleepily, but still obediently lifts her chin to match $target$'s rhythm.",
+                "com_sex_oral_P_balls_47": "\"Mm... what time is it?\" $self$ asks, yawning, but her body has already honestly opened up to accept $target$'s demands.",
+                "com_sex_oral_P_balls_48": "$self$ is not fully awake, just responding to $target$'s kisses by instinct, making soft nasal sounds as he moves downwards.",
+                "com_sex_oral_P_balls_49": "$self$ stares at $target$ in confusion after waking up, blushing to her ears after figuring out the situation. \"If it's $target$... i-it's okay...\"",
+                "com_sex_oral_P_balls_50": "$self$ is overwhelmed as her head is held, but gives up resistance after recognizing him, closing her eyes shyly.",
+                "com_sex_oral_P_balls_51": "\"Eh? Eh?! Since it's come to this...\" $self$ is flustered, but still opens her mouth with a blushing face.",
+                "com_sex_oral_P_balls_52": "$self$ grips the bedsheet nervously, heart racing, but does not refuse $target$'s intrusion.",
+                "com_sex_oral_P_balls_53": "\"Is this a dream...\" $self$ murmurs to herself, succumbing to her deep affection for $target$.",
+                "com_sex_oral_P_balls_54": "$self$, after the surprise, actually shows a trace of secret excitement, trembling as she cooperates.",
+                "com_sex_oral_P_balls_55": "$self$ wakes up in the dark, shaking with fear at the figure pressing on her, not daring to resist.",
+                "com_sex_oral_P_balls_56": "$self$ is about to scream but is silenced, and after seeing $target$'s fierce eyes, can only submit with tears.",
+                "com_sex_oral_P_balls_57": "$self$ whimpers in fear, lowering her head tremblingly under violent coercion.",
+                "com_sex_oral_P_balls_58": "$self$ goes limp all over, losing the courage to resist due to excessive fright, leaving her at his mercy.",
+                "com_sex_oral_P_balls_59": "\"Don't hit me... I'll do it... I'll do it...\" $self$ begs crying, mechanically opening her mouth.",
+                "com_sex_oral_P_balls_60": "$self$ shrinks into a ball like a frightened small animal, but has to stick out her tongue under threat.",
+                "com_sex_oral_P_balls_61": "$self$'s sucking movements become more proactive, incoherent whimpers coming from her throat, seeming to enjoy $target$'s scent.",
+                "com_sex_oral_P_balls_62": "$self$ lifts her head to breathe, a silver thread trailing from the corner of her mouth, looking at $target$ with eyes full of love. \"You taste... so good.\"",
+                "com_sex_oral_P_balls_63": "$self$ continues the tongue movement while reaching out to stroke $target$'s lower abdomen, her body involuntarily pressing closer.",
+                "com_sex_oral_P_balls_64": "$self$'s cheeks are flushed, her eyes slightly moist from the continuous action, but she continues to suck diligently.",
+                "com_sex_oral_P_balls_65": "Hearing $target$'s panting, $self$ seems encouraged, the tip of her tongue drilling more vigorously into the folds.",
+                "com_sex_oral_P_balls_66": "$self$ pauses to rest for a moment, then actively rubs her cheek against the warm part, letting out a satisfied sigh.",
+                "com_sex_oral_P_balls_67": "$self$'s resisting hands slowly grab the hem of $target$'s clothes, the wariness in her eyes gradually replaced by a strange daze.",
+                "com_sex_oral_P_balls_68": "\"Mm... it seems... not that hateful...\" $self$ says vaguely, the movement of her tongue becoming less stiff.",
+                "com_sex_oral_P_balls_69": "$self$ is surprised to find herself having a physiological reaction, cheeks blushing as she peeks at $target$'s expression.",
+                "com_sex_oral_P_balls_70": "$self$ no longer tries to push away, but tentatively deepens the throat swallowing, letting out a suppressed nasal sound.",
+                "com_sex_oral_P_balls_71": "\"Strange... body is so hot...\" $self$'s eyes become somewhat unfocused as she begins to actively match $target$'s rhythm.",
+                "com_sex_oral_P_balls_72": "$self$ seems immersed in some kind of immoral pleasure, her originally furrowed brows relaxing, movements becoming compliant.",
+                "com_sex_oral_P_balls_73": "$self$'s movements slow down, frowning slightly, seeming to feel jaw pain from maintaining this posture for too long.",
+                "com_sex_oral_P_balls_74": "$self$ stops moving, perfunctorily sweeping her tongue twice. \"Are we done yet? My mouth is so sore...\"",
+                "com_sex_oral_P_balls_75": "$self$'s eyes wander, glancing at the clock on the wall from time to time, clearly her mind is no longer on this intimate act.",
+                "com_sex_oral_P_balls_76": "$self$ gags slightly, then releases her mouth with some resistance. \"The taste is a bit strong... I'm going to drink some water.\"",
+                "com_sex_oral_P_balls_77": "$self$ pushes $target$'s thigh, complaining incoherently. \"Too deep... I don't like this.\"",
+                "com_sex_oral_P_balls_78": "$self$ stops the movement in her mouth, just simply holding it with her hand, a trace of tired impatience on her face.",
+                "com_sex_oral_P_balls_79": "$self$ violently pushes $target$ away, gagging violently on the side. \"No... too disgusting...\"",
+                "com_sex_oral_P_balls_80": "$self$'s eyes fill with more and more tears, finally breaking down and crying. \"Let me go... I can't do it...\"",
+                "com_sex_oral_P_balls_81": "$self$ bites $target$ hard in resistance, eyes full of hatred. \"Bastard! Go to hell!\"",
+                "com_sex_oral_P_balls_82": "$self$ takes advantage of $target$ relaxing his guard, struggling desperately to escape. \"Help! Someone save me!\"",
+                "com_sex_oral_P_balls_83": "$self$'s body stiffens like a rock due to extreme disgust, making resisting whimpering sounds.",
+                "com_sex_oral_P_balls_84": "$self$ closes her eyes in despair, stopping all active movements like a corpse, leaving herself at $target$'s mercy."
+            }
         }
     }
 }

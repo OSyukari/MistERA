@@ -48,7 +48,9 @@
             },
             "en-us":
             {
-
+"expedition_cave_bear":"Bear Cave",
+"expeditionDescription_caveBear_1":"$names$ finds massive claw marks on the damp cave walls.",
+"expeditionDescription_caveBear_2":"The air is thick with a strong scent of beastly musk."
 
             }
         }

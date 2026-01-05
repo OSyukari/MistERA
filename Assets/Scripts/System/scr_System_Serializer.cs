@@ -12,6 +12,9 @@ public class scr_System_Serializer : MonoBehaviour
 {
     //private Dictionary<Type, string> DataPath;
     string _datapath = "";
+
+    public bool Debug_KojoIntegrityCheck = false;
+
     public static string DataPath
     {
         get

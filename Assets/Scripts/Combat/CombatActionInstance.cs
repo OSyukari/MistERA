@@ -166,7 +166,7 @@ public class CombatActionInstance
 
     public string Description { get
         {
-            return $"{(isEOTAction||isCounter ? "EX" : this.ActionSlotIndex+1)}: {(sourceRef == null ? "" : $"{sourceRef.DisplayName} ")} {(isCounter ? LocalizeDictionary.QueryThenParse("combat_action_counter") :"")}{(actionRef == null ? " - " : actionRef.Name)}{(targetRef == null ? "" : $" -> {Handler.GetName(targetRef)}")}";
+            return $"{(isEOTAction||isCounter ? "EX" : this.ActionSlotIndex+1)}: {(sourceRef == null ? "" : $"{sourceRef.DisplayName} ")}{(isCounter ? LocalizeDictionary.QueryThenParse("combat_action_counter") :"")}{(actionRef == null ? " - " : actionRef.Name)}{(targetRef == null ? "" : $" -> {Handler.GetName(targetRef)}")}";
         } }
 
 

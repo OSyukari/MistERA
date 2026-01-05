@@ -8,13 +8,13 @@
                     "tags": [
                         "nsfw"
                     ],
-                    "requirePlayer":false,
+                    "requirePlayer": false,
                     "variants": [
                         {
                             "requirement": {
                                 "requireSelfAction": false
                             },
-                            "_comment":"no kojo for now"
+                            "_comment": "no kojo for now"
                         }
                     ]
                 }
@@ -26,153 +26,262 @@
                     "tags": [
                         "nsfw"
                     ],
-                    "requirePlayer":false,
+                    "requirePlayer": false,
                     "_comment": "This triggers on Timestop end outside of standard time update (then proceeds into a standard update cycle for message printing). if anything serious happens, greeting will be disabled for this update cycle",
                     "variants": [
                         {
                             "_comment": "时停解除 清醒 自身状态检测",
                             "requirement": {
-                                "selfTags": [ "timestop" ]
+                                "selfTags": [
+                                    "timestop"
+                                ]
                             },
-                            "variants":[
+                            "variants": [
                                 {
                                     "_comment": "1.1.1 时停解除 绑架",
-                                    "requirement": { "selfTags": [ "locked" ] },
+                                    "requirement": {
+                                        "selfTags": [
+                                            "locked"
+                                        ]
+                                    },
                                     "responses": [
-"$self$试图迈出一步，却猛地撞上了冰冷的铁栏杆。\"哎？这是……什么时候？\"", "$self$的手腕被突然勒紧的触感吓了一跳，她惊恐地发现自己竟被锁链吊了起来。\"不、不可能……刚才明明还在……\"", "$self$迷茫地眨了眨眼，随即意识到四周狭窄的空间限制了她的活动。\"这是什么地方？谁在那儿？！\"", "$self$本能地想要伸手去拿东西，却发现双手被牢牢铐在身后。\"动、动不了？！开什么玩笑！\"", "$self$惊慌失措地抓住了面前的栏杆，指节因用力而发白。\"放我出去！这到底是怎么回事！\"", "$self$双腿一软跪坐在地，眼神呆滞地看着困住自己的囚笼。\"幻觉吗……我不记得我有走进这种地方……\""
+                                        "OnTimestopEnd_locked_1",
+                                        "OnTimestopEnd_locked_2",
+                                        "OnTimestopEnd_locked_3",
+                                        "OnTimestopEnd_locked_4",
+                                        "OnTimestopEnd_locked_5",
+                                        "OnTimestopEnd_locked_6"
                                     ]
                                 },
                                 {
                                     "_comment": "1.1.2 时停解除 位置变化",
-                                    "requirement": { "selfTags": [ "location_change" ] },
+                                    "requirement": {
+                                        "selfTags": [
+                                            "location_change"
+                                        ]
+                                    },
                                     "responses": [
-"$self$只觉得眼前一花，周围的景色瞬间变得陌生。\"咦？我怎么会在这里？\"", "$self$脚下的触感突然变了，她低头看去，发现自己竟站在了完全不同的房间里。\"瞬移？不，这太荒谬了……\"", "$self$扶着额头晃了晃，试图驱散这突如其来的违和感。\"奇怪，我刚才不是在走廊吗？\"", "$self$警惕地环顾四周，身体紧贴着墙壁。\"是谁？是谁把我搬过来的？\"", "$self$疑惑地看着窗外的景色，完全无法理解发生了什么。\"记忆……断片了吗？\"", "$self$下意识地退后半步，鞋跟发出了清脆的声响。\"这里是哪儿？我迷路了？\""
+                                        "OnTimestopEnd_loc_change_1",
+                                        "OnTimestopEnd_loc_change_2",
+                                        "OnTimestopEnd_loc_change_3",
+                                        "OnTimestopEnd_loc_change_4",
+                                        "OnTimestopEnd_loc_change_5",
+                                        "OnTimestopEnd_loc_change_6"
                                     ]
                                 },
                                 {
-                                    "requirement": { "selfTags": [ "undressed" ] },
-                                    "variants":[
+                                    "requirement": {
+                                        "selfTags": [
+                                            "undressed"
+                                        ]
+                                    },
+                                    "variants": [
                                         {
                                             "_comment": "1.1.4 时停解除 服装变化",
-                                            "requirement": { "selfTags": [ "nudity" ] },
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "nudity"
+                                                ]
+                                            },
                                             "responses": [
-"$self$尖叫着捂住胸口和下身，整个人缩成一团。\"啊啊啊！！别看！！\"", "$self$大脑一片空白，呆立在原地，任由空气抚摸着每一寸肌肤。\"骗人……为什么我会……一丝不挂……\"", "$self$慌乱地试图用手遮挡私处，但怎么遮都遮不完。\"衣服……我的衣服去哪了？！\"", "$self$羞愤欲死地背过身去，白皙的后背瑟瑟发抖。\"闭上眼睛！不准看！变态！\"", "$self$绝望地蹲在地上，把头埋进膝盖里。\"这一定是噩梦……快醒醒……\"", "$self$双手护在胸前，眼神中充满了恐惧和无助。\"谁来……谁来给我一件衣服……\""
+                                                "OnTimestopEnd_nude_1",
+                                                "OnTimestopEnd_nude_2",
+                                                "OnTimestopEnd_nude_3",
+                                                "OnTimestopEnd_nude_4",
+                                                "OnTimestopEnd_nude_5",
+                                                "OnTimestopEnd_nude_6"
                                             ]
                                         }
                                     ],
                                     "_comment": "1.1.3 时停解除 服装变化",
                                     "responses": [
-"$self$觉得身上凉飕飕的，低头一看，外套竟然不见了。\"诶？我的衣服呢？！\"", "$self$惊呼一声，连忙抱住只穿着内衣的身体蹲下。\"呀！怎么回事！谁干的！\"", "$self$不可置信地摸了摸自己裸露的手臂和肩膀。\"我、我怎么突然变成这副样子了……\"", "$self$满脸通红地四处寻找遮蔽物。\"别看！不要看我！\"", "$self$颤抖着拉扯着仅剩的布料，试图遮盖更多的肌肤。\"这是恶作剧吗？一点都不好笑！\"", "$self$咬着嘴唇，眼泪在眼眶里打转。\"明明刚才还穿戴整齐的……见鬼了……\""
+                                        "OnTimestopEnd_clothes_lost_1",
+                                        "OnTimestopEnd_clothes_lost_2",
+                                        "OnTimestopEnd_clothes_lost_3",
+                                        "OnTimestopEnd_clothes_lost_4",
+                                        "OnTimestopEnd_clothes_lost_5",
+                                        "OnTimestopEnd_clothes_lost_6"
                                     ]
                                 }
                             ],
-                            "keepLooking":true
+                            "keepLooking": true
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": [ "cum" ]
+                                "selfTags": [
+                                    "cum"
+                                ]
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "selfTags": [ "Expansion" ] },
+                                    "requirement": {
+                                        "selfTags": [
+                                            "Expansion"
+                                        ]
+                                    },
                                     "_comment": "1.1.6 时停解除 精液检测",
-                                    "responses": [ 
-"$self$只觉得腹部一阵沉重，低头一看，瞬间瞪大了眼睛。\"这、这肚子是怎么回事？！\"", "$self$颤抖着双手抚摸上异常隆起的小腹，满脸惊恐。\"不可能……明明刚才还是平坦的……\"", "$self$感觉有什么热热的东西在肚子里晃动，她掀起衣服，发出一声惨叫。\"呀啊啊！怀孕了？！怎么可能瞬间就……\"", "$self$双腿发软，几乎站立不稳，只能扶着墙喘息。\"好涨……肚子好涨……到底被灌了多少东西……\"", "$self$绝望地看着自己像孕妇一样的身形，大脑彻底宕机。\"怪物……一定是被怪物袭击了……\"", "$self$眼泪夺眶而出，无法接受现实地拍打着鼓胀的肚皮。\"出来！快从我身体里出来啊！\""
+                                    "responses": [
+                                        "OnTimestopEnd_cum_preg_1",
+                                        "OnTimestopEnd_cum_preg_2",
+                                        "OnTimestopEnd_cum_preg_3",
+                                        "OnTimestopEnd_cum_preg_4",
+                                        "OnTimestopEnd_cum_preg_5",
+                                        "OnTimestopEnd_cum_preg_6"
                                     ]
                                 }
                             ],
                             "_comment": "1.1.5 时停解除 精液检测",
                             "responses": [
-"$self$微微皱了皱眉，伸手摸了摸小腹。\"奇怪……总觉得肚子有点不舒服。\"", "$self$困惑地夹紧了一下双腿，似乎感觉到了某种湿滑。\"嗯？是不是生理期提前了？\"", "$self$若无其事地继续着手头的动作，完全没有意识到体内的异样。", "$self$扭了扭腰，有些不自在地调整了一下站姿。\"怎么感觉身体变得重重的……\"", "$self$停顿了一下，脸上闪过一丝茫然。\"刚才……是不是有什么东西流出来了？\"", "$self$并没有表现出任何异常，只是偶尔会下意识地揉一揉肚子。"
+                                "OnTimestopEnd_cum_feel_1",
+                                "OnTimestopEnd_cum_feel_2",
+                                "OnTimestopEnd_cum_feel_3",
+                                "OnTimestopEnd_cum_feel_4",
+                                "OnTimestopEnd_cum_feel_5",
+                                "OnTimestopEnd_cum_feel_6"
                             ],
-                            "keepLooking":true
+                            "keepLooking": true
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false
                             },
                             "_comment": "时停解除 身体感觉检测",
-                            "variants":[
+                            "variants": [
                                 {
                                     "requirement": {
                                         "requireSelfAction": false,
-                                        "selfTags": [ "climax" ]
+                                        "selfTags": [
+                                            "climax"
+                                        ]
                                     },
                                     "_comment": "1.2.1 时停解除 睡眠 高潮",
                                     "responses": [
-"$self$在睡梦中突然绷紧了脚背，喉咙里溢出一声甜腻的呜咽。\"嗯……啊……！\"", "$self$猛地翻过身，双手无意识地抓紧了床单，身体剧烈地痉挛着。\"不……那里……哈啊……！\"", "$self$紧闭着双眼，大腿内侧疯狂颤抖，原本平稳的呼吸瞬间变成了急促的喘息。\"好奇怪……做了什么梦……啊啊！\"", "$self$腰部猛地挺起，在睡梦中达到了绝顶，口水顺着嘴角流到了枕头上。", "$self$带着哭腔哼叫了一声，双腿死死夹紧了被子，整个人缩成一团瑟瑟发抖。\"去了……呜呜……要坏掉了……\"",
-
-"$self$在睡梦中突然猛地弓起身子，喉咙里溢出一声甜腻的悲鸣。\"嗯啊啊？！什、什么……！\"", "$self$紧闭的双眼瞬间流出眼泪，原本平稳的呼吸变成了急促的喘息，大腿无意识地死死夹紧。\"哈啊……哈啊……好奇怪……做梦吗……\"", "$self$的手指毫无征兆地抓紧了床单，身体剧烈痉挛，仿佛在梦中被电流击穿。\"不要……那个……要去了……！\"", "$self$在半梦半醒间发出破碎的呻吟，耻丘在睡裙下剧烈起伏，整个人被突如其中来的快感淹没。\"呜呜……那里……坏掉了……\""
+                                        "OnTimestopEnd_sleep_climax_1",
+                                        "OnTimestopEnd_sleep_climax_2",
+                                        "OnTimestopEnd_sleep_climax_3",
+                                        "OnTimestopEnd_sleep_climax_4",
+                                        "OnTimestopEnd_sleep_climax_5",
+                                        "OnTimestopEnd_sleep_climax_6",
+                                        "OnTimestopEnd_sleep_climax_7",
+                                        "OnTimestopEnd_sleep_climax_8",
+                                        "OnTimestopEnd_sleep_climax_9"
                                     ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAction": false,
-                                        "selfTags": [ "pain" ]
+                                        "selfTags": [
+                                            "pain"
+                                        ]
                                     },
                                     "_comment": "1.2.2 时停解除 睡眠 疼痛",
                                     "responses": [
-"$self$眉头紧锁，在睡梦中不安地扭动着身体。\"痛……好痛……\"", "$self$下意识地捂住了下身，发出了一声痛苦的闷哼。\"呜……谁在……撕裂……\"", "$self$像是做了噩梦一般，额头上渗出了冷汗，身体蜷缩起来试图躲避那不存在的攻击。", "$self$迷迷糊糊地想要推开什么东西，双手在空中虚抓了两下。\"走开……好疼……别碰我……\"", "$self$咬着牙关，眼角渗出了泪水，即使在沉睡中也无法忽略那股撕裂般的痛楚。",
-
-"$self$的眉心瞬间拧成一团，发出一声痛苦的闷哼。\"痛……！\"", "$self$蜷缩起身体，双手下意识地护住下腹，额头上瞬间渗出了冷汗。\"呜……好疼……肚子……\"", "$self$在睡梦中不安地翻滚，似乎想要逃离某种看不见的伤害，呼吸变得粗重而紊乱。\"别……别弄那里……好痛……\"", "$self$像是被噩梦惊扰，身体猛地抽搐了一下，随后发出低低的啜泣声。\"裂开了……好像裂开了……\""
+                                        "OnTimestopEnd_sleep_pain_1",
+                                        "OnTimestopEnd_sleep_pain_2",
+                                        "OnTimestopEnd_sleep_pain_3",
+                                        "OnTimestopEnd_sleep_pain_4",
+                                        "OnTimestopEnd_sleep_pain_5",
+                                        "OnTimestopEnd_sleep_pain_6",
+                                        "OnTimestopEnd_sleep_pain_7",
+                                        "OnTimestopEnd_sleep_pain_8",
+                                        "OnTimestopEnd_sleep_pain_9"
                                     ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAction": false,
-                                        "selfTags": [ "pleasure" ]
+                                        "selfTags": [
+                                            "pleasure"
+                                        ]
                                     },
                                     "_comment": "1.2.3 时停解除 睡眠 快感",
                                     "responses": [
-"$self$原本安详的睡脸染上了一层红晕，呼吸变得有些粗重。\"嗯哼……好热……\"", "$self$无意识地磨蹭着双腿，嘴里发出似有若无的娇喘。\"不要停……再……\"", "$self$的手指抓挠着枕头，身体随着那股余韵微微起伏。\"这种感觉……舒服……\"", "$self$翻了个身，将被子夹在两腿之间用力摩擦，像是在索求更多。\"哈啊……那里……好痒……\"", "$self$嘴角勾起一抹淫靡的微笑，似乎正沉浸在一个极其美妙的春梦之中。",
-
-"$self$原本安详的睡脸泛起诡异的潮红，嘴角不自觉地流出一丝津液。\"嘿嘿……好舒服……\"", "$self$在枕头上难耐地磨蹭着脸颊，嘴里含糊不清地呢喃着。\"再……再深一点……嗯哼……\"", "$self$腰肢开始无意识地扭动，仿佛在迎合着空气中残留的某种律动。\"啊……那里……好棒……\"", "$self$发出软绵绵的鼻音，双腿在被子里轻轻磨蹭，像是沉浸在一个极度香艳的美梦中。\"哈啊……还要……\""
+                                        "OnTimestopEnd_sleep_pleasure_1",
+                                        "OnTimestopEnd_sleep_pleasure_2",
+                                        "OnTimestopEnd_sleep_pleasure_3",
+                                        "OnTimestopEnd_sleep_pleasure_4",
+                                        "OnTimestopEnd_sleep_pleasure_5",
+                                        "OnTimestopEnd_sleep_pleasure_6",
+                                        "OnTimestopEnd_sleep_pleasure_7",
+                                        "OnTimestopEnd_sleep_pleasure_8",
+                                        "OnTimestopEnd_sleep_pleasure_9"
                                     ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAction": false,
-                                        "selfTags": [ "sleeping_noclimax" ]
+                                        "selfTags": [
+                                            "sleeping_noclimax"
+                                        ]
                                     },
                                     "_comment": "1.4.1 时停解除 睡眠 无事发生",
                                     "responses": [
-"$self$只是翻了个身，咂了咂嘴，继续沉浸在梦乡之中。", "$self$呼吸依旧平稳绵长，完全不知道刚才发生了什么。", "$self$把脸埋进枕头里蹭了蹭，发出轻微的鼾声。", "$self$依然保持着那个毫无防备的睡姿，连睫毛都没有颤动一下。",
-
-"$self$翻了个身，砸吧砸吧嘴，继续发出均匀的呼吸声。", "$self$把被子拉高盖住头，丝毫没有察觉到任何异样，沉沉地睡着。", "$self$依然保持着原本的睡姿，像个婴儿般安稳。", "$self$只是微微皱了下眉，随后又舒展开来，重新陷入梦乡。"
+                                        "OnTimestopEnd_sleep_normal_1",
+                                        "OnTimestopEnd_sleep_normal_2",
+                                        "OnTimestopEnd_sleep_normal_3",
+                                        "OnTimestopEnd_sleep_normal_4",
+                                        "OnTimestopEnd_sleep_normal_5",
+                                        "OnTimestopEnd_sleep_normal_6",
+                                        "OnTimestopEnd_sleep_normal_7",
+                                        "OnTimestopEnd_sleep_normal_8"
                                     ]
                                 },
                                 {
                                     "requirement": {
-                                        "selfTags": [ "climax" ]
+                                        "selfTags": [
+                                            "climax"
+                                        ]
                                     },
                                     "_comment": "1.3.1 时停解除 高潮",
                                     "responses": [
-"$self$正要开口询问为什么自己在牢笼里，却突然翻起白眼，浑身剧烈抽搐。\"啊——？！等、哈啊——！！\"", "$self$捂着被脱光的胸口刚想尖叫，一股电流却直冲脑顶，让她直接瘫软在地。\"咿呀？！不、不行……要去了啊啊啊！\"", "$self$不可置信地看着自己鼓起的肚子，下一秒便被强烈的快感吞没，口水失控地流下。\"身体……身体擅自……哈啊——♡\"", "$self$刚迈出一步想逃跑，双腿却突然发软跪下，腰肢疯狂摆动。\"什么……这是什么？！高潮……停不下来……！！\"", "$self$抓着栏杆的手指因用力而泛白，整个人在公众面前狼狈地痉挛绝顶。\"救命……啊啊啊……谁在弄我……！\"",
-
-"$self$刚想开口说话，整个人却突然僵住，瞳孔剧烈收缩。\"诶？等、等一下……这种感觉是……啊啊啊啊？！\"", "$self$手中的水杯滑落在地，她双腿一软跪倒在地，双手死死捂住嘴巴却挡不住溢出的浪叫。\"不……并没有人……为什么……要去、去掉了……！\"", "$self$惊恐地瞪大眼睛看着自己的下身，身体不受控制地剧烈颤抖，并在下一秒彻底崩溃。\"骗人……身体……擅自……咿呀啊啊！！\"", "$self$靠在墙上剧烈喘息，眼神瞬间失焦，大量的爱液顺着大腿根部滑落。\"没被碰……为什么……高潮了……哈啊……！\""
+                                        "OnTimestopEnd_awake_climax_1",
+                                        "OnTimestopEnd_awake_climax_2",
+                                        "OnTimestopEnd_awake_climax_3",
+                                        "OnTimestopEnd_awake_climax_4",
+                                        "OnTimestopEnd_awake_climax_5",
+                                        "OnTimestopEnd_awake_climax_6",
+                                        "OnTimestopEnd_awake_climax_7",
+                                        "OnTimestopEnd_awake_climax_8",
+                                        "OnTimestopEnd_awake_climax_9"
                                     ]
                                 },
                                 {
                                     "requirement": {
-                                        "selfTags": [ "pain" ]
+                                        "selfTags": [
+                                            "pain"
+                                        ]
                                     },
                                     "_comment": "1.3.2 时停解除 痛苦",
                                     "responses": [
-"$self$刚想站起来，下身却传来一阵剧痛，让她惨叫着跌倒。\"啊！好痛！像裂开了一样……！\"", "$self$惊恐地看着空无一人的四周，双手捂住红肿的私处瑟瑟发抖。\"好疼……到底被塞了什么东西……\"", "$self$扶着墙试图移动，每走一步都像是走在刀尖上，冷汗直流。\"动不了……下面……火辣辣的……\"", "$self$低头看向自己大腿内侧的淤青，迟来的钝痛感让她倒吸一口凉气。\"这伤痕……什么时候……\"", "$self$绝望地蜷缩在角落，那种内脏被搅动的幻痛感让她干呕不已。\"肚子里……好痛……被顶坏了……\"",
-
-"$self$疑惑地摸了摸完好的衣服，下一秒脸色骤白，捂着下身倒吸一口凉气。\"嘶——！这、这股撕裂感是怎么回事？！\"", "$self$试图迈步，却感到胯骨仿佛被碾碎般的剧痛，整个人踉跄着差点摔倒。\"好痛！像是被什么东西狠狠撞过一样……\"", "$self$颤抖着扶住桌角，冷汗瞬间浸湿了后背，眼中满是不可置信的恐惧。\"屁股……屁股好痛……火辣辣的……\"", "$self$茫然地看着四周，身体深处传来的钝痛让她不得不弯下腰。\"内脏……像是被搅拌过一样……好难受……\""
+                                        "OnTimestopEnd_awake_pain_1",
+                                        "OnTimestopEnd_awake_pain_2",
+                                        "OnTimestopEnd_awake_pain_3",
+                                        "OnTimestopEnd_awake_pain_4",
+                                        "OnTimestopEnd_awake_pain_5",
+                                        "OnTimestopEnd_awake_pain_6",
+                                        "OnTimestopEnd_awake_pain_7",
+                                        "OnTimestopEnd_awake_pain_8",
+                                        "OnTimestopEnd_awake_pain_9"
                                     ]
                                 },
                                 {
                                     "requirement": {
-                                        "selfTags": [ "pleasure" ]
+                                        "selfTags": [
+                                            "pleasure"
+                                        ]
                                     },
                                     "_comment": "1.3.3 时停解除 快感",
                                     "responses": [
-"$self$正疑惑地检查着衣物，身体深处却涌起一股难以言喻的酥麻感。\"嗯？这是……啊……好奇怪……\"", "$self$脸上突然泛起不自然的潮红，双腿不由自主地摩擦起来。\"等等……为什么会觉得……舒服？\"", "$self$拼命想要保持理智，但那股残留的搅拌感让她眼神逐渐迷离。\"不要……这种感觉……哈啊……好想再要……\"", "$self$靠在墙上喘息着，手不受控制地探向湿润的腿间。\"明明没有人……为什么身体会这么……\"", "$self$咬着嘴唇试图压抑那羞耻的呻吟，但身体却诚实地扭动着索求更多。\"不管是谁……求求你……再给我一点……\"",
-
-"$self$正准备继续刚才的话题，声音却突然变得粘稠甜腻。\"所、以说……嗯哼？！这是……什么……♡\"", "$self$脸颊瞬间爆红，双手不安地在大腿间游走，眼神变得水润迷离。\"身体……身体好热……里面……有什么东西在动……\"", "$self$夹紧双腿试图抑制那股从尾椎骨窜上来的电流，却反而刺激得浑身发软。\"呀……好奇怪……停不下来……哈啊……\"", "$self$咬着嘴唇不让自己发出声音，但身体却诚实地开始扭动，仿佛体内正含着什么隐形的异物。\"呜……好痒……深处好痒……谁来……\""
+                                        "OnTimestopEnd_awake_pleasure_1",
+                                        "OnTimestopEnd_awake_pleasure_2",
+                                        "OnTimestopEnd_awake_pleasure_3",
+                                        "OnTimestopEnd_awake_pleasure_4",
+                                        "OnTimestopEnd_awake_pleasure_5",
+                                        "OnTimestopEnd_awake_pleasure_6",
+                                        "OnTimestopEnd_awake_pleasure_7",
+                                        "OnTimestopEnd_awake_pleasure_8",
+                                        "OnTimestopEnd_awake_pleasure_9"
                                     ]
                                 },
                                 {
@@ -180,14 +289,21 @@
                                         "requireSelfAction": false,
                                         "requireSelfMemory": {
                                             "minuteRollback": 1,
-                                            "selfTags": [ "timestop" ]
+                                            "selfTags": [
+                                                "timestop"
+                                            ]
                                         }
                                     },
                                     "_comment": "1.4.2 时停解除 清醒 无事发生",
                                     "responses": [
-"$self$继续着手里的动作，仿佛刚才的时间断层从未存在过。", "$self$眨了眨眼，觉得好像发了一瞬间的呆，但很快又恢复了正常。", "$self$疑惑地摸了摸后脑勺，没有发现任何异样，便不再理会。", "$self$只是觉得哪里有些违和，但具体又说不上来，只好耸耸肩继续赶路。",
-
-"$self$没有任何停顿，自然地接上了刚才没说完的话，仿佛刚才的时间从未断裂过。", "$self$若无其事地整理了一下头发，继续专注于手头的工作。", "$self$眼神清明，甚至还对你笑了一下，完全没有意识到身体发生了什么变化。", "$self$只是觉得有些犯困地打了个哈欠，并没有多想。"
+                                        "OnTimestopEnd_awake_normal_1",
+                                        "OnTimestopEnd_awake_normal_2",
+                                        "OnTimestopEnd_awake_normal_3",
+                                        "OnTimestopEnd_awake_normal_4",
+                                        "OnTimestopEnd_awake_normal_5",
+                                        "OnTimestopEnd_awake_normal_6",
+                                        "OnTimestopEnd_awake_normal_7",
+                                        "OnTimestopEnd_awake_normal_8"
                                     ]
                                 }
                             ]
@@ -200,10 +316,220 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-
+                "OnTimestopEnd_locked_1": "$self$试图迈出一步，却猛地撞上了冰冷的铁栏杆。\"哎？这是……什么时候？\"",
+                "OnTimestopEnd_locked_2": "$self$的手腕被突然勒紧的触感吓了一跳，她惊恐地发现自己竟被锁链吊了起来。\"不、不可能……刚才明明还在……\"",
+                "OnTimestopEnd_locked_3": "$self$迷茫地眨了眨眼，随即意识到四周狭窄的空间限制了她的活动。\"这是什么地方？谁在那儿？！\"",
+                "OnTimestopEnd_locked_4": "$self$本能地想要伸手去拿东西，却发现双手被牢牢铐在身后。\"动、动不了？！开什么玩笑！\"",
+                "OnTimestopEnd_locked_5": "$self$惊慌失措地抓住了面前的栏杆，指节因用力而发白。\"放我出去！这到底是怎么回事！\"",
+                "OnTimestopEnd_locked_6": "$self$双腿一软跪坐在地，眼神呆滞地看着困住自己的囚笼。\"幻觉吗……我不记得我有走进这种地方……\"",
+                "OnTimestopEnd_loc_change_1": "$self$只觉得眼前一花，周围的景色瞬间变得陌生。\"咦？我怎么会在这里？\"",
+                "OnTimestopEnd_loc_change_2": "$self$脚下的触感突然变了，她低头看去，发现自己竟站在了完全不同的房间里。\"瞬移？不，这太荒谬了……\"",
+                "OnTimestopEnd_loc_change_3": "$self$扶着额头晃了晃，试图驱散这突如其来的违和感。\"奇怪，我刚才不是在走廊吗？\"",
+                "OnTimestopEnd_loc_change_4": "$self$警惕地环顾四周，身体紧贴着墙壁。\"是谁？是谁把我搬过来的？\"",
+                "OnTimestopEnd_loc_change_5": "$self$疑惑地看着窗外的景色，完全无法理解发生了什么。\"记忆……断片了吗？\"",
+                "OnTimestopEnd_loc_change_6": "$self$下意识地退后半步，鞋跟发出了清脆的声响。\"这里是哪儿？我迷路了？\"",
+                "OnTimestopEnd_nude_1": "$self$尖叫着捂住胸口和下身，整个人缩成一团。\"啊啊啊！！别看！！\"",
+                "OnTimestopEnd_nude_2": "$self$大脑一片空白，呆立在原地，任由空气抚摸着每一寸肌肤。\"骗人……为什么我会……一丝不挂……\"",
+                "OnTimestopEnd_nude_3": "$self$慌乱地试图用手遮挡私处，但怎么遮都遮不完。\"衣服……我的衣服去哪了？！\"",
+                "OnTimestopEnd_nude_4": "$self$羞愤欲死地背过身去，白皙的后背瑟瑟发抖。\"闭上眼睛！不准看！变态！\"",
+                "OnTimestopEnd_nude_5": "$self$绝望地蹲在地上，把头埋进膝盖里。\"这一定是噩梦……快醒醒……\"",
+                "OnTimestopEnd_nude_6": "$self$双手护在胸前，眼神中充满了恐惧和无助。\"谁来……谁来给我一件衣服……\"",
+                "OnTimestopEnd_clothes_lost_1": "$self$觉得身上凉飕飕的，低头一看，外套竟然不见了。\"诶？我的衣服呢？！\"",
+                "OnTimestopEnd_clothes_lost_2": "$self$惊呼一声，连忙抱住只穿着内衣的身体蹲下。\"呀！怎么回事！谁干的！\"",
+                "OnTimestopEnd_clothes_lost_3": "$self$不可置信地摸了摸自己裸露的手臂和肩膀。\"我、我怎么突然变成这副样子了……\"",
+                "OnTimestopEnd_clothes_lost_4": "$self$满脸通红地四处寻找遮蔽物。\"别看！不要看我！\"",
+                "OnTimestopEnd_clothes_lost_5": "$self$颤抖着拉扯着仅剩的布料，试图遮盖更多的肌肤。\"这是恶作剧吗？一点都不好笑！\"",
+                "OnTimestopEnd_clothes_lost_6": "$self$咬着嘴唇，眼泪在眼眶里打转。\"明明刚才还穿戴整齐的……见鬼了……\"",
+                "OnTimestopEnd_cum_preg_1": "$self$只觉得腹部一阵沉重，低头一看，瞬间瞪大了眼睛。\"这、这肚子是怎么回事？！\"",
+                "OnTimestopEnd_cum_preg_2": "$self$颤抖着双手抚摸上异常隆起的小腹，满脸惊恐。\"不可能……明明刚才还是平坦的……\"",
+                "OnTimestopEnd_cum_preg_3": "$self$感觉有什么热热的东西在肚子里晃动，她掀起衣服，发出一声惨叫。\"呀啊啊！怀孕了？！怎么可能瞬间就……\"",
+                "OnTimestopEnd_cum_preg_4": "$self$双腿发软，几乎站立不稳，只能扶着墙喘息。\"好涨……肚子好涨……到底被灌了多少东西……\"",
+                "OnTimestopEnd_cum_preg_5": "$self$绝望地看着自己像孕妇一样的身形，大脑彻底宕机。\"怪物……一定是被怪物袭击了……\"",
+                "OnTimestopEnd_cum_preg_6": "$self$眼泪夺眶而出，无法接受现实地拍打着鼓胀的肚皮。\"出来！快从我身体里出来啊！\"",
+                "OnTimestopEnd_cum_feel_1": "$self$微微皱了皱眉，伸手摸了摸小腹。\"奇怪……总觉得肚子有点不舒服。\"",
+                "OnTimestopEnd_cum_feel_2": "$self$困惑地夹紧了一下双腿，似乎感觉到了某种湿滑。\"嗯？是不是生理期提前了？\"",
+                "OnTimestopEnd_cum_feel_3": "$self$若无其事地继续着手头的动作，完全没有意识到体内的异样。",
+                "OnTimestopEnd_cum_feel_4": "$self$扭了扭腰，有些不自在地调整了一下站姿。\"怎么感觉身体变得重重的……\"",
+                "OnTimestopEnd_cum_feel_5": "$self$停顿了一下，脸上闪过一丝茫然。\"刚才……是不是有什么东西流出来了？\"",
+                "OnTimestopEnd_cum_feel_6": "$self$并没有表现出任何异常，只是偶尔会下意识地揉一揉肚子。",
+                "OnTimestopEnd_sleep_climax_1": "$self$在睡梦中突然绷紧了脚背，喉咙里溢出一声甜腻的呜咽。\"嗯……啊……！\"",
+                "OnTimestopEnd_sleep_climax_2": "$self$猛地翻过身，双手无意识地抓紧了床单，身体剧烈地痉挛着。\"不……那里……哈啊……！\"",
+                "OnTimestopEnd_sleep_climax_3": "$self$紧闭着双眼，大腿内侧疯狂颤抖，原本平稳的呼吸瞬间变成了急促的喘息。\"好奇怪……做了什么梦……啊啊！\"",
+                "OnTimestopEnd_sleep_climax_4": "$self$腰部猛地挺起，在睡梦中达到了绝顶，口水顺着嘴角流到了枕头上。",
+                "OnTimestopEnd_sleep_climax_5": "$self$带着哭腔哼叫了一声，双腿死死夹紧了被子，整个人缩成一团瑟瑟发抖。\"去了……呜呜……要坏掉了……\"",
+                "OnTimestopEnd_sleep_climax_6": "$self$在睡梦中突然猛地弓起身子，喉咙里溢出一声甜腻的悲鸣。\"嗯啊啊？！什、什么……！\"",
+                "OnTimestopEnd_sleep_climax_7": "$self$紧闭的双眼瞬间流出眼泪，原本平稳的呼吸变成了急促的喘息，大腿无意识地死死夹紧。\"哈啊……哈啊……好奇怪……做梦吗……\"",
+                "OnTimestopEnd_sleep_climax_8": "$self$的手指毫无征兆地抓紧了床单，身体剧烈痉挛，仿佛在梦中被电流击穿。\"不要……那个……要去了……！\"",
+                "OnTimestopEnd_sleep_climax_9": "$self$在半梦半醒间发出破碎的呻吟，耻丘在睡裙下剧烈起伏，整个人被突如其中来的快感淹没。\"呜呜……那里……坏掉了……\"",
+                "OnTimestopEnd_sleep_pain_1": "$self$眉头紧锁，在睡梦中不安地扭动着身体。\"痛……好痛……\"",
+                "OnTimestopEnd_sleep_pain_2": "$self$下意识地捂住了下身，发出了一声痛苦的闷哼。\"呜……谁在……撕裂……\"",
+                "OnTimestopEnd_sleep_pain_3": "$self$像是做了噩梦一般，额头上渗出了冷汗，身体蜷缩起来试图躲避那不存在的攻击。",
+                "OnTimestopEnd_sleep_pain_4": "$self$迷迷糊糊地想要推开什么东西，双手在空中虚抓了两下。\"走开……好疼……别碰我……\"",
+                "OnTimestopEnd_sleep_pain_5": "$self$咬着牙关，眼角渗出了泪水，即使在沉睡中也无法忽略那股撕裂般的痛楚。",
+                "OnTimestopEnd_sleep_pain_6": "$self$的眉心瞬间拧成一团，发出一声痛苦的闷哼。\"痛……！\"",
+                "OnTimestopEnd_sleep_pain_7": "$self$蜷缩起身体，双手下意识地护住下腹，额头上瞬间渗出了冷汗。\"呜……好疼……肚子……\"",
+                "OnTimestopEnd_sleep_pain_8": "$self$在睡梦中不安地翻滚，似乎想要逃离某种看不见的伤害，呼吸变得粗重而紊乱。\"别……别弄那里……好痛……\"",
+                "OnTimestopEnd_sleep_pain_9": "$self$像是被噩梦惊扰，身体猛地抽搐了一下，随后发出低低的啜泣声。\"裂开了……好像裂开了……\"",
+                "OnTimestopEnd_sleep_pleasure_1": "$self$原本安详的睡脸染上了一层红晕，呼吸变得有些粗重。\"嗯哼……好热……\"",
+                "OnTimestopEnd_sleep_pleasure_2": "$self$无意识地磨蹭着双腿，嘴里发出似有若无的娇喘。\"不要停……再……\"",
+                "OnTimestopEnd_sleep_pleasure_3": "$self$的手指抓挠着枕头，身体随着那股余韵微微起伏。\"这种感觉……舒服……\"",
+                "OnTimestopEnd_sleep_pleasure_4": "$self$翻了个身，将被子夹在两腿之间用力摩擦，像是在索求更多。\"哈啊……那里……好痒……\"",
+                "OnTimestopEnd_sleep_pleasure_5": "$self$嘴角勾起一抹淫靡的微笑，似乎正沉浸在一个极其美妙的春梦之中。",
+                "OnTimestopEnd_sleep_pleasure_6": "$self$原本安详的睡脸泛起诡异的潮红，嘴角不自觉地流出一丝津液。\"嘿嘿……好舒服……\"",
+                "OnTimestopEnd_sleep_pleasure_7": "$self$在枕头上难耐地磨蹭着脸颊，嘴里含糊不清地呢喃着。\"再……再深一点……嗯哼……\"",
+                "OnTimestopEnd_sleep_pleasure_8": "$self$腰肢开始无意识地扭动，仿佛在迎合着空气中残留的律动。\"啊……那里……好棒……\"",
+                "OnTimestopEnd_sleep_pleasure_9": "$self$发出软绵绵的鼻音，双腿在被子里轻轻磨蹭，像是沉浸在一个极度香艳的美梦中。\"哈啊……还要……\"",
+                "OnTimestopEnd_sleep_normal_1": "$self$只是翻了个身，咂了咂嘴，继续沉浸在梦乡之中。",
+                "OnTimestopEnd_sleep_normal_2": "$self$呼吸依旧平稳绵长，完全不知道刚才发生了什么。",
+                "OnTimestopEnd_sleep_normal_3": "$self$把脸埋进枕头里蹭了蹭，发出轻微的鼾声。",
+                "OnTimestopEnd_sleep_normal_4": "$self$依然保持着那个毫无防备的睡姿，连睫毛都没有颤动一下。",
+                "OnTimestopEnd_sleep_normal_5": "$self$翻了个身，砸吧砸吧嘴，继续发出均匀的呼吸声。",
+                "OnTimestopEnd_sleep_normal_6": "$self$把被子拉高盖住头，丝毫没有察觉到任何异样，沉沉地睡着。",
+                "OnTimestopEnd_sleep_normal_7": "$self$依然保持着原本的睡姿，像个婴儿般安稳。",
+                "OnTimestopEnd_sleep_normal_8": "$self$只是微微皱了下眉，随后又舒展开来，重新陷入梦乡。",
+                "OnTimestopEnd_awake_climax_1": "$self$正要开口询问为什么自己在牢笼里，却突然翻起白眼，浑身剧烈抽搐。\"啊——？！等、哈啊——！！\"",
+                "OnTimestopEnd_awake_climax_2": "$self$捂着被脱光的胸口刚想尖叫，一股电流却直冲脑顶，让她直接瘫软在地。\"咿呀？！不、不行……要去了啊啊啊！\"",
+                "OnTimestopEnd_awake_climax_3": "$self$不可置信地看着自己鼓起的肚子，下一秒便被强烈的快感吞没，口水失控地流下。\"身体……身体擅自……哈啊——♡\"",
+                "OnTimestopEnd_awake_climax_4": "$self$刚迈出一步想逃跑，双腿却突然发软跪下，腰肢疯狂摆动。\"什么……这是什么？！高潮……停不下来……！！\"",
+                "OnTimestopEnd_awake_climax_5": "$self$抓着栏杆的手指因用力而泛白，整个人在公众面前狼狈地痉挛绝顶。\"救命……啊啊啊……谁在弄我……！\"",
+                "OnTimestopEnd_awake_climax_6": "$self$刚想开口说话，整个人却突然僵住，瞳孔剧烈收缩。\"诶？等、等一下……这种感觉是……啊啊啊啊？！\"",
+                "OnTimestopEnd_awake_climax_7": "$self$手中的水杯滑落在地，她双腿一软跪倒在地，双手死死捂住嘴巴却挡不住溢出的浪叫。\"不……并没有人……为什么……要去、去掉了……！\"",
+                "OnTimestopEnd_awake_climax_8": "$self$惊恐地瞪大眼睛看着自己的下身，身体不受控制地剧烈颤抖，并在下一秒彻底崩溃。\"骗人……身体……擅自……咿呀啊啊！！\"",
+                "OnTimestopEnd_awake_climax_9": "$self$靠在墙上剧烈喘息，眼神瞬间失焦，大量的爱液顺着大腿根部滑落。\"没被碰……为什么……高潮了……哈啊……！\"",
+                "OnTimestopEnd_awake_pain_1": "$self$刚想站起来，下身却传来一阵剧痛，让她惨叫着跌倒。\"啊！好痛！像裂开了一样……！\"",
+                "OnTimestopEnd_awake_pain_2": "$self$惊恐地看着空无一人的四周，双手捂住红肿的私处瑟瑟发抖。\"好疼……到底被塞了什么东西……\"",
+                "OnTimestopEnd_awake_pain_3": "$self$扶着墙试图移动，每走一步都像是走在刀尖上，冷汗直流。\"动不了……下面……火辣辣的……\"",
+                "OnTimestopEnd_awake_pain_4": "$self$低头看向自己大腿内侧的淤青，迟来的钝痛感让她倒吸一口凉气。\"这伤痕……什么时候……\"",
+                "OnTimestopEnd_awake_pain_5": "$self$绝望地蜷缩在角落，那种内脏被搅动的幻痛感让她干呕不已。\"肚子里……好痛……被顶坏了……\"",
+                "OnTimestopEnd_awake_pain_6": "$self$疑惑地摸了摸完好的衣服，下一秒脸色骤白，捂着下身倒吸一口凉气。\"嘶——！这、这股撕裂感是怎么回事？！\"",
+                "OnTimestopEnd_awake_pain_7": "$self$试图迈步，却感到胯骨仿佛被碾碎般的剧痛，整个人踉跄着差点摔倒。\"好痛！像是被什么东西狠狠撞过一样……\"",
+                "OnTimestopEnd_awake_pain_8": "$self$颤抖着扶住桌角，冷汗瞬间浸湿了后背，眼中满是不可置信的恐惧。\"屁股……屁股好痛……火辣辣的……\"",
+                "OnTimestopEnd_awake_pain_9": "$self$茫然地看着四周，身体深处传来的钝痛让她不得不弯下腰。\"内脏……像是被搅拌过一样……好难受……\"",
+                "OnTimestopEnd_awake_pleasure_1": "$self$正疑惑地检查着衣物，身体深处却涌起一股难以言喻的酥麻感。\"嗯？这是……啊……好奇怪……\"",
+                "OnTimestopEnd_awake_pleasure_2": "$self$脸上突然泛起不自然的潮红，双腿不由自主地摩擦起来。\"等等……为什么会觉得……舒服？\"",
+                "OnTimestopEnd_awake_pleasure_3": "$self$拼命想要保持理智，但那股残留的搅拌感让她眼神逐渐迷离。\"不要……这种感觉……哈啊……好想再要……\"",
+                "OnTimestopEnd_awake_pleasure_4": "$self$靠在墙上喘息着，手不受控制地探向湿润的腿间。\"明明没有人……为什么身体会这么……\"",
+                "OnTimestopEnd_awake_pleasure_5": "$self$咬着嘴唇试图压抑那羞耻的呻吟，但身体却诚实地扭动着索求更多。\"不管是谁……求求你……再给我一点……\"",
+                "OnTimestopEnd_awake_pleasure_6": "$self$正准备继续刚才的话题，声音却突然变得粘稠甜腻。\"所、以说……嗯哼？！这是……什么……♡\"",
+                "OnTimestopEnd_awake_pleasure_7": "$self$脸颊瞬间爆红，双手不安地在大腿间游走，眼神变得水润迷离。\"身体……身体好热……里面……有什么东西在动……\"",
+                "OnTimestopEnd_awake_pleasure_8": "$self$夹紧双腿试图抑制那股从尾椎骨窜上来的电流，却反而刺激得浑身发软。\"呀……好奇怪……停不下来……哈啊……\"",
+                "OnTimestopEnd_awake_pleasure_9": "$self$咬着嘴唇不让自己发出声音，但身体却诚实地开始扭动，仿佛体内正含着什么隐形的异物。\"呜……好痒……深处好痒……谁来……\"",
+                "OnTimestopEnd_awake_normal_1": "$self$继续着手里的动作，仿佛刚才的时间断层从未存在过。",
+                "OnTimestopEnd_awake_normal_2": "$self$眨了眨眼，觉得好像发了一瞬间的呆，但很快又恢复了正常。",
+                "OnTimestopEnd_awake_normal_3": "$self$疑惑地摸了摸后脑勺，没有发现任何异样，便不再理会。",
+                "OnTimestopEnd_awake_normal_4": "$self$只是觉得哪里有些违和，但具体又说不上来，只好耸耸肩继续赶路。",
+                "OnTimestopEnd_awake_normal_5": "$self$没有任何停顿，自然地接上了刚才没说完的话，仿佛刚才的时间从未断裂过。",
+                "OnTimestopEnd_awake_normal_6": "$self$若无其事地整理了一下头发，继续专注于手头的工作。",
+                "OnTimestopEnd_awake_normal_7": "$self$眼神清明，甚至还对你笑了一下，完全没有意识到身体发生了什么变化。",
+                "OnTimestopEnd_awake_normal_8": "$self$只是觉得有些犯困地打了个哈欠，并没有多想。"
             },
             "en-us": {
-
+                "OnTimestopEnd_locked_1": "$self$ tried to take a step but abruptly slammed into cold iron bars. \"Eh? What... when did...?\"",
+                "OnTimestopEnd_locked_2": "$self$ flinched as something tightened around her wrists, terrified to find herself suspended by chains. \"No, impossible... I was just there...\"",
+                "OnTimestopEnd_locked_3": "$self$ blinked in confusion, then realized the cramped space restricting her movement. \"Where is this? Who's there?!\"",
+                "OnTimestopEnd_locked_4": "$self$ instinctively tried to reach for something, only to find her hands firmly cuffed behind her back. \"I-I can't move?! Is this a joke!\"",
+                "OnTimestopEnd_locked_5": "$self$ grabbed the bars in front of her in panic, knuckles turning white. \"Let me out! What the hell is going on!\"",
+                "OnTimestopEnd_locked_6": "$self$'s legs gave way, leaving her kneeling as she stared blankly at her cage. \"An hallucination...? I don't remember walking into a place like this...\"",
+                "OnTimestopEnd_loc_change_1": "$self$ felt a blur before her eyes, and the surroundings instantly became unfamiliar. \"Huh? How did I get here?\"",
+                "OnTimestopEnd_loc_change_2": "$self$ felt the ground beneath her change; she looked down to find herself in a completely different room. \"Teleportation? No, that's ridiculous...\"",
+                "OnTimestopEnd_loc_change_3": "$self$ held her forehead, swaying slightly, trying to shake off the sudden dissonance. \"Strange, wasn't I just in the hallway?\"",
+                "OnTimestopEnd_loc_change_4": "$self$ looked around warily, pressing her body against the wall. \"Who is it? Who moved me here?\"",
+                "OnTimestopEnd_loc_change_5": "$self$ looked out the window in confusion, utterly unable to comprehend what had happened. \"Did I... blackout?\"",
+                "OnTimestopEnd_loc_change_6": "$self$ subconsciously took a half-step back, her heels clicking crisply. \"Where am I? Did I get lost?\"",
+                "OnTimestopEnd_nude_1": "$self$ screamed, covering her chest and crotch, curling into a ball. \"Ahhh!! Don't look!!\"",
+                "OnTimestopEnd_nude_2": "$self$'s mind went blank as she stood frozen, letting the air caress every inch of her skin. \"No way... why am I... naked...\"",
+                "OnTimestopEnd_nude_3": "$self$ frantically tried to cover her privates with her hands, but it was futile. \"Clothes... where did my clothes go?!\"",
+                "OnTimestopEnd_nude_4": "$self$ turned her back in mortal shame, her pale back trembling. \"Close your eyes! Don't look! Pervert!\"",
+                "OnTimestopEnd_nude_5": "$self$ squatted on the ground in despair, burying her head in her knees. \"This must be a nightmare... wake up...\"",
+                "OnTimestopEnd_nude_6": "$self$ crossed her arms over her chest, eyes filled with fear and helplessness. \"Someone... someone give me some clothes...\"",
+                "OnTimestopEnd_clothes_lost_1": "$self$ felt a chill and looked down to see her coat was missing. \"Eh? Where are my clothes?!\"",
+                "OnTimestopEnd_clothes_lost_2": "$self$ let out a startled cry, quickly squatting down to hide her underwear-clad body. \"Eek! What's happening! Who did this!\"",
+                "OnTimestopEnd_clothes_lost_3": "$self$ touched her bare arms and shoulders in disbelief. \"H-How did I suddenly end up like this...\"",
+                "OnTimestopEnd_clothes_lost_4": "$self$ looked around for cover, face flushed red. \"Don't look! Don't look at me!\"",
+                "OnTimestopEnd_clothes_lost_5": "$self$ tremblingly tugged at the remaining fabric, trying to cover more skin. \"Is this a prank? It's not funny at all!\"",
+                "OnTimestopEnd_clothes_lost_6": "$self$ bit her lip, tears welling up in her eyes. \"I was fully dressed just a moment ago... damn it...\"",
+                "OnTimestopEnd_cum_preg_1": "$self$ felt a sudden heaviness in her abdomen and looked down, eyes widening in shock. \"W-What is wrong with my belly?!\"",
+                "OnTimestopEnd_cum_preg_2": "$self$ touched her abnormally swollen lower abdomen with trembling hands, face full of horror. \"Impossible... it was flat just now...\"",
+                "OnTimestopEnd_cum_preg_3": "$self$ felt something hot sloshing inside her stomach; she lifted her clothes and screamed. \"Yaaa! Pregnant?! How could it be instant...\"",
+                "OnTimestopEnd_cum_preg_4": "$self$'s legs went weak, barely able to stand, leaning against the wall panting. \"So full... my stomach is so full... how much was poured inside...\"",
+                "OnTimestopEnd_cum_preg_5": "$self$ looked despairingly at her pregnant-like figure, brain completely shutting down. \"Monster... I must have been attacked by a monster...\"",
+                "OnTimestopEnd_cum_preg_6": "$self$ burst into tears, slapping her distended belly in denial. \"Get out! Get out of my body!\"",
+                "OnTimestopEnd_cum_feel_1": "$self$ frowned slightly, reaching out to touch her lower abdomen. \"Strange... my stomach feels a bit uncomfortable.\"",
+                "OnTimestopEnd_cum_feel_2": "$self$ confusedly clamped her legs together, seemingly sensing some wetness. \"Hmm? Is my period early?\"",
+                "OnTimestopEnd_cum_feel_3": "$self$ continued her task nonchalantly, completely unaware of the anomaly within her body.",
+                "OnTimestopEnd_cum_feel_4": "$self$ twisted her waist, adjusting her stance uncomfortably. \"Why does my body feel heavy...\"",
+                "OnTimestopEnd_cum_feel_5": "$self$ paused, a trace of blankness crossing her face. \"Just now... did something leak out?\"",
+                "OnTimestopEnd_cum_feel_6": "$self$ showed no abnormality, only occasionally rubbing her stomach subconsciously.",
+                "OnTimestopEnd_sleep_climax_1": "$self$ suddenly arched her feet in her sleep, a sweet whimper escaping her throat. \"Ngh... ah...!\"",
+                "OnTimestopEnd_sleep_climax_2": "$self$ rolled over violently, hands unconsciously gripping the sheets as her body spasmed. \"No... there... haaa...!\"",
+                "OnTimestopEnd_sleep_climax_3": "$self$'s eyes remained shut as her inner thighs trembled madly, her steady breathing instantly turning into rapid gasps. \"So strange... what kind of dream... ahh!\"",
+                "OnTimestopEnd_sleep_climax_4": "$self$'s waist jerked up, reaching a climax in her sleep, drool flowing from the corner of her mouth onto the pillow.",
+                "OnTimestopEnd_sleep_climax_5": "$self$ hummed with a sobbing tone, legs clamped tight around the quilt, curling into a trembling ball. \"Cumming... woo... gonna break...\"",
+                "OnTimestopEnd_sleep_climax_6": "$self$ suddenly arched her body in her sleep, a sweet cry escaping her throat. \"Ngh-ah?! W-What...?!\"",
+                "OnTimestopEnd_sleep_climax_7": "$self$'s closed eyes leaked tears, her steady breathing turning to gasps, thighs clamping tight unconsciously. \"Haaa... haaa... so weird... is it a dream...\"",
+                "OnTimestopEnd_sleep_climax_8": "$self$'s fingers gripped the sheets without warning, body convulsing as if electrocuted in her dream. \"Don't... that... gonna cum...!\"",
+                "OnTimestopEnd_sleep_climax_9": "$self$ let out a broken moan between sleep and wakefulness, her mound heaving under her nightdress, overwhelmed by sudden pleasure. \"Woo... there... broken...\"",
+                "OnTimestopEnd_sleep_pain_1": "$self$ frowned deeply, twisting uneasily in her sleep. \"Hurts... it hurts...\"",
+                "OnTimestopEnd_sleep_pain_2": "$self$ subconsciously covered her lower body, letting out a muffled groan of pain. \"Woo... who is... tearing...\"",
+                "OnTimestopEnd_sleep_pain_3": "$self$ broke into a cold sweat as if having a nightmare, curling up to avoid some non-existent attack.",
+                "OnTimestopEnd_sleep_pain_4": "$self$ groggily tried to push something away, hands grasping at the air. \"Go away... it hurts... don't touch me...\"",
+                "OnTimestopEnd_sleep_pain_5": "$self$ gritted her teeth, tears seeping from the corners of her eyes, unable to ignore the tearing pain even in deep sleep.",
+                "OnTimestopEnd_sleep_pain_6": "$self$'s brows knit together instantly, letting out a painful grunt. \"Hurts...!\"",
+                "OnTimestopEnd_sleep_pain_7": "$self$ curled up, hands instinctively protecting her lower abdomen, cold sweat instantly forming on her forehead. \"Woo... so painful... stomach...\"",
+                "OnTimestopEnd_sleep_pain_8": "$self$ rolled uneasily in her sleep, seeming to flee some invisible harm, breathing becoming heavy and chaotic. \"Don't... don't do that there... it hurts...\"",
+                "OnTimestopEnd_sleep_pain_9": "$self$ twitched as if startled by a nightmare, then let out low sobs. \"Split... feels like it split open...\"",
+                "OnTimestopEnd_sleep_pleasure_1": "$self$'s peaceful sleeping face flushed, breathing becoming somewhat heavy. \"Ngh-hmm... so hot...\"",
+                "OnTimestopEnd_sleep_pleasure_2": "$self$ unconsciously rubbed her legs together, a faint moan escaping her lips. \"Don't stop... more...\"",
+                "OnTimestopEnd_sleep_pleasure_3": "$self$'s fingers scratched at the pillow, her body heaving slightly with the aftershocks. \"This feeling... feels good...\"",
+                "OnTimestopEnd_sleep_pleasure_4": "$self$ rolled over, rubbing forcefully against the quilt between her legs, as if asking for more. \"Haaa... there... so itchy...\"",
+                "OnTimestopEnd_sleep_pleasure_5": "$self$'s lips curled into a lewd smile, seemingly immersed in an extremely wonderful wet dream.",
+                "OnTimestopEnd_sleep_pleasure_6": "$self$'s peaceful face flushed an eerie red, drool unconsciously leaking from the corner of her mouth. \"Hehe... so good...\"",
+                "OnTimestopEnd_sleep_pleasure_7": "$self$ rubbed her cheek against the pillow in frustration, mumbling indistinctly. \"More... deeper... ngh...\"",
+                "OnTimestopEnd_sleep_pleasure_8": "$self$'s waist began to twist unconsciously, as if welcoming a lingering rhythm in the air. \"Ah... there... so great...\"",
+                "OnTimestopEnd_sleep_pleasure_9": "$self$ made a soft nasal sound, legs rubbing gently in the quilt, like she was lost in a highly erotic dream. \"Haaa... want more...\"",
+                "OnTimestopEnd_sleep_normal_1": "$self$ simply rolled over, smacked her lips, and continued to dream.",
+                "OnTimestopEnd_sleep_normal_2": "$self$'s breathing remained steady and long, completely unaware of what had just happened.",
+                "OnTimestopEnd_sleep_normal_3": "$self$ buried her face in the pillow and nuzzled it, making a slight snoring sound.",
+                "OnTimestopEnd_sleep_normal_4": "$self$ remained in that defenseless sleeping position, not even an eyelash fluttering.",
+                "OnTimestopEnd_sleep_normal_5": "$self$ rolled over, smacked her lips, and continued breathing evenly.",
+                "OnTimestopEnd_sleep_normal_6": "$self$ pulled the quilt over her head, sensing nothing amiss, and slept soundly.",
+                "OnTimestopEnd_sleep_normal_7": "$self$ remained in her original sleeping position, peaceful as a baby.",
+                "OnTimestopEnd_sleep_normal_8": "$self$ just frowned slightly, then relaxed, falling back into dreamland.",
+                "OnTimestopEnd_awake_climax_1": "$self$ was about to ask why she was in a cage, but suddenly rolled her eyes back, convulsing violently. \"Ah-?! W-Wait, haaa-!!\"",
+                "OnTimestopEnd_awake_climax_2": "$self$ covered her stripped chest to scream, but a current rushed to her brain, making her collapse. \"Eek?! N-No... gonna cum ahhh!\"",
+                "OnTimestopEnd_awake_climax_3": "$self$ looked at her bulging belly in disbelief, only to be swallowed by intense pleasure the next second, drooling uncontrollably. \"Body... body is moving on its own... haaa-♡\"",
+                "OnTimestopEnd_awake_climax_4": "$self$ took a step to run, but her legs suddenly gave out, hips swaying madly. \"What... what is this?! Orgasm... can't stop...!!\"",
+                "OnTimestopEnd_awake_climax_5": "$self$'s fingers gripping the bars turned white as she convulsed in public orgasm. \"Help... ahhh... who is doing this...!!\"",
+                "OnTimestopEnd_awake_climax_6": "$self$ was about to speak but froze, pupils constricting violently. \"Eh? W-Wait... this feeling is... ahhhh?!\"",
+                "OnTimestopEnd_awake_climax_7": "$self$ dropped the water glass, knees hitting the floor, hands clapping over her mouth but failing to stop the moans. \"No... there's no one... why... c-cumming...!\"",
+                "OnTimestopEnd_awake_climax_8": "$self$ stared in horror at her lower body, shaking uncontrollably, and broke down completely a second later. \"Liar... body... on its own... eek-ahhh!!\"",
+                "OnTimestopEnd_awake_climax_9": "$self$ leaned against the wall gasping, eyes losing focus, fluids sliding down her thighs. \"Wasn't touched... why... orgasmed... haaa...!\"",
+                "OnTimestopEnd_awake_pain_1": "$self$ tried to stand, but a sharp pain from below made her scream and fall. \"Ah! It hurts! Like I'm ripped open...!\"",
+                "OnTimestopEnd_awake_pain_2": "$self$ looked around in terror at the empty space, hands covering her swollen privates, shivering. \"It hurts... what was shoved in there...\"",
+                "OnTimestopEnd_awake_pain_3": "$self$ tried to move along the wall, every step like walking on knives, cold sweat pouring. \"Can't move... down there... it burns...\"",
+                "OnTimestopEnd_awake_pain_4": "$self$ looked down at the bruise on her inner thigh, gasping at the delayed dull pain. \"This mark... since when...\"",
+                "OnTimestopEnd_awake_pain_5": "$self$ curled up in the corner in despair, retching from the phantom pain of her insides being churned. \"Inside... hurts so much... broken...\"",
+                "OnTimestopEnd_awake_pain_6": "$self$ touched her intact clothes in confusion, then paled, covering her lower body with a gasp. \"Hiss-! W-What is this tearing sensation?!\"",
+                "OnTimestopEnd_awake_pain_7": "$self$ tried to step but felt a crushing pain in her pelvis, staggering and almost falling. \"Hurts! Like I was slammed by something...\"",
+                "OnTimestopEnd_awake_pain_8": "$self$ tremblingly held the table corner, back soaked in cold sweat, eyes full of disbelief and fear. \"Butt... butt hurts... burning...\"",
+                "OnTimestopEnd_awake_pain_9": "$self$ looked around blankly, forced to bend over by the dull pain deep in her body. \"Entrails... feels like they were stirred... so uncomfortable...\"",
+                "OnTimestopEnd_awake_pleasure_1": "$self$ was checking her clothes in confusion when an indescribable numbness surged from deep within. \"Hmm? This is... ah... so strange...\"",
+                "OnTimestopEnd_awake_pleasure_2": "$self$'s face suddenly flushed an unnatural red, legs rubbing together involuntarily. \"Wait... why does it feel... good?\"",
+                "OnTimestopEnd_awake_pleasure_3": "$self$ tried desperately to stay rational, but the residual churning sensation made her eyes glaze over. \"No... this feeling... haaa... want more...\"",
+                "OnTimestopEnd_awake_pleasure_4": "$self$ leaned against the wall panting, hand uncontrollably reaching for her wet crotch. \"There's no one... why is my body so...\"",
+                "OnTimestopEnd_awake_pleasure_5": "$self$ bit her lip to suppress the shameful moan, but her body twisted honestly, begging for more. \"Whoever it is... please... give me a bit more...\"",
+                "OnTimestopEnd_awake_pleasure_6": "$self$ was about to continue the topic, but her voice turned sticky and sweet. \"S-So... ngh?! This is... what...♡\"",
+                "OnTimestopEnd_awake_pleasure_7": "$self$ blushed instantly, hands moving restlessly between her thighs, eyes misty. \"Body... body is so hot... inside... something is moving...\"",
+                "OnTimestopEnd_awake_pleasure_8": "$self$ clamped her legs to stop the current shooting up her spine, but it only made her weak all over. \"Yaa... so weird... can't stop... haaa...\"",
+                "OnTimestopEnd_awake_pleasure_9": "$self$ bit her lip to keep quiet, but her body started writhing honestly, as if holding some invisible object inside. \"Woo... so itchy... itchy deep inside... someone...\"",
+                "OnTimestopEnd_awake_normal_1": "$self$ continues the action in hand, as if the time fracture just now never existed.",
+                "OnTimestopEnd_awake_normal_2": "$self$ blinks, feeling as if spaced out for a split second, but quickly returns to normal.",
+                "OnTimestopEnd_awake_normal_3": "$self$ touches the back of the head in confusion, finding nothing unusual, and pays it no more mind.",
+                "OnTimestopEnd_awake_normal_4": "$self$ just feels something is slightly off but can't quite put a finger on it, so shrugs and continues on the way.",
+                "OnTimestopEnd_awake_normal_5": "$self$ continues the sentence from before without any pause, as if time had never been severed.",
+                "OnTimestopEnd_awake_normal_6": "$self$ nonchalantly fixes hair and continues focusing on the work at hand.",
+                "OnTimestopEnd_awake_normal_7": "$self$'s eyes are clear, even smiling at you, completely unaware of any changes in the body.",
+                "OnTimestopEnd_awake_normal_8": "$self$ just yawns feeling a bit drowsy, not thinking much of it."
             }
         }
     }

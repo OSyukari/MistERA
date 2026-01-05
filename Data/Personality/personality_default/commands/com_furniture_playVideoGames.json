@@ -5,67 +5,224 @@
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "com_furniture_playVideoGames_Begin",
+                    "interruptSelfJob": false,
                     "variants": [
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": { "requireSelfAttitudeGTE": "Like" },
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
                             "extraPortraitTags": [
-                                "relaxed", "leaning", "confident", "smug", "excited", "happy"
+                                "blush"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.3.3 主动接受" ,
+                            "_comment": "2.3.3 主动接受",
                             "responses": [
-"$self$二话不说扔过来一个副手柄，眼里满是兴奋：\"就等你这句话了！快上号！\"",
-"$self$往旁边挪了挪位置，期待地看着$target$：\"一个人正无聊呢，两个人肯定更有意思。\"",
-
-"$self$眼睛一亮，立刻站了起来。\"好啊！我正愁没事做呢！\"", "$self$开心地凑了过来：\"看什么看什么？我也要看！\""
+                                "com_furniture_playVideoGames_Begin_1",
+                                "com_furniture_playVideoGames_Begin_2",
+                                "com_furniture_playVideoGames_Begin_3",
+                                "com_furniture_playVideoGames_Begin_4",
+                                "com_furniture_playVideoGames_Begin_5",
+                                "com_furniture_playVideoGames_Begin_6",
+                                "com_furniture_playVideoGames_Begin_7",
+                                "com_furniture_playVideoGames_Begin_8"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], 
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
                             "useActiveTags": false,
-                            "_comment":"2.3.5 被动接受（屈服）" ,
-                            "responses": [ 
-                                "$self$的身体微微发颤，虽然满脸写着抗拒，但还是默默让出了半个屏幕的位置。\"……知道了，我会配合的。\"",
-"$self$低下头，不敢直视对方的眼睛，颤抖着声音说道：\"只要陪你玩……就可以了吗？\"",
-
-"$self$咬着嘴唇，犹豫了一会儿还是低下了头。\"……知道了，我看就是了。\"", "$self$看起来很想拒绝，但最终还是僵硬地坐了下来。\"好……请不要生气。\""
+                            "_comment": "2.3.5 被动接受（屈服）",
+                            "responses": [
+                                "com_furniture_playVideoGames_Begin_9",
+                                "com_furniture_playVideoGames_Begin_10",
+                                "com_furniture_playVideoGames_Begin_11",
+                                "com_furniture_playVideoGames_Begin_12",
+                                "com_furniture_playVideoGames_Begin_13",
+                                "com_furniture_playVideoGames_Begin_14",
+                                "com_furniture_playVideoGames_Begin_15",
+                                "com_furniture_playVideoGames_Begin_16"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
-                            "_comment":"2.3.4 被动接受（惊讶不反感）" ,
-                            "responses":
-                            [ 
-"$self$愣了一下，显得有些意外：\"欸？你要和我一起玩？那……好吧，如果不嫌弃我技术烂的话。\"",
-"$self$眨了眨眼，似乎没料到会被邀请，迟疑片刻后还是递出了手柄：\"行啊，那就试试看。\"",
-
-"$self$愣了一下，随即耸耸肩。\"诶？找我吗？行吧，反正我也闲着。\"", "$self$有些意外地眨眨眼：\"既然你都邀请了……那就陪你一会吧。\""
-]
-                        },
-                        {
-                    
                             "extraPortraitTags": [
-                                "focused",
-                                "neutral",
-                                "serious",
-                                "thinking",
-                                "calm",
-                                "observation"
+                                "blush"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.1.1 行动开始" ,
+                            "_comment": "2.3.4 被动接受（惊讶不反感）",
                             "responses": [
-"$self$盘腿坐在地毯上，随手抓起手柄，按下电源键。",
-"$self$熟练地戴上耳机，将长发撩到耳后，眼神瞬间变得锐利起来。",
-
-"$self$拿起遥控器，陷进了柔软的沙发里。\"看看今天有什么新闻吧。\"", "$self$打开电视，熟练地切换到了收藏的频道。", "$self$抱起一包零食，盘起腿坐在了电视机前。\"终于到了追剧时间了！\""
+                                "com_furniture_playVideoGames_Begin_17",
+                                "com_furniture_playVideoGames_Begin_18",
+                                "com_furniture_playVideoGames_Begin_19",
+                                "com_furniture_playVideoGames_Begin_20",
+                                "com_furniture_playVideoGames_Begin_21",
+                                "com_furniture_playVideoGames_Begin_22",
+                                "com_furniture_playVideoGames_Begin_23",
+                                "com_furniture_playVideoGames_Begin_24"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "relaxed",
+                                "leaning",
+                                "happy"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 行动开始",
+                            "responses": [
+                                "com_furniture_playVideoGames_Begin_25",
+                                "com_furniture_playVideoGames_Begin_26",
+                                "com_furniture_playVideoGames_Begin_27",
+                                "com_furniture_playVideoGames_Begin_28",
+                                "com_furniture_playVideoGames_Begin_29",
+                                "com_furniture_playVideoGames_Begin_30",
+                                "com_furniture_playVideoGames_Begin_31",
+                                "com_furniture_playVideoGames_Begin_32"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_playVideoGames",
+                    "interruptSelfJob": true,
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
+                                    "responses": [
+                                        "com_furniture_playVideoGames_1",
+                                        "com_furniture_playVideoGames_2",
+                                        "com_furniture_playVideoGames_3",
+                                        "com_furniture_playVideoGames_4",
+                                        "com_furniture_playVideoGames_5",
+                                        "com_furniture_playVideoGames_6",
+                                        "com_furniture_playVideoGames_7",
+                                        "com_furniture_playVideoGames_8"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
+                            "extraPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_furniture_playVideoGames_9",
+                                "com_furniture_playVideoGames_10",
+                                "com_furniture_playVideoGames_11",
+                                "com_furniture_playVideoGames_12",
+                                "com_furniture_playVideoGames_13",
+                                "com_furniture_playVideoGames_14",
+                                "com_furniture_playVideoGames_15",
+                                "com_furniture_playVideoGames_16"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "happy",
+                                        "excited",
+                                        "surprised"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.5.3 成功（正面反馈）行动结束结果",
+                                    "responses": [
+                                        "com_furniture_playVideoGames_17",
+                                        "com_furniture_playVideoGames_18",
+                                        "com_furniture_playVideoGames_19",
+                                        "com_furniture_playVideoGames_20",
+                                        "com_furniture_playVideoGames_21",
+                                        "com_furniture_playVideoGames_22"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "pouting",
+                                "doubt"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.4 成功（负面反馈）行动结束结果",
+                            "responses": [
+                                "com_furniture_playVideoGames_23",
+                                "com_furniture_playVideoGames_24",
+                                "com_furniture_playVideoGames_25",
+                                "com_furniture_playVideoGames_26",
+                                "com_furniture_playVideoGames_27",
+                                "com_furniture_playVideoGames_28"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "happy",
+                                        "excited",
+                                        "surprised"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.5.1 失败但正面反馈",
+                                    "responses": [
+                                        "com_furniture_playVideoGames_29",
+                                        "com_furniture_playVideoGames_30",
+                                        "com_furniture_playVideoGames_31",
+                                        "com_furniture_playVideoGames_32",
+                                        "com_furniture_playVideoGames_33",
+                                        "com_furniture_playVideoGames_34"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "pouting",
+                                "doubt"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.2 失败且负面反馈",
+                            "responses": [
+                                "com_furniture_playVideoGames_35",
+                                "com_furniture_playVideoGames_36",
+                                "com_furniture_playVideoGames_37",
+                                "com_furniture_playVideoGames_38",
+                                "com_furniture_playVideoGames_39",
+                                "com_furniture_playVideoGames_40"
                             ]
                         }
                     ]
@@ -77,9 +234,14 @@
                     "ID": "com_furniture_playVideoGames_Tryjoin",
                     "variants": [
                         {
-                            "_comment":"2.3.6 NPC请求加入" ,
+                            "_comment": "2.3.6 NPC请求加入",
                             "responses": [
-"$self$探头探脑地凑过来：\"这是那个新出的电影吗？能不能加我一个？\"", "$self$有些不好意思地抓抓头发：\"那个……介意我一起看吗？看起来很有趣的样子。\""
+                                "com_furniture_playVideoGames_Tryjoin_1",
+                                "com_furniture_playVideoGames_Tryjoin_2",
+                                "com_furniture_playVideoGames_Tryjoin_3",
+                                "com_furniture_playVideoGames_Tryjoin_4",
+                                "com_furniture_playVideoGames_Tryjoin_5",
+                                "com_furniture_playVideoGames_Tryjoin_6"
                             ]
                         }
                     ]
@@ -91,11 +253,15 @@
                     "ID": "com_furniture_playVideoGames_Joined",
                     "variants": [
                         {
-                            "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
-                            "responses": [ 
-"$self$欢呼一声，直接跳到了沙发上。\"太棒了！我就知道你最好了！\"", "$self$立刻找了个舒服的姿势坐好，脸上挂满了期待。"
-
-                             ]
+                            "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
+                            "responses": [
+                                "com_furniture_playVideoGames_Joined_1",
+                                "com_furniture_playVideoGames_Joined_2",
+                                "com_furniture_playVideoGames_Joined_3",
+                                "com_furniture_playVideoGames_Joined_4",
+                                "com_furniture_playVideoGames_Joined_5",
+                                "com_furniture_playVideoGames_Joined_6"
+                            ]
                         }
                     ]
                 }
@@ -106,11 +272,15 @@
                     "ID": "com_furniture_playVideoGames_Join_Refused",
                     "variants": [
                         {
-                            "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
+                            "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
-"$self$失望地垂下肩膀，撇了撇嘴。\"小气鬼……不看就不看。\"", "$self$尴尬地笑了笑，慢慢退了出去。\"啊，这样啊，那我不打扰了。\""
-
-                             ]
+                                "com_furniture_playVideoGames_Join_Refused_1",
+                                "com_furniture_playVideoGames_Join_Refused_2",
+                                "com_furniture_playVideoGames_Join_Refused_3",
+                                "com_furniture_playVideoGames_Join_Refused_4",
+                                "com_furniture_playVideoGames_Join_Refused_5",
+                                "com_furniture_playVideoGames_Join_Refused_6"
+                            ]
                         }
                     ]
                 }
@@ -124,47 +294,96 @@
                             "requirement": {
                                 "requireEPFailure": true
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
-                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Neutral"
+                                    },
+                                    "extraPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
- "$self$歉意地笑了笑：\"抱歉呀，我想一个人安静地把这部剧看完。\"", "$self$摇摇头：\"现在不太方便，下次再一起吧。\""
+                                        "com_furniture_playVideoGames_Join_1",
+                                        "com_furniture_playVideoGames_Join_2",
+                                        "com_furniture_playVideoGames_Join_3",
+                                        "com_furniture_playVideoGames_Join_4",
+                                        "com_furniture_playVideoGames_Join_5",
+                                        "com_furniture_playVideoGames_Join_6"
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "extraPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
- "$self$不耐烦地啧了一声：\"这沙发容不下两个人，去别处待着。\"", "$self$冷冷地说道：\"我在享受独处时间，请勿打扰。\""
+                                "com_furniture_playVideoGames_Join_7",
+                                "com_furniture_playVideoGames_Join_8",
+                                "com_furniture_playVideoGames_Join_9",
+                                "com_furniture_playVideoGames_Join_10",
+                                "com_furniture_playVideoGames_Join_11",
+                                "com_furniture_playVideoGames_Join_12"
                             ]
                         },
                         {
-                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
- "$self$立刻往旁边挪了挪，拍着身边的空位。\"当然可以！快来快来！\"", "$self$笑着递过遥控器：\"正好多个人讨论剧情更有意思。\""
+                            "responses": [
+                                "com_furniture_playVideoGames_Join_13",
+                                "com_furniture_playVideoGames_Join_14",
+                                "com_furniture_playVideoGames_Join_15",
+                                "com_furniture_playVideoGames_Join_16",
+                                "com_furniture_playVideoGames_Join_17",
+                                "com_furniture_playVideoGames_Join_18"
                             ]
-
                         },
                         {
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
- "$self$身体僵硬了一下，默默地缩到了沙发的另一头。\"……随你便。\"", "$self$不敢直视$target$的眼睛，把遥控器放在了桌上。\"您坐这里……\""
+                            "responses": [
+                                "com_furniture_playVideoGames_Join_19",
+                                "com_furniture_playVideoGames_Join_20",
+                                "com_furniture_playVideoGames_Join_21",
+                                "com_furniture_playVideoGames_Join_22",
+                                "com_furniture_playVideoGames_Join_23",
+                                "com_furniture_playVideoGames_Join_24"
                             ]
                         },
                         {
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
- "$self$有些诧异地看了$target$一眼，然后默默挪开了一些位置。\"呃……你想看就看吧。\"", "$self$虽然没有说话，但还是默许了$target$坐在身边。"
+                            "responses": [
+                                "com_furniture_playVideoGames_Join_25",
+                                "com_furniture_playVideoGames_Join_26",
+                                "com_furniture_playVideoGames_Join_27",
+                                "com_furniture_playVideoGames_Join_28",
+                                "com_furniture_playVideoGames_Join_29",
+                                "com_furniture_playVideoGames_Join_30"
                             ]
                         }
                     ]
@@ -176,12 +395,16 @@
                     "ID": "com_furniture_playVideoGames_Ongoing",
                     "variants": [
                         {
-                            "_comment":"2.1.2 行动中途" ,
-                            "responses": [ 
-"$self$的手指在按键上飞快舞动，屏幕的光映在她的脸上，神情异常专注。",
-"$self$嘴里咬着一根棒棒糖，身体随着游戏角色的动作左右轻晃。",
-
-"电视屏幕的光影映在$self$专注的脸上，她甚至忘记了吃手里的薯片。", "$self$随着剧情的发展时而皱眉，时而微笑。", "$self$慵懒地换了个姿势，目不转睛地盯着屏幕。"
+                            "_comment": "2.1.2 行动中途",
+                            "responses": [
+                                "com_furniture_playVideoGames_Ongoing_1",
+                                "com_furniture_playVideoGames_Ongoing_2",
+                                "com_furniture_playVideoGames_Ongoing_3",
+                                "com_furniture_playVideoGames_Ongoing_4",
+                                "com_furniture_playVideoGames_Ongoing_5",
+                                "com_furniture_playVideoGames_Ongoing_6",
+                                "com_furniture_playVideoGames_Ongoing_7",
+                                "com_furniture_playVideoGames_Ongoing_8"
                             ]
                         }
                     ]
@@ -193,175 +416,102 @@
                     "ID": "com_furniture_playVideoGames_Interrupt",
                     "variants": [
                         {
-                            "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
-                            "requirement":{ "requireSelfAttitudeKey": "Fear" },
-                            "_comment":"2.2.3 态度：恐惧 有他人登场" ,
-                            "responses": [
-"察觉到有人靠近，$self$猛地瑟缩了一下，手中的操作出现明显的失误，眼神惊慌地游移。",
-"$self$立刻按下了暂停键，甚至不敢回头确认，双手紧紧攥着手柄，指节泛白。",
-
-"$self$浑身一僵，下意识地想要关掉电视，手指有些发抖。\"啊……我、我马上就关掉……\"", "$self$缩在沙发角落里，眼神闪躲着不敢看$target$。"
-
-]
-                        },
-                        {
-                            "requirement":{ "requireSelfAttitudeKey": "Badwill" },
-                            "_comment":"2.2.2 态度：恶意 有他人登场" ,
-                            "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
-                            "responses": [ 
-"$self$透过屏幕的反光看到了来人，原本放松的肩膀瞬间紧绷，冷冷地\"啧\"了一声。",
-"$self$完全无视了身后的动静，只是按键的声音变得更加粗暴响亮，仿佛在宣泄不满。",
-
-"$self$瞥见$target$进来，故意调高了电视的音量，假装没看见。", "$self$冷冷地翻了个白眼，身体背对着$target$侧躺下去。\"真扫兴，哪都能碰到。\""
-]
-                        },
-                        {
-                            "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
-                            "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
-                            "_comment":"2.2.1 态度：好意 有他人登场" ,
-                            "responses": ["听到脚步声，$self$摘下一侧耳机，回头露出灿烂的笑容：\"稍微等我一下，这关马上就过了！\"",
-"$self$拍了拍身边的空位，眼睛都没离开屏幕，却自然地说道：\"来得正好，帮我看个点。\"",
-
-"$self$听到动静，转过头拍了拍身边的空位。\"快来，$target$，这一集刚好演到精彩的地方！\"", "$self$笑着把手里的零食递了过去。\"要一起看吗？这个综艺超好笑的。\""
-]
-                        },
-                        {
-                            "requirement":{ "requireSelfAttitudeKey": "Desire" },
-                            "_comment":"2.2.4 态度：欲望 有他人登场" ,
-                            "extraPortraitTags": [ "shy" ], "useActiveTags": false,
-                            "responses": ["$self$的视线虽然还在屏幕上，脸颊却泛起红晕，咬着下唇偷偷用余光瞥向来人。",
-"$self$故意伸了个懒腰，展示出身体的曲线，声音变得有些黏糊：\"怎么？是想看我玩，还是想玩我？\"",
-
-"$self$的视线从屏幕移到$target$身上，眼神变得黏糊糊的。\"电视哪有你好看呀……过来陪我嘛？\"", "$self$故意伸了个懒腰，展示着自己的曲线，声音甜腻。\"一个人看电视好寂寞哦，$target$不来陪陪人家吗？\""
-]
-                        },
-                        {
-                            "_comment":"2.2.5 态度：普通 有他人登场" ,
-                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
-                            "responses": ["$self$只是淡淡瞥了一眼来人，随即又将注意力转回游戏中。\"有事吗？我现在有点忙。\"",
-"$self$没有过多的反应，依旧维持着之前的姿势，仿佛周围的一切都与她无关。",
-
-"$self$只是淡淡看了一眼$target$，又转回了头。\"你要用客厅吗？我还要看一会儿。\"", "$self$点了点头算是打招呼，视线没有离开屏幕。"
-]
-                        }
-                    ]
-                }
-            },
-            {
-                "ID": "personality_default",
-                "Entry": {
-                    "ID": "com_furniture_playVideoGames",
-                    "interruptSelfJob": true,
-                    "variants": [
-                        {
-                            "requirement": { "requireEPFailure": true },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
-                                    "extraPortraitTags": [
-                                        "apology",
-                                        "shy",
-                                        "gentle"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": [
-"$self$晃了晃手中的手柄，歉意地笑了笑：\"这可是单人剧情模式，下次再一起吧。\"",
-"$self$歪着头思考了一下，还是摇了摇头：\"现在手感正热，我想先自己通关试试。\"",
-
-"$self$摆摆手笑道：\"谢啦，但我现在的精神头只够听听音乐。\"", "$self$指了指手里的书：\"下次吧，我想先把这一章看完。\""
-                                    ]
-                                }
-                            ],
                             "extraPortraitTags": [
-                                "apology",
-                                "awkward",
-                                "busy",
-                                "uninterested",
-                                "cold",
-                                "tired",
-                                "distant"
+                                "fear",
+                                "trembling"
                             ],
                             "useActiveTags": false,
-                            "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Fear"
+                            },
+                            "_comment": "2.2.3 态度：恐惧 有他人登场",
                             "responses": [
-"$self$冷哼一声，连正眼都没给一个：\"我不习惯和菜鸟组队，别来碍事。\"",
-"$self$直接调大了耳机的音量，用行动表明了不想被打扰的态度。",
-
-"$self$头也不抬地哼了一声：\"没兴趣，别来烦我。\"", "$self$嫌弃地挥挥手：\"和你一起看？得了吧，品味差太多了。\""
+                                "com_furniture_playVideoGames_Interrupt_1",
+                                "com_furniture_playVideoGames_Interrupt_2",
+                                "com_furniture_playVideoGames_Interrupt_3",
+                                "com_furniture_playVideoGames_Interrupt_4",
+                                "com_furniture_playVideoGames_Interrupt_5",
+                                "com_furniture_playVideoGames_Interrupt_6",
+                                "com_furniture_playVideoGames_Interrupt_7",
+                                "com_furniture_playVideoGames_Interrupt_8"
                             ]
                         },
                         {
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireSelfAttitudeKey": "Badwill"
                             },
-                            "variants":[
-                                {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
-                                    "extraPortraitTags": [
-                                        "happy",
-                                        "excited",
-                                        "surprised",
-                                        "intrigued",
-                                        "relaxed"
-                                    ], "useActiveTags": false,
-                                    "_comment": "2.5.3 成功（正面反馈）行动结束结果",
-                                    "responses": [
- "$self$意犹未尽地盯着片尾字幕。\"太精彩了！神作！下次一定要二刷！\"", "$self$兴奋地抓着$target$的手臂：\"刚才那个反转你看到了吗？太厉害了！\""
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.5.4 成功（负面反馈）行动结束结果",
                             "extraPortraitTags": [
-                                "frustrated",
-                                "pouting",
-                                "complaining",
-                                "glare",
-                                "teary",
-                                "doubt",
-                                "bored",
-                                "annoyed",
+                                "disgusted",
                                 "disappointed"
                             ],
                             "useActiveTags": false,
+                            "_comment": "2.2.2 态度：恶意 有他人登场",
                             "responses": [
- "虽然看完了全集，但$self$看起来并不开心。\"结局竟然是这样？感觉被喂了屎……\"", "$self$揉了揉有些干涩的眼睛，疲惫地说道：\"虽然是好剧，但这剧情也太致郁了，心情好差。\""
+                                "com_furniture_playVideoGames_Interrupt_9",
+                                "com_furniture_playVideoGames_Interrupt_10",
+                                "com_furniture_playVideoGames_Interrupt_11",
+                                "com_furniture_playVideoGames_Interrupt_12",
+                                "com_furniture_playVideoGames_Interrupt_13",
+                                "com_furniture_playVideoGames_Interrupt_14",
+                                "com_furniture_playVideoGames_Interrupt_15",
+                                "com_furniture_playVideoGames_Interrupt_16"
                             ]
                         },
                         {
-                            "variants":[
-                                {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
-                                    "extraPortraitTags": [
-                                        "happy",
-                                        "excited",
-                                        "surprised",
-                                        "intrigued",
-                                        "relaxed"
-                                    ], "useActiveTags": false,
-                                    "_comment": "2.5.1 失败但正面反馈",
-                                    "responses": [
- "虽然节目很无聊，$self$却笑得很开心。\"剧情烂透了，不过和你一起吐槽还挺有意思的。\"", "$self$伸了个懒腰：\"完全没看懂在讲什么，但放松一下也不错。\""
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.5.2 失败且负面反馈",
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Goodwill"
+                            },
                             "extraPortraitTags": [
-                                "frustrated",
-                                "pouting",
-                                "complaining",
-                                "glare",
-                                "teary",
-                                "doubt",
-                                "bored",
-                                "annoyed",
-                                "disappointed"
+                                "happy",
+                                "excited",
+                                "surprised"
                             ],
                             "useActiveTags": false,
+                            "_comment": "2.2.1 态度：好意 有他人登场",
                             "responses": [
- "$self$关掉电视，脸上的表情很微妙。\"这简直是浪费生命的30分钟……\"", "$self$叹了口气，揉着酸痛的脖子。\"早知道就不看这个了，无聊透顶。\""
+                                "com_furniture_playVideoGames_Interrupt_17",
+                                "com_furniture_playVideoGames_Interrupt_18",
+                                "com_furniture_playVideoGames_Interrupt_19",
+                                "com_furniture_playVideoGames_Interrupt_20",
+                                "com_furniture_playVideoGames_Interrupt_21",
+                                "com_furniture_playVideoGames_Interrupt_22",
+                                "com_furniture_playVideoGames_Interrupt_23",
+                                "com_furniture_playVideoGames_Interrupt_24"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Desire"
+                            },
+                            "extraPortraitTags": [
+                                "shy"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.4 态度：欲望 有他人登场",
+                            "responses": [
+                                "com_furniture_playVideoGames_Interrupt_25",
+                                "com_furniture_playVideoGames_Interrupt_26",
+                                "com_furniture_playVideoGames_Interrupt_27",
+                                "com_furniture_playVideoGames_Interrupt_28",
+                                "com_furniture_playVideoGames_Interrupt_29",
+                                "com_furniture_playVideoGames_Interrupt_30",
+                                "com_furniture_playVideoGames_Interrupt_31",
+                                "com_furniture_playVideoGames_Interrupt_32"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "focused"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.5 态度：普通 有他人登场",
+                            "responses": [
+                                "com_furniture_playVideoGames_Interrupt_33",
+                                "com_furniture_playVideoGames_Interrupt_34",
+                                "com_furniture_playVideoGames_Interrupt_35",
+                                "com_furniture_playVideoGames_Interrupt_36",
+                                "com_furniture_playVideoGames_Interrupt_37",
+                                "com_furniture_playVideoGames_Interrupt_38"
                             ]
                         }
                     ]
@@ -372,28 +522,340 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "kojo_default_com_furniture_playVideoGames_refuse_1": "$self$：\"抱歉，我现在没什么心情玩游戏\"",
-                "kojo_default_com_furniture_playVideoGames_refuse_2": "$self$：\"你玩吧，我今天就不參加了。\"",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_1": "\"唉……又输了\" $self$把手柄扔到一旁。\"",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_2": "$self$：\"这个游戏……不太适合我。\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_1": "$self$：\"这比我想象中好玩多了！\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_2": "$self$：\"你挺厉害的嘛！下次我一定赢回来！\"",
-
-                
-                "com_furniture_playVideoGames_begin_1": "$doer.firstname$ picked up the controller, and immersed themselves in a video game.",
-                "com_furniture_playVideoGames_begin_2": "$doer.firstname$ stared at a video game screen with focused eyes"
+                "com_furniture_playVideoGames_Begin_1": "$self$二话不说扔过来一个副手柄，眼里满是兴奋：\"就等你这句话了！快上号！\"",
+                "com_furniture_playVideoGames_Begin_2": "$self$往旁边挪了挪位置，期待地看着$target$：\"一个人正无聊呢，两个人肯定更有意思。\"",
+                "com_furniture_playVideoGames_Begin_3": "$self$眼睛一亮，立刻跳了起来：\"正合我意！我手正痒呢！\"",
+                "com_furniture_playVideoGames_Begin_4": "$self$二话不说抢过另一个手柄：\"来来来，谁怕谁！\"",
+                "com_furniture_playVideoGames_Begin_5": "$self$开心地拍手：\"好啊！我也正无聊呢，快开始！\"",
+                "com_furniture_playVideoGames_Begin_6": "$self$兴奋地凑过去：\"带我一个带我一个！这游戏我馋好久了！\"",
+                "com_furniture_playVideoGames_Begin_7": "$self$一边挽起袖子一边笑道：\"输了的人要请客喝奶茶哦！\"",
+                "com_furniture_playVideoGames_Begin_8": "$self$立刻把手头的事丢到一边：\"这种好事怎么能少了我？\"",
+                "com_furniture_playVideoGames_Begin_9": "$self$的身体微微发颤，虽然满脸写着抗拒，但还是默默让出了半个屏幕的位置。\"……知道了，我会配合的。\"",
+                "com_furniture_playVideoGames_Begin_10": "$self$低下头，不敢直视对方的眼睛，颤抖着声音说道：\"只要陪你玩……就可以了吗？\"",
+                "com_furniture_playVideoGames_Begin_11": "$self$颤抖着接过手柄，声音细若蚊蝇：\"我……我知道了，我会玩的。\"",
+                "com_furniture_playVideoGames_Begin_12": "$self$低着头不敢反抗，默默地坐到了$target$指定的位置。",
+                "com_furniture_playVideoGames_Begin_13": "$self$眼神惊恐地看着$target$，慌乱地点头：\"别，别生气，我玩就是了。\"",
+                "com_furniture_playVideoGames_Begin_14": "$self$僵硬地拿着手柄，手指因为紧张而发白，完全不敢看屏幕以外的地方。",
+                "com_furniture_playVideoGames_Begin_15": "$self$虽然满脸抗拒，但在$target$的注视下还是不得不拿起了控制器。",
+                "com_furniture_playVideoGames_Begin_16": "$self$像是执行命令的机器一样，机械地开始操作，没有任何多余的动作。",
+                "com_furniture_playVideoGames_Begin_17": "$self$愣了一下，显得有些意外：\"欸？你要和我一起玩？那……好吧，如果不嫌弃我技术烂的话。\"",
+                "com_furniture_playVideoGames_Begin_18": "$self$眨了眨眼，似乎没料到会被邀请，迟疑片刻后还是递出了手柄：\"行啊，那就试试看。\"",
+                "com_furniture_playVideoGames_Begin_19": "$self$愣了一下，随即有些迟疑地接过手柄：\"额，我是没玩过，如果不介意我菜的话……\"",
+                "com_furniture_playVideoGames_Begin_20": "$self$眨了眨眼，有些意外：\"邀请我吗？好吧，那就试一试。\"",
+                "com_furniture_playVideoGames_Begin_21": "$self$有些手足无措地坐下：\"虽然不太懂规则，但既然你都这么说了。\"",
+                "com_furniture_playVideoGames_Begin_22": "$self$好奇地看着屏幕：\"这个看起来好复杂，不过既然你教我，那我就玩两把。\"",
+                "com_furniture_playVideoGames_Begin_23": "$self$抓了抓头发：\"本来打算睡了……好吧，就陪你一小会儿。\"",
+                "com_furniture_playVideoGames_Begin_24": "$self$有些生疏地握着手柄：\"是按这个键吗？好像也没那么难？\"",
+                "com_furniture_playVideoGames_Begin_25": "$self$盘腿坐在地毯上，随手抓起手柄，按下电源键。",
+                "com_furniture_playVideoGames_Begin_26": "$self$熟练地戴上耳机，将长发撩到耳后，眼神瞬间变得锐利起来。",
+                "com_furniture_playVideoGames_Begin_27": "$self$伸了个懒腰，熟练地抓起手柄盘腿坐在了地毯上。\"好久没动真格的了，希望手没生。\"",
+                "com_furniture_playVideoGames_Begin_28": "$self$戴上耳机，隔绝了周围的声音，眼神瞬间变得犀利起来。",
+                "com_furniture_playVideoGames_Begin_29": "$self$打开主机电源，看着熟悉的登录界面，嘴角不自觉地上扬。\"今晚就把这一关通了。\"",
+                "com_furniture_playVideoGames_Begin_30": "$self$把零食和饮料摆在触手可及的地方，摆出了一副要打持久战的架势。",
+                "com_furniture_playVideoGames_Begin_31": "$self$深吸一口气，握紧了手柄，神情严肃得像是在进行某种仪式。",
+                "com_furniture_playVideoGames_Begin_32": "$self$快速浏览了一遍攻略，自信满满地点进了‘开始游戏’。",
+                "com_furniture_playVideoGames_1": "$self$晃了晃手中的手柄，歉意地笑了笑：\"这可是单人剧情模式，下次再一起吧。\"",
+                "com_furniture_playVideoGames_2": "$self$歪着头思考了一下，还是摇了摇头：\"现在手感正热，我想先自己通关试试。\"",
+                "com_furniture_playVideoGames_3": "$self$笑着摆了摆手：\"今天太累啦，怕坑了你，改天吧。\"",
+                "com_furniture_playVideoGames_4": "$self$指了指手边的书：\"正看到精彩的地方呢，下次一定陪你。\"",
+                "com_furniture_playVideoGames_5": "$self$有些遗憾地耸耸肩：\"我也想玩，可惜还有作业没写完。\"",
+                "com_furniture_playVideoGames_6": "$self$温和地推辞道：\"现在眼睛有点酸，我想休息一会儿。\"",
+                "com_furniture_playVideoGames_7": "$self$做个了鬼脸：\"要是玩了肯定停不下来，我明天还得早起呢。\"",
+                "com_furniture_playVideoGames_8": "$self$拍拍$target$的肩膀：\"你去玩吧，我在旁边给你加油就好。\"",
+                "com_furniture_playVideoGames_9": "$self$冷哼一声，连正眼都没给一个：\"我不习惯和菜鸟组队，别来碍事。\"",
+                "com_furniture_playVideoGames_10": "$self$直接调大了耳机的音量，用行动表明了不想被打扰的态度。",
+                "com_furniture_playVideoGames_11": "$self$头都没抬，冷淡地回绝：\"没兴趣。\"",
+                "com_furniture_playVideoGames_12": "$self$翻了个白眼：\"跟你玩？算了吧，我不想被气死。\"",
+                "com_furniture_playVideoGames_13": "$self$嗤笑一声：\"这种小孩子的游戏你自己玩去吧。\"",
+                "com_furniture_playVideoGames_14": "$self$不耐烦地挥挥手：\"忙着呢，别来烦我。\"",
+                "com_furniture_playVideoGames_15": "$self$皱着眉头看着$target$：\"你是不是很闲？但我不是。\"",
+                "com_furniture_playVideoGames_16": "$self$直接戴上耳机，把$target$的声音隔绝在外。",
+                "com_furniture_playVideoGames_17": "$self$激动地跳起来，一把抱住身边的$target$：\"赢了！我们赢了！太棒了！\"",
+                "com_furniture_playVideoGames_18": "$self$看着通关画面，脸上洋溢着自豪的笑容：\"哼哼，不愧是我，完美通关！\"",
+                "com_furniture_playVideoGames_19": "$self$兴奋地举起双手欢呼：\"YoooHooo！这个记录估计没人能破了吧！\"",
+                "com_furniture_playVideoGames_20": "$self$满眼崇拜地看着$target$：\"刚才最后那一下太帅了！我们简直是最佳拍档！\"",
+                "com_furniture_playVideoGames_21": "$self$心满意足地靠在沙发上，嘴角挂着笑意：\"终于过了，这种成就感真是无与伦比。\"",
+                "com_furniture_playVideoGames_22": "$self$开心地哼着胜利的小调，心情肉眼可见地变好了。\"今晚必须吃顿好的庆祝一下！\"",
+                "com_furniture_playVideoGames_23": "$self$面无表情地看着通关动画，淡淡地说：\"也就这样吧，比想象中无聊。\"",
+                "com_furniture_playVideoGames_24": "$self$揉了揉酸痛的手腕，叹了口气：\"为了这点奖励累成这样，真不值得。\"",
+                "com_furniture_playVideoGames_25": "$self$有些嫌弃地看着$target$：\"虽然赢了，但你刚才的操作真的很下饭。\"",
+                "com_furniture_playVideoGames_26": "$self$关掉游戏，感到一阵空虚：\"通关了又能怎么样呢？浪费时间。\"",
+                "com_furniture_playVideoGames_27": "$self$皱着眉头抱怨：\"这结局也太烂了吧，早知道不玩了。\"",
+                "com_furniture_playVideoGames_28": "$self$冷淡地回应$target$的欢呼：\"差不多行了，也不是什么大不了的事。\"",
+                "com_furniture_playVideoGames_29": "$self$虽然看着‘失败’字样，却笑得前仰后合：\"哈哈哈哈！刚才那个死法也太搞笑了！\"",
+                "com_furniture_playVideoGames_30": "$self$长出一口气，脸上带着意犹未尽的表情：\"虽然输了，但这过程真是太刺激了。\"",
+                "com_furniture_playVideoGames_31": "$self$拍了拍$target$的肩膀，眼神明亮：\"没事没事，我们配合得越来越好了，再来一把肯定赢！\"",
+                "com_furniture_playVideoGames_32": "$self$伸了个懒腰：\"虽然没通关，但今天玩得真开心，谢啦！\"",
+                "com_furniture_playVideoGames_33": "$self$并不气馁，反而兴致勃勃地分析起来：\"刚才那波只差一点点，我有思路了！\"",
+                "com_furniture_playVideoGames_34": "$self$笑着感叹：\"这种挑战性才有趣嘛，输了也痛快！\"",
+                "com_furniture_playVideoGames_35": "$self$脸色阴沉地摔下手柄，一言不发地盯着黑掉的屏幕。",
+                "com_furniture_playVideoGames_36": "$self$狠狠地抓了抓头发，烦躁地吼道：\"这什么垃圾判定！根本没法玩！\"",
+                "com_furniture_playVideoGames_37": "$self$冷冷地瞥了$target$一眼，语气中满是责备：\"如果你刚才不冲动，我们就不会输。\"",
+                "com_furniture_playVideoGames_38": "$self$颓废地瘫在椅子上，眼神空洞：\"没意思，打了半天全是白费功夫。\"",
+                "com_furniture_playVideoGames_39": "$self$咬牙切齿地关掉电源：\"再也不碰这破游戏了，气死我了。\"",
+                "com_furniture_playVideoGames_40": "$self$直接起身离开，留下一句冰冷的：\"你自己玩吧，我累了。\"",
+                "com_furniture_playVideoGames_Tryjoin_1": "$self$眼巴巴地看着屏幕，忍不住问道：\"那个……能不能加我一个？\"",
+                "com_furniture_playVideoGames_Tryjoin_2": "$self$凑到$target$身边，试探性地说：\"看起来好好玩，带带我呗？\"",
+                "com_furniture_playVideoGames_Tryjoin_3": "$self$拿起闲置的手柄晃了晃：\"缺队友吗？职业辅助申请出战！\"",
+                "com_furniture_playVideoGames_Tryjoin_4": "$self$有些不好意思地挠挠脸颊：\"我在旁边看半天了，手有点痒……\"",
+                "com_furniture_playVideoGames_Tryjoin_5": "$self$自信地扬起下巴：\"这一关很难哦，需要我帮忙吗？\"",
+                "com_furniture_playVideoGames_Tryjoin_6": "$self$轻轻戳了戳$target$：\"双人模式更有意思吧？一起？\"",
+                "com_furniture_playVideoGames_Joined_1": "$self$欢呼一声，迅速挤进沙发里：\"好耶！看我大展身手！\"",
+                "com_furniture_playVideoGames_Joined_2": "$self$立刻进入状态，眼神变得专注：\"谢啦！绝对不会拖后腿的！\"",
+                "com_furniture_playVideoGames_Joined_3": "$self$开心地哼起了小曲，熟练地调整设置。\"那我就不客气咯。\"",
+                "com_furniture_playVideoGames_Joined_4": "$self$感激地看了$target$一眼：\"还是两个人玩有意思！\"",
+                "com_furniture_playVideoGames_Joined_5": "$self$搓着手掌跃跃欲试：\"终于轮到我了，看好了！\"",
+                "com_furniture_playVideoGames_Joined_6": "$self$笑着撞了一下$target$的肩膀：\"合作愉快！\"",
+                "com_furniture_playVideoGames_Join_Refused_1": "$self$有些失落地垂下手，勉强笑了笑：\"啊，这样啊，那没事。\"",
+                "com_furniture_playVideoGames_Join_Refused_2": "$self$撇了撇嘴，把手柄放回原处：\"小气鬼，不玩就不玩。\"",
+                "com_furniture_playVideoGames_Join_Refused_3": "$self$尴尬地收回手，假装不在意地看向别处：\"我也就随口一问。\"",
+                "com_furniture_playVideoGames_Join_Refused_4": "$self$默默地退到一边，眼神里闪过一丝落寞。\"那你们玩，我先走了。\"",
+                "com_furniture_playVideoGames_Join_Refused_5": "$self$有些不甘心地嘟囔：\"一个人玩多没劲啊……\"",
+                "com_furniture_playVideoGames_Join_Refused_6": "$self$耸耸肩试图缓解尴尬：\"行吧，我去看看别的。\"",
+                "com_furniture_playVideoGames_Join_1": "$self$抱歉地指了指屏幕：\"这关是单人限定剧情，下次再带你联机好不好？\"",
+                "com_furniture_playVideoGames_Join_2": "$self$专心致志地操作着，头也不回地说：\"稍微等一下，我现在精神高度紧张，怕顾不上你。\"",
+                "com_furniture_playVideoGames_Join_3": "$self$苦笑着说：\"我现在自身难保，带上你会一起团灭的，还是让我先练练手吧。\"",
+                "com_furniture_playVideoGames_Join_4": "$self$温和地解释：\"我想先一个人体验完这段剧情，晚点再一起玩对战？\"",
+                "com_furniture_playVideoGames_Join_5": "$self$摇摇头：\"这游戏手感太怪了，我还没摸透，怕影响你体验。\"",
+                "com_furniture_playVideoGames_Join_6": "$self$眨眨眼说：\"今天我想当独行侠，明天再组队怎么样？\"",
+                "com_furniture_playVideoGames_Join_7": "$self$立刻护住手柄，警惕地看着$target$：\"别碰，这是我的存档。\"",
+                "com_furniture_playVideoGames_Join_8": "$self$冷淡地回了一句：\"没空带新手。\"",
+                "com_furniture_playVideoGames_Join_9": "$self$嫌弃地看了一眼：\"你水平太菜了，会拉低我评分的。\"",
+                "com_furniture_playVideoGames_Join_10": "$self$毫不客气地说：\"我想一个人玩，别来烦我。\"",
+                "com_furniture_playVideoGames_Join_11": "$self$暂停游戏，不爽地指着门：\"我想静静，出去。\"",
+                "com_furniture_playVideoGames_Join_12": "$self$嗤笑一声：\"加你？你是想来捣乱的吧？\"",
+                "com_furniture_playVideoGames_Join_13": "$self$立刻递过去一个手柄：\"来得正是时候！这BOSS太难打了，快帮我！\"",
+                "com_furniture_playVideoGames_Join_14": "$self$惊喜地挪开位置：\"快快快！Player2即将加入战场！\"",
+                "com_furniture_playVideoGames_Join_15": "$self$松了一口气：\"救星来了！我自己玩得都快自闭了。\"",
+                "com_furniture_playVideoGames_Join_16": "$self$笑着把手柄抛过去：\"接着！正愁没人陪我对战呢。\"",
+                "com_furniture_playVideoGames_Join_17": "$self$兴奋地指着屏幕：\"你也玩这个？太好了，一起来刷副本！\"",
+                "com_furniture_playVideoGames_Join_18": "$self$立刻退回主菜单切换双人模式：\"早就等你这句话了！\"",
+                "com_furniture_playVideoGames_Join_19": "$self$被吓了一跳，慌忙把手柄递过去：\"给你！都给你玩！\"",
+                "com_furniture_playVideoGames_Join_20": "$self$身体缩成一团，唯唯诺诺地说：\"好、好的，你想怎么玩都可以。\"",
+                "com_furniture_playVideoGames_Join_21": "$self$虽然满脸写着不愿意，但在对方的威压下还是默默开启了双人模式。",
+                "com_furniture_playVideoGames_Join_22": "$self$手指发抖地操作着，生怕自己哪里做得不对惹怒了对方。",
+                "com_furniture_playVideoGames_Join_23": "$self$低着头不敢说话，只能机械地配合着对方的动作。",
+                "com_furniture_playVideoGames_Join_24": "$self$眼眶微红，即使不想玩了也不敢放下手柄。",
+                "com_furniture_playVideoGames_Join_25": "$self$愣了一下，随即递出手柄：\"你想玩？也可以，我不介意。\"",
+                "com_furniture_playVideoGames_Join_26": "$self$有些意外地看着$target$：\"你也感兴趣？那就一起吧。\"",
+                "com_furniture_playVideoGames_Join_27": "$self$稍微迟疑了一下，还是点头同意了：\"好吧，不过我玩得不是很好。\"",
+                "com_furniture_playVideoGames_Join_28": "$self$让出一半沙发：\"既然你都开口了……坐吧。\"",
+                "com_furniture_playVideoGames_Join_29": "$self$有些好奇地看着$target$拿起手柄：\"没想到你也好这口，那就试试配合吧。\"",
+                "com_furniture_playVideoGames_Join_30": "$self$虽然有些被打断的不适，但还是接受了：\"行吧，多个人多份力。\"",
+                "com_furniture_playVideoGames_Ongoing_1": "$self$的手指在按键上飞快舞动，屏幕的光映在她的脸上，神情异常专注。",
+                "com_furniture_playVideoGames_Ongoing_2": "$self$嘴里咬着一根棒棒糖，身体随着游戏角色的动作左右轻晃。",
+                "com_furniture_playVideoGames_Ongoing_3": "$self$全神贯注地盯着屏幕，手指在按键上飞快舞动，发出清脆的声响。",
+                "com_furniture_playVideoGames_Ongoing_4": "$self$随着角色的动作左右摇晃着身体，嘴里念念有词：\"对……就是那里，躲开！\"",
+                "com_furniture_playVideoGames_Ongoing_5": "$self$眉头紧锁，额头上渗出了细密的汗珠，显然正处于关键时刻。",
+                "com_furniture_playVideoGames_Ongoing_6": "$self$完全沉浸在光影交错的世界里，连外面的天色变暗都没有察觉。",
+                "com_furniture_playVideoGames_Ongoing_7": "$self$偶尔会因为操作失误而发出懊恼的咂舌声，但视线从未离开过屏幕。",
+                "com_furniture_playVideoGames_Ongoing_8": "$self$保持着高度的专注，瞳孔中映射着游戏画面不断变换的色彩。",
+                "com_furniture_playVideoGames_Interrupt_1": "察觉到有人靠近，$self$猛地瑟缩了一下，手中的操作出现明显的失误，眼神惊慌地游移。",
+                "com_furniture_playVideoGames_Interrupt_2": "$self$立刻按下了暂停键，甚至不敢回头确认，双手紧紧攥着手柄，指节泛白。",
+                "com_furniture_playVideoGames_Interrupt_3": "$self$的手猛地抖了一下，屏幕上的角色随即掉下了悬崖。",
+                "com_furniture_playVideoGames_Interrupt_4": "$self$立刻放下手柄站了起来，低着头不敢看来人的眼睛。\"我……我马上就关掉。\"",
+                "com_furniture_playVideoGames_Interrupt_5": "$self$身体僵硬地缩在角落里，手里紧紧攥着手柄像是那是唯一的防身武器。",
+                "com_furniture_playVideoGames_Interrupt_6": "$self$眼神慌乱地在屏幕和来人之间游移，声音微微发颤。\"对不起，我没注意时间……\"",
+                "com_furniture_playVideoGames_Interrupt_7": "$self$下意识地想要藏起游戏机，动作显得笨拙又惊慌。",
+                "com_furniture_playVideoGames_Interrupt_8": "$self$屏住呼吸，尽力降低自己的存在感，祈祷对方快点离开。",
+                "com_furniture_playVideoGames_Interrupt_9": "$self$透过屏幕的反光看到了来人，原本放松的肩膀瞬间紧绷，冷冷地\"啧\"了一声。",
+                "com_furniture_playVideoGames_Interrupt_10": "$self$完全无视了身后的动静，只是按键的声音变得更加粗暴响亮，仿佛在宣泄不满。",
+                "com_furniture_playVideoGames_Interrupt_11": "$self$啧了一声，把耳机的音量调大，假装没有看到来人。",
+                "com_furniture_playVideoGames_Interrupt_12": "$self$冷冷地斜了一眼，手中的操作变得更加粗暴。\"别挡着屏幕，碍眼。\"",
+                "com_furniture_playVideoGames_Interrupt_13": "$self$背过身去，用只有自己能听见的声音嘟囔了一句：\"真晦气。\"",
+                "com_furniture_playVideoGames_Interrupt_14": "$self$暂停了游戏，双手抱胸，一脸不耐烦。\"有事？没事别在这晃。\"",
+                "com_furniture_playVideoGames_Interrupt_15": "$self$完全无视了对方的存在，只是原本轻松的表情瞬间冷了下来。",
+                "com_furniture_playVideoGames_Interrupt_16": "$self$重重地按下暂停键，把手柄往沙发上一丢。\"这游戏没法玩了。\"",
+                "com_furniture_playVideoGames_Interrupt_17": "听到脚步声，$self$摘下一侧耳机，回头露出灿烂的笑容：\"稍微等我一下，这关马上就过了！\"",
+                "com_furniture_playVideoGames_Interrupt_18": "$self$拍了拍身边的空位，眼睛都没离开屏幕，却自然地说道：\"来得正好，帮我看个点。\"",
+                "com_furniture_playVideoGames_Interrupt_19": "$self$瞥见来人，立刻展颜一笑，拍了拍身边的位置。\"你来啦？快坐，这关超精彩！\"",
+                "com_furniture_playVideoGames_Interrupt_20": "$self$虽然视线还黏在屏幕上，但语气明显轻快了起来。\"帮我看看那个宝箱在哪，我腾不出手。\"",
+                "com_furniture_playVideoGames_Interrupt_21": "$self$顺手拿起一块零食递到来人嘴边。\"张嘴~这个味道不错吧？\"",
+                "com_furniture_playVideoGames_Interrupt_22": "$self$把耳机摘下一半，俏皮地眨了眨眼。\"正想着你呢，这就来了？\"",
+                "com_furniture_playVideoGames_Interrupt_23": "$self$身体自然地向来人的方向倾斜了一下。\"稍微等我一下哦，马上就存档。\"",
+                "com_furniture_playVideoGames_Interrupt_24": "$self$笑着抱怨道：\"你一来我就分心了，待会输了算你的。\"",
+                "com_furniture_playVideoGames_Interrupt_25": "$self$的视线虽然还在屏幕上，脸颊却泛起红晕，咬着下唇偷偷用余光瞥向来人。",
+                "com_furniture_playVideoGames_Interrupt_26": "$self$故意伸了个懒腰，展示出身体的曲线，声音变得有些黏糊：\"怎么？是想看我玩，还是想玩我？\"",
+                "com_furniture_playVideoGames_Interrupt_27": "$self$脸颊微微泛红，眼神变得有些游离，心思显然已经不在游戏上了。",
+                "com_furniture_playVideoGames_Interrupt_28": "$self$故意调整了一下坐姿，展示出更优美的身体曲线。\"你要不要……教教我这一段怎么过？\"",
+                "com_furniture_playVideoGames_Interrupt_29": "$self$咬着下唇，偷偷用余光观察着来人的一举一动。",
+                "com_furniture_playVideoGames_Interrupt_30": "$self$声音变得软糯起来，带着一丝撒娇的意味。\"哎呀，你看着我玩，我都紧张得操作变形了。\"",
+                "com_furniture_playVideoGames_Interrupt_31": "$self$把手柄递过去，指尖似有若无地触碰到了对方的手。\"这关太难了，帮帮我好不好？\"",
+                "com_furniture_playVideoGames_Interrupt_32": "$self$有些期待地抬起头，眼睛里仿佛有星星在闪烁。\"你是一直在看我吗？\"",
+                "com_furniture_playVideoGames_Interrupt_33": "$self$只是淡淡瞥了一眼来人，随即又将注意力转回游戏中。\"有事吗？我现在有点忙。\"",
+                "com_furniture_playVideoGames_Interrupt_34": "$self$没有过多的反应，依旧维持着之前的姿势，仿佛周围的一切都与她无关。",
+                "com_furniture_playVideoGames_Interrupt_35": "$self$只是淡淡地点了点头算是打招呼，注意力很快又回到了屏幕上。",
+                "com_furniture_playVideoGames_Interrupt_36": "$self$随口问了一句：\"你也还没睡啊？\"",
+                "com_furniture_playVideoGames_Interrupt_37": "$self$往旁边挪了挪，腾出一点空间，但没有说话。",
+                "com_furniture_playVideoGames_Interrupt_38": "$self$平静地说道：\"再等我五分钟，这局马上结束。\""
             },
             "en-us": {
-                
-                "com_furniture_playVideoGames_begin_1": "$doer.firstname$拿起手柄，沉浸在了游戏里。",
-                "com_furniture_playVideoGames_begin_2": "$doer.firstname$盯着游戏画面，眼神专注",
-
-                "kojo_default_com_furniture_playVideoGames_refuse_1": "$self$: \"Sorry, I'm not really in the mood for games right now.\"",
-                "kojo_default_com_furniture_playVideoGames_refuse_2": "$self$: \"You go ahead. I'll pass today.\"",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_1": "\"Ugh… I can't believe I lost again\" $self$ tosses the controller to the side",
-                "kojo_default_com_furniture_playVideoGames_accept_failure_2": "$self$: \"That was… rough. Not really my kind of game.\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_1": "$self$: \"That was way more fun than I expected!\"",
-                "kojo_default_com_furniture_playVideoGames_accept_success_2": "$self$: \"You're pretty good at this! I'll get you next time.\""
+                "com_furniture_playVideoGames_Begin_1": "$self$ tosses a spare controller without hesitation, eyes full of excitement: \"Been waiting for you to say that! Log in, quick!\"",
+                "com_furniture_playVideoGames_Begin_2": "$self$ shifts over, looking at $target$ expectantly: \"It's boring alone, two people are definitely more fun.\"",
+                "com_furniture_playVideoGames_Begin_3": "$self$'s eyes light up as she jumps up: \"Just what I wanted! My hands are itching to play!\"",
+                "com_furniture_playVideoGames_Begin_4": "$self$ snatches the other controller without a word: \"Come on! Bring it on!\"",
+                "com_furniture_playVideoGames_Begin_5": "$self$ claps happily: \"Sure! I was just getting bored anyway, let's start!\"",
+                "com_furniture_playVideoGames_Begin_6": "$self$ leans in excitedly: \"Count me in! I've been craving this game for ages!\"",
+                "com_furniture_playVideoGames_Begin_7": "$self$ laughs while rolling up sleeves: \"Loser treats us to milk tea!\"",
+                "com_furniture_playVideoGames_Begin_8": "$self$ immediately drops what she was doing: \"How could I miss out on this?\"",
+                "com_furniture_playVideoGames_Begin_9": "$self$'s body trembles slightly. Although resistance is written all over her face, she silently makes room on the screen. \"…Understood, I'll cooperate.\"",
+                "com_furniture_playVideoGames_Begin_10": "$self$ looks down, avoiding eye contact, and says with a trembling voice: \"Is it… okay if I just play with you?\"",
+                "com_furniture_playVideoGames_Begin_11": "$self$ takes the controller with shaking hands, voice barely audible: \"I… I understand. I'll play.\"",
+                "com_furniture_playVideoGames_Begin_12": "$self$ bows her head, daring not to resist, and silently sits in the spot indicated by $target$.",
+                "com_furniture_playVideoGames_Begin_13": "$self$ looks at $target$ in terror and nods frantically: \"Don't, don't be angry, I'll play.\"",
+                "com_furniture_playVideoGames_Begin_14": "$self$ holds the controller stiffly, knuckles white from tension, not daring to look anywhere but the screen.",
+                "com_furniture_playVideoGames_Begin_15": "$self$, though clearly resistant, is forced to pick up the controller under $target$'s gaze.",
+                "com_furniture_playVideoGames_Begin_16": "$self$ starts operating mechanically like a machine following orders, with no superfluous movement.",
+                "com_furniture_playVideoGames_Begin_17": "$self$ pauses, looking somewhat surprised: \"Eh? You want to play with me? Well… okay, if you don't mind my terrible skills.\"",
+                "com_furniture_playVideoGames_Begin_18": "$self$ blinks, seemingly unexpected to be invited, then hands over the controller after a hesitation: \"Sure, let's give it a try.\"",
+                "com_furniture_playVideoGames_Begin_19": "$self$ pauses, then hesitantly takes the controller: \"Uh, I haven't played before, if you don't mind me being a noob…\"",
+                "com_furniture_playVideoGames_Begin_20": "$self$ blinks, surprised: \"Inviting me? Okay, let's try it then.\"",
+                "com_furniture_playVideoGames_Begin_21": "$self$ sits down somewhat awkwardly: \"I don't really know the rules, but since you said so.\"",
+                "com_furniture_playVideoGames_Begin_22": "$self$ looks at the screen curiously: \"This looks complicated, but since you're teaching me, I'll play a few rounds.\"",
+                "com_furniture_playVideoGames_Begin_23": "$self$ scratches her hair: \"I was planning to sleep… alright, just for a little while.\"",
+                "com_furniture_playVideoGames_Begin_24": "$self$ holds the controller awkwardly: \"Is it this button? Doesn't seem that hard?\"",
+                "com_furniture_playVideoGames_Begin_25": "$self$ sits cross-legged on the carpet, casually grabs the controller, and presses the power button.",
+                "com_furniture_playVideoGames_Begin_26": "$self$ skillfully puts on the headset, tucks her long hair behind her ear, eyes instantly becoming sharp.",
+                "com_furniture_playVideoGames_Begin_27": "$self$ stretches, then skillfully grabs the controller and sits cross-legged on the carpet. \"Haven't played seriously in a while, hope I'm not rusty.\"",
+                "com_furniture_playVideoGames_Begin_28": "$self$ puts on headphones, blocking out surrounding sounds, gaze instantly sharpening.",
+                "com_furniture_playVideoGames_Begin_29": "$self$ turns on the console, smiling unconsciously at the familiar login screen. \"Gonna clear this level tonight.\"",
+                "com_furniture_playVideoGames_Begin_30": "$self$ arranges snacks and drinks within reach, posturing for a long battle.",
+                "com_furniture_playVideoGames_Begin_31": "$self$ takes a deep breath and grips the controller tight, looking serious as if performing a ritual.",
+                "com_furniture_playVideoGames_Begin_32": "$self$ quickly skims through a guide, then confidently clicks 'Start Game'.",
+                "com_furniture_playVideoGames_1": "$self$ shakes the controller in hand, smiling apologetically: \"This is the single-player story mode, let's play together next time.\"",
+                "com_furniture_playVideoGames_2": "$self$ tilts her head in thought, then shakes it: \"I'm on a roll right now, I want to try clearing it myself first.\"",
+                "com_furniture_playVideoGames_3": "$self$ waves smilingly: \"Too tired today, afraid I'll drag you down. Rain check?\"",
+                "com_furniture_playVideoGames_4": "$self$ points to the book at hand: \"I'm just at the best part, I'll join you next time for sure.\"",
+                "com_furniture_playVideoGames_5": "$self$ shrugs regretfully: \"I want to play too, but I still have homework to finish.\"",
+                "com_furniture_playVideoGames_6": "$self$ declines gently: \"My eyes are a bit sore, I want to rest for a while.\"",
+                "com_furniture_playVideoGames_7": "$self$ makes a face: \"If I start I won't be able to stop, and I have to get up early tomorrow.\"",
+                "com_furniture_playVideoGames_8": "$self$ pats $target$ on the shoulder: \"You go play, I'll cheer for you from the side.\"",
+                "com_furniture_playVideoGames_9": "$self$ snorts coldly without even looking: \"I'm not used to teaming with noobs, don't get in my way.\"",
+                "com_furniture_playVideoGames_10": "$self$ directly turns up the headphone volume, showing she doesn't want to be disturbed.",
+                "com_furniture_playVideoGames_11": "$self$ doesn't even look up, rejecting coldly: \"Not interested.\"",
+                "com_furniture_playVideoGames_12": "$self$ rolls her eyes: \"Play with you? Forget it, I don't want to die of anger.\"",
+                "com_furniture_playVideoGames_13": "$self$ sneers: \"Go play this kid's game by yourself.\"",
+                "com_furniture_playVideoGames_14": "$self$ waves impatiently: \"Busy, don't bother me.\"",
+                "com_furniture_playVideoGames_15": "$self$ frowns at $target$: \"Do you have a lot of free time? Well, I don't.\"",
+                "com_furniture_playVideoGames_16": "$self$ puts on headphones directly, shutting out $target$'s voice.",
+                "com_furniture_playVideoGames_17": "$self$ jumps up excitedly, hugging $target$: \"We won! We won! That was awesome!\"",
+                "com_furniture_playVideoGames_18": "$self$ looks at the clearance screen, beaming with pride: \"Heh heh, as expected of me, perfect clear!\"",
+                "com_furniture_playVideoGames_19": "$self$ raises both hands cheering: \"YoooHooo! No one's gonna beat this record!\"",
+                "com_furniture_playVideoGames_20": "$self$ looks at $target$ admiringly: \"That last move was so cool! We're the best partners!\"",
+                "com_furniture_playVideoGames_21": "$self$ leans back on the sofa satisfied, smiling: \"Finally beat it. This sense of achievement is unbeatable.\"",
+                "com_furniture_playVideoGames_22": "$self$ hums a victory tune happily, mood visibly improved. \"We have to eat something good tonight to celebrate!\"",
+                "com_furniture_playVideoGames_23": "$self$ watches the ending animation expressionlessly, saying flatly: \"Just like that? More boring than I thought.\"",
+                "com_furniture_playVideoGames_24": "$self$ rubs her sore wrist and sighs: \"Not worth getting this tired for such a small reward.\"",
+                "com_furniture_playVideoGames_25": "$self$ looks at $target$ with distaste: \"We won, but your gameplay just now was really cringe.\"",
+                "com_furniture_playVideoGames_26": "$self$ closes the game, feeling empty: \"So what if we cleared it? Waste of time.\"",
+                "com_furniture_playVideoGames_27": "$self$ complains with a frown: \"This ending sucks, wouldn't have played if I knew.\"",
+                "com_furniture_playVideoGames_28": "$self$ responds coldly to $target$'s cheers: \"That's enough, it's not a big deal.\"",
+                "com_furniture_playVideoGames_29": "$self$ laughs heartily despite seeing 'DEFEAT': \"Hahahaha! That death was hilarious!\"",
+                "com_furniture_playVideoGames_30": "$self$ lets out a long breath, looking unsatisfied: \"We lost, but that was so thrilling.\"",
+                "com_furniture_playVideoGames_31": "$self$ pats $target$'s shoulder with bright eyes: \"It's okay, our teamwork is getting better, we'll win next time!\"",
+                "com_furniture_playVideoGames_32": "$self$ stretches: \"Didn't clear it, but I had fun today. Thanks!\"",
+                "com_furniture_playVideoGames_33": "$self$ isn't discouraged, analyzing excitedly instead: \"We were so close, I have an idea now!\"",
+                "com_furniture_playVideoGames_34": "$self$ sighs with a smile: \"This challenge is what makes it fun. Even losing feels good!\"",
+                "com_furniture_playVideoGames_35": "$self$ slams down the controller with a dark face, staring silently at the black screen.",
+                "com_furniture_playVideoGames_36": "$self$ grabs her hair fiercely, shouting irritably: \"What kind of garbage hitbox is this! Unplayable!\"",
+                "com_furniture_playVideoGames_37": "$self$ glances coldly at $target$, tone full of blame: \"If you hadn't rushed just now, we wouldn't have lost.\"",
+                "com_furniture_playVideoGames_38": "$self$ slumps in the chair, eyes empty: \"Boring. All that effort for nothing.\"",
+                "com_furniture_playVideoGames_39": "$self$ turns off the power through gritted teeth: \"Never touching this trash game again. Pisses me off.\"",
+                "com_furniture_playVideoGames_40": "$self$ gets up and leaves directly, leaving a cold remark: \"Play by yourself, I'm tired.\"",
+                "com_furniture_playVideoGames_Tryjoin_1": "$self$ stares at the screen, asking uncontrollably: \"Um… can I join?\"",
+                "com_furniture_playVideoGames_Tryjoin_2": "$self$ leans close to $target$, asking tentatively: \"Looks fun, carry me?\"",
+                "com_furniture_playVideoGames_Tryjoin_3": "$self$ shakes the idle controller: \"Need a teammate? Pro support ready for battle!\"",
+                "com_furniture_playVideoGames_Tryjoin_4": "$self$ scratches her cheek shyly: \"I've been watching for a while, my hands are itching…\"",
+                "com_furniture_playVideoGames_Tryjoin_5": "$self$ lifts her chin confidently: \"This level is hard, need some help?\"",
+                "com_furniture_playVideoGames_Tryjoin_6": "$self$ gently pokes $target$: \"Two-player mode is more fun, right? Together?\"",
+                "com_furniture_playVideoGames_Joined_1": "$self$ cheers and squeezes into the sofa: \"Alright! Watch me show off my skills!\"",
+                "com_furniture_playVideoGames_Joined_2": "$self$ immediately gets into the zone, gaze focused: \"Thanks! I definitely won't drag you down!\"",
+                "com_furniture_playVideoGames_Joined_3": "$self$ hums a tune happily, skillfully adjusting settings. \"I won't be polite then.\"",
+                "com_furniture_playVideoGames_Joined_4": "$self$ looks at $target$ gratefully: \"It really is more fun with two people!\"",
+                "com_furniture_playVideoGames_Joined_5": "$self$ rubs her hands, eager to try: \"Finally my turn, watch this!\"",
+                "com_furniture_playVideoGames_Joined_6": "$self$ smiles and bumps $target$'s shoulder: \"Good luck to us!\"",
+                "com_furniture_playVideoGames_Join_Refused_1": "$self$ drops her hand in disappointment, forcing a smile: \"Ah, I see. It's okay.\"",
+                "com_furniture_playVideoGames_Join_Refused_2": "$self$ pouts, putting the controller back: \"Stingy. Fine, I won't play.\"",
+                "com_furniture_playVideoGames_Join_Refused_3": "$self$ awkwardly withdraws her hand, pretending not to care and looking away: \"I was just asking.\"",
+                "com_furniture_playVideoGames_Join_Refused_4": "$self$ silently retreats to the side, a trace of loneliness in her eyes. \"You guys play, I'm leaving.\"",
+                "com_furniture_playVideoGames_Join_Refused_5": "$self$ mutters unwillingly: \"Playing alone is so boring…\"",
+                "com_furniture_playVideoGames_Join_Refused_6": "$self$ shrugs to ease the awkwardness: \"Alright, I'll go check something else.\"",
+                "com_furniture_playVideoGames_Join_1": "$self$ points apologetically at the screen: \"This level is single-player story only. I'll play co-op with you next time, okay?\"",
+                "com_furniture_playVideoGames_Join_2": "$self$ operates intently, saying without looking back: \"Wait a sec, I'm super focused right now, can't pay attention to you.\"",
+                "com_furniture_playVideoGames_Join_3": "$self$ smiles wryly: \"I can barely save myself right now, bringing you along would be a team wipe. Let me practice first.\"",
+                "com_furniture_playVideoGames_Join_4": "$self$ explains gently: \"I want to experience this story part alone first. Play versus later?\"",
+                "com_furniture_playVideoGames_Join_5": "$self$ shakes her head: \"This game feels weird, I haven't figured it out yet, afraid it'll ruin your experience.\"",
+                "com_furniture_playVideoGames_Join_6": "$self$ blinks: \"I want to be a lone wolf today. Team up tomorrow?\"",
+                "com_furniture_playVideoGames_Join_7": "$self$ immediately shields the controller, eyeing $target$ warily: \"Don't touch, this is my save file.\"",
+                "com_furniture_playVideoGames_Join_8": "$self$ replies coldly: \"No time to carry noobs.\"",
+                "com_furniture_playVideoGames_Join_9": "$self$ looks with disgust: \"You're too bad, you'll drag down my score.\"",
+                "com_furniture_playVideoGames_Join_10": "$self$ says bluntly: \"I want to play alone. Don't bother me.\"",
+                "com_furniture_playVideoGames_Join_11": "$self$ pauses the game, pointing at the door unhappily: \"I want peace and quiet. Out.\"",
+                "com_furniture_playVideoGames_Join_12": "$self$ sneers: \"Add you? You just want to troll, right?\"",
+                "com_furniture_playVideoGames_Join_13": "$self$ immediately hands over a controller: \"Perfect timing! This boss is too hard, help me!\"",
+                "com_furniture_playVideoGames_Join_14": "$self$ moves over pleasantly surprised: \"Quick quick! Player 2 entering the battlefield!\"",
+                "com_furniture_playVideoGames_Join_15": "$self$ breathes a sigh of relief: \"Savior's here! I was about to go crazy playing alone.\"",
+                "com_furniture_playVideoGames_Join_16": "$self$ laughs and tosses the controller over: \"Catch! Was just worrying about having no one to play versus with.\"",
+                "com_furniture_playVideoGames_Join_17": "$self$ points at the screen excitedly: \"You play this too? Awesome, let's raid together!\"",
+                "com_furniture_playVideoGames_Join_18": "$self$ immediately returns to menu to switch to 2-player mode: \"Been waiting for you to say that!\"",
+                "com_furniture_playVideoGames_Join_19": "$self$ is startled, hurriedly handing over the controller: \"Here! You can play it all!\"",
+                "com_furniture_playVideoGames_Join_20": "$self$ curls up, saying meekly: \"O-okay, you can play however you want.\"",
+                "com_furniture_playVideoGames_Join_21": "$self$, though unwilling, silently starts 2-player mode under the pressure.",
+                "com_furniture_playVideoGames_Join_22": "$self$ operates with trembling fingers, terrified of doing something wrong and angering the other person.",
+                "com_furniture_playVideoGames_Join_23": "$self$ lowers her head, daring not speak, only mechanically matching the other's moves.",
+                "com_furniture_playVideoGames_Join_24": "$self$'s eyes are red. Even if she doesn't want to play anymore, she dares not put down the controller.",
+                "com_furniture_playVideoGames_Join_25": "$self$ pauses, then hands out the controller: \"You want to play? Sure, I don't mind.\"",
+                "com_furniture_playVideoGames_Join_26": "$self$ looks at $target$ with surprise: \"You're interested too? Then let's play together.\"",
+                "com_furniture_playVideoGames_Join_27": "$self$ hesitates slightly, but nods in agreement: \"Alright, but I'm not very good.\"",
+                "com_furniture_playVideoGames_Join_28": "$self$ gives up half the sofa: \"Since you asked… sit.\"",
+                "com_furniture_playVideoGames_Join_29": "$self$ watches curiously as $target$ picks up the controller: \"Didn't expect you to like this. Let's try co-op.\"",
+                "com_furniture_playVideoGames_Join_30": "$self$ accepts despite the slight annoyance of being interrupted: \"Fine, more hands, more power.\"",
+                "com_furniture_playVideoGames_Ongoing_1": "$self$'s fingers dance across the buttons, screen light reflecting on her face, expression unusually focused.",
+                "com_furniture_playVideoGames_Ongoing_2": "$self$ has a lollipop in her mouth, body swaying slightly with the game character's movements.",
+                "com_furniture_playVideoGames_Ongoing_3": "$self$ stares intently at the screen, fingers tapping rapidly on the buttons, making crisp sounds.",
+                "com_furniture_playVideoGames_Ongoing_4": "$self$ sways left and right with the character's movements, muttering: \"Yes… right there, dodge!\"",
+                "com_furniture_playVideoGames_Ongoing_5": "$self$ frowns, fine sweat on her forehead, clearly at a critical moment.",
+                "com_furniture_playVideoGames_Ongoing_6": "$self$ is completely immersed in the world of light and shadow, unaware of the darkening sky outside.",
+                "com_furniture_playVideoGames_Ongoing_7": "$self$ occasionally clicks her tongue in frustration at mistakes, but eyes never leave the screen.",
+                "com_furniture_playVideoGames_Ongoing_8": "$self$ maintains high focus, pupils reflecting the constantly changing colors of the game screen.",
+                "com_furniture_playVideoGames_Interrupt_1": "Sensing someone approaching, $self$ flinches violently, makes a clear mistake, eyes darting in panic.",
+                "com_furniture_playVideoGames_Interrupt_2": "$self$ immediately presses pause, daring not even look back, gripping the controller tightly, knuckles white.",
+                "com_furniture_playVideoGames_Interrupt_3": "$self$'s hand jerks, and the character on screen falls off a cliff.",
+                "com_furniture_playVideoGames_Interrupt_4": "$self$ immediately puts down the controller and stands up, head down, daring not look at the visitor. \"I… I'll turn it off right away.\"",
+                "com_furniture_playVideoGames_Interrupt_5": "$self$ stiffens in the corner, clutching the controller like it's her only weapon.",
+                "com_furniture_playVideoGames_Interrupt_6": "$self$'s eyes dart panic-stricken between screen and visitor, voice trembling slightly. \"Sorry, I lost track of time…\"",
+                "com_furniture_playVideoGames_Interrupt_7": "$self$ subconsciously tries to hide the console, movements clumsy and panicked.",
+                "com_furniture_playVideoGames_Interrupt_8": "$self$ holds her breath, trying to minimize her presence, praying the person leaves quickly.",
+                "com_furniture_playVideoGames_Interrupt_9": "$self$ sees the visitor in the screen's reflection, relaxed shoulders tensing instantly, tutting coldly.",
+                "com_furniture_playVideoGames_Interrupt_10": "$self$ completely ignores the commotion behind her, but the button clicking becomes rougher and louder, as if venting dissatisfaction.",
+                "com_furniture_playVideoGames_Interrupt_11": "$self$ tuts and turns up the volume, pretending not to see the visitor.",
+                "com_furniture_playVideoGames_Interrupt_12": "$self$ glances coldly, operation becoming rougher. \"Don't block the screen, you're in the way.\"",
+                "com_furniture_playVideoGames_Interrupt_13": "$self$ turns her back, muttering so only she can hear: \"Bad luck.\"",
+                "com_furniture_playVideoGames_Interrupt_14": "$self$ pauses the game, arms crossed, looking impatient. \"What? If nothing, get lost.\"",
+                "com_furniture_playVideoGames_Interrupt_15": "$self$ completely ignores the other's presence, but her relaxed expression turns cold instantly.",
+                "com_furniture_playVideoGames_Interrupt_16": "$self$ slams the pause button and tosses the controller on the sofa. \"Can't play this anymore.\"",
+                "com_furniture_playVideoGames_Interrupt_17": "Hearing footsteps, $self$ takes off one side of the headset, looking back with a bright smile: \"Wait a sec, almost cleared this level!\"",
+                "com_furniture_playVideoGames_Interrupt_18": "$self$ pats the empty seat, saying naturally without looking away from the screen: \"Perfect timing, watch my back.\"",
+                "com_furniture_playVideoGames_Interrupt_19": "$self$ sees the visitor and smiles immediately, patting the seat next to her. \"You're here? Sit, this level is awesome!\"",
+                "com_furniture_playVideoGames_Interrupt_20": "$self$, though eyes glued to screen, speaks in a lighter tone. \"Help me find that chest, my hands are full.\"",
+                "com_furniture_playVideoGames_Interrupt_21": "$self$ hands a snack to the visitor's mouth. \"Open up~ Tastes good, right?\"",
+                "com_furniture_playVideoGames_Interrupt_22": "$self$ takes off half the headset, winking playfully. \"Was just thinking of you, and here you are?\"",
+                "com_furniture_playVideoGames_Interrupt_23": "$self$ leans naturally towards the visitor. \"Wait a sec for me, saving soon.\"",
+                "com_furniture_playVideoGames_Interrupt_24": "$self$ complains with a smile: \"You distracted me as soon as you came, if I lose it's on you.\"",
+                "com_furniture_playVideoGames_Interrupt_25": "$self$'s gaze remains on screen, but cheeks flush, biting lip and stealing glances at the visitor.",
+                "com_furniture_playVideoGames_Interrupt_26": "$self$ stretches intentionally, showing off curves, voice becoming sticky: \"What? Want to watch me play, or play with me?\"",
+                "com_furniture_playVideoGames_Interrupt_27": "$self$ blushes slightly, eyes wandering, clearly no longer focused on the game.",
+                "com_furniture_playVideoGames_Interrupt_28": "$self$ adjusts posture intentionally, showing off better curves. \"Do you want to… teach me how to pass this part?\"",
+                "com_furniture_playVideoGames_Interrupt_29": "$self$ bites her lip, secretly observing the visitor's every move.",
+                "com_furniture_playVideoGames_Interrupt_30": "$self$'s voice becomes soft and coying. \"Oh, watching me play makes me so nervous I'm messing up.\"",
+                "com_furniture_playVideoGames_Interrupt_31": "$self$ hands over the controller, fingers brushing the other's hand almost imperceptibly. \"This level is too hard, help me?\"",
+                "com_furniture_playVideoGames_Interrupt_32": "$self$ looks up expectantly, eyes seemingly sparkling with stars. \"Were you watching me the whole time?\"",
+                "com_furniture_playVideoGames_Interrupt_33": "$self$ glances briefly at the visitor, then returns attention to the game. \"Something up? I'm a bit busy.\"",
+                "com_furniture_playVideoGames_Interrupt_34": "$self$ doesn't react much, maintaining her posture as if everything around has nothing to do with her.",
+                "com_furniture_playVideoGames_Interrupt_35": "$self$ nods slightly as a greeting, attention quickly returning to the screen.",
+                "com_furniture_playVideoGames_Interrupt_36": "$self$ asks casually: \"You haven't slept either?\"",
+                "com_furniture_playVideoGames_Interrupt_37": "$self$ moves over a bit to make space, but doesn't speak.",
+                "com_furniture_playVideoGames_Interrupt_38": "$self$ says calmly: \"Wait five minutes, round is almost over.\""
             }
         }
     }

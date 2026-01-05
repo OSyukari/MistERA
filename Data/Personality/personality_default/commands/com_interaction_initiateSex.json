@@ -6,120 +6,224 @@
                 "Entry": {
                     "ID": "com_interaction_initiateSex",
                     "variants": [
-            {
-                "requireMaster":true,
-                "requireSelfNotMaster": true,
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sex","receiver","sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.1.1 睡眠中 口上文",
-                "responses":
-                [ 
-"$self$发出均匀而绵长的呼吸声，完全没有察觉到衣物已经被褪去。当温热的触感触及私处时，她只是无意识地皱了皱眉，翻了个身发出模糊的哼唧声。","$self$还在梦乡之中，身体随着床垫的下陷而微微倾斜。对于即将到来的入侵，她毫无防备，松弛的四肢就这样大开着展示在空气中。",
-
-"$self$发出一声含糊不清的鼻音，身体本能地在被窝里缩成一团，完全没有意识到睡衣已经被掀开。", "$self$的呼吸依旧绵长均匀，直到那个异物抵住身体的瞬间，眉心才微微皱了一下，嘴里嘟囔着听不清的梦话。", "$self$无意识地翻了个身，温热的大腿正好夹住了那个入侵者，完全把它当成了抱枕的一部分。"
-                ]
-            },
-            {   
-                "requireMaster":true,
-                "requireSelfNotMaster": true,
-                "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","receiver","doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.1.2 时停中 口上文",
-                "responses":
-                [ 
-"$self$维持着伸手拿杯子的动作僵在半空，眼神依旧聚焦在远处的虚像上。在这个凝固的世界里，只有她的私密部位正在被手指肆意拨弄，而那惊恐的表情永远无法浮现在脸上。","$self$的笑容凝固在嘴角，完全不知道自己的双腿已经被强行分开。毫无抵抗的肉体像是一具精美的人偶，任由摆布成最屈辱的姿势。",
-
-"$self$保持着原本伸手拿杯子的动作，眼神凝固在虚空中，对于正被缓缓推开的双腿毫无知觉。", "$self$僵硬的身体像是一具精美的人偶，即使那滚烫的触感已经贴上了最私密的肌肤，在那凝滞的时间里，连一丝颤抖都无法产生。", "$self$脸上还挂着上一秒的微笑，完全不知道自己的身体正在被肆意摆布，即将被侵犯的事实与她此刻的表情形成了残酷的静止画面。"
-                ]
-            },
-            {
-                "requireSelfOnly":true,
-                "useActiveTags":false,
-                "_comment":"2.2.1 独自一人 口上文",
-                "extraPortraitTags":["sex","receiver", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$咬着下唇，一只手难以忍受般地探入了自己的腿间。伴随着急促的喘息，指尖触碰到了那片湿润的软肉。\"哈……怎么会这么想要……\"","$self$眼神迷离地靠在墙角，双手不受控制地揉捏着自己的胸部。那是只有在深夜才会展露出的、被欲望折磨的姿态。",
-"$self$难耐地咬着下唇，手指颤抖着探入了湿热的腿间，指尖触碰到那一点的瞬间，喉咙里溢出了一声压抑的低喘。", "$self$有些焦躁地并在床上磨蹭着双腿，最终还是输给了身体深处的空虚，手缓缓伸向了床头柜里的那个小道具。", "$self$看着镜子里满脸潮红的自己，羞耻地闭上眼，另一只手却诚实地揉上了胸前已经挺立的红豆。"
-                ]
-
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[                   
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.3.2 指令失败拒绝 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$轻轻按住了$target$不规矩的手，带着歉意摇了摇头。\"亲爱的，今晚太累了，抱歉。\"","$self$往后缩了缩身子，拉起被子盖住自己。\"今天身体不太舒服……下次好吗？\"","$self$温柔地吻了吻$target$的额头，然后坚决地推开了他。\"不行哦，明天还要早起呢。\"",
-
-"$self$轻轻推了推$target$的胸膛，侧过头避开了亲吻。\"不行，亲爱的，今天真的没心情。\"", "$self$抓住了那只乱动的手，有些歉意地笑了笑。\"改天好吗？我想先好好睡一觉。\"", "$self$叹了口气，把被子拉高盖住自己。\"别闹了……我很累，别逼我发火。\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.4.3 指令失败拒绝 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$尴尬地笑了笑，不动声色地拉开了两人的距离。\"哈哈，$target$你喝多了吧？别开这种玩笑啦。\"","$self$有些困扰地抓了抓头发，语气尽量保持轻松。\"那个……我觉得我们的关系还没到这一步呢。\"","$self$虽然被吓了一跳，但还是礼貌地推开了对方的手。\"抱歉，我只把$target$当朋友看。\"",
-
-"$self$尴尬地向后退了一步，用开玩笑的语气试图缓解气氛。\"喂喂，这个玩笑可开过头了哦，$target$。\"", "$self$礼貌地挡开了伸过来的手，表情变得有些严肃。\"请自重，$target$，我一直把你当朋友。\"", "$self$摇了摇头，坚定地拉开了两人的距离。\"不行，我们不能这样，这对谁都不好。\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.4.4 指令失败拒绝 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$猛地甩开了$target$的手，眼神瞬间冷了下来。\"别碰我！真恶心！\"","$self$厌恶地擦了擦被碰过的地方，像是沾上了什么脏东西。\"你也太自以为是了，离我远点！\"","$self$毫不客气地一巴掌扇了过去，愤怒地瞪着对方。\"你把我当成什么人了？！滚开！\"",
-
-"$self$猛地甩开了$target$的手，眼神里充满了厌恶。\"别碰我！真让人恶心！\"", "$self$冷冷地盯着对方，后退的同时随手抓起了身边的防身物。\"再敢靠近一步，我就报警了。\"", "$self$像是听到了什么荒谬的笑话，发出一声嗤笑。\"你脑子坏了吗？也不照照镜子看看自己是谁。\""
-                 ]
-            },
-            { 
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.3.1 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$脸颊泛红，但眼神却大胆地迎上了$target$的目光。她主动张开双臂，环住了对方的脖子。\"嗯……我已经准备好了，来吧。\"","$self$轻轻咬了一下$target$的耳朵，手指在他的后背游走。\"如果是你的话……无论做什么都可以哦。\"","$self$将身体紧紧贴向$target$，感受着彼此的温度。\"我也……想要你了。\"",
-
-"$self$顺从地躺了下去，双臂自然地环住$target$的脖子，眼神迷离地轻声说：\"轻一点……今天有点累。\"", "$self$主动分开了双腿，用脚背轻轻蹭着$target$的小腿，嘴角带着一丝调皮的笑意。\"还在等什么？嗯？\"", "$self$仰起头迎合着吻，双手急切地去解$target$的扣子，呼吸早已乱了节奏。\"我想你了……快给我。\""
-                        ]
-                    },
-                    { 
-                        "requirement":{"requireSelfForced":true},
-                        "extraPortraitTags":["sex","receiver", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.4.2 结果正面 未允许 屈服 口上文",
-                        "responses":
-                        [ 
-"$self$浑身颤抖着缩成一团，眼泪在眼眶里打转，却不敢发出一点声音。\"求求你……轻一点……\"","$self$死死抓着床单，指节因用力而发白。面对无法反抗的暴力，她只能绝望地闭上眼放弃抵抗。\"只要听话……就会结束的吧……\"","$self$咬破了嘴唇，强忍着恶心感张开了双腿。\"我知道了……我会做的，请不要伤害我……\"",
-
-"$self$死死咬着嘴唇，眼眶里蓄满了泪水，颤抖着松开了护在胸前的手，不敢去看$target$那充满侵略性的眼神。", "$self$绝望地闭上了眼睛，身体止不住地发抖，像是一只放弃抵抗的猎物。\"求你……快点结束……\"", "$self$哽咽着点了点头，僵硬地按照命令跪了下去，指甲深深地掐进了掌心里。"
-                        ]
-                    }
-                ],
-                "_comment":"2.4.1 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","receiver", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$的眼睛惊讶地睁大，身体瞬间僵硬了一下，但并没有推开对方。\"等等……在这里？可是我们……\"","$self$有些手足无措地任由$target$抱住，脸上满是慌乱的红晕，却并没有逃跑的意思。\"这太突然了……我不知道该不该……\"","$self$的声音因为紧张而微微颤抖，但最终还是闭上了眼睛，默许了对方的动作。\"如果是$target$的话……也许……并不讨厌。\"",
-
-"$self$整个人愣住了，眼睛瞪得大大的，身体虽然因为惊讶而僵硬，却并没有推开凑近的$target$。", "$self$的脸瞬间涨得通红，不知所措地抓着衣角，声音细若游蚊：\"在这里……？可是……\"", "$self$有些慌乱地看向四周，在确信没有别人后，半推半就地放松了紧绷的大腿。\"只、只有这一次哦……\""
-                ]
-            }
-                       
-                       
-                        
+                        {
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 睡眠中 口上文",
+                            "responses": [
+                                "com_interaction_initiateSex_Sleeping_1",
+                                "com_interaction_initiateSex_Sleeping_2",
+                                "com_interaction_initiateSex_Sleeping_3",
+                                "com_interaction_initiateSex_Sleeping_4",
+                                "com_interaction_initiateSex_Sleeping_5"
+                            ]
+                        },
+                        {
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.2 时停中 口上文",
+                            "responses": [
+                                "com_interaction_initiateSex_TimeStop_1",
+                                "com_interaction_initiateSex_TimeStop_2",
+                                "com_interaction_initiateSex_TimeStop_3",
+                                "com_interaction_initiateSex_TimeStop_4",
+                                "com_interaction_initiateSex_TimeStop_5"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 独自一人 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_interaction_initiateSex_Solo_1",
+                                "com_interaction_initiateSex_Solo_2",
+                                "com_interaction_initiateSex_Solo_3",
+                                "com_interaction_initiateSex_Solo_4",
+                                "com_interaction_initiateSex_Solo_5"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.3.2 指令失败拒绝 有允许 口上文",
+                                    "responses": [
+                                        "com_interaction_initiateSex_Fail_Allow_1",
+                                        "com_interaction_initiateSex_Fail_Allow_2",
+                                        "com_interaction_initiateSex_Fail_Allow_3",
+                                        "com_interaction_initiateSex_Fail_Allow_4",
+                                        "com_interaction_initiateSex_Fail_Allow_5",
+                                        "com_interaction_initiateSex_Fail_Allow_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.3 指令失败拒绝 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_interaction_initiateSex_Fail_Disallow_Kind_1",
+                                        "com_interaction_initiateSex_Fail_Disallow_Kind_2",
+                                        "com_interaction_initiateSex_Fail_Disallow_Kind_3",
+                                        "com_interaction_initiateSex_Fail_Disallow_Kind_4",
+                                        "com_interaction_initiateSex_Fail_Disallow_Kind_5",
+                                        "com_interaction_initiateSex_Fail_Disallow_Kind_6"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.4.4 指令失败拒绝 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_interaction_initiateSex_Fail_Disallow_Hostile_1",
+                                "com_interaction_initiateSex_Fail_Disallow_Hostile_2",
+                                "com_interaction_initiateSex_Fail_Disallow_Hostile_3",
+                                "com_interaction_initiateSex_Fail_Disallow_Hostile_4",
+                                "com_interaction_initiateSex_Fail_Disallow_Hostile_5",
+                                "com_interaction_initiateSex_Fail_Disallow_Hostile_6"
+                            ]
+                        },
+                        {
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.3.1 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_interaction_initiateSex_Success_Allow_1",
+                                        "com_interaction_initiateSex_Success_Allow_2",
+                                        "com_interaction_initiateSex_Success_Allow_3",
+                                        "com_interaction_initiateSex_Success_Allow_4",
+                                        "com_interaction_initiateSex_Success_Allow_5",
+                                        "com_interaction_initiateSex_Success_Allow_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.2 结果正面 未允许 屈服 口上文",
+                                    "responses": [
+                                        "com_interaction_initiateSex_Success_Forced_1",
+                                        "com_interaction_initiateSex_Success_Forced_2",
+                                        "com_interaction_initiateSex_Success_Forced_3",
+                                        "com_interaction_initiateSex_Success_Forced_4",
+                                        "com_interaction_initiateSex_Success_Forced_5",
+                                        "com_interaction_initiateSex_Success_Forced_6"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.4.1 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_interaction_initiateSex_Success_Unexpected_1",
+                                "com_interaction_initiateSex_Success_Unexpected_2",
+                                "com_interaction_initiateSex_Success_Unexpected_3",
+                                "com_interaction_initiateSex_Success_Unexpected_4",
+                                "com_interaction_initiateSex_Success_Unexpected_5",
+                                "com_interaction_initiateSex_Success_Unexpected_6"
+                            ]
+                        }
                     ]
                 }
             }
@@ -128,13 +232,110 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-
-
+                "com_interaction_initiateSex_Sleeping_1": "$self$呼吸绵长均匀，对衣衫褪去浑然不觉。直到温热触感袭来，她才无意识蹙眉，翻身哼出一声模糊的鼻音。",
+                "com_interaction_initiateSex_Sleeping_2": "$self$沉浸梦乡，身躯随床垫下陷微倾。对于即将到来的入侵毫无防备，松弛的四肢就这样在空气中大方舒展。",
+                "com_interaction_initiateSex_Sleeping_3": "$self$含糊地哼了一声，本能地在被窝里缩成一团，丝毫未觉睡衣已被掀开。",
+                "com_interaction_initiateSex_Sleeping_4": "$self$依然呼吸均匀，直到异物抵住身体的瞬间，眉心才微微一皱，嘟囔出一句听不清的梦话。",
+                "com_interaction_initiateSex_Sleeping_5": "$self$无意识地翻了个身，温热的大腿顺势夹住了入侵者，完全将其当成了抱枕的一部分。",
+                "com_interaction_initiateSex_TimeStop_1": "$self$伸向杯子的手僵在半空，视线仍聚焦远处。在这凝固的世界里，唯有私处正遭受肆意拨弄，而惊恐永远无法浮现于脸庞。",
+                "com_interaction_initiateSex_TimeStop_2": "$self$嘴角的笑容已凝固，全然不知双腿已被强行分开。毫无抵抗的肉体宛如精美人偶，任由摆布成最为屈辱的姿势。",
+                "com_interaction_initiateSex_TimeStop_3": "$self$维持着取物动作，眼神凝滞虚空，对正被缓缓推开的双腿毫无知觉。",
+                "com_interaction_initiateSex_TimeStop_4": "$self$僵硬的身躯如同一具精致人偶，即便滚烫触感已贴上私密肌肤，在那静止的时间中也无法产生一丝颤抖。",
+                "com_interaction_initiateSex_TimeStop_5": "$self$脸上仍挂着上一秒的微笑，对正被肆意摆布的身体一无所知，即将被侵犯的事实与她此刻的表情定格成一幅残酷的静止画。",
+                "com_interaction_initiateSex_Solo_1": "$self$咬着下唇，难耐地将手探入腿间。伴随急促喘息，指尖触及那片湿润软肉。\"哈……怎么会这么想要……\"",
+                "com_interaction_initiateSex_Solo_2": "$self$眼神迷离靠在墙角，双手不受控地揉捏着胸部。这是只有深夜才会展露的、被欲望折磨的姿态。",
+                "com_interaction_initiateSex_Solo_3": "$self$难耐地咬唇，手指颤抖着探入湿热腿间，指尖触碰那一点的瞬间，喉间溢出一声压抑的低喘。",
+                "com_interaction_initiateSex_Solo_4": "$self$焦躁地并拢双腿在床上磨蹭，终究输给了身体深处的空虚，手缓缓伸向床头柜中的小道具。",
+                "com_interaction_initiateSex_Solo_5": "$self$看着镜中满脸潮红的自己，羞耻地闭眼，另一只手却诚实地揉上胸前挺立的红豆。",
+                "com_interaction_initiateSex_Fail_Allow_1": "$self$轻按住$target$不规矩的手，歉意地摇头。\"亲爱的，今晚太累了，抱歉。\"",
+                "com_interaction_initiateSex_Fail_Allow_2": "$self$往后缩了缩，拉起被子遮住自己。\"今天身体不太舒服……下次好吗？\"",
+                "com_interaction_initiateSex_Fail_Allow_3": "$self$温柔亲吻$target$额头，随后坚决推开了他。\"不行哦，明天还要早起呢。\"",
+                "com_interaction_initiateSex_Fail_Allow_4": "$self$轻推$target$胸膛，侧头避开亲吻。\"不行，亲爱的，今天真的没心情。\"",
+                "com_interaction_initiateSex_Fail_Allow_5": "$self$抓住那只乱动的手，歉意一笑。\"改天好吗？我想先好好睡一觉。\"",
+                "com_interaction_initiateSex_Fail_Allow_6": "$self$叹气将被子拉高。\"别闹了……我很累，别逼我发火。\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_1": "$self$尴尬一笑，不动声色拉开距离。\"哈哈，$target$你喝多了吧？别开这种玩笑啦。\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_2": "$self$困扰地抓抓头发，语气故作轻松。\"那个……我觉得我们的关系还没到这一步呢。\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_3": "$self$虽被吓到，仍礼貌推开对方的手。\"抱歉，我只把$target$当朋友。\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_4": "$self$尴尬后退一步，试图用玩笑缓解气氛。\"喂喂，这个玩笑可开过头了哦，$target$。\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_5": "$self$礼貌挡开伸来的手，表情严肃起来。\"请自重，$target$，我一直把你当朋友。\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_6": "$self$摇头，坚定拉开距离。\"不行，我们不能这样，这对谁都不好。\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_1": "$self$猛地甩开$target$的手，眼神瞬间冰冷。\"别碰我！真恶心！\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_2": "$self$厌恶地擦拭被碰之处，如沾脏物。\"你也太自以为是了，离我远点！\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_3": "$self$毫不客气一巴掌扇去，愤怒瞪视。\"你把我当成什么人了？！滚开！\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_4": "$self$猛甩开$target$的手，眼中满是厌恶。\"别碰我！真让人恶心！\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_5": "$self$冷视对方，后退同时抓起防身物。\"再敢靠近一步，我就报警了。\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_6": "$self$如听荒谬笑话般嗤笑。\"你脑子坏了吗？也不照照镜子看看自己是谁。\"",
+                "com_interaction_initiateSex_Success_Allow_1": "$self$脸颊泛红，眼神大胆迎上$target$目光，主动张臂环住其脖颈。\"嗯……我已经准备好了，来吧。\"",
+                "com_interaction_initiateSex_Success_Allow_2": "$self$轻咬$target$耳廓，手指在他后背游走。\"如果是你的话……无论做什么都可以哦。\"",
+                "com_interaction_initiateSex_Success_Allow_3": "$self$将身体紧贴$target$，感受彼此温度。\"我也……想要你了。\"",
+                "com_interaction_initiateSex_Success_Allow_4": "$self$顺从躺下，双臂自然环住$target$脖颈，眼神迷离轻语：\"轻一点……今天有点累。\"",
+                "com_interaction_initiateSex_Success_Allow_5": "$self$主动分开双腿，用脚背轻蹭$target$小腿，嘴角带起调皮笑意。\"还在等什么？嗯？\"",
+                "com_interaction_initiateSex_Success_Allow_6": "$self$仰头迎合亲吻，双手急切解开$target$扣子，呼吸早乱。\"我想你了……快给我。\"",
+                "com_interaction_initiateSex_Success_Forced_1": "$self$浑身颤抖缩成一团，泪水打转却不敢出声。\"求求你……轻一点……\"",
+                "com_interaction_initiateSex_Success_Forced_2": "$self$死死抓紧床单，指节泛白。面对无法反抗的暴力，只能绝望闭眼放弃抵抗。\"只要听话……就会结束的吧……\"",
+                "com_interaction_initiateSex_Success_Forced_3": "$self$咬破嘴唇，强忍恶心张开双腿。\"我知道了……我会做的，请不要伤害我……\"",
+                "com_interaction_initiateSex_Success_Forced_4": "$self$死咬嘴唇，泪水盈眶，颤抖着松开护在胸前的手，不敢看$target$那充满侵略性的眼神。",
+                "com_interaction_initiateSex_Success_Forced_5": "$self$绝望闭眼，身体止不住发抖，宛如放弃抵抗的猎物。\"求你……快点结束……\"",
+                "com_interaction_initiateSex_Success_Forced_6": "$self$哽咽点头，僵硬地按命令跪下，指甲深深掐进掌心。",
+                "com_interaction_initiateSex_Success_Unexpected_1": "$self$惊讶睁大眼，身体瞬间僵硬却未推开。\"等等……在这里？可是我们……\"",
+                "com_interaction_initiateSex_Success_Unexpected_2": "$self$手足无措任由$target$抱住，脸上尽是慌乱红晕，却无意逃跑。\"这太突然了……我不知道该不该……\"",
+                "com_interaction_initiateSex_Success_Unexpected_3": "$self$声音因紧张微颤，终是闭眼默许。\"如果是$target$的话……也许……并不讨厌。\"",
+                "com_interaction_initiateSex_Success_Unexpected_4": "$self$整个人愣住，瞪大眼睛，虽因惊讶僵硬，却未推开凑近的$target$。",
+                "com_interaction_initiateSex_Success_Unexpected_5": "$self$脸瞬间涨红，不知所措抓着衣角，声如蚊呐：\"在这里……？可是……\"",
+                "com_interaction_initiateSex_Success_Unexpected_6": "$self$慌乱环顾四周，确信无人后，半推半就放松紧绷的大腿。\"只、只有这一次哦……\""
             },
             "en-us": {
-
-
-                
+                "com_interaction_initiateSex_Sleeping_1": "$self$ breathes steadily and deeply, unaware of being undressed. It isn't until the warm touch reaches her that she frowns unconsciously, turning over with a muffled murmur.",
+                "com_interaction_initiateSex_Sleeping_2": "$self$ is still deep in dreamland, her body tilting slightly with the sinking mattress. Defenseless against the impending intrusion, her relaxed limbs are displayed openly in the air.",
+                "com_interaction_initiateSex_Sleeping_3": "$self$ makes a vague humming sound, instinctively curling up under the covers, completely unaware that her pajamas have been lifted.",
+                "com_interaction_initiateSex_Sleeping_4": "$self$'s breathing remains even until the moment the object presses against her. Only then does her brow furrow slightly as she mutters some unintelligible dream talk.",
+                "com_interaction_initiateSex_Sleeping_5": "$self$ unconsciously rolls over, her warm thighs clamping onto the intruder, mistaking it completely for part of a body pillow.",
+                "com_interaction_initiateSex_TimeStop_1": "$self$'s hand remains frozen in mid-air reaching for the cup, eyes still focused on the distance. In this solidified world, only her privates are being wantonly toyed with, while that look of horror can never surface on her face.",
+                "com_interaction_initiateSex_TimeStop_2": "$self$'s smile is frozen at the corner of her mouth, completely unaware that her legs have been forcibly spread. Her defenseless flesh is like an exquisite doll, left to be arranged into the most humiliating pose.",
+                "com_interaction_initiateSex_TimeStop_3": "$self$ maintains the motion of reaching for the cup, eyes fixed on the void, oblivious to her legs being slowly pushed apart.",
+                "com_interaction_initiateSex_TimeStop_4": "$self$'s stiff body is like a fine doll; even as the scorching touch lands on her most intimate skin, not a single tremble can be produced in that stagnant time.",
+                "com_interaction_initiateSex_TimeStop_5": "$self$ still wears the smile from a second ago, ignorant of her body being toyed with at will. The fact of her imminent violation forms a cruel static image with her current expression.",
+                "com_interaction_initiateSex_Solo_1": "$self$ bites her lower lip, hand diving unbearably between her legs. Amidst rapid panting, fingertips touch that moist soft flesh. \"Hah... why do I want it so much...\"",
+                "com_interaction_initiateSex_Solo_2": "$self$ leans against the corner with glazed eyes, hands uncontrollably kneading her breasts. It is a posture of being tortured by desire, revealed only late at night.",
+                "com_interaction_initiateSex_Solo_3": "$self$ bites her lip in endurance, fingers trembling as they explore her warm, wet crotch. The moment they touch that spot, a suppressed low gasp spills from her throat.",
+                "com_interaction_initiateSex_Solo_4": "$self$ rubs her legs together on the bed in frustration, finally losing to the emptiness deep within, her hand slowly reaching for the small toy in the nightstand.",
+                "com_interaction_initiateSex_Solo_5": "$self$ looks at her flushed face in the mirror, closing her eyes in shame, while her other hand honestly rubs the erect nipple on her chest.",
+                "com_interaction_initiateSex_Fail_Allow_1": "$self$ gently holds down $target$'s wandering hand, shaking her head apologetically. \"Honey, I'm too tired tonight, sorry.\"",
+                "com_interaction_initiateSex_Fail_Allow_2": "$self$ shrinks back, pulling the blanket up to cover herself. \"I'm not feeling well today... maybe next time?\"",
+                "com_interaction_initiateSex_Fail_Allow_3": "$self$ kisses $target$ gently on the forehead, then firmly pushes him away. \"No, I have to get up early tomorrow.\"",
+                "com_interaction_initiateSex_Fail_Allow_4": "$self$ gently pushes $target$'s chest, turning her head to avoid the kiss. \"No, honey, I'm really not in the mood today.\"",
+                "com_interaction_initiateSex_Fail_Allow_5": "$self$ grabs the moving hand and smiles apologetically. \"Another day, okay? I want to get a good sleep first.\"",
+                "com_interaction_initiateSex_Fail_Allow_6": "$self$ sighs and pulls the quilt high. \"Stop it... I'm tired, don't make me mad.\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_1": "$self$ smiles awkwardly, subtly distancing herself. \"Haha, $target$, did you drink too much? Stop joking around.\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_2": "$self$ scratches her hair in trouble, trying to keep her tone light. \"Um... I don't think our relationship is there yet.\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_3": "$self$ politely pushes the hand away despite being startled. \"Sorry, I only see $target$ as a friend.\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_4": "$self$ steps back awkwardly, trying to ease the atmosphere with a joke. \"Hey, hey, this joke is going too far, $target$.\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_5": "$self$ politely blocks the reaching hand, expression turning serious. \"Please have some respect, $target$. I've always treated you as a friend.\"",
+                "com_interaction_initiateSex_Fail_Disallow_Kind_6": "$self$ shakes her head, firmly pulling away. \"No, we can't do this. It's not good for anyone.\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_1": "$self$ violently flings $target$'s hand away, eyes turning cold instantly. \"Don't touch me! That's disgusting!\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_2": "$self$ wipes the touched spot in disgust, as if contaminated. \"You're full of yourself. Stay away from me!\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_3": "$self$ slaps him without hesitation, staring angrily. \"What kind of person do you think I am?! Get lost!\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_4": "$self$ flings $target$'s hand away, eyes full of disgust. \"Don't touch me! It's sickening!\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_5": "$self$ stares coldly, grabbing a weapon while backing away. \"One more step and I'm calling the police.\"",
+                "com_interaction_initiateSex_Fail_Disallow_Hostile_6": "$self$ sneers as if hearing a ridiculous joke. \"Is your brain broken? Look in the mirror and see who you are.\"",
+                "com_interaction_initiateSex_Success_Allow_1": "$self$ blushes but meets $target$'s gaze boldly, opening her arms to hug his neck. \"Mmn... I'm ready. Come on.\"",
+                "com_interaction_initiateSex_Success_Allow_2": "$self$ gently bites $target$'s ear, fingers tracing his back. \"If it's you... you can do whatever you want.\"",
+                "com_interaction_initiateSex_Success_Allow_3": "$self$ presses her body tightly against $target$, feeling the warmth. \"I... want you too.\"",
+                "com_interaction_initiateSex_Success_Allow_4": "$self$ lies down obediently, arms naturally circling $target$'s neck, whispering with glazed eyes: \"Be gentle... I'm a bit tired today.\"",
+                "com_interaction_initiateSex_Success_Allow_5": "$self$ actively spreads her legs, rubbing her instep against $target$'s calf, a playful smile on her lips. \"What are you waiting for? Hmm?\"",
+                "com_interaction_initiateSex_Success_Allow_6": "$self$ tilts her head to meet the kiss, hands eagerly undoing $target$'s buttons, breathing already erratic. \"I missed you... give it to me quickly.\"",
+                "com_interaction_initiateSex_Success_Forced_1": "$self$ curls up trembling, tears swirling in her eyes but daring not make a sound. \"Please... be gentle...\"",
+                "com_interaction_initiateSex_Success_Forced_2": "$self$ clutches the sheets tightly, knuckles white. Facing irresistible violence, she closes her eyes in despair, giving up resistance. \"If I obey... it will be over soon, right...\"",
+                "com_interaction_initiateSex_Success_Forced_3": "$self$ bites her lip until it bleeds, suppressing nausea as she spreads her legs. \"I understand... I'll do it, please don't hurt me...\"",
+                "com_interaction_initiateSex_Success_Forced_4": "$self$ bites her lip hard, eyes filled with tears, trembling as she releases the hand protecting her chest, not daring to look at $target$'s aggressive gaze.",
+                "com_interaction_initiateSex_Success_Forced_5": "$self$ closes her eyes in despair, body shaking uncontrollably like prey that has given up. \"Please... finish quickly...\"",
+                "com_interaction_initiateSex_Success_Forced_6": "$self$ nods while choking back sobs, kneeling stiffly as ordered, nails digging deep into her palms.",
+                "com_interaction_initiateSex_Success_Unexpected_1": "$self$'s eyes widen in surprise, body stiffening for a moment but not pushing him away. \"Wait... here? But we...\"",
+                "com_interaction_initiateSex_Success_Unexpected_2": "$self$ lets $target$ hold her, at a loss, face flushed with panic but showing no intent to flee. \"This is too sudden... I don't know if we should...\"",
+                "com_interaction_initiateSex_Success_Unexpected_3": "$self$'s voice trembles with nervousness, but she eventually closes her eyes, acquiescing. \"If it's $target$... maybe... I don't dislike it.\"",
+                "com_interaction_initiateSex_Success_Unexpected_4": "$self$ freezes, eyes wide, body stiff from surprise but not pushing away the approaching $target$.",
+                "com_interaction_initiateSex_Success_Unexpected_5": "$self$'s face turns beet red instantly, clutching her hem in bewilderment, voice faint: \"Here...? But...\"",
+                "com_interaction_initiateSex_Success_Unexpected_6": "$self$ looks around in panic, and after confirming no one else is there, half-reluctantly relaxes her tense thighs. \"O-only this once...\""
             }
         }
     }

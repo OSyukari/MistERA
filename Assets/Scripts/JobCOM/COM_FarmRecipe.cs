@@ -13,6 +13,15 @@ public class COM_FarmRecipe : COM
     ItemComponentTemplate_Harvestable comp;
     public string parentCOMID;
     public COM baseCOM;
+    [JsonIgnore]
+    public override string tooltipID
+    {
+        get
+        {
+            return parentCOMID;
+        }
+    }
+
 
     public void InitializeRecipe(ItemComponentTemplate_Harvestable comp)
     {
@@ -25,17 +34,17 @@ public class COM_FarmRecipe : COM
         {
             yieldItem = Masterlist_Items.GetByID(comp.yieldItemID);
             this.ID = this.ID + "_" + comp.yieldItemID;
-            if(yieldItem == null)
+            if (yieldItem == null)
             {
                 Debug.LogError($"Serialize error item |{comp.yieldItemID}| cannot be found in IDLib");
             }
-            else this.displayName = displayName + "_" + yieldItem.DisplayName;
+            //else this.displayName = displayName;// + "_" + yieldItem.DisplayName;
             //comTags.Add("job");
             comTags.AddRange(this.requirements.requireContaining.allowPlanting);
         }
         this.requirements.requireContaining.allowPlanting = null;
 
-        foreach(var vari in variants) vari.displayName = this.displayName;
+        //foreach(var vari in variants) vari.displayName = this.displayName;
 
         if (this.results.results_jobContainer == null) this.results.results_jobContainer = new List<Result_JobContainer>();
 
@@ -75,7 +84,7 @@ public class COM_FarmRecipe : COM
         return Replace(s);
     }
 
-    protected string Replace(string s)
+    public override string Replace(string s)
     {
         if (yieldItem != null) return s.Replace("$name$", yieldItem.DisplayName);
         else return s;

@@ -29,24 +29,24 @@
     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_active_choice",
     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-    "question":"$party.name$发现一群肮脏矮小的哥布林正在轮奸被俘的女性\n敌方队伍的构成为：$enemy.nameCount$\n被俘对象为：$victims.name$",
+    "question":"event_goblin_gangRape_event_ev01",
     "options":[
         {   
-            "option": "先准备一下",
-            "tooltip": "该事件可以再次触发",
+            "option": "event_goblin_gangRape_event_ev01_op01",
+            "tooltip": "event_goblin_gangRape_event_ev01_op01_tooltip",
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_abort"]} ] 
         },
         {   
-            "option": "继续潜伏",
+            "option": "event_goblin_gangRape_event_ev01_op02",
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_event"]} ] 
         },
         {   
-            "option": "准备战斗", 
+            "option": "event_goblin_gangRape_event_ev01_op03", 
             "target_chara_conditions":
             {
                 "victims":[{"parameters":["CanTerminateExpedition"]}]
             },
-            "tooltip":"请确保救援对象没有未结算的事件！",
+            "tooltip":"event_goblin_gangRape_event_ev01_op03_tooltip",
             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_combat_combat"]} ] 
         }
     ]
@@ -55,14 +55,14 @@
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_event",
     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-    "line": "$party.name$选择不惊动正在奸淫的哥布林们",
+    "line": "event_goblin_gangRape_event_ev02",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_abort",
-    "line": "$party.name$暂时撤退了",
+    "line": "event_goblin_gangRape_event_ev03",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["RetryEvent"]} ],
     "isLast": true
 },
@@ -70,7 +70,7 @@
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_combat",
     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-    "line": "$party.name$偷袭了哥布林！（敌方全员HP-2）",
+    "line": "event_goblin_gangRape_event_ev04",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-2"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
                 { "Type":"StartCombat" , "arguments":["event_goblin_gangRape_rescue","exp_event_combat_Draw","event_goblin_combatDefeat"]} ],
@@ -79,7 +79,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
-    "line": "警告！由于内容缺失，该事件强制终止。",
+    "line": "exp_event_error99",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 }
@@ -111,7 +111,7 @@
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_hasenemy",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-                    "line": "$party.name$击败了哥布林，然后……"
+                    "line": "event_goblin_gangRape_rescue_event_ev01"
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -135,21 +135,21 @@
                     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                     "label":"br_victims",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-                    "question":"$party.name$发现了被哥布林们残酷对待后奄奄一息的$victims.name$",
+                    "question":"event_goblin_gangRape_rescue_event_ev02",
                     "options":[
                         {     
                             "target_chara_conditions":
                             {
                                 "victims":[{"parameters":["CanTerminateExpedition"]}]
                             },
-                            "option": "搜刮战利品",
-                            "tooltip":"请确保救援对象没有未结算的事件！",
+                            "option": "event_goblin_gangRape_rescue_event_ev02_op01",
+                            "tooltip":"event_goblin_gangRape_rescue_event_ev02_op01_tooltip",
                             "Results": [    { "Type":"TerminateExpedition", "arguments":["victims"]},
                                             { "Type":"FactionExchangeInventory", "arguments":["party","victims","true","true","true","true","event_goblin_gangRape_rescuedChara"]},
                                             { "Type":"JumpToLabel", "arguments":["","br_lootEnd"]} ] 
                         },
                         {   
-                            "option": "什么都不拿",   "isDefaultCancel":true,
+                            "option": "event_goblin_gangRape_rescue_event_ev02_op02",   "isDefaultCancel":true,
                             "Results": [ { "Type":"JumpToLabel", "arguments":["","br_noLootEnd"]} ] 
                         }
                     ]
@@ -158,7 +158,7 @@
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_lootEnd",
                     "portraitRefKey":"party",
-                    "line": "$party.name$搜刮完之后离开了这里",
+                    "line": "event_goblin_gangRape_rescue_event_ev03",
                     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
                     "isLast": true
                 },
@@ -167,13 +167,13 @@
                     "label": "br_noLootEnd",
                     "portraitRefKey":"party",
                     "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
-                    "line": "$party.name$没有在此过多停留",
+                    "line": "event_goblin_gangRape_rescue_event_ev04",
                     "isLast": true
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_error",
-                    "line": "警告！由于内容缺失，该事件强制终止。",
+                    "line": "exp_event_error99",
                     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
                     "isLast": true
                 }
@@ -203,18 +203,18 @@
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_hasRescue",
                     "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-                    "line": "$party.name$营救了被哥布林们残酷对待的受害者"
+                    "line": "event_goblin_gangRape_rescuedChara_event_ev01"
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                    "line": "……从救出的$rescued.name$那获得了更多此处的情报",
+                    "line": "event_goblin_gangRape_rescuedChara_event_ev02",
                     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
                     "isLast": true
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_error",
-                    "line": "警告！由于内容缺失，该事件强制终止。",
+                    "line": "exp_event_error99",
                     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
                     "isLast": true
                 }
@@ -226,8 +226,55 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "event_goblin_gangRape":"哥布林的凌辱",
-                "event_goblin_gangRape_rescue":"哥布林的囚犯"
+                "event_goblin_gangRape":"哥布林的性奴隶",
+                "event_goblin_gangRape_event_ev01":"$party.name$发现一群肮脏矮小的哥布林正在轮奸被俘的女性\n敌方队伍的构成为：$enemy.nameCount$\n被俘对象为：$victims.name$",
+                "event_goblin_gangRape_event_ev01_op01":"先准备一下",
+                "event_goblin_gangRape_event_ev01_op01_tooltip":"该事件可以再次触发",
+                "event_goblin_gangRape_event_ev01_op02":"继续潜伏",
+                "event_goblin_gangRape_event_ev01_op03":"准备战斗",
+                "event_goblin_gangRape_event_ev01_op03_tooltip":"请确保救援对象没有未结算的事件！",
+                "event_goblin_gangRape_event_ev02":"$party.name$选择不惊动正在奸淫的哥布林们",
+                "event_goblin_gangRape_event_ev03":"$party.name$暂时撤退了",
+                "event_goblin_gangRape_event_ev04":"$party.name$偷袭了哥布林！（敌方全员HP-2）",
+                
+                "event_goblin_gangRape_rescue":"哥布林的囚犯",
+                "event_goblin_gangRape_rescue_event_ev01":"$party.name$击败了哥布林，然后……",
+                "event_goblin_gangRape_rescue_event_ev02":"$party.name$发现了被哥布林们残酷对待后奄奄一息的$victims.name$",
+                "event_goblin_gangRape_rescue_event_ev02_op01":"搜刮战利品",
+                "event_goblin_gangRape_rescue_event_ev02_op01_tooltip":"请确保救援对象没有未结算的事件！",
+                "event_goblin_gangRape_rescue_event_ev02_op02":"什么都不拿",
+                "event_goblin_gangRape_rescue_event_ev03":"$party.name$搜刮完之后离开了这里",
+                "event_goblin_gangRape_rescue_event_ev04":"$party.name$没有在此过多停留",
+
+                "event_goblin_gangRape_rescuedChara":"营救行动",
+                "event_goblin_gangRape_rescuedChara_event_ev01":"$party.name$营救了被哥布林们残酷对待的受害者",
+                "event_goblin_gangRape_rescuedChara_event_ev02":"……从救出的$rescued.name$那获得了更多此处的情报"
+            },
+            "en-us": 
+            {
+                "event_goblin_gangRape":"Goblin Sex Slaves",
+                "event_goblin_gangRape_event_ev01":"$party.name$ found a group of filthy, small goblins gang-raping a female captive\nEnemy party composition: $enemy.nameCount$\nCaptive target: $victims.name$",
+                "event_goblin_gangRape_event_ev01_op01":"Prepare first",
+                "event_goblin_gangRape_event_ev01_op01_tooltip":"This event can be triggered again",
+                "event_goblin_gangRape_event_ev01_op02":"Continue hiding",
+                "event_goblin_gangRape_event_ev01_op03":"Prepare for combat",
+                "event_goblin_gangRape_event_ev01_op03_tooltip":"Please ensure the rescue target has no unsettled events!",
+                "event_goblin_gangRape_event_ev02":"$party.name$ chose not to disturb the raping goblins",
+                "event_goblin_gangRape_event_ev03":"$party.name$ retreated temporarily",
+                "event_goblin_gangRape_event_ev04":"$party.name$ ambushed the goblins! (Enemy All HP-2)",
+
+                "event_goblin_gangRape_rescue":"Goblin's Prisoner",
+                "event_goblin_gangRape_rescue_event_ev01":"$party.name$ defeated the goblins, and then...",
+                "event_goblin_gangRape_rescue_event_ev02":"$party.name$ found $victims.name$ dying after being brutally treated by goblins",
+                "event_goblin_gangRape_rescue_event_ev02_op01":"Loot spoils",
+                "event_goblin_gangRape_rescue_event_ev02_op01_tooltip":"Please ensure the rescue target has no unsettled events!",
+                "event_goblin_gangRape_rescue_event_ev02_op02":"Take nothing",
+                "event_goblin_gangRape_rescue_event_ev03":"$party.name$ left the place after looting",
+                "event_goblin_gangRape_rescue_event_ev04":"$party.name$ did not stay long",
+
+                "event_goblin_gangRape_rescuedChara":"Rescue Action",
+                "event_goblin_gangRape_rescuedChara_event_ev01":"$party.name$ rescued the victim who was brutally treated by goblins",
+                "event_goblin_gangRape_rescuedChara_event_ev02":"...Obtained more intelligence about this place from the rescued $rescued.name$"
             }
         }
     }

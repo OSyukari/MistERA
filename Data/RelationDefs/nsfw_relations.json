@@ -86,6 +86,16 @@
                 "relationship_slave_displayName": "奴役",
                 "relationship_slave_displayName_A_is_to_B": "主人",
                 "relationship_slave_displayName_B_is_to_A": "奴隶"
+            },
+            "en-us":
+            {
+
+                "relationship_fwb_displayName": "Fuck Buddy",
+
+                "relationship_slave_displayName": "Enslavement",
+                "relationship_slave_displayName_A_is_to_B": "Master",
+                "relationship_slave_displayName_B_is_to_A": "Slave"
+
             }
         }
     }

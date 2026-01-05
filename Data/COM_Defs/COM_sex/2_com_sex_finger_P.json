@@ -84,7 +84,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$正在搓弄着$receiver.firstname$的肉棒" ]
+                            "texts": [ "com_sex_finger_P_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -93,7 +93,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$的手放开了$receiver.firstname$的肉棒" ]
+                            "texts":[ "com_sex_finger_P_description_remove_1" ]
                         }
                     ]
                 },
@@ -102,12 +102,50 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts":  ["$doer.firstname$的手握住了$receiver.firstname$的肉棒开始套弄着"]
+                            "texts":  ["com_sex_finger_P_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_finger_P":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_P_displayName_1": "撸管",
+                "com_sex_finger_P_displayName_2": "一起撸管",
+                "com_sex_finger_P_displayName_3": "手交",
+                "com_sex_finger_P_displayName_4": "交替手交",
+                "com_sex_finger_P_displayName_5": "轮流手交",
+                "com_sex_finger_P_displayName_6": "同时手交",
+
+                "com_sex_finger_P_description_begin_1":"$doer.firstname$的手握住了$receiver.firstname$的肉棒开始套弄着",
+                "com_sex_finger_P_description_remove_1":"$doer.firstname$的手放开了$receiver.firstname$的肉棒",
+                "com_sex_finger_P_description_ongoing_1":"$doer.firstname$正在搓弄着$receiver.firstname$的肉棒"
+
+            },
+            "en-us":
+            {
+                "com_sex_finger_P":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_P_displayName_1": "Masturbate",
+                "com_sex_finger_P_displayName_2": "Alt. Masturbate",
+                "com_sex_finger_P_displayName_3": "Handjob",
+                "com_sex_finger_P_displayName_4": "Alt. Handjob",
+                "com_sex_finger_P_displayName_5": "Alt. Handjob",
+                "com_sex_finger_P_displayName_6": "Alt. Handjob",
+
+                "com_sex_finger_P_description_begin_1":"$doer.firstname$'s hand grasps $receiver.firstname$'s cock and begins to stroke it.",
+                "com_sex_finger_P_description_remove_1":"$doer.firstname$ releases $receiver.firstname$'s cock.",
+                "com_sex_finger_P_description_ongoing_1":"$doer.firstname$ is stroking $receiver.firstname$'s cock."
+
+            }
+        }
     }
 }

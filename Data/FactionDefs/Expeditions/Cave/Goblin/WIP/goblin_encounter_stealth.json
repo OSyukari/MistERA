@@ -54,6 +54,20 @@
                 "exp_event_goblinCave_scoutEncounter_result_leftGift2":"休息时，饮水被悄悄混入了哥布林的体液，喝下后感到一阵恶心与晕眩。",
                 "exp_event_goblinCave_scoutEncounter_result_leftGift3":"队伍发现她们携带的饮用水闻起来有一股淡淡的、令人不安的腥臊味。",
                 "exp_event_goblinCave_scoutEncounter_result_leftGift4":"睡袋被哥布林割开，冰冷而粗糙的手在睡梦中伸了进来，在身上肆意游走。"
+            },
+            "en-us": {
+                "exp_event_goblinCave_scoutEncounter": "Goblin Scout",
+                "exp_event_goblinCave_scoutEncounter_result_escaped": "The party spots a sneaky goblin scout, but it quickly slips into the shadows before it can be caught.",
+                "exp_event_goblinCave_scoutEncounter_result_stoleEquip": "A cunning goblin scout silently approaches $targetName$ and steals a piece of equipment while they are unprepared!",
+                "exp_event_goblinCave_scoutEncounter_result_stoleSupplies": "After a brief rest, the party finds that some supplies have vanished, evidently stolen by a prowling goblin scout.",
+                "exp_event_goblinCave_scoutEncounter_result_poisonedSupplies": "The goblin scout has spiked the party's waterskins with some slime emitting a fishy-sweet scent, appearing to be a potent aphrodisiac.",
+                "exp_event_goblinCave_scoutEncounter_result_kidnapped": "After a commotion, the party discovers in horror that $targetName$ is missing! Only messy goblin footprints and signs of struggle remain.",
+
+                "exp_event_goblinCave_scoutEncounter_result_leftGift1":"The party's lighting equipment suddenly goes out, and suspicious footsteps are heard in the pitch-black darkness.",
+                "exp_event_goblinCave_scoutEncounter_result_leftGift2":"During the rest, goblin bodily fluids were secretly mixed into the drinking water. After drinking it, a wave of nausea and dizziness strikes.",
+                "exp_event_goblinCave_scoutEncounter_result_leftGift3":"The party finds that their drinking water smells of a faint, unsettling fishy odor.",
+                "exp_event_goblinCave_scoutEncounter_result_leftGift4":"The sleeping bag is cut open by a goblin, and cold, rough hands reach inside during sleep, roaming freely over the body."
+                
             }
         }
     }

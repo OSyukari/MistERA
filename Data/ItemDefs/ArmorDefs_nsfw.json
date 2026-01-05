@@ -124,7 +124,14 @@
             },
             "en-us":
             {
-        "clothing_skin_panty": "Panties"
+    "clothing_inner_killerheels":"Killer Heels",
+    "clothing_skin_clit_piercing":"Clitoral Piercing",
+    "clothing_skin_nipple_piercing":"Nipple Piercing",
+    "clothing_skin_stocking":"Stockings",
+    "clothing_skin_stocking_pantyhose":"Pantyhose",
+    "clothing_skin_bra":"Bra",
+    "clothing_skin_panty":"Panties",
+    "clothing_skin_panty_opencrotch":"Crotchless Panties"
 
             }
         }

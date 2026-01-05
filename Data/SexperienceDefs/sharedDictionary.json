@@ -1,10 +1,7 @@
 {
-    "Dictionary":
-    {
-        "Entries":
-        {
-            "zh-cn":
-            {
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
                 "skill_expansion_tooltip1": "该技能每等级增加对应部位的尺寸和深度",
                 "skill_addiction_cum": "精液中毒",
                 "skill_addiction_cum_tooltip": "%%notimplemented%%",
@@ -26,12 +23,34 @@
                 "skill_addiction_hypnosis_tooltip": "%%notimplemented%%",
                 "skill_addiction_milking": "喷乳中毒",
                 "skill_addiction_milking_tooltip": "%%notimplemented%%",
-
                 "skill_sensitivity_tooltip1": "该技能每等级增加对应部位的敏感度上限，略微增加对应部位的快感和苦痛获取",
                 "skill_sensitivity_tooltip2": "该技能每等级增加对应部位的尺寸包容度（不增加实际尺寸）"
+            },
+            "en-us": {
+                "skill_expansion_tooltip1": "Each level increases the size and depth of the corresponding part.",
+                "skill_addiction_cum": "Semen Addiction",
+                "skill_addiction_cum_tooltip": "%%notimplemented%%",
+                "skill_addiction_masturbation": "Masturbation Addiction",
+                "skill_addiction_masturbation_tooltip": "%%notimplemented%%",
+                "skill_addiction_sex": "Sex Addiction",
+                "skill_addiction_sex_tooltip": "%%notimplemented%%",
+                "skill_addiction_bestiality": "Bestiality Addiction",
+                "skill_addiction_bestiality_tooltip": "%%notimplemented%%",
+                "skill_addiction_homosexual_male": "BL Addiction",
+                "skill_addiction_homosexual_male_tooltip": "%%notimplemented%%",
+                "skill_addiction_homosexual_female": "Yuri Addiction",
+                "skill_addiction_homosexual_female_tooltip": "%%notimplemented%%",
+                "skill_addiction_raped": "Rape Addiction",
+                "skill_addiction_raped_tooltip": "%%notimplemented%%",
+                "skill_addiction_prostitution": "Prostitution Addiction",
+                "skill_addiction_prostitution_tooltip": "%%notimplemented%%",
+                "skill_addiction_hypnosis": "Hypnosis Addiction",
+                "skill_addiction_hypnosis_tooltip": "%%notimplemented%%",
+                "skill_addiction_milking": "Lactation Addiction",
+                "skill_addiction_milking_tooltip": "%%notimplemented%%",
+                "skill_sensitivity_tooltip1": "Each level increases the max sensitivity of the corresponding part, and also slightly increasing pleasure and pain gain.",
+                "skill_sensitivity_tooltip2": "Each level increases the size capacity of the corresponding part (does not increase actual size)."
             }
         }
     }
-        
-    
 }

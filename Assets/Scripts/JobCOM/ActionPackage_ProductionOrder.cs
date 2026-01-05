@@ -115,10 +115,19 @@ public class ActionPackage_ProductionOrder : ActionPackage
         //order.AddProgress(targetCOM.TimeScale);
 
 
-        Debug.Log("ActionPackage_ProductionOrder: JobInRoom[" + job.ParentRoom.DisplayName + "] COM[" + targetCOM.displayName + "] has null order ?"+(order == null));
+        Debug.Log("ActionPackage_ProductionOrder: JobInRoom[" + job.ParentRoom.DisplayName + "] COM[" + targetCOM.displayName + "] has null order ?" + (order == null));
 
         base.Execution(m);
-        Debug.Log("Production order ticked, requestAccepted "+requestAccepted);
-        if (requestAccepted) foreach (var ep in packages) order.AddProgress(targetCOM.TimeScale);
+        Debug.Log("Production order ticked, requestAccepted " + requestAccepted);
+        if (requestAccepted)
+        {
+            foreach (var ep in packages)
+            {
+                if ( ep.Response >= Memory_Response.Success)
+                {
+                    order.AddProgress(targetCOM.TimeScale);
+                }
+            }
+        }
     }
 }

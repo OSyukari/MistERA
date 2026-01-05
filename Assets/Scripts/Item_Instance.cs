@@ -104,7 +104,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
     {
         get
         {
-            if (nameOverwrite != "") return LocalizeDictionary.QueryThenParse(nameOverwrite);
+            if (nameOverwrite != "") return LocalizeDictionary.QueryThenParse(nameOverwrite, nameOverwrite);
             else return Parent.DisplayName;
         }
     }

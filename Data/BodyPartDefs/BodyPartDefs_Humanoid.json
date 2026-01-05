@@ -96,6 +96,9 @@
                 "tag_directionIn":"mouth",
                 "tag_directionOut":"guts",
 
+                "memory_ingest_liquid":"ui_entry_memory_description_swallow",
+                "memory_ingest_solid":"ui_entry_memory_description_eat",
+
                 "sortOrder":1,
 
                 "sizeRatio":0.055, 

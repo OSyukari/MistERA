@@ -113,7 +113,7 @@ public class Job : IDisposable, I_Disposable
         else return DateTime.MinValue;
     }
     //[NonSerialized] public Manageable FactionOwner = null;
-    [JsonProperty] protected Dictionary<int, COM_Match> actorRefIDStorage = new Dictionary<int, COM_Match>();
+    [JsonProperty] protected SortedDictionary<int, COM_Match> actorRefIDStorage = new SortedDictionary<int, COM_Match>();
     [JsonProperty] protected Dictionary<int, DateTime> actorJoinTime = new Dictionary<int, DateTime>();
     [JsonIgnore] public virtual List<int> actorRefID 
     { 
@@ -530,8 +530,7 @@ public class Job : IDisposable, I_Disposable
         this.packages_current.Clear();
         this.actorJobComplete.Clear();
         this.actorJoinTime.Clear();
-        if (this.actorRefIDStorage == null) this.actorRefIDStorage = new Dictionary<int, COM_Match>();
-        else this.actorRefIDStorage.Clear();
+        this.actorRefIDStorage.Clear();
         this.packages_completed.Clear();
         this.m.Clear();
     }

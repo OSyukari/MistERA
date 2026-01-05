@@ -78,8 +78,85 @@
                         },
                         "displayName":"com_sex_finger_caress_A_displayName_6"
                     }
-                ]
+                ],
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "com_sex_finger_caress_A_description_ongoing_1" ]
+                        }
+                    ]
+                },
+                "description_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "com_sex_finger_caress_A_description_remove_1" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_finger_caress_A_description_after_1" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "texts": ["com_sex_finger_caress_A_description_begin_1"]
+                        }
+                    ]
+                    
+                }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_finger_caress_A":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_caress_A_displayName_1": "肛門自慰",
+                "com_sex_finger_caress_A_displayName_2": "一起肛門自慰",
+                "com_sex_finger_caress_A_displayName_3": "愛撫肛門",
+                "com_sex_finger_caress_A_displayName_4": "交替愛撫肛門",
+                "com_sex_finger_caress_A_displayName_5": "轮流愛撫肛門",
+                "com_sex_finger_caress_A_displayName_6": "同时愛撫肛門",
+
+                "com_sex_finger_caress_A_description_begin_1":"$doer.firstname$的双手搭上了$receiver.firstname$的屁股开始搓揉着",
+                "com_sex_finger_caress_A_description_after_1":"$receiver.firstname$的臀部在高潮中不止地颤抖着",
+                "com_sex_finger_caress_A_description_remove_1":"$doer.firstname$的双手放开了$receiver.firstname$的屁股",
+                "com_sex_finger_caress_A_description_ongoing_1":"$doer.firstname$正在愛撫$receiver.firstname$的屁股"
+
+            },
+            "en-us":
+            {
+                "com_sex_finger_caress_A":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_caress_A_displayName_1": "Anal Masturbation",
+                "com_sex_finger_caress_A_displayName_2": "Alt. Anal Masturbation",
+                "com_sex_finger_caress_A_displayName_3": "Anal Caress",
+                "com_sex_finger_caress_A_displayName_4": "Alt. Anal Caress",
+                "com_sex_finger_caress_A_displayName_5": "Alt. Anal Caress",
+                "com_sex_finger_caress_A_displayName_6": "Alt. Anal Caress",
+
+                "com_sex_finger_caress_A_description_begin_1":"$doer.firstname$ places hands on $receiver.firstname$'s butt and starts rubbing",
+                "com_sex_finger_caress_A_description_after_1":"$receiver.firstname$'s buttocks tremble endlessly in orgasm",
+                "com_sex_finger_caress_A_description_remove_1":"$doer.firstname$ removes hands from $receiver.firstname$'s butt",
+                "com_sex_finger_caress_A_description_ongoing_1":"$doer.firstname$ is caressing $receiver.firstname$'s butt"
+            }
+        }
     }
 }

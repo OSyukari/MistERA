@@ -44,9 +44,9 @@ public class Result_JobContainer
         public bool ResetMaintenance = false;
 
 
-        [System.Serializable]
         public class Result_SetItem
         {
+            public bool isUnset = false;
             public string itemID = "";
             public ItemComponentTemplate_Harvestable comp = null;
 
@@ -57,7 +57,11 @@ public class Result_JobContainer
 
             public void Apply(Job_Furniture job, ActionPackage package, EvaluationPackage m, Character_Trainable c)
             {
-
+                if (isUnset)
+                {
+                    job.SetContainer(targetCrop:null, true);
+                    return;
+                }
                 if (itemID != "")
                 {
 

@@ -402,6 +402,13 @@
 "ui_management_expeditionConfig_recurring": "<link=ui_management_expeditionConfig_recurring_tooltip>重复执行</link>", 
 "ui_management_expeditionConfig_recurring_tooltip": "启用该选项的话，小队会在从远征归来后的下一次 出发时点 重复该远征\n\n下方可以定义小队重复执行的冷却天数", 
 "ui_management_expeditionConfig_recurringCooldown": "重复冷却天数：$count$", 
+"ui_management_expeditionConfig_prioritizeResting": "<link=ui_management_expeditionConfig_prioritizeResting_tooltip>优先休息</link>", 
+"ui_management_expeditionConfig_prioritizeResting_tooltip": "启用该选项的话，小队成员HP不满时会优先休息\n不启用的话，小队成员会优先探索，直到 ST EN低于50% 或者 HP小于1", 
+
+"ui_management_expeditionConfig": "小队设置：$settings$", 
+
+"ui_entry_memory_description_eat": "吃下了$elem1$个$itemname$||$amount$",
+"ui_entry_memory_description_swallow": "饮下了$elem1$ml的$itemname$||$amount$",
 
 "ui_management_jobs_viewCharaDetail_tooltip": "打开角色的详细信息面板",
 "ui_management_jobs_viewCharaDetail": "查看角色详细",
@@ -457,6 +464,7 @@
 "ui_map_floor_roomsList":"房间列表",
 "ui_map_floor_charaInRoom":"房间内成员",
 "ui_map_floorList":"楼层列表",
+"ui_map_roomTooltip":"房间：$room$\n$furnitures$\n房间内角色：$names$\n移动耗时 $time$分钟",
 
 "ui_update_elapsedTime":"经过$count$分钟",
 "ui_movement_leavesRoom":"$self$离开了$room$",
@@ -467,6 +475,64 @@
 "ui_diceroll_autosuccess":"必定接受",
 "ui_diceroll_success":"接受",
 "ui_diceroll_failure":"拒绝",
+
+"ui_ap_onHoverTooltip":"\n执行者：$doer$（接受率 $proposal$）\n对象：$receiver$（接受率 $acceptance$）\n耗时 $time$ 分钟，消耗 $costs$\n综合接受率 $acceptance_final$，基础DC $difficulty$",
+"ui_ap_onHoverTooltip_comInvalid":"\n执行者：$doer$，对象：$receiver$\n指令由于以下原因无法执行：\n$tooltips$",
+"ui_ap_onHoverTooltip_cannotSleep":"现在还无法睡觉",
+
+"ui_ap_CharaReqUtility_missingCost":"$name$当前的$stat$不够：需求[$requirement$]，当前为[$amount$]",
+"ui_ap_CharaReqUtility_missingBodypart":"$name$缺乏指令需要的身体部件类型[$bodytags$]",
+"ui_ap_CharaReqUtility_missingExtremeInflate":"需要$name$的[$bodytags$]身体部位被填满到极限",
+"ui_ap_CharaReqUtility_missingInflate":"需要$name$的[$bodytags$]身体部位被填满",
+"ui_ap_CharaReqUtility_missingRevealing":"需要$name$的[$bodytags$]特定身体的暴露度<=[$requirement$]（当前为$amount$）",
+"ui_ap_CharaReqUtility_notAllowPlayer":"该指令不允许玩家参与",
+"ui_ap_CharaReqUtility_notAllowNPC":"该指令不允许NPC（$name$）参与",
+"ui_ap_CharaReqUtility_requireConscious":"$name$失去意识了",
+"ui_ap_CharaReqUtility_requireUnrestrained":"需要$name$没有被束缚",
+"ui_ap_CharaReqUtility_requireAction_isTimeStopped":"$name$无法在时停中行动",
+"ui_ap_CharaReqUtility_requireAction":"$name$当前无法行动",
+"ui_ap_CharaReqUtility_requireMovement":"需要$name$有移动的能力",
+"ui_ap_CharaReqUtility_requireUndressed":"需要$name$有衣物被脱下",
+"ui_ap_CharaReqUtility_requireMale":"需要$name$为男性角色",
+"ui_ap_CharaReqUtility_requireFemale":"需要$name$为女性角色",
+"ui_ap_CharaReqUtility_requireNoTeammate":"需要当前没有随行角色",
+"ui_ap_CharaReqUtility_requireExistingJobwithCOMTag":"需要$name$当前有在执行类别为[$tags$]的指令",
+"ui_ap_CharaReqUtility_requireAbsentJobwithCOMTag":"需要$name$当前没有在执行类别为[$tags$]的指令",
+"ui_ap_CharaReqUtility_requireCombat":"需要$name$能够战斗",
+"ui_ap_CharaReqUtility_requireStatFull":"需要$name$的$stat$为满",
+"ui_ap_CharaReqUtility_requireStatNotFull":"需要$name$的$stat$不满",
+
+"ui_ap_PreEvaluate_requireDoer":"指令没有执行者",
+"ui_ap_PreEvaluate_requireCOM":"指令内容缺失",
+"ui_ap_PreEvaluate_requirejob":"指令接收对象（工作）丢失",
+"ui_ap_PreEvaluate_requireRoom":"当前房间[$room$]不满足条件：$conditions$",
+"ui_ap_PreEvaluate_RequireRoomExisting_itemBaseID":"需要房间中的[$name$]数量 >= $requirement$（当前有 $count$ 个）",
+"ui_ap_PreEvaluate_RequireRoomExisting_itemTag":"需要房间中的[$tags$]类道具的数量 >= $requirement$（当前有 $count$ 个）",
+"ui_ap_PreEvaluate_requireSameRoom":"$name$（当前位置 $location$）不在为可执行该指令的位置 $room$",
+
+"ui_COM_Requirements_doerCountInvalid":"执行者数量过多：当前执行者数[$count$]，该指令上限[$req$]",
+"ui_COM_Requirements_requireReceiver":"该指令需要对象",
+"ui_COM_Requirements_requireNoReceiver":"该指令无法在有对象时执行",
+"ui_COM_Requirements_toomanyReceiver":"该指令无法对这么多对象执行：当前对象数$target$，最多允许$count$",
+
+
+"ui_RequireExisting_missingPrereq":"缺乏该指令需要的前置指令",
+
+"ui_GetValidVariant_notAllowedDuringS":"调教中不可执行该指令",
+"ui_GetValidVariant_initS_exist":"所有参与者已经在调教中了",
+"ui_GetValidVariant_initS_noJoinable":"没有可以加入调教的对象",
+"ui_GetValidVariant_endS":"当前不存在可以被中止的调教工作",
+"ui_GetValidVariant_forbiddenGenderInteraction":"该指令的互动类别 $interaction$ 在偏好设置中为禁止项",
+"ui_GetValidVariant_InteractionGenderType":"执行者[$doer$]->对象[$receiver$]",
+
+"ui_RequireContaining_requireContentAbsent":"该家具无法容纳更多物件（当前内容物：$contents$）",
+"ui_RequireContaining_requireContentExist":"该指令需要此家具有容纳物件（当前内容物：$contents$）",
+"ui_RequireContaining_requireCanMaintain":"此家具的内容物暂时不需要维护（当前内容物：$contents$）",
+
+"ui_RequireFactionExisting_jobKeyword":"当前阵营[$faction$]没有需要完成的[$keywords$]类工作",
+"ui_RequireFactionExisting_disallowInNonPlayerFaction":"该指令无法在非玩家所属阵营[$faction$]中执行",
+"ui_RequireFactionExisting_disallowInPlayerFaction":"该指令无法在玩家所属阵营[$faction$]中执行",
+"ui_RequireFactionExisting_inventoryItemBaseID":"当前阵营[$faction$]道具栏中缺乏指令所需的[$name$]道具",
 
 "Memory_Response_None":"",
 "Memory_Response_Refuse":"拒绝",
@@ -506,7 +572,7 @@
 "ui_entry_memory_sleep_end": "Wakes up",
 
 "ui_comPanel_filters_deterministicRolls": "Deterministic Rolls",
-"ui_comPanel_filters_deterministicRolls_tooltip": "Guarantee success when overall success rate is above or equal 65%, and guarantee failure when below.",
+"ui_comPanel_filters_deterministicRolls_tooltip": "Guarantee success on Command acceptance check when overall success rate >= 65%, and guarantee failure when not.",
 "comManager_tab_skinship": "Skinship",
 
 "comManager_tab_act": "Action",
@@ -813,7 +879,214 @@
 
 "ui_diceroll_autosuccess":"Automatic Success",
 "ui_diceroll_success":"Success",
-"ui_diceroll_failure":"Failure"
+"ui_diceroll_failure":"Failure",
+
+
+"ui_settings_requireRestart":"Some settings changes require a game restart to take effect",
+"ui_entry_derivedStats_tooltip": "Derived stats of the character. Each stat has its own calculation rule.",
+
+"ui_fatalError":"Fatal Error encountered! Game cannot continue\nAbove is the game's Error log\nPlease report this to the developer!",
+"ui_fatalError_exit":"Exit Game",
+"ui_fatalError_copy":"Copy LOG to Clipboard",
+"ui_fatalError_copy_over":"Copy Successful",
+
+"ui_comPanel_filters_shortenLogs": "Shorten Logs",
+"ui_comPanel_filters_shortenLogs_tooltip": "When enabled, only one random participant's dialogue will be printed during multi-character commands\nWhen disabled, all participants' dialogue will be printed (Can flood the screen when there is many people, high chance of repetitive dialogue)\n\nRecommended: ON",
+
+
+
+"event_targetscope_nameCount": "$name$ x$count$",
+
+"comManager_title_skinship_teammate": ", extra participants [$teammates$]",
+
+
+"ui_debug": "<link=\"ui_debug_tooltip\">DEBUG</link>",
+"ui_debug_tooltip": "Enabling this option will:\n1. Display some data normally hidden (for debug)\n2. Allow player to sleep anytime\n3. Player commands consume no Stamina or Energy\n4. Can instantly end combat and choose result\n5. Global Ejaculation Volume X5",
+
+"ui_load_autosave": "Auto Save",
+
+"charaDetail_btn_resetPortraitManager": "<link=\"charaDetail_btn_resetPortraitManager_tooltip\">Reset Portrait Manager</link>",
+"charaDetail_btn_resetPortraitManager_tooltip": "Character portrait management data is written to the save file upon game start\nIf the character's portrait JSON is modified after game start, a manual reset is needed to load the modified data\n\nResetting will lose player-adjusted portrait coordinates and scaling.",
+
+"charaDetail_panel_viewHiddenRelationships": "<link=\"charaDetail_panel_viewHiddenRelationships_tooltip\">View Other Relationships</link>",
+"charaDetail_panel_viewHiddenRelationships_tooltip": "If a relationship target character is deleted, that relationship will be moved here.",
+"charaDetail_panel_skills_tooltip": "If the currently executed command meets the skill's applicable conditions, the skill level will be added to the current command's success rate check.",
+"charaDetail_panel_experiences_tooltips": "Lists all of the character's experiences here\n",
+
+"ui_intro_charaSelect_edit": "Edit",
+"ui_intro_charaSelect_delete": "Delete",
+
+
+"ui_memory_relationship_refuse":"Refused to become $relationship$ with $target$",
+"ui_memory_relationship_refused":"Requested to become $relationship$ with $target$, but was refused",
+"ui_memory_relationship_change":"Became $target$'s $relationship$",
+"ui_memory_relationship_end":"Ended $relationship$ relationship with $target$",
+
+"ui_management_expeditions_editMembers_tooltip": "Expedition teams cannot include players (as expedition maps have no actual map for interaction) and prisoners.\n\nOnce explorable maps are implemented in the future, players will be allowed to join the team to travel to such maps.",
+
+"exp_event_timestamp_ongoing":"Ongoing",
+"exp_event_returning":"$names$ are returning",
+"exp_event_departure_memory":"Departed to explore $loc$",
+"exp_event_return_memory":"Returned from exploring $loc$",
+
+"exp_event_active_memory_teammates":"With $team$",
+
+"PartyComposition_backline": "Backline",
+"PartyComposition_frontline": "Frontline",
+
+"trade_chara_Treatment": "<link=trade_chara_Treatment_tooltip>Character Treatment:</link>",
+"trade_chara_Treatment_tooltip": "Decide whether to include the character in the team. If not included, you can choose to take only their equipment.",
+"trade_chara_Treatment_capture": "<link=trade_chara_Treatment_capture_tooltip>Capture</link>",
+"trade_chara_Treatment_capture_tooltip": "Add the character to the team as a prisoner.\nUpon the team's return, this character will join the faction with the same status.",
+"trade_chara_Treatment_transfer": "<link=trade_chara_Treatment_transfer_tooltip>Transfer</link>",
+"trade_chara_Treatment_transfer_tooltip": "Add the character to the team as a member.\nUpon the team's return, this character will join the faction with the same status.",
+"trade_chara_Treatment_rescue": "<link=trade_chara_Treatment_rescue_tooltip>Rescue</link>",
+"trade_chara_Treatment_rescue_tooltip": "This character will return to the original team.",
+"trade_chara_Treatment_liberate": "<link=trade_chara_Treatment_liberate_tooltip>Liberate</link>",
+"trade_chara_Treatment_liberate_tooltip": "This character will be released (will not join the player's team).",
+"trade_chara_Treatment_none": "<link=trade_chara_Treatment_none_tooltip>None</link>",
+"trade_chara_Treatment_none_tooltip": "Do not include this character in the team.\nYou can choose to take the equipment they are carrying.",
+
+"ui_management_expeditionJob_team_active": "$names$ are exploring...",
+"ui_management_expeditionJob_team_resting": "$names$ are resting...",
+"ui_management_expeditionJob_team_returning": "$names$ are returning...",
+
+"ui_management_expeditions_setExpTarget_none":"Please set an expedition target",
+
+"ui_management_partyAvailability_inactive": "Team Standing By",
+"ui_management_partyAvailability_active": "Team Active",
+"ui_management_partyAvailability_nomember": "No Members Assigned",
+"ui_management_partyAvailability_cannotAct": "$name$ cannot act",
+"ui_management_partyAvailability_occupied": "$name$ is active in another team",
+
+
+"ui_management_expedition_rescueEventText": "$names$ found traces of the lost $victims$!",
+"ui_management_expedition_rescueReceiverText": "Rescue operation initiated by $names$!",
+"ui_management_expedition_notifyCharaMIA": "Lost contact with $names$ at $location$",
+"ui_management_expedition_jobInterruptMIA": "Exploration cannot continue due to missing members",
+"ui_management_expedition_noMIAinFaction": "None",
+"ui_management_expedition_partyTitle": "Team List",
+"ui_management_expedition_rescueCondition_expRate": "By dispatching other squads to explore locations with the [$keyword$] keyword and accumulating enough exploration progress, a rescue event can be triggered.",
+"ui_management_expedition_MIATitle": "<link=ui_management_expedition_MIATitle_tooltip>MIA</link>",
+"ui_management_expedition_MIATitle_tooltip": "Teams may encounter events during exploration that lead to loss of contact.\nAfter a certain period or by advancing exploration progress, missing members can be rescued by other expedition teams.\nPlease refer to the mouse-over description of each MIA team for specific conditions.",
+
+"ui_management_expeditionJob_": "Set Exploration Target: $expName$",
+"ui_management_expeditionJob_inactive": "Exploration Target: $expName$",
+"ui_management_expeditionJob_queued": "Exploration of $expName$ scheduled",
+"ui_management_expeditionJob_gathering": "Preparing for exploration of $expName$",
+"ui_management_expeditionJob_active": "Exploration of $expName$ in progress",
+"ui_management_expeditionJob_resting": "Exploration of $expName$ resting",
+"ui_management_expeditionJob_remaining_inactive":"Exploration not started",
+"ui_management_expeditionJob_remaining_active":"<link=ui_management_expeditionJob_remaining_tooltip>$time$ $progress$",
+"ui_management_expeditionJob_remaining_active_ongoing":"<link=ui_management_expeditionJob_remaining_tooltip>$time$ $progress$\nCurrently active characters: $names$</link>",
+"ui_management_expeditionJob_remainingTime": "$time$ hours remaining",
+"ui_management_expeditionJob_remainingProgress": "Exploration Progress $rate$",
+"ui_management_expeditionJob_remaining_tooltip": "Time-limited explorations will end when time runs out.\n\nExploration progress affects when MIA teams can return.",
+"ui_management_expeditionJob_returning": "Returning from $expName$",
+"ui_management_expeditionJob_cancel": "Cancel Exploration Plan",
+"ui_management_expeditionJob_abort": "Abort Exploration",
+"ui_management_expeditionJob_start": "Gathering Team Members",
+"ui_management_expeditionJob_start_final": "Exploration Start",
+"ui_management_expeditionJob_cancel_missing": "Personnel missing, exploration postponed",
+"ui_management_expeditionJob_end": "Exploration Ended",
+"ui_management_expeditionJob_requireManualresolve": "Pending events require manual resolution!",
+"ui_management_expeditionJob_notifyMemoryKidnapped": "$message$ while $partyJob$",
+"ui_management_expeditionJob_resolving": "Resolving exploration...",
+"ui_management_expeditionJob_cannotResolve": "<link=ui_management_expeditionJob_cannotResolve_tooltip>No characters available to resolve events</link>",
+"ui_management_expeditionJob_cannotResolve_tooltip": "Team characters may be resting or sleeping at this time.",
+"ui_management_expeditions_startExp": "Start Expedition Mission",
+"ui_management_expeditionConfig_allowCamp": "<link=ui_management_expeditionConfig_allowCamp_tooltip>Allow Camping</link>",
+"ui_management_expeditionConfig_allowCamp_tooltip": "If the expedition takes >= 24 hours, the team will sleep at the default sleep time of the current outpost.\nIf it takes less than 24 hours, the team will default to staying awake until return.\n\nIf enabled, the team will prioritize sleep even if the expedition takes less than 24 hours.",
+"ui_management_expeditionConfig_duration": "Base duration $time$h, Total duration $final$h",
+"ui_management_expeditionView_duration_base": "Duration $time$h",
+"ui_management_expeditionView_duration_force": "Fixed Start Time $time$",
+"ui_management_expeditionView_features": "Features: $list$",
+"ui_management_expeditionConfig_startTime": "Departure Time: $time$",
+"ui_management_expeditionConfig_startTimeForced": "Fixed Departure Time: $time$",
+"ui_management_expeditionConfig_recurring": "<link=ui_management_expeditionConfig_recurring_tooltip>Repeat Execution</link>",
+"ui_management_expeditionConfig_recurring_tooltip": "If enabled, the team will repeat this expedition at the next departure time after returning.\n\nYou can define the cooldown days for the team's repeat execution below.",
+"ui_management_expeditionConfig_recurringCooldown": "Repeat Cooldown Days: $count$",
+"ui_management_expeditionConfig_prioritizeResting": "<link=ui_management_expeditionConfig_prioritizeResting_tooltip>Prioritize Resting</link>",
+"ui_management_expeditionConfig_prioritizeResting_tooltip": "If enabled, team members will prioritize resting when HP is not full.\nIf disabled, members will prioritize exploration until ST/EN is below 50% or HP is less than 1.",
+
+"ui_management_expeditionConfig": "Team Settings: $settings$",
+
+"ui_entry_memory_description_eat": "Ate $elem1$ $itemname$||$amount$",
+"ui_entry_memory_description_swallow": "Drank $elem1$ml of $itemname$||$amount$",
+
+"ui_ap_join_success":"$names$ joined successfully",
+"ui_ap_join_fail":"$names$ failed to join",
+
+"ui_map_roomTooltip":"Room: $room$\n$furnitures$\nCharacters in room: $names$\nTravel time $time$ min",
+
+
+
+"ui_ap_onHoverTooltip":"\nPerformer: $doer$ (Acceptance Rate $proposal$)\nTarget: $receiver$ (Acceptance Rate $acceptance$)\nTime taken $time$ mins, Cost $costs$\nOverall Success Rate $acceptance_final$, Base DC $difficulty$",
+"ui_ap_onHoverTooltip_comInvalid":"\nPerformer: $doer$, Target: $receiver$\nCommand cannot be executed due to:\n$tooltips$",
+"ui_ap_onHoverTooltip_cannotSleep":"Cannot sleep now",
+
+"ui_ap_CharaReqUtility_missingCost":"$name$'s current $stat$ is insufficient: Requires [$requirement$], Current [$amount$]",
+"ui_ap_CharaReqUtility_missingBodypart":"$name$ lacks the required body part type [$bodytags$] for this command",
+"ui_ap_CharaReqUtility_missingExtremeInflate":"Requires $name$'s [$bodytags$] body part to be filled to the limit",
+"ui_ap_CharaReqUtility_missingInflate":"Requires $name$'s [$bodytags$] body part to be filled",
+"ui_ap_CharaReqUtility_missingRevealing":"Requires $name$'s [$bodytags$] specific body exposure <= [$requirement$] (Current $amount$)",
+"ui_ap_CharaReqUtility_notAllowPlayer":"This command does not allow player participation",
+"ui_ap_CharaReqUtility_notAllowNPC":"This command does not allow NPC ($name$) participation",
+"ui_ap_CharaReqUtility_requireConscious":"$name$ has lost consciousness",
+"ui_ap_CharaReqUtility_requireUnrestrained":"Requires $name$ to be unrestrained",
+"ui_ap_CharaReqUtility_requireAction_isTimeStopped":"$name$ cannot act during time stop",
+"ui_ap_CharaReqUtility_requireAction":"$name$ is currently unable to act",
+"ui_ap_CharaReqUtility_requireMovement":"Requires $name$ to be capable of movement",
+"ui_ap_CharaReqUtility_requireUndressed":"Requires $name$ to have clothing removed",
+"ui_ap_CharaReqUtility_requireMale":"Requires $name$ to be male",
+"ui_ap_CharaReqUtility_requireFemale":"Requires $name$ to be female",
+"ui_ap_CharaReqUtility_requireNoTeammate":"Requires no accompanying characters currently",
+"ui_ap_CharaReqUtility_requireExistingJobwithCOMTag":"Requires $name$ to be currently executing a command with category [$tags$]",
+"ui_ap_CharaReqUtility_requireAbsentJobwithCOMTag":"Requires $name$ not to be currently executing a command with category [$tags$]",
+"ui_ap_CharaReqUtility_requireCombat":"Requires $name$ to be able to fight",
+"ui_ap_CharaReqUtility_requireStatFull":"Requires $name$'s $stat$ to be full",
+"ui_ap_CharaReqUtility_requireStatNotFull":"Requires $name$'s $stat$ not to be full",
+
+"ui_ap_PreEvaluate_requireDoer":"Command has no performer",
+"ui_ap_PreEvaluate_requireCOM":"Command content missing",
+"ui_ap_PreEvaluate_requirejob":"Command target (Job) missing",
+"ui_ap_PreEvaluate_requireRoom":"Current room [$room$] does not meet conditions: $conditions$",
+"ui_ap_PreEvaluate_RequireRoomExisting_itemBaseID":"Requires quantity of [$name$] in room >= $requirement$ (Current $count$)",
+"ui_ap_PreEvaluate_RequireRoomExisting_itemTag":"Requires quantity of items with [$tags$] in room >= $requirement$ (Current $count$)",
+"ui_ap_PreEvaluate_requireSameRoom":"$name$ (Current Location $location$) is not in the room $room$ required to execute this command",
+
+"ui_COM_Requirements_doerCountInvalid":"Too many performers: Current [$count$], Limit for this command [$req$]",
+"ui_COM_Requirements_requireReceiver":"This command requires a target",
+"ui_COM_Requirements_requireNoReceiver":"This command cannot be executed with a target",
+"ui_COM_Requirements_toomanyReceiver":"This command cannot be executed on so many targets: Current $target$, Max allowed $count$",
+
+
+"ui_RequireExisting_missingPrereq":"Missing prerequisite command for this command",
+
+"ui_GetValidVariant_notAllowedDuringS":"This command cannot be executed during training",
+"ui_GetValidVariant_initS_exist":"All participants are already in training",
+"ui_GetValidVariant_initS_noJoinable":"No targets available to join training",
+"ui_GetValidVariant_endS":"No training job currently available to abort",
+"ui_GetValidVariant_forbiddenGenderInteraction":"The interaction category $interaction$ for this command is forbidden in preferences",
+"ui_GetValidVariant_InteractionGenderType":"Performer [$doer$]->Target [$receiver$]",
+
+"ui_RequireContaining_requireContentAbsent":"This furniture cannot contain more items (Current contents: $contents$)",
+"ui_RequireContaining_requireContentExist":"This command requires this furniture to contain items (Current contents: $contents$)",
+"ui_RequireContaining_requireCanMaintain":"Contents of this furniture do not require maintenance for now (Current contents: $contents$)",
+
+"ui_RequireFactionExisting_jobKeyword":"Current faction [$faction$] has no pending [$keywords$] type jobs",
+"ui_RequireFactionExisting_disallowInNonPlayerFaction":"This command cannot be executed in non-player faction [$faction$]",
+"ui_RequireFactionExisting_disallowInPlayerFaction":"This command cannot be executed in player faction [$faction$]",
+"ui_RequireFactionExisting_inventoryItemBaseID":"Current faction [$faction$] inventory lacks required [$name$] item",
+
+"Memory_Response_None":"",
+"Memory_Response_Refuse":"Refuse",
+"Memory_Response_Interrupted":"Interrupted",
+"Memory_Response_Accept":"Accept",
+"Memory_Response_CriticalFailure":"Critical Failure",
+"Memory_Response_Failure":"Failure",
+"Memory_Response_Success":"Success",
+"Memory_Response_CriticalSuccess":"Critical Success"
 
 
             }

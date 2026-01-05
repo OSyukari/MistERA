@@ -42,6 +42,9 @@
             },
             "en-us":
             {
+    "block_horizontal":"Horizontal Block",
+    "block_vertical":"Vertical Block",
+    "block_thrust":"Thrust Block"
                 
             }
         }

@@ -60,8 +60,8 @@
                     {
                         "ID":"bridge_captainsoffice",
                         "displayName":"Captain's Office",
-                        "offsetX":-286.0,
-                        "offsetY":-355.0,
+                        "offsetX":-269,
+                        "offsetY":-286,
                         "connects":
                         [ { "ID":"bridge_hallway2", "cost":1.0  } ],
                         "furnitureIDs":["furniture_cafe_table_2","furniture_sofa_3"],
@@ -271,7 +271,7 @@
                         "ID":"lounge2_SR_1",
                         "displayName":"map_singleRoom",
                         "offsetX":-122,
-                        "offsetY":-349,
+                        "offsetY":-391,
                         "connects": 
                         [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
@@ -297,7 +297,7 @@
                         "ID":"lounge2_SR_3",
                         "displayName":"map_singleRoom",
                         "offsetX":46,
-                        "offsetY":-349,
+                        "offsetY":-391,
                         "connects": 
                         [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
@@ -382,8 +382,8 @@
                     {
                         "ID":"lounge2_DR_1",
                         "displayName":"map_doubleRoom",
-                        "offsetX":-364.2,
-                        "offsetY":-285.8,
+                        "offsetX":-369,
+                        "offsetY":-320,
                         "connects": 
                         [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":["furniture_bed_single_bunk","furniture_bathroom_set","furniture_shower"
@@ -397,7 +397,7 @@
                         "offsetY":-365.7,
                         "connects": 
                         [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
-                        "furnitureIDs":["furniture_stove"],
+                        "furnitureIDs":[],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Warehouse.jpg"
                     },
                     {
@@ -414,7 +414,7 @@
                         "ID":"lounge2_library_computers1",
                         "displayName":"Computers Room 1",
                         "offsetX":372.6,
-                        "offsetY":-310.5,
+                        "offsetY":-299,
                         "connects": 
                         [ { "ID":"lounge2_library", "cost":1.0 } ],
                         "furnitureIDs":["furniture_computer_terminal","furniture_computer_terminal"],
@@ -424,7 +424,7 @@
                         "ID":"lounge2_library_computers2",
                         "displayName":"Computers Room 2",
                         "offsetX":372.6,
-                        "offsetY":-349.9,
+                        "offsetY":-362,
                         "connects": 
                         [ { "ID":"lounge2_library", "cost":1.0 } ],
                         "furnitureIDs":["furniture_computer_terminal","furniture_computer_terminal"],
@@ -563,8 +563,8 @@
                     {
                         "ID":"hydroponics_carniculture_labs",
                         "displayName":"Carniculture Labs",
-                        "offsetX":334,
-                        "offsetY":-19,
+                        "offsetX":329,
+                        "offsetY":47.7,
                         "connects":
                         [ { "ID":"hydroponics_carniculture_office", "cost":1.0  } ],
                         "furnitureIDs":["furniture_research_biochem"],
@@ -627,7 +627,7 @@
         "hydroponics_storage2": "Storage",
         "hydroponics_engineering": "Engineering Workshop",
         "hydroponics_carniculture_production": "Carniculture Farm",
-        "hydroponics_carniculture_office": "Carniculture Studio",
+        "hydroponics_carniculture_office": "Carniculture Office",
         "hydroponics_carniculture_labs": "Carniculture Lab"
             }
         }

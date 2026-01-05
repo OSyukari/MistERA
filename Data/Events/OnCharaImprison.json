@@ -34,13 +34,13 @@
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_party",
         "isLast": true,
-        "line": "$self.name$被$factionName$的$partyName$小队捕获了！"
+        "line": "OnCharaImprison_ev01"
     },
     {
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_noparty",
         "isLast": true,
-        "line": "$self.name$被$factionName$捕获了！"
+        "line": "OnCharaImprison_ev02"
     }
                 ]
             }
@@ -52,11 +52,15 @@
         {
             "zh-cn":
             {
-"OnCharaImprison":"监禁事件"
+"OnCharaImprison":"监禁事件",
+"OnCharaImprison_ev01":"$self.name$被$factionName$的$partyName$小队捕获了！",
+"OnCharaImprison_ev02":"$self.name$被$factionName$捕获了！"
             },
             "en-us":
             {
-
+"OnCharaImprison":"Imprison Event",
+"OnCharaImprison_ev01":"$self.name$ is captured by $factionName$'s $partyName$ party",
+"OnCharaImprison_ev02":"$self.name$ is captured by $factionName$"
             }
         }
     }

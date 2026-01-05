@@ -69,7 +69,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$正吸吮着$receiver.firstname$的乳头" ]
+                            "texts": [ "com_sex_oral_B_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -78,7 +78,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$松开了含在嘴里的$receiver.firstname$的乳头" ]
+                            "texts":[ "com_sex_oral_B_description_remove_1" ]
                         }
                     ]
                 },
@@ -88,7 +88,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$doer.firstname$在口中感受着$receiver.firstname$乳头的突起" ]
+                            "texts":[ "com_sex_oral_B_description_after_1" ]
                         }
                     ]
                 },
@@ -97,12 +97,48 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$将$receiver.firstname$的乳头含在了嘴里"]
+                            "texts": ["com_sex_oral_B_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_oral_B":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_B_displayName_1": "舔乳头",
+                "com_sex_oral_B_displayName_2": "交替舔乳头",
+                "com_sex_oral_B_displayName_3": "轮流舔乳头",
+                "com_sex_oral_B_displayName_4": "同时舔乳头",
+
+                "com_sex_oral_B_description_begin_1":"$doer.firstname$将$receiver.firstname$的乳头含在了嘴里",
+                "com_sex_oral_B_description_after_1":"$doer.firstname$在口中感受着$receiver.firstname$乳头的突起",
+                "com_sex_oral_B_description_remove_1":"$doer.firstname$松开了含在嘴里的$receiver.firstname$的乳头",
+                "com_sex_oral_B_description_ongoing_1":"$doer.firstname$正吸吮着$receiver.firstname$的乳头"
+
+            },
+            "en-us":
+            {
+                "com_sex_oral_B":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_B_displayName_1": "Nipple Licking",
+                "com_sex_oral_B_displayName_2": "Alt. Nipple Licking",
+                "com_sex_oral_B_displayName_3": "Alt. Nipple Licking",
+                "com_sex_oral_B_displayName_4": "Alt. Nipple Licking",
+
+                "com_sex_oral_B_description_begin_1":"$doer.firstname$ takes $receiver.firstname$'s nipple into their mouth.",
+                "com_sex_oral_B_description_after_1":"$doer.firstname$ feels the erection of $receiver.firstname$'s nipple inside their mouth.",
+                "com_sex_oral_B_description_remove_1":"$doer.firstname$ releases $receiver.firstname$'s nipple from their mouth.",
+                "com_sex_oral_B_description_ongoing_1":"$doer.firstname$ is sucking on $receiver.firstname$'s nipple."
+
+            }
+        }
     }
 }

@@ -222,7 +222,15 @@
             {
 "weapon_simple_cutlass":"Cutlass",
 "weapon_simple_cleaver":"Cleaver",
-"weapon_simple_scythe":"Scythe"
+"weapon_simple_scythe":"Scythe",
+"weapon_simple_club":"Club",
+
+"simple_swing_horizontal_light":"Horizontal Swing",
+"simple_swing_horizontal_heavy":"Heavy Horizontal Swing",
+"simple_swing_horizontal_heavy_followup":"Heavy+ Horizontal Swing",
+"simple_swing_up_heavy":"Heavy Downward Swing",
+"simple_thrust_forward":"Thrust",
+"simple_thrust_heavy_forward":"Heavy Thrust"
 
             }
         }

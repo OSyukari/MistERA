@@ -184,7 +184,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$正在愛撫$receiver.firstname$的胸部" ]
+                            "texts": [ "com_sex_finger_caress_B_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -193,7 +193,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$的双手放开了$receiver.firstname$的胸部" ]
+                            "texts":[ "com_sex_finger_caress_B_description_remove_1" ]
                         }
                     ]
                 },
@@ -203,7 +203,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$receiver.firstname$的胸部在高潮中不止地颤抖着" ]
+                            "texts":[ "com_sex_finger_caress_B_description_after_1" ]
                         }
                     ]
                 },
@@ -212,12 +212,64 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$的双手搭上了$receiver.firstname$的胸部开始搓揉着"]
+                            "texts": ["com_sex_finger_caress_B_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_finger_caress_B":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_caress_B_displayName_1": "胸部自慰",
+                "com_sex_finger_caress_B_displayName_2": "一起胸部自慰",
+                "com_sex_finger_caress_B_displayName_3": "愛撫胸部",
+                "com_sex_finger_caress_B_displayName_4": "交替愛撫胸部",
+                "com_sex_finger_caress_B_displayName_5": "轮流愛撫胸部",
+                "com_sex_finger_caress_B_displayName_6": "同时愛撫胸部",
+                "com_sex_finger_caress_B_displayName_1_force": "乳头自慰",
+                "com_sex_finger_caress_B_displayName_2_force": "一起乳头自慰",
+                "com_sex_finger_caress_B_displayName_3_force": "玩弄乳头",
+                "com_sex_finger_caress_B_displayName_4_force": "交替玩弄乳头",
+                "com_sex_finger_caress_B_displayName_5_force": "轮流玩弄乳头",
+                "com_sex_finger_caress_B_displayName_6_force": "同时玩弄乳头",
+
+                "com_sex_finger_caress_B_description_begin_1":"$doer.firstname$的双手搭上了$receiver.firstname$的胸部开始搓揉着",
+                "com_sex_finger_caress_B_description_after_1":"$receiver.firstname$的胸部在高潮中不止地颤抖着",
+                "com_sex_finger_caress_B_description_remove_1":"$doer.firstname$的双手放开了$receiver.firstname$的胸部",
+                "com_sex_finger_caress_B_description_ongoing_1":"$doer.firstname$正在愛撫$receiver.firstname$的胸部"
+
+            },
+            "en-us":
+            {
+                "com_sex_finger_caress_B":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_caress_B_displayName_1": "Breast Masturbation",
+                "com_sex_finger_caress_B_displayName_2": "Alt. Breast Masturbation",
+                "com_sex_finger_caress_B_displayName_3": "Caressing Breasts",
+                "com_sex_finger_caress_B_displayName_4": "Alt. Breast Caress",
+                "com_sex_finger_caress_B_displayName_5": "Alt. Breast Caress",
+                "com_sex_finger_caress_B_displayName_6": "Alt. Breast Caress",
+                "com_sex_finger_caress_B_displayName_1_force": "Nipple Masturbation",
+                "com_sex_finger_caress_B_displayName_2_force": "Alt. Nipple Masturbation",
+                "com_sex_finger_caress_B_displayName_3_force": "Teasing Nipples",
+                "com_sex_finger_caress_B_displayName_4_force": "Alt. Nipple Teasing",
+                "com_sex_finger_caress_B_displayName_5_force": "Alt. Nipple Teasing",
+                "com_sex_finger_caress_B_displayName_6_force": "Alt. Nipple Teasing",
+
+                "com_sex_finger_caress_B_description_begin_1":"$doer.firstname$'s hands rest on $receiver.firstname$'s breasts and begin to knead them",
+                "com_sex_finger_caress_B_description_after_1":"$receiver.firstname$'s breasts tremble endlessly in orgasm",
+                "com_sex_finger_caress_B_description_remove_1":"$doer.firstname$ releases their hands from $receiver.firstname$'s breasts",
+                "com_sex_finger_caress_B_description_ongoing_1":"$doer.firstname$ is caressing $receiver.firstname$'s breasts"
+
+            }
+        }
     }
 }

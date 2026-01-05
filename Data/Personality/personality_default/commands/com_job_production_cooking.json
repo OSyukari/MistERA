@@ -7,41 +7,59 @@
                     "ID": "com_job_production_cooking_Begin",
                     "variants": [
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": { "requireSelfAttitudeGTE": "Like" },
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
                             "extraPortraitTags": [
-                                "relaxed", "leaning", "confident", "smug", "excited", "happy"
+                                "relaxed",
+                                "leaning",
+                                "confident",
+                                "smug",
+                                "excited",
+                                "happy"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.3.3 主动接受" ,
+                            "_comment": "2.3.3 主动接受",
                             "responses": [
-                                "$self$眼睛一亮，立刻站了起来：\"好啊！我正想露一手呢！\"", "$self$挽住$target$的胳膊：\"这种事怎么能少了我？走走走！\""
+                                "com_job_production_cooking_Begin_1",
+                                "com_job_production_cooking_Begin_2"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], 
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
                             "useActiveTags": false,
-                            "_comment":"2.3.5 被动接受（屈服）" ,
-                            "responses": [ 
-                                "$self$身体僵硬了一下，低着头默默地走向厨房。\"……我知道了。\"", "$self$不敢看$target$的眼睛，颤抖着声音回答：\"好、好的……只要你不生气……\""
+                            "_comment": "2.3.5 被动接受（屈服）",
+                            "responses": [
+                                "com_job_production_cooking_Begin_3",
+                                "com_job_production_cooking_Begin_4"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
-                            "_comment":"2.3.4 被动接受（惊讶不反感）" ,
-                            "responses":
-                            [ 
-                                "$self$愣了一下，指着自己：\"诶？我也要一起吗？好吧，如果不嫌弃我笨手笨脚的话。\"", "$self$挠了挠头：\"既然你都这么说了……那我就打个下手吧。\""
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 被动接受（惊讶不反感）",
+                            "responses": [
+                                "com_job_production_cooking_Begin_5",
+                                "com_job_production_cooking_Begin_6"
                             ]
                         },
                         {
-                    
                             "extraPortraitTags": [
                                 "focused",
                                 "neutral",
@@ -51,9 +69,12 @@
                                 "observation"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.1.1 行动开始" ,
+                            "_comment": "2.1.1 行动开始",
                             "responses": [
-                                "$self$系上围裙，洗净双手，拿出了冷藏箱里的食材。", "$self$哼着不成调的小曲，将平底锅架在了炉火上。", "$self$认真地确认了一遍食谱，深吸一口气：\"好，今天要做顿大餐！\"", "$self$挽起袖子，眼神变得犀利起来。\"是时候展现真正的技术了。\""
+                                "com_job_production_cooking_Begin_7",
+                                "com_job_production_cooking_Begin_8",
+                                "com_job_production_cooking_Begin_9",
+                                "com_job_production_cooking_Begin_10"
                             ]
                         }
                     ]
@@ -65,9 +86,10 @@
                     "ID": "com_job_production_cooking_Tryjoin",
                     "variants": [
                         {
-                            "_comment":"2.3.6 NPC请求加入" ,
+                            "_comment": "2.3.6 NPC请求加入",
                             "responses": [
-                                "$self$探头探脑地凑进厨房：\"好香啊！需不需要帮忙？\"", "$self$卷起袖子走了进来：\"看着很有趣的样子，加我一个呗？\""
+                                "com_job_production_cooking_Tryjoin_1",
+                                "com_job_production_cooking_Tryjoin_2"
                             ]
                         }
                     ]
@@ -79,9 +101,10 @@
                     "ID": "com_job_production_cooking_Joined",
                     "variants": [
                         {
-                            "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
-                            "responses": [ 
-                                "$self$开心地比了个‘耶’的手势，迅速加入了备菜队伍。", "$self$接过围裙，脸上洋溢着满足的笑容。\"那就请多指教啦，大厨！\""
+                            "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
+                            "responses": [
+                                "com_job_production_cooking_Joined_1",
+                                "com_job_production_cooking_Joined_2"
                             ]
                         }
                     ]
@@ -93,9 +116,10 @@
                     "ID": "com_job_production_cooking_Join_Refused",
                     "variants": [
                         {
-                            "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
+                            "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
-                                "$self$有些失落地垂下肩膀，嘟囔着退了出去。\"什么嘛，小气鬼……\"", "$self$撇了撇嘴，耸耸肩道：\"行行行，不打扰你们二人世界。\""
+                                "com_job_production_cooking_Join_Refused_1",
+                                "com_job_production_cooking_Join_Refused_2"
                             ]
                         }
                     ]
@@ -110,47 +134,76 @@
                             "requirement": {
                                 "requireEPFailure": true
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
-                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Neutral"
+                                    },
+                                    "extraPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
-                                        "$self$用手背把$target$推开，笑道：\"这里油烟大，你出去等着吃就好啦。\"", "$self$摇摇头：\"不用不用，我已经快搞定啦，你去休息吧。\""
+                                        "com_job_production_cooking_Join_1",
+                                        "com_job_production_cooking_Join_2"
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "extraPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
-                                "$self$警惕地护住灶台：\"别来添乱！上次厨房差点被你炸了。\"", "$self$皱起眉头：\"出去！这里不需要你插手。\""
+                                "com_job_production_cooking_Join_3",
+                                "com_job_production_cooking_Join_4"
                             ]
                         },
                         {
-                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$往旁边挪了一步，让出位置：\"正如我意！快来帮我切洋葱！\"", "$self$把搅拌器递给$target$：\"那就拜托你了，我的得力助手。\""
+                            "responses": [
+                                "com_job_production_cooking_Join_5",
+                                "com_job_production_cooking_Join_6"
                             ]
-
                         },
                         {
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$不敢反抗，默默地让出主厨的位置，退到角落打下手。", "$self$低着头，声音细若蚊蝇：\"随、随你喜欢……\""
+                            "responses": [
+                                "com_job_production_cooking_Join_7",
+                                "com_job_production_cooking_Join_8"
                             ]
                         },
                         {
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$有些惊讶地眨眨眼：\"诶？你想帮忙？稀客啊……那把那个菜洗了吧。\"", "$self$疑惑地打量着$target$：\"太阳打西边出来了？行吧，别切到手哦。\""
+                            "responses": [
+                                "com_job_production_cooking_Join_9",
+                                "com_job_production_cooking_Join_10"
                             ]
                         }
                     ]
@@ -162,9 +215,12 @@
                     "ID": "com_job_production_cooking_Ongoing",
                     "variants": [
                         {
-                            "_comment":"2.1.2 行动中途" ,
-                            "responses": [ 
-                                "厨房里充满了切菜的笃笃声，空气中开始弥漫起食材的香气。", "$self$熟练地颠动着锅铲，额头上渗出细密的汗珠。", "$self$正全神贯注地盯着汤锅的火候，时不时用汤勺尝一口味道。", "$self$手忙脚乱地在几个灶台间穿梭。\"啊！那个酱油在哪里来着？\""
+                            "_comment": "2.1.2 行动中途",
+                            "responses": [
+                                "com_job_production_cooking_Ongoing_1",
+                                "com_job_production_cooking_Ongoing_2",
+                                "com_job_production_cooking_Ongoing_3",
+                                "com_job_production_cooking_Ongoing_4"
                             ]
                         }
                     ]
@@ -176,42 +232,74 @@
                     "ID": "com_job_production_cooking_Interrupt",
                     "variants": [
                         {
-                            "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
-                            "requirement":{ "requireSelfAttitudeKey": "Fear" },
-                            "_comment":"2.2.3 态度：恐惧 有他人登场" ,
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Fear"
+                            },
+                            "_comment": "2.2.3 态度：恐惧 有他人登场",
                             "responses": [
-                                "看到$target$的身影，$self$的手抖了一下，差点切到了手指。", "$self$下意识地往墙角缩了缩，紧紧握住了手中的锅铲作为防御。\"你……你要干什么？\""
+                                "com_job_production_cooking_Interrupt_1",
+                                "com_job_production_cooking_Interrupt_2"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Badwill" },
-                            "_comment":"2.2.2 态度：恶意 有他人登场" ,
-                            "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
-                            "responses": [ 
-                                "$self$手中的菜刀重重地剁在案板上，发出刺耳的声响。\"厨房重地，闲人免进。\"", "$self$冷冷地瞥了$target$一眼，侧过身护住了正在料理的食物。\"别靠近这里，会弄脏我的菜。\""
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Badwill"
+                            },
+                            "_comment": "2.2.2 态度：恶意 有他人登场",
+                            "extraPortraitTags": [
+                                "disgusted",
+                                "disappointed"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_job_production_cooking_Interrupt_3",
+                                "com_job_production_cooking_Interrupt_4"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
-                            "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
-                            "_comment":"2.2.1 态度：好意 有他人登场" ,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Goodwill"
+                            },
+                            "extraPortraitTags": [
+                                "happy",
+                                "excited",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 态度：好意 有他人登场",
                             "responses": [
-                                "看到$target$进来，$self$露出了温暖的笑容。\"来得正好，帮我尝尝这个味道怎么样？\"", "$self$并没有停下手中的动作，只是愉快地打了声招呼。\"稍微等一下哦，马上就好。\""
+                                "com_job_production_cooking_Interrupt_5",
+                                "com_job_production_cooking_Interrupt_6"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Desire" },
-                            "_comment":"2.2.4 态度：欲望 有他人登场" ,
-                            "extraPortraitTags": [ "shy" ], "useActiveTags": false,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Desire"
+                            },
+                            "_comment": "2.2.4 态度：欲望 有他人登场",
+                            "extraPortraitTags": [
+                                "shy"
+                            ],
+                            "useActiveTags": false,
                             "responses": [
-                                "$self$脸颊泛红，有些慌乱地整理了一下围裙。\"啊，$target$……这副样子被你看到有点害羞。\"", "$self$咬着嘴唇，眼神湿润地看着$target$。\"其实……比起做饭，我更想……没、没什么！\""
+                                "com_job_production_cooking_Interrupt_7",
+                                "com_job_production_cooking_Interrupt_8"
                             ]
                         },
                         {
-                            "_comment":"2.2.5 态度：普通 有他人登场" ,
-                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "_comment": "2.2.5 态度：普通 有他人登场",
+                            "extraPortraitTags": [
+                                "focused"
+                            ],
+                            "useActiveTags": false,
                             "responses": [
-                                "$self$只是淡淡地点了点头，继续专注于切菜。", "$self$指了指旁边的椅子。\"如果不忙的话，可以坐在那里等。\""
+                                "com_job_production_cooking_Interrupt_9",
+                                "com_job_production_cooking_Interrupt_10"
                             ]
                         }
                     ]
@@ -224,7 +312,9 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirement": { "requireEPFailure": true },
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
                             "variants": [
                                 {
                                     "requirement": {
@@ -238,7 +328,8 @@
                                     ],
                                     "useActiveTags": false,
                                     "responses": [
-                                        "$self$笑着摆摆手：\"抱歉啦，我今天是'只吃不洗'派。\"", "$self$指了指正在追的电视剧：\"等我看完这集？在那之前还是饶了我吧。\""
+                                        "com_job_production_cooking_End_1",
+                                        "com_job_production_cooking_End_2"
                                     ]
                                 }
                             ],
@@ -254,30 +345,33 @@
                             "useActiveTags": false,
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
-                                "$self$翻了个白眼：\"你看我像是会做饭的样子吗？\"", "$self$不耐烦地转过身去：\"没空，自己叫外卖去。\""
+                                "com_job_production_cooking_End_3",
+                                "com_job_production_cooking_End_4"
                             ]
                         },
                         {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
                                         "intrigued",
                                         "relaxed"
-                                    ], "useActiveTags": false,
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
-                                    "kojo_default_com_job_production_cooking_accept_success_1",
-                                    "kojo_default_com_job_production_cooking_accept_success_2",
-
-                                    "$self$骄傲地端出成品，香气四溢。\"当当当当！完美！快夸我！\"", "$self$看着大家满足的吃相，露出了欣慰的笑容。\"太好了，看来努力没有白费。\""
-                                        
+                                        "kojo_default_com_job_production_cooking_accept_success_1",
+                                        "kojo_default_com_job_production_cooking_accept_success_2",
+                                        "com_job_production_cooking_End_5",
+                                        "com_job_production_cooking_End_6"
                                     ]
                                 }
                             ],
@@ -295,26 +389,29 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
-                                "虽然料理很完美，但$self$只是疲惫地解下围裙。\"太累了……下次还是叫外卖吧。\"", "$self$冷淡地看着桌上的大餐，似乎完全没有食欲。\"做完了，你们吃吧，我去休息。\""
+                                "com_job_production_cooking_End_7",
+                                "com_job_production_cooking_End_8"
                             ]
                         },
                         {
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
                                         "intrigued",
                                         "relaxed"
-                                    ], "useActiveTags": false,
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
-                                    "kojo_default_com_job_production_cooking_accept_failure_1",
-
-                                    "看着这一团焦黑的物体，$self$忍不住笑出了声。\"虽然看起来很惨，但过程还挺开心的嘛！\"", "$self$擦了擦脸上的面粉，对$target$做了个鬼脸。\"这就是传说中的黑暗料理！下次我们会做得更好的！\""
-                                        
+                                        "kojo_default_com_job_production_cooking_accept_failure_1",
+                                        "com_job_production_cooking_End_9",
+                                        "com_job_production_cooking_End_10"
                                     ]
                                 }
                             ],
@@ -332,7 +429,8 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
-                                "$self$颓废地坐在地上，看着一片狼藉的厨房。\"搞砸了……彻底搞砸了。\"", "$self$把失败的料理倒进垃圾桶，眼眶有些发红。\"我想静一静，别理我。\""
+                                "com_job_production_cooking_End_11",
+                                "com_job_production_cooking_End_12"
                             ]
                         }
                     ]
@@ -343,19 +441,118 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-
-"kojo_default_com_job_production_cooking_accept_failure_1":"$self$：“完了，盐放太多了！要不还是吃泡面吧……” ",
-"kojo_default_com_job_production_cooking_accept_success_1":"$self$：“呼…总算按着菜谱一步一步做出来了” ",
-"kojo_default_com_job_production_cooking_accept_success_2":"$self$：“完成了！嗯，至少外观是对的……希望味道别太奇怪。”"
-
+                "com_job_production_cooking_Begin_1": "$self$眼睛一亮，立刻站了起来：“好啊！我正想露一手呢！”",
+                "com_job_production_cooking_Begin_2": "$self$挽住$target$的胳膊：“这种事怎么能少了我？走走走！”",
+                "com_job_production_cooking_Begin_3": "$self$身体僵硬了一下，低着头默默地走向厨房。“……我知道了。”",
+                "com_job_production_cooking_Begin_4": "$self$不敢看$target$的眼睛，颤抖着声音回答：“好、好的……只要你不生气……”",
+                "com_job_production_cooking_Begin_5": "$self$愣了一下，指着自己：“诶？我也要一起吗？好吧，如果不嫌弃我笨手笨脚的话。”",
+                "com_job_production_cooking_Begin_6": "$self$挠了挠头：“既然你都这么说了……那我就打个下手吧。”",
+                "com_job_production_cooking_Begin_7": "$self$系上围裙，洗净双手，拿出了冷藏箱里的食材。",
+                "com_job_production_cooking_Begin_8": "$self$哼着不成调的小曲，将平底锅架在了炉火上。",
+                "com_job_production_cooking_Begin_9": "$self$认真地确认了一遍食谱，深吸一口气：“好，今天要做顿大餐！”",
+                "com_job_production_cooking_Begin_10": "$self$挽起袖子，眼神变得犀利起来。“是时候展现真正的技术了。”",
+                "com_job_production_cooking_Tryjoin_1": "$self$探头探脑地凑进厨房：“好香啊！需不需要帮忙？”",
+                "com_job_production_cooking_Tryjoin_2": "$self$卷起袖子走了进来：“看着很有趣的样子，加我一个呗？”",
+                "com_job_production_cooking_Joined_1": "$self$开心地比了个‘耶’的手势，迅速加入了备菜队伍。",
+                "com_job_production_cooking_Joined_2": "$self$接过围裙，脸上洋溢着满足的笑容。“那就请多指教啦，大厨！”",
+                "com_job_production_cooking_Join_Refused_1": "$self$有些失落地垂下肩膀，嘟囔着退了出去。“什么嘛，小气鬼……”",
+                "com_job_production_cooking_Join_Refused_2": "$self$撇了撇嘴，耸耸肩道：“行行行，不打扰你们二人世界。”",
+                "com_job_production_cooking_Join_1": "$self$用手背把$target$推开，笑道：“这里油烟大，你出去等着吃就好啦。”",
+                "com_job_production_cooking_Join_2": "$self$摇摇头：“不用不用，我已经快搞定啦，你去休息吧。”",
+                "com_job_production_cooking_Join_3": "$self$警惕地护住灶台：“别来添乱！上次厨房差点被你炸了。”",
+                "com_job_production_cooking_Join_4": "$self$皱起眉头：“出去！这里不需要你插手。”",
+                "com_job_production_cooking_Join_5": "$self$往旁边挪了一步，让出位置：“正如我意！快来帮我切洋葱！”",
+                "com_job_production_cooking_Join_6": "$self$把搅拌器递给$target$：“那就拜托你了，我的得力助手。”",
+                "com_job_production_cooking_Join_7": "$self$不敢反抗，默默地让出主厨的位置，退到角落打下手。",
+                "com_job_production_cooking_Join_8": "$self$低着头，声音细若蚊蝇：“随、随你喜欢……”",
+                "com_job_production_cooking_Join_9": "$self$有些惊讶地眨眨眼：“哎？你想帮忙？稀客啊……那把那个菜洗了吧。”",
+                "com_job_production_cooking_Join_10": "$self$疑惑地打量着$target$：“太阳打西边出来了？行吧，别切到手哦。”",
+                "com_job_production_cooking_Ongoing_1": "厨房里充满了切菜的笃笃声，空气中开始弥漫起食材的香气。",
+                "com_job_production_cooking_Ongoing_2": "$self$熟练地颠动着锅铲，额头上渗出细密的汗珠。",
+                "com_job_production_cooking_Ongoing_3": "$self$正全神贯注地盯着汤锅的火候，时不时用汤勺尝一口味道。",
+                "com_job_production_cooking_Ongoing_4": "$self$手忙脚乱地在几个灶台间穿梭。“啊！那个酱油在哪里来着？”",
+                "com_job_production_cooking_Interrupt_1": "看到$target$的身影，$self$的手抖了一下，差点切到了手指。",
+                "com_job_production_cooking_Interrupt_2": "$self$下意识地往墙角缩了缩，紧紧握住了手中的锅铲作为防御。“你……你要干什么？”",
+                "com_job_production_cooking_Interrupt_3": "$self$手中的菜刀重重地剁在案板上，发出刺耳的声响。“厨房重地，闲人免进。”",
+                "com_job_production_cooking_Interrupt_4": "$self$冷冷地瞥了$target$一眼，侧过身护住了正在料理的食物。“别靠近这里，会弄脏我的菜。”",
+                "com_job_production_cooking_Interrupt_5": "看到$target$进来，$self$露出了温暖的笑容。“来得正好，帮我尝尝这个味道怎么样？”",
+                "com_job_production_cooking_Interrupt_6": "$self$并没有停下手中的动作，只是愉快地打了声招呼。“稍微等一下哦，马上就好。”",
+                "com_job_production_cooking_Interrupt_7": "$self$脸颊泛红，有些慌乱地整理了一下围裙。“啊，$target$……这副样子被你看到有点害羞。”",
+                "com_job_production_cooking_Interrupt_8": "$self$咬着嘴唇，眼神湿润地看着$target$。“其实……比起做饭，我更想……没、没什么！”",
+                "com_job_production_cooking_Interrupt_9": "$self$只是淡淡地点了点头，继续专注于切菜。",
+                "com_job_production_cooking_Interrupt_10": "$self$指了指旁边的椅子。“如果不忙的话，可以坐在那里等。”",
+                "com_job_production_cooking_End_1": "$self$笑着摆摆手：“抱歉啦，我今天是'只吃不洗'派。”",
+                "com_job_production_cooking_End_2": "$self$指了指正在追的电视剧：“等我看完这集？在那之前还是饶了我吧。”",
+                "com_job_production_cooking_End_3": "$self$翻了个白眼：“你看我像是会做饭的样子吗？”",
+                "com_job_production_cooking_End_4": "$self$不耐烦地转过身去：“没空，自己叫外卖去。”",
+                "com_job_production_cooking_End_5": "$self$骄傲地端出成品，香气四溢。“当当当当！完美！快夸我！”",
+                "com_job_production_cooking_End_6": "$self$看着大家满足的吃相，露出了欣慰的笑容。“太好了，看来努力没有白费。”",
+                "com_job_production_cooking_End_7": "虽然料理很完美，但$self$只是疲惫地解下围裙。“太累了……下次还是叫外卖吧。”",
+                "com_job_production_cooking_End_8": "$self$冷淡地看着桌上的大餐，似乎完全没有食欲。“做完了，你们吃吧，我去休息。”",
+                "com_job_production_cooking_End_9": "看着这一团焦黑的物体，$self$忍不住笑出了声。“虽然看起来很惨，但过程还挺开心的嘛！”",
+                "com_job_production_cooking_End_10": "$self$擦了擦脸上的面粉，对$target$做了个鬼脸。“这就是传说中的黑暗料理！下次我们会做得更好的！”",
+                "com_job_production_cooking_End_11": "$self$颓废地坐在地上，看着一片狼藉的厨房。“搞砸了……彻底搞砸了。”",
+                "com_job_production_cooking_End_12": "$self$把失败的料理倒进垃圾桶，眼眶有些发红。“我想静一静，别理我。”",
+                "kojo_default_com_job_production_cooking_accept_failure_1": "$self$：“完了，盐放太多了！要不还是吃泡面吧……” ",
+                "kojo_default_com_job_production_cooking_accept_success_1": "$self$：“呼…总算按着菜谱一步一步做出来了” ",
+                "kojo_default_com_job_production_cooking_accept_success_2": "$self$：“完成了！嗯，至少外观是对的……希望味道别太奇怪。”"
             },
             "en-us": {
-
-"kojo_default_com_job_production_cooking_accept_failure_1":"$self$: \"God no, I put too much salt! I should probably serve instant noodles instead...\"",
-"kojo_default_com_job_production_cooking_accept_success_1":"$self$: \"Phew… finally made it step by step according to the recipe。\"",
-"kojo_default_com_job_production_cooking_accept_success_2":"$self$: \"Finished! Hmm, at least it has the right looks… hope it also taste right.\" "
-
-                
+                "com_job_production_cooking_Begin_1": "$self$'s eyes lit up as she stood up immediately: \"Alright! I was just thinking of showing off my skills!\"",
+                "com_job_production_cooking_Begin_2": "$self$ grabbed $target$'s arm: \"How could I miss this? Let's go, let's go!\"",
+                "com_job_production_cooking_Begin_3": "$self$'s body stiffened, and she walked silently toward the kitchen with her head down. \"...I understand.\"",
+                "com_job_production_cooking_Begin_4": "$self$ didn't dare to look $target$ in the eyes, replying with a trembling voice: \"O-Okay... as long as you're not angry...\"",
+                "com_job_production_cooking_Begin_5": "$self$ paused, pointing at herself: \"Eh? Me too? Well, if you don't mind my clumsiness.\"",
+                "com_job_production_cooking_Begin_6": "$self$ scratched her head: \"Since you put it that way... I'll just be your assistant then.\"",
+                "com_job_production_cooking_Begin_7": "$self$ put on an apron, washed her hands, and took out the ingredients from the fridge.",
+                "com_job_production_cooking_Begin_8": "$self$ hummed an out-of-tune melody as she placed the frying pan on the stove.",
+                "com_job_production_cooking_Begin_9": "$self$ seriously checked the recipe again and took a deep breath: \"Alright, time to cook a feast today!\"",
+                "com_job_production_cooking_Begin_10": "$self$ rolled up her sleeves, her gaze sharpening. \"It's time to show some real skills.\"",
+                "com_job_production_cooking_Tryjoin_1": "$self$ peeked into the kitchen curiously: \"Smells good! Need any help?\"",
+                "com_job_production_cooking_Tryjoin_2": "$self$ rolled up her sleeves and walked in: \"Looks fun, count me in?\"",
+                "com_job_production_cooking_Joined_1": "$self$ happily made a 'V' sign and quickly joined the prep team.",
+                "com_job_production_cooking_Joined_2": "$self$ took the apron, a satisfied smile on her face. \"Please take care of me then, Chef!\"",
+                "com_job_production_cooking_Join_Refused_1": "$self$'s shoulders slumped in disappointment as she muttered and backed out. \"Tch, stingy...\"",
+                "com_job_production_cooking_Join_Refused_2": "$self$ pouted and shrugged: \"Fine, fine, I won't disturb your alone time.\"",
+                "com_job_production_cooking_Join_1": "$self$ pushed $target$ away with the back of her hand, laughing: \"It's smoky here, just go wait outside and eat later.\"",
+                "com_job_production_cooking_Join_2": "$self$ shook her head: \"No need, no need, I'm almost done. Go rest.\"",
+                "com_job_production_cooking_Join_3": "$self$ vigilantly guarded the stove: \"Don't cause trouble! You almost blew up the kitchen last time.\"",
+                "com_job_production_cooking_Join_4": "$self$ frowned: \"Get out! I don't need your interference here.\"",
+                "com_job_production_cooking_Join_5": "$self$ moved aside, making room: \"Just what I wanted! Come help me chop the onions!\"",
+                "com_job_production_cooking_Join_6": "$self$ handed the mixer to $target$: \"I'll leave it to you then, my capable assistant.\"",
+                "com_job_production_cooking_Join_7": "$self$ didn't dare to resist, silently giving up the chef's spot and retreating to the corner to help.",
+                "com_job_production_cooking_Join_8": "$self$ lowered her head, her voice as faint as a mosquito: \"Whatever... whatever you like...\"",
+                "com_job_production_cooking_Join_9": "$self$ blinked in surprise: \"Eh? You want to help? That's rare... well, go wash those vegetables.\"",
+                "com_job_production_cooking_Join_10": "$self$ looked at $target$ doubtfully: \"Did the sun rise from the west? Fine, just don't cut your fingers.\"",
+                "com_job_production_cooking_Ongoing_1": "The kitchen was filled with the chopping sound, and the aroma of ingredients began to permeate the air.",
+                "com_job_production_cooking_Ongoing_2": "$self$ skillfully tossed the spatula, beads of sweat forming on her forehead.",
+                "com_job_production_cooking_Ongoing_3": "$self$ was intently watching the soup pot, occasionally tasting it with a spoon.",
+                "com_job_production_cooking_Ongoing_4": "$self$ scrambled between several stoves. \"Ah! Where was that soy sauce again?\"",
+                "com_job_production_cooking_Interrupt_1": "Seeing $target$, $self$'s hand shook, almost cutting her finger.",
+                "com_job_production_cooking_Interrupt_2": "$self$ subconsciously shrank into the corner, tightly gripping the spatula in self-defense. \"What... what do you want?\"",
+                "com_job_production_cooking_Interrupt_3": "$self$ slammed the kitchen knife onto the chopping board with a harsh sound. \"Kitchen area, authorized personnel only.\"",
+                "com_job_production_cooking_Interrupt_4": "$self$ gave $target$ a cold glance, turning sideways to shield the food being cooked. \"Stay away, you'll contaminate my dish.\"",
+                "com_job_production_cooking_Interrupt_5": "Seeing $target$ enter, $self$ showed a warm smile. \"Just in time, come taste this for me?\"",
+                "com_job_production_cooking_Interrupt_6": "$self$ didn't stop her movements, just greeting happily. \"Wait a moment, it'll be ready soon.\"",
+                "com_job_production_cooking_Interrupt_7": "$self$'s cheeks flushed red, and she flusteredly adjusted her apron. \"Ah, $target$... it's a bit embarrassing to be seen like this by you.\"",
+                "com_job_production_cooking_Interrupt_8": "$self$ bit her lip, looking at $target$ with moist eyes. \"Actually... rather than cooking, I'd prefer to... n-nothing!\"",
+                "com_job_production_cooking_Interrupt_9": "$self$ just nodded lightly, continuing to focus on chopping vegetables.",
+                "com_job_production_cooking_Interrupt_10": "$self$ pointed to the nearby chair. \"If you're not busy, you can sit there and wait.\"",
+                "com_job_production_cooking_End_1": "$self$ waved her hand with a laugh: \"Sorry, I'm on the 'eat only, no wash' team today.\"",
+                "com_job_production_cooking_End_2": "$self$ pointed at the TV series she was watching: \"Wait until I finish this episode? Please spare me until then.\"",
+                "com_job_production_cooking_End_3": "$self$ rolled her eyes: \"Do I look like someone who cooks?\"",
+                "com_job_production_cooking_End_4": "$self$ turned away impatiently: \"No time, order takeout yourself.\"",
+                "com_job_production_cooking_End_5": "$self$ proudly brought out the finished product, the aroma overflowing. \"Ta-da! Perfect! Praise me quickly!\"",
+                "com_job_production_cooking_End_6": "$self$ looked at everyone's satisfied eating faces with a relieved smile. \"Great, seems the effort wasn't in vain.\"",
+                "com_job_production_cooking_End_7": "Although the dish was perfect, $self$ just wearily took off her apron. \"Too tired... let's just order takeout next time.\"",
+                "com_job_production_cooking_End_8": "$self$ looked coldly at the feast on the table, seeming to have no appetite. \"It's done. You guys eat, I'm going to rest.\"",
+                "com_job_production_cooking_End_9": "Looking at the burnt mess, $self$ couldn't help but laugh out loud. \"It looks miserable, but the process was fun!\"",
+                "com_job_production_cooking_End_10": "$self$ wiped the flour off her face and made a funny face at $target$. \"This is the legendary dark cuisine! We'll do better next time!\"",
+                "com_job_production_cooking_End_11": "$self$ sat on the floor dejectedly, looking at the messy kitchen. \"Ruined... completely ruined.\"",
+                "com_job_production_cooking_End_12": "$self$ dumped the failed dish into the trash can, her eyes turning red. \"I want to be alone, don't talk to me.\"",
+                "kojo_default_com_job_production_cooking_accept_failure_1": "$self$: \"God no, I put too much salt! I should probably serve instant noodles instead...\"",
+                "kojo_default_com_job_production_cooking_accept_success_1": "$self$: \"Phew… finally made it step by step according to the recipe。\"",
+                "kojo_default_com_job_production_cooking_accept_success_2": "$self$: \"Finished! Hmm, at least it has the right looks… hope it also taste right.\" "
             }
         }
     }

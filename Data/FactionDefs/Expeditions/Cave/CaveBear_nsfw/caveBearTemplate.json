@@ -29,6 +29,10 @@
             },
             "en-us":
             {
+"creature_animal_bear":"Bear",
+"creature_animal_cavebear":"Cave Bear",
+"bear_encounter_1":"Bear Encounter 1",
+"bear_encounter_2":"Bear Encounter 2"
 
             }
         }

@@ -50,6 +50,8 @@ public class BodyInternal_Base
     [JsonIgnore] public bool canOverflowIn { get { return tag_directionIn != ""; } }
     [JsonIgnore] public bool canOverflowOut { get { return tag_directionOut != ""; } }
 
+    public string memory_ingest_liquid = "";
+    public string memory_ingest_solid = "";
 
     public string sensitivityClassString = "";
     public string maxSensitivityStatString = "";

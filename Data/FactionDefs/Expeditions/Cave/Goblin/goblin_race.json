@@ -93,7 +93,8 @@
             "en-us":
             {
                 "creature_humanoid_goblin":"Goblin",
-                "creature_humanoid_hobgoblin":"Hoboblin"
+                "creature_humanoid_hobgoblin":"Hoboblin",
+                "goblin_patrol_1":"Goblin Patrol 1"
             }
         }
     }

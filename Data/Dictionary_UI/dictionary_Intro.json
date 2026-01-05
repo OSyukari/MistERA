@@ -10,7 +10,7 @@
             },
             "zh-cn":
             {
-                "Game_Title":"迷雾Era",
+                "Game_Title":"迷雾ERA",
                 "intro_title_card_2":"作者 %%Game_Maker%%",
     
                 "intro_button_newGame":"新游戏",
@@ -49,7 +49,7 @@
                 "campaign2_start_avantgarde_amelie":"堕落轮回",
                 "campaign2_start_avantgarde_amelie_tooltip":"Begin with Amelie\n(from アメリ・ブランシェットは何度も堕ちる ～カレドニー魔法学院と繰り返す一週間～ by AVANTGARDE)",
     
-                "campaign_mistera":"迷雾年代",
+                "campaign_mistera":"迷雾ERA",
 
                 "char_editor_title":"角色编辑",
                 "char_editor_firstname":"<link=\"char_editor_tooltip_saveAsName\">名字</link>",
@@ -109,7 +109,7 @@
             "en-us":
             {
 
-                "Game_Title":"Mist Era",    
+                "Game_Title":"Mist ERA",    
                 "intro_title_card_2":"Made by %%Game_Maker%%",
     
                 "intro_button_newGame":"New Game",
@@ -118,17 +118,17 @@
                 "intro_button_charEditor":"Character Editor",
                 "intro_button_exit":"Exit",
     
-                "intro_message_1":"Click on button to confirm selection",
+                "intro_message_1":"Left Click on [button] to confirm selection",
                 "intro_message_2":"Mouse over for extra information",
                 "intro_message_3":"Discord link for bug report: $link$\nClick button to copy invite link.",
-                "intro_message_3_safe":"Please contact me via itch.io if you encountered any bug.",
+                "intro_message_3_safe":"Please contact me if you encountered any bug.",
                 "intro_message_4":"Link pasted to clipboard!",
     
-                "tooltip_highlight":"This entry has no extra info",
-                "tooltip_cannotLoadSave":"No save file detected",
+                "tooltip_highlight":"No additional information for this entry",
+                "tooltip_cannotLoadSave":"No save data detected",
     
     
-                "campaign":"Scenario",
+                "campaign":"Campaign",
                 "campaign_option":"Starting Options",
                 "player":"Player",
                 "player_character":"Player Character",
@@ -136,10 +136,74 @@
     
                 "newGame_button_chooseChara":"Select %%player_character%%",
                 "newGame_button_chooseExtra":"Select %%player_extra%%",
-                "newGame_button_beginCampaign":"Start scenario",
-                "newGame_button_returnToMain":"Exit",
+                "newGame_button_beginCampaign":"Start Campaign",
+                "newGame_button_returnToMain":"Return to Main Menu",
     
-                "campaign_mistera":"MistEra"
+                "campaign_chalicedivers":"Chalice Divers",
+                "campaign_chalicedivers_tooltip":"A limited-scope campaign aimed at learning or experimenting with combat systems. Death no longer result in a game over.\nStart the campaign with up to 2 additional companions chosen from a preset selection (Starting Option Companion is disabled in this campaign)\nLimit: Player Character Origin must be Forest Dweller\nStarting Gift Companion is disabled.\n\nThis is a parody of Bloodborne, with some more references from various ero-games.",
+                "campaign2_start_none":"Lone Wolf",
+                "campaign2_start_none_tooltip":"Begin with no extra companion, instead start with more resources.\nAll companions are recruitable in-game regardless of starting options.",
+                "campaign2_start_tadadada_dungeonwithgal":"Dungeon with Gal",
+                "campaign2_start_tadadada_dungeonwithgal_tooltip":"Begin with Monica & Yamemoto.\n(from ダンジョンウィズガール by ただただ愚か)",
+                "campaign2_start_avantgarde_amelie":"Falls over and over again",
+                "campaign2_start_avantgarde_amelie_tooltip":"Begin with Amelie\n(from アメリ・ブランシェットは何度も堕ちる ～カレドニー魔法学院と繰り返す一週間～ by AVANTGARDE)",
+
+                "campaign_mistera":"Mist ERA",
+
+                "char_editor_title":"Character Editor",
+                "char_editor_firstname":"<link=\"char_editor_tooltip_saveAsName\">First Name</link>",
+                "char_editor_middlename":"<link=\"char_editor_tooltip_saveAsName\">Middle Name</link>",
+                "char_editor_lastname":"<link=\"char_editor_tooltip_saveAsName\">Last Name</link>",
+                "char_editor_tooltip_saveAsName":"Click to modify corresponding name\n\nCharacter file will be saved as Firstname_Middlename_Lastname.json, overwriting characters with the same name, please be aware",
+                "char_editor_origin":"<link=\"tooltip_originselection\">Origin</link>",
+                "tooltip_originselection":"Select character origin (currently only attribute adjustments and race restrictions implemented) and extra starting items (not yet implemented)",
+                "char_editor_race":"<link=\"tooltip_raceselection\">Race</link>",
+                "tooltip_raceselection":"Select character race and template. Both provide attribute adjustments.",
+                "char_editor_race_template":"Template",
+                
+                "char_editor_stats_title":"<link=\"char_editor_stats_title_tooltip\">Attributes</link>",
+                "char_editor_stats_title_tooltip":"The 4 values on the right are attribute points. You can freely allocate points to attributes using the buttons below.",
+                "char_editor_stats_strength":"<link=\"stats_base_Strength_tooltip\">%%stats_base_Strength%%</link>",
+                "char_editor_stats_constitution":"<link=\"stats_base_Constitution_tooltip\">%%stats_base_Constitution%%</link>",
+                "char_editor_stats_psyche":"<link=\"stats_base_Psyche_tooltip\">%%stats_base_Psyche%%</link>",
+                "char_editor_stats_willpower":"<link=\"stats_base_Willpower_tooltip\">%%stats_base_Willpower%%</link>",
+                "char_editor_reroll":"<link=\"char_editor_reroll_tooltip\">Reroll Stats</link>",
+                "char_editor_reroll_tooltip":"Each attribute roll is 3D6, minimum 3 maximum 18, expected value 10.5",
+                "char_editor_reroll10":"<link=\"char_editor_reroll10_tooltip\">Reroll 10 times</link>",
+                "char_editor_reroll10_tooltip":"Reroll stats 10 times, keeping the result with the highest total value",
+                "char_editor_maxroll":"<link=\"char_editor_maxroll_tooltip\">Max Stats</link>",
+                "char_editor_maxroll_tooltip":"Are you telling me, you rolled 18 on all attributes?!",
+                "char_editor_stats_value":"<link=\"char_editor_stats_value_tooltip\">Base</link>",
+                "char_editor_stats_value_tooltip":"Attribute Roll Value",
+                "char_editor_stats_racialmod":"<link=\"char_editor_stats_racialmod_tooltip\">Race</link>",
+                "char_editor_stats_racialmod_tooltip":"Attribute adjustments provided by race and template (if any)",
+                "char_editor_stats_final":"<link=\"char_editor_stats_final_tooltip\">Total</link>",
+                "char_editor_stats_final_tooltip":"Final attribute value (adjustments from equipment etc. not yet calculated)",
+                "char_editor_stats_modifier":"<link=\"char_editor_stats_modifier_tooltip\">Modifier</link>",
+                "char_editor_stats_modifier_tooltip":"Attribute Modifier (Attribute / 2 - 5 rounded down). Main value used when calculating other attribute values",
+                "char_editor_appearance":"<link=\"char_editor_appearance_tooltip\">Gender</link>",
+                "char_editor_appearance_tooltip":"Character's appearance gender. This option only determines appearance. In-game interaction gender checks will reference gender options and character body parts\n\nFor details please refer to %%intro_button_editPref%% -> %%ui_prefs_button_contentSetting%% -> %%ui_prefs_gendersetting%%",
+                "GenderAppearance_Male":"Male",
+                "tooltip_GenderAppearance_Male":"You possess the characteristics of a male member of your race.",
+                "GenderAppearance_Female":"Female",
+                "tooltip_GenderAppearance_Female":"You possess the characteristics of a female member of your race.",
+                "GenderAppearance_Ambiguous":"Ambiguous",
+                "tooltip_GenderAppearance_Ambiguous":"You could either be a male or a female member of your race. It's hard to tell.\nYour appearance is considered to be male and female.",
+                "GenderAppearance_Inhuman":"Inhuman",
+                "tooltip_GenderAppearance_Inhuman":"You are still humanoid, but your appearance does not look human-relatable at all.\nYour appearance is considered to not be male nor female.",
+                
+                "char_editor_selectTraitBTN":"<link=\"char_editor_selectTraitBTN_tooltip\">Select Traits</link>",
+                "char_editor_selectTraitBTN_tooltip":"%%wip_disabled%%",
+
+                "char_editor_bodydata":"<link=\"char_editor_bodydata_tooltip\">Body Data</link>",
+                "char_editor_bodydata_tooltip":"Modify character body template data here. Upon game start, specific body parts will be generated based on the template\n\n%%ui_tooltip_trait_size%%",
+                "char_editor_sensitivity":"Sensitivity",
+                "char_editor_size":"Size",
+
+                "char_editor_derivedStats_tooltip":"All of the stat-based traits belongs to one of 4 stat attribute category.\nEach trait has a score cost.\n\nFor all selected traits that belong to the same stat category, \nthe total of their score must be lesser or equal to the corresponding stat's modifier value,\nno limit on the number of traits chosen.",
+
+                "char_editor_exitBTN":"Discard Changes",
+                "char_editor_confirmBTN":"Save Character"
 
             }
         }

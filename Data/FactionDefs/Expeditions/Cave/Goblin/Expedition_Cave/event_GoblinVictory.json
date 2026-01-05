@@ -1,113 +1,237 @@
 {
     "Events": {
         "list": [
-            {                
+            {
                 "ID": "event_goblin_combatVictory",
-"TargetValidators":
-[
-    {
-        "refkeys":["victims"],
-        "baseScope":"ScopeWithinRef",
-        "extraScopeArguments":["enemy"],
-        "chara_conditions":[
-            {"parameters":["isPartyPrisoner"]}
-        ],
-        "minTargetCount":1,
-        "maxTargetCount":-1,
-        "allowEventOnMinTargetCountMiss":true
-    }
-],
-"events": [
-    {
-        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-        "options":[
-            {   
-                "target_chara_conditions":
-                {
-                    "party":[{"parameters":["exists"]}],
-                    "enemy":[{"parameters":["exists"]}],
-                    "victims":[{"parameters":["exists"]}]
-                },
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_victory_hasVictim"]} ] 
-            },
-            {   
-                "target_chara_conditions":
-                {
-                    "party":[{"parameters":["exists"]}],
-                    "enemy":[{"parameters":["exists"]}]
-                },
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_victory"]} ] 
-            },
-            {   
-                "option": "silent fail branch",
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_error"]} ] 
-            }
-        ]
-    },
-    {
-        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-        "label": "br_victory",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-        "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
-        "line": "$party.name$击败了哥布林",
-        "nextEntryLabel":""
-    },
-    {
-        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
-        "question":"搜刮战利品？",
-        "options":[
-            {   
-                "self_chara_conditions":[ {"parameters":["exists"]}, {"parameters":["isPlayer"]} ],
-                "option": "搜刮",
-                "Results": [ { "Type":"FactionExchangeInventory", "arguments":["party","enemy","true","true","true","true",""]},
-                                            { "Type":"JumpToLabel", "arguments":["","br_lootEnd"]} ] 
-            },
-            {   
-                "option": "什么都不拿",   "isDefaultCancel":true,
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_noLootEnd"]} ] 
-            }
-        ]
-    },
-    {
-        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-        "label": "br_victory_hasVictim",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-        "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
-        "line": "$party.name$击败了哥布林"
-    },
-    {
-        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-        "label": "br_lootEnd",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-        "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
-        "line": "$party.name$搜刮了战利品",
-        "isLast": true
-    },
-    {
-        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-        "label": "br_noLootEnd",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-        "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
-        "line": "$party.name$没有在此过多停留",
-        "isLast": true
-    },
-    {
-        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-        "label": "br_error",
-        "line": "警告！由于内容缺失，该事件强制终止。",
-        "isLast": true
-    }
+                "TargetValidators": [
+                    {
+                        "refkeys": [
+                            "victims"
+                        ],
+                        "baseScope": "ScopeWithinRef",
+                        "extraScopeArguments": [
+                            "enemy"
+                        ],
+                        "chara_conditions": [
+                            {
+                                "parameters": [
+                                    "isPartyPrisoner"
+                                ]
+                            }
+                        ],
+                        "minTargetCount": 1,
+                        "maxTargetCount": -1,
+                        "allowEventOnMinTargetCountMiss": true
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "target_chara_conditions": {
+                                    "party": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ],
+                                    "enemy": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ],
+                                    "victims": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_victory_hasVictim"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "target_chara_conditions": {
+                                    "party": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ],
+                                    "enemy": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_victory"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "silent fail branch",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_error"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_victory",
+                        "portraitRefKey": "party",
+                        "portraitTagsOverride": [
+                            "serious"
+                        ],
+                        "_comment": "change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
+                        "line": "event_goblin_combatVictory_event_ev01",
+                        "nextEntryLabel": ""
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "question": "event_goblin_combatVictory_event_ev02",
+                        "options": [
+                            {
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "exists"
+                                        ]
+                                    },
+                                    {
+                                        "parameters": [
+                                            "isPlayer"
+                                        ]
+                                    }
+                                ],
+                                "option": "event_goblin_combatVictory_event_ev02_op01",
+                                "Results": [
+                                    {
+                                        "Type": "FactionExchangeInventory",
+                                        "arguments": [
+                                            "party",
+                                            "enemy",
+                                            "true",
+                                            "true",
+                                            "true",
+                                            "true",
+                                            ""
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_lootEnd"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "event_goblin_combatVictory_event_ev02_op02",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_noLootEnd"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_victory_hasVictim",
+                        "portraitRefKey": "party",
+                        "portraitTagsOverride": [
+                            "serious"
+                        ],
+                        "_comment": "change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
+                        "line": "event_goblin_combatVictory_event_ev03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_lootEnd",
+                        "portraitRefKey": "party",
+                        "portraitTagsOverride": [
+                            "serious"
+                        ],
+                        "_comment": "change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
+                        "line": "event_goblin_combatVictory_event_ev04",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_noLootEnd",
+                        "portraitRefKey": "party",
+                        "portraitTagsOverride": [
+                            "serious"
+                        ],
+                        "_comment": "change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
+                        "line": "event_goblin_combatVictory_event_ev05",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_error",
+                        "line": "exp_event_error99",
+                        "isLast": true
+                    }
                 ]
             }
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-            "zh-cn":
-            {
-
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "event_goblin_combatVictory": "战斗胜利",
+                "event_goblin_combatVictory_event_ev01": "$party.name$击败了哥布林",
+                "event_goblin_combatVictory_event_ev02": "搜刮战利品？",
+                "event_goblin_combatVictory_event_ev02_op01": "搜刮",
+                "event_goblin_combatVictory_event_ev02_op02": "什么都不拿",
+                "event_goblin_combatVictory_event_ev03": "$party.name$击败了哥布林",
+                "event_goblin_combatVictory_event_ev04": "$party.name$搜刮了战利品",
+                "event_goblin_combatVictory_event_ev05": "$party.name$没有在此过多停留"
+            },
+            "en-us": {
+                "event_goblin_combatVictory": "Combat Victory",
+                "event_goblin_combatVictory_event_ev01": "$party.name$ defeated the Goblins",
+                "event_goblin_combatVictory_event_ev02": "Loot the spoils?",
+                "event_goblin_combatVictory_event_ev02_op01": "Loot",
+                "event_goblin_combatVictory_event_ev02_op02": "Take nothing",
+                "event_goblin_combatVictory_event_ev03": "$party.name$ defeated the Goblins",
+                "event_goblin_combatVictory_event_ev04": "$party.name$ looted the spoils",
+                "event_goblin_combatVictory_event_ev05": "$party.name$ did not linger here"
             }
         }
     }

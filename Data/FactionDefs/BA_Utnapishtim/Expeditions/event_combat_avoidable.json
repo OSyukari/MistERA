@@ -88,7 +88,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
-    "line": "exp_event_Utnapishtim_combat_avoidable_ev99",
+    "line": "exp_event_error99",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 }
@@ -107,8 +107,17 @@
 "exp_event_Utnapishtim_combat_avoidable_ev01_op1":"回避敌人（探索进度下降）",
 "exp_event_Utnapishtim_combat_avoidable_ev01_op2":"开始战斗",
 "exp_event_Utnapishtim_combat_avoidable_ev02":"$party.name$的小队成功回避了敌人",
-"exp_event_Utnapishtim_combat_avoidable_ev03":"$party.name$与$enemy.name$开始战斗！",
-"exp_event_Utnapishtim_combat_avoidable_ev99":"警告！由于内容缺失，该事件强制终止。"
+"exp_event_Utnapishtim_combat_avoidable_ev03":"$party.name$与$enemy.name$开始战斗！"
+            },
+            
+            "en-us":
+            {
+"exp_event_Utnapishtim_combat_avoidable":"Skirmish",
+"exp_event_Utnapishtim_combat_avoidable_ev01":"$party.name$'s squad has detected enemies but hasn't been detected yet.\nThere is still a chance to avoid them now.\nEnemy composition: $enemy.nameCount$",
+"exp_event_Utnapishtim_combat_avoidable_ev01_op1":"Avoid enemies (Exploration Progress decreases)",
+"exp_event_Utnapishtim_combat_avoidable_ev01_op2":"Start Combat",
+"exp_event_Utnapishtim_combat_avoidable_ev02":"$party.name$'s squad successfully avoided the enemies.",
+"exp_event_Utnapishtim_combat_avoidable_ev03":"$party.name$ starts combat with $enemy.name$!"
             }
         }
     }

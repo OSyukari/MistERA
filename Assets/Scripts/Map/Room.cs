@@ -89,6 +89,64 @@ public class Room_Instance: IDisposable, I_Disposable
     [JsonIgnore] public bool connectedInFloor = false;
 
     protected string _displayNameCache = "";
+    protected string _displayNameShortCache = "";
+
+    [JsonIgnore]public string DisplayNameShort
+    {
+        get
+        {
+            if (isNameDynamic)
+            {
+                return (this.FactionOwner as Manageable_Party).ExpeditionName;
+            }
+            else if (_displayNameShortCache == "")
+            {
+
+                if (isRoomPrison)
+                {
+                    _displayNameShortCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_prison");
+                }
+                else if (isRoomPrivate)
+                {
+                    //Debug.LogError("RoomDisplaynameCond1");
+                    if (this.FactionOwner == null)
+                    {
+                        //Debug.Log("PRIVATE ROOM HAS NO FACTION OWNER");
+                        _displayNameShortCache = displayName;
+                    }
+                    else if (OwnerNames.Count > 2)
+                    {
+                        var owners = String.Join(",", OwnerNames);
+                        _displayNameShortCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_more").Replace("$owners$", owners);
+                    }
+                    else if (OwnerNames.Count > 1)
+                    {
+                        //Debug.LogError("RoomDisplaynameCond11");
+                        _displayNameShortCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_2").Replace("$owner1$", OwnerNames[0]).Replace("$owner2$", OwnerNames[1]);
+                    }
+                    else if (OwnerNames.Count > 0)
+                    {
+                        //Debug.LogError("RoomDisplaynameCond11");
+                        _displayNameShortCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_1").Replace("$owner$", OwnerNames[0]);
+                    }
+                    else
+                    {
+                        //Debug.LogError("RoomDisplaynameCond12");
+                        _displayNameShortCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_0");
+                    }
+                }
+                else
+                {
+                    //Debug.LogError("RoomDisplaynameCond2, isRoomPrivate ["+isRoomPrivate+"] hasFactionOwner ["+(this.factionOwner != null)+"]");
+                    _displayNameShortCache = displayName;
+                }
+            }
+
+            return _displayNameShortCache;
+        }
+    }
+
+
     [JsonIgnore] public string DisplayName { get
         {
             if (isNameDynamic)
@@ -222,7 +280,7 @@ public class Room_Instance: IDisposable, I_Disposable
             string multiples = LocalizeDictionary.QueryThenParse("ui_entry_multipleCount");
             List<string> names = new List<string>();
             foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names.Add(kvp.Value > 1 ? multiples.Replace("$item$", kvp.Key.DisplayName).Replace("$count$", kvp.Value.ToString()) : kvp.Key.DisplayName);
-            return names.Count > 0 ? LocalizeDictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", String.Join(LocalizeDictionary.QueryThenParse("ui_entry_separator"), names)) : "";
+            return LocalizeDictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", names.Count > 0 ? String.Join(LocalizeDictionary.QueryThenParse("ui_entry_separator"), names) : "-");
         }
     }
 
@@ -234,7 +292,7 @@ public class Room_Instance: IDisposable, I_Disposable
             string multiples = LocalizeDictionary.QueryThenParse("ui_entry_multipleCount");
             List<string> names = new List<string>();
             foreach (KeyValuePair<FurnitureBase, int> kvp in DisplayableFurnitures) names.Add("<link="+kvp.Key.ID + "_tooltip" + ">" + (kvp.Value > 1 ? multiples.Replace("$item$", kvp.Key.DisplayName).Replace("$count$", kvp.Value.ToString()) : kvp.Key.DisplayName) + "</link>");
-            return names.Count > 0 ? LocalizeDictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", String.Join(LocalizeDictionary.QueryThenParse("ui_entry_separator"), names)) : "";
+            return LocalizeDictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", names.Count > 0 ? String.Join(LocalizeDictionary.QueryThenParse("ui_entry_separator"), names) : "-");
         }
     }
     /// <summary>

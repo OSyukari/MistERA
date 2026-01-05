@@ -3,62 +3,124 @@
         "list": [
             {
                 "eventID": "exp_event_goblin_guardpost",
-                "eventString_Ongoing": "$names$发现了一个由粗糙木头和兽皮搭建的哥布林前哨站",
+                "eventString_Ongoing": "exp_event_goblin_guardpost_eventString_Ongoing",
                 "DurationMinutes": 20,
                 "tags": [
                     "goblin"
                 ],
                 "baseWeight": 7,
-                    "teamRequirement": {
-                        "minTeamCount": 1,
-                        "maxTeamCount": 99,
-                        "charaReq_Select": { "cost_EN": 4, "cost_ST": 6 }
-                    },
-"weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"goblin_guardpost" } } ],
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "maxTeamCount": 99,
+                    "charaReq_Select": {
+                        "cost_EN": 4,
+                        "cost_ST": 6
+                    }
+                },
+                "weightMods": [
+                    {
+                        "modValue": 1000,
+                        "teamRequirement": {
+                            "debug_teamNameMatch": "goblin_guardpost"
+                        }
+                    }
+                ],
                 "possibleResults": [
                     {
                         "baseWeight": 6,
-                        "resultText": "$names$屏住呼吸，小心翼翼地从阴影中潜行，成功绕过了哥布林哨站。"
+                        "resultText": "exp_event_goblin_guardpost_result_1"
                     },
                     {
                         "baseWeight": 3,
-                        "resultText": "$names$试图悄悄通过哥布林的哨站，但一名成员不慎惊动了哥布林！",
-                        "eventID":"event_caveGoblinEncounter", "eventLabel":"", "overrideTargetGeneration":true,
-                        "TargetGenerations":
-                        [ {
-                            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
-                            "encounterTemplates":
-                            [{
-                                "encounterWeights":{ "goblin_patrol_1":1 },
-                                "frontlineKeys":["enemy","teamB_frontline"], "supportKeys":["enemy","teamB_backline"]
-                            }]
-                        } ],
-"weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"Encounter" } } ]
-                    },
-                    {
-                        "baseWeight": 2,
-                        "resultText": "$names$尝试潜入哨站，但是失败了，惊动了哥布林哨兵！",
-                        "eventID":"event_caveGoblinEncounter", "eventLabel":"", "overrideTargetGeneration":true,
-                        "TargetGenerations":
-                        [ {
-                            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
-                            "encounterTemplates":
-                            [{
-                                "encounterWeights":{ "goblin_patrol_1":1 },
-                                "frontlineKeys":["enemy","teamB_frontline"], "supportKeys":["enemy","teamB_backline"]
-                            }]
-                        } ],
-"weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"Encounter" } } ]
-                    },
-                    {
-                        "baseWeight": 2,
-                        "resultText": "$names$大胆潜入哨站，找到了些有用的道具。",
-                        "results_factions":[
+                        "resultText": "exp_event_goblin_guardpost_result_2",
+                        "eventID": "event_caveGoblinEncounter",
+                        "eventLabel": "",
+                        "overrideTargetGeneration": true,
+                        "TargetGenerations": [
                             {
-                                "entry_results":{
-                                    "randomLoot":{
-                                        "weightedLoots":[
-    { "weight":1, "itemEntry":{ "itemID": "consumable_emergency_ration", "itemNameOverwrite": "", "itemCount": 1, "itemCountOverride": false } }
+                                "factionTemplate": "AlwaysHostile",
+                                "factionInventory": [],
+                                "allowScope": false,
+                                "encounterTemplates": [
+                                    {
+                                        "encounterWeights": {
+                                            "goblin_patrol_1": 1
+                                        },
+                                        "frontlineKeys": [
+                                            "enemy",
+                                            "teamB_frontline"
+                                        ],
+                                        "supportKeys": [
+                                            "enemy",
+                                            "teamB_backline"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "weightMods": [
+                            {
+                                "modValue": 1000,
+                                "teamRequirement": {
+                                    "debug_teamNameMatch": "Encounter"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_goblin_guardpost_result_3",
+                        "eventID": "event_caveGoblinEncounter",
+                        "eventLabel": "",
+                        "overrideTargetGeneration": true,
+                        "TargetGenerations": [
+                            {
+                                "factionTemplate": "AlwaysHostile",
+                                "factionInventory": [],
+                                "allowScope": false,
+                                "encounterTemplates": [
+                                    {
+                                        "encounterWeights": {
+                                            "goblin_patrol_1": 1
+                                        },
+                                        "frontlineKeys": [
+                                            "enemy",
+                                            "teamB_frontline"
+                                        ],
+                                        "supportKeys": [
+                                            "enemy",
+                                            "teamB_backline"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "weightMods": [
+                            {
+                                "modValue": 1000,
+                                "teamRequirement": {
+                                    "debug_teamNameMatch": "Encounter"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_goblin_guardpost_result_4",
+                        "results_factions": [
+                            {
+                                "entry_results": {
+                                    "randomLoot": {
+                                        "weightedLoots": [
+                                            {
+                                                "weight": 1,
+                                                "itemEntry": {
+                                                    "itemID": "consumable_emergency_ration",
+                                                    "itemNameOverwrite": "",
+                                                    "itemCount": 1,
+                                                    "itemCountOverride": false
+                                                }
+                                            }
                                         ]
                                     }
                                 }
@@ -66,39 +128,81 @@
                         ]
                     },
                     {
-    "baseWeight": 1,
-    "resultText": "$names$潜入巢穴，发现了一名被关押的女冒险者",
-    "eventID":"event_goblin_gangRape_rescue", "eventLabel":"", "overrideTargetGeneration":true,
-    "TargetGenerations":
-    [
-        {
-            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
-            "charaTemplate":[ { "baseID":"BD2_random_3star_female", "refKeys":["victims"], "status":"Prisoner" } ]
-        }
-    ],
-"weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"gangRape_rescue" } } ]
-},
-{
-    "baseWeight": 1,
-    "resultText": "$names$潜入哨站，发现一群肮脏矮小的哥布林正在轮奸一名被俘的女性",
-    "eventID":"event_goblin_gangRape", "eventLabel":"", "overrideTargetGeneration":true,
-    "TargetGenerations":
-    [
-        {
-            "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
-            "encounterTemplates": [
-                {
-                    "encounterWeights": { "goblin_patrol_1": 1 },
-                    "frontlineKeys": [ "enemy", "teamB_frontline" ],
-                    "supportKeys": [ "enemy", "teamB_backline" ]
-                }
-            ],
-            "charaTemplate":[
-                { "baseID":"BD2_random_3star_female", "refKeys":["victims"], "status":"Prisoner" }
-            ]
-        }
-    ],
-"weightMods":[ { "modValue":1000, "teamRequirement":{ "debug_teamNameMatch":"gangRape" } } ]
+                        "baseWeight": 1,
+                        "resultText": "exp_event_goblin_guardpost_result_5",
+                        "eventID": "event_goblin_gangRape_rescue",
+                        "eventLabel": "",
+                        "overrideTargetGeneration": true,
+                        "TargetGenerations": [
+                            {
+                                "factionTemplate": "AlwaysHostile",
+                                "factionInventory": [],
+                                "allowScope": false,
+                                "charaTemplate": [
+                                    {
+                                        "baseID": "BD2_random_3star_female",
+                                        "refKeys": [
+                                            "victims"
+                                        ],
+                                        "status": "Prisoner"
+                                    }
+                                ]
+                            }
+                        ],
+                        "weightMods": [
+                            {
+                                "modValue": 1000,
+                                "teamRequirement": {
+                                    "debug_teamNameMatch": "gangRape_rescue"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_goblin_guardpost_result_6",
+                        "eventID": "event_goblin_gangRape",
+                        "eventLabel": "",
+                        "overrideTargetGeneration": true,
+                        "TargetGenerations": [
+                            {
+                                "factionTemplate": "AlwaysHostile",
+                                "factionInventory": [],
+                                "allowScope": false,
+                                "encounterTemplates": [
+                                    {
+                                        "encounterWeights": {
+                                            "goblin_patrol_1": 1
+                                        },
+                                        "frontlineKeys": [
+                                            "enemy",
+                                            "teamB_frontline"
+                                        ],
+                                        "supportKeys": [
+                                            "enemy",
+                                            "teamB_backline"
+                                        ]
+                                    }
+                                ],
+                                "charaTemplate": [
+                                    {
+                                        "baseID": "BD2_random_3star_female",
+                                        "refKeys": [
+                                            "victims"
+                                        ],
+                                        "status": "Prisoner"
+                                    }
+                                ]
+                            }
+                        ],
+                        "weightMods": [
+                            {
+                                "modValue": 1000,
+                                "teamRequirement": {
+                                    "debug_teamNameMatch": "gangRape"
+                                }
+                            }
+                        ]
                     }
                 ]
             }
@@ -106,10 +210,27 @@
     },
     "Dictionary": {
         "Entries": {
-            "zh-cn": {
-                "exp_event_goblin_guardpost": "哥布林哨站"
-
-            }
+"zh-cn": {
+    "exp_event_goblin_guardpost": "哥布林哨站",
+    "exp_event_goblin_guardpost_eventString_Ongoing":"$names$发现了一个由粗糙木头和兽皮搭建的哥布林前哨站",
+    "exp_event_goblin_guardpost_result_1":"$names$屏住呼吸，小心翼翼地从阴影中潜行，成功绕过了哥布林哨站。",
+    "exp_event_goblin_guardpost_result_2":"$names$试图悄悄通过哥布林的哨站，但一名成员不慎惊动了哥布林！",
+    "exp_event_goblin_guardpost_result_3":"$names$尝试潜入哨站，但是失败了，惊动了哥布林哨兵！",
+    "exp_event_goblin_guardpost_result_4":"$names$大胆潜入哨站，找到了些有用的道具。",
+    "exp_event_goblin_guardpost_result_5":"$names$潜入巢穴，发现了一名被关押的女冒险者",
+    "exp_event_goblin_guardpost_result_6":"$names$潜入哨站，发现一群肮脏矮小的哥布林正在轮奸一名被俘的女性"
+},
+"en-us":
+{
+    "exp_event_goblin_guardpost": "Goblin Outpost",
+    "exp_event_goblin_guardpost_eventString_Ongoing":"$names$ found a Goblin outpost built from rough wood and animal hides",
+    "exp_event_goblin_guardpost_result_1":"$names$ held their breath and sneaked carefully from the shadows, successfully bypassing the Goblin outpost.",
+    "exp_event_goblin_guardpost_result_2":"$names$ tried to pass the Goblin outpost quietly, but a member carelessly alerted the Goblins!",
+    "exp_event_goblin_guardpost_result_3":"$names$ attempted to infiltrate the outpost but failed, alerting the Goblin sentries!",
+    "exp_event_goblin_guardpost_result_4":"$names$ boldly infiltrated the outpost and found some useful items.",
+    "exp_event_goblin_guardpost_result_5":"$names$ infiltrated the nest and found an imprisoned female adventurer",
+    "exp_event_goblin_guardpost_result_6":"$names$ infiltrated the outpost and found a group of filthy, small Goblins gang-raping a captured woman"
+}
         }
     }
 }

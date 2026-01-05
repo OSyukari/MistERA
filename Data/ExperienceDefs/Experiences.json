@@ -12,7 +12,7 @@
     {
         "Entries":
         {
-            "zh-cn":
+"zh-cn":
 {
     "experience_operating":"操作经验",
     "experience_operating_tooltip":"str，操作 驾驶 遥控",
@@ -59,13 +59,54 @@
     "experience_animal_handling_tooltip":"驯兽 骑乘 安抚 辨识天气",
 
     "experience_spellcraft":"魔术经验",
-    "experience_spellcraft_tooltip":"wis，操纵魔力",
+    "experience_spellcraft_tooltip":"wis，操纵魔力"
+},
+"en-us":
+{
+    "experience_operating": "Operating Exp",
+    "experience_operating_tooltip": "str, Operation, Driving, Remote Control",
+    "experience_cooking": "Cooking Exp",
+    "experience_cooking_tooltip": "int, Seasoning, Craftsmanship, Knife Work",
+    "experience_social": "Social Exp",
+    "experience_social_tooltip": "wis, Negotiation, Insight, Bargaining, Deception",
+    "experience_farming": "Farming Exp",
 
+    "experience_perception": "Perception Exp",
+    "experience_perception_tooltip": "str, Searching, Finding, Tracking",
 
+    "experience_sleight_of_hand": "Sleight of Hand Exp",
+    "experience_sleight_of_hand_tooltip": "Lockpicking, Pickpocketing, Magic Tricks",
 
-    "experience_":"经验"
+    "experience_acrobatics": "Acrobatics Exp",
+    "experience_acrobatics_tooltip": "Jumping, Parkour, Stealth",
+
+    "experience_athletics": "Athletics Exp",
+    "experience_athletics_tooltip": "con, Body Control, Running, Swimming, etc.",
+
+    "experience_survival": "Survival Exp",
+    "experience_survival_tooltip": "con, Foraging, Navigation, Keeping Warm, Stealth, First Aid",
     
+    "experience_combat": "Combat Exp",
+    "experience_combat_tooltip": "con, Combat, Intimidation, Pain Tolerance",
 
+    "experience_knowledge": "Knowledge Exp",
+    "experience_knowledge_tooltip": "int, Reading, Math, Accounting, Law, Literature, Bargaining",
+    "experience_medicine": "Medicine Exp",
+
+    "experience_arts": "Arts Exp",
+    "experience_arts_tooltip": "int, Painting, Music, Sculpture",
+
+    "experience_perform": "Performance Exp",
+    "experience_perform_tooltip": "int, Performance, Music, Acting, Drama, Disguise, Deception, Speech Craft, Debate",
+
+    "experience_engineering": "Engineering Exp",
+    "experience_engineering_tooltip": "int, Crafting, Traps, Locks, Guns, Programming",
+
+    "experience_animal_handling": "Animal Handling Exp",
+    "experience_animal_handling_tooltip": "Taming, Riding, Soothing, Weather Identification",
+
+    "experience_spellcraft": "Spellcraft Exp",
+    "experience_spellcraft_tooltip": "wis, Manipulating Mana"
 
 }
         }

@@ -106,6 +106,38 @@
             },
             "en-us":
             {
+"expedition_Utnapishtim_engines":"Utnapishtim Engines",
+"expedition_Utnapishtim_cargo":"Utnapishtim Cargo Bay",
+
+"expedition_Utnapishtim_exploring_1":"$names$ navigates through the battleship's broken pipes. The air is thin, and every step is taken carefully to avoid exposed wires.",
+"expedition_Utnapishtim_exploring_2":"$names$ searches the dim cargo hold. The metal plating underfoot vibrates slightly, but there are no signs of anomalies around.",
+"expedition_Utnapishtim_exploring_3":"$names$ advances along a tilted corridor. A thin layer of frost coats the walls, and no supplies have been found yet.",
+"expedition_Utnapishtim_exploring_4":"$names$ rummages through the abandoned control room. Screens flicker with a faint afterglow, surrounded by silence.",
+"expedition_Utnapishtim_exploring_5":"$names$ explores the depths of the battleship. The hiss of oxygen tanks echoes in the empty hallway, with no danger encountered yet.",
+"expedition_Utnapishtim_exploring_6":"$names$ passes through a collapsed lounge. The worn-out seats are covered in dust, yielding no gains for now.",
+"expedition_Utnapishtim_exploring_7":"$names$ floats forward in a low-gravity zone. Floating debris slowly rotates around, with no other movement.",
+"expedition_Utnapishtim_exploring_8":"$names$ checks a damaged vent. The cold wind bites, but nothing of value is found.",
+"expedition_Utnapishtim_exploring_9":"$names$ moves through the dim battleship corridor. The air is thick with the smell of rusting metal, but nothing unusual has been spotted so far.",
+"expedition_Utnapishtim_exploring_10":"$names$ carefully traverses the ruined cabin. Debris crunches underfoot, and silence reigns all around.",
+"expedition_Utnapishtim_exploring_11":"$names$ searches the battleship's abandoned storage area. Only faint lights flicker around, and no useful supplies have been found yet.",
+"expedition_Utnapishtim_exploring_12":"$names$ explores the icy deck. The oxygen gauge reading is dropping, but the passage remains quiet.",
+"expedition_Utnapishtim_exploring_13":"$names$ passes through a half-open hatch. The low temperature turns breath into white mist, with no movement around.",
+
+"expedition_Utnapishtim_danger_1": "$names$ accidentally slipped into a fissure on the lower deck. Radiation alarms blare, and the air smells of scorched metal.",
+"expedition_Utnapishtim_danger_2": "$names$ stumbled into a vacuum leak zone. The environmental suit clings tight to the skin, with every breath accompanied by low-pressure warnings.",
+"expedition_Utnapishtim_danger_3": "$names$ encountered a structural collapse. Debris flies everywhere as they struggle to maintain balance in the shaking corridor.",
+"expedition_Utnapishtim_danger_4": "$names$ wandered into a high-temperature steam leak. Vision is obscured by white mist, and the metal plates underfoot hiss with heat.",
+"expedition_Utnapishtim_danger_5": "$names$ traverses a power surge area. Lights flicker erratically, and instruments emit irregular crackling sounds.",
+"expedition_Utnapishtim_danger_6": "$names$ is trapped in a tilted cabin. The floor could snap at any moment, and the low hum of machinery comes from afar.",
+"expedition_Utnapishtim_danger_7": "$names$ discovered a coolant leak. Viscous liquid floods over ankles, and the pungent smell is dizzying.",
+"expedition_Utnapishtim_danger_8": "$names$ entered a gravity anomaly zone. Body weight fluctuates wildly, and floating debris threatens their suits.",
+"expedition_Utnapishtim_danger_9": "$names$ stepped into a magnetic disturbance area. Comms emit piercing static, and the compass spins wildly.",
+"expedition_Utnapishtim_danger_10": "$names$ encountered a ruptured pipe. Freezing gas spews out, rapidly frosting the surface of their suits.",
+"expedition_Utnapishtim_danger_11": "$names$ entered a cabin with thin oxygen. Breathing becomes rapid, and the edges of vision start to blur.",
+"expedition_Utnapishtim_danger_12": "$names$ accidentally triggered a malfunctioning laser grid. Blinding beams graze past, scorching the nearby metal walls.",
+"expedition_Utnapishtim_danger_13": "$names$ crosses the outer edge of an exposed reactor. Radiation counters click rapidly, and the air carries a faint scent of ionization.",
+"expedition_Utnapishtim_danger_14": "$names$ is trapped in a broken elevator shaft. Nearby gears grind with a harsh sound, threatening total collapse at any moment.",
+"expedition_Utnapishtim_danger_15": "$names$ found a chemical leak. Corrosive liquid is scattered on the floor, emitting wisps of smoke."
 
 
             }

@@ -153,6 +153,12 @@
             {
                 "skill_expansion_V": "阴道扩张",
                 "skill_expansion_V_tooltip": "%%skill_expansion_tooltip1%%"
+            },
+            "en-us":
+            {
+                
+                "skill_expansion_V": "Vaginal Expansion",
+                "skill_expansion_V_tooltip": "%%skill_expansion_tooltip1%%"
             }
         }
     }

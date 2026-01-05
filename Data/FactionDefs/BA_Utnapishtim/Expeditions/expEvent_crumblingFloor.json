@@ -49,7 +49,7 @@
             "resultText":"exp_event_Utnapishtim_crumblingFloor_result_injured",
             "results_characters":
             [
-                { "entry_results":{ "type":"statMod_HP", "value":-1 } }
+                { "entry_results":{ "type":"statMod_HP", "value":-2 } }
             ]
         },
         {
@@ -144,7 +144,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
-    "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev99",
+    "line": "exp_event_error99",
     "isLast": true
 }
                 ]
@@ -172,11 +172,25 @@
 "exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op02":"接受结果（队员MIA）",
 "exp_event_Utnapishtim_crumblingFloor_MIA_ev02":"$party.name$成功逃离了塌陷",
 "exp_event_Utnapishtim_crumblingFloor_MIA_ev03":"$party.name$被卷入地板塌陷，与主队伍失去了联系！",
-"exp_event_Utnapishtim_crumblingFloor_MIA_message":"$names$被卷入地板塌陷，与主队伍失去了联系！",
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev99":"警告！由于内容缺失，该事件强制终止。"
+"exp_event_Utnapishtim_crumblingFloor_MIA_message":"$names$被卷入地板塌陷，与主队伍失去了联系！"
             },
             "en-us":
             {
+"exp_event_Utnapishtim_crumblingFloor":"Floor Collapse",
+"exp_event_Utnapishtim_crumblingFloor_ongoing":"The floor beneath $names$ suddenly collapses!",
+"exp_event_Utnapishtim_crumblingFloor_result_hiddenRoom":"$names$ discovers a hidden compartment revealed by the collapsed floor.",
+"exp_event_Utnapishtim_crumblingFloor_result_evaded":"$names$ managed to dodge the collapsing floor in time.",
+"exp_event_Utnapishtim_crumblingFloor_result_injured":"$names$ was caught in the floor collapse and took damage.",
+"exp_event_Utnapishtim_crumblingFloor_result_event":"$names$ is caught in the floor collapse!",
+
+"exp_event_Utnapishtim_crumblingFloor_MIA":"Floor Collapse!",
+
+"exp_event_Utnapishtim_crumblingFloor_MIA_ev01":"$party.name$ has been swept away by the collapse and may lose contact with the main squad.",
+"exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op01":"Protect the squad member with the Adult's Card (MP-1)",
+"exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op02":"Accept the result (Member MIA)",
+"exp_event_Utnapishtim_crumblingFloor_MIA_ev02":"$party.name$ successfully escaped the collapse.",
+"exp_event_Utnapishtim_crumblingFloor_MIA_ev03":"$party.name$ was swept away by the floor collapse and lost contact with the main squad!",
+"exp_event_Utnapishtim_crumblingFloor_MIA_message":"$names$ was swept away by the floor collapse and lost contact with the main squad!"
 
             }
         }

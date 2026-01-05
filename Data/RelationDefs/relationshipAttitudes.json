@@ -189,7 +189,23 @@
             "en-us":
             {
               
+"relationship_attitude_terrified": "Terrified",
+"relationship_attitude_hateful": "Hateful",
+"relationship_attitude_rebellious": "Rebellious",
+"relationship_attitude_disdainful": "Disdainful",
+"relationship_attitude_resentful": "Resentful",
+"relationship_attitude_wary": "Wary",
+"relationship_attitude_submissive": "Submissive",
+"relationship_attitude_admiring": "Admiring",
+"relationship_attitude_infatuated": "Infatuated",
+"relationship_attitude_affectionate": "Affectionate",
+"relationship_attitude_lustful": "Lustful",
+"relationship_attitude_friendly": "Friendly",
+"relationship_attitude_neutral":"Neutral",
 
+"relationship_attitude_uiEntry": "Attitude: $content$",
+"relationship_attitude": "Attitude",
+"relationship_attitude_tooltip": "Character's attitude is based on current mood, stress, and relationship with the interact target (if any).\nAfter interacting with the target, attitude towards them accumulates in memory until the entry is forgotten.\nDifferent attitudes increase/decrease obedience to commands (+-25% success rate per point of obedience)\n"
             }
         }
     }

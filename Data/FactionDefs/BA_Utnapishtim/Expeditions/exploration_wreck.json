@@ -53,10 +53,10 @@
         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
         "label":"br_trade",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-        "question":"$party.name$找到了失去联络的$victims.name$",
+        "question":"expedition_Utnapishtim_wreck_rescue_ev01",
         "options":[
             {   
-                "option": "先准备一下",
+                "option": "expedition_Utnapishtim_wreck_rescue_ev01_op01",
                 "Results": [ { "Type":"JumpToLabel", "arguments":["","br_abort"]} ] 
             },
             {   
@@ -64,7 +64,7 @@
                 {
                     "victims":[{"parameters":["CanTerminateExpedition"]}]
                 },
-                "option": "立刻展开救援",
+                "option": "expedition_Utnapishtim_wreck_rescue_ev01_op02",
                 "Results": [ { "Type":"TerminateExpedition", "arguments":["victims"]},
                             { "Type":"FactionExchangeInventory", "arguments":["party","victims","true","true","true","true",""]},
                             { "Type":"JumpToLabel", "arguments":["","br_lootEnd"]} ] 
@@ -75,7 +75,7 @@
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_abort",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-        "line": "$party.name$暂时撤退了\n请确保救援对象没有未结算的事件！",
+        "line": "expedition_Utnapishtim_wreck_rescue_ev02",
         "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["RetryEvent"]} ],
         "isLast": true
     },
@@ -83,14 +83,14 @@
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_lootEnd",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-        "line": "$party.name$成功营救了$victims.name$",
+        "line": "expedition_Utnapishtim_wreck_rescue_ev03",
         "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
         "isLast": true
     },
     {
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_error",
-        "line": "警告！由于内容缺失，该事件强制终止。",
+        "line": "exp_event_error99",
         "isLast": true
     }
     ]
@@ -104,11 +104,22 @@
             "zh-cn":
             {
 "expedition_Utnapishtim_wreck":"生命守护者 战舰残骸",
-"expedition_Utnapishtim_wreck_rescue":"救援行动：战舰残骸"
+"expedition_Utnapishtim_wreck_rescue":"救援行动：战舰残骸",
+"expedition_Utnapishtim_wreck_rescue_ev01":"$party.name$找到了失去联络的$victims.name$",
+"expedition_Utnapishtim_wreck_rescue_ev01_op01":"先准备一下",
+"expedition_Utnapishtim_wreck_rescue_ev01_op02":"立刻展开救援",
+"expedition_Utnapishtim_wreck_rescue_ev02":"$party.name$暂时撤退了\n请确保救援对象没有未结算的事件！",
+"expedition_Utnapishtim_wreck_rescue_ev03":"$party.name$成功营救了$victims.name$"
             },
             "en-us":
             {
-
+"expedition_Utnapishtim_wreck":"Utnapishtim Wreckage",
+"expedition_Utnapishtim_wreck_rescue":"Rescue Operation: Wreckage",
+"expedition_Utnapishtim_wreck_rescue_ev01":"$party.name$ found the missing $victims.name$.",
+"expedition_Utnapishtim_wreck_rescue_ev01_op01":"Prepare first",
+"expedition_Utnapishtim_wreck_rescue_ev01_op02":"Start rescue immediately",
+"expedition_Utnapishtim_wreck_rescue_ev02":"$party.name$ has temporarily retreated.\nPlease ensure the rescue target has no unresolved events!",
+"expedition_Utnapishtim_wreck_rescue_ev03":"$party.name$ successfully rescued $victims.name$."
 
             }
         }

@@ -1,299 +1,431 @@
 {
-    "COMs":
-    {
-        "list":[
-        {
-    "ID":"com_sex_P_cowgirl",
-    "ActionPackageClass":"ActionPackage_Sex",
-    "displayName":"com_sex_P_cowgirl_displayName_1",
-    "timeScale":3,
-    "comTags":["sex","penetration", "position_face", "position_equal"],
-    "requirements":{
-        "requirement":{
-            "req_Doers":{
-                "BodyTags":["vagina"],
-                "minRevealingScore":1,
-                "cost_ST": 2
-            },
-            "req_Receivers":{
-                "BodyTags":["penis"],
-                "minRevealingScore":1,
-                "requireConscious":false,
-                "requireAction": false
-            }
-        }
-    },
-    "AcceptanceCheck":{ "baseAcceptanceValue":25 },
-    "DifficultyCheck":{ "baseD20Check":15 },
-    "variants":[
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":1
-                },
-                "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_cowgirl"  }
-            },
-            "displayName":"com_sex_P_V_overpen_1",
-            "setForce":true
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":99
-                },
-                "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_cowgirl"  }
-            },
-            "displayName":"com_sex_P_V_overpen_2",
-            "setForce":true
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":99,
-                    "receiverCount":1
-                },
-                "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_cowgirl"  }
-            },
-            "displayName":"com_sex_P_V_overpen_3",
-            "setForce":true
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":99,
-                    "receiverCount":99
-                },
-                "requireExisting":{ "OverPenetration":true, "requireCOMID":"com_sex_P_cowgirl"  }
-            },
-            "displayName":"com_sex_P_V_overpen_4",
-            "setForce":true
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":1
-                },
-                "requireExisting":{ "requireCOMID":"com_sex_P_cowgirl"  }
-            },
-            "displayName":"com_sex_P_V_force_1",
-            "setForce":true
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":99
-                },
-                "requireExisting":{ "requireCOMID":"com_sex_P_cowgirl"  }
-            },
-            "displayName":"com_sex_P_V_force_2",
-            "setForce":true
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":99,
-                    "receiverCount":1
-                },
-                "requireExisting":{ "requireCOMID":"com_sex_P_cowgirl"  }
-            },
-            "displayName":"com_sex_P_V_force_3",
-            "setForce":true
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":99,
-                    "receiverCount":99
-                },
-                "requireExisting":{ "requireCOMID":"com_sex_P_cowgirl"  }
-            },
-            "displayName":"com_sex_P_V_force_4",
-            "setForce":true
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":1
-                }
-            },
-            "displayName":"com_sex_P_cowgirl_displayName_1"
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":99
-                }
-            },
-            "displayName":"com_sex_P_cowgirl_displayName_2"
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":99,
-                    "receiverCount":1
-                }
-            },
-            "displayName":"com_sex_P_cowgirl_displayName_3"
-        },
-        {
-            "requirements":{
-                "requirement":{
-                    "doerCount":99,
-                    "receiverCount":99
-                }
-            },
-            "displayName":"com_sex_P_cowgirl_displayName_4"
-        }
-    ],
-    "description_ongoing":{
-        "Entries":
-        [
+    "COMs": {
+        "list": [
             {
-                "_comment":"",
-                "keepLooking":false,
-                "Entries":[
-                    {
-                        "_comment":"else: if doer is ordering",
-                        "keepLooking":false,
-                        "texts":[
-                            "%EQUIP_PLAYER_ANAME(ARG:0)%以骑乘位的姿势向插入%EQUIP_TARGET_ANAME(ARG:0)%，并摇晃着腰部…",
-                            "$receiver.firstname$抓住$doer.firstname$的腰部，将她的臀部往上顶，责弄$doer.v$……"
-                        ]
+                "ID": "com_sex_P_cowgirl",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "displayName": "com_sex_P_cowgirl_displayName_1",
+                "timeScale": 3,
+                "comTags": [
+                    "sex",
+                    "penetration",
+                    "position_face",
+                    "position_equal"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": {
+                            "BodyTags": [
+                                "vagina"
+                            ],
+                            "minRevealingScore": 1,
+                            "cost_ST": 2
+                        },
+                        "req_Receivers": {
+                            "BodyTags": [
+                                "penis"
+                            ],
+                            "minRevealingScore": 1,
+                            "requireConscious": false,
+                            "requireAction": false
+                        }
                     }
-                ]
-            }
-        ]
-    },
-    "description_remove":{
-        "Entries":[
-            {
-                "_comment":"",
-                "keepLooking":false,
-                "Entries":[
+                },
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 25
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 15
+                },
+                "variants": [
                     {
-                        "_comment":"",
-                        "keepLooking":false,
-                        "texts":[ "$doer.firstname$扭动腰部从小穴里拔出了$doer.firstname$的肉棒…" ]
-                    }
-                ]
-            }
-        ]
-    },
-    "description_after":
-    {
-        "Entries":[
-            {
-                "_comment":"check chara current climax value",
-                "keepLooking":true,
-                "conditions":[ ],
-                "Entries":[
-                    {
-                        "_comment":"uncons / fatigued",
-                        "keepLooking":false,
-                        "conditions":[ ],
-                        "texts":[ "$doer.firstname$每一次插入都在颤抖，嘴角不断有口水垂下来。" ]
-                    },
-                    {
-                        "_comment":"stimulation less than 300 ? 10000 is climax threshold",
-                        "keepLooking":false,
-                        "conditions":[ ],
-                        "texts":[ "$doer.firstname$疯狂地移动着臀部，但还远远没有从中得到快感，显得有些痛苦" ]
-                    },
-                    {
-                        "_comment":"< 1000",
-                        "keepLooking":false,
-                        "conditions":[ ],
-                        "texts":[ "$doer.firstname$虽然看起来很痛苦，但表情中却隐约透露着快乐" ]
-                    },
-                    {
-                        "_comment":"< 3000",
-                        "keepLooking":false,
-                        "conditions":[ ],
-                        "texts":[ "$doer.firstname$摇着腰，因无法抑制的快乐而发出可爱的声音" ]
-                    },
-                    {
-                        "_comment":"< 6000",
-                        "keepLooking":false,
-                        "conditions":[ ],
-                        "texts":[ "$doer.firstname$大概已经习惯了，一边顺应快感被顶着，一边心甘情愿地摇晃着臀部。" ]
-                    },
-                    {
-                        "_comment":"< 10000",
-                        "keepLooking":false,
-                        "conditions":[ ],
-                        "Entries":[
-                            {
-                                "_comment":"has trait : refuse pleasure / repressed",
-                                "keepLooking":false,
-                                "conditions":[ ],
-                                "texts":[ "她继续不受控制地喘息着，同时吐出拒绝快感的话语。" ]
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 1
                             },
-                            {
-                                "_comment":"else",
-                                "keepLooking":false,
-                                "texts":[ "她用力地翘起臀部，弓着腰，快乐地呻吟着。" ]
+                            "requireExisting": {
+                                "OverPenetration": true,
+                                "requireCOMID": "com_sex_P_cowgirl"
                             }
-                        ]
+                        },
+                        "displayName": "com_sex_P_V_overpen_1",
+                        "setForce": true
                     },
                     {
-                        "_comment":">= 10000",
-                        "keepLooking":false,
-                        "conditions":[ ],
-                        "texts":[ "$doer.firstname$正摇晃着臀部，一脸堕落的表情贪图着快乐。" ]
-                    }
-                ]
-            },
-            {
-                "_comment":"check cum branch, add this if doer can cum",
-                "keepLooking":true,
-                "conditions":[
-                    { "validateChara":{"target":"receiver", "statID":"isCumReady", "operand":"eq", "value":"true" } }
-                ],
-                "texts":[
-                    "在射精的瞬間$receiver.firstname$将阴茎深深突入了膣内最深处…"
-                ]
-            }
-        ]
-        
-    },
-    "description_begin":{
-
-        "Entries":[ 
-
-            {
-                "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
-                "keepLooking":true,
-                "conditions":[
-                    { "validateChara":{"target":"receiver", "statID":"canAct", "operand":"eq", "value":"true" } }
-                ],
-                "Entries":[
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 99
+                            },
+                            "requireExisting": {
+                                "OverPenetration": true,
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_overpen_2",
+                        "setForce": true
+                    },
                     {
-                        "_comment":"receiver is estrus",
-                        "keepLooking":false,
-                        "conditions":[
-                            { "validateChara":{"target":"receiver", "statID":"isInEstrus", "operand":"eq", "value":"true" } }
-                        ],
-                        "texts":[
-                            "$doer.firstname$被情欲所驱使，像是在撒娇一样伸出屁股…",
-                            "$doer.firstname$以野兽的姿态将$receiver.firstname$的阴茎刺入体内，发情的雌性的脸喘着粗气……"
-                        ]
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 1
+                            },
+                            "requireExisting": {
+                                "OverPenetration": true,
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_overpen_3",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 99
+                            },
+                            "requireExisting": {
+                                "OverPenetration": true,
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_overpen_4",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 1
+                            },
+                            "requireExisting": {
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_force_1",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 99
+                            },
+                            "requireExisting": {
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_force_2",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 1
+                            },
+                            "requireExisting": {
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_force_3",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 99
+                            },
+                            "requireExisting": {
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_force_4",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 1
+                            }
+                        },
+                        "displayName": "com_sex_P_cowgirl_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 99
+                            }
+                        },
+                        "displayName": "com_sex_P_cowgirl_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 1
+                            }
+                        },
+                        "displayName": "com_sex_P_cowgirl_displayName_3"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 99
+                            }
+                        },
+                        "displayName": "com_sex_P_cowgirl_displayName_4"
                     }
-                ]
-            },
-            {
-                "_comment":"middle branch, no condition, always check",
-                "keepLooking":true,
-                "texts":[
-                    "$doer.firstname$跨坐在$receiver.firstname$身上，缓缓将阴茎送入自己的膣内…"
-                ]
+                ],
+                "description_ongoing": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": false,
+                            "Entries": [
+                                {
+                                    "_comment": "else: if doer is ordering",
+                                    "keepLooking": false,
+                                    "texts": [
+                                        "com_sex_P_cowgirl_description_ongoing_1_1",
+                                        "com_sex_P_cowgirl_description_ongoing_1_2"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "description_remove": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": false,
+                            "Entries": [
+                                {
+                                    "_comment": "",
+                                    "keepLooking": false,
+                                    "texts": [
+                                        "com_sex_P_cowgirl_description_remove_1"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "description_after": {
+                    "Entries": [
+                        {
+                            "_comment": "check chara current climax value",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "Entries": [
+                                {
+                                    "_comment": "uncons / fatigued",
+                                    "keepLooking": false,
+                                    "conditions": [],
+                                    "texts": [
+                                        "com_sex_P_cowgirl_description_after_2_1"
+                                    ]
+                                },
+                                {
+                                    "_comment": "stimulation less than 300 ? 10000 is climax threshold",
+                                    "keepLooking": false,
+                                    "conditions": [],
+                                    "texts": [
+                                        "com_sex_P_cowgirl_description_after_2_2"
+                                    ]
+                                },
+                                {
+                                    "_comment": "< 1000",
+                                    "keepLooking": false,
+                                    "conditions": [],
+                                    "texts": [
+                                        "com_sex_P_cowgirl_description_after_2_3"
+                                    ]
+                                },
+                                {
+                                    "_comment": "< 3000",
+                                    "keepLooking": false,
+                                    "conditions": [],
+                                    "texts": [
+                                        "com_sex_P_cowgirl_description_after_2_4"
+                                    ]
+                                },
+                                {
+                                    "_comment": "< 6000",
+                                    "keepLooking": false,
+                                    "conditions": [],
+                                    "texts": [
+                                        "com_sex_P_cowgirl_description_after_2_5"
+                                    ]
+                                },
+                                {
+                                    "_comment": "< 10000",
+                                    "keepLooking": false,
+                                    "conditions": [],
+                                    "Entries": [
+                                        {
+                                            "_comment": "has trait : refuse pleasure / repressed",
+                                            "keepLooking": false,
+                                            "conditions": [],
+                                            "texts": [
+                                                "com_sex_P_cowgirl_description_after_2_6"
+                                            ]
+                                        },
+                                        {
+                                            "_comment": "else",
+                                            "keepLooking": false,
+                                            "texts": [
+                                                "com_sex_P_cowgirl_description_after_2_7"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "_comment": ">= 10000",
+                                    "keepLooking": false,
+                                    "conditions": [],
+                                    "texts": [
+                                        "com_sex_P_cowgirl_description_after_2_8"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "_comment": "check cum branch, add this if doer can cum",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isCumReady",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_cowgirl_description_after_1"
+                            ]
+                        }
+                    ]
+                },
+                "description_begin": {
+                    "Entries": [
+                        {
+                            "_comment": "if receiver is lewd or is estrus. blocks timestop or unconscious",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "canAct",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "Entries": [
+                                {
+                                    "_comment": "receiver is estrus",
+                                    "keepLooking": false,
+                                    "conditions": [
+                                        {
+                                            "validateChara": {
+                                                "target": "receiver",
+                                                "statID": "isInEstrus",
+                                                "operand": "eq",
+                                                "value": "true"
+                                            }
+                                        }
+                                    ],
+                                    "texts": [
+                                        "com_sex_P_cowgirl_description_begin_2_1",
+                                        "com_sex_P_cowgirl_description_begin_2_2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "_comment": "middle branch, no condition, always check",
+                            "keepLooking": true,
+                            "texts": [
+                                "com_sex_P_cowgirl_description_begin_1"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
-        
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_P_cowgirl":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_P_cowgirl_displayName_1": "骑乘位V",
+                "com_sex_P_cowgirl_displayName_2": "交替骑乘位V",
+                "com_sex_P_cowgirl_displayName_3": "轮流骑乘位V",
+                "com_sex_P_cowgirl_displayName_4": "同时骑乘位V",
+
+                "com_sex_P_cowgirl_description_begin_1":"$doer.firstname$跨坐在$receiver.firstname$身上，缓缓将阴茎送入自己的膣内…",
+                "com_sex_P_cowgirl_description_begin_2_1":"$doer.firstname$被情欲所驱使，像是在撒娇一样伸出屁股…",
+                "com_sex_P_cowgirl_description_begin_2_2":"$doer.firstname$以野兽的姿态将$receiver.firstname$的阴茎刺入体内，发情的雌性的脸喘着粗气……",
+
+                "com_sex_P_cowgirl_description_after_1":"在射精的瞬間$receiver.firstname$将阴茎深深突入了$doer.firstname$膣内最深处…",
+                "com_sex_P_cowgirl_description_after_2_1":"$doer.firstname$每一次插入都在颤抖，嘴角不断有口水垂下来。",
+                "com_sex_P_cowgirl_description_after_2_2":"$doer.firstname$疯狂地移动着臀部，但还远远没有从中得到快感，显得有些痛苦",
+                "com_sex_P_cowgirl_description_after_2_3":"$doer.firstname$虽然看起来很痛苦，但表情中却隐约透露着快乐",
+                "com_sex_P_cowgirl_description_after_2_4":"$doer.firstname$摇着腰，因无法抑制的快乐而发出可爱的声音",
+                "com_sex_P_cowgirl_description_after_2_5":"$doer.firstname$大概已经习惯了，一边顺应快感被顶着，一边心甘情愿地摇晃着臀部。",
+                "com_sex_P_cowgirl_description_after_2_6":"$doer.firstname$继续不受控制地喘息着，同时吐出拒绝快感的话语。",
+                "com_sex_P_cowgirl_description_after_2_7":"$doer.firstname$用力地翘起臀部，弓着腰，快乐地呻吟着。",
+                "com_sex_P_cowgirl_description_after_2_8":"$doer.firstname$正摇晃着臀部，一脸堕落的表情贪图着快乐。",
+
+                "com_sex_P_cowgirl_description_remove_1":"$doer.firstname$扭动腰部从小穴里拔出了$doer.firstname$的肉棒…",
+
+                "com_sex_P_cowgirl_description_ongoing_1_1":"$doer.firstname$以骑乘位的姿势将$receiver.firstname$插入，并摇晃着腰部…",
+                "com_sex_P_cowgirl_description_ongoing_1_2":"$receiver.firstname$抓住$doer.firstname$的腰部，将她的臀部往上顶，责弄$doer.v$……"
+
+            },
+            "en-us":
+            {
+                "com_sex_P_cowgirl":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_P_cowgirl_displayName_1": "Cowgirl",
+                "com_sex_P_cowgirl_displayName_2": "Alt. Cowgirl",
+                "com_sex_P_cowgirl_displayName_3": "Alt. Cowgirl",
+                "com_sex_P_cowgirl_displayName_4": "Alt. Cowgirl",
+
+                "com_sex_P_cowgirl_description_begin_1":"$doer.firstname$ straddles $receiver.firstname$, slowly taking the penis into their own vagina...",
+                "com_sex_P_cowgirl_description_begin_2_1":"Driven by lust, $doer.firstname$ sticks out their butt as if acting spoiled...",
+                "com_sex_P_cowgirl_description_begin_2_2":"$doer.firstname$ impales themselves on $receiver.firstname$'s penis like a beast, breathing heavily with the face of a female in heat...",
+
+                "com_sex_P_cowgirl_description_after_1":"At the moment of ejaculation, $receiver.firstname$ thrusts the penis deep into the erratic depths of $doer.firstname$'s vagina...",
+                "com_sex_P_cowgirl_description_after_2_1":"$doer.firstname$ trembles with every thrust, drool dripping uncontrollably from the corner of their mouth.",
+                "com_sex_P_cowgirl_description_after_2_2":"$doer.firstname$ moves their hips frantically, but seemingly far from pleasure, looking somewhat in pain.",
+                "com_sex_P_cowgirl_description_after_2_3":"Although $doer.firstname$ looks in pain, a hint of pleasure can be seen in their expression.",
+                "com_sex_P_cowgirl_description_after_2_4":"$doer.firstname$ shakes their waist, making cute noises from uncontrollable pleasure.",
+                "com_sex_P_cowgirl_description_after_2_5":"$doer.firstname$ seems used to it, shaking their hips willingly while yielding to the pleasure of being thrust into.",
+                "com_sex_P_cowgirl_description_after_2_6":"$doer.firstname$ continues to pant uncontrollably while spouting words denying the pleasure.",
+                "com_sex_P_cowgirl_description_after_2_7":"$doer.firstname$ arches their back and sticks their butt out firmly, moaning in pleasure.",
+                "com_sex_P_cowgirl_description_after_2_8":"$doer.firstname$ is shaking their butt, coveting pleasure with a face of depravity.",
+
+                "com_sex_P_cowgirl_description_remove_1":"$doer.firstname$ twists their waist and pulls $doer.firstname$'s cock out of the pussy...",
+
+                "com_sex_P_cowgirl_description_ongoing_1_1":"$doer.firstname$ takes $receiver.firstname$ inside in the cowgirl position, shaking their waist...",
+                "com_sex_P_cowgirl_description_ongoing_1_2":"$receiver.firstname$ grabs $doer.firstname$'s waist and thrusts their hips upward, tormenting $doer.v$..."
+
+            }
+        }
     }
-    }]}}
+}

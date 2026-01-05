@@ -110,10 +110,10 @@
             "AcceptanceCheck":{ "baseAcceptanceValue":25 },
             "DifficultyCheck":{ "baseD20Check":0 },
 
-            "description_ongoing":{ "Entries":[{"texts":["(ongoing) $doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false },
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_1"]}], "keepLooking":false },
             "description_after":{ "Entries":[{"texts":[""]}], "keepLooking":false },
             "description_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
-            "description_begin":{ "Entries":[{"texts":["(begin) $doer.firstname$推倒了$receiver.firstname$"]}], "keepLooking":false }
+            "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_1"]}], "keepLooking":false }
         },
         {
             "ID":"com_interaction_endOngoingSex",
@@ -248,7 +248,54 @@
                 "com_interaction_endOngoingSex_displayName_5": "结束群P",
                 "com_interaction_endOngoingSex_displayName_6": "结束轮奸",
                 "com_interaction_endOngoingSex_displayName_7": "结束时奸",
-                "com_interaction_endOngoingSex_displayName_8": "结束眠奸"
+                "com_interaction_endOngoingSex_displayName_8": "结束眠奸",
+                
+                "com_special_initSex_tooltip": "邀请当前房间内全部角色做爱\n意识清醒的角色会判定接受度（目前未实装）\n全员接受了的话，所有清醒的角色（包括玩家）会脱光自身的衣服，耗费5分钟",
+                "com_special_initSex_start": "推倒",
+                "com_special_initSex_end": "结束做爱",
+                "com_special_initSex_sleeping_start": "睡眠奸",
+                "com_special_initSex_sleeping_end": "结束眠奸",
+                "com_special_initSex_timestop_start": "时停奸",
+                "com_special_initSex_timestop_end": "结束时奸",
+
+                "com_interaction_initiateSex_description_begin_1": "$doer.firstname$推倒了$receiver.firstname$",
+                "com_interaction_initiateSex_description_ongoing_1": "$doer.firstname$推倒了$receiver.firstname$"
+
+
+            },
+            "en-us":
+            {
+                "com_interaction_initiateSex": "Initiate Sex",
+                "com_interaction_initiateSex_displayName_0": "Masturbate",
+                "com_interaction_initiateSex_displayName_1": "Push Down",
+                "com_interaction_initiateSex_displayName_2": "Rape",
+                "com_interaction_initiateSex_displayName_3": "Time Stop Rape",
+                "com_interaction_initiateSex_displayName_4": "Sleep Rape",
+                "com_interaction_initiateSex_displayName_5": "Orgy",
+                "com_interaction_initiateSex_displayName_6": "Gangbang",
+                "com_interaction_initiateSex_displayName_7": "Time Stop Gangbang",
+                "com_interaction_initiateSex_displayName_8": "Sleep Gangbang",
+                "com_interaction_endOngoingSex": "End Sex",
+                "com_interaction_endOngoingSex_displayName_0": "End Masturbation",
+                "com_interaction_endOngoingSex_displayName_1": "End Sex",
+                "com_interaction_endOngoingSex_displayName_2": "End Rape",
+                "com_interaction_endOngoingSex_displayName_3": "End Time Stop Rape",
+                "com_interaction_endOngoingSex_displayName_4": "End Sleep Rape",
+                "com_interaction_endOngoingSex_displayName_5": "End Orgy",
+                "com_interaction_endOngoingSex_displayName_6": "End Gangbang",
+                "com_interaction_endOngoingSex_displayName_7": "End Time Stop Rape",
+                "com_interaction_endOngoingSex_displayName_8": "End Sleep Rape",
+
+                "com_special_initSex_tooltip": "Invite all characters in the current room to have sex\nConscious characters will check for acceptance (Did I implement this?)\nIf everyone accepts, all conscious characters (including player) will strip naked. Takes 5 minutes.",
+                "com_special_initSex_start": "Push Down",
+                "com_special_initSex_end": "End Sex",
+                "com_special_initSex_sleeping_start": "Sleep Rape",
+                "com_special_initSex_sleeping_end": "End Sleep Rape",
+                "com_special_initSex_timestop_start": "Time Stop Rape",
+                "com_special_initSex_timestop_end": "End Time Stop Rape",
+                
+                "com_interaction_initiateSex_description_begin_1": "$doer.firstname$ pushed $receiver.firstname$ down",
+                "com_interaction_initiateSex_description_ongoing_1": "$doer.firstname$ is pinning $receiver.firstname$ down"
 
             }
         }

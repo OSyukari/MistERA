@@ -128,6 +128,11 @@
             {
                 "skill_sexSkill_exposure": "露出癖好",
                 "skill_sexSkill_exposure_tooltip": "%%notimplemented%%"
+            },
+            "en-us":
+            {
+                "skill_sexSkill_exposure": "Exposure",
+                "skill_sexSkill_exposure_tooltip": "%%notimplemented%%"
             }
         }
     }

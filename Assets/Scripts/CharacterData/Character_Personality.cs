@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -142,6 +143,7 @@ public class Character_Personality
         {
             if (entries.ContainsKey(entry.ID)) continue;
             entries.Add(entry.ID, entry);
+            if (scr_System_Serializer.current.Debug_KojoIntegrityCheck) entry.ValidateIntegrity();
         }
     }
 
@@ -188,7 +190,7 @@ public class Character_Personality
 
     public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, ActionPackage ap, Character_Relationship relation, bool checkClimax = false)
     {
-        string comID = ap.targetCOM.ID;
+        string comID = ap.targetCOM.tooltipID;
         if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
         if (checkClimax) comID = $"{comID}_Climax";
         if (!entries.ContainsKey(comID))
@@ -203,7 +205,7 @@ public class Character_Personality
     }
     public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, EvaluationPackage ep, Character_Relationship relation, bool checkClimax = false)
     {
-        string comID = ep.targetCOM.ID;
+        string comID = ep.targetCOM.tooltipID;
         if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
         if (checkClimax) comID = $"{comID}_Climax";
         if (!entries.ContainsKey(comID))
@@ -218,7 +220,7 @@ public class Character_Personality
     }
     public MessageCollect_KojoEntry GetKOJOMessage_Tryjoin(ActionPackage ep, Character_Relationship relation)
     {
-        string comID = ep.targetCOM.ID;
+        string comID = ep.targetCOM.tooltipID;
         if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
         comID = $"{comID}_Tryjoin";
         if (!entries.ContainsKey(comID))
@@ -248,7 +250,7 @@ public class Character_Personality
     }
     public MessageCollect_KojoEntry GetKOJOMessage_Suffix(string suffix, bool isDoer, bool isReceiver, EvaluationPackage ep, Character_Relationship relation)
     {
-        string comID = ep.targetCOM.ID;
+        string comID = ep.targetCOM.tooltipID;
         if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
         comID = $"{comID}{suffix}";
         if (!entries.ContainsKey(comID))
@@ -263,7 +265,7 @@ public class Character_Personality
     }
     public MessageCollect_KojoEntry GetKOJOMessage_Join(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
     {
-        string comID = ep.targetCOM.ID;
+        string comID = ep.targetCOM.tooltipID;
         if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
         comID = $"{comID}_Join";
         if (!entries.ContainsKey(comID))
@@ -278,7 +280,7 @@ public class Character_Personality
     }
     public MessageCollect_KojoEntry GetKOJOMessage_Begin(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
     {
-        string comID = ep.targetCOM.ID;
+        string comID = ep.targetCOM.tooltipID;
         if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
         comID = $"{comID}_Begin";
         if (!entries.ContainsKey(comID))
@@ -293,7 +295,7 @@ public class Character_Personality
     }
     public MessageCollect_KojoEntry GetKOJOMessage_Ongoing(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
     {
-        string comID = ep.targetCOM.ID;
+        string comID = ep.targetCOM.tooltipID;
         if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
         comID = $"{comID}_Ongoing";
 
@@ -310,7 +312,7 @@ public class Character_Personality
     }
     public MessageCollect_KojoEntry GetKOJOMessage_Interrupt(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
     {
-        string comID = ep.targetCOM.ID;
+        string comID = ep.targetCOM.tooltipID;
         if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
         comID = $"{comID}_Interrupt";
 
@@ -422,6 +424,14 @@ public class ResponseEntry
     {
         if (this.RedirectID != "") return this.RedirectID;
         else return original;
+    }
+
+    public void ValidateIntegrity()
+    {
+        foreach(var v in this.variants)
+        {
+            v.ValidateIntegrity();
+        }
     }
 
     public bool Validate(Character_Trainable owner, Character_Trainable target = null)
@@ -643,7 +653,29 @@ public class ResponseEntry
         public bool hideWhenNotFocused = true;  // Do not display message if Owner is not CurrentTarget (not focused) or Target is not Player nor CurrentTarget (not focused)
         
         public List<Variant> variants = new List<Variant>();
-        
+
+
+        public void ValidateIntegrity()
+        {
+            foreach(var r in this.responses)
+            {
+                if (r.Length < 1) continue;
+                var ss = r.Split(' ');
+                if (ss.Length > 1) continue;
+                var s2 = r.Split('_');
+                if (s2.Length < 2) continue;
+                var s3 = r.Split('$');
+                if (s3.Length > 1) continue;
+                if (LocalizeDictionary.QueryThenParse(r,"error") == "error")
+                {
+                    Debug.LogError($"Error kojo missing translation for {r}");
+                }
+            }
+            foreach (var v in this.variants)
+            {
+                v.ValidateIntegrity();
+            }
+        }
         public bool GetRandomResponse(out MessageCollect_KojoEntry response, Character_Relationship rel, EvaluationPackage ep, List<string> selfTags, List<string> targetTags, bool isPlayerInvolved = false, bool skipExecute = false)
         {
             // first apply cost
@@ -715,6 +747,11 @@ public class ResponseEntry
 
         protected bool isValid(Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
         {
+            if (rel != null)
+            {
+                if (requireSelfOnly && rel.Owner != rel.Target) return false;
+            }
+
             if (ep != null && rel != null)
             {
                 if (requireSelfOnly && (ep.job.Actors.Count != 1 || ep.job.Actors[0] != rel.Owner)) return false;
@@ -733,6 +770,10 @@ public class ResponseEntry
 
                 if (requireSelfMaster && ep.Package.Master != null && ep.Package.Master != rel.Owner) return false;
                 if (requireSelfNotMaster && ep.Package.Master != null && ep.Package.Master == rel.Owner) return false;
+            }
+            else if (ep == null)
+            {
+                
             }
             List<string> ttips = new List<string>();
 

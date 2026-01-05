@@ -110,6 +110,11 @@
             "en-us":
             {
 
+"nameless_guardian_laser_close":"Close range Laser",
+"nameless_guardian_clawThrust":"Claw Thrust",
+"nameless_guardian_clawStomp":"Claw Stomp",
+"nameless_guardian_laser_long":"Long range Laser",
+"nameless_guardian_laser_heavy":"Charged Laser"
             }
         }
     }

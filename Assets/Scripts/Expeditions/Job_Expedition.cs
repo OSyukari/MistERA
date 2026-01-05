@@ -571,7 +571,7 @@ public class Job_Expedition : Job
         if (exp == null) this.expeditionRefID = -1;
         else this.expeditionRefID = exp.RefID;
 
-        Debug.LogError($"SetExpedition! {this.expeditionRefID}");
+        //Debug.LogError($"SetExpedition! {this.expeditionRefID}");
     }
 
     [JsonIgnore]
@@ -794,6 +794,11 @@ public class Job_Expedition : Job
             ss += "expedition on break! ||";
             return false;
         }
+        else if (ShouldRest(c))
+        {
+            ss += "should rest from exploration, liberating ||";
+            return false;
+        }
         else if (packageCooldown > 0)
         {
             ss += $"expedition active, exploring, cooldown {packageCooldown} no event ||";
@@ -806,6 +811,7 @@ public class Job_Expedition : Job
         }
         else if (RemainingMinutes != 0 && Expedition.ExploreRate != 0)
         {
+            
 
             //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
             // 2 - if actor is in room, set COM package
@@ -835,8 +841,8 @@ public class Job_Expedition : Job
             }
         }
 
-            ss += $"expedition no package, remaining minutes {RemainingMinutes}, explore rate {Expedition.ExploreRate}";
-            return true;
+        ss += $"expedition no package, remaining minutes {RemainingMinutes}, explore rate {Expedition.ExploreRate}";
+        return true;
         
     }
 
@@ -852,7 +858,8 @@ public class Job_Expedition : Job
     }
     public bool ShouldRest(Character_Trainable c)
     {
-        return c.shouldRest;
+        if (FactionOwner_Party.PrioritizeResting && c.Stats.HP.ValuePercentile < 1.0) return true;
+        return c.Stats.HP.Value < 1 || c.shouldRest;
     }
 
 

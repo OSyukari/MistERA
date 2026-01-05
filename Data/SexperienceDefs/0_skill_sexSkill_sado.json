@@ -128,6 +128,11 @@
             {
                 "skill_sexSkill_sado": "施虐倾向",
                 "skill_sexSkill_sado_tooltip": "%%notimplemented%%"
+            },
+            "en-us":
+            {
+                "skill_sexSkill_sado": "Sadism",
+                "skill_sexSkill_sado_tooltip": "%%notimplemented%%"
             }
         }
     }

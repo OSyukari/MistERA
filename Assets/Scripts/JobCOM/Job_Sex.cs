@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
+using QuikGraph;
 
 /// <summary>
 /// THIS JOB.. PROBABLY WILL GET SERIALIZED, WHEN NPC ARE ENGAGED IN SEX
@@ -209,14 +210,43 @@ public class Job_Sex_Group : Job
 
     protected bool ended = false;
 
-    public void EndJob(string appendAfterMsg = "")
+    public void EndJob( string sendKojoID = "", List<Character_Trainable> additionalActors = null, string appendAfterMsg = "")
     {
         if (ended) return;
         ended = true;
+        var player = sendKojoID != "" ? scr_System_CampaignManager.current.Player : null;
+
+        if (player != null && scr_System_CampaignManager.current.CurrentRoom == this.parentRoomRef)
+        {
+            var playerTag = new List<string>();
+            UtilityEX.GetActorTag(ref playerTag, player);
+            var actors = new List<Character_Trainable>(this.Actors);
+            if (additionalActors != null) 
+            {
+                actors.AddRange(additionalActors);
+                actors = Utility.Distinct(actors);
+            }
+
+            Debug.Log($"EndSexjob called with kojoID {sendKojoID}, ActorCount {this.actorRefID.Count}+{(additionalActors == null ? 0 : additionalActors.Count)}={actors.Count}");
+
+            foreach (var actor in actors)
+            {
+                if (actor == player) continue;
+                var rel = actor.Relationships.FindRelationshipWith(player);
+                var actorTag = new List<string>();
+                UtilityEX.GetActorTag(ref actorTag, actor);
+                var m = actor.Relationships.Personality.GetKOJOMessage(sendKojoID, rel, actorTag, playerTag);
+                this.m.AddKojo(m);
+                //Debug.Log($"adding kojo for {actor.FirstName}: {m.message}");
+            }
+        }
+
+        this.m.displayOverride = player != null || this.m.displayOverride;
+
         var newList = actorRefID.ToList();
 
         //for (int i = actorRefID.Count - 1; i >= 0; i--)
-        foreach(var i in newList)
+        foreach (var i in newList)
         {
 
             //Character_Trainable C = scr_System_CampaignManager.current.FindInstanceByID(actorRefID[i]);
@@ -238,7 +268,7 @@ public class Job_Sex_Group : Job
         if (appendAfterMsg != "") this.m.messages_after.Add(appendAfterMsg);
 
         Debug.Log($"sex job end, updating? {scr_UpdateHandler.current.Updating}");
-        if (!scr_UpdateHandler.current.Updating) this.NotifyDescriptionsOutOfUpdate();
+        if (!scr_UpdateHandler.current.Updating || this.m.displayOverride) this.NotifyDescriptionsOutOfUpdate();
         //else this.NotifyDescriptionsOutOfUpdate
         scr_System_CampaignManager.current.NotifyEndJob(this);
     }

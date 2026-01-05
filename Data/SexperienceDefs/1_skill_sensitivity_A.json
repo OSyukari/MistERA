@@ -152,6 +152,11 @@
             {
                 "skill_sensitivity_A": "A感觉",
                 "skill_sensitivity_A_tooltip": "%%skill_sensitivity_tooltip1%%\n%%skill_sensitivity_tooltip2%%"
+            },
+            "en-us":
+            {
+                "skill_sensitivity_A": "A Sensitivity",
+                "skill_sensitivity_A_tooltip": "%%skill_sensitivity_tooltip1%%\n%%skill_sensitivity_tooltip2%%"
             }
         }
     }

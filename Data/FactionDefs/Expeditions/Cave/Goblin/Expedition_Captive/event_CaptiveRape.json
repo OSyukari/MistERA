@@ -54,7 +54,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
-    "line": "警告！由于内容缺失，该事件强制终止。",
+    "line": "exp_event_error99",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
 }
@@ -66,6 +66,10 @@
         "Entries": {
             "zh-cn": {
                 "event_goblin_captiveRape": "哥布林囚犯"
+            },
+            "en-us":
+            {
+                "event_goblin_captiveRape": "Goblin Captivity"
             }
         }
     }

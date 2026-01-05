@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-
+using UnityEngine;
 public static class ResultCharaUtility
 {
 
@@ -38,23 +38,23 @@ public static class ResultCharaUtility
         {
             case CharaResultType.statMod_ST:
                 if (!int.TryParse(r.value, out i) || c.Stats.Stamina == null) break;
-                c.Stats.Stamina.ModValue(i);
-                if (log != null) log.AddStats(c.RefID, "stats_derived_extended_stamina", i);
+                i = c.Stats.Stamina.ModValue(i);
+                if (log != null && i != 0) log.AddStats(c.RefID, "stats_derived_extended_stamina", i);
                 break;
             case CharaResultType.statMod_EN:
                 if (!int.TryParse(r.value, out i) || c.Stats.Energy == null) break;
-                c.Stats.Energy.ModValue(i);
-                if (log != null) log.AddStats(c.RefID, "stats_derived_extended_energy", i);
+                i = c.Stats.Energy.ModValue(i);
+                if (log != null && i != 0) log.AddStats(c.RefID, "stats_derived_extended_energy", i);
                 break;
             case CharaResultType.statMod_HP:
                 if (!int.TryParse(r.value, out i) || c.Stats.HP == null) break;
-                c.Stats.HP.ModValue(i);
-                if (log != null) log.AddStats(c.RefID, "stats_derived_extended_hp", i);
+                i = c.Stats.HP.ModValue(i);
+                if (log != null && i != 0) log.AddStats(c.RefID, "stats_derived_extended_hp", i);
                 break;
             case CharaResultType.statMod_MP:
                 if (!int.TryParse(r.value, out i) || c.Stats.MP == null) break;
-                c.Stats.MP.ModValue(i);
-                if (log != null) log.AddStats(c.RefID, "stats_derived_extended_mp", i);
+                i = c.Stats.MP.ModValue(i);
+                if (log != null && i != 0) log.AddStats(c.RefID, "stats_derived_extended_mp", i);
                 break;
             case CharaResultType.redress:
                 c.Redress();
@@ -64,7 +64,7 @@ public static class ResultCharaUtility
         if (r.useItemFromTargetInventory != "")
         {
             Item_Instance instance = null;
-            if (jobOwner != null) instance = jobOwner.Inventory.RemoveItem(r.useItemFromTargetInventory);
+            if (jobOwner != null) instance = jobOwner.Inventory.RemoveItem(r.useItemFromTargetInventory, c);
             if (instance != null && instance.GetComp_Ingestible() != null) c.Body.ConsumeIngestible(instance);
             // Debug.Log("Applying COM Result, useItemFromTargetInventory[" + useItemFromTargetInventory + "], factionOwner?[" + (m.job.FactionOwner != null) + "] instance?[" + (instance != null) + "]");
         }

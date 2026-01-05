@@ -114,7 +114,11 @@
             },
             "en-us":
             {
-
+"weapon_simple_sling":"Sling",
+"weapon_simple_shortbow":"Shortbow",
+"weapon_simple_lightcrossbow":"Light Crossbow",
+"weapon_ranged_aiming":"Aiming",
+"weapon_ranged_projectile_attack":"Fire Projectile"
 
             }
         }

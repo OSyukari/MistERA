@@ -22,22 +22,24 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     Floor_Instance floor = null;
 
-    public RectTransform prefab_roomButton;
+    public scr_roomBTN prefab_roomButton;
 
     //scr_Panel_Map parent;
 
     protected List<int> currentFloorIDs = new List<int>();
 
 
-    private void addExit(RectTransform prefab, RectTransform parent, Floor_Base.FloorPlan_Exit exits, Floor_Instance targetFloor)
+    private void addExit(scr_roomBTN prefab, RectTransform parent, Floor_Base.FloorPlan_Exit exits, Floor_Instance targetFloor)
     {
-        RectTransform r2 = Instantiate(prefab);
-        r2.SetParent(parent, false);
-        r2.anchoredPosition = new Vector2(exits.offsetX, exits.offsetY);
+        scr_roomBTN r2 = Instantiate(prefab);
+        r2.SelfRect.SetParent(parent, false);
+        r2.SelfRect.anchoredPosition = new Vector2(exits.offsetX, exits.offsetY);
+
+        r2.bgImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
 
         r2.transform.rotation = Quaternion.identity;
 
-        scr_SelectableText btn = r2.GetComponent<scr_SelectableText>();
+        scr_SelectableText btn = r2.Button;
 
         btn.Initialize(this, new ButtonValidator_ChangeFloor(this, targetFloor, btn));
         btn.SetText(targetFloor.displayName);
@@ -47,19 +49,21 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         validatorsByID.Add(btn.optionID, btn.Validator);
         btn.Validate();
 
+        r2.sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+
         currentFloorIDs.Add(btn.optionID);
     }
 
-    private void addBtn(RectTransform prefab, RectTransform parent, Room_Instance ri, bool extraOffset = false, bool displayCharaName = false, bool ignorePathToggle = false)
+    private void addBtn(scr_roomBTN prefab, RectTransform parent, Room_Instance ri, bool extraOffset = false, bool displayCharaName = false, bool ignorePathToggle = false)
     {
-        RectTransform r2 = Instantiate(prefab);
-        r2.SetParent(parent, false);
-        r2.anchoredPosition = new Vector2(ri.Base.offsetX, ri.Base.offsetY);
+        scr_roomBTN r2 = Instantiate(prefab);
+        r2.SelfRect.SetParent(parent, false);
+        r2.SelfRect.anchoredPosition = new Vector2(ri.Base.offsetX, ri.Base.offsetY);
 
         r2.transform.rotation = Quaternion.identity;
 
-        scr_SelectableText btn = r2.GetComponent<scr_SelectableText>();
 
+        scr_SelectableText btn = r2.Button;
 
         Floor_Instance parentFloor = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(ri.RefID);
         int tempRefID = ri.RefID;
@@ -72,7 +76,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             List<string> names = new List<string>();
             foreach (var i in list)  if (i.RefID != 0) names.Add(i.FirstName);
 
-            btn.SetText(tempRefID + " - " + ri.DisplayName);
+            btn.SetText(tempRefID + " - " + ri.DisplayNameShort);
+            r2.bgImage.color = scr_System_CentralControl.current.DisplaySetting.TextColor_transparent;
 
             var namesRect = Instantiate(prefab_text_standard);
             namesRect.SetParent(parent, false);
@@ -81,7 +86,10 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         else
         {
             btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn, true, ignorePathToggle));
-            btn.SetText(tempRefID.ToString());
+            //btn.SetText(tempRefID.ToString());
+            btn.SetText(tempRefID + " - " + ri.DisplayNameShort);
+            r2.bgImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
+            r2.sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         }
 
         if (extraOffset) btn.optionID = (floor.GetHashCode() + ri.GetHashCode()) * 2 + 1;
@@ -328,14 +336,15 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
             text.AttachOnHoverEnter(OnHoverEnter);
             text.AttachOnHoverExit(OnHoverExit);
-            
 
-            ttip = "Room: " + room.DisplayName;
-            if (room.Furnitures.Count > 0) ttip += "\nFurnitures: " + room.DisplayableFurnitureNames;
-            var list = scr_System_CampaignManager.current.CharaInRoom(room.RefID);
             List<string> names = new List<string>();
+            var list = scr_System_CampaignManager.current.CharaInRoom(room.RefID);
             foreach (var ii in list) if (ii.RefID != 0) names.Add(ii.FirstName);
-            if (names.Count > 0) ttip += "\nCurrently in room: " + String.Join(" ", names);
+
+            ttip = LocalizeDictionary.QueryThenParse("ui_map_roomTooltip")
+                .Replace("$room$", room.DisplayName)
+                .Replace("$furnitures$", room.DisplayableFurnitureNames)
+                .Replace("$names$", names.Count > 0 ? String.Join(" ", names) : "-" );
         }
 
         protected void OnHoverExit()
@@ -364,13 +373,13 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             else if (parent.path != null && parent.path.ToList().Find(x => x.Source == room.RefID || x.Target == room.RefID) != null)
             {
                 this.text.Toggle(true, false);
-                this.tooltip = ttip + "\nTravel Cost: " + (parent.pathCost).ToString() + " minutes";
+                this.tooltip = ttip.Replace("$time$", (parent.pathCost).ToString());
                 return true;
             }
             else if (parent.path == null)
             {
                 this.text.Toggle(true, false);
-                this.tooltip = ttip;
+                this.tooltip = ttip.Replace("$time$", "-");
                 return true;
             }
             else // parent path not null and current room not in path

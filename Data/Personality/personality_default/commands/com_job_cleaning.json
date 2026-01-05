@@ -7,41 +7,59 @@
                     "ID": "com_job_cleaning_Begin",
                     "variants": [
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": { "requireSelfAttitudeGTE": "Like" },
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
                             "extraPortraitTags": [
-                                "relaxed", "leaning", "confident", "smug", "excited", "happy"
+                                "relaxed",
+                                "leaning",
+                                "confident",
+                                "smug",
+                                "excited",
+                                "happy"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.3.3 主动接受" ,
+                            "_comment": "2.3.3 主动接受",
                             "responses": [
-                                "$self$爽快地答应道：\"没问题！正觉得有点无聊呢，一起弄吧！\"", "$self$挽起袖子，一副干劲十足的样子。\"包在我身上！我可是整理小能手。\""
+                                "com_job_cleaning_Begin_1",
+                                "com_job_cleaning_Begin_2"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], 
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
                             "useActiveTags": false,
-                            "_comment":"2.3.5 被动接受（屈服）" ,
-                            "responses": [ 
-                                "$self$咬着嘴唇，即便满脸写着抗拒，还是默默拿起了工具。\"知道了……我会做的……\"", "$self$眼角带着泪光，颤抖着点了点头，不敢说出一个不字。"
+                            "_comment": "2.3.5 被动接受（屈服）",
+                            "responses": [
+                                "com_job_cleaning_Begin_3",
+                                "com_job_cleaning_Begin_4"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
-                            "_comment":"2.3.4 被动接受（惊讶不反感）" ,
-                            "responses":
-                            [ 
-                                "$self$愣了一下，指着自己：\"诶？我也要来吗？好吧，既然你都这么说了。\"", "$self$挠了挠头，似乎有些困惑。\"唔……虽然不擅长，但我会试试看的。\""
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 被动接受（惊讶不反感）",
+                            "responses": [
+                                "com_job_cleaning_Begin_5",
+                                "com_job_cleaning_Begin_6"
                             ]
                         },
                         {
-                    
                             "extraPortraitTags": [
                                 "focused",
                                 "neutral",
@@ -51,9 +69,11 @@
                                 "observation"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.1.1 行动开始" ,
+                            "_comment": "2.1.1 行动开始",
                             "responses": [
-                                "$self$挽起袖子，从杂物间拿出了扫帚和簸箕。\"好，一口气把这里打扫干净吧。\"", "$self$看着有些凌乱的房间，无奈地叹了口气，开始动手整理桌上的文件。", "$self$戴上围裙，眼神变得犀利起来。\"大扫除时间到！脏东西统统消失！\""
+                                "com_job_cleaning_Begin_7",
+                                "com_job_cleaning_Begin_8",
+                                "com_job_cleaning_Begin_9"
                             ]
                         }
                     ]
@@ -65,9 +85,10 @@
                     "ID": "com_job_cleaning_Tryjoin",
                     "variants": [
                         {
-                            "_comment":"2.3.6 NPC请求加入" ,
+                            "_comment": "2.3.6 NPC请求加入",
                             "responses": [
-                                "$self$看着忙碌的$target$，凑上前问道：\"看起来挺辛苦的，我也来搭把手吧？\"", "$self$有些手痒地拿起一块抹布。\"那个，我能一起帮忙吗？我有强迫症看着难受。\""
+                                "com_job_cleaning_Tryjoin_1",
+                                "com_job_cleaning_Tryjoin_2"
                             ]
                         }
                     ]
@@ -79,9 +100,10 @@
                     "ID": "com_job_cleaning_Joined",
                     "variants": [
                         {
-                            "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
-                            "responses": [ 
-                                "$self$开心地比了个OK的手势。\"好勒！那就比比谁弄得更干净！\"", "$self$立刻投入了工作状态，动作麻利。\"多谢啦，两个人干果然快多了。\""
+                            "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
+                            "responses": [
+                                "com_job_cleaning_Joined_1",
+                                "com_job_cleaning_Joined_2"
                             ]
                         }
                     ]
@@ -93,9 +115,10 @@
                     "ID": "com_job_cleaning_Join_Refused",
                     "variants": [
                         {
-                            "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
+                            "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
-                                "$self$有些失落地放下了手里的东西。\"好吧……那你自己加油。\"", "$self$耸了耸肩，转身离开。\"行行行，不打扰你的兴致了。\""
+                                "com_job_cleaning_Join_Refused_1",
+                                "com_job_cleaning_Join_Refused_2"
                             ]
                         }
                     ]
@@ -110,47 +133,76 @@
                             "requirement": {
                                 "requireEPFailure": true
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
-                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Neutral"
+                                    },
+                                    "extraPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
-                                        "$self$擦了擦汗，笑着拒绝道：\"不用啦，这点小事我自己能搞定，你去休息吧。\"", "$self$挡在了$target$面前。\"这里灰尘大，你别弄脏了手，我一个人就行。\""
+                                        "com_job_cleaning_Join_1",
+                                        "com_job_cleaning_Join_2"
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "extraPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
-                                "$self$冷冷地说道：\"别来添乱，你在旁边只会碍手碍脚。\"", "$self$不耐烦地推开了$target$。\"走开走开，不需要你假惺惺的帮忙。\""
+                                "com_job_cleaning_Join_3",
+                                "com_job_cleaning_Join_4"
                             ]
                         },
                         {
-                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$眼睛一亮，把扫帚递了过去。\"太好了！正愁一个人干不完呢，快来快来！\"", "$self$感激地看着$target$。\"真的吗？那是帮大忙了！那一块就拜托你了。\""
+                            "responses": [
+                                "com_job_cleaning_Join_5",
+                                "com_job_cleaning_Join_6"
                             ]
-
                         },
                         {
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$身体僵硬了一下，默默地低头让开。\"……随你便吧。\"", "$self$不敢直视$target$的眼睛，只能唯唯诺诺地把工具递过去。\"是……请用……\""
+                            "responses": [
+                                "com_job_cleaning_Join_7",
+                                "com_job_cleaning_Join_8"
                             ]
                         },
                         {
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$有些惊讶地眨了眨眼。\"诶？你要帮我吗？嗯……倒是不介意啦。\"", "$self$迟疑了一下，还是让出了一块位置。\"虽然没想到你会感兴趣……那就麻烦你了。\""
+                            "responses": [
+                                "com_job_cleaning_Join_9",
+                                "com_job_cleaning_Join_10"
                             ]
                         }
                     ]
@@ -162,9 +214,11 @@
                     "ID": "com_job_cleaning_Ongoing",
                     "variants": [
                         {
-                            "_comment":"2.1.2 行动中途" ,
-                            "responses": [ 
-                                "$self$正哼着不知名的小调，用抹布仔细擦拭着窗台上的灰尘。", "$self$全神贯注地分类着地上的垃圾，额头上渗出了一层细密的汗珠。", "$self$手里拿着吸尘器在房间里来回走动，机器的轰鸣声掩盖了周围的动静。"
+                            "_comment": "2.1.2 行动中途",
+                            "responses": [
+                                "com_job_cleaning_Ongoing_1",
+                                "com_job_cleaning_Ongoing_2",
+                                "com_job_cleaning_Ongoing_3"
                             ]
                         }
                     ]
@@ -176,42 +230,79 @@
                     "ID": "com_job_cleaning_Interrupt",
                     "variants": [
                         {
-                            "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
-                            "requirement":{ "requireSelfAttitudeKey": "Fear" },
-                            "_comment":"2.2.3 态度：恐惧 有他人登场" ,
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Fear"
+                            },
+                            "_comment": "2.2.3 态度：恐惧 有他人登场",
                             "responses": [
-                                "$self$听到脚步声，受惊般地缩紧了肩膀，握着扫帚的手指因为用力而发白。", "$self$下意识地退到了墙角，眼神闪烁不定，似乎随时准备逃跑。", "$self$低着头不敢看$target$，清理动作变得僵硬而机械。\"对、对不起……我马上就弄完……\""
+                                "com_job_cleaning_Interrupt_1",
+                                "com_job_cleaning_Interrupt_2",
+                                "com_job_cleaning_Interrupt_3"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Badwill" },
-                            "_comment":"2.2.2 态度：恶意 有他人登场" ,
-                            "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
-                            "responses": [ 
-                                "$self$只是冷冷地瞥了$target$一眼，手中的动作反而更加用力，仿佛在发泄不满。", "$self$并没有理会$target$的出现，甚至故意背过身去继续拖地，把灰尘往那个方向扫。", "$self$皱起眉头，压低声音嘟囔了一句：\"啧，怎么偏偏这时候遇到不想见的人。\""
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Badwill"
+                            },
+                            "_comment": "2.2.2 态度：恶意 有他人登场",
+                            "extraPortraitTags": [
+                                "disgusted",
+                                "disappointed"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_job_cleaning_Interrupt_4",
+                                "com_job_cleaning_Interrupt_5",
+                                "com_job_cleaning_Interrupt_6"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
-                            "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
-                            "_comment":"2.2.1 态度：好意 有他人登场" ,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Goodwill"
+                            },
+                            "extraPortraitTags": [
+                                "happy",
+                                "excited",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 态度：好意 有他人登场",
                             "responses": [
-                                "看到$target$进来，$self$停下手中的活，露出灿烂的笑容。\"哎呀，你来得正好，要不要一起喝杯茶休息下？\"", "$self$擦了擦手，有些不好意思地笑了笑。\"抱歉让你看到这么乱的样子，马上就好。\"", "$self$对着$target$挥了挥手中的鸡毛掸子。\"嘿！小心灰尘哦，别弄脏了衣服。\""
+                                "com_job_cleaning_Interrupt_7",
+                                "com_job_cleaning_Interrupt_8",
+                                "com_job_cleaning_Interrupt_9"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Desire" },
-                            "_comment":"2.2.4 态度：欲望 有他人登场" ,
-                            "extraPortraitTags": [ "shy" ], "useActiveTags": false,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Desire"
+                            },
+                            "_comment": "2.2.4 态度：欲望 有他人登场",
+                            "extraPortraitTags": [
+                                "shy"
+                            ],
+                            "useActiveTags": false,
                             "responses": [
-                                "$self$特意挺直了腰背，借着擦高处的动作展示着自己的身体曲线，眼神悄悄飘向$target$。", "$self$脸颊微红，动作变得有些做作的轻柔。\"那个……你要是没事的话，可以多待一会儿也没关系……\"", "$self$咬着嘴唇，故意把领口拉低了一些，用余光观察着$target$的反应。"
+                                "com_job_cleaning_Interrupt_10",
+                                "com_job_cleaning_Interrupt_11",
+                                "com_job_cleaning_Interrupt_12"
                             ]
                         },
                         {
-                            "_comment":"2.2.5 态度：普通 有他人登场" ,
-                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "_comment": "2.2.5 态度：普通 有他人登场",
+                            "extraPortraitTags": [
+                                "focused"
+                            ],
+                            "useActiveTags": false,
                             "responses": [
-                                "$self$礼貌性地点了点头，视线很快回到了手中的垃圾袋上。\"请让一下，正在打扫。\"", "$self$依然保持着原本的节奏，并没有因为$target$的出现而改变动作。", "$self$随口说了一句：\"小心地滑。\"然后继续专注于拖地。"
+                                "com_job_cleaning_Interrupt_13",
+                                "com_job_cleaning_Interrupt_14",
+                                "com_job_cleaning_Interrupt_15"
                             ]
                         }
                     ]
@@ -224,7 +315,9 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirement": { "requireEPFailure": true },
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
                             "variants": [
                                 {
                                     "requirement": {
@@ -238,7 +331,8 @@
                                     ],
                                     "useActiveTags": false,
                                     "responses": [
-                                        "$self$抱歉地摆摆手：\"虽然很想帮忙，但我手上还有别的事走不开。\"", "$self$苦笑着指了指自己的衣服。\"下次吧，今天穿这身不太方便干活。\""
+                                        "com_job_cleaning_1",
+                                        "com_job_cleaning_2"
                                     ]
                                 }
                             ],
@@ -254,27 +348,32 @@
                             "useActiveTags": false,
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
-                                "$self$翻了个白眼，双手抱胸。\"哈？这种脏活为什么要我做？\"", "$self$嫌弃地撇撇嘴。\"没空，你自己弄不就好了。\""
+                                "com_job_cleaning_3",
+                                "com_job_cleaning_4"
                             ]
                         },
                         {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
                                         "intrigued",
                                         "relaxed"
-                                    ], "useActiveTags": false,
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
-                                    "kojo_default_com_job_cleaning_accept_success_1",
-                                        "$self$看着焕然一新的房间，满意地叉着腰。\"哼哼，完美！简直像新房子一样！\"", "$self$擦掉汗水，回头对$target$露出灿烂的笑容。\"虽然很累，但看到这么干净还是很有成就感呢！\""
+                                        "kojo_default_com_job_cleaning_accept_success_1",
+                                        "com_job_cleaning_5",
+                                        "com_job_cleaning_6"
                                     ]
                                 }
                             ],
@@ -292,28 +391,30 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
-                                "$self$瘫坐在椅子上，一脸生无可恋。\"虽然弄干净了，但我的腰快断了……下次绝对不干了。\"", "$self$看着被洗得发白的手，心情有些低落。\"为了这点破事花了这么久，感觉真不值得。\""
+                                "com_job_cleaning_7",
+                                "com_job_cleaning_8"
                             ]
                         },
                         {
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
                                         "intrigued",
                                         "relaxed"
-                                    ], "useActiveTags": false,
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
-                                        
-                                    "kojo_default_com_job_cleaning_accept_failure_1",
-                                    "kojo_default_com_job_cleaning_accept_failure_2",
-
-"$self$看着依然有些乱的角落，却忍不住笑出了声。\"虽然没彻底弄完，但刚才那阵手忙脚乱还挺好玩的。\"", "$self$无所谓地拍了拍手上的灰。\"尽力啦！反正比之前好多了，剩下的以后再说吧！\""
-
+                                        "kojo_default_com_job_cleaning_accept_failure_1",
+                                        "kojo_default_com_job_cleaning_accept_failure_2",
+                                        "com_job_cleaning_9",
+                                        "com_job_cleaning_10"
                                     ]
                                 }
                             ],
@@ -331,7 +432,8 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
-                                "$self$烦躁地把抹布摔在地上。\"啊啊啊！为什么越弄越乱啊！我不干了！\"", "$self$蹲在地上抱着膝盖，看着打翻的水桶，声音带着哭腔。\"搞砸了……明明想弄好的……\""
+                                "com_job_cleaning_11",
+                                "com_job_cleaning_12"
                             ]
                         }
                     ]
@@ -342,20 +444,124 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-
-"kojo_default_com_job_cleaning_accept_failure_1":"$self$在吸尘的时候不小心把某些重要的资料吸进去了！",
-"kojo_default_com_job_cleaning_accept_failure_2":"$self$在整理桌子的时候不小心打翻了水杯！",
-"kojo_default_com_job_cleaning_accept_success_1":"$self$看着整洁的房间，满意地点了点头。"
-
+                "kojo_default_com_job_cleaning_accept_failure_1": "$self$在吸尘的时候不小心把某些重要的资料吸进去了！",
+                "kojo_default_com_job_cleaning_accept_failure_2": "$self$在整理桌子的时候不小心打翻了水杯！",
+                "kojo_default_com_job_cleaning_accept_success_1": "$self$看着整洁的房间，满意地点了点头。",
+                "com_job_cleaning_Begin_1": "$self$爽快地答应道：\"没问题！正觉得有点无聊呢，一起弄吧！\"",
+                "com_job_cleaning_Begin_2": "$self$挽起袖子，一副干劲十足的样子：\"包在我身上！我可是整理小能手。\"",
+                "com_job_cleaning_Begin_3": "$self$咬着嘴唇，即便满脸写着抗拒，还是默默拿起了工具：\"知道了……我会做的……\"",
+                "com_job_cleaning_Begin_4": "$self$眼角带着泪光，颤抖着点了点头，不敢说出一个不字。",
+                "com_job_cleaning_Begin_5": "$self$愣了一下，指着自己：\"诶？我也要来吗？好吧，既然你都这么说了。\"",
+                "com_job_cleaning_Begin_6": "$self$挠了挠头，似乎有些困惑：\"唔……虽然不擅长，但我会试试看的。\"",
+                "com_job_cleaning_Begin_7": "$self$挽起袖子，从杂物间拿出了扫帚和簸箕：\"好，一口气把这里打扫干净吧。\"",
+                "com_job_cleaning_Begin_8": "$self$看着有些凌乱的房间，无奈地叹了口气，开始动手整理桌上的文件。",
+                "com_job_cleaning_Begin_9": "$self$戴上围裙，眼神变得犀利起来：\"大扫除时间到！脏东西统统消失！\"",
+                "com_job_cleaning_Tryjoin_1": "$self$看着忙碌的$target$，凑上前问道：\"看起来挺辛苦的，我也来搭把手吧？\"",
+                "com_job_cleaning_Tryjoin_2": "$self$有些手痒地拿起一块抹布：\"那个，我能一起帮忙吗？我有强迫症看着难受。\"",
+                "com_job_cleaning_Joined_1": "$self$开心地比了个OK的手势：\"好勒！那就比比谁弄得更干净！\"",
+                "com_job_cleaning_Joined_2": "$self$立刻投入了工作状态，动作麻利：\"多谢啦，两个人干果然快多了。\"",
+                "com_job_cleaning_Join_Refused_1": "$self$有些失落地放下了手里的东西：\"好吧……那你自己加油。\"",
+                "com_job_cleaning_Join_Refused_2": "$self$耸了耸肩，转身离开：\"行行行，不打扰你的兴致了。\"",
+                "com_job_cleaning_Join_1": "$self$擦了擦汗，笑着拒绝道：\"不用啦，这点小事我自己能搞定，你去休息吧。\"",
+                "com_job_cleaning_Join_2": "$self$挡在了$target$面前：\"这里灰尘大，你别弄脏了手，我一个人就行。\"",
+                "com_job_cleaning_Join_3": "$self$冷冷地说道：\"别来添乱，你在旁边只会碍手碍脚。\"",
+                "com_job_cleaning_Join_4": "$self$不耐烦地推开了$target$：\"走开走开，不需要你假惺惺的帮忙。\"",
+                "com_job_cleaning_Join_5": "$self$眼睛一亮，把扫帚递了过去：\"太好了！正愁一个人干不完呢，快来快来！\"",
+                "com_job_cleaning_Join_6": "$self$感激地看着$target$：\"真的吗？那是帮大忙了！那一块就拜托你了。\"",
+                "com_job_cleaning_Join_7": "$self$身体僵硬了一下，默默地低头让开：\"……随你便吧。\"",
+                "com_job_cleaning_Join_8": "$self$不敢直视$target$的眼睛，只能唯唯诺诺地把工具递过去：\"是……请用……\"",
+                "com_job_cleaning_Join_9": "$self$有些惊讶地眨了眨眼：\"诶？你要帮我吗？嗯……倒是不介意啦。\"",
+                "com_job_cleaning_Join_10": "$self$迟疑了一下，还是让出了一块位置：\"虽然没想到你会感兴趣……那就麻烦你了。\"",
+                "com_job_cleaning_Ongoing_1": "$self$正哼着不知名的小调，用抹布仔细擦拭着窗台上的灰尘。",
+                "com_job_cleaning_Ongoing_2": "$self$全神贯注地分类着地上的垃圾，额头上渗出了一层细密的汗珠。",
+                "com_job_cleaning_Ongoing_3": "$self$手里拿着吸尘器在房间里来回走动，机器的轰鸣声掩盖了周围的动静。",
+                "com_job_cleaning_Interrupt_1": "$self$听到脚步声，受惊般地缩紧了肩膀，握着扫帚的手指因为用力而发白。",
+                "com_job_cleaning_Interrupt_2": "$self$下意识地退到了墙角，眼神闪烁不定，似乎随时准备逃跑。",
+                "com_job_cleaning_Interrupt_3": "$self$低着头不敢看$target$，清理动作变得僵硬而机械：\"对、对不起……我马上就弄完……\"",
+                "com_job_cleaning_Interrupt_4": "$self$只是冷冷地瞥了$target$一眼，手中的动作反而更加用力，仿佛在发泄不满。",
+                "com_job_cleaning_Interrupt_5": "$self$并没有理会$target$的出现，甚至故意背过身去继续拖地，把灰尘往那个方向扫。",
+                "com_job_cleaning_Interrupt_6": "$self$皱起眉头，压低声音嘟囔了一句：\"啧，怎么偏偏这时候遇到不想见的人。\"",
+                "com_job_cleaning_Interrupt_7": "看到$target$进来，$self$停下手中的活，露出灿烂的笑容：\"哎呀，你来得正好，要不要一起喝杯茶休息下？\"",
+                "com_job_cleaning_Interrupt_8": "$self$擦了擦手，有些不好意思地笑了笑：\"抱歉让你看到这么乱的样子，马上就好。\"",
+                "com_job_cleaning_Interrupt_9": "$self$对着$target$挥了挥手中的鸡毛掸子：\"嘿！小心灰尘哦，别弄脏了衣服。\"",
+                "com_job_cleaning_Interrupt_10": "$self$特意挺直了腰背，借着擦高处的动作展示着自己的身体曲线，眼神悄悄飘向$target$。",
+                "com_job_cleaning_Interrupt_11": "$self$脸颊微红，动作变得有些做作的轻柔：\"那个……你要是没事的话，可以多待一会儿也没关系……\"",
+                "com_job_cleaning_Interrupt_12": "$self$咬着嘴唇，故意把领口拉低了一些，用余光观察着$target$的反应。",
+                "com_job_cleaning_Interrupt_13": "$self$礼貌性地点了点头，视线很快回到了手中的垃圾袋上：\"请让一下，正在打扫。\"",
+                "com_job_cleaning_Interrupt_14": "$self$依然保持着原本的节奏，并没有因为$target$的出现而改变动作。",
+                "com_job_cleaning_Interrupt_15": "$self$随口说了一句：\"小心地滑。\"然后继续专注于拖地。",
+                "com_job_cleaning_1": "$self$抱歉地摆摆手：\"虽然很想帮忙，但我手上还有别的事走不开。\"",
+                "com_job_cleaning_2": "$self$苦笑着指了指自己的衣服：\"下次吧，今天穿这身不太方便干活。\"",
+                "com_job_cleaning_3": "$self$翻了个白眼，双手抱胸：\"哈？这种脏活为什么要我做？\"",
+                "com_job_cleaning_4": "$self$嫌弃地撇撇嘴：\"没空，你自己弄不就好了。\"",
+                "com_job_cleaning_5": "$self$看着焕然一新的房间，满意地叉着腰：\"哼哼，完美！简直像新房子一样！\"",
+                "com_job_cleaning_6": "$self$擦掉汗水，回头对$target$露出灿烂的笑容：\"虽然很累，但看到这么干净还是很有成就感呢！\"",
+                "com_job_cleaning_7": "$self$瘫坐在椅子上，一脸生无可恋：\"虽然弄干净了，但我的腰快断了……下次绝对不干了。\"",
+                "com_job_cleaning_8": "$self$看着被洗得发白的手，心情有些低落：\"为了这点破事花了这么久，感觉真不值得。\"",
+                "com_job_cleaning_9": "$self$看着依然有些乱的角落，却忍不住笑出了声：\"虽然没彻底弄完，但刚才那阵手忙脚乱还挺好玩的。\"",
+                "com_job_cleaning_10": "$self$无所谓地拍了拍手上的灰：\"尽力啦！反正比之前好多了，剩下的以后再说吧！\"",
+                "com_job_cleaning_11": "$self$烦躁地把抹布摔在地上：\"啊啊啊！为什么越弄越乱啊！我不干了！\"",
+                "com_job_cleaning_12": "$self$蹲在地上抱着膝盖，看着打翻的水桶，声音带着哭腔：\"搞砸了……明明想弄好的……\""
             },
             "en-us": {
-
-"kojo_default_com_job_cleaning_accept_failure_1":"$self$ accidentally sucked up some important documents with the vacuum cleaner!",
-"kojo_default_com_job_cleaning_accept_failure_2":"$self$ knocked over a glass of water while cleaning the desk!",
-"kojo_default_com_job_cleaning_accept_success_1":"$self$ looked at the tidied up room and nodded in satisfaction."
-
-
-                
+                "kojo_default_com_job_cleaning_accept_failure_1": "$self$ accidentally sucked up some important documents with the vacuum cleaner!",
+                "kojo_default_com_job_cleaning_accept_failure_2": "$self$ knocked over a glass of water while cleaning the desk!",
+                "kojo_default_com_job_cleaning_accept_success_1": "$self$ looked at the tidied up room and nodded in satisfaction.",
+                "com_job_cleaning_Begin_1": "$self$ readily agreed: \"No problem! I was getting bored anyway, let's do it together!\"",
+                "com_job_cleaning_Begin_2": "$self$ rolled up her sleeves, looking full of energy: \"Leave it to me! I'm a pro at tidying up.\"",
+                "com_job_cleaning_Begin_3": "$self$ bit her lip, and despite the resistance written all over her face, silently picked up the tools: \"Understood... I'll do it...\"",
+                "com_job_cleaning_Begin_4": "$self$ nodded tremblingly with tears in her eyes, daring not to refuse.",
+                "com_job_cleaning_Begin_5": "$self$ paused and pointed at herself: \"Eh? Me too? Well, if you say so.\"",
+                "com_job_cleaning_Begin_6": "$self$ scratched her head, looking a bit confused: \"Umm... I'm not good at this, but I'll give it a try.\"",
+                "com_job_cleaning_Begin_7": "$self$ rolled up her sleeves and took a broom and dustpan from the utility room: \"Alright, let's clean this place up in one go.\"",
+                "com_job_cleaning_Begin_8": "$self$ looked at the slightly messy room, sighed helplessly, and started organizing the documents on the desk.",
+                "com_job_cleaning_Begin_9": "$self$ put on an apron, her gaze sharpening: \"Cleaning time! Dirt, begone!\"",
+                "com_job_cleaning_Tryjoin_1": "$self$ looked at the busy $target$ and leaned in to ask: \"That looks tough, need a hand?\"",
+                "com_job_cleaning_Tryjoin_2": "$self$ picked up a rag, itching to help: \"Um, can I help too? My OCD is kicking in watching this.\"",
+                "com_job_cleaning_Joined_1": "$self$ happily made an OK sign: \"Alright! Let's see who can clean better!\"",
+                "com_job_cleaning_Joined_2": "$self$ immediately got to work, moving deftly: \"Thanks, it's definitely faster with two people.\"",
+                "com_job_cleaning_Join_Refused_1": "$self$ put down the items in her hands, looking somewhat disappointed: \"Okay... good luck on your own then.\"",
+                "com_job_cleaning_Join_Refused_2": "$self$ shrugged and turned to leave: \"Fine, fine, I won't spoil your fun.\"",
+                "com_job_cleaning_Join_1": "$self$ wiped her sweat and smiled in refusal: \"No need, I can handle this little thing myself, you go rest.\"",
+                "com_job_cleaning_Join_2": "$self$ blocked $target$'s way: \"It's dusty here, don't get your hands dirty, I can do it alone.\"",
+                "com_job_cleaning_Join_3": "$self$ said coldly: \"Don't make a mess, you'll just be in the way.\"",
+                "com_job_cleaning_Join_4": "$self$ impatiently pushed $target$ away: \"Go away, I don't need your fake help.\"",
+                "com_job_cleaning_Join_5": "$self$'s eyes lit up as she handed over the broom: \"Great! I was just worrying about doing it all alone, come on!\"",
+                "com_job_cleaning_Join_6": "$self$ looked at $target$ gratefully: \"Really? That helps a lot! I'll leave that part to you.\"",
+                "com_job_cleaning_Join_7": "$self$ stiffened for a moment before silently stepping aside with her head down: \"...Do as you please.\"",
+                "com_job_cleaning_Join_8": "$self$ dared not look $target$ in the eye, timidly handing over the tool: \"Yes... please...\"",
+                "com_job_cleaning_Join_9": "$self$ blinked in surprise: \"Eh? You want to help me? Well... I don't mind.\"",
+                "com_job_cleaning_Join_10": "$self$ hesitated but made some room: \"I didn't expect you to be interested... but thanks for the help.\"",
+                "com_job_cleaning_Ongoing_1": "$self$ was humming an unknown tune while carefully wiping the dust off the windowsill with a rag.",
+                "com_job_cleaning_Ongoing_2": "$self$ was fully focused on sorting the garbage on the floor, a fine layer of sweat forming on her forehead.",
+                "com_job_cleaning_Ongoing_3": "$self$ walked back and forth in the room with a vacuum cleaner, its roar drowning out surrounding noises.",
+                "com_job_cleaning_Interrupt_1": "$self$ heard footsteps and shrank her shoulders in fright, her knuckles turning white from gripping the broom tightly.",
+                "com_job_cleaning_Interrupt_2": "$self$ subconsciously retreated to the corner, her eyes darting around as if ready to flee.",
+                "com_job_cleaning_Interrupt_3": "$self$ lowered her head, afraid to look at $target$, her cleaning movements becoming stiff and mechanical: \"S-sorry... I'll finish right away...\"",
+                "com_job_cleaning_Interrupt_4": "$self$ just glanced coldly at $target$, scrubbing even harder as if venting her dissatisfaction.",
+                "com_job_cleaning_Interrupt_5": "$self$ ignored $target$'s presence, even deliberately turning her back to continue mopping, sweeping dust in that direction.",
+                "com_job_cleaning_Interrupt_6": "$self$ frowned and muttered under her breath: \"Tsk, why run into someone I don't want to see now.\"",
+                "com_job_cleaning_Interrupt_7": "Seeing $target$ enter, $self$ stopped working and smiled brightly: \"Oh, perfect timing! Want to take a break and have some tea together?\"",
+                "com_job_cleaning_Interrupt_8": "$self$ wiped her hands and smiled sheepishly: \"Sorry you have to see this mess, it'll be done soon.\"",
+                "com_job_cleaning_Interrupt_9": "$self$ waved the feather duster at $target$: \"Hey! Watch out for the dust, don't get your clothes dirty.\"",
+                "com_job_cleaning_Interrupt_10": "$self$ deliberately straightened her back, showing off her curves while wiping high places, her eyes stealing glances at $target$.",
+                "com_job_cleaning_Interrupt_11": "$self$ blushed slightly, her movements becoming affectively gentle: \"Um... if you're free, you can stay a while longer, I don't mind...\"",
+                "com_job_cleaning_Interrupt_12": "$self$ bit her lip, intentionally pulling her collar lower while observing $target$'s reaction from the corner of her eye.",
+                "com_job_cleaning_Interrupt_13": "$self$ nodded politely, her gaze quickly returning to the garbage bag in her hand: \"Please excuse me, I'm cleaning.\"",
+                "com_job_cleaning_Interrupt_14": "$self$ maintained her rhythm, not changing her movements despite $target$'s appearance.",
+                "com_job_cleaning_Interrupt_15": "$self$ casually said: \"Careful, wet floor,\" and continued to focus on mopping.",
+                "com_job_cleaning_1": "$self$ waved her hand apologetically: \"I'd love to help, but I have my hands full right now.\"",
+                "com_job_cleaning_2": "$self$ smiled bitterly and pointed at her clothes: \"Next time maybe, I'm not really dressed for work today.\"",
+                "com_job_cleaning_3": "$self$ rolled her eyes and crossed her arms: \"Hah? Why should I do such dirty work?\"",
+                "com_job_cleaning_4": "$self$ pouted in disgust: \"No time, just do it yourself.\"",
+                "com_job_cleaning_5": "$self$ looked at the refreshed room, hands on hips with satisfaction: \"Heh, perfect! It's like a brand new house!\"",
+                "com_job_cleaning_6": "$self$ wiped off her sweat and smiled brightly at $target$: \"It was tiring, but seeing it so clean gives me a sense of accomplishment!\"",
+                "com_job_cleaning_7": "$self$ slumped in the chair, looking lifeless: \"It's clean now, but my back is breaking... never doing this again.\"",
+                "com_job_cleaning_8": "$self$ looked at her hands, pale from washing, feeling a bit down: \"Spent so much time on this crap, doesn't feel worth it.\"",
+                "com_job_cleaning_9": "$self$ looked at the still somewhat messy corner but couldn't help laughing: \"Didn't finish completely, but that flurry of activity was kinda fun.\"",
+                "com_job_cleaning_10": "$self$ casually dusted off her hands: \"I tried! Better than before anyway, let's leave the rest for later!\"",
+                "com_job_cleaning_11": "$self$ threw the rag on the ground in frustration: \"Argh! Why is it getting messier! I quit!\"",
+                "com_job_cleaning_12": "$self$ squatted on the ground hugging her knees, looking at the overturned bucket, her voice tearful: \"Messed up... I really wanted to do it well...\""
             }
         }
     }

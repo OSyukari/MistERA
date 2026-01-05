@@ -1,160 +1,441 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_hug_Begin",
-        "variants":
-        [
+    "Character_Personalities": {
+        "looselist": [
             {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始被拥抱 有允许 口上文" ,
-                "responses":
-                [ 
-"$self$很自然地张开双臂，把脸埋进了$target$的颈窝里，发出一声舒服的叹息。", "$self$笑着迎了上去，双手环住$target$的腰。\"怎么突然这么粘人？\"", "$self$没有说话，只是安静地靠在$target$胸口，听着那熟悉的心跳声。", "$self$顺势倒进$target$怀里，像只寻得温暖的小动物一样蹭了蹭。", "$self$踮起脚尖，把下巴搁在$target$的肩膀上，双手轻轻拍着对方的背。", "$self$闭上眼睛，任由$target$的气息将自己完全包裹。"
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_hug_Begin",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始被拥抱 有允许 口上文",
+                            "responses": [
+                                "com_touch_hug_Begin_1",
+                                "com_touch_hug_Begin_2",
+                                "com_touch_hug_Begin_3",
+                                "com_touch_hug_Begin_4",
+                                "com_touch_hug_Begin_5",
+                                "com_touch_hug_Begin_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始被拥抱 未允许 好意 口上文",
+                            "responses": [
+                                "com_touch_hug_Begin_7",
+                                "com_touch_hug_Begin_8",
+                                "com_touch_hug_Begin_9",
+                                "com_touch_hug_Begin_10",
+                                "com_touch_hug_Begin_11",
+                                "com_touch_hug_Begin_12"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始被拥抱 未允许 敌意 口上文",
+                            "responses": [
+                                "com_touch_hug_Begin_13",
+                                "com_touch_hug_Begin_14",
+                                "com_touch_hug_Begin_15",
+                                "com_touch_hug_Begin_16",
+                                "com_touch_hug_Begin_17",
+                                "com_touch_hug_Begin_18"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":[ "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始被拥抱 未允许 好意 口上文" ,
-                "responses":
-                [ 
-"$self$整个人愣在原地，双手尴尬地悬在半空，一时不知道该往哪放。", "$self$瞪大了眼睛，身体僵直，但并没有第一时间推开$target$。\"那个……这是？\"", "$self$被突如其来的拥抱吓了一跳，发出一声短促的惊呼。\"欸？！\"", "$self$有些手足无措地眨着眼睛，被动地承受着$target$的体温。", "$self$下意识地屏住了呼吸，眼神慌乱地四处乱飘。", "$self$虽然有些困惑，但还是礼貌性地把手搭在了$target$的手臂上。"
-                ]
-            },
-            {
-                
-                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
-                "_comment":"2.2.2 开始被拥抱 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-"$self$瑟缩了一下，咬着嘴唇不敢反抗，身体在微微发抖。", "$self$脸色发白，双手紧紧攥着衣角，眼神充满了恐惧和无助。", "$self$紧闭着双眼，像个木偶一样任由摆布，屏住呼吸祈祷快点结束。", "$self$虽然很想逃跑，但在$target$的威压下只能僵硬地站着，指尖冰凉。", "$self$发出细微的呜咽声，把头偏向一边，极力避免与$target$有视线接触。", "$self$全身肌肉紧绷，每一根神经都在尖叫着排斥，却动弹不得。"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_hug",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 被拥抱 口上文",
+                            "responses": [
+                                "com_touch_hug_1",
+                                "com_touch_hug_2",
+                                "com_touch_hug_3",
+                                "com_touch_hug_4",
+                                "com_touch_hug_5",
+                                "com_touch_hug_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 被拥抱 口上文",
+                            "responses": [
+                                "com_touch_hug_7",
+                                "com_touch_hug_8",
+                                "com_touch_hug_9",
+                                "com_touch_hug_10",
+                                "com_touch_hug_11",
+                                "com_touch_hug_12"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被拥抱 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_hug_13",
+                                        "com_touch_hug_14",
+                                        "com_touch_hug_15",
+                                        "com_touch_hug_16",
+                                        "com_touch_hug_17",
+                                        "com_touch_hug_18"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被拥抱 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_hug_19",
+                                        "com_touch_hug_20",
+                                        "com_touch_hug_21",
+                                        "com_touch_hug_22",
+                                        "com_touch_hug_23",
+                                        "com_touch_hug_24"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被拥抱 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_hug_25",
+                                "com_touch_hug_26",
+                                "com_touch_hug_27",
+                                "com_touch_hug_28",
+                                "com_touch_hug_29",
+                                "com_touch_hug_30"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 被拥抱 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_hug_31",
+                                        "com_touch_hug_32",
+                                        "com_touch_hug_33",
+                                        "com_touch_hug_34",
+                                        "com_touch_hug_35",
+                                        "com_touch_hug_36"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被拥抱 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_hug_37",
+                                "com_touch_hug_38",
+                                "com_touch_hug_39",
+                                "com_touch_hug_40",
+                                "com_touch_hug_41",
+                                "com_touch_hug_42"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 被拥抱 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_hug_43",
+                                        "com_touch_hug_44",
+                                        "com_touch_hug_45",
+                                        "com_touch_hug_46",
+                                        "com_touch_hug_47",
+                                        "com_touch_hug_48"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 被拥抱 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_hug_49",
+                                "com_touch_hug_50",
+                                "com_touch_hug_51",
+                                "com_touch_hug_52",
+                                "com_touch_hug_53",
+                                "com_touch_hug_54"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_hug",
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 被拥抱 口上文",
-                "responses":
-                [ 
-"$self$在睡梦中发出轻微的哼唧声，无意识地往热源的方向拱了拱。", "$self$呼吸依旧平稳，对于这趁虚而入的拥抱毫不知情，反而睡得更沉了。", "$self$皱了皱眉，似乎在梦里遇到了什么干扰，但很快又在温暖的包围下舒展开来。", "$self$翻了个身，一条腿大大咧咧地跨在了$target$身上，像抱抱枕一样抱住了对方。", "$self$嘴里嘟囔着听不清的梦话，顺从地任由$target$调整她的睡姿以便抱得更紧。", "$self$睫毛微微颤动，似乎感觉到了什么，但最终还是没有醒来，只是把脸埋得更深了。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 被拥抱 口上文",
-                "responses":
-                [ 
-"$self$保持着上一秒的姿势一动不动，唯有$target$的手指在她的肌肤上留下了陷落的痕迹。", "$self$凝固在空中的发丝被$target$拨弄开，露出了毫无防备的后颈。", "$self$无法做出任何反应，但随着时间的推移，被紧拥的皮肤开始泛起不自然的潮红。", "$self$像一尊精美的雕塑，任由$target$将脸埋入她的胸口，感受着单方面的体温传递。", "$self$静止的眼眸中倒映着$target$肆意妄为的样子，却无法眨眼，甚至无法呼吸。", "$self$身体随着$target$的动作被随意摆弄成迎合拥抱的姿势，仿佛原本就是为了这一刻而存在。"
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 被拥抱 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$轻轻推开了$target$的手，脸上带着歉意。\"抱歉，身上全是汗，先让我去洗个澡。\"", "$self$有些别扭地侧过身子，避开了$target$的接触。\"别闹了，还在生气呢。\"", "$self$叹了口气，按住$target$的肩膀摇了摇头。\"现在没心情抱抱，我很累。\"", "$self$用手指抵住$target$的胸口，半开玩笑地推拒着。\"去去去，忙着呢，别捣乱。\"", "$self$虽然没有用力反抗，但身体僵硬地向后缩了缩。\"这里有人看着呢……\"", "$self$快速地在$target$脸颊啄了一下就退开了。\"好啦，拥抱就算了，快去干正事。\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 被拥抱 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$不动声色地退后半步，伸出手改为握手姿势。\"我想我们还没熟到这个地步吧？\"", "$self$尴尬地笑了笑，用手臂挡在胸前。\"那个……我不太习惯和人肢体接触。\"", "$self$灵活地侧身闪过，开玩笑似地摆了摆手。\"这种见面礼对我来说太超前啦。\"", "$self$轻轻扶住$target$的手臂阻止了进一步靠近。\"保持一点距离比较好哦。\"", "$self$礼貌但坚定地摇了摇头。\"请自重，$target$先生/女士。\"", "$self$后退一步保持安全距离，微笑着说：\"心意领了，拥抱就不必了。\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 被拥抱 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":
-                 [
-"$self$猛地甩开$target$的手，眼神冰冷刺骨。\"别碰我！\"", "$self$厌恶地皱起眉头，像看垃圾一样看着$target$。\"你想干什么？离我远点。\"", "$self$毫不客气地一把推在$target$胸口。\"谁允许你动手动脚的？\"", "$self$立刻后退并摆出防御姿态，厉声喝道：\"再靠近我就报警了！\"", "$self$拍了拍刚才被碰到的地方，仿佛沾上了什么脏东西。\"真恶心。\"", "$self$冷笑一声，眼神里满是鄙夷。\"也不照照镜子，凭你也想碰我？\""
-                 ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 被拥抱 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$的呼吸变得绵长而均匀，整个人完全软在了$target$身上，似乎不想分开。", "$self$收紧了手臂的力度，贪婪地深吸了一口$target$身上的味道。\"再抱一会儿……就一会儿。\"", "$self$抬起头，眼神迷离地看着$target$，脸颊泛起淡淡的红晕。\"感觉好像充满了电一样。\"", "$self$把手伸进$target$的衣服里贴着温热的皮肤。\"好暖和……不想动了。\"", "$self$在$target$耳边轻声呢喃，声音带着慵懒的鼻音。\"我不讨厌这样。\"", "$self$原本有些紧绷的肩膀彻底放松下来，把全身的重量都交给了$target$。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 被拥抱 结果正面 未允许 口上文",
-                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$原本僵硬的身体慢慢软化，试探性地回抱了一下$target$。", "$self$眼中的惊慌逐渐褪去，取而代之的是一种莫名的安心感。\"……意外地不讨厌呢。\"", "$self$低着头，脸颊不知道什么时候变得通红，也没有再试图推开。", "$self$感觉到$target$的体温，$self$发出一声轻不可闻的叹息，似乎卸下了某种防备。", "$self$有些犹豫地抓住了$target$的衣角。\"如果是$target$的话……也许可以。\"", "$self$小声嘀咕着：\"明明是陌生人，为什么会觉得温暖呢……\""
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 被拥抱 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$开始不安分地扭动身体，试图挣脱怀抱。\"差不多了吧？我腿都麻了。\"", "$self$轻轻拍了拍$target$的背，语气里带着一丝催促。\"好了好了，放开我吧，很热。\"", "$self$叹了口气，视线开始游离向别处。\"虽然不讨厌，但一直这样抱着也很浪费时间啊。\"", "$self$有些不适地动了动脖子。\"你的扣子硌得我有点疼。\"", "$self$僵硬地垂下手臂，不再回应这个拥抱。\"……还要抱多久？\"", "$self$推开$target$，一边整理衣服一边皱着眉。\"以后还是少这样，感觉怪怪的。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 被拥抱 结果负面 未允许 口上文",
-                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$忍耐到了极限，猛地挣脱开来，大口喘着粗气。\"够了！\"", "$self$用力擦着自己的手臂，眼眶泛红，那是生理性的厌恶反应。", "$self$趁$target$放松警惕的瞬间，狠狠地踩了对方一脚。\"去死吧变态！\"", "$self$脸色铁青，胃里一阵翻江倒海的恶心感涌上来。\"我要吐了……\"", "$self$冰冷地盯着$target$，声音没有任何起伏。\"这种低劣的手段只会让我觉得恶心。\"", "$self$推开$target$，二话不说转身就走，连回头看一眼都觉得多余。"
-                ]
-            }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_touch_hug_Begin_1": "$self$很自然地张开双臂，把脸深深埋进了$target$的颈窝里，发出一声舒服的叹息。",
+                "com_touch_hug_Begin_2": "$self$笑着迎了上去，双手温柔地环住$target$的腰。\"怎么突然这么粘人？\"",
+                "com_touch_hug_Begin_3": "$self$没有说话，只是安静地靠在$target$胸口，聆听着那令人安心的心跳声。",
+                "com_touch_hug_Begin_4": "$self$顺势倒进$target$怀里，像只寻得温暖的小动物一样亲昵地蹭了蹭。",
+                "com_touch_hug_Begin_5": "$self$踮起脚尖，把下巴轻轻搁在$target$的肩膀上，双手安抚似地拍着对方的背。",
+                "com_touch_hug_Begin_6": "$self$闭上眼睛，全身心地放松，任由$target$的气息将自己完全包裹。",
+                "com_touch_hug_Begin_7": "$self$整个人愣在原地，双手尴尬地悬在半空，一时有些手足无措。",
+                "com_touch_hug_Begin_8": "$self$瞪大了眼睛，身体有些僵直，但并没有第一时间推开$target$。\"那个……这是？\"",
+                "com_touch_hug_Begin_9": "$self$被突如其来的拥抱吓了一跳，发出一声短促而可爱的惊呼。\"欸？！\"",
+                "com_touch_hug_Begin_10": "$self$有些手足无措地眨着眼睛，被动地感受着$target$传来的体温。",
+                "com_touch_hug_Begin_11": "$self$下意识地屏住了呼吸，眼神慌乱地四处游移，不知道该看向哪里。",
+                "com_touch_hug_Begin_12": "$self$虽然感到些许困惑，但还是礼貌性地把手轻轻搭在了$target$的手臂上。",
+                "com_touch_hug_Begin_13": "$self$瑟缩了一下，咬着嘴唇不敢反抗，身体在微微发抖。",
+                "com_touch_hug_Begin_14": "$self$脸色发白，双手紧紧攥着衣角，眼神中充满了无法掩饰的恐惧和无助。",
+                "com_touch_hug_Begin_15": "$self$紧闭着双眼，像个没有生气的木偶一样任由摆布，屏住呼吸祈祷这一切快点结束。",
+                "com_touch_hug_Begin_16": "$self$虽然很想逃跑，但在$target$的威压下只能僵硬地站着，指尖冰凉。",
+                "com_touch_hug_Begin_17": "$self$发出细微的呜咽声，把头偏向一边，极力避免与$target$有任何视线接触。",
+                "com_touch_hug_Begin_18": "$self$全身肌肉紧绷，每一根神经都在尖叫着排斥，却动弹不得。",
+                "com_touch_hug_1": "$self$在睡梦中发出轻微的哼唧声，无意识地往热源的方向拱了拱。",
+                "com_touch_hug_2": "$self$呼吸依旧平稳，对于这趁虚而入的拥抱毫不知情，反而睡得更香甜了。",
+                "com_touch_hug_3": "$self$皱了皱眉，似乎在梦里遇到了什么干扰，但很快又在温暖的怀抱中舒展开来。",
+                "com_touch_hug_4": "$self$翻了个身，一条腿大大咧咧地跨在了$target$身上，像抱等身抱枕一样紧紧抱住了对方。",
+                "com_touch_hug_5": "$self$嘴里嘟囔着听不清的梦话，顺从地任由$target$调整她的睡姿以便抱得更紧。",
+                "com_touch_hug_6": "$self$睫毛微微颤动，似乎感觉到了什么，但最终还是没有醒来，只是把脸埋得更深了。",
+                "com_touch_hug_7": "$self$保持着上一秒的姿势一动不动，唯有$target$的手指在她的肌肤上留下了陷落的痕迹。",
+                "com_touch_hug_8": "$self$凝固在空中的发丝被$target$拨弄开，露出了毫无防备的洁白后颈。",
+                "com_touch_hug_9": "$self$无法做出任何反应，但随着时间的推移，被紧拥的皮肤开始泛起不自然的潮红。",
+                "com_touch_hug_10": "$self$像一尊精美的雕塑，任由$target$将脸埋入她的胸口，感受着单方面的体温传递。",
+                "com_touch_hug_11": "$self$静止的眼眸中倒映着$target$肆意妄为的样子，却无法眨眼，甚至无法呼吸。",
+                "com_touch_hug_12": "$self$身体随着$target$的动作被随意摆弄成迎合拥抱的姿势，仿佛她原本就是为了这一刻而存在。",
+                "com_touch_hug_13": "$self$轻轻推开了$target$的手，脸上带着歉意。\"抱歉，身上全是汗，先让我去洗个澡好吗？\"",
+                "com_touch_hug_14": "$self$有些别扭地侧过身子，避开了$target$的接触。\"别闹了，我还在生气呢。\"",
+                "com_touch_hug_15": "$self$叹了口气，按住$target$的肩膀摇了摇头。\"现在没心情抱抱，我很累。\"",
+                "com_touch_hug_16": "$self$用手指抵住$target$的胸口，半开玩笑地推拒着。\"去去去，忙着呢，别捣乱。\"",
+                "com_touch_hug_17": "$self$虽然没有用力反抗，但身体僵硬地向后缩了缩。\"这里有人看着呢……\"",
+                "com_touch_hug_18": "$self$快速地在$target$脸颊啄了一下就退开了。\"好啦，拥抱就算了，快去干正事。\"",
+                "com_touch_hug_19": "$self$不动声色地退后半步，伸出手改为握手姿势。\"我想我们还没熟到这个地步吧？\"",
+                "com_touch_hug_20": "$self$尴尬地笑了笑，用手臂挡在胸前。\"那个……我不太习惯和人肢体接触。\"",
+                "com_touch_hug_21": "$self$灵活地侧身闪过，开玩笑似地摆了摆手。\"这种见面礼对我来说太超前啦。\"",
+                "com_touch_hug_22": "$self$轻轻扶住$target$的手臂阻止了进一步靠近。\"保持一点距离比较好哦。\"",
+                "com_touch_hug_23": "$self$礼貌但坚定地摇了摇头。\"请自重，$target$先生。\"",
+                "com_touch_hug_24": "$self$后退一步保持安全距离，微笑着说：\"您的心意我领了，拥抱就不必了。\"",
+                "com_touch_hug_25": "$self$猛地甩开$target$的手，眼神冰冷刺骨。\"别碰我！\"",
+                "com_touch_hug_26": "$self$厌恶地皱起眉头，像看垃圾一样看着$target$。\"你想干什么？离我远点。\"",
+                "com_touch_hug_27": "$self$毫不客气地一把推在$target$胸口。\"谁允许你动手动脚的？\"",
+                "com_touch_hug_28": "$self$立刻后退并摆出防御姿态，厉声喝道：\"再靠近我就要采取措施了！\"",
+                "com_touch_hug_29": "$self$拍了拍刚才被碰到的地方，仿佛沾上了什么脏东西。\"真恶心。\"",
+                "com_touch_hug_30": "$self$冷笑一声，眼神里满是鄙夷。\"也不照照镜子，凭你也想碰我？\"",
+                "com_touch_hug_31": "$self$的呼吸变得绵长而均匀，整个人完全软在了$target$身上，似乎不想分开。",
+                "com_touch_hug_32": "$self$收紧了手臂的力度，贪婪地深吸了一口$target$身上的味道。\"再抱一会儿……就一会儿。\"",
+                "com_touch_hug_33": "$self$抬起头，眼神迷离地看着$target$，脸颊泛起淡淡的红晕。\"感觉好像充满了电一样。\"",
+                "com_touch_hug_34": "$self$把手伸进$target$的衣服里贴着温热的皮肤。\"好暖和……不想动了。\"",
+                "com_touch_hug_35": "$self$在$target$耳边轻声呢喃，声音带着慵懒的鼻音。\"我不讨厌这样……\"",
+                "com_touch_hug_36": "$self$原本有些紧绷的肩膀彻底放松下来，把全身的重量都交给了$target$。",
+                "com_touch_hug_37": "$self$原本僵硬的身体慢慢软化，试探性地回抱了一下$target$。",
+                "com_touch_hug_38": "$self$眼中的惊慌逐渐褪去，取而代之的是一种莫名的安心感。\"……意外地不讨厌呢。\"",
+                "com_touch_hug_39": "$self$低着头，脸颊不知道什么时候变得通红，也没有再试图推开。",
+                "com_touch_hug_40": "$self$感觉到$target$的体温，$self$发出一声轻不可闻的叹息，似乎卸下了某种防备。",
+                "com_touch_hug_41": "$self$有些犹豫地抓住了$target$的衣角。\"如果是$target$的话……也许可以。\"",
+                "com_touch_hug_42": "$self$小声嘀咕着：\"明明是陌生人，为什么会觉得温暖呢……\"",
+                "com_touch_hug_43": "$self$开始不安分地扭动身体，试图挣脱怀抱。\"差不多了吧？我腿都麻了。\"",
+                "com_touch_hug_44": "$self$轻轻拍了拍$target$的背，语气里带着一丝催促。\"好了好了，放开我吧，很热。\"",
+                "com_touch_hug_45": "$self$叹了口气，视线开始游离向别处。\"虽然不讨厌，但一直这样抱着也很浪费时间啊。\"",
+                "com_touch_hug_46": "$self$有些不适地动了动脖子。\"你的扣子硌得我有点疼。\"",
+                "com_touch_hug_47": "$self$僵硬地垂下手臂，不再回应这个拥抱。\"……还要抱多久？\"",
+                "com_touch_hug_48": "$self$推开$target$，一边整理衣服一边皱着眉。\"以后还是少这样，感觉怪怪的。\"",
+                "com_touch_hug_49": "$self$忍耐到了极限，猛地挣脱开来，大口喘着粗气。\"够了！\"",
+                "com_touch_hug_50": "$self$用力擦着自己的手臂，眼眶泛红，那是生理性的厌恶反应。",
+                "com_touch_hug_51": "$self$趁$target$放松警惕的瞬间，狠狠地踩了对方一脚。\"去死吧变态！\"",
+                "com_touch_hug_52": "$self$脸色铁青，胃里一阵翻江倒海的恶心感涌上来。\"我要吐了……\"",
+                "com_touch_hug_53": "$self$冰冷地盯着$target$，声音没有任何起伏。\"这种低劣的手段只会让我觉得恶心。\"",
+                "com_touch_hug_54": "$self$推开$target$，二话不说转身就走，连回头看一眼都觉得多余。"
+            },
+            "en-us": {
+                "com_touch_hug_Begin_1": "$self$ naturally opened her arms and buried her face deep in the crook of $target$'s neck, letting out a comfortable sigh.",
+                "com_touch_hug_Begin_2": "$self$ smiled and went to meet $target$, wrapping her hands gently around $target$'s waist. \"Why so clingy all of a sudden?\"",
+                "com_touch_hug_Begin_3": "$self$ didn't say a word, just quietly leaned against $target$'s chest, listening to that reassuring heartbeat.",
+                "com_touch_hug_Begin_4": "$self$ leaned into $target$'s arms, nuzzling affectionately like a small animal finding warmth.",
+                "com_touch_hug_Begin_5": "$self$ stood on her tiptoes, rested her chin lightly on $target$'s shoulder, and patted $target$'s back soothingly.",
+                "com_touch_hug_Begin_6": "$self$ closed her eyes, relaxing completely, letting $target$'s scent envelop her.",
+                "com_touch_hug_Begin_7": "$self$ froze in place, hands hovering awkwardly in mid-air, momentarily at a loss for what to do.",
+                "com_touch_hug_Begin_8": "$self$'s eyes widened, body stiffening slightly, but she didn't push $target$ away immediately. \"Um... what is this?\"",
+                "com_touch_hug_Begin_9": "$self$ was startled by the sudden hug and let out a short, cute gasp. \"Eh?!\"",
+                "com_touch_hug_Begin_10": "$self$ blinked in confusion, passively accepting the body warmth coming from $target$.",
+                "com_touch_hug_Begin_11": "$self$ subconsciously held her breath, eyes darting around in panic, not knowing where to look.",
+                "com_touch_hug_Begin_12": "Although $self$ felt a bit confused, she politely placed her hand lightly on $target$'s arm.",
+                "com_touch_hug_Begin_13": "$self$ flinched, biting her lip and not daring to resist, body trembling slightly.",
+                "com_touch_hug_Begin_14": "$self$ turned pale, hands gripping the hem of her clothes tightly, eyes filled with unconcealed fear and helplessness.",
+                "com_touch_hug_Begin_15": "$self$ squeezed her eyes shut, letting herself be manipulated like a lifeless puppet, holding her breath and praying for it to end soon.",
+                "com_touch_hug_Begin_16": "Although $self$ wanted to run away, she could only stand stiffly under $target$'s pressure, fingertips ice cold.",
+                "com_touch_hug_Begin_17": "$self$ let out a soft whimper, turning her head away, trying her best to avoid any eye contact with $target$.",
+                "com_touch_hug_Begin_18": "$self$'s muscles were all tense, every nerve screaming in rejection, yet she couldn't move.",
+                "com_touch_hug_1": "$self$ let out a soft hum in her sleep, unconsciously arching towards the source of heat.",
+                "com_touch_hug_2": "$self$'s breathing remained steady, unaware of this embrace, sleeping even more soundly instead.",
+                "com_touch_hug_3": "$self$ frowned, seemingly encountering some disturbance in her dream, but soon relaxed again in the warm embrace.",
+                "com_touch_hug_4": "$self$ rolled over, carelessly throwing a leg over $target$, hugging $target$ tightly like a body pillow.",
+                "com_touch_hug_5": "$self$ mumbled something unintelligible, obediently letting $target$ adjust her sleeping position to hug her tighter.",
+                "com_touch_hug_6": "$self$'s eyelashes fluttered slightly, seeming to sense something, but in the end she didn't wake up, only burying her face deeper.",
+                "com_touch_hug_7": "$self$ remained motionless in her previous pose, only $target$'s fingers leaving impressions on her skin.",
+                "com_touch_hug_8": "$self$'s hair, frozen in mid-air, was brushed aside by $target$, revealing her defenseless white nape.",
+                "com_touch_hug_9": "$self$ couldn't make any reaction, but as time passed, the embraced skin began to flush unnaturally.",
+                "com_touch_hug_10": "Like an exquisite statue, $self$ let $target$ bury their face in her chest, feeling the one-way transfer of body heat.",
+                "com_touch_hug_11": "$self$'s static eyes reflected $target$'s reckless actions, yet she couldn't blink, or even breathe.",
+                "com_touch_hug_12": "$self$'s body was manipulated by $target$ into a hugging posture, as if she existed solely for this moment.",
+                "com_touch_hug_13": "$self$ gently pushed $target$'s hand away, looking apologetic. \"Sorry, I'm all sweaty. Let me take a shower first, okay?\"",
+                "com_touch_hug_14": "$self$ turned sideways awkwardly, avoiding $target$'s touch. \"Stop it, I'm still mad at you.\"",
+                "com_touch_hug_15": "$self$ sighed, shook her head while holding $target$'s shoulders. \"I'm not in the mood for hugs right now, I'm tired.\"",
+                "com_touch_hug_16": "$self$ pressed a finger against $target$'s chest, playfully pushing back. \"Shoo, shoo, I'm busy, don't mess around.\"",
+                "com_touch_hug_17": "Although $self$ didn't resist forcefully, her body shrank back stiffly. \"People are watching...\"",
+                "com_touch_hug_18": "$self$ quickly pecked $target$ on the cheek and backed away. \"Alright, that's enough hugging, go do your work.\"",
+                "com_touch_hug_19": "$self$ stepped back calmly and extended a hand for a handshake instead. \"I don't think we're close enough for that yet, are we?\"",
+                "com_touch_hug_20": "$self$ smiled awkwardly, blocking with her arms in front of her chest. \"Um... I'm not really used to physical contact.\"",
+                "com_touch_hug_21": "$self$ dodged nimbly to the side, waving her hand jokingly. \"This kind of greeting is too advanced for me.\"",
+                "com_touch_hug_22": "$self$ gently held $target$'s arm to stop further approach. \"Better to keep some distance.\"",
+                "com_touch_hug_23": "$self$ shook her head politely but firmly. \"Please have some self-respect, $target$.\"",
+                "com_touch_hug_24": "$self$ took a step back to maintain a safe distance, smiling. \"I appreciate the thought, but no hugs necessary.\"",
+                "com_touch_hug_25": "$self$ abruptly shook off $target$'s hand, eyes cold as ice. \"Don't touch me!\"",
+                "com_touch_hug_26": "$self$ frowned in disgust, looking at $target$ like trash. \"What do you want? Stay away from me.\"",
+                "com_touch_hug_27": "$self$ pushed $target$ hard in the chest without hesitation. \"Who said you could touch me?\"",
+                "com_touch_hug_28": "$self$ immediately backed away into a defensive stance, shouting sternly, \"Come any closer and I'll take action!\"",
+                "com_touch_hug_29": "$self$ patted the spot that was just touched, as if brushing off something dirty. \"Disgusting.\"",
+                "com_touch_hug_30": "$self$ sneered, eyes full of contempt. \"Look in the mirror. You think you can touch me?\"",
+                "com_touch_hug_31": "$self$'s breathing became long and even, melting completely into $target$, seemingly unwilling to separate.",
+                "com_touch_hug_32": "$self$ tightened her arms, greedily inhaling $target$'s scent. \"Just a little longer... just a while.\"",
+                "com_touch_hug_33": "$self$ looked up at $target$ with misty eyes, a faint blush on her cheeks. \"I feel fully charged now.\"",
+                "com_touch_hug_34": "$self$ slipped her hands under $target$'s clothes against the warm skin. \"So warm... I don't want to move.\"",
+                "com_touch_hug_35": "$self$ whispered in $target$'s ear, voice thick with laziness. \"I don't dislike this...\"",
+                "com_touch_hug_36": "$self$'s previously tense shoulders relaxed completely, giving all her weight to $target$.",
+                "com_touch_hug_37": "$self$'s stiff body slowly softened, and she tentatively hugged $target$ back.",
+                "com_touch_hug_38": "The panic in her eyes faded, replaced by an inexplicable sense of security. \"...Surprisingly not unpleasant.\"",
+                "com_touch_hug_39": "$self$ lowered her head, cheeks turning red unnoticed, and didn't try to push away anymore.",
+                "com_touch_hug_40": "Feeling $target$'s body heat, $self$ let out an inaudible sigh, seemingly letting down some guard.",
+                "com_touch_hug_41": "$self$ hesitantly grabbed the hem of $target$'s clothes. \"If it's $target$... maybe it's okay.\"",
+                "com_touch_hug_42": "$self$ muttered softly, \"We're strangers, so why does it feel so warm...\"",
+                "com_touch_hug_43": "$self$ started squirming restlessly, trying to break free. \"That's enough, right? My legs are numb.\"",
+                "com_touch_hug_44": "$self$ patted $target$'s back gently, a hint of urgency in her tone. \"Okay, okay, let me go, it's hot.\"",
+                "com_touch_hug_45": "$self$ sighed, gaze wandering elsewhere. \"I don't hate it, but hugging like this is a waste of time.\"",
+                "com_touch_hug_46": "$self$ moved her neck uncomfortably. \"Your buttons are digging into me, it hurts a bit.\"",
+                "com_touch_hug_47": "$self$ dropped her arms stiffly, no longer responding to the hug. \"...How much longer?\"",
+                "com_touch_hug_48": "$self$ pushed $target$ away, straightening her clothes while frowning. \"Let's do this less often, it feels weird.\"",
+                "com_touch_hug_49": "$self$ reached her limit and broke free violently, gasping for air. \"Enough!\"",
+                "com_touch_hug_50": "$self$ rubbed her arm vigorously, eyes reddening from a physiological reaction of disgust.",
+                "com_touch_hug_51": "$self$ took advantage of the moment $target$ relaxed to stomp hard on their foot. \"Die, you pervert!\"",
+                "com_touch_hug_52": "$self$'s face turned pale as a wave of nausea rose in her stomach. \"I'm going to be sick...\"",
+                "com_touch_hug_53": "$self$ stared coldly at $target$, voice devoid of any fluctuation. \"Cheap tactics like this only make me sick.\"",
+                "com_touch_hug_54": "$self$ pushed $target$ away and walked off without a word, not even deigning to look back."
+            }
         }
     }
 }

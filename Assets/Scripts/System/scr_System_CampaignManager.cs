@@ -236,8 +236,12 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
+    public event Action<bool> Observer_GameReload;
+
     public void LoadSerializable(scr_System_CampaignManager_Serializable obj)
     {
+        Observer_GameReload?.Invoke(true);
+
         foreach (var i in Index_ItemReferenceID.Values) i.DisposeInternal();
         Index_ItemReferenceID.Clear();
 

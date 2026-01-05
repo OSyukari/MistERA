@@ -73,7 +73,17 @@
                 "exp_event_caveBearLair_result_evaded": "$names$明智地选择不惊动巢穴，悄无声息地绕道离开了。",
                 "exp_event_caveBearLair_result_encounter": "$names$惊动了正在睡觉的穴熊！",
                 "exp_event_caveBearLair_result_remains": "$names$在巢穴里发现了冒险者的遗体"
-            }
+            },
+"en-us":
+{
+                "exp_event_caveBearLair": "Cave Bear Lair",
+                "exp_event_caveBearLair_ongoing": "$names$ discovers what appears to be a cave bear's lair deep within the cave.\nThe air is filled with a strong stench of beast and musk.",
+                "exp_event_caveBearLair_result_item": "$names$ searches the lair carefully and is lucky enough to find some useful items.",
+                "exp_event_caveBearLair_result_evaded": "$names$ wisely chooses not to disturb the lair and silently takes a detour to leave.",
+                "exp_event_caveBearLair_result_encounter": "$names$ startles the sleeping cave bear!",
+                "exp_event_caveBearLair_result_remains": "$names$ finds the remains of an adventurer in the lair."
+
+}
         }
     }
 }

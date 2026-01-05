@@ -35,7 +35,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_error",
-    "line": "exp_event_Utnapishtim_combat_training_end_ev99",
+    "line": "exp_event_error99",
     "isLast": true
 }
                 ]
@@ -49,8 +49,12 @@
             "zh-cn":
             {
 "exp_event_Utnapishtim_combat_training_end":"模拟战 结束",
-"exp_event_Utnapishtim_combat_training_end_ev01":"模拟战顺利结束（双方HP恢复）",
-"exp_event_Utnapishtim_combat_training_end_ev99":"警告！由于内容缺失，该事件强制终止。"
+"exp_event_Utnapishtim_combat_training_end_ev01":"模拟战顺利结束（双方HP恢复）"
+            },
+            "en-us":
+            {
+"exp_event_Utnapishtim_combat_training_end":"Simulation Ended",
+"exp_event_Utnapishtim_combat_training_end_ev01":"Simulation ended successfully (HP restored for both sides)"
             }
         }
     }

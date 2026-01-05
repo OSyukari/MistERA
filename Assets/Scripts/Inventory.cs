@@ -53,14 +53,31 @@ public class FactionInventory : Inventory
     }
 
     /// <summary>
-    /// if remove meal item then do not actually remove, instead send in a replacement
+    /// if remove meal item then do not actually remove, instead send in a replacement<br/>
+    /// source is allowed to be null
     /// </summary>
     /// <param name="baseID"></param>
+    /// 
     /// <returns></returns>
-    public Item_Instance RemoveItem(string baseID)
+    public Item_Instance RemoveItem(string baseID, Character_Trainable source)
     {
         var results = RemoveItem(baseID, 1);
-        if (results.Count > 0) return results[0];
+        if (results.Count > 0)
+        {
+           // Debug.Log($"remove item, is source null? {source == null}");
+            if (false && source != null)
+            {
+                // modify item based on source
+                if (source.RefID != 0)
+                {
+                    var result = results[0];
+                    result.nameOverwrite = "weired stuff";
+                    //Debug.Log($"remove item from {source.FirstName}, overwriting item to {result.DisplayName}");
+                    return result;
+                }
+            }
+            return results[0];
+        }
         return null;
     }
 

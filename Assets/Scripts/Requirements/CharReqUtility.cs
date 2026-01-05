@@ -10,137 +10,193 @@ public static class CharaReqUtility
         bool logging = _tooltip != null && !scr_UpdateHandler.current.Updating;
         if (q.cost_EN != 0 && (c.Stats.Energy.Value - q.cost_EN) < 0)
         {
-            if (logging) _tooltip.Add("Command invalid: actor [" + c.FirstName + "] does not have enough energy");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingCost")
+                                        .Replace("$name$", c.FirstName)
+                                        .Replace("$stat$", c.Stats.Energy.DisplayName)
+                                        .Replace("$requirement$", $"{q.cost_EN}")
+                                        .Replace("$amount$", $"{c.Stats.Energy.Value}"));
             return false;
         }
 
         if (q.cost_ST != 0 && (c.Stats.Stamina.Value - q.cost_ST) < 0)
         {
-            if (logging) _tooltip.Add("Command invalid: actor [" + c.FirstName + "] does not have enough stamina");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingCost")
+                                        .Replace("$name$", c.FirstName)
+                                        .Replace("$stat$", c.Stats.Stamina.DisplayName)
+                                        .Replace("$requirement$", $"{q.cost_ST}")
+                                        .Replace("$amount$", $"{c.Stats.Stamina.Value}"));
             return false;
         }
 
-
         if (q.BodyTags.Count > 0 && !c.Body.HasBodyTag(q.BodyTags))
         {
-            if (logging) _tooltip.Add("Command invalid: actor body missing required part");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingBodypart")
+                                        .Replace("$name$", c.FirstName)
+                                        .Replace("$bodytags$", String.Join(" ",q.BodyTags)));
             return false;
         }
         
         if (q.requireExtremeInflatedBodyTags.Count > 0)
         {
             var list = c.Body.GetInternalsWithTags(q.requireExtremeInflatedBodyTags);
-            if (list == null || list.Count < 1) return false;
+            if (list == null || list.Count < 1)
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingBodypart")
+                            .Replace("$name$", c.FirstName)
+                            .Replace("$bodytags$", String.Join(" ", q.requireExtremeInflatedBodyTags)));
+                return false;
+            }
             bool result = false;
             foreach (var i in list)
             {
                 if (i.isExtremelyExpanded) result = true;
             }
-            if (!result) return false;
+            if (!result) 
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingExtremeInflate")
+                                .Replace("$name$", c.FirstName)
+                                .Replace("$bodytags$", String.Join(" ", q.requireExtremeInflatedBodyTags)));
+                return false;
+            }
         }
         if (q.requireInflatedBodyTags.Count > 0)
         {
             var list = c.Body.GetInternalsWithTags(q.requireInflatedBodyTags);
-            if (list == null || list.Count < 1) return false;
+            if (list == null || list.Count < 1)
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingBodypart")
+                            .Replace("$name$", c.FirstName)
+                            .Replace("$bodytags$", String.Join(" ", q.requireInflatedBodyTags)));
+                return false;
+            }
             bool result = false;
             foreach (var i in list)
             {
                 if (i.isVisiblyExpanded) result = true;
             }
-            if (!result) return false;
+            if (!result)
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingInflate")
+                                .Replace("$name$", c.FirstName)
+                                .Replace("$bodytags$", String.Join(" ", q.requireInflatedBodyTags)));
+                return false;
+            }
         }
 
         if (q.minRevealingScore != -1)
         {
-            if (c.Body.GetMaxRevealingScoreByTags(q.BodyTags, BodyEquipLayer.None) > q.minRevealingScore)
+            var score = c.Body.GetMaxRevealingScoreByTags(q.BodyTags, BodyEquipLayer.None);
+            if (score > q.minRevealingScore)
             {
-                if (logging) _tooltip.Add("Command invalid: actor body exposure below requirement");
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingRevealing")
+                                .Replace("$name$", c.FirstName)
+                                .Replace("$bodytags$", String.Join(" ", q.BodyTags))
+                                .Replace("$requirement$",$"{q.minRevealingScore}")
+                                .Replace("$amount$",$"{score}"));
                 return false;
             }
         }
 
         if (!q.allowPlayer && c.RefID == 0)
         {
-            if (logging) _tooltip.Add("Command invalid: command not allowed for player");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_notAllowPlayer"));
             return false;
         }
         if (!q.allowNPC && c.RefID > 0)
         {
-            if (logging) _tooltip.Add("Command invalid: command not allowed for NPC");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_notAllowNPC")
+                                .Replace("$name$", c.FirstName));
             return false;
         }
         if (q.requireConscious && c.Stats.isConsciousnessUnconscious)
         {
-            if (logging) _tooltip.Add("Command invalid: target must be conscious");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireConscious")
+                                .Replace("$name$", c.FirstName));
             return false;
         }
         if (q.requireUnrestrained && (c.isRestrained))
         {
-            if (logging) _tooltip.Add("Command invalid: target must not be restrained");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireUnrestrained")
+                                .Replace("$name$", c.FirstName));
             return false;
         }
         if (q.requireAction && !c.canAct)
         {
             if (c.isTimeStopped)
             {
-                if (logging) _tooltip.Add("Command invalid: target cannot act in timestop");
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireAction_isTimeStopped")
+                                    .Replace("$name$", c.FirstName));
                 return false;
             }
             else
             {
-                if (logging) _tooltip.Add("Command invalid: target is not able to act due to external factors");
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireAction")
+                                    .Replace("$name$", c.FirstName));
                 return false;
             }
         }
         if (q.requireMovement && !c.canMove)
         {
-            if (logging) _tooltip.Add("Command invalid: target must be able to move");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireMovement")
+                                .Replace("$name$", c.FirstName));
             return false;
         }
         if (q.requireUndressed && !c.isUndressed)
         {
-            if (logging) _tooltip.Add("Command invalid, target is wearing too much");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireUndressed")
+                                .Replace("$name$", c.FirstName));
             return false;
         }
         if (q.requireMale && !c.isMale)
         {
-            if (logging) _tooltip.Add($"Command invalid, {c.CallName} must be male");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireMale")
+                                .Replace("$name$", c.FirstName));
             return false;
         }
         if (q.requireFemale && !c.isFemale)
         {
-            if (logging) _tooltip.Add($"Command invalid, {c.CallName} must be female");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireFemale")
+                                .Replace("$name$", c.FirstName));
             return false;
         }
         //if (q.requireAroused && c.Body.)
         if (q.requireNoTeammate && scr_System_CampaignManager.current.party.Members.Count > 0)
         {
-            if (logging) _tooltip.Add("Command invalid, player cannot have other teammate");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireNoTeammate"));
             return false;
         }
         if (q.requireExistingJobwithCOMTag.Count > 0 && (c.CurrentJob == null || !c.CurrentJob.HasAvailableCOMwithCOMTags(q.requireExistingJobwithCOMTag)))
         {
-            if (logging) _tooltip.Add("Requires existing Job with required tags");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireExistingJobwithCOMTag")
+                                .Replace("$name$", c.FirstName)
+                                .Replace("$tags$", String.Join(" ", q.requireExistingJobwithCOMTag)));
             return false;
         }
         if (q.requireAbsentJobwithCOMTag.Count > 0 && (c.CurrentJob != null && c.CurrentJob.HasAvailableCOMwithCOMTags(q.requireAbsentJobwithCOMTag)))
         {
-            if (logging) _tooltip.Add("Cannot be performed while existing Job with conflicting tags");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireAbsentJobwithCOMTag")
+                                .Replace("$name$", c.FirstName)
+                                .Replace("$tags$", String.Join(" ", q.requireAbsentJobwithCOMTag)));
             return false;
         }
         if (q.requireCombat && !c.canFight)
         {
-            if (logging) _tooltip.Add("Chara cannot fight");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireCombat")
+                                .Replace("$name$", c.FirstName));
             return false;
         }
         if (q.requireFullHP && c.Stats.HP != null && c.Stats.HP.ValuePercentile < 0.9)
         {
-            if (logging) _tooltip.Add("Chara is injured and cannot execute");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireStatFull")
+                                .Replace("$name$", c.FirstName)
+                                .Replace("$stat$", c.Stats.HP.DisplayName));
             return false;
         }
         if (q.requireMissingHP && (c.Stats.HP == null || c.Stats.HP.ValuePercentile >= 1))
         {
-            if (logging) _tooltip.Add("Chara is not injured and cannot execute");
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireStatNotFull")
+                                .Replace("$name$", c.FirstName)
+                                .Replace("$stat$", c.Stats.HP.DisplayName));
             return false;
         }
         return true;

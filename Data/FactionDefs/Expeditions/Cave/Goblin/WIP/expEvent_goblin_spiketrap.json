@@ -3,16 +3,22 @@
         "list": [
             {
                 "eventID": "exp_event_goblinCave_spikeTrap",
+                "_comment":"this event would not appear cuz not added in valid event list, ig",
                 "eventString_Ongoing": "exp_event_goblinCave_spikeTrap_ongoing",
                 "DurationMinutes": 20,
                 "tags": [
-                    "hazard",
                     "trap",
-                    "goblin",
-                    "sexual",
-                    "restraint"
+                    "goblin"
                 ],
                 "baseWeight": 5,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "maxTeamCount": 99,
+                    "charaReq_Select": {
+                        "cost_EN": 3,
+                        "cost_ST": 6
+                    }
+                },
                 "possibleResults": [
                     {
                         "baseWeight": 6,
@@ -43,6 +49,15 @@
                 "exp_event_goblinCave_spikeTrap_result_snared": "活板门并未完全打开，但从中弹出的涂满粘液的绳网缠住了$names$的腿。虽然奋力挣脱了，但制服的裙摆被撕开了一个大口子，雪白的大腿暴露在外，还因为用力过猛而摔倒在地，姿态颇为不雅。",
                 "exp_event_goblinCave_spikeTrap_result_capturedAndUsed": "地面瞬间翻转，$names$在尖叫声中坠入下方的深坑。幸运的是，坑底并非尖锐的木刺，而是数十根被打磨光滑、顶端呈圆弧状、模仿着勃起阳具的木桩，上面还涂满了滑腻的、散发着异味的粘液。她们的身体被强制以M字开腿的姿势固定在木桩上，木桩的顶端恰好对准了阴部，每一次挣扎都会带来一阵阵羞耻的摩擦。很快，被陷阱触发的警报声吸引来了几只巡逻的哥布林，它们看着坑中动弹不得的猎物，发出了贪婪而污秽的笑声。",
                 "exp_event_goblinCave_spikeTrap_result_hiddenPath": "$names$坠入了陷阱，但坑道的侧壁却在冲击下坍塌，露出了一条哥布林们自己都未曾发现的古代密道。在通道深处，发现了一些被遗忘的宝物。"
+            },
+            "en-us": {
+                "exp_event_goblinCave_spikeTrap": "Goblin Spike Trap",
+                "exp_event_goblinCave_spikeTrap_ongoing": "As $names$ advances on the damp ground, a crisp mechanical click suddenly sounds underfoot—a trap cleverly camouflaged by moss and dirt has been triggered!",
+                "exp_event_goblinCave_spikeTrap_result_evaded": "With astonishing reaction speed, $names$ rolls aside before the trapdoor fully opens, narrowly avoiding the deadly trap.",
+                "exp_event_goblinCave_spikeTrap_result_snared": "The trapdoor doesn't fully open, but a slime-covered net shoots out and entangles $names$'s legs. Although $names$ struggles free, the uniform's skirt is torn wide open, exposing snow-white thighs, and the forceful exertion causes a fall in a rather undignified posture.",
+                "exp_event_goblinCave_spikeTrap_result_capturedAndUsed": "The ground flips instantly, and $names$ falls into the pit below amidst screams. Fortunately, the bottom isn't lined with sharp wooden spikes, but with dozens of polished stakes with rounded tips, mimicking erect phalluses, covered in slippery, foul-smelling slime. Their bodies are forcibly fixed onto the stakes in an M-leg spread posture, with the tips of the stakes perfectly aligned with their crotches. Every struggle brings waves of shameful friction. Soon, the alarm triggered by the trap attracts several patrolling goblins, who let out greedy and filthy laughs at the immobilized prey in the pit.",
+                "exp_event_goblinCave_spikeTrap_result_hiddenPath": "$names$ falls into the trap, but the impact causes the side wall of the pit to collapse, revealing an ancient secret passage unknown even to the goblins. Deep within the tunnel, some forgotten treasures are found."
+                
             }
         }
     }

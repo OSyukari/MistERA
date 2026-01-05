@@ -535,6 +535,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     button.Initialize(this, new initScript_Expeditions.ButtonValidator_RecurringToggle(this, button, Script_Expeditions.ExpeditionConfig.CooldownTime, Script_Expeditions.OnEndEdit_Recurring)); break;
                 case 47:
                     button.Initialize(this, new initScript_Expeditions.ButtonValidator_EditCamp(this, button)); break;
+                case 48:
+                    button.Initialize(this, new initScript_Expeditions.ButtonValidator_PrioritizeResting(this, button)); break;
                 case 9999: // exit
                     button.Initialize(this, button_alwaysValid); break;
                 default:
@@ -1081,7 +1083,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             this.highlightCOM = highlightCOM;
             if (highlightCOM == null) description.text = "";
 
-            buttonText.linkText = (highlightCOM != null ? highlightCOM.ID : "");
+            buttonText.linkText = (highlightCOM != null ? highlightCOM.tooltipID : "");
             buttonText.SetTextPreInit(highlightCOM != null ? highlightCOM.DisplayName() : "None");
         }
 

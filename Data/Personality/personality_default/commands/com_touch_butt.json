@@ -1,160 +1,369 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_butt_Begin",
-        "variants":
-        [
+    "Character_Personalities": {
+        "looselist": [
             {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始被抚摸屁股 有允许 口上文" ,
-                "responses":
-                [ 
-                    "$self$没有回头，只是自然地向后挺了挺腰，方便$target$的手放得更稳。\"嗯？怎么突然这么粘人？\"", "$self$正在切菜的手顿了一下，随即发出一声轻笑，并未阻止那只游走的手。\"别闹，正忙着呢……痒。\"", "$self$顺势向后靠进$target$的怀里，通过布料感受着掌心的温度。\"真是的，一回来就不老实。\"", "$self$稍微侧过身，不仅没有躲避，反而故意用臀部蹭了蹭$target$的手掌。"
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_butt_Begin",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始被抚摸屁股 有允许 口上文",
+                            "responses": [
+                                "com_touch_butt_Begin_1",
+                                "com_touch_butt_Begin_2",
+                                "com_touch_butt_Begin_3",
+                                "com_touch_butt_Begin_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始被抚摸屁股 未允许 好意 口上文",
+                            "responses": [
+                                "com_touch_butt_Begin_5",
+                                "com_touch_butt_Begin_6",
+                                "com_touch_butt_Begin_7",
+                                "com_touch_butt_Begin_8"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始被抚摸屁股 未允许 敌意 口上文",
+                            "responses": [
+                                "com_touch_butt_Begin_9",
+                                "com_touch_butt_Begin_10",
+                                "com_touch_butt_Begin_11",
+                                "com_touch_butt_Begin_12"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":[ "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始被抚摸屁股 未允许 好意 口上文" ,
-                "responses":
-                [ 
-                    "$self$浑身僵硬了一下，难以置信地回头看向$target$，嘴巴微张却没发出声音。", "$self$手中的文件差点掉落，整个人定在原地，似乎在确认刚才的触感是否是错觉。", "$self$有些不知所措地眨了眨眼，脸瞬间涨红，但没有立刻躲开。\"诶？那个……$target$？\"", "$self$尴尬地干笑了一声，试图用玩笑化解这一刻的突兀。\"哈哈……这是什么新的打招呼方式吗？\""
-                ]
-            },
-            {
-                
-                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
-                "_comment":"2.2.2 开始被抚摸屁股 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-                    "$self$的身体止不住地颤抖，死死咬住下唇，不敢发出任何声音，只能任由那只手放肆。", "$self$低下头盯着地面，双手紧紧抓着衣角，指关节因为用力而泛白。\"对不起……只要……只要不打我就行……\"", "$self$紧闭双眼，屏住呼吸，像是在忍受某种酷刑，眼角渗出了生理性的泪水。", "$self$僵直得像块木头，眼神空洞地看着前方，仿佛灵魂已经抽离了躯壳。"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_butt",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 被抚摸屁股 口上文",
+                            "responses": [
+                                "com_touch_butt_1",
+                                "com_touch_butt_2",
+                                "com_touch_butt_3",
+                                "com_touch_butt_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 被抚摸屁股 口上文",
+                            "responses": [
+                                "com_touch_butt_5",
+                                "com_touch_butt_6",
+                                "com_touch_butt_7",
+                                "com_touch_butt_8"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被抚摸屁股 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_butt_9",
+                                        "com_touch_butt_10",
+                                        "com_touch_butt_11",
+                                        "com_touch_butt_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被抚摸屁股 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_butt_13",
+                                        "com_touch_butt_14",
+                                        "com_touch_butt_15",
+                                        "com_touch_butt_16"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被抚摸屁股 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_butt_17",
+                                "com_touch_butt_18",
+                                "com_touch_butt_19",
+                                "com_touch_butt_20"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 被抚摸屁股 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_butt_21",
+                                        "com_touch_butt_22",
+                                        "com_touch_butt_23",
+                                        "com_touch_butt_24"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被抚摸屁股 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_butt_25",
+                                "com_touch_butt_26",
+                                "com_touch_butt_27",
+                                "com_touch_butt_28"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 被抚摸屁股 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_butt_29",
+                                        "com_touch_butt_30",
+                                        "com_touch_butt_31",
+                                        "com_touch_butt_32"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 被抚摸屁股 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_butt_33",
+                                "com_touch_butt_34",
+                                "com_touch_butt_35",
+                                "com_touch_butt_36"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_butt",
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 被抚摸屁股 口上文",
-                "responses":
-                [ 
-                    "$self$在睡梦中皱了皱眉，喉咙里发出不清不楚的呢喃。\"唔……别吵……困……\"", "$self$翻了个身，无意识地将屁股翘得更高了一些，像是把那只手当成了枕头的一部分。", "$self$随着持续的揉捏，呼吸逐渐变得沉重，双腿在被窝里难耐地磨蹭着。\"嗯……嗯……热……\"", "$self$并没有醒来，但身体本能地对刺激做出了反应，内裤逐渐被不知名的液体浸湿。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 被抚摸屁股 口上文",
-                "responses":
-                [ 
-                    "$self$保持着原本行走的姿势静止不动，只有被揉捏的臀部肉体呈现出诡异的凹陷形状，无法恢复。", "$self$毫无知觉地凝固在时空中，随着$target$手掌的大力揉搓，臀浪在静止的时间里被强行挤压出各种淫靡的形态。", "$self$像是一尊精美的人偶，无论臀部被如何掰开或拍打，脸上依旧维持着静止前那一秒的笑容。", "$self$悬浮在半空中的发丝纹丝不动，只有被$target$肆虐的臀部正违反物理法则地承受着持续的冲击。"
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 被抚摸屁股 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$像触电般向前跳了一小步，捂着屁股回头瞪了$target$一眼。\"呀！你手太凉了！\"", "$self$反手拍掉了$target$的手，语气里带着几分娇嗔的警告。\"去去去，别在这儿碍手碍脚的。\"", "$self$扭动着身体避开了触碰，眉头微微皱起。\"今天不想动……我很累，别闹了。\"", "$self$叹了口气，把$target$的手从臀部拿开并紧紧握住。\"现在不是做这个的时候，好吗？\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 被抚摸屁股 无允许 善意 口上文",
-                        "responses":
-                        [ 
-                            "$self$礼貌地向旁边挪了一步，拉开了安全距离，微笑着化解尴尬。\"那个，$target$先生？我想这不太合适。\"", "$self$轻轻挡住了$target$的手，语气温和但坚定。\"请自重，我们应该还没熟到这种程度吧？\"", "$self$不动声色地转身面对$target$，巧妙地避开了接触。\"是有什么东西沾在裙子上了吗？谢谢提醒。\"", "$self$尴尬地抓了抓头发，往后退了退。\"呃……这种玩笑还是不要随便开比较好哦。\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 被抚摸屁股 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":
-                 [
-                    "$self$直接一巴掌扇了过去，眼神锐利如刀。\"流氓！你在干什么！\"", "$self$立刻大声尖叫起来，指着$target$的鼻子怒骂。\"变态！离我远点！我要报警了！\"", "$self$嫌恶地拍打着刚才被触碰的地方，仿佛沾上了什么脏东西。\"恶心……别用你的脏手碰我。\"", "$self$冷冷地盯着$target$，拿出手机开始录像。\"你刚才的行为已经构成骚扰了，继续啊？\""
-                 ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 被抚摸屁股 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$的呼吸变得有些急促，原本正在做的事完全停了下来，整个人软软地靠在$target$身上。\"嗯……手感好吗？要不要……再进去一点？\"", "$self$的脸颊泛起红晕，身体随着$target$的揉捏节奏无意识地摆动。\"只有手……好像有点不够了呢。\"", "$self$转过身抱住$target$的脖子，眼神迷离地索吻。\"如果你是想点火的话，恭喜你，你成功了。\"", "$self$发出舒服的哼哼声，主动抓着$target$的手按向更深处。\"这里……再用力一点揉……\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 被抚摸屁股 结果正面 未允许 口上文",
-                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-                    "$self$原本抗拒的身体逐渐软化，脸上露出一种复杂而羞耻的神情。\"奇怪……明明不应该这样的……\"", "$self$咬着嘴唇，眼神开始不自觉地往$target$的下半身瞟。\"你……经常这样对别的女孩子吗？手法……有点过分了。\"", "$self$低着头，声音细若蚊蝇，带着一丝颤抖。\"那个……如果不告诉别人的话……也不是不行……\"", "$self$像是放弃了抵抗，有些自暴自弃地靠在墙上，任由快感淹没理智。\"反正……反正你也只会欺负我对吧……\""
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 被抚摸屁股 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$猛地推开$target$，脸上写满了不耐烦。\"摸够了没有？我说了我在忙！\"", "$self$僵硬地站着，语气变得冰冷刺骨。\"三分钟了，你觉得这很有趣吗？放手。\"", "$self$眼眶有些发红，失望地看着$target$。\"我以为你只是开玩笑，但这让我感到很不被尊重。\"", "$self$用力甩开$target$的手，一言不发地转身走进了房间，重重关上了门。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 被抚摸屁股 结果负面 未允许 口上文",
-                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-                    "$self$忍无可忍地爆发了，抓起手边的东西就砸向$target$。\"滚！给我滚出去！\"", "$self$蹲在地上崩溃大哭，充满恨意地瞪着$target$。\"你会遭报应的……你这个人渣！\"", "$self$此时已经完全冷静下来，面无表情地整理好衣服。\"闹够了吗？这三分钟我会记一辈子的。\"", "$self$趁$target$放松警惕，狠狠地踩了一脚他的脚背，趁机逃跑。"
-                ]
-            }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_touch_butt_Begin_1": "$self$没有回头，只是自然地向后挺了挺腰，好让$target$的手放得更稳。\"嗯？怎么突然这么粘人？\"",
+                "com_touch_butt_Begin_2": "$self$切菜的手顿了一下，随即轻笑出声，并未阻止那只游走的手。\"别闹，正忙着呢……好痒。\"",
+                "com_touch_butt_Begin_3": "$self$顺势向后靠进$target$的怀里，隔着布料感受掌心的温度。\"真是的，一回来就不老实。\"",
+                "com_touch_butt_Begin_4": "$self$稍微侧过身，不仅没有躲避，反而故意用臀部蹭了蹭$target$的手掌。",
+                "com_touch_butt_Begin_5": "$self$浑身僵了一下，难以置信地回头看向$target$，嘴巴微张却发不出声音。",
+                "com_touch_butt_Begin_6": "$self$手中的文件差点掉落，整个人定在原地，似乎在确认刚才的触感是否是错觉。",
+                "com_touch_butt_Begin_7": "$self$有些不知所措地眨了眨眼，脸瞬间涨红，但没有立刻躲开。\"诶？那个……$target$？\"",
+                "com_touch_butt_Begin_8": "$self$尴尬地干笑了一声，试图用玩笑化解这一刻的突兀。\"哈哈……这是什么新的打招呼方式吗？\"",
+                "com_touch_butt_Begin_9": "$self$的身体止不住地颤抖，死死咬住下唇，不敢发出任何声音，只能任由那只手放肆。",
+                "com_touch_butt_Begin_10": "$self$低头盯着地面，双手紧紧抓着衣角，指关节因用力而泛白。\"对不起……只要……只要不打我就行……\"",
+                "com_touch_butt_Begin_11": "$self$紧闭双眼，屏住呼吸，像是在忍受某种酷刑，眼角渗出了生理性的泪水。",
+                "com_touch_butt_Begin_12": "$self$僵直得像块木头，眼神空洞地看着前方，仿佛灵魂已经抽离了躯壳。",
+                "com_touch_butt_1": "$self$在睡梦中皱了皱眉，喉咙里发出含糊不清的呢喃。\"唔……别吵……困……\"",
+                "com_touch_butt_2": "$self$翻了个身，无意识地将屁股翘得更高，像是把那只手当成了枕头的一部分。",
+                "com_touch_butt_3": "$self$随着持续的揉捏，呼吸逐渐变得沉重，双腿在被窝里难耐地磨蹭着。\"嗯……嗯……热……\"",
+                "com_touch_butt_4": "$self$并没有醒来，但身体本能地对刺激做出了反应，内裤逐渐被爱液浸湿。",
+                "com_touch_butt_5": "$self$保持着行走的姿势静止不动，只有被揉捏的臀肉呈现出诡异的凹陷形状，无法恢复。",
+                "com_touch_butt_6": "$self$毫无知觉地凝固在时空中，随着$target$手掌的大力揉搓，臀浪在静止的时间里被强行挤压出各种淫靡的形态。",
+                "com_touch_butt_7": "$self$像是一尊精美的人偶，无论臀部被如何掰开或拍打，脸上依旧维持着静止前那一秒的笑容。",
+                "com_touch_butt_8": "$self$悬浮在半空的发丝纹丝不动，只有被$target$肆虐的臀部正违反物理法则地承受着持续的冲击。",
+                "com_touch_butt_9": "$self$像触电般向前跳了一小步，捂着屁股回头瞪了$target$一眼。\"呀！你手太凉了！\"",
+                "com_touch_butt_10": "$self$反手拍掉了$target$的手，语气里带着几分娇嗔。\"去去去，别在这儿碍手碍脚的。\"",
+                "com_touch_butt_11": "$self$扭动身体避开了触碰，眉头微皱。\"今天不想动……我很累，别闹了。\"",
+                "com_touch_butt_12": "$self$叹了口气，把$target$的手从臀部拿开并紧紧握住。\"现在不是做这个的时候，好吗？\"",
+                "com_touch_butt_13": "$self$礼貌地向旁边挪了一步，拉开了安全距离，微笑着化解尴尬。\"那个，$target$先生？我想这不太合适。\"",
+                "com_touch_butt_14": "$self$轻轻挡住了$target$的手，语气温和但坚定。\"请自重，我们应该还没熟到这种程度吧？\"",
+                "com_touch_butt_15": "$self$不动声色地转身面对$target$，巧妙地避开了接触。\"是有什么东西沾在裙子上了吗？谢谢提醒。\"",
+                "com_touch_butt_16": "$self$尴尬地抓了抓头发，往后退了退。\"呃……这种玩笑还是不要随便开比较好哦。\"",
+                "com_touch_butt_17": "$self$直接一巴掌扇了过去，眼神锐利如刀。\"流氓！你在干什么！\"",
+                "com_touch_butt_18": "$self$立刻大声尖叫起来，指着$target$的鼻子怒骂。\"变态！离我远点！我要报警了！\"",
+                "com_touch_butt_19": "$self$嫌恶地拍打着刚才被触碰的地方，仿佛沾上了什么脏东西。\"恶心……别用你的脏手碰我。\"",
+                "com_touch_butt_20": "$self$冷冷地盯着$target$，拿出手机开始录像。\"你刚才的行为已经构成骚扰了，继续啊？\"",
+                "com_touch_butt_21": "$self$的呼吸变得有些急促，原本正在做的事完全停了下来，整个人软软地靠在$target$身上。\"嗯……手感好吗？要不要……再进去一点？\"",
+                "com_touch_butt_22": "$self$的脸颊泛起红晕，身体随着$target$的揉捏节奏无意识地摆动。\"只有手……好像有点不够了呢。\"",
+                "com_touch_butt_23": "$self$转过身抱住$target$的脖子，眼神迷离地索吻。\"如果你是想点火的话，恭喜你，你成功了。\"",
+                "com_touch_butt_24": "$self$发出舒服的哼哼声，主动抓着$target$的手按向更深处。\"这里……再用力一点揉……\"",
+                "com_touch_butt_25": "$self$原本抗拒的身体逐渐软化，脸上露出一种复杂而羞耻的神情。\"奇怪……明明不应该这样的……\"",
+                "com_touch_butt_26": "$self$咬着嘴唇，眼神开始不自觉地往$target$的下半身瞟。\"你……经常这样对别的女孩子吗？手法……有点过分了。\"",
+                "com_touch_butt_27": "$self$低着头，声音细若蚊蝇，带着一丝颤抖。\"那个……如果不告诉别人的话……也不是不行……\"",
+                "com_touch_butt_28": "$self$像是放弃了抵抗，有些自暴自弃地靠在墙上，任由快感淹没理智。\"反正……反正你也只会欺负我对吧……\"",
+                "com_touch_butt_29": "$self$猛地推开$target$，脸上写满了不耐烦。\"摸够了没有？我说了我在忙！\"",
+                "com_touch_butt_30": "$self$僵硬地站着，语气冰冷刺骨。\"三分钟了，你觉得这很有趣吗？放手。\"",
+                "com_touch_butt_31": "$self$眼眶有些发红，失望地看着$target$。\"我以为你只是开玩笑，但这让我感到很不被尊重。\"",
+                "com_touch_butt_32": "$self$用力甩开$target$的手，一言不发地转身进屋，重重关上了门。",
+                "com_touch_butt_33": "$self$忍无可忍地爆发了，抓起手边的东西就砸向$target$。\"滚！给我滚出去！\"",
+                "com_touch_butt_34": "$self$蹲在地上崩溃大哭，充满恨意地瞪着$target$。\"你会遭报应的……你这个人渣！\"",
+                "com_touch_butt_35": "$self$此时已经完全冷静下来，面无表情地整理好衣服。\"闹够了吗？这三分钟我会记一辈子的。\"",
+                "com_touch_butt_36": "$self$趁$target$放松警惕，狠狠地踩了一脚他的脚背，趁机逃跑。"
+            },
+            "en-us": {
+                "com_touch_butt_Begin_1": "$self$ didn't look back, simply arching her back naturally to let $target$'s hand rest more comfortably. \"Hmm? Why so clingy all of a sudden?\"",
+                "com_touch_butt_Begin_2": "$self$ paused her chopping for a moment, then chuckled softly, not stopping the wandering hand. \"Stop it, I'm busy... that tickles.\"",
+                "com_touch_butt_Begin_3": "$self$ leaned back into $target$'s embrace, feeling the warmth of the palm through her clothes. \"Honestly, you just can't keep your hands to yourself the moment you get back.\"",
+                "com_touch_butt_Begin_4": "$self$ turned slightly to the side, and instead of dodging, she deliberately rubbed her hips against $target$'s palm.",
+                "com_touch_butt_Begin_5": "$self$ stiffened all over, looking back at $target$ in disbelief, her mouth slightly open but no sound coming out.",
+                "com_touch_butt_Begin_6": "$self$ almost dropped the documents she was holding, freezing in place as if verifying if the touch just now was an illusion.",
+                "com_touch_butt_Begin_7": "$self$ blinked in confusion, her face instantly flushing red, but she didn't pull away immediately. \"Eh? Um... $target$?\"",
+                "com_touch_butt_Begin_8": "$self$ let out an awkward laugh, trying to diffuse the sudden tension with a joke. \"Haha... is this some new way of saying hello?\"",
+                "com_touch_butt_Begin_9": "$self$'s body couldn't stop trembling; she bit her lower lip hard, daring not to make a sound, letting the hand do as it pleased.",
+                "com_touch_butt_Begin_10": "$self$ lowered her head, staring at the ground, clutching the hem of her clothes until her knuckles turned white. \"I'm sorry... just... as long as you don't hit me...\"",
+                "com_touch_butt_Begin_11": "$self$ squeezed her eyes shut and held her breath, as if enduring some form of torture, physiological tears seeping from the corners of her eyes.",
+                "com_touch_butt_Begin_12": "$self$ stood stiff as a board, staring blankly ahead, as if her soul had already left her body.",
+                "com_touch_butt_1": "$self$ frowned in her sleep, mumbling incoherently. \"Mmm... quiet... sleepy...\"",
+                "com_touch_butt_2": "$self$ rolled over, unconsciously sticking her butt out further, as if treating the hand as part of the pillow.",
+                "com_touch_butt_3": "$self$'s breathing grew heavier with the continued kneading, her legs rubbing restlessly under the covers. \"Nn... ah... hot...\"",
+                "com_touch_butt_4": "$self$ didn't wake up, but her body instinctively reacted to the stimulation, her panties gradually becoming soaked with fluid.",
+                "com_touch_butt_5": "$self$ remained frozen in her walking pose, only the flesh of her kneaded buttocks showing an eerie indentation that wouldn't recover.",
+                "com_touch_butt_6": "$self$ remained solidified in spacetime without sensation, her glutes forcibly squeezed into lewd shapes in the frozen time by $target$'s rough hands.",
+                "com_touch_butt_7": "$self$ was like an exquisite doll; no matter how her buttocks were spread or slapped, her face maintained the smile from the second before time stopped.",
+                "com_touch_butt_8": "$self$'s floating hair didn't move an inch, only her buttocks, ravaged by $target$, endured the continuous impact in defiance of physics.",
+                "com_touch_butt_9": "$self$ jumped forward as if electrocuted, covering her butt and glaring back at $target$. \"Eek! Your hands are too cold!\"",
+                "com_touch_butt_10": "$self$ slapped $target$'s hand away with the back of her hand, her tone carrying a warning mixed with petulance. \"Shoo, shoo, don't get in my way here.\"",
+                "com_touch_butt_11": "$self$ twisted her body to avoid the touch, frowning slightly. \"I don't feel like moving today... I'm tired, stop it.\"",
+                "com_touch_butt_12": "$self$ sighed, removing $target$'s hand from her hip and holding it tight. \"Now isn't really the time for this, okay?\"",
+                "com_touch_butt_13": "$self$ politely stepped aside to create a safe distance, smiling to ease the awkwardness. \"Um, Mr. $target$? I don't think this is appropriate.\"",
+                "com_touch_butt_14": "$self$ gently blocked $target$'s hand, her tone gentle but firm. \"Please have some respect. We aren't close enough for this yet, are we?\"",
+                "com_touch_butt_15": "$self$ quietly turned to face $target$, skillfully avoiding the contact. \"Is there something on my skirt? Thanks for letting me know.\"",
+                "com_touch_butt_16": "$self$ scratched her head awkwardly and backed away. \"Uh... it's better not to make jokes like that.\"",
+                "com_touch_butt_17": "$self$ slapped him directly, her eyes sharp as knives. \"Pervert! What are you doing!\"",
+                "com_touch_butt_18": "$self$ immediately screamed, pointing at $target$'s nose and scolding. \"Creep! Stay away from me! I'm calling the police!\"",
+                "com_touch_butt_19": "$self$ slapped the spot that was touched in disgust, as if she had gotten something dirty on it. \"Disgusting... don't touch me with your dirty hands.\"",
+                "com_touch_butt_20": "$self$ stared coldly at $target$ and took out her phone to start recording. \"Your behavior constitutes harassment. Want to continue?\"",
+                "com_touch_butt_21": "$self$'s breathing quickened; she stopped what she was doing completely and leaned limply against $target$. \"Mmm... does it feel good? Do you want to... go a little deeper?\"",
+                "com_touch_butt_22": "$self$'s cheeks flushed, her body swaying unconsciously to the rhythm of $target$'s kneading. \"Just hands... doesn't seem like enough anymore.\"",
+                "com_touch_butt_23": "$self$ turned around and wrapped her arms around $target$'s neck, her eyes glazed over as she sought a kiss. \"If you were trying to turn me on, congratulations, you succeeded.\"",
+                "com_touch_butt_24": "$self$ hummed in pleasure, actively taking $target$'s hand and pressing it deeper. \"Here... rub a little harder...\"",
+                "com_touch_butt_25": "$self$'s initially resistant body gradually softened, a look of complex shame appearing on her face. \"Weird... it shouldn't be like this...\"",
+                "com_touch_butt_26": "$self$ bit her lip, her eyes involuntarily drifting toward $target$'s lower body. \"Do you... do this often to other girls? Your technique... is a bit too much.\"",
+                "com_touch_butt_27": "$self$ lowered her head, her voice as quiet as a mosquito's, trembling slightly. \"Um... if you don't tell anyone... I guess it's okay...\"",
+                "com_touch_butt_28": "$self$ seemed to give up resistance, leaning against the wall in self-abandonment as pleasure overwhelmed her reason. \"Anyway... you're just going to bully me anyway, right...\"",
+                "com_touch_butt_29": "$self$ pushed $target$ away abruptly, impatience written all over her face. \"Haven't you touched enough? I said I'm busy!\"",
+                "com_touch_butt_30": "$self$ stood stiffly, her tone bone-chillingly cold. \"It's been three minutes. Do you think this is funny? Let go.\"",
+                "com_touch_butt_31": "$self$ eyes reddened slightly as she looked at $target$ in disappointment. \"I thought you were just joking, but this makes me feel very disrespected.\"",
+                "com_touch_butt_32": "$self$ flung $target$'s hand away forcefully, turned around without a word, went into the room, and slammed the door shut.",
+                "com_touch_butt_33": "$self$ exploded, unable to bear it anymore, grabbing whatever was at hand and throwing it at $target$. \"Get out! Get the hell out!\"",
+                "com_touch_butt_34": "$self$ squatted on the ground and broke down crying, staring at $target$ with hatred. \"You'll pay for this... you scumbag!\"",
+                "com_touch_butt_35": "$self$ calmed down completely, organizing her clothes expressionlessly. \"Are you done? I'll remember these three minutes for the rest of my life.\"",
+                "com_touch_butt_36": "$self$ took advantage of $target$ letting his guard down to stomp hard on his instep and ran away."
+            }
         }
     }
 }

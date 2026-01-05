@@ -108,8 +108,8 @@
                     {
                         "ID":"medbay_shooting_range",
                         "displayName":"Range 1",
-                        "offsetX":226,
-                        "offsetY":-272,
+                        "offsetX":0,
+                        "offsetY":-315,
                         "connects":
                         [ { "ID":"medbay_hallway_4", "cost":1.0  } ],
                         "furnitureIDs":["furniture_shooting_range_spot","furniture_shooting_range_spot",
@@ -226,7 +226,8 @@
                     {
                         "ID":"medbay_isolation_storage",
                         "displayName":"Storage",
-                        "offsetY":227,
+                        "offsetY":284,
+                        "offsetX":-5,
                         "connects":
                         [ { "ID":"medbay_isolation_operation_room", "cost":1.0  } ],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Warehouse.jpg"
@@ -234,7 +235,7 @@
                     {
                         "ID":"medbay_isolation_morgue",
                         "displayName":"Morgue",
-                        "offsetX":-97,
+                        "offsetX":-100,
                         "offsetY":227,
                         "connects":
                         [ { "ID":"medbay_isolation_storage", "cost":1.0  } ],
@@ -262,12 +263,12 @@
 "medbay_lab":"实验室",
 "medbay_security_office":"警卫室",
 "medbay_decontamination":"除菌室",
-"medbay_isolation_office":"隔离区警卫室",
+"medbay_isolation_office":"警卫室",
 "medbay_isolation_room_1":"群体隔离间",
 "medbay_isolation_room_2":"双人隔离间",
-"medbay_isolation_operation_room":"隔离间手术室",
-"medbay_isolation_storage":"隔离间储物室",
-"medbay_isolation_morgue":"隔离间停尸房"
+"medbay_isolation_operation_room":"手术室",
+"medbay_isolation_storage":"储物室",
+"medbay_isolation_morgue":"停尸房"
             },
             "en-us":
             {
@@ -282,12 +283,12 @@
 "medbay_lab": "Laboratory",
 "medbay_security_office": "Security Office",
 "medbay_decontamination": "Decontamination Room",
-"medbay_isolation_office": "Isolation Ward Security Office",
+"medbay_isolation_office": "Security Room",
 "medbay_isolation_room_1": "Group Isolation Room",
 "medbay_isolation_room_2": "Double Isolation Room",
-"medbay_isolation_operation_room": "Isolation Ward Operating Room",
-"medbay_isolation_storage": "Isolation Ward Storage Room",
-"medbay_isolation_morgue": "Isolation Ward Morgue"
+"medbay_isolation_operation_room": "Operating Room",
+"medbay_isolation_storage": "Storage Room",
+"medbay_isolation_morgue": "Morgue"
             }
         }
     }

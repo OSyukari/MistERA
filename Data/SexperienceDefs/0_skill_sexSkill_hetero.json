@@ -110,6 +110,11 @@
             {
                 "skill_sexSkill_hetero": "异性",
                 "skill_sexSkill_hetero_tooltip":"适用范围：与异性的身体接触"
+            },
+            "en-us":
+            {
+                "skill_sexSkill_hetero": "Heterosexual",
+                "skill_sexSkill_hetero_tooltip":"Applies to: all physical contact with opposite gender"
             }
         }
     }

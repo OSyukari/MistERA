@@ -205,7 +205,27 @@
                 "chara_currentjob_charaCOM":"Interacting with $target$",
 
                 "event_onNightAssaultFailed_jobD": "$color_error_begin$Interaction terminated because $chara$ refused every commands$color_error_end$",
-                "memory_interrupted": "$comDesc$ was interrupted"
+                "memory_interrupted": "$comDesc$ was interrupted",
+
+                "relationship_trust_base": "Base Trust",
+                "relationship_trust_final": "Current Trust",
+
+                "relationship_fear_base": "Base Fear",
+                "relationship_fear_final": "Current Fear",
+
+                "relationship_goodwill_base": "Base Goodwill",
+                "relationship_goodwill_final": "Current Goodwill",
+
+                "relationship_badwill_base": "Base Aversion",
+                "relationship_badwill_final": "Current Aversion",
+
+                "relationship_desire_base": "Base Desire",
+                "relationship_desire_final": "Current Desire",
+                "relationship_trust_cap": "<link=relationship_trust_cap_tooltip>Trust Cap</link>",
+                "relationship_trust_cap_tooltip": "The upper limit of trust. Improving existing relationship with the character can increase this cap.",
+                "relationship_trust_cap_uiDisplay": "Trust Cap: $value$ Base Value",
+
+                "chara_currentjob_expedition": "Out On Expedition"
             }
         }
     }

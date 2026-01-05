@@ -17,11 +17,11 @@
     "possibleResults": [
 {
     "baseWeight": 5,
-    "resultText": "$names$小心翼翼地从阴影中潜行，成功绕过了哥布林巢穴"
+    "resultText": "exp_event_goblin_nest_result_1"
 },
 {
     "baseWeight": 4,
-    "resultText": "$names$对巢穴内的哥布林们展开伏击",
+    "resultText": "exp_event_goblin_nest_result_2",
     "eventID":"event_caveGoblinEncounter", "eventLabel":"br_combat_ambush_validator", "overrideTargetGeneration":true,
     "TargetGenerations":
     [ {
@@ -35,7 +35,7 @@
 },
 {
     "baseWeight": 3,
-    "resultText": "$names$的行踪被哥布林发现了！",
+    "resultText": "exp_event_goblin_nest_result_3",
     "eventID":"event_caveGoblinEncounter", "eventLabel":"", "overrideTargetGeneration":true,
     "TargetGenerations":
     [ {
@@ -49,11 +49,11 @@
 },
 {
     "baseWeight": 2,
-    "resultText": "$names$只在巢穴内找到了人类的残肢"
+    "resultText": "exp_event_goblin_nest_result_4"
 },
 {
     "baseWeight": 2,
-    "resultText": "$names$潜入巢穴，找到了些有用的道具。",
+    "resultText": "exp_event_goblin_nest_result_5",
     "results_factions":[
         {
             "entry_results":{
@@ -68,7 +68,7 @@
 },
 {
     "baseWeight": 1,
-    "resultText": "$names$潜入巢穴，发现了一名被关押的女冒险者",
+    "resultText": "exp_event_goblin_nest_result_6",
     "eventID":"event_goblin_gangRape_rescue", "eventLabel":"", "overrideTargetGeneration":true,
     "TargetGenerations":
     [
@@ -80,7 +80,7 @@
 },
 {
     "baseWeight": 1,
-    "resultText": "$names$潜入巢穴，发现一群肮脏矮小的哥布林正在轮奸一名被俘的女性",
+    "resultText": "exp_event_goblin_nest_result_7",
     "eventID":"event_goblin_gangRape", "eventLabel":"", "overrideTargetGeneration":true,
     "TargetGenerations":
     [
@@ -105,8 +105,28 @@
         "Entries": {
             "zh-cn": {
                 "exp_event_goblin_nest": "哥布林巢穴",
-                "exp_event_goblin_nest_Ongoing":"$names$在洞窟深处发现了一处散发着恶臭的哥布林巢穴。"
-            }
+                "exp_event_goblin_nest_Ongoing":"$names$在洞窟深处发现了一处散发着恶臭的哥布林巢穴。",
+                "exp_event_goblin_nest_result_1":"$names$小心翼翼地从阴影中潜行，成功绕过了哥布林巢穴",
+                "exp_event_goblin_nest_result_2":"$names$对巢穴内的哥布林们展开伏击",
+                "exp_event_goblin_nest_result_3":"$names$的行踪被哥布林发现了！",
+                "exp_event_goblin_nest_result_4":"$names$只在巢穴内找到了人类的残肢",
+                "exp_event_goblin_nest_result_5":"$names$潜入巢穴，找到了些有用的道具。",
+                "exp_event_goblin_nest_result_6":"$names$潜入巢穴，发现了一名被关押的女冒险者",
+                "exp_event_goblin_nest_result_7":"$names$潜入巢穴，发现一群肮脏矮小的哥布林正在轮奸一名被俘的女性"
+            },
+"en-us":
+{
+                "exp_event_goblin_nest": "Goblin Nest",
+                "exp_event_goblin_nest_Ongoing":"$names$ discovered a foul-smelling Goblin nest deep within the cave.",
+                "exp_event_goblin_nest_result_1":"$names$ sneaked carefully from the shadows, successfully bypassing the Goblin nest",
+                "exp_event_goblin_nest_result_2":"$names$ ambushed the Goblins inside the nest",
+                "exp_event_goblin_nest_result_3":"$names$'s presence was discovered by the Goblins!",
+                "exp_event_goblin_nest_result_4":"$names$ found only human severed limbs inside the nest",
+                "exp_event_goblin_nest_result_5":"$names$ infiltrated the nest and found some useful items.",
+                "exp_event_goblin_nest_result_6":"$names$ infiltrated the nest and found an imprisoned female adventurer",
+                "exp_event_goblin_nest_result_7":"$names$ infiltrated the nest and found a group of filthy, small Goblins gang-raping a captured woman"
+
+}
         }
     }
 }

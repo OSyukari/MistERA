@@ -4,10 +4,10 @@
             "zh-cn": {
                 "comDescription_remainingtime": ", 剩余$minute$分钟",
                 "ActionPackage_ProductionOrder_displayName": "制造$orderName$",
-        "ActionPackage_ProductionOrder_join": "帮$target$$apName$",
-        "ActionPackage_ProductionOrder_joinEX": "协助$apName$$target$",
-        "ActionPackage_join": "与$target$$apName$",
-        "ActionPackage_joinEX": "$apName$$target$",
+                "ActionPackage_ProductionOrder_join": "帮$target$$apName$",
+                "ActionPackage_ProductionOrder_joinEX": "协助$apName$$target$",
+                "ActionPackage_join": "与$target$$apName$",
+                "ActionPackage_joinEX": "$apName$$target$",
                 "ep_Description_preparing": "准备$comdescription$",
                 "ep_Description_replace": "然后……",
                 "ep_Description_start": "$doer$开始$comdesc$$receiver$",
@@ -17,6 +17,7 @@
                 "ap_Description_refuse": "拒绝了$comdesc$",
                 "ap_Description_refused": "$comdesc$被拒绝了",
                 "ap_Description_interrupted": "$comdesc$被打断了",
+                "comDescription_ongoingAP": "$self$：$comdesc$",
                 "comDescription_1_0_doer": "$comdesc$",
                 "comDescription_n_0_doer": "和$other_doers$$comdesc$",
                 "comDescription_1_n_doer_active": "与$receivers$$comdesc$",
@@ -28,22 +29,14 @@
                 "comDescription_n_n_receiver_active": "和$other_receivers$与$doers$$comdesc$",
                 "comDescription_n_n_receiver_passive": "和$other_receivers$被$doers$$comdesc$",
                 "com_unique_party_invite_tooltip": "邀请该角色至队伍，或从队伍移除该角色。\n非调教模式时，队伍中的角色始终被视为当前指令的目标（无论当前指令目标是谁）"
-
-
-
-
             },
-            "en-us":
-            {
+            "en-us": {
                 "comDescription_remainingtime": ", remaining $minute$ minutes",
                 "ActionPackage_ProductionOrder_displayName": "Craft $orderName$",
                 "ActionPackage_ProductionOrder_join": "Help $target$ $apName$",
                 "ActionPackage_join": "$apName$ with $target$",
-
-        "ActionPackage_ProductionOrder_joinEX": "Help $apName$ $target$",
-        "ActionPackage_joinEX": "$apName$ with $target$",
-
-
+                "ActionPackage_ProductionOrder_joinEX": "Help $apName$ $target$",
+                "ActionPackage_joinEX": "$apName$ with $target$",
                 "ep_Description_preparing": "Preparing to $comdescription$",
                 "ep_Description_replace": "Then...",
                 "ep_Description_start": "$doer$ begin $comdesc$ $receiver$",
@@ -53,6 +46,7 @@
                 "ap_Description_refuse": "refused $comdesc$",
                 "ap_Description_refused": "$comdesc$ was refused",
                 "ap_Description_interrupted": "$comdesc$ was interrupted",
+                "comDescription_ongoingAP": "$self$: $comdesc$",
                 "comDescription_1_0_doer": "$comdesc$",
                 "comDescription_n_0_doer": "$comdesc$ with $other_doers$",
                 "comDescription_1_n_doer_active": "$comdesc$ with $receivers$",
@@ -64,9 +58,6 @@
                 "comDescription_n_n_receiver_active": "$comdesc$ with $other_receivers$ and $doers$",
                 "comDescription_n_n_receiver_passive": "with $other_receivers$, $comdesc$ by $doers$",
                 "com_unique_party_invite_tooltip": "Invite to, or remove target from party.\nFor most interactions, party members are always considered to be participating in commands."
-
-
-
             }
         }
     }

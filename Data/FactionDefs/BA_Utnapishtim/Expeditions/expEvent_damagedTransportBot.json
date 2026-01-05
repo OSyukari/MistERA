@@ -93,6 +93,13 @@
                 "exp_event_Utnapishtim_damagedTransportBot_result_alertEnemy": "$names$尝试打开机器人时，它发出刺耳的警报声，引来了敌人！"
             },
             "en-us": {
+                "exp_event_Utnapishtim_damagedTransportBot": "Damaged Transport Bot",
+                "exp_event_Utnapishtim_damagedTransportBot_ongoing": "$names$ found a damaged small transport bot.",
+                "exp_event_Utnapishtim_damagedTransportBot_result_empty": "$names$ opened the bot's cargo bay but found nothing inside.",
+                "exp_event_Utnapishtim_damagedTransportBot_result_loot": "$names$ successfully recovered a small amount of supplies from inside the bot.",
+                "exp_event_Utnapishtim_damagedTransportBot_result_parts": "$names$ successfully dismantled some useful functional parts from the bot.",
+                "exp_event_Utnapishtim_damagedTransportBot_result_malfunction": "$names$ tried to open the bot, but it suddenly emitted a piercing alarm.",
+                "exp_event_Utnapishtim_damagedTransportBot_result_alertEnemy": "$names$ tried to open the bot, but it emitted a piercing alarm, attracting enemies!"
 
             }
         }

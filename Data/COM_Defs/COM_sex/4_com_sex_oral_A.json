@@ -113,7 +113,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$的舌头正在$receiver.firstname$的肛门中抽送着" ]
+                            "texts": [ "com_sex_oral_A_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -122,7 +122,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$的双唇离开了$receiver.firstname$的股间" ]
+                            "texts":[ "com_sex_oral_A_description_remove_1" ]
                         }
                     ]
                 },
@@ -132,7 +132,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$doer.firstname$正通过舌头感受着$receiver.firstname$身体的高潮" ]
+                            "texts":[ "com_sex_oral_A_description_after_1" ]
                         }
                     ]
                 },
@@ -141,12 +141,56 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$的脸贴上了$receiver.firstname$的屁股，将双唇贴上了对方的肛门"]
+                            "texts": ["com_sex_oral_A_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_oral_A":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_A_displayName_1": "舔肛",
+                "com_sex_oral_A_displayName_2": "交替舔肛",
+                "com_sex_oral_A_displayName_3": "轮流舔肛",
+                "com_sex_oral_A_displayName_4": "同时舔肛",
+                "com_sex_oral_A_displayName_1_force": "肛门深吻",
+                "com_sex_oral_A_displayName_2_force": "交替肛门深吻",
+                "com_sex_oral_A_displayName_3_force": "轮流肛门深吻",
+                "com_sex_oral_A_displayName_4_force": "同时肛门深吻",
+
+                "com_sex_oral_A_description_begin_1":"$doer.firstname$的脸贴上了$receiver.firstname$的屁股，将双唇贴上了对方的肛门",
+                "com_sex_oral_A_description_after_1":"$doer.firstname$正通过舌头感受着$receiver.firstname$身体的高潮",
+                "com_sex_oral_A_description_remove_1":"$doer.firstname$的双唇离开了$receiver.firstname$的股间",
+                "com_sex_oral_A_description_ongoing_1":"$doer.firstname$的舌头正在$receiver.firstname$的肛门中抽送着"
+
+            },
+            "en-us":
+            {
+                "com_sex_oral_A":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_A_displayName_1": "Rimming",
+                "com_sex_oral_A_displayName_2": "Alt. Rimming",
+                "com_sex_oral_A_displayName_3": "Alt. Rimming",
+                "com_sex_oral_A_displayName_4": "Alt. Rimming",
+                "com_sex_oral_A_displayName_1_force": "Deep Anal Kissing",
+                "com_sex_oral_A_displayName_2_force": "Alt. Deep Anal Kissing",
+                "com_sex_oral_A_displayName_3_force": "Alt. Deep Anal Kissing",
+                "com_sex_oral_A_displayName_4_force": "Alt. Deep Anal Kissing",
+
+                "com_sex_oral_A_description_begin_1":"$doer.firstname$'s face presses against $receiver.firstname$'s buttocks, lips sealing over their anus.",
+                "com_sex_oral_A_description_after_1":"$doer.firstname$ feels $receiver.firstname$'s orgasm through their tongue.",
+                "com_sex_oral_A_description_remove_1":"$doer.firstname$'s lips part from $receiver.firstname$'s crotch area.",
+                "com_sex_oral_A_description_ongoing_1":"$doer.firstname$'s tongue is thrusting in and out of $receiver.firstname$'s anus."
+
+            }
+        }
     }
 }

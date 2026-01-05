@@ -1007,7 +1007,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     if (s != null) s.Add(ss);
                     return;
                 }
-                else if (party.Job != null && this.CurrentJob != party.Job)
+                else if (party.Job != null && this.CurrentJob != party.Job && !party.Job.ShouldRest(this))
                 {
                     ChangeCurrentJob(party.Job);
                     if (log) ss += "Changing job to party exploration job " + party.FactionDisplayName + "" + party.Job.DisplayName;

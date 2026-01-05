@@ -7,41 +7,59 @@
                     "ID": "com_interaction_talk_Begin",
                     "variants": [
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": { "requireSelfAttitudeGTE": "Like" },
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
                             "extraPortraitTags": [
-                                "relaxed", "leaning", "confident", "smug", "excited", "happy"
+                                "relaxed",
+                                "leaning",
+                                "confident",
+                                "smug",
+                                "excited",
+                                "happy"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.3.3 主动接受" ,
+                            "_comment": "2.3.3 主动接受",
                             "responses": [
-                                "$self$立刻合上手中的书：\"好啊！正好我无聊死了！\"","$self$爽快地站起身：\"聊什么呢？算我一个！\""
+                                "com_interaction_talk_Begin_1",
+                                "com_interaction_talk_Begin_2"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], 
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
                             "useActiveTags": false,
-                            "_comment":"2.3.5 被动接受（屈服）" ,
-                            "responses": [ 
-                                "$self$僵硬地点点头，低着头默默地走了过去。","$self$似乎想拒绝，但看到对方的眼神后又把话咽了回去。"
+                            "_comment": "2.3.5 被动接受（屈服）",
+                            "responses": [
+                                "com_interaction_talk_Begin_3",
+                                "com_interaction_talk_Begin_4"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
-                            "_comment":"2.3.4 被动接受（惊讶不反感）" ,
-                            "responses":
-                            [ 
-                                "$self$愣了一下，随即指着自己：\"诶？叫我吗？好吧……\"","$self$有些意外地眨眨眼，但还是跟了上去。"
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 被动接受（惊讶不反感）",
+                            "responses": [
+                                "com_interaction_talk_Begin_5",
+                                "com_interaction_talk_Begin_6"
                             ]
                         },
                         {
-                    
                             "extraPortraitTags": [
                                 "focused",
                                 "neutral",
@@ -51,9 +69,11 @@
                                 "observation"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.1.1 行动开始" ,
+                            "_comment": "2.1.1 行动开始",
                             "responses": [
-                                "$self$笑着向身边的$target$搭话：\"这天气真不错，不是吗？\"","$self$似乎对$target$的话题很感兴趣，主动凑近了一些。","$self$手里拿着饮料，顺势在$target$对面坐了下来。\"介意我坐这儿吗？\""
+                                "com_interaction_talk_Begin_7",
+                                "com_interaction_talk_Begin_8",
+                                "com_interaction_talk_Begin_9"
                             ]
                         }
                     ]
@@ -65,9 +85,10 @@
                     "ID": "com_interaction_talk_Tryjoin",
                     "variants": [
                         {
-                            "_comment":"2.3.6 NPC请求加入" ,
+                            "_comment": "2.3.6 NPC请求加入",
                             "responses": [
-                                "$self$凑到一个正在聊天的小圈子旁：\"听起来很有趣，介意加我一个吗？\"","$self$试探性地问道：\"你们在聊那个新游戏吗？我也在玩！\""
+                                "com_interaction_talk_Tryjoin_1",
+                                "com_interaction_talk_Tryjoin_2"
                             ]
                         }
                     ]
@@ -79,9 +100,10 @@
                     "ID": "com_interaction_talk_Joined",
                     "variants": [
                         {
-                            "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
-                            "responses": [ 
-                                "$self$开心地拉开椅子坐下：\"太好了！我跟你们说……\"","$self$松了一口气，脸上露出了融入集体的轻松笑容。"
+                            "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
+                            "responses": [
+                                "com_interaction_talk_Joined_1",
+                                "com_interaction_talk_Joined_2"
                             ]
                         }
                     ]
@@ -93,9 +115,10 @@
                     "ID": "com_interaction_talk_Join_Refused",
                     "variants": [
                         {
-                            "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
+                            "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
-                                "$self$尴尬地收回手，讪讪地笑了笑：\"啊……没事，你们继续。\"","$self$有些失落地垂下眼帘，默默地转身离开了。"
+                                "com_interaction_talk_Join_Refused_1",
+                                "com_interaction_talk_Join_Refused_2"
                             ]
                         }
                     ]
@@ -110,47 +133,76 @@
                             "requirement": {
                                 "requireEPFailure": true
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
-                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Neutral"
+                                    },
+                                    "extraPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
-                                        "$self$歉意地笑了笑：\"抱歉，我们在聊一些私事，不太方便。\"","$self$做了一个‘暂停’的手势：\"稍微等一下好吗？我们需要一点私人空间。\""
+                                        "com_interaction_talk_Join_1",
+                                        "com_interaction_talk_Join_2"
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "extraPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
-                                "$self$冷冷地瞥了对方一眼：\"我们在忙，没看到吗？\"","$self$直接无视了对方的存在，提高音量继续之前的话题。"
+                                "com_interaction_talk_Join_3",
+                                "com_interaction_talk_Join_4"
                             ]
                         },
                         {
-                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$热情地招手：\"来来来！正缺人呢！\"","$self$往旁边挤了挤，腾出一个位置：\"快坐！\""
+                            "responses": [
+                                "com_interaction_talk_Join_5",
+                                "com_interaction_talk_Join_6"
                             ]
-
                         },
                         {
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$的话语戛然而止，紧张地看了一眼对方，默默点头。","$self$身体僵硬地往旁边挪开，不敢有任何异议。"
+                            "responses": [
+                                "com_interaction_talk_Join_7",
+                                "com_interaction_talk_Join_8"
                             ]
                         },
                         {
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$有些诧异地停下话头，点了点头：\"呃……如果你想听的话。\"","$self$虽然有些不解，但还是礼貌地让出了位置。"
+                            "responses": [
+                                "com_interaction_talk_Join_9",
+                                "com_interaction_talk_Join_10"
                             ]
                         }
                     ]
@@ -162,9 +214,11 @@
                     "ID": "com_interaction_talk_Ongoing",
                     "variants": [
                         {
-                            "_comment":"2.1.2 行动中途" ,
-                            "responses": [ 
-                                "$self$时不时点头附和，看起来聊得很投机。","$self$捂着嘴轻笑出声，显然是被$target$的笑话逗乐了。","$self$神情专注地倾听着，偶尔插上一两句自己的见解。"
+                            "_comment": "2.1.2 行动中途",
+                            "responses": [
+                                "com_interaction_talk_Ongoing_1",
+                                "com_interaction_talk_Ongoing_2",
+                                "com_interaction_talk_Ongoing_3"
                             ]
                         }
                     ]
@@ -176,42 +230,79 @@
                     "ID": "com_interaction_talk_Interrupt",
                     "variants": [
                         {
-                            "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
-                            "requirement":{ "requireSelfAttitudeKey": "Fear" },
-                            "_comment":"2.2.3 态度：恐惧 有他人登场" ,
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Fear"
+                            },
+                            "_comment": "2.2.3 态度：恐惧 有他人登场",
                             "responses": [
-                                "$self$下意识地缩了缩脖子，说话的声音都变小了。","$self$有些慌乱地避开视线，手指不安地绞在一起。","$self$脸色变得有些苍白，身体微微发抖，似乎想找个借口离开。"
+                                "com_interaction_talk_Interrupt_1",
+                                "com_interaction_talk_Interrupt_2",
+                                "com_interaction_talk_Interrupt_3"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Badwill" },
-                            "_comment":"2.2.2 态度：恶意 有他人登场" ,
-                            "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
-                            "responses": [ 
-                                "看到对方的瞬间，$self$脸上的笑容僵了一下，随即别过头去。","$self$压低了声音，眉头微皱：\"怎么偏偏这个时候来……\"","$self$抱着双臂，原本放松的姿态瞬间变得充满防御性。"
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Badwill"
+                            },
+                            "_comment": "2.2.2 态度：恶意 有他人登场",
+                            "extraPortraitTags": [
+                                "disgusted",
+                                "disappointed"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_interaction_talk_Interrupt_4",
+                                "com_interaction_talk_Interrupt_5",
+                                "com_interaction_talk_Interrupt_6"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
-                            "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
-                            "_comment":"2.2.1 态度：好意 有他人登场" ,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Goodwill"
+                            },
+                            "extraPortraitTags": [
+                                "happy",
+                                "excited",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 态度：好意 有他人登场",
                             "responses": [
-                                "看到来人，$self$的眼睛亮了一下，兴奋地挥手：\"嘿！这儿！快过来一起！\"","$self$往旁边挪了挪位置，拍拍身边的空位示意对方坐下。","$self$露出了惊喜的表情：\"正说到你呢，你就来了！\""
+                                "com_interaction_talk_Interrupt_7",
+                                "com_interaction_talk_Interrupt_8",
+                                "com_interaction_talk_Interrupt_9"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Desire" },
-                            "_comment":"2.2.4 态度：欲望 有他人登场" ,
-                            "extraPortraitTags": [ "shy" ], "useActiveTags": false,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Desire"
+                            },
+                            "_comment": "2.2.4 态度：欲望 有他人登场",
+                            "extraPortraitTags": [
+                                "shy"
+                            ],
+                            "useActiveTags": false,
                             "responses": [
-                                "$self$的视线立刻黏在了对方身上，眼神变得有些迷离。","$self$无意识地咬了咬嘴唇，脸颊泛起一抹红晕。","$self$调整了一下坐姿，试图展现出自己最迷人的角度。"
+                                "com_interaction_talk_Interrupt_10",
+                                "com_interaction_talk_Interrupt_11",
+                                "com_interaction_talk_Interrupt_12"
                             ]
                         },
                         {
-                            "_comment":"2.2.5 态度：普通 有他人登场" ,
-                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "_comment": "2.2.5 态度：普通 有他人登场",
+                            "extraPortraitTags": [
+                                "focused"
+                            ],
+                            "useActiveTags": false,
                             "responses": [
-                                "$self$礼貌性地对其点点头，随后继续之前的话题。","$self$只是瞥了一眼来人，并没有太大的反应。","$self$平静地打了个招呼：\"哟，你也在这儿啊。\""
+                                "com_interaction_talk_Interrupt_13",
+                                "com_interaction_talk_Interrupt_14",
+                                "com_interaction_talk_Interrupt_15"
                             ]
                         }
                     ]
@@ -224,7 +315,9 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirement": { "requireEPFailure": true },
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
                             "variants": [
                                 {
                                     "requirement": {
@@ -238,7 +331,8 @@
                                     ],
                                     "useActiveTags": false,
                                     "responses": [
-                                        "$self$抱歉地摆摆手：\"下次吧，我现在手头有点事。\"","$self$指了指自己的耳朵：\"我想先听完这首歌，你们聊。\""
+                                        "com_interaction_talk_1",
+                                        "com_interaction_talk_2"
                                     ]
                                 }
                             ],
@@ -254,31 +348,33 @@
                             "useActiveTags": false,
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
-                                "$self$不耐烦地啧了一声：\"没空，别烦我。\"","$self$戴上耳机，假装没听到对方的邀请。"
+                                "com_interaction_talk_3",
+                                "com_interaction_talk_4"
                             ]
                         },
                         {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
                                         "intrigued",
                                         "relaxed"
-                                    ], "useActiveTags": false,
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
-                                        
-                                    "kojo_default_com_interaction_talk_accept_success_1",
-                                    "kojo_default_com_interaction_talk_accept_success_2",
-
-                                    "$self$满足地伸了个懒腰：\"这正是我想要的答案！太棒了！\"","$self$眼含笑意地看着对方：\"谢谢你，这对我帮助很大。\""
-
+                                        "kojo_default_com_interaction_talk_accept_success_1",
+                                        "kojo_default_com_interaction_talk_accept_success_2",
+                                        "com_interaction_talk_5",
+                                        "com_interaction_talk_6"
                                     ]
                                 }
                             ],
@@ -296,28 +392,31 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
-                                "$self$虽然得到了信息，但脸色依旧阴沉。\"知道了，你可以走了。\"","$self$勉强挤出一个笑容，眼神却很冷淡。\"行吧，就这样。\""
+                                "com_interaction_talk_7",
+                                "com_interaction_talk_8"
                             ]
                         },
                         {
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
                                         "intrigued",
                                         "relaxed"
-                                    ], "useActiveTags": false,
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
-                                        
-                                    "kojo_default_com_interaction_talk_accept_failure_1",
-                                    "kojo_default_com_interaction_talk_accept_failure_2",
-                                    "kojo_default_com_interaction_talk_accept_failure_3",
-
-                                    "虽然没聊出结果，但$self$还是笑得很开心：\"和你聊天真有意思！\"","$self$意犹未尽地舔了舔嘴唇：\"时间过得真快，下次再继续吧。\""
+                                        "kojo_default_com_interaction_talk_accept_failure_1",
+                                        "kojo_default_com_interaction_talk_accept_failure_2",
+                                        "kojo_default_com_interaction_talk_accept_failure_3",
+                                        "com_interaction_talk_9",
+                                        "com_interaction_talk_10"
                                     ]
                                 }
                             ],
@@ -335,7 +434,8 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
-                                "$self$叹了口气，脸上写满了疲惫：\"完全不知道你在说什么……\"","$self$有些恼火地揉了揉太阳穴：\"算了，这就是对牛弹琴。\""
+                                "com_interaction_talk_11",
+                                "com_interaction_talk_12"
                             ]
                         }
                     ]
@@ -346,24 +446,128 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-
-"kojo_default_com_interaction_talk_accept_failure_1":"\"嗯……是啊，挺好的。\"$self$说着却目光飘忽，明显没在听。",
-"kojo_default_com_interaction_talk_accept_failure_2":"\"所以……你到底想说什么？\"$self$微微歪头，语气中带着一丝不耐。",
-"kojo_default_com_interaction_talk_accept_failure_3":"\"嗯……大概吧。\"$self$含糊地回应，看起来只是想快点结束话题。",
-"kojo_default_com_interaction_talk_accept_success_1":"\"真的假的？太搞笑了吧！\"$self$笑出声来",
-"kojo_default_com_interaction_talk_accept_success_2":"$self$：\"「你讲得挺有意思的，不继续了吗？\""
-
+                "com_interaction_talk_Begin_1": "$self$立刻合上书本，满眼期待：\"好啊！正好我无聊死了！\"",
+                "com_interaction_talk_Begin_2": "$self$爽快地站起身，拍拍裙摆：\"聊什么呢？算我一个！\"",
+                "com_interaction_talk_Begin_3": "$self$僵硬地点点头，低着头默默地走了过去。",
+                "com_interaction_talk_Begin_4": "$self$似乎想拒绝，但看到对方的眼神后又把话咽了回去。",
+                "com_interaction_talk_Begin_5": "$self$愣了一下，随即指着自己：\"诶？叫我吗？好吧……\"",
+                "com_interaction_talk_Begin_6": "$self$有些意外地眨眨眼，但还是跟了上去。",
+                "com_interaction_talk_Begin_7": "$self$笑着向身边的$target$搭话：\"这天气真不错，不是吗？\"",
+                "com_interaction_talk_Begin_8": "$self$似乎对$target$的话题很感兴趣，主动凑近了一些。",
+                "com_interaction_talk_Begin_9": "$self$手里拿着饮料，顺势在$target$对面坐了下来：\"介意我坐这儿吗？\"",
+                "com_interaction_talk_Tryjoin_1": "$self$凑到一个正在聊天的小圈子旁：\"听起来很有趣，介意加我一个吗？\"",
+                "com_interaction_talk_Tryjoin_2": "$self$试探性地问道：\"你们在聊那个新游戏吗？我也在玩！\"",
+                "com_interaction_talk_Joined_1": "$self$开心地拉开椅子坐下：\"太好了！我跟你们说……\"",
+                "com_interaction_talk_Joined_2": "$self$松了一口气，脸上露出了融入集体的轻松笑容。",
+                "com_interaction_talk_Join_Refused_1": "$self$尴尬地收回手，讪讪地笑了笑：\"啊……没事，你们继续。\"",
+                "com_interaction_talk_Join_Refused_2": "$self$有些失落地垂下眼帘，默默地转身离开了。",
+                "com_interaction_talk_Join_1": "$self$歉意地笑了笑：\"抱歉，我们在聊一些私事，不太方便。\"",
+                "com_interaction_talk_Join_2": "$self$做了一个‘暂停’的手势：\"稍微等一下好吗？我们需要一点私人空间。\"",
+                "com_interaction_talk_Join_3": "$self$冷冷地瞥了对方一眼：\"我们在忙，没看到吗？\"",
+                "com_interaction_talk_Join_4": "$self$直接无视了对方的存在，提高音量继续之前的话题。",
+                "com_interaction_talk_Join_5": "$self$热情地招手：\"来来来！正缺人呢！\"",
+                "com_interaction_talk_Join_6": "$self$往旁边挤了挤，腾出一个位置：\"快坐！\"",
+                "com_interaction_talk_Join_7": "$self$的话语戛然而止，紧张地看了一眼对方，默默点头。",
+                "com_interaction_talk_Join_8": "$self$身体僵硬地往旁边挪开，不敢有任何异议。",
+                "com_interaction_talk_Join_9": "$self$有些诧异地停下话头，点了点头：\"呃……如果你想听的话。\"",
+                "com_interaction_talk_Join_10": "$self$虽然有些不解，但还是礼貌地让出了位置。",
+                "com_interaction_talk_Ongoing_1": "$self$时不时点头附和，看起来聊得很投机。",
+                "com_interaction_talk_Ongoing_2": "$self$捂着嘴轻笑出声，显然是被$target$的笑话逗乐了。",
+                "com_interaction_talk_Ongoing_3": "$self$神情专注地倾听着，偶尔插上一两句自己的见解。",
+                "com_interaction_talk_Interrupt_1": "$self$下意识地缩了缩脖子，说话的声音都变小了。",
+                "com_interaction_talk_Interrupt_2": "$self$有些慌乱地避开视线，手指不安地绞在一起。",
+                "com_interaction_talk_Interrupt_3": "$self$脸色变得有些苍白，身体微微发抖，似乎想找个借口离开。",
+                "com_interaction_talk_Interrupt_4": "看到对方的瞬间，$self$脸上的笑容僵了一下，随即别过头去。",
+                "com_interaction_talk_Interrupt_5": "$self$压低了声音，眉头微皱：\"怎么偏偏这个时候来……\"",
+                "com_interaction_talk_Interrupt_6": "$self$抱着双臂，原本放松的姿态瞬间变得充满防御性。",
+                "com_interaction_talk_Interrupt_7": "看到来人，$self$的眼睛亮了一下，兴奋地挥手：\"嘿！这儿！快过来一起！\"",
+                "com_interaction_talk_Interrupt_8": "$self$往旁边挪了挪位置，拍拍身边的空位示意对方坐下。",
+                "com_interaction_talk_Interrupt_9": "$self$露出了惊喜的表情：\"正说到你呢，你就来了！\"",
+                "com_interaction_talk_Interrupt_10": "$self$的视线立刻黏在了对方身上，眼神变得有些迷离。",
+                "com_interaction_talk_Interrupt_11": "$self$无意识地咬了咬嘴唇，脸颊泛起一抹红晕。",
+                "com_interaction_talk_Interrupt_12": "$self$调整了一下坐姿，试图展现出自己最迷人的角度。",
+                "com_interaction_talk_Interrupt_13": "$self$礼貌性地对其点点头，随后继续之前的话题。",
+                "com_interaction_talk_Interrupt_14": "$self$只是瞥了一眼来人，并没有太大的反应。",
+                "com_interaction_talk_Interrupt_15": "$self$平静地打了个招呼：\"哟，你也在这儿啊。\"",
+                "com_interaction_talk_1": "$self$抱歉地摆摆手：\"下次吧，我现在手头有点事。\"",
+                "com_interaction_talk_2": "$self$指了指自己的耳朵：\"我想先听完这首歌，你们聊。\"",
+                "com_interaction_talk_3": "$self$不耐烦地啧了一声：\"没空，别烦我。\"",
+                "com_interaction_talk_4": "$self$戴上耳机，假装没听到对方的邀请。",
+                "kojo_default_com_interaction_talk_accept_success_1": "\"真的假的？太搞笑了吧！\"$self$笑出声来",
+                "kojo_default_com_interaction_talk_accept_success_2": "$self$：\"你讲得挺有意思的，不继续了吗？\"",
+                "com_interaction_talk_5": "$self$满足地伸了个懒腰：\"这正是我想要的答案！太棒了！\"",
+                "com_interaction_talk_6": "$self$眼含笑意地看着对方：\"谢谢你，这对我帮助很大。\"",
+                "com_interaction_talk_7": "$self$虽然得到了信息，但脸色依旧阴沉。\"知道了，你可以走了。\"",
+                "com_interaction_talk_8": "$self$勉强挤出一个笑容，眼神却很冷淡。\"行吧，就这样。\"",
+                "kojo_default_com_interaction_talk_accept_failure_1": "\"嗯……是啊，挺好的。\"$self$说着却目光飘忽，明显没在听。",
+                "kojo_default_com_interaction_talk_accept_failure_2": "\"所以……你到底想说什么？\"$self$微微歪头，语气中带着一丝不耐。",
+                "kojo_default_com_interaction_talk_accept_failure_3": "\"嗯……大概吧。\"$self$含糊地回应，看起来只是想快点结束话题。",
+                "com_interaction_talk_9": "虽然没聊出结果，但$self$还是笑得很开心：\"和你聊天真有意思！\"",
+                "com_interaction_talk_10": "$self$意犹未尽地舔了舔嘴唇：\"时间过得真快，下次再继续吧。\"",
+                "com_interaction_talk_11": "$self$叹了口气，脸上写满了疲惫：\"完全不知道你在说什么……\"",
+                "com_interaction_talk_12": "$self$有些恼火地揉了揉太阳穴：\"算了，这就是对牛弹琴。\""
             },
             "en-us": {
-
-"kojo_default_com_interaction_talk_accept_failure_1":"\"Uh-huh… yeah. Sounds great.\" $self$ glances at something else mid-conversation, clearly tuned out.",
-"kojo_default_com_interaction_talk_accept_failure_2":"\"Is there a point to this, or…?\" $self$ tilts her head slightly, impatience creeping into her tone.",
-"kojo_default_com_interaction_talk_accept_failure_3":"\"Mmm… I guess.\" $self$ replies vaguely, clearly just trying to end the topic.",
-"kojo_default_com_interaction_talk_accept_success_1":"\"Wait, seriously? That’s hilarious.\" $self$ laughs out loud",
-"kojo_default_com_interaction_talk_accept_success_2":"$self$: \"You’ve got good stories. Not gonna keep going?\""
-
-
-                
+                "com_interaction_talk_Begin_1": "$self$ immediately shuts her book, eyes full of anticipation: \"Sure! I was bored to death anyway!\"",
+                "com_interaction_talk_Begin_2": "$self$ stands up briskly, dusting off her skirt: \"What are we talking about? Count me in!\"",
+                "com_interaction_talk_Begin_3": "$self$ nods stiffly, lowering her head as she walks over silently.",
+                "com_interaction_talk_Begin_4": "$self$ seems about to refuse, but swallows her words after seeing the look in their eyes.",
+                "com_interaction_talk_Begin_5": "$self$ pauses, then points to herself: \"Eh? You mean me? Alright...\"",
+                "com_interaction_talk_Begin_6": "$self$ blinks in surprise, but follows along anyway.",
+                "com_interaction_talk_Begin_7": "$self$ smiles and speaks to $target$ beside her: \"Nice weather, isn't it?\"",
+                "com_interaction_talk_Begin_8": "$self$ seems very interested in $target$'s topic and leans in closer.",
+                "com_interaction_talk_Begin_9": "$self$ sits down opposite $target$, holding her drink: \"Mind if I sit here?\"",
+                "com_interaction_talk_Tryjoin_1": "$self$ leans into a small group chatting: \"Sounds fun, mind if I join?\"",
+                "com_interaction_talk_Tryjoin_2": "$self$ asks tentatively: \"Are you guys talking about that new game? I play it too!\"",
+                "com_interaction_talk_Joined_1": "$self$ happily pulls out a chair and sits down: \"Great! Let me tell you...\"",
+                "com_interaction_talk_Joined_2": "$self$ lets out a sigh of relief, a relaxed smile of belonging appearing on her face.",
+                "com_interaction_talk_Join_Refused_1": "$self$ awkwardly withdraws her hand, laughing sheepishly: \"Ah... never mind, carry on.\"",
+                "com_interaction_talk_Join_Refused_2": "$self$ lowers her eyes in disappointment and silently turns to leave.",
+                "com_interaction_talk_Join_1": "$self$ smiles apologetically: \"Sorry, we're discussing something private, it's not a good time.\"",
+                "com_interaction_talk_Join_2": "$self$ makes a 'pause' gesture: \"Can you give us a moment? We need a little privacy.\"",
+                "com_interaction_talk_Join_3": "$self$ glances coldly at them: \"We're busy, can't you see?\"",
+                "com_interaction_talk_Join_4": "$self$ ignores their presence completely, raising her voice to continue the previous topic.",
+                "com_interaction_talk_Join_5": "$self$ waves enthusiastically: \"Come on over! We need more people!\"",
+                "com_interaction_talk_Join_6": "$self$ squeezes to the side to make room: \"Sit! Quick!\"",
+                "com_interaction_talk_Join_7": "$self$ stops talking abruptly, glances nervously at them, and nods silently.",
+                "com_interaction_talk_Join_8": "$self$ stiffly moves aside, daring not to voice any objection.",
+                "com_interaction_talk_Join_9": "$self$ stops in surprise, then nods: \"Uh... if you want to listen.\"",
+                "com_interaction_talk_Join_10": "$self$ looks puzzled but politely makes room.",
+                "com_interaction_talk_Ongoing_1": "$self$ nods along occasionally, seeming to be very engaged in the chat.",
+                "com_interaction_talk_Ongoing_2": "$self$ covers her mouth and giggles, clearly amused by $target$'s joke.",
+                "com_interaction_talk_Ongoing_3": "$self$ listens intently, occasionally interjecting with her own insights.",
+                "com_interaction_talk_Interrupt_1": "$self$ subconsciously shrinks back, her voice dropping to a whisper.",
+                "com_interaction_talk_Interrupt_2": "$self$ averts her gaze in panic, her fingers twisting together nervously.",
+                "com_interaction_talk_Interrupt_3": "$self$ turns pale and trembles slightly, looking for an excuse to leave.",
+                "com_interaction_talk_Interrupt_4": "Upon seeing them, $self$'s smile freezes, and she turns her head away.",
+                "com_interaction_talk_Interrupt_5": "$self$ lowers her voice, frowning: \"Why now, of all times...\"",
+                "com_interaction_talk_Interrupt_6": "$self$ crosses her arms, her relaxed posture instantly becoming defensive.",
+                "com_interaction_talk_Interrupt_7": "Seeing them arrive, $self$'s eyes light up, and she waves excitedly: \"Hey! Over here! Come join us!\"",
+                "com_interaction_talk_Interrupt_8": "$self$ moves over, patting the empty seat beside her for them to sit.",
+                "com_interaction_talk_Interrupt_9": "$self$ looks pleasantly surprised: \"We were just talking about you, and here you are!\"",
+                "com_interaction_talk_Interrupt_10": "$self$'s gaze immediately glues to them, her eyes becoming slightly dreamy.",
+                "com_interaction_talk_Interrupt_11": "$self$ unconsciously bites her lip, a flush rising on her cheeks.",
+                "com_interaction_talk_Interrupt_12": "$self$ adjusts her sitting posture, trying to present her most charming angle.",
+                "com_interaction_talk_Interrupt_13": "$self$ gives a polite nod, then continues with the previous topic.",
+                "com_interaction_talk_Interrupt_14": "$self$ merely glances at the newcomer without much reaction.",
+                "com_interaction_talk_Interrupt_15": "$self$ greets them calmly: \"Oh, you're here too.\"",
+                "com_interaction_talk_1": "$self$ waves apologetically: \"Next time, I'm a bit tied up right now.\"",
+                "com_interaction_talk_2": "$self$ points to her ear: \"I want to finish this song first, you guys talk.\"",
+                "com_interaction_talk_3": "$self$ clicks her tongue impatiently: \"No time, don't bother me.\"",
+                "com_interaction_talk_4": "$self$ puts on headphones, pretending not to hear the invitation.",
+                "kojo_default_com_interaction_talk_accept_success_1": "\"For real? That's hilarious!\" $self$ laughs out loud.",
+                "kojo_default_com_interaction_talk_accept_success_2": "$self$: \"That was interesting. You're stopping there?\"",
+                "com_interaction_talk_5": "$self$ stretches with satisfaction: \"That's exactly the answer I wanted! Awesome!\"",
+                "com_interaction_talk_6": "$self$ looks at them with a smile: \"Thank you, that helps a lot.\"",
+                "com_interaction_talk_7": "$self$ received the info, but her expression remains dark. \"Got it, you can go now.\"",
+                "com_interaction_talk_8": "$self$ forces a smile, though her eyes remain cold. \"Fine, let's leave it at that.\"",
+                "kojo_default_com_interaction_talk_accept_failure_1": "\"Uh-huh... yeah. Sounds great.\" $self$ glances elsewhere, clearly tuned out.",
+                "kojo_default_com_interaction_talk_accept_failure_2": "\"So... is there a point to this?\" $self$ tilts her head slightly, impatience creeping into her tone.",
+                "kojo_default_com_interaction_talk_accept_failure_3": "\"Mmm... I guess.\" $self$ replies vaguely, clearly just trying to end the topic.",
+                "com_interaction_talk_9": "Even without a conclusion, $self$ smiles happily: \"Chatting with you is really fun!\"",
+                "com_interaction_talk_10": "$self$ licks her lips, wanting more: \"Time flies, let's continue next time.\"",
+                "com_interaction_talk_11": "$self$ sighs, looking exhausted: \"I have absolutely no idea what you're talking about...\"",
+                "com_interaction_talk_12": "$self$ rubs her temples in annoyance: \"Forget it, it's like talking to a wall.\""
             }
         }
     }

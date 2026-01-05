@@ -101,6 +101,12 @@
             {
                 "skill_farming": "园艺",
                 "skill_farming_tooltip": "适用范围：打理农田"
+            },
+            "en-us":
+            {
+                
+    "skill_farming": "Gardening",
+    "skill_farming_tooltip": "Applies to: Tending to farmland"
             }
         }
     }

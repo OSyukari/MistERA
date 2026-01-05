@@ -30,7 +30,7 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_error",
-                    "line": "exp_event_combat_draw_ev99",
+                    "line": "exp_event_error99",
                     "isLast": true
                 }
                 ]
@@ -60,27 +60,27 @@
                     "label": "br_victory",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
                     "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
-                    "line": "$party.name$击败了敌人"
+                    "line": "exp_event_combat_Victory_event_ev01"
                 },
     {
         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-        "question":"搜刮战利品？",
+        "question":"exp_event_combat_Victory_event_ev02",
         "options":[
             {   
                 "self_chara_conditions":[ {"parameters":["exists"]}, {"parameters":["isPlayer"]} ],
-                "option": "只拿道具",
+                "option": "exp_event_combat_Victory_event_ev02_op01",
                 "Results": [ { "Type":"FactionExchangeInventory", "arguments":["party","enemy","false","true","true","false",""]},
                                             { "Type":"JumpToLabel", "arguments":["","br_lootEnd"]} ] 
             },
             {   
                 "self_chara_conditions":[ {"parameters":["exists"]}, {"parameters":["isPlayer"]} ],
-                "option": "道具人员都要", 
+                "option": "exp_event_combat_Victory_event_ev02_op02", 
                 "Results": [ { "Type":"FactionExchangeInventory", "arguments":["party","enemy","true","true","true","true",""]},
                                             { "Type":"JumpToLabel", "arguments":["","br_lootEnd"]} ] 
             },
             {   
-                "option": "什么都不拿",   "isDefaultCancel":true,
+                "option": "exp_event_combat_Victory_event_ev02_op03",   "isDefaultCancel":true,
                 "Results": [ { "Type":"JumpToLabel", "arguments":["","br_noLootEnd"]} ] 
             }
         ]
@@ -90,7 +90,7 @@
                     "label": "br_lootEnd",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
                     "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
-                    "line": "$party.name$搜刮了战利品",
+                    "line": "exp_event_combat_Victory_event_ev03",
                     "isLast": true
                 },
                 {
@@ -98,13 +98,13 @@
                     "label": "br_noLootEnd",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
                     "_comment":"change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
-                    "line": "$party.name$没有在此过多停留",
+                    "line": "exp_event_combat_Victory_event_ev04",
                     "isLast": true
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_error",
-                    "line": "警告！由于内容缺失，该事件强制终止。",
+                    "line": "exp_event_error99",
                     "isLast": true
                 }
                 ]
@@ -144,16 +144,16 @@
                     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                     "label":"br_choice",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-                    "question":"$party.name$被敌人击败了",
+                    "question":"exp_event_combat_Defeat_ev01",
                     "options":[
                         {   
-                            "option": "用大人的卡片让队员们撤离（MP-1）",
+                            "option": "exp_event_combat_Defeat_ev01_op01",
                             "self_chara_conditions":[ { "parameters":["getStat","stats_derived_extended_mp","gte","1"] } ],
                             "Results": [ { "Type":"ModStatEXValue", "arguments":["self","stats_derived_extended_mp","-1"]},
                                         { "Type":"JumpToLabel", "arguments":["","br_escape"]} ] 
                         },
                         {   
-                            "option": "接受战败（全员HP-1）", 
+                            "option": "exp_event_combat_Defeat_ev01_op02", 
                             "Results": [ { "Type":"ModStatEXValue", "arguments":["party","stats_derived_extended_hp","-1"]},
                                          { "Type":"JumpToLabel", "arguments":["","br_defeat"]} ] 
                         }
@@ -163,20 +163,20 @@
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_escape",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-                    "line": "$party.name$成功逃离了敌人",
+                    "line": "exp_event_combat_Defeat_ev02",
                     "isLast": true
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_defeat",
         "portraitRefKey":"party", "portraitTagsOverride":["serious"],
-                    "line": "$party.name$尽力从敌人手下逃走，但都受了一定程度的伤",
+                    "line": "exp_event_combat_Defeat_ev03",
                     "isLast": true
                 },
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_error",
-                    "line": "警告！由于内容缺失，该事件强制终止。",
+                    "line": "exp_event_error99",
                     "isLast": true
                 }
                 ]
@@ -189,12 +189,55 @@
         {
             "zh-cn":
             {
-"exp_event_combat_Victory":"战斗胜利",
 "exp_event_combat_Draw":"战斗平局",
-"exp_event_combat_Defeat":"战斗失败",
-
 "exp_event_combat_draw_ev01":"$party.name$的小队未能击败敌人",
-"exp_event_combat_draw_ev99":"警告！由于内容缺失，该事件强制终止。"
+
+
+
+"exp_event_combat_Defeat":"战斗失败",
+"exp_event_combat_Defeat_ev01":"$party.name$被敌人击败了",
+"exp_event_combat_Defeat_ev01_op01":"用大人的卡片让队员们撤离（MP-1）",
+"exp_event_combat_Defeat_ev01_op02":"接受战败（全员HP-1）",
+"exp_event_combat_Defeat_ev02":"$party.name$成功逃离了敌人",
+"exp_event_combat_Defeat_ev03":"$party.name$尽力从敌人手下逃走，但都受了一定程度的伤",
+
+
+
+"exp_event_combat_Victory":"战斗胜利",
+"exp_event_combat_Victory_event_ev01":"$party.name$击败了敌人",
+"exp_event_combat_Victory_event_ev02":"搜刮战利品？",
+"exp_event_combat_Victory_event_ev02_op01":"只拿道具",
+"exp_event_combat_Victory_event_ev02_op02":"道具人员都要",
+"exp_event_combat_Victory_event_ev02_op03":"什么都不拿",
+"exp_event_combat_Victory_event_ev03":"$party.name$搜刮了战利品",
+"exp_event_combat_Victory_event_ev04":"$party.name$没有在此过多停留",
+
+"exp_event_error99":"警告！由于内容缺失，该事件强制终止。"
+            },
+            "en-us":
+            {
+
+"exp_event_combat_Draw":"Combat Draw",
+"exp_event_combat_draw_ev01":"$party.name$'s party failed to defeat the enemy",
+
+"exp_event_combat_Defeat":"Combat Defeat",
+"exp_event_combat_Defeat_ev01":"$party.name$ was defeated by the enemy",
+"exp_event_combat_Defeat_ev01_op01":"Use the Adult's Card to evacuate the members (MP-1)",
+"exp_event_combat_Defeat_ev01_op02":"Accept defeat (All members HP-1)",
+"exp_event_combat_Defeat_ev02":"$party.name$ successfully fled from the enemy",
+"exp_event_combat_Defeat_ev03":"$party.name$ tried their best to escape from the enemy, but everyone sustained some injuries",
+
+"exp_event_combat_Victory":"Combat Victory",
+"exp_event_combat_Victory_event_ev01":"$party.name$ defeated the enemy",
+"exp_event_combat_Victory_event_ev02":"Loot the spoils?",
+"exp_event_combat_Victory_event_ev02_op01":"Take items only",
+"exp_event_combat_Victory_event_ev02_op02":"Take items and personnel",
+"exp_event_combat_Victory_event_ev02_op03":"Take nothing",
+"exp_event_combat_Victory_event_ev03":"$party.name$ looted the spoils",
+"exp_event_combat_Victory_event_ev04":"$party.name$ did not stay here for long",
+
+"exp_event_error99":"WARNING! Event terminated forcefully due to missing content."
+
             }
         }
     }

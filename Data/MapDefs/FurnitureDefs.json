@@ -181,8 +181,9 @@
             "displayName":"水培舱",
             "recipe":[],
             "furnitureSize":1,
-            "givesJob": [  { "comTags":["furniture","farm_cultivate_crop"] },
-                            { "comTags":["furniture","farm_maintain"] }]
+            "givesJob": [  { "comTags":["furniture", "farm_cultivate_crop"] },
+                            { "comTags":["furniture", "farm_maintain"] },
+                            { "comTags":["furniture","farm_remove"] }]
         },
         {
             "ID":"furniture_workbench_engineering",
@@ -198,7 +199,8 @@
             "recipe":[],
             "furnitureSize":1,
             "givesJob": [  { "comTags":["furniture","farm_cultivate_meat"] },
-                            { "comTags":["furniture","farm_maintain"] }]
+                            { "comTags":["furniture","farm_maintain"] },
+                            { "comTags":["furniture","farm_remove"] }]
         },
         {
             "ID":"furniture_research_biochem",
@@ -270,7 +272,6 @@
         },
         {
             "ID":"furniture_camping_site",
-            "displayName":"露营地点",
             "recipe":[],
             "furnitureSize":0,
             "givesJob":
@@ -286,6 +287,8 @@
         {
             "zh-cn":
             {
+"furniture_camping_site":"露营地点",
+
 "furniture_bed_single":"单人床",
 "furniture_bed_single_bunk":"单人上下床",
 "furniture_bed_double":"双人床",
@@ -328,6 +331,8 @@
             },
             "en-us":
             {
+"furniture_camping_site":"Camping Site",
+
 "furniture_bed_single": "Single Bed",
 "furniture_bed_single_bunk": "Bunk Bed",
 "furniture_bed_double": "Double Bed",
@@ -365,7 +370,8 @@
   "furniture_shooting_range_spot": "Shooting Range Spot",
   "furniture_arena_spot": "Arena Spot",
   "furniture_prison_containment_spot": "Prison Cell (Single)",
-  "furniture_prison_containment_spot_2": "Prison Cell (Double)"
+  "furniture_prison_containment_spot_2": "Prison Cell (Double)",
+  "furniture_prison_containment_spot_4":"Prison Cell (Quad)"
 
             }
         }

@@ -153,6 +153,11 @@
             {
                 "skill_expansion_W": "子宫扩张",
                 "skill_expansion_W_tooltip": "%%skill_expansion_tooltip1%%"
+            },
+            "en-us":
+            {
+                "skill_expansion_W": "Womb Expansion",
+                "skill_expansion_W_tooltip": "%%skill_expansion_tooltip1%%"
             }
         }
     }

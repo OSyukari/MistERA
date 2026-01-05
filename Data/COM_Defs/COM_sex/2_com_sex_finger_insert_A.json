@@ -84,7 +84,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$正在愛撫$receiver.firstname$的胸部" ]
+                            "texts": [ "com_sex_finger_insert_A_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -93,7 +93,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$将插在$receiver.firstname$肛门内的手指抽出来" ]
+                            "texts":[ "com_sex_finger_insert_A_description_remove_1" ]
                         }
                     ]
                 },
@@ -103,7 +103,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$receiver.firstname$的肛门由于高潮而紧缩" ]
+                            "texts":[ "com_sex_finger_insert_A_description_after_1" ]
                         }
                     ]
                 },
@@ -112,12 +112,52 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$的手指插入了$receiver.firstname$的肛门开始抽送"]
+                            "texts": ["com_sex_finger_insert_A_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_finger_insert_A":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_insert_A_displayName_1": "A指入自慰",
+                "com_sex_finger_insert_A_displayName_2": "一起A指入自慰",
+                "com_sex_finger_insert_A_displayName_3": "A指入",
+                "com_sex_finger_insert_A_displayName_4": "交替A指入",
+                "com_sex_finger_insert_A_displayName_5": "轮流A指入",
+                "com_sex_finger_insert_A_displayName_6": "同时A指入",
+
+                "com_sex_finger_insert_A_description_begin_1":"$doer.firstname$的手指插入了$receiver.firstname$的肛门开始抽送",
+                "com_sex_finger_insert_A_description_after_1":"$receiver.firstname$的肛门由于高潮而紧缩",
+                "com_sex_finger_insert_A_description_remove_1":"$doer.firstname$将插在$receiver.firstname$肛门内的手指抽出来",
+                "com_sex_finger_insert_A_description_ongoing_1":"$doer.firstname$正在指入$receiver.firstname$的肛门"
+
+            },
+            "en-us":
+            {
+                "com_sex_finger_insert_A":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_finger_insert_A_displayName_1": "Anal Fingering Masturbation",
+                "com_sex_finger_insert_A_displayName_2": "Alt. Anal Fingering Masturbation",
+                "com_sex_finger_insert_A_displayName_3": "Anal Fingering",
+                "com_sex_finger_insert_A_displayName_4": "Alt. Anal Fingering",
+                "com_sex_finger_insert_A_displayName_5": "Alt. Anal Fingering",
+                "com_sex_finger_insert_A_displayName_6": "Alt. Anal Fingering",
+
+                "com_sex_finger_insert_A_description_begin_1":"$doer.firstname$'s finger inserts into $receiver.firstname$'s anus and begins to pump",
+                "com_sex_finger_insert_A_description_after_1":"$receiver.firstname$'s anus tightens due to orgasm",
+                "com_sex_finger_insert_A_description_remove_1":"$doer.firstname$ pulls the finger out from inside $receiver.firstname$'s anus",
+                "com_sex_finger_insert_A_description_ongoing_1":"$doer.firstname$ is fingering $receiver.firstname$'s anus"
+
+            }
+        }
     }
 }

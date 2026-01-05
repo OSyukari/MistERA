@@ -1,251 +1,559 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_P_Climax",
-        "tags":["nsfw"],
-        "variants":[
+    "Character_Personalities": {
+        "looselist": [
             {
-                
-                "requireSelfReceiver": true,
-                "_comment":"受方 被口交 高潮" ,
-                "responses": [
-                    "($self$) 被口交 高潮 口上文"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 被口交 高潮",
+                            "responses": [
+                                "com_sex_oral_P_Climax_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "climax"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 攻方 口交 高潮 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_Climax_2",
+                                        "com_sex_oral_P_Climax_3",
+                                        "com_sex_oral_P_Climax_4"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 攻方 口交 高潮 无允许 口上文",
+                            "responses": [
+                                "com_sex_oral_P_Climax_5",
+                                "com_sex_oral_P_Climax_6",
+                                "com_sex_oral_P_Climax_7"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                
-                "requireSelfDoer": true,
-                "variants":[
-                    {
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","blowjob", "climax"], "useActiveTags":false,
-                        "_comment":"2.4.1 攻方 口交 高潮 有允许 口上文" ,
-                        "responses": [
-"$self$突然浑身一颤，喉咙深处发出一声高亢的呜咽，双手紧紧抓住了$target$的大腿。呜……嗯哼！！不行了……脑子要……融化了……", "$self$眼睛猛地翻白，口水的吞咽动作变得杂乱无章，整个人瘫软在$target$胯下。哈啊……哈啊……这种感觉……太棒了……", "$self$身体剧烈地痉挛着，却依然舍不得松开嘴，一边高潮一边更加用力地吸吮。去了……我也要……一起去……！"
-                        ]
-                    }
-                ],
-                "extraPortraitTags":["sex","doer","blowjob", "climax"], "useActiveTags":false,
-                "_comment":"2.4.2 攻方 口交 高潮 无允许 口上文" ,
-                "responses": [
-"$self$不可置信地瞪大了眼睛，身体背叛了意志开始剧烈颤抖。不……不要……为什么会……呜呜呜！", "$self$屈辱地咬着嘴唇，却无法控制体内涌上来的快感，眼泪和口水混在一起流下。明明很讨厌……为什么……身体会……啊啊！", "$self$在快感的冲击下彻底崩溃，一边哭喊着一边达到了高潮。你是魔鬼……呜……好奇怪……要坏掉了……"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_P_Begin",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":["sex","doer","blowjob", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始口交 有允许 口上文" ,
-                "responses":
-                [ 
-"$self$自然地跪在$target$双腿之间，伸手解开了对方的腰带。既然你想要，那我就不客气了。这里……应该已经很硬了吧？", "$self$嘴角含笑，轻轻推了一下$target$的肩膀示意对方坐下，随后熟练地将长发撩到耳后。乖乖坐好别动，让我来帮你放松一下。", "$self$低下头，眼神有些迷离地盯着$target$的下体，伸出舌尖轻轻舔过嘴唇。虽然有点累，但如果是你的话……好吧。"
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始口交 有允许 口上文",
+                            "responses": [
+                                "com_sex_oral_P_Begin_1",
+                                "com_sex_oral_P_Begin_2",
+                                "com_sex_oral_P_Begin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始口交 未允许 好意 口上文",
+                            "responses": [
+                                "com_sex_oral_P_Begin_4",
+                                "com_sex_oral_P_Begin_5",
+                                "com_sex_oral_P_Begin_6"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始口交 未允许 敌意 口上文",
+                            "responses": [
+                                "com_sex_oral_P_Begin_7",
+                                "com_sex_oral_P_Begin_8",
+                                "com_sex_oral_P_Begin_9"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":["sex","doer","blowjob", "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始口交 未允许 好意 口上文" ,
-                "responses":
-                [ 
-"$self$瞪大了眼睛看着$target$，双手有些不知所措地悬在半空。等等……你是认真的吗？这种事情……", "$self$下意识地想要后退，却因为某种原因停住了脚步，脸颊瞬间涨红。既然是你请求的话……仅此一次哦。", "$self$僵硬地张开了嘴，视线慌乱地游移着，不敢与$target$对视。我知道了……但能不能……温柔一点？"
-                ]
-            },
-            {
-                
-                "extraPortraitTags":["sex","doer","blowjob", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
-                "_comment":"2.2.2 开始口交 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-"$self$浑身颤抖着跪了下去，眼眶里蓄满了恐惧的泪水。我知道了……请不要伤害我……我会照做的。", "$self$紧紧闭着眼睛，因为害怕而不敢有丝毫反抗，双手死死抓着自己的裙角。只要做了这个……你就会放过我对吧？", "$self$在$target$的注视下屈辱地低下头，颤抖着张开了嘴唇。我做……我做就是了……"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_P",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sex","doer","blowjob","sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 口交 口上文",
-                "responses":
-                [ 
-
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","doer","blowjob","doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 口交 口上文",
-                "responses":
-                [ 
-
-
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[
-                    {
-                        "requirement":  { "selfTags":["justWokenUp"] } ,
-                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                        "variants":[
-                            {
-                                "requirement":  {  "requirePermission":true } ,
-                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 口交 口上文 有允许",
-                                "responses":
-                                [ 
-"$self$猛地偏过头吐出了口中的东西，有些生气地擦了擦嘴角。你在干什么啊！让我睡觉行不行！", "$self$皱着眉头推开了$target$的身体，翻过身背对着对方。别闹了……我很累，明天还要早起。", "$self$含糊不清地抗议着，牙齿不小心刮蹭到了$target$。痛……我不想要，快拿出去。"
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
                                 ]
-
-                            }
-                        ],
-                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 口交 口上文 无允许",
-                        "responses":
-                        [ 
-"$self$尖叫着推开$target$，惊恐地缩到了床角。你疯了吗？！这算什么！强奸吗？！", "$self$拼命挣扎着，不顾一切地想要逃离这个房间。救命！有人吗！滚开啊！", "$self$毫不犹豫地咬了下去，趁着$target$吃痛的瞬间跳下了床。别碰我！你这个变态！"
-                        ]
-                    },
-                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 口交 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$按住了$target$伸向自己头部的手，轻轻摇了摇头。今天嘴巴好酸，下次再补偿你好不好？", "$self$笑着躲开了$target$的动作，顺手递过去一杯水。饶了我吧，昨晚还没折腾够吗？现在的我可是休战状态。", "$self$趴在$target$腿上蹭了蹭，声音慵懒。比起做这个，我现在更想让你抱着我睡一会儿。"
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 口交 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$尴尬地笑了笑，轻轻推开了$target$的手。那个……我们好像还没熟到这种程度吧？别开玩笑了。", "$self$机智地岔开了话题，身体不动声色地拉开了距离。这玩笑有点过火了哦，$target$。我去那边看看有什么喝的。", "$self$双手交叉比了一个叉，语气轻松却坚定。达咩！这个绝对不可以！我们的关系仅限于此哦。"
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 口交 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$冷冷地看着$target$，眼神中充满了厌恶和警惕。你在发什么疯？离我远点！", "$self$毫不客气地拍掉了$target$的手，后退几步摆出了防御姿态。再敢乱来我就报警了。你把我当成什么人了？", "$self$啐了一口唾沫，脸上写满了鄙夷。恶心。别用那种眼神看我，滚开。"
-                 ]
-            },
-            {
-
-                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
-                "_comment1":"玩家专用 刚睡醒时的 口交口上文",
-                "variants":[
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":["sex","doer","blowjob","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 口交 有允许 口上文",
-                        "responses":[
-"$self$迷迷糊糊地睁开眼，感受到口中的异物后本能地吮吸了一下。嗯……是$target$吗？真是个坏心眼的家伙……", "$self$在半梦半醒间发出几声鼻音，顺从地张开嘴接纳了$target$的侵入。好困……你自己动吧……", "$self$无力地拍了一下$target$的大腿，随即闭上眼配合着对方的节奏。大半夜的……真拿你没办法。"
-                        ]
-
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":["sex","doer","blowjob","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 口交 无允许 好意 口上文",
-                        "responses":[
-"$self$惊醒后看到眼前的一幕，虽然满脸通红却没有推开。这……这是在做梦吗？既然是你……我不讨厌……", "$self$愣了几秒后，有些羞涩地垂下眼帘，顺从地含住了前端。如果这是$target$希望的……", "$self$不仅没有反抗，反而伸手扶住了$target$的腰。既然都被吵醒了……那就做完吧。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.8 玩家专用 刚睡醒时的 口交 无允许 敌意 口上文",
-                "extraPortraitTags":["sex","doer","blowjob","scared","submissive"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$被吓醒后想要尖叫，却被眼前的情况吓得把声音咽了回去。不……不要打我……我含着……呜呜……", "$self$在极度的惊恐中选择了顺从，眼泪顺着眼角滑落进鬓角。我听话……求求你别生气……", "$self$像个坏掉的玩偶一样张着嘴，任由$target$摆布，完全放弃了思考。"
-                ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","blowjob", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 口交 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$抬起头，嘴角还挂着一丝晶莹的液体，眼神中满是宠溺。你的味道……真的很让人安心。感觉怎么样？还要更深一点吗？", "$self$并没有停下动作，而是更加卖力地吞吐着，喉咙里发出含糊不清的呜咽声，似乎正在享受这一过程。", "$self$伸手抚摸着$target$的大腿内侧，眼神自下而上地勾着对方。我也……渐渐变得奇怪起来了。你的反应真可爱。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 口交 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","doer","blowjob", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [
-"$self$原本紧绷的身体逐渐放松下来，眼神中多了一丝迷离。没想到……感觉并不坏……", "$self$试探性地用舌尖触碰了一下，发现$target$并没有过激反应后，动作变得大胆了一些。这就是……男人的那个吗？", "$self$似乎适应了这种尺寸，喉咙里发出的声音也不再那么抗拒。既然都这样了……那就帮你弄出来吧。"
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","blowjob", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 口交 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$的动作慢了下来，微微皱眉，似乎是因为下颚的酸痛而感到不适。今天好像有点太久了……嘴巴有些麻。 ", "$self$停下动作，捂着嘴咳嗽了几声，眼角渗出一点生理性的泪花。抱歉……有点太深了，让我缓一缓。", "$self$机械地套弄着，眼神开始游移，显然心思已经不在当下的行为上了。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 口交 结果负面 未允许 口上文",
-                "extraPortraitTags":["sex","doer","blowjob", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$因为长时间的张嘴而流出了口水，眼神空洞且绝望。什么时候……才能结束……", "$self$忍受着强烈的呕吐感，眼泪止不住地流下来，身体因为恶心而微微抽搐。好难受……太深了……", "$self$眼神中原本的惊讶已经完全变成了屈辱和怨恨，只是机械地配合着$target$的动作。"
-                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 口交 口上文",
+                            "responses": []
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 口交 口上文",
+                            "responses": []
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 口交 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_oral_P_1",
+                                                "com_sex_oral_P_2",
+                                                "com_sex_oral_P_3"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 口交 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_oral_P_4",
+                                        "com_sex_oral_P_5",
+                                        "com_sex_oral_P_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 口交 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_7",
+                                        "com_sex_oral_P_8",
+                                        "com_sex_oral_P_9"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 口交 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_10",
+                                        "com_sex_oral_P_11",
+                                        "com_sex_oral_P_12"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 口交 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_13",
+                                "com_sex_oral_P_14",
+                                "com_sex_oral_P_15"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment1": "玩家专用 刚睡醒时的 口交口上文",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 口交 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_16",
+                                        "com_sex_oral_P_17",
+                                        "com_sex_oral_P_18"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 口交 无允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_19",
+                                        "com_sex_oral_P_20",
+                                        "com_sex_oral_P_21"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.8 玩家专用 刚睡醒时的 口交 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "scared",
+                                "submissive"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_22",
+                                "com_sex_oral_P_23",
+                                "com_sex_oral_P_24"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 口交 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_25",
+                                        "com_sex_oral_P_26",
+                                        "com_sex_oral_P_27"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 口交 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_oral_P_28",
+                                "com_sex_oral_P_29",
+                                "com_sex_oral_P_30"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 口交 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_31",
+                                        "com_sex_oral_P_32",
+                                        "com_sex_oral_P_33"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 口交 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_34",
+                                "com_sex_oral_P_35",
+                                "com_sex_oral_P_36"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_P_Climax_1": "($self$) 被口交 高潮 口上文",
+                "com_sex_oral_P_Climax_2": "$self$突然浑身一颤，喉咙深处发出一声高亢的呜咽，双手紧紧抓住了$target$的大腿。呜……嗯哼！！不行了……脑子要……融化了……",
+                "com_sex_oral_P_Climax_3": "$self$眼睛猛地翻白，口水的吞咽动作变得杂乱无章，整个人瘫软在$target$胯下。哈啊……哈啊……这种感觉……太棒了……",
+                "com_sex_oral_P_Climax_4": "$self$身体剧烈地痉挛着，却依然舍不得松开嘴，一边高潮一边更加用力地吸吮。去了……我也要……一起去……！",
+                "com_sex_oral_P_Climax_5": "$self$不可置信地瞪大了眼睛，身体背叛了意志开始剧烈颤抖。不……不要……为什么会……呜呜呜！",
+                "com_sex_oral_P_Climax_6": "$self$屈辱地咬着嘴唇，却无法控制体内涌上来的快感，眼泪和口水混在一起流下。明明很讨厌……为什么……身体会……啊啊！",
+                "com_sex_oral_P_Climax_7": "$self$在快感的冲击下彻底崩溃，一边哭喊着一边达到了高潮。你是魔鬼……呜……好奇怪……要坏掉了……",
+                "com_sex_oral_P_Begin_1": "$self$自然地跪在$target$双腿之间，伸手解开了对方的腰带。既然你想要，那我就不客气了。这里……应该已经很硬了吧？",
+                "com_sex_oral_P_Begin_2": "$self$嘴角含笑，轻轻推了一下$target$的肩膀示意对方坐下，随后熟练地将长发撩到耳后。乖乖坐好别动，让我来帮你放松一下。",
+                "com_sex_oral_P_Begin_3": "$self$低下头，眼神有些迷离地盯着$target$的下体，伸出舌尖轻轻舔过嘴唇。虽然有点累，但如果是你的话……好吧。",
+                "com_sex_oral_P_Begin_4": "$self$瞪大了眼睛看着$target$，双手有些不知所措地悬在半空。等等……你是认真的吗？这种事情……",
+                "com_sex_oral_P_Begin_5": "$self$下意识地想要后退，却因为某种原因停住了脚步，脸颊瞬间涨红。既然是你请求的话……仅此一次哦。",
+                "com_sex_oral_P_Begin_6": "$self$僵硬地张开了嘴，视线慌乱地游移着，不敢与$target$对视。我知道了……但能不能……温柔一点？",
+                "com_sex_oral_P_Begin_7": "$self$浑身颤抖着跪了下去，眼眶里蓄满了恐惧的泪水。我知道了……请不要伤害我……我会照做的。",
+                "com_sex_oral_P_Begin_8": "$self$紧紧闭着眼睛，因为害怕而不敢有丝毫反抗，双手死死抓着自己的裙角。只要做了这个……你就会放过我对吧？",
+                "com_sex_oral_P_Begin_9": "$self$在$target$的注视下屈辱地低下头，颤抖着张开了嘴唇。我做……我做就是了……",
+                "com_sex_oral_P_1": "$self$猛地偏过头吐出了口中的东西，有些生气地擦了擦嘴角。你在干什么啊！让我睡觉行不行！",
+                "com_sex_oral_P_2": "$self$皱着眉头推开了$target$的身体，翻过身背对着对方。别闹了……我很累，明天还要早起。",
+                "com_sex_oral_P_3": "$self$含糊不清地抗议着，牙齿不小心刮蹭到了$target$。痛……我不想要，快拿出去。",
+                "com_sex_oral_P_4": "$self$尖叫着推开$target$，惊恐地缩到了床角。你疯了吗？！这算什么！强奸吗？！",
+                "com_sex_oral_P_5": "$self$拼命挣扎着，不顾一切地想要逃离这个房间。救命！有人吗！滚开啊！",
+                "com_sex_oral_P_6": "$self$毫不犹豫地咬了下去，趁着$target$吃痛的瞬间跳下了床。别碰我！你这个变态！",
+                "com_sex_oral_P_7": "$self$按住了$target$伸向自己头部的手，轻轻摇了摇头。今天嘴巴好酸，下次再补偿你好不好？",
+                "com_sex_oral_P_8": "$self$笑着躲开了$target$的动作，顺手递过去一杯水。饶了我吧，昨晚还没折腾够吗？现在的我可是休战状态。",
+                "com_sex_oral_P_9": "$self$趴在$target$腿上蹭了蹭，声音慵懒。比起做这个，我现在更想让你抱着我睡一会儿。",
+                "com_sex_oral_P_10": "$self$尴尬地笑了笑，轻轻推开了$target$的手。那个……我们好像还没熟到这种程度吧？别开玩笑了。",
+                "com_sex_oral_P_11": "$self$机智地岔开了话题，身体不动声色地拉开了距离。这玩笑有点过火了哦，$target$。我去那边看看有什么喝的。",
+                "com_sex_oral_P_12": "$self$双手交叉比了一个叉，语气轻松却坚定。达咩！这个绝对不可以！我们的关系仅限于此哦。",
+                "com_sex_oral_P_13": "$self$冷冷地看着$target$，眼神中充满了厌恶和警惕。你在发什么疯？离我远点！",
+                "com_sex_oral_P_14": "$self$毫不客气地拍掉了$target$的手，后退几步摆出了防御姿态。再敢乱来我就报警了。你把我当成什么人了？",
+                "com_sex_oral_P_15": "$self$啐了一口唾沫，脸上写满了鄙夷。恶心。别用那种眼神看我，滚开。",
+                "com_sex_oral_P_16": "$self$迷迷糊糊地睁开眼，感受到口中的异物后本能地吮吸了一下。嗯……是$target$吗？真是个坏心眼的家伙……",
+                "com_sex_oral_P_17": "$self$在半梦半醒间发出几声鼻音，顺从地张开嘴接纳了$target$的侵入。好困……你自己动吧……",
+                "com_sex_oral_P_18": "$self$无力地拍了一下$target$的大腿，随即闭上眼配合着对方的节奏。大半夜的……真拿你没办法。",
+                "com_sex_oral_P_19": "$self$惊醒后看到眼前的一幕，虽然满脸通红却没有推开。这……这是在做梦吗？既然是你……我不讨厌……",
+                "com_sex_oral_P_20": "$self$愣了几秒后，有些羞涩地垂下眼帘，顺从地含住了前端。如果这是$target$希望的……",
+                "com_sex_oral_P_21": "$self$不仅没有反抗，反而伸手扶住了$target$的腰。既然都被吵醒了……那就做完吧。",
+                "com_sex_oral_P_22": "$self$被吓醒后想要尖叫，却被眼前的情况吓得把声音咽了回去。不……不要打我……我含着……呜呜……",
+                "com_sex_oral_P_23": "$self$在极度的惊恐中选择了顺从，眼泪顺着眼角滑落进鬓角。我听话……求求你别生气……",
+                "com_sex_oral_P_24": "$self$像个坏掉的玩偶一样张着嘴，任由$target$摆布，完全放弃了思考。",
+                "com_sex_oral_P_25": "$self$抬起头，嘴角还挂着一丝晶莹的液体，眼神中满是宠溺。你的味道……真的很让人安心。感觉怎么样？还要更深一点吗？",
+                "com_sex_oral_P_26": "$self$并没有停下动作，而是更加卖力地吞吐着，喉咙里发出的声音也不再那么抗拒。既然都这样了……那就帮你弄出来吧。",
+                "com_sex_oral_P_27": "$self$伸手抚摸着$target$的大腿内侧，眼神自下而上地勾着对方。我也……渐渐变得奇怪起来了。你的反应真可爱。",
+                "com_sex_oral_P_28": "$self$原本紧绷的身体逐渐放松下来，眼神中多了一丝迷离。没想到……感觉并不坏……",
+                "com_sex_oral_P_29": "$self$试探性地用舌尖触碰了一下，发现$target$并没有过激反应后，动作变得大胆了一些。这就是……男人的那个吗？",
+                "com_sex_oral_P_30": "$self$似乎适应了这种尺寸，喉咙里发出的声音也不再那么抗拒。既然都这样了……那就帮你弄出来吧。",
+                "com_sex_oral_P_31": "$self$的动作慢了下来，微微皱眉，似乎是因为下颚的酸痛而感到不适。今天好像有点太久了……嘴巴有些麻。",
+                "com_sex_oral_P_32": "$self$停下动作，捂着嘴咳嗽了几声，眼角渗出一点生理性的泪花。抱歉……有点太深了，让我缓一缓。",
+                "com_sex_oral_P_33": "$self$机械地套弄着，眼神开始游移，显然心思已经不在当下的行为上了。",
+                "com_sex_oral_P_34": "$self$因为长时间的张嘴而流出了口水，眼神空洞且绝望。什么时候……才能结束……",
+                "com_sex_oral_P_35": "$self$忍受着强烈的呕吐感，眼泪止不住地流下来，身体因为恶心而微微抽搐。好难受……太深了……",
+                "com_sex_oral_P_36": "$self$眼神中原本的惊讶已经完全变成了屈辱和怨恨，只是机械地配合着$target$的动作。"
+            },
+            "en-us": {
+                "com_sex_oral_P_Climax_1": "($self$) Receiving Oral Sex Climax Dialogue",
+                "com_sex_oral_P_Climax_2": "$self$ suddenly shudders violently, letting out a high-pitched whimper from deep within the throat as hands tightly grip $target$'s thighs. Woo... Nnh!! No... My brain is... going to melt...",
+                "com_sex_oral_P_Climax_3": "$self$'s eyes roll back sharply, swallowing saliva messily as the whole body goes limp under $target$'s crotch. Haa... haa... this feeling... is amazing...",
+                "com_sex_oral_P_Climax_4": "$self$'s body spasms intensely, yet refuses to let go, sucking even harder while climaxing. I'm cumming... I want to... cum together...!",
+                "com_sex_oral_P_Climax_5": "$self$ stares in disbelief, body betraying the will by starting to tremble violently. No... stop... why is this happening... woo woo woo!",
+                "com_sex_oral_P_Climax_6": "$self$ bites lip in humiliation but cannot control the pleasure surging up, tears and saliva mixing as they run down. I hate this... why... is my body... Ahhh!",
+                "com_sex_oral_P_Climax_7": "$self$ completely breaks down under the impact of pleasure, reaching climax while crying out. You are a devil... woo... feels so strange... I'm going to break...",
+                "com_sex_oral_P_Begin_1": "$self$ naturally kneels between $target$'s legs, reaching out to undo the belt. Since you want it, I won't hold back. It should be... quite hard down here already, right?",
+                "com_sex_oral_P_Begin_2": "$self$ smiles slightly, gently pushing $target$'s shoulder to signal sitting down, then skillfully tucks long hair behind the ear. Sit still like a good boy, let me help you relax.",
+                "com_sex_oral_P_Begin_3": "$self$ lowers head, staring at $target$'s lower body with a hazy gaze, sticking out the tip of the tongue to lick lips lightly. A bit tired, but if it's you... alright.",
+                "com_sex_oral_P_Begin_4": "$self$ stares at $target$ wide-eyed, hands hovering uncertainly in mid-air. Wait... are you serious? This kind of thing...",
+                "com_sex_oral_P_Begin_5": "$self$ instinctively tries to back away but stops for some reason, cheeks instantly flushing red. Since you asked... just this once, okay?",
+                "com_sex_oral_P_Begin_6": "$self$ stiffly opens mouth, gaze wandering in panic, afraid to meet $target$'s eyes. I understand... but can you... be gentle?",
+                "com_sex_oral_P_Begin_7": "$self$ kneels down trembling all over, eyes filled with tears of fear. I understand... please don't hurt me... I'll do it.",
+                "com_sex_oral_P_Begin_8": "$self$ squeezes eyes shut, too afraid to resist in the slightest, hands clutching the hem of the skirt tightly. As long as I do this... you'll let me go, right?",
+                "com_sex_oral_P_Begin_9": "$self$ lowers head in humiliation under $target$'s gaze, opening trembling lips. I'll do it... I'll do it...",
+                "com_sex_oral_P_1": "$self$ suddenly turns head and spits out what's in mouth, wiping the corner of lips angrily. What are you doing! Let me sleep!",
+                "com_sex_oral_P_2": "$self$ frowns and pushes $target$'s body away, turning over to show back. Stop it... I'm tired, have to get up early tomorrow.",
+                "com_sex_oral_P_3": "$self$ protests incoherently, teeth accidentally scraping against $target$. Ouch... I don't want to, take it out quickly.",
+                "com_sex_oral_P_4": "$self$ screams and pushes $target$ away, shrinking back to the corner of the bed in terror. Are you crazy?! What is this! Rape?!",
+                "com_sex_oral_P_5": "$self$ struggles desperately, trying to escape the room at all costs. Help! Is anyone there! Get away!",
+                "com_sex_oral_P_6": "$self$ bites down without hesitation, jumping off the bed while $target$ winces in pain. Don't touch me! You pervert!",
+                "com_sex_oral_P_7": "$self$ holds down $target$'s hand reaching for head, shaking head gently. My jaw is so sore today, make it up to you next time, okay?",
+                "com_sex_oral_P_8": "$self$ smiles and dodges $target$'s move, handing over a glass of water instead. Spare me, wasn't last night enough? I'm currently in a truce state.",
+                "com_sex_oral_P_9": "$self$ lies on $target$'s lap and rubs against it, voice lazy. Rather than doing this, I'd prefer you just hold me while I sleep for a while.",
+                "com_sex_oral_P_10": "$self$ smiles awkwardly, gently pushing $target$'s hand away. Um... we aren't that close yet, are we? Stop joking.",
+                "com_sex_oral_P_11": "$self$ cleverly changes the subject, body quietly moving away to create distance. That joke went a bit too far, $target$. I'll go see if there's anything to drink over there.",
+                "com_sex_oral_P_12": "$self$ crosses arms in an X shape, tone relaxed but firm. Dame! Absolutely not! Our relationship ends right here.",
+                "com_sex_oral_P_13": "$self$ looks at $target$ coldly, eyes full of disgust and wariness. What are you crazy about? Stay away from me!",
+                "com_sex_oral_P_14": "$self$ slaps $target$'s hand away rudely, stepping back into a defensive stance. Try anything funny and I'll call the police. What do you take me for?",
+                "com_sex_oral_P_15": "$self$ spits on the ground, face full of contempt. Disgusting. Don't look at me like that, get lost.",
+                "com_sex_oral_P_16": "$self$ opens eyes dizzily, instinctively sucking on the foreign object in mouth. Mmm... is that you, $target$? Such a mean guy...",
+                "com_sex_oral_P_17": "$self$ makes a few nasal sounds between sleep and wakefulness, obediently opening mouth to accept $target$'s intrusion. So sleepy... you move it yourself...",
+                "com_sex_oral_P_18": "$self$ weakly slaps $target$'s thigh, then closes eyes to go along with the rhythm. In the middle of the night... really can't help it with you.",
+                "com_sex_oral_P_19": "$self$ wakes up startled seeing the scene, flushing red but not pushing away. Is... is this a dream? Since it's you... I don't hate it...",
+                "com_sex_oral_P_20": "$self$ freezes for a few seconds, then shyly lowers gaze, obediently holding the tip in mouth. If this is what $target$ wants...",
+                "com_sex_oral_P_21": "$self$ doesn't resist, instead reaching out to hold $target$'s waist. Since I'm awake anyway... let's finish it.",
+                "com_sex_oral_P_22": "$self$ wakes up scared wanting to scream, but swallows the sound in terror at the situation. No... don't hit me... I'll hold it... woo woo...",
+                "com_sex_oral_P_23": "$self$ chooses obedience in extreme terror, tears rolling from corners of eyes into hair. I'll listen... please don't get angry...",
+                "com_sex_oral_P_24": "$self$ opens mouth like a broken doll, letting $target$ do whatever, completely giving up thinking.",
+                "com_sex_oral_P_25": "$self$ looks up, a trace of glistening liquid at the corner of mouth, eyes full of doting. Your scent... is really reassuring. How does it feel? Want it deeper?",
+                "com_sex_oral_P_26": "$self$ doesn't stop, instead swallowing even more vigorously, throat making muffled whimpering sounds, seemingly enjoying the process.",
+                "com_sex_oral_P_27": "$self$ reaches out to stroke $target$'s inner thigh, looking up seductively. I'm... starting to feel strange too. Your reaction is so cute.",
+                "com_sex_oral_P_28": "$self$'s tense body gradually relaxes, eyes becoming a bit hazy. Didn't expect... it doesn't feel bad...",
+                "com_sex_oral_P_29": "$self$ tentatively touches with the tip of the tongue, and after seeing no drastic reaction from $target$, moves more boldly. Is this... a man's thing?",
+                "com_sex_oral_P_30": "$self$ seems to have adapted to the size, the sounds from throat no longer so resistant. Since it's come to this... let me help you get it out.",
+                "com_sex_oral_P_31": "$self$'s movements slow down, frowning slightly, seeming uncomfortable due to jaw soreness. It's been a bit too long today... mouth is numb.",
+                "com_sex_oral_P_32": "$self$ stops moving, covering mouth to cough a few times, physiological tears seeping from corners of eyes. Sorry... a bit too deep, let me rest a moment.",
+                "com_sex_oral_P_33": "$self$ mechanically strokes, eyes starting to wander, obviously mind no longer on the current act.",
+                "com_sex_oral_P_34": "$self$ drools from keeping mouth open too long, eyes hollow and despairing. When... will this end...",
+                "com_sex_oral_P_35": "$self$ endures the strong urge to vomit, tears flowing uncontrollably, body twitching slightly from nausea. So uncomfortable... too deep...",
+                "com_sex_oral_P_36": "$self$'s eyes turn from surprise to total humiliation and resentment, just mechanically going along with $target$'s movements."
+            }
         }
     }
 }

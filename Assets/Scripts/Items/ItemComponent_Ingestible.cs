@@ -9,6 +9,7 @@ public class ItemComponentTemplate_Ingestible
 {
     public List<Ingestible_IngestMethod> ingestMethod = new List<Ingestible_IngestMethod>();
     public float amount = 0;
+    public bool isLiquid = false;
     // public string giveStatus;
 
     [System.Serializable]
@@ -88,6 +89,7 @@ public class ItemComponent_Ingestible : ItemComponent_Base
         this.amount = CompTemplate.comp_Ingestible.amount;
     }
     [JsonProperty] public float amount = 0;
+    [JsonIgnore] public bool isLiquid { get { return CompTemplate.comp_Ingestible.isLiquid; } }
     [JsonIgnore] public List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod> ingestMethod { get { return CompTemplate.comp_Ingestible.ingestMethod; } }
     //public string giveStatus { get { return CompTemplate.comp_Ingestible.giveStatus; } }
     [JsonIgnore] public List<ItemComponentTemplate_Ingestible.OnUseEffect> OnUseEffects { get { return CompTemplate.comp_Ingestible.OnUseEffects; } }

@@ -1,489 +1,1161 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_kiss_Climax",
-        "tags":["nsfw"],
-        "variants":[
-            { 
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":["sex","kiss", "climax"], "useActiveTags":false,
-                "_comment":"2.4.1 高潮 有允许" ,
-                "responses":
-                [ 
-                    "$self$的瞳孔骤然涣散，喉咙深处发出一声破碎的尖吟，舌头无力地垂在口中。", 
-                    "$self$原本紧抓着$target$的手指猛地痉挛收紧，唾液顺着无法闭合的嘴角失控地流下。",
-
-                    "$self$的呼吸瞬间停滞，整个人像触电般剧烈一颤，随即瘫软下来，只剩下急促的喘息喷洒在$target$脸上。", 
-                    "$self$眼神迷离恍惚，完全忘记了换气，任由快感的余韵让她的大脑一片空白。",
-
-                    "$self$的身体猛地绷紧，在这个漫长的深吻中，双腿不受控制地痉挛起来。",
-"$self$喉咙里发出破碎的呜咽声，指甲深深陷入$target$的背部，瞳孔在这一刻彻底失焦。",
-"$self$的大腿内侧剧烈颤抖着，整个人像是一滩烂泥般挂在$target$身上，眼神涣散。",
-"$self$：\"唔！嗯嗯嗯——！\" $self$在唇齿交缠间发出高亢的鼻音，腰肢猛烈地挺动了一下。",
-"$self$全身泛起潮红，眼角溢出生理性的泪水，在窒息般的快感中彻底瘫软。",
-"$self$急促地抽搐着，大脑一片空白，只能在这个吻的支配下无助地承受着灭顶的快感。",
-
-"$self$的身体猛地弓起，喉咙深处发出了破碎的呜咽声，指甲深深陷入了$target$的背部。", "过度的快感让大脑一片空白，$self$的双眼失焦上翻，大腿内侧痉挛着喷出了爱液。",
-"仅仅是舌头的纠缠就让$self$达到了极限，身体瘫软如泥，口水不受控制地顺着嘴角流下。", "$self$剧烈地喘息着，全身泛起潮红，在唇舌交缠中迎来了剧烈的痉挛。"
-                ] 
-            },
-            
-            { 
-                
-                "extraPortraitTags":["sex","kiss", "climax"], "useActiveTags":false,
-                "_comment":"2.4.2 高潮 无允许" ,
-                "responses":
-                [ 
-"$self$不可置信地瞪大了眼睛，身体在违背意志的快感中剧烈抽搐。",
-"$self$：\"不要……不……啊！\" $self$在抗拒中却迎来了羞耻的顶峰，双腿无力地跪倒。",
-"$self$绝望地发现自己竟然在这个毫无感情基础的吻中崩溃了，眼泪夺眶而出。",
-"$self$的身体诚实地做出了最淫荡的反应，在$target$怀里颤抖着泄身，大脑一片混乱。",
-"$self$试图推开$target$的手变得毫无力气，只能发出破碎的呻吟，任由快感吞噬理智。",
-"$self$羞耻得浑身通红，却控制不住身体的高潮痉挛，在这一吻中彻底暴露了淫荡的本性。",
-
-"明明心理在抗拒，但$self$的身体却诚实地做出了反应，伴随着屈辱的泪水，高潮还是无情地袭来。", "$self$咬紧牙关试图忍耐，但颤抖的双腿和瞬间收缩的小腹还是出卖了她此刻的极乐。",
-"$self$不可置信地瞪大了眼睛，无法理解为什么仅仅是接吻就会导致这种结果。", "随着最后一次深喉般的吮吸，$self$的腰肢猛地挺起，在惊恐与快感的夹缝中彻底崩溃，湿了一地。"
-                ] 
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_kiss_Begin",
-        "tags":["nsfw"],
-        "variants":
-        [
+    "Character_Personalities": {
+        "looselist": [
             {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":["sex","kiss", "closed_eyes", "blush", "affectionate","loving","blushing"], "useActiveTags":false,
-                "_comment":"2.1.1 ($self$) 开始接吻 有允许 口上文" ,
-                "responses":
-                [ 
-                    "$self$慢慢凑近，闭上了眼睛。",
-                    "两人的距离缩短到了呼吸可闻的程度，$self$并没有后退。",
-                    "$self$微微仰起头，双唇间只有毫厘之差。",                    "在这个瞬间，空气仿佛凝固了，$self$等待着触碰。",                    "$self$抓住了衣角，动作显得有些紧张局促。",                    "$self$的睫毛微微颤动，脸颊泛起了一丝红晕。",
-                    
-                    "$self$闭上了眼睛，微微抬起下巴，迎合了这份距离的缩短。",                    "$self$的手不自觉地抓住了你的衣角，主动凑近了面庞。",                    "$self$没有丝毫退缩，反而在此刻屏住了呼吸，等待着触碰。",                    "$self$眼神迷离了一瞬，随即顺从内心的冲动，献上了双唇。",                    "$self$嘴角微微上扬，在接触的瞬间，极其自然地回应着。",                    "$self$似乎早已期待这一刻，在你靠近之前就已做好了准备。",
-
-                    "$self$自然地环住了$target$的脖颈，主动加深了这个吻。",                     "$self$在唇齿交缠的间隙露出了甜蜜的微笑，整个人软倒在$target$怀里。",
-
-                    "$self$顺从地闭上眼睛，睫毛微微颤抖，主动凑上去含住了$target$的嘴唇。",                    "$self$双手环上$target$的脖子，在这个漫长的吻开始前发出了一声满足的叹息。",                    "$self$微微仰起头，眼神迷离地索求着，在双唇相触的瞬间便融化在了$target$怀里。",                    "$self$：\"嗯……终于……\" $self$迫不及待地贴紧了对方，舌尖试探性地探出。",                    "$self$嘴角带着甜蜜的笑意，温柔地接纳了$target$的侵入，十指插入了对方的发间。",                    "$self$在$target$唇上轻啄了一下，随即加深了这个吻，仿佛要将彼此的呼吸彻底交融。",
-
-                    "$self$没有丝毫犹豫，顺从地闭上了双眼，微微仰起头等待着接触。", "随着双唇相触，$self$的手自然地环上了$target$的脖颈，主动加深了这个吻。",
-                    "$self$露出了安心的微笑，主动凑近，将呼吸交融在一起。", "毫无防备的姿态，$self$微微张开嘴唇，默许了$target$的侵入。"
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_kiss_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.1 高潮 有允许",
+                            "responses": [
+                                "com_sex_oral_kiss_Climax_1",
+                                "com_sex_oral_kiss_Climax_2",
+                                "com_sex_oral_kiss_Climax_3",
+                                "com_sex_oral_kiss_Climax_4",
+                                "com_sex_oral_kiss_Climax_5",
+                                "com_sex_oral_kiss_Climax_6",
+                                "com_sex_oral_kiss_Climax_7",
+                                "com_sex_oral_kiss_Climax_8",
+                                "com_sex_oral_kiss_Climax_9",
+                                "com_sex_oral_kiss_Climax_10",
+                                "com_sex_oral_kiss_Climax_11",
+                                "com_sex_oral_kiss_Climax_12",
+                                "com_sex_oral_kiss_Climax_13",
+                                "com_sex_oral_kiss_Climax_14"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 高潮 无允许",
+                            "responses": [
+                                "com_sex_oral_kiss_Climax_15",
+                                "com_sex_oral_kiss_Climax_16",
+                                "com_sex_oral_kiss_Climax_17",
+                                "com_sex_oral_kiss_Climax_18",
+                                "com_sex_oral_kiss_Climax_19",
+                                "com_sex_oral_kiss_Climax_20",
+                                "com_sex_oral_kiss_Climax_21",
+                                "com_sex_oral_kiss_Climax_22",
+                                "com_sex_oral_kiss_Climax_23",
+                                "com_sex_oral_kiss_Climax_24"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":["sex","kiss", "surprised", "blush","wide_eyes","frozen","confused"], "useActiveTags":false,
-                "_comment":"2.2.1 ($self$) 开始接吻 未允许 口上文" ,
-                "responses":
-                [ 
-                    "$self$愣了一下，随即像是被某种魔力牵引，缓缓闭上了眼睛。", 
-                    "$self$的手不知所措地抓住了$target$的衣角，笨拙地回应着这份越界的亲密。",
-
-                    "$self$瞪大了眼睛，整个人僵在了原地，完全忘记了推开。",
-                    "$self$双手不知所措地悬在半空，被$target$的气息笼罩时，呼吸瞬间停滞了。",
-                    "$self$：\"唔？！\" $self$发出错愕的单音节，眼神里写满了不可置信。",
-                    "$self$的大脑似乎宕机了，只能呆呆地任由$target$掠夺着口中的空气。",
-                    "$self$虽然没有反抗，但身体紧绷得像一块石头，眼睛眨个不停。",
-                    "$self$：\"等……\" 话还没说完就被堵回了喉咙里，$self$震惊地看着近在咫尺的脸。",
-
-                    "$self$瞪大了眼睛，身体瞬间僵硬，似乎大脑一片空白。", "虽然没有推开，但$self$的手不知所措地悬在半空，完全忘记了反应。"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_kiss_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "closed_eyes",
+                                "blush",
+                                "affectionate",
+                                "loving",
+                                "blushing"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 ($self$) 开始接吻 有允许 口上文",
+                            "responses": [
+                                "com_sex_oral_kiss_Begin_1",
+                                "com_sex_oral_kiss_Begin_2",
+                                "com_sex_oral_kiss_Begin_3",
+                                "com_sex_oral_kiss_Begin_4",
+                                "com_sex_oral_kiss_Begin_5",
+                                "com_sex_oral_kiss_Begin_6",
+                                "com_sex_oral_kiss_Begin_7",
+                                "com_sex_oral_kiss_Begin_8",
+                                "com_sex_oral_kiss_Begin_9",
+                                "com_sex_oral_kiss_Begin_10",
+                                "com_sex_oral_kiss_Begin_11",
+                                "com_sex_oral_kiss_Begin_12",
+                                "com_sex_oral_kiss_Begin_13",
+                                "com_sex_oral_kiss_Begin_14",
+                                "com_sex_oral_kiss_Begin_15",
+                                "com_sex_oral_kiss_Begin_16",
+                                "com_sex_oral_kiss_Begin_17",
+                                "com_sex_oral_kiss_Begin_18",
+                                "com_sex_oral_kiss_Begin_19",
+                                "com_sex_oral_kiss_Begin_20",
+                                "com_sex_oral_kiss_Begin_21",
+                                "com_sex_oral_kiss_Begin_22",
+                                "com_sex_oral_kiss_Begin_23",
+                                "com_sex_oral_kiss_Begin_24"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "surprised",
+                                "blush",
+                                "wide_eyes",
+                                "frozen",
+                                "confused"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 ($self$) 开始接吻 未允许 口上文",
+                            "responses": [
+                                "com_sex_oral_kiss_Begin_25",
+                                "com_sex_oral_kiss_Begin_26",
+                                "com_sex_oral_kiss_Begin_27",
+                                "com_sex_oral_kiss_Begin_28",
+                                "com_sex_oral_kiss_Begin_29",
+                                "com_sex_oral_kiss_Begin_30",
+                                "com_sex_oral_kiss_Begin_31",
+                                "com_sex_oral_kiss_Begin_32",
+                                "com_sex_oral_kiss_Begin_33",
+                                "com_sex_oral_kiss_Begin_34"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain",
+                                "scared",
+                                "teary"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 ($self$) 开始接吻 未允许 口上文",
+                            "responses": [
+                                "com_sex_oral_kiss_Begin_35",
+                                "com_sex_oral_kiss_Begin_36",
+                                "com_sex_oral_kiss_Begin_37",
+                                "com_sex_oral_kiss_Begin_38",
+                                "com_sex_oral_kiss_Begin_39",
+                                "com_sex_oral_kiss_Begin_40",
+                                "com_sex_oral_kiss_Begin_41",
+                                "com_sex_oral_kiss_Begin_42",
+                                "com_sex_oral_kiss_Begin_43",
+                                "com_sex_oral_kiss_Begin_44",
+                                "com_sex_oral_kiss_Begin_45",
+                                "com_sex_oral_kiss_Begin_46",
+                                "com_sex_oral_kiss_Begin_47",
+                                "com_sex_oral_kiss_Begin_48",
+                                "com_sex_oral_kiss_Begin_49",
+                                "com_sex_oral_kiss_Begin_50",
+                                "com_sex_oral_kiss_Begin_51",
+                                "com_sex_oral_kiss_Begin_52"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                
-                "extraPortraitTags":["sex","kiss", "fear", "trembling", "tearful", "pain","scared","teary"], "useActiveTags":false,
-                "_comment":"2.2.2 ($self$) 开始接吻 未允许 口上文" ,
-                "responses":
-                [ 
-                    "$self$浑身僵硬，紧紧闭着双眼，像是在忍受某种痛苦。",
-                    "$self$颤抖了一下，最终放弃了抵抗，任由你通过这种方式侵略。",
-                    "$self$偏开了视线，双手无力地垂在身侧，默许了你的行为。",
-                    "$self$咬着嘴唇，尽管眼神中透着抗拒，但身体却不敢动弹。",
-                    "$self$像个没有灵魂的人偶一般，对此没有任何回应，只是默默承受。",
-                    "$self$发出了细微的呜咽声，被动地接受了这突如其来的亲密。",
-
-                    "$self$深吸一口气，像是下定决心般闭上了眼睛，僵硬地迎合了上去。", 
-                    "$self$没有推开，但双手始终垂在身侧，任由嘴唇被$target$占有。",
-                    "$self$的睫毛剧烈颤抖着，因为恐惧而不敢闭合的双唇被粗暴地堵住。", 
-                    "$self$发出呜咽般的鼻音，身体紧贴着墙壁，被迫承受着这漫长的侵略。",
-
-                    "$self$瑟瑟发抖地闭上眼睛，眼泪顺着眼角滑落，不敢做出任何反抗。",
-                    "$self$紧紧抓着衣角，在$target$的威压下被迫张开嘴，身体因恐惧而僵硬。",
-                    "$self$：\"呜……我知道了……求你别伤害我……\" $self$绝望地迎合上去。",
-                    "$self$像是认命般放弃了挣扎，任由$target$摆布，眼神空洞而惊恐。",
-                    "$self$颤抖着承受着粗暴的侵略，喉咙里发出受惊小动物般的呜咽。",
-                    "$self$僵硬地配合着$target$的动作，生怕稍有不慎就会招致更可怕的对待。",
-
-                    "$self$紧紧抓着衣角，身体微微颤抖，强迫自己忍受着口腔内的入侵。", "眼角渗出了生理性的泪水，$self$紧闭着双眼，不敢发出任何声音。"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_kiss",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sex","kiss","sleeping", "relaxed","slightly_frowning","unconscious"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 亲吻口上文",
-                "responses":
-                [ 
-                    "$self$的呼吸节奏依然平稳，似乎并没有察觉。",
-                    "$self$在睡梦中微微皱了皱眉，翻了个身。",
-                    "$self$发出了一声含糊的梦呓，嘴唇无意识地蠕动了一下。",
-                    "$self$的睫毛颤动着，似乎即将醒来，又似乎陷入更深的梦境。",
-                    "$self$并没有醒来，只是像小猫一样蹭了蹭枕头。",
-                    "睡梦中的$self$对这突如其来的触碰毫无防备。",
-
-                    "$self$的呼吸依然平稳，似乎并没有察觉到唇上的触感。",
-                    "$self$在睡梦中皱了皱眉，发出了一声模糊的呢喃。",
-                    "$self$睫毛微微颤动了一下，但并没有醒来的迹象。",
-                    "$self$翻了个身，无意识地蹭了蹭枕头，继续沉睡。",
-                    "$self$的嘴唇微微张开，睡颜显得毫无防备。",
-                    "$self$似乎在做一个好梦，嘴角挂着一丝若有若无的笑意。",
-
-                    "$self$发出轻微的梦呓，眉头舒展，似乎在梦中也感受到了这份温柔。", 
-                    "$self$的呼吸变得绵长而安稳，嘴角在睡梦中无意识地微微上扬。",
-
-                    "$self$在睡梦中皱了皱眉，似乎对嘴唇上的异物感到困惑，发出了一声模糊的呢喃。",
-                    "$self$无意识地张开嘴，配合着$target$的入侵，呼吸变得有些急促。",
-                    "$self$依然沉浸在梦乡中，只是身体本能地往热源蹭了蹭，毫无防备地任人采撷。",
-                    "$self$的睫毛颤动了几下，但并没有醒来，只是在梦中发出了一声甜腻的哼唧。",
-                    "$self$完全没有察觉，安静地像个布娃娃一样被$target$肆意亲吻。",
-                    "$self$在睡梦中被吻得有些缺氧，难受地偏了偏头，露出了脆弱的脖颈。",
-
-                    "$self$发出轻微的鼻息声，对于唇瓣上的触感毫无察觉，睡颜依旧安详。", "随着吻的深入，$self$的眉头微微皱了一下，翻了个身继续沉睡。"
-                    
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","kiss","doll", "empty", "silence", "idle", "frozen_mid_motion","unaware","still"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 被亲吻口上文",
-                "responses":
-                [ 
-                    "$self$保持着静止的姿态，温热的触感没有引发任何回应。",
-                    "就像亲吻一尊精美的人偶，$self$的表情没有任何变化。",
-                    "在停滞的时间里，$self$的双唇柔软却冰冷。",
-                    "$self$眼神空洞地凝视着前方，任由$target$索取。",
-                    "没有任何抵抗，也没有任何迎合，$self$只是静静地存在着。",
-                    "无论在这个瞬间发生了什么，$self$都无法知晓。",
-
-                    "$self$像是一尊精美的人偶，对你的亲吻没有任何知觉。",
-                    "时间静止的世界里，只有你的体温传递到了$self$冰凉的唇上。",
-                    "$self$保持着原本的姿势，完全任由你摆布，无法做出任何回应。",
-                    "没有任何呼吸的起伏，也没有眼神的接触，你独占了此刻的$self$。",
-                    "$self$的双唇柔软却静止，像是在等待唤醒的睡美人。",
-                    "在凝固的空气中，你夺走了属于$self$的吻，而她对此一无所知。",
-
-                    "$self$保持着凝固的姿态，对唇上的触感毫无知觉，瞳孔依旧聚焦在虚空。", 
-                    "$self$就像一尊精美的人偶，任由$target$的舌尖描绘着她的唇形，却给不出任何回应。",
-
-                    "$self$依然保持着上一秒的动作僵在原地，$target$的舌头肆意搅动着口腔，而她对此一无所知。",
-                    "$self$的表情凝固在惊讶的瞬间，毫无知觉地承受着这漫长而亵渎的深吻。",
-                    "$self$就像一尊精美的人偶，任由$target$品尝着口腔里的每一寸，连唾液流出也无法控制。",
-                    "$self$静止在时间夹缝中，对身体正被肆意玩弄的事实毫无反应，只能被动地接受。",
-                    "$self$睁着眼睛却看不见任何东西，在静止的世界里，她的口腔成了$target$独享的游乐场。",
-                    "$self$对于这长达三分钟的侵犯毫无察觉，待时间恢复流动时，只会疑惑嘴角的湿润。",
-
-                    "$self$保持着上一秒的姿势一动不动，唯有被搅动的舌尖溢出了些许银丝。", "在这个静止的世界里，$self$毫无知觉地承受着一切，只有口腔内的温度在逐渐升高。"
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,
-                 "variants":[
-                    {
-                        "requirement":  { "selfTags":["justWokenUp"] } ,
-                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                        "variants":[
-                            {
-                                "requirement":  {  "requirePermission":true } ,
-                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                                "_comment":"2.1.6 刚睡醒时的指令失败拒绝口上文 有允许",
-                                "responses":
-                                [ 
- "$self$猛地惊醒，条件反射般地推开了压在身上的人。", "$self$惊魂未定地喘息着：\"吓我一跳……别在睡觉的时候做这种事。\""
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_kiss",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
                                 ]
-
-                            }
-                        ],
-                        "_comment":"2.2.9 刚睡醒时的指令失败拒绝口上文 无允许",
-                        "responses":
-                        [ 
-                            
-                            "$self$猛地睁开眼，惊恐地推开$target$：\"你在干什么？！偷袭吗？\"",
-                            "$self$吓得坐了起来，拉起被子护住自己：\"出去！谁允许你趁我睡觉做这种事的！\"",
-                            "$self$眼神混乱地擦着嘴：\"这太变态了……我以为我们是朋友……\"",
-                            "$self$还没完全清醒，本能地给了$target$一巴掌：\"走开！\"",
-                            "$self$：\"呜？！……不要！别趁人之危啊！\"",
-                            "$self$警觉地缩到床角：\"你在这里看了多久了？真让人毛骨悚然。\"",
-
-                            "$self$猛地睁开眼，惊慌失措地把你推开：\"你、你在做什么？！\"",
-                            "$self$瞬间清醒过来，捂住嘴巴向后缩去：\"变态！趁人睡觉的时候……！\"",
-                            "$self$瞪大了眼睛，脸上写满了不可置信和愤怒。",
-                            "$self$：\"……你是认真的吗？这种叫醒方式太恶劣了。\"",
-                            "$self$惊魂未定地抓紧了被子：\"出去！我现在不想看到你！\"",
-                            "$self$迷迷糊糊地感觉到异样，随即用力拍开了你的手。",
-
-                            "$self$发出一声短促的尖叫，慌乱中一巴掌挥了出去。", "$self$裹紧被子缩到床角：\"出去！谁允许你进来的！\""
-                        ]
-                    },
-                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$轻轻避开：\"现在不行……还有正事要忙呢。\"",
-                            "$self$捏了捏对方的脸：\"一身汗味，去洗澡啦，不然不给亲。\"",
-                            "$self$偏过头去：\"抱歉……我现在心里很乱，不想做这个。\"",
-                            "$self$尴尬地笑了笑，侧身躲开了：\"那个……我突然想起还有事没做。\"",
-
-                            "$self$偏过头躲开了$target$的嘴唇，轻轻推了推对方的胸口。",
-"$self$：\"别闹了……我现在没心情做这个。\" $self$的声音听起来有些闷闷不乐。",
-"$self$捂住嘴巴，皱着眉头后退了半步：\"才吃过大蒜，不许亲！\"",
-"$self$有些疲惫地挡住了$target$凑过来的脸：\"好累，让我歇一会儿吧。\"",
-"$self$：\"还在生气呢，别以为亲一下就能糊弄过去。\" $self$鼓着脸颊别过脸去。",
-"$self$叹了口气，用手指抵住$target$的嘴唇：\"现在的气氛不太对，下次吧。\"",
-
-"$self$轻轻偏过头，避开了即将落下的吻，眼神有些闪躲。", "$self$用手指抵住$target$的嘴唇：\"抱歉……现在不太想做这个。\"",
-"$self$轻轻推了推$target$的胸口，摇了摇头。", "$self$：\"我很累，只限拥抱好吗？\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 无允许 善意 口上文",
-                        "responses":
-                        [ 
-                            "$self$慌乱地偏过头去：\"等等！这……这太突然了，我们不是那种关系吧？\"",
-                            "$self$用手抵住对方胸口，尴尬地笑了笑：\"别开这种玩笑了，会吓到我的。\"",
-                            "$self$猛地向后退了一步：\"等等！你是不是误会了什么？\"",
-                            "$self$用手指抵住了你的嘴唇：\"太快了，我们还没到那一步吧？\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-                    "$self$猛地推开对方：\"你疯了吗？离我远点！\"",
-                    "$self$捂住嘴退后一步，眼神里充满了警惕：\"请你自重。\"",
-                    "$self$皱起眉头：\"如果你再靠近，我就要生气了。\"",
-                    "$self$一把推开了你，脸上写满了不悦：\"离我远点，别碰我。\"",
-
-                    "$self$猛地偏过头，用手背狠狠擦拭着嘴唇：\"别碰我！真恶心！\"", 
-                    "$self$用力推开$target$的胸膛，眼神冷得像冰：\"适可而止，还要我重复一遍吗？\""
-                 ]
-            },
-            {
-
-                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
-                "_comment1":"玩家专用 刚睡醒时的 亲吻口上文",
-                "variants":[
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":["sex","kiss", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.5",
-                        "responses":[
-                            "$self$迷迷糊糊地睁开眼，顺势搂住了$target$的脖子：\"嗯……早安吻吗？\"",
-                            "$self$发出慵懒的鼻音，并没有反抗：\"嘿嘿……像做梦一样……\"",
-                            "$self$半睁着眼，嘴角带着笑意：\"偷袭被我发现咯……作为惩罚，再来一次。\"",
-                            "$self$蹭了蹭$target$的手心，安心地闭上眼继续享受：\"嗯……别停……\"",
-                            "$self$声音沙哑又软糯：\"是你啊……那没关系……\"",
-                            "$self$：\"嗯？……本来还想再睡会的……但这样醒来也不错。\"",
-                            "$self$睡眼惺忪地睁开眼，看清是你后，伸手勾住了你的脖子。",
-                            "$self$迷糊地哼哼了两声，顺势加深了这个吻：\"……早安？\"",
-                            "$self$并没有反抗，而是带着刚睡醒的慵懒，回应着你的热情。",
-                            "$self$：\"嗯……偷袭吗？这可不公平……\" 她闭着眼笑着说道。",
-                            "$self$软绵绵地蹭了蹭你的脸颊：\"再多来一点……我还没醒透呢。\"",
-                            "$self$半睁着眼，露出了安心的表情，任由你在早晨索取。",
-
-                            "$self$迷迷糊糊地睁开眼，随即顺从地张开嘴，含住了$target$的舌头。", 
-                            "$self$慵懒地哼了一声，像只猫一样反客为主，将$target$拉向自己。",
-
-                            "$self$迷迷糊糊地睁开眼，看清是$target$后，慵懒地伸出舌尖回应起来。", "梦呓般的哼声从喉间溢出，$self$本能地迎合着这份温存。"
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":["sex","kiss", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.2.7",
-                        "responses":[
-                            "$self$迷迷糊糊地睁开眼，顺势搂住了$target$的脖子：\"嗯……早安吻吗？\"",
-                            "$self$发出慵懒的鼻音，并没有反抗：\"嘿嘿……像做梦一样……\"",
-                            "$self$半睁着眼，嘴角带着笑意：\"偷袭被我发现咯……作为惩罚，再来一次。\"",
-                            "$self$蹭了蹭$target$的手心，安心地闭上眼继续享受：\"嗯……别停……\"",
-                            "$self$声音沙哑又软糯：\"是你啊……那没关系……\"",
-                            "$self$：\"嗯？……本来还想再睡会的……但这样醒来也不错。\"",
-                            "$self$睡眼惺忪地睁开眼，看清是你后，伸手勾住了你的脖子。",
-                            "$self$迷糊地哼哼了两声，顺势加深了这个吻：\"……早安？\"",
-                            "$self$并没有反抗，而是带着刚睡醒的慵懒，回应着你的热情。",
-                            "$self$：\"嗯……偷袭吗？这可不公平……\" 她闭着眼笑着说道。",
-                            "$self$软绵绵地蹭了蹭你的脸颊：\"再多来一点……我还没醒透呢。\"",
-                            "$self$半睁着眼，露出了安心的表情，任由你在早晨索取。",
-
-                            "$self$迷迷糊糊地睁开眼，随即顺从地张开嘴，含住了$target$的舌头。", 
-                            "$self$慵懒地哼了一声，像只猫一样反客为主，将$target$拉向自己。",
-
-                            "$self$迷迷糊糊地睁开眼，看清是$target$后，慵懒地伸出舌尖回应起来。", "梦呓般的哼声从喉间溢出，$self$本能地迎合着这份温存。"
-                        ]
-                    }
-                ],
-                "_comment":"2.2.8",
-                "extraPortraitTags":["sex","kiss","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                "responses":
-                [ 
-                    "察觉到身上的人是谁后，$self$眼中的恐惧一闪而过，随即认命般地停止了挣扎。", "$self$僵硬地躺着，任由对方索取，眼泪无声地滑落。"
-                ]
-            },
-
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","kiss", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 亲吻 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$意犹未尽地舔了舔嘴唇：\"嗯……只有三分钟吗？不够哦。\"",
-                            "$self$把头埋在对方怀里：\"喜欢……再多亲一会也可以的。\"",
-                            "$self$笑着擦去嘴角的痕迹：\"今天的味道是甜的呢。\"",
-                            "$self$眼神迷离：\"呼……心跳得好快，都是因为你。\"",
-                            "$self$看着你的眼睛，声音变得很轻：\"再一次……可以吗？\"",
-                            "$self$摸了摸自己的嘴唇，露出了羞涩的微笑：\"好像……心跳得好快。\"",
-
-                            "$self$脸颊绯红，眼神湿润地看着$target$，似乎还在回味刚才的触感。",
-"$self$意犹未尽地舔了舔嘴唇，身体更加瘫软地靠在$target$身上。",
-"$self$：\"呼……肺里的空气都要被你吸干了……\" $self$娇嗔地锤了一下$target$。",
-"$self$把头埋进$target$的颈窝，发出细微的哼唧声：\"再一次……还是不够……\"",
-"$self$眼神迷离，手指无意识地摩挲着$target$的后颈：\"怎么这么会亲……犯规……\"",
-"$self$傻笑着摸了摸自己的嘴唇，眼神里满是毫不掩饰的爱意。",
-
-"唇分之际，$self$的脸颊染上了红晕，眼神迷离地看着$target$。", "$self$依恋地蹭了蹭$target$的鼻尖：\"再来一次……可以吗？\"",
-"$self$意犹未尽地舔了舔湿润的嘴角，整个人软绵绵地靠在$target$怀里。", "$self$：\"感觉……完全被治愈了。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 亲吻 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","kiss", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-                    "$self$摸着自己的嘴唇，有些发愣：\"原本以为会很讨厌……但好像……并不坏。\"",
-                    "$self$满脸通红地低下头：\"这算什么意思嘛……太犯规了。\"",
-                    "$self$：\"只是这样而已吗？……没，我什么都没说。\"",
-
-                    "$self$满脸通红，低着头不敢看你：\"这、这次就算了……不讨厌。\"",
-                    "$self$依偎过来：\"有点狡猾……但我并不讨厌这种感觉。\"",
-                    "$self$轻轻喘着气，眼神中似乎还带着一丝水汽：\"你的技术……还凑合吧。\"",
-
-                    "$self$满脸通红地退后一步，指尖轻轻触碰着还有些发麻的嘴唇。", 
-                    "$self$低着头不敢看$target$的眼睛：\"这……算是意外吗？还是……\"",
-
-"$self$有些发愣地摸了摸嘴唇，原本想要责备的话到了嘴边却变成了沉默。",
-"$self$低下头，脸颊红得像熟透的苹果，手指不安地绞在一起：\"意外地……不讨厌……\"",
-"$self$偷看了一眼$target$，眼神里多了一丝从未有过的情愫。",
-"$self$：\"这算什么……\" $self$的声音很小，但并没有推开$target$依然搂在腰间的手。",
-"$self$有些慌乱地整理着头发，却掩盖不住眼底那一丝异样的心动。",
-"$self$咬着下唇，似乎在某种伦理和冲动之间挣扎，最后只是轻轻叹了口气。",
-
-"$self$有些发愣地摸着自己的嘴唇，脸上的热度久久不退。", "$self$低着头不敢看$target$，声音细若蚊蝇：\"意外地……不讨厌……\""
-                ]
-            },
-            { 
-                "extraPortraitTags":["sex","kiss", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","kiss", "pain", "bored", "doubt"], "useActiveTags":false,
-                        "_comment":"2.1.4 亲吻 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$捂着嘴唇：\"痛！你是属狗的吗？牙齿撞到了啦！\"",
-                            "$self$翻了个白眼：\"这就是你的水平？稍微去练习一下吧。\"",
-
-                            "$self$下意识地用手背擦了擦嘴角，眉头微不可查地皱了一下。",
-"$self$有些尴尬地移开视线，身体僵硬地拉开了一点距离。",
-"$self$：\"是不是太久了……\" $self$轻轻喘息着，语气中却透着一丝勉强。",
-"$self$推开$target$，整理了一下被弄乱的衣领：\"好了，适可而止吧。\"",
-"$self$有些嫌弃地抿了抿嘴唇，眼神里闪过一丝不耐烦。",
-"$self$：\"你的技术退步了哦。\" $self$半开玩笑半认真地说道，随即便转身离开。",
-
-"$self$下意识地用手背擦了擦嘴唇，表情显得有些冷淡。", "$self$推开了一些距离：\"你的技术……退步了。\"",
-"$self$眉头紧锁，似乎在忍耐着某种不适感。", "$self$：\"弄痛我了……下次温柔一点。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 亲吻 结果负面 未允许 口上文",
-                "responses":
-                [ 
-                    "$self$用力擦着嘴唇，眼眶发红：\"恶心……别再靠近我！\"",
-                    "$self$冷冷地看着对方：\"你以为这样很有趣吗？差劲透了。\"",
-                    "$self$用力擦着嘴唇，眼神冰冷：\"你觉得这样很有趣吗？\"",
-                    "$self$看起来快要哭出来了：\"差劲……最差劲了。\"",
-                    "$self$甚至没有看你一眼，只是背过身去整理衣服，散发着拒绝的气场。",
-                    "$self$：\"我不明白你为什么要做这种事，我很失望。\"",
-                    "$self$推开你，深吸了一口气平复情绪：\"下次请先征求我的同意。\"",
-                    "$self$干呕了一下：\"别靠近我……我现在感觉很糟糕。\"",
-                    "$self$陷入了令人窒息的沉默：\"……我想，我们需要冷静一下。\"",
-                    "$self$叹了口气：\"以后……我们还能像以前那样相处吗？\"",
-                    
-                    "$self$迅速拉开了距离，眼神游移不定：\"抱歉……刚才大概是我想多了。\"", 
-                    "$self$尴尬地理了理头发：\"如果不介意的话，我们能忘掉刚才的事吗？\"",
-
-"$self$用力推开$target$，跑到一边干呕了起来，仿佛刚才吞下了什么脏东西。",
-"$self$眼神冰冷地看着$target$：\"以后离我远点，真让人恶心。\"",
-"$self$面无表情地擦着嘴，直到把嘴唇擦破皮也没有停下。",
-"$self$：\"你毁了这一切。\" $self$冷冷地丢下这句话，转身摔门而去。",
-"$self$充满恨意地瞪了$target$一眼，身体因为极度的反感而止不住地颤抖。",
-"$self$深吸一口气，语气变得前所未有的疏离：\"我想我们没必要再联系了。\"",
-
-"$self$用力擦拭着嘴唇，眼神中充满了不可置信和厌恶。", "$self$冷冷地说道：\"请你自重，我不希望再有下次。\""
-                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "sleeping",
+                                "relaxed",
+                                "slightly_frowning",
+                                "unconscious"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 亲吻口上文",
+                            "responses": [
+                                "com_sex_oral_kiss_1",
+                                "com_sex_oral_kiss_2",
+                                "com_sex_oral_kiss_3",
+                                "com_sex_oral_kiss_4",
+                                "com_sex_oral_kiss_5",
+                                "com_sex_oral_kiss_6",
+                                "com_sex_oral_kiss_7",
+                                "com_sex_oral_kiss_8",
+                                "com_sex_oral_kiss_9",
+                                "com_sex_oral_kiss_10",
+                                "com_sex_oral_kiss_11",
+                                "com_sex_oral_kiss_12",
+                                "com_sex_oral_kiss_13",
+                                "com_sex_oral_kiss_14",
+                                "com_sex_oral_kiss_15",
+                                "com_sex_oral_kiss_16",
+                                "com_sex_oral_kiss_17",
+                                "com_sex_oral_kiss_18",
+                                "com_sex_oral_kiss_19",
+                                "com_sex_oral_kiss_20",
+                                "com_sex_oral_kiss_21",
+                                "com_sex_oral_kiss_22"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle",
+                                "frozen_mid_motion",
+                                "unaware",
+                                "still"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 被亲吻口上文",
+                            "responses": [
+                                "com_sex_oral_kiss_23",
+                                "com_sex_oral_kiss_24",
+                                "com_sex_oral_kiss_25",
+                                "com_sex_oral_kiss_26",
+                                "com_sex_oral_kiss_27",
+                                "com_sex_oral_kiss_28",
+                                "com_sex_oral_kiss_29",
+                                "com_sex_oral_kiss_30",
+                                "com_sex_oral_kiss_31",
+                                "com_sex_oral_kiss_32",
+                                "com_sex_oral_kiss_33",
+                                "com_sex_oral_kiss_34",
+                                "com_sex_oral_kiss_35",
+                                "com_sex_oral_kiss_36",
+                                "com_sex_oral_kiss_37",
+                                "com_sex_oral_kiss_38",
+                                "com_sex_oral_kiss_39",
+                                "com_sex_oral_kiss_40",
+                                "com_sex_oral_kiss_41",
+                                "com_sex_oral_kiss_42",
+                                "com_sex_oral_kiss_43",
+                                "com_sex_oral_kiss_44"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的指令失败拒绝口上文 有允许",
+                                            "responses": [
+                                                "com_sex_oral_kiss_45",
+                                                "com_sex_oral_kiss_46"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的指令失败拒绝口上文 无允许",
+                                    "responses": [
+                                        "com_sex_oral_kiss_47",
+                                        "com_sex_oral_kiss_48",
+                                        "com_sex_oral_kiss_49",
+                                        "com_sex_oral_kiss_50",
+                                        "com_sex_oral_kiss_51",
+                                        "com_sex_oral_kiss_52",
+                                        "com_sex_oral_kiss_53",
+                                        "com_sex_oral_kiss_54",
+                                        "com_sex_oral_kiss_55",
+                                        "com_sex_oral_kiss_56",
+                                        "com_sex_oral_kiss_57",
+                                        "com_sex_oral_kiss_58",
+                                        "com_sex_oral_kiss_59",
+                                        "com_sex_oral_kiss_60"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_kiss_61",
+                                        "com_sex_oral_kiss_62",
+                                        "com_sex_oral_kiss_63",
+                                        "com_sex_oral_kiss_64",
+                                        "com_sex_oral_kiss_65",
+                                        "com_sex_oral_kiss_66",
+                                        "com_sex_oral_kiss_67",
+                                        "com_sex_oral_kiss_68",
+                                        "com_sex_oral_kiss_69",
+                                        "com_sex_oral_kiss_70",
+                                        "com_sex_oral_kiss_71",
+                                        "com_sex_oral_kiss_72",
+                                        "com_sex_oral_kiss_73",
+                                        "com_sex_oral_kiss_74"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_kiss_75",
+                                        "com_sex_oral_kiss_76",
+                                        "com_sex_oral_kiss_77",
+                                        "com_sex_oral_kiss_78"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_kiss_79",
+                                "com_sex_oral_kiss_80",
+                                "com_sex_oral_kiss_81",
+                                "com_sex_oral_kiss_82",
+                                "com_sex_oral_kiss_83",
+                                "com_sex_oral_kiss_84"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment1": "玩家专用 刚睡醒时的 亲吻口上文",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.5",
+                                    "responses": [
+                                        "com_sex_oral_kiss_85",
+                                        "com_sex_oral_kiss_86",
+                                        "com_sex_oral_kiss_87",
+                                        "com_sex_oral_kiss_88",
+                                        "com_sex_oral_kiss_89",
+                                        "com_sex_oral_kiss_90",
+                                        "com_sex_oral_kiss_91",
+                                        "com_sex_oral_kiss_92",
+                                        "com_sex_oral_kiss_93",
+                                        "com_sex_oral_kiss_94",
+                                        "com_sex_oral_kiss_95",
+                                        "com_sex_oral_kiss_96",
+                                        "com_sex_oral_kiss_97",
+                                        "com_sex_oral_kiss_98",
+                                        "com_sex_oral_kiss_99",
+                                        "com_sex_oral_kiss_100"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.7",
+                                    "responses": [
+                                        "com_sex_oral_kiss_101",
+                                        "com_sex_oral_kiss_102",
+                                        "com_sex_oral_kiss_103",
+                                        "com_sex_oral_kiss_104",
+                                        "com_sex_oral_kiss_105",
+                                        "com_sex_oral_kiss_106",
+                                        "com_sex_oral_kiss_107",
+                                        "com_sex_oral_kiss_108",
+                                        "com_sex_oral_kiss_109",
+                                        "com_sex_oral_kiss_110",
+                                        "com_sex_oral_kiss_111",
+                                        "com_sex_oral_kiss_112",
+                                        "com_sex_oral_kiss_113",
+                                        "com_sex_oral_kiss_114",
+                                        "com_sex_oral_kiss_115",
+                                        "com_sex_oral_kiss_116"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.8",
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "sleep",
+                                "smile",
+                                "blush",
+                                "lazy"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_kiss_117",
+                                "com_sex_oral_kiss_118"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 亲吻 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_kiss_119",
+                                        "com_sex_oral_kiss_120",
+                                        "com_sex_oral_kiss_121",
+                                        "com_sex_oral_kiss_122",
+                                        "com_sex_oral_kiss_123",
+                                        "com_sex_oral_kiss_124",
+                                        "com_sex_oral_kiss_125",
+                                        "com_sex_oral_kiss_126",
+                                        "com_sex_oral_kiss_127",
+                                        "com_sex_oral_kiss_128",
+                                        "com_sex_oral_kiss_129",
+                                        "com_sex_oral_kiss_130",
+                                        "com_sex_oral_kiss_131",
+                                        "com_sex_oral_kiss_132",
+                                        "com_sex_oral_kiss_133",
+                                        "com_sex_oral_kiss_134"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 亲吻 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_oral_kiss_135",
+                                "com_sex_oral_kiss_136",
+                                "com_sex_oral_kiss_137",
+                                "com_sex_oral_kiss_138",
+                                "com_sex_oral_kiss_139",
+                                "com_sex_oral_kiss_140",
+                                "com_sex_oral_kiss_141",
+                                "com_sex_oral_kiss_142",
+                                "com_sex_oral_kiss_143",
+                                "com_sex_oral_kiss_144",
+                                "com_sex_oral_kiss_145",
+                                "com_sex_oral_kiss_146",
+                                "com_sex_oral_kiss_147",
+                                "com_sex_oral_kiss_148",
+                                "com_sex_oral_kiss_149",
+                                "com_sex_oral_kiss_150"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "pain",
+                                        "bored",
+                                        "doubt"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 亲吻 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_kiss_151",
+                                        "com_sex_oral_kiss_152",
+                                        "com_sex_oral_kiss_153",
+                                        "com_sex_oral_kiss_154",
+                                        "com_sex_oral_kiss_155",
+                                        "com_sex_oral_kiss_156",
+                                        "com_sex_oral_kiss_157",
+                                        "com_sex_oral_kiss_158",
+                                        "com_sex_oral_kiss_159",
+                                        "com_sex_oral_kiss_160",
+                                        "com_sex_oral_kiss_161",
+                                        "com_sex_oral_kiss_162"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 亲吻 结果负面 未允许 口上文",
+                            "responses": [
+                                "com_sex_oral_kiss_163",
+                                "com_sex_oral_kiss_164",
+                                "com_sex_oral_kiss_165",
+                                "com_sex_oral_kiss_166",
+                                "com_sex_oral_kiss_167",
+                                "com_sex_oral_kiss_168",
+                                "com_sex_oral_kiss_169",
+                                "com_sex_oral_kiss_170",
+                                "com_sex_oral_kiss_171",
+                                "com_sex_oral_kiss_172",
+                                "com_sex_oral_kiss_173",
+                                "com_sex_oral_kiss_174",
+                                "com_sex_oral_kiss_175",
+                                "com_sex_oral_kiss_176",
+                                "com_sex_oral_kiss_177",
+                                "com_sex_oral_kiss_178",
+                                "com_sex_oral_kiss_179",
+                                "com_sex_oral_kiss_180"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_kiss_Climax_1": "$self$的瞳孔骤然涣散，喉咙深处发出一声破碎的尖吟，舌头无力地垂在口中。",
+                "com_sex_oral_kiss_Climax_2": "$self$原本紧抓着$target$的手指猛地痉挛收紧，唾液顺着无法闭合的嘴角失控地流下。",
+                "com_sex_oral_kiss_Climax_3": "$self$的呼吸瞬间停滞，整个人像触电般剧烈一颤，随即瘫软下来，只剩下急促的喘息喷洒在$target$脸上。",
+                "com_sex_oral_kiss_Climax_4": "$self$眼神迷离恍惚，完全忘记了换气，任由快感的余韵让她的大脑一片空白。",
+                "com_sex_oral_kiss_Climax_5": "$self$的身体猛地绷紧，在这个漫长的深吻中，双腿不受控制地痉挛起来。",
+                "com_sex_oral_kiss_Climax_6": "$self$喉咙里发出破碎的呜咽声，指甲深深陷入$target$的背部，瞳孔在这一刻彻底失焦。",
+                "com_sex_oral_kiss_Climax_7": "$self$的大腿内侧剧烈颤抖着，整个人像是一滩烂泥般挂在$target$身上，眼神涣散。",
+                "com_sex_oral_kiss_Climax_8": "$self$：\"唔！嗯嗯嗯——！\" $self$在唇齿交缠间发出高亢的鼻音，腰肢猛烈地挺动了一下。",
+                "com_sex_oral_kiss_Climax_9": "$self$全身泛起潮红，眼角溢出生理性的泪水，在窒息般的快感中彻底瘫软。",
+                "com_sex_oral_kiss_Climax_10": "$self$急促地抽搐着，大脑一片空白，只能在这个吻的支配下无助地承受着灭顶的快感。",
+                "com_sex_oral_kiss_Climax_11": "$self$的身体猛地弓起，喉咙深处发出了破碎的呜咽声，指甲深深陷入了$target$的背部。",
+                "com_sex_oral_kiss_Climax_12": "过度的快感让大脑一片空白，$self$的双眼失焦上翻，大腿内侧痉挛着喷出了爱液。",
+                "com_sex_oral_kiss_Climax_13": "仅仅是舌头的纠缠就让$self$达到了极限，身体瘫软如泥，口水不受控制地顺着嘴角流下。",
+                "com_sex_oral_kiss_Climax_14": "$self$剧烈地喘息着，全身泛起潮红，在唇舌交缠中迎来了剧烈的痉挛。",
+                "com_sex_oral_kiss_Climax_15": "$self$不可置信地瞪大了眼睛，身体在违背意志的快感中剧烈抽搐。",
+                "com_sex_oral_kiss_Climax_16": "$self$：\"不要……不……啊！\" $self$在抗拒中却迎来了羞耻的顶峰，双腿无力地跪倒。",
+                "com_sex_oral_kiss_Climax_17": "$self$绝望地发现自己竟然在这个毫无感情基础的吻中崩溃了，眼泪夺眶而出。",
+                "com_sex_oral_kiss_Climax_18": "$self$的身体诚实地做出了最淫荡的反应，在$target$怀里颤抖着泄身，大脑一片混乱。",
+                "com_sex_oral_kiss_Climax_19": "$self$试图推开$target$的手变得毫无力气，只能发出破碎的呻吟，任由快感吞噬理智。",
+                "com_sex_oral_kiss_Climax_20": "$self$羞耻得浑身通红，却控制不住身体的高潮痉挛，在这一吻中彻底暴露了淫荡的本性。",
+                "com_sex_oral_kiss_Climax_21": "明明心理在抗拒，但$self$的身体却诚实地做出了反应，伴随着屈辱的泪水，高潮还是无情地袭来。",
+                "com_sex_oral_kiss_Climax_22": "$self$咬紧牙关试图忍耐，但颤抖的双腿和瞬间收缩的小腹还是出卖了她此刻的极乐。",
+                "com_sex_oral_kiss_Climax_23": "$self$不可置信地瞪大了眼睛，无法理解为什么仅仅是接吻就会导致这种结果。",
+                "com_sex_oral_kiss_Climax_24": "随着最后一次深喉般的吮吸，$self$的腰肢猛地挺起，在惊恐与快感的夹缝中彻底崩溃，湿了一地。",
+                "com_sex_oral_kiss_Begin_1": "$self$慢慢凑近，闭上了眼睛。",
+                "com_sex_oral_kiss_Begin_2": "两人的距离缩短到了呼吸可闻的程度，$self$并没有后退。",
+                "com_sex_oral_kiss_Begin_3": "$self$微微仰起头，双唇间只有毫厘之差。",
+                "com_sex_oral_kiss_Begin_4": "在这个瞬间，空气仿佛凝固了，$self$等待着触碰。",
+                "com_sex_oral_kiss_Begin_5": "$self$抓住了衣角，动作显得有些紧张局促。",
+                "com_sex_oral_kiss_Begin_6": "$self$的睫毛微微颤动，脸颊泛起了一丝红晕。",
+                "com_sex_oral_kiss_Begin_7": "$self$闭上了眼睛，微微抬起下巴，迎合了这份距离的缩短。",
+                "com_sex_oral_kiss_Begin_8": "$self$的手不自觉地抓住了你的衣角，主动凑近了面庞。",
+                "com_sex_oral_kiss_Begin_9": "$self$没有丝毫退缩，反而在此刻屏住了呼吸，等待着触碰。",
+                "com_sex_oral_kiss_Begin_10": "$self$眼神迷离了一瞬，随即顺从内心的冲动，献上了双唇。",
+                "com_sex_oral_kiss_Begin_11": "$self$嘴角微微上扬，在接触的瞬间，极其自然地回应着。",
+                "com_sex_oral_kiss_Begin_12": "$self$似乎早已期待这一刻，在你靠近之前就已做好了准备。",
+                "com_sex_oral_kiss_Begin_13": "$self$自然地环住了$target$的脖颈，主动加深了这个吻。",
+                "com_sex_oral_kiss_Begin_14": "$self$在唇齿交缠的间隙露出了甜蜜的微笑，整个人软倒在$target$怀里。",
+                "com_sex_oral_kiss_Begin_15": "$self$顺从地闭上眼睛，睫毛微微颤抖，主动凑上去含住了$target$的嘴唇。",
+                "com_sex_oral_kiss_Begin_16": "$self$双手环上$target$的脖子，在这个漫长的吻开始前发出了一声满足的叹息。",
+                "com_sex_oral_kiss_Begin_17": "$self$微微仰起头，眼神迷离地索求着，在双唇相触的瞬间便融化在了$target$怀里。",
+                "com_sex_oral_kiss_Begin_18": "$self$：\"嗯……终于……\" $self$迫不及待地贴紧了对方，舌尖试探性地探出。",
+                "com_sex_oral_kiss_Begin_19": "$self$嘴角带着甜蜜的笑意，温柔地接纳了$target$的侵入，十指插入了对方的发间。",
+                "com_sex_oral_kiss_Begin_20": "$self$在$target$唇上轻啄了一下，随即加深了这个吻，仿佛要将彼此的呼吸彻底交融。",
+                "com_sex_oral_kiss_Begin_21": "$self$没有丝毫犹豫，顺从地闭上了双眼，微微仰起头等待着接触。",
+                "com_sex_oral_kiss_Begin_22": "随着双唇相触，$self$的手自然地环上了$target$的脖颈，主动加深了这个吻。",
+                "com_sex_oral_kiss_Begin_23": "$self$露出了安心的微笑，主动凑近，将呼吸交融在一起。",
+                "com_sex_oral_kiss_Begin_24": "毫无防备的姿态，$self$微微张开嘴唇，默许了$target$的侵入。",
+                "com_sex_oral_kiss_Begin_25": "$self$愣了一下，随即像是被某种魔力牵引，缓缓闭上了眼睛。",
+                "com_sex_oral_kiss_Begin_26": "$self$的手不知所措地抓住了$target$的衣角，笨拙地回应着这份越界的亲密。",
+                "com_sex_oral_kiss_Begin_27": "$self$瞪大了眼睛，整个人僵在了原地，完全忘记了推开。",
+                "com_sex_oral_kiss_Begin_28": "$self$双手不知所措地悬在半空，被$target$的气息笼罩时，呼吸瞬间停滞了。",
+                "com_sex_oral_kiss_Begin_29": "$self$：\"唔？！\" $self$发出错愕的单音节，眼神里写满了不可置信。",
+                "com_sex_oral_kiss_Begin_30": "$self$的大脑似乎宕机了，只能呆呆地任由$target$掠夺着口中的空气。",
+                "com_sex_oral_kiss_Begin_31": "$self$虽然没有反抗，但身体紧绷得像一块石头，眼睛眨个不停。",
+                "com_sex_oral_kiss_Begin_32": "$self$：\"等……\" 话还没说完就被堵回了喉咙里，$self$震惊地看着近在咫尺的脸。",
+                "com_sex_oral_kiss_Begin_33": "$self$瞪大了眼睛，身体瞬间僵硬，似乎大脑一片空白。",
+                "com_sex_oral_kiss_Begin_34": "虽然没有推开，但$self$的手不知所措地悬在半空，完全忘记了反应。",
+                "com_sex_oral_kiss_Begin_35": "$self$浑身僵硬，紧紧闭着双眼，像是在忍受某种痛苦。",
+                "com_sex_oral_kiss_Begin_36": "$self$颤抖了一下，最终放弃了抵抗，任由你通过这种方式侵略。",
+                "com_sex_oral_kiss_Begin_37": "$self$偏开了视线，双手无力地垂在身侧，默许了你的行为。",
+                "com_sex_oral_kiss_Begin_38": "$self$咬着嘴唇，尽管眼神中透着抗拒，但身体却不敢动弹。",
+                "com_sex_oral_kiss_Begin_39": "$self$像个没有灵魂的人偶一般，对此没有任何回应，只是默默承受。",
+                "com_sex_oral_kiss_Begin_40": "$self$发出了细微的呜咽声，被动地接受了这突如其来的亲密。",
+                "com_sex_oral_kiss_Begin_41": "$self$深吸一口气，像是下定决心般闭上了眼睛，僵硬地迎合了上去。",
+                "com_sex_oral_kiss_Begin_42": "$self$没有推开，但双手始终垂在身侧，任由嘴唇被$target$占有。",
+                "com_sex_oral_kiss_Begin_43": "$self$的睫毛剧烈颤抖着，因为恐惧而不敢闭合的双唇被粗暴地堵住。",
+                "com_sex_oral_kiss_Begin_44": "$self$发出呜咽般的鼻音，身体紧贴着墙壁，被迫承受着这漫长的侵略。",
+                "com_sex_oral_kiss_Begin_45": "$self$瑟瑟发抖地闭上眼睛，眼泪顺着眼角滑落，不敢做出任何反抗。",
+                "com_sex_oral_kiss_Begin_46": "$self$紧紧抓着衣角，在$target$的威压下被迫张开嘴，身体因恐惧而僵硬。",
+                "com_sex_oral_kiss_Begin_47": "$self$：\"呜……我知道了……求你别伤害我……\" $self$绝望地迎合上去。",
+                "com_sex_oral_kiss_Begin_48": "$self$像是认命般放弃了挣扎，任由$target$摆布，眼神空洞而惊恐。",
+                "com_sex_oral_kiss_Begin_49": "$self$颤抖着承受着粗暴的侵略，喉咙里发出受惊小动物般的呜咽。",
+                "com_sex_oral_kiss_Begin_50": "$self$僵硬地配合着$target$的动作，生怕稍有不慎就会招致更可怕的对待。",
+                "com_sex_oral_kiss_Begin_51": "$self$紧紧抓着衣角，身体微微颤抖，强迫自己忍受着口腔内的入侵。",
+                "com_sex_oral_kiss_Begin_52": "眼角渗出了生理性的泪水，$self$紧闭着双眼，不敢发出任何声音。",
+                "com_sex_oral_kiss_1": "$self$的呼吸节奏依然平稳，似乎并没有察觉。",
+                "com_sex_oral_kiss_2": "$self$在睡梦中微微皱了皱眉，翻了个身。",
+                "com_sex_oral_kiss_3": "$self$发出了一声含糊的梦呓，嘴唇无意识地蠕动了一下。",
+                "com_sex_oral_kiss_4": "$self$的睫毛颤动着，似乎即将醒来，又似乎陷入更深的梦境。",
+                "com_sex_oral_kiss_5": "$self$并没有醒来，只是像小猫一样蹭了蹭枕头。",
+                "com_sex_oral_kiss_6": "睡梦中的$self$对这突如其来的触碰毫无防备。",
+                "com_sex_oral_kiss_7": "$self$的呼吸依然平稳，似乎并没有察觉到唇上的触感。",
+                "com_sex_oral_kiss_8": "$self$在睡梦中皱了皱眉，发出了一声模糊的呢喃。",
+                "com_sex_oral_kiss_9": "$self$睫毛微微颤动了一下，但并没有醒来的迹象。",
+                "com_sex_oral_kiss_10": "$self$翻了个身，无意识地蹭了蹭枕头，继续沉睡。",
+                "com_sex_oral_kiss_11": "$self$的嘴唇微微张开，睡颜显得毫无防备。",
+                "com_sex_oral_kiss_12": "$self$似乎在做一个好梦，嘴角挂着一丝若有若无的笑意。",
+                "com_sex_oral_kiss_13": "$self$发出轻微的梦呓，眉头舒展，似乎在梦中也感受到了这份温柔。",
+                "com_sex_oral_kiss_14": "$self$的呼吸变得绵长而安稳，嘴角在睡梦中无意识地微微上扬。",
+                "com_sex_oral_kiss_15": "$self$在睡梦中皱了皱眉，似乎对嘴唇上的异物感到困惑，发出了一声模糊的呢喃。",
+                "com_sex_oral_kiss_16": "$self$无意识地张开嘴，配合着$target$的入侵，呼吸变得有些急促。",
+                "com_sex_oral_kiss_17": "$self$依然沉浸在梦乡中，只是身体本能地往热源蹭了蹭，毫无防备地任人采撷。",
+                "com_sex_oral_kiss_18": "$self$的睫毛颤动了几下，但并没有醒来，只是在梦中发出了一声甜腻的哼唧。",
+                "com_sex_oral_kiss_19": "$self$完全没有察觉，安静地像个布娃娃一样被$target$肆意亲吻。",
+                "com_sex_oral_kiss_20": "$self$在睡梦中被吻得有些缺氧，难受地偏了偏头，露出了脆弱的脖颈。",
+                "com_sex_oral_kiss_21": "$self$发出轻微的鼻息声，对于唇瓣上的触感毫无察觉，睡颜依旧安详。",
+                "com_sex_oral_kiss_22": "随着吻的深入，$self$的眉头微微皱了一下，翻了个身继续沉睡。",
+                "com_sex_oral_kiss_23": "$self$保持着静止的姿态，温热的触感没有引发任何回应。",
+                "com_sex_oral_kiss_24": "就像亲吻一尊精美的人偶，$self$的表情没有任何变化。",
+                "com_sex_oral_kiss_25": "在停滞的时间里，$self$的双唇柔软却冰冷。",
+                "com_sex_oral_kiss_26": "$self$眼神空洞地凝视着前方，任由$target$索取。",
+                "com_sex_oral_kiss_27": "没有任何抵抗，也没有任何迎合，$self$只是静静地存在着。",
+                "com_sex_oral_kiss_28": "无论在这个瞬间发生了什么，$self$都无法知晓。",
+                "com_sex_oral_kiss_29": "$self$像是一尊精美的人偶，对你的亲吻没有任何知觉。",
+                "com_sex_oral_kiss_30": "时间静止的世界里，只有你的体温传递到了$self$冰凉的唇上。",
+                "com_sex_oral_kiss_31": "$self$保持着原本的姿势，完全任由你摆布，无法做出任何回应。",
+                "com_sex_oral_kiss_32": "没有任何呼吸的起伏，也没有眼神的接触，你独占了此刻的$self$。",
+                "com_sex_oral_kiss_33": "$self$的双唇柔软却静止，像是在等待唤醒的睡美人。",
+                "com_sex_oral_kiss_34": "在凝固的空气中，你夺走了属于$self$的吻，而她对此一无所知。",
+                "com_sex_oral_kiss_35": "$self$保持着凝固的姿态，对唇上的触感毫无知觉，瞳孔依旧聚焦在虚空。",
+                "com_sex_oral_kiss_36": "$self$就像一尊精美的人偶，任由$target$的舌尖描绘着她的唇形，却给不出任何回应。",
+                "com_sex_oral_kiss_37": "$self$依然保持着上一秒的动作僵在原地，$target$的舌头肆意搅动着口腔，而她对此一无所知。",
+                "com_sex_oral_kiss_38": "$self$的表情凝固在惊讶的瞬间，毫无知觉地承受着这漫长而亵渎的深吻。",
+                "com_sex_oral_kiss_39": "$self$就像一尊精美的人偶，任由$target$品尝着口腔里的每一寸，连唾液流出也无法控制。",
+                "com_sex_oral_kiss_40": "$self$静止在时间夹缝中，对身体正被肆意玩弄的事实毫无反应，只能被动地接受。",
+                "com_sex_oral_kiss_41": "$self$睁着眼睛却看不见任何东西，在静止的世界里，她的口腔成了$target$独享的游乐场。",
+                "com_sex_oral_kiss_42": "$self$对于这长达三分钟的侵犯毫无察觉，待时间恢复流动时，只会疑惑嘴角的湿润。",
+                "com_sex_oral_kiss_43": "$self$保持着上一秒的姿势一动不动，唯有被搅动的舌尖溢出了些许银丝。",
+                "com_sex_oral_kiss_44": "在这个静止的世界里，$self$毫无知觉地承受着一切，只有口腔内的温度在逐渐升高。",
+                "com_sex_oral_kiss_45": "$self$猛地惊醒，条件反射般地推开了压在身上的人。",
+                "com_sex_oral_kiss_46": "$self$惊魂未定地喘息着：\"吓我一跳……别在睡觉的时候做这种事。\"",
+                "com_sex_oral_kiss_47": "$self$猛地睁开眼，惊恐地推开$target$：\"你在干什么？！偷袭吗？\"",
+                "com_sex_oral_kiss_48": "$self$吓得坐了起来，拉起被子护住自己：\"出去！谁允许你趁我睡觉做这种事的！\"",
+                "com_sex_oral_kiss_49": "$self$眼神混乱地擦着嘴：\"这太变态了……我以为我们是朋友……\"",
+                "com_sex_oral_kiss_50": "$self$还没完全清醒，本能地给了$target$一巴掌：\"走开！\"",
+                "com_sex_oral_kiss_51": "$self$：\"呜？！……不要！别趁人之危啊！\"",
+                "com_sex_oral_kiss_52": "$self$警觉地缩到床角：\"你在这里看了多久了？真让人毛骨悚然。\"",
+                "com_sex_oral_kiss_53": "$self$猛地睁开眼，惊慌失措地把你推开：\"你、你在做什么？！\"",
+                "com_sex_oral_kiss_54": "$self$瞬间清醒过来，捂住嘴巴向后缩去：\"变态！趁人睡觉的时候……！\"",
+                "com_sex_oral_kiss_55": "$self$瞪大了眼睛，脸上写满了不可置信和愤怒。",
+                "com_sex_oral_kiss_56": "$self$：\"……你是认真的吗？这种叫醒方式太恶劣了。\"",
+                "com_sex_oral_kiss_57": "$self$惊魂未定地抓紧了被子：\"出去！我现在不想看到你！\"",
+                "com_sex_oral_kiss_58": "$self$迷迷糊糊地感觉到异样，随即用力拍开了你的手。",
+                "com_sex_oral_kiss_59": "$self$发出一声短促的尖叫，慌乱中一巴掌挥了出去。",
+                "com_sex_oral_kiss_60": "$self$裹紧被子缩到床角：\"出去！谁允许你进来的！\"",
+                "com_sex_oral_kiss_61": "$self$轻轻避开：\"现在不行……还有正事要忙呢。\"",
+                "com_sex_oral_kiss_62": "$self$捏了捏对方的脸：\"一身汗味，去洗澡啦，不然不给亲。\"",
+                "com_sex_oral_kiss_63": "$self$偏过头去：\"抱歉……我现在心里很乱，不想做这个。\"",
+                "com_sex_oral_kiss_64": "$self$尴尬地笑了笑，侧身躲开了：\"那个……我突然想起还有事没做。\"",
+                "com_sex_oral_kiss_65": "$self$偏过头躲开了$target$的嘴唇，轻轻推了推对方的胸口。",
+                "com_sex_oral_kiss_66": "$self$：\"别闹了……我现在没心情做这个。\" $self$的声音听起来有些闷闷不乐。",
+                "com_sex_oral_kiss_67": "$self$捂住嘴巴，皱着眉头后退了半步：\"才吃过大蒜，不许亲！\"",
+                "com_sex_oral_kiss_68": "$self$有些疲惫地挡住了$target$凑过来的脸：\"好累，让我歇一会儿吧。\"",
+                "com_sex_oral_kiss_69": "$self$：\"还在生气呢，别以为亲一下就能糊弄过去。\" $self$鼓着脸颊别过脸去。",
+                "com_sex_oral_kiss_70": "$self$叹了口气，用手指抵住$target$的嘴唇：\"现在的气氛不太对，下次吧。\"",
+                "com_sex_oral_kiss_71": "$self$轻轻偏过头，避开了即将落下的吻，眼神有些闪躲。",
+                "com_sex_oral_kiss_72": "$self$用手指抵住$target$的嘴唇：\"抱歉……现在不太想做这个。\"",
+                "com_sex_oral_kiss_73": "$self$轻轻推了推$target$的胸口，摇了摇头。",
+                "com_sex_oral_kiss_74": "$self$：\"我很累，只限拥抱好吗？\"",
+                "com_sex_oral_kiss_75": "$self$慌乱地偏过头去：\"等等！这……这太突然了，我们不是那种关系吧？\"",
+                "com_sex_oral_kiss_76": "$self$用手抵住对方胸口，尴尬地笑了笑：\"别开这种玩笑了，会吓到我的。\"",
+                "com_sex_oral_kiss_77": "$self$猛地向后退了一步：\"等等！你是不是误会了什么？\"",
+                "com_sex_oral_kiss_78": "$self$用手指抵住了你的嘴唇：\"太快了，我们还没到那一步吧？\"",
+                "com_sex_oral_kiss_79": "$self$猛地推开对方：\"你疯了吗？离我远点！\"",
+                "com_sex_oral_kiss_80": "$self$捂住嘴退后一步，眼神里充满了警惕：\"请你自重。\"",
+                "com_sex_oral_kiss_81": "$self$皱起眉头：\"如果你再靠近，我就要生气了。\"",
+                "com_sex_oral_kiss_82": "$self$一把推开了你，脸上写满了不悦：\"离我远点，别碰我。\"",
+                "com_sex_oral_kiss_83": "$self$猛地偏过头，用手背狠狠擦拭着嘴唇：\"别碰我！真恶心！\"",
+                "com_sex_oral_kiss_84": "$self$用力推开$target$的胸膛，眼神冷得像冰：\"适可而止，还要我重复一遍吗？\"",
+                "com_sex_oral_kiss_85": "$self$迷迷糊糊地睁开眼，顺势搂住了$target$的脖子：\"嗯……早安吻吗？\"",
+                "com_sex_oral_kiss_86": "$self$发出慵懒的鼻音，并没有反抗：\"嘿嘿……像做梦一样……\"",
+                "com_sex_oral_kiss_87": "$self$半睁着眼，嘴角带着笑意：\"偷袭被我发现咯……作为惩罚，再来一次。\"",
+                "com_sex_oral_kiss_88": "$self$蹭了蹭$target$的手心，安心地闭上眼继续享受：\"嗯……别停……\"",
+                "com_sex_oral_kiss_89": "$self$声音沙哑又软糯：\"是你啊……那没关系……\"",
+                "com_sex_oral_kiss_90": "$self$：\"嗯？……本来还想再睡会的……但这样醒来也不错。\"",
+                "com_sex_oral_kiss_91": "$self$睡眼惺忪地睁开眼，看清是你后，伸手勾住了你的脖子。",
+                "com_sex_oral_kiss_92": "$self$迷糊地哼哼了两声，顺势加深了这个吻：\"……早安？\"",
+                "com_sex_oral_kiss_93": "$self$并没有反抗，而是带着刚睡醒的慵懒，回应着你的热情。",
+                "com_sex_oral_kiss_94": "$self$：\"嗯……偷袭吗？这可不公平……\" 她闭着眼笑着说道。",
+                "com_sex_oral_kiss_95": "$self$软绵绵地蹭了蹭你的脸颊：\"再多来一点……我还没醒透呢。\"",
+                "com_sex_oral_kiss_96": "$self$半睁着眼，露出了安心的表情，任由你在早晨索取。",
+                "com_sex_oral_kiss_97": "$self$迷迷糊糊地睁开眼，随即顺从地张开嘴，含住了$target$的舌头。",
+                "com_sex_oral_kiss_98": "$self$慵懒地哼了一声，像只猫一样反客为主，将$target$拉向自己。",
+                "com_sex_oral_kiss_99": "$self$迷迷糊糊地睁开眼，看清是$target$后，慵懒地伸出舌尖回应起来。",
+                "com_sex_oral_kiss_100": "梦呓般的哼声从喉间溢出，$self$本能地迎合着这份温存。",
+                "com_sex_oral_kiss_101": "$self$迷迷糊糊地睁开眼，顺势搂住了$target$的脖子：\"嗯……早安吻吗？\"",
+                "com_sex_oral_kiss_102": "$self$发出慵懒的鼻音，并没有反抗：\"嘿嘿……像做梦一样……\"",
+                "com_sex_oral_kiss_103": "$self$半睁着眼，嘴角带着笑意：\"偷袭被我发现咯……作为惩罚，再来一次。\"",
+                "com_sex_oral_kiss_104": "$self$蹭了蹭$target$的手心，安心地闭上眼继续享受：\"嗯……别停……\"",
+                "com_sex_oral_kiss_105": "$self$声音沙哑又软糯：\"是你啊……那没关系……\"",
+                "com_sex_oral_kiss_106": "$self$：\"嗯？……本来还想再睡会的……但这样醒来也不错。\"",
+                "com_sex_oral_kiss_107": "$self$睡眼惺忪地睁开眼，看清是你后，伸手勾住了你的脖子。",
+                "com_sex_oral_kiss_108": "$self$迷糊地哼哼了两声，顺势加深了这个吻：\"……早安？\"",
+                "com_sex_oral_kiss_109": "$self$并没有反抗，而是带着刚睡醒的慵懒，回应着你的热情。",
+                "com_sex_oral_kiss_110": "$self$：\"嗯……偷袭吗？这可不公平……\" 她闭着眼笑着说道。",
+                "com_sex_oral_kiss_111": "$self$软绵绵地蹭了蹭你的脸颊：\"再多来一点……我还没醒透呢。\"",
+                "com_sex_oral_kiss_112": "$self$半睁着眼，露出了安心的表情，任由你在早晨索取。",
+                "com_sex_oral_kiss_113": "$self$迷迷糊糊地睁开眼，随即顺从地张开嘴，含住了$target$的舌头。",
+                "com_sex_oral_kiss_114": "$self$慵懒地哼了一声，像只猫一样反客为主，将$target$拉向自己。",
+                "com_sex_oral_kiss_115": "$self$迷迷糊糊地睁开眼，看清是$target$后，慵懒地伸出舌尖回应起来。",
+                "com_sex_oral_kiss_116": "梦呓般的哼声从喉间溢出，$self$本能地迎合着这份温存。",
+                "com_sex_oral_kiss_117": "察觉到身上的人是谁后，$self$眼中的恐惧一闪而过，随即认命般地停止了挣扎。",
+                "com_sex_oral_kiss_118": "$self$僵硬地躺着，任由对方索取，眼泪无声地滑落。",
+                "com_sex_oral_kiss_119": "$self$意犹未尽地舔了舔嘴唇：\"嗯……只有三分钟吗？不够哦。\"",
+                "com_sex_oral_kiss_120": "$self$把头埋在对方怀里：\"喜欢……再多亲一会也可以的。\"",
+                "com_sex_oral_kiss_121": "$self$笑着擦去嘴角的痕迹：\"今天的味道是甜的呢。\"",
+                "com_sex_oral_kiss_122": "$self$眼神迷离：\"呼……心跳得好快，都是因为你。\"",
+                "com_sex_oral_kiss_123": "$self$看着你的眼睛，声音变得很轻：\"再一次……可以吗？\"",
+                "com_sex_oral_kiss_124": "$self$摸了摸自己的嘴唇，露出了羞涩的微笑：\"好像……心跳得好快。\"",
+                "com_sex_oral_kiss_125": "$self$脸颊绯红，眼神湿润地看着$target$，似乎还在回味刚才的触感。",
+                "com_sex_oral_kiss_126": "$self$意犹未尽地舔了舔嘴唇，身体更加瘫软地靠在$target$身上。",
+                "com_sex_oral_kiss_127": "$self$：\"呼……肺里的空气都要被你吸干了……\" $self$娇嗔地锤了一下$target$。",
+                "com_sex_oral_kiss_128": "$self$把头埋进$target$的颈窝，发出细微的哼唧声：\"再一次……还是不够……\"",
+                "com_sex_oral_kiss_129": "$self$眼神迷离，手指无意识地摩挲着$target$的后颈：\"怎么这么会亲……犯规……\"",
+                "com_sex_oral_kiss_130": "$self$傻笑着摸了摸自己的嘴唇，眼神里满是毫不掩饰的爱意。",
+                "com_sex_oral_kiss_131": "唇分之际，$self$的脸颊染上了红晕，眼神迷离地看着$target$。",
+                "com_sex_oral_kiss_132": "$self$依恋地蹭了蹭$target$的鼻尖：\"再来一次……可以吗？\"",
+                "com_sex_oral_kiss_133": "$self$意犹未尽地舔了舔湿润的嘴角，整个人软绵绵地靠在$target$怀里。",
+                "com_sex_oral_kiss_134": "$self$：\"感觉……完全被治愈了。\"",
+                "com_sex_oral_kiss_135": "$self$摸着自己的嘴唇，有些发愣：\"原本以为会很讨厌……但好像……并不坏。\"",
+                "com_sex_oral_kiss_136": "$self$满脸通红地低下头：\"这算什么意思嘛……太犯规了。\"",
+                "com_sex_oral_kiss_137": "$self$：\"只是这样而已吗？……没，我什么都没说。\"",
+                "com_sex_oral_kiss_138": "$self$满脸通红，低着头不敢看你：\"这、这次就算了……不讨厌。\"",
+                "com_sex_oral_kiss_139": "$self$依偎过来：\"有点狡猾……但我并不讨厌这种感觉。\"",
+                "com_sex_oral_kiss_140": "$self$轻轻喘着气，眼神中似乎还带着一丝水汽：\"你的技术……还凑合吧。\"",
+                "com_sex_oral_kiss_141": "$self$满脸通红地退后一步，指尖轻轻触碰着还有些发麻的嘴唇。",
+                "com_sex_oral_kiss_142": "$self$低着头不敢看$target$的眼睛：\"这……算是意外吗？还是……\"",
+                "com_sex_oral_kiss_143": "$self$有些发愣地摸了摸嘴唇，原本想要责备的话到了嘴边却变成了沉默。",
+                "com_sex_oral_kiss_144": "$self$低下头，脸颊红得像熟透的苹果，手指不安地绞在一起：\"意外地……不讨厌……\"",
+                "com_sex_oral_kiss_145": "$self$偷看了一眼$target$，眼神里多了一丝从未有过的情愫。",
+                "com_sex_oral_kiss_146": "$self$：\"这算什么……\" $self$的声音很小，但并没有推开$target$依然搂在腰间的手。",
+                "com_sex_oral_kiss_147": "$self$有些慌乱地整理着头发，却掩盖不住眼底那一丝异样的心动。",
+                "com_sex_oral_kiss_148": "$self$咬着下唇，似乎在某种伦理和冲动之间挣扎，最后只是轻轻叹了口气。",
+                "com_sex_oral_kiss_149": "$self$有些发愣地摸着自己的嘴唇，脸上的热度久久不退。",
+                "com_sex_oral_kiss_150": "$self$低着头不敢看$target$，声音细若蚊蝇：\"意外地……不讨厌……\"",
+                "com_sex_oral_kiss_151": "$self$捂着嘴唇：\"痛！你是属狗的吗？牙齿撞到了啦！\"",
+                "com_sex_oral_kiss_152": "$self$翻了个白眼：\"这就是你的水平？稍微去练习一下吧。\"",
+                "com_sex_oral_kiss_153": "$self$下意识地用手背擦了擦嘴角，眉头微不可查地皱了一下。",
+                "com_sex_oral_kiss_154": "$self$有些尴尬地移开视线，身体僵硬地拉开了一点距离。",
+                "com_sex_oral_kiss_155": "$self$：\"是不是太久了……\" $self$轻轻喘息着，语气中却透着一丝勉强。",
+                "com_sex_oral_kiss_156": "$self$推开$target$，整理了一下被弄乱的衣领：\"好了，适可而止吧。\"",
+                "com_sex_oral_kiss_157": "$self$有些嫌弃地抿了抿嘴唇，眼神里闪过一丝不耐烦。",
+                "com_sex_oral_kiss_158": "$self$：\"你的技术退步了哦。\" $self$半开玩笑半认真地说道，随即便转身离开。",
+                "com_sex_oral_kiss_159": "$self$下意识地用手背擦了擦嘴唇，表情显得有些冷淡。",
+                "com_sex_oral_kiss_160": "$self$推开了一些距离：\"你的技术……退步了。\"",
+                "com_sex_oral_kiss_161": "$self$眉头紧锁，似乎在忍耐着某种不适感。",
+                "com_sex_oral_kiss_162": "$self$：\"弄痛我了……下次温柔一点。\"",
+                "com_sex_oral_kiss_163": "$self$用力擦着嘴唇，眼眶发红：\"恶心……别再靠近我！\"",
+                "com_sex_oral_kiss_164": "$self$冷冷地看着对方：\"你以为这样很有趣吗？差劲透了。\"",
+                "com_sex_oral_kiss_165": "$self$用力擦着嘴唇，眼神冰冷：\"你觉得这样很有趣吗？\"",
+                "com_sex_oral_kiss_166": "$self$看起来快要哭出来了：\"差劲……最差劲了。\"",
+                "com_sex_oral_kiss_167": "$self$甚至没有看你一眼，只是背过身去整理衣服，散发着拒绝的气场。",
+                "com_sex_oral_kiss_168": "$self$：\"我不明白你为什么要做这种事，我很失望。\"",
+                "com_sex_oral_kiss_169": "$self$推开你，深吸了一口气平复情绪：\"下次请先征求我的同意。\"",
+                "com_sex_oral_kiss_170": "$self$干呕了一下：\"别靠近我……我现在感觉很糟糕。\"",
+                "com_sex_oral_kiss_171": "$self$陷入了令人窒息的沉默：\"……我想，我们需要冷静一下。\"",
+                "com_sex_oral_kiss_172": "$self$叹了口气：\"以后……我们还能像以前那样相处吗？\"",
+                "com_sex_oral_kiss_173": "$self$迅速拉开了距离，眼神游移不定：\"抱歉……刚才大概是我想多了。\"",
+                "com_sex_oral_kiss_174": "$self$尴尬地理了理头发：\"如果不介意的话，我们能忘掉刚才的事吗？\"",
+                "com_sex_oral_kiss_175": "$self$用力推开$target$，跑到一边干呕了起来，仿佛刚才吞下了什么脏东西。",
+                "com_sex_oral_kiss_176": "$self$眼神冰冷地看着$target$：\"以后离我远点，真让人恶心。\"",
+                "com_sex_oral_kiss_177": "$self$面无表情地擦着嘴，直到把嘴唇擦破皮也没有停下。",
+                "com_sex_oral_kiss_178": "$self$：\"你毁了这一切。\" $self$冷冷地丢下这句话，转身摔门而去。",
+                "com_sex_oral_kiss_179": "$self$充满恨意地瞪了$target$一眼，身体因为极度的反感而止不住地颤抖。",
+                "com_sex_oral_kiss_180": "$self$深吸一口气，语气变得前所未有的疏离：\"我想我们没必要再联系了。\""
+            },
+            "en-us": {
+                "com_sex_oral_kiss_Climax_1": "$self$'s pupils suddenly dilated as a broken moan escaped deep from her throat, her tongue lolling helplessly in her mouth.",
+                "com_sex_oral_kiss_Climax_2": "$self$'s fingers, originally gripping $target$, spasmed tightly, saliva flowing uncontrollably from her unclosable mouth.",
+                "com_sex_oral_kiss_Climax_3": "$self$'s breath hitched instantly, her whole body trembling violently like she was electrocuted, then collapsing softly, leaving only rapid pants spraying on $target$'s face.",
+                "com_sex_oral_kiss_Climax_4": "$self$'s eyes glazed over, completely forgetting to breathe, letting the aftershocks of pleasure blank out her mind.",
+                "com_sex_oral_kiss_Climax_5": "$self$'s body tensed up abruptly, her legs spasming uncontrollably during this endless deep kiss.",
+                "com_sex_oral_kiss_Climax_6": "A broken whimper escaped $self$'s throat, her nails digging deep into $target$'s back, her pupils completely unfocused in this moment.",
+                "com_sex_oral_kiss_Climax_7": "$self$'s inner thighs trembled violently, her whole body hanging onto $target$ like a puddle of mud, eyes unfocused.",
+                "com_sex_oral_kiss_Climax_8": "$self$: \"Mmh! Nnnnghhh—!\" $self$ let out a high-pitched nasal whine between their intertwined lips, her waist thrusting violently once.",
+                "com_sex_oral_kiss_Climax_9": "$self$'s entire body flushed red, physiological tears spilling from the corners of her eyes, collapsing completely in suffocating pleasure.",
+                "com_sex_oral_kiss_Climax_10": "$self$ twitched rapidly, mind blank, helplessly enduring the overwhelming pleasure under the dominance of this kiss.",
+                "com_sex_oral_kiss_Climax_11": "$self$'s body arched suddenly, emitting a broken whimper from her throat, nails digging deep into $target$'s back.",
+                "com_sex_oral_kiss_Climax_12": "Overwhelming pleasure blanked out her mind; $self$'s eyes rolled back out of focus, her inner thighs spasming as she squirted love juices.",
+                "com_sex_oral_kiss_Climax_13": "Just the entanglement of tongues pushed $self$ to her limit; her body went limp, drool flowing uncontrollably from the corner of her mouth.",
+                "com_sex_oral_kiss_Climax_14": "$self$ panted heavily, her whole body flushing red, reaching a violent spasm amidst the tangling of lips and tongues.",
+                "com_sex_oral_kiss_Climax_15": "$self$ stared in disbelief, her body twitching violently in pleasure against her will.",
+                "com_sex_oral_kiss_Climax_16": "$self$: \"No... Don't... Ah!\" Amidst resistance, $self$ reached a shameful peak, her legs giving way as she knelt down.",
+                "com_sex_oral_kiss_Climax_17": "$self$ realized in despair that she had broken down in this emotionless kiss, tears bursting from her eyes.",
+                "com_sex_oral_kiss_Climax_18": "$self$'s body honestly reacted in the lewdest way, trembling and cumming in $target$'s arms, her mind in chaos.",
+                "com_sex_oral_kiss_Climax_19": "$self$'s attempt to push $target$ away became feeble, only managing broken moans as pleasure swallowed her reason.",
+                "com_sex_oral_kiss_Climax_20": "$self$ turned red with shame but couldn't control her body's orgasmic spasms, completely exposing her lewd nature in this kiss.",
+                "com_sex_oral_kiss_Climax_21": "Even though her mind resisted, $self$'s body reacted honestly. Accompanied by tears of humiliation, the orgasm hit mercilessly.",
+                "com_sex_oral_kiss_Climax_22": "$self$ gritted her teeth trying to endure, but her trembling legs and instantly contracting lower belly betrayed her ecstasy.",
+                "com_sex_oral_kiss_Climax_23": "$self$ widened her eyes in disbelief, unable to understand why a mere kiss would lead to this result.",
+                "com_sex_oral_kiss_Climax_24": "With one last deep-throat-like suck, $self$'s waist jerked up, completely breaking down between terror and pleasure, wetting the floor.",
+                "com_sex_oral_kiss_Begin_1": "$self$ leaned in slowly and closed her eyes.",
+                "com_sex_oral_kiss_Begin_2": "The distance between them shortened until breaths could be heard; $self$ did not back away.",
+                "com_sex_oral_kiss_Begin_3": "$self$ tilted her head up slightly, only a hair's breadth between their lips.",
+                "com_sex_oral_kiss_Begin_4": "In this moment, the air seemed to freeze as $self$ awaited the touch.",
+                "com_sex_oral_kiss_Begin_5": "$self$ grabbed the hem of her clothes, her movements appearing somewhat nervous.",
+                "com_sex_oral_kiss_Begin_6": "$self$'s eyelashes trembled slightly, a blush rising on her cheeks.",
+                "com_sex_oral_kiss_Begin_7": "$self$ closed her eyes and lifted her chin slightly, welcoming the closing distance.",
+                "com_sex_oral_kiss_Begin_8": "$self$'s hand unconsciously grabbed your clothes as she actively leaned her face closer.",
+                "com_sex_oral_kiss_Begin_9": "$self$ didn't shrink back at all; instead, she held her breath, waiting for the touch.",
+                "com_sex_oral_kiss_Begin_10": "$self$'s gaze blurred for a second, then following her inner impulse, she offered her lips.",
+                "com_sex_oral_kiss_Begin_11": "$self$'s lips curled up slightly, responding naturally the moment they touched.",
+                "com_sex_oral_kiss_Begin_12": "$self$ seemed to have expected this moment, readying herself before you even got close.",
+                "com_sex_oral_kiss_Begin_13": "$self$ naturally wrapped her arms around $target$'s neck, actively deepening the kiss.",
+                "com_sex_oral_kiss_Begin_14": "$self$ revealed a sweet smile between the lip-locking, collapsing softly into $target$'s arms.",
+                "com_sex_oral_kiss_Begin_15": "$self$ obediently closed her eyes, eyelashes trembling, and leaned in to capture $target$'s lips.",
+                "com_sex_oral_kiss_Begin_16": "$self$ wrapped her hands around $target$'s neck, letting out a satisfied sigh before the long kiss began.",
+                "com_sex_oral_kiss_Begin_17": "$self$ looked up slightly, eyes misty with desire, melting into $target$'s arms the moment their lips touched.",
+                "com_sex_oral_kiss_Begin_18": "$self$: \"Mmh... Finally...\" $self$ pressed eagerly against them, her tongue tentatively probing out.",
+                "com_sex_oral_kiss_Begin_19": "$self$ accepted $target$'s intrusion gently with a sweet smile, burying her fingers in their hair.",
+                "com_sex_oral_kiss_Begin_20": "$self$ pecked $target$'s lips lightly, then deepened the kiss as if to merge their breaths completely.",
+                "com_sex_oral_kiss_Begin_21": "$self$ didn't hesitate, closing her eyes obediently and looking up, waiting for contact.",
+                "com_sex_oral_kiss_Begin_22": "As their lips touched, $self$'s arms naturally encircled $target$'s neck, actively deepening the kiss.",
+                "com_sex_oral_kiss_Begin_23": "$self$ showed a reassured smile, leaning in to mingle their breaths.",
+                "com_sex_oral_kiss_Begin_24": "With an unguarded posture, $self$ parted her lips slightly, silently permitting $target$'s intrusion.",
+                "com_sex_oral_kiss_Begin_25": "$self$ paused, then as if drawn by some magic, slowly closed her eyes.",
+                "com_sex_oral_kiss_Begin_26": "$self$'s hand awkwardly grabbed $target$'s hem, clumsily responding to this overstepping intimacy.",
+                "com_sex_oral_kiss_Begin_27": "$self$ widened her eyes, frozen on the spot, completely forgetting to push away.",
+                "com_sex_oral_kiss_Begin_28": "$self$'s hands hung awkwardly in mid-air; her breath hitched as she was enveloped by $target$'s scent.",
+                "com_sex_oral_kiss_Begin_29": "$self$: \"Mmph?!\" $self$ let out a startled sound, disbelief written in her eyes.",
+                "com_sex_oral_kiss_Begin_30": "$self$'s brain seemed to crash, only able to blankly let $target$ plunder the air from her mouth.",
+                "com_sex_oral_kiss_Begin_31": "Although she didn't resist, $self$'s body was as tense as a rock, blinking rapidly.",
+                "com_sex_oral_kiss_Begin_32": "$self$: \"Wait...\" The words were stifled in her throat, looking shocked at the face so close to hers.",
+                "com_sex_oral_kiss_Begin_33": "$self$ stared wide-eyed, body stiffening instantly, mind seeming to go blank.",
+                "com_sex_oral_kiss_Begin_34": "Although she didn't push away, $self$'s hands hung awkwardly in the air, completely forgetting to react.",
+                "com_sex_oral_kiss_Begin_35": "$self$ went stiff all over, squeezing her eyes shut as if enduring some pain.",
+                "com_sex_oral_kiss_Begin_36": "$self$ trembled, eventually giving up resistance and letting you invade her this way.",
+                "com_sex_oral_kiss_Begin_37": "$self$ averted her gaze, hands hanging limply by her side, silently allowing your actions.",
+                "com_sex_oral_kiss_Begin_38": "$self$ bit her lip; although her eyes showed resistance, her body dared not move.",
+                "com_sex_oral_kiss_Begin_39": "$self$ was like a soulless doll, giving no response, just silently enduring.",
+                "com_sex_oral_kiss_Begin_40": "$self$ made a tiny whimpering sound, passively accepting this sudden intimacy.",
+                "com_sex_oral_kiss_Begin_41": "$self$ took a deep breath, closed her eyes as if resigned, and stiffly went along with it.",
+                "com_sex_oral_kiss_Begin_42": "$self$ didn't push away, but her hands remained by her sides, letting her lips be possessed by $target$.",
+                "com_sex_oral_kiss_Begin_43": "$self$'s eyelashes trembled violently as her lips, too scared to close, were roughly plugged.",
+                "com_sex_oral_kiss_Begin_44": "$self$ emitted a whimper like a nasal whine, body pressed against the wall, forced to endure this long invasion.",
+                "com_sex_oral_kiss_Begin_45": "$self$ closed her eyes, shivering, tears sliding down the corners, daring not to offer any resistance.",
+                "com_sex_oral_kiss_Begin_46": "$self$ clutched her hem tightly, forced to open her mouth under $target$'s pressure, body stiff with fear.",
+                "com_sex_oral_kiss_Begin_47": "$self$: \"Ugh... I understand... Please don't hurt me...\" $self$ complied in despair.",
+                "com_sex_oral_kiss_Begin_48": "$self$ gave up struggling as if resigned to fate, letting $target$ manipulate her, eyes empty and terrified.",
+                "com_sex_oral_kiss_Begin_49": "$self$ trembled under the rough invasion, throat emitting whimpers like a frightened small animal.",
+                "com_sex_oral_kiss_Begin_50": "$self$ stiffly cooperated with $target$'s movements, terrified that a slip-up would invite worse treatment.",
+                "com_sex_oral_kiss_Begin_51": "$self$ gripped her clothes tightly, body slightly trembling, forcing herself to endure the intrusion in her mouth.",
+                "com_sex_oral_kiss_Begin_52": "Physiological tears seeped from the corners of her eyes; $self$ kept her eyes tightly shut, daring not to make a sound.",
+                "com_sex_oral_kiss_1": "$self$'s breathing rhythm remained steady, seeming not to notice.",
+                "com_sex_oral_kiss_2": "$self$ frowned slightly in her sleep and turned over.",
+                "com_sex_oral_kiss_3": "$self$ muttered something vague in her sleep, lips moving unconsciously.",
+                "com_sex_oral_kiss_4": "$self$'s eyelashes fluttered, seeming about to wake, or perhaps falling into a deeper dream.",
+                "com_sex_oral_kiss_5": "$self$ didn't wake up, just nuzzled the pillow like a kitten.",
+                "com_sex_oral_kiss_6": "Sleeping $self$ was completely unguarded against this sudden touch.",
+                "com_sex_oral_kiss_7": "$self$'s breathing remained steady, seemingly unaware of the sensation on her lips.",
+                "com_sex_oral_kiss_8": "$self$ frowned in her sleep, letting out a vague murmur.",
+                "com_sex_oral_kiss_9": "$self$'s eyelashes fluttered slightly, but there was no sign of waking.",
+                "com_sex_oral_kiss_10": "$self$ turned over, unconsciously nuzzled the pillow, and continued sleeping.",
+                "com_sex_oral_kiss_11": "$self$'s lips parted slightly, her sleeping face looking defenseless.",
+                "com_sex_oral_kiss_12": "$self$ seemed to be having a good dream, a faint smile on the corners of her mouth.",
+                "com_sex_oral_kiss_13": "$self$ murmured softly, brow relaxing, seeming to feel the tenderness even in her dream.",
+                "com_sex_oral_kiss_14": "$self$'s breathing became long and steady, corners of her mouth twitching up unconsciously in her sleep.",
+                "com_sex_oral_kiss_15": "$self$ frowned in her sleep, seemingly confused by the foreign object on her lips, and murmured vaguely.",
+                "com_sex_oral_kiss_16": "$self$ unconsciously opened her mouth, cooperating with $target$'s invasion, breathing becoming somewhat rapid.",
+                "com_sex_oral_kiss_17": "$self$ was still immersed in dreamland, instinctively snuggling towards the heat source, defenselessly ripe for picking.",
+                "com_sex_oral_kiss_18": "$self$'s eyelashes fluttered a few times but she didn't wake, just letting out a sweet hum in her dream.",
+                "com_sex_oral_kiss_19": "$self$ didn't notice at all, being kissed wantonly by $target$ quietly like a rag doll.",
+                "com_sex_oral_kiss_20": "$self$, kissed a bit breathless in her sleep, turned her head uncomfortably, revealing her fragile neck.",
+                "com_sex_oral_kiss_21": "$self$ breathed softly through her nose, unaware of the touch on her lips, sleeping face still peaceful.",
+                "com_sex_oral_kiss_22": "As the kiss deepened, $self$'s brows furrowed slightly, and she turned over to continue sleeping.",
+                "com_sex_oral_kiss_23": "$self$ maintained a still posture; the warm touch elicited no response.",
+                "com_sex_oral_kiss_24": "Like kissing an exquisite doll, $self$'s expression didn't change at all.",
+                "com_sex_oral_kiss_25": "In the stagnant time, $self$'s lips were soft but cold.",
+                "com_sex_oral_kiss_26": "$self$ stared blankly ahead, allowing $target$ to take what they wanted.",
+                "com_sex_oral_kiss_27": "No resistance, no welcome, $self$ simply existed quietly.",
+                "com_sex_oral_kiss_28": "Whatever happened in this moment, $self$ would never know.",
+                "com_sex_oral_kiss_29": "$self$ was like an exquisite doll, having no perception of your kiss.",
+                "com_sex_oral_kiss_30": "In a world where time stood still, only your body heat transferred to $self$'s cold lips.",
+                "com_sex_oral_kiss_31": "$self$ kept her original pose, completely at your mercy, unable to respond.",
+                "com_sex_oral_kiss_32": "No rise and fall of breath, no eye contact; you monopolized $self$ in this moment.",
+                "com_sex_oral_kiss_33": "$self$'s lips were soft but still, like a Sleeping Beauty waiting to be awakened.",
+                "com_sex_oral_kiss_34": "In the solidified air, you stole a kiss belonging to $self$, and she knew nothing of it.",
+                "com_sex_oral_kiss_35": "$self$ maintained a frozen posture, unaware of the touch on her lips, pupils still focused on the void.",
+                "com_sex_oral_kiss_36": "$self$ was like an exquisite doll, letting $target$'s tongue trace the shape of her lips without giving any response.",
+                "com_sex_oral_kiss_37": "$self$ remained frozen in the previous second's action, $target$'s tongue churning wantonly in her mouth, while she knew nothing.",
+                "com_sex_oral_kiss_38": "$self$'s expression froze in a moment of surprise, enduring this long and blasphemous deep kiss without perception.",
+                "com_sex_oral_kiss_39": "$self$ was like an exquisite doll, letting $target$ taste every inch of her mouth, unable to control even the drool flowing out.",
+                "com_sex_oral_kiss_40": "$self$ stood still in the rift of time, unreactive to the fact that her body was being wantonly played with, only able to accept passively.",
+                "com_sex_oral_kiss_41": "$self$'s eyes were open but saw nothing. In the still world, her mouth became $target$'s exclusive playground.",
+                "com_sex_oral_kiss_42": "$self$ was unaware of this three-minute violation; when time flowed again, she would only be puzzled by the wetness at the corner of her mouth.",
+                "com_sex_oral_kiss_43": "$self$ remained motionless in the previous second's pose, only a silver thread spilling from the stirred tongue tip.",
+                "com_sex_oral_kiss_44": "In this still world, $self$ endured everything unknowingly, only the temperature inside her mouth gradually rising.",
+                "com_sex_oral_kiss_45": "$self$ woke with a start, reflexively pushing the person on top of her away.",
+                "com_sex_oral_kiss_46": "$self$ panted in shock: \"Scared me... Don't do that while I'm sleeping.\"",
+                "com_sex_oral_kiss_47": "$self$ opened her eyes abruptly, pushing $target$ away in panic: \"What are you doing?! Sneak attack?\"",
+                "com_sex_oral_kiss_48": "$self$ sat up in fright, pulling the quilt to cover herself: \"Get out! Who allowed you to do this while I was sleeping!\"",
+                "com_sex_oral_kiss_49": "$self$ wiped her mouth, eyes confused: \"That's too perverted... I thought we were friends...\"",
+                "com_sex_oral_kiss_50": "$self$ wasn't fully awake yet, instinctively slapping $target$: \"Go away!\"",
+                "com_sex_oral_kiss_51": "$self$: \"Mmph?! ...No! Don't take advantage of people!\"",
+                "com_sex_oral_kiss_52": "$self$ shrank warily to the corner of the bed: \"How long have you been watching? Creepy.\"",
+                "com_sex_oral_kiss_53": "$self$ opened her eyes suddenly, pushing you away in panic: \"Wh-what are you doing?!\"",
+                "com_sex_oral_kiss_54": "$self$ sobered up instantly, covering her mouth and shrinking back: \"Pervert! While people are sleeping...!\"",
+                "com_sex_oral_kiss_55": "$self$ stared wide-eyed, face full of disbelief and anger.",
+                "com_sex_oral_kiss_56": "$self$: \"...Are you serious? This way of waking someone up is too awful.\"",
+                "com_sex_oral_kiss_57": "$self$ clutched the quilt in shock: \"Get out! I don't want to see you right now!\"",
+                "com_sex_oral_kiss_58": "$self$ felt something wrong in her daze, then slapped your hand away hard.",
+                "com_sex_oral_kiss_59": "$self$ let out a short scream, swinging a slap in panic.",
+                "com_sex_oral_kiss_60": "$self$ wrapped herself tight in the quilt and shrank to the corner: \"Get out! Who let you in!\"",
+                "com_sex_oral_kiss_61": "$self$ gently avoided: \"Not now... I have business to attend to.\"",
+                "com_sex_oral_kiss_62": "$self$ pinched the other's cheek: \"You smell of sweat, go shower, or no kisses.\"",
+                "com_sex_oral_kiss_63": "$self$ turned her head away: \"Sorry... I'm confused right now, I don't want to do this.\"",
+                "com_sex_oral_kiss_64": "$self$ smiled awkwardly and dodged sideways: \"Um... I just remembered something I haven't done.\"",
+                "com_sex_oral_kiss_65": "$self$ turned her head to avoid $target$'s lips, gently pushing their chest.",
+                "com_sex_oral_kiss_66": "$self$: \"Stop it... I'm not in the mood for this right now.\" $self$'s voice sounded a bit sullen.",
+                "com_sex_oral_kiss_67": "$self$ covered her mouth, frowning and stepping back half a pace: \"Just ate garlic, no kissing!\"",
+                "com_sex_oral_kiss_68": "$self$ wearily blocked $target$'s approaching face: \"So tired, let me rest a bit.\"",
+                "com_sex_oral_kiss_69": "$self$: \"Still angry, don't think a kiss can smooth things over.\" $self$ puffed her cheeks and looked away.",
+                "com_sex_oral_kiss_70": "$self$ sighed, pressing a finger against $target$'s lips: \"The mood isn't right, next time.\"",
+                "com_sex_oral_kiss_71": "$self$ turned her head slightly, avoiding the impending kiss, eyes darting away.",
+                "com_sex_oral_kiss_72": "$self$ pressed a finger against $target$'s lips: \"Sorry... I don't really want to do this right now.\"",
+                "com_sex_oral_kiss_73": "$self$ gently pushed $target$'s chest and shook her head.",
+                "com_sex_oral_kiss_74": "$self$: \"I'm very tired, hugs only, okay?\"",
+                "com_sex_oral_kiss_75": "$self$ turned her head away in panic: \"Wait! This... this is too sudden, we aren't in that kind of relationship, right?\"",
+                "com_sex_oral_kiss_76": "$self$ pressed her hand against the other's chest, smiling awkwardly: \"Don't joke like that, you'll scare me.\"",
+                "com_sex_oral_kiss_77": "$self$ took a sharp step back: \"Wait! Did you misunderstand something?\"",
+                "com_sex_oral_kiss_78": "$self$ pressed a finger against your lips: \"Too fast, we aren't there yet, right?\"",
+                "com_sex_oral_kiss_79": "$self$ pushed the other away violently: \"Are you crazy? Stay away from me!\"",
+                "com_sex_oral_kiss_80": "$self$ covered her mouth and stepped back, eyes full of wariness: \"Please respect yourself.\"",
+                "com_sex_oral_kiss_81": "$self$ frowned: \"If you come any closer, I'll get angry.\"",
+                "com_sex_oral_kiss_82": "$self$ pushed you away, face full of displeasure: \"Stay away, don't touch me.\"",
+                "com_sex_oral_kiss_83": "$self$ turned her head sharply, wiping her lips hard with the back of her hand: \"Don't touch me! Disgusting!\"",
+                "com_sex_oral_kiss_84": "$self$ pushed $target$'s chest hard, eyes cold as ice: \"That's enough, do I have to repeat myself?\"",
+                "com_sex_oral_kiss_85": "$self$ opened her eyes groggily, hooking her arm around $target$'s neck: \"Mmm... morning kiss?\"",
+                "com_sex_oral_kiss_86": "$self$ made a lazy nasal sound, not resisting: \"Hehe... like a dream...\"",
+                "com_sex_oral_kiss_87": "$self$ half-opened her eyes, smiling: \"Sneak attack discovered... As punishment, do it again.\"",
+                "com_sex_oral_kiss_88": "$self$ rubbed against $target$'s palm, closing her eyes contentedly to continue enjoying: \"Mmm... don't stop...\"",
+                "com_sex_oral_kiss_89": "$self$'s voice was husky and soft: \"It's you... then it's okay...\"",
+                "com_sex_oral_kiss_90": "$self$: \"Hmm? ...Wanted to sleep more... but waking up like this isn't bad.\"",
+                "com_sex_oral_kiss_91": "$self$ opened her sleepy eyes, saw it was you, and hooked her arm around your neck.",
+                "com_sex_oral_kiss_92": "$self$ hummed vaguely twice, deepening the kiss: \"...Morning?\"",
+                "com_sex_oral_kiss_93": "$self$ didn't resist, responding to your passion with just-woken laziness.",
+                "com_sex_oral_kiss_94": "$self$: \"Mmm... sneak attack? That's not fair...\" she said smiling with eyes closed.",
+                "com_sex_oral_kiss_95": "$self$ rubbed softly against your cheek: \"A little more... I'm not fully awake yet.\"",
+                "com_sex_oral_kiss_96": "$self$ half-opened her eyes, revealing a reassured expression, letting you take from her in the morning.",
+                "com_sex_oral_kiss_97": "$self$ opened her eyes groggily, then obediently parted her lips to take in $target$'s tongue.",
+                "com_sex_oral_kiss_98": "$self$ hummed lazily, taking the lead like a cat, pulling $target$ towards her.",
+                "com_sex_oral_kiss_99": "$self$ opened her eyes groggily, saw it was $target$, and lazily extended her tongue tip to respond.",
+                "com_sex_oral_kiss_100": "A dream-like hum spilled from her throat as $self$ instinctively welcomed this warmth.",
+                "com_sex_oral_kiss_101": "$self$ opened her eyes groggily, hooking her arm around $target$'s neck: \"Mmm... morning kiss?\"",
+                "com_sex_oral_kiss_102": "$self$ made a lazy nasal sound, not resisting: \"Hehe... like a dream...\"",
+                "com_sex_oral_kiss_103": "$self$ half-opened her eyes, smiling: \"Sneak attack discovered... As punishment, do it again.\"",
+                "com_sex_oral_kiss_104": "$self$ rubbed against $target$'s palm, closing her eyes contentedly to continue enjoying: \"Mmm... don't stop...\"",
+                "com_sex_oral_kiss_105": "$self$'s voice was husky and soft: \"It's you... then it's okay...\"",
+                "com_sex_oral_kiss_106": "$self$: \"Hmm? ...Wanted to sleep more... but waking up like this isn't bad.\"",
+                "com_sex_oral_kiss_107": "$self$ opened her sleepy eyes, saw it was you, and hooked her arm around your neck.",
+                "com_sex_oral_kiss_108": "$self$ hummed vaguely twice, deepening the kiss: \"...Morning?\"",
+                "com_sex_oral_kiss_109": "$self$ didn't resist, responding to your passion with just-woken laziness.",
+                "com_sex_oral_kiss_110": "$self$: \"Mmm... sneak attack? That's not fair...\" she said smiling with eyes closed.",
+                "com_sex_oral_kiss_111": "$self$ rubbed softly against your cheek: \"A little more... I'm not fully awake yet.\"",
+                "com_sex_oral_kiss_112": "$self$ half-opened her eyes, revealing a reassured expression, letting you take from her in the morning.",
+                "com_sex_oral_kiss_113": "$self$ opened her eyes groggily, then obediently parted her lips to take in $target$'s tongue.",
+                "com_sex_oral_kiss_114": "$self$ hummed lazily, taking the lead like a cat, pulling $target$ towards her.",
+                "com_sex_oral_kiss_115": "$self$ opened her eyes groggily, saw it was $target$, and lazily extended her tongue tip to respond.",
+                "com_sex_oral_kiss_116": "A dream-like hum spilled from her throat as $self$ instinctively welcomed this warmth.",
+                "com_sex_oral_kiss_117": "After realizing who was on top, fear flashed in $self$'s eyes, then she stopped struggling as if resigned.",
+                "com_sex_oral_kiss_118": "$self$ lay stiffly, letting the other take what they wanted, tears sliding silently.",
+                "com_sex_oral_kiss_119": "$self$ licked her lips, wanting more: \"Mmm... only three minutes? Not enough.\"",
+                "com_sex_oral_kiss_120": "$self$ buried her head in the other's chest: \"Like it... kissing a bit longer is okay too.\"",
+                "com_sex_oral_kiss_121": "$self$ smiled and wiped away the trace at the corner of her mouth: \"Today's taste is sweet.\"",
+                "com_sex_oral_kiss_122": "$self$'s eyes were misty: \"Phew... heart beating so fast, all because of you.\"",
+                "com_sex_oral_kiss_123": "$self$ looked into your eyes, voice very soft: \"Once more... can we?\"",
+                "com_sex_oral_kiss_124": "$self$ touched her own lips, revealing a shy smile: \"Seem... heart beating so fast.\"",
+                "com_sex_oral_kiss_125": "$self$'s cheeks were crimson, looking at $target$ with wet eyes, seeming to still savor the touch.",
+                "com_sex_oral_kiss_126": "$self$ licked her lips, unsatisfied, leaning even more limply against $target$.",
+                "com_sex_oral_kiss_127": "$self$: \"Phew... the air in my lungs was sucked dry by you...\" $self$ playfully hit $target$ lightly.",
+                "com_sex_oral_kiss_128": "$self$ buried her head in $target$'s neck, making small humming noises: \"Once more... still not enough...\"",
+                "com_sex_oral_kiss_129": "$self$'s eyes were glazed, fingers unconsciously rubbing $target$'s nape: \"How are you so good at kissing... foul play...\"",
+                "com_sex_oral_kiss_130": "$self$ smiled foolishly touching her lips, eyes full of unconcealed love.",
+                "com_sex_oral_kiss_131": "As lips parted, $self$'s cheeks were dyed with a blush, looking at $target$ with misty eyes.",
+                "com_sex_oral_kiss_132": "$self$ rubbed affectionately against $target$'s nose tip: \"One more time... okay?\"",
+                "com_sex_oral_kiss_133": "$self$ licked the wet corner of her mouth, unsatisfied, leaning softly in $target$'s arms.",
+                "com_sex_oral_kiss_134": "$self$: \"Feeling... completely healed.\"",
+                "com_sex_oral_kiss_135": "$self$ touched her lips, a bit dazed: \"Thought I would hate it... but seems... not bad.\"",
+                "com_sex_oral_kiss_136": "$self$ lowered her head, face completely red: \"What does this mean... too foul.\"",
+                "com_sex_oral_kiss_137": "$self$: \"Just like this? ...No, I didn't say anything.\"",
+                "com_sex_oral_kiss_138": "$self$ lowered her head, face full of red, daring not to look at you: \"Th-this time I'll let it pass... didn't hate it.\"",
+                "com_sex_oral_kiss_139": "$self$ snuggled over: \"A bit cunning... but I don't hate this feeling.\"",
+                "com_sex_oral_kiss_140": "$self$ panted lightly, eyes seeming to hold a trace of moisture: \"Your technique... is passable.\"",
+                "com_sex_oral_kiss_141": "$self$ stepped back, face totally red, fingertips gently touching lips that were still tingling.",
+                "com_sex_oral_kiss_142": "$self$ lowered her head, daring not to look into $target$'s eyes: \"Was this... an accident? Or...\"",
+                "com_sex_oral_kiss_143": "$self$ touched her lips in a daze; words of blame turned into silence at her lips.",
+                "com_sex_oral_kiss_144": "$self$ lowered her head, cheeks red as ripe apples, fingers twisting nervously: \"Surprisingly... didn't hate it...\"",
+                "com_sex_oral_kiss_145": "$self$ stole a glance at $target$, eyes holding a trace of emotion never seen before.",
+                "com_sex_oral_kiss_146": "$self$: \"What is this...\" $self$'s voice was small, but she didn't push away $target$'s hand still on her waist.",
+                "com_sex_oral_kiss_147": "$self$ tidied her hair somewhat flusteredly, but couldn't hide that strange flutter in her eyes.",
+                "com_sex_oral_kiss_148": "$self$ bit her lower lip, seeming to struggle between ethics and impulse, finally just sighing lightly.",
+                "com_sex_oral_kiss_149": "$self$ touched her own lips in a daze, the heat on her face lingering.",
+                "com_sex_oral_kiss_150": "$self$ lowered her head, not daring to look at $target$, voice as thin as a mosquito: \"Surprisingly... didn't hate it...\"",
+                "com_sex_oral_kiss_151": "$self$ covered her lips: \"Ouch! Are you a dog? Teeth bumped!\"",
+                "com_sex_oral_kiss_152": "$self$ rolled her eyes: \"This is your level? Go practice a bit.\"",
+                "com_sex_oral_kiss_153": "$self$ subconsciously wiped the corner of her mouth with the back of her hand, frowning slightly.",
+                "com_sex_oral_kiss_154": "$self$ looked away awkwardly, body stiffly pulling a bit of distance.",
+                "com_sex_oral_kiss_155": "$self$: \"Wasn't that too long...\" $self$ panted lightly, tone revealing a trace of reluctance.",
+                "com_sex_oral_kiss_156": "$self$ pushed $target$ away, tidying her messed collar: \"Okay, that's enough.\"",
+                "com_sex_oral_kiss_157": "$self$ pursed her lips with some disdain, a flash of impatience in her eyes.",
+                "com_sex_oral_kiss_158": "$self$: \"Your technique regressed.\" $self$ said half-jokingly, then turned to leave.",
+                "com_sex_oral_kiss_159": "$self$ subconsciously wiped her lips with the back of her hand, expression looking a bit cold.",
+                "com_sex_oral_kiss_160": "$self$ pushed away some distance: \"Your technique... regressed.\"",
+                "com_sex_oral_kiss_161": "$self$ frowned tightly, seeming to endure some discomfort.",
+                "com_sex_oral_kiss_162": "$self$: \"Hurt me... be gentler next time.\"",
+                "com_sex_oral_kiss_163": "$self$ wiped her lips hard, eyes red: \"Disgusting... don't come near me again!\"",
+                "com_sex_oral_kiss_164": "$self$ looked at the other coldly: \"You think this is fun? Just terrible.\"",
+                "com_sex_oral_kiss_165": "$self$ wiped her lips hard, eyes cold: \"Do you think this is interesting?\"",
+                "com_sex_oral_kiss_166": "$self$ looked about to cry: \"Terrible... just the worst.\"",
+                "com_sex_oral_kiss_167": "$self$ didn't even look at you, just turned her back to tidy her clothes, emitting an aura of rejection.",
+                "com_sex_oral_kiss_168": "$self$: \"I don't understand why you did such a thing, I'm very disappointed.\"",
+                "com_sex_oral_kiss_169": "$self$ pushed you away, taking a deep breath to calm down: \"Next time please ask for my permission first.\"",
+                "com_sex_oral_kiss_170": "$self$ retched a bit: \"Don't come near me... I feel terrible right now.\"",
+                "com_sex_oral_kiss_171": "$self$ fell into a suffocating silence: \"...I think we need to calm down.\"",
+                "com_sex_oral_kiss_172": "$self$ sighed: \"Later... can we still get along like before?\"",
+                "com_sex_oral_kiss_173": "$self$ quickly pulled away, eyes shifting uncertainly: \"Sorry... I probably overthought just now.\"",
+                "com_sex_oral_kiss_174": "$self$ awkwardly tidied her hair: \"If you don't mind, can we forget what happened just now?\"",
+                "com_sex_oral_kiss_175": "$self$ pushed $target$ away forcefully, running aside to retch, as if having swallowed something dirty.",
+                "com_sex_oral_kiss_176": "$self$ looked at $target$ with cold eyes: \"Stay away from me in the future, truly disgusting.\"",
+                "com_sex_oral_kiss_177": "$self$ wiped her mouth expressionlessly, not stopping until her lips were rubbed raw.",
+                "com_sex_oral_kiss_178": "$self$: \"You ruined it all.\" $self$ dropped these words coldly, turned, and slammed the door leaving.",
+                "com_sex_oral_kiss_179": "$self$ glared at $target$ with hatred, body trembling uncontrollably from extreme revulsion.",
+                "com_sex_oral_kiss_180": "$self$ took a deep breath, tone becoming distant as never before: \"I think there's no need for us to contact each other anymore.\""
+            }
         }
     }
 }

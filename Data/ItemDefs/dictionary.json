@@ -21,7 +21,19 @@
             },
             "en-us":
             {
-"ItemComponentTemplate_Craftable_Recipe_tooltip":"Time Cost: $time$ minutes\nSkill Requirement: $skillreqs$\nItem Requirement: $itemreqs$\n\n$basetooltip$"
+"Item_Instance_Tooltip":"Type: $tags$\n\n$parent$\n\n$comps$",
+"ItemComponent_Weapon_tooltip":"Balance $balance$ Mass $mass$ $execution$",
+"ItemComponent_Weapon_tooltip_execution":"Execution Move: $name$",
+"ItemComponent_Weapon_tooltip_dtypes":"$move$ Move Multiplier x$mult$ $dtypes$",
+"ItemComponent_Defense_tooltip":"Defense Stat: $layers$ $pierce$",
+"ItemComponent_Defense_tooltip_integrity":"Integrity Threshold $value$",
+"ItemComponent_Defense_tooltip_integrity_max":"Cannot be penetrated",
+"ItemComponent_Ingestible_tooltip":"Edible, Intake amount $amount$ Method $methods$",
+"ItemComponent_Equippable_tooltip":"Equippable on layer $layer$ on slot $slots$\n$covers$",
+"ItemComponent_Equippable_tooltip_covers":"Extra Coverage on layer $layer$ on slot $covers$",
+"ItemComponent_Degradable_tooltip":"Will disappear in $minutes$ minutes",
+
+"ItemComponentTemplate_Craftable_Recipe_tooltip":"Time Required: $time$ minutes\nSkill Requirement: $skillreqs$\nItem Consumption: $itemreqs$\n\n$basetooltip$"
             }
         }
     }

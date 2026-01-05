@@ -1067,6 +1067,66 @@
             },
             "en-us":
             {
+                "trait_Sensitivity_B":"Breast Sensitivity",
+                "trait_Sensitivity_B_dull":"Dull",
+                "trait_Sensitivity_B_default":"Normal",
+                "trait_Sensitivity_B_sensitive":"Sensitive",
+                "trait_Sensitivity_B_supersensitive":"Hypersensitive",
+
+                "trait_Sensitivity_M":"M Sensitivity",
+                "trait_Sensitivity_M_dull":"Dull",
+                "trait_Sensitivity_M_default":"Normal",
+                "trait_Sensitivity_M_sensitive":"Sensitive",
+                "trait_Sensitivity_M_supersensitive":"Hypersensitive",
+
+                "trait_Sensitivity_C":"Clitoris Sensitivity",
+                "trait_Sensitivity_C_dull":"Dull",
+                "trait_Sensitivity_C_default":"Normal",
+                "trait_Sensitivity_C_sensitive":"Sensitive",
+                "trait_Sensitivity_C_supersensitive":"Hypersensitive",
+
+                "trait_Sensitivity_V":"Vagina Sensitivity",
+                "trait_Sensitivity_V_dull":"Dull",
+                "trait_Sensitivity_V_default":"Normal",
+                "trait_Sensitivity_V_sensitive":"Sensitive",
+                "trait_Sensitivity_V_supersensitive":"Hypersensitive",
+
+                "trait_Sensitivity_A":"Anus Sensitivity",
+                "trait_Sensitivity_A_dull":"Dull",
+                "trait_Sensitivity_A_default":"Normal",
+                "trait_Sensitivity_A_sensitive":"Sensitive",
+                "trait_Sensitivity_A_supersensitive":"Hypersensitive",
+
+                "trait_Size_B":"Breast Size",
+                "trait_Size_B_none":"Flat",
+                "trait_Size_B_AAA":"AAA",
+                "trait_Size_B_AAA_tooltip":"Default size for males",
+                "trait_Size_B_AA":"AA",
+                "trait_Size_B_A":"A",
+                "trait_Size_B_B":"B",
+                "trait_Size_B_C":"C",
+                "trait_Size_B_D":"D",
+                "trait_Size_B_E":"E",
+                "trait_Size_B_F":"F",
+                "trait_Size_B_G":"G",
+                "trait_Size_B_H":"H",
+
+                "ui_tooltip_trait_size":"Note on body part size settings: Currently only the boolean generation (existence) is implemented. Actual size adjustment is not yet implemented (selecting a size will not result in visual changes).",
+
+                "trait_Size_P":"Penis Size",
+                "trait_Size_P_none":"None",
+                "trait_Size_P_tiny":"Tiny",
+                "trait_Size_P_small":"Small",
+                "trait_Size_P_average":"Average",
+                "trait_Size_P_big":"Big",
+                "trait_Size_P_huge":"Huge",
+
+                "trait_Size_V":"Vagina Size",
+                "trait_Size_V_none":"No Vagina",
+                "trait_Size_V_1":"Has Vagina",
+                "trait_Size_A":"Anus Size",
+                "trait_Size_A_none":"No Anus",
+                "trait_Size_A_1":"Has Anus"
 
             }
         }

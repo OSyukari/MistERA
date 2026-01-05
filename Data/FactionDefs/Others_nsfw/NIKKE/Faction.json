@@ -77,6 +77,21 @@
   "Campaign1_Nikke_Anis_firstname": "Anis",
   "Campaign1_Nikke_Neon_firstname": "Neon",
 
+    "Campaign1_Nikke_charaComment":"Used Materials:\n- %%charaComment_source_nikke%%\n- %%charaComment_source_nikke_corruptedgoddess%%",
+    "charaComment_source_nikke":"NIKKE: Goddess of Victory (Character setting and Spine assets)",
+    "charaComment_source_nikke_corruptedgoddess":"RisuAI, Corrupted goddess Nikke (training portrait image variants) https://realm.risuai.net/character/2e2a253e-78bc-4b21-9744-e1207cff2e58",
+
+"Campaign1_Nikke_Cinderella_firstname":"Cinderella",
+"Campaign1_Nikke_Dorothy_firstname":"Dorothy",
+
+"Campaign1_Nikke_Little_Mermaid_firstname":"Little Mermaid",
+"Campaign1_Nikke_Rapunzel_firstname":"Rapunzel",
+"Campaign1_Nikke_Modernia_firstname":"Modernia",
+"Campaign1_Nikke_Scarlet_firstname":"Scarlet",
+"Campaign1_Nikke_Snow_White_firstname":"Snow White",
+"Campaign1_Nikke_Red_Hood_firstname":"Red Hood",
+"Campaign1_Nikke_Grave_firstname":"Grave",
+
   "humanRaceAddon_Android_Nikke": "Nikke",
   "humanRaceAddon_Android_Nikke_tooltip": "An android created to be closer to the human appearance in order to accommodate human thought.\nAlthough their combat power far exceeds that of ordinary people, %%humanRaceAddon_Android_Nikke%% still require a living environment similar to that of normal humans in order to maintain their mental stability.\nSTR+10, CON+10, Base Obedience +1"
   

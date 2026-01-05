@@ -17,11 +17,11 @@
 "possibleResults": [
     {
         "baseWeight": 6,
-        "resultText": "$names$反应迅速，在被发现前成功退入阴影中，屏住呼吸直到巡逻队离开。"
+        "resultText": "exp_event_goblin_patrol_result_1"
     },
     {
         "baseWeight": 3,
-        "resultText": "$names$一名队员在躲藏时不慎弄出了声响，被哥布林注意到了！",
+        "resultText": "exp_event_goblin_patrol_result_2",
         "eventID":"event_caveGoblinEncounter", "eventLabel":"", "overrideTargetGeneration":true,
         "TargetGenerations":
         [ {
@@ -35,7 +35,7 @@
     },
     {
         "baseWeight": 3,
-        "resultText": "$names$埋伏了起来，对哥布林们展开了突袭！",
+        "resultText": "exp_event_goblin_patrol_result_3",
         "eventID":"event_caveGoblinEncounter", "eventLabel":"br_combat_ambush_validator", "overrideTargetGeneration":true,
         "TargetGenerations":
         [ {
@@ -49,7 +49,7 @@
     },
     {
         "baseWeight": 2,
-        "resultText": "$names$对哥布林们突袭，但失败被对方提前发现了",
+        "resultText": "exp_event_goblin_patrol_result_4",
         "eventID":"event_caveGoblinEncounter", "eventLabel":"", "overrideTargetGeneration":true,
         "TargetGenerations":
         [ {
@@ -69,8 +69,22 @@
         "Entries": {
             "zh-cn": {
                 "exp_event_goblin_patrol": "哥布林巡逻队",
+                "exp_event_goblin_patrol_result_1":"$names$反应迅速，在被发现前成功退入阴影中，屏住呼吸直到巡逻队离开。",
+                "exp_event_goblin_patrol_result_2":"$names$一名队员在躲藏时不慎弄出了声响，被哥布林注意到了！",
+                "exp_event_goblin_patrol_result_3":"$names$埋伏了起来，对哥布林们展开了突袭！",
+                "exp_event_goblin_patrol_result_4":"$names$对哥布林们突袭，但失败被对方提前发现了",
                 "exp_event_goblin_patrol_ongoing": "$names$发现了一小队哥布林巡逻队的身影"
-            }
+            },
+"en-us":
+{
+                "exp_event_goblin_patrol": "Goblin Patrol",
+                "exp_event_goblin_patrol_result_1":"$names$ reacted quickly, retreating into the shadows before being spotted, holding their breath until the patrol left.",
+                "exp_event_goblin_patrol_result_2":"One of $names$'s members accidentally made a noise while hiding, alerting the Goblins!",
+                "exp_event_goblin_patrol_result_3":"$names$ set up an ambush and launched a surprise attack on the Goblins!",
+                "exp_event_goblin_patrol_result_4":"$names$ launched a surprise attack on the Goblins but failed as they were spotted prematurely",
+                "exp_event_goblin_patrol_ongoing": "$names$ spotted a small squad of Goblin patrol"
+
+}
         }
     }
 }

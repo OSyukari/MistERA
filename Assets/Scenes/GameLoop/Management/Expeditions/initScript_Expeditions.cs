@@ -274,7 +274,7 @@ public class initScript_Expeditions : MonoBehaviour
                         temporaryExpResolves.Add(v.optionID);
                         box.preText.SetText(i.FullDescription);
                         box.preText.SetExternalTooltip(String.Join("\n", i.Tooltips));
-                        box.timeStamp.text = first ? msg.Key.ToShortTimeString() : "";
+                        box.timeStamp.text = first ? msg.Key.ToString("HH:mm") : "";
                         if ((i.unresolved == null || i.unresolved.isResolved) && i.resolveMessage != "")
                         {
                             box.postEvRect.gameObject.SetActive(true);
@@ -291,7 +291,7 @@ public class initScript_Expeditions : MonoBehaviour
                         v.SelfRect.SetParent(list_ExpeditionMSG, false);
                         v.memText.SetText(i.FullDescription);
                         v.memText.SetExternalTooltip(String.Join("\n", i.Tooltips));
-                        v.timeStamp.text = first ? msg.Key.ToShortTimeString() : "";
+                        v.timeStamp.text = first ? msg.Key.ToString("HH:mm") : "";
                     }
                     first = false;
                 }
@@ -415,7 +415,35 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
         {
         }
     }
+    public class ButtonValidator_PrioritizeResting : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText text;
+        public ButtonValidator_PrioritizeResting(scr_Canvas_Management parent, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+        }
+        public override bool IsButtonValid()
+        {
+            //if (text == null) Debug.LogError("text null");
+            if (!text.gameObject.activeInHierarchy || parent.currentParty == null)
+            {
+                return false;
+            }
+            if (!parent.currentParty.isPlayerFaction) return false;
 
+            var isRecurring = parent.currentParty.PrioritizeResting;
+            text.Toggle(true, isRecurring);
+
+            return !parent.currentParty.isActive;
+        }
+
+        public void OnClickButton()
+        {
+            parent.currentParty.PrioritizeResting = !parent.currentParty.PrioritizeResting;
+        }
+    }
     public class ButtonValidator_RecurringToggle : ButtonValidator, I_ButtonClickable
     {
         new scr_Canvas_Management parent;
@@ -741,10 +769,22 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
             if (!isplayer || parent.currentParty.isActive)
             {
                 var stringkey = isplayer && (parent.currentParty.Job.status == Job_Expedition.ExpeditionStatus.active || parent.currentParty.Job.status == Job_Expedition.ExpeditionStatus.returning) ? "ui_management_expeditionJob_remaining_active_ongoing" : "ui_management_expeditionJob_remaining_active";
-                extraTooltip.SetText(LocalizeDictionary.QueryThenParse(stringkey)
+                var str = LocalizeDictionary.QueryThenParse(stringkey)
                         .Replace("$time$", parent.currentParty.Job.RemainingTime)
                         .Replace("$progress$", parent.currentParty.Job.RemainingProgress)
-                        .Replace("$names$", parent.currentParty.Job.ActorCount < 1 ? " - " : String.Join(" ", parent.currentParty.Job.ActorNames)));
+                        .Replace("$names$", parent.currentParty.Job.ActorCount < 1 ? " - " : String.Join(" ", parent.currentParty.Job.ActorNames));
+                
+                if (isplayer && parent.currentParty.isActive)
+                {
+                    var settings = new List<string>();
+                    if (parent.currentParty.PrioritizeResting) settings.Add(LocalizeDictionary.QueryThenParse("ui_management_expeditionConfig_prioritizeResting"));
+                    if (settings.Count > 0)
+                    {
+                        str += $"\n{LocalizeDictionary.QueryThenParse("ui_management_expeditionConfig").Replace("$settings$", String.Join(" ", settings))}";
+                    }
+                }
+
+                extraTooltip.SetText(str);
             }
             else
             {

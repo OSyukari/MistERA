@@ -103,6 +103,7 @@ public static class FactionUtility
     {
         COM targetCOM = null;
         list = new List<Job_Furniture>();
+        var list2 = new List<Job_Furniture>();
         if (comID == "") return false;
         foreach (COM com in jobs.Keys)
         { 
@@ -115,19 +116,27 @@ public static class FactionUtility
 
         if (targetCOM == null) return false;
         //if (!ExistsProductionOrderWith(targetCOM)) return false;
+        bool skipPrivate = false;
 
         foreach (var post in jobs[targetCOM])
         {
+            if (!skipPrivate && !post.ParentRoom.isRoomPrivate) skipPrivate = true;
             //post.RefreshValidJobCOMs();
             if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
             {
                 Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                 continue;
             }
-            else if (post.ParentRoom.isRoomPrivate && managedRoomRefs != null && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID)) continue;
-            else if (post.ValidateActor(c, targetCOM) && (!c.isRestrained || c.Jail.ownerJob == post)) list.Add(post);
+            //else if (!targetCOM.allowInPrivateRoom && post.ParentRoom.isRoomPrivate) continue;
+            //else if (post.ParentRoom.isRoomPrivate && managedRoomRefs != null && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID)) continue;
+            else if (post.ValidateActor(c, targetCOM) && (!c.isRestrained || c.Jail.ownerJob == post)) 
+            {
+                if (!post.ParentRoom.isRoomPrivate || targetCOM.allowInPrivateRoom) list.Add(post);
+                else if (managedRoomRefs != null && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID)) list2.Add(post);
+                else continue;
+            }
         }
-
+        if (list.Count < 1 && list2.Count > 0 && !skipPrivate) list = list2;
         //list = jobPosts[targetCOM];
         //Debug.Log("FindValidJobInstances for comID[" + comID + "] has COM[" + targetCOM.displayName + "] existProductionOrder [" + ExistsProductionOrderWith(targetCOM) + "] with [" + jobPosts[targetCOM].Count+ "] instances ");
         return list.Count > 0;

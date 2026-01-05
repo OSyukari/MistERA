@@ -84,10 +84,13 @@
             },
             "en-us":
             {
+"village_encounter_villager_patrol_1":"Villager Patrol 1",
+"village_encounter_villager_patrol_2":"Villager Patrol 2",
 "village_mob":"Maddened Villager",
 "village_huntsman_scythe":"%%village_mob%%",
 "village_huntsman_cutlass":"%%village_mob%%",
-"village_huntsman_cleaver":"%%village_mob%%"
+"village_huntsman_cleaver":"%%village_mob%%",
+"village_huntsman_axe_torch":"%%village_mob%%"
 
             }
         }

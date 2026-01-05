@@ -75,7 +75,7 @@ public class Status_Instance
         get
         {
             var variant = BaseRef.variants[SeverityIndex];
-            return variant.displayable && variant.DisplayName != "" ? variant.DisplayName : this.BaseRef.DisplayName;
+            return !BaseRef.noDisplay && variant.displayable && variant.DisplayName != "" ? variant.DisplayName : this.BaseRef.DisplayName;
         }
     }
 

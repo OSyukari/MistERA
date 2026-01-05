@@ -1,160 +1,381 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_thigh_Begin",
-        "variants":
-        [
+    "Character_Personalities": {
+        "looselist": [
             {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始被抚摸大腿 有允许 口上文" ,
-                "responses":
-                [ 
-                    "$self$没有躲开，反而自然地把手覆在了$target$的手背上，指尖轻轻摩挲着。\"嗯？怎么突然这么粘人？\"", "$self$侧过身子，让大腿的接触面更贴合$target$的手掌，嘴角带着笑意。\"要在这种地方开始吗？\"", "$self$只是依然看着手机，但身体明显放松了下来，默许了$target$的动作。\"别闹得太过了哦。\"", "$self$把头靠在$target$肩膀上，腿轻轻蹭了蹭$target$的手心。\"好暖和……\"", "$self$发出一声轻笑，并未阻止那只游走的手。\"真是的，手脚真不老实。\""
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_thigh_Begin",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始被抚摸大腿 有允许 口上文",
+                            "responses": [
+                                "com_touch_thigh_Begin_1",
+                                "com_touch_thigh_Begin_2",
+                                "com_touch_thigh_Begin_3",
+                                "com_touch_thigh_Begin_4",
+                                "com_touch_thigh_Begin_5"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始被抚摸大腿 未允许 好意 口上文",
+                            "responses": [
+                                "com_touch_thigh_Begin_6",
+                                "com_touch_thigh_Begin_7",
+                                "com_touch_thigh_Begin_8",
+                                "com_touch_thigh_Begin_9"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始被抚摸大腿 未允许 敌意 口上文",
+                            "responses": [
+                                "com_touch_thigh_Begin_10",
+                                "com_touch_thigh_Begin_11",
+                                "com_touch_thigh_Begin_12",
+                                "com_touch_thigh_Begin_13"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":[ "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始被抚摸大腿 未允许 好意 口上文" ,
-                "responses":
-                [ 
-                    "$self$全身猛地一颤，惊讶地睁大了眼睛看着$target$，却一时忘记了推开。\"呃？！那个……$target$先生？\"", "$self$手中的动作停住了，脸颊瞬间涨得通红，不知所措地僵在原地。\"这是……什么意思？\"", "$self$并没有大喊大叫，只是困惑地低头看着那只手，似乎在确认这是否是错觉。\"……如果不拿开的话……\"", "$self$紧张地抓紧了自己的裙摆，呼吸变得小心翼翼。\"请问……是有什么事吗？\""
-                ]
-            },
-            {
-                
-                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
-                "_comment":"2.2.2 开始被抚摸大腿 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-                    "$self$紧紧咬着嘴唇，脸色苍白，身体控制不住地细微颤抖。\"我……我知道了……请不要伤害我……\"", "$self$不敢看$target$的眼睛，只是死死盯着地面，眼泪在眼眶里打转。\"只要我不反抗……就会结束的，对吧？\"", "$self$像一只受惊的小动物一样缩起肩膀，却不敢挪动分毫。\"对不起……对不起……\"", "$self$闭上了眼睛，绝望地放弃了所有抵抗动作。\"……求你，快点结束……\""
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_thigh",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 被抚摸大腿 口上文",
+                            "responses": [
+                                "com_touch_thigh_1",
+                                "com_touch_thigh_2",
+                                "com_touch_thigh_3",
+                                "com_touch_thigh_4",
+                                "com_touch_thigh_5"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 被抚摸大腿 口上文",
+                            "responses": [
+                                "com_touch_thigh_6",
+                                "com_touch_thigh_7",
+                                "com_touch_thigh_8",
+                                "com_touch_thigh_9",
+                                "com_touch_thigh_10"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被抚摸大腿 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_thigh_11",
+                                        "com_touch_thigh_12",
+                                        "com_touch_thigh_13",
+                                        "com_touch_thigh_14",
+                                        "com_touch_thigh_15"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被抚摸大腿 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_thigh_16",
+                                        "com_touch_thigh_17",
+                                        "com_touch_thigh_18",
+                                        "com_touch_thigh_19"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被抚摸大腿 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_thigh_20",
+                                "com_touch_thigh_21",
+                                "com_touch_thigh_22",
+                                "com_touch_thigh_23"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 被抚摸大腿 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_thigh_24",
+                                        "com_touch_thigh_25",
+                                        "com_touch_thigh_26",
+                                        "com_touch_thigh_27"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被抚摸大腿 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_thigh_28",
+                                "com_touch_thigh_29",
+                                "com_touch_thigh_30",
+                                "com_touch_thigh_31"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 被抚摸大腿 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_thigh_32",
+                                        "com_touch_thigh_33",
+                                        "com_touch_thigh_34",
+                                        "com_touch_thigh_35"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 被抚摸大腿 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_thigh_36",
+                                "com_touch_thigh_37",
+                                "com_touch_thigh_38",
+                                "com_touch_thigh_39"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_thigh",
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 被抚摸大腿 口上文",
-                "responses":
-                [ 
-                    "$self$发出轻微的鼾声，翻了个身，无意识地把腿搭在了$target$的手上。", "$self$似乎感觉到了什么，迷迷糊糊地哼了一声，像赶蚊子一样挥了挥手。\"唔……别闹……困……\"", "$self$在睡梦中皱了皱眉，缩了一下腿，但很快又沉沉睡去。", "$self$的呼吸依旧平稳绵长，完全不知道自己的身体正在被侵犯。", "$self$吧唧了一下嘴，梦呓着不知名的话语，对大腿上的异样毫无察觉。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 被抚摸大腿 口上文",
-                "responses":
-                [ 
-                    "$self$依然保持着原本的姿势，完全凝固在时间里，对大腿上传来的触感毫无知觉。", "$self$大腿的软肉在$target$手指的按压下凹陷下去，但她本人依然维持着上一秒的笑容，仿佛一尊精美的人偶。", "$self$静止不动，只有那里的布料随着$target$的动作产生了褶皱，本人没有任何反应。", "$self$依然看着远方，毫无焦距，任由$target$的手指划过她敏感的大腿内侧。", "$self$像是一张静止的照片，只有被触碰的肌肤呈现出真实的弹性反馈。"
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 被抚摸大腿 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$笑着拍掉了$target$的手，身体往旁边挪了挪。\"哎呀好痒！别闹！\"", "$self$按住了$target$的手腕，嗔怪地瞪了一眼。\"正经一点，现在不合适。\"", "$self$抓起$target$的手放回原处，无奈地叹了气。\"说了不行就是不行啦，别撒娇。\"", "$self$缩回了腿，用一种警告但并不严厉的语气说道：\"再乱摸我就要生气了哦。\"", "$self$并没有生气，只是坚定地摇了摇头，把裙摆往下拉了拉。\"不可以，至少现在不可以。\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 被抚摸大腿 无允许 善意 口上文",
-                        "responses":
-                        [ 
-                            "$self$礼貌而坚定地拿开了$target$的手，保持着职业的微笑。\"抱歉，$target$先生，这样有些越界了。\"", "$self$往后退了一步，拉开了安全距离。\"我想您可能是误会了什么。\"", "$self$轻轻挡住了$target$的手，语气温和但疏离。\"不好意思，我不习惯这种玩笑。\"", "$self$不动声色地调整了坐姿，避开了接触。\"我们需要专注于工作，不是吗？\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 被抚摸大腿 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":
-                 [
-                    "$self$猛地站起来，厌恶地拍打着刚才被碰过的地方。\"别用你的脏手碰我！\"", "$self$眼神冰冷地盯着$target$，声音里充满了警告。\"再动一下试试？我会让你后悔的。\"", "$self$一把甩开$target$的手，毫不掩饰脸上的恶心表情。\"你想被起诉性骚扰吗？滚开！\"", "$self$冷笑了一声，用看垃圾一样的眼神看着$target$。\"你以为你是谁？真让人作呕。\""
-                 ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 被抚摸大腿 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$的呼吸变得有些急促，她不再说话，而是紧紧抓住了$target$的衣角。\"嗯……好像……有点感觉了……\"", "$self$主动张开了腿，眼神变得迷离起来。\"既然都这样了……不想更进一步吗？\"", "$self$把脸埋进$target$的颈窝，发出一声满足的喟叹。\"手……不要停……\"", "$self$的皮肤开始微微发烫，她难耐地在椅子上扭动了一下腰肢。\"坏蛋……被你弄得奇怪起来了。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 被抚摸大腿 结果正面 未允许 口上文",
-                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-                    "$self$原本僵硬的抵抗逐渐软化，脸上的红晕蔓延到了耳根。\"……奇怪……为什么我不讨厌……\"", "$self$抬起湿润的眸子看了$target$一眼，声音细若蚊蝇。\"如果……如果是$target$的话……也许……\"", "$self$的手指无意识地抓住了$target$的手背，不再是推开，而是挽留。\"这种感觉……还是第一次……\"", "$self$有些羞耻地并拢了双腿，夹住了那只手。\"……不要停下来……\""
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 被抚摸大腿 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$原本的笑意消失了，她一把推开$target$的手，语气变得生硬。\"我说了我不舒服，你没听见吗？\"", "$self$烦躁地站起身，整理了一下衣服。\"够了，这种玩笑开得太久了。\"", "$self$虽然没有反抗，但身体僵硬得像块石头，眼神里透着失望。\"你就只想着这种事吗？\"", "$self$默默地把脸转到一边，不再理会$target$。\"……随便你吧，如果你觉得这样有意思的话。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 被抚摸大腿 结果负面 未允许 口上文",
-                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-                    "$self$终于忍无可忍，眼泪夺眶而出，声音嘶哑。\"你在这个世界上只剩下这种下流的乐趣了吗？！\"", "$self$的眼神彻底死寂下去，如同看着一团死肉。\"你摸够了吗？摸够了就滚。\"", "$self$虽然还在被触摸，但整个人散发出一种令人窒息的冰冷气息。\"我会记住今天的……每一秒。\"", "$self$不再颤抖，取而代之的是极度的愤怒和屈辱。\"把你的手拿开！立刻！马上！\""
-                ]
-            }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_touch_thigh_Begin_1": "$self$没有躲开，反而自然地把手覆在了$target$的手背上，指尖轻轻摩挲着。\"嗯？怎么突然这么粘人？\"",
+                "com_touch_thigh_Begin_2": "$self$侧过身子，让大腿的接触面更贴合$target$的手掌，嘴角带着笑意。\"要在这种地方开始吗？\"",
+                "com_touch_thigh_Begin_3": "$self$只是依然看着手机，但身体明显放松了下来，默许了$target$的动作。\"别闹得太过了哦。\"",
+                "com_touch_thigh_Begin_4": "$self$把头靠在$target$肩膀上，腿轻轻蹭了蹭$target$的手心。\"好暖和……\"",
+                "com_touch_thigh_Begin_5": "$self$发出一声轻笑，并未阻止那只游走的手。\"真是的，手脚真不老实。\"",
+                "com_touch_thigh_Begin_6": "$self$全身猛地一颤，惊讶地睁大了眼睛看着$target$，却一时忘记了推开。\"呃？！那个……$target$先生？\"",
+                "com_touch_thigh_Begin_7": "$self$手中的动作停住了，脸颊瞬间涨得通红，不知所措地僵在原地。\"这是……什么意思？\"",
+                "com_touch_thigh_Begin_8": "$self$并没有大喊大叫，只是困惑地低头看着那只手，似乎在确认这是否是错觉。\"……如果不拿开的话……\"",
+                "com_touch_thigh_Begin_9": "$self$紧张地抓紧了自己的裙摆，呼吸变得小心翼翼。\"请问……是有什么事吗？\"",
+                "com_touch_thigh_Begin_10": "$self$紧紧咬着嘴唇，脸色苍白，身体控制不住地细微颤抖。\"我……我知道了……请不要伤害我……\"",
+                "com_touch_thigh_Begin_11": "$self$不敢看$target$的眼睛，只是死死盯着地面，眼泪在眼眶里打转。\"只要我不反抗……就会结束的，对吧？\"",
+                "com_touch_thigh_Begin_12": "$self$像一只受惊的小动物一样缩起肩膀，却不敢挪动分毫。\"对不起……对不起……\"",
+                "com_touch_thigh_Begin_13": "$self$闭上了眼睛，绝望地放弃了所有抵抗动作。\"……求你，快点结束……\"",
+                "com_touch_thigh_1": "$self$发出轻微的鼾声，翻了个身，无意识地把腿搭在了$target$的手上。",
+                "com_touch_thigh_2": "$self$似乎感觉到了什么，迷迷糊糊地哼了一声，像赶蚊子一样挥了挥手。\"唔……别闹……困……\"",
+                "com_touch_thigh_3": "$self$在睡梦中皱了皱眉，缩了一下腿，但很快又沉沉睡去。",
+                "com_touch_thigh_4": "$self$的呼吸依旧平稳绵长，完全不知道自己的身体正在被侵犯。",
+                "com_touch_thigh_5": "$self$吧唧了一下嘴，梦呓着不知名的话语，对大腿上的异样毫无察觉。",
+                "com_touch_thigh_6": "$self$依然保持着原本的姿势，完全凝固在时间里，对大腿上传来的触感毫无知觉。",
+                "com_touch_thigh_7": "$self$大腿的软肉在$target$手指的按压下凹陷下去，但她本人依然维持着上一秒的笑容，仿佛一尊精美的人偶。",
+                "com_touch_thigh_8": "$self$静止不动，只有那里的布料随着$target$的动作产生了褶皱，本人没有任何反应。",
+                "com_touch_thigh_9": "$self$依然看着远方，毫无焦距，任由$target$的手指划过她敏感的大腿内侧。",
+                "com_touch_thigh_10": "$self$像是一张静止的照片，只有被触碰的肌肤呈现出真实的弹性反馈。",
+                "com_touch_thigh_11": "$self$笑着拍掉了$target$的手，身体往旁边挪了挪。\"哎呀好痒！别闹！\"",
+                "com_touch_thigh_12": "$self$按住了$target$的手腕，嗔怪地瞪了一眼。\"正经一点，现在不合适。\"",
+                "com_touch_thigh_13": "$self$抓起$target$的手放回原处，无奈地叹了气。\"说了不行就是不行啦，别撒娇。\"",
+                "com_touch_thigh_14": "$self$缩回了腿，用一种警告但并不严厉的语气说道：\"再乱摸我就要生气了哦。\"",
+                "com_touch_thigh_15": "$self$并没有生气，只是坚定地摇了摇头，把裙摆往下拉了拉。\"不可以，至少现在不可以。\"",
+                "com_touch_thigh_16": "$self$礼貌而坚定地拿开了$target$的手，保持着职业的微笑。\"抱歉，$target$先生，这样有些越界了。\"",
+                "com_touch_thigh_17": "$self$往后退了一步，拉开了安全距离。\"我想您可能是误会了什么。\"",
+                "com_touch_thigh_18": "$self$轻轻挡住了$target$的手，语气温和但疏离。\"不好意思，我不习惯这种玩笑。\"",
+                "com_touch_thigh_19": "$self$不动声色地调整了坐姿，避开了接触。\"我们需要专注于工作，不是吗？\"",
+                "com_touch_thigh_20": "$self$猛地站起来，厌恶地拍打着刚才被碰过的地方。\"别用你的脏手碰我！\"",
+                "com_touch_thigh_21": "$self$眼神冰冷地盯着$target$，声音里充满了警告。\"再动一下试试？我会让你后悔的。\"",
+                "com_touch_thigh_22": "$self$一把甩开$target$的手，毫不掩饰脸上的恶心表情。\"你想被起诉性骚扰吗？滚开！\"",
+                "com_touch_thigh_23": "$self$冷笑了一声，用看垃圾一样的眼神看着$target$。\"你以为你是谁？真让人作呕。\"",
+                "com_touch_thigh_24": "$self$的呼吸变得有些急促，她不再说话，而是紧紧抓住了$target$的衣角。\"嗯……好像……有点感觉了……\"",
+                "com_touch_thigh_25": "$self$主动张开了腿，眼神变得迷离起来。\"既然都这样了……不想更进一步吗？\"",
+                "com_touch_thigh_26": "$self$把脸埋进$target$的颈窝，发出一声满足的喟叹。\"手……不要停……\"",
+                "com_touch_thigh_27": "$self$的皮肤开始微微发烫，她难耐地在椅子上扭动了一下腰肢。\"坏蛋……被你弄得奇怪起来了。\"",
+                "com_touch_thigh_28": "$self$原本僵硬的抵抗逐渐软化，脸上的红晕蔓延到了耳根。\"……奇怪……为什么我不讨厌……\"",
+                "com_touch_thigh_29": "$self$抬起湿润的眸子看了$target$一眼，声音细若蚊蝇。\"如果……如果是$target$的话……也许……\"",
+                "com_touch_thigh_30": "$self$的手指无意识地抓住了$target$的手背，不再是推开，而是挽留。\"这种感觉……还是第一次……\"",
+                "com_touch_thigh_31": "$self$有些羞耻地并拢了双腿，夹住了那只手。\"……不要停下来……\"",
+                "com_touch_thigh_32": "$self$原本的笑意消失了，她一把推开$target$的手，语气变得生硬。\"我说了我不舒服，你没听见吗？\"",
+                "com_touch_thigh_33": "$self$烦躁地站起身，整理了一下衣服。\"够了，这种玩笑开得太久了。\"",
+                "com_touch_thigh_34": "$self$虽然没有反抗，但身体僵硬得像块石头，眼神里透着失望。\"你就只想着这种事吗？\"",
+                "com_touch_thigh_35": "$self$默默地把脸转到一边，不再理会$target$。\"……随便你吧，如果你觉得这样有意思的话。\"",
+                "com_touch_thigh_36": "$self$终于忍无可忍，眼泪夺眶而出，声音嘶哑。\"你在这个世界上只剩下这种下流的乐趣了吗？！\"",
+                "com_touch_thigh_37": "$self$的眼神彻底死寂下去，如同看着一团死肉。\"你摸够了吗？摸够了就滚。\"",
+                "com_touch_thigh_38": "$self$虽然还在被触摸，但整个人散发出一种令人窒息的冰冷气息。\"我会记住今天的……每一秒。\"",
+                "com_touch_thigh_39": "$self$不再颤抖，取而代之的是极度的愤怒和屈辱。\"把你的手拿开！立刻！马上！\""
+            },
+            "en-us": {
+                "com_touch_thigh_Begin_1": "$self$ didn't dodge, instead naturally covering $target$'s hand with her own, fingertips gently rubbing. \"Hmm? Why so clingy all of a sudden?\"",
+                "com_touch_thigh_Begin_2": "$self$ turned sideways, pressing her thigh closer to $target$'s palm, a smile playing on her lips. \"You want to start right here?\"",
+                "com_touch_thigh_Begin_3": "$self$ kept looking at her phone, but her body noticeably relaxed, silently allowing $target$'s action. \"Don't go too far, okay?\"",
+                "com_touch_thigh_Begin_4": "$self$ leaned her head on $target$'s shoulder, her leg gently rubbing against $target$'s palm. \"So warm...\"",
+                "com_touch_thigh_Begin_5": "$self$ let out a soft chuckle, not stopping the wandering hand. \"Really, you can't keep your hands to yourself.\"",
+                "com_touch_thigh_Begin_6": "$self$ shuddered, eyes widening in surprise at $target$, but momentarily forgot to push away. \"Uh?! Um... Mr. $target$?\"",
+                "com_touch_thigh_Begin_7": "$self$ froze, cheeks flushing red instantly, standing stiffly in confusion. \"What... does this mean?\"",
+                "com_touch_thigh_Begin_8": "$self$ didn't scream, but looked down at the hand in confusion, seemingly confirming if it was an illusion. \"...If you don't take it away...\"",
+                "com_touch_thigh_Begin_9": "$self$ nervously clutched the hem of her skirt, breathing cautiously. \"Excuse me... is something the matter?\"",
+                "com_touch_thigh_Begin_10": "$self$ bit her lip tightly, face pale, body trembling uncontrollably. \"I... I understand... please don't hurt me...\"",
+                "com_touch_thigh_Begin_11": "$self$ didn't dare look $target$ in the eye, staring at the ground with tears welling up. \"As long as I don't resist... it'll be over soon, right?\"",
+                "com_touch_thigh_Begin_12": "$self$ shrank her shoulders like a frightened small animal, afraid to move an inch. \"I'm sorry... I'm sorry...\"",
+                "com_touch_thigh_Begin_13": "$self$ closed her eyes, despairingly giving up all resistance. \"...Please, just finish it quickly...\"",
+                "com_touch_thigh_1": "$self$ let out a soft snore, turning over and unconsciously draping her leg over $target$'s hand.",
+                "com_touch_thigh_2": "$self$ seemed to feel something, mumbling groggily and waving her hand as if swatting a mosquito. \"Mmm... stop it... sleepy...\"",
+                "com_touch_thigh_3": "$self$ frowned in her sleep, shrinking her leg back slightly, but soon fell back into a deep slumber.",
+                "com_touch_thigh_4": "$self$'s breathing remained steady and long, completely unaware that her body was being violated.",
+                "com_touch_thigh_5": "$self$ smacked her lips, murmuring unknown words in her sleep, oblivious to the strangeness on her thigh.",
+                "com_touch_thigh_6": "$self$ remained in her original pose, completely frozen in time, oblivious to the touch on her thigh.",
+                "com_touch_thigh_7": "The soft flesh of $self$'s thigh sank under $target$'s finger pressure, but she maintained her smile from a second ago, like an exquisite doll.",
+                "com_touch_thigh_8": "$self$ stood motionless; only the fabric there wrinkled with $target$'s movement, while she showed no reaction.",
+                "com_touch_thigh_9": "$self$ continued to look into the distance, unfocused, allowing $target$'s fingers to glide over her sensitive inner thigh.",
+                "com_touch_thigh_10": "$self$ was like a still photograph, only the touched skin showing realistic elastic feedback.",
+                "com_touch_thigh_11": "$self$ laughed and slapped $target$'s hand away, shifting her body aside. \"Hey, that tickles! Stop it!\"",
+                "com_touch_thigh_12": "$self$ held down $target$'s wrist, giving a reproachful glare. \"Be serious, now is not the time.\"",
+                "com_touch_thigh_13": "$self$ picked up $target$'s hand and put it back, sighing helplessly. \"I said no means no, don't be spoiled.\"",
+                "com_touch_thigh_14": "$self$ pulled her leg back, speaking in a warning but not harsh tone: \"I'll get angry if you touch me indiscriminately again.\"",
+                "com_touch_thigh_15": "$self$ wasn't angry, but shook her head firmly, pulling her skirt down. \"No, at least not now.\"",
+                "com_touch_thigh_16": "$self$ politely but firmly removed $target$'s hand, maintaining a professional smile. \"Apologies, Mr. $target$, that's crossing the line.\"",
+                "com_touch_thigh_17": "$self$ took a step back, creating a safe distance. \"I think you might have misunderstood something.\"",
+                "com_touch_thigh_18": "$self$ gently blocked $target$'s hand, her tone gentle but distant. \"Excuse me, I'm not used to this kind of joke.\"",
+                "com_touch_thigh_19": "$self$ adjusted her sitting posture calmly, avoiding contact. \"We need to focus on work, don't we?\"",
+                "com_touch_thigh_20": "$self$ stood up abruptly, slapping the spot that was just touched in disgust. \"Don't touch me with your dirty hands!\"",
+                "com_touch_thigh_21": "$self$ stared at $target$ with cold eyes, voice full of warning. \"Try moving again? I'll make you regret it.\"",
+                "com_touch_thigh_22": "$self$ threw off $target$'s hand, not hiding the disgust on her face. \"Do you want to be sued for sexual harassment? Get lost!\"",
+                "com_touch_thigh_23": "$self$ sneered, looking at $target$ like trash. \"Who do you think you are? Truly disgusting.\"",
+                "com_touch_thigh_24": "$self$'s breathing quickened; she stopped talking and tightly gripped the hem of $target$'s clothes. \"Mmm... I think... I'm feeling something...\"",
+                "com_touch_thigh_25": "$self$ actively opened her legs, eyes becoming hazy. \"Since it's come to this... don't you want to go further?\"",
+                "com_touch_thigh_26": "$self$ buried her face in the crook of $target$'s neck, letting out a satisfied sigh. \"Hand... don't stop...\"",
+                "com_touch_thigh_27": "$self$'s skin began to heat up slightly, and she squirmed her waist on the chair. \"You bad thing... you're making me feel weird.\"",
+                "com_touch_thigh_28": "$self$'s stiff resistance gradually softened, a blush spreading to her ears. \"...Strange... why don't I hate it...\"",
+                "com_touch_thigh_29": "$self$ looked up at $target$ with moist eyes, voice faint. \"If... if it's you, $target$... maybe...\"",
+                "com_touch_thigh_30": "$self$'s fingers unconsciously grasped the back of $target$'s hand, no longer pushing away, but keeping it there. \"This feeling... is a first...\"",
+                "com_touch_thigh_31": "$self$ closed her legs together in some shame, sandwiching the hand. \"...Don't stop...\"",
+                "com_touch_thigh_32": "$self$'s smile vanished; she pushed $target$'s hand away, tone becoming stiff. \"I said I'm not feeling well, didn't you hear me?\"",
+                "com_touch_thigh_33": "$self$ stood up irritably, straightening her clothes. \"Enough, this joke has gone on too long.\"",
+                "com_touch_thigh_34": "$self$ didn't resist, but her body was as stiff as a rock, eyes revealing disappointment. \"Is this all you think about?\"",
+                "com_touch_thigh_35": "$self$ silently turned her face away, ignoring $target$. \"...Whatever, if you find this amusing.\"",
+                "com_touch_thigh_36": "$self$ finally couldn't bear it anymore, tears bursting forth, voice hoarse. \"Is this obscene pleasure all you have left in this world?!\"",
+                "com_touch_thigh_37": "$self$'s eyes went completely dead, as if looking at dead meat. \"Have you touched enough? If so, get lost.\"",
+                "com_touch_thigh_38": "$self$ was still being touched, but emitted a suffocatingly cold aura. \"I will remember today... every second of it.\"",
+                "com_touch_thigh_39": "$self$ stopped trembling, replaced by extreme anger and humiliation. \"Take your hand away! Immediately! Now!\""
+            }
         }
     }
 }

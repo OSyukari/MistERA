@@ -69,7 +69,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$用大腿揉按$receiver.firstname$的股间" ]
+                            "texts": [ "com_sex_legs_caress_C_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -78,7 +78,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$将腿从$receiver.firstname$的股间挪开" ]
+                            "texts":[ "com_sex_legs_caress_C_description_remove_1" ]
                         }
                     ]
                 },
@@ -88,7 +88,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "高潮中的$receiver.firstname$双腿紧紧夹住了$doer.firstname$的大腿" ]
+                            "texts":[ "com_sex_legs_caress_C_description_after_1" ]
                         }
                     ]
                 },
@@ -97,12 +97,48 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$的大腿压上了$receiver.firstname$的阴部，左右按压起来"]
+                            "texts": ["com_sex_legs_caress_C_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_legs_caress_C":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_legs_caress_C_displayName_1": "脚玩弄股间",
+                "com_sex_legs_caress_C_displayName_2": "交替脚玩弄股间",
+                "com_sex_legs_caress_C_displayName_3": "轮流脚玩弄股间",
+                "com_sex_legs_caress_C_displayName_4": "同时脚玩弄股间",
+
+                "com_sex_legs_caress_C_description_begin_1":"$doer.firstname$的大腿压上了$receiver.firstname$的阴部，左右按压起来",
+                "com_sex_legs_caress_C_description_after_1":"高潮中的$receiver.firstname$双腿紧紧夹住了$doer.firstname$的大腿",
+                "com_sex_legs_caress_C_description_remove_1":"$doer.firstname$将腿从$receiver.firstname$的股间挪开",
+                "com_sex_legs_caress_C_description_ongoing_1":"$doer.firstname$用大腿揉按$receiver.firstname$的股间"
+
+            },
+            "en-us":
+            {
+                "com_sex_legs_caress_C":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_legs_caress_C_displayName_1": "Teasing Crotch with Legs",
+                "com_sex_legs_caress_C_displayName_2": "Alt. Teasing Crotch with Legs",
+                "com_sex_legs_caress_C_displayName_3": "Alt. Teasing Crotch with Legs",
+                "com_sex_legs_caress_C_displayName_4": "Alt. Teasing Crotch with Legs",
+
+                "com_sex_legs_caress_C_description_begin_1":"$doer.firstname$'s thighs press against $receiver.firstname$'s crotch, rubbing from side to side.",
+                "com_sex_legs_caress_C_description_after_1":"Climaxing, $receiver.firstname$ tightly clamps their legs around $doer.firstname$'s thighs.",
+                "com_sex_legs_caress_C_description_remove_1":"$doer.firstname$ moves their legs away from $receiver.firstname$'s crotch.",
+                "com_sex_legs_caress_C_description_ongoing_1":"$doer.firstname$ is massaging $receiver.firstname$'s crotch with their thighs."
+
+            }
+        }
     }
 }

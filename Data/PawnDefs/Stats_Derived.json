@@ -376,23 +376,57 @@
                 "stats_derived_painSensitivity_tooltip": "该数值（倍率）决定角色有多容易疼痛，越低疼痛越剧烈\n默认1.0"
             },
             "en-us": {
+
                 "stats_derived_extended_hp": "HP",
-                "stats_derived_extended_hp_tooltip": "%%notimplemented%%\n\nHealth Point.\nIf this reaches 0, character will become unconscious\nIf it reaches negative Constitution score, character dies.\nTemporary injury will decrese score, permanent injury will decrease maximum.\nMaximum score is 10 + CON Modifier + others.\nNaturally recovers during sleep.",
+                "stats_derived_extended_hp_tooltip": "When this value reaches zero, the character becomes incapacitated\nMaximum is 10 + %%stats_base_Constitution%%\nRecovers during long rest and sleep",
                 "stats_derived_extended_mp": "MP",
                 "stats_derived_extended_mp_tooltip": "%%notimplemented%%\n\nMana Point, required for casting spells.\nMaximum score is 0 + PSY Modifier + others.\nNaturally recovers during sleep or rest.",
                 "stats_derived_extended_energy": "Energy",
-                "stats_derived_extended_energy_tooltip": "Consumed when performing tasks requiring social interaction, mental effort, and concentration.\nCapped at %%stats_base_Willpower%% * 10 + other modifiers\nCan be restored through sleep or rest.\nWhen a character's energy is too low, their mood will decrease. %%notimplemented%%",
+                "stats_derived_extended_energy_tooltip": "Consumed when performing social, mental, and focused tasks\nMaximum is %%stats_base_Willpower%%*10 + other modifiers\nRecovers via sleep or rest\nWhen Energy is too low, character mood decreases, %%notimplemented%%",
                 "stats_derived_extended_stamina": "Stamina",
-                "stats_derived_extended_stamina_tooltip": "Consumed when performing physical labor.\nCapped at %%stats_base_Constitution%% * 10 + other modifiers\nCan be restored through sleep or rest.\nWhen a character's stamina is too low, they will become fatigued. %%notimplemented%%",
-   
+                "stats_derived_extended_stamina_tooltip": "Consumed when performing physical labor\nMaximum is %%stats_base_Constitution%%*10 + other modifiers\nRecovers via sleep or rest\nWhen Stamina is too low, character enters a fatigued state, %%notimplemented%%",
+
+                "stats_derived_hp_max": "Max HP",
+                "stats_derived_hp_max_tooltip": "%%stats_derived_extended_hp_tooltip%%",
+                "stats_derived_damageReduction_HP": "Damage Reduction",
+                "stats_derived_damageReduction_HP_tooltip": "When taking HP damage, reduces damage taken by this amount",
+                "stats_derived_mp_max": "Max MP",
+                "stats_derived_mp_max_tooltip": "%%notimplemented%%\n\n%%stats_derived_extended_energy%%",
+                "stats_derived_mp_dailyRecovery": "Daily MP Recovery",
+                "stats_derived_mp_dailyRecovery_tooltip": "%%notimplemented%%",
+
+                "stats_derived_stamina_max": "Max Stamina",
+                "stats_derived_stamina_max_tooltip": "%%stats_derived_extended_stamina_tooltip%%",
+                "stats_derived_energy_max": "Max Energy",
+                "stats_derived_energy_max_tooltip": "%%stats_derived_extended_energy_tooltip%%",
+                "stats_derived_fatigueThreshold": "Fatigue Threshold",
+                "stats_derived_fatigueThreshold_tooltip": "%%notimplemented%%",
+                "stats_derived_evasionBase": "Evasion",
+                "stats_derived_evasionBase_tooltip": "Base value used for calculating character evasion in combat",
+                "stats_derived_speedMods": "Speed",
+                "stats_derived_speedMods_tooltip": "Base value used for calculating character initiative in combat",
+                "stats_derived_foodConsumption": "Food Consumption",
+                "stats_derived_foodConsumption_tooltip": "The amount of food the character consumes at daily settlement\n\nOnly characters requiring food possess this attribute",
+                "stats_derived_waterConsumption": "Water Consumption",
+                "stats_derived_waterConsumption_tooltip": "%%notimplemented%%",
+                "stats_derived_baselineObedience": "Obedience Bonus",
+                "stats_derived_baselineObedience_tooltip": "This value is added when determining interpersonal relationships and attitudes between characters",
+                "stats_derived_carryCapacity": "Carry Capacity",
+                "stats_derived_carryCapacity_tooltip": "%%notimplemented%%",
+
+
                 "stats_derived_sleepNeed": "Sleep Need",
-                "stats_derived_sleepNeed_tooltip": "The amount of sleep hours a character needs daily.\nAny modifications to this value will only take effect when the character starts sleeping.",
+                "stats_derived_sleepNeed_tooltip": "Hours of sleep required by the character daily\nModifiers to this value are only applied when the character starts sleeping",
                 "stats_derived_sleepDepth": "Sleep Depth",
-                "stats_derived_sleepDepth_tooltip": "The character's sleep depth, which determines how easily the character's sleep can be interrupted.\nThis value cannot go lower than 1.0.\nAny modifications to this value will take effect when the character starts sleeping.",
-                "stats_derived_memoryEntryCount": "Memory Entry Count",
-                "stats_derived_memoryEntryCount_tooltip": "This value determines how many memory entries (from newest to oldest) will affect the character's mood.",
+                "stats_derived_sleepDepth_tooltip": "Character's sleep depth, determines how easily sleep is interrupted\nThis value will not correspond to less than 1.0\nModifiers to this value are only applied when the character starts sleeping",
+                "stats_derived_memoryEntryCount": "Memory Capacity",
+                "stats_derived_memoryEntryCount_tooltip": "This value determines how many memory entries affect the character's mood (from newest to oldest)",
                 "stats_derived_memoryLength": "Memory Duration",
-                "stats_derived_memoryLength_tooltip": "This value determines how long each (non-permanent) memory entry will remain in memory (in minutes)."
+                "stats_derived_memoryLength_tooltip": "This value determines how long each (non-permanent) memory entry remains in memory (in minutes)\nDefault is 24 hours",
+                "stats_derived_alcoholSensitivity":"Alcohol Tolerance",
+                "stats_derived_alcoholSensitivity_tooltip": "This value (multiplier) determines how easily the character gets drunk; lower means easier to get drunk\nDefault 1.0",
+                "stats_derived_painSensitivity":"Pain Tolerance",
+                "stats_derived_painSensitivity_tooltip": "This value (multiplier) determines how easily the character feels pain; lower means more intense pain\nDefault 1.0"
 
             }
         }

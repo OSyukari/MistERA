@@ -9,9 +9,18 @@
                         {
                             "_comment:": "($self$) 申请成为劲敌 口上文",
                             "responses": [
-"$self$抱着手臂走到$target$面前，下巴微微扬起。\"既然我们的目标一致，那就比比看谁更有资格站在那个位置吧。\"", "$self$没有多余的废话，直接将战书扔在了桌上。\"我不喜欢拖泥带水。从现在开始，你就是我的障碍。\"", "$self$冷冷地瞥了$target$一眼，语气中带着几分挑衅。\"我不认为你会是我的对手，但我不介意证明给你看。\"", "$self$整理了一下衣领，神情变得严肃而锐利。\"这种过家家的游戏结束了。接下来，我会全力以赴击败你。\"", "$self$用一种评估商品的眼神打量着$target$。\"希望你能坚持得久一点，别让我觉得太无聊。\"", "$self$背对着$target$挥了挥手。\"赛场上见。别指望我会手下留情。\"",
-
-"$self$眼里闪烁着兴奋的光芒，用力拍了拍$target$的肩膀。\"嘿！我们来比一场吧！输的人要请客哦！\"", "$self$嘴角勾起一抹自信的弧度，向$target$伸出了拳头。\"虽然我们是朋友，但在这一点上我可是不会让步的。\"", "$self$深吸了一口气，认真地注视着$target$的双眼。\"正因为认可你，所以我才想赢过你。接招吧！\"", "$self$有些不好意思地挠了挠脸颊，但眼神却格外坚定。\"那个……虽然有点突然，但我不想输给你。不管是哪方面！\"", "$self$像是在宣布什么大事一样，双手叉腰站在$target$面前。\"我也要燃起来了！$target$，做好觉悟吧！\"", "$self$调皮地对$target$做了个鬼脸。\"如果不拿出真本事的话，可是会被我甩在身后的哦？\""
+                                "relationship_rival_propose_1",
+                                "relationship_rival_propose_2",
+                                "relationship_rival_propose_3",
+                                "relationship_rival_propose_4",
+                                "relationship_rival_propose_5",
+                                "relationship_rival_propose_6",
+                                "relationship_rival_propose_7",
+                                "relationship_rival_propose_8",
+                                "relationship_rival_propose_9",
+                                "relationship_rival_propose_10",
+                                "relationship_rival_propose_11",
+                                "relationship_rival_propose_12"
                             ]
                         }
                     ]
@@ -25,9 +34,18 @@
                         {
                             "_comment:": "($self$) 成为劲敌 口上文",
                             "responses": [
-"$self$轻哼一声，转身离去。\"很好，那就走着瞧。\"", "$self$没有什么特别的反应，只是微微点了点头。\"明智的选择。后果自负。\"", "$self$嘴角露出一丝不易察觉的冷笑。\"那就让我看看你的斤两吧。\"", "$self$收起了之前的漫不经心，眼神变得像刀锋一样锐利。\"正如我所愿。\"", "$self$没有再看$target$一眼，径直走向了自己的位置。\"别后悔就行。\"", "$self$冷淡地吐出两个字：\"成交。\"",
-
-"$self$高兴地跳了起来，在这个瞬间完全不像是对手。\"太棒了！我就知道你会答应！\"", "$self$用力握住了$target$的手，眼中燃烧着斗志。\"让我们来一场精彩的对决吧！\"", "$self$吹了一声口哨，显得干劲十足。\"好耶！这下更有动力了！\"", "$self$笑得有些狡黠，向$target$比了个V字手势。\"那说好了哦，谁也不许放水！\"", "$self$满意地点点头，像是找到了心仪的玩伴。\"这才像话嘛！我会把你打得落花流水的！\"", "$self$碰了碰$target$的拳头。\"一定要全力以赴啊，我最强的对手！\""
+                                "relationship_rival_set_1",
+                                "relationship_rival_set_2",
+                                "relationship_rival_set_3",
+                                "relationship_rival_set_4",
+                                "relationship_rival_set_5",
+                                "relationship_rival_set_6",
+                                "relationship_rival_set_7",
+                                "relationship_rival_set_8",
+                                "relationship_rival_set_9",
+                                "relationship_rival_set_10",
+                                "relationship_rival_set_11",
+                                "relationship_rival_set_12"
                             ]
                         }
                     ]
@@ -41,9 +59,18 @@
                         {
                             "_comment:": "($self$) 拒绝成为劲敌 口上文",
                             "responses": [
-"$self$像是听到了什么笑话一样，发出了一声嗤笑。\"和你比？别开玩笑了。\"", "$self$连头都没有抬，继续做着手里的事。\"我没兴趣陪你玩这种无聊的游戏。\"", "$self$一脸厌烦地挥了挥手，像是驱赶苍蝇一样。\"别来烦我，我很忙。\"", "$self$上下打量了$target$一番，摇了摇头。\"现在的你，还没有资格做我的对手。\"", "$self$冷漠地转过身去。\"这种毫无意义的争斗，我不参与。\"", "$self$叹了口气，眼神中充满了失望。\"找别人去吧，你的水平太低了。\"",
-
-"$self$有些为难地摆着手，脸上带着歉意的笑。\"啊哈哈……这种事情还是算了吧，我不擅长争斗啦。\"", "$self$轻轻推了推$target$的胳膊，试图缓和气氛。\"哎呀，为什么要搞得这么严肃嘛？大家一起开心不好吗？\"", "$self$有些担忧地看着$target$。\"我不想因为这种事破坏我们的关系……\"", "$self$把头摇得像拨浪鼓一样。\"不行不行！我要是赢了你会哭鼻子的！\"", "$self$嘟起嘴，显得有些不情愿。\"还是做队友比较好吧？我不喜欢和你对着干。\"", "$self$笑着把话题岔开了。\"比起这个，我们还是一起去吃点好吃的吧！\""
+                                "relationship_rival_refuse_1",
+                                "relationship_rival_refuse_2",
+                                "relationship_rival_refuse_3",
+                                "relationship_rival_refuse_4",
+                                "relationship_rival_refuse_5",
+                                "relationship_rival_refuse_6",
+                                "relationship_rival_refuse_7",
+                                "relationship_rival_refuse_8",
+                                "relationship_rival_refuse_9",
+                                "relationship_rival_refuse_10",
+                                "relationship_rival_refuse_11",
+                                "relationship_rival_refuse_12"
                             ]
                         }
                     ]
@@ -57,9 +84,18 @@
                         {
                             "_comment:": "($self$) 被拒绝成为劲敌 口上文",
                             "responses": [
-"$self$眯起眼睛，脸上闪过一丝不悦。\"懦夫。\"", "$self$耸了耸肩，一副无所谓的样子。\"随你便。反正结果不会改变。\"", "$self$冷冷地看着$target$，眼中透着鄙夷。\"这就是你的回答吗？令人失望。\"", "$self$没有说话，只是用一种看失败者的眼神注视了$target$几秒，然后转身离开。\"", "$self$发出了一声轻蔑的鼻音。\"怕了吗？那就滚远点。\"", "$self$面无表情地收回了视线。\"浪费我的时间。\"",
-
-"$self$有些失落地垂下了肩膀。\"诶——？怎么这样……真没劲。\"", "$self$不甘心地咬着嘴唇，盯着$target$看。\"真的不行吗？就试一次嘛！\"", "$self$像是泄了气的皮球一样趴在桌子上。\"小气鬼$target$！明明是个好机会的说……\"", "$self$鼓着腮帮子，有些生气地别过头去。\"哼，不比就不比。胆小鬼！\"", "$self$叹了口气，无奈地摊开双手。\"好吧好吧，看来你是真的不想输给我。\"", "$self$有些遗憾地看着自己的手心。\"明明我还特意准备了很久呢……\""
+                                "relationship_rival_refused_1",
+                                "relationship_rival_refused_2",
+                                "relationship_rival_refused_3",
+                                "relationship_rival_refused_4",
+                                "relationship_rival_refused_5",
+                                "relationship_rival_refused_6",
+                                "relationship_rival_refused_7",
+                                "relationship_rival_refused_8",
+                                "relationship_rival_refused_9",
+                                "relationship_rival_refused_10",
+                                "relationship_rival_refused_11",
+                                "relationship_rival_refused_12"
                             ]
                         }
                     ]
@@ -73,9 +109,18 @@
                         {
                             "_comment:": "($self$) 劲敌关系破裂 口上文",
                             "responses": [
-"$self$疲惫地揉了揉太阳穴。\"够了。这种无休止的争斗没有任何意义。\"", "$self$将相关的资料全部扔进了垃圾桶。\"我退出了。你可以独享那所谓的胜利了。\"", "$self$面无表情地看着$target$，眼神中再无波澜。\"以后别再提这件事了。我们还是保持距离比较好。\"", "$self$冷淡地收拾着自己的东西。\"看来我们确实合不来。到此为止吧。\"", "$self$转身离开，只留下一个决绝的背影。\"这场闹剧结束了。\"", "$self$语气平淡，仿佛在说别人的事。\"我不玩了。这种竞争让我感到恶心。\"",
-
-"$self$长舒了一口气，脸上重新露出了轻松的笑容。\"呼——累死我了！还是不要做对手了，太伤神啦！\"", "$self$主动伸出手，想要和$target$握手言和。\"无论是输是赢都无所谓了，我们还是做回好朋友吧！\"", "$self$有些不好意思地挠了挠头。\"刚才是不是太较真了？抱歉抱歉，忘掉那些吧！\"", "$self$走过去给了$target$一个大大的拥抱。\"比起赢过你，我还是更喜欢支持你！\"", "$self$笑着拍了拍$target$的背。\"竞争解除！以后还是互帮互助比较适合我们！\"", "$self$把之前的赌注一笔勾销。\"不算数不算数！我们重新开始做搭档吧！\""
+                                "relationship_rival_break_1",
+                                "relationship_rival_break_2",
+                                "relationship_rival_break_3",
+                                "relationship_rival_break_4",
+                                "relationship_rival_break_5",
+                                "relationship_rival_break_6",
+                                "relationship_rival_break_7",
+                                "relationship_rival_break_8",
+                                "relationship_rival_break_9",
+                                "relationship_rival_break_10",
+                                "relationship_rival_break_11",
+                                "relationship_rival_break_12"
                             ]
                         }
                     ]
@@ -85,8 +130,130 @@
     },
     "Dictionary": {
         "Entries": {
-            "zh-cn": {},
-            "en-us": {}
+            "zh-cn": {
+                "relationship_rival_propose_1": "$self$抱着手臂走到$target$面前，下巴微微扬起。\"既然我们的目标一致，那就比比看谁更有资格站在那个顶峰吧。\"",
+                "relationship_rival_propose_2": "$self$没有多余的废话，直接将战书扔在桌上。\"我不喜欢拖泥带水。从现在开始，你就是我要跨越的障碍。\"",
+                "relationship_rival_propose_3": "$self$冷冷地瞥了$target$一眼，语气中带着几分挑衅。\"我不认为你会是我的对手，但我不介意那个证明的过程。\"",
+                "relationship_rival_propose_4": "$self$整理了一下衣领，神情变得严肃而锐利。\"这种过家家的游戏结束了。接下来，我会全力以赴击溃你。\"",
+                "relationship_rival_propose_5": "$self$用一种评估商品的眼神上下打量着$target$。\"希望你能坚持得久一点，别太快让我觉得无聊。\"",
+                "relationship_rival_propose_6": "$self$背对着$target$挥了挥手。\"赛场上见。别指望我会手下留情。\"",
+                "relationship_rival_propose_7": "$self$眼里闪烁着兴奋的光芒，用力拍了拍$target$的肩膀。\"嘿！我们来比一场吧！输的人要请客哦！\"",
+                "relationship_rival_propose_8": "$self$嘴角勾起一抹自信的弧度，向$target$伸出了拳头。\"虽然我们是朋友，但在这一点上我可是绝不会让步的。\"",
+                "relationship_rival_propose_9": "$self$深吸一口气，认真地注视着$target$的双眼。\"正因为认可你，所以我才想赢过你。接招吧！\"",
+                "relationship_rival_propose_10": "$self$有些不好意思地挠了挠脸颊，但眼神却格外坚定。\"那个……虽然有点突然，但我不想输给你。不管是哪方面！\"",
+                "relationship_rival_propose_11": "$self$像是在宣布什么大事一样，双手叉腰站在$target$面前。\"我也要燃起来了！$target$，做好觉悟吧！\"",
+                "relationship_rival_propose_12": "$self$调皮地对$target$做了个鬼脸。\"如果不拿出真本事的话，可是会被我远远甩在身后的哦？\"",
+                "relationship_rival_set_1": "$self$轻哼一声，转身离去。\"很好，那就走着瞧。\"",
+                "relationship_rival_set_2": "$self$没有什么特别的反应，只是微微点了点头。\"明智的选择。后果自负。\"",
+                "relationship_rival_set_3": "$self$嘴角露出一丝不易察觉的冷笑。\"那就让我看看你的斤两吧。\"",
+                "relationship_rival_set_4": "$self$收起了之前的漫不经心，眼神变得像刀锋一样锐利。\"正如我所愿。\"",
+                "relationship_rival_set_5": "$self$没有再看$target$一眼，径直走向了自己的位置。\"别后悔就行。\"",
+                "relationship_rival_set_6": "$self$冷淡地吐出两个字：\"成交。\"",
+                "relationship_rival_set_7": "$self$高兴地跳了起来，在这个瞬间完全不像是要对决的对手。\"太棒了！我就知道你会答应！\"",
+                "relationship_rival_set_8": "$self$用力握住了$target$的手，眼中燃烧着斗志。\"让我们来一场精彩的对决吧！\"",
+                "relationship_rival_set_9": "$self$吹了一声口哨，显得干劲十足。\"好耶！这下更有动力了！\"",
+                "relationship_rival_set_10": "$self$笑得有些狡黠，向$target$比了个V字手势。\"那说好了哦，谁也不许放水！\"",
+                "relationship_rival_set_11": "$self$满意地点点头，像是找到了心仪的玩伴。\"这才像话嘛！我会把你打得落花流水的！\"",
+                "relationship_rival_set_12": "$self$碰了碰$target$的拳头。\"一定要全力以赴啊，我最强的对手！\"",
+                "relationship_rival_refuse_1": "$self$像是听到了什么笑话一样，发出了一声嗤笑。\"和你比？别开玩笑了。\"",
+                "relationship_rival_refuse_2": "$self$连头都没有抬，继续做着手里的事。\"我没兴趣陪你玩这种无聊的游戏。\"",
+                "relationship_rival_refuse_3": "$self$一脸厌烦地挥了挥手，像是驱赶苍蝇一样。\"别来烦我，我很忙。\"",
+                "relationship_rival_refuse_4": "$self$上下打量了$target$一番，摇了摇头。\"现在的你，还没有资格做我的对手。\"",
+                "relationship_rival_refuse_5": "$self$冷漠地转过身去。\"这种毫无意义的争斗，我不参与。\"",
+                "relationship_rival_refuse_6": "$self$叹了口气，眼神中充满了失望。\"找别人去吧，你的水平太低了。\"",
+                "relationship_rival_refuse_7": "$self$有些为难地摆着手，脸上带着歉意的笑。\"啊哈哈……这种事情还是算了吧，我不擅长争斗啦。\"",
+                "relationship_rival_refuse_8": "$self$轻轻推了推$target$的胳膊，试图缓和气氛。\"哎呀，为什么要搞得这么严肃嘛？大家一起开心不好吗？\"",
+                "relationship_rival_refuse_9": "$self$有些担忧地看着$target$。\"我不想因为这种事破坏我们的关系……\"",
+                "relationship_rival_refuse_10": "$self$把头摇得像拨浪鼓一样。\"不行不行！我要是赢了你会哭鼻子的！\"",
+                "relationship_rival_refuse_11": "$self$嘟起嘴，显得有些不情愿。\"还是做队友比较好吧？我不喜欢和你对着干。\"",
+                "relationship_rival_refuse_12": "$self$笑着把话题岔开了。\"比起这个，我们还是一起去吃点好吃的吧！\"",
+                "relationship_rival_refused_1": "$self$眯起眼睛，脸上闪过一丝不悦。\"懦夫。\"",
+                "relationship_rival_refused_2": "$self$耸了耸肩，一副无所谓的样子。\"随你便。反正结果不会改变。\"",
+                "relationship_rival_refused_3": "$self$冷冷地看着$target$，眼中透着鄙夷。\"这就是你的回答吗？令人失望。\"",
+                "relationship_rival_refused_4": "$self$没有说话，只是用一种看失败者的眼神注视了$target$几秒，然后转身离开。\"",
+                "relationship_rival_refused_5": "$self$发出了一声轻蔑的鼻音。\"怕了吗？那就滚远点。\"",
+                "relationship_rival_refused_6": "$self$面无表情地收回了视线。\"浪费我的时间。\"",
+                "relationship_rival_refused_7": "$self$有些失落地垂下了肩膀。\"诶——？怎么这样……真没劲。\"",
+                "relationship_rival_refused_8": "$self$不甘心地咬着嘴唇，盯着$target$看。\"真的不行吗？就试一次嘛！\"",
+                "relationship_rival_refused_9": "$self$像是泄了气的皮球一样趴在桌子上。\"小气鬼$target$！明明是个好机会的说……\"",
+                "relationship_rival_refused_10": "$self$鼓着腮帮子，有些生气地别过头去。\"哼，不比就不比。胆小鬼！\"",
+                "relationship_rival_refused_11": "$self$叹了口气，无奈地摊开双手。\"好吧好吧，看来你是真的不想输给我。\"",
+                "relationship_rival_refused_12": "$self$有些遗憾地看着自己的手心。\"明明我还特意准备了很久呢……\"",
+                "relationship_rival_break_1": "$self$疲惫地揉了揉太阳穴。\"够了。这种无休止的争斗没有任何意义。\"",
+                "relationship_rival_break_2": "$self$将相关的资料全部扔进了垃圾桶。\"我退出了。你可以独享那所谓的胜利了。\"",
+                "relationship_rival_break_3": "$self$面无表情地看着$target$，眼神中再无波澜。\"以后别再提这件事了。我们还是保持距离比较好。\"",
+                "relationship_rival_break_4": "$self$冷淡地收拾着自己的东西。\"看来我们确实合不来。到此为止吧。\"",
+                "relationship_rival_break_5": "$self$转身离开，只留下一个决绝的背影。\"这场闹剧结束了。\"",
+                "relationship_rival_break_6": "$self$语气平淡，仿佛在说别人的事。\"我不玩了。这种竞争让我感到恶心。\"",
+                "relationship_rival_break_7": "$self$长舒了一口气，脸上重新露出了轻松的笑容。\"呼——累死我了！还是不要做对手了，太伤神啦！\"",
+                "relationship_rival_break_8": "$self$主动伸出手，想要和$target$握手言和。\"无论是输是赢都无所谓了，我们还是做回好朋友吧！\"",
+                "relationship_rival_break_9": "$self$有些不好意思地挠了挠头。\"刚才是不是太较真了？抱歉抱歉，忘掉那些吧！\"",
+                "relationship_rival_break_10": "$self$走过去给了$target$一个大大的拥抱。\"比起赢过你，我还是更喜欢支持你！\"",
+                "relationship_rival_break_11": "$self$笑着拍了拍$target$的背。\"竞争解除！以后还是互帮互助比较适合我们！\"",
+                "relationship_rival_break_12": "$self$把之前的赌注一笔勾销。\"不算数不算数！我们重新开始做搭档吧！\""
+            },
+            "en-us": {
+                "relationship_rival_propose_1": "$self$ crosses her arms and walks up to $target$, chin tilted slightly upward. \"Since we share the same goal, let's see who's more qualified to stand at the top.\"",
+                "relationship_rival_propose_2": "$self$ tosses the challenge onto the table without wasting words. \"I don't like dragging things out. From now on, you are the obstacle I must overcome.\"",
+                "relationship_rival_propose_3": "$self$ gives $target$ a cold glance, her tone laced with provocation. \"I don't think you're a match for me, but I don't mind the process of proving it.\"",
+                "relationship_rival_propose_4": "$self$ adjusts her collar, her expression turning serious and sharp. \"This childish game is over. From here on out, I'm going all in to crush you.\"",
+                "relationship_rival_propose_5": "$self$ looks $target$ up and down, like assessing a piece of merchandise. \"Hope you can last a while. Don't bore me too quickly.\"",
+                "relationship_rival_propose_6": "$self$ waves without turning back to face $target$. \"See you in the arena. Don't expect any mercy from me.\"",
+                "relationship_rival_propose_7": "$self$ slaps $target$ on the shoulder, excitement sparkling in her eyes. \"Hey! Let's have a contest! Loser has to treat the winner!\"",
+                "relationship_rival_propose_8": "$self$ smirks confidently, extending a fist toward $target$. \"We may be friends, but I won't give an inch on this.\"",
+                "relationship_rival_propose_9": "$self$ takes a deep breath and looks straight into $target$'s eyes earnestly. \"It's because I acknowledge you that I want to beat you. Bring it on!\"",
+                "relationship_rival_propose_10": "$self$ scratches her cheek shyly, but her eyes are determined. \"Umm... this might be sudden, but I don't want to lose to you. In anything!\"",
+                "relationship_rival_propose_11": "$self$ stands before $target$ with hands on hips, as if announcing something huge. \"I'm getting fired up too! $target$, prepare yourself!\"",
+                "relationship_rival_propose_12": "$self$ sticks her tongue out at $target$ playfully. \"If you don't get serious, I'm gonna leave you in the dust, you know?\"",
+                "relationship_rival_set_1": "$self$ scoffs lightly and turns to leave. \"Fine. We'll see about that.\"",
+                "relationship_rival_set_2": "$self$ shows little reaction, simply nodding slightly. \"A wise choice. You'll deal with the consequences.\"",
+                "relationship_rival_set_3": "$self$ reveals a faint, barely noticeable sneer. \"Let's see what you're made of then.\"",
+                "relationship_rival_set_4": "$self$ drops her casual attitude, her gaze turning razor-sharp. \"Just as I wished.\"",
+                "relationship_rival_set_5": "$self$ heads straight for her spot without looking back at $target$. \"Just don't regret it.\"",
+                "relationship_rival_set_6": "$self$ spits out two cold words: \"Deal.\"",
+                "relationship_rival_set_7": "$self$ jumps up in joy, looking nothing like a rival in that moment. \"Awesome! I knew you'd say yes!\"",
+                "relationship_rival_set_8": "$self$ grips $target$'s hand firmly, fighting spirit burning in her eyes. \"Let's have a great match!\"",
+                "relationship_rival_set_9": "$self$ whistles, looking all fired up. \"Heck yeah! Now I'm even more motivated!\"",
+                "relationship_rival_set_10": "$self$ flashes a cunning smile and gives $target$ a peace sign. \"It's a promise then—no holding back!\"",
+                "relationship_rival_set_11": "$self$ nods with satisfaction, like she found the perfect playmate. \"That's what I'm talking about! I'm gonna beat you fair and square!\"",
+                "relationship_rival_set_12": "$self$ bumps fists with $target$. \"You better give it your all, my greatest rival!\"",
+                "relationship_rival_refuse_1": "$self$ snorts as if she heard a joke. \"Compete with you? You're kidding.\"",
+                "relationship_rival_refuse_2": "$self$ doesn't even look up, continuing her work. \"I have no interest in playing silly games with you.\"",
+                "relationship_rival_refuse_3": "$self$ waves her hand in annoyance, like shooing a fly. \"Don't bother me. I'm busy.\"",
+                "relationship_rival_refuse_4": "$self$ looks $target$ up and down and shakes her head. \"You're not qualified to be my opponent yet.\"",
+                "relationship_rival_refuse_5": "$self$ turns her back coldly. \"I won't take part in such meaningless strife.\"",
+                "relationship_rival_refuse_6": "$self$ sighs, eyes filled with disappointment. \"Go find someone else. Your level is too low.\"",
+                "relationship_rival_refuse_7": "$self$ waves her hands awkwardly, an apologetic smile on her face. \"Ahaha... let's not do that. I'm not really good at fighting.\"",
+                "relationship_rival_refuse_8": "$self$ nudges $target$'s arm gently, trying to lighten the mood. \"Oh, come on, why so serious? Can't we just have fun together?\"",
+                "relationship_rival_refuse_9": "$self$ looks at $target$ with concern. \"I don't want to ruin our relationship over something like this...\"",
+                "relationship_rival_refuse_10": "$self$ shakes her head vigorously. \"No, no! If I win, you'll just cry about it!\"",
+                "relationship_rival_refuse_11": "$self$ pouts, looking reluctant. \"Isn't it better to be teammates? I don't like going against you.\"",
+                "relationship_rival_refuse_12": "$self$ laughs and changes the subject. \"More importantly, let's go get something good to eat!\"",
+                "relationship_rival_refused_1": "$self$ narrows her eyes, a flash of displeasure crossing her face. \"Coward.\"",
+                "relationship_rival_refused_2": "$self$ shrugs, acting indifferent. \"Suit yourself. The outcome won't change anyway.\"",
+                "relationship_rival_refused_3": "$self$ stares coldly at $target$ with disdain. \"That's your answer? Disappointing.\"",
+                "relationship_rival_refused_4": "$self$ stays silent, looking at $target$ like a loser for a few seconds before turning away.",
+                "relationship_rival_refused_5": "$self$ snorts contemptuously. \"Scared? Then get lost.\"",
+                "relationship_rival_refused_6": "$self$ withdraws her gaze expressionlessly. \"Waste of my time.\"",
+                "relationship_rival_refused_7": "$self$ shoulders slump in disappointment. \"Ehh—? Why...? That's so boring.\"",
+                "relationship_rival_refused_8": "$self$ bites her lip unhappily, staring at $target$. \"Really? Just try it once!\"",
+                "relationship_rival_refused_9": "$self$ slumps onto the table like a deflated balloon. \"Stingy $target$! And here I thought it was a good chance...\"",
+                "relationship_rival_refused_10": "$self$ puffs out her cheeks and looks away angrily. \"Hmph. Fine, we won't compete. Chicken!\"",
+                "relationship_rival_refused_11": "$self$ sighs and spreads her hands helplessly. \"Okay, okay. Looks like you really don't want to lose to me.\"",
+                "relationship_rival_refused_12": "$self$ looks at her palm with regret. \"And I even prepared for this for so long...\"",
+                "relationship_rival_break_1": "$self$ rubs her temples wearily. \"Enough. This endless fighting is meaningless.\"",
+                "relationship_rival_break_2": "$self$ throws all related documents into the trash. \"I'm out. You can keep that so-called victory to yourself.\"",
+                "relationship_rival_break_3": "$self$ looks at $target$ expressionlessly, eyes devoid of emotion. \"Don't bring this up again. We're better off keeping our distance.\"",
+                "relationship_rival_break_4": "$self$ packs her things coldly. \"Seems we really don't get along. This ends here.\"",
+                "relationship_rival_break_5": "$self$ turns to leave, showing only a resolute back. \"This farce is over.\"",
+                "relationship_rival_break_6": "$self$ speaks flatly, as if talking about someone else. \"I'm done playing. This competition makes me sick.\"",
+                "relationship_rival_break_7": "$self$ lets out a long sigh, a relaxed smile returning to her face. \"Phew—I'm exhausted! Let's stop being rivals, it's too draining!\"",
+                "relationship_rival_break_8": "$self$ reaches out, wanting to shake hands with $target$. \"Win or lose, it doesn't matter anymore. Let's go back to being good friends!\"",
+                "relationship_rival_break_9": "$self$ scratches her head sheepishly. \"Was I too serious earlier? Sorry, sorry, let's forget all that!\"",
+                "relationship_rival_break_10": "$self$ goes over and gives $target$ a big hug. \"I'd rather support you than beat you!\"",
+                "relationship_rival_break_11": "$self$ pats $target$ on the back with a laugh. \"Rivalry cancelled! Helping each other suits us better!\"",
+                "relationship_rival_break_12": "$self$ writes off the previous bet. \"Doesn't count! Let's start over as partners!\""
+            }
         }
     }
 }

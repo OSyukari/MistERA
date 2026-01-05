@@ -113,7 +113,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$亲吻着$receiver.firstname$" ]
+                            "texts": [ "com_sex_oral_kiss_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -122,7 +122,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$和$receiver.firstname$紧贴的唇终于分开来" ]
+                            "texts":[ "com_sex_oral_kiss_description_remove_1" ]
                         }
                     ]
                 },
@@ -132,7 +132,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "高潮中的$receiver.firstname$与$doer.firstname$更激烈地交换着唾液" ]
+                            "texts":[ "com_sex_oral_kiss_description_after_1" ]
                         }
                     ]
                 },
@@ -141,12 +141,56 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$亲上了$receiver.firstname$的嘴唇"]
+                            "texts": ["com_sex_oral_kiss_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_oral_kiss":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_kiss_displayName_1": "接吻",
+                "com_sex_oral_kiss_displayName_2": "交替接吻",
+                "com_sex_oral_kiss_displayName_3": "轮流接吻",
+                "com_sex_oral_kiss_displayName_4": "同时接吻",
+                "com_sex_oral_kiss_displayName_1_force": "法式舌吻",
+                "com_sex_oral_kiss_displayName_2_force": "交替舌吻",
+                "com_sex_oral_kiss_displayName_3_force": "轮流舌吻",
+                "com_sex_oral_kiss_displayName_4_force": "同时舌吻",
+
+                "com_sex_oral_kiss_description_begin_1":"$doer.firstname$亲上了$receiver.firstname$的嘴唇",
+                "com_sex_oral_kiss_description_after_1":"高潮中的$receiver.firstname$与$doer.firstname$更激烈地交换着唾液",
+                "com_sex_oral_kiss_description_remove_1":"$doer.firstname$和$receiver.firstname$紧贴的唇终于分开来",
+                "com_sex_oral_kiss_description_ongoing_1":"$doer.firstname$亲吻着$receiver.firstname$"
+
+            },
+            "en-us":
+            {
+                "com_sex_oral_kiss":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_kiss_displayName_1": "Kissing",
+                "com_sex_oral_kiss_displayName_2": "Alt. Kisses",
+                "com_sex_oral_kiss_displayName_3": "Alt. Kisses",
+                "com_sex_oral_kiss_displayName_4": "Alt. Kisses",
+                "com_sex_oral_kiss_displayName_1_force": "French Kissing",
+                "com_sex_oral_kiss_displayName_2_force": "Alt. Tongue Kissing",
+                "com_sex_oral_kiss_displayName_3_force": "Alt. Tongue Kissing",
+                "com_sex_oral_kiss_displayName_4_force": "Alt. Tongue Kissing",
+
+                "com_sex_oral_kiss_description_begin_1":"$doer.firstname$ kisses $receiver.firstname$'s lips.",
+                "com_sex_oral_kiss_description_after_1":"In the throes of climax, $receiver.firstname$ exchanges saliva with $doer.firstname$ more intensely.",
+                "com_sex_oral_kiss_description_remove_1":"$doer.firstname$ and $receiver.firstname$'s pressed lips finally separate.",
+                "com_sex_oral_kiss_description_ongoing_1":"$doer.firstname$ is kissing $receiver.firstname$."
+
+            }
+        }
     }
 }

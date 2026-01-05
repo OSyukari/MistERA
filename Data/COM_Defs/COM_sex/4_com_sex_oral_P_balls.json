@@ -69,7 +69,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$正在舔弄着$receiver.firstname$的睾丸" ]
+                            "texts": [ "com_sex_oral_P_balls_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -78,7 +78,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$receiver.firstname$的睾丸被从$doer.firstname$的口中解放出来" ]
+                            "texts":[ "com_sex_oral_P_balls_description_remove_1" ]
                         }
                     ]
                 },
@@ -88,7 +88,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$receiver.firstname$的肉棒在$doer.firstname$舌头的敦促下射出了精液" ]
+                            "texts":[ "com_sex_oral_P_balls_description_after_1" ]
                         }
                     ]
                 },
@@ -97,12 +97,48 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$将头埋到了$receiver.firstname$股间，张开嘴贴上了$receiver.firstname$的睾丸"]
+                            "texts": ["com_sex_oral_P_balls_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_oral_P_balls":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_P_balls_displayName_1": "舔睾丸",
+                "com_sex_oral_P_balls_displayName_2": "交替舔睾丸",
+                "com_sex_oral_P_balls_displayName_3": "轮流舔睾丸",
+                "com_sex_oral_P_balls_displayName_4": "同时舔睾丸",
+
+                "com_sex_oral_P_balls_description_begin_1":"$doer.firstname$将头埋到了$receiver.firstname$股间，张开嘴贴上了$receiver.firstname$的睾丸",
+                "com_sex_oral_P_balls_description_after_1":"$receiver.firstname$的肉棒在$doer.firstname$舌头的敦促下射出了精液",
+                "com_sex_oral_P_balls_description_remove_1":"$receiver.firstname$的睾丸被从$doer.firstname$的口中解放出来",
+                "com_sex_oral_P_balls_description_ongoing_1":"$doer.firstname$正在舔弄着$receiver.firstname$的睾丸"
+
+            },
+            "en-us":
+            {
+                "com_sex_oral_P_balls":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_P_balls_displayName_1": "Lick Balls",
+                "com_sex_oral_P_balls_displayName_2": "Alt. Ball Licking",
+                "com_sex_oral_P_balls_displayName_3": "Alt. Licking Balls",
+                "com_sex_oral_P_balls_displayName_4": "Alt. Ball Licking",
+
+                "com_sex_oral_P_balls_description_begin_1":"$doer.firstname$ buries their head in $receiver.firstname$'s crotch, opening their mouth to press against $receiver.firstname$'s balls",
+                "com_sex_oral_P_balls_description_after_1":"Urged by $doer.firstname$'s tongue, $receiver.firstname$'s cock shoots out semen",
+                "com_sex_oral_P_balls_description_remove_1":"$receiver.firstname$'s balls are released from $doer.firstname$'s mouth",
+                "com_sex_oral_P_balls_description_ongoing_1":"$doer.firstname$ is licking $receiver.firstname$'s balls"
+
+            }
+        }
     }
 }

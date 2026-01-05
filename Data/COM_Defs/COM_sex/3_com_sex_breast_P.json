@@ -69,7 +69,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$正在给$receiver.firstname$乳交" ]
+                            "texts": [ "com_sex_breast_P_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -78,7 +78,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$receiver.firstname$的肉棒被从$doer.firstname$的双乳间解放了出来" ]
+                            "texts":[ "com_sex_breast_P_description_remove_1" ]
                         }
                     ]
                 },
@@ -88,7 +88,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$receiver.firstname$将精液尽数射在了$doer.firstname$的双乳间" ]
+                            "texts":[ "com_sex_breast_P_description_after_1" ]
                         }
                     ]
                 },
@@ -97,12 +97,47 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$将$receiver.firstname$的肉棒夹在双乳间左右揉弄着"]
+                            "texts": ["com_sex_breast_P_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_breast_P":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_breast_P_displayName_1": "乳交",
+                "com_sex_breast_P_displayName_2": "交替乳交",
+                "com_sex_breast_P_displayName_3": "轮流乳交",
+                "com_sex_breast_P_displayName_4": "同时乳交",
+
+                "com_sex_breast_P_description_begin_1":"$doer.firstname$将$receiver.firstname$的肉棒夹在双乳间左右揉弄着",
+                "com_sex_breast_P_description_after_1":"$receiver.firstname$将精液尽数射在了$doer.firstname$的双乳间",
+                "com_sex_breast_P_description_remove_1":"$receiver.firstname$的肉棒被从$doer.firstname$的双乳间解放了出来",
+                "com_sex_breast_P_description_ongoing_1":"$doer.firstname$正在给$receiver.firstname$乳交"
+
+            },
+            "en-us":
+            {
+                "com_sex_breast_P":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_breast_P_displayName_1": "Paizuri",
+                "com_sex_breast_P_displayName_2": "Alt. Paizuri",
+                "com_sex_breast_P_displayName_3": "Alt. Paizuri",
+                "com_sex_breast_P_displayName_4": "Alt. Paizuri",
+
+                "com_sex_breast_P_description_begin_1":"$doer.firstname$ sandwiches $receiver.firstname$'s cock between her breasts and rubs it",
+                "com_sex_breast_P_description_after_1":"$receiver.firstname$ cummed all over $doer.firstname$'s cleavage",
+                "com_sex_breast_P_description_remove_1":"$receiver.firstname$'s cock was released from $doer.firstname$'s cleavage",
+                "com_sex_breast_P_description_ongoing_1":"$doer.firstname$ is giving $receiver.firstname$ a paizuri"
+            }
+        }
     }
 }

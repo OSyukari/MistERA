@@ -852,8 +852,11 @@ public class EvaluationPackage
             }
 
             //apply results later cuz results require COM attitude end
-            if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer,m.exp);
-            if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver,m.exp);
+            if (response >= Memory_Response.Success)
+            {
+                if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer, m.exp);
+                if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver, m.exp);
+            }
         }
 
         foreach(var entry in logExps)
@@ -901,11 +904,13 @@ public class EvaluationPackage
             string s = targetCOM.variants[VariantID].GetDescription_Begin(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_begin);
             UtilityEX.StringReplace(this, ref s);
+            s = targetCOM.Replace(s);
             return s; } }
     [JsonIgnore] public string Description_Ongoing { get { 
             string s = targetCOM.variants[VariantID].GetDescription_Ongoing(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_ongoing);
             UtilityEX.StringReplace(this, ref s);
+            s = targetCOM.Replace(s);
             return s;
     } }
 
@@ -913,6 +918,7 @@ public class EvaluationPackage
             string s = targetCOM.variants[VariantID].GetDescription_Remove(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_abort);
             UtilityEX.StringReplace(this, ref s);
+            s = targetCOM.Replace(s);
             return s;
 
         } }
@@ -920,6 +926,7 @@ public class EvaluationPackage
             string s = targetCOM.variants[VariantID].GetDescription_After(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", "");
             UtilityEX.StringReplace(this, ref s);
+            s = targetCOM.Replace(s);
             return s;
         } }
 
@@ -1445,7 +1452,7 @@ public class EvaluationPackage
             if (job != null) job.NotifyRefusal(com, receiver.RefID);
         }
     }
-
+    public bool disabled = false;
     public string bodypart_doer = "", bodypart_receiver = "";
     BodyInternal_Instance _doerInternal = null, _receiverInternal = null;
     [JsonIgnore]

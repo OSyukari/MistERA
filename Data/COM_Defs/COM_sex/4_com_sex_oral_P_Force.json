@@ -119,7 +119,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$的$doer.p$正蹂躏着$receiver.firstname$的嘴" ]
+                            "texts": [ "com_sex_oral_P_Force_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -128,7 +128,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$将$doer.p$从$receiver.firstname$嘴里拿出来" ]
+                            "texts":[ "com_sex_oral_P_Force_description_remove_1" ]
                         }
                     ]
                 },
@@ -138,12 +138,12 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$doer.firstname$在射精的瞬间狠狠地按住了$receiver.firstname$的头" ]
+                            "texts":[ "com_sex_oral_P_Force_description_after_1" ]
                         },
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$receiver.firstname$在与$doer.firstname$的肉棒亲密接触中迎来了高潮" ]
+                            "texts":[ "com_sex_oral_P_Force_description_after_2" ]
                         }
                     ]
                 },
@@ -152,12 +152,58 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$抓住了$receiver.firstname$的脑袋，将$doer.p$粗暴地插入了$receiver.firstname$嘴里"]
+                            "texts": ["com_sex_oral_P_Force_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_oral_P_Force":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_P_Force_displayName_1": "强制口交",
+                "com_sex_oral_P_Force_displayName_2": "交替强制口交",
+                "com_sex_oral_P_Force_displayName_3": "轮流强制口交",
+                "com_sex_oral_P_Force_displayName_4": "同时强制口交",
+                "com_sex_oral_P_Force_displayName_1_force": "强制深喉口交",
+                "com_sex_oral_P_Force_displayName_2_force": "交替强制深喉口交",
+                "com_sex_oral_P_Force_displayName_3_force": "轮流强制深喉口交",
+                "com_sex_oral_P_Force_displayName_4_force": "同时强制深喉口交",
+
+                "com_sex_oral_P_Force_description_begin_1":"$doer.firstname$抓住了$receiver.firstname$的脑袋，将$doer.p$粗暴地插入了$receiver.firstname$嘴里",
+                "com_sex_oral_P_Force_description_after_1":"$doer.firstname$在射精的瞬间狠狠地按住了$receiver.firstname$的头",
+                "com_sex_oral_P_Force_description_after_2":"$receiver.firstname$在与$doer.firstname$的肉棒亲密接触中迎来了高潮",
+                "com_sex_oral_P_Force_description_remove_1":"$doer.firstname$将$doer.p$从$receiver.firstname$嘴里拿出来",
+                "com_sex_oral_P_Force_description_ongoing_1":"$doer.firstname$的$doer.p$正蹂躏着$receiver.firstname$的嘴"
+
+            },
+            "en-us":
+            {
+                "com_sex_oral_P_Force":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_P_Force_displayName_1": "Forced Blowjob",
+                "com_sex_oral_P_Force_displayName_2": "Alt. Forced Blowjob",
+                "com_sex_oral_P_Force_displayName_3": "Alt. Forced Blowjob",
+                "com_sex_oral_P_Force_displayName_4": "Alt. Forced Blowjob",
+                "com_sex_oral_P_Force_displayName_1_force": "Forced Deep Throat",
+                "com_sex_oral_P_Force_displayName_2_force": "Alt. Forced Deep Throat",
+                "com_sex_oral_P_Force_displayName_3_force": "Alt. Forced Deep Throat",
+                "com_sex_oral_P_Force_displayName_4_force": "Alt. Forced Deep Throat",
+
+                "com_sex_oral_P_Force_description_begin_1":"$doer.firstname$ grabs $receiver.firstname$'s head and roughly thrusts $doer.p$ into $receiver.firstname$'s mouth",
+                "com_sex_oral_P_Force_description_after_1":"$doer.firstname$ firmly holds down $receiver.firstname$'s head the moment they ejaculate",
+                "com_sex_oral_P_Force_description_after_2":"$receiver.firstname$ reaches orgasm during the intimate contact with $doer.firstname$'s cock",
+                "com_sex_oral_P_Force_description_remove_1":"$doer.firstname$ pulls $doer.p$ out of $receiver.firstname$'s mouth",
+                "com_sex_oral_P_Force_description_ongoing_1":"$doer.firstname$'s $doer.p$ is ravaging $receiver.firstname$'s mouth"
+
+            }
+        }
     }
 }

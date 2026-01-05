@@ -217,6 +217,7 @@
                 {
                     "compType":"ItemComponent_Ingestible",
                     "comp_Ingestible":{
+                        "isLiquid":true,
                         "ingestMethod":[
                             {
                                 "bodyTags":"internal",
@@ -244,6 +245,8 @@
             },
             "en-us":
             {
+                "consumable_drug_rapedrug":"Aphrodisiac",
+                "consumable_cum":"Semen"
   
             }
         }

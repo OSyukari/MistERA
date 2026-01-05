@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using Newtonsoft.Json;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static EvaluationPackage;
 
@@ -778,6 +780,18 @@ public class BodyInternal_Instance
         }
 
         UtilityEX.ApplyOnConsume(this, comp.OnUseEffects);
+        if (comp != null)
+        {
+            string key = comp.isLiquid ? Base.memory_ingest_liquid : Base.memory_ingest_solid;
+            if (key != "")
+            {
+                string memstring = LocalizeDictionary.QueryThenParse(key);
+                memstring = memstring.Replace("$itemname$", i.DisplayName).Replace("$amount$", comp.isLiquid ? comp.amount.ToString("F1") : i.Count.ToString());
+
+                var memInst2 = new MemInstance(new List<int>() { Owner.RefID }, new List<string>(), "", -1, -1, false, Memory_Response.Accept, Memory_Attitude.None, memstring);
+                Owner.Memory.AddEntry(memInst2, null, -1, true);
+            }
+        }
 
         if (i.Stackable)
         {

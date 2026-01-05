@@ -80,7 +80,18 @@
             },
             "en-us":
             {
+"expedition_cave":"Cave",
+"expedition_cave_exploring_1":"$names$ walks through a narrow rocky passage. Silence reigns all around, broken only by the sound of dripping water from somewhere unknown.",
+"expedition_cave_exploring_2":"A cold, damp wind blows from the depths of the cave, carrying a mix of earth and the scent of unknown creatures. $names$ shivers involuntarily.",
+"expedition_cave_exploring_3":"On the cave wall beside $names$, patches of moss emitting a faint ghostly blue glow grow silently.",
+"expedition_cave_exploring_4":"$names$ walks along the edge of an underground river.",
+"expedition_cave_exploring_5":"$names$ carefully moves through the narrow cave passage.",
 
+"expedition_cave_exploring_6":"The damp air inside the cave sends a chill through $names$.",
+"expedition_cave_exploring_7":"A glowing ore catches $names$'s eye.",
+"expedition_cave_exploring_8":"Squeezing sideways through a narrow crack, $names$'s clothes are scraped by the rocks.",
+"expedition_cave_exploring_9":"Securing the body with a rope, $names$ bravely slides down a steep rocky slope.",
+"expedition_cave_exploring_10":"$names$ wades through a shallow underground pool; the water is bitingly cold."
 
             }
         }

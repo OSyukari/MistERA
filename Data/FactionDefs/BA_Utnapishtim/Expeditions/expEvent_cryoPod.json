@@ -62,6 +62,11 @@
             },
             "en-us":
             {
+"exp_event_Utnapishtim_cryoPod":"Sealed Cryopod",
+"exp_event_Utnapishtim_cryoPod_ongoing":"$names$ found a sealed cryopod that seems to be still operational.",
+"exp_event_Utnapishtim_cryoPod_result_repaired":"$names$ opened the cryopod only to find it empty.",
+"exp_event_Utnapishtim_cryoPod_result_supplies":"$names$ opened the cryopod and found useful supplies.",
+"exp_event_Utnapishtim_cryoPod_result_leak":"$names$ accidentally came into contact with leaking coolant while trying to open the cryopod."
 
             }
         }

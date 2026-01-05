@@ -55,7 +55,7 @@ public class Job_Furniture : Job
                     _validCOMs_room_cache = new List<COM>(allusableCOMs.Count);
                     foreach (var com in allusableCOMs)
                     {
-                        if (com.ValidateRoom(ParentRoom)) _validCOMs_room_cache.Add(com);
+                        if (com.ValidateRoom(ParentRoom, out var s)) _validCOMs_room_cache.Add(com);
                     }
                 }
                 if (validCOMs == null) validCOMs = new List<COM>(allusableCOMs.Count);
@@ -216,7 +216,7 @@ public class Job_Furniture : Job
         {
             possibleCOMs = possibleCOMs.FindAll(x => ValidCOMs.Contains(x) 
                                                     && CanCOMAcceptMoreActor(x) 
-                                                    && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner))
+                                                    && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
                                                     && (!x.hasFactionReq || !x.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out var po)))
                                                 );
             //if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} at step 2");
@@ -238,7 +238,7 @@ public class Job_Furniture : Job
             }
             else*/
             if (com is COM_TakeMeal && !FactionOwner.isMealHour) continue;
-            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner) && (!com.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out po)))))
+            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner, out var r) && (!com.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out po)))))
             {
                 var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, po);
                 if (package.Validate() || allowInvalid)
@@ -516,7 +516,7 @@ public class Job_Furniture : Job
         public int currentGrowth = 0;
 
         public int maintenanceCooldown = -1;
-        [JsonIgnore] public override string DisplayName { get { return (HasContent ? LocalizeDictionary.QueryThenParse( targetCrop.yieldItemID ) : " - "); } }
+        [JsonIgnore] public override string DisplayName { get { return (HasContent ? LocalizeDictionary.QueryThenParse( targetCrop.yieldItemID ) : "-"); } }
 
         public override void DisposeInternal()
         {
@@ -612,7 +612,7 @@ public class Job_Furniture : Job
                 for(int i = 0; i < Capacity; i++)
                 {
                     if (Chara != null && i < Chara.Count) s.Add(Chara[i].FirstName);
-                    else s.Add("Empty");
+                    else s.Add("-");
                 }
                 return String.Join(", ", s);
             }
@@ -704,7 +704,6 @@ public class Job_Furniture : Job
 
     public abstract class JobContainer : IDisposable, I_Disposable
     {
-
         [JsonIgnore] public virtual bool hasRemainingCapacity { get { return false; } }
 
         [JsonProperty] protected int ownerJobRef = -1;

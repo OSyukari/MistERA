@@ -113,7 +113,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$正在吮吸着$receiver.firstname$的肉棒" ]
+                            "texts": [ "com_sex_oral_P_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -122,7 +122,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$将$receiver.firstname$的肉棒从嘴里解放出来" ]
+                            "texts":[ "com_sex_oral_P_description_remove_1" ]
                         }
                     ]
                 },
@@ -132,7 +132,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "$receiver.firstname$的肉棒抖动着将精液射入了$doer.firstname$的口中" ]
+                            "texts":[ "com_sex_oral_P_description_after_1" ]
                         }
                     ]
                 },
@@ -141,12 +141,56 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$张大了嘴，将$receiver.firstname$的肉棒吞入了口中"]
+                            "texts": ["com_sex_oral_P_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_oral_P":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_P_displayName_1": "口交",
+                "com_sex_oral_P_displayName_2": "交替口交",
+                "com_sex_oral_P_displayName_3": "轮流口交",
+                "com_sex_oral_P_displayName_4": "同时口交",
+                "com_sex_oral_P_displayName_1_force": "深喉口交",
+                "com_sex_oral_P_displayName_2_force": "交替深喉口交",
+                "com_sex_oral_P_displayName_3_force": "轮流深喉口交",
+                "com_sex_oral_P_displayName_4_force": "同时深喉口交",
+
+                "com_sex_oral_P_description_begin_1":"$doer.firstname$张大了嘴，将$receiver.firstname$的肉棒吞入了口中",
+                "com_sex_oral_P_description_after_1":"$receiver.firstname$的肉棒抖动着将精液射入了$doer.firstname$的口中",
+                "com_sex_oral_P_description_remove_1":"$doer.firstname$将$receiver.firstname$的肉棒从嘴里解放出来",
+                "com_sex_oral_P_description_ongoing_1":"$doer.firstname$正在吮吸着$receiver.firstname$的肉棒"
+
+            },
+            "en-us":
+            {
+                "com_sex_oral_P":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_P_displayName_1": "Blowjob",
+                "com_sex_oral_P_displayName_2": "Alt. Blowjob",
+                "com_sex_oral_P_displayName_3": "Alt. Blowjob",
+                "com_sex_oral_P_displayName_4": "Alt. Blowjob",
+                "com_sex_oral_P_displayName_1_force": "Deep Throat",
+                "com_sex_oral_P_displayName_2_force": "Alt. Deep Throat",
+                "com_sex_oral_P_displayName_3_force": "Alt. Deep Throat",
+                "com_sex_oral_P_displayName_4_force": "Alt. Deep Throat",
+
+                "com_sex_oral_P_description_begin_1":"$doer.firstname$ opens their mouth wide and swallows $receiver.firstname$'s cock",
+                "com_sex_oral_P_description_after_1":"$receiver.firstname$'s cock twitches, shooting semen into $doer.firstname$'s mouth",
+                "com_sex_oral_P_description_remove_1":"$doer.firstname$ releases $receiver.firstname$'s cock from their mouth",
+                "com_sex_oral_P_description_ongoing_1":"$doer.firstname$ is sucking on $receiver.firstname$'s cock"
+
+            }
+        }
     }
 }

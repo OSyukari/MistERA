@@ -45,7 +45,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_sleeponthigh_ask_displayName",
             "timeScale":5,
-            "comTags":["touch"],
+            "comTags":["touch","do_not_use"],
             "requirements":{
                 "requirement":{
                     "doerCount":1,
@@ -79,7 +79,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_sleeponthigh_give_displayName",
             "timeScale":5,
-            "comTags":["touch"],
+            "comTags":["touch","do_not_use"],
             "requirements":{
                 "requirement":{
                     "doerCount":1,
@@ -421,7 +421,22 @@
             "com_touch_sleeponthigh_give_displayName": "Offer lap pillow",
             "com_touch_sleeponthigh_give_displayName_1": "Offer lap pillow",
             "com_touch_sleeponthigh_ask_displayName": "Request lap pillow",
-            "com_touch_sleeponthigh_ask_displayName_1": "Request lap pillow"
+            "com_touch_sleeponthigh_ask_displayName_1": "Request lap pillow",
+
+            "com_touch_butt_displayName_1": "Knead Butt",
+            "com_touch_butt_displayName_2": "Stroke Butt",
+            "com_touch_abdomen_displayName_1": "Knead Abdomen",
+            "com_touch_abdomen_displayName_2": "Stroke Abdomen",
+            "com_touch_thigh_displayName_1": "Knead Thighs",
+            "com_touch_thigh_displayName_2": "Stroke Thighs",
+            "com_touch_back_displayName_1": "Knead Waist",
+            "com_touch_back_displayName_2": "Stroke Back",
+            "com_touch_shoulders_displayName_1": "Knead Shoulders",
+            "com_touch_shoulders_displayName_2": "Stroke Shoulders",
+            "com_touch_fingers_displayName_1": "Stroke Fingers",
+            "com_touch_foot_toes_displayName_1": "Stroke Toes",
+            "com_touch_ears_displayName_1": "Stroke Ears"
+                            
         }
     }
 }

@@ -102,6 +102,12 @@
             {
                 "skill_cooking": "厨艺",
                 "skill_cooking_tooltip": "适用范围：下厨"
+            },
+            "en-us":
+            {
+                
+                "skill_cooking": "Cooking",
+                "skill_cooking_tooltip": "Applies to: Cooking meals"
             }
         }
     }

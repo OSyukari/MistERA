@@ -1,160 +1,414 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_abdomen_Begin",
-        "variants":
-        [
+    "Character_Personalities": {
+        "looselist": [
             {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":[ "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始被抚摸腹部 有允许 口上文" ,
-                "responses":
-                [ 
-                    "$self$并没有躲闪，而是放松了腹部的肌肉，任由$target$的手掌贴了上来。\"别乱挠哦，我很怕痒的。\"", "$self$顺势向后靠去，露出毫无防备的小腹，嘴角带着笑意。\"要在那里取暖吗？真是个像孩子一样的习惯。\"", "$self$轻轻抓住了$target$放在自己肚子上的手，却没有移开的意思。\"刚吃饱不久，小心点摸。\"", "$self$低头看着那只手，眼中流露出一丝安心的神色。\"嗯……这种感觉还不赖。\"", "$self$并没有说话，只是配合着$target$的动作调整了一下呼吸，身体显得很柔软。", "$self$主动拉起衣服下摆（如果穿着的话），大方地展示出肌肤。\"仅限两分钟哦？\""
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_abdomen_Begin",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始被抚摸腹部 有允许 口上文",
+                            "responses": [
+                                "com_touch_abdomen_Begin_1",
+                                "com_touch_abdomen_Begin_2",
+                                "com_touch_abdomen_Begin_3",
+                                "com_touch_abdomen_Begin_4",
+                                "com_touch_abdomen_Begin_5",
+                                "com_touch_abdomen_Begin_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始被抚摸腹部 未允许 好意 口上文",
+                            "responses": [
+                                "com_touch_abdomen_Begin_2_2_1_1",
+                                "com_touch_abdomen_Begin_2_2_1_2",
+                                "com_touch_abdomen_Begin_2_2_1_3",
+                                "com_touch_abdomen_Begin_2_2_1_4",
+                                "com_touch_abdomen_Begin_2_2_1_5"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始被抚摸腹部 未允许 敌意 口上文",
+                            "responses": [
+                                "com_touch_abdomen_Begin_2_2_2_1",
+                                "com_touch_abdomen_Begin_2_2_2_2",
+                                "com_touch_abdomen_Begin_2_2_2_3",
+                                "com_touch_abdomen_Begin_2_2_2_4",
+                                "com_touch_abdomen_Begin_2_2_2_5"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":[ "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始被抚摸腹部 未允许 好意 口上文" ,
-                "responses":
-                [ 
-                    "$self$身体明显僵硬了一下，露出错愕的表情。\"呃？这、这是什么新的打招呼方式吗？\"", "$self$愣在原地，视线在$target$的手和脸之间来回游移，一时忘了反应。\"那个……您在做什么？\"", "$self$虽然感到意外，但并没有立刻推开，只是困惑地眨了眨眼。\"如果是检查身体的话……请快一点。\"", "$self$紧张地屏住了呼吸，双手不知道该放在哪里。\"如果不疼的话……倒是没关系……\"", "$self$有些迟疑地看着$target$，似乎在判断对方的意图。\"这就是所谓的……治疗吗？\""
-                ]
-            },
-            {
-                
-                "extraPortraitTags":[ "fear", "trembling"], "useActiveTags":false,
-                "_comment":"2.2.2 开始被抚摸腹部 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-                    "$self$浑身颤抖着，死死咬住下唇，不敢发出一点声音。\"……我知道了，请不要伤害我。\"", "$self$紧闭着双眼，身体绷得像石头一样硬，任由那只手在腹部游走。\"只要……只要这样就可以了吗？\"", "$self$脸色苍白，眼神空洞地看着别处，双手紧紧抓着身下的布料。\"……随意吧。\"", "$self$发出了一声短促的惊呼，随即立刻捂住嘴，惊恐地看着$target$。\"对不起……我不会反抗的。\"", "$self$像是放弃了挣扎一般垂下头，身体随着$target$的动作因为恐惧而细微抽搐。\"……请轻一点。\""
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_abdomen",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 被抚摸腹部 口上文",
+                            "responses": [
+                                "com_touch_abdomen_2_3_2_1",
+                                "com_touch_abdomen_2_3_2_2",
+                                "com_touch_abdomen_2_3_2_3",
+                                "com_touch_abdomen_2_3_2_4",
+                                "com_touch_abdomen_2_3_2_5",
+                                "com_touch_abdomen_2_3_2_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 被抚摸腹部 口上文",
+                            "responses": [
+                                "com_touch_abdomen_2_3_1_1",
+                                "com_touch_abdomen_2_3_1_2",
+                                "com_touch_abdomen_2_3_1_3",
+                                "com_touch_abdomen_2_3_1_4",
+                                "com_touch_abdomen_2_3_1_5",
+                                "com_touch_abdomen_2_3_1_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被抚摸腹部 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_1_2_1",
+                                        "com_touch_abdomen_2_1_2_2",
+                                        "com_touch_abdomen_2_1_2_3",
+                                        "com_touch_abdomen_2_1_2_4",
+                                        "com_touch_abdomen_2_1_2_5"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被抚摸腹部 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_2_3_1",
+                                        "com_touch_abdomen_2_2_3_2",
+                                        "com_touch_abdomen_2_2_3_3",
+                                        "com_touch_abdomen_2_2_3_4",
+                                        "com_touch_abdomen_2_2_3_5"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被抚摸腹部 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_abdomen_2_2_4_1",
+                                "com_touch_abdomen_2_2_4_2",
+                                "com_touch_abdomen_2_2_4_3",
+                                "com_touch_abdomen_2_2_4_4",
+                                "com_touch_abdomen_2_2_4_5"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 被抚摸腹部 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_1_3_1",
+                                        "com_touch_abdomen_2_1_3_2",
+                                        "com_touch_abdomen_2_1_3_3",
+                                        "com_touch_abdomen_2_1_3_4",
+                                        "com_touch_abdomen_2_1_3_5"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被抚摸腹部 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_abdomen_2_2_5_1",
+                                "com_touch_abdomen_2_2_5_2",
+                                "com_touch_abdomen_2_2_5_3",
+                                "com_touch_abdomen_2_2_5_4",
+                                "com_touch_abdomen_2_2_5_5"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 被抚摸腹部 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_1_4_1",
+                                        "com_touch_abdomen_2_1_4_2",
+                                        "com_touch_abdomen_2_1_4_3",
+                                        "com_touch_abdomen_2_1_4_4",
+                                        "com_touch_abdomen_2_1_4_5"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 被抚摸腹部 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_abdomen_2_2_6_1",
+                                "com_touch_abdomen_2_2_6_2",
+                                "com_touch_abdomen_2_2_6_3",
+                                "com_touch_abdomen_2_2_6_4",
+                                "com_touch_abdomen_2_2_6_5"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_touch_abdomen",
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 被抚摸腹部 口上文",
-                "responses":
-                [ 
-                    "$self$发出含糊不清的呓语，下意识地想要翻身躲避腹部的异样感，却被按住。", "$self$眉头微微皱起，但在手掌温暖的抚慰下很快又舒展开，呼吸变得平稳。", "$self$迷迷糊糊地伸出手，像是赶苍蝇一样挥了一下，随即又沉沉睡去。", "$self$似乎把那只手当成了抱枕的一部分，主动抱住并蹭了蹭，嘴里嘟囔着什么。", "$self$受到刺激，身体本能地缩了一下，随后发出沉重的呼吸声，依然没醒。", "$self$完全没有察觉，只是随着腹部被按压的节奏，喉咙里发出轻微的呼噜声。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 被抚摸腹部 口上文",
-                "responses":
-                [ 
-                    "$self$静止在原地，唯有腹部的肌肤随着$target$的手指按压而凹陷，没有任何生理性回弹。", "$self$保持着上一秒的姿势，完全不知道有一只手正在她的皮肤上肆意游走描绘。", "$self$的表情凝固在微笑的瞬间，对于小腹上传来的触感和温度毫无知觉。", "$self$腹部的软肉被随意揉捏成各种形状，像是一块静止的柔软粘土。", "$self$毫无反应地承受着一切，只有皮肤表面因为摩擦微微泛红，却没有任何神经信号传达。", "$self$连呼吸都被冻结，那只手掌在她腹部的抚摸如同幽灵穿过静止的雕塑。"
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 被抚摸腹部 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$像是触电般缩了一下身子，笑着拍掉了$target$的手。\"呀！好痒！别碰那里！\"", "$self$捂着肚子退后半步，脸上带着戏谑的警惕。\"你手太凉了！绝对不行！\"", "$self$抓住了$target$的手腕，坚定地摇了摇头。\"刚吃完饭肚子不舒服，别闹。\"", "$self$有些难为情地侧过身去，避开了接触。\"这里……最近胖了一点，不想被碰。\"", "$self$叹了口气，把$target$的手拿开并塞了个抱枕过去。\"摸这个吧，手感差不多。\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 被抚摸腹部 无允许 善意 口上文",
-                        "responses":
-                        [ 
-                            "$self$礼貌而坚定地挡住了$target$的手，带着职业化的微笑。\"先生/小姐，请注意您的手，这个部位不太合适。\"", "$self$不动声色地后退一步，拉开了安全距离。\"不好意思，我不习惯和人这么亲近。\"", "$self$有些尴尬地抓了抓头发，侧身避过。\"那个，能不能别碰肚子？感觉怪怪的。\"", "$self$伸手轻轻架住了$target$的手臂。\"虽然不想扫兴，但这有点越过我的舒适圈了。\"", "$self$用开玩笑的语气化解了尴尬。\"哎呀，肚子上全是肉，可没什么好摸的。\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 被抚摸腹部 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":
-                 [
-                    "$self$猛地拍掉了伸过来的手，眼神瞬间冷了下来。\"你想干什么？离我远点！\"", "$self$厌恶地皱起眉头，迅速倒退几步并做出了防御姿态。\"别用你的脏手碰我！\"", "$self$直接发出了一声响亮的咋舌声，毫不掩饰眼中的鄙夷。\"谁允许你碰这里的？真恶心。\"", "$self$冰冷地盯着$target$，语气里充满了警告意味。\"再往前伸一寸，我就报警了。\"", "$self$甚至没有正眼看$target$，只是嫌弃地拍了拍刚才被碰到的衣服位置。\"下次注意点分寸。\""
-                 ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 被抚摸腹部 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$的呼吸变得有些绵长，整个人像猫一样蜷缩起来。\"嗯……意外地很舒服，手掌热热的……\"", "$self$半眯着眼睛，甚至发出了一声轻哼。\"你的按摩技术什么时候变得这么好了？\"", "$self$把手覆在$target$的手背上，引导着动作。\"再往旁边一点……对，就是那里。\"", "$self$脸上泛起淡淡的红晕，声音变得有些黏糊。\"稍微……有点困了。继续这样也没关系。\"", "$self$发出一声满足的叹息，完全放松了警惕。\"感觉胃暖暖的，真神奇。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 被抚摸腹部 结果正面 未允许 口上文",
-                "extraPortraitTags":[ "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-                    "$self$原本紧绷的肩膀逐渐放松下来，眼神中的戒备消散了不少。\"……不得不承认，你的手法很专业。\"", "$self$有些意外地低头看了看，似乎不再排斥这种接触。\"原来不是恶作剧吗？抱歉刚才误会你了。\"", "$self$长出了一口气，神情变得柔和了一些。\"这种热度……倒是正好缓解了我的胃痛。\"", "$self$有些不好意思地别过头，声音变小了。\"稍微……没那么讨厌了。\"", "$self$竟然在不知不觉中适应了这个距离。\"如果不乱动的话，再放一会儿也可以。\""
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":[ "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 被抚摸腹部 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-                            "$self$还是没忍住笑场了，扭动着身体躲开了手。\"不行不行！还是太痒了，受不了了！\"", "$self$有些僵硬地坐直了身子，轻轻推开了$target$。\"好了……一直摸这里感觉怪怪的。\"", "$self$皱了皱眉，似乎感到了一丝不适。\"是不是按得太重了？有点疼。\"", "$self$尴尬地清了清嗓子，把衣服拉了下来。\"那个……时间太长了吧？有点难为情。\"", "$self$抓住了$target$乱动的手指，语气稍微严肃了一些。\"越界了哦。只是摸摸的话已经够了吧。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 被抚摸腹部 结果负面 未允许 口上文",
-                "extraPortraitTags":[ "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-                    "$self$忍无可忍地挥开了$target$的手，呼吸有些急促。\"够了！你是变态吗？还要摸多久！\"", "$self$浑身的不适感达到了顶点，脸色变得非常难看。\"不仅没有变好，反而更让人火大了。\"", "$self$强忍着反胃的感觉，迅速整理好衣服退开。\"我真是疯了才会让你继续。\"", "$self$眼中的厌恶几乎要溢出来，冷冷地瞪着$target$。\"现在的流氓都这么有耐心吗？滚开。\"", "$self$咬牙切齿地低语，身体因为愤怒而轻微发抖。\"利用别人的容忍度也是有限度的……\""
-                ]
-            }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_touch_abdomen_Begin_1": "$self$没有躲闪，放松腹部肌肉任由$target$的手掌贴上来。\"别乱挠哦，我很怕痒的。\"",
+                "com_touch_abdomen_Begin_2": "$self$顺势后仰，露出毫无防备的小腹，嘴角含笑。\"想在那里取暖吗？真是孩子气呢。\"",
+                "com_touch_abdomen_Begin_3": "$self$轻按住$target$放在自己肚子上的手，没有移开的意思。\"刚吃饱不久，动作温柔点。\"",
+                "com_touch_abdomen_Begin_4": "$self$低头注视那只手，眼中流露出一丝安心。\"嗯……这种触感还不赖。\"",
+                "com_touch_abdomen_Begin_5": "$self$沉默不语，只是配合着$target$的动作调整呼吸节奏，身体显得格外柔软。",
+                "com_touch_abdomen_Begin_6": "$self$主动掀起衣摆，大方地展示出肌肤。\"仅限两分钟哦？\"",
+                "com_touch_abdomen_Begin_2_2_1_1": "$self$身体明显僵硬了一下，错愕地说道。\"呃？这、这是什么新式打招呼吗？\"",
+                "com_touch_abdomen_Begin_2_2_1_2": "$self$愣在原地，视线在$target$的手和脸之间游移，一时忘了反应。\"那个……您在做什么？\"",
+                "com_touch_abdomen_Begin_2_2_1_3": "$self$虽感意外却未推开，困惑地眨眨眼。\"如果是检查身体的话……请快一点。\"",
+                "com_touch_abdomen_Begin_2_2_1_4": "$self$紧张地屏住呼吸，双手无处安放。\"如果不疼的话……倒是没关系……\"",
+                "com_touch_abdomen_Begin_2_2_1_5": "$self$迟疑地看着$target$，似乎在揣测意图。\"这就是所谓的……治疗吗？\"",
+                "com_touch_abdomen_Begin_2_2_2_1": "$self$浑身颤抖，死死咬住下唇不敢出声。\"……我知道了，请不要伤害我。\"",
+                "com_touch_abdomen_Begin_2_2_2_2": "$self$紧闭双眼，身体紧绷如石，任由那只手在腹部游走。\"只要……只要这样就行了吗？\"",
+                "com_touch_abdomen_Begin_2_2_2_3": "$self$脸色苍白眼神空洞，双手紧抓身下布料。\"……随意吧。\"",
+                "com_touch_abdomen_Begin_2_2_2_4": "$self$发出一声短促惊呼，随即捂住嘴惊恐地看向$target$。\"对不起……我不会反抗的。\"",
+                "com_touch_abdomen_Begin_2_2_2_5": "$self$像是放弃挣扎般垂下头，身体因恐惧随动作细微抽搐。\"……请轻一点。\"",
+                "com_touch_abdomen_2_3_2_1": "$self$发出含糊呓语，下意识想翻身躲避腹部异样感，却被按住。",
+                "com_touch_abdomen_2_3_2_2": "$self$眉头微皱，但在手掌温暖抚慰下很快舒展，呼吸转为平稳。",
+                "com_touch_abdomen_2_3_2_3": "$self$迷糊地伸出手，像赶苍蝇般挥了一下，随即又沉沉睡去。",
+                "com_touch_abdomen_2_3_2_4": "$self$似乎把手当成抱枕的一部分，主动抱住蹭了蹭，嘴里嘟囔着。",
+                "com_touch_abdomen_2_3_2_5": "$self$受刺激身体本能缩了一下，随后发出沉重呼吸声，依然未醒。",
+                "com_touch_abdomen_2_3_2_6": "$self$全无察觉，只是随着腹部被按压的节奏，喉间发出轻微呼噜声。",
+                "com_touch_abdomen_2_3_1_1": "$self$静止原地，唯有腹部肌肤随$target$手指按压而凹陷，无生理回弹。",
+                "com_touch_abdomen_2_3_1_2": "$self$保持上一秒姿势，完全不知有一只手正在她皮肤上肆意游走。",
+                "com_touch_abdomen_2_3_1_3": "$self$表情凝固在微笑瞬间，对小腹传来的触感温度毫无知觉。",
+                "com_touch_abdomen_2_3_1_4": "$self$腹部软肉被随意揉捏成各种形状，宛如一块静止的柔软粘土。",
+                "com_touch_abdomen_2_3_1_5": "$self$毫无反应地承受一切，仅皮肤因摩擦微红，无任何神经信号反馈。",
+                "com_touch_abdomen_2_3_1_6": "$self$连呼吸都被冻结，手掌在她腹部的抚摸如同幽灵穿过静止雕塑。",
+                "com_touch_abdomen_2_1_2_1": "$self$触电般缩身，笑着拍掉$target$的手。\"呀！好痒！别碰那里！\"",
+                "com_touch_abdomen_2_1_2_2": "$self$捂着肚子退后半步，带着戏谑的警惕。\"你手太凉了！绝对不行！\"",
+                "com_touch_abdomen_2_1_2_3": "$self$抓住$target$手腕，坚定摇头。\"刚吃完饭肚子不舒服，别闹。\"",
+                "com_touch_abdomen_2_1_2_4": "$self$难为情地侧身避开接触。\"这里……最近胖了一点，不想被碰。\"",
+                "com_touch_abdomen_2_1_2_5": "$self$叹气，把$target$的手拿开并塞个抱枕过去。\"摸这个吧，手感差不多。\"",
+                "com_touch_abdomen_2_2_3_1": "$self$礼貌而坚定地挡住$target$的手，挂着职业化微笑。\"请注意您的手，这个部位不太合适。\"",
+                "com_touch_abdomen_2_2_3_2": "$self$不动声色后退一步，拉开安全距离。\"不好意思，我不习惯这么亲近。\"",
+                "com_touch_abdomen_2_2_3_3": "$self$尴尬地抓抓头发，侧身避过。\"那个，能不能别碰肚子？感觉怪怪的。\"",
+                "com_touch_abdomen_2_2_3_4": "$self$伸手轻轻架住$target$手臂。\"虽不想扫兴，但这有点越过我的舒适圈了。\"",
+                "com_touch_abdomen_2_2_3_5": "$self$用玩笑语气化解尴尬。\"哎呀，肚子上全是肉，可没什么好摸的。\"",
+                "com_touch_abdomen_2_2_4_1": "$self$猛地拍掉伸来的手，眼神瞬间转冷。\"你想干什么？离我远点！\"",
+                "com_touch_abdomen_2_2_4_2": "$self$厌恶皱眉，迅速倒退并做出防御姿态。\"别用你的脏手碰我！\"",
+                "com_touch_abdomen_2_2_4_3": "$self$响亮咋舌，毫不掩饰眼中鄙夷。\"谁允许你碰这里的？真恶心。\"",
+                "com_touch_abdomen_2_2_4_4": "$self$冰冷盯着$target$，语气充满警告。\"再往前伸一寸，我就报警了。\"",
+                "com_touch_abdomen_2_2_4_5": "$self$正眼都不看$target$，嫌弃地拍打刚才被碰的衣服位置。\"下次注意点分寸。\"",
+                "com_touch_abdomen_2_1_3_1": "$self$呼吸变得绵长，整个人像猫一样蜷缩起来。\"嗯……意外地很舒服，手掌热热的……\"",
+                "com_touch_abdomen_2_1_3_2": "$self$半眯眼睛，发出一声轻哼。\"你的按摩技术什么时候变得这么好了？\"",
+                "com_touch_abdomen_2_1_3_3": "$self$把手覆在$target$手背上引导动作。\"再往旁边一点……对，就是那里。\"",
+                "com_touch_abdomen_2_1_3_4": "$self$脸上泛起淡红，声音变得黏糊。\"稍微……有点困了。继续这样也没关系。\"",
+                "com_touch_abdomen_2_1_3_5": "$self$发出一声满足叹息，完全放松警惕。\"感觉胃暖暖的，真神奇。\"",
+                "com_touch_abdomen_2_2_5_1": "$self$原本紧绷的肩膀渐松，眼神戒备消散。\"……不得不承认，你的手法很专业。\"",
+                "com_touch_abdomen_2_2_5_2": "$self$意外地低头看，似不再排斥接触。\"原来不是恶作剧吗？抱歉刚才误会你了。\"",
+                "com_touch_abdomen_2_2_5_3": "$self$长出一口气，神情变得柔和。\"这种热度……倒是正好缓解了我的胃痛。\"",
+                "com_touch_abdomen_2_2_5_4": "$self$不好意思地别过头，声音变小。\"稍微……没那么讨厌了。\"",
+                "com_touch_abdomen_2_2_5_5": "$self$不知不觉适应了这个距离。\"如果不乱动的话，再放一会儿也可以。\"",
+                "com_touch_abdomen_2_1_4_1": "$self$没忍住笑场，扭动身体躲开手。\"不行不行！太痒了，受不了了！\"",
+                "com_touch_abdomen_2_1_4_2": "$self$僵硬地坐直身子，轻轻推开$target$。\"好了……一直摸这里感觉怪怪的。\"",
+                "com_touch_abdomen_2_1_4_3": "$self$皱眉，似感到一丝不适。\"是不是按得太重了？有点疼。\"",
+                "com_touch_abdomen_2_1_4_4": "$self$尴尬清嗓子，把衣服拉下来。\"那个……时间太长了吧？有点难为情。\"",
+                "com_touch_abdomen_2_1_4_5": "$self$抓住$target$乱动的手指，语气严肃。\"越界了哦。只是摸摸的话已经够了吧。\"",
+                "com_touch_abdomen_2_2_6_1": "$self$忍无可忍挥开$target$的手，呼吸急促。\"够了！你是变态吗？还要摸多久！\"",
+                "com_touch_abdomen_2_2_6_2": "$self$浑身不适感达顶点，脸色极难看。\"不仅没有变好，反而更让人火大了。\"",
+                "com_touch_abdomen_2_2_6_3": "$self$强忍反胃感，迅速整理衣服退开。\"我真是疯了才会让你继续。\"",
+                "com_touch_abdomen_2_2_6_4": "$self$厌恶溢出，冷冷瞪着$target$。\"现在的流氓都这么有耐心吗？滚开。\"",
+                "com_touch_abdomen_2_2_6_5": "$self$咬牙切齿低语，身体因愤怒轻颤。\"利用别人的容忍度也是有限度的……\""
+            },
+            "en-us": {
+                "com_touch_abdomen_Begin_1": "$self$ doesn't shy away, relaxing her abdominal muscles as $target$'s palm rests against her. \"Don't tickle me, I'm very ticklish.\"",
+                "com_touch_abdomen_Begin_2": "$self$ leans back, exposing her defenseless lower abdomen with a smile. \"Trying to warm your hands there? How childish.\"",
+                "com_touch_abdomen_Begin_3": "$self$ gently holds $target$'s hand on her belly, not intending to move it. \"I just ate, so be gentle.\"",
+                "com_touch_abdomen_Begin_4": "$self$ looks down at the hand, a look of reassurance in her eyes. \"Hmm... this actually feels nice.\"",
+                "com_touch_abdomen_Begin_5": "$self$ says nothing, simply adjusting her breathing to $target$'s movements, her body remaining pliant.",
+                "com_touch_abdomen_Begin_6": "$self$ actively lifts the hem of her clothes, generously revealing her skin. \"Only for two minutes, okay?\"",
+                "com_touch_abdomen_Begin_2_2_1_1": "$self$ stiffens visibly, looking bewildered. \"Uh? Is... is this some new way of greeting?\"",
+                "com_touch_abdomen_Begin_2_2_1_2": "$self$ freezes, eyes darting between $target$'s hand and face, forgetting to react. \"Um... what are you doing?\"",
+                "com_touch_abdomen_Begin_2_2_1_3": "$self$ is surprised but doesn't push away, blinking in confusion. \"If this is a physical checkup... please make it quick.\"",
+                "com_touch_abdomen_Begin_2_2_1_4": "$self$ holds her breath nervously, not knowing where to put her hands. \"As long as it doesn't hurt... I guess it's okay...\"",
+                "com_touch_abdomen_Begin_2_2_1_5": "$self$ looks at $target$ hesitantly, trying to gauge intentions. \"Is this what you call... treatment?\"",
+                "com_touch_abdomen_Begin_2_2_2_1": "$self$ trembles all over, biting her lower lip to stay silent. \"...I understand, please don't hurt me.\"",
+                "com_touch_abdomen_Begin_2_2_2_2": "$self$ squeezes her eyes shut, body tense as a rock, letting the hand roam her stomach. \"Is... is this all you're going to do?\"",
+                "com_touch_abdomen_Begin_2_2_2_3": "$self$ goes pale, staring blankly away, hands clutching the fabric beneath her. \"...Do as you please.\"",
+                "com_touch_abdomen_Begin_2_2_2_4": "$self$ lets out a short gasp, immediately covering her mouth and looking at $target$ in fear. \"I'm sorry... I won't resist.\"",
+                "com_touch_abdomen_Begin_2_2_2_5": "$self$ hangs her head as if giving up, body twitching slightly with fear at $target$'s movements. \"...Please be gentle.\"",
+                "com_touch_abdomen_2_3_2_1": "$self$ mumbles incoherently, instinctively trying to turn away from the sensation on her belly but is held down.",
+                "com_touch_abdomen_2_3_2_2": "$self$ frowns slightly, but quickly relaxes under the warmth of the palm, breathing steadying.",
+                "com_touch_abdomen_2_3_2_3": "$self$ groggily swats her hand like shooing a fly, then falls back into deep sleep.",
+                "com_touch_abdomen_2_3_2_4": "$self$ seems to mistake the hand for a pillow, hugging it and nuzzling against it, muttering something.",
+                "com_touch_abdomen_2_3_2_5": "$self$ flinches at the stimulus, then breathes heavily, still fast asleep.",
+                "com_touch_abdomen_2_3_2_6": "$self$ is completely unaware, a soft purring sound coming from her throat in rhythm with the pressure on her abdomen.",
+                "com_touch_abdomen_2_3_1_1": "$self$ stands frozen, the skin of her abdomen depressing under $target$'s fingers with no physiological rebound.",
+                "com_touch_abdomen_2_3_1_2": "$self$ remains in her previous pose, completely unaware of a hand roaming freely over her skin.",
+                "com_touch_abdomen_2_3_1_3": "$self$'s expression is frozen in a smile, oblivious to the touch and warmth on her lower belly.",
+                "com_touch_abdomen_2_3_1_4": "$self$'s soft belly flesh is molded into shapes like still, soft clay.",
+                "com_touch_abdomen_2_3_1_5": "$self$ endures it all without reaction, skin reddening from friction but sending no neural signals.",
+                "com_touch_abdomen_2_3_1_6": "$self$'s breath is frozen; the hand stroking her belly is like a ghost passing through a statue.",
+                "com_touch_abdomen_2_1_2_1": "$self$ flinches like she's been shocked, laughing as she slaps $target$'s hand away. \"Eek! That tickles! Don't touch there!\"",
+                "com_touch_abdomen_2_1_2_2": "$self$ covers her stomach and steps back, playfully wary. \"Your hands are too cold! Absolutely not!\"",
+                "com_touch_abdomen_2_1_2_3": "$self$ grabs $target$'s wrist, shaking her head firmly. \"I just ate and my stomach feels weird, stop it.\"",
+                "com_touch_abdomen_2_1_2_4": "$self$ turns sideways shyly to avoid contact. \"I... gained a little weight there recently, I don't want it touched.\"",
+                "com_touch_abdomen_2_1_2_5": "$self$ sighs, removing $target$'s hand and shoving a pillow at them. \"Touch this instead, it feels about the same.\"",
+                "com_touch_abdomen_2_2_3_1": "$self$ politely but firmly blocks $target$'s hand, wearing a professional smile. \"Please mind your hands, that area isn't appropriate.\"",
+                "com_touch_abdomen_2_2_3_2": "$self$ steps back discreetly, creating a safe distance. \"Sorry, I'm not used to being this close to people.\"",
+                "com_touch_abdomen_2_2_3_3": "$self$ scratches her hair awkwardly, sidestepping. \"Um, could you not touch my stomach? It feels weird.\"",
+                "com_touch_abdomen_2_2_3_4": "$self$ gently intercepts $target$'s arm. \"Not to be a buzzkill, but this is crossing my comfort zone.\"",
+                "com_touch_abdomen_2_2_3_5": "$self$ defuses the awkwardness with a joke. \"Oh my, it's all fat on my belly, nothing good to feel there.\"",
+                "com_touch_abdomen_2_2_4_1": "$self$ slaps the hand away sharply, eyes turning cold instantly. \"What do you think you're doing? Get away from me!\"",
+                "com_touch_abdomen_2_2_4_2": "$self$ frowns in disgust, backing away quickly into a defensive stance. \"Don't touch me with your dirty hands!\"",
+                "com_touch_abdomen_2_2_4_3": "$self$ clicks her tongue loudly, making no secret of her disdain. \"Who gave you permission to touch there? Disgusting.\"",
+                "com_touch_abdomen_2_2_4_4": "$self$ stares coldly at $target$, tone full of warning. \"Reach one inch closer and I'm calling the police.\"",
+                "com_touch_abdomen_2_2_4_5": "$self$ doesn't even look at $target$, disgustedly dusting off the spot on her clothes that was touched. \"Watch yourself next time.\"",
+                "com_touch_abdomen_2_1_3_1": "$self$'s breathing lengthens, curling up like a cat. \"Mmm... that's surprisingly comfortable, your hand is warm...\"",
+                "com_touch_abdomen_2_1_3_2": "$self$ half-closes her eyes, letting out a soft hum. \"Since when did your massage skills get this good?\"",
+                "com_touch_abdomen_2_1_3_3": "$self$ places her hand over $target$'s to guide the movement. \"A little to the side... yes, right there.\"",
+                "com_touch_abdomen_2_1_3_4": "$self$ blushes slightly, voice becoming sticky. \"I'm getting... a little sleepy. It's okay to keep going.\"",
+                "com_touch_abdomen_2_1_3_5": "$self$ sighs with satisfaction, completely lowering her guard. \"My stomach feels warm, it's magical.\"",
+                "com_touch_abdomen_2_2_5_1": "$self$'s previously tense shoulders relax, wariness fading from her eyes. \"...I have to admit, your technique is professional.\"",
+                "com_touch_abdomen_2_2_5_2": "$self$ looks down in surprise, seemingly no longer rejecting the contact. \"So it wasn't a prank? Sorry for misunderstanding.\"",
+                "com_touch_abdomen_2_2_5_3": "$self$ exhales deeply, expression softening. \"This heat... actually helps my stomachache.\"",
+                "com_touch_abdomen_2_2_5_4": "$self$ turns her head away shyly, voice quiet. \"It's... not as annoying as I thought.\"",
+                "com_touch_abdomen_2_2_5_5": "$self$ unknowingly adapts to the distance. \"If you don't try anything funny, you can keep it there a while longer.\"",
+                "com_touch_abdomen_2_1_4_1": "$self$ bursts out laughing, twisting away from the hand. \"No, no! It tickles too much, I can't take it!\"",
+                "com_touch_abdomen_2_1_4_2": "$self$ sits up stiffly, gently pushing $target$ away. \"Okay... touching there for so long feels weird.\"",
+                "com_touch_abdomen_2_1_4_3": "$self$ frowns, seeming to feel a twinge of discomfort. \"Are you pressing too hard? It hurts a little.\"",
+                "com_touch_abdomen_2_1_4_4": "$self$ clears her throat awkwardly, pulling her clothes down. \"Um... hasn't it been too long? It's embarrassing.\"",
+                "com_touch_abdomen_2_1_4_5": "$self$ grabs $target$'s wandering fingers, tone serious. \"You're crossing the line. Just touching is enough, right?\"",
+                "com_touch_abdomen_2_2_6_1": "$self$ slaps $target$'s hand away, patience exhausted, breathing fast. \"Enough! Are you a pervert? How long are you going to keep touching!\"",
+                "com_touch_abdomen_2_2_6_2": "$self$ reaches peak discomfort, looking very unwell. \"It's not getting better, it's just pissing me off.\"",
+                "com_touch_abdomen_2_2_6_3": "$self$ suppresses the urge to vomit, quickly fixing her clothes and backing off. \"I must be crazy to let you continue.\"",
+                "com_touch_abdomen_2_2_6_4": "$self$ overflows with disgust, glaring coldly at $target$. \"Are perverts these days so patient? Get lost.\"",
+                "com_touch_abdomen_2_2_6_5": "$self$ whispers through gritted teeth, body trembling with anger. \"There's a limit to taking advantage of someone's tolerance...\""
+            }
         }
     }
 }

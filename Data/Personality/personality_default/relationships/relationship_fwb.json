@@ -9,9 +9,18 @@
                         {
                             "_comment:": "($self$) 申请成为炮友 口上文",
                             "responses": [
-"$self$一边整理着衣领，一边漫不经心地看向$target$。\"如果只是解决生理需求的话，我不介意是你。\"", "$self$靠在门框上，视线在$target$身上扫了一圈。\"今晚有空吗？别误会，只是想找个人出汗。\"", "$self$弹了弹烟灰，语气平淡得像在谈论天气。\"要在这种无聊的日子里找点乐子吗？去你家还是我家？\"", "$self$在手机上敲了几下，头也不抬地说道：\"我对恋爱没兴趣，但床伴的话，你可以考虑一下。\"", "$self$看着手中的酒杯，声音低沉：\"不仅是你，我也需要发泄一下。以此为前提，如何？\"", "$self$瞥了$target$一眼，嘴角似笑非笑。\"你的眼神太明显了。如果不想负责任的话，我不反对。\"",
-
-"$self$的手指轻轻划过$target$的手背，眼神变得迷离。\"呐，$target$，我们要不要……跨过那条线试试？\"", "$self$凑近$target$的耳边，温热的气息喷洒在脖颈上。\"既然我们身体这么合拍，不如把关系固定下来？只做快乐的事就好。\"", "$self$咬着下唇，脸上带着一丝潮红。\"其实……我一直在想，如果是和你做那种事的话，一定很舒服吧？\"", "$self$直接坐在了$target$的腿上，双手环住对方的脖子。\"做我的专属抱枕吧，$target$。不需要复杂的承诺，只要快乐。\"", "$self$笑着解开了自己的一颗扣子，眼神大胆而热烈。\"反正我们都单身，互相慰藉一下寂寞的夜晚，听起来不错吧？\"", "$self$用脚尖轻轻蹭了蹭$target$的小腿。\"我有好酒，也有好故事。今晚想不想留下来，深入交流一下？\""
+                                "relationship_fwb_propose_1",
+                                "relationship_fwb_propose_2",
+                                "relationship_fwb_propose_3",
+                                "relationship_fwb_propose_4",
+                                "relationship_fwb_propose_5",
+                                "relationship_fwb_propose_6",
+                                "relationship_fwb_propose_7",
+                                "relationship_fwb_propose_8",
+                                "relationship_fwb_propose_9",
+                                "relationship_fwb_propose_10",
+                                "relationship_fwb_propose_11",
+                                "relationship_fwb_propose_12"
                             ]
                         }
                     ]
@@ -25,9 +34,16 @@
                         {
                             "_comment:": "($self$) 成为炮友 口上文",
                             "responses": [
-"$self$没有任何多余的表情，只是干脆地点了点头。\"很好，那就这么定了。去酒店？\"", "$self$看了一眼手表，迅速进入了状态。\"既然达成了共识，那就别浪费时间了。\"", "$self$嘴角勾起一抹满意的弧度。\"明智的选择。事后互不纠缠，这可是规矩。\"", "$self$随手将包扔在沙发上，开始解开头发。\"先说好，我不喜欢过夜。\"", "$self$淡然地关上了身后的门，顺手锁上了锁。\"那么，开始吧。\"",
-
-"$self$发出一声愉快的低笑，整个人扑进了$target$怀里。\"就知道你拒绝不了我！今晚不准求饶哦！\"", "$self$兴奋地拉着$target$的手往卧室走去。\"太好了！我早就买了几件新内衣想给你看了！\"", "$self$眼睛亮晶晶的，主动献上了一个深吻。\"嗯……那从现在开始，我们就是秘密的共犯了？\"", "$self$满脸通红地捂住脸，指缝间却漏出笑意。\"真的答应了？那我可就不客气了……我会把你榨干的！\"", "$self$开心地转了个圈，随后从背后抱住了$target$。\"以后寂寞的时候，随时都可以来找我哦。\""
+                                "relationship_fwb_set_1",
+                                "relationship_fwb_set_2",
+                                "relationship_fwb_set_3",
+                                "relationship_fwb_set_4",
+                                "relationship_fwb_set_5",
+                                "relationship_fwb_set_6",
+                                "relationship_fwb_set_7",
+                                "relationship_fwb_set_8",
+                                "relationship_fwb_set_9",
+                                "relationship_fwb_set_10"
                             ]
                         }
                     ]
@@ -41,9 +57,16 @@
                         {
                             "_comment:": "($self$) 拒绝成为炮友 口上文",
                             "responses": [
-"$self$皱了皱眉，往后退了一步拉开距离。\"抱歉，我还没饥渴到这种程度。\"", "$self$冷笑了一声，上下打量着$target$。\"你是不是误会了什么？我对你没有那种性趣。\"", "$self$面无表情地继续着手头的工作，仿佛没听见一样。\"如果是这种无聊的玩笑，适可而止吧。\"", "$self$叹了口气，眼神中透着一股疲惫。\"我现在不想处理这种复杂的关系，找别人吧。\"", "$self$抱起双臂，毫不留情地送客。\"门在那边。这种话我就当没听过。\"",
-
-"$self$有些尴尬地移开了视线，挠了挠脸颊。\"啊哈哈……那个，我们还是做朋友比较合适吧？\"", "$self$伸手弹了一下$target$的额头，语气像是教训弟弟。\"想什么呢！再乱说我可要生气了哦！\"", "$self$愣了一下，随即苦笑着摆摆手。\"别开玩笑了，这样会毁了我们现在的关系的。\"", "$self$认真地看着$target$的眼睛，轻轻摇了摇头。\"我很珍惜你这个朋友，所以不想把你变成……那样的人。\"", "$self$做了一个夸张的鬼脸，试图缓解气氛。\"喂喂，我可是把你当兄弟/闺蜜的！太重口了吧！\""
+                                "relationship_fwb_refuse_1",
+                                "relationship_fwb_refuse_2",
+                                "relationship_fwb_refuse_3",
+                                "relationship_fwb_refuse_4",
+                                "relationship_fwb_refuse_5",
+                                "relationship_fwb_refuse_6",
+                                "relationship_fwb_refuse_7",
+                                "relationship_fwb_refuse_8",
+                                "relationship_fwb_refuse_9",
+                                "relationship_fwb_refuse_10"
                             ]
                         }
                     ]
@@ -57,9 +80,16 @@
                         {
                             "_comment:": "($self$) 被拒绝成为炮友 口上文",
                             "responses": [
-"$self$耸了耸肩，表情没有丝毫变化。\"行吧，当我没说。\"", "$self$无所谓地撇了撇嘴，转身拿起手机。\"没兴趣就算了，反正备选多的是。\"", "$self$冷淡地“哦”了一声，重新把注意力放回了书本上。\"那就忘了吧，没什么大不了的。\"", "$self$甚至没有看$target$一眼，只是挥了挥手。\"不愿意？那你可以走了。\"", "$self$整理了一下衣服，语气恢复了公事公办。\"看来我们的需求不匹配。刚才的话作废。\"",
-
-"$self$失落地垂下肩膀，小声嘟囔着。\"什么嘛……明明我身材还挺不错的……\"", "$self$假装生气地鼓起脸颊，捶了$target$一下。\"笨蛋！这么好的机会你居然错过了！以后别后悔！\"", "$self$有些难过地咬着嘴唇，强颜欢笑。\"啊……被拒绝了。好丢人，你就当我在发神经吧。\"", "$self$把脸埋进手掌里，发出懊恼的呻吟。\"啊啊啊忘掉忘掉！刚才那个不是我！\"", "$self$有些幽怨地看了$target$一眼，叹了口气。\"真是不解风情……算了，谁让我喜欢和你聊天多过和你上床呢。\""
+                                "relationship_fwb_refused_1",
+                                "relationship_fwb_refused_2",
+                                "relationship_fwb_refused_3",
+                                "relationship_fwb_refused_4",
+                                "relationship_fwb_refused_5",
+                                "relationship_fwb_refused_6",
+                                "relationship_fwb_refused_7",
+                                "relationship_fwb_refused_8",
+                                "relationship_fwb_refused_9",
+                                "relationship_fwb_refused_10"
                             ]
                         }
                     ]
@@ -73,9 +103,16 @@
                         {
                             "_comment:": "($self$) 炮友关系破裂 口上文",
                             "responses": [
-"$self$冷冷地盯着$target$，眼神像是在看一件垃圾。\"够了，这种关系到此为止。以后别再联系我。\"", "$self$一边穿衣服一边头也不回地往外走。\"真让人倒胃口。这是最后一次。\"", "$self$将$target$的号码拉黑，动作行云流水。\"我对你已经腻了。别再出现在我面前。\"", "$self$面无表情地指着大门。\"滚出去。现在。立刻。\"", "$self$深吸了一口气，压抑着厌恶的情绪。\"我们之间连肉体关系都没必要维持了。烂透了。\"",
-
-"$self$眼眶红红的，声音带着一丝哽咽。\"我以为我们可以只谈快乐的……为什么会变成这样？\"", "$self$失望地看着$target$，缓缓松开了手。\"不行了……这种感觉不对了。我们还是……算了吧。\"", "$self$有些崩溃地抓着头发，情绪显得很激动。\"我受不了了！这种不清不楚的关系，我不想再继续了！\"", "$self$背对着$target$，肩膀微微颤抖。\"在你把事情搞得更糟之前，我们最好彻底断了。\"", "$self$苦涩地笑了一下，眼泪却掉了下来。\"果然，这种关系一开始就是个错误。再见，$target$。\""
+                                "relationship_fwb_break_1",
+                                "relationship_fwb_break_2",
+                                "relationship_fwb_break_3",
+                                "relationship_fwb_break_4",
+                                "relationship_fwb_break_5",
+                                "relationship_fwb_break_6",
+                                "relationship_fwb_break_7",
+                                "relationship_fwb_break_8",
+                                "relationship_fwb_break_9",
+                                "relationship_fwb_break_10"
                             ]
                         }
                     ]
@@ -85,8 +122,114 @@
     },
     "Dictionary": {
         "Entries": {
-            "zh-cn": {},
-            "en-us": {}
+            "zh-cn": {
+                "relationship_fwb_propose_1": "$self$一边整理着衣领，一边漫不经心地看向$target$。\"如果只是纯粹解决生理需求的话，我不介意对象是你。\"",
+                "relationship_fwb_propose_2": "$self$靠在门框上，视线在$target$身上肆意扫了一圈。\"今晚有空吗？别误会，我只是想找个人一起出出汗。\"",
+                "relationship_fwb_propose_3": "$self$弹了弹烟灰，语气平淡得像在谈论天气。\"要在这种无聊的日子里找点乐子吗？去你家还是我家？\"",
+                "relationship_fwb_propose_4": "$self$在手机上敲了几下，头也不抬地说道：\"我对谈恋爱没兴趣，但如果是床伴的话，你可以考虑一下。\"",
+                "relationship_fwb_propose_5": "$self$看着手中的酒杯，声音低沉：\"不仅是你，我也需要发泄一下。以此为共同前提，如何？\"",
+                "relationship_fwb_propose_6": "$self$瞥了$target$一眼，嘴角似笑非笑。\"你的眼神太明显了。如果不想负责任的话，我不反对哦。\"",
+                "relationship_fwb_propose_7": "$self$的手指轻轻划过$target$的手背，眼神变得迷离。\"呐，$target$，我们要不要……试着跨过那条线？\"",
+                "relationship_fwb_propose_8": "$self$凑近$target$的耳边，温热的气息喷洒在脖颈上。\"既然我们身体这么合拍，不如把关系固定下来？只做快乐的事就好。\"",
+                "relationship_fwb_propose_9": "$self$咬着下唇，脸上带着一丝潮红。\"其实……我一直在想，如果是和你做那种事的话，一定很舒服吧？\"",
+                "relationship_fwb_propose_10": "$self$直接坐在了$target$的腿上，双手环住对方的脖子。\"做我的专属抱枕吧，$target$。不需要复杂的承诺，只要快乐。\"",
+                "relationship_fwb_propose_11": "$self$笑着解开了自己的一颗扣子，眼神大胆而热烈。\"反正我们都单身，互相慰藉一下寂寞的夜晚，听起来不错吧？\"",
+                "relationship_fwb_propose_12": "$self$用脚尖轻轻蹭了蹭$target$的小腿。\"我有好酒，也有好故事。今晚想不想留下来，深入交流一下？\"",
+                "relationship_fwb_set_1": "$self$没有任何多余的表情，只是干脆地点了点头。\"很好，那就这么定了。去酒店？\"",
+                "relationship_fwb_set_2": "$self$看了一眼手表，迅速进入了状态。\"既然达成了共识，那就别浪费时间了。\"",
+                "relationship_fwb_set_3": "$self$嘴角勾起一抹满意的弧度。\"明智的选择。事后互不纠缠，这可是规矩。\"",
+                "relationship_fwb_set_4": "$self$随手将包扔在沙发上，开始解开头发。\"先说好，我不喜欢过夜。\"",
+                "relationship_fwb_set_5": "$self$淡然地关上了身后的门，顺手锁上了锁。\"那么，开始吧。\"",
+                "relationship_fwb_set_6": "$self$发出一声愉快的低笑，整个人扑进了$target$怀里。\"就知道你拒绝不了我！今晚不准求饶哦！\"",
+                "relationship_fwb_set_7": "$self$兴奋地拉着$target$的手往卧室走去。\"太好了！我早就买了几件新内衣想给你看了！\"",
+                "relationship_fwb_set_8": "$self$眼睛亮晶晶的，主动献上了一个深吻。\"嗯……那从现在开始，我们就是秘密的共犯了？\"",
+                "relationship_fwb_set_9": "$self$满脸通红地捂住脸，指缝间却漏出笑意。\"真的答应了？那我可就不客气了……我会把你榨干的！\"",
+                "relationship_fwb_set_10": "$self$开心地转了个圈，随后从背后抱住了$target$。\"以后寂寞的时候，随时都可以来找我哦。\"",
+                "relationship_fwb_refuse_1": "$self$皱了皱眉，往后退了一步拉开距离。\"抱歉，我还没饥渴到这种程度。\"",
+                "relationship_fwb_refuse_2": "$self$冷笑了一声，上下打量着$target$。\"你是不是误会了什么？我对你没有那种性趣。\"",
+                "relationship_fwb_refuse_3": "$self$面无表情地继续着手头的工作，仿佛没听见一样。\"如果是这种无聊的玩笑，适可而止吧。\"",
+                "relationship_fwb_refuse_4": "$self$叹了口气，眼神中透着一股疲惫。\"我现在不想处理这种复杂的关系，找别人吧。\"",
+                "relationship_fwb_refuse_5": "$self$抱起双臂，毫不留情地送客。\"门在那边。这种话我就当没听过。\"",
+                "relationship_fwb_refuse_6": "$self$有些尴尬地移开了视线，挠了挠脸颊。\"啊哈哈……那个，我们还是做朋友比较合适吧？\"",
+                "relationship_fwb_refuse_7": "$self$伸手弹了一下$target$的额头，语气像是教训弟弟。\"想什么呢！再乱说我可要生气了哦！\"",
+                "relationship_fwb_refuse_8": "$self$愣了一下，随即苦笑着摆摆手。\"别开玩笑了，这样会毁了我们现在的关系的。\"",
+                "relationship_fwb_refuse_9": "$self$认真地看着$target$的眼睛，轻轻摇了摇头。\"我很珍惜你这个朋友，所以不想把你变成……那样的人。\"",
+                "relationship_fwb_refuse_10": "$self$做了一个夸张的鬼脸，试图缓解气氛。\"喂喂，我可是把你当兄弟/闺蜜的！太重口了吧！\"",
+                "relationship_fwb_refused_1": "$self$耸了耸肩，表情没有丝毫变化。\"行吧，当我没说。\"",
+                "relationship_fwb_refused_2": "$self$无所谓地撇了撇嘴，转身拿起手机。\"没兴趣就算了，反正备选多的是。\"",
+                "relationship_fwb_refused_3": "$self$冷淡地“哦”了一声，重新把注意力放回了书本上。\"那就忘了吧，没什么大不了的。\"",
+                "relationship_fwb_refused_4": "$self$甚至没有看$target$一眼，只是挥了挥手。\"不愿意？那你可以走了。\"",
+                "relationship_fwb_refused_5": "$self$整理了一下衣服，语气恢复了公事公办。\"看来我们的需求不匹配。刚才的话作废。\"",
+                "relationship_fwb_refused_6": "$self$失落地垂下肩膀，小声嘟囔着。\"什么嘛……明明我身材还挺不错的……\"",
+                "relationship_fwb_refused_7": "$self$假装生气地鼓起脸颊，捶了$target$一下。\"笨蛋！这么好的机会你居然错过了！以后别后悔！\"",
+                "relationship_fwb_refused_8": "$self$有些难过地咬着嘴唇，强颜欢笑。\"啊……被拒绝了。好丢人，你就当我在发神经吧。\"",
+                "relationship_fwb_refused_9": "$self$把脸埋进手掌里，发出懊恼的呻吟。\"啊啊啊忘掉忘掉！刚才那个不是我！\"",
+                "relationship_fwb_refused_10": "$self$有些幽怨地看了$target$一眼，叹了口气。\"真是不解风情……算了，谁让我喜欢和你聊天多过和你上床呢。\"",
+                "relationship_fwb_break_1": "$self$冷冷地盯着$target$，眼神像是在看一件垃圾。\"够了，这种关系到此为止。以后别再联系我。\"",
+                "relationship_fwb_break_2": "$self$一边穿衣服一边头也不回地往外走。\"真让人倒胃口。这是最后一次。\"",
+                "relationship_fwb_break_3": "$self$将$target$的号码拉黑，动作行云流水。\"我对你已经腻了。别再出现在我面前。\"",
+                "relationship_fwb_break_4": "$self$面无表情地指着大门。\"滚出去。现在。立刻。\"",
+                "relationship_fwb_break_5": "$self$深吸了一口气，压抑着厌恶的情绪。\"我们之间连肉体关系都没必要维持了。烂透了。\"",
+                "relationship_fwb_break_6": "$self$眼眶红红的，声音带着一丝哽咽。\"我以为我们可以只谈快乐的……为什么会变成这样？\"",
+                "relationship_fwb_break_7": "$self$失望地看着$target$，缓缓松开了手。\"不行了……这种感觉不对了。我们还是……算了吧。\"",
+                "relationship_fwb_break_8": "$self$有些崩溃地抓着头发，情绪显得很激动。\"我受不了了！这种不清不楚的关系，我不想再继续了！\"",
+                "relationship_fwb_break_9": "$self$背对着$target$，肩膀微微颤抖。\"在你把事情搞得更糟之前，我们最好彻底断了。\"",
+                "relationship_fwb_break_10": "$self$苦涩地笑了一下，眼泪却掉了下来。\"果然，这种关系一开始就是个错误。再见，$target$。\""
+            },
+            "en-us": {
+                "relationship_fwb_propose_1": "$self$ adjusts her collar, glancing nonchalantly at $target$. \"If it's just about satisfying physiological needs, I don't mind if it's you.\"",
+                "relationship_fwb_propose_2": "$self$ leans against the doorframe, sweeping her gaze over $target$. \"Are you free tonight? Don't get me wrong, I just want to find someone to break a sweat with.\"",
+                "relationship_fwb_propose_3": "$self$ flicks some ash, her tone as flat as if discussing the weather. \"Want to find some fun on such a boring day? Your place or mine?\"",
+                "relationship_fwb_propose_4": "$self$ taps on her phone, speaking without looking up: \"I'm not interested in dating, but if you're up for being bed partners, you can consider it.\"",
+                "relationship_fwb_propose_5": "$self$ looks at the wine glass in her hand, voice low: \"Not just you, I need to vent too. How about we start with that premise?\"",
+                "relationship_fwb_propose_6": "$self$ glances at $target$, a faint smile playing on her lips. \"Your look is too obvious. If you don't want any responsibility, I won't object.\"",
+                "relationship_fwb_propose_7": "$self$ gently traces a finger over the back of $target$'s hand, eyes growing hazy. \"Hey, $target$, shall we... try crossing that line?\"",
+                "relationship_fwb_propose_8": "$self$ leans close to $target$'s ear, warm breath tickling their neck. \"Since our bodies are so compatible, why not make this regular? Let's just do the fun stuff.\"",
+                "relationship_fwb_propose_9": "$self$ bites her lower lip, a flush on her face. \"Actually... I've been wondering, doing that sort of thing with you... it must feel really good, right?\"",
+                "relationship_fwb_propose_10": "$self$ sits directly on $target$'s lap, arms wrapping around their neck. \"Be my exclusive body pillow, $target$. No complex promises, just pleasure.\"",
+                "relationship_fwb_propose_11": "$self$ smiles and unbuttons one of her buttons, gaze bold and passionate. \"We're both single anyway, comforting each other on lonely nights sounds good, right?\"",
+                "relationship_fwb_propose_12": "$self$ gently rubs her toes against $target$'s calf. \"I have good wine and good stories. Want to stay the night and communicate... deeply?\"",
+                "relationship_fwb_set_1": "$self$ shows no excess expression, simply nodding decisively. \"Good, it's settled then. To a hotel?\"",
+                "relationship_fwb_set_2": "$self$ checks her watch, quickly getting into the zone. \"Since we've reached a consensus, let's not waste time.\"",
+                "relationship_fwb_set_3": "$self$ curves her lips into a satisfied smile. \"Wise choice. No strings attached afterwards, that's the rule.\"",
+                "relationship_fwb_set_4": "$self$ tosses her bag onto the sofa and starts letting her hair down. \"Just so we're clear, I don't like staying overnight.\"",
+                "relationship_fwb_set_5": "$self$ calmly closes the door behind her, locking it smoothly. \"Well then, let's begin.\"",
+                "relationship_fwb_set_6": "$self$ lets out a happy chuckle, throwing herself into $target$'s arms. \"I knew you couldn't refuse me! No begging for mercy tonight!\"",
+                "relationship_fwb_set_7": "$self$ excitedly pulls $target$ by the hand towards the bedroom. \"Great! I bought some new lingerie I've been dying to show you!\"",
+                "relationship_fwb_set_8": "$self$ eyes shining, actively offers a deep kiss. \"Mmm... so from now on, we are secret accomplices?\"",
+                "relationship_fwb_set_9": "$self$ covers her face, blushing furiously, but a smile leaks through her fingers. \"You really agreed? Then I won't hold back... I'm going to drain you dry!\"",
+                "relationship_fwb_set_10": "$self$ spins around happily, then hugs $target$ from behind. \"Whenever you're lonely from now on, you can come find me anytime.\"",
+                "relationship_fwb_refuse_1": "$self$ frowns, taking a step back to create distance. \"Sorry, I'm not that desperate yet.\"",
+                "relationship_fwb_refuse_2": "$self$ sneers, looking $target$ up and down. \"Are you misunderstanding something? I have no such sexual interest in you.\"",
+                "relationship_fwb_refuse_3": "$self$ continues her work expressionlessly, as if she heard nothing. \"If this is some boring joke, stop it.\"",
+                "relationship_fwb_refuse_4": "$self$ sighs, eyes revealing a trace of exhaustion. \"I don't want to deal with such a complex relationship right now. Find someone else.\"",
+                "relationship_fwb_refuse_5": "$self$ crosses her arms, mercilessly showing the way out. \"The door is over there. I'll pretend I never heard that.\"",
+                "relationship_fwb_refuse_6": "$self$ awkwardly looks away, scratching her cheek. \"Ahaha... um, I think we're better off as friends, right?\"",
+                "relationship_fwb_refuse_7": "$self$ reaches out and flicks $target$'s forehead, tone like scolding a younger brother. \"What are you thinking! Say that again and I'll get angry!\"",
+                "relationship_fwb_refuse_8": "$self$ pauses, then waves her hand with a wry smile. \"Stop joking, that would ruin our current relationship.\"",
+                "relationship_fwb_refuse_9": "$self$ looks earnestly into $target$'s eyes, shaking her head gently. \"I cherish you as a friend, so I don't want to turn you into... that kind of person.\"",
+                "relationship_fwb_refuse_10": "$self$ makes an exaggerated funny face, trying to ease the atmosphere. \"Hey hey, I treat you like a brother/bestie! That's too hardcore!\"",
+                "relationship_fwb_refused_1": "$self$ shrugs, expression unchanged. \"Alright, pretend I didn't say anything.\"",
+                "relationship_fwb_refused_2": "$self$ twitches her mouth indifferently, turning to pick up her phone. \"If you're not interested, fine. There are plenty of other options anyway.\"",
+                "relationship_fwb_refused_3": "$self$ gives a cold 'oh' and turns her attention back to her book. \"Forget it then, no big deal.\"",
+                "relationship_fwb_refused_4": "$self$ waves her hand without even looking at $target$. \"Unwilling? Then you can leave.\"",
+                "relationship_fwb_refused_5": "$self$ adjusts her clothes, tone returning to businesslike. \"It seems our needs don't match. Consider what I said void.\"",
+                "relationship_fwb_refused_6": "$self$ drops her shoulders in disappointment, muttering softly. \"What the hell... and here I thought my figure wasn't bad...\"",
+                "relationship_fwb_refused_7": "$self$ puffs up her cheeks in mock anger and punches $target$. \"Idiot! You missed such a good opportunity! Don't regret it later!\"",
+                "relationship_fwb_refused_8": "$self$ bites her lip sadly, forcing a smile. \"Ah... rejected. So embarrassing, just assume I was losing my mind.\"",
+                "relationship_fwb_refused_9": "$self$ buries her face in her palms, groaning in frustration. \"Aaaah forget it forget it! That wasn't me just now!\"",
+                "relationship_fwb_refused_10": "$self$ looks at $target$ with a hint of resentment, sighing. \"You really don't get romance... whatever, I guess I like talking to you more than sleeping with you.\"",
+                "relationship_fwb_break_1": "$self$ stares coldly at $target$, eyes like she's looking at trash. \"Enough, this relationship ends here. Don't contact me again.\"",
+                "relationship_fwb_break_2": "$self$ walks out without looking back while putting on her clothes. \"Disgusting. This is the last time.\"",
+                "relationship_fwb_break_3": "$self$ blocks $target$'s number, movements smooth and practiced. \"I'm tired of you. Don't appear in front of me again.\"",
+                "relationship_fwb_break_4": "$self$ points expressionlessly at the door. \"Get out. Now. Immediately.\"",
+                "relationship_fwb_break_5": "$self$ takes a deep breath, suppressing her disgust. \"There's no need for us to maintain even a physical relationship anymore. It's rotten.\"",
+                "relationship_fwb_break_6": "$self$ eyes red, voice choking up a bit. \"I thought we could just talk about pleasure... why did it turn out like this?\"",
+                "relationship_fwb_break_7": "$self$ looks at $target$ with disappointment, slowly letting go. \"I can't... this doesn't feel right anymore. Let's just... forget it.\"",
+                "relationship_fwb_break_8": "$self$ grabs her hair, verging on a breakdown, emotional. \"I can't take it anymore! I don't want to continue this vague relationship!\"",
+                "relationship_fwb_break_9": "$self$ turns her back to $target$, shoulders trembling slightly. \"Before you make things worse, we'd better cut ties completely.\"",
+                "relationship_fwb_break_10": "$self$ gives a bitter laugh, tears falling. \"Sure enough, this relationship was a mistake from the start. Goodbye, $target$.\""
+            }
         }
     }
 }

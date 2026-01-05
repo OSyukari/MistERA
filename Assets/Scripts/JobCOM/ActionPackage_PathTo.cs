@@ -190,7 +190,7 @@ public class ActionPackage_PathTo : ActionPackage
                 {
                     if (c.RefID == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID)) continue;
                     if (c == null) continue;
-                    s2 += " " + c.FirstName;
+                    s2 += ", " + c.FirstName;
                     askBreak = true;
                     //scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName + " is in room" + room.DisplayName + ", currently " + c.GetJobDescription(), true);
                 }

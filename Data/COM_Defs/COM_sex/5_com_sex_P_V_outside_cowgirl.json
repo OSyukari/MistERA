@@ -69,7 +69,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$doer.firstname$正在给$receiver.firstname$素股" ]
+                            "texts": [ "com_sex_P_V_outside_cowgirl_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -78,7 +78,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$结束了与$receiver.firstname$素股" ]
+                            "texts":[ "com_sex_P_V_outside_cowgirl_description_remove_1" ]
                         }
                     ]
                 },
@@ -87,12 +87,46 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$将$receiver.firstname$的肉棒顶在了股间摩擦着"]
+                            "texts": ["com_sex_P_V_outside_cowgirl_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_P_V_outside_cowgirl":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_P_V_outside_cowgirl_displayName_1": "骑乘位素股",
+                "com_sex_P_V_outside_cowgirl_displayName_2": "交替骑乘素股",
+                "com_sex_P_V_outside_cowgirl_displayName_3": "轮流骑乘素股",
+                "com_sex_P_V_outside_cowgirl_displayName_4": "同时骑乘素股",
+
+                "com_sex_P_V_outside_cowgirl_description_begin_1":"$doer.firstname$将$receiver.firstname$的肉棒顶在了股间摩擦着",
+                "com_sex_P_V_outside_cowgirl_description_remove_1":"$doer.firstname$结束了与$receiver.firstname$素股",
+                "com_sex_P_V_outside_cowgirl_description_ongoing_1":"$doer.firstname$正在给$receiver.firstname$素股"
+
+            },
+            "en-us":
+            {
+                "com_sex_P_V_outside_cowgirl":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_P_V_outside_cowgirl_displayName_1": "Cowgirl Grinding",
+                "com_sex_P_V_outside_cowgirl_displayName_2": "Alt. Cowgirl Grinding",
+                "com_sex_P_V_outside_cowgirl_displayName_3": "Alt. Cowgirl Grinding",
+                "com_sex_P_V_outside_cowgirl_displayName_4": "Alt. Cowgirl Grinding",
+
+                "com_sex_P_V_outside_cowgirl_description_begin_1":"$doer.firstname$ presses $receiver.firstname$'s cock against their crotch and grinds against it",
+                "com_sex_P_V_outside_cowgirl_description_remove_1":"$doer.firstname$ finishes grinding against $receiver.firstname$",
+                "com_sex_P_V_outside_cowgirl_description_ongoing_1":"$doer.firstname$ is grinding against $receiver.firstname$"
+
+            }
+        }
     }
 }

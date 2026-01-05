@@ -1,279 +1,668 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_P_cowgirl_A_Climax",
-        "tags":["nsfw"],
-        "variants":[
+    "Character_Personalities": {
+        "looselist": [
             {
-                
-                "requireSelfReceiver": true,
-                "_comment":"受方 被骑乘位A 高潮" ,
-                "responses": [
-                    "($self$) 被骑乘位A 高潮 口上文"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_cowgirl_A_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 被骑乘位A 高潮",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Climax_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "anal",
+                                        "climax"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 攻方 骑乘位A 高潮 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_A_Climax_2",
+                                        "com_sex_P_cowgirl_A_Climax_3",
+                                        "com_sex_P_cowgirl_A_Climax_4",
+                                        "com_sex_P_cowgirl_A_Climax_5",
+                                        "com_sex_P_cowgirl_A_Climax_6"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "anal",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 攻方 骑乘位A 高潮 无允许 口上文",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Climax_7",
+                                "com_sex_P_cowgirl_A_Climax_8",
+                                "com_sex_P_cowgirl_A_Climax_9",
+                                "com_sex_P_cowgirl_A_Climax_10",
+                                "com_sex_P_cowgirl_A_Climax_11"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                
-                "requireSelfDoer": true,
-                "variants":[
-                    {
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","cowgirl","anal", "climax"], "useActiveTags":false,
-                        "_comment":"2.4.1 攻方 骑乘位A 高潮 有允许 口上文" ,
-                        "responses": [
-"$self$猛地仰起脖子，发出一声高亢的尖叫，后穴剧烈痉挛，死死咬住体内的异物，整个人像触电般抽搐。", "$self$眼前炸开一片白光，失神地张着嘴流下口水，大腿内侧疯狂颤抖，一股温热的液体失禁般喷洒在$target$的小腹上。",
-
-"$self$猛地仰起头，脊背弯成一道夸张的弧度，脚趾紧紧蜷缩。\"啊啊——不行了！那里……要坏掉了！哈啊——！\"", "$self$双手胡乱地抓着$target$的大腿，身体剧烈地痉挛着。\"到了……一起……我也要……嗯啊啊啊！！\"", "$self$眼前一片空白，只能感受到从尾椎炸开的电流，嘴里发出破碎的尖叫。\"我不行了……哪怕是后面也……好舒服！\""
-                        ]
-                    }
-                ],
-                "extraPortraitTags":["sex","doer","cowgirl","anal", "climax"], "useActiveTags":false,
-                "_comment":"2.4.2 攻方 骑乘位A 高潮 无允许 口上文" ,
-                "responses": [
-"$self$一边哭喊着不要一边达到了顶峰，身体违背意志地弓起，极度的羞耻感让高潮来得比平时更加猛烈且绝望。", "$self$理智彻底崩断，翻着白眼吐出舌头，身体像坏掉的人偶一样剧烈弹动，在极度厌恶中迎来了可悲的极乐。",
-
-"$self$即使拼命捂住嘴，破碎的呻吟还是从指缝里漏了出来，身体羞耻地达到了顶峰。\"不要……明明不想的……为什么会……啊啊啊！\"", "$self$绝望地流着泪，身体却背叛了意志迎来了高潮。\"杀了我吧……竟然被这样弄到高潮……唔嗯嗯嗯！！\"", "$self$身体像触电一样弹起又重重落下，眼神瞬间失去了焦距。\"不……这种事……身体变得好奇怪……停不下来了！\""
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_P_cowgirl_A_Begin",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":["sex","doer","cowgirl","anal", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始骑乘位A 有允许 口上文" ,
-                "responses":
-                [ 
-"$self$撩起裙摆跨坐在$target$身上，深吸一口气，扶着那根昂扬对准自己生涩的后穴，缓缓坐了下去。", "$self$咬着下唇，眼神迷离地看着$target$，双手撑在对方胸膛上，主动将屁股沉下，吞没那滚烫的头部。", "$self$虽然有些紧张，但还是顺从地背过手去拨开臀瓣，引导着$target$进入那个从未被开发的地方。",
-
-"$self$背对着$target$慢慢坐下，双手向后撑在$target$的大腿上找寻支点。\"可能会有点紧……你慢一点进来。\"", "$self$深吸了一口气，主动抬起臀部对准了位置，声音有些颤抖。\"好……我已经准备好了，全部交给你。\"", "$self$扭过头确认了一下位置，随后缓缓下沉腰肢。\"嗯……这种感觉，无论做多少次都觉得好充实。\"", "$self$咬着下唇，试探性地吞吐着那庞大的异物感。\"没关系的，这一步我会自己来控制。\""
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_cowgirl_A_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "anal",
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始骑乘位A 有允许 口上文",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Begin_1",
+                                "com_sex_P_cowgirl_A_Begin_2",
+                                "com_sex_P_cowgirl_A_Begin_3",
+                                "com_sex_P_cowgirl_A_Begin_4",
+                                "com_sex_P_cowgirl_A_Begin_5",
+                                "com_sex_P_cowgirl_A_Begin_6",
+                                "com_sex_P_cowgirl_A_Begin_7"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "anal",
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始骑乘位A 未允许 好意 口上文",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Begin_8",
+                                "com_sex_P_cowgirl_A_Begin_9",
+                                "com_sex_P_cowgirl_A_Begin_10",
+                                "com_sex_P_cowgirl_A_Begin_11",
+                                "com_sex_P_cowgirl_A_Begin_12"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "anal",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始骑乘位A 未允许 敌意 口上文",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Begin_13",
+                                "com_sex_P_cowgirl_A_Begin_14",
+                                "com_sex_P_cowgirl_A_Begin_15",
+                                "com_sex_P_cowgirl_A_Begin_16",
+                                "com_sex_P_cowgirl_A_Begin_17"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":["sex","doer","cowgirl","anal", "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始骑乘位A 未允许 好意 口上文" ,
-                "responses":
-                [ 
-"$self$惊讶地瞪大了眼睛，没想到$target$会提出这种要求，但犹豫片刻后，还是红着脸慢慢转过身去。", "$self$显得有些手足无措，在$target$的注视下，颤抖着手指解开了衣扣，试探性地跨坐上去。\"只、只有这一次哦……\"",
-
-"$self$惊讶地回过头，身体僵硬了一下，但没有推开。\"等等……你是认真的吗？这种事……\"", "$self$有些不知所措地抓紧了身下的床单，声音干涩。\"如果是$target$的话……也许……并不讨厌……\"", "$self$咬着嘴唇，默认了$target$的动作，没有发出拒绝的声音。\"只这一次……我会当做没发生过的。\""
-                ]
-            },
-            {
-                
-                "extraPortraitTags":["sex","doer","cowgirl","anal", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
-                "_comment":"2.2.2 开始骑乘位A 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-"$self$浑身颤抖着，不敢直视$target$的眼睛，在威胁下不得不分开双腿，带着哭腔将那可怕的凶器纳入体内。", "$self$紧咬着嘴唇直到出血，屈辱地按照命令摆好姿势，任由那个不属于这里的粗大硬物强行撑开私处。",
-
-"$self$颤抖着不敢回头，眼泪在眼眶里打转。\"我知道了……我会听话的……请不要伤害我……\"", "$self$绝望地闭上了眼睛，身体任由$target$摆布。\"只要照做就可以了吧……求你快点结束……\"", "$self$死死咬住手背，试图压抑住羞耻的呜咽声，身体完全僵直。"
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_P_cowgirl_A",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sex","doer","cowgirl","anal","sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 骑乘位A 口上文",
-                "responses":
-                [ 
-"$self$对此刻发生的事一无所知，只是偶尔因为过于猛烈的撞击而皱眉哼哼两声。", "$self$如同失去意识的人偶般任由摆布，温热的内壁在本能地收缩，却无法传达给沉睡的大脑。",
-
-"$self$发出无意识的梦呓，眉头微皱，似乎在梦中感到了不适。\"嗯……好涨……\"", "$self$沉睡中的身体随着每一次撞击而微微前倾，呼吸变得略显急促，却依旧没有醒来的迹象。", "$self$完全处于毫无防备的状态，平日里严防死守的部位此刻毫无保留地展现在$target$眼前。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","doer","cowgirl","anal","doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 骑乘位A 口上文",
-                "responses":
-                [ 
-"$self$保持着僵硬的姿势悬停在半空，只有那紧致的后穴随着肉棒的抽插而被迫开合，媚肉毫无防备地外翻。", "$self$定格在惊恐表情的瞬间，身体却成了最诚实的容器，完全接纳了$target$的每一次深顶，没有任何反抗的余地。",
-
-"（$self$保持着原本的姿势一动不动，唯有臀部的肌肉随着$target$的抽插而被动地发生形变。）", "（$self$无神的双眼直视前方，对于体内正在发生的激烈侵犯毫无知觉，像是一尊精美的人偶。）", "（随着时间的静止，$self$甚至连生理性的收缩都无法做到，只能任由$target$肆意扩张。）"
-
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[
-                    {
-                        "requirement":  { "selfTags":["justWokenUp"] } ,
-                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                        "variants":[
-                            {
-                                "requirement":  {  "requirePermission":true } ,
-                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 骑乘位A 口上文 有允许",
-                                "responses":
-                                [ 
-"$self$被痛感惊醒，下意识地想要往前爬走。\"痛！你在干什么……快出去！\"", "$self$带着哭腔推拒着身后的动作。\"好困……不要在这个时候弄那里，让我睡觉……\""
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_cowgirl_A",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
                                 ]
-
-                            }
-                        ],
-                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 骑乘位A 口上文 无允许",
-                        "responses":
-                        [ 
-"$self$尖叫着踹向身后，也不管有没有踢到人。\"变态！滚开！你要干什么！\"", "$self$惊慌失措地试图蜷缩起身体保护自己。\"救命……谁来救救我！\""
-                        ]
-                    },
-                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 骑乘位A 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$感觉到异样后立刻向前挪动身体，避开了接触。\"不行……今天肚子不太舒服，那里绝对不可以。\"", "$self$按住了$target$想要扶住她腰的手，轻轻摇头。\"抱歉，我还没做好这种心理准备，换个地方好吗？\"", "$self$有些慌张地想要起身。\"太痛了……今天真的不行，不要勉强我。\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 骑乘位A 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$尴尬地笑了笑，试图用玩笑化解气氛。\"喂喂，这个玩笑开大了吧？我不玩这个的。\"", "$self$轻轻推了推$target$的膝盖，语气很坚决。\"我们只是朋友吧？这个界限不能越过。\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 骑乘位A 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$猛地推开$target$，眼中满是不可置信和厌恶。\"你有病吗？别用那种脏东西碰我！\"", "$self$冷笑一声，迅速整理好衣服站起来，居高临下地看着$target$。\"你以为我是什么人？滚开。\"",
-
-"$self$猛地站起身，眼神冰冷地盯着$target$。\"恶心。离我远点。\"", "$self$毫不客气地拍开了$target$的手。\"你把我看成什么人了？别碰我！\""
-                 ]
-            },
-            {
-
-                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
-                "_comment1":"玩家专用 刚睡醒时的 骑乘位A口上文",
-                "variants":[
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":["sex","doer","cowgirl","anal","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 骑乘位A 有允许 口上文",
-                        "responses":[
-"$self$迷迷糊糊地睁开眼，感受到后身被入侵的异样感，随即慵懒地哼了一声，配合地扭了扭腰。\"坏人……趁我睡觉做这种事……\"", "$self$在半梦半醒间被快感捕获，本能地夹紧了双腿，将那个正在作怪的东西吃得更深。",
-
-"$self$迷迷糊糊地揉了揉眼睛，感受到身后的异物感后没有反抗，只是慵懒地哼了一声。\"嗯……是大半夜的袭击吗？真拿你没办法……\"", "$self$在半梦半醒间顺从地调整了一下姿势方便$target$动作。\"唔……是你啊……那就轻一点哦……\""
-                        ]
-
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":["sex","doer","cowgirl","anal","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 骑乘位A 无允许 好意 口上文",
-                        "responses":[
-"$self$被身后的动作弄醒，发觉是$target$后，惊讶之余竟有一丝隐秘的期待。\"……是你？……怎么偏偏是那里……\"", "$self$没有大喊大叫，只是红着脸咬住了枕头。\"如果是你的话……也不是不行……\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.8 玩家专用 刚睡醒时的 骑乘位A 无允许 敌意 口上文",
-                "extraPortraitTags":["sex","doer","cowgirl","anal","scared","submissive"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$被剧痛惊醒，刚想尖叫就被捂住了嘴，看清现状后绝望地闭上了眼睛，任由泪水流淌。", "$self$在黑暗中颤栗着，不敢发出一点声音，只能无助地承受着后庭被无情贯穿的暴行。",
-
-"$self$惊恐地想要尖叫，但被某种威慑力吓得收了声。\"我不动……我不敢动了……求你轻点……\"", "$self$抽泣着把脸埋进臂弯里，身体即使在颤抖也不敢逃离。\"对不起……我不知道……我会听话的……\""
-                ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","cowgirl","anal", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 骑乘位A 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$渐渐适应了体内的尺寸，原本紧皱的眉头舒展开来，腰肢开始尝试着主动起伏吞吐。\"嗯……好像，没那么疼了……\"", "$self$俯下身抱住$target$的脖子，在耳边发出甜腻的喘息，后穴也不自觉地收缩夹紧。\"好涨……但是……好舒服……\"", "$self$沉迷在这种被填满的充实感中，动作变得大胆起来，故意用内壁去研磨那坚硬的柱身。",
-
-"$self$原本紧绷的背部线条逐渐放松，向后仰起头靠在$target$肩膀上。\"哈啊……好像，适应那个粗度了……再深一点也可以哦。\"", "$self$开始主动配合着节奏摆动腰肢，发出了甜腻的鼻音。\"嗯哼……这个角度……意外地能顶到很舒服的地方呢。\"", "$self$反手抓住了$target$的手臂，指甲轻轻嵌入皮肤。\"别停……刚才那一下，感觉好像要融化了……\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 骑乘位A 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","doer","cowgirl","anal", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$原本抗拒的身体开始软化，口中溢出无法抑制的呻吟，眼神变得涣散而淫靡。\"不……不行……怎么会……好爽……\"", "$self$似乎忘记了身份的隔阂，本能地追求着快感，腰肢疯狂地摆动起来，贪婪地索取着更多。\"啊……毁掉了……我要被弄坏了……\"",
-
-"$self$原本抗拒的手慢慢松开，开始不自觉地迎合$target$的动作。\"奇怪……明明应该拒绝的……为什么身体会变热……\"", "$self$脸上泛起不正常的潮红，声音变得断断续续。\"既然已经这样了……那就……再用力一点……\"", "$self$羞耻地捂住了脸，但腰肢却诚实地往下坐。\"完了……要是变得离不开这种感觉怎么办……\""
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","doer","cowgirl","anal", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 骑乘位A 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$的动作停了下来，额头上渗出细密的冷汗，有些痛苦地抓紧了$target$的肩膀。\"停一下……太深了……我不行……\"", "$self$无力地趴在$target$身上，大口喘着气，后穴传来的撕裂感让她想要逃离。\"真的好疼……我们要不换个地方吧？\"", "$self$眼角泛起了泪花，原本支撑身体的双臂开始打颤，那是身体达到极限的信号。",
-
-"$self$的动作变得僵硬，发出了痛苦的闷哼。\"停一下……太深了，我有种想吐的感觉……\"", "$self$无力地垂下头，身体甚至在微微发抖。\"还是很痛……我们能结束了吗？求你了。\"", "$self$一直没有回头，声音听起来很压抑。\"根本没有感觉……只觉得肚子涨得难受。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 骑乘位A 结果负面 未允许 口上文",
-                "extraPortraitTags":["sex","doer","cowgirl","anal", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$像一条死鱼一样瘫软在$target$身上，眼神空洞，只有身体随着对方的顶撞而被动摇晃。\"快点结束吧……求你了……\"", "$self$痛苦地抓挠着床单，每一次撞击都像是在遭受酷刑，生理性的泪水打湿了面颊。\"好恶心……把这东西拿出去……\"",
-
-"$self$死死地抓着床单，指节发白，一言不发地忍受着。\"……还没好吗？\"", "$self$的身体随着动作像个破布娃娃一样晃动，眼神空洞。\"随便你吧……反正我也没有拒绝的权利。\"", "$self$发出干呕的声音，身体因为生理性的排斥而痉挛。\"好恶心……不管身体有什么反应，我都觉得好恶心……\""
-                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "anal",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 骑乘位A 口上文",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_1",
+                                "com_sex_P_cowgirl_A_2",
+                                "com_sex_P_cowgirl_A_3",
+                                "com_sex_P_cowgirl_A_4",
+                                "com_sex_P_cowgirl_A_5"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "anal",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 骑乘位A 口上文",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_6",
+                                "com_sex_P_cowgirl_A_7",
+                                "com_sex_P_cowgirl_A_8",
+                                "com_sex_P_cowgirl_A_9",
+                                "com_sex_P_cowgirl_A_10"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 骑乘位A 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_A_11",
+                                                "com_sex_P_cowgirl_A_12"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 骑乘位A 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_A_13",
+                                        "com_sex_P_cowgirl_A_14"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 骑乘位A 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_A_15",
+                                        "com_sex_P_cowgirl_A_16",
+                                        "com_sex_P_cowgirl_A_17"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 骑乘位A 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_A_18",
+                                        "com_sex_P_cowgirl_A_19"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 骑乘位A 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_cowgirl_A_20",
+                                "com_sex_P_cowgirl_A_21",
+                                "com_sex_P_cowgirl_A_22",
+                                "com_sex_P_cowgirl_A_23"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment1": "玩家专用 刚睡醒时的 骑乘位A口上文",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "anal",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 骑乘位A 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_A_24",
+                                        "com_sex_P_cowgirl_A_25",
+                                        "com_sex_P_cowgirl_A_26",
+                                        "com_sex_P_cowgirl_A_27"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "anal",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 骑乘位A 无允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_A_28",
+                                        "com_sex_P_cowgirl_A_29"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.8 玩家专用 刚睡醒时的 骑乘位A 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "anal",
+                                "scared",
+                                "submissive"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_cowgirl_A_30",
+                                "com_sex_P_cowgirl_A_31",
+                                "com_sex_P_cowgirl_A_32",
+                                "com_sex_P_cowgirl_A_33"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "anal",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 骑乘位A 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_A_34",
+                                        "com_sex_P_cowgirl_A_35",
+                                        "com_sex_P_cowgirl_A_36",
+                                        "com_sex_P_cowgirl_A_37",
+                                        "com_sex_P_cowgirl_A_38",
+                                        "com_sex_P_cowgirl_A_39"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 骑乘位A 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "anal",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_P_cowgirl_A_40",
+                                "com_sex_P_cowgirl_A_41",
+                                "com_sex_P_cowgirl_A_42",
+                                "com_sex_P_cowgirl_A_43",
+                                "com_sex_P_cowgirl_A_44"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "anal",
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 骑乘位A 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_A_45",
+                                        "com_sex_P_cowgirl_A_46",
+                                        "com_sex_P_cowgirl_A_47",
+                                        "com_sex_P_cowgirl_A_48",
+                                        "com_sex_P_cowgirl_A_49",
+                                        "com_sex_P_cowgirl_A_50"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 骑乘位A 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "anal",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_cowgirl_A_51",
+                                "com_sex_P_cowgirl_A_52",
+                                "com_sex_P_cowgirl_A_53",
+                                "com_sex_P_cowgirl_A_54",
+                                "com_sex_P_cowgirl_A_55"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_P_cowgirl_A_Climax_1": "($self$) 被骑乘位A 高潮 口上文",
+                "com_sex_P_cowgirl_A_Climax_2": "$self$猛地仰起脖子，发出一声高亢的尖叫，后穴剧烈痉挛，死死咬住体内的异物，整个人像触电般抽搐。",
+                "com_sex_P_cowgirl_A_Climax_3": "$self$眼前炸开一片白光，失神地张着嘴流下口水，大腿内侧疯狂颤抖，一股温热的液体失禁般喷洒在$target$的小腹上。",
+                "com_sex_P_cowgirl_A_Climax_4": "$self$猛地仰起头，脊背弯成一道夸张的弧度，脚趾紧紧蜷缩。\"啊啊——不行了！那里……要坏掉了！哈啊——！\"",
+                "com_sex_P_cowgirl_A_Climax_5": "$self$双手胡乱地抓着$target$的大腿，身体剧烈地痉挛着。\"到了……一起……我也要……嗯啊啊啊！！\"",
+                "com_sex_P_cowgirl_A_Climax_6": "$self$眼前一片空白，只能感受到从尾椎炸开的电流，嘴里发出破碎的尖叫。\"我不行了……哪怕是后面也……好舒服！\"",
+                "com_sex_P_cowgirl_A_Climax_7": "$self$一边哭喊着不要一边达到了顶峰，身体违背意志地弓起，极度的羞耻感让高潮来得比平时更加猛烈且绝望。",
+                "com_sex_P_cowgirl_A_Climax_8": "$self$理智彻底崩断，翻着白眼吐出舌头，身体像坏掉的人偶一样剧烈弹动，在极度厌恶中迎来了可悲的极乐。",
+                "com_sex_P_cowgirl_A_Climax_9": "$self$即使拼命捂住嘴，破碎的呻吟还是从指缝里漏了出来，身体羞耻地达到了顶峰。\"不要……明明不想的……为什么会……啊啊啊！\"",
+                "com_sex_P_cowgirl_A_Climax_10": "$self$绝望地流着泪，身体却背叛了意志迎来了高潮。\"杀了我吧……竟然被这样弄到高潮……唔嗯嗯嗯！！\"",
+                "com_sex_P_cowgirl_A_Climax_11": "$self$身体像触电一样弹起又重重落下，眼神瞬间失去了焦距。\"不……这种事……身体变得好奇怪……停不下来了！\"",
+                "com_sex_P_cowgirl_A_Begin_1": "$self$撩起裙摆跨坐在$target$身上，深吸一口气，扶着那根昂扬对准自己生涩的后穴，缓缓坐了下去。",
+                "com_sex_P_cowgirl_A_Begin_2": "$self$咬着下唇，眼神迷离地看着$target$，双手撑在对方胸膛上，主动将屁股沉下，吞没那滚烫的头部。",
+                "com_sex_P_cowgirl_A_Begin_3": "$self$虽然有些紧张，但还是顺从地背过手去拨开臀瓣，引导着$target$进入那个从未被开发的地方。",
+                "com_sex_P_cowgirl_A_Begin_4": "$self$背对着$target$慢慢坐下，双手向后撑在$target$的大腿上找寻支点。\"可能会有点紧……你慢一点进来。\"",
+                "com_sex_P_cowgirl_A_Begin_5": "$self$深吸了一口气，主动抬起臀部对准了位置，声音有些颤抖。\"好……我已经准备好了，全部交给你。\"",
+                "com_sex_P_cowgirl_A_Begin_6": "$self$扭过头确认了一下位置，随后缓缓下沉腰肢。\"嗯……这种感觉，无论做多少次都觉得好充实。\"",
+                "com_sex_P_cowgirl_A_Begin_7": "$self$咬着下唇，试探性地吞吐着那庞大的异物感。\"没关系的，这一步我会自己来控制。\"",
+                "com_sex_P_cowgirl_A_Begin_8": "$self$惊讶地瞪大了眼睛，没想到$target$会提出这种要求，但犹豫片刻后，还是红着脸慢慢转过身去。",
+                "com_sex_P_cowgirl_A_Begin_9": "$self$显得有些手足无措，在$target$的注视下，颤抖着手指解开了衣扣，试探性地跨坐上去。\"只、只有这一次哦……\"",
+                "com_sex_P_cowgirl_A_Begin_10": "$self$惊讶地回过头，身体僵硬了一下，但没有推开。\"等等……你是认真的吗？这种事……\"",
+                "com_sex_P_cowgirl_A_Begin_11": "$self$有些不知所措地抓紧了身下的床单，声音干涩。\"如果是$target$的话……也许……并不讨厌……\"",
+                "com_sex_P_cowgirl_A_Begin_12": "$self$咬着嘴唇，默认了$target$的动作，没有发出拒绝的声音。\"只这一次……我会当做没发生过的。\"",
+                "com_sex_P_cowgirl_A_Begin_13": "$self$浑身颤抖着，不敢直视$target$的眼睛，在威胁下不得不分开双腿，带着哭腔将那可怕的凶器纳入体内。",
+                "com_sex_P_cowgirl_A_Begin_14": "$self$紧咬着嘴唇直到出血，屈辱地按照命令摆好姿势，任由那个不属于这里的粗大硬物强行撑开私处。",
+                "com_sex_P_cowgirl_A_Begin_15": "$self$颤抖着不敢回头，眼泪在眼眶里打转。\"我知道了……我会听话的……请不要伤害我……\"",
+                "com_sex_P_cowgirl_A_Begin_16": "$self$绝望地闭上了眼睛，身体任由$target$摆布。\"只要照做就可以了吧……求你快点结束……\"",
+                "com_sex_P_cowgirl_A_Begin_17": "$self$死死咬住手背，试图压抑住羞耻的呜咽声，身体完全僵直。",
+                "com_sex_P_cowgirl_A_1": "$self$对此刻发生的事一无所知，只是偶尔因为过于猛烈的撞击而皱眉哼哼两声。",
+                "com_sex_P_cowgirl_A_2": "$self$如同失去意识的人偶般任由摆布，温热的内壁在本能地收缩，却无法传达给沉睡的大脑。",
+                "com_sex_P_cowgirl_A_3": "$self$发出无意识的梦呓，眉头微皱，似乎在梦中感到了不适。\"嗯……好涨……\"",
+                "com_sex_P_cowgirl_A_4": "$self$沉睡中的身体随着每一次撞击而微微前倾，呼吸变得略显急促，却依旧没有醒来的迹象。",
+                "com_sex_P_cowgirl_A_5": "$self$完全处于毫无防备的状态，平日里严防死守的部位此刻毫无保留地展现在$target$眼前。",
+                "com_sex_P_cowgirl_A_6": "$self$保持着僵硬的姿势悬停在半空，只有那紧致的后穴随着肉棒的抽插而被迫开合，媚肉毫无防备地外翻。",
+                "com_sex_P_cowgirl_A_7": "$self$定格在惊恐表情的瞬间，身体却成了最诚实的容器，完全接纳了$target$的每一次深顶，没有任何反抗的余地。",
+                "com_sex_P_cowgirl_A_8": "（$self$保持着原本的姿势一动不动，唯有臀部的肌肉随着$target$的抽插而被动地发生形变。）",
+                "com_sex_P_cowgirl_A_9": "（$self$无神的双眼直视前方，对于体内正在发生的激烈侵犯毫无知觉，像是一尊精美的人偶。）",
+                "com_sex_P_cowgirl_A_10": "（随着时间的静止，$self$甚至连生理性的收缩都无法做到，只能任由$target$肆意扩张。）",
+                "com_sex_P_cowgirl_A_11": "$self$被痛感惊醒，下意识地想要往前爬走。\"痛！你在干什么……快出去！\"",
+                "com_sex_P_cowgirl_A_12": "$self$带着哭腔推拒着身后的动作。\"好困……不要在这个时候弄那里，让我睡觉……\"",
+                "com_sex_P_cowgirl_A_13": "$self$尖叫着踹向身后，也不管有没有踢到人。\"变态！滚开！你要干什么！\"",
+                "com_sex_P_cowgirl_A_14": "$self$惊慌失措地试图蜷缩起身体保护自己。\"救命……谁来救救我！\"",
+                "com_sex_P_cowgirl_A_15": "$self$感觉到异样后立刻向前挪动身体，避开了接触。\"不行……今天肚子不太舒服，那里绝对不可以。\"",
+                "com_sex_P_cowgirl_A_16": "$self$按住了$target$想要扶住她腰的手，轻轻摇头。\"抱歉，我还没做好这种心理准备，换个地方好吗？\"",
+                "com_sex_P_cowgirl_A_17": "$self$有些慌张地想要起身。\"太痛了……今天真的不行，不要勉强我。\"",
+                "com_sex_P_cowgirl_A_18": "$self$尴尬地笑了笑，试图用玩笑化解气氛。\"喂喂，这个玩笑开大了吧？我不玩这个的。\"",
+                "com_sex_P_cowgirl_A_19": "$self$轻轻推了推$target$的膝盖，语气很坚决。\"我们只是朋友吧？这个界限不能越过。\"",
+                "com_sex_P_cowgirl_A_20": "$self$猛地推开$target$，眼中满是不可置信和厌恶。\"你有病吗？别用那种脏东西碰我！\"",
+                "com_sex_P_cowgirl_A_21": "$self$冷笑一声，迅速整理好衣服站起来，居高临下地看着$target$。\"你以为我是什么人？滚开。\"",
+                "com_sex_P_cowgirl_A_22": "$self$猛地站起身，眼神冰冷地盯着$target$。\"恶心。离我远点。\"",
+                "com_sex_P_cowgirl_A_23": "$self$毫不客气地拍开了$target$的手。\"你把我看成什么人了？别碰我！\"",
+                "com_sex_P_cowgirl_A_24": "$self$迷迷糊糊地睁开眼，感受到后身被入侵的异样感，随即慵懒地哼了一声，配合地扭了扭腰。\"坏人……趁我睡觉做这种事……\"",
+                "com_sex_P_cowgirl_A_25": "$self$在半梦半醒间被快感捕获，本能地夹紧了双腿，将那个正在作怪的东西吃得更深。",
+                "com_sex_P_cowgirl_A_26": "$self$迷迷糊糊地揉了揉眼睛，感受到身后的异物感后没有反抗，只是慵懒地哼了一声。\"嗯……是大半夜的袭击吗？真拿你没办法……\"",
+                "com_sex_P_cowgirl_A_27": "$self$在半梦半醒间顺从地调整了一下姿势方便$target$动作。\"唔……是你啊……那就轻一点哦……\"",
+                "com_sex_P_cowgirl_A_28": "$self$被身后的动作弄醒，发觉是$target$后，惊讶之余竟有一丝隐秘的期待。\"……是你？……怎么偏偏是那里……\"",
+                "com_sex_P_cowgirl_A_29": "$self$没有大喊大叫，只是红着脸咬住了枕头。\"如果是你的话……也不是不行……\"",
+                "com_sex_P_cowgirl_A_30": "$self$被剧痛惊醒，刚想尖叫就被捂住了嘴，看清现状后绝望地闭上了眼睛，任由泪水流淌。",
+                "com_sex_P_cowgirl_A_31": "$self$在黑暗中颤栗着，不敢发出一点声音，只能无助地承受着后庭被无情贯穿的暴行。",
+                "com_sex_P_cowgirl_A_32": "$self$惊恐地想要尖叫，但被某种威慑力吓得收了声。\"我不动……我不敢动了……求你轻点……\"",
+                "com_sex_P_cowgirl_A_33": "$self$抽泣着把脸埋进臂弯里，身体即使在颤抖也不敢逃离。\"对不起……我不知道……我会听话的……\"",
+                "com_sex_P_cowgirl_A_34": "$self$渐渐适应了体内的尺寸，原本紧皱的眉头舒展开来，腰肢开始尝试着主动起伏吞吐。\"嗯……好像，没那么疼了……\"",
+                "com_sex_P_cowgirl_A_35": "$self$俯下身抱住$target$的脖子，在耳边发出甜腻的喘息，后穴也不自觉地收缩夹紧。\"好涨……但是……好舒服……\"",
+                "com_sex_P_cowgirl_A_36": "$self$沉迷在这种被填满的充实感中，动作变得大胆起来，故意用内壁去研磨那坚硬的柱身。",
+                "com_sex_P_cowgirl_A_37": "$self$原本紧绷的背部线条逐渐放松，向后仰起头靠在$target$肩膀上。\"哈啊……好像，适应那个粗度了……再深一点也可以哦。\"",
+                "com_sex_P_cowgirl_A_38": "$self$开始主动配合着节奏摆动腰肢，发出了甜腻的鼻音。\"嗯哼……这个角度……意外地能顶到很舒服的地方呢。\"",
+                "com_sex_P_cowgirl_A_39": "$self$反手抓住了$target$的手臂，指甲轻轻嵌入皮肤。\"别停……刚才那一下，感觉好像要融化了……\"",
+                "com_sex_P_cowgirl_A_40": "$self$原本抗拒的身体开始软化，口中溢出无法抑制的呻吟，眼神变得涣散而淫靡。\"不……不行……怎么会……好爽……\"",
+                "com_sex_P_cowgirl_A_41": "$self$似乎忘记了身份的隔阂，本能地追求着快感，腰肢疯狂地摆动起来，贪婪地索取着更多。\"啊……毁掉了……我要被弄坏了……\"",
+                "com_sex_P_cowgirl_A_42": "$self$原本抗拒的手慢慢松开，开始不自觉地迎合$target$的动作。\"奇怪……明明应该拒绝的……为什么身体会变热……\"",
+                "com_sex_P_cowgirl_A_43": "$self$脸上泛起不正常的潮红，声音变得断断续续。\"既然已经这样了……那就……再用力一点……\"",
+                "com_sex_P_cowgirl_A_44": "$self$羞耻地捂住了脸，但腰肢却诚实地往下坐。\"完了……要是变得离不开这种感觉怎么办……\"",
+                "com_sex_P_cowgirl_A_45": "$self$的动作停了下来，额头上渗出细密的冷汗，有些痛苦地抓紧了$target$的肩膀。\"停一下……太深了……我不行……\"",
+                "com_sex_P_cowgirl_A_46": "$self$无力地趴在$target$身上，大口喘着气，后穴传来的撕裂感让她想要逃离。\"真的好疼……我们要不换个地方吧？\"",
+                "com_sex_P_cowgirl_A_47": "$self$眼角泛起了泪花，原本支撑身体的双臂开始打颤，那是身体达到极限的信号。",
+                "com_sex_P_cowgirl_A_48": "$self$的动作变得僵硬，发出了痛苦的闷哼。\"停一下……太深了，我有种想吐的感觉……\"",
+                "com_sex_P_cowgirl_A_49": "$self$无力地垂下头，身体甚至在微微发抖。\"还是很痛……我们能结束了吗？求你了。\"",
+                "com_sex_P_cowgirl_A_50": "$self$一直没有回头，声音听起来很压抑。\"根本没有感觉……只觉得肚子涨得难受。\"",
+                "com_sex_P_cowgirl_A_51": "$self$像一条死鱼一样瘫软在$target$身上，眼神空洞，只有身体随着对方的顶撞而被动摇晃。\"快点结束吧……求你了……\"",
+                "com_sex_P_cowgirl_A_52": "$self$痛苦地抓挠着床单，每一次撞击都像是在遭受酷刑，生理性的泪水打湿了面颊。\"好恶心……把这东西拿出去……\"",
+                "com_sex_P_cowgirl_A_53": "$self$死死地抓着床单，指节发白，一言不发地忍受着。\"……还没好吗？\"",
+                "com_sex_P_cowgirl_A_54": "$self$的身体随着动作像个破布娃娃一样晃动，眼神空洞。\"随便你吧……反正我也没有拒绝的权利。\"",
+                "com_sex_P_cowgirl_A_55": "$self$发出干呕的声音，身体因为生理性的排斥而痉挛。\"好恶心……不管身体有什么反应，我都觉得好恶心……\""
+            },
+            "en-us": {
+                "com_sex_P_cowgirl_A_Climax_1": "($self$) Cowgirl A Climax Response",
+                "com_sex_P_cowgirl_A_Climax_2": "$self$ violently throws her head back, letting out a high-pitched scream. Her anus spasms violently, biting down hard on the foreign object inside her, while her body convulses like she's been electrocuted.",
+                "com_sex_P_cowgirl_A_Climax_3": "White light explodes before $self$'s eyes. She gapes absent-mindedly, drool escaping her lips, as her inner thighs tremble uncontrollably, spraying a warm liquid like urine all over $target$'s lower abdomen.",
+                "com_sex_P_cowgirl_A_Climax_4": "$self$ jerks her head back, arching her spine into an exaggerated curve, toes curling tightly. \"Aaaah— I can't! It's... it's going to break! Haaah—!\"",
+                "com_sex_P_cowgirl_A_Climax_5": "$self$ blindly claws at $target$'s thighs, her body convulsing violently. \"Coming... together... I'm gonna... Nngyaaaah!!\"",
+                "com_sex_P_cowgirl_A_Climax_6": "$self$'s vision goes blank, feeling only the electricity exploding from her tailbone as a broken scream escapes her mouth. \"I can't take it... even in the back... it feels so good!\"",
+                "com_sex_P_cowgirl_A_Climax_7": "$self$ reaches her peak while crying out no, her body arching against her will. The intense shame makes the orgasm come even harder and more desperately than usual.",
+                "com_sex_P_cowgirl_A_Climax_8": "$self$'s rationality snaps completely. Eyes rolling back and tongue lolling out, her body jerks violently like a broken doll, greeting a pathetic bliss amidst extreme disgust.",
+                "com_sex_P_cowgirl_A_Climax_9": "Even though $self$ desperately covers her mouth, broken moans leak through her fingers as she reaches a shameful peak. \"No... I didn't want this... why is this happening... Aaaah!\"",
+                "com_sex_P_cowgirl_A_Climax_10": "$self$ weeps in despair, but her body betrays her will and welcomes the orgasm. \"Just kill me... to cum like this... Uuungh!!\"",
+                "com_sex_P_cowgirl_A_Climax_11": "$self$'s body bucks like it's been shocked before slamming back down, her eyes instantly losing focus. \"No... this kind of thing... my body feels so weird... I can't stop it!\"",
+                "com_sex_P_cowgirl_A_Begin_1": "$self$ hitches up her skirt and straddles $target$. Taking a deep breath, she guides that upright hardness towards her inexperienced rear entrance and slowly lowers herself.",
+                "com_sex_P_cowgirl_A_Begin_2": "Biting her lower lip, $self$ looks at $target$ with glassy eyes. Bracing her hands on his chest, she actively sinks her hips down, swallowing the burning glans.",
+                "com_sex_P_cowgirl_A_Begin_3": "Although nervous, $self$ obediently reaches back to spread her cheeks, guiding $target$ into that place that has never been developed.",
+                "com_sex_P_cowgirl_A_Begin_4": "Sitting down slowly with her back to $target$, $self$ reaches back to brace herself on $target$'s thighs for support. \"It might be a bit tight... please come in slowly.\"",
+                "com_sex_P_cowgirl_A_Begin_5": "$self$ takes a deep breath and actively lifts her hips to align them, her voice trembling slightly. \"Okay... I'm ready. I leave it all to you.\"",
+                "com_sex_P_cowgirl_A_Begin_6": "$self$ twists around to check the position, then slowly lowers her waist. \"Mmn... this feeling, no matter how many times we do it, it feels so full.\"",
+                "com_sex_P_cowgirl_A_Begin_7": "Biting her lip, $self$ tentatively swallows the massive foreign sensation. \"It's okay, I'll control this step myself.\"",
+                "com_sex_P_cowgirl_A_Begin_8": "$self$'s eyes widen in surprise, not expecting such a request from $target$, but after a moment's hesitation, she blushes and slowly turns around.",
+                "com_sex_P_cowgirl_A_Begin_9": "Looking somewhat flustered under $target$'s gaze, $self$ unbuttons her clothes with trembling fingers and tentatively straddles him. \"Only, only this one time, okay...?\"",
+                "com_sex_P_cowgirl_A_Begin_10": "Surprised, $self$ looks back and her body stiffens, but she doesn't push him away. \"Wait... are you serious? Doing this...\"",
+                "com_sex_P_cowgirl_A_Begin_11": "$self$ clutches the sheets beneath her in confusion, her voice dry. \"If it's $target$... maybe... I don't hate it...\"",
+                "com_sex_P_cowgirl_A_Begin_12": "Biting her lip, $self$ acquiesces to $target$'s actions without voicing a refusal. \"Just this once... I'll pretend this never happened.\"",
+                "com_sex_P_cowgirl_A_Begin_13": "Trembling all over, $self$ dares not look $target$ in the eye. Under threat, she is forced to spread her legs and tearfully accept that terrible weapon into her body.",
+                "com_sex_P_cowgirl_A_Begin_14": "Biting her lip until it bleeds, $self$ humiliatorily assumes the position as ordered, letting that thick, hard object that doesn't belong there forcibly stretch her privates open.",
+                "com_sex_P_cowgirl_A_Begin_15": "Trembling, $self$ dares not look back, tears welling up in her eyes. \"I understand... I'll be good... please don't hurt me...\"",
+                "com_sex_P_cowgirl_A_Begin_16": "$self$ closes her eyes in despair, leaving her body to $target$'s mercy. \"I just have to do as I'm told, right... please let it end quickly...\"",
+                "com_sex_P_cowgirl_A_Begin_17": "$self$ bites down hard on the back of her hand, trying to suppress whimpers of shame, her body completely rigid.",
+                "com_sex_P_cowgirl_A_1": "$self$ remains oblivious to what is happening, only occasionally frowning and grunting from the overly vigorous thrusts.",
+                "com_sex_P_cowgirl_A_2": "Like a doll that has lost consciousness, $self$ is at his mercy. Her warm inner walls contract instinctively, but the sensation cannot reach her slumbering brain.",
+                "com_sex_P_cowgirl_A_3": "$self$ mumbles unconsciously, frowning slightly as if feeling discomfort in her dream. \"Mmn... so full...\"",
+                "com_sex_P_cowgirl_A_4": "$self$'s sleeping body leans forward slightly with each impact, her breathing becoming a bit rapid, yet she shows no sign of waking up.",
+                "com_sex_P_cowgirl_A_5": "Completely defenseless, the parts $self$ usually guards so strictly are now unreservedly displayed before $target$.",
+                "com_sex_P_cowgirl_A_6": "$self$ remains suspended in mid-air in a stiff pose, only her tight rear hole forced to open and close with the thrusting of the meat rod, her tender flesh exposed defenselessly.",
+                "com_sex_P_cowgirl_A_7": "Frozen in a moment of terror, $self$'s body becomes the most honest vessel, fully accepting every deep thrust from $target$ with no room for resistance.",
+                "com_sex_P_cowgirl_A_8": "($self$ remains motionless in her original pose, only her gluteal muscles passively deforming with $target$'s thrusts.)",
+                "com_sex_P_cowgirl_A_9": "($self$ stares straight ahead with lifeless eyes, oblivious to the intense violation occurring inside her, like an exquisite doll.)",
+                "com_sex_P_cowgirl_A_10": "(As time stands still, $self$ cannot even manage a physiological contraction, leaving her to be wantonly stretched by $target$.)",
+                "com_sex_P_cowgirl_A_11": "Startled awake by the pain, $self$ instinctively tries to crawl away. \"Ouch! What are you doing... get out!\"",
+                "com_sex_P_cowgirl_A_12": "With a tearful voice, $self$ pushes back against the motion behind her. \"So sleepy... don't do that there right now, let me sleep...\"",
+                "com_sex_P_cowgirl_A_13": "Screaming, $self$ kicks out behind her, not caring if she hits anyone. \"Pervert! Get away! What are you doing!\"",
+                "com_sex_P_cowgirl_A_14": "Panicked, $self$ tries to curl up into a ball to protect herself. \"Help... someone save me!\"",
+                "com_sex_P_cowgirl_A_15": "Feeling something wrong, $self$ immediately scoots forward to avoid contact. \"No... my stomach doesn't feel good today, definitely not there.\"",
+                "com_sex_P_cowgirl_A_16": "$self$ holds down $target$'s hand as he tries to grab her waist, shaking her head gently. \"Sorry, I'm not mentally prepared for this yet. Can we try somewhere else?\"",
+                "com_sex_P_cowgirl_A_17": "$self$ tries to get up in a panic. \"It hurts too much... really not today, don't force me.\"",
+                "com_sex_P_cowgirl_A_18": "$self$ smiles awkwardly, trying to diffuse the atmosphere with a joke. \"Hey, hey, this joke is going too far, right? I don't play like that.\"",
+                "com_sex_P_cowgirl_A_19": "$self$ gently pushes $target$'s knee, her tone firm. \"We're just friends, right? We can't cross this line.\"",
+                "com_sex_P_cowgirl_A_20": "$self$ violently pushes $target$ away, her eyes full of disbelief and disgust. \"Are you sick? Don't touch me with that dirty thing!\"",
+                "com_sex_P_cowgirl_A_21": "$self$ sneers, quickly tidying her clothes and standing up to look down at $target$. \"What kind of person do you think I am? Get lost.\"",
+                "com_sex_P_cowgirl_A_22": "$self$ stands up abruptly, staring coldly at $target$. \"Disgusting. Stay away from me.\"",
+                "com_sex_P_cowgirl_A_23": "$self$ unceremoniously slaps $target$'s hand away. \"What do you take me for? Don't touch me!\"",
+                "com_sex_P_cowgirl_A_24": "$self$ opens her eyes groggily, feeling the intrusion behind her. She hums lazily and cooperatively twists her waist. \"Bad guy... doing this while I sleep...\"",
+                "com_sex_P_cowgirl_A_25": "Captured by pleasure in her half-awake state, $self$ instinctively clamps her legs together, eating the thing playing inside her even deeper.",
+                "com_sex_P_cowgirl_A_26": "$self$ rubs her eyes groggily. Feeling the foreign object behind her, she doesn't resist but hums lazily. \"Mmn... a midnight raid? Can't help it then...\"",
+                "com_sex_P_cowgirl_A_27": "Half-asleep, $self$ obediently adjusts her posture to accommodate $target$'s movements. \"Mmm... it's you... be gentle then...\"",
+                "com_sex_P_cowgirl_A_28": "Woken by the movement behind her, $self$ realizes it's $target$ and feels a secret anticipation amidst her surprise. \"...You? ...Why there of all places...\"",
+                "com_sex_P_cowgirl_A_29": "$self$ doesn't shout, but simply bites the pillow with a flushed face. \"If it's you... I guess it's okay...\"",
+                "com_sex_P_cowgirl_A_30": "Woken by sharp pain, $self$ tries to scream but her mouth is covered. Seeing the situation, she closes her eyes in despair, letting the tears flow.",
+                "com_sex_P_cowgirl_A_31": "Trembling in the dark, $self$ dares not make a sound, helplessly enduring the brutality of her rear being mercilessly impaled.",
+                "com_sex_P_cowgirl_A_32": "$self$ wants to scream in terror but is silenced by some intimidation. \"I won't move... I won't dare move... please be gentle...\"",
+                "com_sex_P_cowgirl_A_33": "Sobbing, $self$ buries her face in the crook of her arm, her body trembling but too afraid to flee. \"I'm sorry... I didn't know... I'll listen...\"",
+                "com_sex_P_cowgirl_A_34": "$self$ gradually gets used to the size inside her. Her furrowed brows relax, and her waist begins to actively rise and fall, swallowing and spitting. \"Mmn... it seems, it doesn't hurt as much...\"",
+                "com_sex_P_cowgirl_A_35": "$self$ leans down to hug $target$'s neck, breathing sweetly into his ear, her rear hole unconsciously contracting and tightening. \"So full... but... feels so good...\"",
+                "com_sex_P_cowgirl_A_36": "Indulging in the fullness, $self$ becomes bolder in her movements, intentionally using her inner walls to grind against the hard shaft.",
+                "com_sex_P_cowgirl_A_37": "The tension in $self$'s back gradually relaxes as she throws her head back and leans on $target$'s shoulder. \"Haaah... seems I've adapted to that thickness... you can go deeper.\"",
+                "com_sex_P_cowgirl_A_38": "$self$ starts actively moving her hips to the rhythm, letting out a sweet nasal sound. \"Mmhmm... this angle... unexpectedly hits a very comfortable spot.\"",
+                "com_sex_P_cowgirl_A_39": "$self$ grabs $target$'s arm backhanded, nails digging slightly into his skin. \"Don't stop... that hit just now, felt like I was going to melt...\"",
+                "com_sex_P_cowgirl_A_40": "$self$'s resisting body begins to soften, uncontrollable moans spilling from her mouth, her eyes becoming unfocused and lustful. \"No... I can't... how can... so good...\"",
+                "com_sex_P_cowgirl_A_41": " Seeming to forget the barrier of status, $self$ instinctively chases pleasure, hips swaying wildly, greedily demanding more. \"Ah... ruined... I'm going to be broken...\"",
+                "com_sex_P_cowgirl_A_42": "$self$'s hands, which were resisting, slowly loosen and begin to unconsciously cater to $target$'s movements. \"Weird... I should be refusing... why is my body getting hot...\"",
+                "com_sex_P_cowgirl_A_43": "An unnatural flush rises on $self$'s face, her voice becoming intermittent. \"Since it's already like this... then... harder...\"",
+                "com_sex_P_cowgirl_A_44": "$self$ covers her face in shame, but her hips honestly sink down. \"It's over... what if I can't live without this feeling...\"",
+                "com_sex_P_cowgirl_A_45": "$self$ stops moving, fine cold sweat beading on her forehead as she painfully grips $target$'s shoulders. \"Stop... too deep... I can't...\"",
+                "com_sex_P_cowgirl_A_46": "$self$ lies weakly on $target$, gasping for air, the tearing sensation from her rear making her want to escape. \"It really hurts... shall we change to a different place?\"",
+                "com_sex_P_cowgirl_A_47": "Tears well up in the corners of $self$'s eyes, and the arms supporting her body start to tremble, a signal that her body has reached its limit.",
+                "com_sex_P_cowgirl_A_48": "$self$'s movements become stiff, letting out a muffled groan of pain. \"Stop... it's too deep, I feel like throwing up...\"",
+                "com_sex_P_cowgirl_A_49": "$self$ hangs her head weakly, her body even trembling slightly. \"It still hurts... can we end this? Please.\"",
+                "com_sex_P_cowgirl_A_50": "$self$ keeps her head turned away, her voice sounding suppressed. \"I don't feel anything... I just feel uncomfortably bloated.\"",
+                "com_sex_P_cowgirl_A_51": "$self$ goes limp on $target$ like a dead fish, eyes hollow, body only swaying passively with the thrusts. \"Let it end quickly... please...\"",
+                "com_sex_P_cowgirl_A_52": "$self$ scratches the sheets in agony, every impact feeling like torture, tears physically wetting her cheeks. \"So disgusting... get this thing out of me...\"",
+                "com_sex_P_cowgirl_A_53": "$self$ grips the sheets tightly, knuckles turning white, enduring in silence. \"...Are you done yet?\"",
+                "com_sex_P_cowgirl_A_54": "$self$ sways like a ragdoll with the movements, eyes empty. \"Do whatever you want... I don't have the right to refuse anyway.\"",
+                "com_sex_P_cowgirl_A_55": "$self$ makes retching sounds, body convulsing in physiological rejection. \"Disgusting... no matter how my body reacts, I find it so disgusting...\""
+            }
         }
     }
 }

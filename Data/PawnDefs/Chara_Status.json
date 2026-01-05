@@ -563,7 +563,12 @@
 "chara_status_analgesic":"Analgesic",
 "chara_status_analgesic_1":"%%chara_status_analgesic%%: Weak",
 "chara_status_analgesic_2":"%%chara_status_analgesic%%: Medium",
-"chara_status_analgesic_3":"%%chara_status_analgesic%%: Strong"
+"chara_status_analgesic_3":"%%chara_status_analgesic%%: Strong",
+
+"chara_status_pain":"Pain",
+"chara_status_pain_1":"%%chara_status_pain%%: Weak",
+"chara_status_pain_2":"%%chara_status_pain%%: Medium",
+"chara_status_pain_3":"%%chara_status_pain%%: Strong"
             }
         }
     }

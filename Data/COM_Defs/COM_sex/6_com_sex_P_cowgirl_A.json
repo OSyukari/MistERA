@@ -165,7 +165,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "$receiver.firstname$的肉棒在$doer.firstname$的肛门中进出" ]
+                            "texts": [ "com_sex_P_cowgirl_A_description_ongoing_1" ]
                         }
                     ]
                 },
@@ -174,7 +174,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "$doer.firstname$抬起身体，抽出了刚才还插在肛门中的肉棒" ]
+                            "texts":[ "com_sex_P_cowgirl_A_description_remove_1" ]
                         }
                     ]
                 },
@@ -184,7 +184,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "即将射精的$receiver.firstname$将肉棒狠狠顶入了$doer.firstname$的体内" ]
+                            "texts":[ "com_sex_P_cowgirl_A_description_after_1" ]
                         }
                     ]
                 },
@@ -193,12 +193,48 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["$doer.firstname$其在$receiver.firstname$，将肉棒对准了自己的肛门插入进去"]
+                            "texts": ["com_sex_P_cowgirl_A_description_begin_1"]
                         }
                     ]
                     
                 }
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_P_cowgirl_A":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_P_cowgirl_A_displayName_1": "骑乘位A",
+                "com_sex_P_cowgirl_A_displayName_2": "交替骑乘位A",
+                "com_sex_P_cowgirl_A_displayName_3": "轮流骑乘位A",
+                "com_sex_P_cowgirl_A_displayName_4": "同时骑乘位A",
+
+                "com_sex_P_cowgirl_A_description_begin_1":"$doer.firstname$其在$receiver.firstname$，将肉棒对准了自己的肛门插入进去",
+                "com_sex_P_cowgirl_A_description_after_1":"即将射精的$receiver.firstname$将肉棒狠狠顶入了$doer.firstname$的体内",
+                "com_sex_P_cowgirl_A_description_remove_1":"$doer.firstname$抬起身体，抽出了刚才还插在肛门中的肉棒",
+                "com_sex_P_cowgirl_A_description_ongoing_1":"$receiver.firstname$的肉棒在$doer.firstname$的肛门中进出"
+
+            },
+            "en-us":
+            {
+                "com_sex_P_cowgirl_A":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_P_cowgirl_A_displayName_1": "Cowgirl Anal",
+                "com_sex_P_cowgirl_A_displayName_2": "Alt. Cowgirl Anal",
+                "com_sex_P_cowgirl_A_displayName_3": "Alt. Cowgirl Anal",
+                "com_sex_P_cowgirl_A_displayName_4": "Alt. Cowgirl Anal",
+
+                "com_sex_P_cowgirl_A_description_begin_1":"$doer.firstname$ straddles $receiver.firstname$, aligning the cock with their own anus and sinking down onto it.",
+                "com_sex_P_cowgirl_A_description_after_1":"$receiver.firstname$, on the verge of ejaculation, thrusts the cock hard into $doer.firstname$'s body.",
+                "com_sex_P_cowgirl_A_description_remove_1":"$doer.firstname$ lifts their body, pulling out the cock that was just inside the anus.",
+                "com_sex_P_cowgirl_A_description_ongoing_1":"$receiver.firstname$'s cock moves in and out of $doer.firstname$'s anus."
+
+            }
+        }
     }
 }

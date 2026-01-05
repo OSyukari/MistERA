@@ -1,0 +1,419 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnWakeUp",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "_comment": "Event trigger, fired when character wakes up (or regains consciousness). Due to fault in design, this event will launch using relationship self -> self",
+                    "variants": [
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfStatusValue": {
+                                    "statusID": "chara_status_sex_stimulation",
+                                    "operand": "gte",
+                                    "value": 39
+                                }
+                            },
+                            "responses": [
+                                "OnWakeUp_1"
+                            ],
+                            "keepLooking": true
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "selfTags": [
+                                    "removedClothing"
+                                ]
+                            },
+                            "responses": [
+                                "OnWakeUp_2"
+                            ],
+                            "keepLooking": true
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "selfTags": [
+                                    "cum"
+                                ]
+                            },
+                            "responses": [
+                                "OnWakeUp_3"
+                            ],
+                            "keepLooking": true
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnNightAssaultSuccess",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "_comment": "Same trigger as OnWakeUp, but this one is used instead if night assault in progress when triggered. use Relationship self -> target",
+                    "debugLogging": true,
+                    "variants": [
+                        {
+                            "responses": [
+                                "OnNightAssaultSuccess_1"
+                            ],
+                            "keepLooking": true
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfStatusValue": {
+                                    "statusID": "chara_status_sex_stimulation",
+                                    "operand": "gte",
+                                    "value": 39
+                                }
+                            },
+                            "responses": [
+                                "OnNightAssaultSuccess_2"
+                            ],
+                            "keepLooking": true
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "removedClothing"
+                                ]
+                            },
+                            "responses": [
+                                "OnNightAssaultSuccess_3"
+                            ],
+                            "keepLooking": true
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "selfTags": [
+                                    "cum"
+                                ]
+                            },
+                            "responses": [
+                                "OnNightAssaultSuccess_4"
+                            ],
+                            "keepLooking": true
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnNightAssaultFailure",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "_comment": "Same trigger as OnNightAssaultSuccess, but fires only when assault refused and terminated",
+                    "debugLogging": true,
+                    "variants": [
+                        {
+                            "responses": [
+                                "OnNightAssaultFailure_1"
+                            ],
+                            "keepLooking": true
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfStatusValue": {
+                                    "statusID": "chara_status_sex_stimulation",
+                                    "operand": "gte",
+                                    "value": 39
+                                }
+                            },
+                            "responses": [
+                                "OnNightAssaultFailure_2"
+                            ],
+                            "keepLooking": true
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "removedClothing"
+                                ]
+                            },
+                            "responses": [
+                                "OnNightAssaultFailure_3"
+                            ],
+                            "keepLooking": true
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "selfTags": [
+                                    "cum"
+                                ]
+                            },
+                            "responses": [
+                                "OnNightAssaultFailure_4"
+                            ],
+                            "keepLooking": true
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "DisruptSleep",
+                    "_comment": "this event fire when character could be disrupted in sleep. this will be called when (1, there is direct interaction) (2, no direct interaction but self is light sleep)",
+                    "variants": [
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping",
+                                    "timestop"
+                                ]
+                            },
+                            "responses": [
+                                "DisruptSleep_1"
+                            ]
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping",
+                                    "pain"
+                                ],
+                                "requireSelfStatusValue": {
+                                    "statusID": "chara_status_sleeping",
+                                    "operand": "gte",
+                                    "value": 1.9
+                                }
+                            },
+                            "responses": [
+                                "DisruptSleep_2"
+                            ],
+                            "results": [
+                                {
+                                    "modifyStatusValue": {
+                                        "statusID": "chara_status_sleeping",
+                                        "value": -0.1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfStatusValue": {
+                                    "statusID": "chara_status_sleeping",
+                                    "operand": "gte",
+                                    "value": 1.9
+                                }
+                            },
+                            "responses": [
+                                "kojo_default_event_disruptsleep_03"
+                            ]
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping",
+                                    "pain"
+                                ],
+                                "requireSelfStatusValue": {
+                                    "statusID": "chara_status_sleeping",
+                                    "operand": "gte",
+                                    "value": 0.9
+                                }
+                            },
+                            "responses": [
+                                "DisruptSleep_4"
+                            ],
+                            "results": [
+                                {
+                                    "modifyStatusValue": {
+                                        "statusID": "chara_status_sleeping",
+                                        "value": -0.2
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ],
+                                "targetTags": [
+                                    "sex",
+                                    "penetration"
+                                ],
+                                "requireSelfStatusValue": {
+                                    "statusID": "chara_status_sleeping",
+                                    "operand": "gte",
+                                    "value": 0.9
+                                }
+                            },
+                            "responses": [
+                                "DisruptSleep_5"
+                            ],
+                            "results": [
+                                {
+                                    "modifyStatusValue": {
+                                        "statusID": "chara_status_sleeping",
+                                        "value": -0.1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfStatusValue": {
+                                    "statusID": "chara_status_sleeping",
+                                    "operand": "gte",
+                                    "value": 0.9
+                                }
+                            },
+                            "responses": [
+                                "kojo_default_event_disruptsleep_06"
+                            ]
+                        },
+                        {
+                            "tags": [
+                                "nsfw"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping",
+                                    "pain"
+                                ]
+                            },
+                            "responses": [
+                                "DisruptSleep_7"
+                            ],
+                            "results": [
+                                {
+                                    "modifyStatusValue": {
+                                        "statusID": "chara_status_sleeping",
+                                        "value": -0.3
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_default_event_disruptsleep_08"
+                            ],
+                            "results": [
+                                {
+                                    "modifyStatusValue": {
+                                        "statusID": "chara_status_sleeping",
+                                        "value": -0.1
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "OnWakeUp_1": "<color=#373737>($self$) $self$因身体深处残留的异样触感而感到困惑</color>",
+                "OnWakeUp_2": "<color=#373737>($self$) $self$醒来时，发现身上的内衣已不知去向</color>",
+                "OnWakeUp_3": "<color=#373737>($self$) $self$醒来后，赫然发现肌肤上沾染着粘稠的精液</color>",
+                "OnNightAssaultSuccess_1": "尽管睡眠被打断，但$self$并没有对$target$的侵犯行为表露出任何反感……",
+                "OnNightAssaultSuccess_2": "<color=#373737>$self$在半梦半醒间，清晰地感觉到了身体传来的阵阵快感</color>",
+                "OnNightAssaultSuccess_3": "<color=#373737>注意到内衣被褪下，$self$却完全没有遮掩身体的打算，任由$target$摆布</color>",
+                "OnNightAssaultSuccess_4": "<color=#373737>$self$从睡梦中醒来，在自己身上发现了属于$target$的精液</color>",
+                "OnNightAssaultFailure_1": "($self$) 被惊醒的$self$出于本能反应，下意识地推开了$target$",
+                "OnNightAssaultFailure_2": "<color=#373737>身体深处传来的快感让$self$瞬间清醒，立刻意识到自己在睡梦中遭受了$target$的侵犯</color>",
+                "OnNightAssaultFailure_3": "<color=#373737>$self$慌乱地抓起床单，试图遮掩赤裸的身体</color>",
+                "OnNightAssaultFailure_4": "<color=#373737>终于注意到沾满全身的精液，$self$的脸色瞬间变得惨白</color>",
+                "DisruptSleep_1": "<color=#373737>($self$) 处于时间停止状态中的$self$对$epDescription$完全没有反应</color>",
+                "DisruptSleep_2": "<color=#373737>($self$) 熟睡中的$self$因$epDescription$带来的痛楚而皱起了眉头</color>",
+                "DisruptSleep_4": "<color=#373737>($self$) $epDescription$造成的痛楚干扰了$self$的梦境</color>",
+                "DisruptSleep_5": "<color=#373737>($self$) 睡梦中的$self$似乎隐约感觉到了$epDescription$的入侵，身体微微抽动</color>",
+                "DisruptSleep_7": "<color=#373737>($self$) 处于浅眠状态的$self$被$epDescription$带来的痛楚瞬间惊扰</color>",
+                "kojo_default_event_disruptsleep_03": "<color=#373737>熟睡中的$self$对$epDescription$没有任何反应</color>",
+                "kojo_default_event_disruptsleep_06": "<color=#373737>睡眠中的$self$对$epDescription$没有任何反应</color>",
+                "kojo_default_event_disruptsleep_08": "<color=#373737>浅眠中的$self$被$epDescription$的动静干扰到</color>"
+            },
+            "en-us": {
+                "OnWakeUp_1": "<color=#373737>($self$) $self$ felt bewildered by the strange sensation lingering deep within her body</color>",
+                "OnWakeUp_2": "<color=#373737>($self$) When $self$ woke up, she found that her underwear had been removed</color>",
+                "OnWakeUp_3": "<color=#373737>($self$) Upon waking, $self$ was shocked to discover sticky semen on her skin</color>",
+                "OnNightAssaultSuccess_1": "Although awakened, $self$ showed no resentment towards $target$'s intrusive behavior...",
+                "OnNightAssaultSuccess_2": "<color=#373737>$self$ clearly felt the waves of pleasure coursing through her body while half-asleep</color>",
+                "OnNightAssaultSuccess_3": "<color=#373737>Noticing her underwear had been taken off, $self$ made no attempt to cover herself, leaving her body at $target$'s mercy</color>",
+                "OnNightAssaultSuccess_4": "<color=#373737>$self$ woke from her sleep only to find $target$'s semen on her body</color>",
+                "OnNightAssaultFailure_1": "($self$) Startled awake, $self$ instinctively pushed $target$ away",
+                "OnNightAssaultFailure_2": "<color=#373737>The pleasure from deep within instantly sobered $self$, realizing she had been violated by $target$ while sleeping</color>",
+                "OnNightAssaultFailure_3": "<color=#373737>$self$ hurriedly grabbed the bedsheet, attempting to cover her naked body</color>",
+                "OnNightAssaultFailure_4": "<color=#373737>Finally noticing the semen covering her body, $self$'s face turned pale</color>",
+                "DisruptSleep_1": "<color=#373737>($self$) Frozen in time, $self$ showed absolutely no reaction to $epDescription$</color>",
+                "DisruptSleep_2": "<color=#373737>($self$) Fast asleep, $self$ frowned due to the pain caused by $epDescription$</color>",
+                "DisruptSleep_4": "<color=#373737>($self$) The pain caused by $epDescription$ disturbed $self$'s dream</color>",
+                "DisruptSleep_5": "<color=#373737>($self$) Even in sleep, $self$ seemed to vaguely sense the intrusion of $epDescription$, her body twitching slightly</color>",
+                "DisruptSleep_7": "<color=#373737>($self$) In a light sleep, $self$ was instantly disturbed by the pain from $epDescription$</color>",
+                "kojo_default_event_disruptsleep_03": "<color=#373737>Fast asleep, $self$ had no reaction to $epDescription$</color>",
+                "kojo_default_event_disruptsleep_06": "<color=#373737>Sleeping $self$ showed no reaction to $epDescription$</color>",
+                "kojo_default_event_disruptsleep_08": "<color=#373737>Lightly sleeping, $self$ was disturbed by the commotion of $epDescription$</color>"
+            }
+        }
+    }
+}

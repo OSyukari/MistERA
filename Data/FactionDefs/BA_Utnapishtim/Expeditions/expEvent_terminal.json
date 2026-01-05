@@ -94,6 +94,13 @@
             "en-us":
             {
 
+"exp_event_Utnapishtim_terminal":"Functioning Terminal",
+"exp_event_Utnapishtim_terminal_ongoing":"$names$ found a terminal that is still operational.",
+"exp_event_Utnapishtim_terminal_result_roomAccess":"$names$ successfully unlocked the terminal and opened a nearby sealed room.",
+"exp_event_Utnapishtim_terminal_result_hallAccess":"$names$ successfully unlocked the terminal and opened a large door blocking a nearby passage.",
+"exp_event_Utnapishtim_terminal_result_dataRecovered":"$names$ recovered useful data from the terminal.",
+"exp_event_Utnapishtim_terminal_result_alarmEnemy":"$names$'s incorrect operation triggered the terminal system alarm, attracting enemies.",
+"exp_event_Utnapishtim_terminal_result_overload":"$names$'s incorrect operation caused a terminal system crash, locking several nearby doors."
             }
         }
     }

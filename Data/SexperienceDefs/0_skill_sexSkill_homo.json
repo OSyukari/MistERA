@@ -111,6 +111,12 @@
                 "skill_sexSkill_homo_male": "BL",
                 "skill_sexSkill_homo_female": "百合",
                 "skill_sexSkill_homo_tooltip":"适用范围：与同性的身体接触"
+            },
+            "en-us":
+            {
+                "skill_sexSkill_homo_male": "Boys Love",
+                "skill_sexSkill_homo_female": "Girls Love",
+                "skill_sexSkill_homo_tooltip":"Applies to: all physical contact with same gender"
             }
         }
     }

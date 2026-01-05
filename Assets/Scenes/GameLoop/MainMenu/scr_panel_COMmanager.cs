@@ -310,6 +310,7 @@ public class scr_panel_COMmanager : scr_Menu
     
     List<scr_SelectableText> filters_sextouch;
 
+
     protected override void Awake()
     {
         base.Awake();
@@ -317,6 +318,7 @@ public class scr_panel_COMmanager : scr_Menu
         scr_System_CampaignManager.current.Observer_PlayerJob += OnPlayerJobChange;
         scr_System_CampaignManager.current.Observer_CurrentTarget += OnCurrentTargetChange;
         scr_System_CampaignManager.current.Observer_UpdateNotice += OnNotifyUpdate;
+        scr_System_CampaignManager.current.Observer_GameReload += OnSaveReload;
 
         currentTab = COMTabs.Interaction;
 
@@ -717,6 +719,31 @@ public class scr_panel_COMmanager : scr_Menu
     public scr_HoverableText undress_player_name, undress_target_name;
     public RectTransform player_UndressBox, player_UndressEquipList, target_UndressBox, target_UndressEquipList;
 
+
+    protected void OnSaveReload(bool value)
+    {
+        Debug.Log("OnSaveReload, clearing tracked jobs");
+
+        for (int i = joinableAPTracker.Count - 1; i >= 0; i--)
+        {
+            var validator = joinableAPTracker[i];
+            DestroyCOMButton(validator.text.optionID);
+        }
+        joinableAPTracker.Clear();
+
+        for (int i = trackedJobRefs.Count - 1; i >= 0; i--)
+        {
+            DestroyCOMButton(trackedJobRefs[i]);
+            if (furnitureRectList.ContainsKey(trackedJobRefs[i])) DestroyCOMBox(trackedJobRefs[i]);
+
+            foreach (KeyValuePair<string, Dictionary<int, bool>> kvp in forbidCOMRepeatList)
+            {
+                if (kvp.Value.ContainsKey(trackedJobRefs[i])) kvp.Value.Remove(trackedJobRefs[i]);
+            }
+        }
+        trackedJobRefs.Clear();
+    }
+
     private void UpdateJobCOM()
     {
         // if current thing not active then skip
@@ -1101,7 +1128,7 @@ public class scr_panel_COMmanager : scr_Menu
 
                 if (ap != null) comp.Initialize(this, new ButtonValidator_validateCOM(this, ap, comp, comRepeat, hidingOverride));
                 else comp.Initialize(this, new ButtonValidator_validateCOM(this, job.RefID, com.ID, comp, comRepeat, hidingOverride));
-                comp.linkText = com.ID;
+                comp.linkText = com.tooltipID;
                 comp.SetText(com.displayName);
 
                 comp.optionID = hash;
@@ -1145,7 +1172,7 @@ public class scr_panel_COMmanager : scr_Menu
             scr_SelectableText comp = r.GetComponent<scr_SelectableText>();
 
             comp.Initialize(this, new ButtonValidator_validateAP(this, ap, comp, comRepeat, hidingOverride));
-            comp.linkText = com.ID;
+            comp.linkText = com.tooltipID;
             comp.SetText(com.displayName);
 
             comp.optionID = hash;
@@ -1248,7 +1275,6 @@ public class scr_panel_COMmanager : scr_Menu
         {
             bool returnVal = true;
             bool display = true;
-            tooltip = "";
             
             package_cache = null;
 
@@ -1259,24 +1285,29 @@ public class scr_panel_COMmanager : scr_Menu
             }
             else if (!job.ExecutingPackages.Contains(cachedAP))
             {
-                tooltip += "AP no longer exist in job";
+                tooltip = "AP no longer exist in job";
                 text.gameObject.SetActive(false);
                 return false;
 
             }
 
-#if UNITY_EDITOR
-            tooltip += "AP " + package.DisplayName + " isSex[" + (package as ActionPackage_Sex != null) + "] isInteract [" + (package as ActionPackage_Interaction != null) + "]\n";
-#endif
-
-
-
-            if (parent.ValidateCOMByTags(com))
+            if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}\ntags: {String.Join(" ", package.ComTags)}\n";
+            else tooltip = "";
+            
+            if (!parent.ValidateCOMByTags(com))
+            {
+                returnVal = false;
+                tooltip += "package did not pass external validation";
+                //this.text.gameObject.SetActive(false);
+                display = false;
+            }
+            else
             {
                 if (!com.ValidateJob(job, out var msg))
                 {
                     returnVal = false;
-                    tooltip += msg + "]\n";
+                    tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid"))
+                        .Replace("$tooltips$", String.Join("\n", msg));
                 }
                 else
                 {
@@ -1312,40 +1343,31 @@ public class scr_panel_COMmanager : scr_Menu
                     }
 
 
-                //    tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
-                //text.SetText(package.DisplayName);
+                    //    tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
+                    //text.SetText(package.DisplayName);
 
                     if (!package.Validate())
                     {
                         returnVal = false;
-                        tooltip += "package did not pass internal validation\n";
-
-
+                        package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
+                        tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", package.tooltip));
                     }
                     else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
                     {
                         returnVal = false;
-                        tooltip += $"Cannot sleep right now.";
+                        tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid"))
+                            .Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_cannotSleep"));
                     }
                     else
                     {
-                        returnVal = returnVal && true;
-                        tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost [" + package.ResourceCost + "]\n";
-                        tooltip += package.GetSuccessRateString();
+                        tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
                     }
-#if UNITY_EDITOR
-                    package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
-                    tooltip += "\n" + String.Join("\n", package.tooltip);
-#endif
-                    if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
+
+                    if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef)
+                    {
+                        returnVal = false;
+                    }
                 }
-            }
-            else
-            {
-                returnVal = false;
-                tooltip += "package did not pass external validation, validateByTag[" + parent.ValidateCOMByTags(com) + "]\n";
-                //this.text.gameObject.SetActive(false);
-                display = false;
             }
 
             if (package.DoerRefs.Contains(0)) text.SetText(package.DisplayName);
@@ -1356,7 +1378,7 @@ public class scr_panel_COMmanager : scr_Menu
                 if (tempList.Count > 1)
                 {
                     text.SetText(LocalizeDictionary.QueryThenParse(package.JoinAPDescriptorKeyEX).Replace("$apName$", package.DisplayName).Replace("$target$", $"...({tempList.Count})"));
-                    tooltip += $"\nParticipating actors: {String.Join(" ", tempList)}";
+                    //tooltip += $"\nParticipating actors: {String.Join(" ", tempList)}";
                 }
                 else
                 {
@@ -1542,27 +1564,32 @@ public class scr_panel_COMmanager : scr_Menu
             //returnVal = returnVal && (com != null) && (com.IsActorValid(0, scr_System_CampaignManager.current.CurrentTarget));
             bool display = true;
             //if (com.comTags.Contains("sex") && )
-            tooltip = "";
 
             if (package == null)
             {
                 Debug.LogError("COMVALIDATOR ISBUTTON VALID ERROR PACKAGE NULL");
                 return false;
             }
-#if UNITY_EDITOR
-            tooltip += $"COM {package.DisplayName} isSex[{(package as ActionPackage_Sex != null)}] isInteract [{(package as ActionPackage_Interaction != null)}], parentJob {this.job.DisplayName}\n";
-#endif
 
-            if (parent.ValidateCOMByTags(com))
+            if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}{(this.jobRefID != this.job.RefID ? " -> "+this.jobRefID : "")}\ntags: {String.Join(" ", package.ComTags)}\n";
+            else tooltip = "";
+
+            if (!parent.ValidateCOMByTags(com))
             {
-                if (com.ValidateJob(job, out var msg))
+                returnVal = false;
+                tooltip += "package did not pass external validation";
+                //this.text.gameObject.SetActive(false);
+                display = false;
+            }
+            else
+            {
+                if (!com.ValidateJob(job, out var msg))
                 {
-                    /*
-if(package is ActionPackage_ProductionOrder)
-{
-    Debug.LogError("COMMANAGER package typecheck ActionPackage_ProductionOrder");
-}
-else */
+                    returnVal = false;
+                    tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", msg));
+                }
+                else
+                {
                     if (package is ActionPackage_Sex)
                     {
                         //Debug.Log("package apsex");
@@ -1570,10 +1597,6 @@ else */
                         else
                         {
                             package.ResetRequest(new List<int>() { scr_System_CampaignManager.current.Player.RefID }, scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0);
-                            /*
-                            (package as ActionPackage_Sex).ReInitializeCOM(job, com, new List<int>() { scr_System_CampaignManager.current.Player.RefID },
-                            scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0, false);
-                            */
                         }
                     }
                     else if (package is ActionPackage_Interaction || package is ActionPackage_ProductionOrder)
@@ -1593,14 +1616,7 @@ else */
 
                         }
                         if (package is ActionPackage_Interaction && job is Job_CharaCOM && !package.ComTags.Contains("endSex") && !package.ComTags.Contains("initSex")) forbidInjectTarget = true;
-                        
-#if UNITY_EDITOR
-                        if (false)
-                        {
-                            if (cachedDoers.Count > 0) Debug.LogError($"COMMANAGER resetCOM cachedDoers [{String.Join("|", cachedDoers)}]");
-                            if (cachedReceivers.Count > 0) Debug.LogError($"COMMANAGER resetCOM cachedReceivers [{String.Join("|", cachedReceivers)}]");
-                        }
-#endif
+
                         var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
                         if (!forbidInjectTarget && currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
                         if (!forbidInjectTarget) targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
@@ -1620,14 +1636,12 @@ else */
                         Debug.LogError("COMMANAGER package typecheck failed");
                     }
 
-                    tooltip += $"{(package.targetCOM == null?"null":String.Join("|", package.targetCOM.comTags))}\n";
-                    tooltip += "doer [" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
-                    //text.SetText(package.DisplayName);
 
                     if (!package.Validate())
                     {
                         returnVal = false;
-                        tooltip += "package did not pass internal validation\n";
+                        package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
+                        tooltip += package.GetTooltips( LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", package.tooltip));
                     }/*
                     else if (job is Job_Furniture && job.ExecutingPackages.FindAll(x=>!x.isTemporaryAP).Count >= 0)
                     {
@@ -1637,33 +1651,17 @@ else */
                     else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
                     {
                         returnVal = false;
-                        tooltip += $"Cannot sleep right now.";
+                        tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid"))
+                            .Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_cannotSleep"));
                     }
                     else
                     {
                         returnVal = returnVal && true;
-                        tooltip += "Time cost [" + package.Duration + "] minutes, Resources cost [" + package.ResourceCost + "]\n";
-                        tooltip += package.GetSuccessRateString();
+                        tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
                     }
-                    package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
 
-#if UNITY_EDITOR
-                    tooltip += "\n" + String.Join("\n", package.tooltip);
-#endif
                     if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
                 }
-                else
-                {
-                    returnVal = false;
-                    tooltip += msg + "\n";
-                }
-            }
-            else
-            {
-                returnVal = false;
-                tooltip += "package did not pass external validation, validateByTag["+parent.ValidateCOMByTags(com)+"]\n";
-                //this.text.gameObject.SetActive(false);
-                display = display && false;
             }
 
             text.SetText(package.DisplayName);
@@ -1682,12 +1680,6 @@ else */
 
             }
 
-            tooltip += $"\nJobRef {jobRefID}";
-
-            foreach (var ep in package.ListEP)
-            {
-                tooltip += $"\nEP:{(ep.Doer == null ? "null" : ep.Doer.FirstName)}->{(ep.Receiver == null ? "null" : ep.Receiver.FirstName)}";
-            }
             if (returnVal) display = display && true;
             else if (!(com.HideWhenInvalid || hidingOverride)) display = display && true;
             else if (com.comTags.Contains("player")) display = display && true;

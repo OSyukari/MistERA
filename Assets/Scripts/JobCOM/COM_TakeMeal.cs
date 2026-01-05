@@ -65,7 +65,7 @@ public class COM_TakeMeal : COM
         return Replace(baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting));
     }
 
-    protected string Replace(string s)
+    public override string Replace(string s)
     {
         if (baseItem != null) return s.Replace("$name$", baseItem.DisplayName);
         else

@@ -88,6 +88,7 @@ public class Manageable_Party : I_IsJobGiver
     public bool AllowPassNight = true;
     public int RecurringCooldown = 0;
     public bool IsRecurring = false;
+    public bool PrioritizeResting = true;
     public int StartHour = 8;
     [JsonIgnore] public int FinalStartHour
     {

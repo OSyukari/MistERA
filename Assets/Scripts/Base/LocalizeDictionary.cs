@@ -66,9 +66,21 @@ public class Dictionary_Index : I_IndexMergeable
         
         foreach (var entry in l.Entries)
         {
-            //if (!this.Entries.ContainsKey(entry.Key)) this.Entries.Add(entry.Key, new SortedDictionary<string, string>());
-            var tempdic = this.Entries[entry.Key].Concat(entry.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            this.Entries[entry.Key] = new SortedDictionary<string, string>(tempdic);
+            if (!this.Entries.ContainsKey(entry.Key)) this.Entries.Add(entry.Key, new SortedDictionary<string, string>());
+            var dict = this.Entries[entry.Key];
+            foreach(var value in entry.Value)
+            {
+                if (dict.ContainsKey(value.Key))
+                {
+                    Debug.LogError($"Error Merging Dictionary, Collision on ID {value.Key} in Dict {entry.Key}");
+                }
+                else
+                {
+                    dict.Add(value.Key, value.Value);
+                }
+            }
+           // var tempdic = this.Entries[entry.Key].Concat(entry.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            //this.Entries[entry.Key] = new SortedDictionary<string, string>(tempdic);
         }
         
     }

@@ -77,6 +77,10 @@
             "en-us":
             {
 
+"firearm_handgun":"Handgun",
+"firearm_handgun_tooltip":"Ammo and reload system is not yet implemented.",
+"firearm_execution_headshot":"Headshot",
+"firearm_attack_standardbullet":"Fire (standard ammo)"
 
             }
         }

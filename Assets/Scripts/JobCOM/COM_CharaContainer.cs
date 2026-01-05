@@ -30,7 +30,6 @@ public class COM_Character_Insert : COM
 }
 
 
-[System.Serializable]
 public class COM_Character_Remove : COM
 {
     public string parentCOMID;
@@ -75,6 +74,8 @@ public class COM_Character_Remove : COM
         // entry results class still WIP
         foreach (var i in description_begin.Entries) i.AppendToText("_REMOVE");
         foreach (var i in description_after.Entries) i.AppendToText("_REMOVE");
+
+        this.displayName += "_REMOVE";
 
     }
 

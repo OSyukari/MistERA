@@ -9,9 +9,13 @@
                         {
                             "_comment:": "($self$) 申请成为情侣 口上文",
                             "responses": [
-"$self$手指绞着衣角，低着头不敢看$target$的眼睛。\"那个……一直以来受了你很多照顾……我……可以一直待在你身边吗？\"", "$self$深吸了一口气，声音细若蚊蝇：\"我对$target$……不仅仅是朋友那种喜欢……\"", "$self$递出一封信后转身就跑，信封上画着一颗笨拙的小爱心。", "$self$脸红得像熟透的苹果，支支吾吾半天说不出一句完整的话。\"就是……那个……我想和你……交往……\"",
-
-"$self$突然抓住了$target$的手，眼神坚定而热烈。\"别装傻了，你知道我喜欢你的，对吧？我们在一起吧！\"", "$self$双手叉腰，把脸凑到$target$面前。\"喂，$target$，做我的男朋友怎么样？我保证不会让你无聊的。\"", "$self$从背后抱住$target$，脸颊贴在对方的背上。\"我不想再只做朋友了……我想做你最特别的那个人。\""
+                                "relationship_couple_propose_1",
+                                "relationship_couple_propose_2",
+                                "relationship_couple_propose_3",
+                                "relationship_couple_propose_4",
+                                "relationship_couple_propose_5",
+                                "relationship_couple_propose_6",
+                                "relationship_couple_propose_7"
                             ]
                         }
                     ]
@@ -25,9 +29,12 @@
                         {
                             "_comment:": "($self$) 成为情侣 口上文",
                             "responses": [
-"$self$看着两人的手紧紧牵在一起，嘴角止不住地上扬。\"感觉像在做梦一样……以后请多指教啦，亲爱的。\"", "$self$轻轻靠在$target$的肩膀上，闭上了眼睛。\"只要在你身边，就觉得什么都不怕了。\"", "$self$兴奋地拿出手机，把两人的合照设成了壁纸。\"这可是官方认证哦！不许反悔！\"", "$self$有些害羞地改了称呼：\"那……以后我就叫你……老公？\"",
-
-"$self$认真地凝视着$target$，眼神温柔得仿佛能滴出水来。\"谢谢你选择了我……我会努力成为配得上你的人。\"", "$self$紧紧拥抱着$target$，仿佛要把对方揉进自己的身体里。\"终于抓到你了……我绝对不会放手的。\""
+                                "relationship_couple_set_1",
+                                "relationship_couple_set_2",
+                                "relationship_couple_set_3",
+                                "relationship_couple_set_4",
+                                "relationship_couple_set_5",
+                                "relationship_couple_set_6"
                             ]
                         }
                     ]
@@ -41,9 +48,12 @@
                         {
                             "_comment:": "($self$) 拒绝成为情侣 口上文",
                             "responses": [
-"$self$有些为难地避开了视线，轻轻咬着嘴唇。\"抱歉……我现在还没有做好开始一段关系的准备。\"", "$self$苦笑着摇了摇头，向后退了一步。\"如果是开玩笑的话，这个玩笑有点过头了哦。\"", "$self$叹了口气，眼神中带着一丝歉意。\"我觉得……我们还是维持现在的关系比较好。对不起。\"",
-
-"$self$面无表情地看着$target$，语气没有任何起伏。\"我没那种想法，希望你以后不要再提了。\"", "$self$皱起眉头，似乎对这个话题感到不适。\"我不觉得我们合适，别浪费时间了。\"", "$self$毫不留情地抽回了自己的手，转身离开。\"这种事，你想都不要想。\""
+                                "relationship_couple_refuse_1",
+                                "relationship_couple_refuse_2",
+                                "relationship_couple_refuse_3",
+                                "relationship_couple_refuse_4",
+                                "relationship_couple_refuse_5",
+                                "relationship_couple_refuse_6"
                             ]
                         }
                     ]
@@ -57,9 +67,12 @@
                         {
                             "_comment:": "($self$) 被拒绝成为情侣 口上文",
                             "responses": [
-"$self$愣了一下，随即勉强挤出一个比哭还难看的笑容。\"啊……是这样啊……哈哈，我就随口一问，别当真。\"", "$self$眼里的光芒瞬间黯淡下去，低着头看着自己的脚尖。\"对不起……给你造成困扰了……\"", "$self$迅速转过身去，声音带着明显的颤抖。\"没关系！真的没关系……我要先走了。\"",
-
-"$self$像是被抽走了所有力气，呆呆地站在原地。\"为什么……明明我那么努力了……\"", "$self$眼泪夺眶而出，捂着脸跑开了。\"笨蛋！$target$是个大笨蛋！\"", "$self$自嘲地笑了笑，眼角却滑过一滴泪珠。\"也是呢……我这种人……怎么可能有人喜欢。\""
+                                "relationship_couple_refused_1",
+                                "relationship_couple_refused_2",
+                                "relationship_couple_refused_3",
+                                "relationship_couple_refused_4",
+                                "relationship_couple_refused_5",
+                                "relationship_couple_refused_6"
                             ]
                         }
                     ]
@@ -73,9 +86,12 @@
                         {
                             "_comment:": "($self$) 情侣关系破裂 口上文",
                             "responses": [
-"$self$把所有合照都摔在地上，指着门口怒吼。\"滚！我再也不想看到你！\"", "$self$冷冷地盯着$target$，眼神陌生得可怕。\"我们结束了。从今以后，你是你，我是我。\"", "$self$摘下戒指扔在桌上，发出一声清脆的声响。\"受够了……这一切都让我感到恶心。\"",
-
-"$self$疲惫地闭上眼睛，声音沙哑。\"太累了……我们放过彼此吧。\"", "$self$开始默默地收拾行李，动作机械而麻木。\"已经没有什么好说的了。\"", "$self$看着$target$，就像看着一团空气。\"随便你吧，你想怎么样都行，只要别来烦我。\""
+                                "relationship_couple_break_1",
+                                "relationship_couple_break_2",
+                                "relationship_couple_break_3",
+                                "relationship_couple_break_4",
+                                "relationship_couple_break_5",
+                                "relationship_couple_break_6"
                             ]
                         }
                     ]
@@ -85,8 +101,72 @@
     },
     "Dictionary": {
         "Entries": {
-            "zh-cn": {},
-            "en-us": {}
+            "zh-cn": {
+                "relationship_couple_propose_1": "$self$手指绞着衣角，低着头不敢看$target$的眼睛。\"那个……一直以来受了你很多照顾……我……可以一直待在你身边吗？\"",
+                "relationship_couple_propose_2": "$self$深吸了一口气，声音细若蚊蝇：\"我对$target$……不仅仅是朋友那种喜欢……\"",
+                "relationship_couple_propose_3": "$self$递出一封信后转身就跑，信封上画着一颗笨拙的小爱心。",
+                "relationship_couple_propose_4": "$self$脸红得像熟透的苹果，支支吾吾半天说不出一句完整的话。\"就是……那个……我想和你……交往……\"",
+                "relationship_couple_propose_5": "$self$突然抓住了$target$的手，眼神坚定而热烈。\"别装傻了，你知道我喜欢你的，对吧？我们在一起吧！\"",
+                "relationship_couple_propose_6": "$self$双手叉腰，把脸凑到$target$面前。\"喂，$target$，做我的男朋友怎么样？我保证不会让你无聊的。\"",
+                "relationship_couple_propose_7": "$self$从背后抱住$target$，脸颊贴在对方的背上。\"我不想再只做朋友了……我想做你最特别的那个人。\"",
+                "relationship_couple_set_1": "$self$看着两人的手紧紧牵在一起，嘴角止不住地上扬。\"感觉像在做梦一样……以后请多指教啦，亲爱的。\"",
+                "relationship_couple_set_2": "$self$轻轻靠在$target$的肩膀上，闭上了眼睛。\"只要在你身边，就觉得什么都不怕了。\"",
+                "relationship_couple_set_3": "$self$兴奋地拿出手机，把两人的合照设成了壁纸。\"这可是官方认证哦！不许反悔！\"",
+                "relationship_couple_set_4": "$self$有些害羞地改了称呼：\"那……以后我就叫你……老公？\"",
+                "relationship_couple_set_5": "$self$认真地凝视着$target$，眼神温柔得仿佛能滴出水来。\"谢谢你选择了我……我会努力成为配得上你的人。\"",
+                "relationship_couple_set_6": "$self$紧紧拥抱着$target$，仿佛要把对方揉进自己的身体里。\"终于抓到你了……我绝对不会放手的。\"",
+                "relationship_couple_refuse_1": "$self$有些为难地避开了视线，轻轻咬着嘴唇。\"抱歉……我现在还没有做好开始一段关系的准备。\"",
+                "relationship_couple_refuse_2": "$self$苦笑着摇了摇头，向后退了一步。\"如果是开玩笑的话，这个玩笑有点过头了哦。\"",
+                "relationship_couple_refuse_3": "$self$叹了口气，眼神中带着一丝歉意。\"我觉得……我们还是维持现在的关系比较好。对不起。\"",
+                "relationship_couple_refuse_4": "$self$面无表情地看着$target$，语气没有任何起伏。\"我没那种想法，希望你以后不要再提了。\"",
+                "relationship_couple_refuse_5": "$self$皱起眉头，似乎对这个话题感到不适。\"我不觉得我们合适，别浪费时间了。\"",
+                "relationship_couple_refuse_6": "$self$毫不留情地抽回了自己的手，转身离开。\"这种事，你想都不要想。\"",
+                "relationship_couple_refused_1": "$self$愣了一下，随即勉强挤出一个比哭还难看的笑容。\"啊……是这样啊……哈哈，我就随口一问，别当真。\"",
+                "relationship_couple_refused_2": "$self$眼里的光芒瞬间黯淡下去，低着头看着自己的脚尖。\"对不起……给你造成困扰了……\"",
+                "relationship_couple_refused_3": "$self$迅速转过身去，声音带着明显的颤抖。\"没关系！真的没关系……我要先走了。\"",
+                "relationship_couple_refused_4": "$self$像是被抽走了所有力气，呆呆地站在原地。\"为什么……明明我那么努力了……\"",
+                "relationship_couple_refused_5": "$self$眼泪夺眶而出，捂着脸跑开了。\"笨蛋！$target$是个大笨蛋！\"",
+                "relationship_couple_refused_6": "$self$自嘲地笑了笑，眼角却滑过一滴泪珠。\"也是呢……我这种人……怎么可能有人喜欢。\"",
+                "relationship_couple_break_1": "$self$把所有合照都摔在地上，指着门口怒吼。\"滚！我再也不想看到你！\"",
+                "relationship_couple_break_2": "$self$冷冷地盯着$target$，眼神陌生得可怕。\"我们结束了。从今以后，你是你，我是我。\"",
+                "relationship_couple_break_3": "$self$摘下戒指扔在桌上，发出一声清脆的声响。\"受够了……这一切都让我感到恶心。\"",
+                "relationship_couple_break_4": "$self$疲惫地闭上眼睛，声音沙哑。\"太累了……我们放过彼此吧。\"",
+                "relationship_couple_break_5": "$self$开始默默地收拾行李，动作机械而麻木。\"已经没有什么好说的了。\"",
+                "relationship_couple_break_6": "$self$看着$target$，就像看着一团空气。\"随便你吧，你想怎么样都行，只要别来烦我。\""
+            },
+            "en-us": {
+                "relationship_couple_propose_1": "$self$ twists the hem of her shirt, head lowered, avoiding $target$'s eyes. \"Um... you've taken such good care of me all this time... Can I... stay by your side forever?\"",
+                "relationship_couple_propose_2": "$self$ takes a deep breath, her voice barely a whisper: \"My feelings for $target$... are more than just friendship...\"",
+                "relationship_couple_propose_3": "$self$ hands over a letter and immediately runs away. A clumsy little heart is drawn on the envelope.",
+                "relationship_couple_propose_4": "$self$'s face turns red as a ripe apple, stumbling over her words. \"It's just... um... I want to... go out with you...\"",
+                "relationship_couple_propose_5": "$self$ suddenly grabs $target$'s hand, her gaze firm and passionate. \"Stop playing dumb. You know I like you, right? Let's be together!\"",
+                "relationship_couple_propose_6": "$self$ puts her hands on her hips and leans in close to $target$. \"Hey, $target$, how about being my boyfriend? I promise you won't be bored.\"",
+                "relationship_couple_propose_7": "$self$ hugs $target$ from behind, resting her cheek against his back. \"I don't want to be just friends anymore... I want to be the most special person to you.\"",
+                "relationship_couple_set_1": "$self$ looks at their tightly interlaced hands, the corners of her mouth twitching upwards. \"It feels like a dream... Please take care of me from now on, darling.\"",
+                "relationship_couple_set_2": "$self$ leans gently on $target$'s shoulder and closes her eyes. \"As long as I'm by your side, I feel like I have nothing to fear.\"",
+                "relationship_couple_set_3": "$self$ excitedly pulls out her phone and sets their photo as the wallpaper. \"This makes it official! No take-backs!\"",
+                "relationship_couple_set_4": "$self$ shyly changes how she addresses him: \"So... can I call you... Hubby from now on?\"",
+                "relationship_couple_set_5": "$self$ stares earnestly at $target$, her eyes so gentle they seem to melt. \"Thank you for choosing me... I'll work hard to be someone worthy of you.\"",
+                "relationship_couple_set_6": "$self$ hugs $target$ tightly, as if trying to merge into his body. \"I finally caught you... and I'm never letting go.\"",
+                "relationship_couple_refuse_1": "$self$ avoids eye contact, looking troubled, and gently bites her lip. \"Sorry... I'm not ready to start a relationship right now.\"",
+                "relationship_couple_refuse_2": "$self$ shakes her head with a bitter smile, taking a step back. \"If this is a joke, it's going a bit too far.\"",
+                "relationship_couple_refuse_3": "$self$ sighs, a hint of apology in her eyes. \"I think... it's better if we stay as we are. I'm sorry.\"",
+                "relationship_couple_refuse_4": "$self$ looks at $target$ expressionlessly, her tone flat. \"I don't see us that way, and I hope you won't bring it up again.\"",
+                "relationship_couple_refuse_5": "$self$ frowns, seeming uncomfortable with the topic. \"I don't think we're a good match. Let's not waste our time.\"",
+                "relationship_couple_refuse_6": "$self$ ruthlessly pulls her hand away and turns to leave. \"Don't even think about it.\"",
+                "relationship_couple_refused_1": "$self$ freezes for a moment, then forces a smile that looks worse than crying. \"Ah... is that so... Haha, I was just asking, don't take it seriously.\"",
+                "relationship_couple_refused_2": "$self$ eyes instantly lose their light as she looks down at her toes. \"I'm sorry... for causing you trouble...\"",
+                "relationship_couple_refused_3": "$self$ quickly turns around, her voice clearly trembling. \"It's okay! Really, it's okay... I have to go now.\"",
+                "relationship_couple_refused_4": "$self$ stands there dazed, as if all her strength has been drained away. \"Why... when I tried so hard...\"",
+                "relationship_couple_refused_5": "$self$ bursts into tears, covering her face as she runs away. \"Idiot! $target$ is a big idiot!\"",
+                "relationship_couple_refused_6": "$self$ laughs self-deprecatingly, a tear sliding from the corner of her eye. \"I guess so... How could anyone like someone like me.\"",
+                "relationship_couple_break_1": "$self$ throws all their photos on the ground and points at the door, screaming. \"Get out! I never want to see you again!\"",
+                "relationship_couple_break_2": "$self$ stares coldly at $target$, her eyes terrifyingly unfamiliar. \"We are done. From now on, you are you, and I am me.\"",
+                "relationship_couple_break_3": "$self$ takes off the ring and throws it on the table with a crisp sound. \"I've had enough... This all makes me sick.\"",
+                "relationship_couple_break_4": "$self$ closes her eyes wearily, her voice hoarse. \"I'm so tired... let's just let each other go.\"",
+                "relationship_couple_break_5": "$self$ begins to pack her luggage silently, her movements mechanical and numb. \"There's nothing left to say.\"",
+                "relationship_couple_break_6": "$self$ looks at $target$ as if looking at thin air. \"Whatever. Do what you want, just don't bother me.\""
+            }
         }
     }
 }

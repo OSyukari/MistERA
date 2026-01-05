@@ -388,7 +388,9 @@ public abstract class ActionPackage
 
     public virtual string DescriptionText()
     {
-        return doer[0].FirstName + this.job.GetJobDescription(doer[0].RefID);
+        return LocalizeDictionary.QueryThenParse("comDescription_ongoingAP")
+            .Replace("$self$", doer[0].FirstName)
+            .Replace("$comdesc$", this.job.GetJobDescription(doer[0].RefID));
     }
     public string DescriptionText(int charaRef, bool withRoomName = false)
     {
@@ -600,6 +602,7 @@ public abstract class ActionPackage
     public bool repeated = false;
     public virtual void Repeat()
     {
+        RemakePackages();
         this.duration = this.targetCOM.TimeScale;
         this.LoggedBegin = false;
         this.LoggedOngoing = false;
@@ -761,34 +764,39 @@ public abstract class ActionPackage
 
         if (targetCOM == null)
         {
-            tooltip.Add("ActionPackage preEvaluation: targetCOM null");
+            tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requireCOM"));
             isValid = false;
+            return isValid;
         }
 
         if (doer == null || doer.Count < 1)
         {
-            tooltip.Add("ActionPackage preEvaluation : no doer detected in package");
+            tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requireDoer"));
             isValid = false;
+            return isValid;
         }
 
         if (job == null)
         {
-            tooltip.Add("ActionPackage preEvaluation: job is null");
+            tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requirejob"));
             isValid = false;
+            return isValid;
         }
-        else
+        else if (!targetCOM.ValidateJob(job, out var msg))
         {
-            if (!targetCOM.ValidateJob(job, out var msg))
-            {
-                tooltip.Add("ActionPackage preEvaluation: job is invalid, "+ msg);
-                isValid = false;
-            }
-            else if (job.ParentRoom != null && !targetCOM.ValidateRoom(job.ParentRoom))
-            {
-                isValid = false;
-                tooltip.Add("missing required item in room");
-            }
+            tooltip.Add("ActionPackage preEvaluation: job is invalid, "+ msg);
+            isValid = false;
+            return isValid;
         }
+        else if (job.ParentRoom != null && !targetCOM.ValidateRoom(job.ParentRoom, out var tooltips))
+        {
+            tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requireRoom")
+                .Replace("$room$", job.ParentRoom.DisplayName)
+                .Replace("$conditions$", tooltips));
+            isValid = false;
+            return isValid;
+        }
+        
 
         /*
         if (!job.canAcceptActor(actorRefsList))
@@ -796,29 +804,20 @@ public abstract class ActionPackage
             tooltip.Add("ActionPackage preEvaluation: invalid actors for the current job.");
             isValid = false;
         }*/
-        if (job.actorRefID == null || job.actorRefID.Count < 1)
-        {
-            
-        }
 
-        if (actorRefs.Count < 1)
+        foreach (var i in Actors)
         {
-            tooltip.Add("ActionPackage preEvaluation: no actor in actorRefList");
-            isValid = false;
-        }
-        else
-        {
-            foreach (int i in actorRefs)
+            var room = scr_System_CampaignManager.current.GetCharaRoomInstance(i.RefID);
+            if (room != job.ParentRoom)
             {
-                if (scr_System_CampaignManager.current.GetCharaRoomInstance(actorRefs[0]).RefID != RoomKey)
-                {
-                    tooltip.Add("ActionPackage preEvaluation: actorRef[" + i + "] is not in same room as others actors");
-                    isValid = false;
-                }
+                tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requireSameRoom")
+                                .Replace("$name$", i.FirstName)
+                                .Replace("$location$", room.DisplayName)
+                                .Replace("$room$", job.ParentRoom.DisplayName));
+                isValid = false;
             }
         }
-
-
+        
         /*
         public void RefreshValidCOMs() foreach (COM com in allusableCOMs) if (com.ValidateRoom(ParentRoom) && com.ValidateJob(this) && CanCOMAcceptMoreActor(com)) validCOMs.Add(com);
         */
@@ -832,7 +831,7 @@ public abstract class ActionPackage
     { get
         {
 
-            if (validVariant < 0) return "ValidVarant < 0";
+            if (validVariant < 0) return "-";
             else
             {
                 List<string> s = new List<string>();
@@ -841,7 +840,7 @@ public abstract class ActionPackage
                 if (targetCOM.variants[validVariant].requirements.requirement.req_Doers.cost_ST != 0) s.Add("ST" + (- targetCOM.variants[validVariant].requirements.requirement.req_Doers.cost_ST).ToString("+0;-#"));
 
                 if (s.Count > 0) return String.Join(" ", s);
-                else return "none";
+                else return "-";
             }
         }
     } 
@@ -850,7 +849,7 @@ public abstract class ActionPackage
     {
         //Debug.Log("ActionPackage Base Evaluate on "+DisplayName);
 
-        validVariant = targetCOM.GetValidVariant(ref tooltip, this.doer, this.receiver);
+        validVariant = targetCOM.GetValidVariant(ref this.tooltip, this.doer, this.receiver);
 
         if (validVariant >= 0)
         {
@@ -859,6 +858,7 @@ public abstract class ActionPackage
         else
         {
             isValid = false;
+            //this.tooltip.Add("no valid variant");
         }
 
         //extraCOMTags = new List<string>();
@@ -977,6 +977,26 @@ public abstract class ActionPackage
                         "negative response chance[" + package.AttitudeRate_Neg + "]\n";*/
     }
 
+    public string GetTooltips(string s)
+    {
+        var names_doer = new List<string>();
+        var names_receiver = new List<string>();
+        foreach (var c in doer) names_doer.Add(c.FirstName);
+        foreach (var c in receiver) names_receiver.Add(c.FirstName);
+
+        s = s.Replace("$acceptance_final$", $"{requestRate * responseRate / 100}%")
+            .Replace("$time$", $"{Duration}")
+            .Replace("$costs$", $"{ResourceCost}")
+            .Replace("$difficulty$", $"{targetCOM.baseD20Check}");
+
+        if (names_doer.Count < 1) s = s.Replace("$doer$", "-").Replace("$proposal$", "-");
+        else s = s.Replace("$proposal$", $"{requestRate}%").Replace("$doer$", String.Join(" ", names_doer));
+
+        if (names_receiver.Count < 1) s = s.Replace("$receiver$", "-").Replace("$acceptance$", "-");
+        else s = s.Replace("$receiver$", String.Join(" ", names_receiver)).Replace("$acceptance$", $"{responseRate}%");
+
+        return s;
+    }
 
 
 
@@ -1010,6 +1030,7 @@ public abstract class ActionPackage
     protected void ExecutePackage(MessageCollect m = null)
     {
         this.timestopTick = scr_System_Time.current.TimeStopStrict;
+
         PreExecution();
         // evaluate acceptance
 
@@ -1065,7 +1086,6 @@ public abstract class ActionPackage
         this.masterRef = masterRef;
 
         actorRefs = null;
-        //actorRefs
     }
     [JsonProperty] public bool requestAccepted = false;
     //Dictionary<int, Dictionary<string, int>> result_stats;
@@ -1076,6 +1096,11 @@ public abstract class ActionPackage
     {
         //result_stats = new Dictionary<int, Dictionary<string, int>>();
         //result_experiences = new Dictionary<int, Dictionary<string, int>>();
+        foreach(var ep in packages)
+        {
+            ep.disabled = true;
+        }
+
         packages.Clear();
         if (targetCOM.requirements.TreatReceiverAsDoer)
         {
@@ -1100,23 +1125,24 @@ public abstract class ActionPackage
             }
 
         }
-        else if (targetCOM is COM_Character_Remove)
+        else if (targetCOM is COM_Character_Remove || targetCOM.isSpecialInteraction)
         {   // match every doer and receiver
             List<Character_Trainable> temp_doers = new List<Character_Trainable>(doer);
             List<Character_Trainable> temp_receivers = new List<Character_Trainable>(receiver);
 
             Character_Trainable temp_doer, temp_receiver;
 
+            var player = this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
+
             while (temp_doers.Count > 0 && temp_receivers.Count > 0)
             {
-                temp_doer = Utility.GetRandomElement(temp_doers);
+                temp_doer = player != null ? player : Utility.GetRandomElement(temp_doers);
                 //c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
 
                 temp_receiver = Utility.GetRandomElement(temp_receivers);
                 temp_receivers.Remove(temp_receiver);
 
                 packages.Add(new EvaluationPackage(temp_doer, temp_receiver, this.targetCOM, this));
-
             }
         }
         else
@@ -1323,7 +1349,7 @@ public abstract class ActionPackage
 
                 foreach (var ep in packages)
                 {
-                    if (ep.Response < Memory_Response.Accept)
+                    if (!repeated && ep.Response < Memory_Response.Accept)
                     {
                         success = false;
                         break;
@@ -1486,54 +1512,17 @@ public abstract class ActionPackage
                         actor.ChangeCurrentJob(existingJob);// existingJob.AddActor(actor);
                     }
                 }
-                /*
-                var doerCurrentJob = evp.Doer.CurrentJob;
-                var receiverCurrentJob = evp.Receiver == null ? null : evp.Receiver.CurrentJob;
-
-                Job_Sex_Group existingJob = doerCurrentJob is Job_Sex_Group ? doerCurrentJob as Job_Sex_Group : receiverCurrentJob is Job_Sex_Group ? receiverCurrentJob as Job_Sex_Group : null;
-
-                if (evp.Doer.RefID == 0)
-                {   // player will not have its currentjob registered so the previous filters wont work at all
-                    //Debug.LogError("initsex hasplayer, special handling");
-                    var allchara = scr_System_CampaignManager.current.CharaInCurrentRoom;
-                    var allPossibleJobs = new List<Job_Sex_Group>();
-                    foreach (var i in allchara)
-                    {
-                        if (i != 0)
-                        {
-                            var targetJob = scr_System_CampaignManager.current.FindInstanceByID(i).CurrentJob;
-                            if (targetJob is Job_Sex_Group) allPossibleJobs.Add(targetJob as Job_Sex_Group);
-                        }
-                    }
-                    if (allPossibleJobs.Count > 0) foreach (var i in p.actorRefs) allPossibleJobs[0].AddActor(i);
-                    else
-                    {
-                        Job_Sex_Group j = new Job_Sex_Group(p.actorRefs, scr_System_CampaignManager.current.Map.FindRoomByChara(evp.Doer.RefID), true);
-                        scr_System_CampaignManager.current.Register(j);
-                    }
-                }
-                else if (existingJob != null)
-                {
-                    foreach (var i in p.actorRefs) existingJob.AddActor(i);
-                }
-                else
-                {   // none is in sex, create new
-                    Job_Sex_Group j = new Job_Sex_Group(p.actorRefs, scr_System_CampaignManager.current.Map.FindRoomByChara(evp.Doer.RefID), true);
-                    scr_System_CampaignManager.current.Register(j);
-                }
-                */
             }
             else if (targetCOM.comTags.Contains("endSex"))
             {
                 foreach (var chara in actorRefs)
                 {
                     var actorJob = scr_System_CampaignManager.current.FindInstanceByID(chara).CurrentJob as Job_Sex_Group;
-                    if (actorJob != null && actorJob != job) actorJob.EndJob();
+                    if (actorJob != null && actorJob != job) actorJob.EndJob(this.targetCOM.ID, this.Actors);
                 }
                 var existingJob = job as Job_Sex_Group;
-                if (existingJob != null) existingJob.EndJob();
-
-
+                if (existingJob != null) existingJob.EndJob(this.targetCOM.ID, this.Actors);
+                this.LoggedKojo = true;
                 /*
                 var doerCurrentJob = evp.Doer.CurrentJob;
                 var receiverCurrentJob = evp.Receiver == null ? null : evp.Receiver.CurrentJob;
@@ -1652,6 +1641,16 @@ public abstract class ActionPackage
 
     protected List<EvaluationPackage> shuffledList = new List<EvaluationPackage>();
 
+    protected bool ShortenAPDisplay
+    {
+        get
+        {
+            if (!scr_System_CampaignManager.current.shortenLogsPrint) return false;
+            if (this.targetCOM != null && targetCOM.isSpecialInteraction) return false;
+            return this.job.CanBeInterrupted;
+        }
+    }
+
     public void LogMessage_Kojo(MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
@@ -1662,7 +1661,8 @@ public abstract class ActionPackage
         var kojoTarget = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
 
         Utility.Shuffle(shuffledList);
-        bool single = this.job.CanBeInterrupted && scr_System_CampaignManager.current.shortenLogsPrint;
+        bool single = ShortenAPDisplay;
+
         foreach (var ep in shuffledList)
         {
             LogMessage_Kojo2(ep, kojoTarget, m);
@@ -1680,6 +1680,7 @@ public abstract class ActionPackage
         }
         else ep.LogMessage_Kojo(m);
     }
+
 
     public void LogMessage_Join(Character_Trainable target, bool rightAlign = false, MessageCollect m = null)
     {
@@ -1706,6 +1707,7 @@ public abstract class ActionPackage
 
         string s = targetCOM.variants[COMVariantID].GetDescription_Begin(targetCOM, this);
         UtilityEX.StringReplace(this, ref s);
+        s = targetCOM.Replace(s);
         if (s.Length > 0)
         {
             if (rightAlign) s = "<align=\"right\">" + s + "</align>";
@@ -1713,7 +1715,7 @@ public abstract class ActionPackage
         }
 
         Utility.Shuffle(shuffledList);
-        bool single = this.job.CanBeInterrupted && scr_System_CampaignManager.current.shortenLogsPrint;
+        bool single = ShortenAPDisplay;
         foreach (var ep in shuffledList)
         {
             ep.LogMessage_Begin(ignoreBegin, rightAlign, m, target);
@@ -1743,6 +1745,7 @@ public abstract class ActionPackage
         string s = targetCOM.variants[COMVariantID].GetDescription_Ongoing(targetCOM, this);
         //Debug.Log("AP LogMessage_Ongoing");
         UtilityEX.StringReplace(this, ref s);
+        s = targetCOM.Replace(s);
         //.Actors, ep.Description_Ongoing
         if (s.Length > 0)
         {
@@ -1751,7 +1754,7 @@ public abstract class ActionPackage
         }
 
         Utility.Shuffle(shuffledList);
-        bool single = this.job.CanBeInterrupted && scr_System_CampaignManager.current.shortenLogsPrint;
+        bool single = ShortenAPDisplay;
         foreach (var ep in shuffledList)
         {
             ep.LogMessage_Ongoing(rightAlign, m, target);
@@ -1799,9 +1802,12 @@ public abstract class ActionPackage
         if (m == null) m = this.job.m;
 
         Utility.Shuffle(shuffledList);
-        bool single = this.job.CanBeInterrupted && scr_System_CampaignManager.current.shortenLogsPrint;
+        bool single = ShortenAPDisplay;
         foreach (var ep in shuffledList)
         {
+            if (targetCOM == null) continue;
+            if (targetCOM is COM_Sex) continue;
+            if (ep.Response < Memory_Response.Success) continue;
             ep.LogMessage_After(rightAlign, m);
             if (single && !ep.isPlayerEP) break;
         }

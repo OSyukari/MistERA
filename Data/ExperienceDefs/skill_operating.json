@@ -99,6 +99,11 @@
             {
                 "skill_operating": "操作技术",
                 "skill_operating_tooltip": "适用范围：驾驶，遥控，打游戏"
+            },
+            "en-us":
+            {
+    "skill_operating": "Operating",
+    "skill_operating_tooltip": "Applies to: Driving, Remote Control, Gaming"
             }
         }
     }

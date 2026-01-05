@@ -216,7 +216,12 @@
             {
                 "nameless_guardian_type_f_name":"Nameless Guardian Type F",
                 "nameless_guardian_type_m_name":"Nameless Guardian Type M",
-                "nameless_guardian_type_b_name":"Nameless Guardian Type B"
+                "nameless_guardian_type_b_name":"Nameless Guardian Type B",
+
+                "nameless_guardian_encounter_1a":"Nameless Guardian Encounter 1A",
+                "nameless_guardian_encounter_1b":"Nameless Guardian Encounter 1B",
+                "nameless_guardian_encounter_2":"Nameless Guardian Encounter 2",
+                "nameless_guardian_encounter_3":"Nameless Guardian Encounter 3"
             }
         }
     }

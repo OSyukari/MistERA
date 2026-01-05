@@ -7,41 +7,59 @@
                     "ID": "com_job_farm_cultivate_crop_Begin",
                     "variants": [
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": { "requireSelfAttitudeGTE": "Like" },
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
                             "extraPortraitTags": [
-                                "relaxed", "leaning", "confident", "smug", "excited", "happy"
+                                "relaxed",
+                                "leaning",
+                                "confident",
+                                "smug",
+                                "excited",
+                                "happy"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.3.3 主动接受" ,
+                            "_comment": "2.3.3 主动接受",
                             "responses": [
-                                "$self$眼睛一亮，立刻站了起来。\"好啊！我早就想种种看了！\"", "$self$兴奋地挽起袖子：\"走走走，我也来露一手！\""
+                                "com_job_farm_cultivate_crop_Begin_1",
+                                "com_job_farm_cultivate_crop_Begin_2"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], 
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
                             "useActiveTags": false,
-                            "_comment":"2.3.5 被动接受（屈服）" ,
-                            "responses": [ 
-                                "$self$脸色发白，颤抖着点了点头。\"我、我知道了……我会照做的。\"", "$self$不敢反抗，只能僵硬地跟在后面。\"请别生气，我去就是了。\""
+                            "_comment": "2.3.5 被动接受（屈服）",
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Begin_3",
+                                "com_job_farm_cultivate_crop_Begin_4"
                             ]
                         },
                         {
-                            "requireMaster":true,
+                            "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
-                            "_comment":"2.3.4 被动接受（惊讶不反感）" ,
-                            "responses":
-                            [ 
-                                "$self$有些意外地指了指自己。\"诶？我也要来吗？好吧，既然你都邀请了。\"", "$self$犹豫了一下，还是接过了递来的工具。\"我可不保证能种活哦。\""
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 被动接受（惊讶不反感）",
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Begin_5",
+                                "com_job_farm_cultivate_crop_Begin_6"
                             ]
                         },
                         {
-                    
                             "extraPortraitTags": [
                                 "focused",
                                 "neutral",
@@ -51,9 +69,13 @@
                                 "observation"
                             ],
                             "useActiveTags": false,
-                            "_comment":"2.1.1 行动开始" ,
+                            "_comment": "2.1.1 行动开始",
                             "responses": [
-                                "$self$带上了沾着泥土的手套，拿起小铲子走向预留的空地。", "$self$将买来的种子包装袋撕开，小心翼翼地倒在手心里数了数。", "$self$深吸了一口花园里泥土的芬芳，挽起袖子准备大干一场。", "$self$蹲下身子，用手指试探了一下土壤的湿度。\"嗯，今天是个种植的好日子。\"", "$self$把沉重的肥料袋拖到了脚边，拍了拍手上的灰尘。"
+                                "com_job_farm_cultivate_crop_Begin_7",
+                                "com_job_farm_cultivate_crop_Begin_8",
+                                "com_job_farm_cultivate_crop_Begin_9",
+                                "com_job_farm_cultivate_crop_Begin_10",
+                                "com_job_farm_cultivate_crop_Begin_11"
                             ]
                         }
                     ]
@@ -65,9 +87,10 @@
                     "ID": "com_job_farm_cultivate_crop_Tryjoin",
                     "variants": [
                         {
-                            "_comment":"2.3.6 NPC请求加入" ,
+                            "_comment": "2.3.6 NPC请求加入",
                             "responses": [
-                                "$self$看着忙碌的$target$，试探性地问道：\"那个……需要帮忙吗？我也想试试。\"", "$self$凑了过去，一脸期待。\"看起来很有趣的样子，加我一个呗？\""
+                                "com_job_farm_cultivate_crop_Tryjoin_1",
+                                "com_job_farm_cultivate_crop_Tryjoin_2"
                             ]
                         }
                     ]
@@ -79,9 +102,10 @@
                     "ID": "com_job_farm_cultivate_crop_Joined",
                     "variants": [
                         {
-                            "_comment":"2.3.7 NPC的请求被同意后，NPC的反应" ,
-                            "responses": [ 
-                                "$self$开心地接过铲子。\"太棒了！我一定不会拖后腿的！\"", "$self$立马蹲下身，干劲十足。\"那我负责这边这一块！\""
+                            "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Joined_1",
+                                "com_job_farm_cultivate_crop_Joined_2"
                             ]
                         }
                     ]
@@ -93,9 +117,10 @@
                     "ID": "com_job_farm_cultivate_crop_Join_Refused",
                     "variants": [
                         {
-                            "_comment":"2.3.8 NPC的请求被拒绝后，NPC的反应" ,
+                            "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
-                                "$self$失落地垂下肩膀。\"啊……好吧，那我自己在旁边看着总行吧？\"", "$self$有些尴尬地收回手。\"不让帮忙就算了，真小气。\""
+                                "com_job_farm_cultivate_crop_Join_Refused_1",
+                                "com_job_farm_cultivate_crop_Join_Refused_2"
                             ]
                         }
                     ]
@@ -110,46 +135,76 @@
                             "requirement": {
                                 "requireEPFailure": true
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
-                                    "extraPortraitTags": [ "apology", "shy" ], "useActiveTags": false,
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Neutral"
+                                    },
+                                    "extraPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
-                                        "$self$感激地笑了笑：\"不用啦，我自己能搞定，而且这本来就是我想一个人静静做的事。\"", "$self$挡住了对方的手：\"小心弄脏衣服，你在旁边陪我说话就好啦。\""
+                                        "com_job_farm_cultivate_crop_Join_1",
+                                        "com_job_farm_cultivate_crop_Join_2"
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": ["troubled","angry", "disgust" ], "useActiveTags": false,
+                            "extraPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
-                                "$self$警惕地护住自己的苗圃。\"别碰！这是我的实验田，不需要外人插手。\"", "$self$冷冷地说道：\"你只会越帮越忙，离远点。\""
+                                "com_job_farm_cultivate_crop_Join_3",
+                                "com_job_farm_cultivate_crop_Join_4"
                             ]
                         },
                         {
-                            "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                            "extraPortraitTags":["blush", "affectionate"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$惊喜地递过一副备用手套。\"求之不得！两个人干活肯定快多了！\"", "$self$往旁边挪了挪位置。\"来来来，这个坑归你挖！\""
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Join_5",
+                                "com_job_farm_cultivate_crop_Join_6"
                             ]
                         },
                         {
-                            "requirement":{"requireSelfForced":true},
-                            "extraPortraitTags":["fear", "trembling", "tearful", "pain"], "useActiveTags":false,
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$身体僵硬地往旁边缩了缩，没敢出声反对。", "$self$低下头默默让出了位置，眼神中闪烁着不安。\"你想怎么样都行……\""
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Join_7",
+                                "com_job_farm_cultivate_crop_Join_8"
                             ]
                         },
                         {
-                            "extraPortraitTags":["blush"], "useActiveTags":false,
+                            "extraPortraitTags": [
+                                "blush"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
-                            "responses":
-                            [ 
-                                "$self$愣了一下，随即耸耸肩。\"如果你坚持的话……只要别嫌累就行。\"", "$self$把铲子分了一半出去。\"那就麻烦你了？其实挺枯燥的。\""
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Join_9",
+                                "com_job_farm_cultivate_crop_Join_10"
                             ]
                         }
                     ]
@@ -161,9 +216,13 @@
                     "ID": "com_job_farm_cultivate_crop_Ongoing",
                     "variants": [
                         {
-                            "_comment":"2.1.2 行动中途" ,
-                            "responses": [ 
-                                "$self$正专注地用铲子松动着板结的土壤，额头上渗出了细密的汗珠。", "$self$哼着不知名的小调，将一株株幼苗小心地移入挖好的坑中。", "$self$跪在泥土上，细心地将多余的杂草拔除，动作轻柔得像在抚摸宠物。", "$self$正拿着喷壶，均匀地给每一片叶子洒上水珠。", "$self$全神贯注地修剪着多余的枝叶，完全没有注意到时间的流逝。"
+                            "_comment": "2.1.2 行动中途",
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Ongoing_1",
+                                "com_job_farm_cultivate_crop_Ongoing_2",
+                                "com_job_farm_cultivate_crop_Ongoing_3",
+                                "com_job_farm_cultivate_crop_Ongoing_4",
+                                "com_job_farm_cultivate_crop_Ongoing_5"
                             ]
                         }
                     ]
@@ -175,42 +234,79 @@
                     "ID": "com_job_farm_cultivate_crop_Interrupt",
                     "variants": [
                         {
-                            "extraPortraitTags": [ "fear", "trembling" ], "useActiveTags": false,
-                            "requirement":{ "requireSelfAttitudeKey": "Fear" },
-                            "_comment":"2.2.3 态度：恐惧 有他人登场" ,
+                            "extraPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Fear"
+                            },
+                            "_comment": "2.2.3 态度：恐惧 有他人登场",
                             "responses": [
-                                "$self$身体猛地一僵，手中的喷壶差点掉落。\"对、对不起……我马上就弄完……\"", "$self$下意识地缩起肩膀，试图用植物挡住自己的身体。\"我……我没有偷懒……\"", "$self$低着头不敢看对方，声音细若游丝。\"请不要踩坏它们……\""
+                                "com_job_farm_cultivate_crop_Interrupt_1",
+                                "com_job_farm_cultivate_crop_Interrupt_2",
+                                "com_job_farm_cultivate_crop_Interrupt_3"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Badwill" },
-                            "_comment":"2.2.2 态度：恶意 有他人登场" ,
-                            "extraPortraitTags": [ "disgusted","disappointed" ], "useActiveTags": false,
-                            "responses": [ 
-                                "$self$手上的动作停顿了一下，并没有回头。\"如果你是来找茬的，请离我的植物远点。\"", "$self$握紧了手中的铲子，眼神冰冷地瞥了一眼来人。\"这里不欢迎你。\"", "$self$故意用力铲了一铲土，扬起的尘土向对方飘去。"
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Badwill"
+                            },
+                            "_comment": "2.2.2 态度：恶意 有他人登场",
+                            "extraPortraitTags": [
+                                "disgusted",
+                                "disappointed"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Interrupt_4",
+                                "com_job_farm_cultivate_crop_Interrupt_5",
+                                "com_job_farm_cultivate_crop_Interrupt_6"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Goodwill" },
-                            "extraPortraitTags": [ "happy", "excited", "surprised" ], "useActiveTags": false,
-                            "_comment":"2.2.1 态度：好意 有他人登场" ,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Goodwill"
+                            },
+                            "extraPortraitTags": [
+                                "happy",
+                                "excited",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 态度：好意 有他人登场",
                             "responses": [
-                                "$self$听到脚步声抬起头，露出了一个灿烂的笑容。\"是你呀！快来看，这棵苗长得多好！\"", "$self$擦了擦脸颊上的泥土，开心地招了招手。\"哎呀，被你看到了脏兮兮的样子。\"", "$self$指着旁边的小板凳：\"坐这儿陪我聊会儿？正好我一个人有点闷。\""
+                                "com_job_farm_cultivate_crop_Interrupt_7",
+                                "com_job_farm_cultivate_crop_Interrupt_8",
+                                "com_job_farm_cultivate_crop_Interrupt_9"
                             ]
                         },
                         {
-                            "requirement":{ "requireSelfAttitudeKey": "Desire" },
-                            "_comment":"2.2.4 态度：欲望 有他人登场" ,
-                            "extraPortraitTags": [ "shy" ], "useActiveTags": false,
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Desire"
+                            },
+                            "_comment": "2.2.4 态度：欲望 有他人登场",
+                            "extraPortraitTags": [
+                                "shy"
+                            ],
+                            "useActiveTags": false,
                             "responses": [
-                                "$self$缓缓直起腰，故意展示出被汗水浸湿的领口。\"要在这种充满自然气息的地方……聊聊吗？\"", "$self$咬着嘴唇，用一种湿漉漉的眼神看着对方。\"一个人种花好累啊，能不能帮帮人家……\"", "$self$借着擦汗的动作，让手套上的泥土蹭过锁骨。\"哎呀，弄脏了呢……你要帮我擦掉吗？\""
+                                "com_job_farm_cultivate_crop_Interrupt_10",
+                                "com_job_farm_cultivate_crop_Interrupt_11",
+                                "com_job_farm_cultivate_crop_Interrupt_12"
                             ]
                         },
                         {
-                            "_comment":"2.2.5 态度：普通 有他人登场" ,
-                            "extraPortraitTags": [ "focused" ], "useActiveTags": false,
+                            "_comment": "2.2.5 态度：普通 有他人登场",
+                            "extraPortraitTags": [
+                                "focused"
+                            ],
+                            "useActiveTags": false,
                             "responses": [
-                                "$self$只是淡淡地点了点头算作打招呼，随即继续手中的活计。", "$self$随口应了一句：\"正如你所见，在忙着呢。\"", "$self$瞥了一眼对方：\"借过一下，我要去那边拿水管。\""
+                                "com_job_farm_cultivate_crop_Interrupt_13",
+                                "com_job_farm_cultivate_crop_Interrupt_14",
+                                "com_job_farm_cultivate_crop_Interrupt_15"
                             ]
                         }
                     ]
@@ -223,7 +319,9 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirement": { "requireEPFailure": true },
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
                             "variants": [
                                 {
                                     "requirement": {
@@ -237,11 +335,10 @@
                                     ],
                                     "useActiveTags": false,
                                     "responses": [
-                                    "kojo_default_com_job_farm_cultivate_crop_refuse_1",
-                                    "kojo_default_com_job_farm_cultivate_crop_refuse_2",
-
-                                    "$self$摆了摆手笑道：\"我也很想去，但这会儿真的走不开，下次一定！\"", "$self$抱歉地看着$target$：\"现在这太阳太毒了，我怕晒黑，晚点再说吧？\""
-                                        
+                                        "kojo_default_com_job_farm_cultivate_crop_refuse_1",
+                                        "kojo_default_com_job_farm_cultivate_crop_refuse_2",
+                                        "com_job_farm_cultivate_crop_1",
+                                        "com_job_farm_cultivate_crop_2"
                                     ]
                                 }
                             ],
@@ -257,26 +354,31 @@
                             "useActiveTags": false,
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
-                                "$self$皱起眉头，仿佛听到了什么笑话。\"你是认真的吗？让我去玩泥巴？\"", "$self$嫌弃地后退了一步。\"没兴趣，别把那些脏东西带到我这里来。\""
+                                "com_job_farm_cultivate_crop_3",
+                                "com_job_farm_cultivate_crop_4"
                             ]
                         },
                         {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
                                         "intrigued",
                                         "relaxed"
-                                    ], "useActiveTags": false,
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
-                                        "$self$看着破土而出的新芽，满脸都是成就感。\"快看！它活了！我们成功了！\"", "$self$小心翼翼地抚摸着翠绿的叶片，脸上洋溢着温柔的笑意。\"这感觉真好，谢谢你陪我一起。\""
+                                        "com_job_farm_cultivate_crop_5",
+                                        "com_job_farm_cultivate_crop_6"
                                     ]
                                 }
                             ],
@@ -294,27 +396,30 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
-                                "虽然植物种活了，$self$却疲惫地揉着腰。\"虽然结果是好的，但这代价也太大了，下次再也不干了。\"", "$self$看着满手的泥污和断掉的指甲，叹了口气。\"为了这点绿化牺牲这么多，真不知道值不值。\""
+                                "com_job_farm_cultivate_crop_7",
+                                "com_job_farm_cultivate_crop_8"
                             ]
                         },
                         {
-                            "variants":[
+                            "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
                                     "extraPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
                                         "intrigued",
                                         "relaxed"
-                                    ], "useActiveTags": false,
+                                    ],
+                                    "useActiveTags": false,
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
-                                    "kojo_default_com_job_farm_cultivate_crop_accept_failure_2",
-                                    "kojo_default_com_job_farm_cultivate_crop_accept_failure_1",
-
-                                    "虽然幼苗没能挺过第一晚，$self$却并不气馁。\"至少我学到了不少经验，下次一定能行！\"", "$self$看着枯萎的叶子苦笑了一下，随即拍了拍$target$的背。\"没事啦，过程开心最重要嘛！\""
-                                        
+                                        "kojo_default_com_job_farm_cultivate_crop_accept_failure_2",
+                                        "kojo_default_com_job_farm_cultivate_crop_accept_failure_1",
+                                        "com_job_farm_cultivate_crop_9",
+                                        "com_job_farm_cultivate_crop_10"
                                     ]
                                 }
                             ],
@@ -332,7 +437,8 @@
                             ],
                             "useActiveTags": false,
                             "responses": [
-                                "$self$看着死去植物，眼眶微微泛红。\"怎么会这样……我明明那么用心了……\"", "$self$烦躁地把工具扔进箱子里。\"浪费了两个小时，简直就是场灾难。\""
+                                "com_job_farm_cultivate_crop_11",
+                                "com_job_farm_cultivate_crop_12"
                             ]
                         }
                     ]
@@ -343,28 +449,134 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-
-
-
-"kojo_default_com_job_farm_cultivate_crop_refuse_1":"$self$：\"种田啊…… 要不你找个更有经验的？\"",
-"kojo_default_com_job_farm_cultivate_crop_refuse_2":"$self$：\"一起种田？ 还是算了吧, 我怕我会拖你后腿\"",
-"kojo_default_com_job_farm_cultivate_crop_accept_failure_1":"\"这苗是不是埋得太浅了点？\" $self$看着歪歪扭扭的幼苗，忍不住皱起了眉头",
-"kojo_default_com_job_farm_cultivate_crop_accept_failure_2":"\"……算了，就这样吧，反正能长出来就行。\" $self$看着参差不齐的田地叹了口气"
-
-        
-
-
+                "kojo_default_com_job_farm_cultivate_crop_refuse_1": "$self$：\"种田啊…… 要不你找个更有经验的？\"",
+                "kojo_default_com_job_farm_cultivate_crop_refuse_2": "$self$：\"一起种田？ 还是算了吧, 我怕我会拖你后腿\"",
+                "kojo_default_com_job_farm_cultivate_crop_accept_failure_1": "\"这苗是不是埋得太浅了点？\" $self$看着歪歪扭扭的幼苗，忍不住皱起了眉头",
+                "kojo_default_com_job_farm_cultivate_crop_accept_failure_2": "\"……算了，就这样吧，反正能长出来就行。\" $self$看着参差不齐的田地叹了口气",
+                "com_job_farm_cultivate_crop_Begin_1": "$self$眼睛一亮，立刻站了起来。\"好啊！我早就想种种看了！\"",
+                "com_job_farm_cultivate_crop_Begin_2": "$self$兴奋地挽起袖子：\"走走走，我也来露一手！\"",
+                "com_job_farm_cultivate_crop_Begin_3": "$self$脸色发白，颤抖着点了点头。\"我、我知道了……我会照做的。\"",
+                "com_job_farm_cultivate_crop_Begin_4": "$self$不敢反抗，只能僵硬地跟在后面。\"请别生气，我去就是了。\"",
+                "com_job_farm_cultivate_crop_Begin_5": "$self$有些意外地指了指自己。\"诶？我也要来吗？好吧，既然你都邀请了。\"",
+                "com_job_farm_cultivate_crop_Begin_6": "$self$犹豫了一下，还是接过了递来的工具。\"我可不保证能种活哦。\"",
+                "com_job_farm_cultivate_crop_Begin_7": "$self$带上了沾着泥土的手套，拿起小铲子走向预留的空地。",
+                "com_job_farm_cultivate_crop_Begin_8": "$self$将买来的种子包装袋撕开，小心翼翼地倒在手心里数了数。",
+                "com_job_farm_cultivate_crop_Begin_9": "$self$深吸了一口花园里泥土的芬芳，挽起袖子准备大干一场。",
+                "com_job_farm_cultivate_crop_Begin_10": "$self$蹲下身子，用手指试探了一下土壤的湿度。\"嗯，今天是个种植的好日子。\"",
+                "com_job_farm_cultivate_crop_Begin_11": "$self$把沉重的肥料袋拖到了脚边，拍了拍手上的灰尘。",
+                "com_job_farm_cultivate_crop_Tryjoin_1": "$self$看着忙碌的$target$，试探性地问道：\"那个……需要帮忙吗？我也想试试。\"",
+                "com_job_farm_cultivate_crop_Tryjoin_2": "$self$凑了过去，一脸期待。\"看起来很有趣的样子，加我一个呗？\"",
+                "com_job_farm_cultivate_crop_Joined_1": "$self$开心地接过铲子。\"太棒了！我一定不会拖后腿的！\"",
+                "com_job_farm_cultivate_crop_Joined_2": "$self$立马蹲下身，干劲十足。\"那我负责这边这一块！\"",
+                "com_job_farm_cultivate_crop_Join_Refused_1": "$self$失落地垂下肩膀。\"啊……好吧，那我自己在旁边看着总行吧？\"",
+                "com_job_farm_cultivate_crop_Join_Refused_2": "$self$有些尴尬地收回手。\"不让帮忙就算了，真小气。\"",
+                "com_job_farm_cultivate_crop_Join_1": "$self$感激地笑了笑：\"不用啦，我自己能搞定，而且这本来就是我想一个人静静做的事。\"",
+                "com_job_farm_cultivate_crop_Join_2": "$self$挡住了对方的手：\"小心弄脏衣服，你在旁边陪我说话就好啦。\"",
+                "com_job_farm_cultivate_crop_Join_3": "$self$警惕地护住自己的苗圃。\"别碰！这是我的实验田，不需要外人插手。\"",
+                "com_job_farm_cultivate_crop_Join_4": "$self$冷冷地说道：\"你只会越帮越忙，离远点。\"",
+                "com_job_farm_cultivate_crop_Join_5": "$self$惊喜地递过一副备用手套。\"求之不得！两个人干活肯定快多了！\"",
+                "com_job_farm_cultivate_crop_Join_6": "$self$往旁边挪了挪位置。\"来来来，这个坑归你挖！\"",
+                "com_job_farm_cultivate_crop_Join_7": "$self$身体僵硬地往旁边缩了缩，没敢出声反对。",
+                "com_job_farm_cultivate_crop_Join_8": "$self$低下头默默让出了位置，眼神中闪烁着不安。\"你想怎么样都行……\"",
+                "com_job_farm_cultivate_crop_Join_9": "$self$愣了一下，随即耸耸肩。\"如果你坚持的话……只要别嫌累就行。\"",
+                "com_job_farm_cultivate_crop_Join_10": "$self$把铲子分了一半出去。\"那就麻烦你了？其实挺枯燥的。\"",
+                "com_job_farm_cultivate_crop_Ongoing_1": "$self$正专注地用铲子松动着板结的土壤，额头上渗出了细密的汗珠。",
+                "com_job_farm_cultivate_crop_Ongoing_2": "$self$哼着不知名的小调，将一株株幼苗小心地移入挖好的坑中。",
+                "com_job_farm_cultivate_crop_Ongoing_3": "$self$跪在泥土上，细心地将多余的杂草拔除，动作轻柔得像在抚摸宠物。",
+                "com_job_farm_cultivate_crop_Ongoing_4": "$self$正拿着喷壶，均匀地给每一片叶子洒上水珠。",
+                "com_job_farm_cultivate_crop_Ongoing_5": "$self$全神贯注地修剪着多余的枝叶，完全没有注意到时间的流逝。",
+                "com_job_farm_cultivate_crop_Interrupt_1": "$self$身体猛地一僵，手中的喷壶差点掉落。\"对、对不起……我马上就弄完……\"",
+                "com_job_farm_cultivate_crop_Interrupt_2": "$self$下意识地缩起肩膀，试图用植物挡住自己的身体。\"我……我没有偷懒……\"",
+                "com_job_farm_cultivate_crop_Interrupt_3": "$self$低着头不敢看对方，声音细若游丝。\"请不要踩坏它们……\"",
+                "com_job_farm_cultivate_crop_Interrupt_4": "$self$手上的动作停顿了一下，并没有回头。\"如果你是来找茬的，请离我的植物远点。\"",
+                "com_job_farm_cultivate_crop_Interrupt_5": "$self$握紧了手中的铲子，眼神冰冷地瞥了一眼来人。\"这里不欢迎你。\"",
+                "com_job_farm_cultivate_crop_Interrupt_6": "$self$故意用力铲了一铲土，扬起的尘土向对方飘去。",
+                "com_job_farm_cultivate_crop_Interrupt_7": "$self$听到脚步声抬起头，露出了一个灿烂的笑容。\"是你呀！快来看，这棵苗长得多好！\"",
+                "com_job_farm_cultivate_crop_Interrupt_8": "$self$擦了擦脸颊上的泥土，开心地招了招手。\"哎呀，被你看到了脏兮兮的样子。\"",
+                "com_job_farm_cultivate_crop_Interrupt_9": "$self$指着旁边的小板凳：\"坐这儿陪我聊会儿？正好我一个人有点闷。\"",
+                "com_job_farm_cultivate_crop_Interrupt_10": "$self$缓缓直起腰，故意展示出被汗水浸湿的领口。\"要在这种充满自然气息的地方……聊聊吗？\"",
+                "com_job_farm_cultivate_crop_Interrupt_11": "$self$咬着嘴唇，用一种湿漉漉的眼神看着对方。\"一个人种花好累啊，能不能帮帮人家……\"",
+                "com_job_farm_cultivate_crop_Interrupt_12": "$self$借着擦汗的动作，让手套上的泥土蹭过锁骨。\"哎呀，弄脏了呢……你要帮我擦掉吗？\"",
+                "com_job_farm_cultivate_crop_Interrupt_13": "$self$只是淡淡地点了点头算作打招呼，随即继续手中的活计。",
+                "com_job_farm_cultivate_crop_Interrupt_14": "$self$随口应了一句：\"正如你所见，在忙着呢。\"",
+                "com_job_farm_cultivate_crop_Interrupt_15": "$self$瞥了一眼对方：\"借过一下，我要去那边拿水管。\"",
+                "com_job_farm_cultivate_crop_1": "$self$摆了摆手笑道：\"我也很想去，但这会儿真的走不开，下次一定！\"",
+                "com_job_farm_cultivate_crop_2": "$self$抱歉地看着$target$：\"现在这太阳太毒了，我怕晒黑，晚点再说吧？\"",
+                "com_job_farm_cultivate_crop_3": "$self$皱起眉头，仿佛听到了什么笑话。\"你是认真的吗？让我去玩泥巴？\"",
+                "com_job_farm_cultivate_crop_4": "$self$嫌弃地后退了一步。\"没兴趣，别把那些脏东西带到我这里来。\"",
+                "com_job_farm_cultivate_crop_5": "$self$看着破土而出的新芽，满脸都是成就感。\"快看！它活了！我们成功了！\"",
+                "com_job_farm_cultivate_crop_6": "$self$小心翼翼地抚摸着翠绿的叶片，脸上洋溢着温柔的笑意。\"这感觉真好，谢谢你陪我一起。\"",
+                "com_job_farm_cultivate_crop_7": "虽然植物种活了，$self$却疲惫地揉着腰。\"虽然结果是好的，但这代价也太大了，下次再也不干了。\"",
+                "com_job_farm_cultivate_crop_8": "$self$看着满手的泥污和断掉的指甲，叹了口气。\"为了这点绿化牺牲这么多，真不知道值不值。\"",
+                "com_job_farm_cultivate_crop_9": "虽然幼苗没能挺过第一晚，$self$却并不气馁。\"至少我学到了不少经验，下次一定能行！\"",
+                "com_job_farm_cultivate_crop_10": "$self$看着枯萎的叶子苦笑了一下，随即拍了拍$target$的背。\"没事啦，过程开心最重要嘛！\"",
+                "com_job_farm_cultivate_crop_11": "$self$看着死去植物，眼眶微微泛红。\"怎么会这样……我明明那么用心了……\"",
+                "com_job_farm_cultivate_crop_12": "$self$烦躁地把工具扔进箱子里。\"浪费了两个小时，简直就是场灾难。\""
             },
             "en-us": {
-
-
-"kojo_default_com_job_farm_cultivate_crop_refuse_1":"$self$: \"Planting crops, huh... why don't you find someone more experienced to work with?\"",
-"kojo_default_com_job_farm_cultivate_crop_refuse_2":"$self$: \"Planting crops together? Let's not do that, I'll probably be holding you back.\"",
-"kojo_default_com_job_farm_cultivate_crop_accept_failure_1":"\"isn't this seedling buried a little too shallow?\" $self$ couldn't help but frown looking at the crooked seedling",
-"kojo_default_com_job_farm_cultivate_crop_accept_failure_2":"\"…whatever, let's just leave it like this, it'll grow just fine... hopefully.\" $self$ sighed, looking at the uneven field"
-
-
-                
+                "kojo_default_com_job_farm_cultivate_crop_refuse_1": "$self$: \"Planting crops, huh... why don't you find someone more experienced to work with?\"",
+                "kojo_default_com_job_farm_cultivate_crop_refuse_2": "$self$: \"Planting crops together? Let's not do that, I'll probably be holding you back.\"",
+                "kojo_default_com_job_farm_cultivate_crop_accept_failure_1": "\"isn't this seedling buried a little too shallow?\" $self$ couldn't help but frown looking at the crooked seedling",
+                "kojo_default_com_job_farm_cultivate_crop_accept_failure_2": "\"…whatever, let's just leave it like this, it'll grow just fine... hopefully.\" $self$ sighed, looking at the uneven field",
+                "com_job_farm_cultivate_crop_Begin_1": "$self$'s eyes lit up, and she stood up immediately. \"Sure! I've been wanting to try planting something!\"",
+                "com_job_farm_cultivate_crop_Begin_2": "$self$ excitedly rolled up her sleeves: \"Let's go, I'll show you what I can do!\"",
+                "com_job_farm_cultivate_crop_Begin_3": "$self$'s face turned pale, and she nodded tremblingly. \"I... I understand... I'll do as I'm told.\"",
+                "com_job_farm_cultivate_crop_Begin_4": "$self$ didn't dare to resist, stiffly following behind. \"Please don't be angry, I'm going.\"",
+                "com_job_farm_cultivate_crop_Begin_5": "$self$ pointed at herself in surprise. \"Eh? Me too? Well, since you invited me.\"",
+                "com_job_farm_cultivate_crop_Begin_6": "$self$ hesitated for a moment but still took the tools. \"I can't guarantee anything will grow, though.\"",
+                "com_job_farm_cultivate_crop_Begin_7": "$self$ put on the soil-stained gloves and picked up the trowel, walking towards the empty plot.",
+                "com_job_farm_cultivate_crop_Begin_8": "$self$ tore open the seed packet and carefully poured some into her palm to count them.",
+                "com_job_farm_cultivate_crop_Begin_9": "$self$ took a deep breath of the garden soil's scent, rolling up her sleeves, ready to get to work.",
+                "com_job_farm_cultivate_crop_Begin_10": "$self$ squatted down and tested the soil moisture with her fingers. \"Hmm, today is a good day for planting.\"",
+                "com_job_farm_cultivate_crop_Begin_11": "$self$ dragged the heavy fertilizer bag to her feet and clapped the dust off her hands.",
+                "com_job_farm_cultivate_crop_Tryjoin_1": "$self$ looked at the busy $target$ and asked tentatively: \"Um... do you need help? I want to try too.\"",
+                "com_job_farm_cultivate_crop_Tryjoin_2": "$self$ leaned in with anticipation. \"That looks fun, count me in?\"",
+                "com_job_farm_cultivate_crop_Joined_1": "$self$ happily took the shovel. \"Awesome! I definitely won't slow you down!\"",
+                "com_job_farm_cultivate_crop_Joined_2": "$self$ immediately squatted down, full of energy. \"Then I'll handle this area!\"",
+                "com_job_farm_cultivate_crop_Join_Refused_1": "$self$ dropped her shoulders in disappointment. \"Ah... okay, can I at least watch from the side?\"",
+                "com_job_farm_cultivate_crop_Join_Refused_2": "$self$ withdrew her hand awkwardly. \"Fine, if you don't want help, be that way.\"",
+                "com_job_farm_cultivate_crop_Join_1": "$self$ smiled gratefully: \"No need, I can handle it myself. Besides, this is something I wanted to do quietly on my own.\"",
+                "com_job_farm_cultivate_crop_Join_2": "$self$ blocked the other's hand: \"Careful not to dirty your clothes, just keeping me company is enough.\"",
+                "com_job_farm_cultivate_crop_Join_3": "$self$ guardedly shielded her plot. \"Don't touch! This is my experimental field, no outsiders allowed.\"",
+                "com_job_farm_cultivate_crop_Join_4": "$self$ said coldly: \"You'll just make things worse, stay away.\"",
+                "com_job_farm_cultivate_crop_Join_5": "$self$ handed over a spare pair of gloves in surprise. \"Just what I needed! It'll be much faster with two people!\"",
+                "com_job_farm_cultivate_crop_Join_6": "$self$ scooted over. \"Here, you dig this hole!\"",
+                "com_job_farm_cultivate_crop_Join_7": "$self$ shrank back stiffly, not daring to voice any objection.",
+                "com_job_farm_cultivate_crop_Join_8": "$self$ lowered her head and silently gave up her spot, eyes flickering with unease. \"Whatever you want...\"",
+                "com_job_farm_cultivate_crop_Join_9": "$self$ paused, then shrugged. \"If you insist... just don't complain about being tired.\"",
+                "com_job_farm_cultivate_crop_Join_10": "$self$ offered half of her tools. \"Then I'll leave some to you? It's actually quite boring.\"",
+                "com_job_farm_cultivate_crop_Ongoing_1": "$self$ was intently loosening the compacted soil with a trowel, beads of sweat forming on her forehead.",
+                "com_job_farm_cultivate_crop_Ongoing_2": "$self$ hummed an unknown tune while carefully transplanting seedlings into the dug holes.",
+                "com_job_farm_cultivate_crop_Ongoing_3": "$self$ knelt on the soil, meticulously pulling out weeds with movements as gentle as petting a pet.",
+                "com_job_farm_cultivate_crop_Ongoing_4": "$self$ was holding a watering can, evenly spraying water droplets on every leaf.",
+                "com_job_farm_cultivate_crop_Ongoing_5": "$self$ was fully focused on trimming excess branches, completely unaware of the passing time.",
+                "com_job_farm_cultivate_crop_Interrupt_1": "$self$'s body stiffened, and she almost dropped the watering can. \"S-sorry... I'll finish right away...\"",
+                "com_job_farm_cultivate_crop_Interrupt_2": "$self$ subconsciously hunched her shoulders, trying to hide her body behind the plants. \"I... I wasn't slacking off...\"",
+                "com_job_farm_cultivate_crop_Interrupt_3": "$self$ lowered her head, afraid to look at the other person, her voice faint. \"Please don't step on them...\"",
+                "com_job_farm_cultivate_crop_Interrupt_4": "$self$ paused her movements but didn't look back. \"If you're here to pick a fight, stay away from my plants.\"",
+                "com_job_farm_cultivate_crop_Interrupt_5": "$self$ gripped the shovel tighter, glancing coldly at the visitor. \"You're not welcome here.\"",
+                "com_job_farm_cultivate_crop_Interrupt_6": "$self$ deliberately shoveled some soil hard, sending dust drifting towards the other person.",
+                "com_job_farm_cultivate_crop_Interrupt_7": "$self$ looked up at the sound of footsteps and flashed a bright smile. \"It's you! Look, this seedling is growing so well!\"",
+                "com_job_farm_cultivate_crop_Interrupt_8": "$self$ wiped the dirt off her cheek and waved happily. \"Oh my, you caught me all dirty.\"",
+                "com_job_farm_cultivate_crop_Interrupt_9": "$self$ pointed to a small stool nearby: \"Sit here and chat with me? It's a bit lonely by myself.\"",
+                "com_job_farm_cultivate_crop_Interrupt_10": "$self$ slowly straightened up, deliberately showing her sweat-soaked neckline. \"Want to... have a chat in this nature-filled place?\"",
+                "com_job_farm_cultivate_crop_Interrupt_11": "$self$ bit her lip, looking at the other person with moist eyes. \"Planting flowers alone is so tiring, could you help me...\"",
+                "com_job_farm_cultivate_crop_Interrupt_12": "$self$ used the motion of wiping sweat to let her dirty glove graze her collarbone. \"Oops, I got dirty... will you help me wipe it off?\"",
+                "com_job_farm_cultivate_crop_Interrupt_13": "$self$ simply nodded as a greeting, then continued with her work.",
+                "com_job_farm_cultivate_crop_Interrupt_14": "$self$ replied casually: \"As you can see, I'm busy.\"",
+                "com_job_farm_cultivate_crop_Interrupt_15": "$self$ glanced at the other person: \"Excuse me, I need to get the hose over there.\"",
+                "com_job_farm_cultivate_crop_1": "$self$ waved her hand and laughed: \"I'd love to, but I really can't get away right now. Next time for sure!\"",
+                "com_job_farm_cultivate_crop_2": "$self$ looked apologetically at $target$: \"The sun is too harsh right now, I'm afraid of getting tanned. Maybe later?\"",
+                "com_job_farm_cultivate_crop_3": "$self$ frowned, as if she heard a joke. \"Are you serious? Asking me to play with mud?\"",
+                "com_job_farm_cultivate_crop_4": "$self$ stepped back in disgust. \"Not interested. Don't bring that filth near me.\"",
+                "com_job_farm_cultivate_crop_5": "$self$ looked at the sprouting buds with a face full of accomplishment. \"Look! It's alive! We did it!\"",
+                "com_job_farm_cultivate_crop_6": "$self$ carefully stroked the green leaves, a gentle smile on her face. \"This feels great, thanks for joining me.\"",
+                "com_job_farm_cultivate_crop_7": "Although the plants survived, $self$ rubbed her waist wearily. \"The result is good, but the cost was too high. Never doing this again.\"",
+                "com_job_farm_cultivate_crop_8": "$self$ looked at her mud-stained hands and broken nails, sighing. \"I don't know if it's worth sacrificing so much for a bit of greenery.\"",
+                "com_job_farm_cultivate_crop_9": "Even though the seedlings didn't survive the first night, $self$ wasn't discouraged. \"At least I learned a lot, next time will be better!\"",
+                "com_job_farm_cultivate_crop_10": "$self$ smiled bitterly at the withered leaves, then patted $target$ on the back. \"It's okay, having fun in the process is what matters!\"",
+                "com_job_farm_cultivate_crop_11": "$self$ looked at the dead plant, her eyes turning slightly red. \"How could this happen... I tried so hard...\"",
+                "com_job_farm_cultivate_crop_12": "$self$ irritably threw the tools into the box. \"Wasted two hours, what a disaster.\""
             }
         }
     }

@@ -89,7 +89,13 @@
             
             "en-us":
             {
-                "campaign_starfarers":"Starfarers",
+        "campaign1_start_debug":"DEBUG",
+        "campaign1_start_debug_tooltip":"%%campaign1_start_default_tooltip%%\n\nDEBUG Start will add things to the map that are not supposed to be there... for now.",
+
+        "campaign1_start_student":"(WIP) Student",
+        "campaign1_start_student_tooltip":"(WIP) Begin the game as a Kivotos Student alongside the Utnapishtim crew",
+        
+        "campaign_starfarers":"Starfarers",
         "campaign_starfarers_tooltip":"A small scenario designed to help familiarize you with the game mechanics.\n\nThis scenario is a parody of Blue Archive.",
         "campaign1_start_default":"Sensei",
         "campaign1_start_default_tooltip":"Start the game as the Sensei from Blue Archive, along with the navigators of %%factionName_Utnapishtim%%.\nAs Sensei, the player need to to manage %%factionName_Utnapishtim%% faction and maintain the physical and mental wellbeing of all students.\nRestrictions: The player cannot participate in combat (not yet implemented).\nThe player's portrait and name will be altered.",

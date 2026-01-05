@@ -178,9 +178,14 @@
 "creature_beastRace_animal":"动物",
 "natural_armor":"天生护甲",
 "natural_armor_part":"$part$天生护甲"
+
             },
             "en-us":
             {
+
+"creature_beastRace_animal":"Animal",
+"natural_armor":"Natural Armor",
+"natural_armor_part":"$part$ Natural Armor"
 
             }
         }

@@ -1,284 +1,561 @@
 {
-    "Character_Personalities":
-    {
-        "looselist":
-        [
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_B_Climax",
-        "tags":["nsfw"],
-        "variants":[
+    "Character_Personalities": {
+        "looselist": [
             {
-                
-                "requireSelfDoer": true,
-                "_comment":"攻方 舔乳头 高潮" ,
-                "responses": [
-                    "($self$) 舔乳头 高潮 口上文"
-                ]
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_B_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "攻方 舔乳头 高潮",
+                            "responses": [
+                                "com_sex_oral_B_Climax_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "breasts",
+                                        "climax"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 受方 被舔乳头 高潮 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_B_Climax_2",
+                                        "com_sex_oral_B_Climax_3",
+                                        "com_sex_oral_B_Climax_4"
+                                    ]
+                                }
+                            ],
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 受方 被舔乳头 高潮 无允许 口上文",
+                            "responses": [
+                                "com_sex_oral_B_Climax_5",
+                                "com_sex_oral_B_Climax_6",
+                                "com_sex_oral_B_Climax_7"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                
-                "requireSelfReceiver": true,
-                "variants":[
-                    {
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver","breasts", "climax"], "useActiveTags":false,
-                        "_comment":"2.4.1 受方 被舔乳头 高潮 有允许 口上文" ,
-                        "responses": [
-"$self$猛地仰起头，后背弓成一道优美的弧线，十指深深陷入$target$的后背。\"啊啊——！不行了！要丢了！哈啊——♡\"", 
-"$self$全身剧烈痉挛，双眼翻白，大腿紧紧夹住$target$的头颅。\"那里！太深了！受不了了——！\"", 
-"$self$发出一声高亢的尖叫，随后身体像是断了线的风筝一样瘫软下来，大口喘息着。"
-                        ]
-                    }
-                ],
-                "extraPortraitTags":["sex","receiver","breasts", "climax"], "useActiveTags":false,
-                "_comment":"2.4.2 受方 被舔乳头 高潮 无允许 口上文" ,
-                "responses": [
-"$self$死死咬住手背试图压抑声音，但剧烈的快感还是让她浑身抽搐，眼泪夺眶而出。\"唔唔唔——！不……不要……啊啊啊！\"", 
-"$self$原本推拒的双手无力地垂下，眼神彻底失去了焦距，口中无意识地流出唾液。\"明明……不想的……哈啊……坏掉了……\"", 
-"$self$在极度的羞耻与快感夹击下崩溃大哭，身体却诚实地迎来了高潮的痉挛。\"杀了我……呜呜……好舒服……杀了我……\""
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_B_Begin",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   {  "requirePermission":true }    ,
-                "extraPortraitTags":["sex","receiver","breasts", "closed_eyes", "blush", "affectionate"], "useActiveTags":false,
-                "_comment":"2.1.1 开始被舔乳头 有允许 口上文" ,
-                "responses":
-                [ 
-"$self$轻哼一声，顺从地挺起胸膛，手指插入$target$的发间。\"嗯……就知道你喜欢这里。\"", 
-"$self$没有说话，只是微微仰起头，将胸前的柔软主动送到了$target$嘴边。眼神迷离地看着对方。\"", 
-"$self$嘴角含笑，解开了胸前的束缚：\"真是个贪吃的孩子……那就喂饱你吧。\""
-                ]
-
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_B_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "closed_eyes",
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1.1 开始被舔乳头 有允许 口上文",
+                            "responses": [
+                                "com_sex_oral_B_Begin_1",
+                                "com_sex_oral_B_Begin_2",
+                                "com_sex_oral_B_Begin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.1 开始被舔乳头 未允许 好意 口上文",
+                            "responses": [
+                                "com_sex_oral_B_Begin_4",
+                                "com_sex_oral_B_Begin_5",
+                                "com_sex_oral_B_Begin_6"
+                            ]
+                        },
+                        {
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.2 开始被舔乳头 未允许 敌意 口上文",
+                            "responses": [
+                                "com_sex_oral_B_Begin_7",
+                                "com_sex_oral_B_Begin_8",
+                                "com_sex_oral_B_Begin_9"
+                            ]
+                        }
+                    ]
+                }
             },
             {
-                "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                "extraPortraitTags":["sex","receiver","breasts", "blush"], "useActiveTags":false,
-                "_comment":"2.2.1 开始被舔乳头 未允许 好意 口上文" ,
-                "responses":
-                [ 
-"$self$浑身一僵，瞪大了眼睛看着$target$，却忘记了推开。\"等等……你在做什么？！\"", 
-"$self$双手悬在半空，不知所措地看着埋首胸前的$target$。\"那种地方……不可以……这太奇怪了……\"", 
-"$self$的脸瞬间红透，结结巴巴地想要制止却使不出力气。\"$target$？！这也是……工作的一部分吗？\""
-                ]
-            },
-            {
-                
-                "extraPortraitTags":["sex","receiver","breasts", "fear", "trembling", "tearful", "pain"], "useActiveTags":false,
-                "_comment":"2.2.2 开始被舔乳头 未允许 敌意 口上文" ,
-                "responses":
-                [ 
-"$self$颤抖着咬住嘴唇，眼角含泪，不敢发出一点声音。\"如果不反抗的话……你就会放过我吗？\"", 
-"$self$身体紧紧缩成一团，绝望地闭上了眼睛。\"求你……快点结束……\"", 
-"$self$不敢看$target$的眼睛，僵硬地任由对方摆布。\"我知道了……我会听话的……别伤害我……\""
-                ]
-            }
-        ]
-    }
-},
-{
-    "ID":"personality_default",
-    "Entry":
-    {
-        "ID": "com_sex_oral_B",
-        "tags":["nsfw"],
-        "variants":
-        [
-            {
-                "requirement":   { "requireSelfAction":false, "selfTags":["sleeping"] }  ,
-                "extraPortraitTags":["sex","receiver","breasts","sleeping", "relaxed"], "useActiveTags":false,
-                "_comment":"2.3.2 睡眠中 被舔乳头 口上文",
-                "responses":
-                [ 
-"$self$发出轻微的呓语，眉头微蹙，似乎在做一个奇怪的梦。", 
-"$self$的身体本能地对此作出反应，腰肢轻轻扭动了一下，但呼吸依旧平稳。", 
-"$self$完全没有醒来的迹象，任由$target$玩弄，只有胸口的起伏稍微变快了一些。"
-                ]
-            },
-            {   "requirement":  { "requireSelfAction":false, "selfTags":["timestop"] } ,
-                "extraPortraitTags":["sex","receiver","breasts","doll", "empty", "silence", "idle"], "useActiveTags":false,
-                "_comment":"2.3.1 时停中 被舔乳头 口上文",
-                "responses":
-                [ 
-"$self$保持着之前的姿势一动不动，唯有胸前的软肉在$target$的舌头下变形、凹陷。", 
-"$self$毫无知觉地张着嘴，对于正在被侵犯乳头的事实一无所知，只有乳头在物理刺激下逐渐充血挺立。", 
-"唾液在$self$凝固的皮肤上拉出银丝，那双失去光泽的眼睛依旧注视着前方。"
-
-                ]
-            },
-            {   
-                "requirement":  { "requireEPFailure":true } ,                 
-                 "variants":[
-                    {
-                        "requirement":  { "selfTags":["justWokenUp"] } ,
-                        "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                        "variants":[
-                            {
-                                "requirement":  {  "requirePermission":true } ,
-                                "extraPortraitTags":["sorry","disgusted","disappointed","surprised", "scared", "angry", "confused"], "useActiveTags":false,
-                                "_comment":"2.1.6 刚睡醒时的 指令失败拒绝 被舔乳头 口上文 有允许",
-                                "responses":
-                                [ 
-"$self$猛地惊醒，下意识地护住了胸口。\"什么？！……是你？别闹了，我很困！\"", 
-"$self$翻了个身背对着$target$，把被子拉过头顶。\"有什么事明天再说……困死了……\""
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_B",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
                                 ]
-
-                            }
-                        ],
-                        "_comment":"2.2.9 刚睡醒时的 指令失败拒绝 被舔乳头 口上文 无允许",
-                        "responses":
-                        [ 
-"$self$发出一声尖叫，手脚并用地把$target$踹下床。\"变态！你在干什么？！\"", 
-"$self$惊慌失措地裹紧被子缩到墙角。\"你怎么进来的？！出去！滚出去！\""
-
-                        ]
-                    },
-                    
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy", "tired" ], "useActiveTags":false,
-                        "_comment":"2.1.2 指令失败拒绝 被舔乳头 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$笑着推开了$target$的头，把衣服拉好。\"别闹了，真的很痒！\"", 
-"$self$按住了$target$不安分的手，轻轻摇了摇头。\"现在不行，还有正事要做呢。\"", 
-"$self$转过身去，语气带着一丝娇嗔：\"只有这个不行，上次被你弄得疼了好几天。\""
-                        ]
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":[ "troubled", "sigh", "smile", "surprised", "troubled", "shy" ], "useActiveTags":false,
-                        "_comment":"2.2.3 指令失败拒绝 被舔乳头 无允许 善意 口上文",
-                        "responses":
-                        [ 
-"$self$尴尬地向后退了一步，挡住了胸口。\"呃，$target$，这个玩笑有点过火了哦。\"", 
-"$self$抓住了$target$的手腕，强颜欢笑。\"我们是朋友吧？这种事还是留给你的恋人比较好。\""
-                        ]
-                    }
-                 ],
-                 "_comment":"2.2.4 指令失败拒绝 被舔乳头 无允许 敌意 口上文" ,
-                 "extraPortraitTags":["angry", "disgust", "surprised", "serious"], "useActiveTags":false,
-                 "responses":[
-"$self$狠狠地甩开了$target$的手，眼神冰冷。\"别碰我！真让人恶心！\"", 
-"$self$后退几步，警惕地护住自己。\"再敢靠近一步，我就报警了！\"", 
-"$self$脸上写满了厌恶，冷冷地啐了一口。\"下流！滚远点！\""
-                 ]
-            },
-            {
-
-                "requirement":  { "targetBaseID":"PLAYER", "selfTags":["justWokenUp"] } ,
-                "_comment1":"玩家专用 刚睡醒时的 舔乳头口上文",
-                "variants":[
-                    {
-                        "requirement":  {  "requirePermission":true } ,
-                        "extraPortraitTags":["sex","receiver","breasts","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.1.5  玩家专用的 刚睡醒时的 被舔乳头 有允许 口上文",
-                        "responses":[
-"$self$迷迷糊糊地睁开眼，发出一声慵懒的呻吟。\"唔……是你啊……真是的，大半夜做这种事……\"", 
-"$self$在半梦半醒间抱住了埋在胸前的头颅，喃喃自语：\"嗯……好痒……随你喜欢吧……\""
-                        ]
-
-                    },
-                    {
-                        "requirement":  {  "requireSelfAttitudeGTE":"Like" } ,
-                        "extraPortraitTags":["sex","receiver","breasts","sleep", "smile", "blush", "lazy"], "useActiveTags":false,
-                        "_comment":"2.2.7 玩家专用的 刚睡醒时的 被舔乳头 无允许 好意 口上文",
-                        "responses":[
-"$self$从睡梦中醒来，惊讶之后反而露出了一丝玩味的笑。\"趁人之危可不是君子所为……不过，我不讨厌就是了。\"", 
-"$self$迷离地看着$target$，轻笑着揽住了对方的脖子。\"既然都被你吵醒了……那就负责让我舒服点吧。\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.8 玩家专用 刚睡醒时的 被舔乳头 无允许 敌意 口上文",
-                "extraPortraitTags":["sex","receiver","breasts","scared","submissive"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$惊恐地醒来，看清现状后瑟瑟发抖。\"别打我……我让你弄……求求你……\"", 
-"$self$在这突如其来的侵犯中吓得不敢动弹，只能无声地流泪。\"只要我不叫……就不会有事吗……\""
-                ]
-            },
-            { 
-                "requirement":      {  "requireEPSuccessGTE":"Success" }   ,
-                "useActiveTags":false,
-                "_player only version":{ "requirement":  { "targetBaseID":"PLAYER"  }  },
-                "_strong com variant":{ "requireCOMStrongVariant":true },
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver","breasts", "love", "happy", "relaxed"], 
-                        "useActiveTags":false,
-                        "_comment":"2.1.3 ($self$) 被舔乳头 结果正面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$的呼吸变得急促，双腿不自觉地夹紧了$target$的腰。\"哈啊……比刚才……更有感觉了……\"", 
-"$self$捧着$target$的脸，眼神中充满了依赖与爱意。\"不要停……那种感觉……好舒服……\"", 
-"$self$发出甜腻的鼻音，身体软成了一滩水。\"嗯哼……你今天……怎么这么会弄……\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.5 ($self$) 被舔乳头 结果正面 未允许 口上文",
-                "extraPortraitTags":["sex","receiver","breasts", "blush", "shy", "surprised","happy","aroused"], 
-                "responses":
-                [ 
-"$self$原本抗拒的手慢慢变成了抓紧$target$的衣角，口中溢出压抑的喘息。\"不……不行……为什么身体会……\"", 
-"$self$的眼神开始涣散，抵抗的力度越来越小。\"哈啊……这种奇怪的感觉……是什么……\"", 
-"$self$羞耻地咬着手指，却无法控制身体迎合$target$的动作。\"明明不应该这样的……可是……\""
-                ]
-            },
-            { 
-                "variants":[
-                    { 
-                        "requirement":   {  "requirePermission":true }    ,
-                        "extraPortraitTags":["sex","receiver","breasts", "pain", "bored", "doubt", "disappointed"], "useActiveTags":false,
-                        "_comment":"2.1.4 ($self$) 被舔乳头 结果负面 有允许 口上文",
-                        "responses":
-                        [ 
-"$self$皱着眉头倒吸了一口凉气，身体僵硬了一下。\"痛……你轻一点，是用牙齿磕到了吗？\"", 
-"$self$有些不耐烦地推了推$target$的肩膀。\"好了，差不多了吧？并没有什么感觉。\"", 
-"$self$叹了口气，眼神游离地看着天花板。\"只是单纯的口水涂抹并没有意思……\""
-                        ]
-                    }
-                ],
-                "_comment":"2.2.6 ($self$) 被舔乳头 结果负面 未允许 口上文",
-                "extraPortraitTags":["sex","receiver","breasts", "angry", "cry", "glare","disgust","pouting","sad", "troubled", "silence"], "useActiveTags":false,
-                "responses":
-                [ 
-"$self$用力推搡着$target$，声音里带上了哭腔。\"够了！放开我！真的很恶心！\"", 
-"$self$像条死鱼一样躺着，眼神空洞而充满恨意。\"你还要羞辱我到什么时候……\"", 
-"$self$趁$target$不备，狠狠地给了一巴掌。\"变态！去死吧！\""
-                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 睡眠中 被舔乳头 口上文",
+                            "responses": [
+                                "com_sex_oral_B_1",
+                                "com_sex_oral_B_2",
+                                "com_sex_oral_B_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.1 时停中 被舔乳头 口上文",
+                            "responses": [
+                                "com_sex_oral_B_4",
+                                "com_sex_oral_B_5",
+                                "com_sex_oral_B_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被舔乳头 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_oral_B_7",
+                                                "com_sex_oral_B_8"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被舔乳头 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_oral_B_9",
+                                        "com_sex_oral_B_10"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被舔乳头 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_B_11",
+                                        "com_sex_oral_B_12",
+                                        "com_sex_oral_B_13"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被舔乳头 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_B_14",
+                                        "com_sex_oral_B_15"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被舔乳头 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_B_16",
+                                "com_sex_oral_B_17",
+                                "com_sex_oral_B_18"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment1": "玩家专用 刚睡醒时的 舔乳头口上文",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "breasts",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被舔乳头 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_B_19",
+                                        "com_sex_oral_B_20"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "breasts",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被舔乳头 无允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_B_21",
+                                        "com_sex_oral_B_22"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被舔乳头 无允许 敌意 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "scared",
+                                "submissive"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_B_23",
+                                "com_sex_oral_B_24"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "breasts",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.3 ($self$) 被舔乳头 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_B_25",
+                                        "com_sex_oral_B_26",
+                                        "com_sex_oral_B_27"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被舔乳头 结果正面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_oral_B_28",
+                                "com_sex_oral_B_29",
+                                "com_sex_oral_B_30"
+                            ]
+                        },
+                        {
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "breasts",
+                                        "pain",
+                                        "bored",
+                                        "doubt",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.4 ($self$) 被舔乳头 结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_B_31",
+                                        "com_sex_oral_B_32",
+                                        "com_sex_oral_B_33"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.6 ($self$) 被舔乳头 结果负面 未允许 口上文",
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_B_34",
+                                "com_sex_oral_B_35",
+                                "com_sex_oral_B_36"
+                            ]
+                        }
+                    ]
+                }
             }
-        ]
-    }
-}
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-"zh-cn":
-{
-
-},
-"en-us":
-{
-    
-
-}
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_B_Climax_1": "($self$) 舔乳头高潮的描述文本",
+                "com_sex_oral_B_Climax_2": "$self$猛地仰起头，后背弓成一道优美的弧线，十指深深陷入$target$的后背。\"啊啊——！不行了！要去了！哈啊——♡\"",
+                "com_sex_oral_B_Climax_3": "$self$全身剧烈痉挛，双眼翻白，大腿紧紧夹住$target$的头颅。\"那里！太深了！受不了了——！\"",
+                "com_sex_oral_B_Climax_4": "$self$发出一声高亢的尖叫，随后身体像是断了线的风筝一样瘫软下来，大口喘息着。",
+                "com_sex_oral_B_Climax_5": "$self$死死咬住手背试图压抑声音，但剧烈的快感还是让她浑身抽搐，眼泪夺眶而出。\"唔唔唔——！不……不要……啊啊啊！\"",
+                "com_sex_oral_B_Climax_6": "$self$原本推拒的双手无力地垂下，眼神彻底失去了焦距，口中无意识地流出唾液。\"明明……不想的……哈啊……坏掉了……\"",
+                "com_sex_oral_B_Climax_7": "$self$在极度的羞耻与快感夹击下崩溃大哭，身体却诚实地迎来了高潮的痉挛。\"杀了我……呜呜……好舒服……杀了我……\"",
+                "com_sex_oral_B_Begin_1": "$self$轻哼一声，顺从地挺起胸膛，手指插入$target$的发间。\"嗯……就知道你喜欢这里。\"",
+                "com_sex_oral_B_Begin_2": "$self$没有说话，只是微微仰起头，将胸前的柔软主动送到了$target$嘴边。眼神迷离地看着对方。",
+                "com_sex_oral_B_Begin_3": "$self$嘴角含笑，解开了胸前的束缚：\"真是个贪吃的孩子……那就喂饱你吧。\"",
+                "com_sex_oral_B_Begin_4": "$self$浑身一僵，瞪大了眼睛看着$target$，却忘记了推开。\"等等……你在做什么？！\"",
+                "com_sex_oral_B_Begin_5": "$self$双手悬在半空，不知所措地看着埋首胸前的$target$。\"那种地方……不可以……这太奇怪了……\"",
+                "com_sex_oral_B_Begin_6": "$self$的脸瞬间红透，结结巴巴地想要制止却使不出力气。\"$target$？！这也是……工作的一部分吗？\"",
+                "com_sex_oral_B_Begin_7": "$self$颤抖着咬住嘴唇，眼角含泪，不敢发出一点声音。\"如果不反抗的话……你就会放过我吗？\"",
+                "com_sex_oral_B_Begin_8": "$self$身体紧紧缩成一团，绝望地闭上了眼睛。\"求你……快点结束……\"",
+                "com_sex_oral_B_Begin_9": "$self$不敢看$target$的眼睛，僵硬地任由对方摆布。\"我知道了……我会听话的……别伤害我……\"",
+                "com_sex_oral_B_1": "$self$发出轻微的呓语，眉头微蹙，似乎在做一个奇怪的梦。",
+                "com_sex_oral_B_2": "$self$的身体本能地对此作出反应，腰肢轻轻扭动了一下，但呼吸依旧平稳。",
+                "com_sex_oral_B_3": "$self$完全没有醒来的迹象，任由$target$玩弄，只有胸口的起伏稍微变快了一些。",
+                "com_sex_oral_B_4": "$self$保持着之前的姿势一动不动，唯有胸前的软肉在$target$的舌头下变形、凹陷。",
+                "com_sex_oral_B_5": "$self$毫无知觉地张着嘴，对于正在被侵犯乳头的事实一无所知，只有乳头在物理刺激下逐渐充血挺立。",
+                "com_sex_oral_B_6": "唾液在$self$凝固的皮肤上拉出银丝，那双失去光泽的眼睛依旧注视着前方。",
+                "com_sex_oral_B_7": "$self$猛地惊醒，下意识地护住了胸口。\"什么？！……是你？别闹了，我很困！\"",
+                "com_sex_oral_B_8": "$self$翻了个身背对着$target$，把被子拉过头顶。\"有什么事明天再说……困死了……\"",
+                "com_sex_oral_B_9": "$self$发出一声尖叫，手脚并用地把$target$踹下床。\"变态！你在干什么？！\"",
+                "com_sex_oral_B_10": "$self$惊慌失措地裹紧被子缩到墙角。\"你怎么进来的？！出去！滚出去！\"",
+                "com_sex_oral_B_11": "$self$笑着推开了$target$的头，把衣服拉好。\"别闹了，真的很痒！\"",
+                "com_sex_oral_B_12": "$self$按住了$target$不安分的手，轻轻摇了摇头。\"现在不行，还有正事要做呢。\"",
+                "com_sex_oral_B_13": "$self$转过身去，语气带着一丝娇嗔：\"只有这个不行，上次被你弄得疼了好几天。\"",
+                "com_sex_oral_B_14": "$self$尴尬地向后退了一步，挡住了胸口。\"呃，$target$，这个玩笑有点过火了哦。\"",
+                "com_sex_oral_B_15": "$self$抓住了$target$的手腕，强颜欢笑。\"我们是朋友吧？这种事还是留给你的恋人比较好。\"",
+                "com_sex_oral_B_16": "$self$狠狠地甩开了$target$的手，眼神冰冷。\"别碰我！真让人恶心！\"",
+                "com_sex_oral_B_17": "$self$后退几步，警惕地护住自己。\"再敢靠近一步，我就报警了！\"",
+                "com_sex_oral_B_18": "$self$脸上写满了厌恶，冷冷地啐了一口。\"下流！滚远点！\"",
+                "com_sex_oral_B_19": "$self$迷迷糊糊地睁开眼，发出一声慵懒的呻吟。\"唔……是你啊……真是的，大半夜做这种事……\"",
+                "com_sex_oral_B_20": "$self$在半梦半醒间抱住了埋在胸前的头颅，喃喃自语：\"嗯……好痒……随你喜欢吧……\"",
+                "com_sex_oral_B_21": "$self$从睡梦中醒来，惊讶之后反而露出了一丝玩味的笑。\"趁人之危可不是君子所为……不过，我不讨厌就是了。\"",
+                "com_sex_oral_B_22": "$self$迷离地看着$target$，轻笑着揽住了对方的脖子。\"既然都被你吵醒了……那就负责让我舒服点吧。\"",
+                "com_sex_oral_B_23": "$self$惊恐地醒来，看清现状后瑟瑟发抖。\"别打我……我让你弄……求求你……\"",
+                "com_sex_oral_B_24": "$self$在这突如其来的侵犯中吓得不敢动弹，只能无声地流泪。\"只要我不叫……就不会有事吗……\"",
+                "com_sex_oral_B_25": "$self$的呼吸变得急促，双腿不自觉地夹紧了$target$的腰。\"哈啊……比刚才……更有感觉了……\"",
+                "com_sex_oral_B_26": "$self$捧着$target$的脸，眼神中充满了依赖与爱意。\"不要停……那种感觉……好舒服……\"",
+                "com_sex_oral_B_27": "$self$发出甜腻的鼻音，身体软成了一滩水。\"嗯哼……你今天……怎么这么会弄……\"",
+                "com_sex_oral_B_28": "$self$原本抗拒的手慢慢变成了抓紧$target$的衣角，口中溢出压抑的喘息。\"不……不行……为什么身体会……\"",
+                "com_sex_oral_B_29": "$self$的眼神开始涣散，抵抗的力度越来越小。\"哈啊……这种奇怪的感觉……是什么……\"",
+                "com_sex_oral_B_30": "$self$羞耻地咬着手指，却无法控制身体迎合$target$的动作。\"明明不应该这样的……可是……\"",
+                "com_sex_oral_B_31": "$self$皱着眉头倒吸了一口凉气，身体僵硬了一下。\"痛……你轻一点，是用牙齿磕到了吗？\"",
+                "com_sex_oral_B_32": "$self$有些不耐烦地推了推$target$的肩膀。\"好了，差不多了吧？并没有什么感觉。\"",
+                "com_sex_oral_B_33": "$self$叹了口气，眼神游离地看着天花板。\"只是单纯的口水涂抹并没有意思……\"",
+                "com_sex_oral_B_34": "$self$用力推搡着$target$，声音里带上了哭腔。\"够了！放开我！真的很恶心！\"",
+                "com_sex_oral_B_35": "$self$像条死鱼一样躺着，眼神空洞而充满恨意。\"你还要羞辱我到什么时候……\"",
+                "com_sex_oral_B_36": "$self$趁$target$不备，狠狠地给了一巴掌。\"变态！去死吧！\""
+            },
+            "en-us": {
+                "com_sex_oral_B_Climax_1": "($self$) Text description of nipple licking climax",
+                "com_sex_oral_B_Climax_2": "$self$ throws her head back sharply, her back arching into a graceful curve as her fingers dig deep into $target$'s back. \"Ahhhh—! I can't take it! I'm cumming! Haaah—♡\"",
+                "com_sex_oral_B_Climax_3": "$self$'s body convulses violently, her eyes rolling back as her thighs clamp tightly around $target$'s head. \"There! Too deep! I can't handle it—!\"",
+                "com_sex_oral_B_Climax_4": "$self$ lets out a high-pitched scream, then her body goes limp like a kite with a cut string, gasping for air.",
+                "com_sex_oral_B_Climax_5": "$self$ bites hard on the back of her hand trying to suppress her voice, but the intense pleasure makes her twitch uncontrollably as tears burst from her eyes. \"Mmph—! No... don't... Ahhhh!\"",
+                "com_sex_oral_B_Climax_6": "$self$'s hands, which were pushing away, drop weakly, her eyes losing focus completely as saliva drools unconsciously from her mouth. \"I... didn't want this... Haaah... I'm broken...\"",
+                "com_sex_oral_B_Climax_7": "$self$ breaks down crying under the assault of extreme shame and pleasure, yet her body honestly welcomes the spasms of orgasm. \"Kill me... Ugh... so good... kill me...\"",
+                "com_sex_oral_B_Begin_1": "$self$ hums softly, obediently puffing out her chest and running her fingers through $target$'s hair. \"Mmm... knew you liked it here.\"",
+                "com_sex_oral_B_Begin_2": "$self$ says nothing, only tilting her head back slightly, actively offering the softness of her chest to $target$'s lips, looking at him with hazy eyes.",
+                "com_sex_oral_B_Begin_3": "$self$ smiles and undoes the bindings on her chest: \"What a greedy child... guess I'll have to feed you then.\"",
+                "com_sex_oral_B_Begin_4": "$self$ stiffens, eyes widening at $target$, forgetting to push him away. \"Wait... what are you doing?!\"",
+                "com_sex_oral_B_Begin_5": "$self$'s hands hover in mid-air, looking bewildered at $target$ buried in her chest. \"That place... you can't... this is too weird...\"",
+                "com_sex_oral_B_Begin_6": "$self$'s face turns red instantly, stammering to stop it but unable to exert strength. \"$target$?! Is this... part of the job too?\"",
+                "com_sex_oral_B_Begin_7": "$self$ bites her lip, trembling with tears in her eyes, daring not to make a sound. \"If I don't resist... will you let me go?\"",
+                "com_sex_oral_B_Begin_8": "$self$ curls up tightly, closing her eyes in despair. \"Please... finish quickly...\"",
+                "com_sex_oral_B_Begin_9": "$self$ dares not look $target$ in the eye, stiffly letting him do as he pleases. \"I understand... I'll be obedient... please don't hurt me...\"",
+                "com_sex_oral_B_1": "$self$ mumbles softly, frowning slightly as if having a strange dream.",
+                "com_sex_oral_B_2": "$self$'s body reacts instinctively, her waist twisting slightly, but her breathing remains steady.",
+                "com_sex_oral_B_3": "$self$ shows no sign of waking, letting $target$ play with her, only the rise and fall of her chest quickening slightly.",
+                "com_sex_oral_B_4": "$self$ remains motionless in her previous pose, only the soft flesh of her chest deforming and sinking under $target$'s tongue.",
+                "com_sex_oral_B_5": "$self$ mouths open unknowingly, oblivious to the fact that her nipples are being violated, only physically erecting due to the stimulation.",
+                "com_sex_oral_B_6": "Saliva stretches into silver strands on $self$'s frozen skin, her lackluster eyes still staring straight ahead.",
+                "com_sex_oral_B_7": "$self$ wakes with a start, instinctively covering her chest. \"What?! ...It's you? Stop it, I'm sleepy!\"",
+                "com_sex_oral_B_8": "$self$ rolls over, turning her back to $target$ and pulling the blanket over her head. \"Let's talk tomorrow... dead tired...\"",
+                "com_sex_oral_B_9": "$self$ screams, kicking $target$ off the bed with hands and feet. \"Pervert! What are you doing?!\"",
+                "com_sex_oral_B_10": "$self$ shrinks into the corner in panic, wrapping the blanket tight. \"How did you get in?! Get out! Get out!\"",
+                "com_sex_oral_B_11": "$self$ smiles and pushes $target$'s head away, adjusting her clothes. \"Stop it, it really tickles!\"",
+                "com_sex_oral_B_12": "$self$ holds down $target$'s restless hand, shaking her head gently. \"Not now, there's work to do.\"",
+                "com_sex_oral_B_13": "$self$ turns away, her tone slightly pettish: \"Anything but that, it hurt for days last time you did it.\"",
+                "com_sex_oral_B_14": "$self$ steps back awkwardly, covering her chest. \"Uh, $target$, this joke is going a bit too far.\"",
+                "com_sex_oral_B_15": "$self$ grabs $target$'s wrist, forcing a smile. \"We're friends, right? Better save this for your lover.\"",
+                "com_sex_oral_B_16": "$self$ flings $target$'s hand away fiercely, eyes cold. \"Don't touch me! Disgusting!\"",
+                "com_sex_oral_B_17": "$self$ steps back, guarding herself warily. \"One more step and I'm calling the police!\"",
+                "com_sex_oral_B_18": "$self$ spits coldly, face full of disgust. \"Gross! Get lost!\"",
+                "com_sex_oral_B_19": "$self$ opens her eyes groggily, letting out a lazy moan. \"Mmm... it's you... seriously, doing this in the middle of the night...\"",
+                "com_sex_oral_B_20": "$self$ hugs the head buried in her chest while half-asleep, mumbling: \"Mmm... so ticklish... do as you like...\"",
+                "com_sex_oral_B_21": "$self$ wakes from sleep, surprised at first but then revealing a playful smile. \"Taking advantage of someone sleeping isn't very gentlemanly... but, I don't hate it.\"",
+                "com_sex_oral_B_22": "$self$ looks at $target$ hazily, chuckling as she wraps her arms around his neck. \"Since you woke me up... take responsibility and make me feel good.\"",
+                "com_sex_oral_B_23": "$self$ wakes in terror, trembling as she realizes the situation. \"Don't hit me... I'll let you do it... please...\"",
+                "com_sex_oral_B_24": "$self$ dares not move in this sudden assault, weeping silently. \"As long as I don't scream... will I be okay...\"",
+                "com_sex_oral_B_25": "$self$'s breathing quickens, legs unconsciously clamping around $target$'s waist. \"Haaah... feeling it... more than before...\"",
+                "com_sex_oral_B_26": "$self$ cups $target$'s face, eyes full of dependence and love. \"Don't stop... that feeling... so good...\"",
+                "com_sex_oral_B_27": "$self$ lets out a sweet nasal sound, body melting like water. \"Mmhmm... why are you... so good at this today...\"",
+                "com_sex_oral_B_28": "$self$'s resisting hands slowly turn to gripping $target$'s clothes tightly, suppressed gasps escaping her lips. \"No... can't... why is my body...\"",
+                "com_sex_oral_B_29": "$self$'s eyes start to lose focus, resistance fading. \"Haaah... what is this strange feeling...\"",
+                "com_sex_oral_B_30": "$self$ bites her finger in shame, yet unable to control her body from reciprocating $target$'s movements. \"Shouldn't be like this... but...\"",
+                "com_sex_oral_B_31": "$self$ frowns and hisses, body stiffening. \"Ouch... be gentle, did you use your teeth?\"",
+                "com_sex_oral_B_32": "$self$ pushes $target$'s shoulder impatiently. \"Okay, that's enough right? I don't feel anything.\"",
+                "com_sex_oral_B_33": "$self$ sighs, looking at the ceiling with wandering eyes. \"Just smearing saliva around isn't fun...\"",
+                "com_sex_oral_B_34": "$self$ pushes $target$ hard, voice sobbing. \"Enough! Let me go! It's really gross!\"",
+                "com_sex_oral_B_35": "$self$ lies there like a dead fish, eyes hollow and full of hatred. \"How long are you going to humiliate me...\"",
+                "com_sex_oral_B_36": "$self$ slaps $target$ hard while he's off guard. \"Pervert! Go to hell!\""
+            }
         }
     }
 }

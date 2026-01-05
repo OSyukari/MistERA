@@ -112,6 +112,11 @@
             {
                 "skill_sexSkill_technique": "性交技巧",
                 "skill_sexSkill_technique_tooltip": "%%notimplemented%%"
+            },
+            "en-us":
+            {
+                "skill_sexSkill_technique": "Technique",
+                "skill_sexSkill_technique_tooltip": "%%notimplemented%%"
             }
         }
     }

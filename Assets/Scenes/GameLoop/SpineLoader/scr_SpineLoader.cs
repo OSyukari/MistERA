@@ -87,12 +87,12 @@ public class scr_SpineLoader : MonoBehaviour
     public IEnumerator SetBase(PortraitManager.CharaPortrait_Spine manager, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName, string addonAnimName)
     {
         var version = "";
-        if (manager.dataHolder != null)
+        if (manager.dataHolder != null && manager.dataHolder.skeletonTA != null && manager.dataHolder.skeletonTA.text != null)
         {
-            var ta =  manager.dataHolder.skeletonTA;
-            if (ta.text.Contains("4.0.")) version = "4.0";
-            else if (ta.text.Contains("4.1.")) version = "4.1";
-            else if (ta.text.Contains("4.2.")) version = "4.2";
+            var text =  manager.dataHolder.skeletonTA.text;
+            if (text.Contains("4.0.")) version = "4.0";
+            else if (text.Contains("4.1.")) version = "4.1";
+            else if (text.Contains("4.2.")) version = "4.2";
         }
         else
         {

@@ -47,7 +47,7 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在做清洁"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_cleaning_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_production_cooking",
@@ -117,7 +117,7 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在下厨"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_production_cooking_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_production_chemistry",
@@ -542,6 +542,18 @@
                             }
                         },
                         "displayName": "com_job_farm_maintain_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_maintain_displayName_2"
                     }
                 ],
                 "results": {
@@ -570,17 +582,19 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在打理农场"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_maintain_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_farm_remove",
                 "COMRepeat": true,
+                "HideWhenInvalid": true,
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_job_farm_remove_displayName_1",
                 "timeScale": 90,
                 "comTags": [
                     "furniture",
-                    "farming"
+                    "farming",
+                    "farm_remove"
                 ],
                 "requirements": {
                     "requirement": {
@@ -588,10 +602,21 @@
                     },
                     "requireContaining": {
                         "requireContentExist": true,
-                        "allowPlanting": [
-                            ""
-                        ]
+                        "allowPlanting": [  "" ]
                     }
+                },
+                "results":{
+                    "results_jobContainer":[
+                        {
+                            "entry_results":{
+                                "isItemContainer":true,
+                                "setItem":{
+                                    "isUnset":true
+                                }
+                            }
+                        }
+                    ]
+
                 },
                 "variants": [
                     {
@@ -615,6 +640,17 @@
                             }
                         },
                         "displayName": "com_job_farm_remove_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "req_Doers": {
+                                    "cost_ST": 15
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_remove_displayName_3"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -640,12 +676,13 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在移除作物"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_remove_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_farm_cultivate_crop",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "COMRepeat": true,
+                "HideWhenInvalid":true,
                 "displayName": "com_job_farm_cultivate_crop_displayName",
                 "timeScale": 120,
                 "comTags": [
@@ -685,6 +722,17 @@
                             }
                         },
                         "displayName": "com_job_farm_cultivate_crop_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "req_Doers": {
+                                    "cost_ST": 30
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_cultivate_crop_displayName_3"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -703,7 +751,7 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在种植作物"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_crop_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_farm_cultivate_meat",
@@ -749,6 +797,17 @@
                             }
                         },
                         "displayName": "com_job_farm_cultivate_meat_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "req_Doers": {
+                                    "cost_ST": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_farm_cultivate_meat_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -767,7 +826,7 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在培育肉食"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_meat_ongoing_1"]}], "keepLooking":false }
             }
         ]
     },
@@ -779,22 +838,26 @@
             {
 
 
+"com_job_farm_cultivate_crop": "将该作物种植于此。多人合作会降低该指令对每人的消耗\nNPC不会执行该指令，必须由玩家亲自起头",
 "com_job_farm_cultivate_crop_displayName": "种植植物",
 "com_job_farm_cultivate_crop_displayName_1": "种植$name$",
 "com_job_farm_cultivate_crop_displayName_2": "二人一起种植$name$",
-"com_job_farm_cultivate_crop_displayName_3": "三人一起种植$name$",
+"com_job_farm_cultivate_crop_displayName_3": "一起种植$name$",
 "com_job_farm_cultivate_crop_begin_1": "$doer.firstname$拿起$name$幼苗，小心地将其放入育苗盆中，并覆盖上土壤。",
 "com_job_farm_cultivate_crop_begin_2": "$doer.firstname$在育苗架上摆放好一个个育苗盆，开始了新一批$name$的种植。",
 "com_job_farm_cultivate_crop_begin_3": "$doer.firstname$在室内种植区，精心挑选着健康的$name$幼苗，并按照规划进行种植。",
+"com_job_farm_cultivate_crop_ongoing_1": "$doer.firstname$正在种植作物",
 
 
 
+"com_job_farm_cultivate_meat": "将该生物养育于此。多人合作会降低该指令对每人的消耗\nNPC不会执行该指令，必须由玩家亲自起头",
 "com_job_farm_cultivate_meat_displayName": "养殖肉类",
 "com_job_farm_cultivate_meat_displayName_1": "养殖$name$",
 "com_job_farm_cultivate_meat_displayName_2": "一起养殖$name$",
 "com_job_farm_cultivate_meat_begin_1": "$doer.firstname$提着饲料，走到饲养区域，开始给圈养的$name$进行喂食",
 "com_job_farm_cultivate_meat_begin_2": "$doer.firstname$仔细检查着养殖环境，清理粪便，更换饮水，确保$name$健康生长",
 "com_job_farm_cultivate_meat_begin_3": "$doer.firstname$按照规定，将营养液添加到饲料中，为圈养的$name$提供生长所需的营养",
+"com_job_farm_cultivate_meat_ongoing_1": "$doer.firstname$正在培育肉食",
 
 "com_job_cleaning": "只有房间内有%%tag_trash%%时才可以执行，指令结束时移除房间内的%%tag_trash%%道具",
 "com_job_cleaning_displayName_1": "扫除",
@@ -803,6 +866,7 @@
 "com_job_cleaning_begin_1": "$doer.firstname$ 拿起抹布和清洁剂，开始擦拭房间里的各个角落",
 "com_job_cleaning_begin_2": "$doer.firstname$ 推出了吸尘器，开始仔细地清理房间的地面",
 "com_job_cleaning_begin_3": "$doer.firstname$ 拿起除尘掸，掸去家具上的灰尘，然后用清洁剂擦拭表面",
+"com_job_cleaning_description_ongoing_1": "$doer.firstname$正在做清洁",
 "com_job_player_hourlywork_displayName_1": "（玩家限定）文书工作",
 "com_job_player_hourlywork_displayName_2": "一同文书工作",
 "com_job_production_cooking_displayName": "制造：下厨",
@@ -811,6 +875,7 @@
 "com_job_production_cooking_begin_1": "$doer.firstname$开始准备晚餐的食材。",
 "com_job_production_cooking_begin_2": "$doer.firstname$打开炉灶开始了烹饪。",
 "com_job_production_cooking_after_1": "$doer.firstname$做出了$item$",
+"com_job_production_cooking_description_ongoing_1": "$doer.firstname$正在下厨",
 "com_job_production_chemistry_displayName": "制造：化学",
 "com_job_production_chemistry_displayName_1": "制造化学",
 "com_job_production_chemistry_displayName_2": "一起制造化学",
@@ -839,22 +904,37 @@
 "com_job_training_melee_displayName_2": "一起格斗训练",
 "com_job_training_melee_begin_1": "$doer.firstname$站在训练场中央，深吸一口气，摆出格斗姿势，开始了今天的近身格斗训练",
 "com_job_training_melee_begin_2": "$doer.firstname$反复练习着各种进攻和防御的动作，提升自己的格斗能力",
+
+"com_job_farm_maintain":"每天一次，打理种植于此的作物。该指令与种植不同，可以由NPC来负责每日维护",
 "com_job_farm_maintain_displayName_1": "打理农场",
 "com_job_farm_maintain_displayName_2": "一起打理农场",
 "com_job_farm_maintain_begin_1": "$doer.firstname$拎起水桶，细心地为田地里的作物浇水，确保它们能茁壮成长",
 "com_job_farm_maintain_begin_2": "$doer.firstname$弯下腰，仔细地巡视着每一株植物，清除掉那些有害的杂草和虫子",
 "com_job_farm_maintain_begin_3": "$doer.firstname$在田地里忙碌着，修剪枝叶，松动土壤，为农作物的生长创造良好的环境",
+"com_job_farm_maintain_description_ongoing_1": "$doer.firstname$正在打理农场",
+
+"com_job_farm_remove": "移除种植于此处的作物",
 "com_job_farm_remove_displayName_1": "移除作物",
 "com_job_farm_remove_displayName_2": "二人一起移除作物",
-"com_job_farm_remove_displayName_3": "三人一起移除作物",
+"com_job_farm_remove_displayName_3": "一起移除作物",
 "com_job_farm_remove_begin_1": "$doer.firstname$开始移除安置在此的对象。",
-"com_job_farm_remove_after_1": "$doer.firstname$移除了指定对象"
+"com_job_farm_remove_after_1": "$doer.firstname$移除了指定对象",
+"com_job_farm_remove_ongoing_1": "$doer.firstname$正在移除作物"
 
 
                 
             },
             "en-us":
             {
+
+"com_job_farm_cultivate_crop": "Plant the crop here. Multiplayer cooperation reduces the cost for each person.\nNPCs will not execute this command; it must be initiated by the player.",
+"com_job_farm_cultivate_crop_ongoing_1": "$doer.firstname$ is planting crops.",
+"com_job_farm_cultivate_meat": "Raise the creature here. Multiplayer cooperation reduces the cost for each person.\nNPCs will not execute this command; it must be initiated by the player.",
+"com_job_farm_cultivate_meat_ongoing_1": "$doer.firstname$ is cultivating meat.",
+"com_job_farm_maintain":"Once a day, tend to the crops planted here. Unlike planting, this command can be handled by NPCs for daily maintenance.",
+"com_job_farm_remove": "Remove the crops planted here.",
+"com_job_farm_remove_ongoing_1": "$doer.firstname$ is removing crops.",
+"com_job_production_cooking_description_ongoing_1": "$doer.firstname$ is cooking.",
 
 "com_job_farm_cultivate_crop_begin_1": "$doer.firstname$ picked up the $name$ seedling, carefully placed it into the seedling pot, and covered it with soil",
 "com_job_farm_cultivate_crop_begin_2": "$doer.firstname$ arranged the seedling pots on the seedling rack, and began planting a new batch of $name$",
@@ -871,6 +951,7 @@
 "com_job_cleaning_begin_1": "$doer.firstname$ picked up the rag and cleaning agent, and began to wipe every corner of the room",
 "com_job_cleaning_begin_2": "$doer.firstname$ rolled out the vacuum cleaner and began to carefully clean the floor of the room",
 "com_job_cleaning_begin_3": "$doer.firstname$ picked up the duster, dusted the furniture, and then wiped the surfaces with cleaning agent",
+"com_job_cleaning_description_ongoing_1": "$doer.firstname$ is cleaning the room",
 "com_job_player_hourlywork_displayName_1": "(Player only) Do paperworks",
 "com_job_player_hourlywork_displayName_2": "Do paperworks",
 "com_job_production_cooking_displayName": "Production: Cooking",
@@ -912,6 +993,7 @@
 "com_job_farm_maintain_begin_1": "$doer.firstname$ picked up the water bucket and carefully watered the crops in the field, ensuring they could grow strong and healthy.",
 "com_job_farm_maintain_begin_2": "$doer.firstname$ bent down and carefully inspected each plant, removing harmful weeds and bugs.",
 "com_job_farm_maintain_begin_3": "$doer.firstname$ was busy in the field, pruning branches and loosening the soil, creating a good environment for the growth of the crops.",
+"com_job_farm_maintain_description_ongoing_1": "$doer.firstname$ is tending the farm",
 "com_job_farm_remove_displayName_1": "Remove crop",
 "com_job_farm_remove_displayName_2": "Remove crop",
 "com_job_farm_remove_displayName_3": "Remove crop",

@@ -1,54 +1,225 @@
 {
-    "ExpeditionEntry":{
-        "list":
-        [
-{
-    "ExpeditionID":"expedition_cave_goblin_captive",
-    "HasStartHour":false,
-    "removeOnComplete":true, 
-    "rescueEventID":"expedition_cave_goblin_captive_rescue",
-    "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
-    "EventRate":0.10,
-    "MaxExplorationRate":1200,
-    "DescriptionText":[],
-    "EventIDs":[],
-    "FeatureKeywords":["captive", "goblin"],
-    "keywords":["Utnapishtim"],
-    "Events":
-    [
-
-    ],
-    "weightModifiers":[ { "keywords":["captive"], "weightMult":2 } ]
-}
-        ]
-    },
-    "ExplorationFeatures":
-    {
-        "list":
-        [
-{
-    "requireKeywords": [ "captive", "goblin" ],
-    "featureEventIDs": [
-        "exp_event_caveGoblinCaptive"
-    ],
-    "DescriptionText":[
-    ]
-}
-        ]
-
-    },
-    "Dictionary":
-    {
-        "Entries":
-        {
-            "zh-cn":
+    "ExpeditionEntry": {
+        "list": [
             {
-"expedition_cave_goblin_captive":"哥布林洞窟",
-"expedition_cave_goblin_captive_rescue":"救援行动：哥布林洞窟"
+                "ExpeditionID": "expedition_cave_goblin_captive",
+                "HasStartHour": false,
+                "removeOnComplete": true,
+                "rescueEventID": "expedition_cave_goblin_captive_rescue",
+                "backgroundImagePath": "Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
+                "EventRate": 0.10,
+                "MaxExplorationRate": 1200,
+                "DescriptionText": [],
+                "EventIDs": [],
+                "FeatureKeywords": [
+                    "captive",
+                    "goblin"
+                ],
+                "keywords": [
+                    "Utnapishtim"
+                ],
+                "Events": [],
+                "weightModifiers": [
+                    {
+                        "keywords": [
+                            "captive"
+                        ],
+                        "weightMult": 2
+                    }
+                ]
+            }
+        ]
+    },
+    "ExplorationFeatures": {
+        "list": [
+            {
+                "requireKeywords": [
+                    "captive",
+                    "goblin"
+                ],
+                "featureEventIDs": [
+                    "exp_event_caveGoblinCaptive"
+                ],
+                "DescriptionText": []
+            }
+        ]
+    },
+    "Events": {
+        "list": [
+            {
+                "ID": "expedition_cave_goblin_captive_rescue",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "target_chara_conditions": {
+                                    "party": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ],
+                                    "victims": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_trade"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "silent fail branch",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_error"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "br_trade",
+                        "portraitRefKey": "party",
+                        "portraitTagsOverride": [
+                            "serious"
+                        ],
+                        "question": "expedition_cave_goblin_captive_rescue_event_ev01",
+                        "options": [
+                            {
+                                "option": "expedition_cave_goblin_captive_rescue_event_ev01_op01",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_abort"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "target_chara_conditions": {
+                                    "victims": [
+                                        {
+                                            "parameters": [
+                                                "CanTerminateExpedition"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "option": "expedition_cave_goblin_captive_rescue_event_ev01_op02",
+                                "Results": [
+                                    {
+                                        "Type": "TerminateExpedition",
+                                        "arguments": [
+                                            "victims"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FactionExchangeInventory",
+                                        "arguments": [
+                                            "party",
+                                            "victims",
+                                            "true",
+                                            "true",
+                                            "true",
+                                            "true",
+                                            ""
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_lootEnd"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_abort",
+                        "portraitRefKey": "party",
+                        "portraitTagsOverride": [
+                            "serious"
+                        ],
+                        "line": "expedition_cave_goblin_captive_rescue_event_ev02",
+                        "Results": [
+                            {
+                                "Type": "ExecuteCallbackPermissive",
+                                "arguments": [
+                                    "RetryEvent"
+                                ]
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_lootEnd",
+                        "portraitRefKey": "party",
+                        "portraitTagsOverride": [
+                            "serious"
+                        ],
+                        "line": "expedition_cave_goblin_captive_rescue_event_ev03",
+                        "Results": [
+                            {
+                                "Type": "ExecuteCallbackPermissive",
+                                "arguments": [
+                                    "ResolveEvent"
+                                ]
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_error",
+                        "line": "exp_event_error99",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "expedition_cave_goblin_captive": "哥布林巢穴",
+                "expedition_cave_goblin_captive_rescue": "救援行动：哥布林巢穴",
+                "expedition_cave_goblin_captive_rescue_event_ev01": "$party.name$找到了失去联络的$victims.name$",
+                "expedition_cave_goblin_captive_rescue_event_ev01_op01": "先准备一下",
+                "expedition_cave_goblin_captive_rescue_event_ev01_op02": "立刻展开救援",
+                "expedition_cave_goblin_captive_rescue_event_ev02": "$party.name$暂时撤退了\n请确保救援对象没有未结算的事件！",
+                "expedition_cave_goblin_captive_rescue_event_ev03": "$party.name$成功营救了$victims.name$"
             },
-            "en-us":
-            {
-
+            "en-us": {
+                "expedition_cave_goblin_captive": "Goblin Lair",
+                "expedition_cave_goblin_captive_rescue": "Rescue Operation: Goblin Lair",
+                "expedition_cave_goblin_captive_rescue_event_ev01": "$party.name$ found the lost contact $victims.name$",
+                "expedition_cave_goblin_captive_rescue_event_ev01_op01": "Prepare first",
+                "expedition_cave_goblin_captive_rescue_event_ev01_op02": "Start rescue immediately",
+                "expedition_cave_goblin_captive_rescue_event_ev02": "$party.name$ retreated temporarily\nPlease ensure the rescue target has no unsettled events!",
+                "expedition_cave_goblin_captive_rescue_event_ev03": "$party.name$ successfully rescued $victims.name$"
 
             }
         }
