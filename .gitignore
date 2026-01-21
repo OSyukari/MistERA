@@ -9,6 +9,7 @@
 !.gitattributes
 !gitlab-ci.yml
 !README.md
+!CHANGELOG.md
 !ci/*
 
 !Data/
