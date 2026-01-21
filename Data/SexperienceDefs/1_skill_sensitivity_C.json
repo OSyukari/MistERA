@@ -5,6 +5,7 @@
         [
             {
                 "ID":"skill_sensitivity_C",
+                "categoryTag":["skill_sensitivity"],
                 "tags":["nsfw"],
                 "requirements":{
                     "$type":"CharaSkill+RequireOne, Assembly-CSharp",

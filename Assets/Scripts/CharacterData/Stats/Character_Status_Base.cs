@@ -174,7 +174,9 @@ public class Status_Base
             float abs = Mathf.Abs(decaySpeed);
             //if (logging) Debug.Log($"decay tick {value} {baseValue} {decaySpeed} {diff} {abs}");
             if (diff == 0) return 0;
-            return diff >= abs ? abs : diff <= -abs ? -abs : 0;
+            else if (diff >= abs) return abs;
+            else if (diff <= -abs) return -abs;
+            else return diff;
             //var lerpStep = Math.Abs( decaySpeed/(targetValue - value));
             //return (float) Unity.Mathematics.math.lerp(value, targetValue, lerpStep) - value;
         }

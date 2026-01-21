@@ -33,16 +33,6 @@
                                 "skillUseTags":"unsafe",
                                 "requireSelfTags":["human","female"],
                                 "requireCOMTags":["human","male"]
-                            } ,
-                            { 
-                                "skillUseTags":"touch",
-                                "requireSelfTags":["human","male"],
-                                "requireCOMTags":["human","female"]
-                            } ,
-                            { 
-                                "skillUseTags":"touch",
-                                "requireSelfTags":["human","female"],
-                                "requireCOMTags":["human","male"]
                             } 
                         ]
                     },{

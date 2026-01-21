@@ -219,18 +219,31 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
     }
 }
 
-public class COM: I_SerializationCallbackReceiver
+[System.Serializable]
+public class COM: I_SerializationCallbackReceiver, hasCategory
 {
-
+    public List<string> categoryTags = new List<string>();
     public class Acceptance
     {
         public int baseAcceptanceValue = 0;
         public bool useDefault = true;
+        public List<string> SkillBonus_Doer = new List<string>();
+        public List<string> SkillBonus_Receiver = new List<string>();
     }
     public class Difficulty
     {
         public int baseD20Check = 0;
         public bool useDefault = true;
+
+        public List<string> SkillBonus_Doer = new List<string>();
+        public List<string> SkillBonus_Receiver = new List<string>();
+
+        /// <summary>
+        /// Moodlet score on DC success
+        /// </summary>
+        public int moodMod = 0;
+        public int stressMod = 0;
+        public int lustMod = 0;
     }
 
     public bool COMRepeat = false;
@@ -760,11 +773,21 @@ public class COM: I_SerializationCallbackReceiver
         }
     }
 
+    [JsonIgnore]
+    public List<string> CategoryLabel
+    {
+        get
+        {
+            return categoryTags;
+        }
+    }
+
     public virtual string GetVariantDescription(int variantID, bool isDoer, int charaRef, string roomName, List<int> DoerRefs, List<int> ReceiverRefs, int masterRef)
     {
         return variants[variantID].GetVariantDescription(false, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
     }
 
+    [System.Serializable]
     public class COM_Variant
     {
         //[NonSerialized] private int ownerIndex = -1;

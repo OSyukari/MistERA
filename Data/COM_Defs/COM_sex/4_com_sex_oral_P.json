@@ -6,6 +6,7 @@
             {
                 "ID":"com_sex_oral_P",
                 "ActionPackageClass":"ActionPackage_Sex",
+                "categoryTags":["com_category_service"],
                 "displayName":"com_sex_oral_P_displayName_1",
                 "timeScale":3,
                 "comTags":["sex","service","penetration", "position_face", "position_inequal"],
@@ -24,8 +25,10 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
-                "DifficultyCheck":{ "baseD20Check":10 },
+                "AcceptanceCheck":{ "baseAcceptanceValue":27,
+                    "SkillBonus_Doer":["skill_sensitivity_M"] },
+                "DifficultyCheck":{ "baseD20Check":10,
+                    "SkillBonus_Doer":["skill_sensitivity_M"] },
                 "variants":[
                     {
                         "requirements":{

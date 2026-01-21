@@ -5,8 +5,10 @@
         [
             {
                 "ID":"relationship_attitude_terrified",            
+                "priority":3,
                 "obedienceMod":3,
-                "MainEmotionKey":"Fear",
+                "obedienceMod_Max":15, "obedienceMod_fear":0.02,
+                "MainEmotionKey":"Fear", "tags":["Fear"],
                 "Requirements":
                 {
                     "requireScore":[
@@ -18,8 +20,10 @@
             },
             {
                 "ID":"relationship_attitude_submissive",         
+                "priority":2,
                 "obedienceMod":2,
-                "MainEmotionKey":"Fear",
+                "obedienceMod_Max":10, "obedienceMod_fear":0.02,
+                "MainEmotionKey":"Fear", "tags":["Fear"],
                 "Requirements":
                 {
                     "requireScore":[
@@ -30,8 +34,10 @@
             },
             {
                 "ID":"relationship_attitude_wary",             
+                "priority":1,
                 "obedienceMod":-1,
-                "MainEmotionKey":"Fear",
+                "obedienceMod_Max":0, "obedienceMod_fear":0.01,
+                "MainEmotionKey":"Fear", "tags":["Fear"],
                 "Requirements":
                 {
                     "requireScore":[
@@ -44,8 +50,10 @@
             },
             {
                 "ID":"relationship_attitude_hateful",               
+                "priority":4,
                 "obedienceMod":-4,
-                "MainEmotionKey":"Badwill",
+                "obedienceMod_badwill":-0.02,
+                "MainEmotionKey":"Badwill", "tags":["Badwill"],
                 "Requirements":
                 {
                     "requireScore":[
@@ -56,8 +64,10 @@
             },
             {
                 "ID":"relationship_attitude_rebellious",                
+                "priority":3,
                 "obedienceMod":-3,
-                "MainEmotionKey":"Badwill",
+                "obedienceMod_badwill":-0.02,
+                "MainEmotionKey":"Badwill", "tags":["Badwill"],
                 "Requirements":
                 {
                     "requireScore":[
@@ -70,8 +80,10 @@
             },
             {
                 "ID":"relationship_attitude_resentful",                       
+                "priority":2,
                 "obedienceMod":-2,
-                "MainEmotionKey":"Badwill",
+                "obedienceMod_badwill":-0.02,
+                "MainEmotionKey":"Badwill", "tags":["Badwill"],
                 "Requirements":
                 {
                     "requireScore":[
@@ -81,8 +93,10 @@
             },  
             {
                 "ID":"relationship_attitude_disdainful",                
+                "priority":1,
                 "obedienceMod":-1,
-                "MainEmotionKey":"Badwill",
+                "obedienceMod_badwill":-0.01,
+                "MainEmotionKey":"Badwill", "tags":["Badwill"],
                 "Requirements":
                 {
                     "requireScore":[
@@ -91,48 +105,11 @@
                 }      
             },          
 
-
-            {
-                "ID":"relationship_attitude_admiring",            
-                "obedienceMod":3,
-                "MainEmotionKey":"Goodwill",
-                "Requirements":
-                {
-                    "requireScore":[{"requireScoreID":"Trust","operand":"gte","value":100},
-                                    {"requireScoreID":"Goodwill","operand":"gte","value":150}],
-                    "requireMood":{"operand":"gte","value":1}
-                },
-                "allowedEvolveInto":[]
-            },
-            {
-                "ID":"relationship_attitude_affectionate",
-                "obedienceMod":2,
-                "MainEmotionKey":"Goodwill",
-                "Requirements":
-                {
-                    "requireScore":[{"requireScoreID":"Trust","operand":"gte","value":50},
-                                    {"requireScoreID":"Goodwill","operand":"gte","value":100}],
-                    "requireMood":{"operand":"gte","value":1}
-                },
-                "allowedEvolveInto":[]
-            },
-            {
-                "ID":"relationship_attitude_friendly",
-                "obedienceMod":1,
-                "MainEmotionKey":"Goodwill",
-                "Requirements":
-                {
-                    "requireScore":[{"requireScoreID":"Goodwill","operand":"gte","value":50}],
-                    "requireMood":{"operand":"gte","value":1}
-                },
-                "allowedEvolveInto":[]
-            },
-
-
             {
                 "ID":"relationship_attitude_infatuated",
-                "obedienceMod":3,
-                "MainEmotionKey":"Desire",
+                "priority":3,
+                "obedienceMod":3, "obedienceMod_Max":15, "obedienceMod_goodwill":0.01, "obedienceMod_desire":0.02,
+                "MainEmotionKey":"Desire", "tags":["Desire"],
                 "Requirements":
                 {
                     "requireScore":[{"requireScoreID":"Desire","operand":"gte","value":100},
@@ -141,10 +118,14 @@
                     "requireLust":{"operand":"gte","value":2}
                 }
             },
+
+
             {
                 "ID":"relationship_attitude_lustful",
+                "priority":2,
                 "obedienceMod":2,
-                "MainEmotionKey":"Desire",
+                "obedienceMod_Max":10, "obedienceMod_desire":0.02,
+                "MainEmotionKey":"Desire","tags":["Desire"],
                 "Requirements":
                 {
                     "requireScore":[{"requireScoreID":"Desire","operand":"gte","value":50}],
@@ -153,8 +134,49 @@
             },
 
             {
+                "ID":"relationship_attitude_admiring",    
+                "priority":3,
+                "obedienceMod":3, "obedienceMod_Max":7, "obedienceMod_goodwill":0.02, 
+                "MainEmotionKey":"Goodwill", "tags":["Goodwill"],
+                "Requirements":
+                {
+                    "requireScore":[{"requireScoreID":"Trust","operand":"gte","value":100},
+                                    {"requireScoreID":"Goodwill","operand":"gte","value":250}],
+                    "requireMood":{"operand":"gte","value":1}
+                },
+                "allowedEvolveInto":[]
+            },
+            {
+                "ID":"relationship_attitude_affectionate",
+                "priority":2,
+                "obedienceMod":2, "obedienceMod_Max":5, "obedienceMod_goodwill":0.02, 
+                "MainEmotionKey":"Goodwill", "tags":["Goodwill"],
+                "Requirements":
+                {
+                    "requireScore":[{"requireScoreID":"Trust","operand":"gte","value":50},
+                                    {"requireScoreID":"Goodwill","operand":"gte","value":150}],
+                    "requireMood":{"operand":"gte","value":1}
+                },
+                "allowedEvolveInto":[]
+            },
+            {
+                "ID":"relationship_attitude_friendly",
+                "priority":1,
+                "obedienceMod":1, "obedienceMod_Max":3, "obedienceMod_goodwill":0.02, 
+                "MainEmotionKey":"Goodwill", "tags":["Goodwill"],
+                "Requirements":
+                {
+                    "requireScore":[{"requireScoreID":"Trust","operand":"gte","value":5},
+                                    {"requireScoreID":"Goodwill","operand":"gte","value":50}],
+                    "requireMood":{"operand":"gte","value":1}
+                },
+                "allowedEvolveInto":[]
+            },
+
+            {
                 "ID":"relationship_attitude_neutral",
-                "obedienceMod":0,
+                "priority":0,
+                "obedienceMod_Max":1, "obedienceMod_goodwill":0.02, 
                 "allowedEvolveInto":[]
             }
         ]

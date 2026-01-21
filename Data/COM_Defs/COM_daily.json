@@ -2,6 +2,123 @@
     "COMs":{
         "list":[
         {
+            "ID":"com_interaction_partyInvite",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"comManager_com_follow_request",
+            "timeScale":1,
+            "comTags": [
+                "action",
+                "player",
+                "followRequest",
+                "NonInteraction"
+            ],
+            "requirements":{
+                "requirement":{ 
+                    "forbidTeammateJoin":true,
+                    "doerCount":1, 
+                    "receiverCount":1,
+                    "req_Doers":{ "allowNPC":false } ,
+                    "req_Receivers":{ "requireUnrestrained":true, "requireAction":false, "requireConscious":false } 
+                }
+            },
+            "results": 
+            { "results_character":
+                [
+                    { "entry_conditions":{ "applyToReceiver":true }, "entry_results": { "toggleTeamStatus":true } }
+                ]
+            },
+            "variants":[
+                {
+                    "requirements":{ 
+                        "requirement":{ 
+                            "req_Receivers":{ "requireAction":true, "requireNotFollowing":true }
+                     } },
+                    "displayName":"comManager_com_follow_request"
+                },
+                {
+                    "requirements":{ 
+                        "requirement":{ 
+                            "req_Receivers":{ "requireNotFollowing":true }
+                     } },
+                    "displayName":"comManager_com_followCarry_request"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":10 },
+            "description_begin":
+            {
+                "Entries":[ 
+                    {
+                        "keepLooking":true,
+                        "texts": ["com_interaction_partyInvite_begin_1"]
+                    }
+                ]
+                
+            },
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_partyInvite_ongoing_1"]}], "keepLooking":false }
+        },
+        {
+            "ID":"com_interaction_partyDisband",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"comManager_com_follow_stop",
+            "timeScale":1, "HideWhenInvalid":true,
+            "comTags": [
+                "action",
+                "player",
+                "followRequest",
+                "NonInteraction"
+            ],
+            "requirements":{
+                "requirement":{ 
+                    "forbidTeammateJoin":true,
+                    "doerCount":1, 
+                    "receiverCount":1,
+                    "req_Doers":{ "allowNPC":false } ,
+                    "req_Receivers":{ "requireUnrestrained":true, "requireAction":false, "requireConscious":false } 
+                }
+            },
+            "results": 
+            { "results_character":
+                [
+                    { "entry_conditions":{ "applyToReceiver":true }, "entry_results": { "toggleTeamStatus":true } }
+                ]
+            },
+            "variants":[
+                {
+                    "requirements":{ 
+                        "requirement":{ 
+                            "req_Receivers":{ "requireAction":true,"requireFollowing":true }
+                     } },
+                    "displayName":"comManager_com_follow_stop"
+                },
+                {
+                    "requirements":{ 
+                        "requirement":{ 
+                            "req_Receivers":{ "requireFollowing":true }
+                     } },
+                    "displayName":"comManager_com_followCarry_stop"
+                }
+            ],
+            "description_begin":
+            {
+                "Entries":[ 
+                    {
+                        "keepLooking":true,
+                        "texts": ["comManager_com_follow_stop_begin_1"]
+                    }
+                ]
+                
+            },
+            "description_after":
+            {
+                "Entries":[
+                    {
+                        "keepLooking":true,
+                        "texts":[ "comManager_com_follow_stop_begin_1" ]
+                    }
+                ]
+            }
+        },
+        {
             "ID":"com_interaction_waste_time",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_interaction_waste_time_displayName",
@@ -74,7 +191,7 @@
                 [
                     { 
                         "entry_conditions": {  "applyToDoer":true, "applyToReceiver":true, "attitudeGTE":4 }, 
-                        "entry_results": { "type":"statMod_EN", "value":"3" } 
+                        "entry_results": { "type":"statMod_EN", "value":"1" } 
                     }
                 ]
             },
@@ -142,8 +259,12 @@
         {
             "zh-cn":
             {
+                "com_interaction_partyInvite":"%%com_unique_party_invite_tooltip%%",
                 "com_interaction_waste_time": "玩家限定，NPC不可执行。跟NPC组队时请请先解散NPC",
                 "com_interaction_waste_time_displayName": "什么都不做",
+                "com_interaction_partyInvite_begin_1": "$receiver.firstname$加入了$doer.firstname$",
+                "com_interaction_partyInvite_ongoing_1": "$receiver.firstname$正准备跟上$doer.firstname$",
+                "comManager_com_follow_stop_begin_1": "$receiver.firstname$离开了$doer.firstname$",
                 "com_interaction_waste_time_begin_1": "$doer.firstname$什么都没做",
                 "com_interaction_waste_time_description_ongoing_1": "$doer.firstname$正在发呆",
 
@@ -162,6 +283,12 @@
             },
             "en-us":
             {
+                "com_interaction_partyInvite": "%%com_unique_party_invite_tooltip%%",
+      "com_interaction_partyInvite_begin_1": "$receiver.firstname$ has joined $doer.firstname$",
+      "com_interaction_partyInvite_ongoing_1": "$receiver.firstname$ is preparing to follow $doer.firstname$",
+      "comManager_com_follow_stop_begin_1": "$receiver.firstname$ has left $doer.firstname$",
+
+
                 "com_interaction_waste_time": "Player only, cannot be performed by NPC. Will require dismissing any teammate before being allowed to perform this action.",
                 "com_interaction_waste_time_displayName": "Do Nothing",
                 "com_interaction_waste_time_begin_1": "$doer.firstname$ stands around and do nothing",

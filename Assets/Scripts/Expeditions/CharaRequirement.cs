@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
+[System.Serializable]
 public class CharaReq
 {
 
@@ -15,11 +16,15 @@ public class CharaReq
     public bool allowNPC = true;
 
     public bool requireConscious = true;
+    public bool requireUnconscious = false;
     // require conscious to react, like work.
     // action that do not require conscious are action that are done unilaterally
     public bool requireUnrestrained = false;
     public bool requireAction = true;
     public bool requireNoTeammate = false;
+    public bool requireFollowing = false;
+    public bool requireNotFollowing = false;
+    public bool requireTimestopped = false;
     public bool addPartyMembers = false;
     public bool requireUndressed = false;
     public bool requireMovement = false;
@@ -48,6 +53,12 @@ public class CharaReq
         requireAction = requireAction && req.requireAction;
         requireMale = this.requireMale || req.requireMale;
         requireFemale = this.requireFemale || req.requireFemale;
+
+        requireUnconscious = requireUnconscious || req.requireUnconscious;
+        requireFollowing = requireFollowing || req.requireFollowing;
+        requireNotFollowing = requireNotFollowing || req.requireNotFollowing;
+        requireTimestopped = requireTimestopped || req.requireTimestopped;
+
         //requireAroused = this.requireAroused || req.requireAroused;
         if (this.minRevealingScore == -1 && req.minRevealingScore != -1) this.minRevealingScore = req.minRevealingScore;
         if (this.cost_EN == 0 && req.cost_EN != 0) this.cost_EN = req.cost_EN;

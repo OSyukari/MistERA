@@ -408,7 +408,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             if (!ButtonsByID.ContainsKey(hash))
             {
                 scr_SelectableText box = Instantiate(prefab_Button);
-                box.transform.SetParent(initSexRecords.SkillsGrid, false);
+                box.transform.SetParent(initSexRecords.GetGrid(si.CategoryLabel), false);
                 box.Initialize(this, new ButtonValidator_UpgradeSkill(this, box, chara, si));
                 box.optionID = hash;
                 box.showBrackets = false;

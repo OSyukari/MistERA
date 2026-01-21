@@ -25,10 +25,16 @@
 
                         ],
                         "DisplayName":"1",
-                        "validUse": [{ 
-                            "skillUseTags":"social",
-                            "requireCOMTags":["interaction"]
-                        } ]
+                        "validUse": [
+                            { 
+                                "skillUseTags":"social",
+                                "requireCOMTags":["interaction"]
+                            } ,
+                            { 
+                                "skillUseTags":"touch",
+                                "requireCOMTags":["safe"]
+                            } 
+                        ]
                     },{
                         "requirements":{ 
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",

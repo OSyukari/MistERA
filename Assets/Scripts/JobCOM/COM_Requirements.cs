@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
+[System.Serializable]
 public class COM_Requirements
 {
 
@@ -49,6 +50,7 @@ public class COM_Requirements
 
     public Requirement requirement = new Requirement();
 
+    [System.Serializable]
     public class Requirement
     {
         public int doerCount = -1;
@@ -56,6 +58,8 @@ public class COM_Requirements
 
         public CharaReq req_Doers = new CharaReq();
         public CharaReq req_Receivers = new CharaReq();
+
+        public bool forbidTeammateJoin = false;
 
         /// <summary>
         /// indicates that this command has no receiver. </br>

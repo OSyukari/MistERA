@@ -6,6 +6,7 @@
             {
                 "ID":"com_sex_legs_P",
                 "ActionPackageClass":"ActionPackage_Sex",
+                "categoryTags":["com_category_service"],
                 "displayName":"com_sex_legs_P_displayName_1",
                 "timeScale":3,
                 "comTags":["sex","service", "position_face", "position_inequal"],
@@ -24,7 +25,7 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+                "AcceptanceCheck":{ "baseAcceptanceValue":27 },
                 "DifficultyCheck":{ "baseD20Check":15 },
                 "variants":[
                     {

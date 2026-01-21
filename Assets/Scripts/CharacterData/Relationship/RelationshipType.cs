@@ -22,6 +22,14 @@ public class RelationshipType
     {
         return this.permission.intimacy_low;
     }
+    public virtual bool HasPermission_Family(bool isB)
+    {
+        return this.permission.formFamily;
+    }
+    public virtual bool HasPermission_Intimacy_Medium(bool isB)
+    {
+        return this.permission.intimacy_medium;
+    }
     public virtual bool HasPermission_Intimacy_High(bool isB)
     {
         return this.permission.intimacy_high;
@@ -70,6 +78,7 @@ public class RelationshipType
                     // .Replace("$tag$", LocalizeDictionary.QueryThenParse(("relationship_" + this.MainEmotionKey).ToLower()))
                     .Replace("$isequal$", this.isEqualRelationship ? LocalizeDictionary.QueryThenParse("rel_tooltip_isequal") : LocalizeDictionary.QueryThenParse("rel_tooltip_inequal"))
                     .Replace("$allownatural$", this.allowNaturalProposition ? LocalizeDictionary.QueryThenParse("rel_tooltip_allownatural") : LocalizeDictionary.QueryThenParse("rel_tooltip_disallownatural"))
+                    .Replace("$allowplayer$", this.allowPlayerProposition ? " " : LocalizeDictionary.QueryThenParse("rel_tooltip_disallowPlayer"))
                     .Replace("$reqvalidation$", this.requireTargetValidation(false) ? LocalizeDictionary.QueryThenParse("rel_tooltip_reqvalidation") : LocalizeDictionary.QueryThenParse("rel_tooltip_novalidation"))
                     .Replace("$bonus$", relScoreBonus)
                     .Replace("$req$", this.Requirements == null ? LocalizeDictionary.QueryThenParse("rel_tooltip_req_none") : this.Requirements.Tooltip)
@@ -124,6 +133,7 @@ public class RelationshipType
     public string displayName = "";
     public bool hasGenderVariant = false;
     public bool allowNaturalProposition = true;
+    public bool allowPlayerProposition = true;
 
     [JsonProperty] protected RelationshipRequirement Requirements = null;
     [JsonProperty] protected RelationshipRequirement MaintenanceRequirements = null;
@@ -139,9 +149,9 @@ public class RelationshipType
         if (rel.Owner.RefID == 0) return true;
         var att = rel.GetCurrentAttitude();
 
-        if (MainEmotionKey == "") return true;
-        else if (att == null || MainEmotionKey != att.MainEmotionKey) return true;
-        else if (MaintenanceRequirements != null && !MaintenanceRequirements.Validate(rel)) return false;
+       // if (MainEmotionKey == "") return true;
+        //else if (att == null || MainEmotionKey != att.MainEmotionKey) return true;
+        if (MaintenanceRequirements != null && !MaintenanceRequirements.Validate(rel)) return false;
         return true;
     }
     public virtual bool isValid(Character_Relationship rel, bool validateB = false)
@@ -150,9 +160,21 @@ public class RelationshipType
         return true;
     }
 
+    /// <summary>
+    /// only for player initiated rel change, check if current stat satisfy maintenance req
+    /// </summary>
+    /// <param name="rel"></param>
+    /// <param name="validateB"></param>
+    /// <returns></returns>
+    public virtual bool isValidLoose(Character_Relationship rel, bool validateB = false)
+    {
+        if (MaintenanceRequirements != null && !MaintenanceRequirements.Validate(rel)) return false;
+        return true;
+    }
+
     public virtual bool canPropose(bool validateB)
     {
-        return this.allowNaturalProposition;
+        return  this.allowNaturalProposition;
     }
 
     public virtual int GetRelModForStat(bool isA, RelationshipScoreType type)
@@ -187,6 +209,19 @@ public class RelationshipType_Inequal : RelationshipType
     {
         if (isB && relationship_B_to_A != null) return relationship_B_to_A.HasPermission_Intimacy_Low(isB);
         else if (!isB && relationship_A_to_B != null) return relationship_A_to_B.HasPermission_Intimacy_Low(isB);
+        return false;
+    }
+
+    public override bool HasPermission_Family(bool isB)
+    {
+        if (isB && relationship_B_to_A != null) return relationship_B_to_A.HasPermission_Family(isB);
+        else if (!isB && relationship_A_to_B != null) return relationship_A_to_B.HasPermission_Family(isB);
+        return false;
+    }
+    public override bool HasPermission_Intimacy_Medium(bool isB)
+    {
+        if (isB && relationship_B_to_A != null) return relationship_B_to_A.HasPermission_Intimacy_Medium(isB);
+        else if (!isB && relationship_A_to_B != null) return relationship_A_to_B.HasPermission_Intimacy_Medium(isB);
         return false;
     }
     public override bool HasPermission_Intimacy_High(bool isB)
@@ -280,13 +315,20 @@ public class RelationshipType_Inequal : RelationshipType
         else if (!validateB && relationship_A_to_B != null) return relationship_A_to_B.isValid(rel, validateB);
         return true;
     }
+
+    public override bool isValidLoose(Character_Relationship rel, bool validateB = false)
+    {
+        if (validateB && relationship_B_to_A != null) return relationship_B_to_A.isValidLoose(rel, validateB);
+        else if (!validateB && relationship_A_to_B != null) return relationship_A_to_B.isValidLoose(rel, validateB);
+        return true;
+    }
 }
 
 public class Index_RelationshipTypes : I_IndexHasID, I_IndexMergeable
 {
-    [JsonProperty] protected List<RelationshipType> list_biological = new List<RelationshipType>();
-    [JsonProperty] protected List<RelationshipType> list_social = new List<RelationshipType>();
-    [JsonProperty] protected List<RelationshipType> list_personal = new List<RelationshipType>();
+    public List<RelationshipType> list_biological = new List<RelationshipType>();
+    public List<RelationshipType> list_social = new List<RelationshipType>();
+    public List<RelationshipType> list_personal = new List<RelationshipType>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, RelationshipType> _List;
     [JsonIgnore]
     public List<RelationshipType> List

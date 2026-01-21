@@ -6,6 +6,7 @@
             {
                 "ID":"com_sex_oral_A",
                 "ActionPackageClass":"ActionPackage_Sex",
+                "categoryTags":["com_category_a","com_category_service"],
                 "displayName":"com_sex_oral_A_displayName_1",
                 "timeScale":3,
                 "comTags":["sex","service", "position_face", "position_inequal"],
@@ -24,9 +25,19 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":35 },
-                "DifficultyCheck":{ "baseD20Check":5 },
-                "variants":[
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 35,
+                    "SkillBonus_Receiver": [
+                        "skill_sensitivity_A"
+                    ]
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 5,
+                    "SkillBonus_Receiver": [
+                        "skill_sensitivity_A"
+                    ]
+                },
+                "variants": [
                     {
                         "requirements":{
                             "requirement":{

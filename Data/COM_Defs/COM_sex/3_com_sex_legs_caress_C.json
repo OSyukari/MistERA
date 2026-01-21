@@ -7,6 +7,7 @@
                 "ID":"com_sex_legs_caress_C",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "displayName":"com_sex_legs_caress_C_displayName_1",
+                "categoryTags":["com_category_c","com_category_service"],
                 "timeScale":3,
                 "comTags":["sex","service", "position_face", "position_equal"],
                 "requirements":{
@@ -24,8 +25,10 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
-                "DifficultyCheck":{ "baseD20Check":5 },
+                "AcceptanceCheck":{ "baseAcceptanceValue":25,
+                    "SkillBonus_Receiver":["skill_sensitivity_C"] },
+                "DifficultyCheck":{ "baseD20Check":5,
+                    "SkillBonus_Receiver":["skill_sensitivity_C"] },
                 "variants":[
                     {
                         "requirements":{

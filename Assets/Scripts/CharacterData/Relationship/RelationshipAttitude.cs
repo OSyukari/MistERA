@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 
-public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, I_RemoveElemByTag
+[System.Serializable]
+public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, I_RemoveElemByTag, I_NeedLateInitialize
 {
-    public List<RelationshipAttitude> list = new List<RelationshipAttitude>(); 
+    [SerializeField] public List<RelationshipAttitude> list = new List<RelationshipAttitude>(); 
     Dictionary<string, RelationshipAttitude> ID_Dictionary = new Dictionary<string, RelationshipAttitude>();
 
     public void RegisterAllID(List<string> messages)
@@ -30,6 +31,32 @@ public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, 
         }
     }
 
+    Dictionary<RelationshipScoreType, List<RelationshipAttitude>> sortedList = new Dictionary<RelationshipScoreType, List<RelationshipAttitude>>();
+
+    /// <summary>
+    /// This function should sort list into priority ordered list.
+    /// </summary>
+    public void LateInitialize()
+    {
+        /*
+        foreach(var i in this.list)
+        {
+            if (!sortedList.ContainsKey(i.MainEmotionKey)) sortedList.Add(i.MainEmotionKey, new List<RelationshipAttitude>());
+            sortedList[i.MainEmotionKey].Add(i);
+        }
+        foreach(var l in sortedList.Values)
+        {
+            l.Sort((x, y) => y.priority.CompareTo(x.priority));
+        }*/
+        
+        list.Sort(delegate(RelationshipAttitude x, RelationshipAttitude y)
+        {
+            if (x.priority != y.priority) return y.priority >= x.priority ? 1 : -1;
+            if (x.MainEmotionKey != y.MainEmotionKey) return y.MainEmotionKey > x.MainEmotionKey ? 1 : -1;
+            return 0;
+        });
+    }
+
     public void RemoveElemByTag(string tag)
     {
        // foreach (var i in list) i.RemoveEntriesIDContaining(tag);
@@ -40,6 +67,7 @@ public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, 
 }
 
 
+[System.Serializable]
 public class RelationshipAttitude
 {
 
@@ -52,32 +80,33 @@ public class RelationshipAttitude
     public RelationshipRequirement Requirements = null;
     //public int[] RelationshipMod = new int[7];
     public int obedienceMod = 0;
-    public string MainEmotionKey = "";
+    public RelationshipScoreType MainEmotionKey = RelationshipScoreType.None;
+    public List<string> tags = new List<string>();
+
+    public int priority = 0;
+
+    public double obedienceMod_goodwill = 0;
+    public double obedienceMod_desire = 0;
+    public double obedienceMod_fear = 0;
+    public double obedienceMod_badwill = 0;
+    public double obedienceMod_trust = 0;
+    public int obedienceMod_Max = 0;
+
+    public int GetObedienceMod(Character_Relationship rel)
+    {
+        int value = 0;
+        if (obedienceMod_goodwill != 0) value += (int)(rel.Goodwill * obedienceMod_goodwill);
+        if (obedienceMod_desire != 0) value += (int)(rel.Desire * obedienceMod_desire);
+        if (obedienceMod_fear != 0) value += (int)(rel.Fear * obedienceMod_fear);
+        if (obedienceMod_badwill != 0) value += (int)(rel.Badwill * obedienceMod_badwill);
+        if (obedienceMod_trust != 0) value += (int)(rel.Trust * obedienceMod_trust);
+        value += obedienceMod;
+        return Math.Min(value, obedienceMod_Max);
+    }
 
     public bool isValidAttitude(Character_Relationship rel)
     {
-        
-        switch (rel.MaxScoreType())
-        {
-            case RelationshipScoreType.Trust:
-                if (this.MainEmotionKey.Length > 0 && this.MainEmotionKey != "Trust") return false;
-                break;
-            case RelationshipScoreType.Fear:
-                if (this.MainEmotionKey.Length > 0 && this.MainEmotionKey != "Fear") return false;
-                break;
-            case RelationshipScoreType.Goodwill:
-                if (this.MainEmotionKey.Length > 0 && this.MainEmotionKey != "Goodwill") return false;
-                break;
-            case RelationshipScoreType.Badwill:
-                if (this.MainEmotionKey.Length > 0 && this.MainEmotionKey != "Badwill") return false;
-                break;
-            case RelationshipScoreType.Desire:
-                if (this.MainEmotionKey.Length > 0 && this.MainEmotionKey != "Desire") return false;
-                break;
-            default:
-                break;
-
-        }
+        //if (this.MainEmotionKey != RelationshipScoreType.None && rel.MaxScoreType() != this.MainEmotionKey) return false;
         if (Requirements != null && !Requirements.Validate(rel)) return false;
         return true;
     }
@@ -140,8 +169,8 @@ public class RelationshipRequirement
             foreach (var i in requireScoreCompare) s.Add(i.Tooltip(false));
             foreach(var i in requireRawScoreCompare) s.Add(i.Tooltip(true));
             if ( requireMood  != null) s.Add(requireMood.Tooltip( scr_System_Serializer.current.MasterList.StatusEXs.GetByID("chara_status_mood") ));
-            if (requireStress != null) s.Add(requireMood.Tooltip(scr_System_Serializer.current.MasterList.StatusEXs.GetByID("chara_status_stress")));
-            if (requireLust != null) s.Add(requireMood.Tooltip(scr_System_Serializer.current.MasterList.StatusEXs.GetByID("chara_status_lust")));
+            if (requireStress != null) s.Add(requireStress.Tooltip(scr_System_Serializer.current.MasterList.StatusEXs.GetByID("chara_status_stress")));
+            if (requireLust != null) s.Add(requireLust.Tooltip(scr_System_Serializer.current.MasterList.StatusEXs.GetByID("chara_status_lust")));
             s.RemoveAll(x => x.Length < 1);
             return String.Join(" | ", s);
         }

@@ -39,8 +39,10 @@
 "ui_fatalError_copy":"复制LOG到剪切板",
 "ui_fatalError_copy_over":"复制成功",
 
+"ui_com_disabled_autofailure_deterministicRolls_tooltip":"（由于开启了%%ui_comPanel_filters_deterministicRolls%%）该指令接受率为0，无法执行",
+"ui_com_disabled_autofailure_tooltip":"该指令的接受率为0，无法执行",
 "ui_comPanel_filters_deterministicRolls": "非随机判定",
-"ui_comPanel_filters_deterministicRolls_tooltip": "判定NPC的指令接受度时，若成功率>=65%则必定成功，反之必定失败\n\n推荐开启",
+"ui_comPanel_filters_deterministicRolls_tooltip": "开启后，判定NPC的指令接受度时若成功率>=65%则必定成功，反之必定失败（并且该指令会无法被选择）\n\n推荐开启",
 
 "ui_comPanel_filters_shortenLogs": "简化口上",
 "ui_comPanel_filters_shortenLogs_tooltip": "开启后，参与多人指令时只会打印一条随机参与者的口上\n未开启时，会打印所有参与者的口上（人多时会刷屏，且刷到重复口上的可能性非常大\n\n推荐开启）",
@@ -99,6 +101,7 @@
 "comManager_filter_equip": "装备",
 "comManager_filter_room": "家具",
 "comManager_filter_work": "工作",
+
 "comManager_title_skinship_self": "肌肤接触 - 无目标",
 "comManager_title_skinship_target": "肌肤接触 - 目标[$name$]",
 "comManager_title_skinship_teammate": "，额外参与者[$teammates$]",
@@ -161,10 +164,19 @@
 "charaDetail_panel_logs": "行动记录",
 "charaDetail_panel_equipments": "装备",
 "charaDetail_tooltip_canMovePortrait": "可通过鼠标左键拖拽和滚轮缩放调整角色图像的默认位置",
+
 "comLogs_causes_previousLogs_positive": "<link=\"$linkTooltip$\">前回互动$amount$</link>",
 "comLogs_causes_previousLogs_negative": "<link=\"$linkTooltip$\">前回互动$amount$</link>",
 "comLogs_causes_unconscious": "<link=\"\">失去意识</link>",
 "comLogs_causes_reduced_consciousness": "<link=\"\">意识涣散</link>",
+"comLogs_causes_repeatRefusal": "<link=\"\">连续拒绝</link>",
+"comLogs_causes_timestopped": "<link=\"\">被时停</link>",
+"comLogs_causes_restrained": "<link=\"\">被拘束</link>",
+"comLogs_causes_imprisoned": "<link=\"\">被监禁</link>",
+"comLogs_causes_cannotRefuse": "<link=\"\">无法拒绝</link>",
+"comLogs_causes_ongoing": "<link=\"\">进行中</link>",
+"comLogs_causes_helpingWork": "<link=\"\">协助工作</link>",
+
 "ui_calendar_dayCount": "第$yearCount$年，第$dayOfYear$日",
 "ui_calendar_month": "$seasons$ $monthName$ $dayOfWeek$",
 "ui_management_topbar_population": "人口：$population$",
@@ -226,6 +238,15 @@
 "ui_prefs_colorPicker_Title": "当前编辑中：$optionName$",
 "ui_prefs_colorPicker_ConfirmAndExit": "确认并退出",
 "ui_prefs_colorPicker_RevertChanges": "撤销变更",
+
+"ui_prefs_logs_title": "<link=ui_prefs_logs_title_tooltip>历史记录相关</link>",
+"ui_prefs_logs_title_tooltip": "指角色选择任何指令后，打印指令成功率/结果的消息界面",
+"ui_prefs_logs_clearLogs": "<link=ui_prefs_logs_clearLogs_tooltip>注册新指令时清空历史记录</link>",
+"ui_prefs_logs_clearLogs_tooltip": "启用该设置等同于将%%ui_prefs_logs_maxLogsCount%%设置为0",
+"ui_prefs_logs_clearLogs_btn": "启用",
+"ui_prefs_logs_maxLogsCount": "<link=ui_prefs_logs_maxLogsCount_tooltip>历史记录最大保留量</link>",
+"ui_prefs_logs_maxLogsCount_tooltip": "高于该数量的历史记录会被删除\n每次注册指令会添加大约5到10条记录\n\n该数值上限150，推荐值50或更低",
+
 
 "ui_memory_relationship_refuse":"拒绝了与$target$成为$relationship$",
 "ui_memory_relationship_refused":"向$target$请求成为$relationship$，被拒绝了",
@@ -320,6 +341,7 @@
 "ui_management_expeditions_partyInventory_tooltip": "外出探索时，队伍成员能够取用道具栏内的物品\n只有在外过夜露营时，队伍成员才会取用道具栏内的餐点和家具\n\n探索中取得的道具会存取在单独的道具栏内，并且在探索结束回归后存入据点道具栏",
 "ui_management_expeditions_partyInventory_empty": "无", 
 
+"none":"无",
 "exp_event_timestamp_ongoing":"进行中",
 "exp_event_returning":"$names$正在返回",
 "exp_event_departure_memory":"出发前往探索$loc$",
@@ -426,6 +448,10 @@
 "com_special_timestop_begin": "时间停止",
 "com_special_timestop_end": "结束时停",
 
+"com_special_changeRel": "改变人际关系",
+"com_special_changeRel_notarget": "没有可改变关系的目标对象",
+"com_special_changeRel_tooltip": "可以提议改变双方的个人关系",
+
 "ui_furniture_container_cropStatus": "生长: $growth$, $days$日后可收获",
 
 "helper_messageTitle": "指南",
@@ -488,6 +514,7 @@
 "ui_ap_CharaReqUtility_notAllowPlayer":"该指令不允许玩家参与",
 "ui_ap_CharaReqUtility_notAllowNPC":"该指令不允许NPC（$name$）参与",
 "ui_ap_CharaReqUtility_requireConscious":"$name$失去意识了",
+"ui_ap_CharaReqUtility_requireUnconscious":"不可在$name$清醒时执行",
 "ui_ap_CharaReqUtility_requireUnrestrained":"需要$name$没有被束缚",
 "ui_ap_CharaReqUtility_requireAction_isTimeStopped":"$name$无法在时停中行动",
 "ui_ap_CharaReqUtility_requireAction":"$name$当前无法行动",
@@ -501,6 +528,9 @@
 "ui_ap_CharaReqUtility_requireCombat":"需要$name$能够战斗",
 "ui_ap_CharaReqUtility_requireStatFull":"需要$name$的$stat$为满",
 "ui_ap_CharaReqUtility_requireStatNotFull":"需要$name$的$stat$不满",
+"ui_ap_CharaReqUtility_requireNotFollowing":"需要$name$当前没有跟随玩家",
+"ui_ap_CharaReqUtility_requireFollowing":"需要$name$当前正跟随玩家",
+"ui_ap_CharaReqUtility_requireTimestopped":"需要$name$当前被时停",
 
 "ui_ap_PreEvaluate_requireDoer":"指令没有执行者",
 "ui_ap_PreEvaluate_requireCOM":"指令内容缺失",
@@ -546,6 +576,7 @@
             },
             "en-us": {
 
+      "none": "None",
 "ui_entry_traits": "Traits",
 "ui_entry_derivedStats": "Derived Stats",
 "ui_entry_status": "Status",
@@ -571,8 +602,10 @@
 "ui_entry_memory_sleep_begin": "sleeping in $room$",
 "ui_entry_memory_sleep_end": "Wakes up",
 
+"ui_com_disabled_autofailure_deterministicRolls_tooltip":"Command disabled due to no chance of getting accepted (under %%ui_comPanel_filters_deterministicRolls%%)",
+"ui_com_disabled_autofailure_tooltip":"Command disabled due to no chance of getting accepted",
 "ui_comPanel_filters_deterministicRolls": "Deterministic Rolls",
-"ui_comPanel_filters_deterministicRolls_tooltip": "Guarantee success on Command acceptance check when overall success rate >= 65%, and guarantee failure when not.",
+"ui_comPanel_filters_deterministicRolls_tooltip": "When toggled ON, guarantee success on Command acceptance check when overall success rate >= 65%, and guarantee failure when not (in this case, Command will be disabled)\n\nRecommended setting: ON",
 "comManager_tab_skinship": "Skinship",
 
 "comManager_tab_act": "Action",
@@ -671,10 +704,20 @@
 "charaDetail_panel_logs": "History Logs",
 "charaDetail_panel_equipments": "Equipments",
 "charaDetail_tooltip_canMovePortrait": "Portrait position can be adjusted with left click drag and scroll wheel zoom.",
+
 "comLogs_causes_previousLogs_positive": "<link=\"$linkTooltip$\">Prev. interactions $amount$</link>",
 "comLogs_causes_previousLogs_negative": "<link=\"$linkTooltip$\">Prev. interactions $amount$</link>",
 "comLogs_causes_unconscious": "<link=\"\">Unconscious</link>",
 "comLogs_causes_reduced_consciousness": "<link=\"\">Reduced Consciousness</link>",
+"comLogs_causes_cannotRefuse": "<link=\"\">Cannot Refuse</link>",
+"comLogs_causes_helpingWork": "<link=\"\">Helping Work</link>",
+"comLogs_causes_imprisoned": "<link=\"\">Imprisoned</link>",
+"comLogs_causes_ongoing": "<link=\"\">Join Ongoing</link>",
+"comLogs_causes_repeatRefusal": "<link=\"\">Repeated Refusal</link>",
+"comLogs_causes_restrained": "<link=\"\">Restrained</link>",
+"comLogs_causes_timestopped": "<link=\"\">Teimestopped</link>",
+
+
 "ui_calendar_dayCount": "Year $yearCount$, Day $dayOfYear$",
 "ui_calendar_month": "$dayOfWeek$ $monthName$, $seasons$",
 "ui_management_topbar_population": "Population: $population$",
@@ -733,6 +776,16 @@
 "ui_prefs_colorPicker_Title": "Currently Editing: $optionName$",
 "ui_prefs_colorPicker_ConfirmAndExit": "Confirm and Exit",
 "ui_prefs_colorPicker_RevertChanges": "Revert Changes",
+
+
+"ui_prefs_logs_clearLogs": "<link=ui_prefs_logs_clearLogs_tooltip>Clear history when registering new commands</link>",
+"ui_prefs_logs_clearLogs_btn": "Enable",
+"ui_prefs_logs_clearLogs_tooltip": "Enabling this setting is equivalent to setting %%ui_prefs_logs_maxLogsCount%% to 0",
+"ui_prefs_logs_maxLogsCount": "<link=ui_prefs_logs_maxLogsCount_tooltip>Maximum history logs retained</link>",
+"ui_prefs_logs_maxLogsCount_tooltip": "Logs exceeding this number will be deleted.\nEach command registration adds approximately 5 to 10 entries.\n\nMaximum value is 150; recommended value is 50 or lower.",
+"ui_prefs_logs_title": "<link=ui_prefs_logs_title_tooltip>History Logs</link>",
+"ui_prefs_logs_title_tooltip": "Refers to the message interface that prints command success rates/results after a character selects any command",
+
 
 "ui_top_faction_canEat": "<link=ui_top_faction_canEat_tooltip>Meal Available</link>",
 "ui_top_faction_canEat_tooltip": "When there is edible meal in Faction inventory, it is possible to get meal in canteen at specific meal hours.",
@@ -836,6 +889,11 @@
 "com_special_timestop_tooltip": "Stop time. Only player is able to act during timestop, and NPC in player's team will move with player.\nTimestopped NPC cannot act, cannot execute command, but can still be command targets.",
 "com_special_timestop_begin": "Timestop",
 "com_special_timestop_end": "End Timestop",
+
+      "com_special_changeRel": "Change Relationship",
+      "com_special_changeRel_notarget": "No target available for relationship change",
+      "com_special_changeRel_tooltip": "Propose to change the personal relationship between both parties",
+
 
 "helper_messageTitle": "Help",
 
@@ -1046,6 +1104,10 @@
 "ui_ap_CharaReqUtility_requireCombat":"Requires $name$ to be able to fight",
 "ui_ap_CharaReqUtility_requireStatFull":"Requires $name$'s $stat$ to be full",
 "ui_ap_CharaReqUtility_requireStatNotFull":"Requires $name$'s $stat$ not to be full",
+"ui_ap_CharaReqUtility_requireFollowing": "Requires $name$ to be currently following the player",
+"ui_ap_CharaReqUtility_requireNotFollowing": "Requires $name$ to not be following the player",
+"ui_ap_CharaReqUtility_requireTimestopped": "Requires $name$ to be currently time-stopped",
+"ui_ap_CharaReqUtility_requireUnconscious": "Cannot be executed while $name$ is conscious",
 
 "ui_ap_PreEvaluate_requireDoer":"Command has no performer",
 "ui_ap_PreEvaluate_requireCOM":"Command content missing",

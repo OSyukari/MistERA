@@ -114,6 +114,12 @@ public static class CharaReqUtility
                                 .Replace("$name$", c.FirstName));
             return false;
         }
+        if (q.requireUnconscious && !c.Stats.isConsciousnessUnconscious)
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireUnconscious")
+                                .Replace("$name$", c.FirstName));
+            return false;
+        }
         if (q.requireUnrestrained && (c.isRestrained))
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireUnrestrained")
@@ -199,6 +205,24 @@ public static class CharaReqUtility
                                 .Replace("$stat$", c.Stats.HP.DisplayName));
             return false;
         }
+        if (q.requireFollowing && !scr_System_CampaignManager.current.party.HasMember(c.RefID))
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireFollowing")
+                                .Replace("$name$", c.FirstName));
+            return false;
+        }
+        if (q.requireNotFollowing && scr_System_CampaignManager.current.party.HasMember(c.RefID))
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireNotFollowing")
+                                .Replace("$name$", c.FirstName));
+            return false;
+        }
+        if (q.requireTimestopped && !c.isTimeStopped)
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireTimestopped")
+                                .Replace("$name$", c.FirstName));
+            return false;
+        }
         return true;
     }
 
@@ -256,7 +280,8 @@ public static class CharaReqUtility
                // Debug.Log($"interaction cost, isdoer {isDoer} tags {String.Join("|",tags)}");
                 if (isDoer || !tags.Contains("ignored"))
                 {
-                    cost = (int)c.Stats.Energy_InteractionCost;
+                    var actorCount = com != null && com.requirements.TreatReceiverAsDoer ? m.Package.Actors.Count - 1 : m.ActorRefs.Count - 1;
+                    if (actorCount >= 0) cost = (int)c.Stats.Energy_InteractionCost * actorCount;
                 }
             }
 

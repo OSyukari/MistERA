@@ -372,7 +372,7 @@ public abstract class MessageLog
         get
         {
             if (PortraitRef != null && PortraitRef.Owner.RefID != 0) return true;
-            if (multipleChara.Count >= 1 && multipleChara[0].RefID != 0) return true;
+            if (multipleChara != null && multipleChara.Count >= 1 && multipleChara[0] != null && multipleChara[0].RefID != 0) return true;
             return false;
         }
     }

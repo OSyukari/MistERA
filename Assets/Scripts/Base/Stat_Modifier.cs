@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Linq;
 using Newtonsoft.Json;
 
 
@@ -93,6 +92,19 @@ public class Stat_Modifier
 
     // baseValue, finalMod, conflicting mod source
     [JsonProperty] protected string modKey = "";
+    [JsonProperty] protected string modName = "";
+    [JsonIgnore] public string DisplayName
+    {
+        get
+        {
+            if (modName != "") return modName;
+            else return modKey;
+        }
+        set
+        {
+            modName = value;
+        }
+    }
     [JsonIgnore]
     public string ModString { get
         {

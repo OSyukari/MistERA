@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -80,12 +81,23 @@ public class scr_System_CampaignManager : MonoBehaviour
             scr_UpdateHandler.current.EventHandler.StartEvent(actions_sceneUnload, false);
             scr_System_CampaignManager.current.FreeUpdate(-1, actions_sceneUnload.Name);
         }
+        if (onSceneUnload_Action != null)
+        {
+            onSceneUnload_Action.Invoke();
+        }
+        onSceneUnload_Action = null;
         actions_sceneUnload = null;
     }
 
+    Action onSceneUnload_Action = null;
+    Action onHideAnchor_Action = null;
     EventInstance actions_sceneUnload = null;
     EventInstance actions_viewChange = null;
     EventInstance actions_hideAnchor = null;
+    public void RegisterSceneUnloadActionCallback(Action a)
+    {
+        onSceneUnload_Action += a;
+    }
     public void RegisterSceneUnloadEventCallback(EventInstance a, bool immediate = false)
     {
         actions_sceneUnload = a;
@@ -96,6 +108,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         actions_hideAnchor = a;
         if (immediate) OnSceneUnload();
     }
+    public void RegisterCanvasAnchorHideActionCallback(Action a)
+    {
+        onHideAnchor_Action += a;
+    }
     public void HideCanvasAnchor()
     {
         if (this.CanvasAnchor != null) this.CanvasAnchor.PanelAnchor.gameObject.SetActive(false);
@@ -105,6 +121,11 @@ public class scr_System_CampaignManager : MonoBehaviour
             scr_UpdateHandler.current.EventHandler.StartEvent(actions_hideAnchor, false);
             scr_System_CampaignManager.current.FreeUpdate(-1, actions_hideAnchor.Name);
         }
+        if (onHideAnchor_Action != null)
+        {
+            onHideAnchor_Action.Invoke();
+        }
+        onHideAnchor_Action = null; 
         actions_hideAnchor = null;
     }
     public void EnableCanvasAnchor()
@@ -321,10 +342,14 @@ public class scr_System_CampaignManager : MonoBehaviour
             Debug.Log("error room does not contain player ref");
             ri.AddChara(Player);//.Add(scr_System_CampaignManager.current.Player);
             //ri.AddChara(scr_System_CampaignManager.current.Player);
-
         }
+
+       // this.Map.RefreshRoomMoodlets();
+
+
         NotifyUpdate();
     }
+
 
     protected void ExpeditionInstancesCleanup()
     {
@@ -387,7 +412,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             Debug.LogError($"empty string dtected, full string [{s}]");
             return;
         }
-        var chara = FindInstanceByID(refID);
+        var chara = refID >= 0 ? FindInstanceByID(refID) : null;
         var lg = LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, false, rightAlign);
         Observer_MessageLogs?.Invoke(lg, animate);
         //ChangeCurrentViewMode(ViewMode.View_Logs);
@@ -1550,6 +1575,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         Map.SerializationRebuilt();
         Map.UpdateRoomForceGreeting();
         ColdLoad = false;
+
         UpdateScene();
         scr_System_Time.current.UpdateTime(0, 0, 0, 0, true);
     }

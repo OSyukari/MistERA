@@ -1,9 +1,10 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 using System.Linq;
-using Newtonsoft.Json;
+using UnityEngine;
 
 
 public class Character_Body
@@ -469,7 +470,7 @@ public class Character_Body
         string cumKeywords = "";
 
 #if UNITY_EDITOR
-        if (Owner.Stats.SexStimulation.Severity >= 5) Debug.Log($"Checking climax on {Owner.FirstName}, {Owner.Stats.Climaxing == null} {!Stimulated} {isClimaxing()} {Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold}");
+       // if (Owner.Stats.SexStimulation.Severity >= 5) Debug.Log($"Checking climax on {Owner.FirstName}, {Owner.Stats.Climaxing == null} {!Stimulated} {isClimaxing()} {Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold}");
 #endif
         if (Owner.Stats.Climaxing == null) return;
         if (!Stimulated) return;
@@ -565,8 +566,23 @@ public class Character_Body
                             container.Owner.Memory.AddEntry(memInst2, containerTags, -1, true);
 
 
-
+                            var rel = container.Owner.Relationships.FindRelationshipWith(part.Owner);
                             var memInst3 = new MemInstance(new List<int>() { container.Owner.RefID }, containerTags, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc2);
+
+                            if (!rel.HasPermission_Family())
+                            {
+                                memInst3.ResetInternal(Memory_Response.Accept, Memory_Attitude.Hate);
+
+                                rel.ModRelationValue(RelationshipScoreType.Trust, -cumAmount, false);
+                                exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Trust, (int)-cumAmount);
+
+                                rel.ModRelationValue(RelationshipScoreType.Badwill, cumAmount, false);
+                                exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Badwill, (int)cumAmount);
+
+                                rel.ModRelationValue(RelationshipScoreType.Fear, cumAmount, false);
+                                exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Fear, (int)cumAmount);
+                            }
+
                             part.Owner.Memory.AddEntry(memInst3, selfTag, -1, true);
                         }
                         else
@@ -616,10 +632,14 @@ public class Character_Body
                 //if (!Cum) climaxDebuff = Math.Clamp(climaxDebuff, -200, 0);
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.Log($"Adding climax status on {Owner.FirstName} debuffstrength {climaxDebuff}");
 
+                //Owner.Stats.AddOrModStatus("chara_status_lust_hidden", climaxDebuff/10);
+
                 Owner.Stats.AddOrModStatus("chara_status_sexual_climax_after", climaxDebuff);
+                float satisfiedBonus = 0;
                 if (Owner.Stats.Lust_Hidden != null)
                 {
-                    Owner.Stats.AddOrModStatus(Owner.Stats.Lust_Hidden.ID, climaxDebuff * 0.05f);
+                    satisfiedBonus += Math.Min(climaxDebuff * 0.5f, Owner.Stats.Lust_Hidden.Severity);
+                    Owner.Stats.AddOrModStatus(Owner.Stats.Lust_Hidden.ID, climaxDebuff * 0.5f);
                 }
 
                 var disassemble = climaxKeywords.Split("||");
@@ -654,15 +674,27 @@ public class Character_Body
                 if (Owner.CurrentJob != null && Owner.CurrentJob is Job_Sex_Group)
                 {
                     List<int> relevantActorRefs = Owner.CurrentJob.GetLastInteractedActorRefs(Owner.RefID);
-                    if (relevantActorRefs.Count > 0)
+                    Utility.ShuffleList(relevantActorRefs);
+
+                    foreach(var c in relevantActorRefs)
                     {
-                        var target = scr_System_CampaignManager.current.FindInstanceByID( Utility.GetRandomElement(relevantActorRefs));
+                        var target = scr_System_CampaignManager.current.FindInstanceByID(c);
                         var rel = target == null ? null : Owner.Relationships.FindRelationshipWith(target);
                         if (rel != null)
                         {
-                            message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_target", rel, tags, null));
-                            logged = true;
+                            if (!logged)
+                            {
+                                message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_target", rel, tags, null));
+                                logged = true;
+                            }
+                            float value = Mathf.Abs(climaxDebuff * 0.1f) + satisfiedBonus;
+                            rel.ModRelationValue(RelationshipScoreType.Goodwill, value, false);
+                            rel.ModRelationValue(RelationshipScoreType.Desire, value, false);
+                            message.exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Goodwill, (int)value);
+                            message.exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Desire, (int)value);
+                            if (satisfiedBonus > 0) message.exp.AddMessage(rel.Owner.RefID, $"{Owner.FirstName}'s desire is getting satisfied ({(satisfiedBonus).ToString("+0;-#")})");
                         }
+                        
                     }
                 }
                 if (!logged)

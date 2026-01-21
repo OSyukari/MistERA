@@ -499,6 +499,7 @@ public static class UtilityEX
         //Debug.LogError("Sex AP detecting conflict");
         ActionPackage_Sex p2 = package as ActionPackage_Sex;
         Job_Sex_Group jSex =  a.job == null? null : a.job as Job_Sex_Group;
+        bool log = scr_System_CentralControl.current.LogPrefs.DLog_APConflict;
         if (p2 == null || jSex == null)
         {
             if (!Utility.ListContainsLoose(a.actorRefs, package.actorRefs)) return false;
@@ -510,12 +511,12 @@ public static class UtilityEX
                     //package.AddExtraCOMTags(new List<string>() { "ignored" });
                     package.SetIgnored();
 
-                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " set to ignored coexist");
+                    if (log) Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " set to ignored coexist");
                     return false;
                 }
                 else
                 {
-                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " cannot be ignored");
+                    if (log) Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " cannot be ignored");
                     return true;
                 }
 
@@ -525,39 +526,39 @@ public static class UtilityEX
         {   //detecting conflict between 2 sex packages inside a sex job (allow coexist)
             if (Utility.ListContainsLoose(a.actorRefs, package.actorRefs))
             {
-                if (a.targetCOM != null && package.targetCOM != null)
+                if (a.targetCOM != null && package.targetCOM != null && (Utility.ListContainsStrict(a.actorRefs, package.actorRefs) || Utility.ListContainsStrict(package.actorRefs, a.actorRefs)))
                 {
                     if (a.targetCOM.conflictTags.Count > 0 && Utility.ListContainsLoose(package.targetCOM.comTags, a.targetCOM.conflictTags))
                     {
-                        //Debug.Log($"Detecting ActionPackage_Sex Conflict between {a.DisplayName} and {package.DisplayName} caught by condition -2\nList 1 [{String.Join(" ", a.targetCOM.conflictTags)}] [{String.Join(" ", package.targetCOM.comTags)}]");
+                        if (log) Debug.Log($"Detecting ActionPackage_Sex Conflict between {a.DisplayName} and {package.DisplayName} caught by condition -2\nList 1 [{String.Join(" ", a.targetCOM.conflictTags)}] [{String.Join(" ", package.targetCOM.comTags)}]");
                         return true;
                     }
                     if (package.targetCOM.conflictTags.Count > 0 && Utility.ListContainsLoose(a.targetCOM.comTags, package.targetCOM.conflictTags))
                     {
-                        Debug.Log($"Detecting ActionPackage_Sex Conflict between {a.DisplayName} and {package.DisplayName} caught by condition -2\nList 1 [{String.Join(" ", a.targetCOM.comTags)}] [{String.Join(" ", package.targetCOM.conflictTags)}]");
+                        if (log) Debug.Log($"Detecting ActionPackage_Sex Conflict between {a.DisplayName} and {package.DisplayName} caught by condition -2\nList 1 [{String.Join(" ", a.targetCOM.comTags)}] [{String.Join(" ", package.targetCOM.conflictTags)}]");
                         return true;
                     }
                 }
 
                 if (Utility.ListContainsLoose(a.DoerRefs, package.DoerRefs) && Utility.ListContainsLoose(a.doerBodyTags, package.doerBodyTags))
                 {
-                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 1\nList 1 [" + String.Join(" ", a.DoerRefs) + " " + String.Join(" ", a.doerBodyTags) + "] List 2 [" + String.Join(" ", package.DoerRefs) + " " + String.Join(" ", package.doerBodyTags) + "]");
+                    if (log) Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 1\nList 1 [" + String.Join(" ", a.DoerRefs) + " " + String.Join(" ", a.doerBodyTags) + "] List 2 [" + String.Join(" ", package.DoerRefs) + " " + String.Join(" ", package.doerBodyTags) + "]");
                     return true;
                 }
                 if (p2.ReceiverRefs.Count > 0 && Utility.ListContainsLoose(a.ReceiverRefs, p2.ReceiverRefs) && Utility.ListContainsLoose(a.receiverBodyTags, p2.receiverBodyTags))
                 {
-                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 2\nList 1 [" + String.Join(" ", a.receiverBodyTags) + "] List 2 [" + String.Join(" ", p2.receiverBodyTags) + "]");
+                    if (log) Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 2\nList 1 [" + String.Join(" ", a.receiverBodyTags) + "] List 2 [" + String.Join(" ", p2.receiverBodyTags) + "]");
                     return true;
                 }
 
                 if (Utility.ListContainsLoose(a.DoerRefs, p2.ReceiverRefs) && Utility.ListContainsLoose(a.doerBodyTags, p2.receiverBodyTags))
                 {
-                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 3\nList 1 [" + String.Join(" ", a.doerBodyTags) + "] List 2 [" + String.Join(" ", p2.receiverBodyTags) + "]");
+                    if (log) Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 3\nList 1 [" + String.Join(" ", a.doerBodyTags) + "] List 2 [" + String.Join(" ", p2.receiverBodyTags) + "]");
                     return true;
                 }
                 if (Utility.ListContainsLoose(a.ReceiverRefs, p2.DoerRefs) && Utility.ListContainsLoose(a.receiverBodyTags, p2.doerBodyTags))
                 {
-                    Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 4\nList 1 [" + String.Join(" ", a.receiverBodyTags) + "] List 2 [" + String.Join(" ", p2.doerBodyTags) + "]");
+                    if (log) Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " caught by condition 4\nList 1 [" + String.Join(" ", a.receiverBodyTags) + "] List 2 [" + String.Join(" ", p2.doerBodyTags) + "]");
                     return true;
                 }
             }
@@ -777,25 +778,49 @@ public static class UtilityEX
         APs = Utility.Distinct(APs);
     }
 
-    public static void GetJobInteractionTagsFrom(Character_Trainable a, Character_Trainable b, Job job, ref List<string> ownerTags, ref List<string> extraComTags, ref List<string> extraTargetTags)
+    public static void GetJobInteractionTagsFrom(Character_Trainable a, Character_Trainable b, COM targetCOM, Job job, ref List<string> ownerTags, ref List<string> extraComTags, ref List<string> extraTargetTags)
     {
         var jobSex = job as Job_Sex_Group;
-        if (jobSex != null && a != null && b != null)
+        bool doer_isr = false;
+        bool receiver_isr = false;
+        if (a != null && b != null && targetCOM is COM_Sex)
         {
-            bool doer_isr = jobSex.isRapist(a) || a.canAct || a.isRestrained;
-            bool receiver_isr = jobSex.isRapist(b) || !b.canAct || b.isRestrained;
-            bool doer_canact = a.canAct && !a.isRestrained;
-            bool receiver_canact = b.canAct && !b.isRestrained;
+            var rel = b.Relationships.FindRelationshipWith(a);
+            if (rel.HasPermission_Intimacy_High())
+            {
+                //
+            }
+            else if (jobSex != null && jobSex.isRapist(a) != jobSex.isRapist(b))
+            {
+                doer_isr = jobSex.isRapist(a);
+                receiver_isr = jobSex.isRapist(b);
+                //Debug.Log($"GetJobInteractionTagsFrom {a.FirstName} {b.FirstName} 1, {doer_isr} != {receiver_isr}");
+            }
+            else if (a.isRestrained != b.isRestrained)
+            {
+                doer_isr = !a.isRestrained;
+                receiver_isr = !b.isRestrained;
+                //Debug.Log($"GetJobInteractionTagsFrom {a.FirstName} {b.FirstName} 2, {doer_isr} != {receiver_isr}");
+            }
+            else if (a.isImprisoned != b.isImprisoned)
+            {
+                doer_isr = !a.isImprisoned;
+                receiver_isr = !b.isImprisoned;
+                //Debug.Log($"GetJobInteractionTagsFrom {a.FirstName} {b.FirstName} 3, {doer_isr} != {receiver_isr}");
+            }
+            else if (a.canAct != b.canAct)
+            {
+                doer_isr = a.canAct;
+                receiver_isr = b.canAct;
+                //Debug.Log($"GetJobInteractionTagsFrom {a.FirstName} {b.FirstName} 4, {doer_isr} != {receiver_isr}");
+            }
+
             if (doer_isr != receiver_isr)
             {
                 ownerTags.Add(doer_isr ? "rape" : "raped");
                 extraTargetTags.Add(receiver_isr ? "rape" : "raped");
             }
-            else if (doer_canact != receiver_canact)
-            {
-                ownerTags.Add(doer_canact ? "rape" : "raped");
-                extraTargetTags.Add(receiver_canact ? "rape" : "raped");
-            }
+
         }
         ownerTags = ownerTags.Distinct().ToList();
         extraTargetTags = extraTargetTags.Distinct().ToList();

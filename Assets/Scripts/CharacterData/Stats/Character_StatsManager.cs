@@ -433,10 +433,10 @@ public class StatsManager : I_StatsManager
 
     public List<Stat_Modifier> GetModifiers(StatusEx_Instance obj, string statID, List<string> contexts = null)
     {
-        return GetModifiers(statID, contexts, true, true);
+        return GetModifiers(statID, contexts, true, true, obj.BaseRef.constant && obj.BaseRef.capModded && obj.BaseRef.noDisplay);
     }
 
-    protected List<Stat_Modifier> GetModifiers(string statID, List<string> contexts = null, bool checkStatusInstance = true, bool checkMemory = true)
+    protected List<Stat_Modifier> GetModifiers(string statID, List<string> contexts = null, bool checkStatusInstance = true, bool checkMemory = true, bool checkRelationships = false)
     {
         List<Stat_Modifier> list = new List<Stat_Modifier>();
         foreach (var mod in modifiers)
@@ -470,17 +470,36 @@ public class StatsManager : I_StatsManager
             }
         }
 
-        if (!checkMemory) return list;
-
-        if (Owner.Memory != null)
+        if (checkMemory)
         {
-            var temp = Owner.Memory.GetRecentMemoryStatMods();
-            foreach (var mod in temp)
+            if (Owner.Memory != null)
             {
-                if (mod.statID != statID) continue;
-                else list.Add(mod);
+                var temp = Owner.Memory.GetRecentMemoryStatMods();
+                foreach (var mod in temp)
+                {
+                    if (mod.statID != statID) continue;
+                    else list.Add(mod);
+                }
             }
         }
+
+
+        /*
+        if (checkRelationships)
+        {
+            foreach (var c in scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID).RoomChara)
+            {
+                if (c == Owner) continue;
+                var temp = Owner.Relationships.GetRelationshipStatMod(c);
+                Debug.Log($"checkRelationships for {Owner.CallName} has found mod count {temp.Count}, filtering for {statID}");
+                foreach (var mod in temp)
+                {
+                    if (mod.statID != statID) continue;
+                    else list.Add(mod);
+                }
+            }
+        }*/
+
         return list;
     }
 

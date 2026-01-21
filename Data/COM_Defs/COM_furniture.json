@@ -52,6 +52,14 @@
                             }
                         },
                         "displayName": "com_furniture_sleep_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99
+                            }
+                        },
+                        "displayName": "com_furniture_sleep_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -104,7 +112,7 @@
                             },
                             "entry_results": {
                                 "type": "statMod_EN",
-                                "value": "8"
+                                "value": "15"
                             }
                         }
                     ]
@@ -169,7 +177,7 @@
                             },
                             "entry_results": {
                                 "type": "statMod_EN",
-                                "value": "8"
+                                "value": "15"
                             }
                         },
                         {
@@ -240,11 +248,12 @@
                         },
                         {
                             "entry_conditions": {
-                                "applyToDoer": true
+                                "applyToDoer": true,
+                                "attitudeGTE":4
                             },
                             "entry_results": {
                                 "type": "statMod_EN",
-                                "value": "10"
+                                "value": "4"
                             }
                         }
                     ]
@@ -297,7 +306,7 @@
                     "requirement": {
                         "treatReceiverAsDoer": true,
                         "req_Doers": {
-                            "cost_EN": 5
+                            "cost_EN": 2
                         }
                     }
                 },
@@ -314,11 +323,12 @@
                         },
                         {
                             "entry_conditions": {
-                                "applyToDoer": true
+                                "applyToDoer": true,
+                                "attitudeGTE":4
                             },
                             "entry_results": {
                                 "type": "statMod_EN",
-                                "value": "10"
+                                "value": "4"
                             }
                         }
                     ]
@@ -592,7 +602,7 @@
                             },
                             "entry_results": {
                                 "type": "statMod_EN",
-                                "value": "40"
+                                "value": "30"
                             }
                         }
                     ]

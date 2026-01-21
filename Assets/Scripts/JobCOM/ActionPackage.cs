@@ -1,16 +1,9 @@
+using Newtonsoft.Json;
 using System;
-using System.Buffers.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
-using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static Character_Personality;
-using static EvaluationPackage;
-using static UnityEngine.GraphicsBuffer;
+using UnityEngine.SocialPlatforms;
 
 
 public enum AP_Priority
@@ -881,7 +874,7 @@ public abstract class ActionPackage
                 {
                     //this.attitudeRate_neg = t.attitudeRate_neg;
                     //this.attitudeRate_pos = t.attitudeRate_pos;
-                    this.responseRate = Math.Min(t.ResponseRate, this.responseRate);
+                   // this.responseRate = Math.Min(t.ResponseRate, this.responseRate);
                     this.requestRate = Math.Min(t.RequestRate, this.requestRate);
                 }
 
@@ -899,8 +892,8 @@ public abstract class ActionPackage
                     {
                         //this.attitudeRate_neg = t.attitudeRate_neg;
                         //this.attitudeRate_pos = t.attitudeRate_pos;
-                        this.responseRate = Math.Min(t.ResponseRate, this.responseRate);
-                        this.requestRate = Math.Min(t.RequestRate, this.requestRate);
+                        this.responseRate = Math.Min(t.RequestRate, this.responseRate);
+                        //this.requestRate = Math.Min(t.RequestRate, this.requestRate);
                     }
 
                     this.tooltip.AddRange(t.tooltip);
@@ -1247,7 +1240,37 @@ public abstract class ActionPackage
         return finalResults.Length > 0 ? finalResults : "";
         //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
     }
-    
+
+    public void LogCheckResult(bool rightAlign, bool resultOnly = false)
+    {
+
+        if (!resultOnly)
+        {
+            List<string> checkResults = new List<string>();
+
+            foreach (var ep in packages)
+            {
+                if (ep.skipCheckResult) continue; // skip player alone package
+                var res = ep.GetCheckResult(!rightAlign);
+                if (res.Length < 1) continue;
+                checkResults.Add(res);
+            }
+
+            if (checkResults.Count < 1) return;
+            string finalResults = String.Join("\n", checkResults);
+            if (finalResults.Length < 1) return;
+            this.job.m.messages_checks.Add(rightAlign ? $"<align=\"right\">{finalResults}</align>" : finalResults, "");
+
+        }
+        else if (this.checkResults_result != "")
+        {
+            this.job.m.messages_checks.Add(rightAlign? $"<align=\"right\">{this.checkResults_result}</align>" : this.checkResults_result, this.checkResults_tooltips);
+        }
+
+
+        //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
+    }
+
     /// <summary>
     /// If AP duration is already zero, do not resend request.<br/>
     /// If ep is accepted, job log ep kojo message.
@@ -1333,7 +1356,7 @@ public abstract class ActionPackage
             }
             else if (targetCOM.baseD20Check > 0)
             {
-                Modifiers dcMods = new Modifiers();
+                EvaluationPackage.Modifiers dcMods = new EvaluationPackage.Modifiers();
                 bool success = true;
                 int bonus = 0;
                 int baseDC = targetCOM.baseD20Check;
@@ -1354,15 +1377,40 @@ public abstract class ActionPackage
                         success = false;
                         break;
                     }
+
                     if (ep.Receiver == null || ep.Receiver == ep.Doer)
                     {
                         bonus += ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods);
+
                     }
                     else
                     {
                         bonus += ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods);
-                        bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
+                        if (ep.ReceiverAttitude > Memory_Attitude.Dislike) bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
                     }
+
+                    foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Doer)
+                    {
+                        var j = ep.Doer.GetSkill(i);
+                        var k = j.GetSkillLevel;
+                        if (k <= 0) continue;
+                        bonus += k;
+                        dcMods.AddModifier(ep.Doer.RefID, j.DisplayName, k);
+                    }
+
+
+                    if (ep.Receiver != null && ep.Receiver != ep.Doer)
+                    {
+                        foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Receiver)
+                        {
+                            var j = ep.Receiver.GetSkill(i);
+                            var k = j.GetSkillLevel;
+                            if (k <= 0) continue;
+                            bonus += k;
+                            dcMods.AddModifier(ep.Receiver.RefID, j.DisplayName, k);
+                        }
+                    }
+                        
                 }
 
                 if (success)
@@ -1374,7 +1422,8 @@ public abstract class ActionPackage
                     else injectResult = diceRoll + bonus >= baseDC ? Memory_Response.Success : Memory_Response.Failure;
 
                     List<string> mods = dcMods == null ? new List<string>() : dcMods.GetAllModifiers();
-                    checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20 = {diceRoll}{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} = {diceRoll + bonus} {(injectResult >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                    checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20 = {diceRoll}{(mods.Count > 0 ? $" + {bonus}" : "")} = {diceRoll + bonus} {(injectResult >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                    checkResults_tooltips = String.Join("\n", mods);
                     checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
                 }
             }
@@ -1415,8 +1464,17 @@ public abstract class ActionPackage
             {
                 foreach (var participant in actors)  // comparing with all actor in the parent AP before subdividing into EPs
                 {
-                    CheckRelationshipChange(participant, ep.Doer, ep.DoerAttitude, ep.Response, ep.DoerTargetTag, m);
-                    if (ep.Doer != ep.Receiver) CheckRelationshipChange(participant, ep.Receiver, ep.ReceiverAttitude, ep.Response, ep.ReceiverTargetTag, m);
+                    CheckRelationshipChange(ep, participant, ep.Doer, ep.DoerAttitude, ep.Response, ep.DoerTargetTag, m, ep.hasPermission);
+                    if (ep.Doer != ep.Receiver) CheckRelationshipChange(ep, participant, ep.Receiver, ep.ReceiverAttitude, ep.Response, ep.ReceiverTargetTag, m, ep.hasPermission);
+                }
+                if (isForced)
+                {   // force AP success
+
+                    if (ep.Receiver != null)
+                    {
+                        if (ep.Doer != null && ep.Doer != ep.Receiver) ep.Receiver.Relationships.IncreaseRelationshipWith(ep.Doer.RefID, RelationshipScoreType.Fear, ep.RecentRefusalPenalty + 1, m.exp, false);
+                        if (ep.Master != null && ep.Master != ep.Doer && ep.Master != ep.Receiver) ep.Receiver.Relationships.IncreaseRelationshipWith(ep.Master.RefID, RelationshipScoreType.Fear, ep.RecentRefusalPenalty + 1, m.exp, false);
+                    }
                 }
             }
         }
@@ -1424,18 +1482,35 @@ public abstract class ActionPackage
         {// refused
 
             // first, for each ep, reduce
-            foreach (var participant in actors)  // comparing with all actor in the parent AP before subdividing into EPs
+
+            foreach (var ep in packages)
             {
-                foreach (var ep in packages)
+                if (ep.RecentRefusalPenalty == 0) continue;
+                if (ep.Receiver == null || ep.Receiver == ep.Doer) continue;
+
+                foreach (var participant in actors)  // comparing with all actor in the parent AP before subdividing into EPs
                 {
-                    if (ep.RecentRefusalPenalty == 0) continue;
-                    if (ep.Receiver == null || ep.Receiver == ep.Doer) continue;
                     if (participant != ep.Doer) ep.Doer.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, ep.RecentRefusalPenalty, m.exp, false);
                     if (ep.Receiver != null && ep.Receiver != ep.Doer && participant != ep.Receiver) ep.Receiver.Relationships.IncreaseRelationshipWith(participant.RefID, RelationshipScoreType.Badwill, ep.RecentRefusalPenalty, m.exp, false);
                 }
             }
 
-            if (!isForced) SendRefuseEvent();
+
+            if (!isForced)
+            {
+                SendRefuseEvent();
+            }
+            else
+            {   // force AP failed
+                foreach (var ep in packages)
+                {
+                    if (ep.Receiver != null)
+                    {
+                        if (ep.Doer != null && ep.Doer != ep.Receiver) ep.Receiver.Relationships.IncreaseRelationshipWith(ep.Doer.RefID, RelationshipScoreType.Trust, -1, m.exp, false);
+                        if (ep.Master != null && ep.Master!=ep.Doer && ep.Master != ep.Receiver) ep.Receiver.Relationships.IncreaseRelationshipWith(ep.Master.RefID, RelationshipScoreType.Trust, -1, m.exp, false);
+                    }
+                }
+            }
         }
 
 
@@ -1597,27 +1672,51 @@ public abstract class ActionPackage
 
     MessageCollect temporaryM = null;
     string checkResults_result = "";
+    string checkResults_tooltips = "";
     string checkResults_result_short = "";
 
 
-    protected void CheckRelationshipChange(Character_Trainable A, Character_Trainable B, Memory_Attitude b_attitude, Memory_Response response, List<string> tags, MessageCollect m)
+    protected void CheckRelationshipChange(EvaluationPackage ep, Character_Trainable A, Character_Trainable B, Memory_Attitude b_attitude, Memory_Response response, List<string> tags, MessageCollect m, bool hasPermission)
     {
         if (B != null && A != B && !B.Stats.isConsciousnessUnconscious && b_attitude != Memory_Attitude.None)
         {
+            var goodwill = 0;
+            var badwill = 0;
+            var trust = 0;
+            var lust = 0;
+            var fear = 0;
+
             if (!tags.Contains("NonInteraction"))
             {
-                var goodwill = b_attitude > Memory_Attitude.Neutral ? (int)(b_attitude - Memory_Attitude.Neutral) : 0;
-                var badwill = b_attitude < Memory_Attitude.Neutral ? (int)(Memory_Attitude.Neutral - b_attitude) : 0;
-
-                if (goodwill != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, !job.CanBeInterrupted);
-                if (badwill > 0 || (badwill < 0 && B.Stats.Mood.Severity >= 2)) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false);
+                goodwill = b_attitude > Memory_Attitude.Neutral ? (int)(b_attitude - Memory_Attitude.Neutral) : 0;
+                badwill = b_attitude < Memory_Attitude.Neutral ? (int)(Memory_Attitude.Neutral - b_attitude) : 0;
             }
-
+            if (tags.Contains("recreation") && actorRefs.Count > 2)
+            {
+                badwill -= 1;
+            }
             if (tags.Contains("job") && response > Memory_Response.Accept)
             {
-                var trust = response >= Memory_Response.Success ? 1 : response < Memory_Response.Failure ? -1 : 0;
-                if (trust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, !job.CanBeInterrupted);
+                trust = response >= Memory_Response.Success ? 1 : response < Memory_Response.Failure ? -1 : 0;
             }
+            if (tags.Contains("unsafe"))
+            {
+                lust = b_attitude > Memory_Attitude.Neutral ? (int)(b_attitude - Memory_Attitude.Neutral) : b_attitude < Memory_Attitude.Neutral && b_attitude > Memory_Attitude.None ? (int)(Memory_Attitude.Neutral - b_attitude) : 0;
+            }
+            if (!hasPermission && b_attitude < Memory_Attitude.Neutral)
+            {
+                trust -= 1;
+            }
+            if (ep.GetActorEPTags(B.RefID).Contains("raped"))
+            {
+                fear += 1;
+            }
+
+            if (trust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, !job.CanBeInterrupted);
+            if (goodwill != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, !job.CanBeInterrupted);
+            if (badwill > 0 || (badwill < 0 && B.Stats.Mood.Severity >= 2)) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false);
+            if (lust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Desire, lust, m.exp);
+            if (fear != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Fear, fear, m.exp);
         }
     }
 
@@ -1789,6 +1888,7 @@ public abstract class ActionPackage
         if (m == null) m = this.job.m;
         if (!m.displayOverride && !this.job.isVisibleToPlayer) return;
         //if (LoggedBegin) return;
+        if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("LogMessage_Begin_Abort");
         foreach (var ep in this.ListEP)
         {
             ep.LogMessage_Begin_Abort(rightAlign, m);
@@ -1904,7 +2004,7 @@ public abstract class ActionPackage
             //Debug.Log($"adding force AP, isrepeat? {forceAP.PackageRepeat}");
             if (forceAP.Validate())
             {
-                MemInstance pressured = new MemInstance(new List<int>() { targetDoer.RefID }, new List<string>(), "", -1, -1, false, Memory_Response.None, Memory_Attitude.None, "pressured by " + targetDoer.FirstName);
+                MemInstance pressured = new MemInstance(new List<int>() { targetDoer.RefID }, new List<string>(), "", -1, -1, false, Memory_Response.Accept, Memory_Attitude.Dislike, "pressured by " + targetDoer.FirstName);
                 pressured.AddMoodletScore(-1, -1, 0);
                 appends.Add(forceAP.GetSuccessRateString());
                 if (targetDoer == scr_System_CampaignManager.current.Player || forceAP.SuccessRate >= 65)

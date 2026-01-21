@@ -7,7 +7,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_cheek_displayName",
             "timeScale":2,
-            "comTags":["touch", "canbeignored"],
+            "comTags":["touch", "safe", "canbeignored"],
             "requirements":{
                 "requirement":{
                     "doerCount":1,
@@ -18,15 +18,25 @@
                     }
                 }
             },
-            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":10 }
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.3 }
+                        }
+                    }
+                ]
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":14 },
+            "DifficultyCheck":{ "baseD20Check":8 }
         },
         {
             "ID":"com_touch_hair",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_hair_displayName",
             "timeScale":2,
-            "comTags":["touch", "canbeignored"],
+            "comTags":["touch", "safe", "canbeignored"],
             "requirements":{
                 "requirement":{
                     "doerCount":1,
@@ -37,8 +47,18 @@
                     }
                 }
             },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.2 }
+                        }
+                    }
+                ]
+            },
             "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":10 }
+            "DifficultyCheck":{ "baseD20Check":9 }
         },
         {
             "ID":"com_touch_sleeponthigh_ask",
@@ -60,7 +80,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_hug_displayName",
             "timeScale":2,
-            "comTags":["touch"],
+            "comTags":["touch", "safe"],
             "requirements":{
                 "requirement":{
                     "doerCount":1,
@@ -71,8 +91,18 @@
                     }
                 }
             },
-            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":10 }
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.5 }
+                        }
+                    }
+                ]
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":16 },
+            "DifficultyCheck":{ "baseD20Check":11 }
         },
         {
             "ID":"com_touch_sleeponthigh_give",
@@ -111,11 +141,20 @@
                      }
                 }
             },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":1 }
+                        }
+                    }
+                ]
+            },
             "variants":[
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":1 },
                             "req_Receivers":{ "minRevealingScore":2 }
                         }
                     },
@@ -125,7 +164,7 @@
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Doers":{ "minRevealingScore":2 },
                             "req_Receivers":{ "minRevealingScore":4 }
                         }
                     },
@@ -133,7 +172,7 @@
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":10 }
+            "DifficultyCheck":{ "baseD20Check":15 }
         },
         {
             "ID":"com_touch_abdomen",
@@ -154,13 +193,22 @@
                     "receiverCount":1
                 }
             },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.5 }
+                        }
+                    }
+                ]
+            },
             "variants":[
                 {
                     "requirements":
                     {
                         "requirement":
                         {
-                            "req_Doers":{ "minRevealingScore":1 },
                             "req_Receivers":{ "minRevealingScore":2 }
                         }
                     },
@@ -169,7 +217,7 @@
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Doers":{ "minRevealingScore":2 },
                             "req_Receivers":{ "minRevealingScore":4 }
                         }
                     },
@@ -177,8 +225,8 @@
                     "displayName":"com_touch_abdomen_displayName_2"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":5 }
+            "AcceptanceCheck":{ "baseAcceptanceValue":16 },
+            "DifficultyCheck":{ "baseD20Check":11 }
         },
         {
             "ID":"com_touch_thigh",
@@ -197,11 +245,20 @@
                     "receiverCount":1
                 }
             },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":1 }
+                        }
+                    }
+                ]
+            },
             "variants":[
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":1 },
                             "req_Receivers":{ "minRevealingScore":2 }
                         }
                     },
@@ -210,7 +267,7 @@
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Doers":{ "minRevealingScore":2 },
                             "req_Receivers":{ "minRevealingScore":4 }
                         }
                     },
@@ -218,8 +275,8 @@
                     "displayName":"com_touch_thigh_displayName_2"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":10 }
+            "AcceptanceCheck":{ "baseAcceptanceValue":19 },
+            "DifficultyCheck":{ "baseD20Check":14 }
         },
         {
             "ID":"com_touch_back",
@@ -238,11 +295,20 @@
                     "receiverCount":1
                 }
             },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.5 }
+                        }
+                    }
+                ]
+            },
             "variants":[
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":1 },
                             "req_Receivers":{ "minRevealingScore":2 }
                         }
                     },
@@ -251,15 +317,15 @@
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Doers":{ "minRevealingScore":2 },
                             "req_Receivers":{ "minRevealingScore":4 }
                         }
                     },
                     "displayName":"com_touch_back_displayName_2"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":10 }
+            "AcceptanceCheck":{ "baseAcceptanceValue":17 },
+            "DifficultyCheck":{ "baseD20Check":12 }
         },
         {
             "ID":"com_touch_shoulders",
@@ -277,11 +343,20 @@
                     "receiverCount":1
                 }
             },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.5 }
+                        }
+                    }
+                ]
+            },
             "variants":[
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":1 },
                             "req_Receivers":{ "minRevealingScore":2 }
                         }
                     },
@@ -290,15 +365,15 @@
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":1 },
+                            "req_Doers":{ "minRevealingScore":2 },
                             "req_Receivers":{ "minRevealingScore":4 }
                         }
                     },
                     "displayName":"com_touch_shoulders_displayName_2"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":10 }
+            "AcceptanceCheck":{ "baseAcceptanceValue":16 },
+            "DifficultyCheck":{ "baseD20Check":11 }
         },
         {
             "ID":"com_touch_fingers",
@@ -308,7 +383,7 @@
             "comTags":["touch","massage"],
             "requirements":{
                 "requirement":{
-                    "req_Doers":{ "BodyTags":["arm"] , "minRevealingScore":1},
+                    "req_Doers":{ "BodyTags":["arm"] },
                     "req_Receivers":{ "BodyTags":["arm"] , "minRevealingScore":1,
                         "requireConscious":false,
                         "requireAction": false },
@@ -316,13 +391,23 @@
                     "receiverCount":1
                 }
             },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":1 }
+                        }
+                    }
+                ]
+            },
             "variants":[
                 {
                     "displayName":"com_touch_fingers_displayName_1"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":5 }
+            "AcceptanceCheck":{ "baseAcceptanceValue":17 },
+            "DifficultyCheck":{ "baseD20Check":12 }
         },
         {
             "ID":"com_touch_foot_toes",
@@ -333,7 +418,7 @@
             "requirements":{
                 "requirement":{
                     "receiverBodyTags":[""],
-                    "req_Doers":{ "BodyTags":["arm"] , "minRevealingScore":1},
+                    "req_Doers":{ "BodyTags":["arm"] },
                     "req_Receivers":{ "BodyTags":["feet"] , "minRevealingScore":1,
                         "requireConscious":false,
                         "requireAction": false },
@@ -341,13 +426,23 @@
                     "receiverCount":1
                 }
             },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.7 }
+                        }
+                    }
+                ]
+            },
             "variants":[
                 {
                     "displayName":"com_touch_foot_toes_displayName_1"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":10 }
+            "AcceptanceCheck":{ "baseAcceptanceValue":17 },
+            "DifficultyCheck":{ "baseD20Check":12 }
         },
         {
             "ID":"com_touch_ears",
@@ -365,13 +460,23 @@
                     "receiverCount":1
                 }
             },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.5 }
+                        }
+                    }
+                ]
+            },
             "variants":[
                 {
                     "displayName":"com_touch_ears_displayName_1"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":5 }
+            "AcceptanceCheck":{ "baseAcceptanceValue":18 },
+            "DifficultyCheck":{ "baseD20Check":13 }
         }
 
     ]

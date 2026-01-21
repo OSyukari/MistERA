@@ -44,7 +44,7 @@ public class scr_UpdateHandler : MonoBehaviour
         }
     }
 
-    public bool TempLongCOMFix = true;
+    public bool TempLongCOMFix = false;
 
     bool _animating = false;
     public bool Animating
@@ -254,8 +254,7 @@ public class scr_UpdateHandler : MonoBehaviour
     protected int firstLoopCounter = 2;
     public bool isFirstUpdate { get { return firstLoopCounter > 0; } }
 
-    float waitTime = 0.001f;
-    
+    WaitForSeconds wait = new WaitForSeconds(0.0001f);
 
 
     string cache_elapsedTime = "";
@@ -277,8 +276,6 @@ public class scr_UpdateHandler : MonoBehaviour
         //NotifyLogsSingleUpdate();
         //var copy = updateTime;
         bool timestop = scr_System_Time.current.TimeStop;
-
-        //WaitForSeconds wait = new WaitForSeconds(waitTime);
 
         while (updateTime > 0 && !EventHandler.Waiting)  // updatetime can be 0 if there is no player package
         {   // if indeed 0 updatetime, then none of the below preupdate postupdate will be called.
@@ -331,9 +328,10 @@ public class scr_UpdateHandler : MonoBehaviour
             cnManager.ClearExecutedAPs();
             //cnManager.ClearLogs(true);
             scr_System_Time.current.NotifyTimeResumeEnd();
-           // if (scr_System_Time.current.TimeResume) scr_System_Time.current.timeStop = TimestopState.normal;
+            // if (scr_System_Time.current.TimeResume) scr_System_Time.current.timeStop = TimestopState.normal;
 
             //yield return wait;
+            if (loopCount % 30 == 0) yield return wait;
             //yield return new WaitForSecondsRealtime(waitTime);
             //yield return 
 #if UNITY_EDITOR
@@ -460,7 +458,10 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         if (m.messages_checks.Count > 0)
         {
-            Message.messages_checks.AddRange(m.messages_checks);
+            foreach(var check in m.messages_checks)
+            {
+                Message.messages_checks[check.Key] = check.Value;
+            }
             m.messages_checks.Clear();
         }
         if (m.messages_kojo.Count > 0)
@@ -515,7 +516,11 @@ public class scr_UpdateHandler : MonoBehaviour
     public void AppendEndMessage(string s)
     {
         Message.messages_after.Add(s);
-        if (!Updating) FlushCollectedLogs(true, false);
+        if (!Updating)
+        {
+            Debug.Log("Updatehandler AppendEndMessage !Updating, flushCollectedLogs");
+            FlushCollectedLogs(true, false);
+        }
     }
 
     public void NotifyLogsSingleUpdate(bool skipAll = false)

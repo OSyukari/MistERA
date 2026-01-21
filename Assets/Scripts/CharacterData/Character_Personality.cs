@@ -352,7 +352,7 @@ public class Character_Personality
     {
         if (selfTags == null) selfTags = new List<string>();
         if (targetTags == null) targetTags = new List<string>();
-        if (eventID == "Descriptor") Debug.Log($"Descriptor called on {rel.Owner.CallName}");
+        //if (eventID == "Descriptor") Debug.Log($"Descriptor called on {rel.Owner.CallName}");
         if (!entries.ContainsKey(eventID))
         {
 
@@ -822,7 +822,7 @@ public class ResponseEntry
                 {
                     if (rel == null) return false;
                     var att = rel.GetCurrentAttitude();
-                    if (att == null || att.MainEmotionKey != requireSelfAttitudeKey) return false;
+                    if (att == null || !att.tags.Contains(requireSelfAttitudeKey)) return false;
                 }
 
                 if (ep != null)
@@ -955,7 +955,7 @@ public class ResponseEntry
 
             public ModKojoVariable modifyKojoVariables = new ModKojoVariable();
             public EventInitializer launchEvent = new EventInitializer();
-            public ModStatusValue modifyStatusValue = new ModStatusValue();
+            public Result_Character.ModStatusValue modifyStatusValue = new Result_Character.ModStatusValue();
             public bool flushLog = false;
             public void Execute(MessageCollect_KojoEntry message, Character_Relationship rel, List<string> selfTags, List<string> targetTags)
             {
@@ -965,21 +965,9 @@ public class ResponseEntry
                 }
                 if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel);
                 if (this.launchEvent != null && this.launchEvent.isValid) launchEvent.Execute(rel);
-                if (modifyStatusValue != null && modifyStatusValue.isValid) modifyStatusValue.Execute(rel.Owner);
+                if (modifyStatusValue != null && modifyStatusValue.isValid) modifyStatusValue.Execute(rel.Owner, null);
             }
 
-            [System.Serializable]
-            public class ModStatusValue
-            {
-                public string statusID = "";
-                public float value = 0;
-                [JsonIgnore] public bool isValid { get { return this.statusID != "" && value != 0; } }
-                public void Execute(Character_Trainable chara)
-                {
-                    chara.Stats.AddOrModStatus(statusID, value);
-                }
-
-            }
 
             public class EventInitializer
             {

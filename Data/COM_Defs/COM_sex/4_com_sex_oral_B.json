@@ -1,143 +1,164 @@
 {
-    "COMs":
-    {
-        "list":
-        [
+    "COMs": {
+        "list": [
             {
-                "ID":"com_sex_oral_B",
-                "ActionPackageClass":"ActionPackage_Sex",
-                "displayName":"com_sex_oral_B_displayName_1",
-                "timeScale":3,
-                "comTags":["sex","service", "position_face", "position_equal"],
-                "requirements":{
-                    "requirement":{
-                        "req_Doers":{
-                            "BodyTags":["mouth"],
-                            "minRevealingScore":1,
+                "ID": "com_sex_oral_B",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "categoryTags":["com_category_b","com_category_service"],
+                "displayName": "com_sex_oral_B_displayName_1",
+                "timeScale": 3,
+                "comTags": [
+                    "sex",
+                    "service",
+                    "position_face",
+                    "position_equal"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": {
+                            "BodyTags": [
+                                "mouth"
+                            ],
+                            "minRevealingScore": 1,
                             "cost_ST": 1
                         },
-                        "req_Receivers":{
-                            "BodyTags":["breast"],
-                            "minRevealingScore":1,
-                            "requireConscious":false,
+                        "req_Receivers": {
+                            "BodyTags": [
+                                "breast"
+                            ],
+                            "minRevealingScore": 1,
+                            "requireConscious": false,
                             "requireAction": false
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
-                "DifficultyCheck":{ "baseD20Check":5 },
-                "variants":[
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 25,
+                    "SkillBonus_Receiver": [
+                        "skill_sensitivity_B"
+                    ]
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 5,
+                    "SkillBonus_Receiver": [
+                        "skill_sensitivity_B"
+                    ]
+                },
+                "variants": [
                     {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":1
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 1
                             }
                         },
-                        "displayName":"com_sex_oral_B_displayName_1"
+                        "displayName": "com_sex_oral_B_displayName_1"
                     },
                     {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":99
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 99
                             }
                         },
-                        "displayName":"com_sex_oral_B_displayName_2"
+                        "displayName": "com_sex_oral_B_displayName_2"
                     },
                     {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":1
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 1
                             }
                         },
-                        "displayName":"com_sex_oral_B_displayName_3"
+                        "displayName": "com_sex_oral_B_displayName_3"
                     },
                     {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":99
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 99
                             }
                         },
-                        "displayName":"com_sex_oral_B_displayName_4"
+                        "displayName": "com_sex_oral_B_displayName_4"
                     }
                 ],
-                "description_ongoing":{
-                    "Entries":
-                    [
+                "description_ongoing": {
+                    "Entries": [
                         {
-                            "keepLooking":true,
-                            "texts": [ "com_sex_oral_B_description_ongoing_1" ]
+                            "keepLooking": true,
+                            "texts": [
+                                "com_sex_oral_B_description_ongoing_1"
+                            ]
                         }
                     ]
                 },
-                "description_remove":{
-                    "Entries":[
+                "description_remove": {
+                    "Entries": [
                         {
-                            "_comment":"",
-                            "keepLooking":true,
-                            "texts":[ "com_sex_oral_B_description_remove_1" ]
+                            "_comment": "",
+                            "keepLooking": true,
+                            "texts": [
+                                "com_sex_oral_B_description_remove_1"
+                            ]
                         }
                     ]
                 },
-                "description_after":
-                {
-                    "Entries":[
+                "description_after": {
+                    "Entries": [
                         {
-                            "keepLooking":true,
-                            "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_oral_B_description_after_1" ]
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "climaxed",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_oral_B_description_after_1"
+                            ]
                         }
                     ]
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
+                "description_begin": {
+                    "Entries": [
                         {
-                            "keepLooking":true,
-                            "texts": ["com_sex_oral_B_description_begin_1"]
+                            "keepLooking": true,
+                            "texts": [
+                                "com_sex_oral_B_description_begin_1"
+                            ]
                         }
                     ]
-                    
                 }
             }
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-            "zh-cn":
-            {
-                "com_sex_oral_B":"%%tooltip_sex_com_alternating_tooltip%%",
-
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_B": "%%tooltip_sex_com_alternating_tooltip%%",
                 "com_sex_oral_B_displayName_1": "舔乳头",
                 "com_sex_oral_B_displayName_2": "交替舔乳头",
                 "com_sex_oral_B_displayName_3": "轮流舔乳头",
                 "com_sex_oral_B_displayName_4": "同时舔乳头",
-
-                "com_sex_oral_B_description_begin_1":"$doer.firstname$将$receiver.firstname$的乳头含在了嘴里",
-                "com_sex_oral_B_description_after_1":"$doer.firstname$在口中感受着$receiver.firstname$乳头的突起",
-                "com_sex_oral_B_description_remove_1":"$doer.firstname$松开了含在嘴里的$receiver.firstname$的乳头",
-                "com_sex_oral_B_description_ongoing_1":"$doer.firstname$正吸吮着$receiver.firstname$的乳头"
-
+                "com_sex_oral_B_description_begin_1": "$doer.firstname$将$receiver.firstname$的乳头含在了嘴里",
+                "com_sex_oral_B_description_after_1": "$doer.firstname$在口中感受着$receiver.firstname$乳头的突起",
+                "com_sex_oral_B_description_remove_1": "$doer.firstname$松开了含在嘴里的$receiver.firstname$的乳头",
+                "com_sex_oral_B_description_ongoing_1": "$doer.firstname$正吸吮着$receiver.firstname$的乳头"
             },
-            "en-us":
-            {
-                "com_sex_oral_B":"%%tooltip_sex_com_alternating_tooltip%%",
-
+            "en-us": {
+                "com_sex_oral_B": "%%tooltip_sex_com_alternating_tooltip%%",
                 "com_sex_oral_B_displayName_1": "Nipple Licking",
                 "com_sex_oral_B_displayName_2": "Alt. Nipple Licking",
                 "com_sex_oral_B_displayName_3": "Alt. Nipple Licking",
                 "com_sex_oral_B_displayName_4": "Alt. Nipple Licking",
-
-                "com_sex_oral_B_description_begin_1":"$doer.firstname$ takes $receiver.firstname$'s nipple into their mouth.",
-                "com_sex_oral_B_description_after_1":"$doer.firstname$ feels the erection of $receiver.firstname$'s nipple inside their mouth.",
-                "com_sex_oral_B_description_remove_1":"$doer.firstname$ releases $receiver.firstname$'s nipple from their mouth.",
-                "com_sex_oral_B_description_ongoing_1":"$doer.firstname$ is sucking on $receiver.firstname$'s nipple."
-
+                "com_sex_oral_B_description_begin_1": "$doer.firstname$ takes $receiver.firstname$'s nipple into their mouth.",
+                "com_sex_oral_B_description_after_1": "$doer.firstname$ feels the erection of $receiver.firstname$'s nipple inside their mouth.",
+                "com_sex_oral_B_description_remove_1": "$doer.firstname$ releases $receiver.firstname$'s nipple from their mouth.",
+                "com_sex_oral_B_description_ongoing_1": "$doer.firstname$ is sucking on $receiver.firstname$'s nipple."
             }
         }
     }

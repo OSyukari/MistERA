@@ -33,10 +33,18 @@ public class Index_CharaSkills : I_IndexMergeable, I_IndexHasID, I_RemoveElemByT
     }
 }
 
+
+public interface hasCategory
+{
+    public List<string> CategoryLabel { get; }
+}
+
+
 public class CharaSkill
 {
     public string ID = "";
     public List<string> tags = new List<string>();
+    public List<string> categoryTag = new List<string>();
     public bool hasGenderVariant = false;
     public Require requirements = null;
     public bool allowAutoUpgrade = true;

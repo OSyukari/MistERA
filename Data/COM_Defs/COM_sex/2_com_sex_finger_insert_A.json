@@ -7,6 +7,7 @@
                 "ID":"com_sex_finger_insert_A",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "displayName":"com_sex_finger_insert_A_displayName_3",
+                "categoryTags":["com_category_a","com_category_service"],
                 "timeScale":3,
                 "comTags":["sex","service"],
                 "requirements":{
@@ -23,8 +24,14 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":30 },
-                "DifficultyCheck":{ "baseD20Check":20 },
+                "AcceptanceCheck":{ 
+                    "baseAcceptanceValue":29,
+                    "SkillBonus_Receiver":["skill_sensitivity_A"] 
+                },
+                "DifficultyCheck":{ 
+                    "baseD20Check":20,
+                    "SkillBonus_Receiver":["skill_sensitivity_A"]
+                },
                 "variants":[
                     {
                         "requirements":{

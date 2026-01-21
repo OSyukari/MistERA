@@ -68,7 +68,7 @@ public class StatModStorage
                 foreach (var key in entriesID)
                 {
                     if (key == baseKey) continue;
-                    var keymod = CalcMods(Utility.GetStringByUniqueID(key),  
+                    var keymod = CalcMods(entriesNameRef.ContainsKey(key)? entriesNameRef[key] : Utility.GetStringByUniqueID(key),  
                                             setValue.ContainsKey(key)? setValue[key] : null,
                                             addValue.ContainsKey(key) ? addValue[key] : null,
                                             setMult.ContainsKey(key) ? setMult[key] : null,
@@ -124,7 +124,7 @@ public class StatModStorage
         float addmul_f = addmul == null || addmul.Count < 1 ? 0 : addmul.Sum(x=>UtilityEX.StatValue(x, parent));
 
         var final = (setval_f + addval_f) * (setmul_f + addmul_f);
-        if (final != 0 && tooltips != null) tooltips.Add($"{key}: {setval_f}+{addval_f} * {setmul_f}+{addmul_f}");
+        if (final != 0 && tooltips != null) tooltips.Add($"{key}: {setval_f}{addval_f.ToString("+0;-#")} * {setmul_f}{addmul_f.ToString("+0;-#")}");
         return final;
     }
     float CalcMods_Final(ref float value, Stat_Modifier setval, List<Stat_Modifier> addval, Stat_Modifier setmul, List<Stat_Modifier> addmul, List<string> tooltips)
@@ -136,7 +136,7 @@ public class StatModStorage
 
         var prev = value;
         value = value * (setmul_f + addmul_f) + (setval_f + addval_f);
-        if ( tooltips != null) tooltips.Add($"{prev.ToString("F2")} finalMod * {setmul_f}+{addmul_f} + {setval_f}+{addval_f} -> {value.ToString("F2")}");
+        if ( tooltips != null) tooltips.Add($"{prev.ToString("F2")} finalMod * {setmul_f}{addmul_f.ToString("+0;-#")} + {setval_f}{addval_f.ToString("+0;-#")} -> {value.ToString("F2")}");
         return value;
     }
     float CalcMods_Base(Stat_Modifier setval, List<Stat_Modifier> addval, Stat_Modifier setmul, List<Stat_Modifier> addmul, List<string> tooltips)
@@ -148,7 +148,7 @@ public class StatModStorage
 
        // Debug.Log($"Getting basevalue {setval_f} {addval_f} {setmul_f} {addmul_f}\n baseval null? {setval == null} {setValue_original} {(setval == null ? "null" : UtilityEX.StatValue(setval, parent))}");
 
-        if (tooltips != null) tooltips.Add($"baseValue: {setval_f}+{addval_f} * {setmul_f}+{addmul_f}");
+        if (tooltips != null) tooltips.Add($"baseValue: {setval_f}{addval_f.ToString("+0;-#")} * {setmul_f}{addmul_f.ToString("+0;-#")}");
         return (setval_f + addval_f) * (setmul_f + addmul_f);
     }
 
@@ -162,6 +162,7 @@ public class StatModStorage
     List<Stat_Modifier> addValue_final = new List<Stat_Modifier>(), addMult_final = new List<Stat_Modifier>();
 
     List<int> entriesID = new List<int>();
+    Dictionary<int, string> entriesNameRef = new Dictionary<int, string>();
     List<string> _tooltips = new List<string>();
 
 
@@ -171,6 +172,7 @@ public class StatModStorage
     public void Reset()
     {
         entriesID.Clear();
+        entriesNameRef.Clear();
         _value_cached = false;
         foreach (var kvp in addValue) kvp.Value.Clear();
         addValue_final.Clear();
@@ -201,7 +203,11 @@ public class StatModStorage
     }
     public void Merge(Stat_Modifier mod)
     {
-        if (!entriesID.Contains(mod.ModKey)) entriesID.Add(mod.ModKey);
+        if (!entriesID.Contains(mod.ModKey))
+        {
+            entriesID.Add(mod.ModKey);
+            entriesNameRef.Add(mod.ModKey, mod.DisplayName);
+        }
         if (mod.isFinal)
         {
             MergeFinal(mod);

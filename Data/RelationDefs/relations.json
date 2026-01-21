@@ -9,16 +9,16 @@
                 "displayName":"relationship_parent_displayName",
 
                 "relationship_A_to_B":{
-                    "permission":{ "intimacy_low":true, "lead_follow":true },
+                    "permission":{ "intimacy_low":true, "intimacy_medium":true, "lead_follow":true },
                     "displayName":"relationship_parent_displayName_A_is_to_B",
                     "hasGenderVariant":true,
-                    "RelationshipMod":[100,0,100,0,0]
+                    "RelationshipMod":[100,100,0,0,0]
                 },
                 "relationship_B_to_A":{
                     "permission":{ "intimacy_low":true, "lead_follow":true },
                     "displayName":"relationship_parent_displayName_B_is_to_A",
                     "hasGenderVariant":true,
-                    "RelationshipMod":[100,100,100,100,0]
+                    "RelationshipMod":[100,100,0,100,100]
                 },
                 "_comment":"trust|fear|good|bad|lust"
             },
@@ -32,13 +32,13 @@
                     "permission":{ "intimacy_low":true, "lead_follow":true },
                     "displayName":"relationship_sibling_displayName_A_is_to_B",
                     "hasGenderVariant":true,
-                    "RelationshipMod":[100,0,100,100,0]
+                    "RelationshipMod":[100,100,0,100,0]
                 },
                 "relationship_B_to_A":{
                     "permission":{ "intimacy_low":true, "lead_follow":true },
                     "displayName":"relationship_sibling_displayName_B_is_to_A",
                     "hasGenderVariant":true,
-                    "RelationshipMod":[100,0,100,100,0]
+                    "RelationshipMod":[100,100,0,100,0]
                 }
             },
             {
@@ -51,13 +51,13 @@
                     "permission":{ "intimacy_low":true, "lead_follow":true },
                     "displayName":"relationship_stepparent_displayName_A_is_to_B",
                     "hasGenderVariant":true,
-                    "RelationshipMod":[0,0,50,0,0]
+                    "RelationshipMod":[0,50,0,0,0]
                 },
                 "relationship_B_to_A":{
                     "permission":{ "intimacy_low":true, "lead_follow":true },
                     "displayName":"relationship_stepparent_displayName_B_is_to_A",
                     "hasGenderVariant":true,
-                    "RelationshipMod":[-50,50,0,50,0]
+                    "RelationshipMod":[-50,0,0,50,50]
                 }
             }
         ],
@@ -94,13 +94,13 @@
                 "displayName":"relationship_prisoner_displayName",
 
                 "relationship_A_to_B":{
-                    "permission":{ "intimacy_low":true, "intimacy_high":true, "lead_follow":true },
+                    "permission":{ "intimacy_low":true, "intimacy_medium":true, "intimacy_high":true, "lead_follow":true },
                     "displayName":"relationship_prisoner_displayName_A_is_to_B",
-                    "RelationshipMod":[0,0,0,0,10]
+                    "RelationshipMod":[0,0,10,0,0]
                 },
                 "relationship_B_to_A":{
                     "displayName":"relationship_prisoner_displayName_B_is_to_A",
-                    "RelationshipMod":[0,25,0,25,0]
+                    "RelationshipMod":[0,0,0,25,25]
                 }
             },
             {
@@ -128,8 +128,9 @@
                 "displayName":"relationship_mentor_displayName",
 
                 "relationship_A_to_B":{
+                    "permission":{ "lead_follow":true },
                     "displayName":"relationship_mentor_displayName_A_is_to_B",
-                    "RelationshipMod":[0,0,5,0,0],
+                    "RelationshipMod":[0,5,0,0,0],
 
                     "Requirements":
                     {
@@ -144,7 +145,7 @@
                         ],
                         "requireMood":{"operand":"gte","value":0}
                     },
-                    "MainEmotionKey":"Badwill",
+                    "MainEmotionKey":"Badwill", "tags":["Badwill"],
                     "MaintenanceRequirements":
                     {
                         "requireRawScoreCompare":[
@@ -154,7 +155,7 @@
                 },
                 "relationship_B_to_A":{
                     "displayName":"relationship_mentor_displayName_B_is_to_A",
-                    "RelationshipMod":[5,0,5,0,0],
+                    "RelationshipMod":[5,5,0,0,0],
 
                     "Requirements":
                     {
@@ -166,7 +167,7 @@
                         ],
                         "requireMood":{"operand":"gte","value":0}
                     },
-                    "MainEmotionKey":"Badwill",
+                    "MainEmotionKey":"Badwill", "tags":["Badwill"],
                     "MaintenanceRequirements":
                     {
                         "requireRawScore":[
@@ -183,7 +184,7 @@
 
                 "relationship_A_to_B":{
                     "displayName":"relationship_servant_displayName_A_is_to_B",
-                    "RelationshipMod":[0,0,0,0,50],
+                    "RelationshipMod":[0,0,50,0,0],
                     "permission":{ "lead_follow":true },
 
                     "Requirements":
@@ -197,7 +198,7 @@
                         "requireScore":[ {"requireScoreID":"Goodwill","operand":"gte","value":50}],
                         "requireMood":{"operand":"gte","value":0}
                     },
-                    "MainEmotionKey":"Badwill",
+                    "MainEmotionKey":"Badwill", "tags":["Badwill"],
                     "MaintenanceRequirements":
                     {
                         "requireRawScoreCompare":[
@@ -207,7 +208,7 @@
                 },
                 "relationship_B_to_A":{
                     "displayName":"relationship_servant_displayName_B_is_to_A",
-                    "RelationshipMod":[50,50,0,50,0],
+                    "RelationshipMod":[50,0,0,50,50],
 
                     "Requirements":
                     {
@@ -220,7 +221,7 @@
                         "requireScore":[ {"requireScoreID":"Trust","operand":"gte","value":50}],
                         "requireMood":{"operand":"gte","value":0}
                     },
-                    "MainEmotionKey":"Fear",
+                    "MainEmotionKey":"Fear", "tags":["Fear"],
                     "MaintenanceRequirements":
                     {
                         "requireRawScoreCompare":[
@@ -235,9 +236,10 @@
                 "$type":"RelationshipType, Assembly-CSharp",
 
                 "ID":"relationship_friend",
+                "permission":{ "lead_follow":true, "intimacy_low":true },
                 "displayName":"relationship_friend_displayName",
                 "canUpgradeInto":["relationship_bff"],
-                "RelationshipMod":[0,0,5,0,0],
+                "RelationshipMod":[0,5,0,0,0],
                 "trustCapIncrease":25,
                 "Requirements":
                 {
@@ -252,7 +254,7 @@
                         {"requireScoreID":"Goodwill","operand":"gte","value":50}],
                     "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill",
+                "MainEmotionKey":"Badwill", "tags":["Badwill"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScoreCompare":[
@@ -264,10 +266,10 @@
                 "$type":"RelationshipType, Assembly-CSharp",
 
                 "ID":"relationship_bff",
-                "permission":{ "lead_follow":true },
+                "permission":{ "lead_follow":true,  "intimacy_low":true },
                 "canUpgradeInto":["relationship_couple"],
                 "displayName":"relationship_bff_displayName",
-                "RelationshipMod":[10,0,10,0,0],
+                "RelationshipMod":[35,20,0,0,0],
                 "trustCapIncrease":50,
                 "Requirements":
                 {
@@ -284,7 +286,7 @@
                     ],
                     "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill",
+                "MainEmotionKey":"Badwill", "tags":["Badwill"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[
@@ -299,12 +301,12 @@
                 "$type":"RelationshipType, Assembly-CSharp",
 
                 "ID":"relationship_couple",
-                "permission":{ "intimacy_low":true, "intimacy_high":true, "lead_follow":true },
+                "permission":{ "intimacy_low":true, "intimacy_medium":true, "intimacy_high":true, "lead_follow":true, "formFamily":true },
                 "canUpgradeInto":["relationship_marriage"],
                 "displayName":"relationship_couple_displayName",
                 "hasGenderVariant":true,
                 "trustCapIncrease":125,
-                "RelationshipMod":[15,0,0,0,10],
+                "RelationshipMod":[15,0,10,0,0],
                 "Requirements":
                 {
                     "requireRawScore":[
@@ -320,7 +322,7 @@
                         {"requireScoreID":"Goodwill","operand":"gte","value":50}],
                     "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill",
+                "MainEmotionKey":"Badwill", "tags":["Badwill"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[
@@ -337,11 +339,11 @@
                 "$type":"RelationshipType, Assembly-CSharp",
 
                 "ID":"relationship_marriage",
-                "permission":{ "intimacy_low":true, "intimacy_high":true, "lead_follow":true },
+                "permission":{ "intimacy_low":true, "intimacy_medium":true,  "intimacy_high":true, "lead_follow":true, "formFamily":true },
                 "displayName":"relationship_marriage_displayName",
                 "allowNaturalProposition":false,
                 "hasGenderVariant":true,
-                "RelationshipMod":[25,0,0,0,25],
+                "RelationshipMod":[25,0,25,0,0],
                 "trustCapIncrease":500,
                 "Requirements":
                 {
@@ -358,7 +360,7 @@
                     ],
                     "requireMood":{"operand":"gte","value":2}
                 },
-                "MainEmotionKey":"Badwill",
+                "MainEmotionKey":"Badwill", "tags":["Badwill"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[
@@ -392,7 +394,7 @@
                     "requireScore":[ {"requireScoreID":"Badwill","operand":"gte","value":50}],
                     "requireMood":{"operand":"lt","value":0}
                 },
-                "MainEmotionKey":"Goodwill",
+                "MainEmotionKey":"Goodwill", "tags":["Goodwill"],
                 "MaintenanceRequirements":
                 {"requireRawScore":[
                         {"requireScoreID":"Trust","operand":"gte","value":10}
@@ -408,16 +410,18 @@
                 "ID":"relationship_bully",
                 "displayName":"relationship_bully_displayName",    
                 "trustCapIncrease":-10,    
+                "allowPlayerProposition":false,
 
                 "relationship_A_to_B":{
                     "displayName":"relationship_bully_displayName_A_is_to_B",
-                    "RelationshipMod":[0,0,0,10,10],
+                    "RelationshipMod":[0,0,10,10,0],   
+                    "allowPlayerProposition":false,
                     "allowNaturalProposition":"false"
                 },
                 "relationship_B_to_A":{
                     "displayName":"relationship_bully_displayName_B_is_to_A",
-                    "RelationshipMod":[0,20,0,10,0],
-
+                    "RelationshipMod":[0,0,0,10,20],
+                    "allowPlayerProposition":false,
                     "Requirements":
                     {
                         "requireRawScore":[
@@ -449,7 +453,7 @@
             {
 
                 "rel_tooltip_inequal_baseString":"$name$ $isequal$\n甲方：$tooltip_a$\n乙方：$tooltip_b$",
-                "rel_tooltip_baseString":"$name$ $isequal$ $allownatural$ $reqvalidation$\n关系加值：$bonus$\n申请需求：$req$\n维持关系条件：$maintenance$",
+                "rel_tooltip_baseString":"$name$ $isequal$ $allownatural$$allowplayer$$reqvalidation$\n关系加值：$bonus$\n申请需求：$req$\n维持关系条件：$maintenance$",
                 "rel_tooltip_biological":"血缘关系",
                 "rel_tooltip_social":"职场关系",
                 "rel_tooltip_personal":"个人关系",
@@ -458,12 +462,30 @@
                 "rel_tooltip_inequal":"不对等关系",
                 "rel_tooltip_allownatural":"NPC可主动提出",
                 "rel_tooltip_disallownatural":"NPC不可主动提出",
+                "rel_tooltip_disallowPlayer":" 玩家不可主动提出 ",
                 "rel_tooltip_reqvalidation":"需要对方接受",
                 "rel_tooltip_novalidation":"可单方面成立",
                 "rel_tooltip_req_none":"无",
                 "rel_tooltip_maintenance_none":"无",
 
+                "menu_changeRel_title":"改变$source$与$target$之间的关系",
+                "menu_changeRel_title_bio":"<link=menu_changeRel_title_tooltip>二者的血缘关系为……</link>",
+                "menu_changeRel_norel":"无",
+                "menu_changeRel_title_social":"<link=menu_changeRel_title_tooltip>二者的阵营关系为……</link>",
+                "menu_changeRel_title_personal":"<link=menu_changeRel_title_tooltip>二者的个人关系为……</link>",
+                "menu_changeRel_title_tooltip":"此处显示的是从玩家的视角看的对象身份",
+
+                "menu_changeRel_socialFactionWrapper":"$faction$的$relname$",
+                
+                "menu_changeRel_tooltip_currentActive":"这是二人当前维持的关系",
+                "menu_changeRel_tooltip_forbidPlayer":"该关系无法由玩家提出",
+                "menu_changeRel_tooltip_cooldown":"二人才刚刚改变过关系！",
+                "menu_changeRel_tooltip_satistisfied":"前置条件已满足",
+                "menu_changeRel_tooltip_invalid":"不满足该关系的前置条件",
+
+                "com_rel_tooltip_nopermission_follow":"未允许随行",
                 "com_rel_tooltip_nopermission_low":"未允许接触",
+                "com_rel_tooltip_nopermission_medium":"未允许亲密接触",
                 "com_rel_tooltip_nopermission_high":"未允许性行为",
                 "com_rel_tooltip_pressure":"被施压",
                 "com_rel_tooltip_obedience":"接受度",
@@ -545,6 +567,10 @@
                 "com_rel_tooltip_nopermission_high":"Sexual Activity Not Allowed",
                 "com_rel_tooltip_pressure":"Pressured",
                 "com_rel_tooltip_obedience":"Acceptance",
+      "rel_tooltip_disallowPlayer": " Cannot be proposed by player ",
+
+      "com_rel_tooltip_nopermission_follow": "Following not permitted",
+      "com_rel_tooltip_nopermission_medium": "Intimate contact not permitted",
 
 
                 "relationship_stranger_displayName":"Stranger",
@@ -598,7 +624,20 @@
                 "relationship_stepparent_displayName_A_is_to_B_female": "Stepmother",
                 "relationship_stepparent_displayName_B_is_to_A": "Stepchild",
                 "relationship_stepparent_displayName_B_is_to_A_male": "Stepson",
-                "relationship_stepparent_displayName_B_is_to_A_female": "Stepdaughter"
+                "relationship_stepparent_displayName_B_is_to_A_female": "Stepdaughter",
+
+      "menu_changeRel_norel": "None",
+      "menu_changeRel_socialFactionWrapper": "$relname$ of $faction$",
+      "menu_changeRel_title": "Change the relationship between $source$ and $target$",
+      "menu_changeRel_title_bio": "<link=menu_changeRel_title_tooltip>The blood relation between the two is...</link>",
+      "menu_changeRel_title_personal": "<link=menu_changeRel_title_tooltip>The personal relationship between the two is...</link>",
+      "menu_changeRel_title_social": "<link=menu_changeRel_title_tooltip>The faction relationship between the two is...</link>",
+      "menu_changeRel_title_tooltip": "This displays the identity of the target from the player's perspective",
+      "menu_changeRel_tooltip_cooldown": "These two just changed their relationship recently!",
+      "menu_changeRel_tooltip_currentActive": "This is the relationship currently maintained by the two",
+      "menu_changeRel_tooltip_forbidPlayer": "This relationship cannot be proposed by the player",
+      "menu_changeRel_tooltip_invalid": "Prerequisites for this relationship are not met",
+      "menu_changeRel_tooltip_satistisfied": "Prerequisites satisfied"
 
             }
         }

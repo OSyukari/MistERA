@@ -56,13 +56,14 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     /// <param name="animate"></param>
     private void OnLogAdd(MessageLog msg, bool animate)
     {
+        var immediate = animate && todo.Count < 1;
         todo.Add(msg);
         UpdateAnimatingStatus();
         //Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
         if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnLogsadd, waiting? {waiting} displayPortrait? {msg.DisplaPortrait} waitForPortrait? {msg.WaitForPortrait} portraitRef {(msg.PortraitRef == null ? "null" : msg.PortraitRef.Owner.CallName)} multiple? {msg.multipleChara.Count} animate? {animate} count? {todo.Count}");
         if (firstLine) SingleUpdate(false);
         else if (waiting && msg.WaitForPortrait) return;
-        else if (animate && todo.Count < 2) SingleUpdate(false);
+        else if (immediate) SingleUpdate(false);
     }
 
     private void SingleUpdate(bool skipAll)
@@ -84,11 +85,15 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
     private void ClearLogs()
     {
-        // destroy all
-        while (LogsList.transform.childCount > 0)
+        var clearLogsvalue = scr_System_CentralControl.current.DisplaySetting.clearLogs.value ? 0 : scr_System_CentralControl.current.DisplaySetting.MaxLogCount;
+        if (scr_System_CentralControl.current.DisplaySetting.clearLogs.value)
+        
+        while (LogsList.transform.childCount > clearLogsvalue)
         {
             DestroyImmediate(LogsList.transform.GetChild(0).gameObject);
         }
+
+        // destroy all
         //trackedLogs.Clear();
         todo.Clear();
         scr_System_CampaignManager.current.Logs.Clear();

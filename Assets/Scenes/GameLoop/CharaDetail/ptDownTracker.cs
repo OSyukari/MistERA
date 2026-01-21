@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class ptDownTracker : MonoBehaviour, IScrollHandler//, IDragHandler
 {

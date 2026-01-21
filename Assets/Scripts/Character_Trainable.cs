@@ -1605,6 +1605,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     }
 
 
+
+
     /// <summary>
     /// If not immediate, then queue event and over <br/>
     /// if immediate, then actually execute
@@ -1717,13 +1719,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 }
 
                 var selfTags = new List<string>();
-                foreach (var item in this.Inventory.ContentsPrintable)
+                if (Memory == null || Memory.sleepMemory == null)
                 {
-                    if (!item.Equippable) continue;
-                    if (item.GetComp_Equippable().equipLayer != BodyEquipLayer.Skin) continue;
-                    // detected item 
+                    Debug.LogError($"{FirstName} error no sleep memory");
+                }
+                else if (!Utility.ListEquals(Memory.sleepMemory.lastEquipRefs, EquippedItemRefs))
+                {
                     selfTags.Add("removedClothing");
-                    break;
                 }
                 bool foundCum = false;
                 foreach (var organ in this.Body.Internals)
@@ -1761,7 +1763,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Fear, 30, logger);
 
 
-                    memInst.ResetInternal(Memory_Response.Refuse, Memory_Attitude.Hate);
+                    memInst.ResetInternal(Memory_Response.Accept, Memory_Attitude.Hate);
                     memInst.targets = new List<int>() { randRel.TargetID };
                     memInst.description = LocalizeDictionary.QueryThenParse("memory_onNightAssaultFailed").Replace("$target$", randRel.Target.FirstName);
                     memInst.AddMoodletScore(-2, -4, 0);
@@ -1786,7 +1788,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     if (selfTags.Count > 0)
                     {
                         
-                        memInst.ResetInternal(Memory_Response.Refuse, Memory_Attitude.Hate);
+                        memInst.ResetInternal(Memory_Response.Accept, Memory_Attitude.Hate);
                         memInst.description = LocalizeDictionary.QueryThenParse("memory_onNightAssaultDiscover");
                         memInst.AddMoodletScore(selfTags.Count, (-selfTags.Count - 1) * 2, 0);
 
@@ -1808,6 +1810,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 // so, if last memory is ended and uncons, then, problem!
 
                 this.Stats.RefreshAllStats();
+                Memory.SleepEnd();
 
 
                 /*
@@ -1824,7 +1827,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 // check self status
             }
 
-           // scr_UpdateHandler.current.FlushCollectedLogs(true, false);
+            // scr_UpdateHandler.current.FlushCollectedLogs(true, false);
         }
     }
 
@@ -1838,6 +1841,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_begin"));
         this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" });
 
+        Memory.SleepStart();
+        //Debug.Log($"{FirstName} sleep!");
         return sleepHour;
     }
 
@@ -1989,6 +1994,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         if (this.Stats != null) Stats.ReEstablishParent(this);  // stats require memory
         if (this.Portrait != null) Portrait.RebuildInternal(this);
         if (this.Relationships != null) Relationships.ReEstablishParent(this);
+
+        if (this.Memory != null) Memory.UpdateBlacklist();
 
         bool value = true;
         if (CurrentJob != null)

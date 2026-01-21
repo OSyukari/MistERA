@@ -10,8 +10,6 @@ using QuikGraph;
 using QuikGraph.Algorithms.Observers;
 using QuikGraph.Algorithms.ShortestPath;
 using UnityEngine;
-using static scr_Menu;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class Map_Instance
 {
@@ -341,6 +339,8 @@ public class Map_Instance
             //ri.AddChara(scr_System_CampaignManager.current.Player);
 
         }
+
+
         // if(Rooms.ContainsKey(iii.Key) && iii.Value.Count > 0) Debug.Log("roomCharaRef " + Rooms[iii.Key].DisplayName + " and charaRefs " + String.Join("|", iii.Value));
         /*if (iii.Key == scr_System_CampaignManager.current.CurrentRoom.RefID)
         {
@@ -455,6 +455,29 @@ public class Map_Instance
             if (isDirty)
             {
                 scr_UpdateHandler.current.EventHandler.Trigger(xx, EventTrigger.OnEnterRoom);
+            }
+        }
+
+        foreach (var i in charaInRoom)
+        {
+            i.Relationships.RefreshMoodlets(charaInRoom);
+        }
+    }
+
+    public void RefreshRoomMoodlets()
+    {
+        foreach(var i in this.Rooms)
+        {
+            foreach(var c in i.Value.RoomChara)
+            {
+                c.Relationships.RefreshMoodlets(i.Value.RoomChara);
+            }
+        }
+        foreach (var i in this.rooms_orphans)
+        {
+            foreach (var c in i.Value.RoomChara)
+            {
+                c.Relationships.RefreshMoodlets(i.Value.RoomChara);
             }
         }
     }

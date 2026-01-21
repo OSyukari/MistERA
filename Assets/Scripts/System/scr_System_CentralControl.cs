@@ -709,6 +709,8 @@ public class DisplaySettings
     public int MaxLogCount = 50;
     public int ClickDragForgiveness = 100;
 
+    public BoolSetting clearLogs = new BoolSetting(true, "clearLogs");
+
     public BoolSetting displayPlayerPortraitInLogs = new BoolSetting(true, "displayPlayerPortraitInLogs");
 }
 

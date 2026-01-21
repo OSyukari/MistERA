@@ -57,7 +57,7 @@ public static class ResultCharaUtility
                 if (log != null && i != 0) log.AddStats(c.RefID, "stats_derived_extended_mp", i);
                 break;
             case CharaResultType.redress:
-                Debug.Log($"{c.FirstName} redress");
+                //Debug.Log($"{c.FirstName} redress");
                 c.Redress();
                 break;
             default: break;
@@ -68,6 +68,22 @@ public static class ResultCharaUtility
             if (jobOwner != null) instance = jobOwner.Inventory.RemoveItem(r.useItemFromTargetInventory, c);
             if (instance != null && instance.GetComp_Ingestible() != null) c.Body.ConsumeIngestible(instance);
             // Debug.Log("Applying COM Result, useItemFromTargetInventory[" + useItemFromTargetInventory + "], factionOwner?[" + (m.job.FactionOwner != null) + "] instance?[" + (instance != null) + "]");
+        }
+        if (r.modifyStatusValue != null && r.modifyStatusValue.isValid)
+        {
+            r.modifyStatusValue.Execute(c, log);
+        }
+
+        if (r.toggleTeamStatus)
+        {
+            if (scr_System_CampaignManager.current.isPlayerPartyMember(c.RefID))
+            {
+                scr_System_CampaignManager.current.party.RemoveFromParty(c.RefID);
+            }
+            else
+            {
+                scr_System_CampaignManager.current.party.AddToParty(c.RefID);
+            }
         }
 
         if (tooltips != null) tooltips.Add($"{c.CallName} {r.Print}");

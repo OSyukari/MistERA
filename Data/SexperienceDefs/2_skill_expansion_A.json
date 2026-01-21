@@ -5,6 +5,7 @@
         [
             {
                 "ID":"skill_expansion_A",
+                "categoryTag":["skill_expansion"],
                 "requirements":{
                     "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                     "entries":[ { "requireBodyTag":["anus"] } ]

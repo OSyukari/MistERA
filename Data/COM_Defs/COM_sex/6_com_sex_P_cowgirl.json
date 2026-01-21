@@ -4,6 +4,7 @@
             {
                 "ID": "com_sex_P_cowgirl",
                 "ActionPackageClass": "ActionPackage_Sex",
+                "categoryTags":["com_category_v"],
                 "displayName": "com_sex_P_cowgirl_displayName_1",
                 "timeScale": 3,
                 "comTags": [
@@ -32,10 +33,12 @@
                     }
                 },
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 25
+                    "baseAcceptanceValue": 30,
+                    "SkillBonus_Receiver":["skill_sensitivity_V"]
                 },
                 "DifficultyCheck": {
-                    "baseD20Check": 15
+                    "baseD20Check": 15,
+                    "SkillBonus_Receiver":["skill_sensitivity_V"]
                 },
                 "variants": [
                     {

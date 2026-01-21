@@ -638,21 +638,34 @@ public class Job : IDisposable, I_Disposable
         else if (ap.Duration == 0)
         {//   duration == 0 this might be aborted
 
-            if (display && !ap.executeSuccessful && !ap.LoggedBegin)
+            if (display && displayStrict)
             {
-                var checkResult = ap.GetCheckResult(rightAlign);
-                if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult);
-                ap.LogMessage_Kojo(m);
-                ap.LogMessage_Begin_Refuse( rightAlign, m);
+                ap.LogCheckResult(rightAlign, ap.LoggedBegin);
             }
-            else if (display)
+            if (!ap.LoggedBegin)
             {
-                //  Debug.LogError($"CollectLogs LogMessage_After on {ap.ListEP.Count} EPs");
-                var checkResult = ap.GetCheckResult(rightAlign, true);
-                if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult);
+                if (ap.executeSuccessful)
+                {
+                    if (ap.repeated) ap.LogMessage_Begin_Ongoing(false, rightAlign, m);
+                    else ap.LogMessage_Begin(false, rightAlign, m, scr_System_CampaignManager.current.Player);
+
+                }
+                else
+                {
+                    ap.LogMessage_Begin_Refuse(rightAlign, m);
+                }
+                ap.LoggedBegin = true;
+            }
+            if (display)
+            {
                 ap.LogMessage_Kojo(m);
+            }
+            if (display)
+            {
+
                 ap.LogMessage_After(rightAlign, m);
             }
+
             m.exp.leftAlignOverride = !rightAlign;
         }
         //else if ( ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
@@ -660,8 +673,12 @@ public class Job : IDisposable, I_Disposable
         {   // one ticked
             if (display)
             {
-                var checkResult = ap.GetCheckResult(rightAlign);
-                if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult);
+                // var checkResult = ap.GetCheckResult(out var tooltip, rightAlign);
+                //if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult, tooltip);
+                if (displayStrict)
+                {
+                    ap.LogCheckResult(rightAlign);
+                }
 
                 if (ap.repeated) ap.LogMessage_Begin_Ongoing(false, rightAlign, m);
                 else ap.LogMessage_Begin(false, rightAlign, m, scr_System_CampaignManager.current.Player);
@@ -751,7 +768,7 @@ public class Job : IDisposable, I_Disposable
             for (int ii = packages_current.Count - 1; ii >= 0; ii--)
             {
                 p2 = packages_current[ii];
-                if (UtilityEX.DetectConflict(p1, p2))
+                if (UtilityEX.DetectConflict(p2, p1))
                 {
 
                     packages_current.RemoveAt(ii);

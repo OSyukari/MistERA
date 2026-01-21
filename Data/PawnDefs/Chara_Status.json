@@ -469,7 +469,7 @@
 "chara_status_stress_1": "%%chara_status_stress%%：放松",
 "chara_status_stress_m1": "%%chara_status_stress%%：紧张",
 "chara_status_stress_m2": "%%chara_status_stress%%：界限",
-"chara_status_stress_tooltip": "影响角色的恐惧数值，低压力时恐惧取半或更低，高压力时取全数值或更高\n高压力时好意和厌恶数值都取更高\n%%statsEX_capModded%%",
+"chara_status_stress_tooltip": "影响角色的信赖和恐惧获取量\n影响角色的恐惧数值，低压力时恐惧取半或更低，高压力时取全数值或更高\n高压力时好意和厌恶数值都取更高\n%%statsEX_capModded%%",
 
 "chara_status_mood": "心情",
 "chara_status_mood_0": "%%chara_status_mood%%：普通",
@@ -477,7 +477,7 @@
 "chara_status_mood_2": "%%chara_status_mood%%：绝佳",
 "chara_status_mood_m1": "%%chara_status_mood%%：糟糕",
 "chara_status_mood_m2": "%%chara_status_mood%%：极恶",
-"chara_status_mood_tooltip": "影响执行指令时角色的初始态度\n心情好时厌恶数值取半或更低，心情差时好意数值取半或更低\n%%statsEX_capModded%%",
+"chara_status_mood_tooltip": "影响角色的好感和厌恶获取量\n影响执行指令时角色的初始态度\n心情好时厌恶数值取半或更低，心情差时好意数值取半或更低\n%%statsEX_capModded%%",
 
 "chara_status_alcohol":"酒精",
 "chara_status_alcohol_0":"%%chara_status_alcohol%%：清醒",
@@ -521,15 +521,17 @@
 "chara_status_mood_2": "Excellent Mood",
 "chara_status_mood_m1": "Bad Mood",
 "chara_status_mood_m2": "Terrible Mood",
-"chara_status_mood_tooltip": "Influences the character's initial attitude when executing commands.\nWhen in a good mood, aversion values are halved or lower; when in a bad mood, goodwill values are halved or lower.\n%%statsEX_capModded%%",
 
 "chara_status_stress": "Stress",
 "chara_status_stress_0": "Calm",
 "chara_status_stress_1": "Relaxed",
 "chara_status_stress_m1": "Tense",
 "chara_status_stress_m2": "Stressed",
-"chara_status_stress_tooltip": "Influences the character's fear value. At low stress, fear is halved or lower; at high stress, the full value or higher is taken.\nGoodwill and aversion values are both higher at high stress.\n%%statsEX_capModded%%",
 
+"chara_status_mood_tooltip": "Affects the character's Favorability and Aversion gain.\nAffects the character's initial attitude when executing commands.\nWhen Mood is high, Aversion is halved or lower; when Mood is low, Favorability is halved or lower.\n%%statsEX_capModded%%",
+      "chara_status_stress_tooltip": "Affects the character's Trust and Fear gain.\nAffects the character's Fear value: at low Stress, Fear is halved or lower; at high Stress, the full value or higher is taken.\nAt high Stress, both Favorability and Aversion values are increased.\n%%statsEX_capModded%%",
+      
+      
 "chara_status_consciousness": "Consciousness",
 "chara_status_consciousness_0": "Awake",
 "chara_status_consciousness_m1": "Unfocused",

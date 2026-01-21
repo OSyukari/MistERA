@@ -24,7 +24,8 @@ public class RelationshipManager
 
     public void RefreshAttitudes()
     {
-        foreach (var rel in this.Relationships) rel.ResetAttitude();
+        //foreach (var rel in this.Relationships) rel.ResetAttitude();
+        //foreach(var rel in this.Relationships) rel.
     }
 
     public void HourlyRefresh()
@@ -284,6 +285,34 @@ public class RelationshipManager
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Relationships) Debug.Log($"{Owner.FirstName} relationship increase {relID}{amount} with {targetRel.Target.FirstName}");
         }
+
+        var mood = Owner.Stats.Mood == null ? 0 : Owner.Stats.Mood.Severity;
+        var stress = Owner.Stats.Stress == null ? 0 : Owner.Stats.Stress.Severity;
+        var lust = Owner.Stats.Lust == null ? 0 : Owner.Stats.Lust.Severity;
+
+        switch (relID)
+        {
+            case RelationshipScoreType.Trust:
+                if ((amount > 0 && stress > 0) || (amount < 0 && stress < 0)) amount += stress;
+                break;
+            case RelationshipScoreType.Fear:
+                if ((amount > 0 && stress < 0) || (amount < 0 && stress > 0)) amount -= stress;
+                break;
+            case RelationshipScoreType.Goodwill:
+                if ((amount > 0 && mood > 0) || (amount < 0 && mood < 0)) amount += mood;
+                break;
+            case RelationshipScoreType.Badwill:
+                if ((amount > 0 && mood < 0) || (amount < 0 && mood > 0)) amount -= mood;
+                break;
+            case RelationshipScoreType.Desire:
+                if ((amount > 0 && lust > 0) || (amount < 0 && lust < 0)) amount += lust;
+                break;
+            default:
+                break;
+        }
+
+        if (amount == 0) return;
+
         targetRel.ModRelationValue(relID, amount, silent);
 
         if (exp != null) exp.AddRelations(ownerRef, targetRef, relID, (int)amount);
@@ -316,6 +345,29 @@ public class RelationshipManager
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
         }
     }
+
+    public List<Stat_Modifier> moodlets = new List<Stat_Modifier>();
+    public void RefreshMoodlets(List<Character_Trainable> cs)
+    {
+        moodlets.Clear();   
+        foreach(var c in cs)
+        {
+            if (c == Owner) continue;
+            var rel = FindRelationshipWith(c);
+            if (rel.Target == null) continue;
+            moodlets.AddRange(rel.GetMoodletModifiers());
+        }
+        Owner.Stats.Stress.ClearCache();
+        Owner.Stats.Mood.ClearCache();
+    }
+
+    public List<Stat_Modifier> GetMoodlet(string statID)
+    {
+        var list = new List<Stat_Modifier>(moodlets.Count);
+        foreach(var i in moodlets) if (i.statID == statID) list.Add(i);
+        return list;
+    }
+
 
     public MessageCollect_KojoEntry GetKOJOMessage_Tryjoin(ActionPackage ep, Character_Trainable c, MessageCollect m = null)
     {
@@ -550,7 +602,7 @@ public class RelationshipManager
         //box.SetText(LocalizeDictionary.QueryThenParse("relationship_attitude") + ":" + rel.AttitudeString(tooltip1), false, "relationship_attitude_tooltip");
         var attitude = rel.GetCurrentAttitude();
         box.SetText(LocalizeDictionary.QueryThenParse("relationship_attitude_uiEntry").Replace("$content$", attitude == null ? " - " : attitude.DisplayName)  , false, "relationship_attitude_tooltip");
-        box.SetExternalTooltip(String.Join("\n", rel.CurrentAttitudeTooltip));
+        box.SetExternalTooltip($"{($"currentObedience {(attitude == null ? 0 : attitude.GetObedienceMod(rel))}, maxObedience {(attitude == null ? 0 : attitude.obedienceMod_Max)}")}\n{String.Join("\n", rel.CurrentAttitudeTooltip)}");
     }
 
     public static void Draw(Character_Relationship rel, scr_box_relationship box)
@@ -570,13 +622,16 @@ public class RelationshipManager
                 relTooltip.Add($"{LocalizeDictionary.QueryThenParse("rel_tooltip_biological")}: {rel.Relationship_Bio.TooltipShort}");
             }
         }
-        if (rel.Relationship_Social != null)
+        foreach(var key in rel.Relationship_Social_Keys)
         {
-            var name = rel.Relationship_Social.GetDisplayName(rel.Owner, !rel.isA_Social);
-            if (name.Length > 0)
+            if (rel.tryGetSocialFaction(key, out var rel2, out var isA))
             {
-                relName.Add(name);
-                relTooltip.Add($"{LocalizeDictionary.QueryThenParse("rel_tooltip_social")}: {rel.Relationship_Social.TooltipShort}");
+                var name = rel2.GetDisplayName(rel.Owner, !isA);
+                if (name.Length > 0)
+                {
+                    relName.Add(name);
+                    relTooltip.Add($"{LocalizeDictionary.QueryThenParse("rel_tooltip_social")}: {rel2.TooltipShort}");
+                }
             }
         }
         if (rel.Relationship_Personal != null)
@@ -599,6 +654,15 @@ public class RelationshipManager
         box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire")}: {rel.Desire_Base.ToString("N0")}{rel.Desire_Bonus.ToString("+0;-#")}", false, "relationship_desire_tooltip");
 
         //RelationshipManager.Draw_Obedience(rel, box.obedienceBox);
-        RelationshipManager.Draw_Attitude(rel, box.attitudeBox);
+        if (box.attitudeBox != null) RelationshipManager.Draw_Attitude(rel, box.attitudeBox);
+    }
+    public static void DrawFinal(Character_Relationship rel, scr_box_relationship box)
+    {
+        box.trustBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_trust_final")}: {rel.Trust.ToString("N0")}", false, "relationship_trust_tooltip");
+        box.fearBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_fear_final")}: {rel.Fear.ToString("N0")}", false, "relationship_fear_tooltip");
+        box.goodwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_goodwill_final")}: {rel.Goodwill.ToString("N0")}", false, "relationship_goodwill_tooltip");
+        box.badwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_badwill_final")}: {rel.Badwill.ToString("N0")}", false, "relationship_badwill_tooltip");
+        box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire_final")}: {rel.Desire.ToString("N0")}", false, "relationship_desire_tooltip");
+
     }
 }

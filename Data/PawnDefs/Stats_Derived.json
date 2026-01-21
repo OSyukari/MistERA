@@ -369,7 +369,7 @@
                 "stats_derived_memoryEntryCount": "记忆数量",
                 "stats_derived_memoryEntryCount_tooltip": "该数值决定了角色的心情会受到多少项记忆条目影响（从新到旧）",
                 "stats_derived_memoryLength": "记忆时长",
-                "stats_derived_memoryLength_tooltip": "该数值决定了角色的每项（非永久的）记忆条目会在记忆中保留多久（分钟单位）\n默认24小时",
+                "stats_derived_memoryLength_tooltip": "该数值决定了角色的每项（非永久的）记忆条目会在记忆中保留多久（分钟单位）\n默认24小时\n角色失去意识期间，记忆保留时长减半",
                 "stats_derived_alcoholSensitivity":"酒精耐受",
                 "stats_derived_alcoholSensitivity_tooltip": "该数值（倍率）决定角色有多容易醉，越低越易醉\n默认1.0",
                 "stats_derived_painSensitivity":"疼痛耐受",
@@ -415,6 +415,8 @@
                 "stats_derived_carryCapacity_tooltip": "%%notimplemented%%",
 
 
+      "stats_derived_memoryLength_tooltip": "This value determines how long each (non-permanent) memory entry remains in memory (in minutes).\nDefault: 24 hours.\nWhile the character is unconscious, memory duration is halved.",
+
                 "stats_derived_sleepNeed": "Sleep Need",
                 "stats_derived_sleepNeed_tooltip": "Hours of sleep required by the character daily\nModifiers to this value are only applied when the character starts sleeping",
                 "stats_derived_sleepDepth": "Sleep Depth",
@@ -422,7 +424,6 @@
                 "stats_derived_memoryEntryCount": "Memory Capacity",
                 "stats_derived_memoryEntryCount_tooltip": "This value determines how many memory entries affect the character's mood (from newest to oldest)",
                 "stats_derived_memoryLength": "Memory Duration",
-                "stats_derived_memoryLength_tooltip": "This value determines how long each (non-permanent) memory entry remains in memory (in minutes)\nDefault is 24 hours",
                 "stats_derived_alcoholSensitivity":"Alcohol Tolerance",
                 "stats_derived_alcoholSensitivity_tooltip": "This value (multiplier) determines how easily the character gets drunk; lower means easier to get drunk\nDefault 1.0",
                 "stats_derived_painSensitivity":"Pain Tolerance",

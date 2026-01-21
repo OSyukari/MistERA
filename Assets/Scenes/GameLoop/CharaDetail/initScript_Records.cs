@@ -4,13 +4,38 @@ using UnityEngine;
 
 public class initScript_Records : MonoBehaviour
 {
-    public RectTransform AbnormalExpGrid, SkillsGrid;
+    public RectTransform AbnormalExpGrid;
     public scr_HoverableText viewEXPBTN;
 
+    public List<labelGrid> managedGrids = new List<labelGrid>();
+    public labelGrid unlabeled;
+
+    Dictionary<string, labelGrid> labeled = new Dictionary<string, labelGrid>();
+
+    public RectTransform GetGrid(List<string> label)
+    {
+        foreach(var l in label)
+        {
+            if (labeled.ContainsKey(l))
+            {
+                labeled[l].NotifyInsert();
+                return labeled[l].selfRect;
+            }
+        }
+        unlabeled.NotifyInsert();
+        return unlabeled.selfRect;
+    }
 
     public void Initialize(Character_Trainable c)
     {
-        while (SkillsGrid.transform.childCount > 0) DestroyImmediate(SkillsGrid.transform.GetChild(0).gameObject);
+
+        foreach (var i in managedGrids)
+        {
+            labeled.Add(i.gridLabel, i);
+            i.Clear();
+        }
+
+        unlabeled.Clear();
     }
 
 }

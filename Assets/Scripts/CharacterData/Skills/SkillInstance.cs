@@ -4,8 +4,9 @@ using Newtonsoft.Json;
 using UnityEngine;
 using static CharaSkill;
 
-public class SkillInstance
+public class SkillInstance : hasCategory
 {
+
     [JsonIgnore]
     public string DisplayName
     {
@@ -142,6 +143,15 @@ public class SkillInstance
                 }
             }
             return _cachedUses;
+        }
+    }
+
+    [JsonIgnore]
+    public List<string> CategoryLabel 
+    {
+        get
+        {
+            return BaseRef.categoryTag;
         }
     }
 

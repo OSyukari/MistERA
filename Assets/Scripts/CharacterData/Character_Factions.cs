@@ -497,9 +497,17 @@ public class Character_Factions
     [JsonIgnore] public List<Manageable> Factions  { get { 
             if (_factions == null)
             {
-                _factions = new List<Manageable>();
-                _factions.AddRange(WorkFactions);
-                _factions.AddRange(HomeFactions);
+                _factions = new List<Manageable>(WorkFactions.Count + HomeFactions.Count);
+                foreach (var faction in WorkFactions)
+                {
+                    if (_factions.Contains(faction)) continue;
+                    _factions.Add(faction);
+                }
+                foreach(var faction in HomeFactions)
+                {
+                    if (_factions.Contains(faction)) continue;
+                    _factions.Add(faction);
+                }
             }
            
             return _factions; } }

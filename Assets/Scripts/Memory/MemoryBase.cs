@@ -413,6 +413,7 @@ public class Memory_Entry
         for(int i = 0; i < stresslist.Count; i++)
         {
             var moodlet = initMoodlet("chara_status_stress", i);
+            moodlet.DisplayName = this.ToString(true, false);
             moodlet.SetValueTypeAndString(Stat_Modifier_Type.number, stresslist[i].ToString());
             Mod_Stress.Add(moodlet);
         }
@@ -422,6 +423,7 @@ public class Memory_Entry
         for (int i = 0; i < moodlist.Count; i++)
         {
             var moodlet = initMoodlet("chara_status_mood", i);
+            moodlet.DisplayName = this.ToString(true, false);
             moodlet.SetValueTypeAndString(Stat_Modifier_Type.number, moodlist[i].ToString());
             Mod_Mood.Add(moodlet);
         }
@@ -431,6 +433,7 @@ public class Memory_Entry
         for (int i = 0; i < lustlist.Count; i++)
         {
             var moodlet = initMoodlet("chara_status_lust", i);
+            moodlet.DisplayName = this.ToString(true, false);
             moodlet.SetValueTypeAndString(Stat_Modifier_Type.number, lustlist[i].ToString());
             Mod_Lust.Add(moodlet);
         }
@@ -552,7 +555,7 @@ public class Memory_Entry
 
         if (withRoomName && !disableRoomName)
         {
-            var roomname = roomNameOverride != "" ? roomNameOverride : this.roomRef == -1 ? "unknown" : scr_System_CampaignManager.current.Map.GetRoomByRef(roomRef).DisplayName;
+            var roomname = roomNameOverride != "" ? roomNameOverride : this.roomRef == -1 ? "unknown" : scr_System_CampaignManager.current.Map.GetRoomByRef(roomRef).DisplayNameShort;
             return LocalizeDictionary.QueryThenParse("ui_entry_memory_withRoomName").Replace("$desc$", body).Replace("$roomname$", roomname);
         } else return body;
 
@@ -672,42 +675,6 @@ public class Memory_Entry
 
     private string dictionaryKeyword = "ui_entry_memory_description";
 
-    /*
-    private string makeSingleMemInstanceDescription(Tuple<string, int, string, bool, int, bool> Key, int Value)
-    {
-        string ss = LocalizeDictionary.QueryThenParse(dictionaryKeyword);
-        var names = new List<string>();
-        var refIDs = Key.Item3.Split(',');
-
-        foreach (var i in refIDs) if (int.TryParse(i, out int ii) && ii >= 0 && ii != ownerRef) names.Add(scr_System_CampaignManager.current.FindInstanceByID(ii).FirstName);
-
-        var targetcom = scr_System_Serializer.current.GetByNameOrID_COM(Key.Item1);
-        if(names.Count <= 0)
-        {
-            ss = ss.Replace("$with_targets$", "");
-        }
-        else
-        {
-            if (targetcom.variants[Key.Item2].requirements.requirement.req_Receivers.requireAction) ss = ss.Replace("$with_targets$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_with_targets").Replace("$targets$", String.Join(",", names)));
-            else  ss = ss.Replace("$with_targets$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_by_targets").Replace("$targets$", String.Join(",", names)));
-        }
-        
-
-
-
-        ss = ss.Replace("$com$", targetcom.DisplayName(Key.Item2));
-
-        if (Value > 1) ss = ss.Replace("$multiple_counts$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_multiple_counts").Replace("$counts$", Value.ToString()));
-        else ss = ss.Replace("$multiple_counts$", "");
-
-        if (Key.Item6 == true) ss = ss.Replace("$refused$", "");
-        else ss = ss.Replace("$refused$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_refused"));
-
-        if (Key.Item5 >= 0 && Key.Item5 != ownerRef && !refIDs.Contains(Key.Item5.ToString())) ss = ss.Replace("$ordered_by$", LocalizeDictionary.QueryThenParse(dictionaryKeyword + "_ordered_by").Replace("$master$", scr_System_CampaignManager.current.FindInstanceByID(Key.Item5).FirstName));
-        else ss = ss.Replace("$ordered_by$", "");
-
-        return ss;
-    }*/
 
     private List<string> memInstanceDescriptionCache = null;
     [JsonIgnore] public List<string> MemInstanceDescriptions
@@ -864,18 +831,17 @@ public class MemInstance
         get
         {
             var value = modMood;
-            if (tags.Contains("unsafe") || tags.Contains("ignored"))
-            {
-               // Debug.Log($"logging memory {this.description} mood {modMood}, response {response} attitude {attitude}");
+            if (tags.Contains("unsafe") || tags.Contains("ignored")) return (int)value;
+            
+            value += ((float)Attitude - (float)Memory_Attitude.Neutral);
+
+            if (tags.Contains("recreation"))
+            {   // if recreation related, as long as its not bad, increase mood
+                //if (Attitude >= Memory_Attitude.Neutral) value += 1;
             }
             else
             {
-                value += ((float)Attitude - (float)Memory_Attitude.Neutral);
 
-                if (tags.Contains("recreation"))
-                {   // if recreation related, as long as its not bad, increase mood
-                    if (Attitude >= Memory_Attitude.Neutral) value += 1;
-                }
             }
 
             return (int)value; } }
@@ -884,14 +850,17 @@ public class MemInstance
         get
         {
             var value = modStress;
+            if ( tags.Contains("ignored")) return (int)value;
+            
             if (tags.Contains("job"))
             {
                 value -= 1;
-                if (Attitude < Memory_Attitude.Neutral) value -= 1;
+                if (response > Memory_Response.Accept && response < Memory_Response.Success) value -= 1;
+                else if (response > Memory_Response.Success) value += 1;
             }
-            if (tags.Contains("recreation") || tags.Contains("rest"))
+            else if (tags.Contains("recreation"))
             {   // if recreation related, as long as its not bad, decrease stress
-                if (Attitude >= Memory_Attitude.Neutral) value += 1;
+                if (Attitude > Memory_Attitude.Neutral) value += 1;
             }
             return (int)value;
         } }
@@ -899,6 +868,7 @@ public class MemInstance
         get
         {
             var value = modLust;
+            if (tags.Contains("ignored")) return (int)value;
             //if (Attitude > Memory_Attitude.Neutral && (tags.Contains("sex") || tags.Contains("massage") || tags.Contains("touch")) && !tags.Contains("safe")) value += 1;
             return (int)value;
         } }

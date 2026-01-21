@@ -12,6 +12,12 @@ public class initScript_prefs_Display: MonoBehaviour
     public TMP_Text text_normal, text_hover, text_conflict, text_disabled, text_maxed, text_toggled;
     public RectTransform selfRect;
     public Image bg_normal, bg_transparent;
+    public scr_inputFieldLink input_logs;
+
+    public void Initialize()
+    {
+        input_logs.self_inputfield.text = $"{scr_System_CentralControl.current.DisplaySetting.MaxLogCount}";
+    }
 
     void Start()
     {
@@ -33,6 +39,22 @@ public class initScript_prefs_Display: MonoBehaviour
     {
         bg_normal.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Opaque.Color;
         bg_transparent.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
+    }
+
+    /// <summary>
+    /// Inputfield OnValueChanged calls for this
+    /// </summary>
+    /// <param name="s"></param>
+    public void UpdateMaxLogs(string s)
+    {
+        //Debug.Log($"UpdateMaxLogs");
+        if (int.TryParse(input_logs.self_inputfield.text, out int value))
+        {
+            value = Math.Clamp(value, 0, 150);
+            //Debug.Log($"updating maxlogs to {value}");
+            scr_System_CentralControl.current.DisplaySetting.MaxLogCount = value;
+            input_logs.self_inputfield.text = $"{value}";
+        }
     }
 
 }

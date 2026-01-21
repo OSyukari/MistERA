@@ -175,14 +175,14 @@ public class ActionPackage_PathTo : ActionPackage
             var pc = path[0];
             if (!moved) moved = true;
 
-            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef,LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$",scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName), true, true);
+            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(-1,LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$",scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName), true, true);
                 
             scr_System_CampaignManager.current.MoveCharacterTo(Doer, pc.Target);
             if ((int)pc.Tag.Cost > 0 && doerRef == 0)
             {
                 Room_Instance room = scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target);
                 string s = LocalizeDictionary.QueryThenParse("ui_movement_playerEntersRoom").Replace("$room$", room.DisplayName);
-                string s2 = "";
+                List<string> s2 = new List<string>();
                 bool askBreak = false;
                 //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
                 
@@ -190,16 +190,16 @@ public class ActionPackage_PathTo : ActionPackage
                 {
                     if (c.RefID == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID)) continue;
                     if (c == null) continue;
-                    s2 += ", " + c.FirstName;
+                    s2.Add(c.FirstName);// += ", " + c.FirstName;
                     askBreak = true;
                     //scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName + " is in room" + room.DisplayName + ", currently " + c.GetJobDescription(), true);
                 }
 
-                scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.DisplaySetting.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Length > 0 ? $"\n{LocalizeDictionary.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", s2)}":""), true);
+                scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.DisplaySetting.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Count > 0 ? $"\n{LocalizeDictionary.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", String.Join(", ",s2))}":""), true);
                 //if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)  { }
 
             }
-            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(doerRef, LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target).DisplayName), true, true);
+            if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(-1, LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(pc.Target).DisplayName), true, true);
 
             this.PathPop();
             if (duration > 0) break;

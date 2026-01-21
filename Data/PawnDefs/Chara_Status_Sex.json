@@ -54,23 +54,23 @@
             "variationMode":{ 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
-                    "baseValue":10, "decaySpeed":0.001
+                    "baseValue":60, "decaySpeed":0.006
                 }
             } ,
             "variants":[
-                {  "displayable":false,       "displayName":"chara_status_lust_satisfied",   "threshold":0.0 },
-                {   "displayable":false,       "displayName":"chara_status_lust_satisfied",   "threshold":3.9  },
+                {  "displayable":false,       "displayName":"chara_status_lust_satisfied",   "threshold":0 },
+                {   "displayable":false,       "displayName":"chara_status_lust_satisfied",   "threshold":25  },
                 {   
-                    "displayName":"chara_status_lust_low",   "threshold":6.9  ,
+                    "displayName":"chara_status_lust_low",   "threshold":50  ,
                     "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_lust_hidden", "type":"setBase", "valueType":"number", "valueString":"1" } ] 
                 },
                 { 
-                    "displayName":"chara_status_lust_high",     "threshold":7.9 ,
+                    "displayName":"chara_status_lust_high",     "threshold":75 ,
                     "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_lust_hidden", "type":"setBase", "valueType":"number", "valueString":"2" } ] 
                 },
                 { 
                     "displayName":"chara_status_lust_high",     "threshold":9999 ,
-                    "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_lust_hidden", "type":"setBase", "valueType":"number", "valueString":"2" } ] 
+                    "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_lust_hidden", "type":"setBase", "valueType":"number", "valueString":"3" } ] 
                 }
             ]
         },
@@ -686,7 +686,7 @@
                 "chara_status_lust_satisfied": "%%chara_status_lust%%：满足",
                 "chara_status_lust_low": "%%chara_status_lust%%：不满",
                 "chara_status_lust_high": "%%chara_status_lust%%：发情",
-                "chara_status_lust_tooltip": "影响角色对肢体接触的接受度\n影响角色态度计算中的欲望数值\n影响角色在做爱时的扩张能力\n%%statsEX_capModded%%",
+                "chara_status_lust_tooltip": "影响角色的欲望获取量\n影响角色对肢体接触的接受度\n影响角色态度计算中的欲望数值\n影响角色在做爱时的扩张能力\n%%statsEX_capModded%%",
 
                 "chara_status_sex_stimulation_pos":"%%chara_status_orificelubrication%%",
                 "chara_status_orificelubrication":"润滑",
@@ -753,6 +753,9 @@
             },
             "en-us":
             {
+                
+      "chara_status_lust_tooltip": "Affects the character's Lust gain.\nAffects the character's receptivity to physical contact.\nAffects the Lust value in character attitude calculations.\nAffects the character's expansion capability during sex.\n%%statsEX_capModded%%",
+      
                 "chara_status_sex_stimulation": "Sex Stimulation",
                 "chara_status_lust": "Lust",
                 "chara_status_lust_hidden":"Desire (hidden)",
@@ -768,8 +771,7 @@
                 "chara_status_lust_satisfied": "%%chara_status_lust%%: Satisfied",
                 "chara_status_lust_low": "%%chara_status_lust%%: Unfulfilled",
                 "chara_status_lust_high": "%%chara_status_lust%%: In Heat",
-                "chara_status_lust_tooltip": "Influence acceptance toward physical contact\nAffects lust value during attitude calculations\nAffects orifice stretching capacity during sex\n%%statsEX_capModded%%",
-
+                
                 "chara_status_sex_stimulation_pos":"%%chara_status_orificelubrication%%",
                 "chara_status_orificelubrication":"Wetness",
                 "chara_status_orificelubrication_none":"%%chara_status_orificelubrication%%: Dry",

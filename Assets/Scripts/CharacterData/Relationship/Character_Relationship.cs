@@ -2,14 +2,17 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+using UnityEngine.SocialPlatforms.Impl;
 
 public enum RelationshipScoreType
 {
+    None = -1,
     Trust,
-    Fear,
     Goodwill,
+    Desire,
     Badwill,
-    Desire
+    Fear
 }
 public enum RelationshipObedienceType
 {
@@ -53,6 +56,49 @@ public class Character_Relationship
         }
     }
 
+
+    Stat_Modifier stressMod = null, moodMod = null;//, lustMod = null;
+    bool initialized_moodlet = false;
+
+    public List<Stat_Modifier> GetMoodletModifiers()
+    {
+        List<Stat_Modifier> results = new List<Stat_Modifier>(3);
+        if (!initialized_moodlet)
+        {
+            stressMod = new Stat_Modifier();
+            stressMod.ModString = Target.FirstName;
+            stressMod.type = Stat_Modifier.StatMod_Type.addBase;
+            stressMod.statID = "chara_status_stress";
+
+            moodMod = new Stat_Modifier();
+            moodMod.ModString = Target.FirstName;
+            moodMod.type = Stat_Modifier.StatMod_Type.addBase;
+            moodMod.statID = "chara_status_mood";
+
+            // lustMod = new Stat_Modifier();
+            // lustMod.ModString = Owner.FirstName;
+            // lustMod.statID = "chara_status_lust";
+
+            initialized_moodlet = true;
+        }
+        var tf = Trust_Raw - Fear_Raw;
+        if (tf >= 25 || tf <= -25)
+        {// trust > fear + 50
+            stressMod.SetValueTypeAndString(Stat_Modifier_Type.number, tf >= 25 ? $"{1}" : $"-{1}");
+            results.Add(stressMod);
+        }
+
+        var gb = Goodwill_Raw - Badwill_Raw;
+        if (gb >= 25 || gb <= -25)
+        {
+            moodMod.SetValueTypeAndString(Stat_Modifier_Type.number, gb >= 25 ? $"{1}" : $"-{1}");
+            results.Add(moodMod);
+
+        }
+
+        return results;
+    }
+
     /// <summary>
     /// Wipe cache
     /// </summary>
@@ -63,11 +109,11 @@ public class Character_Relationship
         this.relationshipTypeID_Bio = "";
         _Relationship_Bio = null;
         _Relationship_Personal = null;
-        _Relationship_Social = null;
+        Relationship_Social_Keys.Clear();
         this.relationshipTypeID_Personal = "";
         isA_Bio = false;
         isA_Personal = false;
-        isA_Social = false;
+        //isA_Social = false;
     }
 
     [JsonProperty] int targetRefID = -1;
@@ -81,7 +127,7 @@ public class Character_Relationship
     [JsonIgnore] public List<string> CurrentAttitudeTooltip
     { get
         {
-            if ( _currentAttitudeTooltip.Count < 1)
+            if (scr_System_CampaignManager.current.DebugMode && _currentAttitudeTooltip.Count < 1)
             {
                 var tooltip = _currentAttitudeTooltip;
                 tooltip.Clear();
@@ -94,7 +140,7 @@ public class Character_Relationship
                 int prideLevel = Math.Max((int)((100 - Manager.Pride) / 50), 0);
                 int baseline = (int)Owner.Stats.GetStatValue("stats_derived_baselineObedience");
 
-                if (scr_System_CampaignManager.current.DebugMode && tooltip != null)
+                if (scr_System_CampaignManager.current.DebugMode)
                 {
                     tooltip.Add("neutral[" + (int)RelationshipAttitudeType.Neutral + "] + goodwill[" + pos + "] + badwill[" + neg + "] + desire[" + des + "]");
                     tooltip.Add("Goodwill:" + Goodwill_Raw.ToString("N1") + "|" + Goodwill_Mult.ToString("N1") + "|" + Goodwill.ToString("N1"));
@@ -112,6 +158,9 @@ public class Character_Relationship
                     tooltip.Add("Pride:" + Manager.Pride);
                     tooltip.Add("Baseline:" + baseline.ToString("N1"));
                 }
+            }else if (!scr_System_CampaignManager.current.DebugMode)
+            {
+                _currentAttitudeTooltip.Clear();
             }
             return _currentAttitudeTooltip;
         } }
@@ -120,7 +169,8 @@ public class Character_Relationship
     {
         if (forceRefresh || _currentAttitude == null)
         {
-            if (forceRefresh || currentAttitude == "") UpdateAttitude(forceRefresh, true);
+            if (currentAttitude == "") UpdateAttitude(forceRefresh, true);
+            else if (forceRefresh) UpdateAttitude(forceRefresh, false);
             else SetCurrentAttitude(scr_System_Serializer.current.MasterList.Character_RelationshipAttitudes.GetByID(currentAttitude), true);
         }
         return _currentAttitude;
@@ -147,11 +197,12 @@ public class Character_Relationship
                         .Replace("$target.name$", Target.CallName)
                         .Replace("$originalAttitude$", _currentAttitude == null ? "?" : _currentAttitude.DisplayName)
                         .Replace("$newAttitude$", value.DisplayName);
-                    scr_System_CampaignManager.current.AddLog(Owner.RefID, s, true);
+                    scr_UpdateHandler.current.Message.messages_after.Add(s);
+                    //scr_System_CampaignManager.current.AddLog(Owner.RefID, s, true);
                 }
             }
             _currentAttitude = value;
-            currentAttitude = "";
+            //currentAttitude = "";
 
             currentAttitude = value.ID;
         }
@@ -185,7 +236,7 @@ public class Character_Relationship
         {
             if (this.Relationship_Personal.CanUpgradeInto(this, out var relation, out var isA))
             {
-
+                Debug.LogError($"{Owner.FirstName} -> {Target.FirstName} CheckMaintainRelationship {this.Relationship_Personal.displayName} CanUpgradeInto {relation.displayName}");
                 RelationshipCooldown = 6;
                 TryChangeRelationship(relation, isA);
                 
@@ -194,7 +245,7 @@ public class Character_Relationship
         }
         else
         {
-            //Debug.Log($"{Owner.CallName} Relationship CANNOT MAINTAIN RELATIONSHIP ");
+            if (this.relationshipTypeID_Personal != "") Debug.Log($"{Owner.CallName} Relationship CANNOT MAINTAIN RELATIONSHIP ID {this.relationshipTypeID_Personal}");
             bool isA = false;
             RelationshipType relation = null;
             var reverse = Target.Relationships.FindRelationshipWith(Owner);
@@ -270,6 +321,7 @@ public class Character_Relationship
             else
             {   // break
                 RelationshipCooldown = 6;
+                //Debug.LogError("Wiping existing relationships ?!");
                 SetPersonalRelationship(null, isA, true);
             }
         }
@@ -340,23 +392,54 @@ public class Character_Relationship
     public bool HasPermission_Follow()
     {
         if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Follow(!isA_Bio)) return true;
-        if (this.Relationship_Social != null && this.Relationship_Social.HasPermission_Follow(!isA_Social)) return true;
+        foreach (var key in Relationship_Social_Keys)
+        {
+            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Follow(!isa)) return true;
+        }
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Follow(!isA_Personal)) return true;
+        if (this.Owner.Relationships.Pride < 75) return true;
+        return false;
+    }
+    public bool HasPermission_Family()
+    {
+        if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Family(!isA_Bio)) return true;
+        foreach (var key in Relationship_Social_Keys)
+        {
+            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Family(!isa)) return true;
+        }
+        if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Family(!isA_Personal)) return true;
         if (this.Owner.Relationships.Pride < 75) return true;
         return false;
     }
     public bool HasPermission_Intimacy_Low()
     {
         if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Intimacy_Low(!isA_Bio)) return true;
-        if (this.Relationship_Social != null && this.Relationship_Social.HasPermission_Intimacy_Low(!isA_Social)) return true;
+        foreach (var key in Relationship_Social_Keys)
+        {
+            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Intimacy_Low(!isa)) return true;
+        }
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_Low(!isA_Personal)) return true;
+        if (this.Owner.Relationships.Pride < 50) return true;
+        return false;
+    }
+    public bool HasPermission_Intimacy_Medium()
+    {
+        if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Intimacy_Medium(!isA_Bio)) return true;
+        foreach (var key in Relationship_Social_Keys)
+        {
+            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Intimacy_Medium(!isa)) return true;
+        }
+        if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_Medium(!isA_Personal)) return true;
         if (this.Owner.Relationships.Pride < 50) return true;
         return false;
     }
     public bool HasPermission_Intimacy_High()
     {
         if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Intimacy_High(!isA_Bio)) return true;
-        if (this.Relationship_Social != null && this.Relationship_Social.HasPermission_Intimacy_High(!isA_Social)) return true;
+        foreach (var key in Relationship_Social_Keys)
+        {
+            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Intimacy_High(!isa)) return true;
+        }
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_High(!isA_Personal)) return true;
         if (this.Owner.Relationships.Pride < 25) return true;
         return false;
@@ -372,8 +455,9 @@ public class Character_Relationship
 
         if (sendKojo && Owner.RefID != 0)
         {
+            Debug.Log($"{a == null} {relationshipTypeID_Personal == ""}");
             var eventID = a != null ? $"{a.ID}_set{(a.isEqualRelationship ? "" : isA ? "_A" : "_B")}"
-                : this.relationshipTypeID_Personal != "" ? $"{this.relationshipTypeID_Personal}_break{(a.isEqualRelationship ? "" : isA ? "_A" : "_B")}" : "";
+                : this.relationshipTypeID_Personal != "" ? $"{this.relationshipTypeID_Personal}_break{(_Relationship_Personal.isEqualRelationship ? "" : isA ? "_A" : "_B")}" : "";
 
             LogKojoMessage(eventID);
         }
@@ -381,6 +465,8 @@ public class Character_Relationship
         {
             scr_UpdateHandler.current.AppendEndMessage($"[{memString}]");
         }
+
+        RelationshipCooldown = 6;
 
         var v = Owner.Memory.AddEntryMSG(memString, new List<string>() { "forbidMerge" });
         v.disableRoomName = true;
@@ -418,19 +504,25 @@ public class Character_Relationship
         {
             foreach(var i in scr_System_Serializer.current.MasterList.Character_RelationshipAttitudes.list)
             {
-                if (i.isValidAttitude(this))
+                if (_currentAttitude == i)
                 {
-                    SetCurrentAttitude(i, silent);// CurrentAttitude = i;
-                    break;
+                    //
                 }
+                else if (i.MainEmotionKey != RelationshipScoreType.None && this.CurrentEmotionKey != i.MainEmotionKey) continue;
+
+                if (!i.isValidAttitude(this)) continue;
+
+                SetCurrentAttitude(i, silent);// CurrentAttitude = i;
+                break;
             }
+
         }
         return _currentAttitude;
     }
 
     public void NotifyFactionChange()
     {
-        this._Relationship_Social = null;
+        UpdateSocialFactions();
         OnRelationshioChange();
     }
 
@@ -465,60 +557,83 @@ public class Character_Relationship
         }
     }
 
-    protected RelationshipType _Relationship_Social = null;
-    [JsonIgnore] public bool isA_Social = false;
+    //protected RelationshipType _Relationship_Social = null;
+    //[JsonIgnore] public bool isA_Social = false;
 
-    /// <summary>
-    /// Make a cache and wipe it on demand
-    /// </summary>
+    List<I_IsJobGiver> _relationship_Social_Keys = null;
+
     [JsonIgnore]
-    public RelationshipType Relationship_Social
+    public
+    List<I_IsJobGiver> Relationship_Social_Keys
     {
         get
         {
-            if (Target == null) return null;
-            if (_Relationship_Social == null)
+            if (_relationship_Social_Keys == null)
             {
-                if (Owner.FactionManager.CurrentActiveParty != null)
-                {
-                    var party = Owner.FactionManager.CurrentActiveParty;
-                    if (party.ManagedChara.Contains(Target) && (party.isPrisoner(Owner) || party.isPrisoner(Target)))
-                    {
-                        var relation = party.GetRelationshipBetween(Owner.RefID, Target.RefID, out var social);
-                        if (relation != null)
-                        {
-                            isA_Social = social;
-                            _Relationship_Social = relation;
-                            return _Relationship_Social;
-                        }
-                    }
-                }
-
-                var possibleFactions = Owner.FactionManager.Factions.FindAll(x => x.isManagedChara(targetRefID));
-                while (possibleFactions.Count > 0)
-                {
-                    _Relationship_Social = possibleFactions[0].GetRelationshipBetween(Owner.RefID, targetRefID, out isA_Social);
-                    if (_Relationship_Social != null) break;
-                    else possibleFactions.RemoveAt(0);
-                }
-
-                if (_Relationship_Social != null)
-                {
-                    //
-                }
-                else if (Owner.FactionManager.HomeFactions.Count > 0)
-                {
-                    var home = Owner.FactionManager.HomeFactions[0];
-                    _Relationship_Social = relationshipScoresSum >= 100 ? home.Relationship_Acquaintance : home.Relationship_Stranger;
-                }
-                else
-                {
-                    _Relationship_Social = relationshipScoresSum >= 100 ? scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID("relationship_acquaintance")
-                        : scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID("relationship_stranger");
-                }
-                //Debug.Log($"Getting social relationship between {Owner.CallName} and {Target.CallName} as {(_Relationship_Social == null ? "-" : _Relationship_Social.displayName)}");
+                UpdateSocialFactions();
             }
-            return _Relationship_Social;
+            return _relationship_Social_Keys;
+        }
+    }
+    Dictionary<I_IsJobGiver, RelationshipType> rel_per_faction = null;
+    Dictionary<I_IsJobGiver, bool> rel_per_faction_isa = null;
+
+    void UpdateSocialFactions()
+    {
+        _relationship_Social_Keys = new List<I_IsJobGiver>();
+        rel_per_faction = new Dictionary<I_IsJobGiver, RelationshipType>();
+        rel_per_faction_isa = new Dictionary<I_IsJobGiver, bool>();
+        if (targetRefID == -1) return;
+        if (Owner.FactionManager.CurrentActiveParty != null)
+        {
+            var party = Owner.FactionManager.CurrentActiveParty;
+            if (party.ManagedChara.Contains(Target) && (party.isPrisoner(Owner) || party.isPrisoner(Target)))
+            {
+                var relation = party.GetRelationshipBetween(Owner.RefID, Target.RefID, out var social);
+                if (relation != null)
+                {
+                    _relationship_Social_Keys.Add(party);
+                    rel_per_faction.Add(party, relation);
+                    rel_per_faction_isa.Add(party, social);
+                }
+            }
+        }
+
+        bool added = false;
+        foreach(var faction in Owner.FactionManager.Factions)
+        {
+            if (!faction.isManagedChara(targetRefID)) continue;
+            var rel = faction.GetRelationshipBetween(Owner.RefID, targetRefID, out var isa);
+            if (rel != null)
+            {
+                _relationship_Social_Keys.Add(faction);
+                rel_per_faction.Add(faction, rel);
+                rel_per_faction_isa.Add(faction, isa);
+                added = true;
+            }
+        }
+
+        if (!added && Owner.FactionManager.HomeFactions.Count > 0)
+        {
+            var home = Owner.FactionManager.HomeFactions[0];
+            var rel = relationshipScoresSum >= 100 ? home.Relationship_Acquaintance : home.Relationship_Stranger;
+            _relationship_Social_Keys.Add(home);
+            rel_per_faction.Add(home, rel);
+            rel_per_faction_isa.Add(home, false);
+        }
+    }
+    public bool tryGetSocialFaction(I_IsJobGiver faction, out RelationshipType rel, out bool isA)
+    {
+        if (rel_per_faction.TryGetValue(faction, out rel))
+        {
+            if (rel_per_faction_isa.TryGetValue(faction, out isA)) return true;
+            isA = false;
+            return true;
+        }
+        else
+        {
+            isA = false;
+            return false;
         }
     }
 
@@ -557,13 +672,17 @@ public class Character_Relationship
                 _trustCap_tooltip += $"{i.ToString("+0;-#")}{Relationship_Bio.GetDisplayName(Owner, !isA_Bio)}";
             }
         }
-        if (Relationship_Social != null)
+        foreach(var key in Relationship_Social_Keys)
         {
-            var i = Relationship_Social.GetTrustCapIncrease(!isA_Social);
-            if (i != 0)
+            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null)
             {
-                _trustCap += i;
-                _trustCap_tooltip += $"{i.ToString("+0;-#")}{Relationship_Social.GetDisplayName(Owner, !isA_Social)}";
+                var i = rel.GetTrustCapIncrease(!isa);
+                if (i != 0)
+                {
+                    _trustCap += i;
+                    _trustCap_tooltip += $"{i.ToString("+0;-#")}{rel.GetDisplayName(Owner, !isa)}";
+                }
+
             }
         }
         if (Relationship_Personal != null)
@@ -645,8 +764,16 @@ public class Character_Relationship
         {
             var score = 0f
                + (Relationship_Personal == null ? 0 : Relationship_Personal.GetRelModForStat(this.isA_Personal, RelationshipScoreType.Trust))
-               + (Relationship_Social == null ? 0 : Relationship_Social.GetRelModForStat(this.isA_Social, RelationshipScoreType.Trust))
                + (Relationship_Bio == null ? 0 : Relationship_Bio.GetRelModForStat(this.isA_Bio, RelationshipScoreType.Trust));
+
+            foreach (var key in Relationship_Social_Keys)
+            {
+                if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null)
+                {
+                    score += rel.GetRelModForStat(isa, RelationshipScoreType.Trust);
+                }
+            }
+
             return score;
         }
     }
@@ -691,8 +818,16 @@ public class Character_Relationship
         {
             var score = 0f
                 + (Relationship_Personal == null ? 0 : Relationship_Personal.GetRelModForStat(this.isA_Personal, RelationshipScoreType.Fear))
-                + (Relationship_Social == null ? 0 : Relationship_Social.GetRelModForStat(this.isA_Social, RelationshipScoreType.Fear))
+
                 + (Relationship_Bio == null ? 0 : Relationship_Bio.GetRelModForStat(this.isA_Bio, RelationshipScoreType.Fear));
+
+            foreach (var key in Relationship_Social_Keys)
+            {
+                if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null)
+                {
+                    score += rel.GetRelModForStat(isa, RelationshipScoreType.Fear);
+                }
+            }
 
             return score;
         }
@@ -740,8 +875,16 @@ public class Character_Relationship
         {
             var score = 0f
                 + (Relationship_Personal == null ? 0 : Relationship_Personal.GetRelModForStat(this.isA_Personal, RelationshipScoreType.Badwill))
-                + (Relationship_Social == null ? 0 : Relationship_Social.GetRelModForStat(this.isA_Social, RelationshipScoreType.Badwill))
                 + (Relationship_Bio == null ? 0 : Relationship_Bio.GetRelModForStat(this.isA_Bio, RelationshipScoreType.Badwill));
+
+            foreach (var key in Relationship_Social_Keys)
+            {
+                if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null)
+                {
+                    score += rel.GetRelModForStat(isa, RelationshipScoreType.Badwill);
+                }
+            }
+
             return score;
         }
     }
@@ -786,8 +929,15 @@ public class Character_Relationship
         {
             var score = 0f
                 + (Relationship_Personal == null ? 0 : Relationship_Personal.GetRelModForStat(this.isA_Personal, RelationshipScoreType.Goodwill))
-                + (Relationship_Social == null ? 0 : Relationship_Social.GetRelModForStat(this.isA_Social, RelationshipScoreType.Goodwill))
                 + (Relationship_Bio == null ? 0 : Relationship_Bio.GetRelModForStat(this.isA_Bio, RelationshipScoreType.Goodwill));
+
+            foreach (var key in Relationship_Social_Keys)
+            {
+                if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null)
+                {
+                    score += rel.GetRelModForStat(isa, RelationshipScoreType.Goodwill);
+                }
+            }
             return score;
         }
     }
@@ -832,8 +982,16 @@ public class Character_Relationship
         {
             var score = 0f
                 + (Relationship_Personal == null ? 0 : Relationship_Personal.GetRelModForStat(this.isA_Personal, RelationshipScoreType.Desire))
-                + (Relationship_Social == null ? 0 : Relationship_Social.GetRelModForStat(this.isA_Social, RelationshipScoreType.Desire))
                 + (Relationship_Bio == null ? 0 : Relationship_Bio.GetRelModForStat(this.isA_Bio, RelationshipScoreType.Desire));
+
+
+            foreach (var key in Relationship_Social_Keys)
+            {
+                if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null)
+                {
+                    score += rel.GetRelModForStat(isa, RelationshipScoreType.Desire);
+                }
+            }
             return score;
         }
     }
@@ -888,6 +1046,13 @@ public class Character_Relationship
         currentAttitude = "";
     }
 
+    public bool HasRelationship(I_IsJobGiver sourceFaction, RelationshipType rel, bool isA)
+    {
+        if (this.Relationship_Bio == rel && this.isA_Bio == isA) return true;
+        else if (this.Relationship_Personal == rel && this.isA_Personal == isA) return true;
+        else if (sourceFaction != null && tryGetSocialFaction(sourceFaction, out var oldrel, out var oldA) && oldrel == rel && oldA == isA) return true;
+        else return false;
+    }
     public void PostReloadUpdate()
     {
         UpdateAttitude(false, true);
@@ -917,6 +1082,8 @@ public class Character_Relationship
         }
     }
 
+    public RelationshipScoreType CurrentEmotionKey = RelationshipScoreType.Trust;
+
     public void ModRelationValue(RelationshipScoreType type, float value, bool silent = true)
     {
         if (type == RelationshipScoreType.Goodwill || type == RelationshipScoreType.Badwill)
@@ -931,12 +1098,16 @@ public class Character_Relationship
         {
             relationshipScores[(int)type] += value;
         }
+
+        if (value > 0) CurrentEmotionKey = type;
+
         _currentAttitudeTooltip.Clear();
+        UpdateAttitude(true, false);
         if (Target != null)
         {
-            _currentAttitude = null;
+            //_currentAttitude = null;
 
-            if (!silent && RelationshipCooldown == 0)
+            if (!silent && RelationshipCooldown == 0 && !Owner.Stats.isConsciousnessUnconscious)
             {
                 var eventInstance = new EventInstance(this.Owner, "AttitudeChange", "");
                 eventInstance.Targets.Add("target", new List<Character_Trainable>() { Target });

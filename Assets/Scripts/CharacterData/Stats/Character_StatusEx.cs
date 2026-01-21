@@ -252,6 +252,7 @@ public class StatusEx_Instance : I_CacheValues
 
             var list = new List<Stat_Modifier>();
             list.AddRange(owner.GetModifiers(this, BaseRef.statusID));
+            if (BaseRef.constant && BaseRef.noDisplay && BaseRef.capModded && owner.Owner.Relationships != null) list.AddRange(owner.Owner.Relationships.GetMoodlet(BaseRef.statusID));
 
             float finalResult = UtilityEX.ParseStatMods(this, storage, list);
             storage.SetFinalOverride(finalResult, 1);

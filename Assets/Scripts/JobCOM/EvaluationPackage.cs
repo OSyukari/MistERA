@@ -375,7 +375,7 @@ public class EvaluationPackage
         extraReceiverTags = new List<string>();
 
         UtilityEX.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
-        UtilityEX.GetJobInteractionTagsFrom(Doer, Receiver, this.job, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+        UtilityEX.GetJobInteractionTagsFrom(Doer, Receiver, targetCOM, this.job, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
         CalculateRequestRate();
         CalculateResponseRate();
 
@@ -447,11 +447,24 @@ public class EvaluationPackage
         int bonus = 0;
         hasPermission = true;
 
-        if ((targetCOM.isSexCOM || targetCOM.isUnsafe) && (rel == null || !rel.HasPermission_Intimacy_High()))
+        if (targetCOM.comTags.Contains("followRequest") && (rel == null || !rel.HasPermission_Follow()))
+        {
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_follow")}]", -3);
+            hasPermission = false;
+            bonus -= 3;
+        }
+
+        if (targetCOM.isSexCOM && (rel == null || !rel.HasPermission_Intimacy_High()))
         {
             mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_high")}]", -4);
             hasPermission = false;
             bonus -= 4;
+        }
+        else if (targetCOM.isUnsafe && (rel == null || !rel.HasPermission_Intimacy_Medium()))
+        {
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_medium")}]", -3);
+            hasPermission = false;
+            bonus -= 3;
         }
         else if (targetCOM.isTouchCOM && (rel == null || !rel.HasPermission_Intimacy_Low()))
         {
@@ -462,8 +475,17 @@ public class EvaluationPackage
 
         if (Package.targetCOM.TimeScale > Package.Duration + 1)
         {
-            mod.AddModifier(self.RefID, $"[Ongoing]", 3);
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_ongoing")}]", 3);
             bonus += 3;
+        }
+
+        foreach(var i in (isDoer ? targetCOM.AcceptanceCheck.SkillBonus_Doer : targetCOM.AcceptanceCheck.SkillBonus_Receiver))
+        {
+            var j = self.GetSkill(i);
+            var k = j.GetSkillLevel;
+            if (k <= 0) continue;
+            mod.AddModifier(self.RefID, $"[{self.FirstName} {j.DisplayName}]", k);
+            bonus += k;
         }
 
         // float diceMax = 20;
@@ -471,15 +493,15 @@ public class EvaluationPackage
         if (rel != null)
         {
             var attitude = rel.GetCurrentAttitude();
-            var modvalue = attitude == null ? 0 : attitude.obedienceMod;
+            var modvalue = attitude == null ? 0 : attitude.GetObedienceMod(rel);
             if (isThreat)
             {
                 modvalue *= 2;
-                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pressure")}]", modvalue);
+                if (modvalue != 0) mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pressure")}]", modvalue);
             }
             else
             {
-                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_obedience")}]", modvalue);
+                if (modvalue != 0) mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_obedience")}]", modvalue);
             }
 
             bonus += modvalue;
@@ -495,49 +517,44 @@ public class EvaluationPackage
             }
         }
 
+/*
         if (!scr_System_CentralControl.current.isSafeMode && extraCOMTags.Contains("safe") && rel != null)
         {
-            mod.AddModifier(self.RefID, "[Safe]", 2);
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_safeInteraction")}]", 2);
             bonus += 2;
         }
-
+*/
 
         if(self.Stats.Lust != null)
         {
-            /*
-            var lustSev = self.Stats.Lust.Severity;
+            
+            var lustSev = (int)self.Stats.Lust.Severity;
+
             if (extraCOMTags.Contains("sex") || extraCOMTags.Contains("service"))
             {
-                var modval = lustSev > 0 ? 0.5f * lustSev : 
-                if (self.Stats.Lust.Severity > 0)
-                {
-                    mod.AddModifier(self.RefID, "[Lust]", (int);
-                    bonus += 
-                    baseValue *= (0.5f * self.Stats.Lust.Severity);
-                }
-                else baseValue *= (1 + 1.5f * (Math.Abs(lustSev) + 1));
-                if (rel != null) average += rel.Desire / 10;
+                lustSev -= 2;
+
+                if (lustSev > 0) mod.AddModifier(self.RefID, "[Lust]", lustSev);
+                else if (lustSev < 0) mod.AddModifier(self.RefID, "[not enough Lust]", lustSev);
+
+                bonus += lustSev;
             }
             else if (extraCOMTags.Contains("massage"))
             {
-                if (self.Stats.Lust.Severity > 0)
-                {
-                    mod.AddModifier(self.RefID, "[Lust]", 0);
-                    baseValue *= (0.5f * self.Stats.Lust.Severity);
-                }
-                else baseValue *= (1 + 1.0f * (Math.Abs(lustSev) + 1));
-                if (rel != null) average += rel.Desire / 10;
+                lustSev -= 1;
+
+                if (lustSev > 0) mod.AddModifier(self.RefID, "[Lust]", lustSev);
+                else if (lustSev < 0) mod.AddModifier(self.RefID, "[not enough Lust]", lustSev);
+
+                bonus += lustSev;
             }
             else if (extraCOMTags.Contains("touch"))
             {
-                if (self.Stats.Lust.Severity > 0)
-                {
-                    mod.AddModifier(self.RefID, "[Lust]", 0);
-                    baseValue *= (0.5f * self.Stats.Lust.Severity);
-                }
-                else baseValue *= (1 + 0.5f * (Math.Abs(lustSev) + 1));
-                if (rel != null) average += rel.Desire / 10;
-            }*/
+                if (lustSev > 0) mod.AddModifier(self.RefID, "[Lust]", lustSev);
+                else if (lustSev < 0) mod.AddModifier(self.RefID, "[not enough Lust]", lustSev);
+
+                bonus += lustSev;
+            }
         }
 
 
@@ -556,7 +573,7 @@ public class EvaluationPackage
 
         if (extraCOMTags.Contains("job") && p.job.FactionOwner != null && self.FactionManager.Factions.Contains(p.job.FactionOwner) && (target == null || target.FactionManager.Factions.Contains(p.job.FactionOwner)))
         {
-            mod.AddModifier(self.RefID, "Helping Work", 2);
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_helpingWork")}]", 2);
             bonus += 2;
         }
         if (self.isAnimal)
@@ -571,25 +588,21 @@ public class EvaluationPackage
         }
 
 
-        var blacklistMatch = self.Memory.MatchBlacklist(this);
+        var blacklistMatch = self.Memory.MatchBlacklist(this, target);
         if (!isThreat && blacklistMatch > 0)
         {
             //Debug.LogError($"blacklist match {blacklistMatch}");
-            mod.AddModifier(self.RefID, "recent refusal", -2*blacklistMatch);
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_repeatRefusal")}]", -2*blacklistMatch);
             bonus -= 2*blacklistMatch;
-            RecentRefusalPenalty = blacklistMatch;
         }
-        else
-        {
-            RecentRefusalPenalty = 0;
-        }
+        RecentRefusalPenalty = blacklistMatch;
 
         float consciousness = self.Stats.Consciousness.Severity;
 
         if (self.isTimeStopped)
         {
             //mod.Clear();
-            mod.AddModifier(self.RefID, "Timestopped!", 0);
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_timestopped")}]", 0);
             _responseRate = self == Receiver ? 100 : 0;
         }
         else if (self.Climaxing)
@@ -601,16 +614,25 @@ public class EvaluationPackage
         else if (self.Stats.isConsciousnessUnconscious)
         {
             //mod.Clear();
-            mod.AddModifier(self.RefID, $"{LocalizeDictionary.QueryThenParse("comLogs_causes_unconscious")} {self.Stats.Consciousness.Severity} {self.Stats.isConsciousnessUnconscious}", 0);
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_unconscious")} {self.Stats.Consciousness.Severity} {self.Stats.isConsciousnessUnconscious}]", 0);
 
             if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = 100;
             else if (self == Doer && !targetCOM.requirements.requirement.req_Doers.requireConscious) _responseRate = 100;
             else _responseRate = 0;
         }
-        else if (self.isRestrained || self.isImprisoned || self.cannotRefuse)
+        else if (self.isRestrained)
         {
             //mod.Clear();
-            mod.AddModifier(self.RefID, "Restrained", 0);
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_restrained")}]", 0);
+            _responseRate = 100;
+        }else if (self.isImprisoned)
+        {
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_imprisoned")}]", 0);
+            _responseRate = 100;
+        }
+        else if (self.cannotRefuse)
+        {
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_cannotRefuse")}]", 0);
             _responseRate = 100;
         }
         /*
@@ -638,12 +660,12 @@ public class EvaluationPackage
         else
         {
             int consciousPenalty = Math.Clamp((100 - (int)consciousness * 100) * 10, 0, 100);
-           //  if unconscious return success rate max
+            //  if unconscious return success rate max
             //else
 
             //_responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
 
-            _responseRate = (int)Math.Clamp((20 + bonus - baseValue)*5, 5, 95);
+            _responseRate = (int)Math.Clamp((20 + bonus - baseValue) * 5, 5, 95);
         }
 
         if (false && extraCOMTags.Contains("debug_refuse") && self.RefID > 0)
@@ -756,10 +778,15 @@ public class EvaluationPackage
             float consciousness = self.Stats.Consciousness.Severity;
 
             bool forced = Receiver == self && Package.isForced;
+            int mood = self.Stats.Mood == null ? 0 : (int)self.Stats.Mood.Severity;
 
-            if (!forced && self.Stats.Mood !=null && self.Stats.Mood.Severity > 0) average += (rel.Goodwill / 10 - rel.Badwill / 20);
-            else if (forced || (self.Stats.Mood != null && self.Stats.Mood.Severity < 0)) average += (rel.Goodwill / 20 - rel.Badwill / 10);
+
+
+            if (!forced && mood > 0) average += (rel.Goodwill / 10 - rel.Badwill / 20);
+            else if (forced || mood < 0) average += (rel.Goodwill / 20 - rel.Badwill / 10);
             else average += (rel.Goodwill / 20 - rel.Badwill / 20);
+
+            if (!hasPermission) average -= 10;
 
             // lower consciousness (100 to 0) higher is penalty (0 to 100)
             if (self.Stats.isConsciousnessReduced) average -= Math.Clamp((100 - (int)consciousness * 100), 0, 100);
@@ -792,15 +819,19 @@ public class EvaluationPackage
     /// Cleared on Execute() so no need to store any of it. But the property must 
     /// </summary>
     //[JsonProperty] public ExperienceLog m = new ExperienceLog();
-    public void Execute(MessageCollect m, Memory_Response injectResult= Memory_Response.None)
+    public void Execute(MessageCollect m, Memory_Response injectResult = Memory_Response.None)
     {
+        if (response == Memory_Response.None && injectResult != Memory_Response.None)
+        {
+            TryRespond(false, injectResult >= Memory_Response.Accept);
+        }
         if (injectResult != Memory_Response.None)
         {
             response = injectResult;
         }
 
         //if (receiver == null || doer == receiver) receiver = doer;
-        _doerInternal = null; _receiverInternal = null;
+        //_doerInternal = null; _receiverInternal = null;
         targetCOM.ApplyCost(this, this.Package.job.isPlayerRelatedJob ? m : null);
 
         // clear previous tags, cuz some command have built-in random part selection we dont want both part end up in tags
@@ -809,10 +840,9 @@ public class EvaluationPackage
         extraCOMTags = new List<string>();
         extraReceiverTags = new List<string>();
         UtilityEX.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
-        UtilityEX.GetJobInteractionTagsFrom(Doer, Receiver, this.job, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+        UtilityEX.GetJobInteractionTagsFrom(Doer, Receiver, targetCOM, this.job, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
 
 
-        bool visibility = this.Package.job.isPlayerRelatedJob;
         if (response == Memory_Response.None || response == Memory_Response.Refuse)
         {// doer unwilling
             Doer.Memory.AddEntry(this);
@@ -847,8 +877,8 @@ public class EvaluationPackage
                 if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, Memory_Response.Accept, attitude_receiver, Receiver.Stats.MemoryLength, p.masterRef);
                 */
 
-                UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, visibility ? m.exp : null);
-                UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, visibility ? m.exp : null);
+                UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, m.exp );
+                UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag,  m.exp );
             }
 
             //apply results later cuz results require COM attitude end
@@ -867,7 +897,7 @@ public class EvaluationPackage
                 // first experience loss
                 string s = LocalizeDictionary.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
                 UtilityEX.StringReplace(entry.body.Owner, ref s);
-                if (visibility) m.exp.AddMessage(entry.body.Owner.RefID, s);
+                 m.exp.AddMessage(entry.body.Owner.RefID, s);
 
                 var att = isReceiver(entry.body.Owner) ? attitude_receiver : attitude_doer;
                 if (hasPermission) att = (Memory_Attitude)Math.Min((int)(att+1), (int)Memory_Attitude.Love);
@@ -1063,8 +1093,7 @@ public class EvaluationPackage
     [JsonProperty] protected Memory_Attitude attitude_doer = Memory_Attitude.None, attitude_receiver = Memory_Attitude.None;
     [JsonProperty] Memory_Response response = Memory_Response.None;
 
-    [JsonIgnore] public Memory_Response Response { get { return response; } 
-    }
+    [JsonIgnore] public Memory_Response Response { get { return response; } }
 
     public List<string> tooltip = new List<string>();
 
@@ -1106,12 +1135,12 @@ public class EvaluationPackage
 
         if (targetCOM != null && response >= Memory_Response.Accept)
         {
-            doerInternal = Utility.GetRandomElement(Doer.Body.GetInternalsWithTags(targetCOM.requirements.requirement.doerBodyTags));
-            receiverInternal = Utility.GetRandomElement((Receiver == null ? Doer : Receiver).Body.GetInternalsWithTags(targetCOM.requirements.requirement.receiverBodyTags));
-
+            if (doerInternal == null) doerInternal = Utility.GetRandomElement(Doer.Body.GetInternalsWithTags(targetCOM.requirements.requirement.doerBodyTags));
+            if (receiverInternal == null) receiverInternal = Utility.GetRandomElement((Receiver == null ? Doer : Receiver).Body.GetInternalsWithTags(targetCOM.requirements.requirement.receiverBodyTags));
         }
         else
         {
+            Debug.LogError("resetting internals");
             doerInternal = null;
             receiverInternal = null;
         }
@@ -1468,6 +1497,7 @@ public class EvaluationPackage
         }
         set
         {
+            //Debug.LogError($"Setting Doerinternal to {(value == null? "null" : value.Parent.Base.DisplayName)}");
             _doerInternal = value;
             bodypart_doer = value == null ? "" : value.Parent.Base.ID;
         }
@@ -1519,10 +1549,13 @@ public class EvaluationPackage
             foreach (var modlist in modifiers)
             {
                 var name = scr_System_CampaignManager.current.FindInstanceByID(modlist.Key);
-                foreach(var mod in modlist.Value)
+                List<string> list2 = new List<string>();
+                if (modlist.Value.Count < 1) continue;
+                foreach (var mod in modlist.Value)
                 {
-                    list.Add($"({name.CallName}){mod.Key}{(mod.Value == 0 ? "" : mod.Value.ToString("+0;-#"))}");
+                    list2.Add($"{mod.Key}{(mod.Value == 0 ? "" : mod.Value.ToString("+0;-#"))}");
                 }
+                list.Add($"{name.FirstName}: {String.Join(" ", list2)}");
             }
             return list;
         }
@@ -1575,24 +1608,22 @@ public class EvaluationPackage
 
         if (internal_fucker != null && internal_fucked != null && internal_fucker.canFuck && internal_fucked.canBePenetrated)
         {
-           // Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
+            Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
             history.Add(internal_fucked);
             Penetrate(m,baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, internal_fucker, internal_fucked, isForce, 0);
         }
         else
         {
             if (penetrateOnly) return false;
-            //  Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
+              Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
             List<string> newlist1 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
             List<string> newlist2 = isReceiverFucked ? DoerSelfTag : ReceiverSelfTag;
 
-            bool visibility = this.Package.job.isPlayerRelatedJob;
-
             if (internal_fucked != null && internal_fucked.canBeStimulated) Stimulate(m,isReceiverFucked ? false : true, ref newlist1, targetCOM, VariantID, ref fuckedPleasure, internal_fucked, fucker, baseStrength, internal_fucker);
-            else UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, visibility ? m.exp : null);
+            else UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m.exp);
 
             if (internal_fucker != null && internal_fucker.canBeStimulated) Stimulate(m,isReceiverFucked ? true : false, ref newlist2, targetCOM, VariantID, ref fuckerPleasure, internal_fucker, internal_fucked.Owner, baseStrength, internal_fucked);
-            else UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, visibility ? m.exp : null);
+            else UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, m.exp);
         }
 
         //Memory_Attitude fucked_att = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + (int)(fuckedPleasure / 5)));
@@ -1847,7 +1878,7 @@ public class EvaluationPackage
             {
                 var relation = body.Owner.Relationships.FindRelationshipWith(source);
                 var attitude = relation == null ? null : relation.GetCurrentAttitude();
-                if (attitude != null && attitude.obedienceMod > 0)
+                if (attitude != null && attitude.GetObedienceMod(relation) > 0)
                 {
                     ModRelationshipResult(m, relation, RelationshipScoreType.Fear, (int)pain);
                 }
@@ -1859,26 +1890,26 @@ public class EvaluationPackage
         }
         if (expansion > 0) newTags.Add("has_expansion");
 
-        bool visibility = this.Package.job.isPlayerRelatedJob;
+       // bool visibility = this.Package.job.isPlayerRelatedJob;
 
         if (pleasure > 0)
         {
             var newTags2 = new List<string>(newTags);
             newTags2.Add("pleasure");
-            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, (float)pleasure, isDoer, visibility ? m.exp : null);
+            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, (float)pleasure, isDoer, m.exp);
         }
         if (pain > 0)
         {
             var newTags2 = new List<string>(newTags);
             newTags2.Add("pain");
             body.Owner.Stats.AddOrModStatus("chara_status_pain", (float)pain);
-            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, (float)pain, isDoer, visibility ? m.exp : null);
+            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, (float)pain, isDoer, m.exp);
         }
         if (expansion > 0)
         {
             var newTags2 = new List<string>(newTags);
             newTags2.Add("expansion");
-            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, expansion, isDoer, visibility ? m.exp : null);
+            body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, expansion, isDoer, m.exp);
         }
     }
 
@@ -1912,13 +1943,15 @@ public class EvaluationPackage
 public class ExperienceLog
 {
     [JsonIgnore] public bool isPlayerLog { get { return RightAlign.ContainsKey(0) 
-                || StatLog.ContainsKey(0) || ExpLog.ContainsKey(0) || RelationLog.ContainsKey(0) || MessageLog.ContainsKey(0) || climaxMessage.ContainsKey(0) ;  } }
+                || StatLog.ContainsKey(0) || ExpLog.ContainsKey(0) || 
+                //RelationLog.ContainsKey(0) || 
+                MessageLog.ContainsKey(0) || climaxMessage.ContainsKey(0) ;  } }
     [JsonIgnore] public bool leftAlignOverride = false;
 
     protected SortedDictionary<int, bool> RightAlign = new SortedDictionary<int, bool>();
-    protected SortedDictionary<int, Dictionary<string, int>> StatLog = new SortedDictionary<int, Dictionary<string, int>>();
+    protected SortedDictionary<int, Dictionary<string, double>> StatLog = new SortedDictionary<int, Dictionary<string, double>>();
     protected SortedDictionary<int, Dictionary<string, int>> ExpLog = new SortedDictionary<int, Dictionary<string, int>>();
-    protected SortedDictionary<int, Dictionary<int, int>> RelationLog = new SortedDictionary<int, Dictionary<int, int>>();
+    //protected SortedDictionary<int, Dictionary<int, int>> RelationLog = new SortedDictionary<int, Dictionary<int, int>>();
     protected SortedDictionary<int, List<string>> MessageLog = new SortedDictionary<int, List<string>>();
     protected SortedDictionary<int, string> climaxMessage = new SortedDictionary<int, string>();
 
@@ -1977,10 +2010,10 @@ public class ExperienceLog
         if (sourceCharaRef == playerRef) return;
         if (targetCharaRef != playerRef) return;
 
-        if (!this.RelationLog.ContainsKey(sourceCharaRef)) RelationLog.Add(sourceCharaRef, new Dictionary<int, int>());
-
-        if (RelationLog[sourceCharaRef].ContainsKey((int)relID)) RelationLog[sourceCharaRef][(int)relID] += count;
-        else RelationLog[sourceCharaRef].Add((int)relID, count);
+        if (!this.StatLog.ContainsKey(sourceCharaRef)) StatLog.Add(sourceCharaRef, new Dictionary<string, double>());
+        var relIDStr = $"relationship_{relID.ToString().ToLower()}";
+        if (StatLog[sourceCharaRef].ContainsKey(relIDStr)) StatLog[sourceCharaRef][relIDStr] += count;
+        else StatLog[sourceCharaRef].Add(relIDStr, count);
     }
 
     public void AddMessage(int charaRef, string message)
@@ -1990,11 +2023,11 @@ public class ExperienceLog
         else this.MessageLog[charaRef].Add(message);
     }
 
-    public void AddStats(int charaRef, string statID, int count)
+    public void AddStats(int charaRef, string statID, double count)
     {
         AddChara(charaRef);
         //Debug.Log("EVP Explog, adding stat");
-        if (!this.StatLog.ContainsKey(charaRef)) StatLog.Add(charaRef, new Dictionary<string, int>());
+        if (!this.StatLog.ContainsKey(charaRef)) StatLog.Add(charaRef, new Dictionary<string, double>());
 
         if (StatLog[charaRef].ContainsKey(statID)) StatLog[charaRef][statID] += count;
         else StatLog[charaRef].Add(statID, count);
@@ -2025,6 +2058,7 @@ public class ExperienceLog
                 }
             }
 
+            /*
             foreach (KeyValuePair<int, Dictionary<int, int>> kvp in log.RelationLog)
             {
                 if (!this.RelationLog.ContainsKey(kvp.Key)) RelationLog.Add(kvp.Key, kvp.Value);
@@ -2037,14 +2071,14 @@ public class ExperienceLog
                         else this.RelationLog[kvp.Key][kkvp.Key] += kkvp.Value;
                     }
                 }
-            }
+            }*/
 
-            foreach (KeyValuePair<int, Dictionary<string, int>> kvp in log.StatLog)
+            foreach (KeyValuePair<int, Dictionary<string, double>> kvp in log.StatLog)
             {
                 if (!this.StatLog.ContainsKey(kvp.Key)) StatLog.Add(kvp.Key, kvp.Value);
                 else
                 {
-                    foreach (KeyValuePair<string, int> kkvp in kvp.Value)
+                    foreach (KeyValuePair<string, double> kkvp in kvp.Value)
                     {
                         if (!this.StatLog[kvp.Key].ContainsKey(kkvp.Key)) this.StatLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
                         else this.StatLog[kvp.Key][kkvp.Key] += kkvp.Value;
@@ -2077,7 +2111,7 @@ public class ExperienceLog
         //if(clearedBeforePrint) Debug.LogError("EVP Explog cleared before print ? ");
 
         //foreach (KeyValuePair<int, Dictionary<int, int>> kvp in RelationLog) kvp.Value.Clear();
-        RelationLog.Clear();
+        //RelationLog.Clear();
         climaxMessage.Clear();
         //foreach (KeyValuePair<int, Dictionary<string, int>> kvp in StatLog) kvp.Value.Clear();
         StatLog.Clear();
@@ -2095,7 +2129,7 @@ public class ExperienceLog
             if (kvp_refID.Value.Count > 0)
             {
                 string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0.#;-0.#") + " ";
                 if (s.Length < 1) continue;
 
                 s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
@@ -2104,6 +2138,7 @@ public class ExperienceLog
         }
         return String.Join('\n', lines.ToArray());
     }
+    /*
     public string PrintContent_Relations()
     {
         // Debug.Log("EVP Explog, print");
@@ -2122,7 +2157,7 @@ public class ExperienceLog
             }
         }
         return String.Join('\n', lines.ToArray());
-    }
+    }*/
     public string PrintContent_Exps()
     {
         // Debug.Log("EVP Explog, print");

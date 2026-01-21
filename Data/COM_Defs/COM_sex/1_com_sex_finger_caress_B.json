@@ -6,6 +6,7 @@
             {
                 "ID":"com_sex_finger_caress_B",
                 "ActionPackageClass":"ActionPackage_Sex",
+                "categoryTags":["com_category_b","com_category_service"],
                 "displayName":"com_sex_finger_caress_B_displayName_3",
                 "timeScale":3,
                 "comTags":["sex","service"],
@@ -23,7 +24,7 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+                "AcceptanceCheck":{ "baseAcceptanceValue":23 },
                 "DifficultyCheck":{ "baseD20Check":10 },
                 "variants":[
                     {

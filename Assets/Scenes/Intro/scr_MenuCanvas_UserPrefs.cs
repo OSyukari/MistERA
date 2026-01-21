@@ -33,6 +33,8 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
             demoCharaList.Add(c);
         }
 
+        initScript_Prefs_Display.Initialize();
+
         foreach (scr_SelectableText button in GetComponentsInChildren<scr_SelectableText>(true))
         {
             //Debug.Log("Button " + button + " " + button.optionID);
@@ -93,47 +95,47 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
 
 
                     case 1401:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_male)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.male_on_male)); break;
                     case 1402:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_male, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.male_on_male, true)); break;
                     case 1403:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_male, scr_System_CentralControl.current.ContentSetting.male_on_male)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_male, scr_System_CentralControl.current.ContentSetting.male_on_male)); break;
 
                     case 1411:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_female)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.male_on_female)); break;
                     case 1412:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_male, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.female_on_male, true)); break;
                     case 1413:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_female, scr_System_CentralControl.current.ContentSetting.female_on_male)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_female, scr_System_CentralControl.current.ContentSetting.female_on_male)); break;
 
 
                     case 1421:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_ambi)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.male_on_ambi)); break;
                     case 1422:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_male, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_male, true)); break;
                     case 1423:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_ambi, scr_System_CentralControl.current.ContentSetting.ambi_on_male)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_ambi, scr_System_CentralControl.current.ContentSetting.ambi_on_male)); break;
 
                     case 1431:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_female)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.female_on_female)); break;
                     case 1432:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_female, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.female_on_female, true)); break;
                     case 1433:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_female, scr_System_CentralControl.current.ContentSetting.female_on_female)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_female, scr_System_CentralControl.current.ContentSetting.female_on_female)); break;
 
                     case 1441:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_ambi)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.female_on_ambi)); break;
                     case 1442:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_female, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_female, true)); break;
                     case 1443:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_ambi, scr_System_CentralControl.current.ContentSetting.ambi_on_female)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_ambi, scr_System_CentralControl.current.ContentSetting.ambi_on_female)); break;
 
                     case 1451:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_ambi)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_ambi)); break;
                     case 1452:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_ambi, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_ambi, true)); break;
                     case 1453:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_ambi, scr_System_CentralControl.current.ContentSetting.ambi_on_ambi)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_ambi, scr_System_CentralControl.current.ContentSetting.ambi_on_ambi)); break;
 
 
                     case 1460:  // sex presence left
@@ -142,32 +144,32 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                         button.Initialize(this, new ButtonValidator_toggleEnum(this, button, text_sex_presence, scr_System_CentralControl.current.ContentSetting.sex_presence_mode)); break;
 
                     case 1501:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_ambi)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_ambi)); break;
                     case 1502:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_creature, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_creature, true)); break;
                     case 1503:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_ambi, scr_System_CentralControl.current.ContentSetting.ambi_on_creature)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_ambi, scr_System_CentralControl.current.ContentSetting.ambi_on_creature)); break;
 
                     case 1511:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_female)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_female)); break;
                     case 1512:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_creature, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.female_on_creature, true)); break;
                     case 1513:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_female, scr_System_CentralControl.current.ContentSetting.female_on_creature)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_female, scr_System_CentralControl.current.ContentSetting.female_on_creature)); break;
 
                     case 1521:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_male)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_male)); break;
                     case 1522:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_creature, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.male_on_creature, true)); break;
                     case 1523:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_male, scr_System_CentralControl.current.ContentSetting.male_on_creature)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_male, scr_System_CentralControl.current.ContentSetting.male_on_creature)); break;
 
                     case 1531:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_creature)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_creature)); break;
                     case 1532:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_creature, true)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_creature, true)); break;
                     case 1533:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_creature, scr_System_CentralControl.current.ContentSetting.creature_on_creature)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_creature, scr_System_CentralControl.current.ContentSetting.creature_on_creature)); break;
 
                     case 1550:  // creature setting left
                         button.Initialize(this, new ButtonValidator_toggleEnum(this, button, text_creature, scr_System_CentralControl.current.ContentSetting._creature_mode, true)); break;
@@ -175,24 +177,24 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                         button.Initialize(this, new ButtonValidator_toggleEnum(this, button, text_creature, scr_System_CentralControl.current.ContentSetting._creature_mode)); break;
 
                     case 1601:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_necro)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_necro)); break;
                     case 1603:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_necro, scr_System_CentralControl.current.ContentSetting.ambi_on_necro)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.ambi_on_necro, scr_System_CentralControl.current.ContentSetting.ambi_on_necro)); break;
 
                     case 1611:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_necro)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.female_on_necro)); break;
                     case 1613:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_necro, scr_System_CentralControl.current.ContentSetting.female_on_necro)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.female_on_necro, scr_System_CentralControl.current.ContentSetting.female_on_necro)); break;
 
                     case 1621:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_necro)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.male_on_necro)); break;
                     case 1623:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_necro, scr_System_CentralControl.current.ContentSetting.male_on_necro)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.male_on_necro, scr_System_CentralControl.current.ContentSetting.male_on_necro)); break;
 
                     case 1631:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_necro)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBoolean(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_necro)); break;
                     case 1633:
-                        button.Initialize(this, new ButtonValidator_toggleBoolean_SexFilterCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_necro, scr_System_CentralControl.current.ContentSetting.creature_on_necro)); break;
+                        button.Initialize(this, new ButtonValidator_toggleBooleanCenter(this, button, scr_System_CentralControl.current.ContentSetting.creature_on_necro, scr_System_CentralControl.current.ContentSetting.creature_on_necro)); break;
 
                     case 1640:  // necro setting left
                         button.Initialize(this, new ButtonValidator_toggleEnum(this, button, text_necro, scr_System_CentralControl.current.ContentSetting._necro_mode, true)); break;
@@ -231,7 +233,9 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                         button.Initialize(this, new ButtonValidator_LoadColorSwap(this, button, "ui_prefs_textColor_disabled", scr_System_CentralControl.current.DisplaySetting.TextColor_disabled, initScript_Prefs_Display.TextColorUpdate)); break;
                     case 0109: // ColorPicker text toggled
                         button.Initialize(this, new ButtonValidator_LoadColorSwap(this, button, "ui_prefs_textColor_toggled", scr_System_CentralControl.current.DisplaySetting.TextColor_toggle, initScript_Prefs_Display.TextColorUpdate)); break;
-
+                    
+                    case 0200: // Logs toggle clearlogs
+                        button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.clearLogs)); break;
 
                     case 9999:  //exit without saving
                         button.Initialize(this, button_alwaysValid); break;
@@ -377,15 +381,47 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
 
     }
 
-    
-    class ButtonValidator_toggleBoolean_SexFilter : ButtonValidator, I_ButtonClickable
+    class ButtonValidator_toggleBooleanText : ButtonValidator, I_ButtonClickable
+    {
+        new scr_MenuCanvas_UserPrefs parent;
+        scr_SelectableText button;
+        BoolSetting targetBool;
+        public ButtonValidator_toggleBooleanText(scr_Menu parent, scr_SelectableText selfbox, BoolSetting targetBool) : base(parent)
+        {
+
+            this.parent = parent as scr_MenuCanvas_UserPrefs;
+            this.button = selfbox;
+            this.targetBool = targetBool;
+        }
+
+        public override bool IsButtonValid()
+        {
+            // if (!button.gameObject.activeInHierarchy) return false;
+            if (targetBool.value)
+            {
+                button.Toggle(true, true);
+            }
+            else
+            {
+                button.Toggle(true, false);
+            }
+
+            return true;
+        }
+
+        void I_ButtonClickable.OnClickButton()
+        {
+            targetBool.Toggle();
+        }
+    }
+    class ButtonValidator_toggleBoolean : ButtonValidator, I_ButtonClickable
     {
         new scr_MenuCanvas_UserPrefs parent;
         bool isLeft;
         scr_SelectableText button;
         scr_HoverableText centerText;
         BoolSetting targetBool;
-        public ButtonValidator_toggleBoolean_SexFilter(scr_Menu parent, scr_SelectableText selfbox, BoolSetting targetBool, bool isLeft = false) : base(parent)
+        public ButtonValidator_toggleBoolean(scr_Menu parent, scr_SelectableText selfbox, BoolSetting targetBool, bool isLeft = false) : base(parent)
         {
 
             this.parent = parent as scr_MenuCanvas_UserPrefs;
@@ -418,14 +454,14 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         }
     }
 
-    class ButtonValidator_toggleBoolean_SexFilterCenter : ButtonValidator, I_ButtonClickable
+    class ButtonValidator_toggleBooleanCenter : ButtonValidator, I_ButtonClickable
     {
         new scr_MenuCanvas_UserPrefs parent;
         BoolSetting target1, target2;
 
         scr_SelectableText button;
 
-        public ButtonValidator_toggleBoolean_SexFilterCenter(scr_Menu parent, scr_SelectableText selfbutton, BoolSetting target1, BoolSetting target2) : base(parent)
+        public ButtonValidator_toggleBooleanCenter(scr_Menu parent, scr_SelectableText selfbutton, BoolSetting target1, BoolSetting target2) : base(parent)
         {
             this.parent = parent as scr_MenuCanvas_UserPrefs;
             this.target1 = target1;

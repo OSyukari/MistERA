@@ -57,6 +57,7 @@ public class MemoryManager
     }
 
     public MemoryPackage timestopMemory = null;
+    public MemoryPackage sleepMemory = null;
     public void TimestopStart()
     {
         timestopMemory = new MemoryPackage(Owner);
@@ -67,6 +68,14 @@ public class MemoryManager
         timestopMemory = null;
     }
 
+    public void SleepStart()
+    {
+        sleepMemory = new MemoryPackage(Owner);
+    }
+    public void SleepEnd()
+    {
+        sleepMemory = null;
+    }
     //public ExperienceManager Experience;
     //public SexLogManager SexLogManager;
 
@@ -95,7 +104,7 @@ public class MemoryManager
         this.owner = c;
 
         foreach (var i in Entries) i.ReEstablishParent(c);
-        UpdateBlacklist();
+        //UpdateBlacklist();
     }
 
     public MemoryManager()
@@ -112,6 +121,7 @@ public class MemoryManager
         // ClearCache();
         bool clearcache = false;
         var list = new List<long>(this.entries.Keys);
+        if (Owner.Stats.isConsciousnessUnconscious) t *= 2;
         foreach(var i in list)// var entry in entries.Values)
         {
             var entry = entries[i];
@@ -165,30 +175,36 @@ public class MemoryManager
     /// </summary>
     /// <param name="ep"></param>
     /// <returns></returns>
-    public int MatchBlacklist(EvaluationPackage ep)
+    public int MatchBlacklist(EvaluationPackage ep, Character_Trainable source)
     {
-        if (!ep.Package.receiver.Contains(Owner)) return 0;
+        if (!ep.Actors.Contains(Owner)) return 0;
+        if (source == null) return 0;
+
         int count = 0;
         foreach(var b in Blacklist)
         {
-            if (b.targets.Count < 1 || ep.Package.DoerRefs.Count < 1 || !Utility.ListContainsLoose(b.targets, ep.Package.DoerRefs)) continue;
-            else if (ep.targetCOM == null || b.targetCOM == null) continue;
+            if (!b.targets.Contains(source.RefID)) continue;
+           // if (!ep.Package.actorRefs.Contains(source.RefID)) continue;
+           // if (b.targets.Count < 1 || ep.Package.DoerRefs.Count < 1 || !Utility.ListContainsLoose(b.targets, ep.Package.DoerRefs)) continue;
+            if (ep.targetCOM != b.targetCOM) continue;
 
-            if (ep.targetCOM == b.targetCOM || (ep.targetCOM.comTags.Contains("initSex") && b.targetCOM.comTags.Contains("initSex"))) count += b.count;
-            else continue;
+            count += b.count;
         }
         return count;
     }
 
-    protected void UpdateBlacklist()
+    public void UpdateBlacklist()
     {
         Blacklist.Clear();
+        int maxcount = Owner.Stats.MemoryEntryCount;
         for (int i = entries.Count - 1; i >= 0; i--)
         {
-            if (Entries[i].Duration == 0) continue;
+           // if (Entries[i].Duration == 0) continue;
 
             Entries[i].FillBlacklist(Blacklist);
-            if (!Entries[i].isRefuseOnly) break;
+            maxcount--;
+            if (maxcount == 0) break;
+            //if (!Entries[i].isRefuseOnly) break;
         }
     }
 
@@ -515,6 +531,12 @@ public class MemoryManager
 
         MemInstance memInstance = new MemInstance(targets, targetTags, ep.targetCOM == null ? "" : ep.targetCOM.ID, ep.VariantID, ep.Master == null ? -1 : ep.Master.RefID, isDoer, interrupted ? Memory_Response.Interrupted : ep.Response, attitude, description);
         if (memInstance.response == Memory_Response.None) Debug.LogError($"Logging Null response memory on {Owner.FirstName} about {memInstance.description}");
+
+        if ((ep.Response == Memory_Response.Accept || ep.Response >= Memory_Response.Success) && ep.targetCOM != null && ep.targetCOM.DifficultyCheck != null)
+        {
+            var dc = ep.targetCOM.DifficultyCheck;
+            memInstance.AddMoodletScore(dc.moodMod, dc.stressMod, dc.lustMod);
+        }
 
         Memory_Entry entry = new Memory_Entry(Owner, job, roomRef, selfTags, memInstance, jobDesc, memDuration);
         var jobStartTime = ep.Package.job.GetActorLastJoinTime(Owner.RefID);

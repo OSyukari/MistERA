@@ -9,13 +9,13 @@
                 "displayName":"relationship_slave_displayName",
 
                 "relationship_A_to_B":{
-                    "permission":{ "intimacy_low":true, "intimacy_high":true, "lead_follow":true },
+                    "permission":{ "intimacy_low":true, "intimacy_medium":true, "intimacy_high":true, "lead_follow":true },
                     "displayName":"relationship_slave_displayName_A_is_to_B",
-                    "RelationshipMod":[0,0,0,0,100]
+                    "RelationshipMod":[0,0,100,0,0]
                 },
                 "relationship_B_to_A":{
                     "displayName":"relationship_slave_displayName_B_is_to_A",
-                    "RelationshipMod":[0,200,0,100,0],
+                    "RelationshipMod":[0,0,0,100,200],
 
                     "Requirements":
                     {
@@ -28,7 +28,7 @@
                         "requireScore":[ {"requireScoreID":"Fear","operand":"gte","value":50}],
                         "requireMood":{"operand":"gte","value":0}
                     },
-                    "MainEmotionKey":"Badwill",
+                    "MainEmotionKey":"Badwill", "tags":["Badwill"],
                     "MaintenanceRequirements":
                     {
                         "requireRawScoreCompare":[
@@ -45,7 +45,7 @@
                 "ID":"relationship_fwb",
                 "displayName":"relationship_fwb_displayName",
                 "trustCapIncrease":25,
-                "RelationshipMod":[0,0,5,0,15],
+                "RelationshipMod":[0,5,15,0,0],
                 "Requirements":
                 {
                     "requireRawScore":[
@@ -59,8 +59,8 @@
                         {"requireScoreID":"Desire","operand":"gte","value":150}],
                     "requireLust":{"operand":"gte","value":1}
                 },
-                "MainEmotionKey":"Badwill",
-                "permission":{ "intimacy_low":true, "intimacy_high":true },
+                "MainEmotionKey":"Badwill", "tags":["Badwill"],
+                "permission":{ "intimacy_low":true, "intimacy_medium":true, "intimacy_high":true },
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[

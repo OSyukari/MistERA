@@ -138,7 +138,10 @@ public class scr_panel_COMmanager : scr_Menu
                 {
                     Box_SexCOMs_Full.gameObject.SetActive(true);
 
-                    Box_SexCOMs.gameObject.SetActive(true);
+                    Box_SexCOMs_unlabeled.gameObject.SetActive(true);
+                    foreach(var i in Box_SexCOMs) i.gameObject.SetActive(true);
+                    
+
                     Box_MassageCOMs.gameObject.SetActive(false);
                     Box_TouchCOMs.gameObject.SetActive(false);
                     Box_ServiceCOMs.gameObject.SetActive(false);
@@ -164,7 +167,8 @@ public class scr_panel_COMmanager : scr_Menu
                 }
                 else if (refID == 0)
                 {
-                    Box_SexCOMs.gameObject.SetActive(false);
+                    Box_SexCOMs_unlabeled.gameObject.SetActive(false);
+                    foreach (var i in Box_SexCOMs) i.gameObject.SetActive(false);
                     Box_MassageCOMs.gameObject.SetActive(false);
                     Box_TouchCOMs.gameObject.SetActive(false);
                     Box_ServiceCOMs.gameObject.SetActive(false);
@@ -172,7 +176,8 @@ public class scr_panel_COMmanager : scr_Menu
                 }
                 else
                 {
-                    Box_SexCOMs.gameObject.SetActive(false);
+                    Box_SexCOMs_unlabeled.gameObject.SetActive(false);
+                    foreach (var i in Box_SexCOMs) i.gameObject.SetActive(false);
                     Box_MassageCOMs.gameObject.SetActive(true);
                     Box_TouchCOMs.gameObject.SetActive(true);
                     Box_ServiceCOMs.gameObject.SetActive(true);
@@ -338,7 +343,31 @@ public class scr_panel_COMmanager : scr_Menu
         managedTargetEquipRefs = new List<int>();
         managedPlayerEquipRefs = new List<int>();
 
+        foreach (var i in Box_SexCOMs)
+        {
+            if (i.gridLabel == "") continue;
+            labelGrids.Add(i.gridLabel, i);
+            i.Clear();
+        }
+
     }
+
+
+    RectTransform GetGrid(List<string> label)
+    {
+        foreach (var l in label)
+        {
+            if (labelGrids.ContainsKey(l))
+            {
+                labelGrids[l].NotifyInsert();
+                return labelGrids[l].selfRect;
+            }
+        }
+        Box_SexCOMs_unlabeled.NotifyInsert();
+        return Box_SexCOMs_unlabeled.selfRect;
+    }
+    Dictionary<string, labelGrid> labelGrids = new Dictionary<string, labelGrid>();
+
 
     COMTabs currentTab = COMTabs.Interaction;
     public override void Initialize()
@@ -354,7 +383,7 @@ public class scr_panel_COMmanager : scr_Menu
 
                 case -1: break;
                 //case 1: button.Initialize(this, new ButtonValidator_InspectChara(this, button)); break;
-                case -2: button.Initialize(this, new ButtonValidator_PartyInvite(this, button)); break;
+                //case -2: button.Initialize(this, new ButtonValidator_PartyInvite(this, button)); break;
 
                 //case 106: button.Initialize(this, new ButtonValidator_FixClothes(this, button)); break;
 
@@ -510,6 +539,13 @@ public class scr_panel_COMmanager : scr_Menu
                     button.gameObject.SetActive(false);
 #endif
                     break;
+                case -7412:  //change relationship
+#if UNITY_EDITOR
+                    button.Initialize(this, new ButtonValidator_ChangeRelationship(this, button));
+#else
+                    button.gameObject.SetActive(false);
+#endif
+                    break;
                 /*
             case -7500:
 #if UNITY_EDITOR
@@ -654,9 +690,12 @@ public class scr_panel_COMmanager : scr_Menu
     }
 
     public RectTransform panel_InteractionCOMs, panel_SexCOMs, panel_InventoryCOMs, panel_CombatCOMs;
-    public RectTransform Box_SexCOMs, Box_InteractionCOMs, Box_UndressCOMs, Box_FurnitureCOMs, Box_FurnitureCOMsList, Box_TouchCOMs, Box_SpecialCOMs, Box_MassageCOMs, Box_ServiceCOMs, buttonPrefab_COM, Box_InitiateSex;
+    public RectTransform Box_InteractionCOMs, Box_UndressCOMs, Box_FurnitureCOMs, Box_FurnitureCOMsList, Box_TouchCOMs, Box_SpecialCOMs, Box_MassageCOMs, Box_ServiceCOMs, buttonPrefab_COM, Box_InitiateSex;
     public RectTransform Box_SexCOMs_Full;
     public RectTransform Box_Filters;
+
+    public labelGrid Box_SexCOMs_unlabeled;
+    public List<labelGrid> Box_SexCOMs;
     public List<scr_SelectableText> filters_Sex, filters_Touch, filters_Interact, filters_Inventory, filters_Combat;
 
     public scr_IndividualCOMBox prefab_IndividualCOMBox;
@@ -865,7 +904,8 @@ public class scr_panel_COMmanager : scr_Menu
                     currentSexJob = jdebug;
                     foreach (COM c in jdebug.allusableCOMs)
                     {
-                        MakeCOMButton(Box_SexCOMs, buttonPrefab_COM, jdebug, c);
+                        var getrect = GetGrid(c.CategoryLabel);
+                        MakeCOMButton(getrect, buttonPrefab_COM, jdebug, c);
                     }
 
                     SexComDoers.Clear();
@@ -1291,7 +1331,7 @@ public class scr_panel_COMmanager : scr_Menu
 
             }
 
-            if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}\ntags: {String.Join(" ", package.ComTags)}\n";
+            if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}\ntags: {String.Join(" ", package.ComTags)}{(package.targetCOM == null?"\n":$"\ncommand AC {package.targetCOM.baseAcceptanceValue}\n")}";
             else tooltip = "";
             
             if (!parent.ValidateCOMByTags(com))
@@ -1325,7 +1365,7 @@ public class scr_panel_COMmanager : scr_Menu
                         List<int> targets = new List<int>();
                         var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
                         if (currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
-                        targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
+                        if (package.targetCOM == null || !package.targetCOM.requirements.requirement.forbidTeammateJoin) targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
                         targets = targets.Distinct().ToList();
                         targets.Remove(0);
                         targets.RemoveAll(x => doers.Contains(x) || receivers.Contains(x));
@@ -1409,6 +1449,20 @@ public class scr_panel_COMmanager : scr_Menu
 
             if (display) text.gameObject.SetActive(true);
             else text.gameObject.SetActive(false);
+
+            if (display && returnVal)
+            {
+                if (package.RequestRate * package.ResponseRate == 0)
+                {
+                    tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
+                    return false;
+                }
+                else if (scr_System_CampaignManager.current.DeterministicRolls && package.RequestRate * package.ResponseRate / 100 < 65)
+                {
+                    tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_deterministicRolls_tooltip")}";
+                    return false;
+                }
+            }
 
             return returnVal;
         }
@@ -1571,7 +1625,7 @@ public class scr_panel_COMmanager : scr_Menu
                 return false;
             }
 
-            if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}{(this.jobRefID != this.job.RefID ? " -> "+this.jobRefID : "")}\ntags: {String.Join(" ", package.ComTags)}\n";
+            if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}{(this.jobRefID != this.job.RefID ? " -> "+this.jobRefID : "")}\ntags: {String.Join(" ", package.ComTags)}{(package.targetCOM == null?"\n":$"\ncommand AC {package.targetCOM.baseAcceptanceValue}\n")}";
             else tooltip = "";
 
             if (!parent.ValidateCOMByTags(com))
@@ -1613,13 +1667,12 @@ public class scr_panel_COMmanager : scr_Menu
                                 targets.AddRange(container.CharaRefs);
                                 forbidInjectTarget = true;
                             }
-
                         }
                         if (package is ActionPackage_Interaction && job is Job_CharaCOM && !package.ComTags.Contains("endSex") && !package.ComTags.Contains("initSex")) forbidInjectTarget = true;
 
                         var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
                         if (!forbidInjectTarget && currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
-                        if (!forbidInjectTarget) targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
+                        if (!forbidInjectTarget && (package.targetCOM == null || !package.targetCOM.requirements.requirement.forbidTeammateJoin)) targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
                         targets = targets.Distinct().ToList();
                         targets.Remove(0);
                         targets.RemoveAll(x => doers.Contains(x) || receivers.Contains(x));
@@ -1688,6 +1741,20 @@ public class scr_panel_COMmanager : scr_Menu
 
             if (display) text.gameObject.SetActive(true);
             else text.gameObject.SetActive(false);
+
+            if (display && returnVal)
+            {
+                if (package.RequestRate * package.ResponseRate == 0)
+                {
+                    tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
+                    return false;
+                }
+                else if (scr_System_CampaignManager.current.DeterministicRolls && package.RequestRate * package.ResponseRate / 100 < 65)
+                {
+                    tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_deterministicRolls_tooltip")}";
+                    return false;
+                }
+            }
 
             return returnVal;
         }
@@ -2235,6 +2302,40 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
+    public scr_menu_changeRel prefab_ChangeRel;
+
+    public class ButtonValidator_ChangeRelationship : ButtonValidator, I_ButtonClickable
+    {
+        new scr_panel_COMmanager parent;
+        scr_SelectableText text;
+
+        public ButtonValidator_ChangeRelationship(scr_panel_COMmanager parent, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+        }
+
+        public override bool IsButtonValid()
+        {
+            if (scr_System_CampaignManager.current.CurrentTarget == null || scr_System_CampaignManager.current.CurrentTarget == scr_System_CampaignManager.current.Player)
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("com_special_changeRel_notarget");
+                return false;
+
+            }
+            else
+            {
+                tooltip = "";
+                return true;
+            }
+        }
+
+        public void OnClickButton()
+        {
+            scr_menu_changeRel detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_ChangeRel).GetComponent<scr_menu_changeRel>();
+            detail.InitializeWithArgument(scr_System_CampaignManager.current.CurrentTarget, scr_System_CampaignManager.current.Player);
+        }
+    }
     public class ButtonValidator_DebugAddItemToRoom : ButtonValidator, I_ButtonClickable
     {
         new scr_panel_COMmanager parent;

@@ -381,6 +381,7 @@
                                         "value": 0.9
                                     }
                                 },
+                                "forbidPortaitDisplay":true,
                                 "selfEventCall": "DisruptSleep",
                                 "keepLooking": true
                             },
@@ -397,6 +398,7 @@
                                 "responses": [
                                     "kojo_default_event_interrupt_02"
                                 ],
+                                "forbidPortaitDisplay":true,
                                 "results": [
                                     {
                                         "flushLog": true,
@@ -415,6 +417,7 @@
                                         "unsafe"
                                     ]
                                 },
+                                "forbidPortaitDisplay":true,
                                 "hideWhenNotFocused": false,
                                 "responses": [
                                     "kojo_default_event_interrupt_01"
@@ -429,6 +432,7 @@
                                 "responses": [
                                     "kojo_default_event_interrupt_02"
                                 ],
+                                "forbidPortaitDisplay":true,
                                 "results": [
                                     {
                                         "flushLog": true,
@@ -450,6 +454,7 @@
                                         "recreation"
                                     ]
                                 },
+                                "forbidPortaitDisplay":true,
                                 "responses": [
                                     "kojo_default_event_interrupt_03"
                                 ]
