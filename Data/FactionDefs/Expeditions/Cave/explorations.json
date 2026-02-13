@@ -1,98 +1,83 @@
 {
-    "ExpeditionEntry":{
-        "list":
-        [
-{
-    "ExpeditionID":"expedition_cave",
-    "HasStartHour":false,
-    "ForceStartHour":0,
-    "DurationHour":6,
-    "EventIDs":[],
-    "FeatureKeywords":["cave"],
-    "Events":
-    [
-
-    ]
-}     ]
-    },
-    "ExplorationFeatures":
-    {
-        "list":
-        [
-{
-    "requireKeywords": [
-        "cave",
-        "goblin"
-    ],
-    "featureEventIDs": []
-},
-{
-    "requireKeywords": [
-        "cave"
-    ],
-    "featureEventIDs": [
-        "exp_event_abandonedCampsite",
-        "exp_event_oreClump",
-        "exp_event_plantCluster",
-        "exp_event_caveClearPool",
-        "exp_event_caveDustyPassage",
-        "exp_event_caveHypothermia",
-        "exp_event_caveLostDirection",
-        "exp_event_caveMurkyPool",
-        "exp_event_caveNarrowTunnel",
-        "exp_event_cavePit",
-        "exp_event_cavePlant",
-        "exp_event_caveSlope",
-        "exp_event_caveUnsettlingEchoes",
-        "exp_event_caveUnstablePassage"
-    ],
-    "DescriptionText": [
-        "expedition_cave_exploring_1", "expedition_cave_exploring_2",
-        "expedition_cave_exploring_3", "expedition_cave_exploring_4",
-        "expedition_cave_exploring_5", "expedition_cave_exploring_6",
-        "expedition_cave_exploring_7", "expedition_cave_exploring_8",
-        "expedition_cave_exploring_9", "expedition_cave_exploring_10"
-        
-    ]
-}
+    "ExpeditionEntry": {
+        "list": [
+            {
+                "ExpeditionID": "expedition_cave",
+                "HasStartHour": false,
+                "ForceStartHour": 0,
+                "DurationHour": 6,
+                "EventIDs": [],
+                "FeatureKeywords": [
+                    "cave"
+                ],
+                "Events": []
+            }
         ]
-
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-            "zh-cn":
+    "ExplorationFeatures": {
+        "list": [
             {
-"expedition_cave":"洞穴",
-"expedition_cave_exploring_1":"$names$走在狭窄的岩石通道中，四下里一片死寂，只有不知从何处传来的滴水声",
-"expedition_cave_exploring_2":"一阵阴冷的风从洞穴深处吹来，带着一股泥土和未知生物的混合气味，$names$不禁打了个寒颤",
-"expedition_cave_exploring_3":"$names$身边的洞壁上，一片片散发着幽蓝色微光的苔藓静静地生长着",
-"expedition_cave_exploring_4":"$names$沿着一条地下暗河的边缘前行",
-"expedition_cave_exploring_5":"$names$小心翼翼地穿过狭窄的洞穴通道",
-
-"expedition_cave_exploring_6":"洞内潮湿的空气让$names$感到一丝寒意",
-"expedition_cave_exploring_7":"一块发光的矿石吸引$names$的目光",
-"expedition_cave_exploring_8":"狭窄的缝隙中，$names$侧身挤过，衣服被岩石刮擦",
-"expedition_cave_exploring_9":"$names$用绳索固定身体，勇敢地滑下陡峭的岩坡",
-"expedition_cave_exploring_10":"$names$涉过浅浅的地下水潭，水流冰凉刺骨"
-
+                "requireKeywords": [
+                    "cave"
+                ],
+                "featureEventIDs": [
+                    "exp_event_abandonedCampsite",
+                    "exp_event_oreClump",
+                    "exp_event_plantCluster",
+                    "exp_event_caveClearPool",
+                    "exp_event_caveDustyPassage",
+                    "exp_event_caveHypothermia",
+                    "exp_event_caveLostDirection",
+                    "exp_event_caveMurkyPool",
+                    "exp_event_caveNarrowTunnel",
+                    "exp_event_cavePit",
+                    "exp_event_cavePlant",
+                    "exp_event_caveSlope",
+                    "exp_event_caveUnsettlingEchoes",
+                    "exp_event_caveUnstablePassage"
+                ],
+                "DescriptionText": [
+                    "expedition_cave_exploring_1",
+                    "expedition_cave_exploring_2",
+                    "expedition_cave_exploring_3",
+                    "expedition_cave_exploring_4",
+                    "expedition_cave_exploring_5",
+                    "expedition_cave_exploring_6",
+                    "expedition_cave_exploring_7",
+                    "expedition_cave_exploring_8",
+                    "expedition_cave_exploring_9",
+                    "expedition_cave_exploring_10"
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "expedition_cave": "洞穴",
+                "expedition_cave_exploring_1": "$names$走在狭窄的岩石通道中，四下里一片死寂，只有不知从何处传来的滴水声",
+                "expedition_cave_exploring_2": "一阵阴冷的风从洞穴深处吹来，带着一股泥土和未知生物的混合气味，$names$不禁打了个寒颤",
+                "expedition_cave_exploring_3": "$names$身边的洞壁上，一片片散发着幽蓝色微光的苔藓静静地生长着",
+                "expedition_cave_exploring_4": "$names$沿着一条地下暗河的边缘前行",
+                "expedition_cave_exploring_5": "$names$小心翼翼地穿过狭窄的洞穴通道",
+                "expedition_cave_exploring_6": "洞内潮湿的空气让$names$感到一丝寒意",
+                "expedition_cave_exploring_7": "一块发光的矿石吸引$names$的目光",
+                "expedition_cave_exploring_8": "狭窄的缝隙中，$names$侧身挤过，衣服被岩石刮擦",
+                "expedition_cave_exploring_9": "$names$用绳索固定身体，勇敢地滑下陡峭的岩坡",
+                "expedition_cave_exploring_10": "$names$涉过浅浅的地下水潭，水流冰凉刺骨"
             },
-            "en-us":
-            {
-"expedition_cave":"Cave",
-"expedition_cave_exploring_1":"$names$ walks through a narrow rocky passage. Silence reigns all around, broken only by the sound of dripping water from somewhere unknown.",
-"expedition_cave_exploring_2":"A cold, damp wind blows from the depths of the cave, carrying a mix of earth and the scent of unknown creatures. $names$ shivers involuntarily.",
-"expedition_cave_exploring_3":"On the cave wall beside $names$, patches of moss emitting a faint ghostly blue glow grow silently.",
-"expedition_cave_exploring_4":"$names$ walks along the edge of an underground river.",
-"expedition_cave_exploring_5":"$names$ carefully moves through the narrow cave passage.",
-
-"expedition_cave_exploring_6":"The damp air inside the cave sends a chill through $names$.",
-"expedition_cave_exploring_7":"A glowing ore catches $names$'s eye.",
-"expedition_cave_exploring_8":"Squeezing sideways through a narrow crack, $names$'s clothes are scraped by the rocks.",
-"expedition_cave_exploring_9":"Securing the body with a rope, $names$ bravely slides down a steep rocky slope.",
-"expedition_cave_exploring_10":"$names$ wades through a shallow underground pool; the water is bitingly cold."
-
+            "en-us": {
+                "expedition_cave": "Cave",
+                "expedition_cave_exploring_1": "$names$ walks through a narrow rocky passage. Silence reigns all around, broken only by the sound of dripping water from somewhere unknown.",
+                "expedition_cave_exploring_2": "A cold, damp wind blows from the depths of the cave, carrying a mix of earth and the scent of unknown creatures. $names$ shivers involuntarily.",
+                "expedition_cave_exploring_3": "On the cave wall beside $names$, patches of moss emitting a faint ghostly blue glow grow silently.",
+                "expedition_cave_exploring_4": "$names$ walks along the edge of an underground river.",
+                "expedition_cave_exploring_5": "$names$ carefully moves through the narrow cave passage.",
+                "expedition_cave_exploring_6": "The damp air inside the cave sends a chill through $names$.",
+                "expedition_cave_exploring_7": "A glowing ore catches $names$'s eye.",
+                "expedition_cave_exploring_8": "Squeezing sideways through a narrow crack, $names$'s clothes are scraped by the rocks.",
+                "expedition_cave_exploring_9": "Securing the body with a rope, $names$ bravely slides down a steep rocky slope.",
+                "expedition_cave_exploring_10": "$names$ wades through a shallow underground pool; the water is bitingly cold."
             }
         }
     }

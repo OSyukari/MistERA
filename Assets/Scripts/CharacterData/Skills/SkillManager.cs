@@ -1,9 +1,10 @@
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using UnityEngine;
+using static scr_panel_COMmanager;
 
 public class SkillManager
 {
@@ -107,6 +108,7 @@ public class SkillManager
 
             AddExperience(i, amount, m);
         }
+        Owner.Relationships.CheckPrideChange(ownerTags, comTags, amount, m);
     }
 
     protected void AddExperience(ExperienceClass i, float amount, ExperienceLog m = null)
@@ -117,6 +119,7 @@ public class SkillManager
         {
             experienceLogs_currentRound[i.ExperienceID] += (int)amount;
             if (m != null) m.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);
+            //return (int)amount;
            // else Owner.InteractionJob.m.exp.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);
             //scr_UpdateHandler.current.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);
         }
@@ -124,6 +127,7 @@ public class SkillManager
         {
             experienceLogs_currentRound[i.ExperienceID] += 1;
             if (m != null) m.AddExperience(Owner.RefID, i.ExperienceID, 1);
+            //return 1;
            // else Owner.InteractionJob.m.exp.AddExperience(Owner.RefID, i.ExperienceID, 1);
             //scr_UpdateHandler.current.AddExperience(Owner.RefID, i.ExperienceID, 1);
         }
@@ -140,6 +144,7 @@ public class SkillManager
 
             AddExperience(i, amount, m);
         }
+        Owner.Relationships.CheckPrideChange(ownerTags, null, amount, m);
     }
 
 

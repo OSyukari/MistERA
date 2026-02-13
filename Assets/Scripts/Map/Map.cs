@@ -339,6 +339,7 @@ public class Map_Instance
             //ri.AddChara(scr_System_CampaignManager.current.Player);
 
         }
+        ri.Tick();
 
 
         // if(Rooms.ContainsKey(iii.Key) && iii.Value.Count > 0) Debug.Log("roomCharaRef " + Rooms[iii.Key].DisplayName + " and charaRefs " + String.Join("|", iii.Value));

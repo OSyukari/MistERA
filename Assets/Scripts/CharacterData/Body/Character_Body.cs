@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -345,6 +346,13 @@ public class Character_Body
             return false;
         }
 
+        if (scr_System_CentralControl.current.isSafeMode)
+        { // no organ can ingest, automatically do
+            IngestInternal(i);
+            if (i.Tags.Contains("food_meal")) Owner.NotifyFoodConsume(i);
+            return true;
+        }
+
         if (bodyTag == "" && ingest.ingestMethod.Count > 0) bodyTag = ingest.ingestMethod[0].bodyTags;
 
         if (bodyTag != "")
@@ -369,6 +377,26 @@ public class Character_Body
             return false;
         }
         
+    }
+
+    protected void IngestInternal(Item_Instance i, ExperienceLog m = null)
+    {
+        var comp = i.GetComp_Ingestible();
+        if (comp != null)
+        {
+            string key = comp.isLiquid ? "ui_entry_memory_description_swallow" : "ui_entry_memory_description_eat";
+            if (key != "")
+            {
+                string memstring = LocalizeDictionary.QueryThenParse(key);
+                memstring = memstring.Replace("$itemname$", i.DisplayName).Replace("$amount$", comp.isLiquid ? comp.amount.ToString("F1") : i.Count.ToString());
+
+                var memInst2 = new MemInstance(new List<int>() { Owner.RefID }, new List<string>(), "", -1, -1, false, Memory_Response.Accept, Memory_Attitude.None, memstring);
+                Owner.Memory.AddEntry(memInst2, null, -1, true);
+            }
+        }
+        UtilityEX.ApplyOnConsume(this, comp.OnUseEffects);
+        scr_System_CampaignManager.current.Unregister(i);
+        return;
     }
 
     public bool HasBodyTag(List<string> list)
@@ -542,7 +570,9 @@ public class Character_Body
                             container.Parent.Owner.Body.NotifyInternalsContentChange();
                             string key = "ui_entry_memory_description_cum_";
                             // ADDLOG CUM FOR RECEIVER
-                            var desc = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_creampie");
+                            var rel = container.Owner.Relationships.FindRelationshipWith(part.Owner);
+
+                            var desc = LocalizeDictionary.QueryThenParse( rel.HasPermission_Family()? "ui_entry_memory_description_creampie" : "ui_entry_memory_description_creampie_nopermission");
                             desc = desc.Replace("$target$", part.Owner.FirstName)
                                         .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
                                         .Replace("$amount$", cumAmount.ToString("N0"));
@@ -556,23 +586,13 @@ public class Character_Body
                             UtilityEX.CheckExperienceGainNoStimulate(container.Owner, cumAmount, false, containerTags, new List<string>());
 
                             // ADDLOG CUM FOR SHOOTER
-                            var desc2 = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_cumOnto");
+                            var desc2 = LocalizeDictionary.QueryThenParse( "ui_entry_memory_description_cumOnto");
                             desc2 = desc2.Replace("$target$", container.Owner.FirstName)
                                         .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
                                         .Replace("$amount$", cumAmount.ToString("N0"));
 
-
-                            var memInst2 = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.Accept, Memory_Attitude.None, desc);
-                            container.Owner.Memory.AddEntry(memInst2, containerTags, -1, true);
-
-
-                            var rel = container.Owner.Relationships.FindRelationshipWith(part.Owner);
-                            var memInst3 = new MemInstance(new List<int>() { container.Owner.RefID }, containerTags, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc2);
-
                             if (!rel.HasPermission_Family())
                             {
-                                memInst3.ResetInternal(Memory_Response.Accept, Memory_Attitude.Hate);
-
                                 rel.ModRelationValue(RelationshipScoreType.Trust, -cumAmount, false);
                                 exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Trust, (int)-cumAmount);
 
@@ -583,6 +603,10 @@ public class Character_Body
                                 exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Fear, (int)cumAmount);
                             }
 
+                            var memInst2 = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.Accept, rel.HasPermission_Family() ? Memory_Attitude.Like : Memory_Attitude.Hate, desc);
+                            container.Owner.Memory.AddEntry(memInst2, containerTags, -1, true);
+
+                            var memInst3 = new MemInstance(new List<int>() { container.Owner.RefID }, containerTags, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc2);
                             part.Owner.Memory.AddEntry(memInst3, selfTag, -1, true);
                         }
                         else

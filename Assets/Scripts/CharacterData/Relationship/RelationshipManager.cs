@@ -1,9 +1,19 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using Newtonsoft.Json;
+using System.Linq;
 using UnityEngine;
 
+public enum PrideLevel
+{
+    None,
+    Low,
+    Medium,
+    High
+}
+
+[System.Serializable]
 public class RelationshipManager
 {
     [JsonProperty] protected string _personalityID = "personality_default";
@@ -22,10 +32,94 @@ public class RelationshipManager
         }
     }
 
+    [JsonProperty] Dictionary<string, int> behaviorCooldown = new Dictionary<string, int>();
+
+    public void BehaviorCooldown(string cooldownID, int cooldownHours)
+    {
+        if (cooldownHours <= 0) return;
+        if (cooldownID == "") return;
+        behaviorCooldown[cooldownID] = cooldownHours;
+        //Debug.Log($"{Owner.FirstName} BehaviorCooldown {cooldownID} {behaviorCooldown[cooldownID]}");
+    }
+    public bool BehaviorInCooldown(string cooldownID)
+    {
+        if (behaviorCooldown.TryGetValue(cooldownID, out int value) && value > 0) return true;
+        return false;
+    }
+
+    [JsonProperty] double pride = 100;
+    public PrideLevel CurrentPride = PrideLevel.High;
+
+    [JsonIgnore]
+    public double CurrentPrideMod { get
+        {
+            switch (CurrentPride)
+            {
+                case PrideLevel.Medium: return 0.75;
+                case PrideLevel.Low: return 0.5;
+                case PrideLevel.None: return 0.25;
+                default: return 1.0;
+            }
+        } }
+
+    public void ModPride(int value)
+    {
+        pride += value;
+    }
+    public float CheckPrideChange(List<string> ownerTags, List<string> comTags, float amount, ExperienceLog m = null)
+    {
+        float modvalue = 0;
+
+       // Debug.Log($"{Owner.FirstName} Checking pride change, increase entry {Personality.pride_increase.Count} decrease entry {Personality.pride_decrease.Count}");
+        foreach(var inc in Personality.pride_increase)
+        {
+            if (inc.Value.Match(ownerTags, comTags) && CurrentPride <= inc.Key)
+            {
+                if (inc.Key - CurrentPride + 1 == 0) Debug.LogError($"match pride inc {inc.Key}, amount {amount} * {inc.Key - CurrentPride + 1}");
+                modvalue += amount * (inc.Key - CurrentPride + 1);
+            }
+        }
+
+        foreach(var dec in Personality.pride_decrease)
+        {
+            if (dec.Value.Match(ownerTags, comTags) && CurrentPride >= dec.Key)
+            {
+                if (dec.Key - CurrentPride - 1 == 0) Debug.LogError($"match pride dec {dec.Key}, amount {amount} * {dec.Key - CurrentPride - 1}");
+                modvalue += amount * (dec.Key - CurrentPride - 1);
+            }
+        }
+
+        if (modvalue != 0)
+        {
+            modvalue *= 0.1f;
+            //Debug.Log($"{Owner.FirstName} ModPride {modvalue}");
+            pride += modvalue;
+            if (m != null) m.AddStats(Owner.RefID, "pride", modvalue);
+            double rate = pride / Personality.maxPrideValue;
+            CurrentPride = rate >= 0.75 ? PrideLevel.High : rate >= 0.50 ? PrideLevel.Medium : rate >= 0.25 ? PrideLevel.Low : PrideLevel.None;
+        }
+        return modvalue;
+    }
+
+
+
     public void RefreshAttitudes()
     {
         //foreach (var rel in this.Relationships) rel.ResetAttitude();
         //foreach(var rel in this.Relationships) rel.
+    }
+    public void RefreshMinute5()
+    {
+        int value = 0;
+        foreach (var key in behaviorCooldown.Keys.ToList())
+        {
+            value = 0;
+            if (behaviorCooldown.TryGetValue(key, out value) && value > 0)
+            {
+                behaviorCooldown[key] = (value - 5);
+                //Debug.Log($"{Owner.FirstName} tick behaviorCooldown {key} {value} -> {behaviorCooldown[key]}");
+            }
+        }
     }
 
     public void HourlyRefresh()
@@ -34,10 +128,38 @@ public class RelationshipManager
         {
             if (i.RelationshipCooldown > 0) i.RelationshipCooldown--;
         }
+
+
     }
-    public void DailyRefresh()
+    public void DailyRefresh(List<Manageable.DailyReportHandler.MiscMessageEntry> messages)
     {
         this.kojoVariables_Daily.Clear();
+        float total = 0;
+        List<string> tooltips = new List<string>();
+        if (Owner.isImprisoned)
+        {
+            // send isimprisoned pride change
+            var value = CheckPrideChange(new List<string>() { "imprisoned" }, new List<string>(), 10);
+            if (value != 0)
+            {
+                tooltips.Add($"{value.ToString("+0.#;-0.#")} due to imprisonment");
+                total += value;
+            }
+        }
+        if (Owner.isRestrained)
+        {
+            // send isrestrained pride change
+            var value = CheckPrideChange(new List<string>() { "restrained" }, new List<string>(), 10);
+            if (value != 0)
+            {
+                tooltips.Add($"{value.ToString("+0.#;-0.#")} due to restraint");
+                total += value;
+            }
+        }
+        if (tooltips.Count > 0)
+        {
+            messages.Add(new Manageable.DailyReportHandler.MiscMessageEntry($"{Owner.CallName}'s Pride {total.ToString("+0.#;-0.#")}", tooltips));
+        }
     }
 
     [JsonProperty] Dictionary<string, int> kojoVariables_Daily = new Dictionary<string, int>();
@@ -177,14 +299,14 @@ public class RelationshipManager
 
     public int _Corruption = 0;
     [JsonIgnore] public int Corruption { get { return _Corruption; } }
-    public int _Pride = 100;
-    [JsonIgnore] public int Pride { get { return _Pride; } }
+    //public int _Pride = 100;
     public RelationshipManager(Character_Trainable c) : this()
     {
         ReEstablishParent(c);
         this._personalityID = c.Template.personalityID;
     }
 
+    /*
     public void ModSelfEsteem(int i, ExperienceLog exp = null)
     {
         int newValue;
@@ -192,7 +314,7 @@ public class RelationshipManager
         else newValue = Math.Max(0, _Pride + i);
 
         if (exp != null && newValue - _Pride != 0) exp.AddStats(this.Owner.RefID, "personality_selfesteem", newValue - _Pride);
-    }
+    }*/
 
     public bool NotifyMeeting(Character_Trainable c, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs, string triggerEventID = "")
     {
@@ -356,6 +478,12 @@ public class RelationshipManager
             var rel = FindRelationshipWith(c);
             if (rel.Target == null) continue;
             moodlets.AddRange(rel.GetMoodletModifiers());
+        }
+        var room = scr_System_CampaignManager.current.Map.FindRoomByChara(Owner.RefID);
+        if (room != null)
+        {
+            var modd = room.GetCleanlinessMod();
+            if (modd != null) moodlets.Add(modd);
         }
         Owner.Stats.Stress.ClearCache();
         Owner.Stats.Mood.ClearCache();
@@ -651,7 +779,9 @@ public class RelationshipManager
         box.fearBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_fear")}: {rel.Fear_Base.ToString("N0")}{rel.Fear_Bonus.ToString("+0;-#")}", false, "relationship_fear_tooltip");
         box.goodwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_goodwill")}: {rel.Goodwill_Base.ToString("N0")}{rel.Goodwill_Bonus.ToString("+0;-#")}", false, "relationship_goodwill_tooltip");
         box.badwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_badwill")}: {rel.Badwill_Base.ToString("N0")}{rel.Badwill_Bonus.ToString("+0;-#")}", false, "relationship_badwill_tooltip");
-        box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire")}: {rel.Desire_Base.ToString("N0")}{rel.Desire_Bonus.ToString("+0;-#")}", false, "relationship_desire_tooltip");
+
+        if (scr_System_CentralControl.current.isSafeMode) box.desireBox.gameObject.SetActive(false);
+        else box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire")}: {rel.Desire_Base.ToString("N0")}{rel.Desire_Bonus.ToString("+0;-#")}", false, "relationship_desire_tooltip");
 
         //RelationshipManager.Draw_Obedience(rel, box.obedienceBox);
         if (box.attitudeBox != null) RelationshipManager.Draw_Attitude(rel, box.attitudeBox);
@@ -662,7 +792,8 @@ public class RelationshipManager
         box.fearBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_fear_final")}: {rel.Fear.ToString("N0")}", false, "relationship_fear_tooltip");
         box.goodwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_goodwill_final")}: {rel.Goodwill.ToString("N0")}", false, "relationship_goodwill_tooltip");
         box.badwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_badwill_final")}: {rel.Badwill.ToString("N0")}", false, "relationship_badwill_tooltip");
-        box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire_final")}: {rel.Desire.ToString("N0")}", false, "relationship_desire_tooltip");
+        if (scr_System_CentralControl.current.isSafeMode) box.desireBox.gameObject.SetActive(false);
+        else box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire_final")}: {rel.Desire.ToString("N0")}", false, "relationship_desire_tooltip");
 
     }
 }

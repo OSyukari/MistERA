@@ -53,7 +53,6 @@ public class scr_Menu_Daycount : MonoBehaviour
         if (updateOrder != 1) return;
         factionName.SetText(ri.FactionOwner != null ? ri.FactionOwner.FactionDisplayName : "");
         roomName.SetText(ri.DisplayName);
-        roomName.SetExternalTooltip(ri.DisplayableFurnitureNames);
-
+        roomName.SetExternalTooltip(ri.DisplayableFurnitureNames+(scr_System_CampaignManager.current.DebugMode?$"\ndust level: {ri.dustLevel}/1000":""));
     }
 }

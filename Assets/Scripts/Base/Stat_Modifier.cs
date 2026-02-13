@@ -180,6 +180,7 @@ public class Stat_Modifier
         this.valueType = vType;
         this.valueString = vString;
         this.valueString_backup = vString;
+        this.init = false;
     }
 
 

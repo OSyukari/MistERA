@@ -8,7 +8,10 @@
                 "timeScale":15,
                 "comTags":["job","production_cleaning"],
                 "requirements":{
-                    "requirement":{ "doerCount":1, "req_Doers": { "cost_ST": 5 }, "req_Receivers":{"cost_ST": 5} },
+                    "requirement":{ 
+                        "doerCount": 1,
+                        "treatReceiverAsDoer": true
+                    },
                     "requireRoomExisting":
                     {
                         "requiresItem":
@@ -19,12 +22,40 @@
                 },
                 "variants":[
                     {
-                        "requirements":{"requirement":{ "receiverCount":0 }},
-                        "displayName":"com_job_cleaning_displayName_1"
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_cleaning_displayName_1"
                     },
                     {
-                        "requirements":{"requirement":{ "receiverCount":1 }},
-                        "displayName":"com_job_cleaning_displayName_2"
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 2,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_cleaning_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "req_Doers": {
+                                    "cost_ST": 2,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_cleaning_displayName_2"
                     }
                 ],
                 "results": 
@@ -859,7 +890,7 @@
 "com_job_farm_cultivate_meat_begin_3": "$doer.firstname$按照规定，将营养液添加到饲料中，为圈养的$name$提供生长所需的营养",
 "com_job_farm_cultivate_meat_ongoing_1": "$doer.firstname$正在培育肉食",
 
-"com_job_cleaning": "只有房间内有%%tag_trash%%时才可以执行，指令结束时移除房间内的%%tag_trash%%道具",
+"com_job_cleaning": "只有房间内有%%tag_trash%%时才可以执行，指令结束时移除房间内的%%tag_trash%%道具\n\nNPC在日常生活中会自发打扫当前房间和自身的卧室\n如需打扫公共场所，请单独安排NPC进行%%com_job_cleaning_displayName_1%%工作",
 "com_job_cleaning_displayName_1": "扫除",
 "com_job_cleaning_displayName_2": "一起扫除",
 "com_job_cleaning_displayName_3": "全员一起扫除",
@@ -944,7 +975,7 @@
 "com_job_farm_cultivate_meat_begin_2": "$doer.firstname$ carefully checked the breeding environment, cleaned up feces, changed the drinking water, and ensured that the $name$ grew healthily",
 "com_job_farm_cultivate_meat_begin_3": "$doer.firstname$ according to regulations, added nutrient solution to the feed, providing the enclosed $name$ with the nutrients needed for growth",
 
-"com_job_cleaning": "Can only be performed when there is %%tag_trash%% in room, will remove all %%tag_trash%% on command completion.",
+ "com_job_cleaning": "Can only be executed when %%tag_trash%% is present in the room. Removes %%tag_trash%% items from the room upon completion.\n\nNPCs will spontaneously clean their current room and their own bedroom in daily life.\nTo clean public areas, please schedule the NPC for %%com_job_cleaning_displayName_1%% work separately.",
 "com_job_cleaning_displayName_1": "Cleaning",
 "com_job_cleaning_displayName_2": "Cleaning",
 "com_job_cleaning_displayName_3": "Cleaning",

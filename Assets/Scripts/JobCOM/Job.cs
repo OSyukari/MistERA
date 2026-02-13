@@ -10,6 +10,7 @@ public interface I_Disposable
     public void DisposeInternal();
 }
 
+[System.Serializable]
 /// <summary>
 /// Job.
 /// Keep a central list of all instantiated Job, do tick on each to monitor their availability / being worked on / progress
@@ -137,7 +138,7 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
-    [JsonProperty] protected int jobRefID = -1;
+    [JsonProperty][SerializeField] protected int jobRefID = -1;
     protected string jobBaseID;
     protected COM getActorPriorityCOM(int refID)
     {
@@ -167,7 +168,7 @@ public class Job : IDisposable, I_Disposable
     {
         return new List<COM>();
     }
-    [NonSerialized] protected List<COM> allusableCOMs_cache = null;
+    [SerializeField] protected List<COM> allusableCOMs_cache = null;
     [JsonIgnore] public List<COM> allusableCOMs{
         get
         {

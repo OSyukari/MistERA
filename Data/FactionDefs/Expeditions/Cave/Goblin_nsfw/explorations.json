@@ -1,0 +1,19 @@
+{
+    "ExplorationFeatures": {
+        "list": [
+            {
+                "requireKeywords": [
+                    "cave",
+                    "goblin"
+                ],
+                "featureEventIDs": []
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {},
+            "en-us": {}
+        }
+    }
+}

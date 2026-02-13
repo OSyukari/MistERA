@@ -1,3 +1,5 @@
+using Unity.IO.LowLevel.Unsafe;
+
 public class Result_Room
 {
     public Entry_Condition entry_conditions = null;
@@ -38,18 +40,16 @@ public class Result_Room
                 else targetInventory = null;
 
 
-                for (int i = 0; i < moveItem.maxCount; i++)
+
+                var item = job.ParentRoom.RemoveItemByTag(moveItem.itemTag, moveItem.maxCount);
+                if (targetInventory != null) targetInventory.AddItem(item);
+                else
                 {
-                    Item_Instance item = job.ParentRoom.RemoveItemByTag(moveItem.itemTag);
-                    if (item == null) break;
-                    else if (targetInventory != null) targetInventory.AddItem(item);
-                    else
-                    {
-                        // destroy instance
-                        scr_System_CampaignManager.current.Unregister(item);
-                        item = null;
-                    }
+                    // destroy instance
+                    for(int j = item.Count - 1; j >= 0; j--) scr_System_CampaignManager.current.Unregister(item[j]);
+                    item = null;
                 }
+                
             }
 
         }

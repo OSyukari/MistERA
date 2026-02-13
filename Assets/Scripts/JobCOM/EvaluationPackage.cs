@@ -447,6 +447,21 @@ public class EvaluationPackage
         int bonus = 0;
         hasPermission = true;
 
+        baseValue = (int)(baseValue * self.Relationships.CurrentPrideMod);
+        
+        switch (self.Relationships.CurrentPride)
+        {
+            case PrideLevel.Medium:
+                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pride_medium")}]", 0);
+                break;
+            case PrideLevel.Low:
+                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pride_low")}]", 0);
+                break;
+            case PrideLevel.None:
+                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pride_none")}]", 0);
+                break;
+        }
+
         if (targetCOM.comTags.Contains("followRequest") && (rel == null || !rel.HasPermission_Follow()))
         {
             mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_follow")}]", -3);
@@ -586,7 +601,11 @@ public class EvaluationPackage
             mod.AddModifier(self.RefID, "horny", 2);
             bonus += 2;
         }
-
+        else if (self.isImprisoned)
+        {
+            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_imprisoned")}]", 5);
+            bonus += 5;
+        }
 
         var blacklistMatch = self.Memory.MatchBlacklist(this, target);
         if (!isThreat && blacklistMatch > 0)
@@ -624,10 +643,6 @@ public class EvaluationPackage
         {
             //mod.Clear();
             mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_restrained")}]", 0);
-            _responseRate = 100;
-        }else if (self.isImprisoned)
-        {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_imprisoned")}]", 0);
             _responseRate = 100;
         }
         else if (self.cannotRefuse)

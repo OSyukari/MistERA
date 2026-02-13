@@ -567,7 +567,68 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else return new List<Job_CharaCOM>();
     }
 
-    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false)
+    public List<int> GetOwnedRooms(Character_Trainable c)
+    {
+        if (this.OwnedRoomByChara.TryGetValue(c.RefID, out var list)) return list;
+        return null;
+    }
+
+    public List<Job_Furniture> GetValidJobs_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false, List<int> restrictRoomList = null)
+    {
+
+        List<Job_Furniture> possibleJobs;
+        string ss = " (" + ID + ")";
+        if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
+        if (chara.Jail != null && chara.Jail.ownerJob != null)
+        {
+
+        }
+        if (!FactionUtility.TryFindValidNonJobInstances(jobPosts, managedRoomRefs, out possibleJobs, chara, "", tag, checkBlacklist))
+        {
+            ss += $" found no valid [{tag}] instances offered by Furnitures from chara[{chara.FirstName}] currenthour[{currentHour}], checkBlacklist[{checkBlacklist}]";
+            if (s != null) s.Add(ss);
+            return new List<Job_Furniture>();
+        }
+        string s3 = $"Begin GetValidJobs_byTags {tag} for {chara.FirstName} restrictList {String.Join("|", restrictRoomList)} count {possibleJobs.Count}";
+        //if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} with {possibleJobs.Count} possible instances");
+
+        if (skipPrivate)
+        {
+            possibleJobs.RemoveAll(x => x.ParentRoom.isRoomPrivate);
+            s3 += $"--- GetValidJobs_byTags {tag} for {chara.FirstName} skipPrivate count {possibleJobs.Count}";
+        }
+        if (restrictRoomList != null)
+        {
+            possibleJobs.RemoveAll(x => x.ParentRoom == null || !restrictRoomList.Contains(x.ParentRoom.RefID));
+            s3 += $"--- GetValidJobs_byTags {tag} for {chara.FirstName} restrictRoomList count {possibleJobs.Count}";
+        }
+
+        Debug.Log(s3);
+
+        if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
+        {
+            ss += $" cannot pass validate check for any of the {tag} job instances";
+            if (s != null) s.Add(ss);
+            return new List<Job_Furniture>();
+        }
+
+        //if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} with {possibleJobs.Count} possible instances post validateall");
+
+        //bool result = FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
+        if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly))
+        {
+            //Debug.Log("GetValidPaths success after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
+            return possibleJobs;
+        }
+        else
+        {
+            if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} no validpaths");
+            //Debug.Log("GetValidPaths failed after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
+            return new List<Job_Furniture>();
+        }
+
+    }
+    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false, List<int> restrictRoomList = null)
     {
         //Debug.Log("Begin getvalidRecreation");
 
@@ -590,6 +651,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (skipPrivate)
         {
             possibleJobs.RemoveAll(x => x.ParentRoom.isRoomPrivate);
+        }
+        if (restrictRoomList != null)
+        {
+            possibleJobs.RemoveAll(x => x.ParentRoom == null || !restrictRoomList.Contains(x.ParentRoom.RefID));
         }
 
         if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
@@ -718,12 +783,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
-
-
-    
-
-
-    public List<Job_Furniture> GetValidJobsByCOMID(Character_Trainable chara, string comID, List<string> s = null, bool allowJobPostSearch = true, bool allowNonJobPostSearch = true)
+    public List<Job_Furniture> GetValidJobsByCOMID(Character_Trainable chara, string comID, List<string> s = null, bool allowJobPostSearch = true, bool allowNonJobPostSearch = true, List<int> restrictRoomList = null)
     {
         string ss = " (" + ID + ")";
 
@@ -735,7 +795,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         {
             if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs,this.managedRoomRefs,  chara, comID, false))
             {
-                ss += " found no valid ["+comID+ "] instances offered by Furnitures";
+                ss += " found no valid ["+comID+ "] instances offered by Furnitures job";
                 if(s != null) s.Add(ss);
                 return null;
             }
@@ -744,7 +804,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         {
             if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, comID,"", false))
             {
-                ss += " found no valid ["+comID+"] instances offered by Furnitures";
+                ss += " found no valid ["+comID+"] instances offered by Furnitures nonjob";
                 if (s != null) s.Add(ss);
                 return null;
             }
@@ -756,7 +816,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
             return null;
         }
 
-        
+        if (restrictRoomList != null)
+        {
+
+            possibleJobs.RemoveAll(x => x.ParentRoom == null || !restrictRoomList.Contains(x.ParentRoom.RefID));
+
+        }
+
+
         if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
         {
             ss += " cannot pass validate check for any of the offered [" + comID + "] job instances";
@@ -889,6 +956,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 }
             }
         }
+        managedRoomOwnersRefs = null;
         RefreshRoomJobs(room);
     }
 
@@ -896,6 +964,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         if (!managedRoomRefs.ContainsKey(roomRefID)) return;
         managedRoomRefs[roomRefID].Add(charaRefID);
+        managedRoomOwnersRefs = null;
         scr_System_CampaignManager.current.Map.GetRoomByRef(roomRefID).NotifyOwnershipChange(managedRoomRefs[roomRefID]);
     }
 
@@ -903,6 +972,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         if (!managedRoomRefs.ContainsKey(roomRefID)) return;
         managedRoomRefs[roomRefID].Remove(charaRefID);
+        managedRoomOwnersRefs = null;
         scr_System_CampaignManager.current.Map.GetRoomByRef(roomRefID).NotifyOwnershipChange(managedRoomRefs[roomRefID]);
     }
 
@@ -1104,7 +1174,28 @@ public class Manageable : I_Disposable, I_IsJobGiver
     /// 1st key roomRefID, 2nd key charaRefID;
     /// </summary>
     [JsonProperty] protected Dictionary<int, List<int>> managedRoomRefs = null;
+    protected Dictionary<int, List<int>> managedRoomOwnersRefs = null;
     private Dictionary<int, Room_Instance> roomRefsCache = null;
+
+    [JsonIgnore] public Dictionary<int, List<int>> OwnedRoomByChara
+    {
+        get
+        {
+            if (managedRoomOwnersRefs == null)
+            {
+                managedRoomOwnersRefs = new Dictionary<int, List<int>>();
+                foreach(var entry in managedRoomRefs)
+                {
+                    foreach(var refid in entry.Value)
+                    {
+                        if (!managedRoomOwnersRefs.ContainsKey(refid)) managedRoomOwnersRefs.Add(refid, new List<int>());
+                        managedRoomOwnersRefs[refid].Add(entry.Key);
+                    }
+                }
+            }
+            return managedRoomOwnersRefs;
+        }
+    }
 
     [JsonIgnore] public Dictionary<int, Room_Instance> ManagedRooms
     {
@@ -1273,7 +1364,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 if (exp.keywords.Count < 1) continue;
                 if (!Utility.ListContainsStrict(this.explorationKeywords, exp.keywords)) continue;
             }
-            list.Add(scr_System_CampaignManager.current.CreateExpedition(exp.ExpeditionID));
+            var expinstance = scr_System_CampaignManager.current.CreateExpedition(exp.ExpeditionID);
+            if (expinstance != null) list.Add(expinstance);
         }
         return list;
     }

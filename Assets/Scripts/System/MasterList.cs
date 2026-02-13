@@ -53,6 +53,7 @@ public class MasterList
                 list.Add(ExplorationEvents);
                 list.Add(ExplorationFeatures);
                 list.Add(ExpeditionEntry);
+                list.Add(FindJobNodeRoots);
             }
             return list;
         }
@@ -66,7 +67,7 @@ public class MasterList
     public Character_Base_Index Character_Bases = new Character_Base_Index();
     public Index_StatusEx StatusEXs = new Index_StatusEx();
     public Stats_Derived_Extended_Index StatEXs = new Stats_Derived_Extended_Index();
-
+    public FindJobNodeRoot_Index FindJobNodeRoots = new FindJobNodeRoot_Index();
     public Index_Status Status = new Index_Status();
     public Index_Experiences Experiences = new Index_Experiences();
     public Character_Origin_Index Character_Origins = new Character_Origin_Index();

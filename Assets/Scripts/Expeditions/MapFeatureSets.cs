@@ -1,6 +1,10 @@
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+
+
+[Serializable]
 public class Index_FeatureSet : I_IndexHasID, I_IndexMergeable
 {
     public List<FeatureSet> list = new List<FeatureSet>();
@@ -21,6 +25,7 @@ public class Index_FeatureSet : I_IndexHasID, I_IndexMergeable
     {
 
     }
+
 }
 public class FeatureSet
 {
@@ -29,6 +34,7 @@ public class FeatureSet
     public List<string> DescriptionText = new List<string>();
 
     List<ExpEvents> _featureEvents = null;
+
     [JsonIgnore]
     public List<ExpEvents> FeatureEvents
     { get
@@ -36,7 +42,12 @@ public class FeatureSet
             if (_featureEvents == null)
             {
                 _featureEvents = new List<ExpEvents>();
-                foreach (var i in this.featureEventIDs) _featureEvents.Add(Expeditions.ExplorationEvents.GetByID(i));
+                foreach (var i in this.featureEventIDs)
+                {
+                    var expev = Expeditions.ExplorationEvents.GetByID(i);
+                    if (expev == null) continue;
+                    _featureEvents.Add(expev);
+                }
             }
             return _featureEvents;
         } }

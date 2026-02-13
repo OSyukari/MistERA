@@ -266,7 +266,16 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     [JsonIgnore] public bool isSpecialInteraction { get
         {
             return comTags.Contains("initSex") || comTags.Contains("endSex");
-        } }
+        }
+    }
+    [JsonIgnore]
+    public bool requiresPrivacy
+    {
+        get
+        {
+            return comTags.Contains("privacy");
+        }
+    }
 
     public Acceptance AcceptanceCheck = new Acceptance();
     public Difficulty DifficultyCheck = new Difficulty();

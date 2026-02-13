@@ -20,6 +20,7 @@ public enum Character_BodyType
 }
 
 
+[System.Serializable]
 public class Character_Trainable : ScriptableObject, I_Disposable
 {
     public bool isTemporaryActor = false;
@@ -311,6 +312,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     {
         this.Body.UpdateTimeMinute(t);
         this.Memory.Tick(t);
+        this.Relationships.RefreshMinute5();
     }
     private void Observer_GlobalMinute(TimeSpan t, TimeSpan t_real)
     {
@@ -358,6 +360,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
         List<Manageable.DailyReportHandler.MiscMessageEntry> updateMessage = new List<Manageable.DailyReportHandler.MiscMessageEntry>();
         this.Skills.UpdateAllSkills(updateMessage);
+        this.Relationships.DailyRefresh(updateMessage);
         if (updateMessage.Count > 0)
         {
             foreach (var i in FactionManager.HomeFactions)
@@ -365,7 +368,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 foreach(var m in updateMessage) i.DailyReport.AddMiscRecord(m);
             }
         }
-        this.Relationships.DailyRefresh();
     }
 
     public void NotifyFactionChange()
@@ -743,7 +745,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         I_IsJobGiver currentJobFaction = FactionManager.CurrentActiveParty != null ? FactionManager.CurrentActiveParty : FactionManager.CurrentlyActiveFaction;
         I_IsJobGiver currentLocaleFaction = FactionManager.CurrentActiveParty != null ? FactionManager.CurrentActiveParty : FactionManager.CurrentLocaleFaction;
 
-        bool resetJob = false;
+        bool resetJob = true;
 
         if (RefID == 0)
         {
@@ -766,10 +768,20 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         {   // has job, but job cannot give a valid package
             bool hasPackage = CurrentJob.UpdateActorPackage(this, out jobInternalStatus);
             if (log) ss += jobInternalStatus;
-            if (!hasPackage)
+            if (CurrentJob == null)
+            {
+                if (log) ss += $" || released from previous job";
+                resetJob = true;
+            }
+            else if (!hasPackage)
             {
                 if (log) ss += $" || Job cannot give valid package, releasing from |{CurrentJob.RefID}|";
+                ChangeCurrentJob(null);
                 resetJob = true;
+            }
+            else
+            {
+                resetJob = false;
             }
             // release from job
         }
@@ -844,8 +856,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         foreach (var faction in FactionManager.Factions) factionstring.Add(faction.ID + (faction.isCharaManager(this) ? "*" : ""));
         //if (chara.CurrentJobRefID)
 
-        var jobpost = GetJobPost(currentHour);
-        COM currentScheduleCOM = jobpost == null ? null : jobpost.getRandCOM;
+        //var jobpost = GetJobPost(currentHour);
+        //COM currentScheduleCOM = jobpost == null ? null : jobpost.getRandCOM;
       
 
         /// if previous almost over (time less than half and time less than 15min)
@@ -896,13 +908,25 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (log) s.Add(", RESET called");
         }*/
 
+        if (s != null) s.Add(ss);
+
         if (isTemporaryActor)
         {
             if (s != null) s.Add("isTemporaryActor, breaking");
             return;
         }
+        else if (currentJobFaction == null && currentLocaleFaction == null)
+        {
+            if (s != null) s.Add("no faction, breaking");
+            return;
+        }
+        else if (resetJob && this.Relationships != null)
+        {
+            this.Relationships.Personality.Behavior.TryGetJob(this, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
+        }
 
         // Redress check
+        /*
         if (shouldRedress)
         {
             //Debug.LogError(FirstName + " should redress");
@@ -927,8 +951,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 }
                 //}
             }
-        }
+        }*/
 
+
+        /*
         // can sleep, should sleep, hasSleepPlan
         if (shouldSleep)
         {   // if current schedule is sleep then go to sleep
@@ -953,9 +979,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     return;
                 }
             }
-        }
+        }*/
 
         // temporarily disable eat cuz need to restrict food hours in faction management
+        /*
         if (canEat)
         {   // try get food
             if (CurrentJob != null && !resetJob && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains("food_meal")) != null)
@@ -981,8 +1008,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             }
 
             //}
-        }
+        }*/
 
+        /*
         if (currentJobFaction is Manageable_Party)
         {
             var party = currentJobFaction as Manageable_Party;
@@ -1038,9 +1066,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             {
                 Debug.LogError($"Error party locked and hasExpeditionSet[{party.hasExpeditionSet}] !isResting[{!party.Job.isResting}] !skipTryGetJob[{!party.skipTryGetJob(this)}]");
             }
-        }
+        }*/
 
 
+        /*
         if (currentScheduleCOM != null && currentScheduleCOM.ID != "com_furniture_sleep")
         {   // if current schedule has available job (exclude sleep)
 
@@ -1071,14 +1100,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 }
                // }
             }
-        }
-
+        }*/
+        /*
         if (shouldRest && TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(false, true, true)))
         {
             if (s != null) s.Add(ss);
             return;
-        }
-
+        }*/
+        /*
         if ((isAnimal || isCreature) && !scr_System_CentralControl.current.isSafeMode && isRestrained)
         {        // try find interaction job (rape job)
             if (CurrentJob != null && !resetJob)
@@ -1133,29 +1162,31 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 }
             }
 
-            
-        }
-        
+
+        }*/
+
+        /*
         if (Jail != null && Jail.ownerJob != null)
         {
             ChangeCurrentJob(Jail.ownerJob, "", "rest");
             return;
-        }
-        else if(TryFindNonJobByTag(resetJob, "recreation", currentJobFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(true, false, true)))
+        }*/
+        /*
+        else if (TryFindNonJobByTag(resetJob, "recreation", currentJobFaction, currentHour, ref ss, log, s, new NonJobSearchWrapper(true, false, true)))
         {
             if (s != null) s.Add(ss);
             return;
-        }
+        }*/
         // if still no job, set to look for recreation
         // need to find : is there location restriction ? search currently at ?
         // include search : character currently at + home faction
-            
-        else if (TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, debugLog, s, new NonJobSearchWrapper(false, true, false)))
-        {
-            if (s != null) s.Add(ss);
-            return;
-        }
-        
+        /*
+    else if (TryFindNonJobByTag(resetJob, "rest", currentLocaleFaction, currentHour, ref ss, debugLog, s, new NonJobSearchWrapper(false, true, false)))
+    {
+        if (s != null) s.Add(ss);
+        return;
+    }*/
+
     }
 
     public class NonJobSearchWrapper
@@ -1903,6 +1934,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public bool NeedUndress(BodyEquipLayer includeLayer, Revealing includeRating)
     {
+        if (scr_System_CentralControl.current.isSafeMode) return false;
+
         foreach(var i in Body.EquippedItemRefs)
         {
             var item = scr_System_CampaignManager.current.FindItemInstanceByID(i);

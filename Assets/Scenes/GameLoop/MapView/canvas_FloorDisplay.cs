@@ -343,6 +343,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
             ttip = LocalizeDictionary.QueryThenParse("ui_map_roomTooltip")
                 .Replace("$room$", room.DisplayName)
+                .Replace("$items$", room.Inventory.PrintContent(" ", true))
                 .Replace("$furnitures$", room.DisplayableFurnitureNames)
                 .Replace("$names$", names.Count > 0 ? String.Join(" ", names) : "-" );
         }

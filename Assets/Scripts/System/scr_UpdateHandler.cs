@@ -203,9 +203,10 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         else if (!Updating && init)
         {
-            
-            if (EventHandler.Active && scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError("Eventhandler active prior to StartCoroutine SingleUpdate");
-            
+
+#if UNITY_EDITOR
+            if (EventHandler.Active && scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log("Eventhandler active prior to StartCoroutine SingleUpdate");
+#endif
             updateTime = 1;
             totalUpdateTime = 1;
             if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"UpdateHandler ForceUpdate duration {updateTime}  {totalUpdateTime}");

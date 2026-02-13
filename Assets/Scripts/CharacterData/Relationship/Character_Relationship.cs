@@ -137,7 +137,6 @@ public class Character_Relationship
                 //  float trustDiv = Math.Abs(Owner.Stats.Mood.Severity < 0 ? Owner.Stats.Mood.Severity : 0);
                 int trustLevel = (int)(Trust / 50);
                 int fearLevel = (int)(Fear / 50);
-                int prideLevel = Math.Max((int)((100 - Manager.Pride) / 50), 0);
                 int baseline = (int)Owner.Stats.GetStatValue("stats_derived_baselineObedience");
 
                 if (scr_System_CampaignManager.current.DebugMode)
@@ -152,10 +151,10 @@ public class Character_Relationship
                         tooltip.Add("Corruption:" + Manager.Corruption);
                     }
 
-                    tooltip.Add("neutral[" + (int)RelationshipObedienceType.Normal + "] + trust[" + trustLevel + "] + fear[" + fearLevel + "] + pride[" + prideLevel + "]");
+                    tooltip.Add("neutral[" + (int)RelationshipObedienceType.Normal + "] + trust[" + trustLevel + "] + fear[" + fearLevel + $"] + pride [{Manager.CurrentPride}]");
                     tooltip.Add("Trust:" + Trust_Raw.ToString("N1") + "|" + Trust.ToString("N1"));
                     tooltip.Add("Fear:" + Fear_Raw.ToString("N1") + "|" + Fear_Mult.ToString("N1") + "|" + Fear.ToString("N1"));
-                    tooltip.Add("Pride:" + Manager.Pride);
+                    tooltip.Add($"Pride: {Manager.CurrentPride} mult {Manager.CurrentPrideMod}");
                     tooltip.Add("Baseline:" + baseline.ToString("N1"));
                 }
             }else if (!scr_System_CampaignManager.current.DebugMode)
@@ -397,18 +396,7 @@ public class Character_Relationship
             if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Follow(!isa)) return true;
         }
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Follow(!isA_Personal)) return true;
-        if (this.Owner.Relationships.Pride < 75) return true;
-        return false;
-    }
-    public bool HasPermission_Family()
-    {
-        if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Family(!isA_Bio)) return true;
-        foreach (var key in Relationship_Social_Keys)
-        {
-            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Family(!isa)) return true;
-        }
-        if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Family(!isA_Personal)) return true;
-        if (this.Owner.Relationships.Pride < 75) return true;
+        if (this.Owner.Relationships.CurrentPride < PrideLevel.High) return true;
         return false;
     }
     public bool HasPermission_Intimacy_Low()
@@ -419,7 +407,7 @@ public class Character_Relationship
             if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Intimacy_Low(!isa)) return true;
         }
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_Low(!isA_Personal)) return true;
-        if (this.Owner.Relationships.Pride < 50) return true;
+        if (this.Owner.Relationships.CurrentPride < PrideLevel.High) return true;
         return false;
     }
     public bool HasPermission_Intimacy_Medium()
@@ -430,7 +418,7 @@ public class Character_Relationship
             if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Intimacy_Medium(!isa)) return true;
         }
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_Medium(!isA_Personal)) return true;
-        if (this.Owner.Relationships.Pride < 50) return true;
+        if (this.Owner.Relationships.CurrentPride < PrideLevel.Medium) return true;
         return false;
     }
     public bool HasPermission_Intimacy_High()
@@ -441,7 +429,18 @@ public class Character_Relationship
             if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Intimacy_High(!isa)) return true;
         }
         if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_High(!isA_Personal)) return true;
-        if (this.Owner.Relationships.Pride < 25) return true;
+        if (this.Owner.Relationships.CurrentPride < PrideLevel.Low) return true;
+        return false;
+    }
+    public bool HasPermission_Family()
+    {
+        if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Family(!isA_Bio)) return true;
+        foreach (var key in Relationship_Social_Keys)
+        {
+            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Family(!isa)) return true;
+        }
+        if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Family(!isA_Personal)) return true;
+        if (this.Owner.Relationships.CurrentPride < PrideLevel.Low) return true;
         return false;
     }
 
@@ -790,7 +789,7 @@ public class Character_Relationship
     {
         get
         {
-            return Manager.Pride <= 50 ? 0.5f : 1f;
+            return (float)Manager.CurrentPrideMod;
         }
     }
     [JsonIgnore]

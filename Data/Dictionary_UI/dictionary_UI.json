@@ -51,7 +51,9 @@
 
 "comManager_tab_skinship": "触摸",
 
-"ui_main_comtab_title": "指令界面\n指令过滤",
+"ui_main_comtab_title": "%%ui_main_comtab_title_title1%%\n%%ui_main_comtab_title_title2%%",
+"ui_main_comtab_title_title1": "指令界面",
+"ui_main_comtab_title_title2": "指令过滤",
 
 "event_targetscope_nameCount": "$name$ x$count$",
 
@@ -130,7 +132,7 @@
 
 
 "ui_debug": "<link=\"ui_debug_tooltip\">DEBUG</link>",
-"ui_debug_tooltip": "开启该选项后，\n1. 追加显示一些本不应显示的数据（方便debug）\n2. 允许玩家随时睡觉\n3. 玩家执行指令不消耗耐力和精力\n4. 战斗中可以一键结束战斗并选择结果\n5. 全局射精量X5",
+"ui_debug_tooltip": "开启该选项后，\n1. 追加显示一些本不应显示的数据（方便debug）\n2. 允许玩家随时睡觉\n3. 玩家执行指令不消耗耐力和精力\n4. 战斗中可以一键结束战斗并选择结果\n%%ui_debug_tooltip2%%",
 
 "ui_quicksave": "快速保存",
 "ui_quicksave_tooltip": "将当前的游戏数据保存到本地存取",
@@ -456,12 +458,6 @@
 
 "helper_messageTitle": "指南",
 
-"helper_AIRoutine_guide": "NPC行为逻辑",
-"helper_AIRoutine_guide_content": "所有NPC都会照着下述的顺序排查条件决定行动（内容略有简化）\n- 检查自身是否能够自由行动（没有在睡觉，没有昏迷，没有被拘束，没有在跟随玩家等）\n- 检查自身是否衣冠不整，是的话会寻找合适的房间（私人浴室或者公共浴室）整理衣物\n- 以 工作阵营 > 临时家庭阵营 > 家庭阵营 > 自身自由时间表 的优先顺序检查自身在当前时刻是否有被安排工作（睡觉也是工作），有的话，寻找阵营内是否有能够被执行的该类工作，有的话前去执行\n- 以同样的优先级顺序，检查阵营内有没有可以吃的餐点，有的话就前往进餐（该行动意义只是模拟，没去吃也不会有惩罚，实际是否满足每日需求只看每日结算时道具数量）（该项目有BUG暂时被关掉了，等后续修复）\n- 同上，但检查的是据点内可以使用的休闲娱乐项目\n\n\nNPC搜索行动项目时只会在公共房间和自己的私人房间内搜索，不会跑到别人的私人房间休息。\nNPC会在没有被任何阵营安排工作的自由时间内安排连续的睡眠时间，且睡着后只有睡够了才会自然醒来（目前还未实装叫醒NPC的功能）\n条件允许的话，NPC会将睡眠时间设定到与自身家庭阵营（或临时阵营）的睡眠时间一致。",
-"helper_AIInteract_guide": "NPC互动逻辑",
-"helper_AIInteract_guide_content": "（由于大量必要的数值还没填所以就只写最简化的版本）\n大部分互动指令都有成功率判定，能影响判定的要素如下：\n指令基础成功率 + 指令类型调整 + 当前心情调整 + 当前健康状态调整 + 最近的几项记忆调整 + 与执行对象的关系调整 + 与对象的最近一次互动调整\n上述的成功率调整项目有的没做完，有的可能有bug，所以暂时无法描述太详细\n\nNPC会将所有的互动都记下来。大部分记忆过一段时间就会被忘记，且所有没被忘记的记忆条目之中只有最近的几项会改变NPC的心情和紧张指数。\n记忆条目的内容可以在角色的个人资料中查看，被‘忘记’的项目会在每日更新时删除，部分重要的记忆项目永远不会被忘记\n每项记忆条目的判定加成/减值只会在与该记忆条目有关的人互动时生效，且只有最近的一项记忆条目会生效\n\n总的来说，与NPC互动成功会提高后续指令成功率（可堆叠），而互动失败（互动被拒绝或者结果太糟糕）会降低后续成功率（可堆叠），连续互动失败只会越来越糟。遇到这种情况，请等NPC自己休息一会调整下心情，或者等NPC做了点别的事情将之前的糟糕体验忘掉后，再次互动吧！",
-"helper_HomeFaction_guide": "家庭阵营管理",
-"helper_HomeFaction_guide_content": "每位阵营的成员都有维生需求（例如进食和睡眠），每天每位成员都会从所属的家庭阵营（或临时家庭阵营）索取对应资源。阵营的库存有足够的对应资源满足所有同类需求的话，所有人的该项需求都会满足，反之全员都会判定为未满足需求\n（假设阵营内有10人每天需要10份%%tag_food_meal%%但每日更新时阵营库存只有9份，那么全员都会判定为挨饿了）\n\n由于还没做这方面的具体数值，所以直接将生产%%tag_food_meal%%的素材消耗移除掉了，只要耗费足够的工时就能制作。\n目前玩家不可以直接参与食材生产（因为UI按钮麻烦），玩家只能通过在据点管理界面发订单和安排工时，让NPC去生产\n\n睡眠需求的判定有别于食物，睡眠需求只有NPC确实睡着了才会被判定为满足。NPC什么时候睡觉取决于需要睡多久和有没有足够的空闲时间睡觉，如果工作排太满空闲时间不足那NPC就不会睡……除非休息的时候不小心睡着（此项未实装）",
 "UI_chara_relationship_text": "$name$的$relation$",               
 
 "management_schedule_box_freetime":"自由时间",
@@ -475,8 +471,8 @@
 "management_setschedule_jobpost":"",
 "management_setschedule_jobpost_ext":"",
 
-"management_modCount_add":"点击按钮+1，按住CTRL时+10，按住SHIFT时+100",
-"management_modCount_sub":"点击按钮-1，按住CTRL时-10，按住SHIFT时-100",
+"management_modCount_add":"点击按钮+1\n按住CTRL时+10\n按住SHIFT时+100",
+"management_modCount_sub":"点击按钮-1\n按住CTRL时-10\n按住SHIFT时-100",
 
 "msg_manageSuccess":"资源消耗无异常",
 "msg_manageFailure":"缺乏必要的资源",
@@ -490,7 +486,7 @@
 "ui_map_floor_roomsList":"房间列表",
 "ui_map_floor_charaInRoom":"房间内成员",
 "ui_map_floorList":"楼层列表",
-"ui_map_roomTooltip":"房间：$room$\n$furnitures$\n房间内角色：$names$\n移动耗时 $time$分钟",
+"ui_map_roomTooltip":"房间：$room$\n$furnitures$\n房间内物品：$items$\n房间内角色：$names$\n移动耗时 $time$分钟",
 
 "ui_update_elapsedTime":"经过$count$分钟",
 "ui_movement_leavesRoom":"$self$离开了$room$",
@@ -602,10 +598,10 @@
 "ui_entry_memory_sleep_begin": "sleeping in $room$",
 "ui_entry_memory_sleep_end": "Wakes up",
 
-"ui_com_disabled_autofailure_deterministicRolls_tooltip":"Command disabled due to no chance of getting accepted (under %%ui_comPanel_filters_deterministicRolls%%)",
+"ui_com_disabled_autofailure_deterministicRolls_tooltip":"Command disabled due to no chance of getting accepted\n(under %%ui_comPanel_filters_deterministicRolls%%)",
 "ui_com_disabled_autofailure_tooltip":"Command disabled due to no chance of getting accepted",
 "ui_comPanel_filters_deterministicRolls": "Deterministic Rolls",
-"ui_comPanel_filters_deterministicRolls_tooltip": "When toggled ON, guarantee success on Command acceptance check when overall success rate >= 65%, and guarantee failure when not (in this case, Command will be disabled)\n\nRecommended setting: ON",
+"ui_comPanel_filters_deterministicRolls_tooltip": "When toggled ON,\nguarantee success on Command acceptance check when overall success rate >= 65%,\nand guarantee failure when not (in this case, Command will be disabled)\n\nRecommended setting: ON",
 "comManager_tab_skinship": "Skinship",
 
 "comManager_tab_act": "Action",
@@ -844,7 +840,11 @@
 "ui_management_production_order_typeChange": "Change the execution type of this order.\n%%craftCount%%: Craft a fixed amount of item\n%%craftUntilCount%%: Keep crafting until reaching the specified amount of item in inventory",
 "craftCount": "Order Count",
 "craftUntilCount": "Order Until",
-"ui_main_comtab_title": "Command Tab\nCommand Filters",
+
+"ui_main_comtab_title": "%%ui_main_comtab_title_title1%%\n%%ui_main_comtab_title_title2%%",
+"ui_main_comtab_title_title1": "Command Tab",
+"ui_main_comtab_title_title2": "Command Filters",
+
 "ui_management_inventory_TITLE": "Inventory",
 "ui_management_production_PO_TITLE": "Production Orders",
 "ui_management_production_Trade_TITLE": "Trade Orders",
@@ -897,12 +897,6 @@
 
 "helper_messageTitle": "Help",
 
-"helper_AIRoutine_guide": "NPC Behavior",
-"helper_AIRoutine_guide_content": "All NPC will check conditions in order before deciding on any action\n- Check if they can act freely (not sleeping, not unconscious, not restrained, not following a player, etc.)\n- Check if they are properly dressed. If not, they will look for a suitable room (their own room) to fix up their clothes\n- Check if they have a scheduled task at the current time, in order of priority: Work Faction > Temporary Family Faction > Family Faction > Personal Free Time. If they found a scheduled task, they will look for a valid jobpost of that type within the faction territory, and path toward it.\n- Check if there are any available meals in the faction's canteen. If so, they will go get some food (this action is just a simulation; there is no penalty for not eating, and whether daily needs are met only depends on the number of items at the daily settlement)\n- Look for recreation jobs within character's current settlement\n\n\nNPC will avoid other people's private room when looking for possible jobs.\nNPC will try to schedule their sleep time into their longest uninterrupted personal time slot, and if possible will try to match their sleep time with others from the same faction",
-"helper_AIInteract_guide": "Interact with NPC",
-"helper_AIInteract_guide_content": "(due to this being a WIP, here's a simplified description of how it works)\nMost commands have a success rate check, and here are some of the elements that might influence check result:\n\nCommand base success rate + command type + current Moood + current Stress + recent memories + relationship with target actor + most recent interaction with target \n\nNPC wil remember all past interactions, and some will be forgotten with time. All non-forgotten memory entry will modify NPC's mood and stress\nMemory's content can be viewed in character's [relationship] tab. 'Forgotten' memory will be wiped on day update, and some important memories will never be forgotten.\n\nTLDR, successfully interact witn an NPC will increase subsequent command success rate, and failed interaction might decrease it. If an NPC is resistant to Player's suggestions, maybe come back later (when NPC forgot about it all) or come back when NPC is more relaxed!",
-"helper_HomeFaction_guide": "Home Faction Management",
-"helper_HomeFaction_guide_content": "Every faction member have daily needs (such as food and sleep), and each one will seek related items (in case of food) from their Home Faction. If a Faction has enough resouces for everyone, then everyone's need is satisfied, if not then no one is satisfied.\n(so, if 10 people requires 10 meals but only 9 are in Faction inventory, then everyone will be hungry)\n\nSleep need is handled differently. NPC will be in sleep deficiency when they have not slept for 24 hours, and cannot sleep unless they have been awake for at least 8 hours.",
 "UI_chara_relationship_text": "$name$'s $relation$",               
 
 "management_schedule_box_freetime":"Free time",
@@ -916,8 +910,8 @@
 "management_setschedule_jobpost":"",
 "management_setschedule_jobpost_ext":"",
 
-"management_modCount_add":"Click +1, holding CTRL +10, holding SHIFT +100",
-"management_modCount_sub":"Click -1, holding CTRL -10, holding SHIFT -100",
+"management_modCount_add":"Click +1\nwhen holding CTRL +10\nwhen holding SHIFT +100",
+"management_modCount_sub":"Click -1\nwhen holding CTRL -10\nwhen holding SHIFT -100",
 
 "msg_manageSuccess":"No error in resource expenditures",
 "msg_manageFailure":"Missing required resources",
@@ -959,7 +953,7 @@
 
 
 "ui_debug": "<link=\"ui_debug_tooltip\">DEBUG</link>",
-"ui_debug_tooltip": "Enabling this option will:\n1. Display some data normally hidden (for debug)\n2. Allow player to sleep anytime\n3. Player commands consume no Stamina or Energy\n4. Can instantly end combat and choose result\n5. Global Ejaculation Volume X5",
+"ui_debug_tooltip": "Enabling this option will:\n1. Display some data normally hidden (for debug)\n2. Allow player to sleep anytime\n3. Player commands consume no Stamina or Energy\n4. Can instantly end combat and choose result\n%%ui_debug_tooltip2%%",
 
 "ui_load_autosave": "Auto Save",
 
@@ -1075,7 +1069,7 @@
 "ui_ap_join_success":"$names$ joined successfully",
 "ui_ap_join_fail":"$names$ failed to join",
 
-"ui_map_roomTooltip":"Room: $room$\n$furnitures$\nCharacters in room: $names$\nTravel time $time$ min",
+"ui_map_roomTooltip":"Room: $room$\n$furnitures$\nItems: $items$\nCharacters: $names$\nTravel time $time$ min",
 
 
 

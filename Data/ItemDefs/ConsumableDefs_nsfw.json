@@ -213,6 +213,7 @@
             "id":"consumable_cum",
             "displayName":"Cum",
             "tooltip":"Cum",
+            "Tags":["trash"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",

@@ -217,6 +217,25 @@ public static class Utility
         return maxIteration;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="chance">range from 0.0 to 1.0</param>
+    /// <param name="rand">randomizer object</param>
+    /// <returns></returns>
+    public static bool RandomChance(double chance, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        return random.NextDouble() < chance;
+    }
+    public static double RandVariation(double baseNumber, double maxMult, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        double min = baseNumber / maxMult;
+        double max = baseNumber * maxMult;
+        return min + random.NextDouble() * (max - min);
+    }
+
     public static float RandVariation(float baseNumber, float maxVariation, System.Random rand = null)
     {
         var random = rand == null ? Random : rand;

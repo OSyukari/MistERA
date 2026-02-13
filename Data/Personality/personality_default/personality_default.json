@@ -5,79 +5,51 @@
                 "id": "personality_default",
                 "displayName": "Default",
                 "_comment": "every entry in list should have unique ID. entry order should not matter.",
+                "maxPrideValue":100,
+                "behaviorID":"behavior_default",
+                "pride_increase":{
+                    "High": { 
+                        "mods":
+                        [
+                            { "selfTags":[], "comTags":["job"] }
+                        ]
+                    },
+                    "Low":{ 
+                        "mods":
+                        [
+                            { "selfTags":[], "comTags":["social"] }
+                        ]
+                    }
+                },
+                "pride_decrease":
+                {
+                    "High":{ 
+                        "mods":
+                        [
+                            { "selfTags":["imprisoned"], "comTags":[] }
+                        ]
+                    },
+                    "Medium":{ 
+                        "mods":
+                        [
+                            { "selfTags":["raped"], "comTags":["unsafe"] }
+                        ]
+                    },
+                    "Low":{ 
+                        "mods":
+                        [
+                            { "selfTags":["restrained"], "comTags":[] },
+                            { "selfTags":["raped","penetration"], "comTags":["unsafe"] }
+                        ]
+                    },
+                    "None":{ 
+                        "mods":
+                        [
+                            { "selfTags":["pain"], "comTags":["unsafe"] }
+                        ]
+                    }
+                },
                 "entries_list": [
-                    {
-                        "ID": "Exposed_Breasts",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "variants": [
-                            {
-                                "responses": [
-                                    "Exposed_Breasts"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "Exposed_Penis",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "variants": [
-                            {
-                                "responses": [
-                                    "Exposed_Penis"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "Exposed_Clit",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "variants": [
-                            {
-                                "responses": [
-                                    "Exposed_Clit"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "ID": "Exposed_Vagina",
-                        "tags": [
-                            "nsfw"
-                        ],
-                        "variants": [
-                            {
-                                "requirement": {
-                                    "selfTags": [
-                                        "Expansion_Extreme"
-                                    ]
-                                },
-                                "responses": [
-                                    "Exposed_Vagina_Expansion_Extreme"
-                                ]
-                            },
-                            {
-                                "requirement": {
-                                    "selfTags": [
-                                        "Expansion"
-                                    ]
-                                },
-                                "responses": [
-                                    "Exposed_Vagina_Expansion"
-                                ]
-                            },
-                            {
-                                "responses": [
-                                    "Exposed_Vagina"
-                                ]
-                            }
-                        ]
-                    },
                     {
                         "ID": "com_touch_sleeponthigh_ask",
                         "tags": [
@@ -468,19 +440,10 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "Exposed_Breasts": "胸部露出",
-                "Exposed_Penis": "阴茎露出",
-                "Exposed_Clit": "阴部露出",
-                "Exposed_Vagina": "阴部露出",
-                "Exposed_Vagina_Expansion": "阴部露出（小腹膨胀）",
-                "Exposed_Vagina_Expansion_Extreme": "阴部露出（精液灌满）",
-                "Exposed_Anus": "肛门露出",
+
                 "Descriptor_Sleeping_1": "($self$) 正在房间里熟睡的$self$呼吸均匀，完全没注意到$target$的靠近",
                 "Descriptor_Timestop_1": "($self$) $target$正在端详着时间停止中一动不动的$self$",
                 "Descriptor_FixingClothes_1": "($self$) $target$不仅看到了衣衫不整的$self$，还目睹了她慌乱整理衣物的样子",
-                "Descriptor_Masturbate_1": "($self$) $target$撞见了正面色潮红、沉浸在自慰快感中的$self$",
-                "Descriptor_Sex_1": "($self$) $target$目击了$self$正在与他人激烈交合的淫乱场面",
-                "Descriptor_Rape_1": "($self$) $target$目击了$self$正被他人按在身下无力反抗的凄惨景象",
                 "Descriptor_Job_1": "($self$) $target$看到了正全神贯注于工作的$self$",
                 "Descriptor_Rest_1": "($self$) $target$看到了正在享受片刻安宁的$self$",
                 "Descriptor_Recreation_1": "($self$) $target$看到了正在开心地玩耍着的$self$",
@@ -492,19 +455,10 @@
                 "kojo_default_event_interrupt_03": "<color=#373737>工作中的$self$看到$target$$epDescription$</color>"
             },
             "en-us": {
-                "Exposed_Breasts": "Exposed Breasts",
-                "Exposed_Penis": "Exposed Penis",
-                "Exposed_Clit": "Exposed Crotch",
-                "Exposed_Vagina": "Exposed Crotch",
-                "Exposed_Vagina_Expansion": "Exposed Crotch (visibly inflated)",
-                "Exposed_Vagina_Expansion_Extreme": "Exposed Crotch (extremely inflated)",
-                "Exposed_Anus": "Exposed Anus",
+
                 "Descriptor_Sleeping_1": "($self$) $self$ is fast asleep in the room, breathing evenly, completely unaware of $target$'s approach.",
                 "Descriptor_Timestop_1": "($self$) $target$ is examining the motionless $self$, frozen in stopped time.",
                 "Descriptor_FixingClothes_1": "($self$) $target$ catches $self$ not only in disarray but also frantically trying to fix her clothes.",
-                "Descriptor_Masturbate_1": "($self$) $target$ walks in on $self$, flushed and immersed in the pleasure of masturbation.",
-                "Descriptor_Sex_1": "($self$) $target$ witnesses the lewd scene of $self$ engaging in intense intercourse with someone.",
-                "Descriptor_Rape_1": "($self$) $target$ witnesses the pitiful sight of $self$ being pinned down and raped, unable to resist.",
                 "Descriptor_Job_1": "($self$) $target$ sees $self$ fully focused on her work.",
                 "Descriptor_Rest_1": "($self$) $target$ sees $self$ enjoying a moment of peace.",
                 "Descriptor_Recreation_1": "($self$) $target$ sees $self$ happily playing.",

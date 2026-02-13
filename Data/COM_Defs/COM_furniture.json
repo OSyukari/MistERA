@@ -79,6 +79,54 @@
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_sleep_description_ongoing_1"]}], "keepLooking":false }
             },
             {
+                "ID": "com_furniture_restroom",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "timeScale": 10,
+                "comTags": [
+                    "furniture","bathroom", "unsafe"
+                ],
+                "requirements": {
+                },
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "redress",
+                                "behaviorCooldownID":"com_furniture_restroom","behaviorCooldown":240, "behaviorCooldownVariation":1.4
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_restroom_displayName_1"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 20
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts":[ "$doer.firstname$ finished using toilet" ]
+                        }
+                    ]
+                },
+                "description_begin":{ "Entries":[{"texts":["$doer.firstname$ starts using toilet"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$ is using toilet"]}], "keepLooking":false }
+            },
+            {
                 "ID": "com_furniture_takingBreak",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_takingBreak_displayName_1",
@@ -697,6 +745,8 @@
         {
             "zh-cn":
             {
+                "com_furniture_restroom_displayName_1": "上厕所",
+
                 "com_furniture_sleep_displayName_1": "睡觉",
                 "com_furniture_sleep_displayName_2": "一起睡觉",
                 "com_furniture_sleep": "玩家只有在可睡眠时间段（默认为23H-6H）才可睡眠，可以在阵营管理-工作分配界面检查玩家的时间表确认。\n该指令执行后，参与者会获得时长等于参与者自身%%stats_derived_sleepNeed%%分钟的睡眠状态。当该状态结束时角色会立刻醒来",
@@ -769,6 +819,7 @@
             },
             "en-us":
             {
+"com_furniture_restroom_displayName_1": "Use Restroom",
 
                 "com_furniture_getmeal": "Get Meal",
                 "com_furniture_sleep_displayName_1": "Sleep",

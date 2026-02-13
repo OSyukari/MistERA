@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 
+[System.Serializable]
 
 public class Expeditions : MonoBehaviour
 {
@@ -23,5 +24,12 @@ public class Expeditions : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
+    }
+
+    public void ResetMasterlist()
+    {
+        expeditionEntry = scr_System_Serializer.current.MasterList.ExpeditionEntry;
+        explorationEvents = scr_System_Serializer.current.MasterList.ExplorationEvents;
+        explorationFeatures = scr_System_Serializer.current.MasterList.ExplorationFeatures;
     }
 }

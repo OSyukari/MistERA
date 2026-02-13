@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
+[Serializable]
 public class Index_ExpEvents : I_IndexHasID, I_IndexMergeable
 {
     public List<ExpEvents> list = new List<ExpEvents>();

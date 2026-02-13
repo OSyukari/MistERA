@@ -109,7 +109,7 @@
                 "ID":"relationship_attitude_infatuated",
                 "priority":3,
                 "obedienceMod":3, "obedienceMod_Max":15, "obedienceMod_goodwill":0.01, "obedienceMod_desire":0.02,
-                "MainEmotionKey":"Desire", "tags":["Desire"],
+                "MainEmotionKey":"Desire", "tags":["Desire","unsafe"],
                 "Requirements":
                 {
                     "requireScore":[{"requireScoreID":"Desire","operand":"gte","value":100},
@@ -125,7 +125,7 @@
                 "priority":2,
                 "obedienceMod":2,
                 "obedienceMod_Max":10, "obedienceMod_desire":0.02,
-                "MainEmotionKey":"Desire","tags":["Desire"],
+                "MainEmotionKey":"Desire","tags":["Desire","unsafe"],
                 "Requirements":
                 {
                     "requireScore":[{"requireScoreID":"Desire","operand":"gte","value":50}],

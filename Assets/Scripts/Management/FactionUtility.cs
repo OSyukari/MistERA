@@ -56,7 +56,7 @@ public static class FactionUtility
                    // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError($"Error {c.CallName} jail job ValidateActor Fail on {post.DisplayName} {String.Join("|", post.allusableCOMStrings)}");
                     continue;
                 }
-                else if (post.ParentRoom.isRoomPrivate && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID))
+                else if (post.ParentRoom.isRoomPrivate && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID) && charaRoom != post.ParentRoom)
                 {
                     //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job isRoomPrivate Fail");
                     continue;
@@ -98,7 +98,6 @@ public static class FactionUtility
         }
         else return TryFindValidJobInstances(jobs, out list, managedRoomRefs, c, rnd.ID, checkBlacklist);
     }
-
     public static bool TryFindValidJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, out List<Job_Furniture> list, Dictionary<int, List<int>> managedRoomRefs, Character_Trainable c, string comID, bool checkBlacklist)
     {
         COM targetCOM = null;
@@ -117,6 +116,7 @@ public static class FactionUtility
         if (targetCOM == null) return false;
         //if (!ExistsProductionOrderWith(targetCOM)) return false;
         bool skipPrivate = false;
+        var currentRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
 
         foreach (var post in jobs[targetCOM])
         {
@@ -132,6 +132,7 @@ public static class FactionUtility
             else if (post.ValidateActor(c, targetCOM) && (!c.isRestrained || c.Jail.ownerJob == post)) 
             {
                 if (!post.ParentRoom.isRoomPrivate || targetCOM.allowInPrivateRoom) list.Add(post);
+                else if (!targetCOM.requiresPrivacy && post.ParentRoom == currentRoom) list.Add(post);
                 else if (managedRoomRefs != null && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID)) list2.Add(post);
                 else continue;
             }

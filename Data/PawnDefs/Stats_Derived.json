@@ -251,6 +251,18 @@
                 "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
             },
             {
+                "id": "stats_derived_mentalResilience",
+                "statKeyword":"memory",
+                "displayName":"Mental Resilience",
+                "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
+            },
+            {
+                "id": "stats_derived_prideThreshold",
+                "statKeyword":"memory",
+                "displayName":"stats_derived_prideThreshold",
+                "valueBase":{ "baseValue_value":0.6, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":1.0 }
+            },
+            {
                 "id": "stats_derived_painSensitivity",
                 "statKeyword":"physical",
                 "displayName":"Pain Sensitivity",
@@ -282,41 +294,6 @@
                         "valueString":"Strength"
                     }
                 ]
-            }, 
-            {
-                "id": "stats_derived_maxSensitivity_C",
-                "displayName":"C Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
-                "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
-            }, 
-            {
-                "id": "stats_derived_maxSensitivity_V",
-                "displayName":"V Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
-                "valueBase":{ "baseValue_value":0.4, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
-            }, 
-            {
-                "id": "stats_derived_maxSensitivity_B",
-                "displayName":"B Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
-                "valueBase":{ "baseValue_value":0.2, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
-            }, 
-            {
-                "id": "stats_derived_maxSensitivity_A",
-                "displayName":"A Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
-                "valueBase":{ "baseValue_value":0.1, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
-            }, 
-            {
-                "id": "stats_derived_maxSensitivity_M",
-                "displayName":"M Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
-                "valueBase":{ "baseValue_value":0.2, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
-            }, 
-            {
-                "id": "stats_derived_maxSensitivity_W",
-                "displayName":"W Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
-                "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
-            },      
-            {
-                "id": "stats_derived_maxSensitivity_Mind",
-                "statKeyword":"lust", "noDisplay":true, "displayName":"Mind Sensitivity", "tooltip":"",
-                "valueBase":{ "baseValue_value":0.4, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
             }
         ]
     },
@@ -341,6 +318,12 @@
                 "stats_derived_mp_max_tooltip": "%%notimplemented%%\n\n%%stats_derived_extended_energy%%",
                 "stats_derived_mp_dailyRecovery": "每日MP回复",
                 "stats_derived_mp_dailyRecovery_tooltip": "%%notimplemented%%",
+
+
+                "stats_derived_mentalResilience":"精神脆弱度",
+                "stats_derived_mentalResilience_tooltip":"影响角色的自尊因指令增减时，增减的幅度\n默认1.0，该数值越高，自尊掉得越多，恢复的也越少",
+                "stats_derived_prideThreshold":"自尊阈值",
+                "stats_derived_prideThreshold_tooltip":"角色的当前自尊比例低于阈值时，视为低自尊状态。低自尊的角色会更容易接受指令。\n默认0.6",
 
                 "stats_derived_stamina_max": "体力上限",
                 "stats_derived_stamina_max_tooltip": "%%stats_derived_extended_stamina_tooltip%%",
@@ -414,6 +397,10 @@
                 "stats_derived_carryCapacity": "Carry Capacity",
                 "stats_derived_carryCapacity_tooltip": "%%notimplemented%%",
 
+                "stats_derived_mentalResilience": "Mental Resilience",
+      "stats_derived_mentalResilience_tooltip": "Affects the magnitude of increase/decrease when character's Self-Esteem changes due to commands.\nDefault 1.0. The higher this value, the more Self-Esteem is lost and the less is recovered.",
+      "stats_derived_prideThreshold": "Pride Threshold",
+      "stats_derived_prideThreshold_tooltip": "When the character's current Self-Esteem ratio is below the threshold, it is considered a Low Pride state. Characters with Low Pride are more likely to accept commands.\nDefault 0.6",
 
       "stats_derived_memoryLength_tooltip": "This value determines how long each (non-permanent) memory entry remains in memory (in minutes).\nDefault: 24 hours.\nWhile the character is unconscious, memory duration is halved.",
 

@@ -1,0 +1,47 @@
+{
+    "Furnitures":{
+        "list":[
+        {
+            "ID":"furniture_prison_containment_spot",
+            "furnitureSize":1,
+            "givesJob":
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
+        },
+        {
+            "ID":"furniture_prison_containment_spot_2",
+            "furnitureSize":2,
+            "givesJob":
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
+        },
+        {
+            "ID":"furniture_prison_containment_spot_4",
+            "furnitureSize":4,
+            "givesJob":
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
+        }
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+
+"furniture_prison_containment_spot":"收容单间",
+"furniture_prison_containment_spot_2":"收容双人间",
+"furniture_prison_containment_spot_4":"收容宿舍"
+
+            },
+            "en-us":
+            {
+
+  "furniture_prison_containment_spot": "Prison Cell (Single)",
+  "furniture_prison_containment_spot_2": "Prison Cell (Double)",
+  "furniture_prison_containment_spot_4":"Prison Cell (Quad)"
+
+            }
+        }
+    }
+    
+}

@@ -217,14 +217,16 @@ public class scr_MenuCanvas_NewGame : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return true;
+            if (right) return scr_System_Serializer.current.MasterList.CampaignSettings.GetItemAfter(parent.currentCampaign) != parent.currentCampaign;
+            else return scr_System_Serializer.current.MasterList.CampaignSettings.GetItemBefore(parent.currentCampaign) != parent.currentCampaign;
+
         }
 
         public void OnClickButton()
         {
             if (right)
             {
-                parent.SetCurrentCampaign(scr_System_Serializer.current.MasterList.CampaignSettings.GetItemBefore(parent.currentCampaign));
+                parent.SetCurrentCampaign(scr_System_Serializer.current.MasterList.CampaignSettings.GetItemAfter(parent.currentCampaign));
             }
             else
             {
@@ -250,8 +252,16 @@ public class scr_MenuCanvas_NewGame : scr_Menu
 
         public override bool IsButtonValid()
         {
-            if (parent.currentCampaign_option != null) return true;
-            else return false;
+            if (parent.currentCampaign_option == null) return false;
+
+            if (right)
+            {
+                return parent.currentCampaign.GetNextOption(parent.currentCampaign_option) != parent.currentCampaign_option;
+            }
+            else
+            {
+                return parent.currentCampaign.GetPreviousOption(parent.currentCampaign_option)!= parent.currentCampaign_option;
+            }
         }
 
         public void OnClickButton()

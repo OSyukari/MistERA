@@ -1435,7 +1435,7 @@ public abstract class ActionPackage
             bool executed = ep.Response >= Memory_Response.Accept;
             executeSuccessful = executed && executeSuccessful;
 
-
+            /*
             if (executed)
             {
                 //this.job.LogMessage_Begin_CheckResult(ep);
@@ -1450,7 +1450,7 @@ public abstract class ActionPackage
                     }                  
                 }
 
-            }
+            }*/
         }
 
         var actors = new List<Character_Trainable>();

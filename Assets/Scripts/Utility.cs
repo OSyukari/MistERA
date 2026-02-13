@@ -163,6 +163,39 @@ public static class UtilityEX
             }
         }
     }
+    public static void ApplyOnConsume(Character_Body body, List<ItemComponentTemplate_Ingestible.OnUseEffect> onUses)
+    {
+        if (body == null || body.Owner == null) return;
+        if (onUses == null) return;
+
+        foreach (var onUse in onUses)
+        {
+            if (!onUse.isValid) continue;
+
+            switch (onUse.effectID)
+            {
+                case EffectKeyword.ModStatValue:
+                    if (onUse.arguments.Count >= 2 && float.TryParse(onUse.arguments[1], out float statValue))
+                    {
+                        string statID = onUse.arguments[0];
+                        var stat = body.Owner.Stats.GetStatEx(statID);
+                        if (stat != null) stat.ModValue(statValue);
+                    }
+                    break;
+                case EffectKeyword.ModStatValuePercent:
+                    if (onUse.arguments.Count >= 2 && float.TryParse(onUse.arguments[1], out float percentile))
+                    {
+                        string statID = onUse.arguments[0];
+                        var stat = body.Owner.Stats.GetStatEx(statID);
+                        if (stat != null) stat.RestorePercent(percentile);
+                    }
+                    break;
+
+            }
+        }
+    }
+
+
 
 
     public static void CheckExperienceGainNoStimulate(Character_Trainable a, float amount, bool isDoer, List<string> selfTags, List<string> comTags, ExperienceLog m = null)
@@ -976,7 +1009,7 @@ public static class UtilityEX
                     switch (parsed[1])
                     {
                         case "pride":
-                            scr_System_CampaignManager.current.CurrentTarget.Relationships._Pride += numbers;
+                            scr_System_CampaignManager.current.CurrentTarget.Relationships.ModPride(numbers);// += numbers;
                             parsedSuccessful = true;
                             break;
                         case "corruption":
@@ -1087,6 +1120,13 @@ public static class UtilityEX
                             chara.Inventory.AddItem(itemInstance);
                         }
                     }
+                }
+                break;
+            case "inspectjob":
+                if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int targetjobref))
+                {
+                    var job = scr_System_CampaignManager.current.FindJobInstanceByID(targetjobref);
+                    scr_System_CentralControl.current.CurrentInspectJob = job;
                 }
                 break;
             case "resetAllActorJobs":

@@ -691,8 +691,8 @@ public class Memory_Entry
         box.memText.SetText(ToString(true));
 
         List<string> additional = new List<string>();
-        additional.Add(entryDescription);
-        if (Tags.Count > 0) additional.Add(PrintTags);
+        if (entryDescription.Length > 0) additional.Add(entryDescription);
+        if (!scr_System_CentralControl.current.isSafeMode && Tags.Count > 0) additional.Add(PrintTags);
         additional.AddRange(MemInstanceDescriptions);
 
         string moodSum = "", stressSum = "", lustSum = "";
@@ -721,7 +721,8 @@ public class Memory_Entry
         }
         else foreach (var i in Mod_Lust) lustSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
 
-        additional.Add($"Statmod: Check{cache_score.ToString("+0;-#")} Mood{moodSum} Stress{stressSum} Lust{lustSum}");
+        if (scr_System_CentralControl.current.isSafeMode) additional.Add($"Statmod: Check{cache_score.ToString("+0;-#")} Mood{moodSum} Stress{stressSum}");
+        else additional.Add($"Statmod: Check{cache_score.ToString("+0;-#")} Mood{moodSum} Stress{stressSum} Lust{lustSum}");
 
         if (scr_System_CampaignManager.current.DebugMode) additional.Add("Internal Duration " + Duration);
         box.memText.SetExternalTooltip(String.Join("\n", additional));

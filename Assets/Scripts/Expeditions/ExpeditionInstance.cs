@@ -102,7 +102,7 @@ public class ExpeditionInstance
         } }
 
     [JsonIgnore] public List<string> Keywords { get { return Base.keywords; } }
-    [JsonIgnore] public List<string> FeatureKeywords { get { return Base.FeatureKeywords; } }
+    [JsonIgnore] public List<string> FeatureKeywords { get { return Base == null ? new List<string>() : Base.FeatureKeywords; } }
 
     List<FeatureSet> _features = null;
     [JsonIgnore] public List<FeatureSet> Features

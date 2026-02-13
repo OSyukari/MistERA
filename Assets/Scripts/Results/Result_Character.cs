@@ -52,6 +52,10 @@ public class Result_Character
 
         public bool toggleTeamStatus = false;
 
+        public string behaviorCooldownID = "";
+        public int behaviorCooldown = 0;
+        public double behaviorCooldownVariation = 1.0;
+
         [JsonIgnore]
         public string Print
         { get

@@ -1,10 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using QuikGraph;
 using QuikGraph.Algorithms.Observers;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 /// Parent owner of the room handle initialization,
@@ -41,6 +42,9 @@ public class Room_Instance: IDisposable, I_Disposable
         this.roomCharaRefs.Remove(c.RefID);
         ri.RoomChara.Add(c);
         ri.roomCharaRefs.Add(c.RefID);
+
+        ri.dustLevel += 10;
+        dustLevel += 10;
     }
     public void AddChara(Character_Trainable c)
     {
@@ -212,10 +216,10 @@ public class Room_Instance: IDisposable, I_Disposable
         foreach (var i in Furnitures) if (i.FurnitureBase.ID == baseID) c++;
         return c;
     }
-    [JsonIgnore] public List<Item_Instance> Items { get { return this.roomItems; } }
+    //[JsonIgnore] public List<Item_Instance> Items { get { return this.roomItems; } }
 
     protected List<string> ownerNames = null;
-    [JsonIgnore] public List<String> OwnerNames
+    [JsonIgnore] public List<string> OwnerNames
     {
         get
         {
@@ -295,6 +299,7 @@ public class Room_Instance: IDisposable, I_Disposable
             return LocalizeDictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", names.Count > 0 ? String.Join(LocalizeDictionary.QueryThenParse("ui_entry_separator"), names) : "-");
         }
     }
+
     /// <summary>
     /// Register this room's refID
     /// </summary>
@@ -316,6 +321,8 @@ public class Room_Instance: IDisposable, I_Disposable
 
     public void AddFurniture(FurnitureBase baseFurniture)
     {
+        if (baseFurniture == null) return;
+
         FurnitureInstance inst = new FurnitureInstance(this, baseFurniture);
 
         if (inst.JobGiver != null)
@@ -368,6 +375,22 @@ public class Room_Instance: IDisposable, I_Disposable
             else
             {
                 Debug.LogError("Error setting FactionOwner");
+            }
+        }
+    }
+
+    public int dustLevel = 0;
+
+    public void Tick()
+    {
+        if (this.Base != null && !this.Base.noCleaning && RoomChara.Count > 0)
+        {
+            dustLevel += RoomChara.Count;
+            if (dustLevel >= 5000)
+            {
+                var dust = WorldManager.Instantiate("item_dust", "", dustLevel / 5000);
+                dustLevel %= 5000;
+                AddItem(dust);
             }
         }
     }
@@ -466,18 +489,6 @@ public class Room_Instance: IDisposable, I_Disposable
             }
             return _isRoomPrivate; } }
 
-    [JsonProperty] private List<int> roomItemsRefs = new List<int>();
-    private List<Item_Instance> roomItemsCache = null;
-    [JsonIgnore] List<Item_Instance> roomItems { get
-        {
-            if (roomItemsCache == null)
-            {
-                roomItemsCache = new List<Item_Instance>();
-                foreach(var i in roomItemsRefs) roomItemsCache.Add(scr_System_CampaignManager.current.FindItemInstanceByID(i));
-            }
-            return roomItemsCache;
-        } }
-
     [JsonIgnore] public Room_Instance.CleaningStatus isRoomClean
     {
         get
@@ -488,68 +499,113 @@ public class Room_Instance: IDisposable, I_Disposable
 
     public bool HasItem_Tag(string tag)
     {
-        foreach (Item_Instance item in roomItems) if (item.Tags.Contains(tag)) return true;
-        return false;
-    }
-    public bool HasItem_BaseID(string baseID)
-    {
-        foreach (Item_Instance item in roomItems) if (item.BaseID == baseID) return true;
-        return false;
-    }
-    public int HasItem_BaseID_Count(string baseID)
-    {
-        int c = 0;
-        foreach (Item_Instance item in roomItems) if (item.BaseID == baseID) c++;
-        return c;
+        return Inventory.GetItemCountByTag(tag) > 0;
     }
     public int HasItem_Tag_Count(string tag)
     {
-        int c = 0;
-        foreach (Item_Instance item in roomItems) if (item.Tags.Contains(tag)) c++;
-        return c;
+        return Inventory.GetItemCountByTag(tag);
+    }
+    public bool HasItem_BaseID(string baseID)
+    {
+        return Inventory.GetItemCount(baseID) > 0;
+    }
+    public int HasItem_BaseID_Count(string baseID)
+    {
+        return Inventory.GetItemCount(baseID);
+    }
+
+    bool _cachedCleanliness = false;
+    CleaningStatus cleanliness = CleaningStatus.None;
+
+    Stat_Modifier cleanlinessMod = new Stat_Modifier()
+    {
+        ModString = "room cleanliness",
+        type = Stat_Modifier.StatMod_Type.addBase,
+        statID = "chara_status_mood"
+    };
+
+    public Stat_Modifier GetCleanlinessMod()
+    {
+        if (Base.noCleaning) return null;
+        var cl = RoomCleanliness();
+        if (cl == CleaningStatus.None) return null;
+        cleanlinessMod.ModString = $"room cleanliness {cl}";
+        switch (cl)
+        {
+            case CleaningStatus.Clean:
+                cleanlinessMod.SetValueTypeAndString(Stat_Modifier_Type.number, $"{1}");
+                break;
+            case CleaningStatus.Dirty:
+                cleanlinessMod.SetValueTypeAndString(Stat_Modifier_Type.number, $"-{1}");
+                break;
+            case CleaningStatus.Very_Dirty:
+                cleanlinessMod.SetValueTypeAndString(Stat_Modifier_Type.number, $"-{2}");
+                break;
+            default:
+                cleanlinessMod.SetValueTypeAndString(Stat_Modifier_Type.number, $"{0}");
+                break;
+        }
+        return cleanlinessMod;
+    }
+
+    /// <summary>
+    /// When inventory change
+    /// </summary>
+    protected void RoomRefresh()
+    {
+        _cachedCleanliness = false;
+
+        foreach (var i in RoomChara)
+        {
+            i.Relationships.RefreshMoodlets(RoomChara);
+        }
     }
 
     public CleaningStatus RoomCleanliness(float extraMod = 1f)
     {
         {
-            int i = 0;
-            foreach (var item in roomItems)
+            if (Base.noCleaning) return CleaningStatus.None;
+
+            if (_cachedCleanliness == false)
             {
-                i -= item.Cleanliness;
+                _cachedCleanliness = true;
+
+                int i = 0;
+                foreach (var item in Inventory.Contents)
+                {
+                    i -= item.Cleanliness * item.Count;
+                }
+                i = (int)(i * extraMod);
+
+                if (i <= 0) cleanliness = CleaningStatus.Clean;
+                else if (i <= 3) cleanliness = CleaningStatus.Normal;
+                else if (i <= 6) cleanliness = CleaningStatus.Dirty;
+                else cleanliness = CleaningStatus.Very_Dirty;
             }
-            i = (int)(i * extraMod);
-
-            if (i <= 0) return CleaningStatus.Clean;
-            else if (i <= 5) return CleaningStatus.Normal;
-            else if (i <= 10) return CleaningStatus.Dirty;
-            else return CleaningStatus.Very_Dirty;
-
+            return cleanliness;
         }
     }
 
+
+
     public bool AddItem(Item_Instance itemInstance)
     {
-        if (roomItems.Contains(itemInstance)) return false;
-        else roomItems.Add(itemInstance);
-        return true;
+        var returnval = Inventory.AddItem(itemInstance);
+        RoomRefresh();
+        return returnval;
     }
 
-    public Item_Instance RemoveItem(Item_Base itemBase)
+    public List<Item_Instance> RemoveItemByTag(string tag, int maxcount)
     {
-        return RemoveItem(itemBase.ID);
-    }
-
-    public Item_Instance RemoveItem(string baseID)
-    {
-        Item_Instance returnValue = roomItems.Find(x => x.BaseID == baseID);
-        if (returnValue != null) roomItems.Remove(returnValue);
-        return returnValue;
-    }
-    public Item_Instance RemoveItemByTag(string tag)
-    {
+        var removed = new List<Item_Instance>();
+        var messages = new List<string>();
+        Inventory.RemoveItemByTag(tag, maxcount, ref removed, ref messages);
+        RoomRefresh();
+        return removed;
+        /*
         Item_Instance returnValue = roomItems.Find(x => x.Tags.Contains(tag));
         if (returnValue != null) roomItems.Remove(returnValue);
-        return returnValue;
+        return returnValue;*/
     }
 
     public void Dispose()
@@ -559,7 +615,6 @@ public class Room_Instance: IDisposable, I_Disposable
 
     public void DisposeInternal()
     {
-        roomItemsCache.Clear();
         baseRoom = null;
         roomJobs.Clear();
         factionOwner = null;
@@ -578,6 +633,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
     public enum CleaningStatus
     {
+        None,
         Clean,
         Normal, 
         Dirty,

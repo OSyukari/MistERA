@@ -192,7 +192,15 @@ public class scr_Menu_Intro : scr_Menu
                     button.Initialize(this, new ButtonValidator_AlwaysTrue(this));
                     break;
                 case 3:
-                    button.Initialize(this, new ButtonValidator_AlwaysTrue(this));
+                    if (scr_System_CentralControl.current.isSafeMode)
+                    {
+                        button.linkText = "wip_disabled";
+                        button.Initialize(this, new ButtonValidator_AlwaysFalse(this));
+                    }
+                    else
+                    {
+                        button.Initialize(this, new ButtonValidator_AlwaysTrue(this));
+                    }
                     break;
                 case 5:
                     button.Initialize(this, new ButtonValidator_HoverMessage(this, button));break;

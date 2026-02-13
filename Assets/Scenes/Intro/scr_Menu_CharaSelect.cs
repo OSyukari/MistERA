@@ -84,7 +84,15 @@ public class scr_Menu_CharaSelect : scr_Menu
                     button.Initialize(this, button_alwaysValid);
                     break;
                 case 100:   // new char button
-                    button.Initialize(this, button_alwaysValid);
+                    if (scr_System_CentralControl.current.isSafeMode)
+                    {
+                        button.linkText = "wip_disabled";
+                        button.Initialize(this, new ButtonValidator_AlwaysFalse(this));
+                    }
+                    else
+                    {
+                        button.Initialize(this, button_alwaysValid);
+                    }
                     break;
                 default:
                     break;
@@ -135,13 +143,13 @@ public class scr_Menu_CharaSelect : scr_Menu
 
 
         fab.edit.optionID = AssertUniqueHash(fab.edit.GetHashCode());
-        fab.edit.Initialize(this, new ButtonValidator_editPreset(this, file));
+        fab.edit.Initialize(this, new ButtonValidator_editPreset(this, file, fab.edit));
         fab.edit.SetText(LocalizeDictionary.QueryThenParse("ui_intro_charaSelect_edit"));
         buttonsByID.Add(fab.edit.optionID, fab.edit);
         validatorsByID.Add(fab.edit.optionID, fab.edit.Validator);
 
         fab.delete.optionID = AssertUniqueHash(fab.delete.GetHashCode());
-        fab.delete.Initialize(this, new ButtonValidator_deletePreset(this, file));
+        fab.delete.Initialize(this, new ButtonValidator_deletePreset(this, file, fab.delete));
         fab.delete.SetText(LocalizeDictionary.QueryThenParse("ui_intro_charaSelect_delete"));
         buttonsByID.Add(fab.delete.optionID, fab.delete);
         validatorsByID.Add(fab.delete.optionID, fab.delete.Validator);
@@ -256,14 +264,20 @@ public class scr_Menu_CharaSelect : scr_Menu
         //public override bool Clickable { get { return true; } }
         new scr_Menu_CharaSelect parent;
         Character_SerializableBase filename;
-        public ButtonValidator_editPreset(scr_Menu parent, Character_SerializableBase filename) : base(parent)
+
+        bool turnoff = false;
+
+        public ButtonValidator_editPreset(scr_Menu parent, Character_SerializableBase filename, scr_SelectableText btn) : base(parent)
         {
             this.parent = parent as scr_Menu_CharaSelect;
             this.filename = filename;
+            this.turnoff = scr_System_CentralControl.current.isSafeMode;
+            if (turnoff) btn.linkText = "wip_disabled";
         }
 
         public override bool IsButtonValid()
         {
+            if (turnoff) return false;
             var c = scr_System_Serializer.current.MasterList.Character_Bases.GetChara(filename.baseID);
             return c != null;
         }
@@ -283,14 +297,19 @@ public class scr_Menu_CharaSelect : scr_Menu
         // public override bool Clickable { get { return true; } }
         Character_SerializableBase filename;
         new scr_Menu_CharaSelect parent;
-        public ButtonValidator_deletePreset(scr_Menu parent, Character_SerializableBase filename) : base(parent)
+
+        bool turnoff = false;
+        public ButtonValidator_deletePreset(scr_Menu parent, Character_SerializableBase filename, scr_SelectableText btn) : base(parent)
         {
             this.parent = parent as scr_Menu_CharaSelect;
             this.filename = filename;
+            this.turnoff = scr_System_CentralControl.current.isSafeMode;
+            if (turnoff) btn.linkText = "wip_disabled";
         }
 
         public override bool IsButtonValid()
         {
+            if (turnoff) return false;
             if (!File.Exists($"{scr_System_Serializer.PresetPath}/{filename.baseID}")) return false;
             if (filename.baseID == "Default Chara.json") return false;
             return true;

@@ -418,7 +418,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         chara_HomeFaction.SetText(currentChara.FactionManager.Faction_Home == null ? " - " : currentChara.FactionManager.Faction_Home.FactionDisplayName);
         chara_TempHomeFaction.SetText(currentChara.FactionManager.Faction_Home_Temporary == null ? " - " : currentChara.FactionManager.Faction_Home_Temporary.FactionDisplayName);
 
-
+        scr_System_CampaignManager.current.CurrentTargetEX = c;
 
         // int currentHour = scr_System_Time.current.getCurrentTime().Hour;
 

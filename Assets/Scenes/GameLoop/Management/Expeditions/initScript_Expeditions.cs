@@ -118,8 +118,11 @@ public class initScript_Expeditions : MonoBehaviour
         Utility.DestroyAllChildrenFrom(List_AllExpeditions);
         foreach(var exp in m.GetAllValidExpeditions())
         {
+            //Debug.Log($"initializing exp btn for {(exp == null ? "null" : exp.Base.ExpeditionID)}");
             var script = Instantiate(prefab_partyButton);
             script.SelfRect.SetParent(this.List_AllExpeditions, false);
+            if (script.partyMembers == null) Debug.LogError($"members text null");
+            if (exp.FeatureKeywords == null) Debug.LogError($"FeatureKeywords null");
             script.partyMembers.SetText(String.Join(" ", exp.FeatureKeywords));
             canvas.MakeButton_Expedition(exp, script.PartyButton, script);
             temporaryExpIDs.Add(script.PartyButton.optionID);

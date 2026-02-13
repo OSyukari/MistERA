@@ -306,6 +306,7 @@
                 "displayName":"relationship_couple_displayName",
                 "hasGenderVariant":true,
                 "trustCapIncrease":125,
+                "hide_when_safe":true,
                 "RelationshipMod":[15,0,10,0,0],
                 "Requirements":
                 {
@@ -345,6 +346,7 @@
                 "hasGenderVariant":true,
                 "RelationshipMod":[25,0,25,0,0],
                 "trustCapIncrease":500,
+                "hide_when_safe":true,
                 "Requirements":
                 {
                     "requireRawScore":[
@@ -360,7 +362,7 @@
                     ],
                     "requireMood":{"operand":"gte","value":2}
                 },
-                "MainEmotionKey":"Badwill", "tags":["Badwill"],
+                "MainEmotionKey":"Badwill", "tags":["Badwill","unsafe"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[
@@ -489,6 +491,12 @@
                 "com_rel_tooltip_nopermission_high":"未允许性行为",
                 "com_rel_tooltip_pressure":"被施压",
                 "com_rel_tooltip_obedience":"接受度",
+                "com_rel_tooltip_pride_medium":"<link=com_rel_tooltip_pride_medium_tooltip>自尊低下</link>",
+                "com_rel_tooltip_pride_medium_tooltip":"指令难度等级*0.75",
+                "com_rel_tooltip_pride_low":"<link=com_rel_tooltip_pride_low_tooltip>自尊极低</link>",
+                "com_rel_tooltip_pride_low_tooltip":"指令难度等级*0.5",
+                "com_rel_tooltip_pride_none":"<link=com_rel_tooltip_pride_none_tooltip>无自尊</link>",
+                "com_rel_tooltip_pride_none_tooltip":"指令难度等级*0.25",
 
 
                 "relationship_stranger_displayName":"陌生人",
@@ -547,7 +555,13 @@
             },
             "en-us":
             {
-                
+                "com_rel_tooltip_pride_low": "<link=com_rel_tooltip_pride_low_tooltip>Pride: Very Low</link>",
+      "com_rel_tooltip_pride_low_tooltip": "Command Difficulty Level * 0.5",
+      "com_rel_tooltip_pride_medium": "<link=com_rel_tooltip_pride_medium_tooltip>Pride: Low</link>",
+      "com_rel_tooltip_pride_medium_tooltip": "Command Difficulty Level * 0.75",
+      "com_rel_tooltip_pride_none": "<link=com_rel_tooltip_pride_none_tooltip>Pride: None</link>",
+      "com_rel_tooltip_pride_none_tooltip": "Command Difficulty Level * 0.25",
+      
                 "rel_tooltip_inequal_baseString":"$name$ $isequal$\nParty A: $tooltip_a$\nParty B: $tooltip_b$",
                 "rel_tooltip_baseString":"$name$ $isequal$ $allownatural$ $reqvalidation$\nRelationship Bonus: $bonus$\nRequest Requirement: $req$\nMaintenance Condition: $maintenance$",
                 "rel_tooltip_biological":"Biological Relationship",

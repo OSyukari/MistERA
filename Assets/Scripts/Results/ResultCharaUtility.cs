@@ -88,5 +88,9 @@ public static class ResultCharaUtility
 
         if (tooltips != null) tooltips.Add($"{c.CallName} {r.Print}");
 
+        if (r.behaviorCooldown > 0 && r.behaviorCooldownID != "")
+        {
+            c.Relationships.BehaviorCooldown(r.behaviorCooldownID, (int)Utility.RandVariation(r.behaviorCooldown, r.behaviorCooldownVariation));
+        }
     }
 }

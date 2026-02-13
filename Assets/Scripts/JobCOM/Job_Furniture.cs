@@ -42,7 +42,7 @@ public class Job_Furniture : Job
     }
 
     //public List<COM> validNonJobCOMs. This is a cache value holder, dont need to serialize
-    protected List<COM> _validCOMs_room_cache = null;
+    //protected List<COM> _validCOMs_room_cache = null;
     protected List<COM> validCOMs = null;
     bool _validCOMs_cached = false;
     [JsonIgnore] public List<COM> ValidCOMs { 
@@ -50,20 +50,13 @@ public class Job_Furniture : Job
             if (!_validCOMs_cached)
             {
                 _validCOMs_cached = true;
-                if (_validCOMs_room_cache == null)
-                {
-                    _validCOMs_room_cache = new List<COM>(allusableCOMs.Count);
-                    foreach (var com in allusableCOMs)
-                    {
-                        if (com.ValidateRoom(ParentRoom, out var s)) _validCOMs_room_cache.Add(com);
-                    }
-                }
+
                 if (validCOMs == null) validCOMs = new List<COM>(allusableCOMs.Count);
                 else validCOMs.Clear();
 
-                foreach(var com in _validCOMs_room_cache)
+                foreach(var com in allusableCOMs)
                 {
-                    if (com.ValidateJob(this, out var msg) && CanCOMAcceptMoreActor(com)) validCOMs.Add(com);
+                    if (com.ValidateRoom(ParentRoom, out var s) && com.ValidateJob(this, out var msg) && CanCOMAcceptMoreActor(com)) validCOMs.Add(com);
                 }
             }
             return validCOMs; } 
@@ -210,7 +203,11 @@ public class Job_Furniture : Job
         foreach (var i in possibleCOMs) comnames.Add(i.DisplayName());
         if (debug != null) debug.Add($"possibleCOMs containRef[{actorRefID.Contains(c.RefID)}] allowInvalid[{allowInvalid}]\nCOMs:{String.Join("|", comnames)}");
 
-        if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} looking for {actorRefIDStorage[c.RefID].comID} at step 1");
+        if (possibleCOMs.Count < 1)
+        {
+            Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} looking for {actorRefIDStorage[c.RefID].comID} at step 1");
+            return new List<ActionPackage>();
+        }   
         
         if (!allowInvalid) 
         {

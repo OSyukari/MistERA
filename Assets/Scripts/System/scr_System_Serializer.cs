@@ -115,6 +115,7 @@ public class scr_System_Serializer : MonoBehaviour
 
         DirectoryInfo d = new DirectoryInfo(path);
         int appDataLen = d.Parent.Parent.FullName.Length + 1;
+        var safe = "safeOnly";
 
         foreach (var file in d.GetFiles("*.*", SearchOption.AllDirectories))
         {   // all files must be index_com files
@@ -131,6 +132,14 @@ public class scr_System_Serializer : MonoBehaviour
                         skippedFiles.Add($"Skipping file {file.Name} due to safeMode toggle");
                         break;
                     }
+                }
+            }
+            else
+            {
+                if (file.Name.Contains(safe, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(safe, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    skippedFiles.Add($"Skipping file {file.Name} due to not in safeMode");
+                    continue;
                 }
             }
             if (skipped) continue;
@@ -206,7 +215,9 @@ public class scr_System_Serializer : MonoBehaviour
                 Masterlist_Items.Instance.Index = SafeList.Items;
                 LocalizeDictionary.Instance.Index = SafeList.Dictionary;
 
-                SafeList.RemoveNSFW();
+                Expeditions.Instance.ResetMasterlist();
+
+                MasterList.RemoveNSFW();
             }
 
             // update untranslated list
@@ -460,7 +471,8 @@ public class scr_System_Serializer : MonoBehaviour
         MasterList = new MasterList();
         MasterList.InitializeLists(true);
         if (!Directory.Exists(path)) { Debug.LogError($"Error in LoadDefs, path [{path}] do not exist"); return; }
-        
+
+        var safe = "safeOnly";
         DirectoryInfo d = new DirectoryInfo(path);
         foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
         {   // all files must be index_com files
@@ -475,6 +487,14 @@ public class scr_System_Serializer : MonoBehaviour
                         skippedFiles.Add($"Skipping file {file.Name} due to safeMode toggle");
                         break;
                     }
+                }
+            }
+            else
+            {
+                if (file.Name.Contains(safe, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(safe, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    skippedFiles.Add($"Skipping file {file.Name} due to not in safeMode");
+                    continue;
                 }
             }
             if (skipped) continue;

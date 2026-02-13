@@ -153,6 +153,8 @@ public class scr_System_CentralControl : MonoBehaviour
         this._display = obj.DisplaySettings;
     }
 
+    public Job CurrentInspectJob = null;
+
     protected scr_System_CentralControl_Serializable GetSerializable()
     {
         var obj = new scr_System_CentralControl_Serializable();
@@ -420,7 +422,10 @@ public class scr_System_CentralControl : MonoBehaviour
     public List<string> allusedConsoleCommands = new List<string>();
     public InteractionGenderType GetGenderSimple(Character_Trainable c)
     {
-        if (scr_System_CentralControl.current.isSafeMode) return InteractionGenderType.none;
+        if (scr_System_CentralControl.current.isSafeMode)
+        {
+            return c.Appearance == Humanoid_GenderAppearance.Male ? InteractionGenderType.male : c.Appearance == Humanoid_GenderAppearance.Female ? InteractionGenderType.female : InteractionGenderType.none;
+        }
 
         List<InteractionGenderType> complexResult = GetGender(c);
         if (complexResult.Contains(InteractionGenderType.male)) return InteractionGenderType.male;
@@ -430,7 +435,14 @@ public class scr_System_CentralControl : MonoBehaviour
 
     public List<InteractionGenderType> GetGender(Character_Trainable c)
     {
-        if (scr_System_CentralControl.current.isSafeMode) return new List<InteractionGenderType>();
+        if (scr_System_CentralControl.current.isSafeMode)
+        {
+            var res = new List<InteractionGenderType>();
+            if (c.Appearance == Humanoid_GenderAppearance.Male) res.Add(InteractionGenderType.male);
+            else if (c.Appearance == Humanoid_GenderAppearance.Female) res.Add(InteractionGenderType.female);
+
+            return res;
+        }
 
         var result = new List<InteractionGenderType>();
 

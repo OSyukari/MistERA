@@ -88,7 +88,7 @@ public class FactionInventory : Inventory
     /// <param name="count"></param>
     /// <param name="list"></param>
     /// <returns></returns>
-    public bool RemoveItemByTag(string tag, int count, ref List<Item_Instance> list, ref List<string> message)
+    public override bool RemoveItemByTag(string tag, int count, ref List<Item_Instance> list, ref List<string> message)
     {
         var tempList = new Dictionary<string, int>();
 
@@ -118,35 +118,7 @@ public class FactionInventory : Inventory
 
         return count == 0;
     }
-    public void UpdateTimeMinute(TimeSpan t)
-    {
-        //Debug.LogError("INVENTORY UpdateTimeMinute " + t.Minutes);
-
-        if (Contents.Count < 1) return;
-        for (int j = Contents.Count - 1; j >= 0; j--)
-        {
-            if (Contents[j] == null)
-            {
-                Debug.LogError("Inventory Tick null content skipping");
-                continue;
-            }
-            Contents[j].Tick(t);
-
-            if (Contents[j].markForDelete)
-            {
-                Item_Instance item = Contents[j];
-
-                Contents.RemoveAt(j);
-                contentRefs.Remove(item.RefID);
-                foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= item.Count;
-                scr_System_CampaignManager.current.Unregister(item);
-
-            }
-        }
-
-    }
-
-    public List<Item_Instance> RemoveItem(string baseID, int count)
+    public override List<Item_Instance> RemoveItem(string baseID, int count)
     {
         var lists = Contents.FindAll(x => x.BaseID == baseID);
         var results = new List<Item_Instance>();
@@ -179,6 +151,34 @@ public class FactionInventory : Inventory
 
         return results;
     }
+    public void UpdateTimeMinute(TimeSpan t)
+    {
+        //Debug.LogError("INVENTORY UpdateTimeMinute " + t.Minutes);
+
+        if (Contents.Count < 1) return;
+        for (int j = Contents.Count - 1; j >= 0; j--)
+        {
+            if (Contents[j] == null)
+            {
+                Debug.LogError("Inventory Tick null content skipping");
+                continue;
+            }
+            Contents[j].Tick(t);
+
+            if (Contents[j].markForDelete)
+            {
+                Item_Instance item = Contents[j];
+
+                Contents.RemoveAt(j);
+                contentRefs.Remove(item.RefID);
+                foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= item.Count;
+                scr_System_CampaignManager.current.Unregister(item);
+
+            }
+        }
+
+    }
+
 
     public List<string> tracksTag = new List<string>();
     private Dictionary<string, int> tracker_cache = null;
@@ -214,25 +214,6 @@ public class FactionInventory : Inventory
         return added;
     }
 
-    public string PrintContent(bool verticalBreak = false, bool printFullContent = false)
-    {
-        if (!printFullContent)
-        {
-            List<string> list = new List<string>();
-            //foreach(var kvp in tracker) list.Add(kvp.Key+":"+kvp.Value);
-            foreach (KeyValuePair<string, int> kvp in tracker) list.Add(kvp.Key + ":" + kvp.Value);// tokentracker[stringkey] + "+" + );
-            string s = "Total Item Count [" + Contents.Count + "], TagsTracker " + String.Join(verticalBreak ? "\n" : "|", list);
-            return s;
-        }
-        else
-        {
-            List<string> list = new List<string>();
-            //foreach(var kvp in tracker) list.Add(kvp.Key+":"+kvp.Value);
-            foreach (var item in Contents) list.Add(item.Print());// tokentracker[stringkey] + "+" + );
-            return String.Join(verticalBreak ? "\n" : "|", list);
-        }
-
-    }
     public override void Remove(Item_Instance item)
     {
         base.Remove(item);
@@ -378,8 +359,8 @@ public class Inventory
         if(!added)
         {
             added = true;
-            this.Contents.Add(i);
             this.contentRefs.Add(i.RefID);
+            this.contents_cache = null;
         }
 
         return added;
@@ -388,6 +369,7 @@ public class Inventory
 
     public void AddItem(List<Item_Instance> list)
     {
+        if (list == null || list.Count < 1) return;
         foreach (var ii in list) AddItem(ii);
     }
 
@@ -435,7 +417,7 @@ public class Inventory
     public bool HasRequiredItems(ItemEntry entry, int count)
     {
         if (entry.itemID == "" || count == 0) return true;
-        if (GetItemCount(entry.itemID) < entry.itemCount * count) return false;
+        if (GetItemCount(entry.itemID) < (entry.itemCount * count)) return false;
         return true;
     }
 
@@ -487,5 +469,88 @@ public class Inventory
     }
 
 
+    /// <summary>
+    /// This will skip token items
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <param name="count"></param>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public virtual bool RemoveItemByTag(string tag, int count, ref List<Item_Instance> list, ref List<string> message)
+    {
+        var tempList = new Dictionary<string, int>();
+
+        foreach (var item in this.Contents)
+        {
+           // if (item.isToken) continue;
+            if (!item.Tags.Contains(tag)) continue;
+            if (item.Count < 1) continue;
+            if (!tempList.ContainsKey(item.BaseID)) tempList.Add(item.BaseID, 0);
+            tempList[item.BaseID] += item.Count;
+        }
+        foreach (var kvp in tempList)
+        {
+            if (count < 1) break;
+            var removeCount = Math.Min(kvp.Value, count);
+            var temp = RemoveItem(kvp.Key, removeCount);
+
+            if (temp.Count > 0)
+            {
+                list.AddRange(temp);
+                var names = new List<string>();
+                foreach (var item in temp) names.Add(item.Print());
+                message.Add($"removed item {String.Join(",", names)}");
+                count -= removeCount;
+            }
+        }
+
+        return count == 0;
+    }
+    public virtual List<Item_Instance> RemoveItem(string baseID, int count)
+    {
+        var lists = Contents.FindAll(x => x.BaseID == baseID);
+        var results = new List<Item_Instance>();
+
+        for (int i = lists.Count - 1; i >= 0; i--)
+        {
+            var item = lists[i];
+            if (count < 1 || item == null) break;
+            if (item.Count <= count)
+            {
+                count -= item.Count;
+                //foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= item.Count;
+                results.Add(item);
+                Contents.Remove(item);
+            }
+            else
+            {
+                var vv = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, count);
+               // foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= count;
+                item.ModCount(-count);
+                results.Add(vv);
+            }
+        }
+
+        return results;
+    }
+    public string PrintContent(string breakSymbol = " ", bool printFullContent = false)
+    {
+        /*
+        if (!printFullContent)
+        {
+            List<string> list = new List<string>();
+            //foreach(var kvp in tracker) list.Add(kvp.Key+":"+kvp.Value);
+            foreach (KeyValuePair<string, int> kvp in tracker) list.Add(kvp.Key + ":" + kvp.Value);// tokentracker[stringkey] + "+" + );
+            string s = "Total Item Count [" + Contents.Count + "], TagsTracker " + String.Join(verticalBreak ? "\n" : "|", list);
+            return s;
+        }
+        else
+        {*/
+        List<string> list = new List<string>();
+            //foreach(var kvp in tracker) list.Add(kvp.Key+":"+kvp.Value);
+            foreach (var item in Contents) list.Add(item.Print());// tokentracker[stringkey] + "+" + );
+            return String.Join(breakSymbol, list);
+        //}
+    }
 }
 

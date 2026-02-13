@@ -36,6 +36,14 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
         teamB = new TeamComposition();
         teamB.frontline = new List<int>();
 
+        for(int i = combatSimTargets.Count - 1; i >= 0; i--)
+        {
+
+            var team = scr_System_Serializer.current.MasterList.Encounters.GetByID(combatSimTargets[i]);
+            if (team == null) combatSimTargets.RemoveAt(i);
+
+        }
+
         SetCombatSimTargets(0);
         
         Utility.DestroyAllChildrenFrom( playerTeamList);
@@ -258,6 +266,8 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
         CurrentDummy = i;
 
         var nextTarget = this.combatSimTargets[CurrentDummy];
+
+
         SetCombatSimTargets(nextTarget);
 
     }

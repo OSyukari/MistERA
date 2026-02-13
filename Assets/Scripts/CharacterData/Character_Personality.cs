@@ -1,11 +1,14 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Unity.Collections;
 using UnityEngine;
+using static scr_panel_COMmanager;
 
-public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize, I_RemoveElemByTag
+[System.Serializable]
+public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize, I_RemoveElemByTag, I_RemoveNSFW
 {
     public List<Character_Personality> list = new List<Character_Personality>();
     public List<Character_Personality_LooseEntry> looselist = new List<Character_Personality_LooseEntry>();
@@ -57,6 +60,14 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
     {
         foreach (var i in list) i.RemoveEntriesIDContaining(tag);
     }
+
+    public void RemoveNSFW()
+    {
+        foreach(var i in list)
+        {
+            i.RemoveNSFWEntry();
+        }
+    }
 }
 
 
@@ -82,6 +93,30 @@ public class Character_Personality_LooseEntry
     public ResponseEntry Entry = null;
 }
 
+[System.Serializable]
+public class PrideMod
+{
+    public class ModSingle
+    {
+        public List<string> selfTags = new List<string>();
+        public List<string> comTags = new List<string>();
+    }
+
+    public List<ModSingle> mods = new List<ModSingle>();
+    public bool Match(List<string> self, List<string> com)
+    {
+        foreach(var mod in mods)
+        {
+            if (Utility.ListContainsStrict(self, mod.selfTags) && Utility.ListContainsStrict(com, mod.comTags))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+[System.Serializable]
 public class Character_Personality
 {
     // ID
@@ -99,7 +134,32 @@ public class Character_Personality
         if (fallbackRef == null && fallbackID != "" && fallbackID != this.id) fallbackRef = scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(fallbackID);
         return fallbackRef; } }
 
-    
+    [JsonProperty] string behaviorID = "";
+
+    FindJobNodeRoot _behavior = null;
+    [JsonIgnore]
+    public FindJobNodeRoot Behavior { get
+        {
+            if (_behavior == null)
+            {
+                if (behaviorID != "") _behavior = scr_System_Serializer.current.MasterList.FindJobNodeRoots.GetByID(behaviorID);
+                else if (Fallback != null) _behavior = Fallback.Behavior;
+            }
+            return _behavior;
+        } }
+
+    public double maxPrideValue = 100;
+
+    public Dictionary<PrideLevel, PrideMod> pride_increase = new Dictionary<PrideLevel, PrideMod>();
+    public Dictionary<PrideLevel, PrideMod> pride_decrease = new Dictionary<PrideLevel, PrideMod>();
+    /*
+    public PrideMod pride_high_inc = null;
+    public PrideMod pride_high_dec = null;
+    public PrideMod pride_low_inc = null;
+    public PrideMod pride_low_dec = null;
+    public PrideMod pride_none_inc = null;
+    public PrideMod pride_none_dec = null;
+    */
     // Responses
     [JsonProperty] private List<ResponseEntry> entries_list;
     Dictionary<string, ResponseEntry> entries = new Dictionary<string, ResponseEntry>();
@@ -114,6 +174,19 @@ public class Character_Personality
     public Character_Personality()
     {
         
+    }
+
+    public void RemoveNSFWEntry()
+    {
+        for (int j = this.entries_list.Count - 1; j >= 0; j--)
+        {
+            var i = this.entries_list[j];
+            if (i.tags.Count > 0 && Utility.ListContainsLoose(scr_System_Serializer.current.nsfwKeywords, i.tags))
+            {
+                this.entries_list.RemoveAt(j);
+            }
+        }
+        this.pride_decrease.Clear();
     }
 
 
@@ -404,7 +477,7 @@ public class Character_Personality
 
 }
 
-
+[System.Serializable]
 public class ResponseEntry
 {
     /// <summary>

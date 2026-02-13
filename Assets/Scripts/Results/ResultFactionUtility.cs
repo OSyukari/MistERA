@@ -77,12 +77,8 @@ public static class ResultFactionUtility
 
             if (r.transferItem.collectFromRoom && room != null)
             {
-                for (int i = 0; i < r.transferItem.maxCount; i++)
-                {
-                    Item_Instance item = r.transferItem.matchByID != "" ? room.RemoveItemByTag(r.transferItem.matchByID) : room.RemoveItemByTag(r.transferItem.matchByTag);
-                    if (item == null) break;
-                    target.AddItem(item);
-                }
+                var item = r.transferItem.matchByID != "" ? room.RemoveItemByTag(r.transferItem.matchByID, r.transferItem.maxCount) : room.RemoveItemByTag(r.transferItem.matchByTag, r.transferItem.maxCount);
+                target.AddItem(item);
             }
             else if (!r.transferItem.collectFromRoom) 
             {

@@ -62,9 +62,13 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
 
     public void RemoveNSFW()
     {
-        foreach (var i in this.BodyPart_Base) i.equipLayers.RemoveAll (x => x == BodyEquipLayer.Skin);
-        foreach (var i in this.BodyInternal_Base) i.equipLayers.RemoveAll(x => x == BodyEquipLayer.Skin);
 
+        foreach (var i in this.BodyPart_Base) 
+        {
+            i.equipLayers.RemoveAll(x => x == BodyEquipLayer.Skin);
+            i.internalID.Clear();
+        }
+        this.BodyInternal_Base.Clear();
     }
 }
 

@@ -28,7 +28,7 @@ public class scr_System_CampaignManager_Serializable
 }
 
 
-
+[Serializable]
 
 public class scr_System_CampaignManager : MonoBehaviour
 {
@@ -144,6 +144,19 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when a entry is purged
+    /// </summary>
+    public void NotifyExpeditionEntryPurge(string id)
+    {
+        if (_uniqueExpeditionInstances != null && _uniqueExpeditionInstances.TryGetValue(id, out var value))
+        {
+            Debug.Log($"Removing unique expInstance {id}");
+            _uniqueExpeditionInstances.Remove(id);
+        }
+
+    }
+
     public ExpeditionInstance FindExpeditionByID(int id)
     {
         if (_uniqueExpeditionInstances == null) RebuildExpeditionsList();
@@ -161,7 +174,11 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (_uniqueExpeditionInstances.TryGetValue(id, out var expinst)) return expinst;
         // create new
         var baseExp = Expeditions.ExpeditionEntry.GetByID(id);
-        if (baseExp == null) return null;
+        if (baseExp == null)
+        {
+            Debug.LogError($"CreateExpedition: cannot find ExpeditionEntry by ID {id}");
+            return null;
+        }
         var newstuff = Register(new ExpeditionInstance(baseExp));
 
         //Index_ExpeditionInstances.Add(newstuff.RefID, newstuff); -> already registered
@@ -544,7 +561,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         LogManager.ClearLogChara(isAnimating);
     }
 
-    Dictionary<int, Job> Index_JobReferenceID = new Dictionary<int, Job>();
+    [SerializeField] Dictionary<int, Job> Index_JobReferenceID = new Dictionary<int, Job>();
 
     public int GlobalTimeScale { get { return 4; } }
 
@@ -1260,7 +1277,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             else return this.FindInstanceByID(0);
         } }
 
-    Character_Trainable _currentTargetEX = null;
+    [SerializeField] Character_Trainable _currentTargetEX = null;
     public Character_Trainable CurrentTargetEX { 
         get { return _currentTargetEX; }
         set
@@ -1909,35 +1926,23 @@ public class scr_System_CampaignManager : MonoBehaviour
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
             //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
             if (i == null) continue;
-            if (i.GetComp_Equippable() == null)
+            c.Inventory.AddItem(i);
+            if (i.GetComp_Equippable() != null && c.EquipItem(i.RefID, false))
             {   // add to inv
-                c.Inventory.AddItem(i);
+                c.Inventory.Remove(i);
             }
-            else
-            {   // is equippable
-                if (!c.EquipItem(i.RefID, false))
-                {//
-                    Debug.LogError($"error equipping {i.DisplayName} on {c.FirstName}");
-                }
-            }
-
         }
         foreach (presetInventory p in c.Template.overrideInventory)
         {
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
             //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
             if (i == null) continue;
-            if (i.GetComp_Equippable() == null)
+            c.Inventory.AddItem(i);
+            if (i.GetComp_Equippable() != null && c.EquipItem(i.RefID, false))
             {   // add to inv
-                c.Inventory.AddItem(i);
+                c.Inventory.Remove(i);
             }
-            else
-            {   // is equippable
-                if (!c.EquipItem(i.RefID, false))
-                {//
-                    Debug.LogError($"error equipping {i.DisplayName} on {c.FirstName}");
-                }
-            }
+            
 
         }
         return c;

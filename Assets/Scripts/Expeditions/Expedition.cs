@@ -4,7 +4,8 @@ using System;
 using Newtonsoft.Json;
 using System.Linq;
 
-public class Index_Expeditions : I_IndexHasID, I_IndexMergeable
+[Serializable]
+public class Index_Expeditions : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW
 {
     public List<Expedition> list = new List<Expedition>();
 
@@ -23,11 +24,14 @@ public class Index_Expeditions : I_IndexHasID, I_IndexMergeable
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Expedition GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+    public Expedition GetByID(string id) {
+        if (ID_Dictionary.TryGetValue(id, out var value)) return value;
+        foreach (var i in list) if (i.ExpeditionID == id && ID_Dictionary.TryAdd(i.ExpeditionID, i)) return i;
+        return null; }
     Dictionary<string, Expedition> ID_Dictionary = new Dictionary<string, Expedition>();
     public void RegisterAllID(List<string> s)
     {
-        s.Add("Index_CombatActions : registering ID with list length [" + list.Count + "]");
+        s.Add("Index_Expeditions : registering ID with list length [" + list.Count + "]");
 
         foreach (Expedition o in this.list)
         {
@@ -36,9 +40,30 @@ public class Index_Expeditions : I_IndexHasID, I_IndexMergeable
             o.Initialize();
         }
     }
+
+    public void RemoveNSFW()
+    {
+        var nsfwlist = scr_System_Serializer.current.nsfwKeywords;
+        if (nsfwlist.Count < 1)
+        {
+            Debug.LogError("RemoveNSFW error no keywords");
+            return;
+        }
+        for(int i = list.Count - 1; i >= 0; i--)
+        {
+            if (Utility.ListContainsLoose(list[i].FeatureKeywords, nsfwlist))
+            {
+                Debug.Log($"purging nsfw entry {list[i].ExpeditionID}");
+                scr_System_CampaignManager.current.NotifyExpeditionEntryPurge(list[i].ExpeditionID);
+                ID_Dictionary.Remove(list[i].ExpeditionID);
+                list.RemoveAt(i);
+
+            }
+        }
+    }
 }
 
-
+[System.Serializable]
 public class Expedition
 {
 

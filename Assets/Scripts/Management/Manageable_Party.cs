@@ -21,41 +21,6 @@ public enum PartyStatus
     Active
 }
 
-public interface I_IsJobGiver
-{
-    public List<Job_Furniture> GetValidJobs_Meal(Character_Trainable chara, int currentHour, List<string> s = null);
-    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s, bool checkBlacklist = false);
-    [JsonIgnore]
-    public string FactionDisplayName { get; }
-    public List<Job_CharaCOM> GetValidCharaCOMByTag(Character_Trainable chara, string tag, ref string ss, bool restrainedOnly = true);
-    public List<Job_Furniture> GetValidJobsByCOMID(Character_Trainable chara, string comID, List<string> s = null, bool allowJobPostSearch = true, bool allowNonJobPostSearch = true);
-    public List<Job_Furniture> GetValidJobs_Sleep(Character_Trainable chara, int currentHour, List<string> s = null);
-    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false);
-    public void NotifyFurnitureChange(Room_Instance room);
-    public List<int> RoomOwners(int roomRef);
-    [JsonIgnore] public List<Floor_Instance> ManagedFloors { get; }
-    [JsonIgnore] public List<Manageable> ConnectedFactions { get; }
-    [JsonIgnore] public Room_Instance MainExit { get; }
-    [JsonIgnore] public FactionInventory Inventory { get; }
-    [JsonIgnore] public List<Character_Trainable> Managers { get; }
-    [JsonIgnore] public List<Character_Trainable> ManagedChara { get; }
-    [JsonIgnore] public bool isPlayerFaction { get; }
-    [JsonIgnore] public bool isPlayerRelatedFaction { get; }
-
-    public Manageable_GuestStatus GetStatus(Character_Trainable c);
-
-    [JsonIgnore]
-    public bool isMealHour { get ;  }
-    /// <summary>
-    /// Return true if character is manager/member/hidden. <br/>
-    /// Require strict ordering in membershipstatus
-    /// </summary>
-    /// <param name="charaRef"></param>
-    /// <returns></returns>
-    public bool isMember(int charaRef);
-    [JsonIgnore] public Manageable FactionOwnerRoot { get; }
-}
-
 public enum PartyAvailability
 {
     Unavailable,
@@ -171,6 +136,58 @@ public class Manageable_Party : I_IsJobGiver
         }
     }
 
+    public List<Job_Furniture> GetValidJobs_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false, List<int> restrictRoomList = null)
+    {
+        //Debug.Log("Begin getvalidRecreation");
+
+        List<Job_Furniture> possibleJobs;
+        string ss = " (" + ID + ")";
+        if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
+        if (chara.Jail != null && chara.Jail.ownerJob != null)
+        {
+
+        }
+        if (!FactionUtility.TryFindValidNonJobInstances(jobPosts, managedRoomRefs, out possibleJobs, chara, "", tag, checkBlacklist))
+        {
+            ss += $" found no valid [{tag}] instances offered by Furnitures from chara[{chara.FirstName}] currenthour[{currentHour}], checkBlacklist[{checkBlacklist}]";
+            if (s != null) s.Add(ss);
+            return new List<Job_Furniture>();
+        }
+
+        //if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} with {possibleJobs.Count} possible instances");
+
+        if (skipPrivate)
+        {
+            possibleJobs.RemoveAll(x => x.ParentRoom.isRoomPrivate);
+        }
+        if (restrictRoomList != null)
+        {
+            possibleJobs.RemoveAll(x => x.ParentRoom == null || !restrictRoomList.Contains(x.ParentRoom.RefID));
+        }
+
+        if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
+        {
+            ss += $" cannot pass validate check for any of the {tag} job instances";
+            if (s != null) s.Add(ss);
+            return new List<Job_Furniture>();
+        }
+
+        //if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} with {possibleJobs.Count} possible instances post validateall");
+
+        //bool result = FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
+        if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly))
+        {
+            //Debug.Log("GetValidPaths success after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
+            return possibleJobs;
+        }
+        else
+        {
+            if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} no validpaths");
+            //Debug.Log("GetValidPaths failed after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
+            return new List<Job_Furniture>();
+        }
+
+    }
     [JsonProperty] protected int _recurringCooldown = 0;
     [JsonProperty] protected bool _recurringTicked = false;
     public void ExpeditionEnd()
@@ -579,7 +596,7 @@ public class Manageable_Party : I_IsJobGiver
         }
     }
 
-    public List<Job_Furniture> GetValidJobsByCOMID(Character_Trainable chara, string comID, List<string> s = null, bool allowJobPostSearch = true, bool allowNonJobPostSearch = true)
+    public List<Job_Furniture> GetValidJobsByCOMID(Character_Trainable chara, string comID, List<string> s = null, bool allowJobPostSearch = true, bool allowNonJobPostSearch = true, List<int> restrictRoomList = null)
     {
         string ss = " (" + ID + ")";
 
@@ -591,7 +608,7 @@ public class Manageable_Party : I_IsJobGiver
         {
             if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, null, chara, comID, false))
             {
-                ss += " found no valid [" + comID + "] instances offered by Furnitures";
+                ss += " found no valid [" + comID + "] instances offered by Furnitures job";
                 if (s != null) s.Add(ss);
                 return null;
             }
@@ -600,7 +617,7 @@ public class Manageable_Party : I_IsJobGiver
         {
             if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, comID, "", false))
             {
-                ss += " found no valid [" + comID + "] instances offered by Furnitures";
+                ss += " found no valid [" + comID + "] instances offered by Furnitures nonjob";
                 if (s != null) s.Add(ss);
                 return null;
             }
@@ -653,7 +670,7 @@ public class Manageable_Party : I_IsJobGiver
     public Dictionary<int, List<int>> ManagedRooms { get { return this.managedRoomRefs; } }
     [JsonIgnore] public Dictionary<COM, List<Job_Furniture>> NonjobPosts { get { return this.nonjobPosts; } }
 
-    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false)
+    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false, List<int> restrictRoomList = null)
     {
         //Debug.Log("Begin getvalidRecreation");
         List<Job_Furniture> possibleJobs;
@@ -669,6 +686,10 @@ public class Manageable_Party : I_IsJobGiver
         if (skipPrivate)
         {
             possibleJobs.RemoveAll(x => x.ParentRoom.isRoomPrivate);
+        }
+        if (restrictRoomList != null)
+        {
+            possibleJobs.RemoveAll(x => x.ParentRoom == null || !restrictRoomList.Contains(x.ParentRoom.RefID));
         }
 
         if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
@@ -1032,6 +1053,12 @@ public class Manageable_Party : I_IsJobGiver
             foreach (var i in this.charaGuestStatus) if (i.Value == Manageable_GuestStatus.Manager) v.Add(scr_System_CampaignManager.current.FindInstanceByID(i.Key));
             return v;
         }
+    }
+
+    public List<int> GetOwnedRooms(Character_Trainable c)
+    {
+        if (this.isMember(c) || this.isPrisoner(c)) return new List<int>() { Room.RefID };
+        else return null;
     }
 
     [JsonIgnore] public Manageable FactionOwnerRoot

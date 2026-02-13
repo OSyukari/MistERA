@@ -114,14 +114,8 @@
                     }
                 }
             ]
-        },
-        {
-            "id":"item_trash",
-            "displayName":"Trash",
-            "tooltip":"is trash",
-            "Tags":["trash"],
-            "cleanlinessMod":-1
         }
+        
     ]
     },
     "Dictionary":

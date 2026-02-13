@@ -124,13 +124,14 @@ public class scr_panel_COMmanager : scr_Menu
                 if (members.Count > 0) title_interaction.text = LocalizeDictionary.QueryThenParse("comManager_title_interact_target").Replace("$name$", name);
                 else title_interaction.text = LocalizeDictionary.QueryThenParse("comManager_title_interact_self");
                 List<string> aps = new List<string>();
-                foreach (var ap in scr_System_CampaignManager.current.GetRegisteredAPByRoom(scr_System_CampaignManager.current.CurrentRoom.RefID, false))
+                var curr = scr_System_CampaignManager.current.CurrentRoom;
+                foreach (var ap in scr_System_CampaignManager.current.GetRegisteredAPByRoom(curr.RefID, false))
                 {
                     if (ap.job.isPlayerRelatedJob) continue;
                     if (ap.isTemporaryAP) continue;
                     aps.Add(ap.DescriptionText());
                 }
-                title_furnitures.SetText(scr_System_CampaignManager.current.CurrentRoom.DisplayableFurnitureNames_withLink);
+                title_furnitures.SetText(curr.DisplayableFurnitureNames_withLink+$"\nRoom Cleanliness: {curr.RoomCleanliness()}"+(curr.Inventory.Contents.Count>0?$"\n{curr.Inventory.PrintContent()}":""));
                 ongoingCOMs.text = String.Join(", ", aps);
                 break;
             case COMTabs.Sex:

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
-public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, I_RemoveElemByTag, I_NeedLateInitialize
+public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW, I_NeedLateInitialize
 {
     [SerializeField] public List<RelationshipAttitude> list = new List<RelationshipAttitude>(); 
     Dictionary<string, RelationshipAttitude> ID_Dictionary = new Dictionary<string, RelationshipAttitude>();
@@ -57,13 +57,21 @@ public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, 
         });
     }
 
-    public void RemoveElemByTag(string tag)
-    {
-       // foreach (var i in list) i.RemoveEntriesIDContaining(tag);
-    }
 
     public RelationshipAttitude GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
 
+    public void RemoveNSFW()
+    {
+        for(int i = list.Count - 1; i >= 0; i--)
+        {
+            var curr = list[i];
+            if (curr.tags.Count > 0 && Utility.ListContainsLoose(scr_System_Serializer.current.nsfwKeywords, curr.tags))
+            {
+                ID_Dictionary.Remove(curr.ID);
+                list.RemoveAt(i);
+            }
+        }
+    }
 }
 
 

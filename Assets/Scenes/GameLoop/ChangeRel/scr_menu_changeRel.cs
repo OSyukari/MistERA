@@ -73,6 +73,7 @@ public class scr_menu_changeRel : scr_Menu, IPointerClickHandler
 
         foreach(var personal in scr_System_Serializer.current.MasterList.RelationshipTypes.list_personal)
         {
+            if (personal.hide_when_safe && scr_System_CentralControl.current.isSafeMode) continue;
             if (personal.isEqualRelationship)
             {
                 var btn = Instantiate(prefab_relButton);

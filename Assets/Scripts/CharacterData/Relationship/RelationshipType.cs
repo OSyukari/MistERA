@@ -6,6 +6,8 @@ using UnityEngine;
 public class RelationshipType
 {
 
+    public bool hide_when_safe = false;
+
     [JsonProperty]
     protected List<string> canUpgradeInto = new List<string>();
 

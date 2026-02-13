@@ -406,7 +406,7 @@ public class Job_Expedition : Job
                 this.packages_previous.RemoveAt(i);
             }
 
-            if (this.actorRefID.Count < 1)
+            if (properExitRefs.Count > 0 || this.actorRefID.Count < 1)
             {
                 var charaList = this.FactionOwner_Party.Room.RoomChara;
                 var remaining = new List<int>();
@@ -664,10 +664,13 @@ public class Job_Expedition : Job
         }
 
         // check has ongoing package 2
-        List<ActionPackage> tempList = packages_previous.FindAll(x => x.actorRefs.Contains(c.RefID));
-        if (tempList.Exists(x => x.Duration > 0))
+        List<ActionPackage> tempList = packages_previous.FindAll(x => x.actorRefs.Contains(c.RefID) && x.Duration > 0);
+        if (tempList.Count > 0)
         {
-            ss += c.FirstName + " already have ongoing previous package";
+            List<int> durations = new List<int>();
+            foreach (var i in tempList) durations.Add(i.Duration);
+
+            ss += c.FirstName + $" already have ongoing previous package {tempList.Count} [{String.Join("|",durations)}] ";
             return true;
         }
         /* Expedition ignores jobcomplete
@@ -735,8 +738,9 @@ public class Job_Expedition : Job
                 else if (charaRoom.RefID == exitRef)
                 {   // release chara
                     //Debug.LogError($"Error fail to return {c.CallName} from party {FactionOwner_Party.FullFactionDisplayName}");
+                    ss += "actor at exit location, waiting for release ||";
                     properExitRefs.Add(c.RefID);
-                    return false;
+                    return true;
                 }
             }
         }
