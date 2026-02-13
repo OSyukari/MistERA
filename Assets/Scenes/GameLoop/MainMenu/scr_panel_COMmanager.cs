@@ -205,6 +205,7 @@ public class scr_panel_COMmanager : scr_Menu
                 else title_inventory.text = LocalizeDictionary.QueryThenParse("comManager_title_inventory_self");
                 break;
         }
+        RefreshEquips(scr_System_CampaignManager.current.CurrentTargetRef);
     }
 
     public scr_HoverableText self_internal_descriptor, target_internal_descriptor;
@@ -656,7 +657,6 @@ public class scr_panel_COMmanager : scr_Menu
         RefreshTitle();
         COMRepeat_Reset();
         UpdateJobCOM();
-        RefreshEquips(scr_System_CampaignManager.current.CurrentTargetRef);
         ValidateAll();
     }
 
@@ -667,7 +667,6 @@ public class scr_panel_COMmanager : scr_Menu
         RefreshTitle();
         COMRepeat_Reset();
         UpdateJobCOM();
-        RefreshEquips(scr_System_CampaignManager.current.CurrentTargetRef);
         ValidateAll();
     }
 
