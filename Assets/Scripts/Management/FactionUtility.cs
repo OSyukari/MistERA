@@ -29,7 +29,24 @@ public static class FactionUtility
 
     }
 
-
+    public static void SendImprisonEvent(Manageable faction, Character_Trainable c)
+    {
+        //Debug.Log($"{c.CallName} is being captured!");
+        var ev = new EventInstance(c, "OnCharaImprison", "");
+        ev.displayOverride = faction.FactionOwnerRoot.isPlayerFaction || c.DisplayCharaEvent;
+        ev.AppendStrings.Add("factionName", new List<string>() { faction.FactionOwnerRoot.FactionDisplayName });
+        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+    }
+    public static void SendImprisonEvent(Manageable_Party faction, Character_Trainable c)
+    {
+        //Debug.Log($"{c.CallName} is being captured!");
+        var ev = new EventInstance(c, "OnCharaImprison", "");
+        ev.Targets.Add("party", new List<Character_Trainable>( faction.Job.Actors));
+        ev.displayOverride = faction.FactionOwnerRoot.isPlayerFaction || c.DisplayCharaEvent;
+        ev.AppendStrings.Add("partyName", new List<string>() { faction.FactionDisplayName });
+        ev.AppendStrings.Add("factionName", new List<string>() { faction.FactionOwnerRoot.FactionDisplayName });
+        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+    }
 
     public static bool TryFindValidNonJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, Dictionary<int, List<int>> managedRoomRefs, out List<Job_Furniture> list, Character_Trainable c, string comID = "", string comTag = "", bool checkBlacklist = false)
     {

@@ -28,6 +28,7 @@ public class DebugLogSettings
     public bool DLog_Pathing = false;
     public bool DLog_Equipping = false;
     public bool DLog_Events = false;
+    public bool DLog_Production = false;
     public bool DLog_Inventory = false;
     public bool DLog_Memory = false;
     public bool DLog_LogsMenu = false;
@@ -35,7 +36,7 @@ public class DebugLogSettings
     public bool DLog_Relationships = false;
     public bool DLog_APConflict = false;
     public bool DLog_Status = false;
-    public bool DLog_Sex = false;
+    public bool DLog_Training = false;
     public bool DLog_AP = false;
     public bool DLog_UIChange = false;
     public bool DLog_Interrupt = false;

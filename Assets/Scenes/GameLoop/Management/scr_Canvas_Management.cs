@@ -272,7 +272,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         if (initialized_faction_expsList && !forceRefresh) return;
         else initialized_faction_expsList = true;
 
-        Script_Expeditions.Initialize(this, currentFaction);
+        Script_Expeditions.Initialize(this, currentFaction, forceRefresh);
 
     }
     private void Initialize_FactionExpsList()

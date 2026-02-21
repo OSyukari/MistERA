@@ -19,6 +19,8 @@ public class scr_menu_question : scr_Menu
 
     RectTransform self;
 
+    public Message_Question InnerQuestion = null;
+
     scr_panel_logs logs;
     bool _active = true;
     public bool Active 

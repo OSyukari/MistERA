@@ -425,8 +425,12 @@ public class scr_UpdateHandler : MonoBehaviour
         var loopCount = 100;
         while(loopCount > 0 && eventCallbacks.Count > 0)
         {
-            eventCallbacks[0].Invoke();
-            eventCallbacks.RemoveAt(0);
+            var vv = eventCallbacks.Count > 0 ? eventCallbacks[0] : null;
+            if (vv != null)
+            {
+                vv.Invoke();
+                eventCallbacks.Remove(vv);
+            }
             loopCount--;
         }
         if (loopCount < 1) Debug.LogError("Eventcallback stack exceed 100, forced exit");

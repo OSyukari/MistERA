@@ -141,7 +141,7 @@
                                             "true",
                                             "true",
                                             "true",
-                                            ""
+                                            "event_goblin_gangRape_rescuedChara"
                                         ]
                                     },
                                     {
@@ -210,7 +210,8 @@
                 "expedition_cave_goblin_captive_rescue_event_ev01_op01": "先准备一下",
                 "expedition_cave_goblin_captive_rescue_event_ev01_op02": "立刻展开救援",
                 "expedition_cave_goblin_captive_rescue_event_ev02": "$party.name$暂时撤退了\n请确保救援对象没有未结算的事件！",
-                "expedition_cave_goblin_captive_rescue_event_ev03": "$party.name$成功营救了$victims.name$"
+                "expedition_cave_goblin_captive_rescue_event_ev03": "$party.name$成功营救了$victims.name$",
+                "expedition_cave_goblin_captive_rescue_event_ev04": "营救行动失败！"
             },
             "en-us": {
                 "expedition_cave_goblin_captive": "Goblin Lair",

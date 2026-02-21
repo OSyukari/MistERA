@@ -267,7 +267,7 @@ public class Job_Sex_Group : Job
 
         if (appendAfterMsg != "") this.m.messages_after.Add(appendAfterMsg);
 
-        Debug.Log($"sex job end, updating? {scr_UpdateHandler.current.Updating}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"sex job end, updating? {scr_UpdateHandler.current.Updating}");
         if (!scr_UpdateHandler.current.Updating || this.m.displayOverride) this.NotifyDescriptionsOutOfUpdate();
         //else this.NotifyDescriptionsOutOfUpdate
         scr_System_CampaignManager.current.NotifyEndJob(this);
@@ -319,7 +319,7 @@ public class Job_Sex_Group : Job
                     string prev = $"{c.CallName} prev stamina {(c.Stats.Stamina == null ? "-" : c.Stats.Stamina.Value)} energy {(c.Stats.Energy == null ? "-" : c.Stats.Energy.Value)}";
                     if (c.Stats.Stamina != null) c.Stats.Stamina.RestoreMax();
                     if (c.Stats.Energy != null) c.Stats.Energy.RestoreMax();
-                    Debug.Log($"Register Sex Job: {prev}, now maxed stamina {(c.Stats.Stamina == null ? "-" : c.Stats.Stamina.Value)} energy {(c.Stats.Energy == null ? "-" : c.Stats.Energy.Value)}");
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"Register Sex Job: {prev}, now maxed stamina {(c.Stats.Stamina == null ? "-" : c.Stats.Stamina.Value)} energy {(c.Stats.Energy == null ? "-" : c.Stats.Energy.Value)}");
                 }
             }
             //this.actorJoinTime.Add(charaRef, scr_System_Time.current.getCurrentTime());
@@ -330,7 +330,7 @@ public class Job_Sex_Group : Job
 
         if (!this.actorRefID.Contains(0) && this.restrictDuration == -1)
         {
-            Debug.Log("Creating non-player Sex job without setting restrictDuration, defaulting value to 90");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log("Creating non-player Sex job without setting restrictDuration, defaulting value to 90");
             this.restrictDuration = 90;
         }
     }

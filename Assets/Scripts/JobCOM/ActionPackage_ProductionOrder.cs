@@ -113,12 +113,12 @@ public class ActionPackage_ProductionOrder : ActionPackage
     protected override void Execution(MessageCollect m = null)
     {
         //order.AddProgress(targetCOM.TimeScale);
+        bool log = scr_System_CentralControl.current.LogPrefs.DLog_Production;
 
-
-        Debug.Log("ActionPackage_ProductionOrder: JobInRoom[" + job.ParentRoom.DisplayName + "] COM[" + targetCOM.displayName + "] has null order ?" + (order == null));
+        if (log) Debug.Log("ActionPackage_ProductionOrder: JobInRoom[" + job.ParentRoom.DisplayName + "] COM[" + targetCOM.displayName + "] has null order ?" + (order == null));
 
         base.Execution(m);
-        Debug.Log("Production order ticked, requestAccepted " + requestAccepted);
+        if (log) Debug.Log("Production order ticked, requestAccepted " + requestAccepted);
         if (requestAccepted)
         {
             foreach (var ep in packages)

@@ -517,6 +517,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         MessageLog log = null;
         if (question.portraitRefKey == "self")
         {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"AddLog_Question Self {parent.Self.RefID}");
             log = LogManager.AddLog(new Message_Question(parent.Self == null ? null : parent.Self.PortraitManager,question.portraitTagsOverride,  parent, question));
         }
         else if (parent.Targets.TryGetValue(question.portraitRefKey, out var targetrefs))
@@ -538,10 +539,11 @@ public class scr_System_CampaignManager : MonoBehaviour
     public event Action<PortraitManager, List<string>> Observer_LogsCharaChange;
     public void Log_TrySetChara(PortraitManager refID, bool isAnimating)
     {
-
+        bool debug = true || scr_System_CentralControl.current.LogPrefs.DLog_Portraits;
+        if (debug) Debug.Log($"Log_TrySetChara {(refID == null ? "null" : refID.Owner.FirstName )} {isAnimating}");
         if (LogManager.SetLogChara(refID, isAnimating))
         {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log("Log_TrySetChara true " + refID.Owner.CallName);
+            if (debug) Debug.Log("Log_TrySetChara true " + refID.Owner.CallName);
             Observer_LogsCharaChange?.Invoke(refID, new List<string>());
         }
     }

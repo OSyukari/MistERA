@@ -49,7 +49,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "question":"event_CharaLeaveRoom_ev01",
-            "portraitRefKey":"self", "portraitTagsOverride":["worry","sorry"],
+                        "portraitRefKey":"requestFrom", "portraitTagsOverride":["worry","sorry"],
                         "options":[
                             {   "option": "event_CharaLeaveRoom_ev01_op1", "isDefaultCancel":true, 
                                 "Results":  [  { "Type":"JumpToLabel", "arguments":["","select1"] }  ] 
@@ -62,7 +62,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "end2",
-            "portraitRefKey":"self", "portraitTagsOverride":["disappointed"],
+                        "portraitRefKey":"requestFrom", "portraitTagsOverride":["disappointed"],
                         "isLast": true,
                         "line": "event_CharaLeaveRoom_ev02"
                     },
@@ -93,7 +93,7 @@
                                         {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "end3",
-            "portraitRefKey":"self", "portraitTagsOverride":["relaxed"],
+                        "portraitRefKey":"requestFrom", "portraitTagsOverride":["relaxed"],
                         "line": "event_CharaLeaveRoom_ev03"
                     },
                     {

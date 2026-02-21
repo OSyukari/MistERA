@@ -35,9 +35,10 @@
                 "enemy":[{"parameters":["exists"]}]
             },
             "option": "start sex",
-            "Results": [    { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
-                            { "Type":"StartSexJobInParty" , "arguments":["enemy","party","party","120","","","","StartSexJobInParty_noJobResultLogging"]},
-                            { "Type":"JumpToLabel", "arguments":["","br_success"]} ] 
+            "Results": [    { "Type": "ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
+                            { "Type": "StartSexJobInParty" , "arguments":["enemy","party","party","120","","","","StartSexJobInParty_noJobResultLogging"]},
+                            { "Type": "ModSelfKojoVariable", "arguments":["party","false","captive_rapedcount", "1"]},
+                            { "Type": "JumpToLabel", "arguments":["","br_success"]} ] 
         },
         {   
             "option": "silent fail branch",

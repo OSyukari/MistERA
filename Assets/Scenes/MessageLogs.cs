@@ -316,7 +316,7 @@ public class Message_Text : MessageLog
 
 
 
-
+[System.Serializable]
 public class Message_Question : MessageLog
 {
     public override bool DisplaPortrait
@@ -350,6 +350,7 @@ public class Message_Question : MessageLog
     public void Draw(bool skipImage, Canvas mainCanvas, scr_menu_question questionBox , scr_panel_logs logs = null)
     {
         // question log always draw
+        questionBox.InnerQuestion = this;
         base.Draw(false);
         questionBox.InitializeWithArgs(mainCanvas, parentEvent, question, logs);
     }
@@ -413,13 +414,15 @@ public abstract class MessageLog
 
     public bool ForceDraw()
     {
-        if (this.multipleChara.Count > 0)
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"Forcedraw! {(PortraitRef == null ? "null" : PortraitRef.Owner.FirstName)} {multipleChara.Count}");
+        if (PortraitRef != null && PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
+        else if (this.multipleChara.Count > 0)
         {
-            var result =   scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, tagsOverride);
+            var result = scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, tagsOverride);
             if (result == null) return false;
             else return result.Owner.RefID != 0;
         }
-        else if (PortraitRef != null && PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
+
         if (PortraitRef == null) return false;
         else return PortraitRef.Owner.RefID != 0;
     }

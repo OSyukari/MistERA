@@ -61,14 +61,14 @@ public class BodyInternal_Instance
 
         if (targetBodyTag != null && Utility.ListContainsLoose(targetBodyTag, this.Base.virginityLossTags))
         {
-            Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on targetBodytags {String.Join(" ", targetBodyTag)}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on targetBodytags {String.Join(" ", targetBodyTag)}");
             this.firstExperience = lastExperience;
             this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
             return true;
         }
         else if (Utility.ListContainsLoose(comtags, this.Base.virginityLossTags))
         {
-            Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on comtags {String.Join(" ", comtags)}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on comtags {String.Join(" ", comtags)}");
             this.firstExperience = lastExperience;
             this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission ? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
             return true;
@@ -719,7 +719,7 @@ public class BodyInternal_Instance
         {
             if (RemainingCapacity >= comp.amount || comp.amount < 1)
             {
-                Debug.Log($"{Owner.CallName} {this.DisplayName} ingest cum {comp.amount} ml, RemainingCapacity {RemainingCapacity}, full capacity ingest");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"{Owner.CallName} {this.DisplayName} ingest cum {comp.amount} ml, RemainingCapacity {RemainingCapacity}, full capacity ingest");
                 IngestInternal(item, m);
                 return true;
             }

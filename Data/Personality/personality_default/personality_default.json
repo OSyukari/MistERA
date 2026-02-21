@@ -270,6 +270,17 @@
                                 "keepLooking": true
                             },
                             {
+                                "_comment": "blocker for greeting",
+                                "requirement": {
+                                    "selfTags": [
+                                        "privacy"
+                                    ],
+                                    "requireTargetAction": false,
+                                    "requireEPSuccess": false
+                                },
+                                "forbidPortaitDisplay":true
+                            },
+                            {
                                 "requirement": {
                                     "requireKojoVariable": {
                                         "isDailyVariable": true,
@@ -281,30 +292,6 @@
                                 "_comment": "this will never met requirement. disabled for now.",
                                 "responses": [
                                     "kojo_default_event_greeting_03"
-                                ],
-                                "keepLooking": true
-                            },
-                            {
-                                "requirement": {
-                                    "requireKojoVariable": {
-                                        "isDailyVariable": true,
-                                        "variableID": "dailyGreeting",
-                                        "checkExistOnly": true,
-                                        "value": 0
-                                    }
-                                },
-                                "responses": [
-                                    "kojo_default_event_greeting_04"
-                                ],
-                                "results": [
-                                    {
-                                        "modifyKojoVariables": {
-                                            "isDailyVariable": true,
-                                            "variableID": "dailyGreeting",
-                                            "isSetValue": false,
-                                            "value": 1
-                                        }
-                                    }
                                 ],
                                 "keepLooking": true
                             },
@@ -382,6 +369,7 @@
                                     }
                                 ]
                             },
+                            
                             {
                                 "requirement": {
                                     "requireTargetAction": false,

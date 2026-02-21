@@ -55,7 +55,7 @@
 "ui_main_comtab_title_title1": "指令界面",
 "ui_main_comtab_title_title2": "指令过滤",
 
-"event_targetscope_nameCount": "$name$ x$count$",
+"event_targetscope_nameCount": "$elem1$ x$elem2$",
 
 "comManager_tab_act": "行动",
 "comManager_tab_interact": "互动",

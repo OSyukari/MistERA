@@ -346,7 +346,7 @@ public class Character_Relationship
         Target.Relationships.FindRelationshipWith(Owner).NotifyRefused(relation, !isA);
         var v = Owner.Memory.AddEntryMSG(LocalizeDictionary.QueryThenParse("ui_memory_relationship_refuse")
             .Replace("$target$", Target.FirstName)
-            .Replace("$relationship$", relation.GetDisplayName(Owner, !isA)), new List<string>() { "forbidMerge" });
+            .Replace("$relationship$", relation.GetDisplayName(Owner, !isA)), new List<string>() { "forbidMerge", "important" });
         v.disableRoomName = true;
     }
     protected void NotifyRefused(RelationshipType relation, bool isA)
@@ -355,7 +355,7 @@ public class Character_Relationship
         LogKojoMessage(refuseID);
         var v = Owner.Memory.AddEntryMSG(LocalizeDictionary.QueryThenParse("ui_memory_relationship_refused")
             .Replace("$target$",Target.FirstName)
-            .Replace("$relationship$", relation.GetDisplayName(Owner, !isA)), new List<string>() { "forbidMerge" });
+            .Replace("$relationship$", relation.GetDisplayName(Owner, !isA)), new List<string>() { "forbidMerge", "important" });
         v.disableRoomName = true;
     }
 
@@ -467,7 +467,7 @@ public class Character_Relationship
 
         RelationshipCooldown = 6;
 
-        var v = Owner.Memory.AddEntryMSG(memString, new List<string>() { "forbidMerge" });
+        var v = Owner.Memory.AddEntryMSG(memString, new List<string>() { "forbidMerge","important" });
         v.disableRoomName = true;
 
         this._Relationship_Personal = a;
@@ -1108,14 +1108,10 @@ public class Character_Relationship
 
             if (!silent && RelationshipCooldown == 0 && !Owner.Stats.isConsciousnessUnconscious)
             {
-                var eventInstance = new EventInstance(this.Owner, "AttitudeChange", "");
-                eventInstance.Targets.Add("target", new List<Character_Trainable>() { Target });
+               // var eventInstance = new EventInstance(this.Owner, "AttitudeChange", "");
+              //  eventInstance.Targets.Add("target", new List<Character_Trainable>() { Target });
 
-                _callback = new Action(() =>
-                {
-                    CheckMaintainRelationship();
-                });
-                scr_UpdateHandler.current.EventHandler.StartEventAuto(eventInstance);
+                scr_UpdateHandler.current.AddEventCallback(CheckMaintainRelationship);
 
             }
         }

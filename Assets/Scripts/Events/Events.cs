@@ -340,6 +340,24 @@ public class Event : I_SerializationCallbackReceiver
             None,
             JumpToLabel,
             GetKojoEntry,
+
+            /// <summary>
+            /// [self/targetkey, isdaily, stringkey, value]
+            /// </summary>
+            ModSelfKojoVariable,
+            /// <summary>
+            /// [selfkey, targetKey, isdaily, stringkey, value]
+            /// </summary>
+            ModRelfKojoVariable,
+            /// <summary>
+            /// [selfkey, isdaily, stringkey]
+            /// </summary>
+            RemoveSelfKojoVariable,
+            /// <summary>
+            /// [selfkey, targetkey, isdaily, stringkey]
+            /// </summary>
+            RemoveRelKojoVariable,
+
             EventEnd,
             /// <summary>
             /// [self/targetkey, autoQuitJob?, typefilter]
@@ -418,7 +436,14 @@ public class Event : I_SerializationCallbackReceiver
             /// </summary>
             ExecuteAPOnFurniture,
 
-            CheckRelationship
+            CheckRelationship,
+
+            /// <summary>
+            /// [target, basestringID]
+            /// </summary>
+            LogMemoryEntry
+
+            
         }
     }
 

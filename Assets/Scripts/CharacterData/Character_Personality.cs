@@ -1037,7 +1037,10 @@ public class ResponseEntry
                     scr_System_CampaignManager.current.AddLogSingle(message);
                 }
                 if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel);
-                if (this.launchEvent != null && this.launchEvent.isValid) launchEvent.Execute(rel);
+                if (this.launchEvent != null && this.launchEvent.isValid)
+                {
+                    launchEvent.Execute(rel);
+                }
                 if (modifyStatusValue != null && modifyStatusValue.isValid) modifyStatusValue.Execute(rel.Owner, null);
             }
 
@@ -1048,7 +1051,7 @@ public class ResponseEntry
                 public string eventLabel = "";
                 public bool reverseTargets = false;
                 public string targetKeyword = "";
-
+                public bool startImmediate = false;
                 [JsonIgnore] public bool isValid { get { return this.eventID != ""; } }
 
                 public void Execute(Character_Relationship rel)
@@ -1066,7 +1069,11 @@ public class ResponseEntry
                         if (targetKeyword != "") newEvent.Targets.Add(targetKeyword, new List<Character_Trainable>() { rel.Target });
                     }
 
-                    if (newEvent != null) scr_UpdateHandler.current.EventHandler.StartEvent(newEvent, false);
+                    if (newEvent != null)
+                    {
+                        if (startImmediate) scr_UpdateHandler.current.EventHandler.StartEvent(newEvent, false);
+                        else scr_UpdateHandler.current.AddEventCallback(() => scr_UpdateHandler.current.EventHandler.StartEvent(newEvent, false));
+                    }
                 }
             }
 

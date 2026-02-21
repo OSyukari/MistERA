@@ -1,0 +1,70 @@
+
+{
+    "baseID": "Wuwa_Aemeath",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+                "portrait_offset_x": 27.24082,
+                "portrait_offset_y": -244.8654,
+                "portrait_offset_size": 0.25,
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.56,
+
+                "icon_path":"Aemeath/T_IconRoleHead256_53_UI.png",
+                
+                "straightAlpha":true,
+                "materialTexturePaths":["Aemeath/Portraits_Aimisi.png"],
+                "atlasJSON_path":"Aemeath/Portraits_Aimisi.atlas",
+                "skeletonJSON_path":"Aemeath/Portraits_Aimisi.skel",
+                "idleAnimName":"idle"
+
+            }
+        ]
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 14,
+      "stat_CON": 12,
+      "stat_PSY": 12,
+      "stat_WIL": 12,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_default",
+      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_C",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":153,
+
+      "initialInventory":[
+            { "ID":"clothing_bluearchive_Navigator_Hat" },
+            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Cape" },
+            { "ID":"clothing_bluearchive_Navigator_Glove" },
+            { "ID":"clothing_bluearchive_Navigator_Boot" },
+            { "ID":"clothing_skin_socks" },
+            { "ID":"clothing_skin_panty" },
+            { "ID":"clothing_skin_contactlens" },
+            { "ID":"clothing_skin_hair_hairpin" },
+            { "ID":"clothing_skin_bra" },
+            { "ID":"firearm_handgun" }
+        ],
+      "Skills": null
+    },   
+    "firstName": "Aemeath",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_KivotosStudent",
+    "race": "humanRace_elf",
+    "raceTemplate": "humanRaceAddon_Kivotos_Abydos",
+    "startingGift": "charOriginGift_none"
+  }

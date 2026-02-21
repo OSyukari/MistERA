@@ -1608,6 +1608,7 @@ public class EvaluationPackage
 
     private bool Fuck_3(MessageCollect m,bool penetrateOnly ,bool isReceiverFucked, Character_Trainable fucker, BodyInternal_Instance internal_fucker, BodyInternal_Instance internal_fucked, COM com, int variantID, bool isForce, bool logMessage)
     {
+        bool log = scr_System_CentralControl.current.LogPrefs.DLog_Training;
         string fuckerName = "fucker["+(fucker == null ? "null" : fucker.FirstName)+"] " + "internal["+(internal_fucker == null?"null":internal_fucker.DisplayName)+"]";
         string fuckedName = "fucked["+(internal_fucked == null || internal_fucked .Owner == null ? "null" : internal_fucked.Owner.FirstName) +"] " + "internal["+(internal_fucked == null?"null": internal_fucked.DisplayName)+"]";
 
@@ -1623,14 +1624,14 @@ public class EvaluationPackage
 
         if (internal_fucker != null && internal_fucked != null && internal_fucker.canFuck && internal_fucked.canBePenetrated)
         {
-            Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
+            if (log) Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
             history.Add(internal_fucked);
             Penetrate(m,baseStrength, isReceiverFucked, ref history, ref fuckerPleasure, ref fuckedPleasure, internal_fucker, internal_fucked, isForce, 0);
         }
         else
         {
             if (penetrateOnly) return false;
-              Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
+            if (log) Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
             List<string> newlist1 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
             List<string> newlist2 = isReceiverFucked ? DoerSelfTag : ReceiverSelfTag;
 
@@ -1655,7 +1656,7 @@ public class EvaluationPackage
 
         //if (fucker != null && fucker_att != Memory_Attitude.None && logMessage) fucker.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, internal_fucked.Owner.RefID, com, VariantID, true, null, fucker.canAct ? Memory_Response.Success : Memory_Response.Accept, fucker_att, fucker.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
 
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Sex) Debug.Log("Fuck_3 final interaction result fuckerPleasure["+fuckerPleasure+"] initA["+attitude_doer.ToString()+"] fuckedPleasure["+fuckedPleasure+ "] initA["+attitude_receiver.ToString()+"]");
+        if (log) Debug.Log("Fuck_3 final interaction result fuckerPleasure["+fuckerPleasure+"] initA["+attitude_doer.ToString()+"] fuckedPleasure["+fuckedPleasure+ "] initA["+attitude_receiver.ToString()+"]");
         //attitude_receiver = fucked_att;
         //attitude_doer = fucker_att;
         return true;
@@ -1799,7 +1800,7 @@ public class EvaluationPackage
         }
 
         s.Add("Final Resolution :" + (fucker == null ? "" : "Fucker " + fucker.Owner.FirstName + " pleasure [" + fucker.Owner.Stats.SexStimulation.Severity + "]") + " Fucked " + fucked.Owner.FirstName + " pleasure [" + fucked.Owner.Stats.SexStimulation.Severity + "]");
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Sex) Debug.Log(String.Join("\n",s));
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log(String.Join("\n",s));
 
         //message.AddMessage(s);
 

@@ -235,7 +235,7 @@ public class Character_Factions
         get
         {
             if (this.CurrentLockedParty != null) return this.CurrentLockedParty;
-            else if (this.CurrentParty != null && this.CurrentParty.isActive) return this.CurrentParty;
+            else if (this.CurrentParty != null && (this.CurrentParty.isActive || !this.CurrentParty.isPlayerFaction)) return this.CurrentParty;
             return null;
         }
     }

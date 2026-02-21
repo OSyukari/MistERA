@@ -387,10 +387,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
     { get
         {
             var kidnaps = new List<Manageable_Party>();
-            foreach (var c in ManagedChara)
+            foreach(var cref in kidnappedTime.Keys)
             {
+                if (!this.charaGuestStatus.TryGetValue(cref, out var value)) continue;
+                var c = scr_System_CampaignManager.current.FindInstanceByID(cref);
                 var kk = c.FactionManager.CurrentLockedParty;
                 if (kk != null && !kidnaps.Contains(kk)) kidnaps.Add(kk);
+
             }
             return kidnaps;
         } }
@@ -405,6 +408,37 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         return this.SubFactions.Find(x => x.ID == id);
     }
+    /// <summary>
+
+
+    public Dictionary<int, DateTime> kidnappedTime = new Dictionary<int, DateTime>();
+
+    public double GetKidnappedDays(Character_Trainable c)
+    {
+        if (c == null) return -1;
+        if (!this.isPlayerFaction) return -1;
+        if (kidnappedTime.TryGetValue(c.RefID, out var initialTime))
+        {
+            return (scr_System_Time.current.getCurrentTime() - initialTime).TotalDays;
+        }
+        else return -1;
+    }
+
+    /// </summary>
+    /// <param name="c"></param>
+    public void NotifyCharaKidnapped(Character_Trainable c)
+    {
+        if (!this.isPlayerFaction) return;
+        if (c == null) return;
+        if (kidnappedTime.ContainsKey(c.RefID)) return;
+        kidnappedTime[c.RefID] = scr_System_Time.current.getCurrentTime();
+    }
+    public void NotifyCharaRescued(Character_Trainable c)
+    {
+        if (c == null) return;
+        kidnappedTime.Remove(c.RefID);
+    }
+
 
     protected void InitScript()
     {
@@ -1038,14 +1072,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         managedChara = null;
         _managerRefs = null;
 
-        if (sendEvent && guestStatus == Manageable_GuestStatus.Prisoner)
-        {
-            Debug.Log($"{c.CallName} is being captured!");
-            var ev = new EventInstance(c, "OnCharaImprison", "");
-            ev.displayOverride = this.isPlayerFaction || c.DisplayCharaEvent;
-            ev.AppendStrings.Add("partyName", new List<string>() { this.FactionDisplayName });
-            scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
-        }
+        if (sendEvent && guestStatus == Manageable_GuestStatus.Prisoner) FactionUtility.SendImprisonEvent(this, c);
         // set manager roles
         NotifyFactionMemberChange();
     }

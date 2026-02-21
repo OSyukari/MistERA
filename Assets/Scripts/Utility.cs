@@ -1,3 +1,7 @@
+using Microsoft.Extensions.ObjectPool;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -5,9 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.ObjectPool;
-using Newtonsoft.Json;
-using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -284,44 +285,59 @@ public static class UtilityEX
             var kvp = match.Value.Substring(1, len-2).Split('.');
             if (kvp.Length != 2) continue;
             //Debug.Log($"Parse event kvp {String.Join("|", kvp)}");
+            Dictionary<string, int> collectDict = new Dictionary<string, int>();
+            List<string> collect = new List<string>();
+            bool error = false;
             if (kvp[0] == "self" && owner.Self != null)
             {
-                switch(kvp[1])
+                if (CollectString(kvp[1], owner.Self, collect))
                 {
-                    case "name": newString = newString.Replace(match.Value, owner.Self.FirstName); break;
-                    case "nameCount": newString = newString.Replace(match.Value, owner.Self.FirstName); break;
-                    case "room_name":
-                        var room = scr_System_CampaignManager.current.Map.FindRoomByChara(owner.Self.RefID);
-                        if (room != null) newString = newString.Replace(match.Value, room.DisplayName); break;
-                    default: break;
+
                 }
+                else if (CollectNumber(kvp[1], owner.Self, collect))
+                {
+
+                }
+                else if (CollectCount(kvp[1], owner.Self, collectDict))
+                {
+
+                }
+                else if (CollectResidual(owner, kvp[0], kvp[1], collect))
+                {
+
+                }
+                else  error = true;
             }
             else if (owner.Targets.ContainsKey(kvp[0]))
             {
-                bool error = false;
-                List<string> collect = new List<string>();
-                Dictionary<string, int> collectDict = new Dictionary<string, int>();
                 foreach (var c in owner.Targets[kvp[0]])
                 {
-                    switch(kvp[1])
+                    if (CollectString(kvp[1], c, collect))
                     {
-                        case "name": if (!collect.Contains(c.CallName)) collect.Add(c.CallName); break;
-                        case "nameCount":
-                            if (!collectDict.ContainsKey(c.CallName)) collectDict.Add(c.CallName, 1);
-                            else collectDict[c.CallName] += 1;
-                            break;
-                        case "room_name":
-                            var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
-                            if (room != null && !collect.Contains(room.DisplayName)) collect.Add(room.DisplayName); break;
-                        default: error = true; break;
+
                     }
+                    else if (CollectNumber(kvp[1], c, collect))
+                    {
+
+                    }
+                    else if (CollectCount(kvp[1], c, collectDict))
+                    {
+
+                    }
+                    else if (CollectResidual(owner, kvp[0], kvp[1], collect))
+                    {
+
+                    }
+                    else error = true;
                 }
-                if (collectDict.Count > 0)
-                {
-                    foreach (var collectkvp in collectDict) collect.Add(LocalizeDictionary.QueryThenParse("event_targetscope_nameCount").Replace("$name$", collectkvp.Key).Replace("$count$", $"{collectkvp.Value}"));
-                }
-                if (!error) newString = newString.Replace(match.Value, String.Join(separator, collect));
             }
+            else error = true;
+
+            if (collectDict.Count > 0)
+            {
+                foreach (var collectkvp in collectDict) collect.Add(LocalizeDictionary.QueryThenParse($"event_targetscope_{kvp[1]}").Replace("$elem1$", collectkvp.Key).Replace("$elem2$", $"{collectkvp.Value}"));
+            }
+            if (!error) newString = newString.Replace(match.Value, String.Join(separator, collect));
         }
 
         foreach(var appendStringkey in owner.AppendStrings)
@@ -332,6 +348,70 @@ public static class UtilityEX
         }
 
         return newString;
+    }
+
+    static bool CollectResidual(EventInstance owner, string key1, string key2, List<string> collect)
+    {
+        if (owner.AppendStrings.TryGetValue($"{key1}.{key2}", out var value))
+        {
+            collect.Add(String.Join(", ",value));
+            return true;
+        }
+        return false;
+    }
+
+    static bool CollectCount(string key, Character_Trainable c, Dictionary<string, int> collectDict)
+    {
+        switch (key)
+        {
+            case "nameCount":
+                if (!collectDict.ContainsKey(c.CallName)) collectDict.Add(c.CallName, 1);
+                else collectDict[c.CallName] += 1;
+                return true;
+        }
+
+
+        return false;
+    }
+
+    static bool CollectNumber(string key, Character_Trainable c, List<string> collect)
+    {
+
+        // check kojo
+        var rel = c.Relationships.FindRelationshipWith(c);
+        if (c.Relationships.GetKojoVariableExist(false, rel, key))
+        {
+            collect.Add($"{c.Relationships.GetKojoVariable(false, rel, key)}");
+            return true;
+        }
+        else if (c.Relationships.GetKojoVariableExist(true, rel, key))
+        {
+            collect.Add($"{c.Relationships.GetKojoVariable(true, rel, key)}");
+            return true;
+        }
+        return false;
+    }
+
+    static bool CollectString(string key, Character_Trainable c, List<string> collect)
+    {
+        switch (key)
+        {
+            case "name":
+                if (c != null)
+                {
+                    if (!collect.Contains(c.CallName)) collect.Add(c.CallName);
+                }
+                return true;
+            case "room_name":
+                var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+                if (room != null)
+                {
+                    if (!collect.Contains(room.DisplayName)) collect.Add(room.DisplayName);
+                }
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static bool ArePackagesEqual(ActionPackage a, ActionPackage b)

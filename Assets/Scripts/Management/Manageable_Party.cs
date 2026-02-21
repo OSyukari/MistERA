@@ -438,12 +438,12 @@ public class Manageable_Party : I_IsJobGiver
 
         if (sendEvent && guestStatus == Manageable_GuestStatus.Prisoner)
         {
-            //Debug.Log($"{c.CallName} is being captured!");
-            var ev = new EventInstance(c, "OnCharaImprison", "");
-            ev.AppendStrings.Add("partyName", new List<string>() { this.FactionDisplayName });
-            ev.AppendStrings.Add("factionName", new List<string>() { this.OwnerFaction.FactionDisplayName });
-            ev.displayOverride = this.OwnerFaction.isPlayerFaction;
-            scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+            FactionUtility.SendImprisonEvent(this, c);
+            if (this.Job.isActive)
+            {
+                var sss = "$names$ captured $target$".Replace("$target$", c.FirstName);
+                this.Job.AddResult(sss, new List<string>(), this.Job.Actors, true);
+            }
         }
 
         c.FactionManager.AddPartyTracker(this);
@@ -734,6 +734,10 @@ public class Manageable_Party : I_IsJobGiver
         InternalUpdate();
         //Debug.Log($"NotifyCharaKidnapped {c.CallName}, status {this.Job.status}, actors[{String.Join("|", this.Job.actorRefID)}], actorInRoom[{String.Join("|", scr_System_CampaignManager.current.CharaInRoom(MainExit.RefID))}] ");
         this.Job.UpdateStatus(-1, -1, false);
+        foreach(var home in c.FactionManager.HomeFactions)
+        {
+            home.NotifyCharaKidnapped(c);
+        }
     }
 
     public List<int> RoomOwners(int roomRef)
@@ -945,6 +949,8 @@ public class Manageable_Party : I_IsJobGiver
                     var package = new SerializableEventPackage();
                     package.eventID = kexp.Base.rescueEventID;
                     package.eventLabel = kexp.Base.rescueEventLabel;
+
+                    package.rescueJobID = k.Job.RefID;
 
                     List<int> party = new List<int>(), frontline = new List<int>(), backline = new List<int>();
                     List<int> victims = new List<int>();

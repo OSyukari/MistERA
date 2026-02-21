@@ -190,7 +190,11 @@ public static class EventUtility
             var targetScopes = instance.overrideTargetScope ? instance.OverrideTargetScope : ev.TargetValidators;
             foreach (var targetscope in targetScopes)
             {
-                if (!FindTargets(targetscope, instance, instance.Self, ref instance.Targets)) return false;
+                if (!FindTargets(targetscope, instance, instance.Self, ref instance.Targets))
+                {
+
+                    return false;
+                }
                 else
                 {
                     // List<string> names = new List<string>();
@@ -335,7 +339,7 @@ public static class EventUtility
                 else return false;
             case "CanTerminateExpedition":
                 var faction = c.FactionManager.CurrentActiveParty;
-                if (faction != null && !faction.Job.hasUnresolvedResult) return true;
+                if (faction == null || !faction.Job.hasUnresolvedResult) return true;
                 else return false;
             case "HasFactionID":
                 if (r.parameters.Count >= 2)
@@ -511,9 +515,10 @@ public static class EventUtility
             }
         }
 
+        // if scoped target exceed max count, check if allow failure
         if (scope.minTargetCount != -1 && list.Count < scope.minTargetCount) return scope.allowEventOnMinTargetCountMiss;
-        if (scope.maxTargetCount != -1 && !scope.pickAmongValidTargets && list.Count > scope.maxTargetCount) return false;
-        if (scope.mustHaveMoreValidTargets && scope.pickAmongValidTargets && list.Count <= scope.maxTargetCount) return false;
+        if (scope.maxTargetCount != -1 && list.Count > scope.maxTargetCount && !scope.pickAmongValidTargets) return scope.allowEventOnMinTargetCountMiss;
+        if (scope.mustHaveMoreValidTargets && list.Count >= scope.maxTargetCount && !scope.pickAmongValidTargets) return scope.allowEventOnMinTargetCountMiss;
 
         if (scope.pickAmongValidTargets) Utility.FilterRandXInList(list, scope.maxTargetCount);
         foreach(var key in scope.refKeys)
@@ -556,7 +561,7 @@ public static class EventUtility
     {
 
 #if UNITY_EDITOR
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {block.line} ");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {block.line}, isvisible? {owner.isVisible}");
 #endif
         // display line
 
@@ -808,6 +813,24 @@ public static class EventUtility
                 {
                     return false;
                 }
+            case Event.EventEntry.ExecutionType.LogMemoryEntry:
+                if (exec.arguments.Count >= 2)
+                {
+                    var memstring = LocalizeDictionary.QueryThenParse(exec.arguments[1]);
+                    memstring = UtilityEX.ParseEventEntry(owner, memstring);
+                    if (exec.arguments[0] == "self" && owner.Self != null)
+                    {
+                        owner.Self.Memory.AddEntryMSG(memstring, new List<string>() { "forbidMerge" });
+                    }
+                    else if (owner.Targets.TryGetValue(exec.arguments[0], out var targs) && targs.Count > 0)
+                    {
+                        foreach(var i in targs)
+                        {
+                            i.Memory.AddEntryMSG(memstring, new List<string>() { "forbidMerge" });
+                        }
+                    }
+                }
+                return false;
             case Event.EventEntry.ExecutionType.CheckRelationship:
                 if (exec.arguments.Count >= 2 && exec.arguments[0] != exec.arguments[1])
                 {
@@ -1124,6 +1147,146 @@ public static class EventUtility
                 // randomly match doer and receiver, register doer to receiver characom, and add targetcomID
 
                 return false;
+
+            case Event.EventEntry.ExecutionType.RemoveSelfKojoVariable:
+                if (exec.arguments.Count >= 3)
+                {
+                    if (exec.arguments[2].Length > 0 && bool.TryParse(exec.arguments[1], out var isdaily))
+                    {
+                        List<Character_Trainable> tgts = new List<Character_Trainable>();
+
+                        if (exec.arguments[0] == "self" && owner.Self != null) tgts.Add(owner.Self);
+                        else if (owner.Targets.TryGetValue(exec.arguments[0], out tgts))
+                        {
+
+                        }
+                        else return false;
+
+                        foreach (var c in tgts)
+                        {
+                            if (c == null) continue;
+                            var rel = c.Relationships.FindRelationshipWith(c);
+                            if (rel == null) continue;
+                            if (c.Relationships.RemoveKojoVariable(isdaily, rel, exec.arguments[2], out var val))
+                            {
+                                owner.AppendStrings.Add($"{exec.arguments[0]}.{exec.arguments[2]}", new List<string>() { $"{val}" });
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.ModSelfKojoVariable:
+                if (exec.arguments.Count >= 4)
+                {
+                    if (exec.arguments[2].Length > 0 && bool.TryParse(exec.arguments[1], out var isdaily) && int.TryParse(exec.arguments[3], out var val))
+                    {
+                        List<Character_Trainable> tgts = new List<Character_Trainable>();
+
+                        if (exec.arguments[0] == "self" && owner.Self != null) tgts.Add(owner.Self);
+                        else if (owner.Targets.TryGetValue(exec.arguments[0], out tgts))
+                        {
+
+                        }
+                        else return false;
+
+                        foreach (var c in tgts)
+                        {
+                            if (c == null) continue;
+                            var rel = c.Relationships.FindRelationshipWith(c);
+                            if (rel == null) continue;
+                            c.Relationships.ModKojoVariable(isdaily, rel, exec.arguments[2], val);
+                        }
+
+                        return true;
+                    }
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.RemoveRelKojoVariable:
+                /// [selfkey, targetKey, isdaily, stringkey]
+                if (exec.arguments.Count >= 4)
+                {
+                    if (exec.arguments[3].Length > 0 && bool.TryParse(exec.arguments[2], out var isdaily))
+                    {
+                        List<Character_Trainable> from = new List<Character_Trainable>();
+                        List<Character_Trainable> to = new List<Character_Trainable>();
+
+                        if (exec.arguments[0] == "self" && owner.Self != null) from.Add(owner.Self);
+                        else if (owner.Targets.TryGetValue(exec.arguments[0], out from))
+                        {
+
+                        }
+                        else return false;
+
+                        if (exec.arguments[1] == "self" && owner.Self != null) to.Add(owner.Self);
+                        else if (owner.Targets.TryGetValue(exec.arguments[1], out to))
+                        {
+
+                        }
+                        else return false;
+
+                        foreach (var c1 in from)
+                        {
+                            if (c1 == null) continue;
+
+                            foreach (var c2 in to)
+                            {
+                                if (c2 == null) continue;
+
+                                var rel = c1.Relationships.FindRelationshipWith(c2);
+                                if (rel == null) continue;
+                                if (c1.Relationships.RemoveKojoVariable(isdaily, rel, exec.arguments[3], out var val))
+                                {
+                                    owner.AppendStrings.Add($"{exec.arguments[0]}.{exec.arguments[3]}", new List<string>() { $"{val}" });
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                return false;
+
+            case Event.EventEntry.ExecutionType.ModRelfKojoVariable:
+                /// [selfkey, targetKey, isdaily, stringkey, value]
+                if (exec.arguments.Count >= 5)
+                {
+                    if (exec.arguments[3].Length > 0 && bool.TryParse(exec.arguments[2], out var isdaily) && int.TryParse(exec.arguments[4], out var val))
+                    {
+                        List<Character_Trainable> from = new List<Character_Trainable>();
+                        List<Character_Trainable> to = new List<Character_Trainable>();
+
+                        if (exec.arguments[0] == "self" && owner.Self != null) from.Add(owner.Self);
+                        else if (owner.Targets.TryGetValue(exec.arguments[0], out from))
+                        {
+
+                        }
+                        else return false;
+
+                        if (exec.arguments[1] == "self" && owner.Self != null) to.Add(owner.Self);
+                        else if (owner.Targets.TryGetValue(exec.arguments[1], out to))
+                        {
+
+                        }
+                        else return false;
+
+                        foreach (var c1 in from)
+                        {
+                            if (c1 == null) continue;
+
+                            foreach(var c2 in to)
+                            {
+                                if (c2 == null) continue;
+
+                                var rel = c1.Relationships.FindRelationshipWith(c2);
+                                if (rel == null) continue;
+                                c1.Relationships.ModKojoVariable(isdaily, rel, exec.arguments[3], val);
+                            }
+                        }
+                        return true;
+                    }
+                }
+                return false;
             case Event.EventEntry.ExecutionType.StartSexJobInParty:
                 if (exec.arguments.Count >= 8)
                 {
@@ -1139,7 +1302,7 @@ public static class EventUtility
                         List<string> namesa = new List<string>(), namesb = new List<string>();
                         foreach (var i in victims) namesa.Add(i.CallName);
                         foreach (var i in rapists) namesb.Add(i.CallName);
-                        Debug.Log($"StartSexJobInParty between [{String.Join(" ",namesa)}] and [{String.Join(" ", namesb)}]");
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"StartSexJobInParty between [{String.Join(" ",namesa)}] and [{String.Join(" ", namesb)}]");
 
                         var f = UtilityEX.GetActiveFactionFrom(locations) as Manageable_Party;
                         if (f == null || f.Room == null)
@@ -1215,10 +1378,17 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.PartyKidnap:
                 if (exec.arguments.Count >= 5)
                 {
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events)
+                    {
+                        Debug.Log($"PartyKidnap called on [{String.Join("|", exec.arguments)}]");
+                    }
+
                     if (owner.Targets.TryGetValue(exec.arguments[0], out var victims) && owner.Targets.TryGetValue(exec.arguments[1], out var kidnappers) &&  Enum.TryParse<Manageable_GuestStatus>(exec.arguments[4], false, out var status))
                     {
+                        Debug.Log($"PartyKidnap scoped, victims {victims.Count} kidnappers {kidnappers.Count}");
                         if (victims.Count < 1 || kidnappers.Count < 1) return false;
                         Manageable_Party kidnapLoc = UtilityEX.GetActiveFactionFrom(kidnappers) as Manageable_Party;
+                        Debug.Log($"PartyKidnap scoped, kidnapLoc {((kidnapLoc == null || kidnapLoc.MainExit == null) ? "null" : "exist")} status {status}");
                         if (kidnapLoc == null || kidnapLoc.MainExit == null) return false;
                         if (status != Manageable_GuestStatus.Prisoner && status != Manageable_GuestStatus.Visitor) return false;
 
@@ -1229,7 +1399,15 @@ public static class EventUtility
                             kidnapLoc.Job.AddResult(LocalizeDictionary.QueryThenParse(exec.arguments[3]), new List<string>(), victims, true);
                             return true;
                         }
-                        else return false;
+                        else
+                        {
+                            Debug.Log($"PartyKidnap failed 2 on [{String.Join("|", exec.arguments)}]");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log($"PartyKidnap failed on [{String.Join("|", exec.arguments)}]");
                     }
                 }
                 return false;
@@ -1385,7 +1563,7 @@ public static class EventUtility
         foreach (var i in victims)
         {
             //Debug.Log($"Kidnap message {i.CallName} {finalMSG}");
-            var mem = i.Memory.AddEntryMSG(stringmsg.Replace("$message$", kdnpmsg).Replace("$partyJob$", i.CurrentJob == null ? "" : i.CurrentJob.GetJobDescription(i.RefID)), new List<string>() { "forbidMerge" });
+            var mem = i.Memory.AddEntryMSG(stringmsg.Replace("$message$", kdnpmsg).Replace("$partyJob$", i.CurrentJob == null ? "" : i.CurrentJob.GetJobDescription(i.RefID)), new List<string>() { "forbidMerge","important" });
             mem.disableRoomName = true;
 
             i.ChangeCurrentJob(null);

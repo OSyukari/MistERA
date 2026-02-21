@@ -69,7 +69,14 @@ public class ExpeditionInstance
 
     public bool ModProgress(int i, bool limit = false)
     {
-        if (this.ExploreRate <= 0) return false;
+        if (this.ExploreRate <= 0 && i <= 0) return false;
+        this.ExploreRate = Math.Clamp(this.ExploreRate + i, limit ? 1 : 0, Base.MaxExplorationRate);
+        return this.ExploreRate == 0;
+    }
+    public bool ModProgressRate(double db, bool limit = false)
+    {
+        int i = (int)(Base.MaxExplorationRate * db);
+        if (this.ExploreRate <= 0 && i <= 0) return false;
         this.ExploreRate = Math.Clamp(this.ExploreRate + i, limit ? 1 : 0, Base.MaxExplorationRate);
         return this.ExploreRate == 0;
     }

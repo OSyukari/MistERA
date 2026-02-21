@@ -526,7 +526,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
     public Stat_Modifier GetCleanlinessMod()
     {
-        if (Base.noCleaning) return null;
+        if (Base == null || Base.noCleaning) return null;
         var cl = RoomCleanliness();
         if (cl == CleaningStatus.None) return null;
         cleanlinessMod.ModString = $"room cleanliness {cl}";

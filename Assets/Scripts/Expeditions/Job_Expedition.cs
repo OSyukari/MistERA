@@ -73,6 +73,11 @@ public class SerializableEventPackage
         }
     }
 
+    /// <summary>
+    /// Unique only for rescue events
+    /// </summary>
+    public int rescueJobID = -1;
+
     [JsonIgnore]
     public string DisplayName { get { return LocalizeDictionary.QueryThenParse(eventID); } }
     public void NotifyCharaExit(int refID)
@@ -393,6 +398,7 @@ public class Job_Expedition : Job
             {
                 this.status = ExpeditionStatus.returning;
                 this.AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_jobInterruptMIA"), new List<string>(), new List<Character_Trainable>());
+                this.NotifyEventFailure();
             }
         }
 
@@ -445,6 +451,34 @@ public class Job_Expedition : Job
             }
         }
     }
+
+    protected void NotifyEventFailure()
+    {
+        foreach(var eventry in this.ExpeditionResults)
+        {
+            foreach(var entry in eventry.Value)
+            {
+                if (entry.unresolved == null) continue;
+                if (entry.unresolved.isResolved) continue;
+                if (entry.unresolved.rescueJobID != -1)
+                {
+                    entry.resolveMessage = "rescue event failure";
+                    entry.unresolved.isResolved = true;
+                    var job = scr_System_CampaignManager.current.FindJobInstanceByID(entry.unresolved.rescueJobID) as Job_Expedition;
+                    var kexp = job == null ? null : job.Expedition;
+                    if (kexp != null)
+                    {
+                        kexp.ModProgressRate(0.2);
+                        entry.resolveMessage += " (reset)";
+                    }
+                }
+
+            }
+        }
+    }
+
+
+
     /// <summary>
     /// Return Parent FactionOwner (Party) Main Exit (camp room)
     /// </summary>
@@ -643,6 +677,10 @@ public class Job_Expedition : Job
         return properExitRefs.Contains(charaRef);
     }
     public List<int> properExitRefs = new List<int>();
+
+
+    public Dictionary<int, DateTime> startTime = new Dictionary<int, DateTime>();
+
     public override bool UpdateActorPackage(Character_Trainable c, out string ss)
     {
         /*
@@ -862,6 +900,7 @@ public class Job_Expedition : Job
     }
     public bool ShouldRest(Character_Trainable c)
     {
+        if (this.status == ExpeditionStatus.returning) return false;
         if (FactionOwner_Party.PrioritizeResting && c.Stats.HP.ValuePercentile < 1.0) return true;
         return c.Stats.HP.Value < 1 || c.shouldRest;
     }

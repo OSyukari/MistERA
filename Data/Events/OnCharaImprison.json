@@ -34,13 +34,20 @@
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_party",
         "isLast": true,
-        "line": "OnCharaImprison_ev01"
+        "line": "OnCharaImprison_ev01",
+        "Results":[
+            { "Type":"LogMemoryEntry", "arguments":["self", "memory_OnCharaImprison_ev01_receiver"] },
+            { "Type":"LogMemoryEntry", "arguments":["party", "memory_OnCharaImprison_ev01_doer"] }
+        ]
     },
     {
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_noparty",
         "isLast": true,
-        "line": "OnCharaImprison_ev02"
+        "line": "OnCharaImprison_ev02",
+        "Results":[
+            { "Type":"LogMemoryEntry", "arguments":["self", "memory_OnCharaImprison_ev02_receiver"] }
+        ]
     }
                 ]
             }
@@ -54,7 +61,12 @@
             {
 "OnCharaImprison":"监禁事件",
 "OnCharaImprison_ev01":"$self.name$被$factionName$的$partyName$小队捕获了！",
-"OnCharaImprison_ev02":"$self.name$被$factionName$捕获了！"
+"memory_OnCharaImprison_ev01_doer":"与$partyName$小队捕获了$self.name$",
+"memory_OnCharaImprison_ev01_receiver":"被$factionName$的$partyName$小队捕获了",
+
+"OnCharaImprison_ev02":"$self.name$被$factionName$捕获了！",
+"memory_OnCharaImprison_ev02_receiver":"成为了$factionName$的囚犯"
+
             },
             "en-us":
             {

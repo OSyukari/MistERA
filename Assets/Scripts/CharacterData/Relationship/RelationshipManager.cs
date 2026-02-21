@@ -184,7 +184,13 @@ public class RelationshipManager
         var key = rel.Target.RefID.ToString() + "||" + varID;
         targetList[key] = value;
     }
-
+    public bool RemoveKojoVariable(bool isDaily, Character_Relationship rel, string varID, out int value)
+    {
+        var targetList = isDaily ? kojoVariables_Daily : kojoVariables_Permanent;
+        var key = rel.Target.RefID.ToString() + "||" + varID;
+        if (targetList.Remove(key, out value)) return true;
+        return false;
+    }
     public void ModKojoVariable(bool isDaily, Character_Relationship rel, string varID, int value)
     {
         var targetList = isDaily ? kojoVariables_Daily : kojoVariables_Permanent;
@@ -485,8 +491,8 @@ public class RelationshipManager
             var modd = room.GetCleanlinessMod();
             if (modd != null) moodlets.Add(modd);
         }
-        Owner.Stats.Stress.ClearCache();
-        Owner.Stats.Mood.ClearCache();
+        if (Owner.Stats.Stress != null) Owner.Stats.Stress.ClearCache();
+        if (Owner.Stats.Mood != null) Owner.Stats.Mood.ClearCache();
     }
 
     public List<Stat_Modifier> GetMoodlet(string statID)

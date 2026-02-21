@@ -75,7 +75,7 @@ public class EventInstance
 
     public Dictionary<string, List<Action>> FunctionCalls = new Dictionary<string, List<Action>>();
     public Dictionary<string, List<Character_Trainable>> Targets = new Dictionary<string, List<Character_Trainable>>();
-
+    public Dictionary<string, double> Parameters = new Dictionary<string, double>();
     /// <summary>
     /// Can be used to store strings (flush with dict key)
     /// or store string key that ca
