@@ -29,7 +29,7 @@ public class LLMRequest
 
     public string model;
     public float temperature = 0.7f;
-    public int max_tokens = 512;
+    public int max_tokens;
     public int max_completion_tokens = 512;
     public bool stream = false;
     public double top_p = 1.0;
@@ -37,6 +37,11 @@ public class LLMRequest
 
     public void LoadTemplate(LLMRequest req)
     {
+        this.temperature = req.temperature;
+        this.max_completion_tokens = req.max_completion_tokens;
+        this.max_tokens = req.max_tokens;
+        this.top_p = req.top_p;
+        this.top_k = req.top_k;
         foreach(var message in req.messages)
         {
             var newm = new LLMMessage(message);
@@ -109,6 +114,7 @@ public class LLM_WorldState
         public Dictionary<string, RelationshipStorage> Relationships = null;
         public List<string> equipments = null;
         public Dictionary<string, string> schedule = null;
+        public string LorebookEntry;
 
         public class RelationshipStorage
         {
@@ -196,6 +202,7 @@ public class LLM_WorldState
             if (nextHour >= 24) nextHour -= 24;
             var nextHourJob = c.FactionManager.CurrentJobPost(nextHour);
 
+            LorebookEntry = c.CharacterCard;
             Fullname = c.FullName;
             Description = $"{c.Race.DisplayName} {c.RaceTemplate.DisplayName} {c.FactionManager.CurrentlyActiveFactionStatus}";
             if (scr_System_CampaignManager.current.Player == c) Description += ", IS PLAYER CHARACTER";

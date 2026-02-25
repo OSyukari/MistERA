@@ -206,7 +206,7 @@ public class scr_UpdateHandler : MonoBehaviour
                 }
                 else
                 {
-                    //Debug.LogError($"LLM Request Error: {request.error}\nResponse: {request.downloadHandler.text}");
+                    Debug.LogError($"LLM Request Error: {request.error}\nResponse: {request.downloadHandler.text}");
                     onResponseReceived?.Invoke(request.error);
                 }
             }

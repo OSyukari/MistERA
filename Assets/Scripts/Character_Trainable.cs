@@ -503,6 +503,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonProperty] protected string firstName = "Jane", middleName = "", lastName = "Doe", title = "";
     [JsonProperty] public string nameDisplayFormat = "chara_fullname_firstToLast";
     [JsonProperty] protected string characterComment = "";
+    [JsonIgnore] public string CharacterCard
+    {
+        get
+        {
+            if (this.Template != null) return this.Template.CharacterCard;
+            else return null;
+        }
+    }
     [JsonIgnore] public string CharacterComment 
     {
         get
