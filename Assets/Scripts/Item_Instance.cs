@@ -88,7 +88,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
                 compTooltips.Add(c.Tooltip);
             }
             return LocalizeDictionary.QueryThenParse("Item_Instance_Tooltip")
-                .Replace("$tags$", String.Join("|", this.Tags))
+                .Replace("$tags$", $"[{String.Join("|", this.Tags)}]")
                 .Replace("$parent$", Parent.Tooltip)
                 .Replace("$comps$", compTooltips.Count > 0 ? String.Join("\n\n", compTooltips) : ""); } }
     [JsonIgnore] public bool Stackable { get { return Parent.Stackable && this.compInstances.Count < 1; } }

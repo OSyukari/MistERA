@@ -12,6 +12,8 @@ public class PortraitManager
 {
     public List<CharaPortrait> portraitPriorityList = new List<CharaPortrait>();
 
+    public CharaPortrait CharaBanner = null;
+
     public PortraitManager()
     {
         //Debug.Log("PortraitManager instantiate on null call");
@@ -148,6 +150,12 @@ public class PortraitManager
     [JsonIgnore] public CharaPortrait _cache_NeutralPortrait = null;
     protected string _cache_NeutralPortrait_path = "";
     protected string _cache_NeutralPortrait_icon = "";
+
+    public void DrawBanner(scr_CharPortraitBox box)
+    {
+        if (this.CharaBanner != null) box.Draw(this.CharaBanner.DrawPortrait(box, this.CharaBanner.PortraitPath(new List<string>())));
+        else DrawNeutralPortrait(box);
+    }
     protected void DrawNeutralPortrait(scr_CharPortraitBox box)
     {
         if (_cache_NeutralPortrait == null)
@@ -262,6 +270,7 @@ public class PortraitManager
            // _cache_ActivityPortrait.Click();
         }
     }
+
     public void DrawPortrait(scr_CharPortraitBox box, List<string> tags = null)
     {
         if (box.isCurrentTargetEXBox) DrawNeutralPortrait(box);

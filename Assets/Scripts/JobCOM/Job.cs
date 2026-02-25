@@ -188,7 +188,22 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
-
+    List<ActionPackage> cachedPackages = null;
+    [JsonIgnore] public List<ActionPackage> CachedPackages
+    {
+        get
+        {
+            if (cachedPackages == null)
+            {
+                cachedPackages = new List<ActionPackage>();
+                foreach(var com in this.allusableCOMs)
+                {
+                    cachedPackages.Add(com.MakePackage(this, new List<int>(), new List<int>(), -1));
+                }
+            }
+            return cachedPackages;
+        }
+    }
 
     [JsonIgnore] public List<string> allusableCOMStrings { get
         {
@@ -375,7 +390,7 @@ public class Job : IDisposable, I_Disposable
 
     public virtual List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false, List<string> debug = null)
     {
-        Debug.Log("UNIMPLEMENTED MAKEPACKAGE FUNCTION");
+        //Debug.Log("UNIMPLEMENTED MAKEPACKAGE FUNCTION");
         return new List<ActionPackage>();
     }
 

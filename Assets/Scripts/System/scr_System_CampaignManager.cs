@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using static UnityEngine.UI.GridLayoutGroup;
 public class scr_System_CampaignManager_Serializable
 {
     public Dictionary<int, Job> Jobs;
@@ -530,6 +527,14 @@ public class scr_System_CampaignManager : MonoBehaviour
             PortraitManager portraitRef = null;
             log = LogManager.AddLog(new Message_Question(portraitRef, question.portraitTagsOverride, parent, question));
         }
+        Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
+    }
+
+    public void AddLog_LLM(LLMRequest request)
+    {
+        PortraitManager portraitRef = null;
+        MessageLog log = LogManager.AddLog(new Message_LLMQuery(portraitRef, new List<string>(), request));
+        
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
 
@@ -1160,6 +1165,12 @@ public class scr_System_CampaignManager : MonoBehaviour
             Observer_CurrentViewMode?.Invoke(viewMode, lockView);
         }
         else if (viewMode == ViewMode.View_Logs && vm == ViewMode.View_Room && ExistPlayerPackage(out int a, out int b, false)) scr_UpdateHandler.current.StartUpdate(true);
+
+        else if (scr_UpdateHandler.current.Lock && vm != ViewMode.View_Logs)
+        {
+            Debug.Log($"ChangeCurrentViewMode failed, currently locked");
+            return;
+        }
         else
         {
             if (viewMode != vm) viewMode = vm;
@@ -1376,7 +1387,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
 
     int debugRoomRef = 0;
-    string CurrentCampaignID;
+    string CurrentCampaignID = "";
     public Room_Instance debugRoom;
 
     protected int statisRoomID = -1;
@@ -1428,6 +1439,24 @@ public class scr_System_CampaignManager : MonoBehaviour
                 }
             }
             return _tempRoom;
+        }
+    }
+
+    CampaignSettings _currentCampaign = null;
+    public CampaignSettings CurrentCampaign
+    {
+        get
+        {
+            if (_currentCampaign == null && CurrentCampaignID != "")
+            {
+                _currentCampaign = scr_System_Serializer.current.MasterList.CampaignSettings.GetByID(CurrentCampaignID);
+            }
+            return _currentCampaign;
+        }
+        set
+        {
+            _currentCampaign = value;
+            CurrentCampaignID = value == null ? "" : _currentCampaign.ID;
         }
     }
 

@@ -1076,6 +1076,35 @@ public class EvaluationPackage
         }
         return returnVal;
     }
+
+    public string GetCheckPrevalidation()
+    {
+        Evaluate(true);
+        if (RollRequest(false) && RollResponse(false))
+        {
+            // response = Memory_Response.None;
+            // result = "[" + doer.FirstName + "] is unwilling to do [" + targetCOM.displayName + "] on/with [" + receiver.FirstName + "]";
+        }
+        bool hasReceiver = response > Memory_Response.None && checkResults_receiver != "" && checkResults_receiver_short != "";
+
+        string ss = "";
+
+        int reverseRate = 20 - (int)(responseRate / 5);
+
+        if (hasReceiver)
+        {
+            List<string> mods = modifiers.GetModifiersByRefID(Receiver.RefID);
+            ss += $"{Receiver.FirstName} Acceptance check: D20{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} {(responseRate >= 100 ? diceroll_autosuccess : $">=? {reverseRate}")}, positive attitude rate {attitudeRate_pos_receiver}%, negative attitude rate {attitudeRate_neg_receiver}%";
+        }
+        else
+        {
+            List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID);
+            ss += $"{Doer.FirstName} Acceptance check: D20{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} {(requestRate >= 100 ? diceroll_autosuccess : $">=? {reverseRate}")}, positive attitude rate {attitudeRate_pos_doer}%, negative attitude rate {attitudeRate_neg_doer}%";
+        }
+        return ss;
+
+    }
+
     public string GetCheckResult(bool full = false)
     {
         bool hasReceiver = response > Memory_Response.None && checkResults_receiver != "" && checkResults_receiver_short != "";

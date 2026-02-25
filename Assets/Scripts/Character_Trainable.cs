@@ -583,10 +583,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     string _cachedFullName = "";
 
     [JsonIgnore] public string FullName { get {
-            if (_cachedFullName == "") _cachedFullName = LocalizeDictionary.QueryThenParse(nameDisplayFormat)
+            if (_cachedFullName == "")
+            {
+                if (MiddleName == "" && LastName == "") _cachedFullName = FirstName;
+                else _cachedFullName = LocalizeDictionary.QueryThenParse(nameDisplayFormat)
                                                             .Replace("$lastName$", LastName)
                                                             .Replace(" $middleName$", MiddleName == "" ? "" : " " + MiddleName)
                                                             .Replace("$firstName$", FirstName);
+            }
             //Debug.LogError(nameDisplayFormat);
             return _cachedFullName;
         } }

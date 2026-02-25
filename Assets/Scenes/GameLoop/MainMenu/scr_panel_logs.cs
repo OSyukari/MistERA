@@ -143,6 +143,12 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
                 question.transform.SetParent(LogsList, false);
                 (current as Message_Question).Draw(skipping, this.m_Canvas, question, this);
             }
+            else if (current is Message_LLMQuery)
+            {
+                var query = Instantiate(prefab_llm);
+                query.transform.SetParent(LogsList, false);
+                (current as Message_LLMQuery).Draw(skipping, this.m_Canvas, query, this);
+            }
         }
         else if (current.canAnimate())
         {
@@ -183,6 +189,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     public RectTransform prefab_LogEntry, prefab_SeparationEntry;
     public scr_HoverableText prefab_LogLine;
     public scr_menu_question prefab_question;
+    public scr_menu_LLMQuery prefab_llm;
 
 
     private void OnDisable()

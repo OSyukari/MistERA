@@ -54,6 +54,41 @@ public class scr_System_CentralControl : MonoBehaviour
     public static scr_System_CentralControl current;
     [SerializeField] protected ContentSettings _content = null;
     [SerializeField] protected DebugLogSettings _logPrefs = null;
+
+    LLM_Setting _llmSetting = null;
+    public LLM_Setting LLMSetting
+    {
+        get
+        {
+            return _llmSetting;
+        }
+    }
+    LLMRequest _llmRequestTemplate = null;
+    bool deactivate_llmRequestTemplate = false;
+    public LLMRequest LLMRequestTemplate
+    {
+        get
+        {
+            if (_llmRequestTemplate == null && !deactivate_llmRequestTemplate)
+            {
+                string filePath = Application.dataPath + "/LLMrequestTemplate.json";
+                FileInfo file = new System.IO.FileInfo(filePath);
+                if (File.Exists(filePath)) _llmRequestTemplate = JsonConvert.DeserializeObject<LLMRequest>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                else deactivate_llmRequestTemplate = true;
+            }
+            return _llmRequestTemplate;
+        }
+    }
+
+    public void StoreLLMSetting()
+    {
+        string llmpath = Application.persistentDataPath + "/llmSetting.json";
+        FileInfo llmfile = new System.IO.FileInfo(llmpath);
+        string s = JsonConvert.SerializeObject(_llmSetting, Formatting.Indented, UtilityEX.SerializerSettings);
+        File.WriteAllText(llmfile.FullName, s);
+    }
+
+
     public DebugLogSettings LogPrefs { get
         {
             if(_logPrefs == null) _logPrefs = new DebugLogSettings();
@@ -196,6 +231,22 @@ public class scr_System_CentralControl : MonoBehaviour
         {
             scr_System_CentralControl_Serializable s = JsonConvert.DeserializeObject<scr_System_CentralControl_Serializable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
             LoadSerializable(s);
+        }
+
+        string llmpath = Application.persistentDataPath + "/llmSetting.json";
+        FileInfo llmfile = new System.IO.FileInfo(llmpath);
+        if (!File.Exists(llmpath))
+        {
+            this._llmSetting = new LLM_Setting();
+            string s = JsonConvert.SerializeObject(this._llmSetting, Formatting.Indented, UtilityEX.SerializerSettings);
+            llmfile.Directory.Create();
+            File.WriteAllText(llmfile.FullName, s);
+
+        }
+        else
+        {
+            LLM_Setting s = JsonConvert.DeserializeObject<LLM_Setting>(File.ReadAllText(llmfile.FullName), UtilityEX.SerializerSettings);
+            this._llmSetting = s;
         }
     }
 

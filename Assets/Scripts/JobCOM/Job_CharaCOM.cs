@@ -21,7 +21,7 @@ public class Job_CharaCOM : Job
     {
         get
         {
-            return $"{Owner.CallName}'s Interaction Job";
+            return $"Interacting with {Owner.CallName}";
         }
     }
     [JsonIgnore] public override Room_Instance ParentRoom { get

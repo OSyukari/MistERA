@@ -235,7 +235,7 @@ public class Character_Relationship
         {
             if (this.Relationship_Personal.CanUpgradeInto(this, out var relation, out var isA))
             {
-                Debug.LogError($"{Owner.FirstName} -> {Target.FirstName} CheckMaintainRelationship {this.Relationship_Personal.displayName} CanUpgradeInto {relation.displayName}");
+                Debug.LogError($"{Owner.FirstName} -> {Target.FirstName} CheckMaintainRelationship {this.Relationship_Personal.DisplayName} CanUpgradeInto {relation.DisplayName}");
                 RelationshipCooldown = 6;
                 TryChangeRelationship(relation, isA);
                 
@@ -278,7 +278,7 @@ public class Character_Relationship
             RelationshipCooldown = 6;
             if (relation.requireTargetValidation(!isA))
             {
-                Debug.Log($"{Owner.CallName} new Relationship {relation.displayName} require validation, setting up event");
+                Debug.Log($"{Owner.CallName} new Relationship {relation.DisplayName} require validation, setting up event");
                 // first log kojo for asking relation
                 var eventID = $"{relation.ID}_propose{(relation.isEqualRelationship ? "" : isA ? "_A" : "_B")}";
                 //
@@ -307,7 +307,7 @@ public class Character_Relationship
             }
             else
             {
-                Debug.Log($"{Owner.CallName} new Relationship {relation.displayName} does not require validation, changing");
+                Debug.Log($"{Owner.CallName} new Relationship {relation.DisplayName} does not require validation, changing");
                 SetPersonalRelationship(relation, isA, true);
             }
         }

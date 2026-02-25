@@ -266,7 +266,7 @@ public class StatusEx_Instance : I_CacheValues
     {
         get {
             var variant = BaseRef.variants[SeverityIndex];
-            return !BaseRef.noDisplay && variant.displayable && variant.displayName != "" ? variant.DisplayName : this.BaseRef.DisplayName; }
+            return variant.displayable && variant.displayName != "" ? variant.DisplayName : this.BaseRef.DisplayName; }
     }
 
     [JsonIgnore] public bool SeverityDisplayable

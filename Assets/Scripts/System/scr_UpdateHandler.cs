@@ -1,19 +1,227 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static UnityEngine.UI.GridLayoutGroup;
+using UnityEngine.Networking;
+
+public enum LLMStatus
+{
+    /// <summary>
+    /// inactive
+    /// </summary>
+    inactive,
+
+    /// <summary>
+    /// waiting for LLM response
+    /// </summary>
+    active,
+
+    waiting
+}
+
+public class LLMManager
+{
+
+
+
+
+
+
+}
 
 public class scr_UpdateHandler : MonoBehaviour
 {
     public EventManager EventHandler = new EventManager();
 
+    //---------------------------------------
+
+    Coroutine LLMRoutine = null;
+    public void InterruptLLMRoutine()
+    {
+        StopCoroutine(LLMRoutine);
+        LLMRoutine = null;
+        LLMStatus = LLMStatus.waiting;
+    }
+    LLMStatus _LLMStatus = LLMStatus.inactive;
+    public LLMStatus LLMStatus
+    {
+        get
+        {
+            return _LLMStatus;
+
+        }
+        set
+        {
+            _LLMStatus = value;
+            Observer_LLMStatus?.Invoke(value);
+        }
+    }
+
+    public event Action<LLMStatus> Observer_LLMStatus;
+    public event Action<LLMResponse> Observer_LLMResponse;
+
+    public bool LLM_Active
+    {
+        get
+        {
+            return LLMStatus > LLMStatus.inactive;
+        }
+    }
+
+    public bool dummyLLM = true;
+
+    /// <summary>
+    /// This one function will create payload and replace stuff
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="updateUI"></param>
+    public void SendLLMRequest(string s, bool updateUI =false)
+    {
+        var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        var payload = new LLMRequest();
+        payload.model = llm.model;
+
+        if (scr_System_CentralControl.current.LLMRequestTemplate != null)
+        {
+            payload.LoadTemplate(scr_System_CentralControl.current.LLMRequestTemplate);
+            // inject user
+            payload.ReplaceString("<user>", scr_System_CampaignManager.current.Player.FirstName);
+            var worldinfo = new LLM_WorldState();
+            var worldinfostring = JsonConvert.SerializeObject(worldinfo, Formatting.Indented, UtilityEX.SerializerSettings);
+            payload.ReplaceString("%%worldInfo%%", worldinfostring);
+            payload.ReplaceString("%%currentRoundInput%%", s);
+            payload.currentString = s;
+
+        }
+        else
+        {
+            var message = new LLMMessage();
+            message.role = "user";
+            message.content = s;
+            payload.messages.Add(message);
+        }
+
+        SendLLMRequest(payload, updateUI);
+    }
+    public void SendLLMRequest(LLMRequest s, bool updateUI = false)
+    {
+        LLMStatus = LLMStatus.active;
+        if (updateUI)
+        {
+            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs);
+            scr_System_CampaignManager.current.AddLog_LLM(s);
+        }
+
+        LLMRoutine = StartCoroutine(SendLLMRequest_Routine(s, OnLLMResponse));
+    }
+
+    void OnLLMResponse(string s)
+    {
+        LLMResponse response = null;
+
+        if (dummyLLM)
+        {
+            response = new LLMResponse();
+            var choice = new LLMResponse.choice();
+            choice.index = 0;
+            choice.message = new LLMMessage();
+            choice.message.role = "assistant";
+            choice.message.content = s;
+            response.choices.Add(choice);
+        }
+        else
+        {
+            response = JsonConvert.DeserializeObject<LLMResponse>(s);
+        }
+
+        string collectionPath = Application.persistentDataPath + "/LLMResponse.json";
+
+        var s2 = JsonConvert.SerializeObject(response, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
+        if (File.Exists(collectionPath)) File.Delete(collectionPath);
+
+        FileInfo untransDict = new System.IO.FileInfo(collectionPath);
+        untransDict.Directory.Create();
+        File.WriteAllText(untransDict.FullName, s2);
+
+        Debug.Log($"Response Received!: creating file at {collectionPath}");
+
+        Observer_LLMResponse?.Invoke(response);
+
+        LLMRoutine = null;
+        LLMStatus = LLMStatus.waiting;
+    }
+
+    IEnumerator SendLLMRequest_Routine(LLMRequest payload, Action<string> onResponseReceived)
+    {
+        Observer_LLMStatus?.Invoke(LLMStatus);
+
+        var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        var baseUrl = llm.endpoint;
+        var apiKey = llm.key;
+
+        string jsonPayload = JsonConvert.SerializeObject(payload, Formatting.Indented, UtilityEX.SerializerSettingsLLM);
+        string collectionPath = Application.persistentDataPath + "/LLMRequest.json";
+        if (File.Exists(collectionPath)) File.Delete(collectionPath);
+        FileInfo untransDict = new System.IO.FileInfo(collectionPath);
+        untransDict.Directory.Create();
+        File.WriteAllText(untransDict.FullName, jsonPayload);
+        Debug.Log($"Request Created!: creating file at {collectionPath}");
+
+        payload.Purge();
+
+        if (dummyLLM)
+        {
+            yield return new WaitForSecondsRealtime(5);
+
+            onResponseReceived?.Invoke($"dummytext received {DateTime.Now}");
+        }
+        else
+        {
+            string endpoint = baseUrl.EndsWith("/") ? baseUrl + "chat/completions" : baseUrl + "/chat/completions";
+
+            using (UnityWebRequest request = new UnityWebRequest(endpoint, "POST"))
+            {
+                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+
+                request.SetRequestHeader("Content-Type", "application/json");
+                request.SetRequestHeader("Authorization", "Bearer " + apiKey);
+
+                // Specific header for Claude if not using an OpenAI proxy
+                if (baseUrl.Contains("anthropic"))
+                {
+                    request.SetRequestHeader("x-api-key", apiKey);
+                    request.SetRequestHeader("anthropic-version", "2023-06-01");
+                }
+
+                yield return request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    onResponseReceived?.Invoke(request.downloadHandler.text);
+                }
+                else
+                {
+                    //Debug.LogError($"LLM Request Error: {request.error}\nResponse: {request.downloadHandler.text}");
+                    onResponseReceived?.Invoke(request.error);
+                }
+            }
+        }
+
+    }
+
+
+    //---------------------------------------
+
     public bool Lock
     {
         get
         {
-            return Updating || EventHandler.Active || Animating;
+            return Updating || EventHandler.Active || Animating || LLM_Active;
         }
     }
 

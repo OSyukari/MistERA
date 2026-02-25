@@ -17,7 +17,6 @@ public class scr_menu_question : scr_Menu
 
     float preferredLen = 0;
 
-    RectTransform self;
 
     public Message_Question InnerQuestion = null;
 
@@ -42,11 +41,10 @@ public class scr_menu_question : scr_Menu
     }
     public void InitializeWithArgs(Canvas mainCanvas, EventInstance instance, Event.EventEntry.EventEntry_Question query, scr_panel_logs logs)
     {
-        // Initialize();
+        if (!initialized) Initialize();
         this.logs = logs;
         SetCanvas(mainCanvas, true);
         this.Text.SetText(UtilityEX.ParseEventEntry(instance, query.question));
-        self = this.GetComponent<RectTransform>();
         SelfImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
         foreach (var option in query.options)
         {

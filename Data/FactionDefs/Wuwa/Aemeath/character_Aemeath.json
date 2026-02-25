@@ -23,7 +23,28 @@
                 "idleAnimName":"idle"
 
             }
-        ]
+        ],
+        "CharaBanner":
+        {
+            "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+            "portrait_offset_x": 27.24082,
+            "portrait_offset_y": -244.8654,
+            "portrait_offset_size": 0.25,
+
+            "icon_offset_x":0.0,
+            "icon_offset_y":0.0,
+            "icon_offset_size":0.56,
+
+            "icon_path":"Aemeath/T_IconRoleHead256_53_UI.png",
+            
+            "straightAlpha":true,
+            "materialTexturePaths":["Aemeath/c_aimisi_1.png"],
+            "atlasJSON_path":"Aemeath/c_aimisi_1.atlas",
+            "skeletonJSON_path":"Aemeath/c_aimisi_1.skel",
+            "idleAnimName":"idle"
+
+        }
     },
     "Template": {
       "Appearance": "Female",

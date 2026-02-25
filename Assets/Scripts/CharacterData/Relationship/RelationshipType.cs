@@ -132,7 +132,8 @@ public class RelationshipType
     public virtual bool isEqualRelationship { get { return true; } }
 
     public string ID = "";
-    public string displayName = "";
+    [JsonProperty]protected string displayName = "";
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(displayName); } }
     public bool hasGenderVariant = false;
     public bool allowNaturalProposition = true;
     public bool allowPlayerProposition = true;

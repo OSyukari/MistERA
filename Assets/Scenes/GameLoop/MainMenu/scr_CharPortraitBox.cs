@@ -22,6 +22,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     public bool isCurrentTargetBox = false;
     public bool isCurrentTargetEXBox = false;
     public bool isCombatBox = false;
+    public bool isBannerBox = false;
 
     // Start is called before the first frame update
     protected Character_Trainable currentChara = null;
@@ -159,7 +160,11 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         if (portrait != null)
         {
             //Debug.Log($"drawing portrait for {newPortrait.Owner.RefID}");
-            if (!isCombatBox) portrait.DrawPortrait(this, tags);
+            if (!isCombatBox)
+            {
+                if (isBannerBox) portrait.DrawBanner(this);
+                else portrait.DrawPortrait(this, tags);
+            }
         }
     }
 

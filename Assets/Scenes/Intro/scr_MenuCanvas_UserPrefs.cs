@@ -1,8 +1,11 @@
+using NUnit.Framework.Interfaces;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
-using System;
+using UnityEditor.PackageManager.Requests;
+using UnityEngine;
+using UnityEngine.Networking;
 
 public class scr_MenuCanvas_UserPrefs : scr_Menu
 {
@@ -15,7 +18,7 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
     }
 
     //public RectTransform SelfRect;
-    public RectTransform ContentPanel, DisplayPanel;
+    public RectTransform ContentPanel, DisplayPanel, LLMPanel;
     public scr_SelectableText ContentButton, DisplayButton;
 
     [HideInInspector] public RectTransform CurrentPanel;
@@ -212,6 +215,8 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                 {
                     case 0011: // Display button
                         button.Initialize(this, new ButtonValidator_OptionPanel(this, button, DisplayPanel)); break;
+                    case 0012: // Display button
+                        button.Initialize(this, new ButtonValidator_OptionPanel(this, button, LLMPanel)); break;
 
                     case 0100: // ColorPicker Apply button
                         button.Initialize(this, new ButtonValidator_ApplyColor(this, button)); break;
@@ -262,10 +267,107 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
             ContentButton.gameObject.SetActive(false);
         }
 
+        var mmm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        url.text = mmm.endpoint;
+        pwd.text = mmm.key;
+
         ValidateAll();
 
        // 
 
+    }
+
+
+    public TMP_InputField url, pwd;
+    public void OnContentChange_model(int s)
+    {
+        if (modelsDropdown.options.Count <= s)
+        {
+            return;
+        }
+        Debug.Log($"model value change to index {s} { modelsDropdown.options[s].text}");
+        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.model = modelsDropdown.options[s].text;
+        scr_System_CentralControl.current.StoreLLMSetting();
+    }
+    public void OnContentChange_url(string s)
+    {
+        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = url.text;
+        scr_System_CentralControl.current.StoreLLMSetting();
+        RefreshModels();
+
+    }
+    public void OnContentChange_pwd(string s)
+    {
+        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.key = pwd.text;
+        scr_System_CentralControl.current.StoreLLMSetting();
+        RefreshModels();
+    }
+
+    protected void RefreshModels()
+    {
+        var mm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        StartCoroutine(GetAvailableModel(mm.endpoint, mm.key, OnModelFound));
+    }
+
+    protected void OnModelFound(ModelList model, UnityWebRequest request) 
+    {
+        if (model == null)
+        {
+            errorMSG.SetText(Utility.WrapTextColor($"Failed to fetch models: {request.error}", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color));
+            return;
+        }
+
+        string existing = scr_System_CentralControl.current.LLMSetting.chatCompletionModel.model;
+        int newvalue = 0;
+
+        List<string> modelnames = new List<string>();
+
+        for(int i = 0; i < model.data.Count; i++)
+        {
+            modelnames.Add(model.data[i].id);
+            if (model.data[i].id == existing) newvalue = i;
+        }
+        //Debug.Log($"Found {model.data.Count} models: {String.Join(" ", modelnames)}");
+        errorMSG.SetText("");
+
+        modelsDropdown.ClearOptions();
+        modelsDropdown.AddOptions(modelnames);
+        modelsDropdown.value = newvalue;
+
+
+    }
+    public scr_HoverableText errorMSG;
+
+    public TMP_Dropdown modelsDropdown;
+
+    [Serializable] public class ModelList { public List<ModelData> data; }
+    [Serializable] public class ModelData { public string id; }
+    /// <summary>
+    /// Fetches available models from a custom URL and returns the first ID found.
+    /// </summary>
+    public IEnumerator GetAvailableModel(string baseUrl, string apiKey, Action<ModelList, UnityWebRequest> onModelFound)
+    {
+        string url = baseUrl.EndsWith("/") ? baseUrl + "models" : baseUrl + "/models";
+
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.SetRequestHeader("Authorization", "Bearer " + apiKey);
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                // Simple JSON parsing (Consider using a proper JSON library like Newtonsoft for complex nested objects)
+                ModelList list = JsonUtility.FromJson<ModelList>(request.downloadHandler.text);
+                if (list != null && list.data.Count > 0)
+                {
+                    onModelFound?.Invoke(list, request);
+                }
+            }
+            else
+            {
+                onModelFound?.Invoke(null, request);
+            }
+        }
     }
 
     public override void ValidateAll()

@@ -205,7 +205,7 @@ public class Job_Furniture : Job
 
         if (possibleCOMs.Count < 1)
         {
-            Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} looking for {actorRefIDStorage[c.RefID].comID} at step 1");
+           // Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} looking for {actorRefIDStorage.TryGetValue(c.RefID, out) actorRefIDStorage[c.RefID].comID} at step 1");
             return new List<ActionPackage>();
         }   
         

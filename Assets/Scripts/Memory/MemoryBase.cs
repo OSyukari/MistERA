@@ -438,6 +438,34 @@ public class Memory_Entry
             Mod_Lust.Add(moodlet);
         }
 
+        moodSum = "";
+        stressSum = "";
+        lustSum = "";
+
+        if (Mod_Mood.Count > 3)
+        {
+            int sum = 0;
+            foreach (var i in Mod_Mood) sum += (int)UtilityEX.StatValue(i, null);
+            moodSum = $"...{sum.ToString("+0;-#")}";
+        }
+        else foreach (var i in Mod_Mood) moodSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
+
+        if (Mod_Stress.Count > 3)
+        {
+            int sum = 0;
+            foreach (var i in Mod_Stress) sum += (int)UtilityEX.StatValue(i, null);
+            stressSum = $"...{sum.ToString("+0;-#")}";
+        }
+        else foreach (var i in Mod_Stress) stressSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
+
+        if (Mod_Lust.Count > 3)
+        {
+            int sum = 0;
+            foreach (var i in Mod_Lust) sum += (int)UtilityEX.StatValue(i, null);
+            lustSum = $"...{sum.ToString("+0;-#")}";
+        }
+        else foreach (var i in Mod_Lust) lustSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
+
         MergeWithAll = MergeWithAll || (targetTags.Contains("initSex") && !targetTags.Contains("endSex"));
 
         isEvaluationCached = true;
@@ -445,6 +473,10 @@ public class Memory_Entry
         isRefuseOnly = cache_refuseCount > cache_acceptCount && cache_acceptCount == 0;
     }
 
+    string moodSum = "", stressSum = "", lustSum = "";
+    [JsonIgnore] public string MoodSum { get { return moodSum; } }
+    [JsonIgnore] public string StressSum { get { return stressSum; } }
+    [JsonIgnore] public string LustSum { get { return lustSum; } }
     public int roomRef = -1;
 
     protected List<int> SplitScore(int original, int min, int max)
@@ -542,7 +574,7 @@ public class Memory_Entry
     {
         string s = "";
         //bool printed = true;
-        if (withTimeStamp) s += StartTime.ToShortTimeString() + ": ";
+        if (withTimeStamp) s += PrintShortTimeStartToEnd + ": ";
 
         string body = "";
 
@@ -637,6 +669,7 @@ public class Memory_Entry
     bool isEvaluationCached = false;
     int cache_score, cache_acceptCount, cache_refuseCount;
 
+    [JsonIgnore] public int CachedScore { get { return cache_score; } }
 
     public int GetInfluence(EvaluationPackage.Modifiers modifiers, bool isSame = false)
     {
@@ -694,32 +727,6 @@ public class Memory_Entry
         if (entryDescription.Length > 0) additional.Add(entryDescription);
         if (!scr_System_CentralControl.current.isSafeMode && Tags.Count > 0) additional.Add(PrintTags);
         additional.AddRange(MemInstanceDescriptions);
-
-        string moodSum = "", stressSum = "", lustSum = "";
-
-        if (Mod_Mood.Count > 3)
-        {
-            int sum = 0;
-            foreach (var i in Mod_Mood) sum += (int)UtilityEX.StatValue(i, null);
-            moodSum = $"...{sum.ToString("+0;-#")}";
-        }
-        else foreach (var i in Mod_Mood) moodSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
-
-        if (Mod_Stress.Count > 3)
-        {
-            int sum = 0;
-            foreach (var i in Mod_Stress) sum += (int)UtilityEX.StatValue(i, null);
-            stressSum = $"...{sum.ToString("+0;-#")}";
-        }
-        else foreach (var i in Mod_Stress) stressSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
-
-        if (Mod_Lust.Count > 0)
-        {
-            int sum = 0;
-            foreach (var i in Mod_Lust) sum += (int)UtilityEX.StatValue(i, null);
-            lustSum = $"...{sum.ToString("+0;-#")}";
-        }
-        else foreach (var i in Mod_Lust) lustSum += UtilityEX.StatValue(i, null).ToString("+0;-#");
 
         if (scr_System_CentralControl.current.isSafeMode) additional.Add($"Statmod: Check{cache_score.ToString("+0;-#")} Mood{moodSum} Stress{stressSum}");
         else additional.Add($"Statmod: Check{cache_score.ToString("+0;-#")} Mood{moodSum} Stress{stressSum} Lust{lustSum}");

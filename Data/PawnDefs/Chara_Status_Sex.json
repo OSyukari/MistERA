@@ -9,7 +9,7 @@
             "variants":[
                 { "displayName":"chara_status_lust_satisfied",     "threshold":-3.0 },
                 { "displayName":"chara_status_lust_satisfied",     "threshold":-0.9 },
-                { "displayable":false,       "threshold":0.9 },
+                { "displayName":"chara_status_lust_satisfied",      "threshold":0.9 },
                 { "displayName":"chara_status_lust_low",        "threshold":1.9 },
                 { "displayName":"chara_status_lust_high",       "threshold":2.9 },
                 { "displayName":"chara_status_lust_high",       "threshold":5.0 }
@@ -50,7 +50,7 @@
         {
             "statusID":"chara_status_lust_hidden",
             "displayName":"chara_status_lust_hidden",
-            "noDisplay":false, "stringFormat":"F1", "constant":true,
+            "noDisplay":true, "stringFormat":"F1", "constant":true,
             "variationMode":{ 
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",

@@ -141,7 +141,7 @@ public class Item_Base
             {
                 var compTooltips = new List<string>();
                 foreach (var comp in this.itemComps_Template) if (comp.Tooltip.Length > 0) compTooltips.Add(comp.Tooltip);
-                _tooltipCache = LocalizeDictionary.QueryThenParse(id + "_tooltip", tooltip) + (compTooltips.Count > 0 ? "\n\n"+ String.Join("\n", compTooltips) : "");
+                _tooltipCache = LocalizeDictionary.QueryThenParse(id + "_tooltip", tooltip) + (compTooltips.Count > 0 ? "\n\n"+ String.Join("\n", compTooltips) : "", "NONE");
             }
             return _tooltipCache;
         }

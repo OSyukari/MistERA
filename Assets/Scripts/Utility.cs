@@ -1,7 +1,5 @@
 using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+
 
 public static class UtilityEX
 {                                               //  F      E      D      C      B      A      S    
@@ -72,12 +70,20 @@ public static class UtilityEX
 
     public static string bugReport = "https://discord.gg/XK6vm4xPh5";
 
-    public static JsonSerializerSettings SerializerSettings = 
-        new JsonSerializerSettings() { 
-            TypeNameHandling = TypeNameHandling.Auto ,
+    public static JsonSerializerSettings SerializerSettings =
+        new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
             Converters = new JsonConverter[] { new JSON_SO_Converter<Character_Trainable>() }
-    };
+        };
 
+    public static JsonSerializerSettings SerializerSettingsLLM =
+        new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            Converters = new JsonConverter[] { new JSON_SO_Converter<Character_Trainable>() },
+            NullValueHandling = NullValueHandling.Ignore
+        };
 
     public static SaveFileHolder ReadSaveHolder(FileInfo file)
     {
@@ -1053,6 +1059,19 @@ public static class UtilityEX
 
         switch (parsed[0])
         {
+            case "generateAI":
+                var collection = new LLM_WorldState();
+                string collectionPath = Application.persistentDataPath + "/worldStateInfo.json";
+
+                var s2 = JsonConvert.SerializeObject(collection, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
+                if (File.Exists(collectionPath)) File.Delete(collectionPath);
+
+                FileInfo untransDict = new System.IO.FileInfo(collectionPath);
+                untransDict.Directory.Create();
+                File.WriteAllText(untransDict.FullName, s2);
+                Debug.Log($"creating/updating worldstateinfo collection in {collectionPath}");
+
+                break;
             case "modstatderived": // modify derived stat's debug modifier
                 if (scr_System_CampaignManager.current.CurrentTarget == null) return;
                 if (parsed.Count() != 3) return;
@@ -1280,7 +1299,9 @@ public static class UtilityEX
         return modifier.ValidateAccess(isStatEx, isStatDerived, true, true, true, true);
     }
 
-    public static ObjectPool<StringBuilder> StringBuilderPool = new DefaultObjectPoolProvider().CreateStringBuilderPool(); 
+    public static ObjectPool<StringBuilder> StringBuilderPool = new DefaultObjectPoolProvider().CreateStringBuilderPool();
+
+
 
     /// <summary>
     /// 

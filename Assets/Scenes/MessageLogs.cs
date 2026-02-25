@@ -357,6 +357,41 @@ public class Message_Question : MessageLog
 }
 
 
+[System.Serializable]
+public class Message_LLMQuery : MessageLog
+{
+    public override bool DisplaPortrait
+    {
+        get
+        {
+            return multipleChara.Count > 0 || PortraitRef != null;
+        }
+    }
+
+    public override bool canAnimate()
+    {
+        return false;
+    }
+    LLMRequest request;
+    public Message_LLMQuery(PortraitManager portraitRef, List<string> tags, LLMRequest request, DateTime time = default) : base(portraitRef, time, null)
+    {
+        this.tagsOverride = tags;
+        this.request = request;
+    }
+
+    public override void Animate()
+    {
+        Debug.LogError("Animate called on message_question");
+    }
+
+    public void Draw(bool skipImage, Canvas mainCanvas, scr_menu_LLMQuery questionBox, scr_panel_logs logs = null)
+    {
+        // question log always draw
+        base.Draw(true);
+        questionBox.InitializeWithArgs(mainCanvas, request, logs);
+    }
+}
+
 public abstract class MessageLog
 {
     public bool displayed = false;

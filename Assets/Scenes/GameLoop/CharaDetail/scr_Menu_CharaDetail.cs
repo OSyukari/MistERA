@@ -1,12 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 {

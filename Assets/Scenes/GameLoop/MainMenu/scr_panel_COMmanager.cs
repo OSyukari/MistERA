@@ -15,6 +15,7 @@ public class scr_panel_COMmanager : scr_Menu
     {
         Debug,
         DeterministicRolls,
+        LLM,
         ShorterLogs,
         Sex_Touch,
         Sex_Undress,
@@ -354,7 +355,6 @@ public class scr_panel_COMmanager : scr_Menu
 
     }
 
-
     RectTransform GetGrid(List<string> label)
     {
         foreach (var l in label)
@@ -408,6 +408,7 @@ public class scr_panel_COMmanager : scr_Menu
                 case -6500: button.Initialize(this, new ButtonValidator_ChangeDebugFilter(this, COMFilter.Debug, button)); break;
                 case -6511: button.Initialize(this, new ButtonValidator_ChangeDeterministicRollsFilter(this, COMFilter.DeterministicRolls, button)); break;
                 case -6512: button.Initialize(this, new ButtonValidator_ChangeShorterLogs(this, COMFilter.ShorterLogs, button)); break;
+                case -6513: button.Initialize(this, new Button_ToggleLLM(this, COMFilter.LLM, button)); break;
                 case -6509:
                     if (safeMode) button.gameObject.SetActive(false);
                     else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Touch, button)); 
@@ -474,6 +475,10 @@ public class scr_panel_COMmanager : scr_Menu
                 case -6703:
                     if (safeMode) button.gameObject.SetActive(false);
                     else button.Initialize(this, new ButtonValidator_UndressAll(this, button, false, 1)); 
+                    break;
+
+                case -6800:
+                    button.Initialize(this, new Button_LLM_Submit(this, button));
                     break;
 
                 //case -7400: button.Initialize(this, new ButtonValidator_InitSexDebug(this, button)); break;
@@ -670,6 +675,10 @@ public class scr_panel_COMmanager : scr_Menu
         ValidateAll();
     }
 
+    protected void ValidateLLMs()
+    {
+        GetButtonByID(-6800).Validate();
+    }
     public override void Notify(int optionID)
     {
         //Debug.Log("Parent Notified ! [" + optionID + "]");
@@ -2030,6 +2039,19 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
+    public TMP_InputField inputfield_llm;
+
+    public void OnEdit_LLM(string s)
+    {
+        ValidateLLMs();
+    }
+    public void OnSubmit_LLM(string s)
+    {
+        Debug.Log($"OnEndEdit_LLM\nReceived Text: {s}\nInternalText:{inputfield_llm.text}");
+        scr_UpdateHandler.current.SendLLMRequest(inputfield_llm.text, true);
+        inputfield_llm.text = "";
+    }
+
     public class ButtonValidator_ChangeDebugFilter : ButtonValidator, I_ButtonClickable
     {
         COMFilter filter;
@@ -2053,7 +2075,6 @@ public class scr_panel_COMmanager : scr_Menu
 
             if (currentVal) text.Toggle(true, true);
             else text.Toggle(true, false);
-
             return true;
         }
 
@@ -2062,6 +2083,75 @@ public class scr_panel_COMmanager : scr_Menu
             var resultValue = !parent.GetCOMFilter(filter);
             parent.ChangeCOMFilter(filter, resultValue);
             scr_System_CampaignManager.current.DebugMode = resultValue;
+        }
+    }
+
+    public RectTransform LLMRect;
+
+    public class Button_ToggleLLM : ButtonValidator, I_ButtonClickable
+    {
+        COMFilter filter;
+        new scr_panel_COMmanager parent;
+        scr_SelectableText text;
+        public Button_ToggleLLM(scr_panel_COMmanager parent, COMFilter filter, scr_SelectableText text) : base(parent)
+        {
+            this.filter = filter;
+            this.parent = parent;
+            this.text = text;
+
+            text.isButtonToggle = true;
+            text.useDisabledColorWhenUntoggled = true;
+        }
+        public override bool IsButtonValid()
+        {
+            var currentVal = parent.GetCOMFilter(filter);
+            if (currentVal)
+            {
+                text.Toggle(true, true);
+            }
+            else
+            {
+                text.Toggle(true, false);
+            }
+            parent.LLMRect.gameObject.SetActive(currentVal);
+
+            if (currentVal && parent.inputfield_llm.text == "")
+            {
+                parent.inputfield_llm.text = parent.llm_placeholder;
+            }
+
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            var resultValue = !parent.GetCOMFilter(filter);
+            parent.ChangeCOMFilter(filter, resultValue);
+        }
+    }
+
+    public string llm_placeholder = "(LLM input here)";
+
+    public class Button_LLM_Submit: ButtonValidator, I_ButtonClickable
+    {
+
+        new scr_panel_COMmanager parent;
+        scr_SelectableText text;
+        public Button_LLM_Submit(scr_panel_COMmanager parent, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+        }
+        public override bool IsButtonValid()
+        {
+            if (!text.gameObject.activeInHierarchy) return false;
+            if (parent.inputfield_llm.text == "" || parent.inputfield_llm.text == parent.llm_placeholder) return false;
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.OnSubmit_LLM("s");
         }
     }
 

@@ -961,6 +961,18 @@ public abstract class ActionPackage
     [JsonIgnore] protected int attitudeRate_neg = 0;
     //public int AttitudeRate_Neg { get { return attitudeRate_neg; } }
     
+    public string GetSuccessRatePrevalidationString()
+    {
+        RemakePackages();
+        List<string> concat = new List<string>();
+        foreach(var ep in this.ListEP)
+        {
+            var result = ep.GetCheckPrevalidation();
+            if (result.Length > 0) concat.Add(result);
+        }
+        return String.Join("\n", concat);
+    }
+
 
     public string GetSuccessRateString()
     {
@@ -1326,6 +1338,67 @@ public abstract class ActionPackage
         }
     }
 
+    public bool CollectMods(out EvaluationPackage.Modifiers dcMods, out int bonus, out int baseDC)
+    {
+        dcMods = new EvaluationPackage.Modifiers();
+        bool success = true;
+        bonus = 0;
+        baseDC = targetCOM.baseD20Check;
+        var tags = new List<string>();
+        tags.AddRange(targetCOM.comTags);
+        bool multiActor = (packages.Count > 0 && this.actorRefs.Count > 1) ? true : false;
+        foreach (var ep in packages)
+        {
+            tags.AddRange(ep.ExtraCOMTags);
+            if (multiActor) ep.AddExtraCOMTags("interaction");
+        }
+        tags = Utility.Distinct(tags);
+
+        foreach (var ep in packages)
+        {
+            if (!repeated && ep.Response < Memory_Response.Accept)
+            {
+                success = false;
+            }
+
+            if (ep.Receiver == null || ep.Receiver == ep.Doer)
+            {
+                bonus += ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods);
+
+            }
+            else
+            {
+                bonus += ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods);
+                if (ep.ReceiverAttitude > Memory_Attitude.Dislike) bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
+            }
+
+            foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Doer)
+            {
+                var j = ep.Doer.GetSkill(i);
+                var k = j.GetSkillLevel;
+                if (k <= 0) continue;
+                bonus += k;
+                dcMods.AddModifier(ep.Doer.RefID, j.DisplayName, k);
+            }
+
+
+            if (ep.Receiver != null && ep.Receiver != ep.Doer)
+            {
+                foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Receiver)
+                {
+                    var j = ep.Receiver.GetSkill(i);
+                    var k = j.GetSkillLevel;
+                    if (k <= 0) continue;
+                    bonus += k;
+                    dcMods.AddModifier(ep.Receiver.RefID, j.DisplayName, k);
+                }
+            }
+
+        }
+
+        return success;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -1356,64 +1429,7 @@ public abstract class ActionPackage
             }
             else if (targetCOM.baseD20Check > 0)
             {
-                EvaluationPackage.Modifiers dcMods = new EvaluationPackage.Modifiers();
-                bool success = true;
-                int bonus = 0;
-                int baseDC = targetCOM.baseD20Check;
-                var tags = new List<string>();
-                tags.AddRange(targetCOM.comTags);
-                bool multiActor = (packages.Count > 0 && this.actorRefs.Count > 1) ? true : false;
-                foreach (var ep in packages)
-                {
-                    tags.AddRange(ep.ExtraCOMTags);
-                    if (multiActor) ep.AddExtraCOMTags("interaction");
-                }
-                tags = Utility.Distinct(tags);
-
-                foreach (var ep in packages)
-                {
-                    if (!repeated && ep.Response < Memory_Response.Accept)
-                    {
-                        success = false;
-                        break;
-                    }
-
-                    if (ep.Receiver == null || ep.Receiver == ep.Doer)
-                    {
-                        bonus += ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods);
-
-                    }
-                    else
-                    {
-                        bonus += ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods);
-                        if (ep.ReceiverAttitude > Memory_Attitude.Dislike) bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
-                    }
-
-                    foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Doer)
-                    {
-                        var j = ep.Doer.GetSkill(i);
-                        var k = j.GetSkillLevel;
-                        if (k <= 0) continue;
-                        bonus += k;
-                        dcMods.AddModifier(ep.Doer.RefID, j.DisplayName, k);
-                    }
-
-
-                    if (ep.Receiver != null && ep.Receiver != ep.Doer)
-                    {
-                        foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Receiver)
-                        {
-                            var j = ep.Receiver.GetSkill(i);
-                            var k = j.GetSkillLevel;
-                            if (k <= 0) continue;
-                            bonus += k;
-                            dcMods.AddModifier(ep.Receiver.RefID, j.DisplayName, k);
-                        }
-                    }
-                        
-                }
-
-                if (success)
+                if (CollectMods(out var dcMods, out int bonus, out int baseDC))
                 {
                     int diceRoll = Dice(1, 21, 1);
                     if (baseDC == 0) injectResult = Memory_Response.Success;
