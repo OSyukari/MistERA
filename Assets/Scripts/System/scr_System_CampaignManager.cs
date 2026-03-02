@@ -21,6 +21,7 @@ public class scr_System_CampaignManager_Serializable
     public string campaignSettingID;
     public Dictionary<int, ExpeditionInstance> ExpeditionInstances;
     public int debugRoomRef, statisRoomRef, tempRoomRef;
+    public Dictionary<string, string> LLMResponseStorage;
     // LogsManager? dont need serializing, logs are throwaway lines anyway
 }
 
@@ -248,6 +249,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.statisRoomRef = this.statisRoomID;
         obj.tempRoomRef = this.tempRoomID;
         obj.debugRoomRef = this.debugRoomRef;
+        obj.LLMResponseStorage = this.LLMResponseStorage;
 
         return obj;
     }
@@ -343,6 +345,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         this.StasisRoom = null;
         this._tempRoom = null;
         this.debugRoomRef = obj.debugRoomRef;
+        this.LLMResponseStorage = obj.LLMResponseStorage;
 
         currentRoomRef = obj.CurrentRoomRef;
         currentTarget = 0;
@@ -396,6 +399,24 @@ public class scr_System_CampaignManager : MonoBehaviour
     private MessageLogManager LogManager;
 
     public List<MessageLog> Logs { get { return LogManager.Logs; } }
+
+    public Dictionary<string, string> LLMResponseStorage = new Dictionary<string, string>();
+
+    public string AddLLMEntry(string s)
+    {
+        if (LLMResponseStorage == null) LLMResponseStorage = new Dictionary<string, string>();
+        var key = $"%%{DateTime.Now.Ticks}%%";
+        LLMResponseStorage.Add(key, s);
+        return key;
+    }
+
+    public bool TryGetCustomEntry(string s, out string value)
+    {
+        if (LLMResponseStorage == null) LLMResponseStorage = new Dictionary<string, string>();
+        if (LLMResponseStorage.TryGetValue(s, out value)) return true;
+        else return false;
+    }
+
     /// <summary>
     /// RefID -1 no display
     /// RefID -2 
@@ -667,7 +688,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public bool Unregister(ActionPackage p)
     {
         bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Jobs;
-        if (debug) Debug.Log("Unregistering AP " + p.DisplayName);
+        if (debug || p is ActionPackage_LLM) Debug.Log("Unregistering AP " + p.DisplayName);
         if (!registeredPackagesByRoom.ContainsKey(p.RoomKey)) return false;
         //if (p.targetCOM.comTags.Contains("character_trainable") && p.Duration > -1) return;
         var possibleTargets = registeredPackagesByRoom[p.RoomKey].FindAll(x => UtilityEX.ArePackagesEqual(x, p));
@@ -1014,6 +1035,10 @@ public class scr_System_CampaignManager : MonoBehaviour
                 ActionPackage p = list[i];
                 int roomKey = p.RoomKey;
                 int duration = p.Duration;
+                if (p is ActionPackage_LLM)
+                {
+                    Debug.Log("ticking llm package");
+                }
                 if (p.isPaused) continue;
                 if (p.Tick(ref freeActors, updateDuration))
                 {

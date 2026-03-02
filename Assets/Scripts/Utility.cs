@@ -80,7 +80,7 @@ public static class UtilityEX
     public static JsonSerializerSettings SerializerSettingsLLM =
         new JsonSerializerSettings()
         {
-            TypeNameHandling = TypeNameHandling.Auto,
+            TypeNameHandling = TypeNameHandling.None,
             Converters = new JsonConverter[] { new JSON_SO_Converter<Character_Trainable>() },
             NullValueHandling = NullValueHandling.Ignore
         };

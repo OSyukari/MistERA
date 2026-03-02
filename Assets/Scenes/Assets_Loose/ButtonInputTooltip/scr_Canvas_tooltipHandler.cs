@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class scr_Canvas_tooltipHandler : MonoBehaviour
 {
@@ -86,13 +87,23 @@ public class scr_Canvas_tooltipHandler : MonoBehaviour
         anchor_x = 0;
         anchor_y = 1;
 
-        if (Screen.width - x_offset - m_TextPopup_TMPComponent.preferredWidth - Input.mousePosition.x < 50)
+        m_TextPopup_RectTransform.sizeDelta = new Vector2(Math.Clamp((int)(m_TextPopup_TMPComponent.preferredWidth*1.3), 100, (int)(Screen.width*0.4)), m_TextPopup_TMPComponent.preferredHeight);
+
+        if (Input.mousePosition.x + x_offset + m_TextPopup_RectTransform.sizeDelta.x > Screen.width)
         {
             anchor_x = 1;
             x_offset = -x_offset;
         }
 
-        if (Input.mousePosition.y + y_offset - m_TextPopup_TMPComponent.preferredHeight < 50)
+
+        /*
+        if (Screen.width - x_offset - m_TextPopup_TMPComponent.preferredWidth - Input.mousePosition.x < 50)
+        {
+
+        }*/
+
+
+        if (Input.mousePosition.y + y_offset - m_TextPopup_RectTransform.sizeDelta.y < 50)
         {
             anchor_y = 0;
             y_offset = -y_offset;
@@ -109,7 +120,7 @@ public class scr_Canvas_tooltipHandler : MonoBehaviour
         m_TextPopup_RectTransform.SetSiblingIndex(m_Canvas.transform.childCount - 1);
         //m_TextPopup_RectTransform.gameObject.SetActive(true);
 
-        
+        m_TextPopup_TMPComponent.SetLayoutDirty();
     }
 
     private void LateUpdate()

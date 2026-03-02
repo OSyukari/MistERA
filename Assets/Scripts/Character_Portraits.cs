@@ -171,6 +171,21 @@ public class PortraitManager
             box.Draw(_cache_NeutralPortrait.DrawPortrait(box, _cache_NeutralPortrait_path));
         }
     }
+
+    public void CollectAllTags(ref List<string> s)
+    {
+        foreach(var portrait in this.portraitPriorityList)
+        {
+            s.AddRange(portrait.RequireContextKeys);
+            foreach(var variant in portrait.Variants)
+            {
+                s.AddRange(variant.tagsMatch);
+            }
+        }
+        s = Utility.Distinct(s);
+    }
+
+
     [JsonIgnore] public CharaPortrait _cache_CombatPortrait = null;
     protected string _cache_CombatPortrait_path = "";
     protected string _cache_CombatPortrait_icon = "";
@@ -220,6 +235,10 @@ public class PortraitManager
             box.currentHandler = _cache_ActivityPortrait;
             //box.currentPortrait = _cache_ActivityPortrait_path;
             box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path));
+        }
+        else
+        {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait ABORT due to cannot find distinct portrait for Tags [{String.Join(" ", tags_active)}]");
         }
 
     }

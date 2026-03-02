@@ -150,9 +150,9 @@ public class ActionPackage_Sex : ActionPackage
         }
     }
 
-    protected override bool Request(bool rebuildPackage = true, bool forceAccept = false)
+    protected override bool Request(bool rebuildPackage = true, Memory_Response forceAccept = Memory_Response.None)
     {
-        forceAccept = forceAccept || this.is_Forced;
+        if (this.isForced && forceAccept < Memory_Response.Accept) forceAccept = Memory_Response.Accept; 
         return base.Request(rebuildPackage, forceAccept);
     }
 }

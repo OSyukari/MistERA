@@ -149,7 +149,7 @@ public class ActionPackage_PathTo : ActionPackage
     /// Does not require EP, thus overwrite.
     /// </summary>
     /// <returns></returns>
-    protected override bool Request(bool rebuildPackage = true, bool forceAccept = false)
+    protected override bool Request(bool rebuildPackage = true, Memory_Response forceAccept = Memory_Response.None)
     {
         return isValid;
     }

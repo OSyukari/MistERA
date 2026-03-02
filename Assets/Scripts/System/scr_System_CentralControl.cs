@@ -80,6 +80,11 @@ public class scr_System_CentralControl : MonoBehaviour
         }
     }
 
+    public void ResetLLMRequestTemplate()
+    {
+        _llmRequestTemplate = null;
+    }
+
     public void StoreLLMSetting()
     {
         string llmpath = Application.persistentDataPath + "/llmSetting.json";
@@ -311,7 +316,7 @@ public class scr_System_CentralControl : MonoBehaviour
         }
 
 
-        if (!this.texSprites.ContainsKey(path)) this.texSprites.Add(path, Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 100.0f));
+        if (!this.texSprites.ContainsKey(path)) this.texSprites.Add(path, Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f));
 
         this.textureUseCounter[path] = PortraitCacheHour;
         return this.texSprites[path];

@@ -129,6 +129,9 @@ public class Dictionary_Index : I_IndexMergeable
                 var content = Regex.Match(original, strContentPattern).Value;
                 var replaced = Query(content);
                 if (replaced != content) s = s.Replace(original, replaced);
+                else if (scr_System_CampaignManager.current.TryGetCustomEntry(original, out replaced)){
+                    s = s.Replace(original, replaced);
+                }
             }
         }
         return s;

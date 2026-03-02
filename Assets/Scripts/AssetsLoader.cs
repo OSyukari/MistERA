@@ -33,15 +33,14 @@ public class AssetsLoader
             }
 
             byte[] bytes = uwr.downloadHandler.data;
-            Texture2D tex = null;
+            Texture2D tex = new Texture2D(2, 2);
 
-            if (extension == ".png" || extension == ".jpg" || extension == ".jpeg")
+            if (tex.LoadImage(bytes))
             {
                 // Native Unity support
-                tex = new Texture2D(2, 2);
-                tex.LoadImage(bytes);
+                //
             }
-            else if (extension == ".webp")
+            else
             {
                 // Use NativeWebP if available
                 var newTex = Texture2DExt.CreateTexture2DFromWebP(bytes, true, false, out var Error);
@@ -51,15 +50,10 @@ public class AssetsLoader
                 }
                 else
                 {
+                    Debug.LogError($"AssetsLoader LoadTextureCoroutine Error, unhandled format [{extension}]");
                     onComplete?.Invoke(null);
                     yield break;
                 }
-            }
-            else
-            {
-                Debug.LogError($"AssetsLoader LoadTextureCoroutine Error, unhandled format [{extension}]");
-                onComplete?.Invoke(null);
-                yield break;
             }
 
             onComplete?.Invoke(tex);

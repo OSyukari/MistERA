@@ -486,7 +486,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         com = null;
         order = null;
-
+        if (sourceJob == null) return false;
         foreach (var jbPost in jobPosts) {
 
             if (jbPost.Value.Contains(sourceJob))

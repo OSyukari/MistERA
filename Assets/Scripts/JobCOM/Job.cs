@@ -388,10 +388,55 @@ public class Job : IDisposable, I_Disposable
     
     */
 
+    public List<ActionPackage> MakePackages(Character_Trainable c, string comID, bool allowInvalid = false, List<string> debug = null)
+    {
+        actorRefIDStorage.Add(c.RefID, new COM_Match(comID));
+        return MakePackages(c, allowInvalid, debug);
+    }
+
     public virtual List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false, List<string> debug = null)
     {
+        if (actorRefIDStorage.ContainsKey(c.RefID))
+        {
+            var possibleCOMs = actorRefIDStorage[c.RefID].Match(this);
+            possibleCOMs = possibleCOMs.FindAll(x => (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
+                                                );
+
+            List<ActionPackage> results = new List<ActionPackage>();
+            foreach (var com in possibleCOMs)
+            {
+                // bool valid = false;
+                /*if (com is COM_Character_Remove && this.Container != null && this.Container is JobContainer_Chara && (this.Container as JobContainer_Chara).CharaRefs)
+                {
+                    var container = this.Container as JobContainer_Chara;
+                    var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(container.CharaRefs), -1, po);
+                    if (package.Validate() || allowInvalid)
+                    {
+                        results.Add(package);
+                       // valid = true;
+                    }
+                }
+                else*/
+                if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner, out var r)))
+                {
+                    var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1);
+                    if (package.Validate() || allowInvalid)
+                    {
+                        results.Add(package);
+                        if (debug != null) debug.Add($"add com {com.DisplayName()}");
+                        //  valid = true;
+                    }
+                    else if (debug != null) debug.Add($"com {com.DisplayName()} invalid");
+
+                }
+                else if (debug != null) debug.Add($"com {com.DisplayName()} skipped");
+                // if (com.comTags.Contains("food_meal") && !valid) Debug.LogError($"mealcom {com.ID} failed playerCOM validation, allowinvalid {allowInvalid} hasfactionreq {(!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc2, out po))}");
+            }
+
+            return results;
+        }
         //Debug.Log("UNIMPLEMENTED MAKEPACKAGE FUNCTION");
-        return new List<ActionPackage>();
+        else return new List<ActionPackage>();
     }
 
     public virtual bool isCOMValid(COM com)
@@ -597,12 +642,12 @@ public class Job : IDisposable, I_Disposable
         return false;
     }
 
-    [JsonIgnore] public bool isPlayerRelatedJob { get { return this.actorRefID.Contains(0) 
+    [JsonIgnore] public virtual bool isPlayerRelatedJob { get { return this.actorRefID.Contains(0) 
                 || this.packages_current.Find(x=>x.actorRefs.Contains(0)) != null 
                 || this.packages_previous.Find(x => x.actorRefs.Contains(0)) != null;
         } }
 
-    [JsonIgnore] public bool isVisibleToPlayer { get { return this.ParentRoom != null && ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(0).RefID; } }
+    [JsonIgnore] public virtual bool isVisibleToPlayer { get { return this.ParentRoom != null && ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(0).RefID; } }
 
     /// <summary>
     /// Return true if job.parentRoom is player current room, and that player is not Unconscious<br/>
@@ -656,7 +701,7 @@ public class Job : IDisposable, I_Disposable
 
             if (display && displayStrict)
             {
-                ap.LogCheckResult(rightAlign, ap.LoggedBegin);
+                ap.LogCheckResult(rightAlign, ap.LoggedBegin, m);
             }
             if (!ap.LoggedBegin)
             {
@@ -693,7 +738,7 @@ public class Job : IDisposable, I_Disposable
                 //if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult, tooltip);
                 if (displayStrict)
                 {
-                    ap.LogCheckResult(rightAlign);
+                    ap.LogCheckResult(rightAlign, false, m);
                 }
 
                 if (ap.repeated) ap.LogMessage_Begin_Ongoing(false, rightAlign, m);
@@ -705,11 +750,17 @@ public class Job : IDisposable, I_Disposable
     }
 
 
-
     public void NotifyDescriptionsOutOfUpdate()
     {
         //Debug.Log($"NotifyDescriptionsOutOfUpdate on {DisplayName}");
         if (this.isVisibleToPlayer) scr_UpdateHandler.current.NotifyJobDescriptions(m, true);
+        m.Clear();
+    }
+
+    public void NotifyDescriptionsOutOfUpdate(bool shortenLogs=  true)
+    {
+        //Debug.Log($"NotifyDescriptionsOutOfUpdate on {DisplayName}");
+        if (this.isVisibleToPlayer) scr_UpdateHandler.current.NotifyJobDescriptions(m, shortenLogs);
         m.Clear();
     }
 

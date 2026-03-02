@@ -243,7 +243,7 @@ public class Memory_Entry
 
     protected bool CanMergeWith(Memory_Entry other)
     {
-        if ( this.EndTime.Ticks == other.EndTime.Ticks)
+        if (this.EndTime.Ticks == other.EndTime.Ticks)
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Memory && Owner == scr_System_CampaignManager.current.CurrentTarget) Debug.Log($"memory entry merge, same endtime tick merge|");
             return true;
@@ -580,7 +580,7 @@ public class Memory_Entry
 
 
         if (isRefuseOnly && this.entryDescription != "") body = LocalizeDictionary.QueryThenParse("job_desc_refuseOnly").Replace("$jobdesc$", entryDescription); 
-        else if (this.entryDescription != "") body = entryDescription;
+        else if (this.entryDescription != "") body = LocalizeDictionary.QueryThenParse( entryDescription);
         else if (Actions.Count > 0) body = Actions[0].Print();
         else if (this.MemInstanceDescriptions != null && this.MemInstanceDescriptions.Count > 0) body = MemInstanceDescriptions[0];
         else body = "Error no stuff";

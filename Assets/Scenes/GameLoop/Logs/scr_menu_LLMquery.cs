@@ -1,11 +1,13 @@
-using UnityEngine;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.EventSystems;
 using System.Linq;
+using TMPro;
+using Unity.Jobs;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class scr_menu_LLMQuery : scr_Menu
 {
@@ -16,6 +18,8 @@ public class scr_menu_LLMQuery : scr_Menu
     public Image SelfImage;
 
     public TMP_Text responseText;
+
+    public RectTransform ResponseList;
 
     public bool _active = true;
 
@@ -38,10 +42,12 @@ public class scr_menu_LLMQuery : scr_Menu
         }
     }
     public LLMRequest request;
-    public void InitializeWithArgs(Canvas mainCanvas, LLMRequest request, scr_panel_logs logs)
+    Message_LLMQuery parent = null;
+    public void InitializeWithArgs(Canvas mainCanvas, Message_LLMQuery parent, LLMRequest request, scr_panel_logs logs)
     {
         if (!initialized) Initialize();
         this.request = request;
+        this.parent = parent;
         SetCanvas(mainCanvas, true);
         this.messageText.text = request.currentString;
         SelfImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
@@ -52,22 +58,199 @@ public class scr_menu_LLMQuery : scr_Menu
 
         scr_UpdateHandler.current.Observer_LLMResponse += OnResponse;
         scr_UpdateHandler.current.Observer_LLMStatus += OnUpdate;
-
-
-
     }
+
+    List<LLMResponse> currentList = new List<LLMResponse>();
+    int currentIndex = -1;
+
+    LLMResponse CurrentResponse = null;
+    LLMMessage.MessageJSON internalJson = null;
+    public bool HasValidResponse
+    {
+        get
+        {
+            return CurrentResponse != null;
+        }
+    }
+    public bool HasNext
+    {
+        get
+        {
+            return currentIndex > -1 && currentList.Count > currentIndex + 1;
+        }
+    }
+    public bool HasPrev
+    {
+        get
+        {
+            return currentIndex > -1;
+        }
+    }
+
+    /// <summary>
+    /// load internal state and animate one step
+    /// </summary>
+    /// <param name="prev"></param>
+    public void LoadResponse(bool prev = false)
+    {
+        if (currentList.Count < 1) return;
+
+        currentIndex += (prev ? -1 : 1);
+        if (currentIndex < 0) currentIndex = currentList.Count - 1;
+        else if (currentIndex >= currentList.Count) currentIndex = 0;
+
+        Utility.DestroyAllChildrenFrom(ResponseList);
+
+        CurrentResponse = currentList[currentIndex];
+        reload = true;
+
+        if (CurrentResponse != null && CurrentResponse.JSON != null)
+        {
+            List<string> names = new List<string>();
+            foreach(var i in CurrentResponse.JSON.relevantActorRefs)
+            {
+                var c = scr_System_CampaignManager.current.FindInstanceByID(i);
+                if (c != null && !names.Contains(c.FirstName)) names.Add(c.FirstName);
+            }
+
+            List<string> tooltips = new List<string>();
+            bool allvalid = true;
+            foreach (var ap in CurrentResponse.JSON.actionpackages)
+            {
+                bool isvalid = ap.Validate();
+                allvalid = isvalid && allvalid;
+                var result = ap.GetCheckResult(false);
+                tooltips.Add(ap.GetTooltips($"{ap.DisplayName} isvalid? [{isvalid}]: doers [$doer$], receivers [$receiver$]"));
+            }
+            tooltipText.SetText(allvalid ? "all packages parsed successfully" : "error in package parsing");
+            tooltipText.SetExternalTooltip($"Relevant actors {CurrentResponse.JSON.relevantActorRefs.Count} [{String.Join(" ",names)}]\ntimecost [{CurrentResponse.JSON.timeCost}]\n{String.Join("\n", tooltips)}");
+        }
+
+        Animate();
+    }
+    public void ExecuteResponse()
+    {
+        this.Active = false;
+        bool update = false;
+        if (CurrentResponse != null && CurrentResponse.JSON != null)
+        {
+            scr_System_CentralControl.current.AutoSave();
+
+            //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
+            //scr_System_CampaignManager.current.Player.ChangeCurrentJob(job);
+
+
+            var json = CurrentResponse.JSON;
+            var allrelevantActors = new List<int>(CurrentResponse.JSON.relevantActorRefs);
+
+            foreach (var ap in CurrentResponse.JSON.actionpackages)
+            {
+                allrelevantActors.AddRange(ap.DoerRefs);
+                allrelevantActors.AddRange(ap.ReceiverRefs);
+            }
+            allrelevantActors.RemoveAll(x => x < 0);
+            allrelevantActors = Utility.Distinct(allrelevantActors);
+
+
+            var playerjob = scr_System_CampaignManager.current.FindJobInstanceByID(scr_System_CampaignManager.current.jobRef_playerCOM);
+            playerjob.m.displayOverride = true;
+
+            foreach (var actor in allrelevantActors)
+            {
+                scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(playerjob);
+            }
+
+            json.timeCost = Math.Clamp(json.timeCost, 5, 60);
+
+            var apLLM = new ActionPackage_LLM(playerjob, json.timeCost, allrelevantActors, CurrentResponse.JSON);
+
+            playerjob.AddPackage(new List<ActionPackage>() { apLLM }, true);
+            //scr_System_CampaignManager.current.Register(apLLM, false);
+            update = true;
+
+        }
+        scr_UpdateHandler.current.LLMStatus = LLMStatus.inactive;
+        if (update) scr_System_CampaignManager.current.FreeUpdate();
+    }
+    public scr_HoverableText tooltipText;
+
+    public bool canAnimate = true;
+    bool reload = true;
+    public scr_HoverableText prefab_LogLine;
+    public scr_MessageLogBox prefab_LogBox;
+
+    void DrawLine( LLMMessage.MessageParagraph s)
+    {
+        var box = Instantiate(prefab_LogBox);
+        box.SelfRect.SetParent(ResponseList, false);
+        //box.SelfImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
+
+        var c = scr_System_CampaignManager.current.FindInstanceByID(s.portraitRefID);
+        Message_Text text = new Message_Text(c, s.portraitTags, s.content_text, false);
+        text.animateAllOverride = true;
+        text.Draw(false, box, prefab_LogLine);
+    }
+
+    void DrawLine(string s)
+    {
+        var prefab = Instantiate(prefab_LogLine);
+        prefab.SelfRect.SetParent(ResponseList, false);
+        prefab.SetText(s);
+    }
+
+    public void Animate()
+    {
+        if (CurrentResponse == null) return;
+
+        var message = CurrentResponse.JSON;
+        if (message != null)
+        {
+            responseText.text = "";
+            if (message.content_blocks.Count > 0)
+            {
+                var startIndex = reload ? 0 : message.animatedIndex;
+                var endIndex = Math.Min(message.animatedIndex + 1, message.content_blocks.Count);
+                for (int i = startIndex; i < endIndex; i++)
+                {
+                    //RectTransform msgbox = Instantiate(prefab_LogEntry);
+                    //if (parent != null) parent.Draw(false, msgbox.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine);
+                    DrawLine(message.content_blocks[i]);
+                }
+                message.animatedIndex = endIndex;
+                canAnimate = message.animatedIndex < message.content_blocks.Count;
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"reload {reload}, start {startIndex} end {endIndex} animated_final {message.animatedIndex}");
+            }
+            else if (message.content_string.Length > 0 && message.animatedIndex < message.content_string.Length)
+            {
+                //RectTransform msgbox = Instantiate(prefab_LogEntry);
+                DrawLine(message.content_string);
+                message.animatedIndex = message.content_string.Length;
+                canAnimate = false;
+            }
+        }
+        else
+        {
+            responseText.text = "error no message in response";
+            canAnimate = false;
+        }
+        reload = false;
+        ValidateAll();
+    }
+
+
 
     void OnUpdate(LLMStatus status)
     {
         ValidateAll();
     }
 
-    void OnResponse(LLMResponse response)
+    public void OnResponse(LLMResponse response)
     {
         Debug.Log("OnResponse!");
         this.currentList.Add(response);
         LoadResponse();
     }
+
 
     public override void Initialize()
     {
@@ -156,6 +339,7 @@ public class scr_menu_LLMQuery : scr_Menu
         public override bool IsButtonValid()
         {
             if (scr_UpdateHandler.current.LLMStatus == LLMStatus.active) return false;
+            if (parent.canAnimate) return false;
             return parent.Active && parent.HasValidResponse;
         }
         public void OnClickButton()
@@ -163,59 +347,12 @@ public class scr_menu_LLMQuery : scr_Menu
             parent.ExecuteResponse();
         }
     }
-    public bool HasValidResponse
-    {
-        get
-        {
-            return CurrentResponse != null;
-        }
-    }
-    public void ExecuteResponse()
-    {
-        this.Active = false;
-    }
 
     public void Regenerate()
     {
         scr_UpdateHandler.current.SendLLMRequest(this.request);
     }
 
-    int currentIndex = -1;
-    List<LLMResponse> currentList = new List<LLMResponse>();
-
-    LLMResponse CurrentResponse = null;
-    public bool HasNext
-    {
-        get
-        {
-            return currentIndex > -1 && currentList.Count > currentIndex + 1;
-        }
-    }
-    public bool HasPrev
-    {
-        get
-        {
-            return currentIndex > -1;
-        }
-    }
-
-    public void LoadResponse(bool prev = false)
-    {
-        if (currentList.Count < 1) return;
-        currentIndex += (prev ? -1 : 1);
-        if (currentIndex < 0) currentIndex = currentList.Count - 1;
-        else if (currentIndex >= currentList.Count) currentIndex = 0;
-
-        CurrentResponse = currentList[currentIndex];
-        if (CurrentResponse.choices.Count > 0)
-        {
-            responseText.text = CurrentResponse.choices[0].message.content;
-        }
-        else
-        {
-            responseText.text = "error no message in response";
-        }
-    }
 
 
     public void CancelResponse()
@@ -239,19 +376,20 @@ public class scr_menu_LLMQuery : scr_Menu
         }
         public override bool IsButtonValid()
         {
-            Debug.Log("IsButtonValid");
+            //Debug.Log("IsButtonValid");
             if (!parent.Active) return false;
+            if (parent.canAnimate) return false;
             if (scr_UpdateHandler.current.LLMStatus == LLMStatus.active) 
             {
-                button.SetText("cancel update");
+                button.SetText(LocalizeDictionary.QueryThenParse("ui_comPanel_LLM_cancelRegen"));
             }
             else if (parent.HasNext)
             {
-                button.SetText("->");
+                button.SetText(LocalizeDictionary.QueryThenParse("ui_comPanel_LLM_next"));
             }
             else
             {
-                button.SetText("generate");
+                button.SetText(LocalizeDictionary.QueryThenParse("ui_comPanel_LLM_regenerate"));
             }
             return true;
         }
@@ -276,6 +414,7 @@ public class scr_menu_LLMQuery : scr_Menu
         public override bool IsButtonValid()
         {
             if (!parent.Active) return false;
+            if (parent.canAnimate) return false;
             if (scr_UpdateHandler.current.LLMStatus == LLMStatus.active) return false;
             if (parent.currentList.Count < 2) return false;
             return parent.HasPrev;
@@ -297,6 +436,7 @@ public class scr_menu_LLMQuery : scr_Menu
         public override bool IsButtonValid()
         {
             if (!parent.Active) return false;
+            if (parent.canAnimate) return false;
             if (scr_UpdateHandler.current.LLMStatus == LLMStatus.active) return false;
             return true;
         }
@@ -304,7 +444,8 @@ public class scr_menu_LLMQuery : scr_Menu
         {
             parent.Active = false;
             scr_UpdateHandler.current.LLMStatus = LLMStatus.inactive;
-            scr_System_CampaignManager.current.AddLog(-1, "LLM generation aborted, click again to return to main menu", true);
+            scr_System_CampaignManager.current.AddLog(-1, LocalizeDictionary.QueryThenParse("ui_comPanel_LLM_abort_message"), true);
+            scr_UpdateHandler.current.NotifyLogsSingleUpdate(true);
         }
     }
 }

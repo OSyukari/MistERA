@@ -417,10 +417,10 @@ public class MemoryManager
     //Character_Trainable ownerCache = null;
     //Character_Trainable Owner { get { if (ownerCache == null) ownerCache = scr_System_CampaignManager.current.FindInstanceByID(ownerRefID); return ownerCache; } }
 
-    public Memory_Entry AddEntryMSG(string msg, List<string> tags)
+    public Memory_Entry AddEntryMSG(string msg, List<string> tags, int duration = -1)
     {
         var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, msg);
-        return AddEntry(memInst, tags);
+        return AddEntry(memInst, tags, duration);
     }
 
     public void NotifyCharaUnregister(Character_Trainable c)

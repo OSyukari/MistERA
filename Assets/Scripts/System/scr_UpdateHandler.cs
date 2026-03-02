@@ -72,7 +72,7 @@ public class scr_UpdateHandler : MonoBehaviour
     }
 
     public bool dummyLLM = true;
-
+    public bool reserializeTemplate = false;
     /// <summary>
     /// This one function will create payload and replace stuff
     /// </summary>
@@ -84,6 +84,8 @@ public class scr_UpdateHandler : MonoBehaviour
         var payload = new LLMRequest();
         payload.model = llm.model;
 
+        if (reserializeTemplate) scr_System_CentralControl.current.ResetLLMRequestTemplate();
+
         if (scr_System_CentralControl.current.LLMRequestTemplate != null)
         {
             payload.LoadTemplate(scr_System_CentralControl.current.LLMRequestTemplate);
@@ -94,6 +96,18 @@ public class scr_UpdateHandler : MonoBehaviour
             payload.ReplaceString("%%worldInfo%%", worldinfostring);
             payload.ReplaceString("%%currentRoundInput%%", s);
             payload.currentString = s;
+
+
+
+            string collectionPath = Application.persistentDataPath + "/worldStateInfo.json";
+
+            var s2 = JsonConvert.SerializeObject(worldinfo, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
+            if (File.Exists(collectionPath)) File.Delete(collectionPath);
+
+            FileInfo untransDict = new System.IO.FileInfo(collectionPath);
+            untransDict.Directory.Create();
+            File.WriteAllText(untransDict.FullName, s2);
+            Debug.Log($"creating/updating worldstateinfo collection in {collectionPath}");
 
         }
         else
@@ -118,11 +132,49 @@ public class scr_UpdateHandler : MonoBehaviour
         LLMRoutine = StartCoroutine(SendLLMRequest_Routine(s, OnLLMResponse));
     }
 
-    void OnLLMResponse(string s)
+    void OnLLMResponse(bool success, string s)
     {
         LLMResponse response = null;
 
+        string collectionPath = Application.persistentDataPath + "/LLMResponse.json";
+
         if (dummyLLM)
+        {
+            if (File.Exists(collectionPath))
+            {
+                FileInfo file = new System.IO.FileInfo(collectionPath);
+                response = JsonConvert.DeserializeObject<LLMResponse>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+
+
+                Debug.Log($"Loading dummy Response from {collectionPath}");
+            }
+            else
+            {
+                response = new LLMResponse();
+                var choice = new LLMResponse.choice();
+                choice.index = 0;
+                choice.message = new LLMMessage();
+                choice.message.role = "assistant";
+                choice.message.content = s;
+                response.choices.Add(choice);
+
+                Debug.Log($"Creating new dummy Response at {collectionPath}");
+            }
+        }
+        else if (success)
+        {
+            response = JsonConvert.DeserializeObject<LLMResponse>(s);
+
+            var s2 = JsonConvert.SerializeObject(response, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
+            if (File.Exists(collectionPath)) File.Delete(collectionPath);
+
+            FileInfo untransDict = new System.IO.FileInfo(collectionPath);
+            untransDict.Directory.Create();
+            File.WriteAllText(untransDict.FullName, s2);
+
+            Debug.Log($"Response Received!: creating file at {collectionPath}");
+        }
+        else
         {
             response = new LLMResponse();
             var choice = new LLMResponse.choice();
@@ -131,22 +183,10 @@ public class scr_UpdateHandler : MonoBehaviour
             choice.message.role = "assistant";
             choice.message.content = s;
             response.choices.Add(choice);
-        }
-        else
-        {
-            response = JsonConvert.DeserializeObject<LLMResponse>(s);
+
+            Debug.Log($"Response Received! LLM failed to respond! creating file at {collectionPath}");
         }
 
-        string collectionPath = Application.persistentDataPath + "/LLMResponse.json";
-
-        var s2 = JsonConvert.SerializeObject(response, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
-        if (File.Exists(collectionPath)) File.Delete(collectionPath);
-
-        FileInfo untransDict = new System.IO.FileInfo(collectionPath);
-        untransDict.Directory.Create();
-        File.WriteAllText(untransDict.FullName, s2);
-
-        Debug.Log($"Response Received!: creating file at {collectionPath}");
 
         Observer_LLMResponse?.Invoke(response);
 
@@ -154,13 +194,15 @@ public class scr_UpdateHandler : MonoBehaviour
         LLMStatus = LLMStatus.waiting;
     }
 
-    IEnumerator SendLLMRequest_Routine(LLMRequest payload, Action<string> onResponseReceived)
+    IEnumerator SendLLMRequest_Routine(LLMRequest payload, Action<bool, string> onResponseReceived)
     {
         Observer_LLMStatus?.Invoke(LLMStatus);
 
         var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
         var baseUrl = llm.endpoint;
         var apiKey = llm.key;
+
+        payload.Purge();
 
         string jsonPayload = JsonConvert.SerializeObject(payload, Formatting.Indented, UtilityEX.SerializerSettingsLLM);
         string collectionPath = Application.persistentDataPath + "/LLMRequest.json";
@@ -170,13 +212,12 @@ public class scr_UpdateHandler : MonoBehaviour
         File.WriteAllText(untransDict.FullName, jsonPayload);
         Debug.Log($"Request Created!: creating file at {collectionPath}");
 
-        payload.Purge();
 
         if (dummyLLM)
         {
-            yield return new WaitForSecondsRealtime(5);
+            yield return new WaitForSecondsRealtime(3);
 
-            onResponseReceived?.Invoke($"dummytext received {DateTime.Now}");
+            onResponseReceived?.Invoke(true, $"dummytext received {DateTime.Now}");
         }
         else
         {
@@ -202,12 +243,12 @@ public class scr_UpdateHandler : MonoBehaviour
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {
-                    onResponseReceived?.Invoke(request.downloadHandler.text);
+                    onResponseReceived?.Invoke(true, request.downloadHandler.text);
                 }
                 else
                 {
                     Debug.LogError($"LLM Request Error: {request.error}\nResponse: {request.downloadHandler.text}");
-                    onResponseReceived?.Invoke(request.error);
+                    onResponseReceived?.Invoke(false, request.error);
                 }
             }
         }

@@ -675,8 +675,10 @@ public class scr_panel_COMmanager : scr_Menu
         ValidateAll();
     }
 
+    public scr_resize_inputfield llm_resizer;
     protected void ValidateLLMs()
     {
+        llm_resizer.OnContentChange();
         GetButtonByID(-6800).Validate();
     }
     public override void Notify(int optionID)
@@ -2115,10 +2117,7 @@ public class scr_panel_COMmanager : scr_Menu
             }
             parent.LLMRect.gameObject.SetActive(currentVal);
 
-            if (currentVal && parent.inputfield_llm.text == "")
-            {
-                parent.inputfield_llm.text = parent.llm_placeholder;
-            }
+
 
             return true;
         }
@@ -2130,7 +2129,6 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
-    public string llm_placeholder = "(LLM input here)";
 
     public class Button_LLM_Submit: ButtonValidator, I_ButtonClickable
     {
@@ -2145,7 +2143,7 @@ public class scr_panel_COMmanager : scr_Menu
         public override bool IsButtonValid()
         {
             if (!text.gameObject.activeInHierarchy) return false;
-            if (parent.inputfield_llm.text == "" || parent.inputfield_llm.text == parent.llm_placeholder) return false;
+            if (parent.inputfield_llm.text == "") return false;
             return true;
         }
 

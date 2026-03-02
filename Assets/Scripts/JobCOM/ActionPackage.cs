@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,39 @@ public abstract class ActionPackage
             return cache_interruptedResponse;
         }
     }
+
+    public List<APJSON> epjson = new List<APJSON>();
+
+    public bool JoinAP(APJSON ep)
+    {
+        if (epjson.Contains(ep)) return true;
+        if (this.targetCOMID != ep.CommandID) return false;
+        if (this.jobRefID != ep.SourceJobID) return false;
+
+        foreach(var ep2 in epjson)
+        {
+            if (ep.command_result >= Memory_Response.Accept != ep2.command_result >= Memory_Response.Accept) return false;
+        }
+
+        var actors = new List<Character_Trainable>();
+
+        var doer = scr_System_CampaignManager.current.FindInstanceByID(ep.doer_RefID);
+        if (doer != null) actors.Add(doer);
+
+        var receiver = scr_System_CampaignManager.current.FindInstanceByID(ep.receiver_RefID);
+        if (receiver != null) actors.Add(receiver);
+
+        var variantID = canJoinAP(actors, out var doers1, out var receivers1);
+        if (variantID > -1)
+        {
+            this.ResetRequest(doers1, receivers1, this.masterRef);
+            this.validVariant = variantID;
+            epjson.Add(ep);
+            return true;
+        }
+        else return false;
+    }
+
 
     [JsonIgnore]
     public bool hasActorClimax
@@ -225,6 +259,8 @@ public abstract class ActionPackage
         return -1;
     }
 
+    
+
     /// <summary>
     /// if invalid, return -1. else return valid COMvariantID
     /// </summary>
@@ -253,8 +289,11 @@ public abstract class ActionPackage
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    public virtual bool JoinAP(Character_Trainable c, bool forceAccept = false)
+    public virtual bool JoinAP(Character_Trainable c, Memory_Response forceAccept = Memory_Response.None)
     {
+        if (this.doer.Contains(c)) return true;
+        else if (this.receiver.Contains(c)) return true;
+
         var variantID = canJoinAP(c, out var doers1, out var receivers1);
         if (variantID >= 0)
         {
@@ -284,7 +323,7 @@ public abstract class ActionPackage
             {
                 this.ResetRequest(old_d, old_r, this.masterRef);
                 this.validVariant = old_varID;
-                Request(true, true);
+                Request(true, forceAccept);
             }
 
             return result;
@@ -292,7 +331,7 @@ public abstract class ActionPackage
         else return false;
     }
 
-    public virtual bool JoinAP(List<Character_Trainable> cs, bool forceAccept = false)
+    public virtual bool JoinAP(List<Character_Trainable> cs, Memory_Response forceAccept = Memory_Response.None)
     {
         var variantID = canJoinAP(cs, out var doers1, out var receivers1);
         if (variantID >= 0)
@@ -341,7 +380,7 @@ public abstract class ActionPackage
             {
                 this.ResetRequest(old_d, old_r, this.masterRef);
                 this.validVariant = old_varID;
-                Request(true, true);
+                Request(true, forceAccept);
             }
             
             return result;
@@ -630,7 +669,7 @@ public abstract class ActionPackage
     /// Timestop && !canActInTimeStop will prevent this from ticking <br/>
     /// doers.allUnconscious will prevent this from ticking
     /// </summary>
-    public bool Tick(ref List<int> actorList, int tickDuration = 1)
+    public virtual bool Tick(ref List<int> actorList, int tickDuration = 1)
     {
         //Debug.Log("AP TICK for " + DisplayName);
         bool timeStop = false;
@@ -1113,8 +1152,50 @@ public abstract class ActionPackage
             tempArr.AddRange(doer);
             tempArr.AddRange(receiver);
 
-            foreach (var chara in doer) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
-            foreach (var chara in receiver) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
+            if (epjson.Count > 0)
+            {
+                var tempArr2 = new List<Character_Trainable>();
+                Debug.Log($"remaking package, epjson count {epjson.Count}");
+                foreach (var ep in epjson)
+                {
+                    var doer = scr_System_CampaignManager.current.FindInstanceByID(ep.doer_RefID);
+                    var receiver = scr_System_CampaignManager.current.FindInstanceByID(ep.receiver_RefID);
+
+                    if (doer != null && !tempArr2.Contains(doer))
+                    {
+                        var ep2 = new EvaluationPackage(doer, null, this.targetCOM, this, tempArr);
+                        ep2.epjson = ep;
+                        packages.Add(ep2);
+                        tempArr2.Add(doer);
+                    }
+                    if (receiver != null && !tempArr2.Contains(receiver))
+                    {
+                        var ep2 = new EvaluationPackage(receiver, null, this.targetCOM, this, tempArr);
+                        ep2.epjson = ep;
+                        packages.Add(ep2);
+                        tempArr2.Add(receiver);
+                    }
+
+                }
+            }
+            else
+            {
+                foreach (var chara in doer) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
+                foreach (var chara in receiver) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
+            }
+        }
+        else if (epjson.Count > 0)
+        {
+            Debug.Log($"remaking package, epjson count {epjson.Count}");
+            foreach (var ep in epjson)
+            {
+                var doer = scr_System_CampaignManager.current.FindInstanceByID(ep.doer_RefID);
+                var receiver = scr_System_CampaignManager.current.FindInstanceByID(ep.receiver_RefID);
+
+                var ep2 = new EvaluationPackage(doer, receiver, this.targetCOM, this);
+                ep2.epjson = ep;
+                packages.Add(ep2);
+            }
         }
         else if (doer.Count < 2 && receiver.Count < 2)
         {
@@ -1123,12 +1204,10 @@ public abstract class ActionPackage
         else if (receiver.Count < 1)
         {
             // random match doer and receivers
-
             foreach (Character_Trainable temp_doer in doer)
             {
                 packages.Add(new EvaluationPackage(temp_doer, null, this.targetCOM, this));
             }
-
         }
         else if (targetCOM is COM_Character_Remove || targetCOM.isSpecialInteraction)
         {   // match every doer and receiver
@@ -1202,7 +1281,7 @@ public abstract class ActionPackage
     /// making EP is still required for one to get reactions
     /// </summary>
     /// <returns></returns>
-    protected virtual bool Request(bool rebuildPackage = true, bool forceAccept = false)
+    protected virtual bool Request(bool rebuildPackage = true, Memory_Response forceAccept = Memory_Response.None)
     {
         requested = true;
 
@@ -1253,9 +1332,9 @@ public abstract class ActionPackage
         //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
     }
 
-    public void LogCheckResult(bool rightAlign, bool resultOnly = false)
+    public void LogCheckResult(bool rightAlign, bool resultOnly = false, MessageCollect m = null)
     {
-
+        if (m == null) m = this.job.m;
         if (!resultOnly)
         {
             List<string> checkResults = new List<string>();
@@ -1271,12 +1350,13 @@ public abstract class ActionPackage
             if (checkResults.Count < 1) return;
             string finalResults = String.Join("\n", checkResults);
             if (finalResults.Length < 1) return;
-            this.job.m.messages_checks.Add(rightAlign ? $"<align=\"right\">{finalResults}</align>" : finalResults, "");
+            m.messages_checks.Add(rightAlign ? $"<align=\"right\">{finalResults}</align>" : finalResults, "");
 
         }
         else if (this.checkResults_result != "")
         {
-            this.job.m.messages_checks.Add(rightAlign? $"<align=\"right\">{this.checkResults_result}</align>" : this.checkResults_result, this.checkResults_tooltips);
+            this.checkResults_result = rightAlign ? $"<align=\"right\">{this.checkResults_result}</align>" : this.checkResults_result;
+            if (!m.messages_checks.ContainsKey(this.checkResults_result)) m.messages_checks.Add(this.checkResults_result, this.checkResults_tooltips);
         }
 
 
@@ -1321,6 +1401,7 @@ public abstract class ActionPackage
     }
     public void ExecutePackageOutsideUpdate(MessageCollect m = null)
     {
+        this.duration = 0;
         ExecutePackage(m);
     }
 
@@ -1407,7 +1488,8 @@ public abstract class ActionPackage
         if (m == null) m = this.job.m;
         if (packages == null || packages.Count < 1)
         {
-            Debug.LogError("AP " + DisplayName + " execution() called but there is no package inside. Rebuilding.");
+            RemakePackages();
+            Debug.Log($"AP {DisplayName} execution() called but there is no package inside. Rebuilding... package count {packages.Count}");
         }
 
         if (!requested) Request();
@@ -1431,16 +1513,33 @@ public abstract class ActionPackage
             {
                 if (CollectMods(out var dcMods, out int bonus, out int baseDC))
                 {
-                    int diceRoll = Dice(1, 21, 1);
-                    if (baseDC == 0) injectResult = Memory_Response.Success;
-                    else if (diceRoll >= 20) injectResult = Memory_Response.CriticalSuccess;
-                    else if (diceRoll <= 1) injectResult = Memory_Response.CriticalFailure;
-                    else injectResult = diceRoll + bonus >= baseDC ? Memory_Response.Success : Memory_Response.Failure;
-
                     List<string> mods = dcMods == null ? new List<string>() : dcMods.GetAllModifiers();
-                    checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20 = {diceRoll}{(mods.Count > 0 ? $" + {bonus}" : "")} = {diceRoll + bonus} {(injectResult >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
-                    checkResults_tooltips = String.Join("\n", mods);
-                    checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+
+                    if (epjson.Count > 0)
+                    {
+                        int count = 0;
+                        foreach (var i in epjson) count += (int)i.command_result;
+                        injectResult = (Memory_Response)(int)(count / epjson.Count);
+
+                        checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20{(mods.Count > 0 ? $" + {bonus}" : "")} {(injectResult >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                        checkResults_tooltips = String.Join("\n", mods);
+                        checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                    }
+                    else
+                    {
+                        int diceRoll = Dice(1, 21, 1);
+
+                        if (baseDC == 0) injectResult = Memory_Response.Success;
+                        else if (diceRoll >= 20) injectResult = Memory_Response.CriticalSuccess;
+                        else if (diceRoll <= 1) injectResult = Memory_Response.CriticalFailure;
+                        else injectResult = diceRoll + bonus >= baseDC ? Memory_Response.Success : Memory_Response.Failure;
+
+                        checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20 = {diceRoll}{(mods.Count > 0 ? $" + {bonus}" : "")} = {diceRoll + bonus} {(injectResult >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                        checkResults_tooltips = String.Join("\n", mods);
+                        checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                    }
+
+
                 }
             }
         }
@@ -1474,6 +1573,8 @@ public abstract class ActionPackage
         actors.AddRange(this.receiver);
         // Treat receiver as doer will separate all actors and make them individually do task
         // so we need to collect group and parse as group
+        Debug.Log($"AP executed, checking successful {executeSuccessful}");
+
         if (executeSuccessful)// && targetCOM.requirements.requirement.TreatReceiverAsDoer)         // this behavior does not need to be limited to treatreceiverasdoer, right ?
         {   // if job is recreation and result at least neutral, increase relationship between all participating actors
             foreach (var ep in packages)
@@ -1681,7 +1782,7 @@ public abstract class ActionPackage
 
         if (this.temporaryM != null)
         {
-            this.job.m.Merge(this.temporaryM, false);
+            m.Merge(this.temporaryM, false);
             this.temporaryM = null;
         }
     }

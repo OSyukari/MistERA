@@ -1,9 +1,11 @@
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 using System.Linq;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 
 /// <summary>
@@ -286,6 +288,8 @@ public class Message_Text : MessageLog
     List<string> msg = new List<string>();
     protected scr_HoverableText prefab_LogLine;
 
+    public bool animateAllOverride = false;
+
     public override void Animate()
     {
         if (msg.Count < 1 && lines.Count > 0)
@@ -309,7 +313,7 @@ public class Message_Text : MessageLog
             msg.RemoveAt(0);
         }*/
 
-        if (Input.GetMouseButton(1) && this.canAnimate()) Animate();
+        if ((animateAllOverride || Input.GetMouseButton(1)) && this.canAnimate()) Animate();
     }
 }
 
@@ -364,32 +368,51 @@ public class Message_LLMQuery : MessageLog
     {
         get
         {
-            return multipleChara.Count > 0 || PortraitRef != null;
+            return true;
         }
     }
 
     public override bool canAnimate()
     {
-        return false;
+        return questionBox != null && questionBox.Active;
     }
     LLMRequest request;
+
     public Message_LLMQuery(PortraitManager portraitRef, List<string> tags, LLMRequest request, DateTime time = default) : base(portraitRef, time, null)
     {
         this.tagsOverride = tags;
         this.request = request;
     }
 
+
     public override void Animate()
     {
-        Debug.LogError("Animate called on message_question");
+        questionBox.Animate();
     }
 
-    public void Draw(bool skipImage, Canvas mainCanvas, scr_menu_LLMQuery questionBox, scr_panel_logs logs = null)
+    scr_menu_LLMQuery questionBox = null;
+
+    public bool Draw(bool skipImage, Canvas mainCanvas, scr_menu_LLMQuery questionBox, scr_panel_logs logs = null)
     {
         // question log always draw
         base.Draw(true);
-        questionBox.InitializeWithArgs(mainCanvas, request, logs);
+        this.questionBox = questionBox;
+        questionBox.InitializeWithArgs(mainCanvas,this, request, logs);
+        return true;
     }
+    public bool Draw(bool skipImage, scr_MessageLogBox box, scr_HoverableText linePrefab)
+    {
+        //Debug.Log($"Draw text, skipImage? {skipImage} display? {DisplaPortrait} tags {String.Join("|", tagsOverride)}");
+        //if (skipImage || !DisplaPortrait) Debug.Log($"SkipImage? {skipImage}");
+        var returnval = base.Draw(skipImage || !DisplaPortrait);
+
+        box.Initialize(PortraitRef);
+        if (canAnimate()) Animate();
+
+        return returnval;
+    }
+
+
 }
 
 public abstract class MessageLog

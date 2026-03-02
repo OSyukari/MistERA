@@ -60,7 +60,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         todo.Add(msg);
         UpdateAnimatingStatus();
         //Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
-        if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnLogsadd, waiting? {waiting} displayPortrait? {msg.DisplaPortrait} waitForPortrait? {msg.WaitForPortrait} portraitRef {(msg.PortraitRef == null ? "null" : msg.PortraitRef.Owner.CallName)} multiple? {msg.multipleChara.Count} animate? {animate} count? {todo.Count}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnLogsadd, waiting? {waiting} displayPortrait? {msg.DisplaPortrait} waitForPortrait? {msg.WaitForPortrait} portraitRef {(msg.PortraitRef == null ? "null" : msg.PortraitRef.Owner.CallName)} multiple? {msg.multipleChara.Count} animate? {animate} count? {todo.Count} firstline? {firstLine} immediate? {immediate}");
         if (firstLine) SingleUpdate(false);
         else if (waiting && msg.WaitForPortrait) return;
         else if (immediate) SingleUpdate(false);
@@ -108,7 +108,6 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     {
         if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"Animateonestep, firstline {firstLine} waiting? {waiting}");
         animationLock = true;
-        firstLine = false;
         while (LogsList.transform.childCount > scr_System_CentralControl.current.DisplaySetting.MaxLogCount)
         {
             DestroyImmediate(LogsList.transform.GetChild(0).gameObject);
@@ -135,19 +134,22 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
                 msgbox.SetParent(LogsList, false);
                 waiting = (current as Message_Text).Draw(skipping, msgbox.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine) || waiting;
-               // if (waiting) Debug.Log("waiting!");
+                // if (waiting) Debug.Log("waiting!");
+                firstLine = false;
             }
             else if (current is Message_Question)
             {
                 var question = Instantiate(prefab_question);
                 question.transform.SetParent(LogsList, false);
                 (current as Message_Question).Draw(skipping, this.m_Canvas, question, this);
+                firstLine = true;
             }
             else if (current is Message_LLMQuery)
             {
                 var query = Instantiate(prefab_llm);
                 query.transform.SetParent(LogsList, false);
                 (current as Message_LLMQuery).Draw(skipping, this.m_Canvas, query, this);
+                firstLine = true;
             }
         }
         else if (current.canAnimate())

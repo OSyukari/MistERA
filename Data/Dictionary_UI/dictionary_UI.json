@@ -47,6 +47,15 @@
 "ui_comPanel_filters_shortenLogs": "简化口上",
 "ui_comPanel_filters_shortenLogs_tooltip": "开启后，参与多人指令时只会打印一条随机参与者的口上\n未开启时，会打印所有参与者的口上（人多时会刷屏，且刷到重复口上的可能性非常大\n\n推荐开启）",
 
+"ui_comPanel_LLM_title": "AI聊天输入窗口",
+"ui_comPanel_LLM_submit": "提交指令",
+"ui_comPanel_LLM_previous": " < ",
+"ui_comPanel_LLM_next": " > ",
+"ui_comPanel_LLM_abort": "放弃",
+"ui_comPanel_LLM_abort_message": "已放弃AI生成。再次点击返回主界面。",
+"ui_comPanel_LLM_confirm": "确认并执行",
+"ui_comPanel_LLM_regenerate": "重新生成",
+"ui_comPanel_LLM_cancelRegen": "中止生成",
 
 
 "comManager_tab_skinship": "触摸",

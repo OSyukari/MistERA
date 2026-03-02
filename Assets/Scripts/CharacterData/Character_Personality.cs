@@ -871,7 +871,9 @@ public class ResponseEntry
             public Memory_Attitude requireSelfAttitudeGTE = Memory_Attitude.None;
             public bool requirePermission = false;
             public List<string> selfTags = new List<string>();
+            public List<string> excludeSelfTags = new List<string>();
             public List<string> targetTags = new List<string>();
+            public List<string> excludeTargetTags = new List<string>();
             public bool requireSelfForced = false;
             public int variantID = -1;
             public CharaReq selfReq = null;
@@ -932,7 +934,9 @@ public class ResponseEntry
                 //if (selfTags.Count < this.selfTags.Count) return false;
                 if (this.selfTags.Count > 0 && !Utility.ListContainsStrict(selfTags, this.selfTags)) return false;
                 //if (targetTags.Count < this.targetTags.Count) return false;
+                if (this.excludeSelfTags.Count > 0 && Utility.ListContainsLoose(selfTags, this.excludeSelfTags)) return false;
                 if (this.targetTags.Count > 0 && !Utility.ListContainsStrict(targetTags, this.targetTags)) return false;
+                if (this.excludeTargetTags.Count > 0 && Utility.ListContainsLoose(targetTags, this.excludeTargetTags)) return false;
                 if (this.variantID > -1 && (ep == null || ep.VariantID != this.variantID)) return false;
                 if (this.requireKojoVariable != null && this.requireKojoVariable.isValid && rel != null && !this.requireKojoVariable.Validate(rel)) return false;
                 if (this.requireSelfStatValue.Count > 0) {

@@ -786,7 +786,7 @@ public static class EventUtility
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
 
                     var randpackage = Utility.GetRandomElement(packages);
-                    return randpackage.JoinAP(owner.Self, true);
+                    return randpackage.JoinAP(owner.Self, Memory_Response.Accept);
                 }
                 else
                 {

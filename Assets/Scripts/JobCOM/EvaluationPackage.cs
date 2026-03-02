@@ -822,7 +822,7 @@ public class EvaluationPackage
     /// Request data are stored in EP and on subsequent calls by AP.Execution() will skip the Request() part
     /// </summary>
     /// <returns></returns>
-    public bool Request( bool recalculateRate = false, bool forceAccept = false)
+    public bool Request( bool recalculateRate = false, Memory_Response forceAccept = Memory_Response.None)
     {
         //result_stats = new Dictionary<int, Dictionary<string, int>>();
         //result_experiences = new Dictionary<int, Dictionary<string, int>>();
@@ -838,7 +838,7 @@ public class EvaluationPackage
     {
         if (response == Memory_Response.None && injectResult != Memory_Response.None)
         {
-            TryRespond(false, injectResult >= Memory_Response.Accept);
+            TryRespond(false, injectResult);
         }
         if (injectResult != Memory_Response.None)
         {
@@ -847,7 +847,7 @@ public class EvaluationPackage
 
         //if (receiver == null || doer == receiver) receiver = doer;
         //_doerInternal = null; _receiverInternal = null;
-        targetCOM.ApplyCost(this, this.Package.job.isPlayerRelatedJob ? m : null);
+        targetCOM.ApplyCost(this, this.Package.job.isPlayerRelatedJob || m.displayOverride ? m : null);
 
         // clear previous tags, cuz some command have built-in random part selection we dont want both part end up in tags
         if (Doer.Stats.isConsciousnessUnconscious || Doer.Stats.isConsciousnessReduced) foreach (var str in Doer.Stats.Consciousness.Tags) AddModifier(Doer.RefID, str, 0);
@@ -983,6 +983,8 @@ public class EvaluationPackage
     [JsonProperty] protected string checkResults_receiver = "";
     [JsonProperty] protected string checkResults_receiver_short = "";
 
+    public APJSON epjson = null;
+
     string diceroll_autosuccess = LocalizeDictionary.QueryThenParse("ui_diceroll_autosuccess");
     string diceroll_success = LocalizeDictionary.QueryThenParse("ui_diceroll_success");
     string diceroll_failure = LocalizeDictionary.QueryThenParse("ui_diceroll_failure");
@@ -991,14 +993,14 @@ public class EvaluationPackage
     /// Internal method. Run after data initialized. 
     /// read and build all relevant data structure that are required for evaluation
     /// </summary>
-    protected bool RollRequest(bool forceSuccess = false)
+    protected bool RollRequest(Memory_Response forceSuccess = Memory_Response.None)
     {
         bool returnVal = true;
         int diceroll = Dice(1, 21, 0);
 
         int reverseRate = 20 - (int)(requestRate / 5);
 
-        if (this.Doer.isTemporaryActor) forceSuccess = true;
+        if (this.Doer.isTemporaryActor) forceSuccess = Memory_Response.Accept;
 
         if (requestRate <= 0) returnVal = false;
         else if (requestRate >= 100) returnVal = true;
@@ -1006,7 +1008,9 @@ public class EvaluationPackage
         {
             if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = requestRate >= scr_System_CampaignManager.current.DeterministicThreshold ? 20 : 1;
 
-            if (forceSuccess) returnVal = true;
+            if (epjson != null && epjson.command_result != Memory_Response.None) returnVal = epjson.command_result >= Memory_Response.Accept;
+            else if (forceSuccess >= Memory_Response.Accept) returnVal = true;
+            else if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) returnVal = false;
             else if (requestRate >= 100) returnVal = true;
             else if (requestRate <= 0) returnVal = false;
             else if (diceroll <= 1) returnVal = false; // rate <= 95 allow crit failure 
@@ -1035,7 +1039,7 @@ public class EvaluationPackage
     /// <param name="isPositive"></param>
     /// <returns></returns>
 
-    private bool RollResponse(bool forceSuccess = false)
+    private bool RollResponse(Memory_Response forceSuccess = Memory_Response.None)
     {
         bool returnVal = true;
         // first find if doer is willing
@@ -1055,7 +1059,9 @@ public class EvaluationPackage
             
             int reverseRate = 20 - (int)(responseRate / 5);
 
-            if (forceSuccess) returnVal = true;
+            if (epjson != null && epjson.command_result != Memory_Response.None) returnVal = true;
+            else if (forceSuccess >= Memory_Response.Accept) returnVal = true;
+            else if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) returnVal = false;
             else if (responseRate == 0) returnVal = false;
             else if (responseRate == 100) returnVal = true;
             else if (diceroll <= 1) returnVal = false; // rate <= 95 allow crit failure 
@@ -1080,7 +1086,7 @@ public class EvaluationPackage
     public string GetCheckPrevalidation()
     {
         Evaluate(true);
-        if (RollRequest(false) && RollResponse(false))
+        if (RollRequest() && RollResponse())
         {
             // response = Memory_Response.None;
             // result = "[" + doer.FirstName + "] is unwilling to do [" + targetCOM.displayName + "] on/with [" + receiver.FirstName + "]";
@@ -1151,10 +1157,10 @@ public class EvaluationPackage
     /// </summary>
     public void ForceRespond()
     {
-        TryRespond(true, true);
+        TryRespond(true, Memory_Response.Accept);
     }
 
-    protected bool TryRespond(bool recalculateRate = false, bool forceSuccess = false)
+    protected bool TryRespond(bool recalculateRate = false, Memory_Response forceSuccess = Memory_Response.None)
     {
         /// <summary>
         /// Store all check-influencing factors by dictionary %query% string key
@@ -1175,7 +1181,7 @@ public class EvaluationPackage
            // else response = Memory_Response.Accept;
         }
 
-        if (forceSuccess) response = Memory_Response.Accept;
+        if (forceSuccess != Memory_Response.None) response = forceSuccess;
 
         if (targetCOM != null && response >= Memory_Response.Accept)
         {
@@ -1199,7 +1205,8 @@ public class EvaluationPackage
     {
         int diceroll = Dice(1, 100, 0);
 
-        if (diceroll >= (100 - attitudeRate_pos)) attitude_begin = Memory_Attitude.Like;
+        if (epjson != null && epjson.participant_attitude != Memory_Attitude.None) attitude_begin = epjson.participant_attitude;
+        else if (diceroll >= (100 - attitudeRate_pos)) attitude_begin = Memory_Attitude.Like;
         else if (diceroll <= attitudeRate_neg) attitude_begin = Memory_Attitude.Dislike;
         else attitude_begin = Memory_Attitude.Neutral;
     }
@@ -2178,7 +2185,7 @@ public class ExperienceLog
                 if (s.Length < 1) continue;
 
                 s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
-                lines.Add(RightAlign.ContainsKey(kvp_refID.Key) && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
+                lines.Add(!leftAlignOverride && RightAlign.ContainsKey(kvp_refID.Key) && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
             }
         }
         return String.Join('\n', lines.ToArray());
@@ -2217,7 +2224,7 @@ public class ExperienceLog
                 if (s.Length < 1) continue;
 
                 s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
-                lines.Add(RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
+                lines.Add(!leftAlignOverride && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
             }
         }
         return String.Join('\n', lines.ToArray());
@@ -2230,7 +2237,7 @@ public class ExperienceLog
         {
             if (kvp_refID.Value.Count > 0)
             {
-                string s = RightAlign[kvp_refID.Key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID.Value)}</align>" :  String.Join("\n", kvp_refID.Value);
+                string s = !leftAlignOverride && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID.Value)}</align>" :  String.Join("\n", kvp_refID.Value);
                 if (s.Length < 1) continue;
                 lines.Add(s);
             }
@@ -2247,7 +2254,7 @@ public class ExperienceLog
         {
             if (kvp_refID.Value.Length > 0)
             {
-                string s = RightAlign[kvp_refID.Key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID.Value)}</align>" : String.Join("\n", kvp_refID.Value);
+                string s = !leftAlignOverride && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID.Value)}</align>" : String.Join("\n", kvp_refID.Value);
                 if (s.Length < 1) continue;
                 lines.Add(s);
             }

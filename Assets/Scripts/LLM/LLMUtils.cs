@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Networking;
+using static LLMMessage.MessageJSON;
+using static LLMUtils;
 
 public class LLM_Setting
 {
@@ -47,6 +48,7 @@ public class LLMRequest
             var newm = new LLMMessage(message);
             messages.Add(newm);
         }
+        if (this.response_format == null) this.response_format = req.response_format;
     }
 
     public void ReplaceString(string a, string b)
@@ -61,6 +63,208 @@ public class LLMRequest
     {
         currentString = null;
         prepend = null;
+        if (this.response_format != null) this.response_format.Purge();
+    }
+
+    public LLMRequest() { }
+    public LLMRequest(bool initialize)
+    {
+        this.response_format = new ResponseFormatter(initialize);
+    }
+
+    public ResponseFormatter response_format = null;
+    public class ResponseFormatter
+    {
+        public string type = "json_schema";
+        public JsonSchema json_schema = new JsonSchema();
+
+        public ResponseFormatter() { }
+        public ResponseFormatter(bool initialize)
+        {
+            json_schema = new JsonSchema(initialize);
+        }
+
+        public void Purge()
+        {
+            if (this.json_schema != null) this.json_schema.Purge();
+        }
+
+        public class JsonSchema
+        {
+            public string name = "mistera_format";
+            public bool strict = true;
+            public Schema schema = new Schema();
+
+            public JsonSchema()
+            {
+
+            }
+            public JsonSchema(bool initialize)
+            {
+                this.schema = new Schema(initialize);
+            }
+
+            public void Purge()
+            {
+                if (this.schema != null) this.schema.Purge();
+            }
+
+            public class Schema
+            {
+                public string type = "object";
+                public Dictionary<string, Type> properties = new Dictionary<string, Type>();
+
+
+                public Schema()
+                {
+
+                }
+
+
+                /// <summary>
+                /// This structure is no longer used. see LLMrequestTemplate
+                /// </summary>
+                /// <param name="initialize"></param>
+                public Schema(bool initialize)
+                {
+                    properties.Add("content", new Type_Simple("string", "the main response and story completion content"));
+
+                    var action = new Dictionary<string, Type>();
+                    action.Add("doer_RefID", new Type_Simple("int", "command doer's RefID"));
+                    action.Add("receiver_RefID", new Type_Simple("int", "command receiver/target's RefID"));
+                    action.Add("SourceJobID", new Type_Simple("int", "target command's SourceJobID"));
+                    action.Add("CommandID", new Type_Simple("string", "target command's CommandID"));
+                    action.Add("source_content_text_Index", new Type_Simple("int", "target command's CommandID"));
+                    action.Add("command_result", new Type_Enum(typeof(Memory_Response), "represent the final status of the action. Refuse/Interrupted represent actions that failed to perform. Failure and Success applies only when action has been performed, and evaluates how successful it is."));
+                    action.Add("participant_attitude", new Type_Enum(typeof(Memory_Attitude), "represent the receiver's attitude toward this action, regardless of whether the action is refused or accepted."));
+                    var item = new Type_Object(action, "action data that can be executed by the game");
+                    var listdict = new Type_Array(item, "list of actions");
+
+                    properties.Add("UpdateVariable", listdict);
+
+                    properties.Add("summary", new Type_Simple("string", "a short summary of [content]"));
+                    properties.Add("disclaimer", new Type_Simple("string","disclaimer should be put here"));
+                    properties.Add("timeCost", new Type_Simple("int", "in-game minute that the game should advance if this response is accepted"));
+                }
+
+
+                public class Type
+                {
+                    public string description;
+                    public virtual void Purge()
+                    {
+
+                    }
+                    public Type()
+                    {
+
+                    }
+                    public Type(string s)
+                    {
+                        this.description = s;
+                    }
+                }
+
+                public class Type_Simple : Type
+                {
+                    public string type;
+                    public Type_Simple()
+                    {
+
+                    }
+                    public Type_Simple(string type, string desc):base(desc)
+                    {
+                        this.type = type;
+                    }
+
+                }
+                public class Type_Enum : Type
+                {
+                    public string type = "string";
+
+                    [JsonProperty("enum")]
+                    public List<string> enums = new List<string>(); 
+                    public Type_Enum()
+                    {
+
+                    }
+                    public Type_Enum(List<string> enums, string desc) : base(desc)
+                    {
+                        this.enums = enums;
+                    }
+                    // New Constructor: Handles any Enum type
+                    public Type_Enum(System.Type enumType, string desc) : base(desc)
+                    {
+                        if (enumType == null)
+                            throw new ArgumentNullException(nameof(enumType));
+
+                        if (!enumType.IsEnum)
+                            throw new ArgumentException("Provided type must be an Enum.", nameof(enumType));
+
+                        // GetNames retrieves the string representations of all members
+                        this.enums = Enum.GetNames(enumType).ToArray().ToList();
+                    }
+
+                }
+
+                public class Type_Object: Type
+                {
+
+                    public string type = "object";
+                    public Dictionary<string,Type> properties;
+                    public Type_Object()
+                    {
+
+                    }
+                    public Type_Object(Dictionary<string, Type> properties, string desc) : base(desc)
+                    {
+                        this.properties = properties;
+                    }
+
+                    public List<string> required = new List<string>();
+                    public bool additionalProperties = false;
+                    public override void Purge()
+                    {
+                        required.Clear();
+                        foreach (var type in this.properties)
+                        {
+                            required.Add(type.Key);
+                            type.Value.Purge();
+                        }
+                    }
+                }
+
+                public class Type_Array : Type
+                {
+                    public string type = "array";
+                    public Type items;
+                    public Type_Array()
+                    {
+
+                    }
+                    public Type_Array(Type items, string desc) : base(desc)
+                    {
+                        this.items = items;
+                    }
+
+                }
+
+
+                public List<string> required = new List<string>();
+                public bool additionalProperties = false;
+
+                public void Purge()
+                {
+                    required.Clear();
+                    foreach (var type in this.properties)
+                    {
+                        required.Add(type.Key);
+                        type.Value.Purge();
+                    }
+                }
+            }
+        }
+
     }
 
 }
@@ -75,7 +279,170 @@ public class LLMMessage
         this.role = message.role;
         this.content = message.content;
     }
+
+    public void ParseAP(MessageJSON json, List<APJSON> updatevariables)
+    {
+        json.actionpackages.Clear();
+        Debug.Log($"parsing AP, total json count {updatevariables.Count}");
+        foreach (var tempAP in updatevariables)
+        {
+            if (tempAP.innerCOM == null) continue;
+
+            if (tempAP.command_result == Memory_Response.None) tempAP.command_result = Memory_Response.Accept;
+
+            var job = scr_System_CampaignManager.current.FindJobInstanceByID(tempAP.SourceJobID);
+            if (job == null) continue;
+
+            var doers = new List<int>();
+            if (tempAP.doer_RefID != -1) doers.Add(tempAP.doer_RefID);
+
+            var receivers = new List<int>();
+            if (tempAP.receiver_RefID != -1) receivers.Add(tempAP.receiver_RefID);
+
+            var masterRef = tempAP.doer_RefID;
+
+            bool merged = false;
+            foreach (var ap in json.actionpackages)
+            {
+                if (ap.JoinAP(tempAP))
+                {
+                    merged = true;
+                    break;
+                }
+            }
+            if (merged)
+            {
+                Debug.Log($"parsing AP merged package");
+                continue;
+            }
+            else
+            {
+                var newap = tempAP.innerCOM.MakePackage(job, doers, receivers, masterRef);
+                newap.epjson.Add(tempAP);
+                json.actionpackages.Add(newap);
+                Debug.Log($"parsing AP create package, current at {json.actionpackages.Count}");
+            }
+        }
+
+        foreach(var ap in json.actionpackages)
+        {
+            Debug.Log($"final ap, inner count {ap.epjson.Count}");
+        }
+    }
+
+
+    MessageJSON json = null;
+    public MessageJSON GetContent()
+    {
+        if (json != null) return json;
+
+        try
+        {
+            json = JsonConvert.DeserializeObject<MessageJSON>(content);
+            ParseAP(json, json.UpdateVariable);
+        }
+        catch(Exception e)
+        {
+            Debug.LogError($"error failed to deserialize MessageJSON object from [{content}]");
+            return null;
+        }
+
+
+        try
+        {
+            var json1 = JsonConvert.DeserializeObject<MessageJSON_blocks>(content);
+            json.content_blocks = json1.content;
+            return json;
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                var json1 = JsonConvert.DeserializeObject<MessageJSON_simple>(content);
+                json.content_string = json1.content;
+                return json;
+            }
+            catch (Exception e2)
+            {
+                Debug.LogError($"error failed to deserialize MessageJSON object from [{content}]");
+                json.content_string = content;
+                return json;
+            }
+        }
+    }
+
+    public class MessageJSON
+    {
+        public string think;
+        public string summary;
+        public string content_string;
+        public List<MessageParagraph> content_blocks = new List<MessageParagraph>();
+        public int timeCost;
+        public List<int> relevantActorRefs = new List<int>();
+        public List<APJSON> UpdateVariable = new List<APJSON>();
+        /// <summary>
+        /// Start at 0
+        /// </summary>
+        public int animatedIndex = 0;
+
+        [JsonIgnore]
+        public bool CanAnimate
+        {
+            get
+            {
+                return (content_blocks.Count > animatedIndex) || (content_string.Length > animatedIndex);
+            }
+        }
+
+
+        [JsonIgnore] public List<ActionPackage> actionpackages = new List<ActionPackage>();
+        public string disclaimer;
+    }
+    public class MessageParagraph
+    {
+        public string content_text;
+        public int portraitRefID = -1;
+        public List<string> portraitTags = new List<string>();
+        public string CommandID;
+        public int targetID;
+    }
+
+    public class MessageJSON_blocks
+    {
+        public List<MessageParagraph> content = new List<MessageParagraph>();
+    }
+
+    public class MessageJSON_simple
+    {
+        public string content;
+    }
 }
+
+public class APJSON
+{
+    public string CommandID;
+    public int SourceJobID;
+    public Memory_Response command_result = Memory_Response.None;
+    public int doer_RefID = -1;
+    public Memory_Attitude participant_attitude = Memory_Attitude.None;
+    public int receiver_RefID = -1;
+    public int source_content_text_Index;
+
+    [JsonIgnore]
+    public COM innerCOM
+    {
+        get
+        {
+            if (_com == null && CommandID != null && CommandID.Length > 0)
+            {
+                _com = scr_System_Serializer.current.MasterList.COMs.GetByID(CommandID);
+            }
+            return _com;
+        }
+    }
+    COM _com = null;
+}
+
 
 public class LLMResponse
 {
@@ -90,12 +457,41 @@ public class LLMResponse
         public int index;
         public LLMMessage message;
         public string finish_reason;
+
+
+        [JsonIgnore]
+        public LLMMessage.MessageJSON JSON
+        {
+            get
+            {
+                if (message == null) return null;
+                return message.GetContent();
+            }
+        }
+        public LLMMessage.MessageJSON JSONOUTPUT
+        {
+            get
+            {
+                if (message == null) return null;
+                return message.GetContent();
+            }
+        }
     }
     public class usages
     {
         public int prompt_tokens;
         public int completion_tokens;
         public int total_tokens;
+    }
+
+    [JsonIgnore]
+    public LLMMessage.MessageJSON JSON
+    {
+        get
+        {
+            if (choices.Count < 1) return null;
+            return choices[0].JSON;
+        }
     }
 }
 
@@ -104,7 +500,8 @@ public class LLM_WorldState
 {
     public class CharaStorage
     {
-        public string Fullname;
+        public string FirstName;
+        public int RefID;
         public string Description;
         public List<string> Status = null;
         public List<MemoryStorage> Memories = null;
@@ -114,7 +511,8 @@ public class LLM_WorldState
         public Dictionary<string, RelationshipStorage> Relationships = null;
         public List<string> equipments = null;
         public Dictionary<string, string> schedule = null;
-        public string LorebookEntry;
+        public string LorebookEntry = null;
+        public List<string> ValidPortraitTags = new List<string>();
 
         public class RelationshipStorage
         {
@@ -198,12 +596,13 @@ public class LLM_WorldState
         }
         public CharaStorage(Character_Trainable c, I_IsJobGiver faction, bool fullLoad = false)
         {
+            FirstName = c.FirstName;
+
             int nextHour = scr_System_Time.current.getCurrentTime().Hour + 1;
             if (nextHour >= 24) nextHour -= 24;
             var nextHourJob = c.FactionManager.CurrentJobPost(nextHour);
 
-            LorebookEntry = c.CharacterCard;
-            Fullname = c.FullName;
+            RefID = c.RefID;
             Description = $"{c.Race.DisplayName} {c.RaceTemplate.DisplayName} {c.FactionManager.CurrentlyActiveFactionStatus}";
             if (scr_System_CampaignManager.current.Player == c) Description += ", IS PLAYER CHARACTER";
             CurrentlyDoing = c.GetJobDescription();
@@ -213,6 +612,7 @@ public class LLM_WorldState
 
             if (fullLoad)
             {
+                LorebookEntry = c.CharacterCard;
                 Relationships = new Dictionary<string, RelationshipStorage>();
                 equipments = new List<string>();
                 schedule = new Dictionary<string, string>();
@@ -252,13 +652,19 @@ public class LLM_WorldState
                 foreach(var equipref in c.Body.EquippedItemRefs)
                 {
                     var equip = scr_System_CampaignManager.current.FindItemInstanceByID(equipref);
-                    equipments.Add($"{equip.DisplayName}{(equip.Base.Tooltip == "NONE" ? "" : equip.Base.Tooltip)}");
+                    var equiptooltip = equip.Base.Tooltip == "no_tooltip" ? "" : $": {equip.Base.Tooltip}";
+                    equipments.Add($"{equip.DisplayName}{equiptooltip}");
                 }
 
                 for(int i = 0; i < 24; i++)
                 {
                     var name = c.GetJobPost(i).Name;
-                    schedule.Add($"{i}H", name == "" ? "free time" : name);
+                    if(name != "") schedule.Add($"{i}H", name);
+                }
+
+                if (c.PortraitManager != null)
+                {
+                    c.PortraitManager.CollectAllTags(ref this.ValidPortraitTags);
                 }
             
             }
@@ -267,8 +673,8 @@ public class LLM_WorldState
 
     public Dictionary<string, List<string>> FloorDescriptions = new Dictionary<string, List<string>>();// <floorName, <roomRefID, roomDescription>> with each room name and present chara;
     public Dictionary<string, string> Lorebook = new Dictionary<string, string>();
-    public Dictionary<int, CharaStorage> Characters = new Dictionary<int, CharaStorage>(); // <refID, description>
-    public Dictionary<string, Dictionary<string, string>> PossibleInteractions = new Dictionary<string, Dictionary<string, string>>(); // <targetName, <commandID, tooltips>>
+    public Dictionary<string, CharaStorage> Characters = new Dictionary<string, CharaStorage>(); // <refID, description>
+    public Dictionary<string, Dictionary<string, List<SerializedAP>>> PossibleInteractions = new Dictionary<string, Dictionary<string, List<SerializedAP>>>(); // <targetName, <commandID, tooltips>>
 
     public LLM_WorldState()
     {
@@ -311,11 +717,11 @@ public class LLM_WorldState
 
                if (currentRoom.RoomChara.Contains(c))
                 {// more detailed desc
-                    Characters.Add(c.RefID, new CharaStorage(c, faction, true));
+                    Characters.Add(c.FullName, new CharaStorage(c, faction, true));
                 }
                 else
                 {
-                    Characters.Add(c.RefID, new CharaStorage(c, faction, false));
+                    Characters.Add(c.FullName, new CharaStorage(c, faction, false));
                 }
 
             }
@@ -354,7 +760,7 @@ public class LLM_WorldState
 
 public static class LLMUtils
 {
-    static void validateSingle(Job job, List<int> doer, List<int> receiver, HashSet<Job> verified, Dictionary<string,string> collection, HashSet<string> repeat )
+    static void validateSingle(Job job, List<int> doer, List<int> receiver, HashSet<Job> verified, Dictionary<string, List<SerializedAP>> collection, HashSet<string> repeat )
     {
         if (verified != null)
         {
@@ -369,29 +775,27 @@ public static class LLMUtils
         }
 
         var chara = scr_System_CampaignManager.current.FindInstanceByID(doer[0]);
-        List<string> tooltips = new List<string>();
+        List<SerializedAP> tooltips = new List<SerializedAP>();
 
         foreach (var ap in (job is Job_Furniture ? job.MakePackages(chara, true) : job.CachedPackages))
         { 
-            tooltips.Clear();
             validateAP(ap, tooltips, doer, receiver);
-            if (tooltips.Count > 0) collection.Add($"{job.DisplayName}: {ap.DisplayName}", String.Join("\n", tooltips));
         }
+        if (tooltips.Count > 0) collection.Add($"{job.DisplayName}", tooltips);
     }
 
-    static void validateExisting(Job job, Dictionary<string, string> collection)
+    static void validateExisting(Job job, Dictionary<string, List<SerializedAP>> collection)
     {
-        List<string> tooltips = new List<string>();
+        List<SerializedAP> tooltips = new List<SerializedAP>();
         foreach (var ap in job.MakePackages(scr_System_CampaignManager.current.Player))
         {
-            tooltips.Clear();
             validateAP(ap, tooltips, null, null);
-            if (tooltips.Count > 0) collection.Add($"Available Command in {job.DisplayName}", String.Join("\n", tooltips));
         }
+        if (tooltips.Count > 0) collection.Add($"Available Command in {job.DisplayName}", tooltips);
     }
 
 
-    static void validateAP(ActionPackage ap, List<string> tooltips, List<int> doer, List<int> receiver)
+    static void validateAP(ActionPackage ap, List<SerializedAP> tooltips, List<int> doer, List<int> receiver)
     {
         if (ap.targetCOM == null) return;
         if (!ap.targetCOM.ValidateJob(ap.job, out var msg))
@@ -399,17 +803,23 @@ public static class LLMUtils
             // add message
             return;
         }
+        var app = new SerializedAP();
+        app.CommandName = ap.DisplayName;
+        app.CommandID = ap.targetCOM == null ? "null" : ap.targetCOM.ID;
+        app.SourceJobID = ap.job.RefID;
+
+
         if (doer != null && receiver != null) ap.ResetRequest(doer, receiver, doer.Count > 0 ? doer[0] : -1, true);
         if (!ap.Validate())
         {
             // validation failure
             ap.tooltip.RemoveAll(x => x == "" || x.Length < 1);
-            tooltips.Add($"{ap.DisplayName}: [{ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", ap.tooltip))}\n]");
+            app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", ap.tooltip));
 
         }
         else if (ap.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep)
         {
-            tooltips.Add($"{ap.DisplayName}: [{ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_cannotSleep"))}\n]");
+            app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_cannotSleep"));
         }
         else
         {
@@ -422,8 +832,29 @@ public static class LLMUtils
                 dcResult = $"Difficulty Check D20{(mods.Count > 0 ? $" + {String.Join(" + ", mods)}" : "")} >=? {baseDC}";
             }
 
-            tooltips.Add($"{ap.DisplayName}: [{ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"))}{(prevalidation.Length > 0 ? $"\n{prevalidation}" : "")}{(dcResult.Length > 0 ? $"\n{dcResult}" : "")}\n]");
+            //tooltips.Add($"{ap.DisplayName}: [{ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"))}{(prevalidation.Length > 0 ? $"\n{prevalidation}" : "")}{(dcResult.Length > 0 ? $"\n{dcResult}" : "")}\n]");
+
+            app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
+
+            if (prevalidation.Length > 0) app.AcceptanceCheck = prevalidation;
+            else app.AcceptanceCheck = null;
+
+            if (dcResult.Length > 0) app.DifficultyCheck = dcResult;
+            else app.DifficultyCheck = null;
         }
+
+        tooltips.Add(app);
+    }
+
+    public class SerializedAP
+    { 
+        public string CommandName;
+        public string CommandID;
+        public int SourceJobID;
+        public string Summary;
+        public string AcceptanceCheck;
+        public string DifficultyCheck;
+
     }
 
     /// <summary>
@@ -431,14 +862,14 @@ public static class LLMUtils
     /// </summary>
     /// <param name="targets"></param>
     /// <returns></returns>
-    public static void CollectCOMInfo(Dictionary<string, Dictionary<string, string>> PossibleInteractions, Room_Instance currentRoom)
+    public static void CollectCOMInfo(Dictionary<string, Dictionary<string, List<SerializedAP>>> PossibleInteractions, Room_Instance currentRoom)
     {
         var mgr = scr_System_CampaignManager.current;
         if (mgr == null) return;
         List<Character_Trainable> targets = currentRoom == null ? new List<Character_Trainable>() : currentRoom.RoomChara;
         var trackedJobs = new HashSet<Job>();
 
-        Dictionary<string, string> collection = new Dictionary<string, string>();
+        Dictionary<string, List<SerializedAP>> collection = new Dictionary<string, List<SerializedAP>>();
 
         var player = new List<int>(1);
         if (mgr.Player != null)
@@ -465,7 +896,7 @@ public static class LLMUtils
         }
         if (collection.Count > 0)
         {
-            PossibleInteractions.Add("Existing Commands in room:", new Dictionary<string, string>(collection));
+            PossibleInteractions.Add("Existing Commands in room:", new Dictionary<string, List<SerializedAP>>(collection));
         }
         collection.Clear();
 
@@ -511,7 +942,7 @@ public static class LLMUtils
 
                 if (collection.Count > 0)
                 {
-                    PossibleInteractions.Add($"Possible command with {r.FirstName}", new Dictionary<string, string>(collection));
+                    PossibleInteractions.Add($"Possible command with {r.FirstName}", new Dictionary<string, List<SerializedAP>>(collection));
                 }
             }
         }
@@ -542,7 +973,7 @@ public static class LLMUtils
 
             if (collection.Count > 0)
             {
-                PossibleInteractions.Add($"Possible command alone", new Dictionary<string, string>(collection));
+                PossibleInteractions.Add($"Possible command alone", new Dictionary<string, List<SerializedAP>>(collection));
             }
         }
     }

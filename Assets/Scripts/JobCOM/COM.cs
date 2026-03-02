@@ -1022,9 +1022,14 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
 
     public string ActionPackageClass = "";
-    public ActionPackage MakePackage(Job job, List<int> doers, List<int> receivers, int masterRef, Manageable.ProductionOrder pOrder = null)
+    public ActionPackage MakePackage(Job job, List<int> doers, List<int> receivers, int masterRef)
     {
         ActionPackage returnValue = null;
+        Manageable.ProductionOrder pOrder = null;
+        if (!isJobCOM || (job.FactionOwner != null && job.FactionOwner.FactionOwnerRoot.GetProductionOrder(job as Job_Furniture, out var xxx, out pOrder)))
+        {
+
+        }
         switch (ActionPackageClass)
         {
             case "ActionPackage_Interaction":

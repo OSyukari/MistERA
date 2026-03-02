@@ -292,7 +292,10 @@
                                             "selfTags": [
                                                 "timestop"
                                             ]
-                                        }
+                                        },
+                                        "excludeSelfTags":[
+                                            "cum","undressed","location_change","locked"
+                                        ]
                                     },
                                     "_comment": "1.4.2 时停解除 清醒 无事发生",
                                     "responses": [

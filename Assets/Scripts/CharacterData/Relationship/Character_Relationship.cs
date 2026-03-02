@@ -1024,7 +1024,7 @@ public class Character_Relationship
 
     [JsonIgnore] public float Desire { get { return Desire_Raw / Desire_Div * Desire_Mult; } }
 
-    [JsonIgnore] public string TargetName { get { return this.displayName != "" ? LocalizeDictionary.QueryThenParse(this.displayName) : Target != null ? Target.FullName : "missing"; } }
+    [JsonIgnore] public string TargetName { get { return this.displayName != "" ? LocalizeDictionary.QueryThenParse(this.displayName) : Target != null ? Target.FirstName : "missing"; } }
 
 
     public Character_Relationship()

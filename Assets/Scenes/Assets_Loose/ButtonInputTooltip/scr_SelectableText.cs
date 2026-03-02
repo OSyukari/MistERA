@@ -120,6 +120,7 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private ButtonValidator validator = null;
     public ButtonValidator Validator { get { return validator; } }
+
     public void Validate()
     {
         if (!initialized) Awake();
@@ -156,6 +157,8 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
 
             //this.text.text = scr_System_Serializer.current.Dictionary.Parse(this.text.text);
         }
+
+
 
     }
 

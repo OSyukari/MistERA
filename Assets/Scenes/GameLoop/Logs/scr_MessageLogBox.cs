@@ -19,5 +19,6 @@ public class scr_MessageLogBox : MonoBehaviour
     }
 
     protected PortraitManager portrait = null;
-
+    public RectTransform SelfRect;
+    public Image SelfImage;
 }

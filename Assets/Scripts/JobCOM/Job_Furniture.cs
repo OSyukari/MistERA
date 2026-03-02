@@ -197,7 +197,7 @@ public class Job_Furniture : Job
         var m = FactionOwner is Manageable ? FactionOwner as Manageable : null;
         // during registration, chara addactor register currentjobschedule, or register recreation / meal / etc
 
-        List<COM> possibleCOMs = c.RefID != scr_System_CampaignManager.current.Player.RefID && actorRefID.Contains(c.RefID) ? actorRefIDStorage[c.RefID].Match(this) : (allowInvalid ? allusableCOMs : new List<COM>());
+        List<COM> possibleCOMs = c.RefID != scr_System_CampaignManager.current.Player.RefID && actorRefIDStorage.ContainsKey(c.RefID) ? actorRefIDStorage[c.RefID].Match(this) : (allowInvalid ? allusableCOMs : new List<COM>());
 
         List<string> comnames = new List<string>();
         foreach (var i in possibleCOMs) comnames.Add(i.DisplayName());
@@ -235,9 +235,9 @@ public class Job_Furniture : Job
             }
             else*/
             if (com is COM_TakeMeal && !FactionOwner.isMealHour) continue;
-            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner, out var r) && (!com.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out po)))))
+            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner, out var r)))
             {
-                var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, po);
+                var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1);
                 if (package.Validate() || allowInvalid)
                 {
                     results.Add(package);
