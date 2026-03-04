@@ -39,6 +39,11 @@ public class scr_UpdateHandler : MonoBehaviour
     //---------------------------------------
 
     Coroutine LLMRoutine = null;
+
+    public bool CanInterruptLLMRoutine { get
+        {
+            return LLMRoutine != null;
+        } }
     public void InterruptLLMRoutine()
     {
         StopCoroutine(LLMRoutine);
@@ -71,7 +76,18 @@ public class scr_UpdateHandler : MonoBehaviour
         }
     }
 
-    public bool dummyLLM = true;
+    [SerializeField] bool dummyLLMToggle = false;
+    [JsonIgnore] public bool dummyLLM
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return dummyLLMToggle;
+#else
+    return false;
+#endif
+        }
+    }
     public bool reserializeTemplate = false;
     /// <summary>
     /// This one function will create payload and replace stuff
@@ -95,8 +111,8 @@ public class scr_UpdateHandler : MonoBehaviour
             var worldinfostring = JsonConvert.SerializeObject(worldinfo, Formatting.Indented, UtilityEX.SerializerSettings);
             payload.ReplaceString("%%worldInfo%%", worldinfostring);
             payload.ReplaceString("%%currentRoundInput%%", s);
+            payload.ReplaceString("%%currentLanguage%%", LocalizeDictionary.Instance.Index.cachedLang);
             payload.currentString = s;
-
 
 
             string collectionPath = Application.persistentDataPath + "/worldStateInfo.json";
@@ -108,6 +124,7 @@ public class scr_UpdateHandler : MonoBehaviour
             untransDict.Directory.Create();
             File.WriteAllText(untransDict.FullName, s2);
             Debug.Log($"creating/updating worldstateinfo collection in {collectionPath}");
+
 
         }
         else
@@ -129,7 +146,57 @@ public class scr_UpdateHandler : MonoBehaviour
             scr_System_CampaignManager.current.AddLog_LLM(s);
         }
 
+        var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        var baseUrl = llm.endpoint;
+
+        // --- FIX: Remove top_k if using Google's OpenAI endpoint ---
+        if (baseUrl.Contains("generativelanguage.googleapis.com"))
+        {
+            s.top_k = null;
+            s.max_tokens = null;
+            s.response_format.ReplaceType("int", "integer");
+
+        }
+        else if (baseUrl.Contains("anthropic"))
+        {
+            List<string> systemMessages = new List<string>();
+            for(int i = s.messages.Count - 1; i>= 0; i--)
+            {
+                if (s.messages[i].role == "system")
+                {
+                    systemMessages.Add(s.messages[i].content);
+                    s.messages.RemoveAt(i);
+                }
+            }
+            systemMessages.Reverse();
+            s.system = String.Join("\n", systemMessages);
+            s.response_format.ReplaceType("int", "integer");
+            s.output_config = new LLMRequest.ResponseFormatter_Claude(s.response_format);
+            s.response_format = null;
+
+            s.max_completion_tokens = null;
+            if (s.max_tokens == null || s.max_tokens > 16384) s.max_tokens = 16384;
+
+            s.top_p = null;
+        }
+        else if (baseUrl.Contains("deepseek.com"))
+        {
+            s.max_completion_tokens = null;
+            s.response_format.ReplaceType("int", "integer");
+        }
+        else if (baseUrl.Contains("api.openai.com"))
+        {
+            // For OpenAI's modern models, only use max_completion_tokens
+            s.max_tokens = null;
+
+            // OpenAI supports top_k only in very specific beta models, 
+            // usually it's safer to null it out for GPT-4/5.
+            s.top_k = null;
+
+            s.response_format.ReplaceType("int", "integer");
+        }
         LLMRoutine = StartCoroutine(SendLLMRequest_Routine(s, OnLLMResponse));
+
     }
 
     void OnLLMResponse(bool success, string s)
@@ -165,6 +232,11 @@ public class scr_UpdateHandler : MonoBehaviour
         {
             response = JsonConvert.DeserializeObject<LLMResponse>(s);
 
+            if (response.JSON != null)
+            {
+
+            }
+
             var s2 = JsonConvert.SerializeObject(response, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
             if (File.Exists(collectionPath)) File.Delete(collectionPath);
 
@@ -199,10 +271,11 @@ public class scr_UpdateHandler : MonoBehaviour
         Observer_LLMStatus?.Invoke(LLMStatus);
 
         var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
-        var baseUrl = llm.endpoint;
+        var endpoint = llm.endpoint;
         var apiKey = llm.key;
 
         payload.Purge();
+
 
         string jsonPayload = JsonConvert.SerializeObject(payload, Formatting.Indented, UtilityEX.SerializerSettingsLLM);
         string collectionPath = Application.persistentDataPath + "/LLMRequest.json";
@@ -221,7 +294,7 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         else
         {
-            string endpoint = baseUrl.EndsWith("/") ? baseUrl + "chat/completions" : baseUrl + "/chat/completions";
+            Debug.Log($"Sending request to endpoint {endpoint}");
 
             using (UnityWebRequest request = new UnityWebRequest(endpoint, "POST"))
             {
@@ -229,14 +302,17 @@ public class scr_UpdateHandler : MonoBehaviour
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 request.downloadHandler = new DownloadHandlerBuffer();
 
-                request.SetRequestHeader("Content-Type", "application/json");
-                request.SetRequestHeader("Authorization", "Bearer " + apiKey);
 
                 // Specific header for Claude if not using an OpenAI proxy
-                if (baseUrl.Contains("anthropic"))
+                if (endpoint.Contains("anthropic"))
                 {
                     request.SetRequestHeader("x-api-key", apiKey);
                     request.SetRequestHeader("anthropic-version", "2023-06-01");
+                }
+                else
+                {
+                    request.SetRequestHeader("Content-Type", "application/json");
+                    request.SetRequestHeader("Authorization", "Bearer " + apiKey);
                 }
 
                 yield return request.SendWebRequest();

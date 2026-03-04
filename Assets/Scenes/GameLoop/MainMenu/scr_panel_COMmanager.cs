@@ -207,6 +207,8 @@ public class scr_panel_COMmanager : scr_Menu
                 break;
         }
         RefreshEquips(scr_System_CampaignManager.current.CurrentTargetRef);
+
+
     }
 
     public scr_HoverableText self_internal_descriptor, target_internal_descriptor;
@@ -2105,8 +2107,10 @@ public class scr_panel_COMmanager : scr_Menu
             text.useDisabledColorWhenUntoggled = true;
         }
         public override bool IsButtonValid()
-        {
-            var currentVal = parent.GetCOMFilter(filter);
+        { 
+
+            bool setting = scr_System_CentralControl.current.LLMSetting.enabled;
+            var currentVal = parent.GetCOMFilter(filter) && setting;
             if (currentVal)
             {
                 text.Toggle(true, true);
@@ -2116,10 +2120,15 @@ public class scr_panel_COMmanager : scr_Menu
                 text.Toggle(true, false);
             }
             parent.LLMRect.gameObject.SetActive(currentVal);
-
-
-
-            return true;
+            if (setting)
+            {
+                this.tooltip = LocalizeDictionary.QueryThenParse("ui_prefs_llm_apisetting_toggle");
+            }
+            else
+            {
+                this.tooltip = LocalizeDictionary.QueryThenParse("ui_prefs_llm_apisetting_disabled");
+            }
+            return setting;
         }
 
         public void OnClickButton()

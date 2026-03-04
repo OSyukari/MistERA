@@ -447,10 +447,10 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         }*/
 
   
-    protected virtual bool ValidateCondition(List<string> _tooltip, List<Character_Trainable> doerRefs, List<Character_Trainable> receiverRefs, COM com, COM_Variant variant = null)
+    protected virtual bool ValidateCondition(List<string> _tooltip, List<Character_Trainable> doerRefs, List<Character_Trainable> receiverRefs, COM com, out bool hardlock, COM_Variant variant = null)
     {
-        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, null);
-        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, com.requirements.requirement);
+        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, null);
+        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, com.requirements.requirement);
         // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
         if (!(value1 && value2))
         {
@@ -458,10 +458,11 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         }
         return value1 && value2;
     }
-    protected virtual bool ValidateCondition(List<string> _tooltip, Character_Trainable doerRefs, COM com, COM_Variant variant = null)
+    protected virtual bool ValidateCondition(List<string> _tooltip, Character_Trainable doerRefs, COM com, out bool hardlock, COM_Variant variant = null)
     {
-        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, null);
-        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, com.requirements.requirement);
+        hardlock = false;
+        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, out hardlock, null);
+        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, out hardlock, com.requirements.requirement);
         // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
         if (!(value1 && value2))
         {
@@ -529,7 +530,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (doerRefIDs.CurrentJob is not Job_Sex_Group) return -1;
         }
 
-        if (!ValidateCondition(null, doerRefIDs, this))
+        if (!ValidateCondition(null, doerRefIDs, this, out bool hardlock))
         {
             return -1;
         }
@@ -538,7 +539,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         {
             //s.Clear();
             if (!requirements.requireExisting.ValidateCondition(null, doerRefIDs, this, var)) continue;
-            if (!ValidateCondition(null, doerRefIDs, this, var)) continue;
+            if (!ValidateCondition(null, doerRefIDs, this, out hardlock, var)) continue;
             if (excludeRequireExisting && var.requirements.requireExisting.isValid) continue;
             //if( !comTags.Contains("sex") && !comTags.Contains("touch")) Debug.Log("validate com " + displayName + " return true valid variant id "+ variants.IndexOf(var));
             index = Math.Max(index, variants.IndexOf(var));
@@ -559,7 +560,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         //if (receiverRefIDs == null || receiverRefIDs.Count < 1) receiverRefIDs = doerRefIDs;
         if (!requirements.requireExisting.ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this))
         {
-            return -1;
+            return -2;
         }
         if (variants.Count < 1)
         {
@@ -567,7 +568,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             {
                 tooltip.Add("Command GetValidVariant invalid: no variant in command");
             }
-            return -1;
+            return -2;
         }
         if (doerRefIDs.Count < 1)
         {
@@ -575,7 +576,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             {
                 tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requireDoer"));
             }
-            return -1;
+            return -2;
         }
         if (!AllowDuringSex)
         {
@@ -584,12 +585,12 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 if (receiver == null)
                 {
                     tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireReceiver"));
-                    return -1;
+                    return -2;
                 }
                 else if (receiver.CurrentJob is Job_Sex_Group)
                 {
                     tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_notAllowedDuringS"));
-                    return -1;
+                    return -2;
                 }
             }
         }
@@ -631,9 +632,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 }
             }
         }
-        if (!ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this))
+        if (!ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this, out bool hardlock))
         {
-            return -1;
+            return hardlock ? -2 : -1;
         }
 
         
@@ -644,7 +645,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             {
                 tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_forbiddenGenderInteraction")
                                     .Replace("$interaction$", ttip));
-                return -1;
+                return -2;
             }
         }
 
@@ -661,7 +662,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 continue;
             }
             s.Clear();
-            if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, var))
+            if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, out hardlock, var))
             {
                 s2.Add($"{DisplayName(i)}: {String.Join("|", s)}");
                 continue;

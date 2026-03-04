@@ -502,7 +502,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     [JsonProperty] protected string firstName = "Jane", middleName = "", lastName = "Doe", title = "";
     [JsonProperty] public string nameDisplayFormat = "chara_fullname_firstToLast";
-    [JsonProperty] protected string characterComment = "";
     [JsonIgnore] public string CharacterCard
     {
         get
@@ -511,15 +510,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             else return null;
         }
     }
-    [JsonIgnore] public string CharacterComment 
-    {
-        get
-        {
-            if (characterComment == "") return "No Comment";
-            return LocalizeDictionary.QueryThenParse(characterComment);
-        }
-    }
-
     public void SetName(string firstName, string middleName, string lastName, string displayFormat){
         this.FirstName = firstName;
         this.middleName = middleName;

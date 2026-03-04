@@ -301,7 +301,12 @@
 
                 "event_goblin_gangRape_rescuedChara":"Rescue Action",
                 "event_goblin_gangRape_rescuedChara_liberate_event_ev01":"$party.name$ rescued the victim who was brutally treated by goblins",
-                "event_goblin_gangRape_rescuedChara_liberate_event_ev02":"...Obtained more intelligence about this place from the rescued $rescued.name$"
+                "event_goblin_gangRape_rescuedChara_liberate_event_ev02":"...Obtained more intelligence about this place from the rescued $rescued.name$",
+
+                
+      "memory_goblin_gangRape_rescuedChara": "Rescued by $party.name$ after missing for $MIADays$ days\nRaped $rescue.captive_rapedcount$ times during the captivity",
+      "event_goblin_gangRape_rescuedChara_rescue_event_ev01": "$party.name$ rescued $rescue.name$ who was being cruelly treated by the goblins",
+      "event_goblin_gangRape_rescuedChara_rescue_event_ev02": "($rescue.name$ has been missing for $MIADays$ days, and was raped $rescue.captive_rapedcount$ times)"
             }
         }
     }

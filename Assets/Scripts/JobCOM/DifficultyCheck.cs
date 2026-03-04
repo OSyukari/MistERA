@@ -26,7 +26,7 @@ public class DifficultyModifiers
             tooltips = new List<string>();
             return 0;
         }
-        if( TeamReqUtility.Validate(actor, teamRequirement, faction, out tooltips)) return modifierScore;
+        if( TeamReqUtility.Validate(actor, teamRequirement, faction, out tooltips, out var hadlock)) return modifierScore;
         else return 0;
     }
 

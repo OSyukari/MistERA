@@ -36,15 +36,19 @@ public class ActionPackage_ProductionOrder : ActionPackage
         else return -1;
     }
 
-    public override int canJoinAP(List<Character_Trainable> cs, out List<int> doers, out List<int> receivers)
+    public override int canJoinAP(List<Character_Trainable> cs, out List<int> doers, out List<int> receivers, out List<string> tooltips)
     {
         var tempPackage = this.Copy();
 
-        base.canJoinAP(cs, out doers, out receivers);
+        base.canJoinAP(cs, out doers, out receivers, out tooltips);
 
         tempPackage.ResetRequest(doers, receivers, this.masterRef);
         if (tempPackage.Validate()) return tempPackage.COMVariantID;
-        else return -1;
+        else
+        {
+            tooltips = tempPackage.tooltip;
+            return -1;
+        }
     }
     private Job_Furniture jobFurn { get { return job as Job_Furniture; } }
 

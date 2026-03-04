@@ -2,8 +2,6 @@ using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 public class scr_resize_inputfield : MonoBehaviour
 {
@@ -11,13 +9,15 @@ public class scr_resize_inputfield : MonoBehaviour
 
     public float singleLineHeight;
     public RectTransform targetRect;
-    public TMP_InputField inputField; 
+    public TMP_InputField inputField;
+    public RectTransform SelfRect;
     
     public int lastLineCount = 0;
 
     private void Start()
     {
-        OnContentChange();
+        if (scr_System_CentralControl.current.LLMSetting.enabled) OnContentChange();
+        else SelfRect.gameObject.SetActive(false);
     }
 
     public void OnContentChange()

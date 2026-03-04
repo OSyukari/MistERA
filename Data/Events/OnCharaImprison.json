@@ -72,7 +72,12 @@
             {
 "OnCharaImprison":"Imprison Event",
 "OnCharaImprison_ev01":"$self.name$ is captured by $factionName$'s $partyName$ party",
-"OnCharaImprison_ev02":"$self.name$ is captured by $factionName$"
+"OnCharaImprison_ev02":"$self.name$ is captured by $factionName$",
+
+
+      "memory_OnCharaImprison_ev01_doer": "Captured $self.name$ together with $partyName$ squad",
+      "memory_OnCharaImprison_ev01_receiver": "Captured by $partyName$ squad of the $factionName$",
+      "memory_OnCharaImprison_ev02_receiver": "Became a prisoner of $factionName$"
             }
         }
     }

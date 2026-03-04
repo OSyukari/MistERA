@@ -47,8 +47,35 @@
 "ui_comPanel_filters_shortenLogs": "简化口上",
 "ui_comPanel_filters_shortenLogs_tooltip": "开启后，参与多人指令时只会打印一条随机参与者的口上\n未开启时，会打印所有参与者的口上（人多时会刷屏，且刷到重复口上的可能性非常大\n\n推荐开启）",
 
-"ui_comPanel_LLM_title": "AI聊天输入窗口",
+"ui_prefs_button_llmSetting": "语言模型设定",
+"ui_prefs_button_llmSetting_tooltip": "设定语言模型接口和API",
+
+"ui_prefs_llm_llmSetting_on": "启用",
+
+"ui_prefs_llm_apisetting": "API设定",
+"ui_prefs_llm_apisetting_disabled": "需要先启用语言模型",
+"ui_prefs_llm_apisetting_toggle": "开关语言模型输出框的显示",
+"ui_prefs_llm_apisetting_descriptions": "所有API相关设定（包括Key）都会存储于Application.persistentDataPath中（Windows系统下在Appdata\\LocalLow\\Silent Forest\\Mist Era\\\n使用自定义端口时，请使用localhost而非127.0.0.1",
+
+"ui_prefs_llm_apisetting_completion_title": "聊天补全模型",
+"ui_prefs_llm_apisetting_completion_api_type": "API来源",
+"ui_prefs_llm_apisetting_completion_dropdown_0": "自制接口（OpenAI兼容）",
+"ui_prefs_llm_apisetting_completion_dropdown_1": "Google AI Studio",
+"ui_prefs_llm_apisetting_completion_dropdown_2": "Claude",
+
+"ui_prefs_llm_apisetting_completion_customurl": "自制接口URL",
+
+"ui_prefs_llm_apisetting_completion_api_0": "自制接口Key",
+"ui_prefs_llm_apisetting_completion_api_1": "Google AI Studio API Key",
+"ui_prefs_llm_apisetting_completion_api_2": "Claude API Key",
+
+"ui_prefs_llm_apisetting_completion_models": "选择模型",
+
+
+"ui_comPanel_LLM_title": "<link=\"ui_comPanel_LLM_title_tooltip\">AI聊天输入窗口</link>",
+"ui_comPanel_LLM_title_tooltip": "AI能做到的：\n1. 可以执行指令：与/对房间内的NPC执行指令（邀请同行，家具互动，触摸，推倒调教，工作，监禁/释放）\n2. 可以识别的数据：\n2.1 当前房间所有角色的状态，人际关系，服装，日程表，记忆，立绘关键词，和角色卡信息\n2.2 当前战役的lorebook，当前地图的所有楼层和房间，当前房间的所有家具和清洁状况\n2.3 当前房间内，玩家所有可执行指令的内容和成功率\n3. 指令的成功与否，目前是交给了AI去决定\n\nAI目前无法做到/做得不够好的：\n1. 无法让玩家/NPC在地图上移动。\n2. 无法开启/结束时停。\n3. 无法穿脱衣物。\n4. 无法加入进行中的指令\n4.1 衍生出的BUG为，如果房间里坐满了NPC在用电视，那么玩家描述‘与NPC一起看电视’会失败（因为无法加入进行中+电视机被占用无法新开）导致指令的结果处理条目会很诡异\n5. 最终的耗时计算可能与实际执行的指令不符（耗时过多或过短）\n6. 无法连续执行同类型但不同对象一样的指令（例如无法在一次指令内将5片田全部种好，一次只能种一个）\n7. 调教中，游戏内的射精计算会与AI的叙述脱节（例如AI只描述调教，游戏处理调教指令时直接射了）",
 "ui_comPanel_LLM_submit": "提交指令",
+"ui_comPanel_LLM_submit_tooltip": "如果对AI聊天功能有疑问，可以鼠标悬停[%%ui_comPanel_LLM_title%%]标题。\n修改API等请重开游戏，在主界面的[%%intro_button_editPref%%]->[%%ui_prefs_button_llmSetting%%]中修改",
 "ui_comPanel_LLM_previous": " < ",
 "ui_comPanel_LLM_next": " > ",
 "ui_comPanel_LLM_abort": "放弃",
@@ -685,6 +712,36 @@
 "comManager_bottom_map": "Move",
 
 
+"ui_comPanel_LLM_abort": "Abort",
+      "ui_comPanel_LLM_abort_message": "AI generation aborted. Click again to return to the main interface.",
+      "ui_comPanel_LLM_cancelRegen": "Stop Generation",
+      "ui_comPanel_LLM_confirm": "Confirm and Execute",
+      "ui_comPanel_LLM_next": " > ",
+      "ui_comPanel_LLM_previous": " < ",
+      "ui_comPanel_LLM_regenerate": "Regenerate",
+      "ui_comPanel_LLM_submit": "Submit Command",
+      "ui_comPanel_LLM_submit_tooltip": "The system cannot move the player.",
+      "ui_comPanel_LLM_title": "AI Chat Input Window",
+
+      
+      "ui_prefs_button_llmSetting": "LLM Settings",
+      "ui_prefs_button_llmSetting_tooltip": "Configure LLM Interface and API",
+
+      "ui_prefs_llm_apisetting": "API Settings",
+      "ui_prefs_llm_apisetting_completion_api_0": "Custom Interface Key",
+      "ui_prefs_llm_apisetting_completion_api_1": "Google AI Studio API Key",
+      "ui_prefs_llm_apisetting_completion_api_2": "Claude API Key",
+      "ui_prefs_llm_apisetting_completion_api_type": "API Source",
+      "ui_prefs_llm_apisetting_completion_customurl": "Custom Interface URL",
+      "ui_prefs_llm_apisetting_completion_dropdown_0": "Custom Interface (OpenAI Compatible)",
+      "ui_prefs_llm_apisetting_completion_dropdown_1": "Google AI Studio",
+      "ui_prefs_llm_apisetting_completion_dropdown_2": "Claude",
+      "ui_prefs_llm_apisetting_completion_models": "Select Model",
+      "ui_prefs_llm_apisetting_completion_title": "Chat Completion Model",
+      "ui_prefs_llm_apisetting_descriptions": "All API related settings (including Keys) will be stored in Application.persistentDataPath (Under Windows: Appdata\\LocalLow\\Silent Forest\\Mist Era\\\nWhen using a custom port, please use localhost instead of 127.0.0.1",
+      "ui_prefs_llm_apisetting_disabled": "LLM needs to be enabled first",
+      "ui_prefs_llm_apisetting_toggle": "Toggle visibility of LLM output box",
+      "ui_prefs_llm_llmSetting_on": "Enable",
 
 "ui_quicksave": "Quicksave",
 "ui_quicksave_tooltip": "Store current play data into local file",

@@ -90,7 +90,7 @@ public class COM_Requirements
             treatDoerAsReceiver = treatDoerAsReceiver || req.treatDoerAsReceiver;
             treatReceiverAsDoer = treatReceiverAsDoer || req.treatReceiverAsDoer;
         }
-        public bool Validate(ref List<string> _tooltip, Character_Trainable doerRefIDs, Requirement extraCondition = null)
+        public bool Validate(ref List<string> _tooltip, Character_Trainable doerRefIDs, out bool hardlock, Requirement extraCondition = null)
         {
             //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
             //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
@@ -100,6 +100,7 @@ public class COM_Requirements
             if (TreatReceiverAsDoer) actorCount.AddRange(receiverRefIDs);
             actorCount.RemoveAll(x=>x < 0);
             */
+            hardlock = false;
             bool logging = !scr_UpdateHandler.current.Updating;
             var actorCount = 1;
 
@@ -116,33 +117,35 @@ public class COM_Requirements
             if (receiverCount > 0)
             {
                 if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireReceiver"));
+                hardlock = true;
                 return false;
             }
 
             // Debug.Log("Command (Variant) Requirement Validating [" + String.Join(",", doerRefIDs) + "] and [" + String.Join(",", receiverRefIDs) + "]");
 
-            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs))
+            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock))
             {
                 //if (logging) _tooltip.Add("doer failed doer req validation");
                 return false;
             }
-            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs))
+            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock))
             {
                 return false;
             }
             if (receiverCount == 0)
             {
-                return CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs);
+                return CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock);
             }
             else
             {
                 return true;
             }
         }
-        public bool Validate(ref List<string> _tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, Requirement extraCondition = null)
+        public bool Validate(ref List<string> _tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, out bool hardlock, Requirement extraCondition = null)
         {
             //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
             //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
+            hardlock = false;
             var actorSet = new HashSet<int>();
             bool logging = !scr_UpdateHandler.current.Updating;
             foreach (var id in doerRefIDs) { actorSet.Add(id.RefID); }
@@ -196,30 +199,30 @@ public class COM_Requirements
 
             //            Debug.Log("Command (Variant) Requirement Validating [" + String.Join(",", doerRefIDs) + "] and [" + String.Join(",", receiverRefIDs) + "]");
 
-            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs))
+            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock))
             {
                 //if (logging) _tooltip.Add("doer failed doer req validation");
                 return false;
             }
-            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs))
+            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock))
             {
                 //if (logging) _tooltip.Add("doer failed receiver req validation");
                 return false;
             }
-            if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers, ref _tooltip, receiverRefIDs))
+            if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers, ref _tooltip, receiverRefIDs, out hardlock))
             {
                // if (logging) _tooltip.Add("receiver failed doer req validation");
                 return false;
             }
             if (receiverCount == 0)
             {
-                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs);
+                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock);
                 //if (!value && logging) _tooltip.Add("doer failed receiver == 0 req validation");
                 return value;
             }
             else
             {
-                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, receiverRefIDs);
+                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, receiverRefIDs, out hardlock);
                 //if (!value && logging) _tooltip.Add("receiver failed receiver req validation");
                 return value;
             }

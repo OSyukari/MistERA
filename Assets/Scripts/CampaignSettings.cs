@@ -12,6 +12,8 @@ public class CampaignSettings
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID+"_tooltip"); } }
     public bool isAvailable = true;
     public string requireOriginID = "";
+    public Dictionary<string, string> Lorebooks = new Dictionary<string, string>();
+
     public List<CampaignSettings_ExtraOptions> extraOptions = new List<CampaignSettings_ExtraOptions>();
     public List<string> tags = new List<string>();
     public CampaignSettings_ExtraOptions GetPreviousOption(CampaignSettings_ExtraOptions ex)

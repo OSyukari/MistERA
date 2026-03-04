@@ -1,9 +1,7 @@
-using NUnit.Framework.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -242,6 +240,9 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                     case 0200: // Logs toggle clearlogs
                         button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.clearLogs)); break;
 
+                    case 1000: // LLM enable button
+                        button.Initialize(this, new buttonValidator_toggleLLM(this, button)); break;
+
                     case 9999:  //exit without saving
                         button.Initialize(this, button_alwaysValid); break;
                     case -1:
@@ -268,8 +269,19 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         }
 
         var mmm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
-        url.text = mmm.endpoint;
-        pwd.text = mmm.key;
+
+
+
+        foreach (var text in dropdown_api.options)
+        {
+            text.text = LocalizeDictionary.QueryThenParse(text.text);
+        }
+
+
+        url_custom.text = mmm.endpoint;
+        pwd_custom.text = mmm.key;
+
+        dropdown_api.value = mmm.APIType;
 
         ValidateAll();
 
@@ -278,35 +290,80 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
     }
 
 
-    public TMP_InputField url, pwd;
+    public TMP_Dropdown dropdown_api;
+    public RectTransform box_customAPI;
+    public TMP_Text api_title;
+    public void OnAPIChange(int i)
+    {
+        box_customAPI.gameObject.SetActive(i == 0);
+        switch (i)
+        {
+            case 0: // custom endpoint
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = url_custom.text;
+                break;
+            case 1: // google ai studio
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://generativelanguage.googleapis.com/v1beta/openai/models";
+                break;
+            case 2: // claude anthropic
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.anthropic.com/v1/messages";
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.anthropic.com/v1/models";
+                break;            /*
+            case 3: // openai
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.openai.com/v1/chat/completions";
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.openai.com/v1/models";
+                break;
+            case 3: // deepseek
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.deepseek.com/chat/completions";
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.deepseek.com/models";
+                break;*/
+            default:
+                break;
+
+        }
+
+        api_title.text = LocalizeDictionary.QueryThenParse($"ui_prefs_llm_apisetting_completion_api_{i}");
+
+        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.key = pwd_custom.text;
+        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.APIType = i;
+        scr_System_CentralControl.current.StoreLLMSetting();
+
+        RefreshModels();
+    }
+
+
+    public TMP_InputField url_custom, pwd_custom;
     public void OnContentChange_model(int s)
     {
-        if (modelsDropdown.options.Count <= s)
-        {
-            return;
-        }
         Debug.Log($"model value change to index {s} { modelsDropdown.options[s].text}");
         scr_System_CentralControl.current.LLMSetting.chatCompletionModel.model = modelsDropdown.options[s].text;
         scr_System_CentralControl.current.StoreLLMSetting();
     }
     public void OnContentChange_url(string s)
     {
-        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = url.text;
+        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = s;
         scr_System_CentralControl.current.StoreLLMSetting();
         RefreshModels();
 
     }
     public void OnContentChange_pwd(string s)
     {
-        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.key = pwd.text;
+        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.key = s;
         scr_System_CentralControl.current.StoreLLMSetting();
         RefreshModels();
     }
 
+    Coroutine refreshModels = null;
+
     protected void RefreshModels()
     {
         var mm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
-        StartCoroutine(GetAvailableModel(mm.endpoint, mm.key, OnModelFound));
+        if (refreshModels != null)
+        {
+            StopCoroutine(refreshModels);
+            refreshModels = null;
+        }
+        refreshModels = StartCoroutine(GetAvailableModel(mm.modellist, mm.key, OnModelFound));
     }
 
     protected void OnModelFound(ModelList model, UnityWebRequest request) 
@@ -315,6 +372,10 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         {
             errorMSG.SetText(Utility.WrapTextColor($"Failed to fetch models: {request.error}", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color));
             return;
+        }
+        else
+        {
+            errorMSG.SetText("");
         }
 
         string existing = scr_System_CentralControl.current.LLMSetting.chatCompletionModel.model;
@@ -328,12 +389,12 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
             if (model.data[i].id == existing) newvalue = i;
         }
         //Debug.Log($"Found {model.data.Count} models: {String.Join(" ", modelnames)}");
-        errorMSG.SetText("");
 
         modelsDropdown.ClearOptions();
         modelsDropdown.AddOptions(modelnames);
         modelsDropdown.value = newvalue;
 
+        OnContentChange_model(newvalue);
 
     }
     public scr_HoverableText errorMSG;
@@ -347,11 +408,20 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
     /// </summary>
     public IEnumerator GetAvailableModel(string baseUrl, string apiKey, Action<ModelList, UnityWebRequest> onModelFound)
     {
-        string url = baseUrl.EndsWith("/") ? baseUrl + "models" : baseUrl + "/models";
-
-        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        using (UnityWebRequest request = UnityWebRequest.Get(baseUrl))
         {
-            request.SetRequestHeader("Authorization", "Bearer " + apiKey);
+
+            if (baseUrl.Contains("anthropic"))
+            {
+                request.SetRequestHeader("x-api-key", apiKey);
+                request.SetRequestHeader("anthropic-version", "2023-06-01");
+                //request.SetRequestHeader("Accept", "application/json");
+            }
+            else
+            {
+                request.SetRequestHeader("Authorization", "Bearer " + apiKey);
+            }
+
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.Success)
@@ -710,7 +780,6 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
     }
 
     public initScript_ColorPicker colorPickerScript;
-
     class ButtonValidator_LoadColorSwap : ButtonValidator, I_ButtonClickable
     {
         new scr_MenuCanvas_UserPrefs parent;
@@ -777,6 +846,34 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         }
     }
 
+    public RectTransform rect_llm_enabled, rect_llm_disabled;
+
+    class buttonValidator_toggleLLM: ButtonValidator, I_ButtonClickable
+    {
+        new scr_MenuCanvas_UserPrefs parent;
+        scr_SelectableText selfButton;
+        public buttonValidator_toggleLLM(scr_Menu parent, scr_SelectableText selfButton) : base(parent)
+        {
+            this.parent = parent as scr_MenuCanvas_UserPrefs;
+            this.selfButton = selfButton;
+        }
+
+        public override bool IsButtonValid()
+        {
+            bool oldval = scr_System_CentralControl.current.LLMSetting.enabled;
+            selfButton.Toggle(true, oldval);
+            parent.rect_llm_enabled.gameObject.SetActive(oldval);
+            parent.rect_llm_disabled.gameObject.SetActive(!oldval);
+            return true;
+        }
+
+
+        void I_ButtonClickable.OnClickButton()
+        {
+            bool newval = !scr_System_CentralControl.current.LLMSetting.enabled;
+            scr_System_CentralControl.current.LLMSetting.enabled = newval;
+        }
+    }
     class ButtonValidator_RevertColor : ButtonValidator, I_ButtonClickable
     {
         new scr_MenuCanvas_UserPrefs parent;

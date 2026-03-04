@@ -64,15 +64,28 @@ public abstract class ActionPackage
 
     public List<APJSON> epjson = new List<APJSON>();
 
-    public bool JoinAP(APJSON ep)
+    public bool JoinAP(APJSON ep, out string error)
     {
+        error = "";
         if (epjson.Contains(ep)) return true;
-        if (this.targetCOMID != ep.CommandID) return false;
-        if (this.jobRefID != ep.SourceJobID) return false;
-
-        foreach(var ep2 in epjson)
+        if (this.targetCOMID != ep.CommandID)
         {
-            if (ep.command_result >= Memory_Response.Accept != ep2.command_result >= Memory_Response.Accept) return false;
+            error = "commandID mismatch";
+            return false;
+        }
+        if (this.jobRefID != ep.SourceJobID)
+        {
+            error = "SourceJobID mismatch";
+            return false;
+        }
+
+        foreach (var ep2 in epjson)
+        {
+            if ((ep.command_result >= Memory_Response.Accept) != (ep2.command_result >= Memory_Response.Accept))
+            {
+                error = "command_result acceptance mismatch";
+                return false;
+            }
         }
 
         var actors = new List<Character_Trainable>();
@@ -83,7 +96,7 @@ public abstract class ActionPackage
         var receiver = scr_System_CampaignManager.current.FindInstanceByID(ep.receiver_RefID);
         if (receiver != null) actors.Add(receiver);
 
-        var variantID = canJoinAP(actors, out var doers1, out var receivers1);
+        var variantID = canJoinAP(actors, out var doers1, out var receivers1, out var tooltipss);
         if (variantID > -1)
         {
             this.ResetRequest(doers1, receivers1, this.masterRef);
@@ -91,7 +104,11 @@ public abstract class ActionPackage
             epjson.Add(ep);
             return true;
         }
-        else return false;
+        else
+        {
+            error = $"validvariant {variantID} failure due to {String.Join("\n",tooltipss)}, cannot join";
+            return false;
+        }
     }
 
 
@@ -268,10 +285,11 @@ public abstract class ActionPackage
     /// <param name="doers"></param>
     /// <param name="receivers"></param>
     /// <returns></returns>
-    public virtual int canJoinAP(List<Character_Trainable> cs, out List<int> doers, out List<int> receivers)
+    public virtual int canJoinAP(List<Character_Trainable> cs, out List<int> doers, out List<int> receivers, out List<string> tooltips)
     {
         doers = new List<int>(this.DoerRefs);
         receivers = new List<int>(this.ReceiverRefs);
+        tooltips = new List<string>();
 
         foreach(var c in cs)
         {
@@ -333,7 +351,7 @@ public abstract class ActionPackage
 
     public virtual bool JoinAP(List<Character_Trainable> cs, Memory_Response forceAccept = Memory_Response.None)
     {
-        var variantID = canJoinAP(cs, out var doers1, out var receivers1);
+        var variantID = canJoinAP(cs, out var doers1, out var receivers1, out var tooltipss);
         if (variantID >= 0)
         {
             var old_d = this.DoerRefs;
@@ -672,7 +690,7 @@ public abstract class ActionPackage
     public virtual bool Tick(ref List<int> actorList, int tickDuration = 1)
     {
         //Debug.Log("AP TICK for " + DisplayName);
-        bool timeStop = false;
+        bool timeStop = DoerRefs.Count > 0;
         bool allUnconscious = true;
         //Debug.Log("before timestop");
 
@@ -682,7 +700,10 @@ public abstract class ActionPackage
         {
             //Debug.Log("before canTimeStop");
             var c = scr_System_CampaignManager.current.FindInstanceByID(chara);
-            if (timeTimestop && !c.CanActInTimeStop) timeStop = true;
+            if (!timeTimestop || c.CanActInTimeStop)
+            {
+                timeStop = false && timeStop;
+            }
             allUnconscious = allUnconscious && c.Stats.isConsciousnessUnconscious;
         }
 

@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using UnityEditorInternal;
 using UnityEngine;
 
 
@@ -24,7 +22,7 @@ public class ActionPackage_LLM : ActionPackage
 
     }
     
-    public ActionPackage_LLM(Job job, int duration,  List<int> actorRefs, LLMMessage.MessageJSON innerJSON)
+    public ActionPackage_LLM(Job job, int duration,  List<int> actorRefs, MessageJSON innerJSON)
     {
         this._actorRefs = actorRefs;
         this.jobRefID = job.RefID;
@@ -34,12 +32,12 @@ public class ActionPackage_LLM : ActionPackage
         this.requested = true;
         this.doerRefs = actorRefs;
     }
-    LLMMessage.MessageJSON innerJSON = null;
+    MessageJSON innerJSON = null;
 
 
     public override bool Tick(ref List<int> actorList, int tickDuration = 1)
     {
-        Debug.Log($"llm package ticked! currentDuration {this.Duration}, tick {tickDuration}");
+        Debug.Log($"llm package ticked! currentDuration {this.Duration}, tick {tickDuration}, doers {String.Join(" ", DoerRefs)}, receivers {String.Join(" ", ReceiverRefs)}");
         return base.Tick(ref actorList, tickDuration);
     }
 
@@ -58,7 +56,7 @@ public class ActionPackage_LLM : ActionPackage
             isValid = false;
         }
 
-        else if (innerJSON.actionpackages.Count < 1)
+        else if (innerJSON.GetActionPackages(out var tooltops2).Count < 1)
         {
             tooltip.Add("ActionPackage preEvaluation: innerJSON no package");
             isValid = false;
@@ -127,14 +125,20 @@ public class ActionPackage_LLM : ActionPackage
         job.m.displayOverride = true;
 
 
-        foreach (var ap in innerJSON.actionpackages)
+        foreach (var ap in innerJSON.GetActionPackages(out var tooltips2))
         {
             if (ap.Validate())
             {
                 ap.LoggedBegin = true;
                 ap.LoggedKojo = true;
                 ap.LoggedOngoing = true;
-                ap.ExecutePackageOutsideUpdate(job.m);
+
+                int count = 0;
+                foreach (var ep in ap.epjson) count = Math.Max(count, ep.repeatCount);
+                for(int i = 0; i < count; i++)
+                { 
+                    ap.ExecutePackageOutsideUpdate(job.m);
+                }
                 job.CollectLogs(ap);
                 ap.DisablePackage();
                 scr_System_CampaignManager.current.Unregister(ap);

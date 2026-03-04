@@ -175,6 +175,7 @@ public abstract class CharaTemplate
     public Humanoid_GenderAppearance Appearance = Humanoid_GenderAppearance.Female;
     public int stat_STR = 10, stat_CON = 10, stat_PSY = 10, stat_WIL = 10;
     public string personalityID = "personality_default";
+    public string characterComment = "";
     public string CharacterCard = "";
     [JsonIgnore]
     public virtual bool isMale

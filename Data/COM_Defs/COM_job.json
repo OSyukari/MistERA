@@ -122,6 +122,18 @@
                             }
                         },
                         "displayName": "com_job_production_cooking_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "req_Doers": {
+                                    "cost_ST": 2,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_production_cooking_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -185,6 +197,18 @@
                         "requirements": {
                             "requirement": {
                                 "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_production_chemistry_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
                                 "req_Doers": {
                                     "cost_ST": 5,
                                     "cost_EN": 5
@@ -263,6 +287,18 @@
                             }
                         },
                         "displayName": "com_job_production_engineering_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_job_production_engineering_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -310,6 +346,18 @@
                             }
                         },
                         "displayName": "com_job_research_engineering_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_research_engineering_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -350,6 +398,18 @@
                         "requirements": {
                             "requirement": {
                                 "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_job_research_physics_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
                                 "req_Doers": {
                                     "cost_ST": 5,
                                     "cost_EN": 10

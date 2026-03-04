@@ -94,10 +94,10 @@ public static class ExpeditionUtility
     {
         int weight = ev.baseWeight;
 
-        if (!TeamReqUtility.Validate(targets, ev.teamRequirement, p, out var result)) return -1;
+        if (!TeamReqUtility.Validate(targets, ev.teamRequirement, p, out var result, out bool hardlock)) return -1;
         foreach (var wmod in ev.weightMods)
         {
-            if (TeamReqUtility.Validate(targets, wmod.teamRequirement, p, out var result2))
+            if (TeamReqUtility.Validate(targets, wmod.teamRequirement, p, out var result2, out hardlock))
             {
                 weight += wmod.modValue;
             }

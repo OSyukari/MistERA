@@ -320,7 +320,6 @@ public class Message_Text : MessageLog
 
 
 
-[System.Serializable]
 public class Message_Question : MessageLog
 {
     public override bool DisplaPortrait
@@ -361,7 +360,6 @@ public class Message_Question : MessageLog
 }
 
 
-[System.Serializable]
 public class Message_LLMQuery : MessageLog
 {
     public override bool DisplaPortrait
@@ -448,6 +446,7 @@ public abstract class MessageLog
     }
     public MessageLog(List<Character_Trainable> multipleChara, List<string> tagsOverride, DateTime time = default, EventInstance parentEvent = null)
     {
+        multipleChara.RemoveAll(x => x == null);
         this.multipleChara = multipleChara;
         this.tagsOverride = tagsOverride;
         this.parentEvent = parentEvent;

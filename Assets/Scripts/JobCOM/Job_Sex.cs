@@ -430,7 +430,49 @@ public class Job_Sex_Group : Job
         for (int i = packages.Count - 1; i >= 0; i--)
         {
             //foreach(var ii in packages[i].actorRefs) this.allowActorExit.Remove(ii);
+            if (packages[i] is ActionPackage_LLM)
+            {
+                var p = packages[i] as ActionPackage_LLM;
 
+                for (int ii = packages_current.Count - 1; ii >= 0; ii--)
+                {
+                    if (UtilityEX.DetectConflict(p, packages_current[ii]))
+                    {   // leave the conflict package in previous to use for COM text selection purposes.
+
+                        //if (display) packages_current[ii].LogMessage_Begin_Abort();
+
+                        replaced = true;
+                        packages_current[ii].LoggedBegin = true;
+
+                        packages_current[ii].PackageRepeat = false;
+                        packages_current[ii].DisablePackage();
+                        packages_previous.Add(packages_current[ii]);
+                        packages_current.RemoveAt(ii);
+                    }
+                }
+
+                for (int ii = packages_previous.Count - 1; ii >= 0; ii--)
+                {
+
+                    if (packages_previous[ii].Duration > 0 && UtilityEX.DetectConflict(p, packages_previous[ii]))
+                    {   // leave the conflict package in previous to use for COM text selection purposes.
+                        //if (display) packages_previous[ii].LogMessage_Begin_Abort();
+
+                        replaced = true;
+                        packages_previous[ii].LoggedBegin = true;
+
+                        packages_current[ii].PackageRepeat = false;
+                        packages_previous[ii].DisablePackage();
+                        scr_System_CampaignManager.current.Unregister(packages_previous[ii]);
+                        //packages_previous.Add(packages_current[ii]);
+                    }
+                }
+
+
+                ActionPackage ap = p.Copy();
+                packages_current.Add(ap);
+                
+            }
             if (packages[i] is ActionPackage_Sex)
             {
                 var p = packages[i] as ActionPackage_Sex;
@@ -624,6 +666,7 @@ public class Job_Sex_Group : Job
 
         foreach(var p in packages_current)
         {
+            if (!(p is ActionPackage_Sex)) continue;
             if (Utility.ListContainsStrict(forceFucking, p.DoerRefs))
             {
                // Debug.Log("Preupdatetime isStrongPenetration");

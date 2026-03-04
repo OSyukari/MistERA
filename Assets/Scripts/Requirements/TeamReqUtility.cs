@@ -13,9 +13,10 @@ public static class TeamReqUtility
     }
 
 
-    public static bool Validate(List<Character_Trainable> list, TeamReq q, I_IsJobGiver p, out List<string> tooltip)
+    public static bool Validate(List<Character_Trainable> list, TeamReq q, I_IsJobGiver p, out List<string> tooltip, out bool hardlock)
     {
         tooltip = new List<string>();
+        hardlock = false;
         var team = new List<Character_Trainable>();
         if (q.debug_teamNameMatch != "")
         {
@@ -83,10 +84,10 @@ public static class TeamReqUtility
                 }
             }
 
-            valid_Any = valid_Any || CharaReqUtility.Validate(q.charaReq_Any, ref tooltip, i);
-            valid_All = valid_All && (q.charaReq_All == null || CharaReqUtility.Validate(q.charaReq_All, ref tooltip, i));
+            valid_Any = valid_Any || CharaReqUtility.Validate(q.charaReq_Any, ref tooltip, i, out hardlock);
+            valid_All = valid_All && (q.charaReq_All == null || CharaReqUtility.Validate(q.charaReq_All, ref tooltip, i, out hardlock));
 
-            if (q.charaReq_Select == null || CharaReqUtility.Validate(q.charaReq_Select, ref tooltip, i)) team.Add(i);
+            if (q.charaReq_Select == null || CharaReqUtility.Validate(q.charaReq_Select, ref tooltip, i, out hardlock)) team.Add(i);
             else
             {
                 tooltip.Add($"{i.CallName} failed charaReq validation");

@@ -3,14 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using UnityEngine;
-using static LLMMessage.MessageJSON;
+using static LLMMessage;
 using static LLMUtils;
 
 public class LLM_Setting
 {
+    public bool enabled = true;
     public class ChatCompletion
     {
+        public int APIType = 0;
+        public string modellist = "";
         public string endpoint = "";
         public string key = "";
         public string model = "";
@@ -28,13 +32,29 @@ public class LLMRequest
     public List<LLMMessage> messages = new List<LLMMessage>();
     public string currentString;
 
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string? system = null;
+
     public string model;
     public float temperature = 0.7f;
-    public int max_tokens;
-    public int max_completion_tokens = 512;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public int? max_tokens = null;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public int? max_completion_tokens = 512;
     public bool stream = false;
-    public double top_p = 1.0;
-    public double top_k = 40;
+
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public double? top_p = 1.0; 
+    
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public int? top_k = 40;
+
+    public ResponseFormatter response_format = null;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ResponseFormatter_Claude output_config = null;
 
     public void LoadTemplate(LLMRequest req)
     {
@@ -58,12 +78,21 @@ public class LLMRequest
             message.content = message.content.Replace(a, b);
         }
     }
+    public void ReplaceType(string a, string b)
+    {
+        foreach (var message in this.messages)
+        {
+            message.content = message.content.Replace(a, b);
+        }
+    }
 
     public void Purge()
     {
         currentString = null;
         prepend = null;
         if (this.response_format != null) this.response_format.Purge();
+
+
     }
 
     public LLMRequest() { }
@@ -72,7 +101,24 @@ public class LLMRequest
         this.response_format = new ResponseFormatter(initialize);
     }
 
-    public ResponseFormatter response_format = null;
+    public class ResponseFormatter_Claude
+    {
+        public ResponseFormatter_Claude_2 format;
+
+        public class ResponseFormatter_Claude_2
+        {
+            public string type = "json_schema";
+            public LLMFormatSchema schema;
+        }
+
+        public ResponseFormatter_Claude(ResponseFormatter format)
+        {
+            this.format = new ResponseFormatter_Claude_2();
+            this.format.schema = format.json_schema.schema;
+        }
+
+    }
+
     public class ResponseFormatter
     {
         public string type = "json_schema";
@@ -81,7 +127,7 @@ public class LLMRequest
         public ResponseFormatter() { }
         public ResponseFormatter(bool initialize)
         {
-            json_schema = new JsonSchema(initialize);
+            json_schema = new JsonSchema();
         }
 
         public void Purge()
@@ -89,19 +135,31 @@ public class LLMRequest
             if (this.json_schema != null) this.json_schema.Purge();
         }
 
+        public void ReplaceType(string a, string b)
+        {
+            if (this.json_schema != null)
+            {
+                this.json_schema.ReplaceType(a, b);
+            }
+        }
+
         public class JsonSchema
         {
             public string name = "mistera_format";
             public bool strict = true;
-            public Schema schema = new Schema();
+            public LLMFormatSchema schema = new LLMFormatSchema();
+
+            public void ReplaceType(string a, string b)
+            {
+                if (this.schema != null)
+                {
+                    this.schema.ReplaceType(a, b);
+                }
+            }
 
             public JsonSchema()
             {
 
-            }
-            public JsonSchema(bool initialize)
-            {
-                this.schema = new Schema(initialize);
             }
 
             public void Purge()
@@ -109,165 +167,169 @@ public class LLMRequest
                 if (this.schema != null) this.schema.Purge();
             }
 
-            public class Schema
-            {
-                public string type = "object";
-                public Dictionary<string, Type> properties = new Dictionary<string, Type>();
-
-
-                public Schema()
-                {
-
-                }
-
-
-                /// <summary>
-                /// This structure is no longer used. see LLMrequestTemplate
-                /// </summary>
-                /// <param name="initialize"></param>
-                public Schema(bool initialize)
-                {
-                    properties.Add("content", new Type_Simple("string", "the main response and story completion content"));
-
-                    var action = new Dictionary<string, Type>();
-                    action.Add("doer_RefID", new Type_Simple("int", "command doer's RefID"));
-                    action.Add("receiver_RefID", new Type_Simple("int", "command receiver/target's RefID"));
-                    action.Add("SourceJobID", new Type_Simple("int", "target command's SourceJobID"));
-                    action.Add("CommandID", new Type_Simple("string", "target command's CommandID"));
-                    action.Add("source_content_text_Index", new Type_Simple("int", "target command's CommandID"));
-                    action.Add("command_result", new Type_Enum(typeof(Memory_Response), "represent the final status of the action. Refuse/Interrupted represent actions that failed to perform. Failure and Success applies only when action has been performed, and evaluates how successful it is."));
-                    action.Add("participant_attitude", new Type_Enum(typeof(Memory_Attitude), "represent the receiver's attitude toward this action, regardless of whether the action is refused or accepted."));
-                    var item = new Type_Object(action, "action data that can be executed by the game");
-                    var listdict = new Type_Array(item, "list of actions");
-
-                    properties.Add("UpdateVariable", listdict);
-
-                    properties.Add("summary", new Type_Simple("string", "a short summary of [content]"));
-                    properties.Add("disclaimer", new Type_Simple("string","disclaimer should be put here"));
-                    properties.Add("timeCost", new Type_Simple("int", "in-game minute that the game should advance if this response is accepted"));
-                }
-
-
-                public class Type
-                {
-                    public string description;
-                    public virtual void Purge()
-                    {
-
-                    }
-                    public Type()
-                    {
-
-                    }
-                    public Type(string s)
-                    {
-                        this.description = s;
-                    }
-                }
-
-                public class Type_Simple : Type
-                {
-                    public string type;
-                    public Type_Simple()
-                    {
-
-                    }
-                    public Type_Simple(string type, string desc):base(desc)
-                    {
-                        this.type = type;
-                    }
-
-                }
-                public class Type_Enum : Type
-                {
-                    public string type = "string";
-
-                    [JsonProperty("enum")]
-                    public List<string> enums = new List<string>(); 
-                    public Type_Enum()
-                    {
-
-                    }
-                    public Type_Enum(List<string> enums, string desc) : base(desc)
-                    {
-                        this.enums = enums;
-                    }
-                    // New Constructor: Handles any Enum type
-                    public Type_Enum(System.Type enumType, string desc) : base(desc)
-                    {
-                        if (enumType == null)
-                            throw new ArgumentNullException(nameof(enumType));
-
-                        if (!enumType.IsEnum)
-                            throw new ArgumentException("Provided type must be an Enum.", nameof(enumType));
-
-                        // GetNames retrieves the string representations of all members
-                        this.enums = Enum.GetNames(enumType).ToArray().ToList();
-                    }
-
-                }
-
-                public class Type_Object: Type
-                {
-
-                    public string type = "object";
-                    public Dictionary<string,Type> properties;
-                    public Type_Object()
-                    {
-
-                    }
-                    public Type_Object(Dictionary<string, Type> properties, string desc) : base(desc)
-                    {
-                        this.properties = properties;
-                    }
-
-                    public List<string> required = new List<string>();
-                    public bool additionalProperties = false;
-                    public override void Purge()
-                    {
-                        required.Clear();
-                        foreach (var type in this.properties)
-                        {
-                            required.Add(type.Key);
-                            type.Value.Purge();
-                        }
-                    }
-                }
-
-                public class Type_Array : Type
-                {
-                    public string type = "array";
-                    public Type items;
-                    public Type_Array()
-                    {
-
-                    }
-                    public Type_Array(Type items, string desc) : base(desc)
-                    {
-                        this.items = items;
-                    }
-
-                }
-
-
-                public List<string> required = new List<string>();
-                public bool additionalProperties = false;
-
-                public void Purge()
-                {
-                    required.Clear();
-                    foreach (var type in this.properties)
-                    {
-                        required.Add(type.Key);
-                        type.Value.Purge();
-                    }
-                }
-            }
+            
         }
 
     }
 
 }
+
+public class LLMFormatSchema
+{
+    public string type = "object";
+    public Dictionary<string, Type> properties = new Dictionary<string, Type>();
+
+
+    public void ReplaceType(string a, string b)
+    {
+        if (this.properties != null)
+        {
+            foreach (var p in properties.Values) p.ReplaceType(a, b);
+        }
+    }
+    public LLMFormatSchema()
+    {
+
+    }
+    public class Type
+    {
+        public string description;
+        public virtual void Purge()
+        {
+
+        }
+        public Type()
+        {
+
+        }
+        public Type(string s)
+        {
+            this.description = s;
+        }
+
+        public virtual void ReplaceType(string a, string b)
+        {
+
+        }
+    }
+
+    public class Type_Simple : Type
+    {
+        public string type;
+        public Type_Simple()
+        {
+
+        }
+        public Type_Simple(string type, string desc) : base(desc)
+        {
+            this.type = type;
+        }
+
+        public override void ReplaceType(string a, string b)
+        {
+            if (this.type == a) this.type = b;
+        }
+    }
+    public class Type_Enum : Type
+    {
+        public string type = "string";
+
+        [JsonProperty("enum")]
+        public List<string> enums = new List<string>();
+        public Type_Enum()
+        {
+
+        }
+        public Type_Enum(List<string> enums, string desc) : base(desc)
+        {
+            this.enums = enums;
+        }
+        // New Constructor: Handles any Enum type
+        public Type_Enum(System.Type enumType, string desc) : base(desc)
+        {
+            if (enumType == null)
+                throw new ArgumentNullException(nameof(enumType));
+
+            if (!enumType.IsEnum)
+                throw new ArgumentException("Provided type must be an Enum.", nameof(enumType));
+
+            // GetNames retrieves the string representations of all members
+            this.enums = Enum.GetNames(enumType).ToArray().ToList();
+        }
+
+        public override void ReplaceType(string a, string b)
+        {
+            if (this.type == a) this.type = b;
+        }
+    }
+
+    public class Type_Object : Type
+    {
+
+        public string type = "object";
+        public Dictionary<string, Type> properties;
+        public Type_Object()
+        {
+
+        }
+        public Type_Object(Dictionary<string, Type> properties, string desc) : base(desc)
+        {
+            this.properties = properties;
+        }
+
+        public List<string> required = new List<string>();
+        public bool additionalProperties = false;
+        public override void Purge()
+        {
+            required.Clear();
+            foreach (var type in this.properties)
+            {
+                required.Add(type.Key);
+                type.Value.Purge();
+            }
+        }
+        public override void ReplaceType(string a, string b)
+        {
+            if (this.type == a) this.type = b;
+            foreach (var p in properties.Values) p.ReplaceType(a, b);
+        }
+    }
+
+    public class Type_Array : Type
+    {
+        public string type = "array";
+        public Type items;
+        public Type_Array()
+        {
+
+        }
+        public Type_Array(Type items, string desc) : base(desc)
+        {
+            this.items = items;
+        }
+
+        public override void ReplaceType(string a, string b)
+        {
+            if (this.type == a) this.type = b;
+            items.ReplaceType(a, b);
+        }
+    }
+
+
+    public List<string> required = new List<string>();
+    public bool additionalProperties = false;
+
+    public void Purge()
+    {
+        required.Clear();
+        foreach (var type in this.properties)
+        {
+            required.Add(type.Key);
+            type.Value.Purge();
+        }
+    }
+}
+
 public class LLMMessage
 {
     public string role;
@@ -280,58 +342,10 @@ public class LLMMessage
         this.content = message.content;
     }
 
-    public void ParseAP(MessageJSON json, List<APJSON> updatevariables)
-    {
-        json.actionpackages.Clear();
-        Debug.Log($"parsing AP, total json count {updatevariables.Count}");
-        foreach (var tempAP in updatevariables)
-        {
-            if (tempAP.innerCOM == null) continue;
-
-            if (tempAP.command_result == Memory_Response.None) tempAP.command_result = Memory_Response.Accept;
-
-            var job = scr_System_CampaignManager.current.FindJobInstanceByID(tempAP.SourceJobID);
-            if (job == null) continue;
-
-            var doers = new List<int>();
-            if (tempAP.doer_RefID != -1) doers.Add(tempAP.doer_RefID);
-
-            var receivers = new List<int>();
-            if (tempAP.receiver_RefID != -1) receivers.Add(tempAP.receiver_RefID);
-
-            var masterRef = tempAP.doer_RefID;
-
-            bool merged = false;
-            foreach (var ap in json.actionpackages)
-            {
-                if (ap.JoinAP(tempAP))
-                {
-                    merged = true;
-                    break;
-                }
-            }
-            if (merged)
-            {
-                Debug.Log($"parsing AP merged package");
-                continue;
-            }
-            else
-            {
-                var newap = tempAP.innerCOM.MakePackage(job, doers, receivers, masterRef);
-                newap.epjson.Add(tempAP);
-                json.actionpackages.Add(newap);
-                Debug.Log($"parsing AP create package, current at {json.actionpackages.Count}");
-            }
-        }
-
-        foreach(var ap in json.actionpackages)
-        {
-            Debug.Log($"final ap, inner count {ap.epjson.Count}");
-        }
-    }
-
-
     MessageJSON json = null;
+
+    public MessageJSON json_serialized = null;
+
     public MessageJSON GetContent()
     {
         if (json != null) return json;
@@ -339,12 +353,14 @@ public class LLMMessage
         try
         {
             json = JsonConvert.DeserializeObject<MessageJSON>(content);
-            ParseAP(json, json.UpdateVariable);
+            json_serialized = json;
         }
         catch(Exception e)
         {
             Debug.LogError($"error failed to deserialize MessageJSON object from [{content}]");
-            return null;
+            json = new MessageJSON();
+            json.content_string = Utility.WrapTextColor($"ERROR failed to deserialize MessageJSON object, error code [{content}]", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
+            return json;
         }
 
 
@@ -365,46 +381,20 @@ public class LLMMessage
             catch (Exception e2)
             {
                 Debug.LogError($"error failed to deserialize MessageJSON object from [{content}]");
-                json.content_string = content;
+                if (content == null) json.content_string = "null";
+                else json.content_string = content;
                 return json;
             }
         }
     }
 
-    public class MessageJSON
-    {
-        public string think;
-        public string summary;
-        public string content_string;
-        public List<MessageParagraph> content_blocks = new List<MessageParagraph>();
-        public int timeCost;
-        public List<int> relevantActorRefs = new List<int>();
-        public List<APJSON> UpdateVariable = new List<APJSON>();
-        /// <summary>
-        /// Start at 0
-        /// </summary>
-        public int animatedIndex = 0;
-
-        [JsonIgnore]
-        public bool CanAnimate
-        {
-            get
-            {
-                return (content_blocks.Count > animatedIndex) || (content_string.Length > animatedIndex);
-            }
-        }
-
-
-        [JsonIgnore] public List<ActionPackage> actionpackages = new List<ActionPackage>();
-        public string disclaimer;
-    }
+    
     public class MessageParagraph
     {
         public string content_text;
         public int portraitRefID = -1;
         public List<string> portraitTags = new List<string>();
         public string CommandID;
-        public int targetID;
     }
 
     public class MessageJSON_blocks
@@ -417,7 +407,90 @@ public class LLMMessage
         public string content;
     }
 }
+public class MessageJSON
+{
+    public string think;
+    public string summary;
+    public string content_string;
+    public List<MessageParagraph> content_blocks = new List<MessageParagraph>();
+    public int timeCost = 0;
+    public List<int> relevantActorRefs = new List<int>();
+    public List<APJSON> UpdateVariable = new List<APJSON>();
+    /// <summary>
+    /// Start at 0
+    /// </summary>
+    public int animatedIndex = 0;
 
+    [JsonIgnore]
+    public bool CanAnimate
+    {
+        get
+        {
+            return (content_blocks.Count > animatedIndex) || (content_string.Length > animatedIndex);
+        }
+    }
+
+
+    protected List<ActionPackage> actionpackages = null;
+    protected List<string> tooltips = new List<string>();
+    public string disclaimer;
+
+    public List<ActionPackage> GetActionPackages(out List<string> tooltip)
+    {
+        tooltip = tooltips;
+        if (actionpackages == null)
+        {
+            tooltips.Clear();
+            actionpackages = new List<ActionPackage>();
+            Debug.Log($"parsing AP, total json count {UpdateVariable.Count}");
+
+            foreach (var tempAP in UpdateVariable)
+            {
+                if (tempAP.innerCOM == null) continue;
+
+                if (tempAP.command_result == Memory_Response.None) tempAP.command_result = Memory_Response.Accept;
+
+                var job = scr_System_CampaignManager.current.FindJobInstanceByID(tempAP.SourceJobID);
+                if (job == null) continue;
+
+                var doers = new List<int>();
+                if (tempAP.doer_RefID != -1) doers.Add(tempAP.doer_RefID);
+
+                var receivers = new List<int>();
+                if (tempAP.receiver_RefID != -1) receivers.Add(tempAP.receiver_RefID);
+
+                var masterRef = tempAP.doer_RefID;
+
+                bool merged = false;
+                foreach (var ap in actionpackages)
+                {
+                    if (ap.JoinAP(tempAP, out var error))
+                    {
+                        merged = true;
+                        tooltips.Add($"{tempAP.CommandID}({tempAP.doer_RefID}+{tempAP.receiver_RefID}) merged with {ap.targetCOM.ID}({String.Join(" ", ap.DoerRefs)}+{String.Join(" ", ap.ReceiverRefs)})");
+                        break;
+                    }
+                    else
+                    {
+                        tooltips.Add($"{tempAP.CommandID}({tempAP.doer_RefID}+{tempAP.receiver_RefID}) cannot merge with {ap.targetCOM.ID}({String.Join(" ", ap.DoerRefs)}+{String.Join(" ", ap.ReceiverRefs)}) due to {error}");
+                    }
+                }
+                if (merged)
+                {
+                    continue;
+                }
+                else
+                {
+                    var newap = tempAP.innerCOM.MakePackage(job, doers, receivers, masterRef);
+                    newap.epjson.Add(tempAP);
+                    actionpackages.Add(newap);
+                    Debug.Log($"parsing AP create package, current at {actionpackages.Count}");
+                }
+            }
+        }
+        return actionpackages;
+    }
+}
 public class APJSON
 {
     public string CommandID;
@@ -427,6 +500,7 @@ public class APJSON
     public Memory_Attitude participant_attitude = Memory_Attitude.None;
     public int receiver_RefID = -1;
     public int source_content_text_Index;
+    public int repeatCount = 1;
 
     [JsonIgnore]
     public COM innerCOM
@@ -449,8 +523,12 @@ public class LLMResponse
     public string id;
     public string created;
     public string model;
+    public string role;
+    public string type;
     public List<choice> choices = new List<choice>();
     public usages usage;
+    public string stop_reason;
+    public List<choice_claude> content = new List<choice_claude>();
 
     public class choice
     {
@@ -460,7 +538,7 @@ public class LLMResponse
 
 
         [JsonIgnore]
-        public LLMMessage.MessageJSON JSON
+        public MessageJSON JSON
         {
             get
             {
@@ -468,12 +546,61 @@ public class LLMResponse
                 return message.GetContent();
             }
         }
-        public LLMMessage.MessageJSON JSONOUTPUT
+    }
+
+    public class choice_claude
+    {
+        public string type;
+        public string text;
+
+
+        [JsonIgnore]
+        public MessageJSON JSON
         {
             get
             {
-                if (message == null) return null;
-                return message.GetContent();
+                return GetContent();
+            }
+        }
+        MessageJSON json = null;
+        public MessageJSON json_serialized = null;
+        public MessageJSON GetContent()
+        {
+            if (json != null) return json;
+
+            try
+            {
+                json = JsonConvert.DeserializeObject<MessageJSON>(text);
+                json_serialized = json;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"error failed to deserialize MessageJSON object from [{text}]");
+                return null;
+            }
+
+
+            try
+            {
+                var json1 = JsonConvert.DeserializeObject<MessageJSON_blocks>(text);
+                json.content_blocks = json1.content;
+                return json;
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    var json1 = JsonConvert.DeserializeObject<MessageJSON_simple>(text);
+                    json.content_string = json1.content;
+                    return json;
+                }
+                catch (Exception e2)
+                {
+                    Debug.LogError($"error failed to deserialize MessageJSON object from [{text}]");
+                    if (text == null) json.content_string = "null";
+                    else json.content_string = text;
+                    return json;
+                }
             }
         }
     }
@@ -482,15 +609,18 @@ public class LLMResponse
         public int prompt_tokens;
         public int completion_tokens;
         public int total_tokens;
+        public int input_tokens;
+        public int output_tokens;
     }
 
     [JsonIgnore]
-    public LLMMessage.MessageJSON JSON
+    public MessageJSON JSON
     {
         get
         {
-            if (choices.Count < 1) return null;
-            return choices[0].JSON;
+            if (choices.Count > 0) return choices[0].JSON;
+            else if (content.Count > 0) return content[0].JSON;
+            else return null;
         }
     }
 }
@@ -655,6 +785,10 @@ public class LLM_WorldState
                     var equiptooltip = equip.Base.Tooltip == "no_tooltip" ? "" : $": {equip.Base.Tooltip}";
                     equipments.Add($"{equip.DisplayName}{equiptooltip}");
                 }
+                foreach(var kwd in c.Body.BodyDescription)
+                {
+                    equipments.Add(kwd);
+                }
 
                 for(int i = 0; i < 24; i++)
                 {
@@ -702,10 +836,17 @@ public class LLM_WorldState
                         }
                         dic.Add($"This is the Current Room player is in: [{room.DisplayName}]\nRoomInfo:[{room.DisplayableFurnitureNames}]\nRoom Cleanliness: {room.RoomCleanliness()}\nRoom Items:{(room.Inventory.Contents.Count > 0 ? $"[\n{room.Inventory.PrintContent()}]" : "no item")}\nChara in room:[{String.Join(", ", names)}]\nOngoing command in room:[{(aps.Count > 0 ? String.Join("\n", aps) : "no ongoing")}]");
 
+                        if (room.parentFloor != null && room.parentFloor.MapTemplate != null)
+                        {
+                            foreach (var kvp in room.parentFloor.MapTemplate.Lorebooks)
+                            {
+                                Lorebook.Add(kvp.Key, kvp.Value);
+                            }
+                        }
                     }
                     else
                     {
-                        dic.Add($"{room.DisplayName}");
+                        if (!dic.Contains(room.DisplayName)) dic.Add($"{room.DisplayName}");
                     }
                 }
                 FloorDescriptions.Add(floor.displayName, dic);
@@ -732,6 +873,11 @@ public class LLM_WorldState
         if (scr_System_CampaignManager.current.CurrentCampaign != null)
         {
             Lorebook.Add($"Current Campaign: [{scr_System_CampaignManager.current.CurrentCampaign.DisplayName}]",$"\nCampaign Info:[\n {scr_System_CampaignManager.current.CurrentCampaign.Tooltip}\n]");
+
+            foreach (var kvp in scr_System_CampaignManager.current.CurrentCampaign.Lorebooks)
+            {
+                Lorebook.Add(kvp.Key, kvp.Value);
+            }
         }
 
         List<string> relationshipTypes = new List<string>();
@@ -749,7 +895,7 @@ public class LLM_WorldState
         var startTime = scr_System_Time.current.getStartTime();
         var dayCount = currentTime - startTime;
         Lorebook.Add("Time Since Campaign Start", $"{currentTime.Year - startTime.Year} year, {dayCount.Days + 1} days");
-
+        Lorebook.Add("isTimeStopped", $"{scr_System_Time.current.TimeStop}");
 
         LLMUtils.CollectCOMInfo(PossibleInteractions, currentRoom);
 
@@ -804,7 +950,7 @@ public static class LLMUtils
             return;
         }
         var app = new SerializedAP();
-        app.CommandName = ap.DisplayName;
+        app.CommandName =  ap.DisplayName;
         app.CommandID = ap.targetCOM == null ? "null" : ap.targetCOM.ID;
         app.SourceJobID = ap.job.RefID;
 
@@ -812,12 +958,13 @@ public static class LLMUtils
         if (doer != null && receiver != null) ap.ResetRequest(doer, receiver, doer.Count > 0 ? doer[0] : -1, true);
         if (!ap.Validate())
         {
+            if (ap.COMVariantID < -1) return;
             // validation failure
             ap.tooltip.RemoveAll(x => x == "" || x.Length < 1);
             app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", ap.tooltip));
 
         }
-        else if (ap.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep)
+        else if (ap.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !scr_System_CampaignManager.current.DebugMode)
         {
             app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_cannotSleep"));
         }
@@ -834,7 +981,7 @@ public static class LLMUtils
 
             //tooltips.Add($"{ap.DisplayName}: [{ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"))}{(prevalidation.Length > 0 ? $"\n{prevalidation}" : "")}{(dcResult.Length > 0 ? $"\n{dcResult}" : "")}\n]");
 
-            app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
+            app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip")+$"\n{String.Join("\n", ap.tooltip)}");
 
             if (prevalidation.Length > 0) app.AcceptanceCheck = prevalidation;
             else app.AcceptanceCheck = null;
@@ -889,16 +1036,20 @@ public static class LLMUtils
         var curr = mgr.Player.CurrentJob;
         if (curr != null && !curr.CanBeInterrupted) trackedJobs.Add(curr);
 
-        // current room jobs
-        foreach (var job in mgr.CurrentRoom.Jobs)
+        if (!scr_System_CampaignManager.current.displaySex)
         {
-            validateExisting(job, collection);
+            // current room jobs
+            foreach (var job in mgr.CurrentRoom.Jobs)
+            {
+                validateExisting(job, collection);
+            }
+            if (collection.Count > 0)
+            {
+                PossibleInteractions.Add("Existing Commands in room:", new Dictionary<string, List<SerializedAP>>(collection));
+            }
+            collection.Clear();
         }
-        if (collection.Count > 0)
-        {
-            PossibleInteractions.Add("Existing Commands in room:", new Dictionary<string, List<SerializedAP>>(collection));
-        }
-        collection.Clear();
+
 
         HashSet<string> duplicateCheck = new HashSet<string>();
 
@@ -917,22 +1068,27 @@ public static class LLMUtils
                 target.Clear();
                 target.Add(r.RefID);
 
-                if (playerCOM != null)
-                {   // check npc's acceptance of playercom
-                    validateSingle(playerCOM, player, target, trackedJobs, collection, duplicateCheck);
-                }
-
                 if (r.InteractionJob != null)
                 {   // player interacting with target
                     validateSingle(r.InteractionJob, player, target, trackedJobs, collection, duplicateCheck);
                 }
 
-                if (currentRoom != null && currentRoom.Jobs != null)
+                if (curr == null || curr.CanBeInterrupted)
                 {
-                    foreach (var j in currentRoom.Jobs)
-                    {
-                        validateSingle(j, player, target, trackedJobs, collection, duplicateCheck);
+
+                    if (playerCOM != null)
+                    {   // check npc's acceptance of playercom
+                        validateSingle(playerCOM, player, target, trackedJobs, collection, duplicateCheck);
                     }
+
+                    if (currentRoom != null && currentRoom.Jobs != null)
+                    {
+                        foreach (var j in currentRoom.Jobs)
+                        {
+                            validateSingle(j, player, target, trackedJobs, collection, duplicateCheck);
+                        }
+                    }
+
                 }
 
                 if (curr != null)
@@ -954,18 +1110,22 @@ public static class LLMUtils
             trackedJobs.Clear();
             duplicateCheck.Clear();
 
-            if (playerCOM != null)
-            {   // check npc's acceptance of playercom
-                validateSingle(playerCOM, player, target, trackedJobs, collection, duplicateCheck);
-            }
-
-            if (currentRoom != null && currentRoom.Jobs != null)
+            if (curr == null || curr.CanBeInterrupted)
             {
-                foreach (var j in currentRoom.Jobs)
+                if (playerCOM != null)
+                {   // check npc's acceptance of playercom
+                    validateSingle(playerCOM, player, target, trackedJobs, collection, duplicateCheck);
+                }
+
+                if (currentRoom != null && currentRoom.Jobs != null)
                 {
-                    validateSingle(j, player, target, trackedJobs, collection, duplicateCheck);
+                    foreach (var j in currentRoom.Jobs)
+                    {
+                        validateSingle(j, player, target, trackedJobs, collection, duplicateCheck);
+                    }
                 }
             }
+            
             if (curr != null)
             {
                 validateSingle(curr, player, target, trackedJobs, collection, duplicateCheck);

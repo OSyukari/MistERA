@@ -232,7 +232,6 @@ public class FactionInventory : Inventory
     }
 }
 
-[System.Serializable]
 public class CharacterInventory : Inventory
 {
 

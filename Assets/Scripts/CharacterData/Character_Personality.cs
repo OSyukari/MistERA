@@ -884,14 +884,16 @@ public class ResponseEntry
             public List<RequireStatValue> requireSelfStatValue = new List<RequireStatValue>();
             public RequireMemory requireSelfMemory = new RequireMemory();
 
-            public bool Validate(Character_Trainable self, Character_Trainable target, List<string> selfTags, List<string> targetTags, EvaluationPackage ep, Character_Relationship rel)
+            public bool Validate(Character_Trainable self, Character_Trainable target, List<string> selfTags, List<string> targetTags, EvaluationPackage ep, Character_Relationship rel, out bool hardlock)
             {
+
+                hardlock = false;
                 if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojo req [" + (self == null ? "null" : self.FirstName) + "->" + (target == null ? "null" : target.FirstName) + "], self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", targetTags) + "]");
 
                 List<string> tooltips = new List<string>();
 
-                if (selfReq != null && !CharaReqUtility.Validate(selfReq, ref tooltips, self)) return false;
-                if (targetReq != null && !CharaReqUtility.Validate(targetReq, ref tooltips, target)) return false;
+                if (selfReq != null && !CharaReqUtility.Validate(selfReq, ref tooltips, self, out hardlock)) return false;
+                if (targetReq != null && !CharaReqUtility.Validate(targetReq, ref tooltips, target, out hardlock)) return false;
 
                 if (requireSelfAttitudeKey != "")
                 {
@@ -956,7 +958,7 @@ public class ResponseEntry
             {
                 //var v = 
                 //if (!v && (rel.ownerRefID == 0 || rel.TargetID == 0)) Debug.LogError("failed validation");
-                return Validate(rel.Owner, rel.Target, selfTags, targetTags, ep, rel);
+                return Validate(rel.Owner, rel.Target, selfTags, targetTags, ep, rel, out var hadlock);
             }
 
             public class RequireMemory

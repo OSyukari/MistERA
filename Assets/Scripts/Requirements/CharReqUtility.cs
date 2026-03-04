@@ -5,9 +5,10 @@ using Newtonsoft.Json;
 
 public static class CharaReqUtility
 {
-    public static bool Validate(CharaReq q, ref List<string> _tooltip, Character_Trainable c)
+    public static bool Validate(CharaReq q, ref List<string> _tooltip, Character_Trainable c, out bool hardlock)
     {
         bool logging = _tooltip != null && !scr_UpdateHandler.current.Updating;
+        hardlock = false;
         if (q.cost_EN != 0 && (c.Stats.Energy.Value - q.cost_EN) < 0)
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingCost")
@@ -33,6 +34,7 @@ public static class CharaReqUtility
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingBodypart")
                                         .Replace("$name$", c.FirstName)
                                         .Replace("$bodytags$", String.Join(" ",q.BodyTags)));
+            hardlock = true;
             return false;
         }
         
@@ -226,19 +228,20 @@ public static class CharaReqUtility
         return true;
     }
 
-    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<Character_Trainable> cs)
+    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<Character_Trainable> cs, out bool hardlock)
     {
-        foreach (var c in cs) if (!Validate(q, ref _tooltip, c)) return false;
+        hardlock = false;
+        foreach (var c in cs) if (!Validate(q, ref _tooltip, c, out hardlock)) return false;
         return true;
     }
-    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<int> actorRefIDs)
+    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<int> actorRefIDs, out bool hardlock)
     {
         var list = new List<Character_Trainable>(actorRefIDs.Count);
         foreach (var i in actorRefIDs)
         {
             list.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
         }
-        return Validate(q,ref _tooltip, list);
+        return Validate(q,ref _tooltip, list, out hardlock);
     }
 
     public static void ApplyCost(CharaReq q, EvaluationPackage m, Character_Trainable c, COM com, bool isDoer, MessageCollect msg)

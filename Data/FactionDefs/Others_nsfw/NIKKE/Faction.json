@@ -51,10 +51,10 @@
         "Campaign1_Nikke_Anis_firstname":"阿妮斯",
         "Campaign1_Nikke_Neon_firstname":"尼恩",
 
-        "Campaign1_Nikke_charaComment":"使用素材：\n- %%charaComment_source_nikke%%\n- %%charaComment_source_nikke_corruptedgoddess%%",
+        "Campaign1_Nikke_charaComment":"使用素材：\n- %%charaComment_source_nikke%%\n- %%charaComment_source_nikke_corruptedgoddess%%\n- %%charaComment_source_nikke_characard%%",
         "charaComment_source_nikke":"NIKKE：胜利女神（角色设定和Spine素材）",
         "charaComment_source_nikke_corruptedgoddess":"RisuAI, Corrupted goddess Nikke（调教立绘差分） https://realm.risuai.net/character/2e2a253e-78bc-4b21-9744-e1207cff2e58",
-
+        "charaComment_source_nikke_characard":"角色卡条目出自酒馆卡：胜利女神：妮姬（未获得授权",
         "Campaign1_Nikke_Cinderella_firstname":"灰姑娘",
         "Campaign1_Nikke_Dorothy_firstname":"桃乐丝",
         

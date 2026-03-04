@@ -82,7 +82,6 @@ public class Result_JobContainer
             if (ResetMaintenance) job.Container.Maintenance();
         }
 
-        [System.Serializable]
         public class Result_LockChara
         {
             public bool isUndo = false;

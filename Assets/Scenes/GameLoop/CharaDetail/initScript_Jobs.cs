@@ -47,7 +47,8 @@ public class initScript_Relations : MonoBehaviour
             }
         }
 
-        charaComment.SetText(c.CharacterComment);
+        if (c.Template != null) charaComment.SetText(LocalizeDictionary.QueryThenParse( c.Template.characterComment));
+        else charaComment.SetText("");
 
         DateTime current = scr_System_Time.current.getCurrentTime();
         DateTime lastTime = scr_System_Time.current.getCurrentTime();
