@@ -720,9 +720,11 @@
       "ui_comPanel_LLM_previous": " < ",
       "ui_comPanel_LLM_regenerate": "Regenerate",
       "ui_comPanel_LLM_submit": "Submit Command",
-      "ui_comPanel_LLM_submit_tooltip": "The system cannot move the player.",
-      "ui_comPanel_LLM_title": "AI Chat Input Window",
+      "ui_comPanel_LLM_title": "<link=\"ui_comPanel_LLM_title_tooltip\">AI Chat Input Window</link>",
 
+
+"ui_comPanel_LLM_title_tooltip": "What AI can do:\n1. Execute commands: Issue commands with/to NPCs in the room (invite to follow, furniture interaction, touching, pushdown/training, work, imprison/release).\n2. Data recognition:\n2.1 Status, relationships, clothing, schedules, memories, portrait keywords, and character card info for all characters in the current room.\n2.2 Lorebook of the current campaign, all floors and rooms of the current map, all furniture and cleanliness status in the current room.\n2.3 Content and success rates of all executable commands for the player in the current room.\n3. Success or failure of commands is currently determined by the AI.\n\nWhat AI currently cannot do/does poorly:\n1. Cannot move players/NPCs across the map.\n2. Cannot begin/end time stop.\n3. Cannot put on or take off clothes.\n4. Cannot join existing commands.\n4.1 A resulting bug: If the room is full of NPCs using the TV, the player's description to 'watch TV with NPCs' will fail (cannot join existing + TV fully occupied), causing weird results in the command processing entry.\n5. Final time cost calculation may not match the actual executed command (too long or too short).\n6. Cannot continuously execute commands of the same type but with different targets (e.g., cannot plant all 5 fields in one command; can only plant one at a time).\n7. During training, the in-game ejaculation calculation may disconnect from the AI narrative (e.g., AI only describes training, but the game processes the training command and triggers ejaculation immediately).",
+"ui_comPanel_LLM_submit_tooltip": "If you have questions about the AI chat feature, you can hover your mouse over the [%%ui_comPanel_LLM_title%%] title.\nTo modify the API or other settings, please restart the game and adjust them in [%%intro_button_editPref%%] -> [%%ui_prefs_button_llmSetting%%].",
       
       "ui_prefs_button_llmSetting": "LLM Settings",
       "ui_prefs_button_llmSetting_tooltip": "Configure LLM Interface and API",
