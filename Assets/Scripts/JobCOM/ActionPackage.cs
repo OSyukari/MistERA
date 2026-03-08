@@ -307,7 +307,7 @@ public abstract class ActionPackage
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    public virtual bool JoinAP(Character_Trainable c, Memory_Response forceAccept = Memory_Response.None)
+    public virtual bool JoinAP(Character_Trainable c, Memory_Response forceAccept = Memory_Response.None, bool silent = false)
     {
         if (this.doer.Contains(c)) return true;
         else if (this.receiver.Contains(c)) return true;
@@ -331,7 +331,8 @@ public abstract class ActionPackage
             foreach(var c2 in newchara)
             {
                 if (result) c2.ChangeCurrentJob(this.job, this.targetCOMID);
-                this.job.m.messages_before.Add(LocalizeDictionary.QueryThenParse(result ? "ui_ap_join_success" : "ui_ap_join_fail")
+                if (silent && result) { }
+                else this.job.m.messages_before.Add(LocalizeDictionary.QueryThenParse(result ? "ui_ap_join_success" : "ui_ap_join_fail")
                     .Replace("$names$", c2.FirstName)
                     .Replace("$comname$", comname));
                 LogMessage_Join(c2);
@@ -349,7 +350,7 @@ public abstract class ActionPackage
         else return false;
     }
 
-    public virtual bool JoinAP(List<Character_Trainable> cs, Memory_Response forceAccept = Memory_Response.None)
+    public virtual bool JoinAP(List<Character_Trainable> cs, Memory_Response forceAccept = Memory_Response.None, bool silent = false)
     {
         var variantID = canJoinAP(cs, out var doers1, out var receivers1, out var tooltipss);
         if (variantID >= 0)
@@ -378,7 +379,8 @@ public abstract class ActionPackage
                 if (result) c.ChangeCurrentJob(this.job, this.targetCOMID);
             }
 
-            this.job.m.messages_before.Add( LocalizeDictionary.QueryThenParse(result ? "ui_ap_join_success" : "ui_ap_join_fail")
+            if (silent && result) { }
+            else this.job.m.messages_before.Add( LocalizeDictionary.QueryThenParse(result ? "ui_ap_join_success" : "ui_ap_join_fail")
                 .Replace("$names$", String.Join(", ", names))
                 .Replace("$comname$", comname));
 
@@ -849,6 +851,16 @@ public abstract class ActionPackage
             isValid = false;
             return isValid;
         }
+
+        if (job is Job_Furniture)
+        {
+            if (!(job as Job_Furniture).CanCOMAcceptMoreActor(targetCOM, this.actorRefs))
+            {
+                tooltip.Add("cannot accept more actor");
+                isValid = false;
+                return isValid;
+            }
+        }
         
 
         /*
@@ -902,7 +914,7 @@ public abstract class ActionPackage
     {
         //Debug.Log("ActionPackage Base Evaluate on "+DisplayName);
 
-        validVariant = targetCOM.GetValidVariant(ref this.tooltip, this.doer, this.receiver);
+        validVariant = targetCOM.GetValidVariant(ref this.tooltip, this.doer, this.receiver, false, this.job is Job_Furniture ? (int)(this.job as Job_Furniture).ParentInstance.FurnitureBase.furnitureSize : 1);
 
         if (validVariant >= 0)
         {
@@ -1151,6 +1163,7 @@ public abstract class ActionPackage
         this.masterRef = masterRef;
 
         actorRefs = null;
+        _actors = null;
     }
     [JsonProperty] public bool requestAccepted = false;
     //Dictionary<int, Dictionary<string, int>> result_stats;
@@ -1515,6 +1528,8 @@ public abstract class ActionPackage
 
         if (!requested) Request();
         executeSuccessful = true;
+
+        joinAP_list.Clear();
 
         if (this.targetCOM != null && targetCOM.comTags.Contains("food_meal"))
         {
@@ -1919,17 +1934,22 @@ public abstract class ActionPackage
     }
 
 
+    List<int> joinAP_list = new List<int>();
     public void LogMessage_Join(Character_Trainable target, bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
         if (!m.displayOverride && !job.isVisibleToPlayer) return;
 
-        foreach (var ep in this.ListEP)
+        var list = new List<EvaluationPackage>(this.packages);
+        Utility.Shuffle(list);
+
+        //if (scr_System_CampaignManager.current.shortenLogsPrint && joinAP_list.Count > 0) return; 
+
+        foreach (var ep in list)
         {
+            //if (ep.Doer == target) continue;
             if (!requestAccepted && ep.Response != Memory_Response.Refuse) continue;
-            if (ep.Doer == target) continue;
-            ep.LogMessage_Join(target, rightAlign, m);
-            break;
+            if (ep.LogMessage_Join(target, joinAP_list, rightAlign, m)) break;
         }
     }
 

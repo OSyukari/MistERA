@@ -9,7 +9,6 @@
                 "comTags":["job","production_cleaning"],
                 "requirements":{
                     "requirement":{ 
-                        "doerCount": 1,
                         "treatReceiverAsDoer": true
                     },
                     "requireRoomExisting":

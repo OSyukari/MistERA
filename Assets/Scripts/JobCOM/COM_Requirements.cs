@@ -141,7 +141,7 @@ public class COM_Requirements
                 return true;
             }
         }
-        public bool Validate(ref List<string> _tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, out bool hardlock, Requirement extraCondition = null)
+        public bool Validate(ref List<string> _tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, out bool hardlock, Requirement extraCondition = null, int actorCountMult = 1)
         {
             //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
             //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
@@ -162,20 +162,30 @@ public class COM_Requirements
 
             if (doerCount == -1) { }
             else if (doerCount == 0 && doerRefIDs.Count == 0 && (!treatReceiverAsDoer || receiverRefIDs.Count == 0)) { }
-            else if (doerCount > 0 && actorCount == doerCount) { }
+            else if (doerCount == 1) 
+            {
+                if (actorCount == doerCount) { }
+                else
+                {
+                    if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_doerCountInvalid")
+                    .Replace("$count$", $"{actorCount}")
+                    .Replace("$req$", $"{doerCount}"));
+                    return false;
+                }
+            }
+            else if (doerCount > 1 && doerCount < 9)
+            {
+                if (actorCount <= (doerCount * actorCountMult)) { }
+                else
+                {
+                    if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_doerCountInvalid")
+                    .Replace("$count$", $"{actorCount}")
+                    .Replace("$req$", $"{doerCount}*{actorCountMult}"));
+                    return false;
+                }
+            }
             else if (doerCount > 9) { }
-            else if (actorCount > doerCount)
-            {
-                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_doerCountInvalid")
-                                    .Replace("$count$", $"{actorCount}")
-                                    .Replace("$req$", $"{doerCount}"));
-                return false;
-            }
-            else
-            {
-                if (logging) _tooltip.Add("Command invalid: command doer number below requirement : treatRasD[" + treatReceiverAsDoer + "] dCount[" + doerRefIDs.Count + "] rCount[" + receiverRefIDs.Count + "] finalEval[" + (treatReceiverAsDoer && ((doerRefIDs.Count + receiverRefIDs.Count) <= doerCount)) + "]");
-                return false;
-            }
+
 
             if (receiverCount == 0 && receiverRefIDs.Count != 0)
             {
@@ -189,11 +199,11 @@ public class COM_Requirements
                 return false;
             }
 
-            if (receiverCount > 0 && receiverRefIDs.Count > receiverCount)
+            if ((receiverCount == 1 && receiverRefIDs.Count > receiverCount) || (receiverCount > 1 && receiverRefIDs.Count > receiverCount * actorCountMult))
             {
                 if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_toomanyReceiver")
                                             .Replace("$target$", $"{receiverRefIDs.Count}")
-                                            .Replace("$count$",$"{receiverCount}"));
+                                            .Replace("$count$",$"{receiverCount}*{actorCountMult}"));
                 return false;
             }
 

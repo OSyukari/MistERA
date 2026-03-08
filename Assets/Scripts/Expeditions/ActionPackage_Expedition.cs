@@ -262,7 +262,7 @@ public class ActionPackage_Expedition : ActionPackage
 
     }
 
-    public override bool JoinAP(Character_Trainable c, Memory_Response forceAccept = Memory_Response.None)
+    public override bool JoinAP(Character_Trainable c, Memory_Response forceAccept = Memory_Response.None, bool silent = false)
     {
 
 

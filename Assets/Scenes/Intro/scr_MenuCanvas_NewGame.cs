@@ -155,8 +155,8 @@ public class scr_MenuCanvas_NewGame : scr_Menu
                 case 1000:
                     if (currentCampaign.ID == "campaign_chalicedivers") companion = null;
                     //if (currentCampaign.ID == "campaign_starfarers") currentCampaign_option = null;
-                    scr_System_CampaignManager.current.StartCampaign(currentCampaign,currentCampaign_option, c, companion);
-                    scr_System_SceneManager.current.UnloadScene(GlobalValues.IntroScene);
+                    scr_System_CampaignManager.current.StartNewGame(currentCampaign,currentCampaign_option, c, companion);
+                    //scr_System_SceneManager.current.UnloadScene(GlobalValues.IntroScene);
                     break;
                 default:
                     break;

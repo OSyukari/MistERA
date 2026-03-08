@@ -779,7 +779,7 @@ public class scr_panel_COMmanager : scr_Menu
         for (int i = joinableAPTracker.Count - 1; i >= 0; i--)
         {
             var validator = joinableAPTracker[i];
-            DestroyCOMButton(validator.text.optionID);
+            DestroyCOMButtonByOptionID(validator.text.optionID);
         }
         joinableAPTracker.Clear();
 
@@ -992,7 +992,7 @@ public class scr_panel_COMmanager : scr_Menu
         for(int i = joinableAPTracker.Count -1; i >= 0; i--)
         {
             var validator = joinableAPTracker[i];
-            DestroyCOMButton(validator.text.optionID);
+            DestroyCOMButtonByOptionID(validator.text.optionID);
             //Debug.Log("Destroy button!");
         }
         joinableAPTracker.Clear();
@@ -1272,6 +1272,26 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
+    private void DestroyCOMButtonByOptionID(int optionID)
+    {
+        string matchKey = null;
+        foreach (var kvp in indexCOM)
+        {
+            if (kvp.Value == optionID) { matchKey = kvp.Key; break; }
+        }
+        if (matchKey == null || !buttonsByID.ContainsKey(optionID)) return;
+
+        scr_SelectableText text = buttonsByID[optionID];
+        buttonsByID.Remove(optionID);
+        ButtonValidator validator = validatorsByID[optionID];
+        validatorsByID.Remove(optionID);
+
+        validator.Destroy();
+        text.gameObject.SetActive(false);
+        Destroy(text.gameObject);
+        indexCOM.Remove(matchKey);
+    }
+
     public class ButtonValidator_validateAP : ButtonValidator, I_ButtonClickable
     {
         new scr_panel_COMmanager parent;
@@ -1399,6 +1419,7 @@ public class scr_panel_COMmanager : scr_Menu
                     //    tooltip += "doer[" + String.Join("|", package.DoerRefs) + "] receiver [" + String.Join("|", package.ReceiverRefs) + "]\n";
                     //text.SetText(package.DisplayName);
 
+
                     if (!package.Validate())
                     {
                         returnVal = false;
@@ -1459,6 +1480,8 @@ public class scr_panel_COMmanager : scr_Menu
             else if (com.comTags.Contains("player")) display = display && true;
             else if (com.comTags.Contains("initSex") || com.comTags.Contains("endSex")) display = display && true;
             else display = display && false;
+
+            //display = true;
 
             if (display) text.gameObject.SetActive(true);
             else text.gameObject.SetActive(false);

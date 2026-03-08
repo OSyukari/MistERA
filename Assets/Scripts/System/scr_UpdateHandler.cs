@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,6 +50,7 @@ public class scr_UpdateHandler : MonoBehaviour
         StopCoroutine(LLMRoutine);
         LLMRoutine = null;
         LLMStatus = LLMStatus.waiting;
+        Observer_LLMStatus?.Invoke(LLMStatus);
     }
     LLMStatus _LLMStatus = LLMStatus.inactive;
     public LLMStatus LLMStatus
@@ -303,6 +305,8 @@ public class scr_UpdateHandler : MonoBehaviour
                 request.downloadHandler = new DownloadHandlerBuffer();
 
 
+                request.SetRequestHeader("Content-Type", "application/json");
+
                 // Specific header for Claude if not using an OpenAI proxy
                 if (endpoint.Contains("anthropic"))
                 {
@@ -311,7 +315,6 @@ public class scr_UpdateHandler : MonoBehaviour
                 }
                 else
                 {
-                    request.SetRequestHeader("Content-Type", "application/json");
                     request.SetRequestHeader("Authorization", "Bearer " + apiKey);
                 }
 

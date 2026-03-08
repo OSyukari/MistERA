@@ -1,10 +1,11 @@
+using Spine_v40;
+using Spine_v40.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Spine_v40;
-using Spine_v40.Unity;
+using System.Text;
 using UnityEngine;
 
 public class  SpineDataTiny_40 : SpineDataTiny
@@ -112,57 +113,10 @@ public class SpineAnimator40 : SpineAnimatorBase
         {
             // SGmaterial.SetInt("_StraightAlphaInput", straightAlpha ? 1 : 0);
             refresh = true;
-            dataloader.Clear();
             loader.Clear();
-            dataloader.atlasPath = atlasPath;
-            dataloader.skeletonPath = skeletonPath;
-            dataloader.texturePath = texturePath;
 
-            yield return AssetsLoader.LoadTextCoroutine(skeletonPath, text => dataloader.skeletonTA = text);
-
-            // Load .atlas text
-            string atlasText = File.ReadAllText(scr_System_Serializer.current.GetFullPath(atlasPath));
-            byte[] skelBytes = File.ReadAllBytes(scr_System_Serializer.current.GetFullPath(skeletonPath));
-
-            if (dataloader.imageTextures != null)
-            {
-                Debug.LogError("ERROR dataloader.imageTextures NOT NULL");
-            }
-            dataloader.imageTextures = new Texture2D[texturePath.Count];
-            for (int i = 0; i < texturePath.Count; i++)
-            {
-                Texture2D imageTexture = new(2, 2, TextureFormat.RGBA32, false);
-                byte[] texs = null;
-                yield return AssetsLoader.LoadSkelCoroutine(texturePath[i], texture => texs = texture);
-                imageTexture.LoadImage(texs);
-                imageTexture.name = Path.GetFileNameWithoutExtension(texturePath[i]);
-                dataloader.imageTextures[i] = imageTexture;
-            }
-
-            // Parse skeleton
-            dataloader.atlasAsset = SpineAtlasAsset.CreateRuntimeInstance(
-                        new TextAsset(atlasText),
-                        dataloader.imageTextures,
-                        straightAlpha ? this.SGmaterial_Alpha : this.SGmaterial,
-                        true
-                    );
-
-            //foreach(var m in atlasAsset.materials) m.SetInt("_StraightAlphaInput", 1);
-            // Parse .skel into SkeletonData
-            dataloader.attachmentLoader = new(dataloader.atlasAsset.GetAtlas());
-            dataloader.skeletonBinary = new SkeletonBinary(dataloader.attachmentLoader);
-
-            dataloader.skeletonData = dataloader.skeletonBinary.ReadSkeletonData(new MemoryStream(skelBytes));
-            dataloader.skeletonBinary.Scale *= dataloader.spineScale;
-
-            dataloader.animationStateData = new(dataloader.skeletonData);
-            dataloader.skeletonDataAsset = CreateSkeletonDataAsset(
-                dataloader.skeletonData,
-                dataloader.animationStateData
-            );
-            dataloader.initialized = true;
+            yield return PreCacheData(manager, texturePath, atlasPath, skeletonPath, straightAlpha);
         }
-
 
         if (refresh)
         {
@@ -225,6 +179,73 @@ public class SpineAnimator40 : SpineAnimatorBase
         }
     }
 
+    bool loading = false;
+
+    public override IEnumerator PreCacheData(PortraitManager.CharaPortrait_Spine manager, List<string> texturePath, string atlasPath, string skeletonPath, bool straightAlpha)
+    {
+        if (loading) yield break;
+        if (manager.dataHolder is SpineDataTiny_40 existing
+            && existing.initialized
+            && existing.atlasPath == atlasPath
+            && existing.skeletonPath == skeletonPath
+            && existing.texturePath == texturePath)
+            yield break;
+
+        loading = true;
+
+        SpineDataTiny_40 dataloader;
+        if (manager.dataHolder is SpineDataTiny_40 reuse)
+        {
+            dataloader = reuse;
+        }
+        else
+        {
+            dataloader = new SpineDataTiny_40();
+            manager.dataHolder = dataloader;
+        }
+
+        dataloader.Clear();
+        dataloader.atlasPath = atlasPath;
+        dataloader.texturePath = texturePath;
+
+        if (dataloader.skeletonTA == null || dataloader.skeletonPath == "" || dataloader.skeletonPath != skeletonPath)
+        {
+            dataloader.skeletonPath = skeletonPath;
+            yield return AssetsLoader.LoadSkelCoroutine(skeletonPath, text => dataloader.skeletonTA = text);
+        }
+
+
+        string atlasText = "";
+        yield return AssetsLoader.LoadSkelCoroutine(scr_System_Serializer.current.GetFullPath(atlasPath), text => atlasText = Encoding.UTF8.GetString(text));
+
+        dataloader.imageTextures = new Texture2D[texturePath.Count];
+        int texDone = 0;
+        for (int i = 0; i < texturePath.Count; i++)
+        {
+            int idx = i;
+            Texture2D imageTexture = new(2, 2, TextureFormat.RGBA32, false);
+            imageTexture.name = Path.GetFileNameWithoutExtension(texturePath[idx]);
+            dataloader.imageTextures[idx] = imageTexture;
+            StartCoroutine(AssetsLoader.LoadSkelCoroutine(texturePath[idx], bytes => { imageTexture.LoadImage(bytes); texDone++; }));
+        }
+        while (texDone < texturePath.Count) yield return null;
+
+        dataloader.atlasAsset = SpineAtlasAsset.CreateRuntimeInstance(
+            new TextAsset(atlasText),
+            dataloader.imageTextures,
+            straightAlpha ? this.SGmaterial_Alpha : this.SGmaterial,
+            true);
+
+        dataloader.attachmentLoader = new(dataloader.atlasAsset.GetAtlas());
+        dataloader.skeletonBinary = new SkeletonBinary(dataloader.attachmentLoader);
+        dataloader.skeletonData = dataloader.skeletonBinary.ReadSkeletonData(new MemoryStream(dataloader.skeletonTA));
+        dataloader.skeletonBinary.Scale *= dataloader.spineScale;
+        dataloader.animationStateData = new(dataloader.skeletonData);
+        dataloader.skeletonDataAsset = CreateSkeletonDataAsset(dataloader.skeletonData, dataloader.animationStateData);
+        dataloader.initialized = true;
+
+        loading = false;
+    }
 
     public static bool CheckSkinMesh(Skin skin)
     {

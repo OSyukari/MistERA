@@ -59,10 +59,10 @@ public class COM_TakeMeal : COM
         return Replace(baseCOM.DisplayName(index));
     }
 
-    public override string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false)
+    public override string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
         //Debug.Log("getmeal displayname 2");
-        return Replace(baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting));
+        return Replace(baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult));
     }
 
     public override string Replace(string s)

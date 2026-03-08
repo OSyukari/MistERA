@@ -24,7 +24,7 @@ public abstract class SpineLoaderTiny
 }
 public abstract class SpineDataTiny
 {
-    public UnityEngine.TextAsset skeletonTA = null;
+    public byte[] skeletonTA = null;
     public string skeletonPath = "";
     public string atlasPath = "";
     public List<string> texturePath = new List<string>();
@@ -32,8 +32,6 @@ public abstract class SpineDataTiny
     public virtual void Clear()
     {
         //Debug.Log("dataholder clear!");
-        MonoBehaviour.Destroy(skeletonTA);
-        skeletonTA = null;
 
         if (imageTextures != null)
         {

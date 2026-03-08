@@ -645,6 +645,11 @@ public class EvaluationPackage
             mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_restrained")}]", 0);
             _responseRate = 100;
         }
+        else if (scr_System_CampaignManager.current.DebugMode && self.isImprisoned)
+        {
+            mod.AddModifier(self.RefID, $"[Debug_{LocalizeDictionary.QueryThenParse("comLogs_causes_restrained")}]", 0);
+            _responseRate = 100;
+        }
         else if (self.cannotRefuse)
         {
             mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_cannotRefuse")}]", 0);
@@ -1298,41 +1303,52 @@ public class EvaluationPackage
     }
 
 
-    public void LogMessage_Join(Character_Trainable injectChara, bool rightAlign = false, MessageCollect m = null)
+    public bool LogMessage_Join(Character_Trainable injectChara, List<int> reactedRefs,  bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        if (Doer.isTimeStopped) return;
-        if (injectChara == null) return;
+        if (Doer.isTimeStopped) return false;
+        if (injectChara == null) return false;
 
+        var returnval = false;
 
-        if (Doer != null && Doer.RefID != 0)
+        if (Doer != null && Doer.RefID != 0 && Doer != injectChara && !reactedRefs.Contains(Doer.RefID))
         {
-            Character_Relationship rel = null;
-            if (Doer != injectChara) rel = Doer.Relationships.FindRelationshipWith(injectChara);
-            else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
-
+            var rel = Doer.Relationships.FindRelationshipWith(injectChara);
+            //else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
             Doer.Relationships.GetKOJOMessage_Join(true, rightAlign, this, m, rel);
+            returnval = true;
+            if (injectChara != scr_System_CampaignManager.current.Player) reactedRefs.Add(Doer.RefID);
         }
-        if (Receiver != null && Receiver.RefID != 0)
+        if (Receiver != null && Receiver.RefID != 0 && Receiver != injectChara && !reactedRefs.Contains(Receiver.RefID))
         {
-            Character_Relationship rel = null;
-
-            if (Receiver != injectChara) rel = Receiver.Relationships.FindRelationshipWith(injectChara);
-            else if (Receiver != Doer) rel = Receiver.Relationships.FindRelationshipWith(Doer);
-
-            Receiver.Relationships.GetKOJOMessage_Join(false, rightAlign, this, m, rel);
+            if (returnval && scr_System_CampaignManager.current.shortenLogsPrint)
+            {
+                // dont do anything
+            }
+            else
+            {
+                var rel = Receiver.Relationships.FindRelationshipWith(injectChara);
+                Receiver.Relationships.GetKOJOMessage_Join(false, rightAlign, this, m, rel);
+                returnval = true;
+                if (injectChara != scr_System_CampaignManager.current.Player) reactedRefs.Add(Receiver.RefID);
+            }
         }
 
-        if (Doer != null && Doer.RefID != 0 && Doer != injectChara)
-        {
-            Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Doer);
-            injectChara.Relationships.GetKOJOMessage_Suffix("_Joined", rightAlign, this, m, rel);
+        if (returnval && !Package.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID))
+        {   // if contains playerref, then player join event already printed _joined kojo
+            if (Doer != null && Doer.RefID != 0 && Doer != injectChara)
+            {
+                Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Doer);
+                injectChara.Relationships.GetKOJOMessage_Suffix("_Joined", rightAlign, this, m, rel);
+            }
+            else if (Receiver != null && Receiver.RefID != 0 && Receiver != injectChara && Receiver != Doer)
+            {
+                Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Receiver);
+                injectChara.Relationships.GetKOJOMessage_Suffix("_Joined", rightAlign, this, m, rel);
+            }
         }
-        else if (Receiver != null && Receiver.RefID != 0 && Receiver != injectChara && Receiver != Doer)
-        {
-            Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Receiver);
-            injectChara.Relationships.GetKOJOMessage_Suffix("_Joined", rightAlign, this, m, rel);
-        }
+
+        return returnval;
     }
 
     public void LogMessage_Begin(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)

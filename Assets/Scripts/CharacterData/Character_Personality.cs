@@ -100,6 +100,9 @@ public class PrideMod
     {
         public List<string> selfTags = new List<string>();
         public List<string> comTags = new List<string>();
+
+        public double mult = 1;
+        public double threshold = 0;
     }
 
     public List<ModSingle> mods = new List<ModSingle>();
@@ -113,6 +116,19 @@ public class PrideMod
             }
         }
         return false;
+    }
+    public float Match(List<string> self, List<string> com, int prideLevelMult, float amount)
+    {
+        foreach (var mod in mods)
+        {
+            if (Utility.ListContainsStrict(self, mod.selfTags) && Utility.ListContainsStrict(com, mod.comTags))
+            {
+                if (Math.Abs(amount) < mod.threshold) continue;
+                float am = amount * (float)prideLevelMult * (float)mod.mult;
+                if (Math.Abs(am) >= mod.threshold) return am;
+            }
+        }
+        return 0;
     }
 }
 

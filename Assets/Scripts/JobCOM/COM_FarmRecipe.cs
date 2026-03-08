@@ -65,10 +65,10 @@ public class COM_FarmRecipe : COM
         return baseCOM.variants[variantID].GetVariantDescription(false, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef).Replace("$name$", yieldItem.DisplayName);
     }
 
-    public override string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false)
+    public override string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
-        if (comp != null) return baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting).Replace("$name$", LocalizeDictionary.QueryThenParse(comp.yieldItemID));
-        else return base.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting);
+        if (comp != null) return baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult).Replace("$name$", LocalizeDictionary.QueryThenParse(comp.yieldItemID));
+        else return base.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
     }
     public override string DisplayName(int index = -1)
     {

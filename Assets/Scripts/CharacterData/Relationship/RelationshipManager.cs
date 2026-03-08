@@ -66,27 +66,36 @@ public class RelationshipManager
     {
         pride += value;
     }
-    public float CheckPrideChange(List<string> ownerTags, List<string> comTags, float amount, ExperienceLog m = null)
+    public float CheckPrideChange(List<string> ownerTags, List<string> comTags, float amount, ExperienceLog m = null, bool ignoreOwnerStatus = false)
     {
+        if (!ignoreOwnerStatus)
+        {
+            if (Owner.Stats.isConsciousnessUnconscious || Owner.isTimeStopped) return 0;
+        }
+
         float modvalue = 0;
 
        // Debug.Log($"{Owner.FirstName} Checking pride change, increase entry {Personality.pride_increase.Count} decrease entry {Personality.pride_decrease.Count}");
         foreach(var inc in Personality.pride_increase)
         {
+            if (CurrentPride <= inc.Key) modvalue += inc.Value.Match(ownerTags, comTags, inc.Key - CurrentPride + 1, amount);
+            /*
             if (inc.Value.Match(ownerTags, comTags) && CurrentPride <= inc.Key)
             {
                 if (inc.Key - CurrentPride + 1 == 0) Debug.LogError($"match pride inc {inc.Key}, amount {amount} * {inc.Key - CurrentPride + 1}");
                 modvalue += amount * (inc.Key - CurrentPride + 1);
-            }
+            }*/
         }
 
-        foreach(var dec in Personality.pride_decrease)
+        foreach (var dec in Personality.pride_decrease)
         {
-            if (dec.Value.Match(ownerTags, comTags) && CurrentPride >= dec.Key)
+            if (CurrentPride >= dec.Key) modvalue += dec.Value.Match(ownerTags, comTags, dec.Key - CurrentPride - 1, amount);
+            /*
+            if (CurrentPride >= dec.Key && dec.Value.Match(ownerTags, comTags))
             {
                 if (dec.Key - CurrentPride - 1 == 0) Debug.LogError($"match pride dec {dec.Key}, amount {amount} * {dec.Key - CurrentPride - 1}");
                 modvalue += amount * (dec.Key - CurrentPride - 1);
-            }
+            }*/
         }
 
         if (modvalue != 0)
@@ -98,7 +107,7 @@ public class RelationshipManager
             double rate = pride / Personality.maxPrideValue;
             CurrentPride = rate >= 0.75 ? PrideLevel.High : rate >= 0.50 ? PrideLevel.Medium : rate >= 0.25 ? PrideLevel.Low : PrideLevel.None;
         }
-        return modvalue;
+        return (float)modvalue;
     }
 
 
@@ -139,7 +148,7 @@ public class RelationshipManager
         if (Owner.isImprisoned)
         {
             // send isimprisoned pride change
-            var value = CheckPrideChange(new List<string>() { "imprisoned" }, new List<string>(), 10);
+            var value = CheckPrideChange(new List<string>() { "imprisoned" }, new List<string>(), 10, null, true);
             if (value != 0)
             {
                 tooltips.Add($"{value.ToString("+0.#;-0.#")} due to imprisonment");
@@ -149,7 +158,7 @@ public class RelationshipManager
         if (Owner.isRestrained)
         {
             // send isrestrained pride change
-            var value = CheckPrideChange(new List<string>() { "restrained" }, new List<string>(), 10);
+            var value = CheckPrideChange(new List<string>() { "restrained" }, new List<string>(), 10, null, true);
             if (value != 0)
             {
                 tooltips.Add($"{value.ToString("+0.#;-0.#")} due to restraint");
@@ -400,9 +409,13 @@ public class RelationshipManager
         foreach (var i in relationships) i.Value.PostReloadUpdate();
     }
 
-    public void IncreaseRelationshipWith(int targetRef, RelationshipScoreType relID, float amount, ExperienceLog exp = null, bool silent= true)
+    public void IncreaseRelationshipWith(int targetRef, RelationshipScoreType relID, float amount, ExperienceLog exp = null, bool silent= true, bool ignoreOwnerStatus = false)
     {
         if (targetRef == ownerRef) return;
+        if (!ignoreOwnerStatus)
+        {
+            if (Owner.Stats.isConsciousnessUnconscious || Owner.isTimeStopped) return;
+        }
         Character_Relationship targetRel = FindRelationshipWith(targetRef);
         if (targetRel == null)
         {

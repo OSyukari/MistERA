@@ -426,7 +426,7 @@ public class MessageJSON
     {
         get
         {
-            return (content_blocks.Count > animatedIndex) || (content_string.Length > animatedIndex);
+            return (content_blocks.Count > animatedIndex) || (content_string != null && content_string.Length > animatedIndex);
         }
     }
 
@@ -910,13 +910,21 @@ public static class LLMUtils
     {
         if (verified != null)
         {
-            if (verified.Contains(job)) return;
+            if (verified.Contains(job))
+            {
+               // collection.Add($"{job.DisplayName} {job.RefID} verified", new List<SerializedAP>());
+                return;
+            }
             verified.Add(job);
         }
 
         if (job is Job_Furniture)
         {
-            if (repeat.Contains(job.DisplayName)) return;
+            if (repeat.Contains(job.DisplayName))
+            {
+              //  collection.Add($"{job.DisplayName} {job.RefID} repeat", new List<SerializedAP>());
+                return;
+            }
             repeat.Add(job.DisplayName);
         }
 
@@ -928,31 +936,38 @@ public static class LLMUtils
             validateAP(ap, tooltips, doer, receiver);
         }
         if (tooltips.Count > 0) collection.Add($"{job.DisplayName}", tooltips);
+       // else collection.Add($"{job.DisplayName}, no valid aps", new List<SerializedAP>());
     }
 
-    static void validateExisting(Job job, Dictionary<string, List<SerializedAP>> collection)
+    static void validateExisting(Job_Furniture job, Dictionary<string, List<SerializedAP>> collection)
     {
+        if (job == null) return;
         List<SerializedAP> tooltips = new List<SerializedAP>();
-        foreach (var ap in job.MakePackages(scr_System_CampaignManager.current.Player))
+        foreach (var ap in job.MakePackagesJoinable(scr_System_CampaignManager.current.Player))
         {
             validateAP(ap, tooltips, null, null);
         }
-        if (tooltips.Count > 0) collection.Add($"Available Command in {job.DisplayName}", tooltips);
+
+        if (tooltips.Count > 0) collection.Add($"{job.DisplayName}", tooltips);
     }
 
 
     static void validateAP(ActionPackage ap, List<SerializedAP> tooltips, List<int> doer, List<int> receiver)
     {
         if (ap.targetCOM == null) return;
+
+        var app = new SerializedAP();
+        app.CommandName = ap.DisplayName;
+        app.CommandID = ap.targetCOM == null ? "null" : ap.targetCOM.ID;
+        app.SourceJobID = ap.job.RefID;
+
         if (!ap.targetCOM.ValidateJob(ap.job, out var msg))
         {
             // add message
+            app.Summary = ap.GetTooltips($"validatejob fail: {msg}");
+            tooltips.Add(app);
             return;
         }
-        var app = new SerializedAP();
-        app.CommandName =  ap.DisplayName;
-        app.CommandID = ap.targetCOM == null ? "null" : ap.targetCOM.ID;
-        app.SourceJobID = ap.job.RefID;
 
 
         if (doer != null && receiver != null) ap.ResetRequest(doer, receiver, doer.Count > 0 ? doer[0] : -1, true);
@@ -1041,11 +1056,13 @@ public static class LLMUtils
             // current room jobs
             foreach (var job in mgr.CurrentRoom.Jobs)
             {
-                validateExisting(job, collection);
+                if (job is Job_Furniture) validateExisting(job as Job_Furniture, collection);
+                else continue;
+                //validateExisting(job, collection);
             }
             if (collection.Count > 0)
             {
-                PossibleInteractions.Add("Existing Commands in room:", new Dictionary<string, List<SerializedAP>>(collection));
+                PossibleInteractions.Add("Ongoing Commands in room:", new Dictionary<string, List<SerializedAP>>(collection));
             }
             collection.Clear();
         }
@@ -1073,7 +1090,16 @@ public static class LLMUtils
                     validateSingle(r.InteractionJob, player, target, trackedJobs, collection, duplicateCheck);
                 }
 
-                if (curr == null || curr.CanBeInterrupted)
+                if (curr != null)
+                {
+                    validateSingle(curr, player, target, trackedJobs, collection, duplicateCheck);
+                }
+
+                if (curr != null && curr is Job_Sex_Group)
+                {
+                    //
+                }
+                else
                 {
 
                     if (playerCOM != null)
@@ -1089,11 +1115,6 @@ public static class LLMUtils
                         }
                     }
 
-                }
-
-                if (curr != null)
-                {
-                    validateSingle(curr, player, target, trackedJobs, collection, duplicateCheck);
                 }
 
                 if (collection.Count > 0)

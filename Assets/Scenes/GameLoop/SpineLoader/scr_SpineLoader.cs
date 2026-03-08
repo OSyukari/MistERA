@@ -7,6 +7,7 @@ using System.IO;
 using UnityEngine.UI;
 using System;
 using System.Reflection;
+using System.Text;
 
 
 public class scr_SpineLoader : MonoBehaviour
@@ -87,21 +88,40 @@ public class scr_SpineLoader : MonoBehaviour
     public IEnumerator SetBase(PortraitManager.CharaPortrait_Spine manager, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName, string addonAnimName)
     {
         var version = "";
-        if (manager.dataHolder != null && manager.dataHolder.skeletonTA != null && manager.dataHolder.skeletonTA.text != null)
+        if (manager.dataHolder != null && manager.dataHolder.skeletonTA != null && manager.dataHolder.skeletonPath == skeletonJSON_path)
         {
-            var text =  manager.dataHolder.skeletonTA.text;
+            var text = Encoding.UTF8.GetString(manager.dataHolder.skeletonTA, 0, 100);// manager.dataHolder.skeletonTA.text;
             if (text.Contains("4.0.")) version = "4.0";
             else if (text.Contains("4.1.")) version = "4.1";
             else if (text.Contains("4.2.")) version = "4.2";
         }
         else
         {
-            TextAsset ta = null;
-            yield return AssetsLoader.LoadTextCoroutine(skeletonJSON_path, text => ta = text);
-            if (ta.text.Contains("4.0.")) version = "4.0";
-            else if (ta.text.Contains("4.1.")) version = "4.1";
-            else if (ta.text.Contains("4.2.")) version = "4.2";
-            Destroy(ta);
+
+            byte[] ta = null;
+            yield return AssetsLoader.LoadSkelCoroutine(skeletonJSON_path, text => ta = text);
+            var text = Encoding.UTF8.GetString(manager.dataHolder.skeletonTA, 0, 100);// manager.dataHolder.skeletonTA.text;
+
+            if (text.Contains("4.0."))
+            {
+                version = "4.0";
+                manager.dataHolder = new SpineDataTiny_40();
+            }
+            else if (text.Contains("4.1."))
+            {
+                version = "4.1";
+                manager.dataHolder = new SpineDataTiny_41();
+            }
+            else if (text.Contains("4.2."))
+            {
+                version = "4.2";
+                manager.dataHolder = new SpineDataTiny_42();
+            }
+            if (manager.dataHolder != null)
+            {
+                manager.dataHolder.skeletonTA = ta;
+                manager.dataHolder.skeletonPath = skeletonJSON_path;
+            }
         }
 
 

@@ -296,10 +296,17 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
     public void OnAPIChange(int i)
     {
         box_customAPI.gameObject.SetActive(i == 0);
+        var mmm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+
+        api_title.text = LocalizeDictionary.QueryThenParse($"ui_prefs_llm_apisetting_completion_api_{i}");
+
+        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.key = pwd_custom.text;
+        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.APIType = i;
+
         switch (i)
         {
             case 0: // custom endpoint
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = url_custom.text;
+                OnContentChange_url(url_custom.text);
                 break;
             case 1: // google ai studio
                 scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
@@ -322,10 +329,6 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
 
         }
 
-        api_title.text = LocalizeDictionary.QueryThenParse($"ui_prefs_llm_apisetting_completion_api_{i}");
-
-        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.key = pwd_custom.text;
-        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.APIType = i;
         scr_System_CentralControl.current.StoreLLMSetting();
 
         RefreshModels();
@@ -341,10 +344,19 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
     }
     public void OnContentChange_url(string s)
     {
-        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = s;
+        var url = s;
+        if (url.Contains("/chat/completions")) url = url.Replace("/chat/completions", "");
+
+        var mmm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        if (mmm.APIType == 0)
+        {
+            mmm.endpoint = url;
+            if (!mmm.endpoint.Contains("/chat/completions")) mmm.endpoint += "/chat/completions";
+            mmm.modellist = url;
+            if (!mmm.modellist.Contains("/models")) mmm.modellist += "/models";
+        }
         scr_System_CentralControl.current.StoreLLMSetting();
         RefreshModels();
-
     }
     public void OnContentChange_pwd(string s)
     {

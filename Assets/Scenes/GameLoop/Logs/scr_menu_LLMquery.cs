@@ -37,6 +37,7 @@ public class scr_menu_LLMQuery : scr_Menu
                 SelfGroup.blocksRaycasts = false;
                 SelfGroup.interactable = false;
                 scr_UpdateHandler.current.Observer_LLMResponse -= OnResponse;
+                scr_UpdateHandler.current.Observer_LLMStatus -= OnUpdate;
             }
         }
     }
@@ -150,14 +151,17 @@ public class scr_menu_LLMQuery : scr_Menu
 
             var json = CurrentResponse.JSON;
             var allrelevantActors = new List<int>(CurrentResponse.JSON.relevantActorRefs);
+            var allrelevantJobRefs = new List<int>();
 
             foreach (var ap in CurrentResponse.JSON.GetActionPackages(out var tooltips2))
             {
                 allrelevantActors.AddRange(ap.DoerRefs);
                 allrelevantActors.AddRange(ap.ReceiverRefs);
+                allrelevantJobRefs.Add(ap.job.RefID);
             }
             allrelevantActors.RemoveAll(x => x < 0);
             allrelevantActors = Utility.Distinct(allrelevantActors);
+            allrelevantJobRefs = Utility.Distinct(allrelevantJobRefs);
 
             var player = scr_System_CampaignManager.current.Player;
             var currentjob = player.CurrentJob;
@@ -165,14 +169,37 @@ public class scr_menu_LLMQuery : scr_Menu
             var playerjob = currentjob == null || currentjob.CanBeInterrupted ? scr_System_CampaignManager.current.FindJobInstanceByID(scr_System_CampaignManager.current.jobRef_playerCOM) : currentjob;
             playerjob.m.displayOverride = true;
 
-            foreach (var actor in allrelevantActors)
+            var apLLM = new ActionPackage_LLM(playerjob, json.timeCost, allrelevantActors, CurrentResponse.JSON);
+
+            foreach(var jobref in allrelevantJobRefs)
             {
-                scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(playerjob);
+                // placeholder package should be added to every job mentioned in json
+                var job = scr_System_CampaignManager.current.FindJobInstanceByID(jobref);
+                if (job != null && job != playerjob) job.AddPlaceholderPackage(apLLM);
             }
 
-            //json.timeCost = Math.Clamp(json.timeCost, 5, 60);
+            List<string>errors = new List<string>();
 
-            var apLLM = new ActionPackage_LLM(playerjob, json.timeCost, allrelevantActors, CurrentResponse.JSON);
+            foreach (var actorref in allrelevantActors)
+            {
+                var actor = scr_System_CampaignManager.current.FindInstanceByID(actorref);
+                if (actor == null)
+                {
+                    errors.Add($"hallucinating actorref {actorref}");
+                    continue;
+                }
+                if (scr_System_CampaignManager.current.Map.FindRoomByChara(actorref) != scr_System_CampaignManager.current.CurrentRoom)
+                {
+                    errors.Add($"actorref {actorref} not in current room");
+                    continue; 
+                }
+                var actorjob = actor.CurrentJob;
+                if (actorjob != playerjob)
+                {
+                    // changejob
+                    actor.ChangeCurrentJob(playerjob);
+                }
+            }
 
             playerjob.AddPackage(new List<ActionPackage>() { apLLM }, true);
             //scr_System_CampaignManager.current.Register(apLLM, false);
@@ -233,7 +260,7 @@ public class scr_menu_LLMQuery : scr_Menu
                 canAnimate = message.animatedIndex < message.content_blocks.Count;
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"reload {reload}, start {startIndex} end {endIndex} animated_final {message.animatedIndex}");
             }
-            else if (message.content_string.Length > 0 && message.animatedIndex < message.content_string.Length)
+            else if (message.content_string != null && message.content_string.Length > 0 && message.animatedIndex < message.content_string.Length)
             {
                 //RectTransform msgbox = Instantiate(prefab_LogEntry);
                 Debug.Log("drawline");

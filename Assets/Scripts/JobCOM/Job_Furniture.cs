@@ -56,7 +56,7 @@ public class Job_Furniture : Job
 
                 foreach(var com in allusableCOMs)
                 {
-                    if (com.ValidateRoom(ParentRoom, out var s) && com.ValidateJob(this, out var msg) && CanCOMAcceptMoreActor(com)) validCOMs.Add(com);
+                    if (com.ValidateRoom(ParentRoom, out var s) && com.ValidateJob(this, out var msg)) validCOMs.Add(com);
                 }
             }
             return validCOMs; } 
@@ -176,7 +176,7 @@ public class Job_Furniture : Job
                 continue;
             }
             //if (pkg.Duration * 2 < pkg.targetCOM.TimeScale) continue;
-            if (!CanCOMAcceptMoreActor(pkg.targetCOM))
+            if (!CanCOMAcceptMoreActor(pkg.targetCOM, c))
             {
                 //Debug.LogError($"{c.FirstName} try join: {pkg.DisplayName} cannot accept more actor");
                 continue;
@@ -212,7 +212,7 @@ public class Job_Furniture : Job
         if (!allowInvalid) 
         {
             possibleCOMs = possibleCOMs.FindAll(x => ValidCOMs.Contains(x) 
-                                                    && CanCOMAcceptMoreActor(x) 
+                                                    && CanCOMAcceptMoreActor(x, c) 
                                                     && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
                                                     && (!x.hasFactionReq || !x.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out var po)))
                                                 );
@@ -334,7 +334,7 @@ public class Job_Furniture : Job
             
             if (pl2 != null)
             {
-                if (pl2.DoerRefs.Contains(scr_System_CampaignManager.current.Player.RefID)) 
+                if (pl2.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID)) 
                 {
                     ss += "try join player existing pkg " + pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID);
                     if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.LogError($"{c.FirstName} try join player {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}");
@@ -778,29 +778,65 @@ public class Job_Furniture : Job
         }
     }
 
-    public bool CanCOMAcceptMoreActor(COM com)
+    public bool CanCOMAcceptMoreActor(COM com, List<int> cs)
     {
+        foreach (var c in cs) if (!CanCOMAcceptMoreActor(com, c)) return false;
+        return true;
+    }
+
+    public bool CanCOMAcceptMoreActor(COM com, int RefID)
+    {
+        return true;
         // one job can only have one active comtype
         if (this.ParentInstance.FurnitureBase.furnitureSize <= 0) return true;
         if (this.Container != null && this.Container.HasContent && com is COM_Character_Remove) return true;
+        if (RefID == scr_System_CampaignManager.current.Player.RefID) return true;
         int maxActor = com.MaxActorCount;
         int i = (com.requirements.requirement.doerCount >= 1 ? com.requirements.requirement.doerCount : 1) * (int)this.ParentInstance.FurnitureBase.furnitureSize;
         //Debug.Log($"CanCOMAcceptMoreActor {com.DisplayName()}, maxActor[{maxActor}] i[{i}] furnitureSize[{(int)this.ParentInstance.FurnitureBase.furnitureSize}]");
         i = Math.Min(i, maxActor);
+
         foreach (var p in packages_current)
         {
             if (p.isTemporaryAP) continue;
-           // if (p.targetCOM != com) return false;
-            i -= p.actorRefs.Count;
+            foreach (var actorref in p.actorRefs)
+            {
+                if (actorref == RefID) continue;
+                i -= 1;
+            }
+            // if (p.targetCOM != com) return false;
+            //i -= p.actorRefs.Count;
         }
         foreach (var p in packages_previous)
         {
             if (p.isTemporaryAP) continue;
-            //if (p.targetCOM != com) return false;
-            i -= p.actorRefs.Count;
+            foreach (var actorref in p.actorRefs)
+            {
+                if (actorref == RefID) continue;
+                i -= 1;
+            }
+        }
+        foreach (var p in packages_placeholder)
+        {
+            if (p.isTemporaryAP) continue;
+            foreach (var actorref in p.actorRefs)
+            {
+                if (actorref == RefID) continue;
+                i -= 1;
+            }
         }
         if (i > 0) return true;
         return false;
+    }
+
+    /// <summary>
+    /// Player can always be accepted
+    /// </summary>
+    /// <param name="com"></param>
+    /// <returns></returns>
+    public bool CanCOMAcceptMoreActor(COM com, Character_Trainable c)
+    {
+        return CanCOMAcceptMoreActor(com, c.RefID);
     }
 
     public override void OnAfterDeserialize()

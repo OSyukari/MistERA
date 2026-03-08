@@ -589,6 +589,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             this.tooltip = "portrait reset!";
             clicked = true;
             parent.chara.PortraitManager.ResetPortraits();
+            Coroutine co = parent.StartCoroutine(parent.chara.PortraitManager.CacheInternal(parent.chara));
             // call for ex watcher to re-update
             scr_System_CampaignManager.current.NotifyCurrentTargetEXReset();
         }

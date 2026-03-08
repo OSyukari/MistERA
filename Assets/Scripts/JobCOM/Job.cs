@@ -544,6 +544,7 @@ public class Job : IDisposable, I_Disposable
     [JsonProperty] protected List<ActionPackage> packages_previous = new List<ActionPackage>();
     [JsonProperty] protected List<ActionPackage> packages_current = new List<ActionPackage>();
     [JsonProperty] protected List<ActionPackage> packages_completed = new List<ActionPackage>();
+    protected List<ActionPackage> packages_placeholder = new List<ActionPackage>();
 
     [JsonIgnore] public List<ActionPackage> ExecutingPackages { get { return packages_previous; } }
 
@@ -807,6 +808,12 @@ public class Job : IDisposable, I_Disposable
             }
         }
 
+        for(int i = packages_placeholder.Count - 1; i >= 0; i--)
+        {
+            var p = packages_placeholder[i];
+            if (p.Duration <= 0) packages_placeholder.RemoveAt(i);
+        }
+
         //InternalJobUpdate();
         if (visible)
         {
@@ -822,6 +829,16 @@ public class Job : IDisposable, I_Disposable
     public bool hasActorCompletedJob(int refID)
     {
          return actorJobComplete.Contains(refID); 
+    }
+
+    /// <summary>
+    /// Placeholder package only exist during execution of LLM package.<br/>
+    /// They will never exist outside of update -> never saved -> reference is always accurate<br/>
+    /// </summary>
+    /// <param name="ap"></param>
+    public void AddPlaceholderPackage(ActionPackage ap)
+    {
+        this.packages_placeholder.Add(ap);
     }
 
     public virtual void AddPackage(List<ActionPackage> packages, bool isPlayerCOM = false)

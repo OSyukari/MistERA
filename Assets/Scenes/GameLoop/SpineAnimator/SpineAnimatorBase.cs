@@ -13,4 +13,9 @@ public class SpineAnimatorBase : MonoBehaviour
         Debug.LogError("SpineAnimatorBase Initialize called!");
         yield break;
     }
+
+    public virtual IEnumerator PreCacheData(PortraitManager.CharaPortrait_Spine manager, List<string> texturePath, string atlasPath, string skeletonPath, bool straightAlpha)
+    {
+        yield break;
+    }
 }

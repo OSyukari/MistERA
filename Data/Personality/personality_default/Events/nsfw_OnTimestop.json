@@ -28,7 +28,8 @@
                     ],
                     "requirePlayer": false,
                     "_comment": "This triggers on Timestop end outside of standard time update (then proceeds into a standard update cycle for message printing). if anything serious happens, greeting will be disabled for this update cycle",
-                    "variants": [
+                    "variants": 
+                    [
                         {
                             "_comment": "时停解除 清醒 自身状态检测",
                             "requirement": {
@@ -294,7 +295,7 @@
                                             ]
                                         },
                                         "excludeSelfTags":[
-                                            "cum","undressed","location_change","locked"
+                                            "cum","undressed","location_change","locked","pleasure","pain","climax"
                                         ]
                                     },
                                     "_comment": "1.4.2 时停解除 清醒 无事发生",

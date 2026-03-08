@@ -56,7 +56,7 @@
                     {
                         "requirements": {
                             "requirement": {
-                                "doerCount": 99
+                                "doerCount": 2
                             }
                         },
                         "displayName": "com_furniture_sleep_displayName_2"
@@ -177,7 +177,7 @@
                     {
                         "requirements": {
                             "requirement": {
-                                "doerCount": 99
+                                "doerCount": 2
                             }
                         },
                         "displayName": "com_furniture_takingBreak_displayName_2"
@@ -251,7 +251,7 @@
                     {
                         "requirements": {
                             "requirement": {
-                                "doerCount": 99
+                                "doerCount": 2
                             }
                         },
                         "displayName": "com_furniture_takingLongBreak_displayName_2"
@@ -326,7 +326,7 @@
                     {
                         "requirements": {
                             "requirement": {
-                                "doerCount": 99
+                                "doerCount": 2
                             }
                         },
                         "displayName": "com_furniture_playVideoGames_displayName_2"
@@ -401,7 +401,7 @@
                     {
                         "requirements": {
                             "requirement": {
-                                "doerCount": 99
+                                "doerCount": 2
                             }
                         },
                         "displayName": "com_furniture_watchVideo_displayName_2"
@@ -627,7 +627,7 @@
                     {
                         "requirements": {
                             "requirement": {
-                                "doerCount": 99
+                                "doerCount": 2
                             }
                         },
                         "displayName": "com_furniture_getmeal_displayName_2"

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +35,16 @@ public class PortraitManager
         foreach(var i in this.portraitPriorityList)
         {
             i.RebuildInternal();
+        }
+    }
+    public IEnumerator CacheInternal(Character_Trainable c)
+    {
+        _owner = c;
+        if (portraitPriorityList != null) foreach (var i in portraitPriorityList) i.Owner = this;
+
+        foreach (var i in this.portraitPriorityList)
+        {
+            yield return i.CacheInternal();
         }
     }
 
@@ -371,6 +382,10 @@ public class PortraitManager
         {
 
         }
+        public virtual IEnumerator CacheInternal()
+        {
+            return null;
+        }
 
         internal virtual string IconPath(List<string> tags)
         {
@@ -625,6 +640,62 @@ public class PortraitManager
         {
             if (dataHolder != null) dataHolder.Clear();
             dataHolder = null;
+        }
+
+        public override void RebuildInternal()
+        {
+            if (skeletonJSON_path == "" || atlasJSON_path == "") return;
+            if (scr_System_CentralControl.current == null) return;
+        }
+
+        public override IEnumerator CacheInternal()
+        {
+            return PreCacheCoroutine();
+        }
+
+        private IEnumerator PreCacheCoroutine()
+        {
+            string version = "";
+            if (dataHolder?.skeletonTA != null)
+            {
+                var text = Encoding.UTF8.GetString(dataHolder.skeletonTA,0,100);
+                if (text.Contains("4.0.")) version = "4.0";
+                else if (text.Contains("4.1.")) version = "4.1";
+                else if (text.Contains("4.2.")) version = "4.2";
+            }
+            else
+            {
+                byte[] ta = null;
+                yield return AssetsLoader.LoadSkelCoroutine(skeletonJSON_path, text => ta = text);
+                if (ta == null) yield break;
+                var text = Encoding.UTF8.GetString(ta, 0, 100);
+                if (text.Contains("4.0."))
+                {
+                    this.dataHolder = new SpineDataTiny_40();
+                    version = "4.0";
+                }
+                else if (text.Contains("4.1."))
+                {
+                    this.dataHolder = new SpineDataTiny_41();
+                    version = "4.1";
+                }
+                else if (text.Contains("4.2."))
+                {
+                    this.dataHolder = new SpineDataTiny_42();
+                    version = "4.2";
+                }
+                else
+                {
+                    yield break;
+                }
+                this.dataHolder.skeletonTA = ta;
+                this.dataHolder.skeletonPath = skeletonJSON_path;
+
+            }
+
+            var animator = scr_System_CentralControl.current?.GetSpineAnimator(version);
+            if (animator == null) yield break;
+            yield return animator.PreCacheData(this, materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha);
         }
 
         public override bool isValid() { return !Disable; }

@@ -45,7 +45,7 @@
                     "None":{ 
                         "mods":
                         [
-                            { "selfTags":["pain"], "comTags":["unsafe"] }
+                            { "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1 }
                         ]
                     }
                 },

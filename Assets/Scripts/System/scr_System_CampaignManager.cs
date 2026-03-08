@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -275,6 +276,10 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public event Action<bool> Observer_GameReload;
 
+    public event Action Observer_LoadStart;
+    public event Action<float, string> Observer_LoadProgress;
+    public event Action Observer_LoadComplete;
+
     public void LoadSerializable(scr_System_CampaignManager_Serializable obj)
     {
         Observer_GameReload?.Invoke(true);
@@ -361,8 +366,9 @@ public class scr_System_CampaignManager : MonoBehaviour
             //ri.AddChara(scr_System_CampaignManager.current.Player);
         }
 
-       // this.Map.RefreshRoomMoodlets();
+        // this.Map.RefreshRoomMoodlets();
 
+        StartCoroutine(CachePortraitCoroutine());
 
         NotifyUpdate();
     }
@@ -613,7 +619,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         get
         {
-            return Player.CurrentJob is Job_Sex_Group;
+            return Player.CurrentJob != null && Player.CurrentJob is Job_Sex_Group;
         }
     }
 
@@ -1493,8 +1499,6 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         this.CurrentCampaignID = camp.ID;
 
-        scr_System_SceneManager.current.LoadScene(GlobalValues.GameScene);
-
         map = new Map_Instance();
 
         debugRoom = new Room_Instance(null, null);
@@ -1652,6 +1656,73 @@ public class scr_System_CampaignManager : MonoBehaviour
         UpdateScene();
         scr_System_Time.current.UpdateTime(0, 0, 0, 0, true);
     }
+
+    protected IEnumerator CachePortraitCoroutine()
+    {
+        var chars = new List<Character_Trainable>();
+        foreach (var chara in this.Index_referenceID.Values)
+        {
+            if (chara.FactionManager.HasPlayerFaction) chars.Add(chara);
+        }
+        int total = chars.Count;
+        for (int i = 0; i < total; i++)
+        {
+            Observer_LoadProgress?.Invoke((float)i / Mathf.Max(total, 1), chars[i].CallName);
+            yield return chars[i].PortraitManager.CacheInternal(chars[i]);
+        }
+        Observer_LoadProgress?.Invoke(1f, "");
+        Debug.Log("CachePortraitComplete");
+    }
+
+    /// <summary>
+    /// Starts a new game and fires load events for the loading screen to listen to.
+    /// Call this instead of StartCampaign directly when a loading screen is present.
+    /// </summary>
+    public void StartNewGame(
+        CampaignSettings camp,
+        CampaignSettings_ExtraOptions camp_ex,
+        Character_Trainable main,
+        Character_Trainable sub)
+    {
+        scr_System_SceneManager.current.LoadScene(GlobalValues.GameScene);
+        StartCoroutine(InitializeNewGame(camp, camp_ex, main, sub));
+        scr_System_SceneManager.current.UnloadScene(GlobalValues.IntroScene);
+    }
+
+    /// <summary>
+    /// Loads a save file and fires load events for the loading screen to listen to.
+    /// Call this instead of scr_UpdateHandler.LoadSaveFile directly when a loading screen is present.
+    /// </summary>
+    public void StartLoadSave(SaveFileHolder saveHolder)
+    {
+        StartCoroutine(InitializeLoadSave(saveHolder));
+    }
+
+    private IEnumerator InitializeNewGame(
+        CampaignSettings camp,
+        CampaignSettings_ExtraOptions camp_ex,
+        Character_Trainable main,
+        Character_Trainable sub)
+    {
+        Observer_LoadStart?.Invoke();
+        yield return null;
+        StartCampaign(camp, camp_ex, main, sub);
+        yield return null;
+        yield return CachePortraitCoroutine();
+        Observer_LoadComplete?.Invoke();
+    }
+
+    private IEnumerator InitializeLoadSave(SaveFileHolder saveHolder)
+    {
+        Observer_LoadStart?.Invoke();
+        yield return null;
+        scr_UpdateHandler.current.LoadSaveFile(saveHolder, true);
+        yield return null;
+        yield return CachePortraitCoroutine();
+        Observer_LoadComplete?.Invoke();
+    }
+
+
 
     [NonSerialized] public int jobRef_playerCOM = 2;
     [NonSerialized] public int jobRef_followPlayerCOM = 1;

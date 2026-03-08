@@ -320,6 +320,22 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         }
     }
 
+    [JsonIgnore]
+    public bool AllowMaxActorMod
+    {
+        get
+        {
+            var i = Math.Max(0, this.requirements.requirement.doerCount);
+            var j = Math.Max(0, this.requirements.requirement.receiverCount);
+            foreach (var v in this.variants)
+            {
+                i = Math.Max(i, v.requirements.requirement.doerCount);
+                j = Math.Max(j, v.requirements.requirement.receiverCount);
+            }
+
+            return i > 1 || j > 1;
+        }
+    }
     public virtual string GetDescription_Begin(EvaluationPackage evp, int variantID)
     {
         //Debug.LogError("GetDescription_Begin with variantID " + variantID);
@@ -397,6 +413,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         msg = "";
         if (this.requirements.requireContaining != null && !requirements.requireContaining.Validate(j, out msg))
         {
+            msg = "require containing null";
             return false;
         }
         if (hasFactionReq && j.FactionOwner == null)
@@ -406,13 +423,15 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         }
         if (j.FactionOwner != null && !ValidateFaction(j.FactionOwner, out msg))
         {
+            msg = "ValidateFaction fail";
             return false;
         }
+        /*
         if (false && j is Job_Furniture && !(j as Job_Furniture).CanCOMAcceptMoreActor(this))
         {
             msg = "furniture cannot accept more actor";
             return false;
-        }
+        }*/
         return true;
     }
 
@@ -447,10 +466,10 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         }*/
 
   
-    protected virtual bool ValidateCondition(List<string> _tooltip, List<Character_Trainable> doerRefs, List<Character_Trainable> receiverRefs, COM com, out bool hardlock, COM_Variant variant = null)
+    protected virtual bool ValidateCondition(List<string> _tooltip, List<Character_Trainable> doerRefs, List<Character_Trainable> receiverRefs, COM com, out bool hardlock, COM_Variant variant = null, int actorCountMult = 1)
     {
-        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, null);
-        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, com.requirements.requirement);
+        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, null, actorCountMult);
+        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, com.requirements.requirement, actorCountMult);
         // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
         if (!(value1 && value2))
         {
@@ -472,9 +491,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     }
 
     public bool allowInPrivateRoom = false;
-    public virtual string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false)
+    public virtual string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
-        int index = GetValidVariant(doerRefIDs, receiverRefIDs, excludeRequireExisting);
+        int index = GetValidVariant(doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
         if (index < 0) return LocalizeDictionary.QueryThenParse(this.displayName);
         else return LocalizeDictionary.QueryThenParse(variants[index].displayName);
     }
@@ -496,10 +515,10 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     [JsonIgnore] public bool isSleepCOM { get { return ID == "com_furniture_sleep"; } }
     [JsonIgnore] public bool isRecreationCOM { get { return !isSleepCOM && !isJobCOM; } }
 
-    public int GetValidVariant(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false)
+    public int GetValidVariant(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
         List<string> s = new List<string>();
-        return GetValidVariant(ref s, doerRefIDs, receiverRefIDs, excludeRequireExisting);
+        return GetValidVariant(ref s, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
     }
 
     public int GetValidVariant(Character_Trainable doerRefIDs, bool excludeRequireExisting = false)
@@ -553,7 +572,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
     [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex"); } }
 
-    public int GetValidVariant(ref List<string> tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false)
+    public int GetValidVariant(ref List<string> tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
         int index = -1;
         bool logging = tooltip != null && !scr_UpdateHandler.current.Updating;
@@ -632,7 +651,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 }
             }
         }
-        if (!ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this, out bool hardlock))
+        if (!ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this, out bool hardlock, null, actorCountMult))
         {
             return hardlock ? -2 : -1;
         }
@@ -662,7 +681,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 continue;
             }
             s.Clear();
-            if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, out hardlock, var))
+            if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, out hardlock, var, actorCountMult))
             {
                 s2.Add($"{DisplayName(i)}: {String.Join("|", s)}");
                 continue;
@@ -681,14 +700,6 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         tooltip.AddRange(s2);
         return index;
     }
-
-    public virtual bool ValidateActors(ref List<string> tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null)
-    {
-        //if (!comTags.Contains("sex") && !comTags.Contains("touch")) Debug.Log("validate com " + displayName + " doers[" + String.Join(" ", doerRefIDs) + "] receivers[" +String.Join(" ",receiverRefIDs)+"]");
-        if ( GetValidVariant(ref tooltip, doerRefIDs, receiverRefIDs) > -1) return true;
-        return false;
-    }
-
 
     /*
      GetSuccess

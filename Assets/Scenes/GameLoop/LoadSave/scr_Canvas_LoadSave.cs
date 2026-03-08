@@ -187,7 +187,8 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             // unload canvas
-            scr_UpdateHandler.current.LoadSaveFile(s);
+            scr_System_CampaignManager.current.StartLoadSave(s);
+            //scr_UpdateHandler.current.LoadSaveFile(s);
         }
     }
     protected class ButtonValidator_DeleteSave : ButtonValidator, I_ButtonClickable

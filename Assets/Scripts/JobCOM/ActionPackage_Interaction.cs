@@ -23,7 +23,9 @@ public class ActionPackage_Interaction : ActionPackage
     {
         get
         {
-            return this.targetCOM.MaxActorCount > this.actorRefs.Count;
+            var maxcount = this.targetCOM.MaxActorCount;
+            if (this.targetCOM.AllowMaxActorMod && this.job is Job_Furniture) maxcount *= (int)(this.job as Job_Furniture).ParentInstance.FurnitureBase.furnitureSize; 
+            return maxcount > this.actorRefs.Count;
         }
     }
 
