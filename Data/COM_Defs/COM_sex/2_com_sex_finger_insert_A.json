@@ -4,6 +4,7 @@
         "list":
         [
             {
+                "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_finger_insert_A",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "displayName":"com_sex_finger_insert_A_displayName_3",

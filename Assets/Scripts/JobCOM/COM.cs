@@ -33,7 +33,10 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
                 list[i] = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, UtilityEX.SerializerSettings);
             }
-            else if (list[i] is COM_TakeMeal || list[i] is COM_Character_Insert || list[i] is COM_Character_Remove || list[i] is COM_FarmRecipe || list[i].ID.Contains("_noSex", StringComparison.InvariantCultureIgnoreCase))
+            else if ( list[i] is COM_Character_Insert || list[i] is COM_Character_Remove 
+              //  || list[i] is COM_TakeMeal
+               // || list[i] is COM_FarmRecipe 
+                || list[i].ID.Contains("_noSex", StringComparison.InvariantCultureIgnoreCase))
             {
                 list.RemoveAt(i);
                 continue;
@@ -76,25 +79,46 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         List<COM> newCOMs = new List<COM>();
         for (int i = list.Count - 1; i >= 0; i--)
         {
-            if (list[i].ID == "com_furniture_getmeal")
+            var com = list[i];
+
+            if (com.GenerateCOM != null && com.GenerateCOM.itemTag != "" && com.GenerateCOM.targetCOMClass != null)
+            {
+                var type = com.GenerateCOM.targetCOMClass.GetType();
+                var serializedParent = JsonConvert.SerializeObject(com.GenerateCOM.targetCOMClass, UtilityEX.SerializerSettings);
+                bool hideChild = com.GenerateCOM.hideChild;
+                foreach (Item_Base item in Masterlist_Items.Instance.Index.List)
+                {
+                    if (item.Tags.Contains(com.GenerateCOM.itemTag))
+                    {
+                        COM newCOM1 = JsonConvert.DeserializeObject(serializedParent.Replace("$itemID$", item.ID), type, UtilityEX.SerializerSettings) as COM;
+                        newCOM1.InitializeChildCOM(com, item);
+
+                        if (hideChild) newCOM1.isHiddenChild = true;
+
+                        if (newCOM1.isValid && newCOMs.Find(x => x.ID == newCOM1.ID) == null) newCOMs.Add(newCOM1);
+                        else Debug.LogError($"already contain mealcom with id {newCOM1.ID}");
+                    }
+                }
+            }
+            /*if (com.ID == "com_furniture_getmeal")
             {
                 foreach (Item_Base item in Masterlist_Items.Instance.Index.List)
                 {
                     if (item.Tags.Contains("food_meal"))
                     {
-                        var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
+                        var serializedParent = JsonConvert.SerializeObject(com, UtilityEX.SerializerSettings);
                         COM_TakeMeal newCOM1 = JsonConvert.DeserializeObject<COM_TakeMeal>(serializedParent, UtilityEX.SerializerSettings);
-                        newCOM1.Initialize(list[i], item);
+                        newCOM1.Initialize(com, item);
 
                         if (newCOMs.Find(x => x.ID == newCOM1.ID) == null) newCOMs.Add(newCOM1);
                         else Debug.LogError($"already contain mealcom with id {newCOM1.ID}");
                     }
                 }
-            }
-            else if (list[i].requirements.requireContaining != null && list[i].requirements.requireContaining.allowPlanting != null)
+            }*/
+            else if (com.requirements.requireContaining != null && com.requirements.requireContaining.allowPlanting != null)
             {
                 // make restraint furniture stuff
-                if (list[i].requirements.requireContaining.allowPlanting.Contains("character_trainable"))
+                if (com.requirements.requireContaining.allowPlanting.Contains("character_trainable"))
                 {
 
                     var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
@@ -110,10 +134,12 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                     if (newCOMs.Find(x => x.ID == newCOM2.ID) == null) newCOMs.Add(newCOM2);
                     //if (newCOMs.Find(x => x.ID == newCOM3.ID) == null) newCOMs.Add(newCOM3);
                 }
+                /*
                 else if (list[i].requirements.requireContaining.allowPlanting.Count == 1 && list[i].requirements.requireContaining.allowPlanting[0] == "")
                 {   // this is a special case just to handle/initialize com_job_farm_remove
 
-                   // Debug.Log("initializing remove plant com [" + list[i].ID + "]");
+                    //Debug.LogError($"FarmRecipe fallthrough on {list[i].ID}, allow planting 1 and nullID");
+                    // Debug.Log("initializing remove plant com [" + list[i].ID + "]");
                     var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
                     COM_FarmRecipe newCOM = JsonConvert.DeserializeObject<COM_FarmRecipe>(serializedParent, UtilityEX.SerializerSettings);
                     newCOM.InitializeRecipe(null);
@@ -122,6 +148,8 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 }
                 else
                 { // make farm recipe stuff
+                    Debug.LogError($"FarmRecipe fallthrough on {list[i].ID}");
+                    
                     foreach (var recipe in Masterlist_Items.Instance.FarmRecipe)
                     {
                         if (list[i].requirements.requireContaining.allowPlanting.Contains(recipe.growType))
@@ -136,7 +164,7 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                             if (newCOMs.Find(x => x.ID == newCOM.ID) == null) newCOMs.Add(newCOM);
                         }
                     }
-                }
+                }*/
             }
             if (list[i].comTags.Contains("service") || list[i].comTags.Contains("sex") || (list[i].comTags.Contains("touch") && !list[i].comTags.Contains("safe")))
             {
@@ -151,6 +179,7 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 newCOM.comTags.Remove("sex");
                 newCOM.requirements.requirement.req_Receivers.requireAbsentJobwithCOMTag.Add("sex");
                 newCOM.ID += "_noSex";
+                newCOM.AppendParentID("_noSex");
                 newCOMs.Add(newCOM);
             }
         }
@@ -175,6 +204,11 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
 
         Debug.Log($"COM late initialize Generated RecipeCOMs count {generatedCOMs.Count}, conflict count {conflictCOMs.Count}\n{String.Join(" | ",generatedCOMs)}\n{String.Join(" | ", conflictCOMs)}");
         //list.AddRange(newCOMs);
+
+        foreach(var com in list)
+        {
+            if (com.ParentCOM != null) com.ParentCOM.NotifyChild(com);
+        }
 
         /*
         foreach (var i in list)
@@ -222,6 +256,73 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
 [System.Serializable]
 public class COM: I_SerializationCallbackReceiver, hasCategory
 {
+
+
+    public virtual void InitializeChildCOM(COM baseCOM, Item_Base item)
+    {
+        // ignore if not child com
+
+        ParentCOM = baseCOM;
+    }
+
+    [JsonIgnore]
+    public List<COM> childCOMs = new List<COM>();
+    public void NotifyChild(COM child)
+    {
+        if (child == null) return;
+        childCOMs.Add(child);
+        childCOMs = Utility.Distinct(childCOMs);
+    }
+
+    [JsonIgnore] public bool isHiddenChild = false;
+    [JsonIgnore] public bool isHiddenParent
+    {
+        get
+        {
+            return this.childCOMs.Count > 0 && (this.GenerateCOM == null || !this.GenerateCOM.hideChild);
+        }
+    }
+    [JsonIgnore]
+    public COM ParentCOM
+    {
+        get
+        {
+            if (_parentCOM == null && parentCOMID != "")
+            {
+                _parentCOM = scr_System_Serializer.current.MasterList.COMs.GetByID(parentCOMID);
+            }
+            return _parentCOM;
+        }
+        set
+        {
+            _parentCOM = value;
+            parentCOMID = value == null ? "" : value.ID;
+        }
+    }
+    COM _parentCOM = null;
+    [JsonProperty] protected string parentCOMID = "";
+    /// <summary>
+    /// will skip if parentcomID is empty
+    /// </summary>
+    /// <param name="s"></param>
+    public void AppendParentID(string s)
+    {
+        if (parentCOMID == "" || parentCOMID.Length < 1) return;
+        parentCOMID += s;
+        _parentCOM = null;
+    }
+
+    [JsonIgnore]
+    public COM ParentCOM_includeSelf
+    {
+        get
+        {
+            if (ParentCOM == null) return this;
+            else return ParentCOM;
+        }
+    }
+
+
     public List<string> categoryTags = new List<string>();
     public class Acceptance
     {
@@ -253,6 +354,15 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         {
             return ID;
         } }
+
+    public GenerateCOMWithItemTag GenerateCOM = null;
+
+    public class GenerateCOMWithItemTag
+    {
+        public string itemTag = "";
+        public COM targetCOMClass = null;
+        public bool hideChild = true;
+    }
 
     public string tooltip = "";
     public string displayName = "";
@@ -421,17 +531,6 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             msg = "missing faction owner";
             return false;
         }
-        if (j.FactionOwner != null && !ValidateFaction(j.FactionOwner, out msg))
-        {
-            msg = "ValidateFaction fail";
-            return false;
-        }
-        /*
-        if (false && j is Job_Furniture && !(j as Job_Furniture).CanCOMAcceptMoreActor(this))
-        {
-            msg = "furniture cannot accept more actor";
-            return false;
-        }*/
         return true;
     }
 
@@ -439,14 +538,6 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     {
         if (this.requirements.requireRoomExisting != null && !requirements.requireRoomExisting.Validate(r, out tooltips)) return false;
         foreach(var variant in this.variants) if (variant.requirements.requireRoomExisting != null && !variant.requirements.requireRoomExisting.Validate(r, out tooltips)) return false;
-        tooltips = "";
-        return true;
-    }
-
-    protected bool ValidateFaction(I_IsJobGiver m, out string tooltips)
-    {
-        if (this.requirements.requireFactionExisting != null && !requirements.requireFactionExisting.Validate(m, out tooltips)) return false;
-        foreach (var variant in this.variants) if (variant.requirements.requireFactionExisting != null && !variant.requirements.requireFactionExisting.Validate(m, out tooltips)) return false;
         tooltips = "";
         return true;
     }
@@ -491,9 +582,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     }
 
     public bool allowInPrivateRoom = false;
-    public virtual string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false, int actorCountMult = 1)
+    public virtual string DisplayName(Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
-        int index = GetValidVariant(doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
+        int index = GetValidVariant(sourceJob, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
         if (index < 0) return LocalizeDictionary.QueryThenParse(this.displayName);
         else return LocalizeDictionary.QueryThenParse(variants[index].displayName);
     }
@@ -515,10 +606,10 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     [JsonIgnore] public bool isSleepCOM { get { return ID == "com_furniture_sleep"; } }
     [JsonIgnore] public bool isRecreationCOM { get { return !isSleepCOM && !isJobCOM; } }
 
-    public int GetValidVariant(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1)
+    public int GetValidVariant(Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
         List<string> s = new List<string>();
-        return GetValidVariant(ref s, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
+        return GetValidVariant(ref s, sourceJob, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
     }
 
     public int GetValidVariant(Character_Trainable doerRefIDs, bool excludeRequireExisting = false)
@@ -572,11 +663,16 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
     [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex"); } }
 
-    public int GetValidVariant(ref List<string> tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1)
+    public int GetValidVariant(ref List<string> tooltip, Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
         int index = -1;
         bool logging = tooltip != null && !scr_UpdateHandler.current.Updating;
         //if (receiverRefIDs == null || receiverRefIDs.Count < 1) receiverRefIDs = doerRefIDs;
+        if (this.requirements.requireFactionExisting != null && !requirements.requireFactionExisting.Validate(sourceJob.FactionOwner, out var tooltips))
+        {
+            if (logging) tooltip.Add(tooltips);
+            return -1;
+        }
         if (!requirements.requireExisting.ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this))
         {
             return -2;
@@ -675,6 +771,12 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         for(int i = 0; i < variants.Count; i++)
         {
             var var = variants[i];
+
+            if (this.requirements.requireFactionExisting != null && !requirements.requireFactionExisting.Validate(sourceJob.FactionOwner, out var tooltips2))
+            {
+                s2.Add($"{DisplayName(i)}: {tooltips2}");
+                continue;
+            }
             if (!requirements.requireExisting.ValidateCondition(s, doerRefIDs, receiverRefIDs, this, var))
             {
                 s2.Add($"{DisplayName(i)}: {String.Join("|", s)}");
@@ -782,6 +884,16 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         public int Value { get { return addValue; } }
 
     }
+
+    /// <summary>
+    /// Used during serialization, check internal data valid or not. if invalid, dont add to DB.
+    /// </summary>
+    [JsonIgnore]
+    
+    public virtual bool isValid { get
+        {
+            return true;
+        } }
 
     [JsonIgnore]
     public bool hasFactionReq
@@ -1017,17 +1129,17 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
     }
 
-    public string PreEvaluate(List<int> doerRefIDs, List<int> receiverRefIDs)
+    public string PreEvaluate(Job sourceJob, List<int> doerRefIDs, List<int> receiverRefIDs)
     {
         List<Character_Trainable> doers = new List<Character_Trainable>();
         List<Character_Trainable> receivers = new List<Character_Trainable>();
         foreach (int i in doerRefIDs) doers.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
         foreach (int i in receiverRefIDs) receivers.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
 
-        return PreEvaluate(doers, receivers);
+        return PreEvaluate(sourceJob, doers, receivers);
     }
 
-    public virtual string PreEvaluate(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs)
+    public virtual string PreEvaluate(Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs)
     {
         return "";
     }

@@ -81,6 +81,7 @@
             {
                 "ID": "com_furniture_restroom",
                 "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_restroom_displayName_1",
                 "timeScale": 10,
                 "comTags": [
                     "furniture","bathroom", "unsafe"
@@ -283,6 +284,88 @@
                         }
                     }
                 },
+                "GenerateCOM": {
+                    "itemTag": "furniture_playVideoGames",
+                    "targetCOMClass": 
+                    {
+                        "$type": "COM_UseItemCOM, Assembly-CSharp",
+                        "ID": "com_furniture_playVideoGames",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "COMRepeat": true,
+                        "HideWhenInvalid":true,
+                        "displayName": "com_furniture_playVideoGames_displayName_variant_1",
+                        "timeScale": 30,
+                        "comTags": [
+                            "furniture",
+                            "TV",
+                            "recreation",
+                            "operating","social"
+                        ],
+                        "requirements": {
+                            "requirement": {
+                                "treatReceiverAsDoer": true,
+                                "req_Doers": {
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "results": {
+                            "results_character": [
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_ST",
+                                        "value": "5"
+                                    }
+                                },
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true,
+                                        "attitudeGTE":4
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_EN",
+                                        "value": "4"
+                                    }
+                                }
+                            ]
+                        },
+                        "variants": [
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 1
+                                    }
+                                },
+                                "displayName": "com_furniture_playVideoGames_displayName_variant_1"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 2
+                                    }
+                                },
+                                "displayName": "com_furniture_playVideoGames_displayName_variant_2"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 2
+                                    }
+                                },
+                                "displayName": "com_furniture_playVideoGames_displayName_variant_2"
+                            }
+                        ],
+                        "AcceptanceCheck": {
+                            "baseAcceptanceValue": 5
+                        },
+                        "DifficultyCheck":{ "baseD20Check":10 },
+                        "description_begin":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_variant_begin_1"]}], "keepLooking":false },
+                        "description_ongoing":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_variant_ongoing_1"]}], "keepLooking":false }
+                    }
+                },
                 "results": {
                     "results_character": [
                         {
@@ -358,6 +441,88 @@
                         }
                     }
                 },
+                "GenerateCOM": {
+                    "itemTag": "furniture_watchVideo",
+                    "targetCOMClass":
+                    {
+                        "$type": "COM_UseItemCOM, Assembly-CSharp",
+                        "ID": "com_furniture_watchVideo",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "COMRepeat": true,
+                        "HideWhenInvalid": true,
+                        "displayName": "com_furniture_watchVideo_displayName_variant_1",
+                        "timeScale": 30,
+                        "comTags": [
+                            "furniture",
+                            "TV",
+                            "recreation",
+                            "social"
+                        ],
+                        "requirements": {
+                            "requirement": {
+                                "treatReceiverAsDoer": true,
+                                "req_Doers": {
+                                    "cost_EN": 2
+                                }
+                            }
+                        },
+                        "results": {
+                            "results_character": [
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_ST",
+                                        "value": "10"
+                                    }
+                                },
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true,
+                                        "attitudeGTE": 4
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_EN",
+                                        "value": "4"
+                                    }
+                                }
+                            ]
+                        },
+                        "variants": [
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 1
+                                    }
+                                },
+                                "displayName": "com_furniture_watchVideo_displayName_variant_1"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 2
+                                    }
+                                },
+                                "displayName": "com_furniture_watchVideo_displayName_variant_2"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 2
+                                    }
+                                },
+                                "displayName": "com_furniture_watchVideo_displayName_variant_2"
+                            }
+                        ],
+                        "AcceptanceCheck": {
+                            "baseAcceptanceValue": 5
+                        },
+                        "DifficultyCheck": { "baseD20Check": 5 },
+                        "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_watchVideo_description_variant_begin_1"] }] },
+                        "description_ongoing": { "Entries": [{ "texts": ["com_furniture_watchVideo_description_variant_ongoing_1"] }], "keepLooking": false }
+                    }
+                },
                 "results": {
                     "results_character": [
                         {
@@ -413,6 +578,161 @@
                 "DifficultyCheck":{ "baseD20Check":5 },
                 "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "com_furniture_watchVideo_description_begin_1" ] } ] },
                 "description_ongoing":{ "Entries":[ { "texts":["com_furniture_watchVideo_description_ongoing_1"]}], "keepLooking":false }
+            },
+            {
+                "ID": "com_furniture_readBooks",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_readBooks_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture",
+                    "recreation",
+                    "books"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "cost_EN": 1
+                        }
+                    }
+                },
+                "GenerateCOM": {
+                    "itemTag": "furniture_readBooks",
+                    "targetCOMClass":
+                    {
+                        "$type": "COM_UseItemCOM, Assembly-CSharp",
+                        "ID": "com_furniture_readBooks",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "COMRepeat": true,
+                        "HideWhenInvalid": true,
+                        "displayName": "com_furniture_readBooks_displayName_variant_1",
+                        "timeScale": 30,
+                        "comTags": [
+                            "furniture",
+                            "recreation",
+                            "books"
+                        ],
+                        "requirements": {
+                            "requirement": {
+                                "treatReceiverAsDoer": true,
+                                "req_Doers": {
+                                    "cost_EN": 1
+                                }
+                            }
+                        },
+                        "results": {
+                            "results_character": [
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_ST",
+                                        "value": "8"
+                                    }
+                                },
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true,
+                                        "attitudeGTE": 4
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_EN",
+                                        "value": "6"
+                                    }
+                                }
+                            ]
+                        },
+                        "variants": [
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 1
+                                    }
+                                },
+                                "displayName": "com_furniture_readBooks_displayName_variant_1"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 2
+                                    }
+                                },
+                                "displayName": "com_furniture_readBooks_displayName_variant_2"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 2
+                                    }
+                                },
+                                "displayName": "com_furniture_readBooks_displayName_variant_2"
+                            }
+                        ],
+                        "AcceptanceCheck": {
+                            "baseAcceptanceValue": 10
+                        },
+                        "DifficultyCheck": { "baseD20Check": 3 },
+                        "description_begin": { "Entries": [{ "keepLooking": false, "texts": ["com_furniture_readBooks_description_variant_begin_1"] }] },
+                        "description_ongoing": { "Entries": [{ "texts": ["com_furniture_readBooks_description_variant_ongoing_1"] }], "keepLooking": false }
+                    }
+                },
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_ST",
+                                "value": "8"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true,
+                                "attitudeGTE": 4
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "6"
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_readBooks_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2
+                            }
+                        },
+                        "displayName": "com_furniture_readBooks_displayName_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2
+                            }
+                        },
+                        "displayName": "com_furniture_readBooks_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": { "baseD20Check": 3 },
+                "description_begin": { "Entries": [{ "keepLooking": false, "texts": ["com_furniture_readBooks_description_begin_1"] }] },
+                "description_ongoing": { "Entries": [{ "texts": ["com_furniture_readBooks_description_ongoing_1"] }], "keepLooking": false }
             },
             {
                 "ID": "com_furniture_takeShower",
@@ -608,8 +928,79 @@
                 "timeScale": 30,
                 "comTags": [
                     "furniture",
-                    "social"
+                    "social",
+                    "food_getmeal"
                 ],
+                "GenerateCOM":
+                {
+                    "itemTag":"food_meal",
+                    "targetCOMClass":{
+                        "$type": "COM_TakeMeal, Assembly-CSharp",
+                        "ID": "com_furniture_getmeal",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "COMRepeat": false,
+                        "HideWhenInvalid": true,
+                        "displayName": "com_furniture_getmeal_displayName",
+                        "timeScale": 30,
+                        "comTags": [
+                            "furniture",
+                            "social",
+                            "food_meal"
+                        ],
+                        "requirements": {
+                            "requirement": {
+                                "treatReceiverAsDoer": true
+                            }
+                        },
+                        "variants": [
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 1
+                                    }
+                                },
+                                "displayName": "com_furniture_getmeal_displayName_1"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 2
+                                    }
+                                },
+                                "displayName": "com_furniture_getmeal_displayName_2"
+                            }
+                        ],
+                        "results": {
+                            "results_character": [
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_ST",
+                                        "value": "20"
+                                    }
+                                },
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_EN",
+                                        "value": "30"
+                                    }
+                                }
+                            ]
+                        },
+                        "AcceptanceCheck": {
+                            "baseAcceptanceValue": 10
+                        },
+                        "DifficultyCheck": { "baseD20Check": 0 },
+                        "description_begin":{ "Entries":[{"texts":["com_furniture_getmeal_begin_1","com_furniture_getmeal_begin_2","com_furniture_getmeal_begin_3"]}], "keepLooking":false },
+                        "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1"]}], "keepLooking":false }
+                    }
+
+                },
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true
@@ -622,7 +1013,7 @@
                                 "doerCount": 1
                             }
                         },
-                        "displayName": "com_furniture_getmeal_displayName_1"
+                        "displayName": "com_furniture_getmeal_displayName"
                     },
                     {
                         "requirements": {
@@ -630,7 +1021,7 @@
                                 "doerCount": 2
                             }
                         },
-                        "displayName": "com_furniture_getmeal_displayName_2"
+                        "displayName": "com_furniture_getmeal_displayName_base_2"
                     }
                 ],
                 "results": {
@@ -770,11 +1161,31 @@
                 "com_furniture_playVideoGames_displayName_2": "一起打游戏",
                 "com_furniture_playVideoGames_description_begin_1": "$doer.firstname$开始玩游戏",
                 "com_furniture_playVideoGames_description_ongoing_1": "$doer.firstname$正在玩游戏",
+
+                "com_furniture_playVideoGames_displayName_variant_1": "玩$name$",
+                "com_furniture_playVideoGames_displayName_variant_2": "一起玩$name$",
+                "com_furniture_playVideoGames_description_variant_begin_1": "$doer.firstname$开始玩$name$",
+                "com_furniture_playVideoGames_description_variant_ongoing_1": "$doer.firstname$正在玩$name$",
                 
+                "com_furniture_readBooks_displayName_1": "读书",
+                "com_furniture_readBooks_displayName_2": "一起读书",
+                "com_furniture_readBooks_description_begin_1": "$doer.firstname$开始读书",
+                "com_furniture_readBooks_description_ongoing_1": "$doer.firstname$正在读书",
+
+                "com_furniture_readBooks_displayName_variant_1": "阅读$name$",
+                "com_furniture_readBooks_displayName_variant_2": "一起阅读$name$",
+                "com_furniture_readBooks_description_variant_begin_1": "$doer.firstname$开始阅读$name$",
+                "com_furniture_readBooks_description_variant_ongoing_1": "$doer.firstname$正在阅读$name$",
+
+
                 "com_furniture_watchVideo_displayName_1": "看影片",
                 "com_furniture_watchVideo_displayName_2": "一起看影片",
                 "com_furniture_watchVideo_description_begin_1": "$doer.firstname$开始看电视",
                 "com_furniture_watchVideo_description_ongoing_1": "$doer.firstname$正在看电视",
+                "com_furniture_watchVideo_description_variant_begin_1": "$doer.firstname$开始观看$name$",
+                "com_furniture_watchVideo_description_variant_ongoing_1": "$doer.firstname$正在观看$name$",
+                "com_furniture_watchVideo_displayName_variant_1": "观看$name$",
+                "com_furniture_watchVideo_displayName_variant_2":"一起观看$name$",
                 
                 "com_furniture_takeShower_displayName_1": "洗澡",
                 "com_furniture_takeShower_displayName_2": "一起洗澡",
@@ -809,10 +1220,12 @@
 
                 "com_furniture_getmeal": "用餐",
                 "com_furniture_getmeal_displayName": "用餐",
+                "com_furniture_getmeal_displayName_base_2": "一起用餐",
                 "com_furniture_getmeal_begin_3": "$doer.firstname$开始吃饭",
                 "com_furniture_getmeal_begin_1": "$doer.firstname$在桌边坐下，拿起一份$name$吃了起来。",
                 "com_furniture_getmeal_begin_2": "$doer.firstname$将$name$移到面前，开始了进食。",
                 "com_furniture_getmeal_ongoing_1": "$doer.firstname$正在吃饭",
+
                 "com_furniture_getmeal_displayName_1": "吃$name$",
                 "com_furniture_getmeal_displayName_2": "一起吃$name$"
                 

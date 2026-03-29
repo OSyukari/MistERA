@@ -162,11 +162,11 @@ public class scr_System_Serializer : MonoBehaviour
             }*/
 
             ShortFileAddress.Add($"{file.Directory.Name}/{file.Name}", file.FullName);
-            //ShortFileAddress.Add($"{file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name}", file.FullName);
+            ShortFileAddress.Add($"{file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name}", file.FullName);
 
             //var entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
             //entry.address = filepath;
-            if (file.FullName.Contains("arin")) loadedFiles.Add($"Reading json file {file.FullName} into {file.Directory.Name}/{file.Name}");
+            //if (file.FullName.Contains("arin")) loadedFiles.Add($"Reading json file {file.FullName} into {file.Directory.Name}/{file.Name}");
             //Debug.Log($"reading directory {file.Name} in {file.FullName} in {file.DirectoryName} in {file.DirectoryName}");
         }
        // AssetDatabase.SaveAssets();

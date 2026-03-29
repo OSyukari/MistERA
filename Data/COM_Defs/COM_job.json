@@ -675,9 +675,10 @@
                 "description_ongoing":{ "Entries":[{"texts":["com_job_farm_maintain_description_ongoing_1"]}], "keepLooking":false }
             },
             {
+                "$type": "COM_FarmRecipe, Assembly-CSharp",
                 "ID": "com_job_farm_remove",
                 "COMRepeat": true,
-                "HideWhenInvalid": true,
+                "HideWhenInvalid": false,
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_job_farm_remove_displayName_1",
                 "timeScale": 90,
@@ -691,8 +692,7 @@
                         "treatReceiverAsDoer": true
                     },
                     "requireContaining": {
-                        "requireContentExist": true,
-                        "allowPlanting": [  "" ]
+                        "requireContentExist": true
                     }
                 },
                 "results":{
@@ -772,19 +772,98 @@
                 "ID": "com_job_farm_cultivate_crop",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "COMRepeat": true,
-                "HideWhenInvalid":true,
+                "HideWhenInvalid":false,
                 "displayName": "com_job_farm_cultivate_crop_displayName",
                 "timeScale": 120,
                 "comTags": [
                     "furniture",
-                    "farming"
+                    "farming",
+                    "farm_cultivate_crop"
                 ],
+                "GenerateCOM": {
+                    "itemTag": "farm_cultivate_crop",
+                    "targetCOMClass": 
+                    {
+                        "$type": "COM_FarmRecipe, Assembly-CSharp",
+                        "ID": "com_job_farm_cultivate_crop",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "COMRepeat": true,
+                        "HideWhenInvalid":true,
+                        "displayName": "com_job_farm_cultivate_crop_displayName",
+                        "timeScale": 120,
+                        "comTags": [
+                            "furniture",
+                            "farming",
+                            "farm_cultivate_crop"
+                        ],
+                        "requirements": {
+                            "requirement": {
+                                "treatReceiverAsDoer": true
+                            },
+                            "requireContaining": {
+                                "requireContentAbsent": true
+                            }
+                        },
+                        "variants": [
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 1,
+                                        "req_Doers": {
+                                            "cost_ST": 90
+                                        }
+                                    }
+                                },
+                                "displayName": "com_job_farm_cultivate_crop_displayName_1"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 2,
+                                        "req_Doers": {
+                                            "cost_ST": 60
+                                        }
+                                    }
+                                },
+                                "displayName": "com_job_farm_cultivate_crop_displayName_2"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 99,
+                                        "req_Doers": {
+                                            "cost_ST": 30
+                                        }
+                                    }
+                                },
+                                "displayName": "com_job_farm_cultivate_crop_displayName_3"
+                            }
+                        ],
+                        "AcceptanceCheck": {
+                            "baseAcceptanceValue": 10
+                        },
+                        "DifficultyCheck":{ "baseD20Check":10 },
+                        "description_begin":
+                        {
+                            "Entries":[ 
+                                {
+                                    "keepLooking":true,
+                                    "texts": [  "com_job_farm_cultivate_crop_begin_1", 
+                                                "com_job_farm_cultivate_crop_begin_2",
+                                                "com_job_farm_cultivate_crop_begin_3"   ]
+                                }
+                            ]
+                            
+                        },
+                        "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_crop_ongoing_1"]}], "keepLooking":false }
+                    }
+                },
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true
                     },
                     "requireContaining": {
-                        "requireContentAbsent": true,
+                        "requireContentAbsent": true,                      
                         "allowPlanting": [
                             "farm_cultivate_crop"
                         ]
@@ -800,7 +879,7 @@
                                 }
                             }
                         },
-                        "displayName": "com_job_farm_cultivate_crop_displayName_1"
+                        "displayName": "com_job_farm_cultivate_crop_displayName"
                     },
                     {
                         "requirements": {
@@ -811,7 +890,7 @@
                                 }
                             }
                         },
-                        "displayName": "com_job_farm_cultivate_crop_displayName_2"
+                        "displayName": "com_job_farm_cultivate_crop_displayName_parent_2"
                     },
                     {
                         "requirements": {
@@ -822,7 +901,7 @@
                                 }
                             }
                         },
-                        "displayName": "com_job_farm_cultivate_crop_displayName_3"
+                        "displayName": "com_job_farm_cultivate_crop_displayName_parent_3"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -854,12 +933,18 @@
                     "furniture",
                     "farming"
                 ],
+                "GenerateCOM": {
+                    "itemTag": "farm_cultivate_meat",
+                    "targetCOMClass": {
+                        "$type": "COM_FarmRecipe, Assembly-CSharp"
+                    }
+                },
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true
                     },
                     "requireContaining": {
-                        "requireContentAbsent": true,
+                        "requireContentAbsent": true,                      
                         "allowPlanting": [
                             "farm_cultivate_meat"
                         ]
@@ -930,6 +1015,8 @@
 
 "com_job_farm_cultivate_crop": "将该作物种植于此。多人合作会降低该指令对每人的消耗\nNPC不会执行该指令，必须由玩家亲自起头",
 "com_job_farm_cultivate_crop_displayName": "种植植物",
+"com_job_farm_cultivate_crop_displayName_parent_2": "二人一起种植植物",
+"com_job_farm_cultivate_crop_displayName_parent_3": "起种植植物",
 "com_job_farm_cultivate_crop_displayName_1": "种植$name$",
 "com_job_farm_cultivate_crop_displayName_2": "二人一起种植$name$",
 "com_job_farm_cultivate_crop_displayName_3": "一起种植$name$",

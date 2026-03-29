@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using UnityEngine;
 
 public enum ParticipantType { 
@@ -12,9 +11,43 @@ public enum ParticipantType {
     observer
 }
 
-
-public class EvaluationPackage
+public interface I_ResultStorage
 {
+    public bool requestAccepted { get; }
+    public bool HasPermission { get; }
+    public bool isForced { get; }
+    public Memory_Response Response { get; }
+    public Memory_Attitude GetActorAttitude(int refid);
+    public int VariantID { get; }
+}
+
+public partial class EvaluationPackage : I_ResultStorage
+{
+    [JsonIgnore]
+    public bool requestAccepted
+    {
+        get
+        {
+            return this.Package.requestAccepted;
+        }
+    }
+    [JsonIgnore]
+    public bool HasPermission
+    {
+        get
+        {
+            return this.hasPermission;
+        }
+    }
+    [JsonIgnore]
+    public bool isForced
+    {
+        get
+        {
+            return this.Package.isForced;
+        }
+    }
+
 
     protected bool initializedRand = false;
     protected Unity.Mathematics.Random Random;
@@ -358,18 +391,9 @@ public class EvaluationPackage
         {
             this.doerCache = null;
             this.receiverCache = null;
-            this.modifiers.Clear();
         }
 
-        if (Doer.Stats.isConsciousnessUnconscious || Doer.Stats.isConsciousnessReduced)
-        {
-            //Debug.LogError("doer uncons or reduced");
-            foreach (var str in Doer.Stats.Consciousness.Tags)
-            {
-                AddModifier(Doer.RefID, str, 0);
-            }
-        }
-
+        this.modifiers.Reset(null, reset);
         extraDoerTags = new List<string>();
         extraCOMTags = new List<string>();
         extraReceiverTags = new List<string>();
@@ -383,42 +407,9 @@ public class EvaluationPackage
     }
 
 
-    /// <summary>
-    /// Rate at which doer is likely to proceed with the command
-    /// </summary>
-    /// <param name="requestRate"></param>
-    protected void CalculateRequestRate(bool isThreat = false)
-    {
-
-        int r1, r2;
-        Modifiers m1 = new Modifiers(), m2 = new Modifiers();
-        CalculateWillingness(true, Doer, p.Master, out r1, m1, isThreat);
-        CalculateWillingness(true, Doer, Receiver, out r2, m2, isThreat);
-        if (r2 < r1)
-        {
-            this.modifiers.MergeModifiers(m2);
-            requestRate = r2;
-        }
-        else
-        {
-            this.modifiers.MergeModifiers(m1);
-            requestRate = r1;
-        }
-        if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Request rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + "] Doer->Master[" + r1 + "] Doer->Receiver[" + r2 + "] final[" + requestRate + "]");
-        //if (requestRate == 95 && (p.Master == null || p.Master == doer)) requestRate = 100;  // if no master involved, skip)
-
-        int n1, n2, p1, p2;
-
-        var a = Doer;
-        a = Receiver;
-        CalculateAttitudeRate(Doer, Package.Master, out n1, out p1);
-        CalculateAttitudeRate(Doer, Receiver, out n2, out p2);
-
-        attitudeRate_neg_doer = Math.Min(n1, n2);
-        attitudeRate_pos_doer = Math.Min(p1, p2);
-    }
 
     public bool hasPermission = true;
+    public int RecentRefusalPenalty = 0;
 
     /// <summary>
     /// Calculate the willingness for 'self' to do targetCOM under influence of 'target'.<br/>
@@ -428,277 +419,71 @@ public class EvaluationPackage
     /// <param name="target"></param>
     /// <param name="rateValue"></param>
     /// <param name="isThreat"></param>
-    protected void CalculateWillingness(bool isDoer, Character_Trainable self, Character_Trainable target, out int rateValue , Modifiers mod, bool isThreat = false)
+    protected Modifiers CalculateWillingness(bool isDoer, Character_Trainable self, Character_Trainable target, bool isThreat)
     {
-        int _responseRate = 100;
-        isThreat = Receiver == self && Package.isForced;
-
-        if (self == null || self.RefID == 0 || target == null || target.RefID == self.RefID)
-        {
-            rateValue = 100;
-            return;
-        }
-
-        /////////////////////////////////////////////////////////
+        isThreat = isThreat || ( Receiver == self && Package.isForced);
 
         Character_Relationship rel = self.Relationships.FindRelationshipWith(target);
+        Modifiers mod = rel != null ? rel.GetEPWillingness(this.targetCOM.ParentCOM != null ? this.targetCOM.ParentCOM : this.targetCOM, isDoer, isThreat) : new Modifiers(this.targetCOM.ParentCOM != null ? this.targetCOM.ParentCOM : this.targetCOM, isDoer, isThreat);
 
-        int baseValue = targetCOM.baseAcceptanceValue;
-        int bonus = 0;
-        hasPermission = true;
-
-        baseValue = (int)(baseValue * self.Relationships.CurrentPrideMod);
-        
-        switch (self.Relationships.CurrentPride)
+        if (rel == null)
         {
-            case PrideLevel.Medium:
-                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pride_medium")}]", 0);
-                break;
-            case PrideLevel.Low:
-                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pride_low")}]", 0);
-                break;
-            case PrideLevel.None:
-                mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pride_none")}]", 0);
-                break;
+            mod.RateValue = 100;
+            return mod;
         }
 
-        if (targetCOM.comTags.Contains("followRequest") && (rel == null || !rel.HasPermission_Follow()))
-        {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_follow")}]", -3);
-            hasPermission = false;
-            bonus -= 3;
-        }
+        Modifiers copy = null;
 
-        if (targetCOM.isSexCOM && (rel == null || !rel.HasPermission_Intimacy_High()))
+        if (targetCOM.ParentCOM != null)
         {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_high")}]", -4);
-            hasPermission = false;
-            bonus -= 4;
+            copy = mod.Copy();
+            mod.Calculate(rel);
+            copy.parent = mod;
+            copy.targetCOM = targetCOM;
+            copy.Reset(null, false);
+
         }
-        else if (targetCOM.isUnsafe && (rel == null || !rel.HasPermission_Intimacy_Medium()))
+        else
         {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_medium")}]", -3);
-            hasPermission = false;
-            bonus -= 3;
+            copy = mod;
+            copy.Reset(extraCOMTags);
         }
-        else if (targetCOM.isTouchCOM && (rel == null || !rel.HasPermission_Intimacy_Low()))
-        {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_low")}]", -2);
-            hasPermission = false;
-            bonus -= 2;
-        }
+        copy.Calculate(rel);
+
+
+        copy.bonus = 0;
 
         if (Package.targetCOM.TimeScale > Package.Duration + 1)
         {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_ongoing")}]", 3);
-            bonus += 3;
+            copy.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_ongoing")}]", 3);
+            copy.bonus += 3;
         }
-
-        foreach(var i in (isDoer ? targetCOM.AcceptanceCheck.SkillBonus_Doer : targetCOM.AcceptanceCheck.SkillBonus_Receiver))
-        {
-            var j = self.GetSkill(i);
-            var k = j.GetSkillLevel;
-            if (k <= 0) continue;
-            mod.AddModifier(self.RefID, $"[{self.FirstName} {j.DisplayName}]", k);
-            bonus += k;
-        }
-
-        // float diceMax = 20;
-        //float diceMin = 0;
-        if (rel != null)
-        {
-            var attitude = rel.GetCurrentAttitude();
-            var modvalue = attitude == null ? 0 : attitude.GetObedienceMod(rel);
-            if (isThreat)
-            {
-                modvalue *= 2;
-                if (modvalue != 0) mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_pressure")}]", modvalue);
-            }
-            else
-            {
-                if (modvalue != 0) mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_obedience")}]", modvalue);
-            }
-
-            bonus += modvalue;
-        }
-
-        if (self.Stats.Mood != null)
-        {
-            var sev =  self.Stats.Mood.Severity;
-            if (Math.Abs(sev) >= 1)
-            {
-                mod.AddModifier(self.RefID, "Mood", (int)sev);
-                bonus += (int)sev;
-            }
-        }
-
-/*
-        if (!scr_System_CentralControl.current.isSafeMode && extraCOMTags.Contains("safe") && rel != null)
-        {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_safeInteraction")}]", 2);
-            bonus += 2;
-        }
-*/
-
-        if(self.Stats.Lust != null)
-        {
-            
-            var lustSev = (int)self.Stats.Lust.Severity;
-
-            if (extraCOMTags.Contains("sex") || extraCOMTags.Contains("service"))
-            {
-                lustSev -= 2;
-
-                if (lustSev > 0) mod.AddModifier(self.RefID, "[Lust]", lustSev);
-                else if (lustSev < 0) mod.AddModifier(self.RefID, "[not enough Lust]", lustSev);
-
-                bonus += lustSev;
-            }
-            else if (extraCOMTags.Contains("massage"))
-            {
-                lustSev -= 1;
-
-                if (lustSev > 0) mod.AddModifier(self.RefID, "[Lust]", lustSev);
-                else if (lustSev < 0) mod.AddModifier(self.RefID, "[not enough Lust]", lustSev);
-
-                bonus += lustSev;
-            }
-            else if (extraCOMTags.Contains("touch"))
-            {
-                if (lustSev > 0) mod.AddModifier(self.RefID, "[Lust]", lustSev);
-                else if (lustSev < 0) mod.AddModifier(self.RefID, "[not enough Lust]", lustSev);
-
-                bonus += lustSev;
-            }
-        }
-
-
-        // Get Recent Interaction Memory Adjustment
-        if (rel != null)
-        {
-            bonus += self.Memory.GetMemoryAdjustment(modifiers, rel.TargetID, targetCOM, extraCOMTags);
-        }
-
-        // If self is in party with target chara, add bonus
-        if (target != null && target.RefID == 0 && scr_System_CampaignManager.current.PlayerPartyMembers.Contains(self.RefID))
-        {   // party members shouldnt include player himself right ?
-            mod.AddModifier(self.RefID, "In same party!", 2);
-            bonus += 2;
-        }
-
         if (extraCOMTags.Contains("job") && p.job.FactionOwner != null && self.FactionManager.Factions.Contains(p.job.FactionOwner) && (target == null || target.FactionManager.Factions.Contains(p.job.FactionOwner)))
         {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_helpingWork")}]", 2);
-            bonus += 2;
-        }
-        if (self.isAnimal)
-        {
-            mod.AddModifier(self.RefID, "is Animal", 10);
-            bonus += 10;
-        }
-        if (self.isMale && target != null && target.isFemale)
-        {
-            mod.AddModifier(self.RefID, "horny", 2);
-            bonus += 2;
-        }
-        else if (self.isImprisoned)
-        {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_imprisoned")}]", 5);
-            bonus += 5;
+            copy.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_helpingWork")}]", 2);
+            copy.bonus += 2;
         }
 
-        var blacklistMatch = self.Memory.MatchBlacklist(this, target);
-        if (!isThreat && blacklistMatch > 0)
+        foreach (var i in (isDoer ? targetCOM.AcceptanceCheck.SkillBonus_Doer : targetCOM.AcceptanceCheck.SkillBonus_Receiver))
         {
-            //Debug.LogError($"blacklist match {blacklistMatch}");
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_repeatRefusal")}]", -2*blacklistMatch);
-            bonus -= 2*blacklistMatch;
-        }
-        RecentRefusalPenalty = blacklistMatch;
-
-        float consciousness = self.Stats.Consciousness.Severity;
-
-        if (self.isTimeStopped)
-        {
-            //mod.Clear();
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_timestopped")}]", 0);
-            _responseRate = self == Receiver ? 100 : 0;
-        }
-        else if (self.Climaxing)
-        {
-            //mod.Clear();
-            mod.AddModifier(self.RefID, "Climaxing!", 0);
-            _responseRate = self == Receiver ? 100 : 0;
-        }
-        else if (self.Stats.isConsciousnessUnconscious)
-        {
-            //mod.Clear();
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_unconscious")} {self.Stats.Consciousness.Severity} {self.Stats.isConsciousnessUnconscious}]", 0);
-
-            if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = 100;
-            else if (self == Doer && !targetCOM.requirements.requirement.req_Doers.requireConscious) _responseRate = 100;
-            else _responseRate = 0;
-        }
-        else if (self.isRestrained)
-        {
-            //mod.Clear();
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_restrained")}]", 0);
-            _responseRate = 100;
-        }
-        else if (scr_System_CampaignManager.current.DebugMode && self.isImprisoned)
-        {
-            mod.AddModifier(self.RefID, $"[Debug_{LocalizeDictionary.QueryThenParse("comLogs_causes_restrained")}]", 0);
-            _responseRate = 100;
-        }
-        else if (self.cannotRefuse)
-        {
-            mod.AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("comLogs_causes_cannotRefuse")}]", 0);
-            _responseRate = 100;
-        }
-        /*
-        else if (self.Stats.isConsciousnessReduced)
-        {
-            int consciousPenalty = Math.Clamp((100 - (int)consciousness * 100) * 10, 0, 100);
-            // if unconscious return success rate max
-            //else
-            mod.AddModifier(self.RefID, "%%comLogs_causes_reduced_consciousness%%", 3);
-            bonus += 3;
-            if (50 + 5 * (average - baseValue) + consciousPenalty >= 100)
-            {
-                if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = 100;
-                else if (self == Doer && !targetCOM.requirements.requirement.req_Doers.requireConscious) _responseRate = 100;
-                else _responseRate = 0;
-            }
-            else
-            {
-                if (self == Receiver && !targetCOM.requirements.requirement.req_Receivers.requireConscious) _responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
-                else if (self == Doer && !targetCOM.requirements.requirement.req_Doers.requireConscious) _responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
-                else _responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) - consciousPenalty, 5, 95);
-
-            }
-        }*/
-        else
-        {
-            int consciousPenalty = Math.Clamp((100 - (int)consciousness * 100) * 10, 0, 100);
-            //  if unconscious return success rate max
-            //else
-
-            //_responseRate = (int)Math.Clamp(50 + 5 * (average - baseValue) + consciousPenalty, 5, 95);
-
-            _responseRate = (int)Math.Clamp((20 + bonus - baseValue) * 5, 5, 95);
+            var j = self.GetSkill(i);
+            if (j == null) continue;
+            var k = j.GetSkillLevel;
+            if (k <= 0) continue;
+            copy.AddModifier(self.RefID, $"[{self.FirstName} {j.DisplayName}]", k);
+            copy.bonus += k;
         }
 
-        if (false && extraCOMTags.Contains("debug_refuse") && self.RefID > 0)
+
+        if (scr_System_CampaignManager.current.DebugMode && self.isImprisoned)
         {
-            mod.AddModifier(self.RefID, "Debug Refusal", 0);
-            _responseRate = 0;
+            copy.AddModifier(self.RefID, $"[Debug_{LocalizeDictionary.QueryThenParse("comLogs_causes_restrained")}]", 0);
+            copy.RateValue = 100;
         }
 
-        
-        rateValue = _responseRate;
+        return copy;
     }
 
-    public int RecentRefusalPenalty = 0;
     //Dictionary<int, Dictionary<string, int>> result_experiences;
     //Dictionary<int, Dictionary<string, int>> result_stats;
     /// <summary>
@@ -710,117 +495,72 @@ public class EvaluationPackage
     /// <param name="isThreat"></param>
     protected void CalculateResponseRate(bool isThreat = false)
     {
-
         if (Receiver != null)
         {
-            int r1, r2;
-            Modifiers m1 = new Modifiers(), m2 = new Modifiers();
+            Modifiers m1 = CalculateWillingness(false, Receiver, p.Master, isThreat);
+            Modifiers m2 = CalculateWillingness(false, Receiver, Doer, isThreat);
             //CalculateAcceptance(ref receiver, ref p.Master, out r1, isThreat);
             //CalculateAcceptance(ref receiver, ref doer, out r2, isThreat);
-            CalculateWillingness(false, Receiver,  p.Master, out r1, m1, isThreat);
-            CalculateWillingness(false, Receiver, Doer, out r2, m2, isThreat);
 
-            if (r2 < r1)
+            if (p.Master != null && m1.RateValue > m2.RateValue)
             {
-                this.modifiers.MergeModifiers(m2);
-                responseRate = r2;
+                this.modifiers.MergeModifiers(m1);
+                responseRate = m1.RateValue;
+                RecentRefusalPenalty = m1.RecentRefusalPenalty;
             }
             else
             {
-                this.modifiers.MergeModifiers(m1);
-                responseRate = r1;
+                this.modifiers.MergeModifiers(m2);
+                responseRate = m2.RateValue;
+                RecentRefusalPenalty = m2.RecentRefusalPenalty;
             }
 
-            if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Response rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + "] Receiver->Master[" + r1 + "] Receiver->Doer[" + r2 + "] final["+ responseRate + "]");
+            hasPermission = m2.hasPermission;
+
+            attitudeRate_neg_receiver = Math.Min(m1.attitudeRate_neg, m2.attitudeRate_neg);
+            attitudeRate_pos_receiver = Math.Min(m1.attitudeRate_pos, m2.attitudeRate_pos);
+
+            if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Response rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + $"] Receiver->Master[{m1.RateValue}] Receiver->Doer[{m2.RateValue}] final[{responseRate}]");
 
         }
         else
         {
             responseRate = 100;
         }
-
-        var a = Doer;
-        a = Receiver;
-        int p1, p2, n1, n2;
-        CalculateAttitudeRate( Receiver,  Doer, out n1, out p1);
-        CalculateAttitudeRate( Receiver,  Package.Master, out n2, out p2);
-
-        attitudeRate_neg_receiver = Math.Min(n1, n2);
-        attitudeRate_pos_receiver = Math.Min(p1, p2);
-
-
     }
 
-
     /// <summary>
-    /// Response rate 25% neg 50% neutral 25% pos<br/>
-    /// return the attitude of 1st actor toward 2nd actor
+    /// Rate at which doer is likely to proceed with the command
     /// </summary>
-    /// <param name="receiver"></param>
-    /// <param name="rel"></param>
-    /// <param name="targetCOM"></param>
-    /// <param name="isPositive"></param>
-    /// <returns></returns>
-    protected void CalculateAttitudeRate(Character_Trainable self, Character_Trainable target, out int attitudeRate_neg, out int attitudeRate_pos)
+    /// <param name="requestRate"></param>
+    protected void CalculateRequestRate(bool isThreat = false)
     {
-        if (self == null)
+
+        Modifiers m1 = CalculateWillingness(true, Doer, p.Master, isThreat);
+        Modifiers m2 = CalculateWillingness(true, Doer, Receiver, isThreat);
+
+
+        if (m1.RateValue > m2.RateValue)
         {
-            attitudeRate_neg = 0;
-            attitudeRate_pos = 0;
-            return;
-        }
-        else if (target == null || self == target || self.RefID == target.RefID)
-        {        //if (receiver == null || doer.RefID == receiver.RefID)
-            attitudeRate_neg = 0;
-            attitudeRate_pos = 0;
-            return;
-        }
-        else if (self.isTimeStopped)
-        {
-            attitudeRate_neg = 100;
-            attitudeRate_pos = 0;
-            return;
-        }
-        else if (self.Stats.isConsciousnessUnconscious)
-        { 
-            attitudeRate_neg = 100;
-            attitudeRate_pos = 0;
-            return;
+            this.modifiers.MergeModifiers(m1);
+            requestRate = m1.RateValue;
+            RecentRefusalPenalty = m1.RecentRefusalPenalty;
         }
         else
         {
-            Character_Relationship rel = self.Relationships.FindRelationshipWith(target.RefID);
-
-
-            if (rel == null) Debug.LogError("EVP relationship null");
-
-            float average = 50f;
-            float consciousness = self.Stats.Consciousness.Severity;
-
-            bool forced = Receiver == self && Package.isForced;
-            int mood = self.Stats.Mood == null ? 0 : (int)self.Stats.Mood.Severity;
-
-
-
-            if (!forced && mood > 0) average += (rel.Goodwill / 10 - rel.Badwill / 20);
-            else if (forced || mood < 0) average += (rel.Goodwill / 20 - rel.Badwill / 10);
-            else average += (rel.Goodwill / 20 - rel.Badwill / 20);
-
-            if (!hasPermission) average -= 10;
-
-            // lower consciousness (100 to 0) higher is penalty (0 to 100)
-            if (self.Stats.isConsciousnessReduced) average -= Math.Clamp((100 - (int)consciousness * 100), 0, 100);
-
-            attitudeRate_pos = (int)Math.Clamp(25 + (average - 50f), 5, 100);
-            attitudeRate_neg = (int)Math.Clamp(25 + (50f - average), 5, 100);
+            this.modifiers.MergeModifiers(m2);
+            requestRate = m2.RateValue;
+            RecentRefusalPenalty = m2.RecentRefusalPenalty;
         }
+
+        if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Request rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + $"] Doer->Master[{m1.RateValue}] Doer->Receiver[{m2.RateValue}] final[{requestRate}]");
+        //if (requestRate == 95 && (p.Master == null || p.Master == doer)) requestRate = 100;  // if no master involved, skip)
+
+        attitudeRate_neg_doer = Math.Min(m1.attitudeRate_neg, m2.attitudeRate_neg);
+        attitudeRate_pos_doer = Math.Min(m1.attitudeRate_pos, m2.attitudeRate_pos);
     }
-
-
-
-
     /////////////////////
-// Execution Codes
+    // Execution Codes
 
     /// <summary>
     /// Called on every AP Request().
@@ -855,7 +595,6 @@ public class EvaluationPackage
         targetCOM.ApplyCost(this, this.Package.job.isPlayerRelatedJob || m.displayOverride ? m : null);
 
         // clear previous tags, cuz some command have built-in random part selection we dont want both part end up in tags
-        if (Doer.Stats.isConsciousnessUnconscious || Doer.Stats.isConsciousnessReduced) foreach (var str in Doer.Stats.Consciousness.Tags) AddModifier(Doer.RefID, str, 0);
         extraDoerTags = new List<string>();
         extraCOMTags = new List<string>();
         extraReceiverTags = new List<string>();
@@ -964,7 +703,8 @@ public class EvaluationPackage
             return s;
     } }
 
-    [JsonIgnore] public string Description_Remove { get { 
+    [JsonIgnore] public string Description_Remove { get {
+            if (VariantID < 0) return "";
             string s = targetCOM.variants[VariantID].GetDescription_Remove(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_abort);
             UtilityEX.StringReplace(this, ref s);
@@ -1082,13 +822,26 @@ public class EvaluationPackage
 
 
             checkResults_receiver = $"{Receiver.FirstName}: D20{(mods.Count > 0 ? " + "+String.Join(" + ", mods) : "")} = {(responseRate >= 100 ? diceroll_autosuccess : ($"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}"))}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_receiver})";
-            checkResults_receiver_short = $"({Doer.FirstName}{(Receiver == null || Receiver == Doer ? "" : " -> " + Receiver.FirstName)}) {targetCOM.DisplayName(VariantID)}: {(requestRate >= 100 ? diceroll_autosuccess : $"({requestRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
+            checkResults_receiver_short = $"({Doer.FirstName}{(Receiver == null || Receiver == Doer ? "" : " -> " + Receiver.FirstName)}) {targetCOM.DisplayName(VariantID)}: {(responseRate >= 100 ? diceroll_autosuccess : $"({responseRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
 
         }
         return returnVal;
     }
 
-    public string GetCheckPrevalidation()
+    public int GetSuccessRate()
+    {
+        bool hasReceiver = response > Memory_Response.None && checkResults_receiver != "" && checkResults_receiver_short != "";
+        if (hasReceiver)
+        {
+            return responseRate;
+        }
+        else
+        {
+            return requestRate;
+        }
+    }
+
+    public string GetCheckPrevalidation(bool includeparent, bool modOnly, bool trued20falsed100)
     {
         Evaluate(true);
         if (RollRequest() && RollResponse())
@@ -1100,21 +853,21 @@ public class EvaluationPackage
 
         string ss = "";
 
-        int reverseRate = 20 - (int)(responseRate / 5);
-
         if (hasReceiver)
         {
-            List<string> mods = modifiers.GetModifiersByRefID(Receiver.RefID);
-            ss += $"{Receiver.FirstName} Acceptance check: D20{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} {(responseRate >= 100 ? diceroll_autosuccess : $">=? {reverseRate}")}, positive attitude rate {attitudeRate_pos_receiver}%, negative attitude rate {attitudeRate_neg_receiver}%";
+            if (modOnly) return String.Join(" + ", modifiers.GetModifiersByRefID(Receiver.RefID, includeparent, trued20falsed100));
+            List<string> mods = modifiers.GetModifiersByRefID(Receiver.RefID, includeparent);
+            ss += $"{Receiver.FirstName} Acceptance check: D20{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} {(responseRate >= 100 ? diceroll_autosuccess : $">=? {20 - (int)(responseRate / 5)}")}{(includeparent ? $", positive attitude rate {attitudeRate_pos_receiver}%, negative attitude rate {attitudeRate_neg_receiver}%" : "")}";
         }
         else
         {
-            List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID);
-            ss += $"{Doer.FirstName} Acceptance check: D20{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} {(requestRate >= 100 ? diceroll_autosuccess : $">=? {reverseRate}")}, positive attitude rate {attitudeRate_pos_doer}%, negative attitude rate {attitudeRate_neg_doer}%";
+            if (modOnly) return String.Join(" + ", modifiers.GetModifiersByRefID(Doer.RefID, includeparent, trued20falsed100));
+            List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID, includeparent);
+            ss += $"{Doer.FirstName} Acceptance check: D20{(mods.Count > 0 ? " + " + String.Join(" + ", mods) : "")} {(requestRate >= 100 ? diceroll_autosuccess : $">=? {20 - (int)(requestRate / 5)}")}{(includeparent ? $", positive attitude rate {attitudeRate_pos_doer}%, negative attitude rate {attitudeRate_neg_doer}%" : "")}";
         }
         return ss;
-
     }
+
 
     public string GetCheckResult(bool full = false)
     {
@@ -1205,6 +958,7 @@ public class EvaluationPackage
     }
 
     [JsonProperty] Modifiers modifiers = new Modifiers();
+    [JsonProperty] Modifiers modifiers_child = new Modifiers();
 
     private void RollAttitude(ref int attitudeRate_pos, ref int attitudeRate_neg, ref Memory_Attitude attitude_begin)
     {
@@ -1216,106 +970,81 @@ public class EvaluationPackage
         else attitude_begin = Memory_Attitude.Neutral;
     }
 
-    private void AddModifier(int charaRef, string key, int count)
-    {
-        key = LocalizeDictionary.QueryThenParse(key);
-        modifiers.AddModifier(charaRef, key, count);
-    }
 
-    public void LogMessage_Kojo(MessageCollect m = null, Character_Relationship injectRel = null)
+    /// <summary>
+    /// Logs kojo automatically
+    /// </summary>
+    public List<KojoCollector> LogMessage_Kojo(MessageCollect m = null, Character_Relationship injectRel = null)
     {
         if (m == null) m = this.job.m;
+        List<KojoCollector> responses = new List<KojoCollector>();
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + Doer.FirstName + ", tags: [" + String.Join("|", DoerSelfTag) + "] -> [" + String.Join("|", ReceiverTargetTag) + $"], epStatus [{Response}]");
 
-        MessageCollect_KojoEntry s3 = null, s4 = null;
+        KojoCollector s3 = null, s4 = null;
 
         if (Doer != null && Doer.RefID != 0)
         {
-            Doer.Relationships.GetKOJOMessage(true, this, m, injectRel);
+            var message = Doer.Relationships.GetKOJOMessage(true, this, m, injectRel == null ? null : injectRel.Target);
+            if (message != null) responses.Add(message);
+            
             if (Doer.isSleeping && injectRel != null && injectRel.Owner == Doer)
             {
-                s3 = Doer.Relationships.Personality.GetKOJOMessage("DisruptSleep", injectRel);
-                if (s3 != null) s3.message = s3.message.Replace("$epDescription$", Package.targetCOM.DisplayName(Package.COMVariantID));
+                s3 = Doer.Relationships.GetKOJOMessage("DisruptSleep", injectRel);
+                //s3 = Doer.Relationships.GetKOJOMessage Doer.Relationships.Personality.GetKOJOMessage("DisruptSleep", injectRel);
+                if (s3 != null)
+                {
+                    s3.collect.message = s3.collect.message.Replace("$epDescription$", Package.targetCOM.DisplayName(Package.COMVariantID));
+                    responses.Add(s3);
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{s3.collect.message}]");
+                }
             }
         }
         if (Receiver != null && Receiver.RefID != 0)
         {
-            Receiver.Relationships.GetKOJOMessage(false, this, m, injectRel);
+            var message = Receiver.Relationships.GetKOJOMessage(false, this, m, injectRel == null ? null : injectRel.Target);
+            if (message != null) responses.Add(message);
             if (Receiver.isSleeping)
             {
                 var targetRel = Receiver != Doer ? Receiver.Relationships.FindRelationshipWith(Doer) : injectRel;
                 if (targetRel != null && targetRel.Owner == Receiver)
                 {
-                    s4 = Receiver.Relationships.Personality.GetKOJOMessage("DisruptSleep", targetRel);
-                    if (s4 != null) s4.message = s4.message.Replace("$epDescription$", Package.targetCOM.DisplayName(Package.COMVariantID));
+                    s4 = Receiver.Relationships.GetKOJOMessage("DisruptSleep", targetRel);
+                    if (s4 != null)
+                    {
+                        s4.collect.message = s4.collect.message.Replace("$epDescription$", Package.targetCOM.DisplayName(Package.COMVariantID));
+                        responses.Add(s4);
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{s4.collect.message}]");
+                    }
                 }
             }
         }
-
-        if (s3 != null && s3.message.Length > 0)
-        {
-            m.messages_kojo.Add(s3);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{s3.message}]");
-        }// 
-        if (s4 != null && s4.message.Length > 0)
-        {
-            m.messages_kojo.Add(s4);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{s4.message}]");
-        }// 
+        return responses;
     }
 
-
-
-
-    public void LogMessage_Interrupt(bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
+    /// <summary>
+    /// Logs kojo automatically
+    /// </summary>
+    public List<KojoCollector> LogMessage_Join(Character_Trainable injectChara, List<int> reactedRefs,  bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        //List<Character_Trainable> actors, string s
-        //.Actors, ep.Description_Ongoing
-        if (Doer.isTimeStopped) return;
-        /*
-        var s = Description_Ongoing;
-        if (s.Length > 0)
-        {
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_after.Add(s);
-        }*/
-        Debug.Log("EP LogMessage_Interrupt");
-
-        if (Doer != null && Doer.RefID != 0)
-        {
-            Character_Relationship rel = null;
-
-            if (injectChara != null && Doer != injectChara) rel = Doer.Relationships.FindRelationshipWith(injectChara);
-            else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
-
-            Doer.Relationships.GetKOJOMessage_Ongoing(rightAlign, true, this, m, rel);
-        }
-        if (Receiver != null && Receiver.RefID != 0)
-        {
-            Character_Relationship rel = null;
-
-            if (injectChara != null && Receiver != injectChara) rel = Receiver.Relationships.FindRelationshipWith(injectChara);
-            else if (Receiver != Doer) rel = Receiver.Relationships.FindRelationshipWith(Doer);
-
-            Receiver.Relationships.GetKOJOMessage_Ongoing(rightAlign, false, this, m, rel);
-        }
-    }
-
-
-    public bool LogMessage_Join(Character_Trainable injectChara, List<int> reactedRefs,  bool rightAlign = false, MessageCollect m = null)
-    {
-        if (m == null) m = this.job.m;
-        if (Doer.isTimeStopped) return false;
-        if (injectChara == null) return false;
+        var responses = new List<KojoCollector>();
+        if (Doer.isTimeStopped) return responses;
+        if (injectChara == null) return responses;
 
         var returnval = false;
 
         if (Doer != null && Doer.RefID != 0 && Doer != injectChara && !reactedRefs.Contains(Doer.RefID))
         {
-            var rel = Doer.Relationships.FindRelationshipWith(injectChara);
+            //var rel = Doer.Relationships.FindRelationshipWith(injectChara);
             //else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
-            Doer.Relationships.GetKOJOMessage_Join(true, rightAlign, this, m, rel);
+            //Doer.Relationships.GetKOJOMessage_Join(true, rightAlign, this, m, rel);
+            var kol = new KojoCollector(Doer, targetCOM.tooltipID, "_Join");
+            kol.LoadEP(this, injectChara);
+            var mm = Doer.Relationships.GetKOJOMessage_Suffix(kol, rightAlign, m);
+            //var mm = Doer.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Join", injectChara, m);
+            //if (mm != null) m.messages_before.Add(mm.message);
+            if (mm != null) responses.Add(mm);
+
             returnval = true;
             if (injectChara != scr_System_CampaignManager.current.Player) reactedRefs.Add(Doer.RefID);
         }
@@ -1327,8 +1056,15 @@ public class EvaluationPackage
             }
             else
             {
-                var rel = Receiver.Relationships.FindRelationshipWith(injectChara);
-                Receiver.Relationships.GetKOJOMessage_Join(false, rightAlign, this, m, rel);
+                //var rel = Receiver.Relationships.FindRelationshipWith(injectChara);
+                //Receiver.Relationships.GetKOJOMessage_Join(false, rightAlign, this, m, rel);
+                //var mm = Receiver.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Join", injectChara, m);
+                //if (mm != null) m.messages_before.Add(mm.message);
+                var kol = new KojoCollector(Receiver, targetCOM.tooltipID, "_Join");
+                kol.LoadEP(this, injectChara);
+                var mm = Doer.Relationships.GetKOJOMessage_Suffix(kol, rightAlign, m);
+                if (mm != null) responses.Add(mm);
+
                 returnval = true;
                 if (injectChara != scr_System_CampaignManager.current.Player) reactedRefs.Add(Receiver.RefID);
             }
@@ -1338,103 +1074,197 @@ public class EvaluationPackage
         {   // if contains playerref, then player join event already printed _joined kojo
             if (Doer != null && Doer.RefID != 0 && Doer != injectChara)
             {
-                Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Doer);
-                injectChara.Relationships.GetKOJOMessage_Suffix("_Joined", rightAlign, this, m, rel);
+                var kol = new KojoCollector(injectChara, targetCOM.tooltipID, "_Joined");
+                kol.LoadEP(this, Doer);
+                var mm = injectChara.Relationships.GetKOJOMessage_Suffix(kol, rightAlign, m);
+                if (mm != null) responses.Add(mm);
+
+
+
+                //Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Doer);
+                //injectChara.Relationships.GetKOJOMessage_Suffix( "_Joined", rightAlign, this, m, rel);
+                //var mm = injectChara.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Joined", Doer, m);
+                //if (mm != null) m.messages_before.Add(mm.message);
             }
             else if (Receiver != null && Receiver.RefID != 0 && Receiver != injectChara && Receiver != Doer)
             {
-                Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Receiver);
-                injectChara.Relationships.GetKOJOMessage_Suffix("_Joined", rightAlign, this, m, rel);
+               // Character_Relationship rel = injectChara.Relationships.FindRelationshipWith(Receiver);
+               // injectChara.Relationships.GetKOJOMessage_Suffix("_Joined", rightAlign, this, m, rel);
+                //var mm = injectChara.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Joined", Receiver, m);
+                //if (mm != null) m.messages_before.Add(mm.message);
+                
+                var kol = new KojoCollector(injectChara, targetCOM.tooltipID, "_Joined");
+                kol.LoadEP(this, Receiver);
+                var mm = injectChara.Relationships.GetKOJOMessage_Suffix(kol, rightAlign, m);
+                if (mm != null) responses.Add(mm);
+
+
             }
         }
-
-        return returnval;
+        return responses;
     }
 
-    public void LogMessage_Begin(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
+    /// <summary>
+    /// Logs kojo automatically
+    /// </summary>
+    public List<KojoCollector> LogMessage_Begin(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
     {
         if (m == null) m = this.job.m;
-        if (Doer.isTimeStopped) return;
+        List<KojoCollector> results = new List<KojoCollector>();
+        if (Doer.isTimeStopped) return results;
 
         if (Doer != null && Doer.RefID != 0)
         {
-            Character_Relationship rel = null;
-            if (injectChara != null && Doer != injectChara) rel = Doer.Relationships.FindRelationshipWith(injectChara);
-            else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
+            if (injectChara != null && Doer != injectChara)
+            {
+                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Begin", this, m, injectChara);
+                if (message != null) results.Add(message);
 
-            Doer.Relationships.GetKOJOMessage_Begin(true, rightAlign, this, m, rel);
+            }
+            else if (Receiver != null && Receiver != Doer)
+            {
+                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Begin", this, m, Receiver);
+                if (message != null) results.Add(message);
+            }
+
         }
         if (Receiver != null && Receiver.RefID != 0)
         {
-            Character_Relationship rel = null;
-
-            if (injectChara != null && Receiver != injectChara) rel = Receiver.Relationships.FindRelationshipWith(injectChara);
-            else if (Receiver != Doer) rel = Receiver.Relationships.FindRelationshipWith(Doer);
-
-            Receiver.Relationships.GetKOJOMessage_Begin(false, rightAlign, this, m, rel);
+            if (injectChara != null && Receiver != injectChara) 
+            {
+                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Begin", this, m, injectChara);
+                if (message != null) results.Add(message);
+            }
+            else if (Receiver != Doer)
+            {
+                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Begin", this, m, Doer);
+                if (message != null) results.Add(message);
+            }
         }
+        return results;
     }
-    public void LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
+
+    /// <summary>
+    /// Logs kojo automatically
+    /// </summary>
+    public List<KojoCollector> LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
     {
         if (m == null) m = this.job.m;
         //List<Character_Trainable> actors, string s
         //.Actors, ep.Description_Ongoing
-        if (Doer.isTimeStopped) return;
+        List<KojoCollector> results = new List<KojoCollector>();
+        if (Doer.isTimeStopped) return results;
 
         if (Doer != null && Doer.RefID != 0)
         {
+            /*
             Character_Relationship rel = null;
 
             if (injectChara != null && Doer != injectChara) rel = Doer.Relationships.FindRelationshipWith(injectChara);
             else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
 
-            Doer.Relationships.GetKOJOMessage_Ongoing(rightAlign, true, this, m, rel);
+            Doer.Relationships.GetKOJOMessage_Ongoing(rightAlign, true, this, m, rel);*/
+
+            if (injectChara != null && Doer != injectChara)
+            {
+                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, m, injectChara);
+                if (message != null) results.Add(message);
+                /*
+                 * 
+        if (message != null && message.message.Length > 0)
+        {
+            if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
+            m.messages_after.Add(rightAlign ? $"<align=\"right\">{message.message}</align>" : message.message);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
+            return true;
+        }
+                 
+                 */
+            }
+            else if (Receiver != null && Receiver != Doer)
+            {
+                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, m, Receiver);
+                if (message != null) results.Add(message);
+            }
         }
         if (Receiver != null && Receiver.RefID != 0)
         {
+            /*
             Character_Relationship rel = null;
 
             if (injectChara != null && Receiver != injectChara) rel = Receiver.Relationships.FindRelationshipWith(injectChara);
             else if (Receiver != Doer) rel = Receiver.Relationships.FindRelationshipWith(Doer);
 
             Receiver.Relationships.GetKOJOMessage_Ongoing(rightAlign, false, this, m, rel);
+            */
+
+            if (injectChara != null && Receiver != injectChara)
+            {
+                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, m, injectChara);
+                if (message != null) results.Add(message);
+            }
+            else if (Receiver != Doer)
+            {
+                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, m, Doer);
+                if (message != null) results.Add(message);
+            }
         }
+        return results;
     }
 
     /// <summary>
     /// This one should be allowed to repeat on every player command input, so there is less check
     /// </summary>
     /// <param name="ep"></param>
-    public void LogMessage_Begin_Ongoing(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
+    public string LogMessage_Begin_Ongoing(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        if (Doer.isTimeStopped) return;
+        if (Doer.isTimeStopped) return "";
 
         var s1 = $"{Description_Ongoing}";
         if (s1.Length > 0)
         {
-            if (rightAlign) s1 = "<align=\"right\">" + s1 + "</align>";
-            m.messages_before.Add(s1);
+            return s1;
         }
+        return "";
     }
 
-    public void LogMessage_Climax(MessageCollect m = null)
+    /// <summary>
+    /// Logs kojo automatically
+    /// </summary>
+    public List<KojoCollector> LogMessage_Climax(MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        if (Doer != null && Doer.Climaxing) { }
-        else if (Receiver != null && Receiver.Climaxing) { }
-        else return;
+        var results = new List<KojoCollector>();
 
-        if (Doer != null && Doer.RefID != 0) Doer.Relationships.GetKOJOMessage_Climax(true, this, m);
-        if (Receiver != null && Receiver.RefID != 0) Receiver.Relationships.GetKOJOMessage_Climax(false, this, m);
+        if (Doer != null && Doer.RefID != 0 && Doer.Climaxing && Doer.Body.isClimaxing())
+        {
+            var kol = new KojoCollector(Doer, this.targetCOM.ID, "_Climax");
+            kol.LoadEP(this, this.Receiver != null ? this.Receiver : this.Doer);
+            var msg = Doer.Relationships.GetKOJOMessage_Suffix(kol, false, m);
+
+            //if (ep.targetCOM != null) message2.message = ep.targetCOM.Replace(message2.message);
+            if (msg != null) results.Add(msg);
+            //Doer.Relationships.GetKOJOMessage_Climax(true, this, m);
+        }
+        if (Receiver != null && Receiver.RefID != 0 && Receiver.Climaxing && Receiver.Body.isClimaxing())
+        {
+            var kol = new KojoCollector(Receiver, this.targetCOM.ID, "_Climax");
+            kol.LoadEP(this, this.Doer != null ? this.Doer : this.Receiver);
+            var msg = Receiver.Relationships.GetKOJOMessage_Suffix(kol, false, m);
+            if (msg != null) results.Add(msg);
+
+            // Receiver.Relationships.GetKOJOMessage_Climax(false, this, m);
+        }
+        return results;
     }
 
 
-    public void LogMessage_Begin_Refuse(bool rightAlign = false, MessageCollect m = null)
+    public string LogMessage_Begin_Refuse(bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        if (Doer.isTimeStopped) return;
-        if (response >= Memory_Response.Accept) return;
+        if (Doer.isTimeStopped) return "";
+        if (response >= Memory_Response.Accept) return "";
         if (Doer != null)
         {
             var s = this.job.ep_refuse;
@@ -1449,30 +1279,30 @@ public class EvaluationPackage
 
             if (s.Length > 0)
             {
-                if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-                m.messages_before.Add(s);
+                return s;
             }
         }
+        return "";
     }
 
 
-    public void LogMessage_Begin_Abort(bool rightAlign = false, MessageCollect m = null)
+    public string LogMessage_Begin_Abort(bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        if (Doer.isTimeStopped) return;
+        if (Doer.isTimeStopped) return "";
 
         var s = Description_Remove;
         if (s.Length > 0)
         {
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_before.Add(s);
+            return s;
         }
+        return "";
     }
 
     //public Tuple<int, string> MessagesOngoing { get { return messages_ongoing.Count > 0 ? String.Join("\n", messages_ongoing) : ""; } }
 
 
-    public void LogMessage_After(bool rightAlign = false, MessageCollect m = null)
+    public string LogMessage_After(bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
         var s = Description_After;
@@ -1486,22 +1316,10 @@ public class EvaluationPackage
 
         if (s.Length > 0)
         {
-            //Debug.LogError($"LogMessage_After with s > 0 {s}");
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_after.Add(s);
+            return s;
         }
-        else if (rightAlign)
-        {
-            LogMessage_Ongoing(rightAlign, m);
-        }
+        return "";
 
-        /*
-        else if (ep.Actors != null)
-        {
-            List<string> s2 = new List<string>();
-            foreach (var a in ep.Actors) if (a != null) s2.Add(a.FirstName);
-            messages_after.Add(String.Join(", ", s2) + " finished doing " + ep.targetCOM.DisplayName(ep.VariantID));
-        }*/
     }
 
 
@@ -1588,58 +1406,8 @@ public class EvaluationPackage
         }
     }
 
-    public class Modifiers
-    {
-        public Dictionary<int, Dictionary<string, int>> modifiers = new Dictionary<int, Dictionary<string, int>>();
+    
 
-        public Modifiers(){
-        }
-
-        public void AddModifier(int charaRef, string key, int count)
-        {
-            if (!modifiers.ContainsKey(charaRef)) modifiers.Add(charaRef, new Dictionary<string, int>());
-
-            if (modifiers[charaRef].ContainsKey(key)) modifiers[charaRef][key] += count;
-            else modifiers[charaRef].Add(key, count);
-        }
-        public List<string> GetModifiersByRefID(int refID)
-        {
-            List<string> list = new List<string>();
-            if (!modifiers.ContainsKey(refID)) return list;
-            foreach (var mod in modifiers[refID]) list.Add(mod.Key + (mod.Value == 0 ? "" : mod.Value.ToString("+0;-#")));
-            return list;
-        }
-
-        public List<string> GetAllModifiers()
-        {
-            List<string> list = new List<string>();
-            foreach (var modlist in modifiers)
-            {
-                var name = scr_System_CampaignManager.current.FindInstanceByID(modlist.Key);
-                List<string> list2 = new List<string>();
-                if (modlist.Value.Count < 1) continue;
-                foreach (var mod in modlist.Value)
-                {
-                    list2.Add($"{mod.Key}{(mod.Value == 0 ? "" : mod.Value.ToString("+0;-#"))}");
-                }
-                list.Add($"{name.FirstName}: {String.Join(" ", list2)}");
-            }
-            return list;
-        }
-
-        public void MergeModifiers(Modifiers m)
-        {
-            foreach(var kvp_i in m.modifiers)
-            {
-                foreach (var j in kvp_i.Value) AddModifier(kvp_i.Key, j.Key, j.Value);
-            }
-        }
-
-        public void Clear()
-        {
-            this.modifiers.Clear();
-        }
-    }
 
     /// <summary>
     /// All variables are nullable

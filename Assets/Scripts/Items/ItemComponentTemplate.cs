@@ -55,6 +55,8 @@ public class ItemComponentTemplate
     public ItemComponentTemplate_Degradable comp_Degradable = null;
 
     public ItemComponentTemplate_Furniture Comp_Furniture = null;
+
+    public ItemComponentTemplate_Recorder Comp_Recorder = null;
     public ItemComponent_Base Instantiate(Item_Base parent)
     {
         switch (compType)
@@ -71,7 +73,10 @@ public class ItemComponentTemplate
                 return new ItemComponent_Weapon(parent);
             case "ItemComponent_Defense":
                 return new ItemComponent_Defense(parent);
-
+            case "ItemComponent_Recorder":
+                return new ItemComponent_Recorder(parent);
+            case "ItemComponent_Records":
+                return new ItemComponent_Records(parent);
             default:
                 return null;
 

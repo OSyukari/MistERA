@@ -2,6 +2,7 @@
     "COMs": {
         "list": [
             {
+                "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_doggy",
                 "ActionPackageClass": "ActionPackage_Sex",
                 "categoryTags":["com_category_v"],

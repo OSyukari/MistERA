@@ -134,9 +134,6 @@ public class SpineAnimator41 : SpineAnimatorBase
             loader.Animation.Skeleton.SetToSetupPose();
         }
 
-
-        while (loader.Animation == null) yield return 0;
-
         if (loader.idleAnimName != idleAnimName)
         {
             refresh = true;

@@ -27,6 +27,8 @@ public enum  Memory_Response
 
 public class Memory_Entry
 {
+
+    public bool noDisplay = false;
     public DateTime StartTime = DateTime.MinValue;
     [JsonIgnore][NonSerialized] public bool MergeWithAll = false;
     public DateTime EndTime = DateTime.MinValue;
@@ -520,10 +522,10 @@ public class Memory_Entry
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
-    public bool Tick(TimeSpan t)
+    public bool Tick(int t)
     {
         if (Tags.Contains("important")) duration = -1;
-        else if (duration > 0) duration = Math.Max(duration - t.Minutes, 0);
+        else if (duration > 0) duration = Math.Max(duration - t, 0);
 
         return duration == 0;
     }

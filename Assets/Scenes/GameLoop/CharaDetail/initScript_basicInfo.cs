@@ -159,4 +159,73 @@ public class initScript_basicInfo : MonoBehaviour
         //if (ii == 0) statusGrid.transform.GetChild(0).gameObject.SetActive(true);
         //else statusGrid.transform.GetChild(0).gameObject.SetActive(false);
     }
+    public class button_resetPortraitManager : ButtonValidator, I_ButtonClickable
+    {
+        scr_SelectableText text;
+        new scr_Menu_CharaDetail parent;
+        bool clicked = false;
+        public button_resetPortraitManager(scr_Menu_CharaDetail parent, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+        }
+
+        public override bool IsButtonValid()
+        {
+            if (clicked) return false;
+            if (parent.chara == null)
+            {
+                this.tooltip = "parent canvas chara is null";
+                return false;
+            }
+            return parent.chara.PortraitManager.CanResetPortrait(out tooltip);
+        }
+
+        public void OnClickButton()
+        {
+            //parent.currentHealthTab = target;
+            this.tooltip = "portrait reset!";
+            clicked = true;
+            parent.chara.PortraitManager.ResetPortraits();
+            Coroutine co = parent.StartCoroutine(parent.chara.PortraitManager.CacheInternal(parent.chara));
+            // call for ex watcher to re-update
+            scr_System_CampaignManager.current.NotifyCurrentTargetEXReset();
+        }
+    }
+
+
+    public scr_canvas_changeportrait canvas_changeportrait;
+    public class button_changePortraitManager : ButtonValidator, I_ButtonClickable
+    {
+        scr_SelectableText text;
+        new scr_Menu_CharaDetail parent;
+        public button_changePortraitManager(scr_Menu_CharaDetail parent, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+        }
+
+        public override bool IsButtonValid()
+        {
+            if (parent.chara == null)
+            {
+                this.tooltip = "parent canvas chara is null";
+                return false;
+            }
+            return true;
+        }
+
+        void OnDestry()
+        {
+            parent.InitializeWithArgument(parent.chara.RefID);
+        }
+
+        public void OnClickButton()
+        {
+            //parent.currentHealthTab = target;
+            scr_canvas_changeportrait cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.initScript_BasicInfo.canvas_changeportrait).GetComponent<scr_canvas_changeportrait>();
+            cvs.InitializeWithArgument(this.parent.chara.RefID, OnDestry);
+
+        }
+    }
 }

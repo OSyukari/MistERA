@@ -250,6 +250,72 @@
 
             "description_ongoing":{ "Entries":[{"texts":["com_furniture_combat_sim_description_ongoing_1"]}], "keepLooking":false },
             "description_begin":{ "Entries":[{"texts":["com_furniture_combat_sim_description_begin_1"]}], "keepLooking":false }
+        },
+        {
+            "ID": "com_furniture_mealPrep",
+            "ActionPackageClass": "ActionPackage_Interaction",
+            "displayName": "com_furniture_mealPrep_displayName",
+            "timeScale": 15,
+            "comTags": [
+                "furniture", 
+                "job",
+                "cooking",
+                "beginMealPrep"
+            ],
+            "requirements":{  
+                "requirement":{ 
+                    "treatReceiverAsDoer": true 
+                }
+            },
+            "variants": [
+                {
+                    "requirements": {
+                        "requirement": {
+                            "doerCount": 1,
+                            "req_Doers":{
+                                "allowPlayer":false
+                            }
+                        },
+                        "requireFactionExisting": {
+                            "requireCanPrepMeal": true
+                        }  
+                    },
+                    "displayName": "com_furniture_mealPrep_displayName_2"
+                },
+                {
+                    "requirements": {
+                        "requirement": {
+                            "doerCount": 1,
+                            "req_Doers":{
+                                "allowNPC":false
+                            }
+                        },
+                        "requireFactionExisting": {
+                            "requireCanPrepMeal": false
+                        }  
+                    },
+                    "displayName": "com_furniture_mealPrep_displayName_1"
+                },
+                {
+                    "requirements": {
+                        "requirement": {
+                            "doerCount": 99
+                        },
+                        "requireFactionExisting": {
+                            "requireCanPrepMeal": true
+                        }  
+                    },
+                    "displayName": "com_furniture_mealPrep_displayName_3"
+                }
+            ],
+
+            "AcceptanceCheck": {
+                "baseAcceptanceValue": 0
+            },
+            "DifficultyCheck": { "baseD20Check": 0 },
+
+            "description_ongoing":{ "Entries":[{"texts":["prepping meals"]}], "keepLooking":false },
+            "description_begin":{ "Entries":[{"texts":["starts prepping meals"]}], "keepLooking":false }
         }
     ]
     },
@@ -278,7 +344,13 @@
                 "com_furniture_combat_sim_displayName_1":"模拟战斗",
                 "com_furniture_combat_sim_displayName_2":"一同模拟战斗",
                 "com_furniture_combat_sim_description_ongoing_1":"$doer.firstname$正在模拟战",
-                "com_furniture_combat_sim_description_begin_1":"$doer.firstname$开始模拟战"
+                "com_furniture_combat_sim_description_begin_1":"$doer.firstname$开始模拟战",
+
+                "com_furniture_mealPrep":"准备餐点。将下个小时设为饭点。",
+                "com_furniture_mealPrep_displayName":"准备餐点",
+                "com_furniture_mealPrep_displayName_1":"准备餐点（特殊）",
+                "com_furniture_mealPrep_displayName_2":"准备餐点",
+                "com_furniture_mealPrep_displayName_3":"一起准备餐点"
                 
             },
             "en-us":

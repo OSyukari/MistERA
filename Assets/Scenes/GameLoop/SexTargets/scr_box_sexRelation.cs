@@ -41,7 +41,7 @@ public class scr_box_sexRelation : MonoBehaviour
 
         foreach (var receiverRef in rel.receiver) receiverText += receiverRef.FirstName + "\n";
 
-        com.text = rel.targetCOM.DisplayName(rel.doer, rel.receiver, true);
+        com.text = rel.targetCOM.DisplayName(rel.job, rel.doer, rel.receiver, true);
         doer.text = doerText;
         receiver.text = receiverText;
     }

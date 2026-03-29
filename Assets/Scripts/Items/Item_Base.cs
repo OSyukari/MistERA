@@ -142,6 +142,14 @@ public class Item_Base
                 var compTooltips = new List<string>();
                 foreach (var comp in this.itemComps_Template) if (comp.Tooltip.Length > 0) compTooltips.Add(comp.Tooltip);
                 _tooltipCache = LocalizeDictionary.QueryThenParse(id + "_tooltip", "no_tooltip");
+
+                if (isFood)
+                {
+                    if (isFoodAdditive) _tooltipCache += $"\n{LocalizeDictionary.QueryThenParse("ItemComponent_Ingestible_additive_tooltip")}";
+                    else if (isFoodConsumable) _tooltipCache += $"\n{LocalizeDictionary.QueryThenParse("ItemComponent_Ingestible_token_tooltip")}"; 
+                    else _tooltipCache += $"\n{LocalizeDictionary.QueryThenParse("ItemComponent_Ingestible_nontoken_tooltip")}";
+                }
+
                 if (compTooltips.Count > 0) _tooltipCache += (_tooltipCache.Length > 0 ? "\n\n" : "") + String.Join("\n", compTooltips);// + (compTooltips.Count > 0 ? "\n\n"+  : "");
             }
             return _tooltipCache;
@@ -184,7 +192,33 @@ public class Item_Base
 
     [JsonIgnore] public bool isTokenItem { get { 
             return this.Tags.Contains("food_meal") && this.itemComps_Template.Find(x => x.compType == "ItemComponent_Degradable") != null; 
-        } }
+        }
+    }
+    [JsonIgnore]
+    public bool isFood
+    {
+        get
+        {
+            return this.itemComps_Template.Find(x => x.compType == "ItemComponent_Ingestible") != null;
+        }
+    }
+
+    [JsonIgnore]
+    public bool isFoodAdditive
+    {
+        get
+        {
+            return isFood && Tags.Contains("additive");
+        }
+    }
+    [JsonIgnore]
+    public bool isFoodConsumable
+    {
+        get
+        {
+            return isFood && isTokenItem && !isFoodAdditive;
+        }
+    }
 
 
     public void OnAfterDeserialize()

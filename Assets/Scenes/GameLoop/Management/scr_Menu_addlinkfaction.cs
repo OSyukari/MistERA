@@ -21,7 +21,7 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
         {
             // TODO INSTANTIATE BUTTON
             if (faction == sourceFaction) continue;
-            else if (faction.MainExit == null) continue;
+            else if (faction.MainExit == null && (faction.salesInventory == null || faction.salesInventory.entries.Count < 1)) continue;
             MakeFactionButton(faction);
         }
         ValidateAll();

@@ -131,13 +131,12 @@ public class SpineAnimator42 : SpineAnimatorBase
             // Set default skin that has any mesh data to prevent Degenerate Triangle error.
             foreach (Skin skin in dataloader.skeletonData.Skins)
             {
-
                 if (CheckSkinMesh(skin)) loader.Animation.Skeleton.SetSkin(skin.Name);
             }
             // Optional: play animation
             loader.Animation.Skeleton.SetToSetupPose();
         }
-        while (loader.Animation == null) yield return 0;
+
 
         if (loader.idleAnimName != idleAnimName)
         {

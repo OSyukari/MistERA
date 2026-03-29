@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+using static UnityEngine.GraphicsBuffer;
 
 public enum PrideLevel
 {
@@ -356,21 +358,27 @@ public class RelationshipManager
         if (msg != null)
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("[" + Owner.FirstName + "] -> [" + c.FirstName + "] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
-            if (Owner.RefID == 0 || c.RefID == 0)
-            {
-                msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
-                scr_UpdateHandler.current.AppendKojoMessage(msg);
-            }
-            else if (scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
-            {
-                msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
-                scr_UpdateHandler.current.AppendKojoMessage_NonVisible(msg);
-            }
+            msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
+
+            bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
+
+            msg.AddRelevantActor(Owner);
+            msg.AddRelevantActor(c);
+
+            scr_UpdateHandler.current.AppendKojoMessage(msg, Owner.RefID == 0 || c.RefID == 0, recording ? Owner.CurrentRoom : null);
+
             return true;
         }
         return false;
 
     }
+
+    public void ClearEPCache()
+    {
+        foreach (var rel in relationships) rel.Value.ClearEPCache();
+        foreach (var rel in GenericRelationship) rel.Value.ClearEPCache();
+    }
+
 
     /// <summary>
     /// Conditions are pre-filtered in Map pre CheckInterrupt calls <br/>
@@ -387,10 +395,16 @@ public class RelationshipManager
         {
             // for each ep check interrupt
         }
-        if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.message != null && msg.message.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+        if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.message != null && msg.message.Length > 0)
         {
-            msg.message = $"<align=\"right\">{msg.message.Replace("$self$", Owner.FirstName)}</align>";//.Replace("$target$", c.FirstName);
-            scr_UpdateHandler.current.AppendKojoMessage(msg);
+            msg.message = $"<align=\"right\">{msg.message.Replace("$self$", Owner.FirstName)}</align>";//;
+            bool visible = scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID);
+            bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
+
+            msg.AddRelevantActor(Owner);
+            msg.AddRelevantActors(ap.Actors);
+
+            scr_UpdateHandler.current.AppendKojoMessage(msg, visible, recording ? Owner.CurrentRoom : null);
             return true;
         }
         return false;
@@ -458,35 +472,6 @@ public class RelationshipManager
 
         if (exp != null) exp.AddRelations(ownerRef, targetRef, relID, (int)amount);
     }
-    /// <summary>
-    /// This call will auto log collected message into m
-    /// </summary>
-    /// <param name="isDoer"></param>
-    /// <param name="ep"></param>
-    /// <param name="m"></param>
-    /// <returns></returns>
-    public void GetKOJOMessage(bool isDoer, EvaluationPackage ep, MessageCollect m, Character_Relationship injectRel = null)
-    {
-        if (Owner.RefID == 0) return;
-        Character_Relationship rel = null;
-        if (injectRel != null) rel = injectRel;
-        else if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
-        else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
-
-        string cleanedID = ep.targetCOM.tooltipID;
-        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
-
-        var message = rel == null ? this.Personality.GetKOJOMessage(cleanedID, Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
-            : this.Personality.GetKOJOMessage(isDoer, ep, rel);
-
-        if (message != null && message.message.Length > 0)
-        {
-            if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
-            m.messages_kojo.Add(message);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
-        }
-    }
-
     public List<Stat_Modifier> moodlets = new List<Stat_Modifier>();
     public void RefreshMoodlets(List<Character_Trainable> cs)
     {
@@ -516,163 +501,143 @@ public class RelationshipManager
     }
 
 
-    public MessageCollect_KojoEntry GetKOJOMessage_Tryjoin(ActionPackage ep, Character_Trainable c, MessageCollect m = null)
+    /// <summary>
+    /// This call will auto log collected message into m
+    /// </summary>
+    /// <param name="isDoer"></param>
+    /// <param name="ep"></param>
+    /// <param name="m"></param>
+    /// <returns></returns>
+    public KojoCollector GetKOJOMessage(bool isDoer, EvaluationPackage ep, MessageCollect m, Character_Trainable injectRel = null)
     {
         if (Owner.RefID == 0) return null;
-        var rel = Owner.Relationships.FindRelationshipWith(c);
+
+        if (injectRel == null)
+        {
+            if (isDoer) injectRel = ep.Receiver != null ? ep.Receiver : ep.Doer;
+            else injectRel = ep.Doer;
+        }
+
+        KojoCollector kol = new KojoCollector(Owner, ep.targetCOM.tooltipID);
+        kol.LoadEP(ep, injectRel);
+
+        MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);
+        /*
+        Character_Relationship rel = null;
+        if (injectRel != null) rel = injectRel;
+        else if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
+        else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
 
         string cleanedID = ep.targetCOM.tooltipID;
         if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
 
-        MessageCollect_KojoEntry message = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}_Tryjoin", Owner, new List<string>(), new List<EvaluationPackage>())
-            : this.Personality.GetKOJOMessage_Tryjoin(ep, rel);
-
+        var message = rel == null ? this.Personality.GetKOJOMessage(cleanedID, Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
+            : this.Personality.GetKOJOMessage(isDoer, ep, rel);
+        */
         if (message != null && message.message.Length > 0)
         {
             if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
-            //m.messages_before.Add(message.message);
-            //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
-            return message;
+            kol.collect = message;
+            return kol;
+            m.messages_kojo.Add(message);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
         }
         else return null;
     }
 
+    public KojoCollector GetKOJOMessage(string eventID, Character_Relationship rel)
+    {
+        if (Owner.RefID == 0) return null;
+        KojoCollector kol = new KojoCollector(Owner, eventID);
+        kol.LoadRel(rel);
+        MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);
+        if (message != null)
+        {
+            kol.collect = message;
+            return kol;
+        }
+        return null;
+    }
     public MessageCollect_KojoEntry GetKOJOMessage_Suffix(string ID, string suffix, Character_Trainable c, MessageCollect m = null)
     {
         if (Owner.RefID == 0) return null;
         var rel = Owner.Relationships.FindRelationshipWith(c);
 
+        KojoCollector kol = new KojoCollector(Owner, ID, suffix);
+        kol.LoadRel(rel);
+
+
+        MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);
+
+        /*
         string cleanedID = ID;
         if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
 
         MessageCollect_KojoEntry message = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}{suffix}", Owner, new List<string>(), new List<EvaluationPackage>())
             : this.Personality.GetKOJOMessage_Suffix(ID, suffix, rel);
-
+        */
         if (message != null && message.message.Length > 0)
         {
-            //m.messages_before.Add(message.message);
             //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
+            kol.collect = message;
             return message;
         }
         else return null;
     }
 
-    public bool GetKOJOMessage_Suffix(string suffix, bool rightAlign, EvaluationPackage ep, MessageCollect m, Character_Relationship injectRel)
+    public KojoCollector GetKOJOMessage_Suffix(KojoCollector kol, bool rightAlign, MessageCollect m)
     {
-        if (Owner.RefID == 0) return false;
+        if (Owner.RefID == 0) return null;
 
+        MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);
+        /*
         string cleanedID = ep.targetCOM.tooltipID;
         if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
 
         MessageCollect_KojoEntry message = injectRel == null ? this.Personality.GetKOJOMessage($"{cleanedID}{suffix}", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
             : this.Personality.GetKOJOMessage_Suffix(suffix, ep.isDoer(Owner), ep.isReceiver(Owner), ep, injectRel);
+        */
+        if (true || scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.selfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
+
+        if (message != null && message.message.Length > 0)
+        {
+            if (kol.targetCOM != null) message.message = kol.targetCOM.Replace(message.message);
+            // if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
+            kol.collect = message;
+            return kol;
+            //m.messages_before.Add(rightAlign ? $"<align=\"right\">{message.message}</align>" : message.message);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
+            //return true;
+        }
+        else return null;
+    }
+    public KojoCollector GetKOJOMessage_Suffix(string suffix, EvaluationPackage ep, MessageCollect m, Character_Trainable injectRel)
+    {
+        if (Owner.RefID == 0) return null;
+
+        KojoCollector kol = new KojoCollector(Owner, ep.targetCOM.tooltipID, suffix);
+        kol.LoadEP(ep, injectRel);
+
+        MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);
+        /*
+        string cleanedID = ep.targetCOM.tooltipID;
+        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
+
+        MessageCollect_KojoEntry message = injectRel == null ? this.Personality.GetKOJOMessage($"{cleanedID}{suffix}", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
+            : this.Personality.GetKOJOMessage_Suffix(suffix, ep.isDoer(Owner), ep.isReceiver(Owner), ep, injectRel);
+        */
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.selfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
 
         if (message != null && message.message.Length > 0)
         {
             if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
-            m.messages_before.Add(rightAlign ? $"<align=\"right\">{message.message}</align>" : message.message);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
-            return true;
+            //m.messages_before.Add(rightAlign ? $"<align=\"right\">{message.message}</align>" : message.message);
+            //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
+            kol.collect = message;
+            return kol;
         }
-        else return false;
+        else return null;
     }
-    public bool GetKOJOMessage_Join(bool isDoer, bool rightAlign, EvaluationPackage ep, MessageCollect m, Character_Relationship injectRel = null)
-    {
-        if (Owner.RefID == 0) return false;
-        Character_Relationship rel = null;
-        if (injectRel != null) rel = injectRel;
-        else if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
-        else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
-
-        string cleanedID = ep.targetCOM.tooltipID;
-        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
-
-        MessageCollect_KojoEntry message = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}_Join", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
-            : this.Personality.GetKOJOMessage_Join(isDoer, ep, rel);
-
-        if (message != null && message.message.Length > 0)
-        {
-            if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
-            m.messages_before.Add(rightAlign ? $"<align=\"right\">{message.message}</align>" : message.message);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
-            return true;
-        }
-        else return false;
-    }
-    public bool GetKOJOMessage_Begin(bool isDoer, bool rightAlign, EvaluationPackage ep, MessageCollect m, Character_Relationship injectRel = null)
-    {
-        if (Owner.RefID == 0) return false;
-        Character_Relationship rel = null;
-        if (injectRel != null) rel = injectRel;
-        else if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
-        else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
-
-        string cleanedID = ep.targetCOM.tooltipID;
-        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
-
-        MessageCollect_KojoEntry message = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}_Begin", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
-            : this.Personality.GetKOJOMessage_Begin(isDoer, ep, rel);
-
-        if (message != null && message.message.Length > 0)
-        {
-            if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
-            m.messages_before.Add(rightAlign ? $"<align=\"right\">{message.message}</align>" : message.message);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
-            return true;
-        }
-        else return false;
-    }
-
-    public bool GetKOJOMessage_Ongoing(bool rightAlign, bool isDoer, EvaluationPackage ep, MessageCollect m, Character_Relationship injectRel = null)
-    {
-        if (Owner.RefID == 0) return false;
-        Character_Relationship rel = null;
-        if (injectRel != null) rel = injectRel;
-        else if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
-        else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
-
-        string cleanedID = ep.targetCOM.tooltipID;
-        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
-
-       // Debug.Log($"GetKOJOMessage_Ongoing {cleanedID}, rel null ? {rel == null}");
-
-
-        MessageCollect_KojoEntry message = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}_Ongoing", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
-            : this.Personality.GetKOJOMessage_Ongoing(isDoer, ep, rel);
-
-        if (message != null && message.message.Length > 0)
-        {
-            if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
-            m.messages_after.Add(rightAlign ? $"<align=\"right\">{message.message}</align>" : message.message);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
-            return true;
-        }
-        else return false;
-    }
-
-    public void GetKOJOMessage_Climax(bool isDoer, EvaluationPackage ep, MessageCollect m)
-    {
-        if (Owner.RefID == 0) return;
-        if (!Owner.Climaxing) return;
-        if (!Owner.Body.isClimaxing()) return;
-        Character_Relationship rel = null;
-        if (isDoer && ep.Receiver != null) rel = FindRelationshipWith(ep.ReceiverRef);
-        else if (!isDoer && ep.Doer != null) rel = FindRelationshipWith(ep.DoerRef);
-
-        string cleanedID = ep.targetCOM.tooltipID;
-        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
-
-        var message2 = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}_Climax", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
-        : this.Personality.GetKOJOMessage(isDoer, ep, rel, true);
-
-        if (message2 != null && message2.message.Length > 0)
-        {
-            if (ep.targetCOM != null) message2.message = ep.targetCOM.Replace(message2.message);
-            m.messages_kojo_after.Add(message2);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Climax Message logged: [{message2.message} | {String.Join(" ", message2.portraitTags)}");
-        }
-    }
-
     /// <summary>
     /// Only check if relation exist, does not generate
     /// </summary>

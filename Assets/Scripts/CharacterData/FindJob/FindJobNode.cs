@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity.Jobs;
 using UnityEngine;
@@ -135,6 +136,35 @@ public class TryFindMealNode : TryFindNonJobByTagNode
     }
 }
 
+public class TryChangeLocaleNode : FindJobNode
+{
+    public TryChangeLocaleNode()
+    {
+    }
+    public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
+    {
+        // if working, currentjob is not home
+        // if not working, currentjob is home
+        // if currentjobfaction != currentlocalefaction && currentlocale is not home, go to currentjob -> specific job for rallying?
+        if (currentJobFaction == null) return false;
+        //Debug.Log($"TryChangeLocaleNode on {c.FirstName}, currentJobFaction {(currentJobFaction == null ? "null" : currentJobFaction.FactionDisplayName)}, mainexit? {(currentJobFaction.MainExit == null ? "null" : "exist")}");
+        if (currentJobFaction.MainExit == null) return false;
+        if (currentJobFaction.FactionRallyJob == null) return false;
+        if (currentJobFaction != currentLocaleFaction && !c.FactionManager.HomeFactions.Contains(currentLocaleFaction))
+        {
+            var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+            if (charaRoom.FactionOwner == null) return false;
+            if (scr_System_CampaignManager.current.Map.isConnectedFaction(charaRoom.FactionOwner.FactionOwnerRoot, currentJobFaction.FactionOwnerRoot))
+            {
+                c.ChangeCurrentJob(currentJobFaction.FactionRallyJob);
+                if (s != null) s.Add($"|trying to move toward currentjobfaction {currentJobFaction.FactionDisplayName} |");
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
 public class TryFindSexNode_Animal : FindJobNode
 {
     public TryFindSexNode_Animal()
@@ -293,10 +323,10 @@ public class TryFindNonJobByTagNode : FindJobNode
     public string tag = "";
     public bool skipPrivate = false;
     public bool shortestPathOnly = true;
-    public bool checkBlackList = false;
+    public bool checkBlackList = true;
 
     public TryFindNonJobByTagNode() { }
-    public TryFindNonJobByTagNode(string tag, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false)
+    public TryFindNonJobByTagNode(string tag, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = true)
     {
         this.tag = tag;
         this.skipPrivate = skipPrivate;

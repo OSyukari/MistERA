@@ -141,6 +141,19 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfDoer": true,
+                            "_comment": "攻方 舔肛",
+                            "extraPortraitTags": [
+                                "sex",
+                                "doer",
+                                "rimjob"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_A_doer_variant"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [

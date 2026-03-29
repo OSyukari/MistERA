@@ -127,6 +127,7 @@ public class Job_Furniture : Job
         }
         foreach (COM com in list)
         {
+          //  if (com.ParentCOM != null) continue;
             if (com.comTags.Contains("job")) hasProductionJob = true;
             if (com.requirements.requireContaining != null && com.requirements.requireContaining.isValid) isContainer = true;
         }
@@ -189,7 +190,7 @@ public class Job_Furniture : Job
         return pkgs;
     }
 
-    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false, List<string> debug = null)
+    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, List<string> debug = null)
     {
         //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
         // 2 - if actor is in room, set COM package
@@ -221,6 +222,9 @@ public class Job_Furniture : Job
         List<ActionPackage> results = new List<ActionPackage>();
         foreach(var com in possibleCOMs)
         {
+            if (!allowParent && com.childCOMs.Count > 0) continue;
+            if (!allowChild && com.ParentCOM != null) continue;
+
             Manageable.ProductionOrder po = null;
             // bool valid = false;
             /*if (com is COM_Character_Remove && this.Container != null && this.Container is JobContainer_Chara && (this.Container as JobContainer_Chara).CharaRefs)
@@ -325,7 +329,7 @@ public class Job_Furniture : Job
             // make COM package
 
 
-            var list1 = MakePackages(c);
+            var list1 = MakePackages(c, false, true);
             var list2 = MakePackagesJoinable(c);
 
             var pl1 = list1.Count > 0 ? Utility.GetRandomElement(list1) : null;
@@ -371,7 +375,7 @@ public class Job_Furniture : Job
                     actorJobComplete.Add(c.RefID);
                     return true;
                 }
-                else if( pl2.JoinAP(c))
+                else if( pl2.JoinAP(c, Memory_Response.None, true))
                 {
                     ss += "join existing pkg " + pl2.DescriptionText(c.RefID);
 
@@ -386,7 +390,6 @@ public class Job_Furniture : Job
                     ev.AppendStrings.Add("kojo_joined", empty);
                     ev.AppendStrings.Add("kojo_join_refused", empty);
                     ev.AppendStrings.Add("kojo_tryjoin", empty);
-
 
                     scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
 
@@ -409,9 +412,36 @@ public class Job_Furniture : Job
                 ss += "creating package " + pl1.DescriptionText(c.RefID);
                 return true;
             }
+            else if (actorJobComplete.Contains(c.RefID))
+            {
+                ss += "actor has completed all commands";
+                return false;
+            }
             else
             {
-                ss += "actor has not valid command or has completed all commands";
+                ss += "actor has not valid command. Adding to blacklist";
+
+                var mems = LocalizeDictionary.QueryThenParse("ui_entry_memory_blacklist");
+                mems = mems.Replace("$room$", this.ParentRoom.DisplayNameShort);
+                if (actorRefIDStorage.TryGetValue(c.RefID, out var match) && (match.comID != "" || match.tag != ""))
+                {
+                    var com = match.comID == "" ? null : scr_System_Serializer.current.MasterList.COMs.GetByID(match.comID);
+
+                    if (com != null) mems = mems.Replace("$comName$", com.DisplayName()).Replace("$comTags$", "");
+                    else mems = mems.Replace("$comName$", "").Replace("$comTags$", LocalizeDictionary.QueryThenParse(match.tag));
+                }
+                else
+                {
+                    mems = mems.Replace("$comName$", "").Replace("$comTags$", "(missing?)");
+                }
+
+                var mem = new MemInstance(new List<int>(), new List<string>(), "", -1, c.RefID, true, Memory_Response.Refuse, Memory_Attitude.Neutral, mems);
+
+                var blacklist = c.Memory.AddEntry(mem, new List<string>());
+                blacklist.roomRef = this.parentRoomID;
+                blacklist.disableRoomName = true;
+                blacklist.noDisplay = true;
+
                 return false;
             }
         }

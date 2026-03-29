@@ -158,11 +158,23 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if (this.chara != null && !isCombatBox)
         {
-            if (scr_System_CampaignManager.current.CurrentTargetRef != chara_refID)
+            if (scr_System_CampaignManager.current.displaySex)
             {
-                scr_System_CampaignManager.current.ChangeCurrentTarget(chara_refID);
+                if (scr_System_CampaignManager.current.CurrentTargetRef != chara_refID)
+                {
+                    scr_System_CampaignManager.current.ChangeCurrentTarget_Training(chara_refID);
+                }
+                else scr_System_CampaignManager.current.ChangeCurrentTarget_Training(0);
             }
-            else  scr_System_CampaignManager.current.ChangeCurrentTarget(0);
+
+            else
+            {
+                if (scr_System_CampaignManager.current.CurrentTargetRef != chara_refID)
+                {
+                    scr_System_CampaignManager.current.ChangeCurrentTarget(chara_refID);
+                }
+                else scr_System_CampaignManager.current.ChangeCurrentTarget(0);
+            }
                     
         }
     }

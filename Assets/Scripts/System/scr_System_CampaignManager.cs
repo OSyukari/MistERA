@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using UnityEditor;
 using UnityEngine;
 public class scr_System_CampaignManager_Serializable
 {
@@ -23,6 +24,7 @@ public class scr_System_CampaignManager_Serializable
     public Dictionary<int, ExpeditionInstance> ExpeditionInstances;
     public int debugRoomRef, statisRoomRef, tempRoomRef;
     public Dictionary<string, string> LLMResponseStorage;
+    public List<int> specialUpdateJobs;
     // LogsManager? dont need serializing, logs are throwaway lines anyway
 }
 
@@ -32,7 +34,10 @@ public class scr_System_CampaignManager_Serializable
 public class scr_System_CampaignManager : MonoBehaviour
 {
 
+    public scr_CharPortraitBox CurrentTargetEX_Box = null;
+
     public MenuHandler CanvasAnchor = null;
+
 
     [NonSerialized] public Action<PortraitManager.CharaPortrait> Observer_UpdateCurrentTargetAnchor;
     public Action Observer_CurrentTargetClick;
@@ -246,6 +251,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.Characters = this.Index_referenceID;
         obj.campaignSettingID = CurrentCampaignID;
         obj.ExpeditionInstances = this.Index_ExpeditionInstances;
+        obj.specialUpdateJobs = this.specialUpdateJobs;
 
         obj.statisRoomRef = this.statisRoomID;
         obj.tempRoomRef = this.tempRoomID;
@@ -342,6 +348,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         this.party.Clear();
 
         this.Index_ExpeditionInstances = obj.ExpeditionInstances;
+        this.specialUpdateJobs = obj.specialUpdateJobs != null ? obj.specialUpdateJobs : new List<int>();
 
         this._uniqueExpeditionInstances = null;
 
@@ -366,9 +373,18 @@ public class scr_System_CampaignManager : MonoBehaviour
             //ri.AddChara(scr_System_CampaignManager.current.Player);
         }
 
-        // this.Map.RefreshRoomMoodlets();
+        this.playerAPLogs.Clear();
 
-        StartCoroutine(CachePortraitCoroutine());
+
+        // this.Map.RefreshRoomMoodlets();
+        if (this.COMmanager != null)
+        {
+            this.COMmanager.inputfield_llm.text = "";
+            this.COMmanager.inputfield_llm.DeactivateInputField();
+        }
+
+        ClearLogs(false,true);
+       // StartCoroutine(CachePortraitCoroutine());
 
         NotifyUpdate();
     }
@@ -422,6 +438,63 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (LLMResponseStorage.TryGetValue(s, out value)) return true;
         else return false;
     }
+
+    public List<ActionPackage> playerAPLogs = new List<ActionPackage>();
+    public void LogPlayerPackage(ActionPackage ap)
+    {
+        ap.nameOverwrite = ap.DisplayName;
+        if (playerAPLogs.Count >= 5)
+        {
+            playerAPLogs.RemoveAt(0);
+        }
+        playerAPLogs.Add(ap);
+    }
+
+
+    /// <summary>
+    /// RefID -1 no display
+    /// RefID -2 
+    /// </summary>
+    /// <param name="refID"></param>
+    /// <param name="s"></param>
+    /// <param name="animate"></param>
+    public void AddLog(bool visible, Room_Instance recording, int refID, string s, bool animate = false, bool rightAlign = false, string tooltip = "")
+    {
+        if (s.Length < 1) return;
+        if (s == "\n")
+        {
+            //Debug.LogError("Detect addlog \\ n");
+            return;
+        }
+        if (s == "\n\n")
+        {
+            // Debug.LogError("Detect addlog \\ n 2");
+            return;
+        }
+        if (s == "\n\n\n")
+        {
+            // Debug.LogError("Detect addlog \\ n 3");
+            return;
+        }
+        if (s.Contains("<align=\"right\"></align>"))
+        {
+            Debug.LogError($"empty string dtected, full string [{s}]");
+            return;
+        }
+        var chara = refID >= 0 ? FindInstanceByID(refID) : null;
+
+        if (visible)
+        {
+            var lg = LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, false, rightAlign);
+            Observer_MessageLogs?.Invoke(lg, animate);
+        }
+        if (recording != null)
+        {
+            recording.NotifyKojoCollect(new DescriptionCollector(s, chara == null ? new List<int>() : new List<int>() { chara.RefID }));
+        }
+        //ChangeCurrentViewMode(ViewMode.View_Logs);
+    }
+
 
     /// <summary>
     /// RefID -1 no display
@@ -495,6 +568,11 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void NotifyEventEnd()
     {
         this.Map.NotifyEventEnd();
+        foreach(var c in Index_referenceID.Values)
+        {
+            c.Stats.RefreshAttitude();
+        }
+        //Debug.Log("NotifyEventEnd");
     }
 
     /// <summary>
@@ -659,7 +737,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 var currentP = registeredPackagesByRoom[p.RoomKey][i];
                 if (!ignoreConflict && currentP.Duration > 0 && UtilityEX.DetectConflict(currentP, p))
                 {
-                    //Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + "] [" + p.COMVariantID + "] avoidConflict?[" + (avoidConflict) + "]");
+                    Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + $"]{currentP.PackagePriority} [" + p.COMVariantID + $"]{p.PackagePriority} avoidConflict?[" + (avoidConflict) + "]");
                     if (avoidConflict)
                     {
                         if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + "] [" + p.COMVariantID + "] avoidConflict?[" + (avoidConflict) + "], skipping");
@@ -667,7 +745,8 @@ public class scr_System_CampaignManager : MonoBehaviour
                     }
                     if (currentP.PackagePriority > p.PackagePriority)
                     {
-                        p.NotifyInterrupted();
+                        p.isPaused = true;
+                        //p.NotifyInterrupted();
                         if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("CM RegisterAP: Package [" + p.DisplayName + " " + p.PackagePriority + "] is not getting registered (set to paused) due to not having at least equal priority than [" + currentP.DisplayName + " " + currentP.PackagePriority + "]");
                         return;
                     }
@@ -676,7 +755,8 @@ public class scr_System_CampaignManager : MonoBehaviour
                         if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.LogError($"CM RegisterAP: [{currentP.DisplayName} {currentP.PackagePriority}] (remain {currentP.Duration}) is being set to paused due to conflict with [{p.DisplayName} {p.PackagePriority}] and failed priority check.");
                         p.job.LogMessage_Begin_Replace(registeredPackagesByRoom[p.RoomKey][i], p);
 
-                        registeredPackagesByRoom[p.RoomKey][i].NotifyInterrupted();
+                        registeredPackagesByRoom[p.RoomKey][i].isPaused = true;
+                        //registeredPackagesByRoom[p.RoomKey][i].NotifyInterrupted();
                         registeredPackagesByRoom[p.RoomKey].RemoveAt(i);
 
                     }
@@ -684,7 +764,17 @@ public class scr_System_CampaignManager : MonoBehaviour
             }
             if (p.isPaused)
             {
-                if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("CM RegisterAP: resuming package [" + p.DisplayName + "]");
+                var resume = true;
+                foreach (var actor in p.Actors)
+                {
+                    if (actor.CurrentJob != null && actor.CurrentJob != p.job && !actor.CurrentJob.CanBeInterrupted)
+                    {
+                        resume = false;
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log($"CM RegisterAP: resuming package [{p.DisplayName}] ? {resume} due to {actor.FirstName} currentjob {actor.CurrentJob.RefID} != {p.job.RefID}");
+                        return;
+                    }
+                }
+                if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log($"CM RegisterAP: resuming package [{p.DisplayName}] ? {resume}");
                 p.isPaused = false;
             }
             registeredPackagesByRoom[p.RoomKey].Add(p);
@@ -717,9 +807,32 @@ public class scr_System_CampaignManager : MonoBehaviour
         return Map.FindRoomByChara(charaRefID);
     }
 
+
+
+    public List<int> specialUpdateJobs = new List<int>();
+    List<Room_Instance> specialUpdateRooms = new List<Room_Instance>();
+    /// <summary>
+    /// Clear executed APs, and resolve filming
+    /// </summary>
     public void ClearExecutedAPs()
     {
         executedPackagesByRoom.Clear();
+        foreach(var i in specialUpdateJobs)
+        {
+            if (Index_JobReferenceID.TryGetValue(i, out var job)) job.LastUpdate();
+        }
+        for (int i = specialUpdateRooms.Count - 1; i >= 0; i--)
+        {
+            var room = specialUpdateRooms[i];
+            room.ClearRecords();
+            if (!room.HasRecording) specialUpdateRooms.RemoveAt(i);
+        }
+
+    }
+
+    public void NotifyRoomSpecialUpdate(Room_Instance r)
+    {
+        if (!specialUpdateRooms.Contains(r)) specialUpdateRooms.Add(r);
     }
 
     public void UpdateAllRoom()
@@ -971,10 +1084,10 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     //Job displayJob = null;
 
-    public void FreeUpdate(int addLogRefID = -1, string addText = "", bool silent = false)
+    public void FreeUpdate(int addLogRefID = -1, string addText = "", bool silent = false, bool flushLogsOnly = false)
     {
         //FreeUpdateAsync();
-        ClearLogs();
+        ClearLogs(flushLogsOnly);
         if (!silent && addText != "") AddLog(addLogRefID, addText, true);
         scr_UpdateHandler.current.StartUpdate(true, silent);
         //StartCoroutine(FreeUpdateCoroutine());
@@ -1114,6 +1227,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void Unregister(Job j)
     {
         Index_JobReferenceID.Remove(j.RefID);
+        specialUpdateJobs.Remove(j.RefID);
     }
     public int Register(Job j, int forceRefID = -1)
     {
@@ -1131,6 +1245,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         Index_JobReferenceID.Add(forceRefID, j);
         j.Register(forceRefID);
+
+        if (j.RequireAdditionalLastUpdate) specialUpdateJobs.Add(j.RefID);
         //Debug.Log("Registering job " + j.RefID);
         //index_JobReferenceIDCache = null;
         //Index_JobReferenceID.Add(j.RefID, j);
@@ -1226,7 +1342,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public event Action<int, bool> Observer_CurrentTarget;
     public event Action<int, bool> Observer_CurrentTargetEX;
 
-    public event Action<bool> Observer_LogsClear;
+    public event Action<bool, bool> Observer_LogsClear;
 
     public void ChangeCurrentTarget(int refID = 0, bool forceUpdate = false)
     {
@@ -1237,6 +1353,19 @@ public class scr_System_CampaignManager : MonoBehaviour
                 currentTarget = refID;
                 Observer_CurrentTarget?.Invoke(currentTarget, forceUpdate);
             }
+        }
+    }
+    public void ChangeCurrentTarget_Training(int refID = 0)
+    {
+        ChangeCurrentTarget(refID);
+        if (displaySex && COMmanager != null)
+        {
+            var playerref = Player.RefID;
+            COMmanager.SexComDoers.Clear();
+            COMmanager.SexComDoers.Add(playerref);
+            COMmanager.SexComReceivers.Clear();
+            if (refID != playerref && refID >= 0 && Player.CurrentJob.actorRefID.Contains(refID)) COMmanager.SexComReceivers.Add(refID);
+            Observer_UpdateNotice?.Invoke(false);
         }
     }
 
@@ -1674,6 +1803,12 @@ public class scr_System_CampaignManager : MonoBehaviour
         Debug.Log("CachePortraitComplete");
     }
 
+    public void CacheCharaPortrait(Character_Trainable c)
+    {
+        StartCoroutine(c.PortraitManager.CacheInternal(c));
+    }
+
+
     /// <summary>
     /// Starts a new game and fires load events for the loading screen to listen to.
     /// Call this instead of StartCampaign directly when a loading screen is present.
@@ -1934,10 +2069,14 @@ public class scr_System_CampaignManager : MonoBehaviour
         UpdateScene();
     }
 
-    public void ClearLogs(bool flushOnly = false)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="flushOnly">if true, do not clear logs. else, clear logs.</param>
+    public void ClearLogs(bool flushOnly = false, bool clearAll = false)
     {
         if (!flushOnly) LogManager.Clear();
-        Observer_LogsClear?.Invoke(flushOnly);
+        Observer_LogsClear?.Invoke(flushOnly, clearAll);
     }
 
 
@@ -2148,7 +2287,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     [NonSerialized][JsonIgnore] public string QuickSaveFilePath = "";
 
-
+    public scr_panel_COMmanager COMmanager;
     public void Unregister(Item_Instance i)
     {
         if (Index_ItemReferenceID.ContainsKey(i.RefID))
@@ -2194,8 +2333,19 @@ public class scr_System_CampaignManager : MonoBehaviour
         // open up combat selection UI, and ui call startcombat proper
         menu_combatSim detail = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_Simulation.GetComponent<RectTransform>(), CanvasAnchor == null ? null : CanvasAnchor.PanelAnchor_AlwaysEnable).GetComponent<menu_combatSim>();
         detail.InitializeWithArgument(self, successCallback, failCallback);
-
     }
+
+
+    public scr_menu_mealadditives prefab_Meals;
+
+    public void QueueMealAdditive(Manageable f)
+    {
+        // open up combat selection UI, and ui call startcombat proper
+        scr_menu_mealadditives detail = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_Meals.GetComponent<RectTransform>(), CanvasAnchor == null ? null : CanvasAnchor.PanelAnchor_AlwaysEnable).GetComponent<scr_menu_mealadditives>();
+        detail.InitializeWithArgument(f);
+    }
+
+
     public void StartCombat(TeamComposition teamA, TeamComposition teamB, string victoryEvID, string drawEvID, string defeatEvID, EventInstance source = null, bool forcePlayerInstance = false)
     {
         Combat.StartCombat(teamA, teamB, victoryEvID, drawEvID, defeatEvID, source, forcePlayerInstance);
@@ -2349,9 +2499,9 @@ public static class WorldManager
                     org.AddSalesInventory(itemInit);
                 }
             }
+            org.priceMult = map.priceMult;
             org.explorationKeywords = map.explorationKeywords;
             org.mealHours = map.mealHours;
-
         }
 
         return list;

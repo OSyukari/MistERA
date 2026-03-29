@@ -5,7 +5,7 @@
             "id":"consumable_fruit_tomato",
             "displayName":"Tomato",
             "tooltip":"Tomato.",
-            "Tags":["food_raw"],
+            "Tags":["food_raw","farm_cultivate_crop"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -43,7 +43,7 @@
             "id":"consumable_fruit_potato",
             "displayName":"Potato",
             "tooltip":"Potato.",
-            "Tags":["food_raw"],
+            "Tags":["food_raw","farm_cultivate_crop"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -81,7 +81,7 @@
             "id":"consumable_meat_mealworm",
             "displayName":"Mealworm",
             "tooltip":"Mealworm.",
-            "Tags":["food_meat"],
+            "Tags":["food_meat","farm_cultivate_meat"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",
@@ -126,16 +126,14 @@
             {
                 "consumable_fruit_tomato": "番茄",
                 "consumable_fruit_potato": "土豆",
-                "consumable_meat_mealworm": "肉虫",
-                "item_trash":"垃圾"
+                "consumable_meat_mealworm": "肉虫"
 
             },
             "en-us":
             {
   "consumable_fruit_tomato": "Tomato",
   "consumable_fruit_potato": "Potato",
-  "consumable_meat_mealworm": "Mealworm",
-  "item_trash": "Trash"
+  "consumable_meat_mealworm": "Mealworm"
             }
         }
     }

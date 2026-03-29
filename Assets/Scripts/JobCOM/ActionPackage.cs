@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
+using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.LowLevelPhysics2D.PhysicsShape;
 
 
 public enum AP_Priority
@@ -12,11 +15,13 @@ public enum AP_Priority
     npc_action,
     npc_pathing,
     npc_interaction,            // npc-npc command, allow catching pathing
+    npc_interaction_training,    // AP sex   
     npc_interaction_special,    // special actions such as initsex and endsex
-    npc_interaction_special_2,    // AP sex   
-    player_interaction,             
+    player_pathing,
+    player_interaction,
+    player_interaction_training,
     player_interaction_special,
-    player_pathing
+    
 }
 
 
@@ -52,6 +57,9 @@ public abstract class ActionPackage
             return cache_refusedByResponse;
         }
     }
+
+
+
     string cache_interruptedResponse = "";
     string InterruptedResponse
     {
@@ -145,8 +153,8 @@ public abstract class ActionPackage
             }
             else if (this is ActionPackage_Sex)
             {
-                if (this.actorRefs.Contains(0)) return AP_Priority.player_interaction_special;
-                else return AP_Priority.npc_interaction_special_2;
+                if (this.actorRefs.Contains(0)) return AP_Priority.player_interaction_training;
+                else return AP_Priority.npc_interaction_training;
             }
             else if (this is ActionPackage_Undress || this.ComTags.Contains("endSex") || this.ComTags.Contains("initSex"))
             {
@@ -332,10 +340,13 @@ public abstract class ActionPackage
             {
                 if (result) c2.ChangeCurrentJob(this.job, this.targetCOMID);
                 if (silent && result) { }
-                else this.job.m.messages_before.Add(LocalizeDictionary.QueryThenParse(result ? "ui_ap_join_success" : "ui_ap_join_fail")
+                else
+                {
+                    this.job.m.messages_before.Add(LocalizeDictionary.QueryThenParse(result ? "ui_ap_join_success" : "ui_ap_join_fail")
                     .Replace("$names$", c2.FirstName)
                     .Replace("$comname$", comname));
-                LogMessage_Join(c2);
+                    LogMessage_Join(c2);
+                }
             }
 
             if (!result)
@@ -413,7 +424,10 @@ public abstract class ActionPackage
     /// </summary>
     [JsonIgnore] public virtual string DisplayName { get {
             //if (targetCOM != null && targetCOM.comTags.Contains("food_meal")) Debug.LogError($"mealcom name {targetCOM.DisplayName(0)}, ismealcom ? {(targetCOM is COM_TakeMeal)}");
-            return targetCOM != null ? (COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName()):" - "; } }
+            return nameOverwrite != "" ? nameOverwrite : targetCOM != null ? (COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName()):" - "; } }
+
+    public string nameOverwrite = "";
+
      protected string DescriptionText(bool isDoer, int charaRef, bool withRoomName = false)
     {
         if (targetCOM == null || COMVariantID < 0) return "";
@@ -914,7 +928,7 @@ public abstract class ActionPackage
     {
         //Debug.Log("ActionPackage Base Evaluate on "+DisplayName);
 
-        validVariant = targetCOM.GetValidVariant(ref this.tooltip, this.doer, this.receiver, false, this.job is Job_Furniture ? (int)(this.job as Job_Furniture).ParentInstance.FurnitureBase.furnitureSize : 1);
+        validVariant = targetCOM.GetValidVariant(ref this.tooltip, job, this.doer, this.receiver, false, this.job is Job_Furniture ? (int)(this.job as Job_Furniture).ParentInstance.FurnitureBase.furnitureSize : 1);
 
         if (validVariant >= 0)
         {
@@ -1033,18 +1047,41 @@ public abstract class ActionPackage
     [JsonIgnore] protected int attitudeRate_neg = 0;
     //public int AttitudeRate_Neg { get { return attitudeRate_neg; } }
     
-    public string GetSuccessRatePrevalidationString()
+
+    public void GetSerializedAPData(LLMUtils.SerializedAP ap)
     {
         RemakePackages();
-        List<string> concat = new List<string>();
-        foreach(var ep in this.ListEP)
+        List<string> acceptances = new List<string>(), mods = new List<string>(), cat3 = new List<string>();
+        int accheck = 100;
+        foreach (var ep in this.ListEP)
         {
-            var result = ep.GetCheckPrevalidation();
-            if (result.Length > 0) concat.Add(result);
-        }
-        return String.Join("\n", concat);
-    }
+            var acceptance = ep.GetCheckPrevalidation(false, false, false);
+            if (acceptance.Length > 0) acceptances.Add(acceptance);
 
+            var mod = ep.GetCheckPrevalidation(false, true, false);
+            if (mod.Length > 0) mods.Add(mod);
+
+            accheck = Math.Min(accheck, ep.GetSuccessRate());
+        }
+        if (this.doer.Count > 0)
+        {
+            var names = new List<string>();
+            foreach (var i in this.doer) names.Add(i.FirstName);
+            ap.Doers = String.Join(", ", names);
+        }
+        else ap.Doers = null;
+        if (this.receiver.Count > 0)
+        {
+            var names = new List<string>();
+            foreach (var i in this.receiver) names.Add(i.FirstName);
+            ap.Receivers = String.Join(", ", names);
+        }
+        else ap.Receivers = null;
+
+        //ap.AcceptanceCheck = String.Join("\n", acceptances);
+        ap.AcceptanceMods = String.Join("\n", mods);
+        ap.AcceptanceRate = $"{accheck}%";
+    }
 
     public string GetSuccessRateString()
     {
@@ -1356,7 +1393,7 @@ public abstract class ActionPackage
                 checkResults.Add(res);
             }
         }
-        else if (this.checkResults_result != "") checkResults.Add(this.checkResults_result);
+        else if (executeSuccessful && this.checkResults_result != "") checkResults.Add(this.checkResults_result);
         
 
 
@@ -1387,7 +1424,7 @@ public abstract class ActionPackage
             m.messages_checks.Add(rightAlign ? $"<align=\"right\">{finalResults}</align>" : finalResults, "");
 
         }
-        else if (this.checkResults_result != "")
+        else if (executeSuccessful && this.checkResults_result != "")
         {
             this.checkResults_result = rightAlign ? $"<align=\"right\">{this.checkResults_result}</align>" : this.checkResults_result;
             if (!m.messages_checks.ContainsKey(this.checkResults_result)) m.messages_checks.Add(this.checkResults_result, this.checkResults_tooltips);
@@ -1542,8 +1579,8 @@ public abstract class ActionPackage
         {
             if (targetCOM.baseD20Check == 0)
             {
-                checkResults_result = $"{targetCOM.DisplayName(COMVariantID)}, {LocalizeDictionary.QueryThenParse($"Memory_Response_Success")}";
-                checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {LocalizeDictionary.QueryThenParse($"Memory_Response_Success")}";
+                checkResults_result = "";
+                checkResults_result_short = "";
             }
             else if (targetCOM.baseD20Check > 0)
             {
@@ -1609,7 +1646,7 @@ public abstract class ActionPackage
         actors.AddRange(this.receiver);
         // Treat receiver as doer will separate all actors and make them individually do task
         // so we need to collect group and parse as group
-        Debug.Log($"AP executed, checking successful {executeSuccessful}");
+       // Debug.Log($"AP executed, checking successful {executeSuccessful}");
 
         if (executeSuccessful)// && targetCOM.requirements.requirement.TreatReceiverAsDoer)         // this behavior does not need to be limited to treatreceiverasdoer, right ?
         {   // if job is recreation and result at least neutral, increase relationship between all participating actors
@@ -1708,6 +1745,24 @@ public abstract class ActionPackage
 
                 }
             }
+            else if (targetCOM.comTags.Contains("beginMealPrep"))
+            {
+                // first, check if target is already in combat, if true, end it and return (cuz 15 min already passed and stuck inside it
+                if (this.job != null && job.FactionOwner != null && job.FactionOwner is Manageable)
+                {
+                    var nexthour = Math.Clamp(scr_System_Time.current.getCurrentTime().Hour + 1, 0, 23);
+                    var jobfac = job.FactionOwner as Manageable;
+
+                    if (this.actorRefs.Count == 1 && this.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID))
+                    {
+                        scr_System_CampaignManager.current.QueueMealAdditive(job.FactionOwner as Manageable);
+                    }
+                    else if (jobfac.isPlayerFaction && !jobfac.mealHours.Contains(nexthour))
+                    {
+                        jobfac.mealHours.Add(nexthour);
+                    }
+                }
+            }
             else if (targetCOM.comTags.Contains("initSex"))
             {
                 Job_Sex_Group existingJob = null;
@@ -1740,6 +1795,80 @@ public abstract class ActionPackage
                         actor.ChangeCurrentJob(existingJob);// existingJob.AddActor(actor);
                     }
                 }
+            }
+            else if (targetCOM.comTags.Contains("initRecording"))
+            {
+                Job_Recording existingJob = null;
+
+                // find existing job in room and merge into it
+                var allchara = scr_System_CampaignManager.current.CharaInCurrentRoom;
+
+                List<string> names = new List<string>();
+
+                foreach (var i in allchara)
+                {
+                    var targetJob = i.CurrentJob;
+                    names.Add(i.FirstName);
+                    if (targetJob == null) continue;
+                    if (targetJob is not Job_Recording) continue;
+                    if (existingJob == null)
+                    {
+                        existingJob = targetJob as Job_Recording;
+                    }
+                }
+                Debug.Log($"initRecording found existing [{existingJob != null}] among {String.Join("|", names)}");
+                if (existingJob == null)
+                {
+                    if (targetCOM != null && targetCOM is COM_Recording)
+                    {
+                        //error 1
+                        var targetcomp2 = targetCOM as COM_Recording;
+                        var recordcomp = targetcomp2.Recorder;
+                        if (recordcomp != null)
+                        {
+                            var filmcrew = this.receiver.Count > 0 ? this.receiver[0] : this.doer[0];
+
+                            existingJob = new Job_Recording(this.job.FactionOwner, targetcomp2.RecorderItem.ID, targetcomp2.Recorder, this.RoomKey, filmcrew);
+                            scr_System_CampaignManager.current.Register(existingJob);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var actor in allchara)
+                    {
+                        if (!this.actorRefs.Contains(actor.RefID)) continue;
+                        if (actor.CurrentJob == existingJob) continue;
+                        actor.ChangeCurrentJob(existingJob);// existingJob.AddActor(actor);
+                    }
+                }
+
+                if (existingJob == null)
+                {
+                    //exit error
+                    Debug.LogError("create recording job failed");
+                }
+            }
+            else if (targetCOM.comTags.Contains("endRecording"))
+            {
+                var existingJob = job as Job_Recording;
+                if (existingJob != null) existingJob.EndJob();
+                // find film job in room that does not belong to existingjob
+                if (RoomKey != -1)
+                {
+                    var room = scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey);
+                    if (room != null && room.HasRecording)
+                    {
+                        // find recording
+                        var cols = new List<I_CanEndJob>(room.GetCollectors());
+                        foreach(var i in cols)
+                        {
+                            i.EndJob();
+                        }
+                    }
+                }
+
+                this.LoggedKojo = true;
             }
             else if (targetCOM.comTags.Contains("endSex"))
             {
@@ -1906,39 +2035,61 @@ public abstract class ActionPackage
     public void LogMessage_Kojo(MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
+        var visible = job.isPlayerRelatedJob || isPlayerRelatedPackage;
+        var recordingRoom = this.RoomKey == -1 ? null : scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey);
+        if (recordingRoom != null && !recordingRoom.HasRecording) recordingRoom = null;
+
+        LogMessage_Kojo(visible, recordingRoom, m);
+    }
+
+    public void LogMessage_Kojo(bool visible, Room_Instance recordingRoom, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
         if (LoggedKojo) return;
+        if (!visible && recordingRoom == null) return;
         LoggedKojo = true;
         //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName + ", tags: [" + String.Join("|", ep.DoerSelfTag) + "] -> [" + String.Join("|", ep.ReceiverTargetTag) + $"], epStatus [{ep.Response}]");
 
         var kojoTarget = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
 
+        if (shuffledList.Count < 1)
+        {
+            shuffledList = new List<EvaluationPackage>(ListEP);
+            //Debug.LogError($"shuffled list count 0, resetting to {shuffledList.Count}");
+        }
         Utility.Shuffle(shuffledList);
         bool single = ShortenAPDisplay;
 
         foreach (var ep in shuffledList)
         {
-            LogMessage_Kojo2(ep, kojoTarget, m);
+            var rel = ep.Receiver == null && kojoTarget != null && ep.Doer != kojoTarget ? ep.Doer.Relationships.FindRelationshipWith(kojoTarget) : null;
+
+            var responses = ep.LogMessage_Kojo(m, rel);
+            foreach (var kol in responses)
+            {
+                if (visible) m.messages_kojo.Add(kol.collect);
+                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+            }
             if (single && !ep.isPlayerEP) break;
         }
     }
 
-    protected void LogMessage_Kojo2(EvaluationPackage ep, Character_Trainable kojoTarget, MessageCollect m)
-    {
-        if (ep.Receiver == null && kojoTarget != null && ep.Doer != kojoTarget)
-        {
-            // special handling
-            var rel = ep.Doer.Relationships.FindRelationshipWith(kojoTarget);
-            ep.LogMessage_Kojo(m, rel);
-        }
-        else ep.LogMessage_Kojo(m);
-    }
-
-
     List<int> joinAP_list = new List<int>();
+
     public void LogMessage_Join(Character_Trainable target, bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        if (!m.displayOverride && !job.isVisibleToPlayer) return;
+        var visible = job.isPlayerRelatedJob || isPlayerRelatedPackage;
+        var recordingRoom = this.RoomKey == -1 ? null : scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey);
+        if (recordingRoom != null && !recordingRoom.HasRecording) recordingRoom = null;
+
+        LogMessage_Join(visible, recordingRoom, target, rightAlign, m);
+    }
+
+    public void LogMessage_Join(bool visible, Room_Instance recordingRoom, Character_Trainable target, bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        if (!visible && recordingRoom == null) return;
 
         var list = new List<EvaluationPackage>(this.packages);
         Utility.Shuffle(list);
@@ -1949,17 +2100,24 @@ public abstract class ActionPackage
         {
             //if (ep.Doer == target) continue;
             if (!requestAccepted && ep.Response != Memory_Response.Refuse) continue;
-            if (ep.LogMessage_Join(target, joinAP_list, rightAlign, m)) break;
+
+            var responses = ep.LogMessage_Join(target, joinAP_list, rightAlign, m);
+            foreach (var kol in responses)
+            {
+                if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{kol.collect.message}</align>" : kol.collect.message);
+                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+            }
+            if (responses.Count > 0) break;
         }
     }
 
-    public void LogMessage_Begin( bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null, Character_Trainable target = null)
+    public void LogMessage_Begin(bool visible, Room_Instance recordingRoom, bool ignoreBegin = false, bool rightAlign = false,  MessageCollect m = null, Character_Trainable target = null)
     {
         if (m == null) m = this.job.m;
-        if (!m.displayOverride && !job.isVisibleToPlayer) return;
+        if (!visible && recordingRoom == null) return;
         if (!ignoreBegin && LoggedBegin) return;
         if (targetCOM == null || COMVariantID < 0) return;
-        
+
         LoggedBegin = true;
 
         string s = targetCOM.variants[COMVariantID].GetDescription_Begin(targetCOM, this);
@@ -1967,15 +2125,26 @@ public abstract class ActionPackage
         s = targetCOM.Replace(s);
         if (s.Length > 0)
         {
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_before.Add(s);
+            if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{s}</align>" : s);
+            if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(s, this.actorRefs));
+        }
+
+        if (shuffledList.Count < 1)
+        {
+            shuffledList = new List<EvaluationPackage>(ListEP);
+            //Debug.LogError($"shuffled list count 0, resetting to {shuffledList.Count}");
         }
 
         Utility.Shuffle(shuffledList);
         bool single = ShortenAPDisplay;
         foreach (var ep in shuffledList)
         {
-            ep.LogMessage_Begin(ignoreBegin, rightAlign, m, target);
+            var responses = ep.LogMessage_Begin(ignoreBegin, rightAlign, m, target);
+            foreach(var kol in responses)
+            {
+                if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{kol.collect.message}</align>" : kol.collect.message);
+                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+            }
             if (single && !ep.isPlayerEP) break;
         }
     }
@@ -1983,21 +2152,26 @@ public abstract class ActionPackage
     /// This one should be allowed to repeat on every player command input, so there is less check
     /// </summary>
     /// <param name="ep"></param>
-    public void LogMessage_Begin_Ongoing(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
+    public void LogMessage_Begin_Ongoing(bool visible, Room_Instance recordingRoom, bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
+        if (!visible && recordingRoom == null) return;
         if (!ignoreBegin && LoggedBegin) return;
         LoggedBegin = true;
 
         foreach (var ep in this.ListEP)
         {
-            ep.LogMessage_Begin_Ongoing(ignoreBegin, rightAlign, m);
+            var response = ep.LogMessage_Begin_Ongoing(ignoreBegin, rightAlign, m);
+            if (response.Length < 1) continue;
+            if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{response}</align>" : response);
+            if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(response, this.actorRefs));
         }
     }
 
-    public void LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null, Character_Trainable target = null)
+    public void LogMessage_Ongoing(bool visible, Room_Instance recordingRoom, bool rightAlign = false, MessageCollect m = null, Character_Trainable target = null)
     {
         if (this.isTemporaryAP) return;
+        if (!visible && recordingRoom == null) return;
         if (m == null) m = this.job.m;
         string s = targetCOM.variants[COMVariantID].GetDescription_Ongoing(targetCOM, this);
         //Debug.Log("AP LogMessage_Ongoing");
@@ -2006,59 +2180,102 @@ public abstract class ActionPackage
         //.Actors, ep.Description_Ongoing
         if (s.Length > 0)
         {
-            if (rightAlign) s = "<align=\"right\">" + s + "</align>";
-            m.messages_after.Add(s);
+            if (visible) m.messages_after.Add(rightAlign ? $"<align=\"right\">{s}</align>" : s);
+            if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(s, this.actorRefs));
         }
 
+        if (shuffledList.Count < 1)
+        {
+            shuffledList = new List<EvaluationPackage>(ListEP);
+            //Debug.LogError($"shuffled list count 0, resetting to {shuffledList.Count}");
+        }
         Utility.Shuffle(shuffledList);
         bool single = ShortenAPDisplay;
         foreach (var ep in shuffledList)
         {
-            ep.LogMessage_Ongoing(rightAlign, m, target);
+            var responses = ep.LogMessage_Ongoing(rightAlign, m, target);
+            foreach (var kol in responses)
+            {
+                if (visible) m.messages_after.Add(rightAlign ? $"<align=\"right\">{kol.collect.message}</align>" : kol.collect.message);
+                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+            }
             if (single && !ep.isPlayerEP) break;
         }
     }
 
 
-    public void LogMessage_Climax(MessageCollect m = null)
+    public void LogMessage_Climax(bool visible, Room_Instance recordingRoom, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
         foreach (var ep in this.ListEP)
         {
-            ep.LogMessage_Climax( m);
+            var responses = ep.LogMessage_Climax( m);
+
+            foreach (var kol in responses)
+            {
+                if (visible) m.messages_kojo_after.Add(kol.collect);
+                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+            }
         }
 
     }
 
-    public void LogMessage_Begin_Refuse(bool rightAlign = false, MessageCollect m = null)
+    public void LogMessage_Begin_Refuse(bool visible, Room_Instance recordingRoom, bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
         if (LoggedBegin) return;
-        if (!m.displayOverride && !this.job.isVisibleToPlayer) return;
+        if (!visible && recordingRoom == null) return;
         foreach (var ep in this.ListEP)
         {
-            ep.LogMessage_Begin_Refuse(rightAlign, m);
+            var responses = ep.LogMessage_Begin_Refuse(rightAlign, m);
+
+            if (responses.Length > 0)
+            {
+                if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{responses}</align>" : responses);
+                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(responses, this.actorRefs));
+            }
         }
     }
-
-    public void LogMessage_Begin_Abort(bool rightAlign = false, MessageCollect m = null)
+    public void LogMessage_Begin_Abort( bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        if (!m.displayOverride && !this.job.isVisibleToPlayer) return;
+        var visible = job.isPlayerRelatedJob || isPlayerRelatedPackage;
+        var recordingRoom = this.RoomKey == -1 ? null : scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey);
+        if (recordingRoom != null && !recordingRoom.HasRecording) recordingRoom = null;
+
+        LogMessage_Begin_Abort(visible, recordingRoom, rightAlign, m);
+    }
+
+    public void LogMessage_Begin_Abort(bool visible, Room_Instance recordingRoom, bool rightAlign = false, MessageCollect m = null)
+    {
+        if (m == null) m = this.job.m;
+        if (!visible && recordingRoom == null) return;
         //if (LoggedBegin) return;
         if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("LogMessage_Begin_Abort");
         foreach (var ep in this.ListEP)
         {
-            ep.LogMessage_Begin_Abort(rightAlign, m);
+            var responses = ep.LogMessage_Begin_Abort(rightAlign, m);
+
+            if (responses.Length > 0)
+            {
+                if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{responses}</align>" : responses);
+                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(responses, this.actorRefs));
+            }
         }
         this.LoggedBegin = true;
     }
 
 
-    public void LogMessage_After(bool rightAlign = false, MessageCollect m = null)
+    public void LogMessage_After(bool visible, Room_Instance recordingRoom, bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
+        if (!visible && recordingRoom == null) return;
 
+        if (shuffledList.Count < 1)
+        {
+            shuffledList = new List<EvaluationPackage>(ListEP);
+            //Debug.LogError($"shuffled list count 0, resetting to {shuffledList.Count}");
+        }
         Utility.Shuffle(shuffledList);
         bool single = ShortenAPDisplay;
         foreach (var ep in shuffledList)
@@ -2066,7 +2283,23 @@ public abstract class ActionPackage
             if (targetCOM == null) continue;
             if (targetCOM is COM_Sex) continue;
             if (ep.Response < Memory_Response.Success) continue;
-            ep.LogMessage_After(rightAlign, m);
+            var rs = ep.LogMessage_After(rightAlign, m);
+            if (rs.Length > 0)
+            {
+                if (visible) m.messages_after.Add(rightAlign ? $"<align=\"right\">{rs}</align>" : rs);
+                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(rs, this.actorRefs));
+            }
+            else if (rightAlign)
+            {
+                var responses = ep.LogMessage_Ongoing(rightAlign, m, null);
+                if (responses.Count < 1) continue;
+                foreach (var kol in responses)
+                {
+                    if (visible) m.messages_after.Add(rightAlign ? $"<align=\"right\">{kol.collect.message}</align>" : kol.collect.message);
+                    if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+                }
+            }
+
             if (single && !ep.isPlayerEP) break;
         }
     }

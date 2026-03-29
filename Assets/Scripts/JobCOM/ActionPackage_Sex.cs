@@ -74,7 +74,7 @@ public class ActionPackage_Sex : ActionPackage
 
         var targetscom = targetCOM as COM_Sex;
         if (targetscom == null) Debug.LogError($"AP_SEX failed to cast targetCOM as valid COM");
-        tooltip.Add( (targetCOM as COM_Sex).PreEvaluate(doer, receiver));
+        tooltip.Add( (targetCOM as COM_Sex).PreEvaluate(job, doer, receiver));
         
         return isValid;
 

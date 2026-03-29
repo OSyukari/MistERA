@@ -4,6 +4,7 @@
         "list":
         [
             {
+                "parentCOMID":"com_sex_base",
                 "ID":"com_sex_oral_P_Force",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_service"],

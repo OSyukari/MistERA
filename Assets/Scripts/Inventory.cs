@@ -76,6 +76,16 @@ public class FactionInventory : Inventory
                     return result;
                 }
             }
+            if (source != null && this.FactionOwner != null && this.FactionOwner.Faction != null && this.FactionOwner.Faction.mealManager != null)
+            {
+                var meal = this.FactionOwner.Faction.mealManager;
+                if (meal.CheckAdditives(source, results[0], results[0].GetComp_Ingestible()))
+                {
+                    //
+                }
+            }
+
+
             return results[0];
         }
         return null;

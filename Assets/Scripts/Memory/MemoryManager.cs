@@ -116,8 +116,9 @@ public class MemoryManager
         ReEstablishParent(c);
     }
 
-    public void Tick(TimeSpan t)
+    public void Tick()
     {
+        var t = 1;
         // ClearCache();
         bool clearcache = false;
         var list = new List<long>(this.entries.Keys);
@@ -160,12 +161,12 @@ public class MemoryManager
     /// <returns></returns>
     public bool MatchBlacklist(int roomRef, List<string> availableComID)
     {
-        if (availableComID.Count < 1) return false;
         if (roomRef == -1) return false;
         foreach (var b in Blacklist)
         {
-            if (b.comID == "" || b.roomRef == -1) continue;
-            else if (availableComID.Contains(b.comID) && b.roomRef == roomRef) return true;
+            if (b.roomRef != roomRef) continue;
+            if (b.comID == "") return true;
+            if (availableComID.Contains(b.comID)) return true;
         }
         return false;
     }
@@ -175,18 +176,17 @@ public class MemoryManager
     /// </summary>
     /// <param name="ep"></param>
     /// <returns></returns>
-    public int MatchBlacklist(EvaluationPackage ep, Character_Trainable source)
+    public int MatchBlacklist(Character_Relationship rel, COM com)
     {
-        if (!ep.Actors.Contains(Owner)) return 0;
-        if (source == null) return 0;
+        if (rel.Target == null || rel.Target == rel.Owner) return 0;
 
         int count = 0;
         foreach(var b in Blacklist)
         {
-            if (!b.targets.Contains(source.RefID)) continue;
+            if (!b.targets.Contains(rel.Target.RefID)) continue;
            // if (!ep.Package.actorRefs.Contains(source.RefID)) continue;
            // if (b.targets.Count < 1 || ep.Package.DoerRefs.Count < 1 || !Utility.ListContainsLoose(b.targets, ep.Package.DoerRefs)) continue;
-            if (ep.targetCOM != b.targetCOM) continue;
+            if (com != b.targetCOM && com.ParentCOM_includeSelf != b.targetCOM.ParentCOM_includeSelf) continue;
 
             count += b.count;
         }
@@ -237,6 +237,7 @@ public class MemoryManager
             {
                 if (overrideMemoryCount < 1) break;
                 if (Entries[i].Duration == 0) continue;
+                if (Entries[i].noDisplay) continue;
                 else if (Entries[i].selfTags.Contains("unconscious")) continue;
                 overrideMemoryCount -= 1;
 
@@ -244,8 +245,8 @@ public class MemoryManager
                 AddMoodlet(ref rm_mood, Entries[i].Mod_Mood);
                 AddMoodlet(ref rm_stress, Entries[i].Mod_Stress);
             }
+            //Debug.Log($"{Owner.FirstName} GetRecentMemoryStatMods count {recentMemoryCache.Count}");
         }
-
         return recentMemoryCache;
     }
     List<Stat_Modifier> recentMemoryCache = null;

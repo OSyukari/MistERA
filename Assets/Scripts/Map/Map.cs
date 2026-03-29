@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QuikGraph;
+using QuikGraph.Algorithms.Observers;
+using QuikGraph.Algorithms.ShortestPath;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using QuikGraph;
-using QuikGraph.Algorithms.Observers;
-using QuikGraph.Algorithms.ShortestPath;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class Map_Instance
 {
@@ -52,6 +54,11 @@ public class Map_Instance
         if (mapTemplateID != "")
         {
             var template = scr_System_Serializer.current.GetByNameOrID_MapPlan(mapTemplateID);
+            if (template == null)
+            {
+                Debug.Log($"WorldManager Instantiate map error, cannot find mapID {mapTemplateID}");
+                return;
+            }
             foreach (var fl in WorldManager.Instantiate( template, factionOverride, disablePlayerInit, disableCharaInstantiation))
             {
                 if(!floors.ContainsKey(fl.Key)) floors.Add(fl.Key, fl.Value);
@@ -378,7 +385,7 @@ public class Map_Instance
             List<int> ignoreList = new List<int>();
 
             // check interrupt
-            var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(ri.RefID, true) : new List<ActionPackage>( dirtyCharaAPRef);
+            var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(ri.RefID, true) : new List<ActionPackage>(dirtyCharaAPRef);
             //if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
             //if (xx.RefID != 0)
             //{
@@ -388,10 +395,12 @@ public class Map_Instance
             {
                 if (i.RoomKey != ri.RefID) continue;// { Debug.LogError("dirtychararef roomkey inequal [" + i.RoomKey + "] [" + iii.Key + "]"); continue; }
                 if (i.actorRefs.Contains(xx.RefID)) continue;//{ Debug.LogError("dirtychararef actorref contains [" + String.Join("|", i.actorRefs) + "] [" + charaInRoom[x] + "]"); continue; }
-                if (xx.CurrentJob != null && i.job != null && i.job.RefID == xx.CurrentJobRefID) continue;//{ Debug.LogError("dirtychararef currentjob identical [" + i.job.DisplayName + "]"); continue; }
-                if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
+               // if (xx.CurrentJob != null && i.job != null && i.job.RefID == xx.CurrentJobRefID) continue;//{ Debug.LogError("dirtychararef currentjob identical [" + i.job.DisplayName + "]"); continue; }
+               // if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
                 if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
                 if (i.timestopTick && !xx.CanActInTimeStop) continue;
+                if (xx.InteractionJob != null && xx.InteractionJob.isActive) continue;
+                if (xx.CurrentJob != null && !xx.CurrentJob.CanBeInterrupted) continue;
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
                 if (xx.Relationships.CheckInterrupt(i, selfTags) && xx.RefID != 0)
                 {
@@ -495,18 +504,15 @@ public class Map_Instance
             if (ep.job.Actors.Contains(self) && ep.job.Actors.Contains(target)) continue;
             var msg = self.Relationships.Personality.GetKOJOMessage_Interrupt(ep.isDoer(self), ep, rel);
             if (msg == null) continue;
-            if (self.RefID == 0 || target.RefID == 0)
-            {
-                msg.message = msg.message.Replace("$self$", self.FirstName).Replace("$target$", target.FirstName);
-                scr_UpdateHandler.current.AppendKojoMessage(msg);
-                return true;
-            }
-            else if (scr_System_CampaignManager.current.isCharaVisibleToPlayer(self.RefID))
-            {
-                //msg.message = msg.message.Replace("$self$", self.FirstName).Replace("$target$", target.FirstName);
-                scr_UpdateHandler.current.AppendKojoMessage_NonVisible(msg);
-                return true;
-            }
+            msg.message = msg.message.Replace("$self$", self.FirstName).Replace("$target$", target.FirstName);
+
+            bool recording = self.CurrentRoom != null && self.CurrentRoom.HasRecording;
+
+            msg.AddRelevantActor(self);
+            msg.AddRelevantActor(target);
+
+            scr_UpdateHandler.current.AppendKojoMessage(msg, self.RefID == 0 || target.RefID == 0, recording ? self.CurrentRoom : null);
+            return true;
         }
         return false;
     }
@@ -526,7 +532,7 @@ public class Map_Instance
             }
             foreach(var i in dirtyCharaAPRef)
             {
-                names2.Add(i.DisplayName);
+                names2.Add($"{String.Join(" ",i.DoerRefs)}{i.DisplayName}");
             }
             Debug.Log($"UpdateAllRoom, check interrupt\nDirtyCharaRefs {dirtyCharaRef.Count}: {String.Join("|",names)}\nDirtyAPRefs {dirtyCharaAPRef.Count}: {String.Join("|", names2)}");
         }
@@ -543,6 +549,9 @@ public class Map_Instance
         //handle.Complete();
 
     }
+
+    
+
 
     public Room_Instance GetRoomByRef(int roomRef)
     {
@@ -609,6 +618,7 @@ public class Map_Instance
             newRoom.AddChara(charaRef);
         }
         charaRoomRef[charaRef.RefID] = newRoom.RefID;
+        charaRef.NotifyMoveToRoom(newRoom);
         dirtyCharaRef.Add(charaRef.RefID);
         dirtyCharaRef = Utility.Distinct(dirtyCharaRef);
 

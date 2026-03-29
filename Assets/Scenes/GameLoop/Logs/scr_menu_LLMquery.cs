@@ -169,9 +169,9 @@ public class scr_menu_LLMQuery : scr_Menu
             var playerjob = currentjob == null || currentjob.CanBeInterrupted ? scr_System_CampaignManager.current.FindJobInstanceByID(scr_System_CampaignManager.current.jobRef_playerCOM) : currentjob;
             playerjob.m.displayOverride = true;
 
-            var apLLM = new ActionPackage_LLM(playerjob, json.timeCost, allrelevantActors, CurrentResponse.JSON);
+            var apLLM = new ActionPackage_LLM(playerjob, json.timeCost, new List<int>() { player.RefID }, CurrentResponse.JSON);
 
-            foreach(var jobref in allrelevantJobRefs)
+            foreach (var jobref in allrelevantJobRefs)
             {
                 // placeholder package should be added to every job mentioned in json
                 var job = scr_System_CampaignManager.current.FindJobInstanceByID(jobref);
@@ -193,21 +193,28 @@ public class scr_menu_LLMQuery : scr_Menu
                     errors.Add($"actorref {actorref} not in current room");
                     continue; 
                 }
-                var actorjob = actor.CurrentJob;
-                if (actorjob != playerjob)
+                if (actor == player) continue;
+
+                
+
+                var actorjob = actor.CurrentJob != null ? actor.CurrentJob : actor.InteractionJob;
+                if (actorjob != actor.CurrentJob)
                 {
                     // changejob
-                    actor.ChangeCurrentJob(playerjob);
+                    actor.ChangeCurrentJob(actorjob);
                 }
+                actor.Stats.pauseLLMTicks = apLLM.Duration;
+                var waiting = new ActionPackage_Wait(actorjob, actorref, json.timeCost);
+                actorjob.AddPackage(new List<ActionPackage>() { waiting });
             }
 
+            player.ChangeCurrentJob(playerjob);
             playerjob.AddPackage(new List<ActionPackage>() { apLLM }, true);
             //scr_System_CampaignManager.current.Register(apLLM, false);
             update = true;
-
         }
         scr_UpdateHandler.current.LLMStatus = LLMStatus.inactive;
-        if (update) scr_System_CampaignManager.current.FreeUpdate();
+        if (update) scr_System_CampaignManager.current.FreeUpdate(flushLogsOnly: true);
     }
     public scr_HoverableText tooltipText;
 

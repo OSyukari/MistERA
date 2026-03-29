@@ -945,6 +945,33 @@ public static class UtilityEX
         extraTargetTags = extraTargetTags.Distinct().ToList();
     }
 
+
+    public static void GetCOMTags(Character_Trainable a, Character_Trainable b, COM com, ref List<string> extraComTags)
+    {
+        if (com != null)
+        {
+            extraComTags.AddRange(com.comTags);
+        }
+        if (extraComTags.Contains("initSex")) extraComTags.Add("sex");
+
+        if (b == null || b == a)
+        {
+            if (com != null && com.comTags.Contains("interaction")) extraComTags.Add("NonInteraction");
+            if (com != null && (com.comTags.Contains("sex") || com.comTags.Contains("service"))) extraComTags.Add("masturbate");
+        }
+        else
+        {
+            if (b.canAct && !extraComTags.Contains("interaction") && !extraComTags.Contains("NonInteraction")) extraComTags.Add("interaction");
+            else if (!b.canAct)
+            {
+                extraComTags.Add("NonInteraction");
+                extraComTags.Remove("service");
+            }
+            // if a cannot act then a cannot react then it doesnt make sense to add target gender experience
+        }
+        extraComTags = Utility.Distinct(extraComTags);
+    }
+
     public static void GetInteractionTagsFrom(Character_Trainable a, Character_Trainable b, COM com, int variantID, ref List<string> ownerTags, ref List<string> extraComTags, ref List<string> extraTargetTags)
     {
         if (com != null)
@@ -1059,19 +1086,6 @@ public static class UtilityEX
 
         switch (parsed[0])
         {
-            case "generateAI":
-                var collection = new LLM_WorldState();
-                string collectionPath = Application.persistentDataPath + "/worldStateInfo.json";
-
-                var s2 = JsonConvert.SerializeObject(collection, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
-                if (File.Exists(collectionPath)) File.Delete(collectionPath);
-
-                FileInfo untransDict = new System.IO.FileInfo(collectionPath);
-                untransDict.Directory.Create();
-                File.WriteAllText(untransDict.FullName, s2);
-                Debug.Log($"creating/updating worldstateinfo collection in {collectionPath}");
-
-                break;
             case "modstatderived": // modify derived stat's debug modifier
                 if (scr_System_CampaignManager.current.CurrentTarget == null) return;
                 if (parsed.Count() != 3) return;
@@ -1248,6 +1262,7 @@ public static class UtilityEX
                     }
 
                     var c = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(parsed[1], scr_System_CampaignManager.current.CurrentRoom);
+                    if (c == null) break;
                     scr_System_CampaignManager.current.party.AddToParty(c);
 
                     var addTofaction = scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction;

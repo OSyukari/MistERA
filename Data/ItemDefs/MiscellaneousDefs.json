@@ -9,8 +9,35 @@
         "Tags":["item_money"],
         "value":1,
         "itemComps_Template":[]
+    },
+    
+    {
+        "id":"itemm_gamecd_minesweeper",
+        "Tags":["furniture_playVideoGames","noFactionReq"]
+    },
+    
+    {
+        "id":"item_videocd_news",
+        "Tags":["furniture_watchVideo","noFactionReq"]
     }
 
 ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"itemm_gamecd_minesweeper":"扫雷",
+"itemm_gamecd_minesweeper_tooltip":"扫雷",
+"item_videocd_news":"新闻",
+"item_videocd_news_tooltip":"新闻"
+            },
+            "en-us":
+            {
+
+            }
+        }
     }
 }

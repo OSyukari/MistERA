@@ -2,6 +2,7 @@
     "COMs": {
         "list": [
             {
+                "parentCOMID":"com_sex_service_base",
                 "ID": "com_sex_oral_B",
                 "ActionPackageClass": "ActionPackage_Sex",
                 "categoryTags":["com_category_b","com_category_service"],

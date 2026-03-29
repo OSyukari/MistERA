@@ -10,6 +10,7 @@ using System.Linq;
 public abstract class Character_SerializableBase
 {
     public string baseID = "";
+    public string title = "";
     public string firstName = "Jane", middleName = "", lastName = "Doe", nameDisplayFormat = "chara_fullname_firstToLast";
     public string characterComment = "";
     public string origin = "charOrigin_EmissaryoftheTower", race = "humanRace_human", raceTemplate = "humanRaceAddon_Magician", startingGift = "charOriginGift_none";
@@ -20,6 +21,34 @@ public abstract class Character_SerializableBase
     {
         //Debug.Log("CALLING VIRTUAL METHOD PurgeNonExistingData");
     }
+
+    string _cachedFullName = "";
+
+    [JsonIgnore]
+    public string FullName
+    {
+        get
+        {
+            if (_cachedFullName == "")
+            {
+                if (FirstName != "")
+                {
+                    if (MiddleName == "" && LastName == "") _cachedFullName = FirstName;
+                    else _cachedFullName = LocalizeDictionary.QueryThenParse(nameDisplayFormat)
+                                                                .Replace("$lastName$", LastName)
+                                                                .Replace(" $middleName$", MiddleName == "" ? "" : " " + MiddleName)
+                                                                .Replace("$firstName$", FirstName);
+                }
+                else if (title != "") _cachedFullName = LocalizeDictionary.QueryThenParse(title, title);
+                else _cachedFullName = "(missing name)";
+            }
+            //Debug.LogError(nameDisplayFormat);
+            return _cachedFullName;
+        }
+    }
+    string FirstName { get { return firstName == "" ? "" : LocalizeDictionary.QueryThenParse(firstName, firstName); } }
+    string MiddleName { get { return middleName == "" ? "" : LocalizeDictionary.QueryThenParse(middleName, middleName); } }
+    string LastName { get { return lastName == "" ? "" : LocalizeDictionary.QueryThenParse(lastName, lastName); }  }
 }
 
 public class Character_SerializableSafe : Character_SerializableBase

@@ -4,6 +4,7 @@
         "list":
         [
             {
+                "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_oral_kiss",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_service"],

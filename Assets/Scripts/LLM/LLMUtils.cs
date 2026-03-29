@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -194,6 +195,7 @@ public class LLMFormatSchema
     public class Type
     {
         public string description;
+        public string? example = null;
         public virtual void Purge()
         {
 
@@ -640,7 +642,7 @@ public class LLM_WorldState
         public string NextHourPlan;
         public Dictionary<string, RelationshipStorage> Relationships = null;
         public List<string> equipments = null;
-        public Dictionary<string, string> schedule = null;
+        //public Dictionary<string, string> schedule = null;
         public string LorebookEntry = null;
         public List<string> ValidPortraitTags = new List<string>();
 
@@ -731,6 +733,7 @@ public class LLM_WorldState
             int nextHour = scr_System_Time.current.getCurrentTime().Hour + 1;
             if (nextHour >= 24) nextHour -= 24;
             var nextHourJob = c.FactionManager.CurrentJobPost(nextHour);
+            var nextHourFaction = c.FactionManager.CurrentJobScheduleFaction(nextHour);
 
             RefID = c.RefID;
             Description = $"{c.Race.DisplayName} {c.RaceTemplate.DisplayName} {c.FactionManager.CurrentlyActiveFactionStatus}";
@@ -738,14 +741,14 @@ public class LLM_WorldState
             CurrentlyDoing = c.GetJobDescription();
             var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
             if (room != null) CurrentLocation = $"{(room.parentFloor != null ? $"{room.parentFloor.displayName}, " : "" )}{room.DisplayName}";
-            NextHourPlan = ((nextHourJob == null || nextHourJob.Name == "") ? LocalizeDictionary.QueryThenParse("chara_currentjob_free") : nextHourJob.Name + (faction != null ? "(" + c.FactionManager.CurrentJobScheduleFaction(nextHour).FactionDisplayName + ")" : ""));
+            NextHourPlan = ((nextHourJob == null || nextHourJob.Name == "") ? LocalizeDictionary.QueryThenParse("chara_currentjob_free") : nextHourJob.Name + (nextHourFaction != null ? $"({nextHourFaction.FactionDisplayName})" : ""));
 
             if (fullLoad)
             {
                 LorebookEntry = c.CharacterCard;
                 Relationships = new Dictionary<string, RelationshipStorage>();
                 equipments = new List<string>();
-                schedule = new Dictionary<string, string>();
+                //schedule = new Dictionary<string, string>();
                 Status = new List<string>();
                 Memories = new List<MemoryStorage>();
 
@@ -790,11 +793,12 @@ public class LLM_WorldState
                     equipments.Add(kwd);
                 }
 
+                /*
                 for(int i = 0; i < 24; i++)
                 {
                     var name = c.GetJobPost(i).Name;
                     if(name != "") schedule.Add($"{i}H", name);
-                }
+                }*/
 
                 if (c.PortraitManager != null)
                 {
@@ -808,10 +812,13 @@ public class LLM_WorldState
     public Dictionary<string, List<string>> FloorDescriptions = new Dictionary<string, List<string>>();// <floorName, <roomRefID, roomDescription>> with each room name and present chara;
     public Dictionary<string, string> Lorebook = new Dictionary<string, string>();
     public Dictionary<string, CharaStorage> Characters = new Dictionary<string, CharaStorage>(); // <refID, description>
-    public Dictionary<string, Dictionary<string, List<SerializedAP>>> PossibleInteractions = new Dictionary<string, Dictionary<string, List<SerializedAP>>>(); // <targetName, <commandID, tooltips>>
+    public Dictionary<string, Dictionary<string, Dictionary<string, SerializedAP>>> PossibleInteractions = new Dictionary<string, Dictionary<string, Dictionary<string, SerializedAP>>>(); // <targetName, <commandID, tooltips>>
 
     public LLM_WorldState()
     {
+        //bool isdebug = scr_System_CampaignManager.current.DebugMode;
+        //if (isdebug) scr_System_CampaignManager.current.DebugMode = false;
+
         var currentRoom = scr_System_CampaignManager.current.CurrentRoom;
         var faction = currentRoom == null ? null : currentRoom.FactionOwner;
 
@@ -899,6 +906,7 @@ public class LLM_WorldState
 
         LLMUtils.CollectCOMInfo(PossibleInteractions, currentRoom);
 
+      //  if (isdebug) scr_System_CampaignManager.current.DebugMode = true;
     }
 
 }
@@ -906,7 +914,27 @@ public class LLM_WorldState
 
 public static class LLMUtils
 {
-    static void validateSingle(Job job, List<int> doer, List<int> receiver, HashSet<Job> verified, Dictionary<string, List<SerializedAP>> collection, HashSet<string> repeat )
+    static void AddChild(ActionPackage ap, SerializedAP child, Dictionary<string, SerializedAP> tooltips)
+    {
+        if (child == null) return;
+        child.SourceJobID = null;
+        child.Summary = null;
+        child.TimeCost = null;
+        if (child.AcceptanceRate != null) child.AcceptanceCheck = null;
+        child.Doers = null;
+        child.Receivers = null;
+
+        if (tooltips.TryGetValue(ap.targetCOM.ParentCOM.DisplayName(), out var parentAP))
+        {
+            parentAP.CommandID = null;
+            parentAP.AcceptanceRate = null;
+            parentAP.AcceptanceCheck = null;
+            if (parentAP.variants == null) parentAP.variants = new List<SerializedAP>();
+            parentAP.variants.Add(child);
+        }
+    }
+
+    static void validateSingle(Job job, List<int> doer, List<int> receiver, HashSet<Job> verified, Dictionary<string, Dictionary<string, SerializedAP>> collection, HashSet<string> repeat )
     {
         if (verified != null)
         {
@@ -929,54 +957,108 @@ public static class LLMUtils
         }
 
         var chara = scr_System_CampaignManager.current.FindInstanceByID(doer[0]);
-        List<SerializedAP> tooltips = new List<SerializedAP>();
+        Dictionary<string, SerializedAP> tooltips = new Dictionary<string, SerializedAP>();
 
-        foreach (var ap in (job is Job_Furniture ? job.MakePackages(chara, true) : job.CachedPackages))
+        /*
+        foreach (var ap in (job is Job_Furniture ? job.MakePackages(chara, true, false, true) : job.CachedPackages))
         { 
-            validateAP(ap, tooltips, doer, receiver);
+            var app = validateAP(ap, doer, receiver);
+            if (app != null) tooltips.Add(app.CommandID, app);
+        }*/
+
+        if (job is Job_Furniture)
+        {
+            foreach (var ap in job.MakePackages(chara, true, false, true))
+            {
+                var app = validateAP(ap, doer, receiver);
+                if (app != null)
+                {
+                    if (ap.targetCOM.childCOMs.Count > 0)
+                    {
+                        tooltips.Add(ap.targetCOM.DisplayName(), app);
+                        app.CommandName = null;
+                    }
+                    else tooltips.Add(ap.DescriptionText(chara.RefID, false), app);
+                }
+            }
+
+            foreach (var ap in job.MakePackages(chara, false, true, true))
+            {
+                if (ap.targetCOM.ParentCOM == null) continue;
+                var app = validateAP(ap, doer, receiver);
+                AddChild(ap, app, tooltips);
+            }
         }
+        else
+        {
+            foreach (var ap in job.CachedPackages)
+            {
+                if (ap.targetCOM != null && ap.targetCOM.ParentCOM != null) continue;
+                var app = validateAP(ap, doer, receiver);
+                if (app != null)
+                {
+                    if (ap.targetCOM.childCOMs.Count > 0)
+                    {
+                        tooltips.Add(ap.targetCOM.DisplayName(), app);
+                        app.CommandName = null;
+                    }
+                    else tooltips.Add(ap.DescriptionText(chara.RefID, false), app);
+                }
+            }
+            foreach (var ap in job.CachedPackages)
+            {
+                if (ap.targetCOM == null || ap.targetCOM.ParentCOM == null) continue;
+                var app = validateAP(ap, doer, receiver);
+                AddChild(ap, app, tooltips);
+            }
+        }
+
         if (tooltips.Count > 0) collection.Add($"{job.DisplayName}", tooltips);
        // else collection.Add($"{job.DisplayName}, no valid aps", new List<SerializedAP>());
     }
 
-    static void validateExisting(Job_Furniture job, Dictionary<string, List<SerializedAP>> collection)
+    static void validateExisting(Job_Furniture job, Dictionary<string, Dictionary<string, SerializedAP>> collection)
     {
         if (job == null) return;
-        List<SerializedAP> tooltips = new List<SerializedAP>();
+        var tooltips = new Dictionary<string, SerializedAP>();
         foreach (var ap in job.MakePackagesJoinable(scr_System_CampaignManager.current.Player))
         {
-            validateAP(ap, tooltips, null, null);
+            var app = validateAP(ap, null, null);
+            if (app != null) tooltips.Add(app.CommandID, app);
         }
 
         if (tooltips.Count > 0) collection.Add($"{job.DisplayName}", tooltips);
     }
 
 
-    static void validateAP(ActionPackage ap, List<SerializedAP> tooltips, List<int> doer, List<int> receiver)
+    static SerializedAP validateAP(ActionPackage ap, List<int> doer, List<int> receiver)
     {
-        if (ap.targetCOM == null) return;
+        if (ap.targetCOM == null) return null;
 
         var app = new SerializedAP();
         app.CommandName = ap.DisplayName;
         app.CommandID = ap.targetCOM == null ? "null" : ap.targetCOM.ID;
         app.SourceJobID = ap.job.RefID;
 
+        app.TimeCost = ap.targetCOM == null ? 1 : ap.targetCOM.TimeScale;
+
         if (!ap.targetCOM.ValidateJob(ap.job, out var msg))
         {
             // add message
             app.Summary = ap.GetTooltips($"validatejob fail: {msg}");
-            tooltips.Add(app);
-            return;
+           // tooltips.Add();
+            return app;
         }
 
 
         if (doer != null && receiver != null) ap.ResetRequest(doer, receiver, doer.Count > 0 ? doer[0] : -1, true);
         if (!ap.Validate())
         {
-            if (ap.COMVariantID < -1) return;
+            if (ap.COMVariantID < -1) return null;
             // validation failure
             ap.tooltip.RemoveAll(x => x == "" || x.Length < 1);
             app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", ap.tooltip));
+            return null;
 
         }
         else if (ap.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !scr_System_CampaignManager.current.DebugMode)
@@ -985,37 +1067,66 @@ public static class LLMUtils
         }
         else
         {
-            var prevalidation = ap.GetSuccessRatePrevalidationString();
+            ap.GetSerializedAPData(app);
+            //ap.get
+            //var prevalidation = ap.GetSuccessRatePrevalidationString(false);
             ap.CollectMods(out var dcMods, out var bonus, out var baseDC);
             string dcResult = "";
             if (baseDC > 0)
             {
-                List<string> mods = dcMods == null ? new List<string>() : dcMods.GetAllModifiers();
+                List<string> mods = dcMods == null ? new List<string>() : dcMods.GetAllModifiers(false);
                 dcResult = $"Difficulty Check D20{(mods.Count > 0 ? $" + {String.Join(" + ", mods)}" : "")} >=? {baseDC}";
             }
 
             //tooltips.Add($"{ap.DisplayName}: [{ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"))}{(prevalidation.Length > 0 ? $"\n{prevalidation}" : "")}{(dcResult.Length > 0 ? $"\n{dcResult}" : "")}\n]");
 
-            app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip")+$"\n{String.Join("\n", ap.tooltip)}");
+            //app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip")+$"\n{String.Join("\n", ap.tooltip)}");
 
-            if (prevalidation.Length > 0) app.AcceptanceCheck = prevalidation;
-            else app.AcceptanceCheck = null;
+            if (app.AcceptanceRate != null)
+            {
+                app.AcceptanceCheck = null;
+            }
+            else if (app.AcceptanceCheck != null)
+            {
+                if (app.AcceptanceCheck.Length > 0) app.AcceptanceCheck = RegexStrip(app.AcceptanceCheck);
+                else app.AcceptanceCheck = null;
+            }
+
+
+            if (app.AcceptanceMods != null)
+            {
+                if (app.AcceptanceMods.Length > 0) app.AcceptanceMods = RegexStrip(app.AcceptanceMods);
+                else app.AcceptanceMods = null;
+            }
 
             if (dcResult.Length > 0) app.DifficultyCheck = dcResult;
             else app.DifficultyCheck = null;
         }
 
-        tooltips.Add(app);
+        return app;
+    }
+
+
+    static string RegexStrip(string s)
+    {
+        return System.Text.RegularExpressions.Regex.Replace(s, @"<link=[^>]+>(.*?)<\/link>", "$1");
     }
 
     public class SerializedAP
     { 
         public string CommandName;
         public string CommandID;
-        public int SourceJobID;
+        public int? SourceJobID;
         public string Summary;
+        public int? TimeCost;
         public string AcceptanceCheck;
+        public string AcceptanceRate;
+        public string AcceptanceMods;
         public string DifficultyCheck;
+        public string Doers;
+        public string Receivers;
+
+        public List<SerializedAP> variants = null;
 
     }
 
@@ -1024,14 +1135,14 @@ public static class LLMUtils
     /// </summary>
     /// <param name="targets"></param>
     /// <returns></returns>
-    public static void CollectCOMInfo(Dictionary<string, Dictionary<string, List<SerializedAP>>> PossibleInteractions, Room_Instance currentRoom)
+    public static void CollectCOMInfo(Dictionary<string, Dictionary<string, Dictionary<string, SerializedAP>>> PossibleInteractions, Room_Instance currentRoom)
     {
         var mgr = scr_System_CampaignManager.current;
         if (mgr == null) return;
         List<Character_Trainable> targets = currentRoom == null ? new List<Character_Trainable>() : currentRoom.RoomChara;
         var trackedJobs = new HashSet<Job>();
 
-        Dictionary<string, List<SerializedAP>> collection = new Dictionary<string, List<SerializedAP>>();
+        Dictionary<string, Dictionary<string, SerializedAP>> collection = new Dictionary<string, Dictionary<string, SerializedAP>> ();
 
         var player = new List<int>(1);
         if (mgr.Player != null)
@@ -1062,7 +1173,7 @@ public static class LLMUtils
             }
             if (collection.Count > 0)
             {
-                PossibleInteractions.Add("Ongoing Commands in room:", new Dictionary<string, List<SerializedAP>>(collection));
+                PossibleInteractions.Add("Ongoing Commands in room:", new Dictionary<string, Dictionary<string, SerializedAP>>(collection));
             }
             collection.Clear();
         }
@@ -1119,7 +1230,7 @@ public static class LLMUtils
 
                 if (collection.Count > 0)
                 {
-                    PossibleInteractions.Add($"Possible command with {r.FirstName}", new Dictionary<string, List<SerializedAP>>(collection));
+                    PossibleInteractions.Add($"Possible command with {r.FirstName}", new Dictionary<string, Dictionary<string, SerializedAP>>(collection));
                 }
             }
         }
@@ -1154,7 +1265,7 @@ public static class LLMUtils
 
             if (collection.Count > 0)
             {
-                PossibleInteractions.Add($"Possible command alone", new Dictionary<string, List<SerializedAP>>(collection));
+                PossibleInteractions.Add($"Possible command alone", new Dictionary<string, Dictionary<string, SerializedAP>>(collection));
             }
         }
     }

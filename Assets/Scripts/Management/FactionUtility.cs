@@ -48,7 +48,7 @@ public static class FactionUtility
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
     }
 
-    public static bool TryFindValidNonJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, Dictionary<int, List<int>> managedRoomRefs, out List<Job_Furniture> list, Character_Trainable c, string comID = "", string comTag = "", bool checkBlacklist = false)
+    public static bool TryFindValidNonJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, Dictionary<int, List<int>> managedRoomRefs, out List<Job_Furniture> list, Character_Trainable c, string comID = "", string comTag = "", bool checkBlacklist = true)
     {
         list = new List<Job_Furniture>();
         var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
@@ -65,7 +65,7 @@ public static class FactionUtility
                 if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
                 {
                    // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job blacklisted");
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                     continue;
                 }
                 else if (!post.ValidateActor(c, key))
@@ -94,6 +94,7 @@ public static class FactionUtility
                     //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job prisonRefID != post.ParentRoom.RefID Fail");
                     continue;
                 }
+
                 list.Add(post);
             
             }
@@ -141,7 +142,7 @@ public static class FactionUtility
             //post.RefreshValidJobCOMs();
             if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
             {
-                Debug.LogError($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                 continue;
             }
             //else if (!targetCOM.allowInPrivateRoom && post.ParentRoom.isRoomPrivate) continue;

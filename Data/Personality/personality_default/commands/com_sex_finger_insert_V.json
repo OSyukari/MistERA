@@ -65,6 +65,26 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "closed_eyes"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "时停分支",
+                            "responses": [
+                                "时停 被V指入 分支"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraPortraitTags": [

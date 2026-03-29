@@ -41,6 +41,7 @@ public class scr_UpdateHandler : MonoBehaviour
 
     Coroutine LLMRoutine = null;
 
+    //public bool skipCurrentRoundClimaxCheck = false;
     public bool CanInterruptLLMRoutine { get
         {
             return LLMRoutine != null;
@@ -111,6 +112,9 @@ public class scr_UpdateHandler : MonoBehaviour
             payload.ReplaceString("<user>", scr_System_CampaignManager.current.Player.FirstName);
             var worldinfo = new LLM_WorldState();
             var worldinfostring = JsonConvert.SerializeObject(worldinfo, Formatting.Indented, UtilityEX.SerializerSettings);
+
+
+
             payload.ReplaceString("%%worldInfo%%", worldinfostring);
             payload.ReplaceString("%%currentRoundInput%%", s);
             payload.ReplaceString("%%currentLanguage%%", LocalizeDictionary.Instance.Index.cachedLang);
@@ -357,6 +361,7 @@ public class scr_UpdateHandler : MonoBehaviour
                 {
                     imageScript.Activate();
                     //                    imageScript.selfCanvasGroup.alpha = 1;
+                    _updateTime = scr_System_Time.current.getCurrentTime();
                 }
                 else
                 {
@@ -589,6 +594,20 @@ public class scr_UpdateHandler : MonoBehaviour
     string cache_elapsedTime = "";
     string ElapsedTime { get { if (cache_elapsedTime == "") cache_elapsedTime = LocalizeDictionary.QueryThenParse("ui_update_elapsedTime");
         return cache_elapsedTime;} }
+
+
+    DateTime _updateTime;
+    [JsonIgnore]
+    public DateTime UpdateTime
+    {
+        get
+        {
+            if (Updating) return _updateTime;
+            else return scr_System_Time.current.getCurrentTime();
+        }
+    }
+
+
     private IEnumerator SingleUpdate()
     {
         //Debug.Log("Singleupdate : start");
@@ -657,7 +676,9 @@ public class scr_UpdateHandler : MonoBehaviour
             cnManager.ClearExecutedAPs();
             //cnManager.ClearLogs(true);
             scr_System_Time.current.NotifyTimeResumeEnd();
+            //skipCurrentRoundClimaxCheck = false;
             // if (scr_System_Time.current.TimeResume) scr_System_Time.current.timeStop = TimestopState.normal;
+            _updateTime = scr_System_Time.current.getCurrentTime();
 
             //yield return wait;
             if (loopCount % 30 == 0) yield return wait;
@@ -700,16 +721,15 @@ public class scr_UpdateHandler : MonoBehaviour
         {
             EventHandler.Run(false, true);
         }
-        else
-        {
-            cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", true, true, scr_System_Time.current.getCurrentTime().ToString());
+            
 
-        }
+        
         ExecuteEventCallbacks(CallbackResumeUpdate);
         FlushCollectedLogs(true, oneLoop, true);
         //NotifyLogsSingleUpdate(CallbackResumeUpdate);
         scr_System_CampaignManager.current.NotifyEventEnd();
 
+        cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", true, true, scr_System_Time.current.getCurrentTime().ToString());
     }
 
     public void DeferredUpdateCall(int intref, string text)
@@ -768,7 +788,7 @@ public class scr_UpdateHandler : MonoBehaviour
         this.CallbackResumeUpdate = false;
     }
 
-    public MessageCollect Message = new MessageCollect();
+    MessageCollect Message = new MessageCollect();
     public void NotifyJobDescriptions(MessageCollect m, bool shorten)
     {
        // Debug.Log("NotifyJobDescriptions");
@@ -801,17 +821,25 @@ public class scr_UpdateHandler : MonoBehaviour
     public void AppendMessageBefore(string s, bool rightalign)
     {
         if (s.Length < 1) return;
-        this.Message.messages_before.Add($"<align=\"right\">{s}</align>");
+        this.Message.messages_before.Add(rightalign ? $"<align=\"right\">{s}</align>": s);
     }
-    public void AppendKojoMessage(MessageCollect_KojoEntry m)
+    public void AppendKojoMessage(MessageCollect_KojoEntry m, bool visible, Room_Instance recording)
     {
         //Debug.Log("AppendKojoMessage");
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"AppendKojoMessage: {m.message}");
-        this.Message.messages_kojo.Add(m);
+        if (!visible && recording == null) return;
+        if (visible) this.Message.messages_kojo.Add(m);
+        if (recording != null) recording.NotifyKojoCollect(m);
     }
-    public void AppendKojoMessage_NonVisible(MessageCollect_KojoEntry m)
+    public ExperienceLog GetExpLogs()
     {
+        return this.Message.exp;
+    }
 
+    public void AppendMessageAfter(string s, bool rightalign)
+    {
+        if (s.Length < 1) return;
+        this.Message.messages_after.Add(rightalign ? $"<align=\"right\">{s}</align>" : s);
     }
 
     public void FlushCollectedLogs_PreEvents()

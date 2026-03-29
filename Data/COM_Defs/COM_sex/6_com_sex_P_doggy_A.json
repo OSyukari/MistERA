@@ -4,6 +4,7 @@
         "list":
         [
             {
+                "parentCOMID":"com_sex_base",
                 "ID":"com_sex_P_doggy_A",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_a"],

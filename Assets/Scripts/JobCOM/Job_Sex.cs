@@ -461,7 +461,7 @@ public class Job_Sex_Group : Job
                         replaced = true;
                         packages_previous[ii].LoggedBegin = true;
 
-                        packages_current[ii].PackageRepeat = false;
+                        packages_previous[ii].PackageRepeat = false;
                         packages_previous[ii].DisablePackage();
                         scr_System_CampaignManager.current.Unregister(packages_previous[ii]);
                         //packages_previous.Add(packages_current[ii]);
@@ -533,7 +533,7 @@ public class Job_Sex_Group : Job
                             replaced = true;
                             packages_previous[ii].LoggedBegin = true;
 
-                            packages_current[ii].PackageRepeat = false;
+                            packages_previous[ii].PackageRepeat = false;
                             packages_previous[ii].DisablePackage();
                             scr_System_CampaignManager.current.Unregister(packages_previous[ii]);
                             //packages_previous.Add(packages_current[ii]);
@@ -577,6 +577,47 @@ public class Job_Sex_Group : Job
        // Observer_JobUpdate?.Invoke(true);
     }
 
+    public override List<ActionPackage> GetConflictPackages(ActionPackage a)
+    {
+        List<ActionPackage> tooltips = new List<ActionPackage>();
+        if (a is ActionPackage_Sex)
+        {
+            var p = a as ActionPackage_Sex;
+
+            if (p.targetCOM.comTags.Contains("noAction"))
+            {
+                //
+            }
+            else
+            {
+                for (int ii = packages_current.Count - 1; ii >= 0; ii--)
+                {
+                    if (UtilityEX.ArePackagesEqual(p, packages_current[ii]))
+                    {
+
+
+                    }
+                    else if (UtilityEX.DetectConflict(p, packages_current[ii]))
+                    {   // leave the conflict package in previous to use for COM text selection purposes.
+
+                        // ii will get replaced
+                        tooltips.Add(packages_current[ii]);
+                    }
+                }
+
+                for (int ii = packages_previous.Count - 1; ii >= 0; ii--)
+                {
+
+                    if (packages_previous[ii].Duration > 0 && UtilityEX.DetectConflict(p, packages_previous[ii]))
+                    {   // leave the conflict package in previous to use for COM text selection purposes.
+                        tooltips.Add(packages_previous[ii]);
+                    }
+                }
+            }
+
+        }   // Redress COM register directly with no extra processing
+        return tooltips;
+    }
     public override bool HasExistingCOMwithTag(List<string> tags, List<int> doerRef, List<int> receiverRef = null, bool searchPrevious = false, bool checkDisabled = false)
     {
         return GetExistingCOMwithTag(tags, doerRef, receiverRef, searchPrevious,checkDisabled).Count > 0;

@@ -1,0 +1,61 @@
+{
+    "COMs":
+    {
+    "list":[
+        {
+            "ID":"com_sex_service_base",
+            "ActionPackageClass":"ActionPackage_Sex",
+            "displayName":"com_sex_service_base",
+            "timeScale":3,
+            "comTags":["sex","service"],
+            "requirements":{
+                "requirement":{
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":14 },
+            "DifficultyCheck":{ "baseD20Check":8 }
+        },
+        {
+            "ID":"com_sex_base",
+            "ActionPackageClass":"ActionPackage_Sex",
+            "displayName":"com_sex_base",
+            "timeScale":3,
+            "comTags":["sex"],
+            "requirements":{
+                "requirement":{
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":14 },
+            "DifficultyCheck":{ "baseD20Check":8 }
+        }
+
+    ]
+},
+"Dictionary":
+{
+    "Entries":
+    {
+        "zh-cn":
+        {
+            "com_sex_service_base":"侍奉系指令"
+        },
+        "en-us":
+        {
+
+
+            
+                            
+        }
+    }
+}
+
+
+}

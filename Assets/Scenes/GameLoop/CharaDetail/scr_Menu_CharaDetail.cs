@@ -12,7 +12,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     public scr_SpineLoader spineLoader;
     int chara_refID = -1;
     Character_Trainable _chara;
-    Character_Trainable chara { get
+    public Character_Trainable chara { get
         {
             if (chara_refID < 0) return null;
             else if (_chara == null )
@@ -76,7 +76,9 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                 //button.Initialize(this, new button_ChangeTab(this, button, panel_health, InitializeHealth)); break;
 
                 case 10: // reset portrait manager BTN
-                    button.Initialize(this, new button_resetPortraitManager(this, button)); break;
+                    button.Initialize(this, new initScript_basicInfo.button_resetPortraitManager(this, button)); break;
+                case 11: // change portrait manager BTN
+                    button.Initialize(this, new initScript_basicInfo.button_changePortraitManager(this, button)); break;
                 case 3:   // equipment tab
                     if (safe) button.gameObject.SetActive(false);
                     else button.Initialize(this, new button_ChangeTab(this, button, panel_equip, InitializeEquipment)); 
@@ -143,7 +145,8 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     }
 
 
-   // public TextMeshProUGUI picture_AA;
+
+    // public TextMeshProUGUI picture_AA;
     RectTransform selfRect;
 
 
@@ -561,39 +564,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         }
     }
 
-    public class button_resetPortraitManager : ButtonValidator, I_ButtonClickable
-    {
-        scr_SelectableText text;
-        new scr_Menu_CharaDetail parent;
-        bool clicked = false;
-        public button_resetPortraitManager(scr_Menu_CharaDetail parent, scr_SelectableText text) : base(parent)
-        {
-            this.parent = parent;
-            this.text = text;
-        }
-
-        public override bool IsButtonValid()
-        {
-            if (clicked) return false;
-            if (parent.chara == null) 
-            {
-                this.tooltip = "parent canvas chara is null";
-                return false;
-            }
-            return parent.chara.PortraitManager.CanResetPortrait(out tooltip);
-        }
-
-        public void OnClickButton()
-        {
-            //parent.currentHealthTab = target;
-            this.tooltip = "portrait reset!";
-            clicked = true;
-            parent.chara.PortraitManager.ResetPortraits();
-            Coroutine co = parent.StartCoroutine(parent.chara.PortraitManager.CacheInternal(parent.chara));
-            // call for ex watcher to re-update
-            scr_System_CampaignManager.current.NotifyCurrentTargetEXReset();
-        }
-    }
 
     public class button_ChangeHealthTab : ButtonValidator, I_ButtonClickable
     {

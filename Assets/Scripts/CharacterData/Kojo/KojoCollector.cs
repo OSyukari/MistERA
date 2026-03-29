@@ -1,0 +1,303 @@
+﻿using Newtonsoft.Json;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.UI.GridLayoutGroup;
+
+public interface I_Records
+{
+
+    [JsonIgnore] public DateTime Timestamp { get; }
+    public bool VisibleToChara(Character_Trainable c);
+}
+
+
+public class KojoCollector : I_ResultStorage, I_Records
+{
+    [JsonIgnore]
+    public bool requestAccepted
+    {
+        get
+        {
+            return this.isRequestAccepted;
+        }
+    }
+    [JsonIgnore]
+    public bool HasPermission
+    {
+        get
+        {
+            return this.hasPermission;
+        }
+    }
+    [JsonIgnore]
+    public bool isForced
+    {
+        get
+        {
+            return this.IsForced;
+        }
+    }
+
+    public bool VisibleToChara(Character_Trainable c)
+    {
+        if (c == null) return true;
+        if (Owner == c) return true;
+        if (Target == c) return true;
+        if (doerRef == c.RefID || receiverRef == c.RefID) return true;
+        return false;
+    }
+
+    // validate target baseID
+
+    Character_Trainable _owner = null;
+    [JsonIgnore]
+    public Character_Trainable Owner
+    {
+        get
+        {
+            if (_owner == null && selfRef != -1)
+            {
+                _owner = scr_System_CampaignManager.current.FindInstanceByID(selfRef);
+            }
+            return _owner;
+
+        }
+    }
+
+    Character_Trainable _target = null;
+    [JsonIgnore]
+    public Character_Trainable Target
+    {
+        get
+        {
+            if (_target == null && targetRef != -1)
+            {
+                _target = scr_System_CampaignManager.current.FindInstanceByID(targetRef);
+            }
+            return _target;
+
+        }
+        set
+        {
+            _target = value;
+            targetRef = value == null ? -1 : value.RefID;
+        }
+    }
+
+
+
+    [JsonProperty] protected string _eventID = "";
+    [JsonIgnore] 
+    public string eventID
+    {
+        get
+        {
+            return _eventID;
+        }
+        set
+        {
+            if (value == null || value.Length < 1) _eventID = "";
+            else if (value.Length > 0 && value.Contains("_noSex")) _eventID = value.Substring(0, value.Length - 6);
+            else _eventID = value;
+        }
+    }
+    public string suffix = "";
+
+    public Memory_Attitude GetActorAttitude(int actorRef)
+    {
+        if (doerRef == actorRef) return doerAttitude;
+        else if (receiverRef == actorRef) return receiverAttitude;
+        else return Memory_Attitude.None;
+    }
+    public int comVariantID = -1;
+    [JsonIgnore] public int VariantID { get { return comVariantID; } }
+
+
+    Character_Relationship _relation = null;
+    [JsonIgnore]
+    public Character_Relationship Relation
+    {
+        get
+        {
+            if (_relation == null && Owner != null && Target != null)
+            {
+                _relation = Owner.Relationships.FindRelationshipWith(Target);
+            }
+            return _relation;
+        }
+    }
+
+    [JsonIgnore]
+    public Memory_Response Response
+    {
+        get
+        {
+            return response;
+        }
+    }
+
+    public KojoCollector Copy()
+    {
+        var newinstance = new KojoCollector(this.Owner, this.eventID, this.suffix);
+        newinstance.comVariantID = comVariantID;
+        newinstance.selfTags = new List<string>(selfTags);
+        newinstance.targetTags = new List<string>(targetTags);
+        newinstance.rightAlign = rightAlign;
+        newinstance.isDoer = isDoer;
+        newinstance.selfRef = selfRef;
+        newinstance.targetRef = targetRef;
+        newinstance.doerRef = doerRef;
+        newinstance.doerAttitude = doerAttitude;
+        newinstance.receiverAttitude = receiverAttitude;
+        newinstance.receiverRef = receiverRef;
+        newinstance.masterRef = masterRef;
+        newinstance.response = response;
+        newinstance.commandID = commandID;
+        newinstance.comVariantID = comVariantID;
+        newinstance.isRequestAccepted = isRequestAccepted;
+        newinstance.hasPackageData = hasPackageData;
+        newinstance.hasPermission = hasPermission;
+        newinstance.isStrongP = isStrongP;
+        newinstance.isPlayerInvolved = isPlayerInvolved;
+        newinstance.timestamp = timestamp;
+
+        return newinstance;
+    }
+    public List<string> selfTags = new List<string>();
+    public List<string> targetTags = new List<string>();
+
+    public bool rightAlign = false;
+    public bool isDoer = true;
+    public bool isPlayerInvolved = false;
+
+    public MessageCollect_KojoEntry collect = null;
+
+
+    // first, will need to get self and target character instance
+    public int selfRef = -1;
+    public int targetRef = -1;
+    public int doerRef = -1;
+    public Memory_Attitude doerAttitude = Memory_Attitude.None;
+    public int receiverRef = -1;
+    public Memory_Attitude receiverAttitude = Memory_Attitude.None;
+    public int masterRef = -1;
+    public Memory_Response response = Memory_Response.Accept;
+
+    public string commandID = "";
+
+    COM _targetCOM = null;
+    [JsonIgnore]
+    public COM targetCOM { get
+        {
+            if (_targetCOM == null && commandID != "")
+            {
+                _targetCOM = scr_System_Serializer.current.MasterList.COMs.GetByID(commandID);
+            }
+            return _targetCOM;
+        } }
+
+
+    // if relationship exist -> it will always exist
+    // 
+
+    // validate ep
+
+    /*
+    - success?
+    - attitude
+    - permission
+    */
+    public bool isRequestAccepted = true;
+    public bool hasPermission = true;
+    public bool IsForced = false;
+    public bool hasPackageData = false;
+    public bool isStrongP = false;
+
+    public KojoCollector() { }
+    public KojoCollector(Character_Trainable c, string eventID, string suffix = "")
+    {
+        this.eventID = eventID;
+        selfRef = c.RefID;
+        this.suffix = suffix;
+        this.timestamp = scr_System_Time.current.getCurrentTime();
+        //Debug.LogError("error did you remember to make selftags and targettags??");
+    }
+
+    public void LoadRel(Character_Relationship rel)
+    {
+        this.Target = rel.Target;
+        this.isPlayerInvolved = this.isPlayerInvolved || Owner.CurrentJob.actorRefID.Contains(0) || Target.CurrentJob.actorRefID.Contains(0);
+    }
+
+    /// <summary>
+    /// Load EP data.
+    /// </summary>
+    /// <param name="loadReceiver">if True, load receiver's relationship</param>
+    public void LoadEP(EvaluationPackage ep, Character_Trainable target)
+    {
+        if (ep == null) return;
+        hasPackageData = true;
+        hasPermission = ep.hasPermission;
+        isStrongP = ep.isStrongP;
+
+        if (ep.Doer == Owner)
+        {
+            if (ep.Receiver == null) this.selfTags = ep.DoerTargetTag;
+            else this.selfTags = ep.DoerSelfTag;
+        }
+        else if (ep.Receiver == Owner)
+        {
+            this.selfTags = ep.ReceiverSelfTag;
+        }
+
+        if (ep.Receiver != null)
+        {
+            receiverRef = ep.Receiver.RefID;
+            if (target == ep.Receiver)
+            {
+                Target = ep.Receiver;
+                targetTags = ep.ReceiverTargetTag;
+            }
+            receiverAttitude = ep.ReceiverAttitude;
+        }
+        if (ep.Doer != null)
+        {
+            doerRef = ep.Doer.RefID;
+            if (target == ep.Doer)
+            {
+                Target = ep.Doer;
+                targetTags = ep.DoerTargetTag;
+            }
+            doerAttitude = ep.DoerAttitude;
+        }
+
+        if (ep.Master != null) masterRef = ep.Master.RefID;
+        else if (ep.Doer != null) masterRef = ep.Doer.RefID;
+
+        if (ep.targetCOM != null)
+        {
+            this.commandID = ep.targetCOM.ID;
+            this.comVariantID = ep.VariantID;
+        }
+
+        if (Target == null && target != null)
+        {
+            Target = target;
+        }
+
+        IsForced = ep.isForced;
+
+        isPlayerInvolved = isPlayerInvolved || ep.Package.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID);
+        isRequestAccepted = ep.requestAccepted;
+        response = ep.Response;
+    }
+
+    public DateTime timestamp = DateTime.MinValue;
+    [JsonIgnore] public DateTime Timestamp { get { return timestamp; } }
+
+}
+

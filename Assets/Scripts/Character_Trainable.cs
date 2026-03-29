@@ -59,6 +59,21 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
     }
 
+
+    Room_Instance _currentRoom = null;
+    bool cached_currentroom = false;
+    [JsonIgnore] public Room_Instance CurrentRoom { get
+        {
+            if (_currentRoom == null && !cached_currentroom)
+            {
+                _currentRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(this.RefID);
+                cached_currentroom = true;
+            }
+            return _currentRoom;
+        } }
+
+
+
     [JsonIgnore] public bool Climaxing { get { return Stats.Climaxing != null && Stats.Climaxing.Severity >= 1; } }
 
     /// <summary>
@@ -90,7 +105,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return GetJobPost(scr_System_Time.current.getCurrentTime().Hour);
             //return jobpost == null ? null : jobpost.getRandCOM; 
         } }
-
 
     /// <summary>
     /// If self is player, check all packages in job and find if has active <br/>
@@ -144,6 +158,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     [JsonIgnore] public string BaseID { get { return baseID; } set { this.baseID = value; } }
     [JsonProperty] protected int referenceID = -1;
     [JsonIgnore] public int RefID { get { return referenceID; } }
+
+    public event Action<Room_Instance> OnMoveToRoom;
+    public void NotifyMoveToRoom(Room_Instance r)
+    {
+        this._currentRoom = r;
+        OnMoveToRoom?.Invoke(r);
+    }
 
     [JsonIgnore] private Humanoid_Womb womb = null;
     [JsonIgnore] public Humanoid_Womb Womb {
@@ -294,6 +315,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     private void PostUpdateTime2()
     {
         if (!scr_System_CentralControl.current.isSafeMode) this.Body.CheckClimax(this.InteractionJob.m);
+        this.Relationships.ClearEPCache();
     }
 
     private void PostUpdateTime3()
@@ -301,6 +323,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this.Skills.FinalizeExperience();
         this._cachedJobDescription = string.Empty;
         this.PortraitManager.ClearHandlerCache();
+        this.Memory.Tick();
         if (!isTimeStoppedLoose)
         {
             MovedInTimeStop = false;
@@ -311,7 +334,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     private void Observer_GlobalMinute5(TimeSpan t)
     {
         this.Body.UpdateTimeMinute(t);
-        this.Memory.Tick(t);
         this.Relationships.RefreshMinute5();
     }
     private void Observer_GlobalMinute(TimeSpan t, TimeSpan t_real)
@@ -1791,7 +1813,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                     // add moodlet, reduce relationship -> mod relationship record are from ep. or can we directly inject into updatehandler ?
                     // directly add explog to updatehandler's log
                     var relationship = randRel.Owner.Relationships;
-                    var logger = scr_System_CampaignManager.current.isCharaVisibleToPlayer(this.RefID) ? scr_UpdateHandler.current.Message.exp : null;
+                    var logger = scr_System_CampaignManager.current.isCharaVisibleToPlayer(this.RefID) ? scr_UpdateHandler.current.GetExpLogs() : null;
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Trust, -30, logger);
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Fear, 30, logger);
 

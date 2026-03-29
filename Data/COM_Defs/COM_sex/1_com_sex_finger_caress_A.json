@@ -4,6 +4,7 @@
         "list":
         [
             {
+                "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_finger_caress_A",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_a","com_category_service"],

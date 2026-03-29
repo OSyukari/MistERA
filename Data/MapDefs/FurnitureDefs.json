@@ -78,7 +78,10 @@
             "noDisplay":true,
             "recipe":[],
             "furnitureSize":0,
-            "givesJob": [ { "comTags":["furniture","food_meal"] } ]
+            "givesJob": [ 
+                { "comTags":["furniture","food_getmeal"] } ,
+                { "comTags":["furniture","food_meal"] } 
+            ]
         },
         {
             "ID":"furniture_galley",
@@ -86,7 +89,8 @@
             "recipe":[],
             "furnitureSize":3,
             "givesJob":
-            [ { "comTags":["furniture","production_cooking"] } ]
+            [ { "comTags":["furniture","production_cooking"] },
+                { "comTags":["furniture","cooking"] } ]
         },
         {
             "ID":"furniture_stove",
@@ -175,7 +179,8 @@
             "ID":"furniture_bookshelves",
             "displayName":"书架",
             "recipe":[],
-            "furnitureSize":1
+            "furnitureSize":1,
+            "givesJob": [  { "comTags":["furniture", "books"] }]
         },
         {
             "ID":"furniture_hydroponics",
@@ -259,6 +264,7 @@
             "furnitureSize":0,
             "givesJob":
             [   { "comTags":["furniture","bed"] },
+                { "comTags":["furniture","food_getmeal"] } ,
                 { "comTags":["furniture","food_meal"] },
                 { "comID":["com_furniture_restroom_fix"] } ]
         }

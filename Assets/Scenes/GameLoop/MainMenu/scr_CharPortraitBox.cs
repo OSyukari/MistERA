@@ -10,6 +10,8 @@ using System.Runtime.InteropServices;
 public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Image picture;
+    public Image picture_landscape;
+    public CanvasGroup picture_landscape_group;
     public scr_SpineLoader spineLoader;
     public Transform spineRect { get { return (spineLoader == null ? null : spineLoader.GetLoaderRect); } }
 
@@ -42,6 +44,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         {
             scr_System_CampaignManager.current.Observer_CurrentTargetEX += ReadCurrentChar;
             scr_System_CampaignManager.current.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
+            scr_System_CampaignManager.current.CurrentTargetEX_Box = this;
         }
     }
 
@@ -114,6 +117,14 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         CheckCharaChange(chara);
         return true;
     }
+
+    public bool InitializeWithArgument(Character_SerializableBase template)
+    {
+        if (template == null) return false;
+        CheckCharaChange(template.Portrait);
+        return true;
+    }
+
 
     PortraitManager PreviousRef = null;
 

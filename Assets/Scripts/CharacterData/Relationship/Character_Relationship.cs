@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
-using UnityEngine.SocialPlatforms.Impl;
 
 public enum RelationshipScoreType
 {
@@ -164,6 +162,65 @@ public class Character_Relationship
             return _currentAttitudeTooltip;
         } }
 
+
+    public class ModifiersPackage
+    {
+        EvaluationPackage.Modifiers isdoer_isthreat = null;
+        EvaluationPackage.Modifiers notdoer_isthreat = null;
+        EvaluationPackage.Modifiers isdoer_notthreat = null;
+        EvaluationPackage.Modifiers notdoer_notthreat = null;
+
+        public void Clear()
+        {
+            if (isdoer_isthreat != null) isdoer_isthreat.Reset();
+            if (notdoer_isthreat != null) notdoer_isthreat.Reset();
+            if (isdoer_notthreat != null) isdoer_notthreat.Reset();
+            if (notdoer_notthreat != null) notdoer_notthreat.Reset();
+        }
+
+        public EvaluationPackage.Modifiers GetModifier(COM com, bool isdoer, bool isthreat)
+        {
+            if (isdoer)
+            {
+                if (isthreat)
+                {
+                    if (isdoer_isthreat == null) isdoer_isthreat = new EvaluationPackage.Modifiers(com, true, true);
+                    return isdoer_isthreat;
+                }
+                else
+                {
+                    if (isdoer_notthreat == null) isdoer_notthreat = new EvaluationPackage.Modifiers(com, true, false);
+                    return isdoer_notthreat;
+                }
+            }
+            else
+            {
+                if (isthreat)
+                {
+                    if (notdoer_isthreat == null) notdoer_isthreat = new EvaluationPackage.Modifiers(com, false, true);
+                    return notdoer_isthreat;
+                }
+                else
+                {
+                    if (notdoer_notthreat == null) notdoer_notthreat = new EvaluationPackage.Modifiers(com, false,false);
+                    return notdoer_notthreat;
+                }
+            }
+        }
+    }
+
+
+    Dictionary<COM, ModifiersPackage> cachedPackages = new Dictionary<COM, ModifiersPackage>();
+
+    public EvaluationPackage.Modifiers GetEPWillingness(COM com, bool isdoer, bool isthreat)
+    {
+        if (!cachedPackages.ContainsKey(com))
+        {
+            cachedPackages.Add(com, new ModifiersPackage());
+        }
+        return cachedPackages[com].GetModifier(com, isdoer, isthreat);        
+    }
+
     public RelationshipAttitude GetCurrentAttitude(bool forceRefresh = false)
     {
         if (forceRefresh || _currentAttitude == null)
@@ -188,16 +245,26 @@ public class Character_Relationship
             if (scr_System_CentralControl.current.LogPrefs.DLog_Attitude) Debug.Log($"{Owner.CallName} Changing attitude toward {Target.CallName} to {value.DisplayName}. isSilent? {silent}");
             if (!silent && Owner.RefID != 0)
             {
-                if (_currentAttitude != null && scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+                bool visible = scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID);
+                bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
+                
+                if (!visible && !recording)
+                {
+
+                }
+                else if (_currentAttitude != null)
                 {
 
                     var s = LocalizeDictionary.QueryThenParse("event_AttitudeChange_string")
                         .Replace("$self.name$", Owner.CallName)
                         .Replace("$target.name$", Target.CallName)
-                        .Replace("$originalAttitude$", _currentAttitude == null ? "?" : _currentAttitude.DisplayName)
+                        .Replace("$originalAttitude$", _currentAttitude.DisplayName)
                         .Replace("$newAttitude$", value.DisplayName);
-                    scr_UpdateHandler.current.Message.messages_after.Add(s);
-                    //scr_System_CampaignManager.current.AddLog(Owner.RefID, s, true);
+                    if (visible) scr_UpdateHandler.current.AppendMessageAfter(s, false);
+                    if (recording) 
+                    {
+                        Owner.CurrentRoom.NotifyKojoCollect(new DescriptionCollector(s, this));
+                    }
                 }
             }
             _currentAttitude = value;
@@ -206,6 +273,15 @@ public class Character_Relationship
             currentAttitude = value.ID;
         }
         _currentAttitudeTooltip.Clear();
+    }
+
+    public void ClearEPCache()
+    {
+        foreach(var package in cachedPackages)
+        {
+            package.Value.Clear();
+        }
+        this.cachedPackages.Clear();
     }
 
     public int RelationshipCooldown = 0;
@@ -225,6 +301,7 @@ public class Character_Relationship
             _callback = null;
             _callbackExecute = false;
         }
+        ClearEPCache();
     }
 
     protected void CheckMaintainRelationship()
@@ -367,25 +444,23 @@ public class Character_Relationship
         if (kojo != null)
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"[{Owner.FirstName}] -> [{Target.FirstName}] get kojomsg for event [{s}]");
-            if (Owner.RefID == 0 || Target.RefID == 0)
-            {
-                kojo.message = kojo.message.Replace("$self$", Owner.FirstName).Replace("$target$", Target.FirstName);
+            kojo.message = kojo.message.Replace("$self$", Owner.FirstName).Replace("$target$", Target.FirstName);
+            bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
+            bool visible = Owner.RefID == 0 || Target.RefID == 0;
 
-                if (m == null)
-                {
-                    scr_UpdateHandler.current.AppendKojoMessage(kojo);
-                    scr_UpdateHandler.current.FlushCollectedLogs_PreEvents();
-                }
-                else
-                {
-                    m.messages_kojo.Add(kojo);
-                }
-            }
-            else if (scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID))
+            kojo.AddRelevantActor(Owner);
+            kojo.AddRelevantActor(Target);
+
+            if (m == null)
             {
-                kojo.message = kojo.message.Replace("$self$", Owner.FirstName).Replace("$target$", Target.FirstName);
-                scr_UpdateHandler.current.AppendKojoMessage_NonVisible(kojo);
+                scr_UpdateHandler.current.AppendKojoMessage(kojo, visible, recording ? Owner.CurrentRoom : null);
+                if (visible) scr_UpdateHandler.current.FlushCollectedLogs_PreEvents();
             }
+            else
+            {
+                m.messages_kojo.Add(kojo);
+            }
+            
         }
     }
     public bool HasPermission_Follow()
@@ -460,9 +535,10 @@ public class Character_Relationship
 
             LogKojoMessage(eventID);
         }
-        else if (Owner.RefID == 0)
+        else
         {
-            scr_UpdateHandler.current.AppendEndMessage($"[{memString}]");
+            if (Owner.RefID == 0) scr_UpdateHandler.current.AppendEndMessage($"[{memString}]");
+            if (Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording) Owner.CurrentRoom.NotifyKojoCollect(new DescriptionCollector($"[{memString}]", this));
         }
 
         RelationshipCooldown = 6;
@@ -516,6 +592,7 @@ public class Character_Relationship
             }
 
         }
+        ClearEPCache();
         return _currentAttitude;
     }
 
@@ -523,6 +600,7 @@ public class Character_Relationship
     {
         UpdateSocialFactions();
         OnRelationshioChange();
+        ClearEPCache();
     }
 
     protected void OnRelationshioChange()

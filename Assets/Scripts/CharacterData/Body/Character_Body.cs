@@ -498,8 +498,9 @@ public class Character_Body
         string cumKeywords = "";
 
 #if UNITY_EDITOR
-       // if (Owner.Stats.SexStimulation.Severity >= 5) Debug.Log($"Checking climax on {Owner.FirstName}, {Owner.Stats.Climaxing == null} {!Stimulated} {isClimaxing()} {Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold}");
+        // if (Owner.Stats.SexStimulation.Severity >= 5) Debug.Log($"Checking climax on {Owner.FirstName}, {Owner.Stats.Climaxing == null} {!Stimulated} {isClimaxing()} {Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold}");
 #endif
+        //if (scr_UpdateHandler.current.skipCurrentRoundClimaxCheck) return;
         if (Owner.Stats.Climaxing == null) return;
         if (!Stimulated) return;
         if (isClimaxing()) return;

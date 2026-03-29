@@ -9,6 +9,12 @@ using Newtonsoft.Json;
 
 public class Manageable : I_Disposable, I_IsJobGiver
 {
+
+    
+
+
+
+    [JsonIgnore] public Manageable Faction { get { return this; } }
     [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }
 
     public List<int> mealHours = new List<int>();
@@ -35,6 +41,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
     protected virtual bool isManageableHours(int hour)
     {
         return false;
+    }
+
+    public MealManager mealManager = new MealManager();
+
+    public bool isMealHourAt(int hour)
+    {
+        return this.mealHours.Contains(hour); 
     }
 
     public RelationshipType GetRelationshipBetween(int self, int target, out bool isA)
@@ -255,6 +268,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         
         Inventory.UpdateTimeMinute(t);
+        mealManager.OnTimeUpdate(t);
 
     }
     
@@ -313,7 +327,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         if (updateOrder != 0) return;
         DailyReport.Clear();
-
+        if (isPlayerFaction) mealHours.Clear();
         foreach (var i in this.SubFactions) i.OnDayUpdate_0();
     }
 
@@ -348,6 +362,29 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
+    [JsonProperty] protected int rallyJobID = -1;
+    protected Job_MoveLocation _rallyJob = null;
+    [JsonIgnore] 
+    public Job_MoveLocation FactionRallyJob
+    {
+        get
+        {
+            if (_rallyJob == null && this.MainExit != null)
+            {
+                if (rallyJobID == -1)
+                {
+                    _rallyJob = new Job_MoveLocation();
+                    _rallyJob.FactionOwner = this;
+                    rallyJobID = scr_System_CampaignManager.current.Register(_rallyJob);
+                }
+                else
+                {
+                    _rallyJob = scr_System_CampaignManager.current.FindJobInstanceByID(rallyJobID) as Job_MoveLocation;
+                }
+            }
+            return _rallyJob;
+        }
+    }
 
     protected void OnDayUpdate_3(int updateOrder)
     {   // character log their daily consumption at updateOrder 2, refresh report at update3
@@ -607,7 +644,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         return null;
     }
 
-    public List<Job_Furniture> GetValidJobs_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false, List<int> restrictRoomList = null)
+    public List<Job_Furniture> GetValidJobs_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = true, List<int> restrictRoomList = null)
     {
 
         List<Job_Furniture> possibleJobs;
@@ -662,7 +699,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
 
     }
-    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false, List<int> restrictRoomList = null)
+    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = true, List<int> restrictRoomList = null)
     {
         //Debug.Log("Begin getvalidRecreation");
 
@@ -871,7 +908,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
-    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s, bool checkBlacklist = false)
+    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s, bool checkBlacklist = true)
     {
         string ss = " (" + ID + ")";
         if (GetSchedule(chara).Get(currentHour).comIDs.Count < 1)
@@ -2135,6 +2172,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         foreach (var p in TradeOrders) p.ReEstablishParent(this);
         if (this.managedRoomRefs != null) foreach (var r in ManagedRooms) RefreshRoomJobs(r.Value);
         if (this.Inventory != null) this.Inventory.ReEstablishParent(this);
+        if (this.mealManager != null) mealManager.ReEstablishParent(this);
 
         foreach (var p in this.SubFactions) p.ReEstablishParent(this);
 
@@ -2214,9 +2252,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public int GetPrice(ItemEntry entry, bool isExport)
     {
         if (entry.BaseItem == null || Currency == null) return 0;
-        return (int)Math.Round( (decimal)((entry.BaseItem.value * entry.itemCount / Currency.value) * (isExport? 2.5 : 1)));
+        return (int)Math.Round( (decimal)((entry.BaseItem.value * entry.itemCount / Currency.value) * (isExport? 2.5 : 1) * priceMult));
     }
-
+    public double priceMult = 1;
     string pricelabel = "";
     public string GetPricingLabel(ItemEntry entry, bool isExport)
     {

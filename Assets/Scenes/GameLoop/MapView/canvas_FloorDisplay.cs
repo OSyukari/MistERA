@@ -159,8 +159,9 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
            // Debug.LogError("initfaction error faction null");
             return;
         }
-        else
+        else if (faction.MainExit == null)
         {
+            return;
            // Debug.Log("initffactionblock " + faction.FactionDisplayName);
         }
 

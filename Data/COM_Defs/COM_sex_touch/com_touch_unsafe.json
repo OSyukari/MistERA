@@ -3,11 +3,11 @@
     {
     "list":[
         {
-            "ID":"com_touch_cheek",
+            "ID":"com_touch_unsafe_base",
             "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_touch_cheek_displayName",
+            "displayName":"com_touch_unsafe_base",
             "timeScale":2,
-            "comTags":["touch", "safe", "canbeignored"],
+            "comTags":["touch", "massage"],
             "requirements":{
                 "requirement":{
                     "doerCount":1,
@@ -17,113 +17,12 @@
                         "requireAction": false
                     }
                 }
-            },
-            "results":{
-                "results_character":
-                [
-                    {
-                        "entry_results":{
-                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.3 }
-                        }
-                    }
-                ]
             },
             "AcceptanceCheck":{ "baseAcceptanceValue":14 },
             "DifficultyCheck":{ "baseD20Check":8 }
         },
         {
-            "ID":"com_touch_hair",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_touch_hair_displayName",
-            "timeScale":2,
-            "comTags":["touch", "safe", "canbeignored"],
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":1,
-                    "req_Receivers":{
-                        "requireConscious":false,
-                        "requireAction": false
-                    }
-                }
-            },
-            "results":{
-                "results_character":
-                [
-                    {
-                        "entry_results":{
-                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.2 }
-                        }
-                    }
-                ]
-            },
-            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":9 }
-        },
-        {
-            "ID":"com_touch_sleeponthigh_ask",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_touch_sleeponthigh_ask_displayName",
-            "timeScale":5,
-            "comTags":["touch","do_not_use"],
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":1
-                }
-            },
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
-            "DifficultyCheck":{ "baseD20Check":5 }
-        },
-        {
-            "ID":"com_touch_hug",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_touch_hug_displayName",
-            "timeScale":2,
-            "comTags":["touch", "safe"],
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":1,
-                    "req_Receivers":{
-                        "requireConscious":false,
-                        "requireAction": false
-                    }
-                }
-            },
-            "results":{
-                "results_character":
-                [
-                    {
-                        "entry_results":{
-                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.5 }
-                        }
-                    }
-                ]
-            },
-            "AcceptanceCheck":{ "baseAcceptanceValue":16 },
-            "DifficultyCheck":{ "baseD20Check":11 }
-        },
-        {
-            "ID":"com_touch_sleeponthigh_give",
-            "ActionPackageClass":"ActionPackage_Interaction",
-            "displayName":"com_touch_sleeponthigh_give_displayName",
-            "timeScale":5,
-            "comTags":["touch","do_not_use"],
-            "requirements":{
-                "requirement":{
-                    "doerCount":1,
-                    "receiverCount":1,
-                    "req_Receivers":{
-                        "requireConscious":false,
-                        "requireAction": false
-                    }
-                }
-            },
-            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
-            "DifficultyCheck":{ "baseD20Check":10 }
-        },
-        {
+            "parentCOMID":"com_touch_unsafe_base",
             "ID":"com_touch_butt",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_butt_displayName_2",
@@ -175,6 +74,7 @@
             "DifficultyCheck":{ "baseD20Check":15 }
         },
         {
+            "parentCOMID":"com_touch_unsafe_base",
             "ID":"com_touch_abdomen",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_abdomen_displayName_2",
@@ -229,6 +129,7 @@
             "DifficultyCheck":{ "baseD20Check":11 }
         },
         {
+            "parentCOMID":"com_touch_unsafe_base",
             "ID":"com_touch_thigh",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_thigh_displayName_2",
@@ -279,6 +180,7 @@
             "DifficultyCheck":{ "baseD20Check":14 }
         },
         {
+            "parentCOMID":"com_touch_unsafe_base",
             "ID":"com_touch_back",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_back_displayName_2",
@@ -328,6 +230,7 @@
             "DifficultyCheck":{ "baseD20Check":12 }
         },
         {
+            "parentCOMID":"com_touch_unsafe_base",
             "ID":"com_touch_shoulders",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_shoulders_displayName_2",
@@ -376,6 +279,7 @@
             "DifficultyCheck":{ "baseD20Check":11 }
         },
         {
+            "parentCOMID":"com_touch_unsafe_base",
             "ID":"com_touch_fingers",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_fingers_displayName_1",
@@ -410,6 +314,7 @@
             "DifficultyCheck":{ "baseD20Check":12 }
         },
         {
+            "parentCOMID":"com_touch_unsafe_base",
             "ID":"com_touch_foot_toes",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_foot_toes_displayName_1",
@@ -445,6 +350,7 @@
             "DifficultyCheck":{ "baseD20Check":12 }
         },
         {
+            "parentCOMID":"com_touch_unsafe_base",
             "ID":"com_touch_ears",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_ears_displayName_1",
@@ -487,60 +393,13 @@
     {
         "zh-cn":
         {
-            "com_touch_butt_displayName_1": "揉捏屁股",
-            "com_touch_butt_displayName_2": "抚摸屁股",
-            "com_touch_abdomen_displayName_1": "揉捏腹部",
-            "com_touch_abdomen_displayName_2": "抚摸腹部",
-            "com_touch_thigh_displayName_1": "揉捏大腿",
-            "com_touch_thigh_displayName_2": "抚摸大腿",
-            "com_touch_back_displayName_1": "揉捏腰部",
-            "com_touch_back_displayName_2": "抚摸背部",
-            "com_touch_shoulders_displayName_1": "揉捏肩部",
-            "com_touch_shoulders_displayName_2": "抚摸肩部",
-            "com_touch_fingers_displayName_1": "撫摸手指",
-            "com_touch_foot_toes_displayName_1": "撫摸脚趾",
-            "com_touch_ears_displayName_1": "撫摸耳朵",
-                            
-            "com_touch_cheek_displayName": "捏脸蛋",
-            "com_touch_cheek_displayName_1": "捏脸蛋",
-
-            "com_touch_hair_displayName": "抚摸头发",
-            "com_touch_hair_displayName_1": "抚摸头发",
-            "com_touch_hug_displayName": "拥抱",
-            "com_touch_hug_displayName_1": "拥抱",
-            "com_touch_sleeponthigh_give_displayName": "给予膝枕",
-            "com_touch_sleeponthigh_give_displayName_1": "给予膝枕",
-            "com_touch_sleeponthigh_ask_displayName": "索求膝枕",
-            "com_touch_sleeponthigh_ask_displayName_1": "索求膝枕"
+            "com_touch_unsafe_base":"触摸类指令"
         },
         "en-us":
         {
 
-            "com_touch_cheek_displayName": "Pinch cheek",
-            "com_touch_cheek_displayName_1": "Pinch cheek",
 
-            "com_touch_hair_displayName": "Stroke hair",
-            "com_touch_hair_displayName_1": "Stroke hair",
-            "com_touch_hug_displayName": "Hug",
-            "com_touch_hug_displayName_1": "Hug",
-            "com_touch_sleeponthigh_give_displayName": "Offer lap pillow",
-            "com_touch_sleeponthigh_give_displayName_1": "Offer lap pillow",
-            "com_touch_sleeponthigh_ask_displayName": "Request lap pillow",
-            "com_touch_sleeponthigh_ask_displayName_1": "Request lap pillow",
-
-            "com_touch_butt_displayName_1": "Knead Butt",
-            "com_touch_butt_displayName_2": "Stroke Butt",
-            "com_touch_abdomen_displayName_1": "Knead Abdomen",
-            "com_touch_abdomen_displayName_2": "Stroke Abdomen",
-            "com_touch_thigh_displayName_1": "Knead Thighs",
-            "com_touch_thigh_displayName_2": "Stroke Thighs",
-            "com_touch_back_displayName_1": "Knead Waist",
-            "com_touch_back_displayName_2": "Stroke Back",
-            "com_touch_shoulders_displayName_1": "Knead Shoulders",
-            "com_touch_shoulders_displayName_2": "Stroke Shoulders",
-            "com_touch_fingers_displayName_1": "Stroke Fingers",
-            "com_touch_foot_toes_displayName_1": "Stroke Toes",
-            "com_touch_ears_displayName_1": "Stroke Ears"
+            
                             
         }
     }

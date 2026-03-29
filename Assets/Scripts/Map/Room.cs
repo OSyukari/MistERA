@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+using UnityEngine.Profiling;
 
 /// <summary>
 /// Parent owner of the room handle initialization,
@@ -287,6 +287,47 @@ public class Room_Instance: IDisposable, I_Disposable
             return LocalizeDictionary.QueryThenParse("ui_room_furnitureList").Replace("$list$", names.Count > 0 ? String.Join(LocalizeDictionary.QueryThenParse("ui_entry_separator"), names) : "-");
         }
     }
+
+    protected List<I_CanEndJob> recorders = new List<I_CanEndJob>();
+    protected List<I_Records> kols = new List<I_Records>();
+    public void NotifyKojoCollect(I_Records kol)
+    {
+        if (recorders.Count < 1) return;
+        if (!kols.Contains(kol)) kols.Add(kol);
+    }
+
+    public void AddCollector(I_CanEndJob job)
+    {
+        if (!recorders.Contains(job))
+        {
+            recorders.Add(job);
+            scr_System_CampaignManager.current.NotifyRoomSpecialUpdate(this);
+        }
+    }
+
+    [JsonIgnore]
+    public bool HasRecording { get
+        {
+            return recorders.Count > 0;
+        } }
+
+    /// <summary>
+    /// Each job collects a copy of the shared log. kols is cleared only once the last recorder has collected.
+    /// </summary>
+    public List<I_Records> Collect(I_CanEndJob job, bool renew_recording)
+    {
+        if (!renew_recording) recorders.Remove(job);
+        return new List<I_Records>( kols);
+    }
+    public List<I_CanEndJob> GetCollectors()
+    {
+        return recorders;
+    }
+    public void ClearRecords()
+    {
+        this.kols.Clear();
+    }
+
 
     [JsonIgnore]
     public string DisplayableFurnitureNames_withLink

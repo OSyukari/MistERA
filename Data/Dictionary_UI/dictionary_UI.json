@@ -34,6 +34,9 @@
 "ui_entry_memory_sleep_end": "睡醒了",
 "ui_entry_multipleCount": "$item$x$count$",
 
+
+"ui_entry_memory_blacklist": "尝试在$room$寻找$comName$$comTags$工作失败",
+
 "ui_fatalError":"遭遇致命错误！游戏无法继续\n上为游戏的Error log\n请与制作者汇报该BUG！",
 "ui_fatalError_exit":"退出游戏",
 "ui_fatalError_copy":"复制LOG到剪切板",
@@ -87,9 +90,9 @@
 
 "comManager_tab_skinship": "触摸",
 
-"ui_main_comtab_title": "%%ui_main_comtab_title_title1%%\n%%ui_main_comtab_title_title2%%",
 "ui_main_comtab_title_title1": "指令界面",
 "ui_main_comtab_title_title2": "指令过滤",
+"ui_main_comtab_title_records": "指令记录：",
 
 "event_targetscope_nameCount": "$elem1$ x$elem2$",
 
@@ -191,6 +194,9 @@
 "charaDetail_btn_resetPortraitManager": "<link=\"charaDetail_btn_resetPortraitManager_tooltip\">刷新立绘套组</link>",
 "charaDetail_btn_resetPortraitManager_tooltip": "角色的立绘管理数据在游戏开始后会写入存档\n若是游戏开始后，角色的立绘JSON被修改，那为了读取该修改数据，需要手动刷新\n\n刷新后，会丢失玩家调整的立绘坐标和缩放。",
 
+"charaDetail_btn_changePortraitManager": "<link=\"charaDetail_btn_changePortraitManager_tooltip\">替换立绘套组</link>",
+"charaDetail_btn_changePortraitManager_tooltip": "将当前角色的立绘数据替换成别的角色\n该数据会写入存档\n替换后，会丢失玩家调整的立绘坐标和缩放。",
+
 "charaDetail_panel_relationship": "人际关系",
 "charaDetail_panel_viewHiddenRelationships": "<link=\"charaDetail_panel_viewHiddenRelationships_tooltip\">检视其他关系</link>",
 "charaDetail_panel_viewHiddenRelationships_tooltip": "若某项人际关系的对象角色被删除，该项人际关系会被移动到此处显示。",
@@ -203,10 +209,15 @@
 "charaDetail_panel_equipments": "装备",
 "charaDetail_tooltip_canMovePortrait": "可通过鼠标左键拖拽和滚轮缩放调整角色图像的默认位置",
 
+"charaPortrait_change_title":"修改$name$的立绘套组为……",
+"charaPortrait_change_confirm":"保存并退出",
+"charaPortrait_change_abort":"放弃变更并退出",
+
 "comLogs_causes_previousLogs_positive": "<link=\"$linkTooltip$\">前回互动$amount$</link>",
 "comLogs_causes_previousLogs_negative": "<link=\"$linkTooltip$\">前回互动$amount$</link>",
 "comLogs_causes_unconscious": "<link=\"\">失去意识</link>",
-"comLogs_causes_reduced_consciousness": "<link=\"\">意识涣散</link>",
+"comLogs_causes_reduced_consciousness": "<link=\"comLogs_causes_reduced_consciousness_tooltip\">意识涣散</link>",
+"comLogs_causes_reduced_consciousness_tooltip": "意识涣散的角色无法判断是否允许对象执行该类指令",
 "comLogs_causes_repeatRefusal": "<link=\"\">连续拒绝</link>",
 "comLogs_causes_timestopped": "<link=\"\">被时停</link>",
 "comLogs_causes_restrained": "<link=\"\">被拘束</link>",
@@ -318,6 +329,8 @@
 "ui_management_factionName":"阵营名称",
 "ui_management_linkStatus":"链接状态",
 
+"ui_management_linkStatus_faction_tooltip": "饭点：$mealhours$",
+
 "ui_management_linkStatus_add":"添加",
 "ui_management_linkStatus_add_tooltip":"链接后，当前阵营将能够从主要出口前往对象阵营地图，能够派遣阵营成员去对象阵营打工，能够添加对象阵营的贸易订单",
 "ui_management_linkStatus_remove":"移除",
@@ -368,6 +381,31 @@
 "ui_management_jobs_schedule_jobpost_tooltip": "会清除当前的其他岗位设定",
 "ui_management_jobs_schedule_jobpost_ext": "外派工作岗位",
 "ui_management_jobs_schedule_jobpost_ext_tooltip": "会清除当前的其他岗位设定",
+
+"ui_management_mealprep_title": "准备$faction$的食材中……",
+"ui_management_mealprep_additive_title": "添加剂：$name$，当前持有 $count$，可适用的食品数 $food$",
+"ui_management_mealprep_additive_title_extratooltip": "适用的食品有：\n$names$",
+"ui_management_mealprep_additive_applyTo": "适用对象：",
+"ui_management_mealprep_additive_addEntry": "添加适用条件",
+"ui_management_mealprep_additive_applyTo_BTN_All": "对象：%%ui_management_mealprep_targeting_type_All%%",
+"ui_management_mealprep_additive_applyTo_BTN_AllIncludePlayer": "对象：%%ui_management_mealprep_targeting_type_AllIncludePlayer%%",
+"ui_management_mealprep_additive_applyTo_BTN_Custom": "对象：$names$",
+"ui_management_mealprep_additive_applyTo_BTN_Custom_none": "无",
+"ui_management_mealprep_additive_dosage": "添加剂量 $dosage$",
+"ui_management_mealprep_additive_expiresIn_inactive": "未启用",
+"ui_management_mealprep_additive_expiresIn_active": "生效中（$minutes$分钟）",
+"ui_management_mealprep_additive_expiresIn_alwaysactive": "永久生效",
+"ui_management_mealprep_activateAll": "全部启用",
+"ui_management_mealprep_activateAll_tooltip": "生效时间为从现在起2小时内",
+"ui_management_mealprep_quit": "结束食材准备",
+"ui_management_mealprep_quit_tooltip": "下个小时NPC将可以来餐厅用餐（有可食用的餐点的话）",
+"ui_management_mealprep_targeting_title": "更改适用对象",
+"ui_management_mealprep_targeting_type_All": "所有人",
+"ui_management_mealprep_targeting_type_AllIncludePlayer": "所有人（包括玩家）",
+"ui_management_mealprep_targeting_type_Custom": "自定义对象",
+"ui_management_mealprep_targeting_end": "结束变更",
+"ui_management_mealprep_targeting_end_tooltip": "%%ui_button_tooltip_exit%%",
+
 
 "ui_management_expeditions_createParty": "创建队伍",
 "ui_management_expeditions_partyTitle": "<link=ui_management_expeditions_partyTitle_tooltip>队伍名称：</link>",
@@ -509,6 +547,7 @@
 
 "management_modCount_add":"点击按钮+1\n按住CTRL时+10\n按住SHIFT时+100",
 "management_modCount_sub":"点击按钮-1\n按住CTRL时-10\n按住SHIFT时-100",
+"management_modCount_remove":"移除",
 
 "msg_manageSuccess":"资源消耗无异常",
 "msg_manageFailure":"缺乏必要的资源",
@@ -537,6 +576,7 @@
 "ui_ap_onHoverTooltip":"\n执行者：$doer$（接受率 $proposal$）\n对象：$receiver$（接受率 $acceptance$）\n耗时 $time$ 分钟，消耗 $costs$\n综合接受率 $acceptance_final$，基础DC $difficulty$",
 "ui_ap_onHoverTooltip_comInvalid":"\n执行者：$doer$，对象：$receiver$\n指令由于以下原因无法执行：\n$tooltips$",
 "ui_ap_onHoverTooltip_cannotSleep":"现在还无法睡觉",
+"ui_ap_onHoverTooltip_conflictAP":"由于冲突，以下指令将被移除：\n$names$",
 
 "ui_ap_CharaReqUtility_missingCost":"$name$当前的$stat$不够：需求[$requirement$]，当前为[$amount$]",
 "ui_ap_CharaReqUtility_missingBodypart":"$name$缺乏指令需要的身体部件类型[$bodytags$]",

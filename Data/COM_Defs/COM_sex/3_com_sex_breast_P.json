@@ -4,6 +4,7 @@
         "list":
         [
             {
+                "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_breast_P",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "displayName":"com_sex_breast_P_displayName_1",

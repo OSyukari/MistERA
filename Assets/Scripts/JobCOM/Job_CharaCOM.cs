@@ -202,5 +202,21 @@ public class Job_CharaCOM : Job
         else return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM").Replace("$target$", String.Join(",", names));
     }
 
+    [JsonIgnore]
+    public override I_IsJobGiver FactionOwner
+    {
+        get
+        {
+            return Owner.FactionManager.CurrentlyActiveFaction;
+        }
+        set
+        {
+
+            Debug.LogError("Error setting Job_CharaCOM FactionOwner");
+            
+        }
+    }
+
+
 }
 

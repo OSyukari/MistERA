@@ -1,0 +1,20 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+       
+                "Campaign2_Chara_Amelie_FirstName":"艾米莉",
+                "Campaign2_Chara_Amelie_LastName":"布朗谢"
+            },
+            "en-us":
+            {
+       
+                "Campaign2_Chara_Amelie_FirstName":"Amelie",
+                "Campaign2_Chara_Amelie_LastName":"Blanchett"
+            }
+        }
+    }
+}

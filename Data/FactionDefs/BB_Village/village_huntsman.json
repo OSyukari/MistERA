@@ -46,6 +46,7 @@
     "middleName": "",
     "lastName": "",
     "nameDisplayFormat": "chara_fullname_firstToLast",
+    "title":"village_mob",
     "origin": "charOrigin_none",
     "race": "humanRace_human",
     "raceTemplate": "humanRaceAddon_Mistaken",

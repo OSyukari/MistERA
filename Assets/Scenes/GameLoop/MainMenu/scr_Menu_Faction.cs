@@ -11,7 +11,7 @@ public class scr_Menu_Faction : MonoBehaviour
     public TMP_Text factionName;
     public TMP_Text factionResources;
     public scr_HoverableText factionPopulation;
-    public scr_HoverableText canEat, canSleep;
+    public scr_HoverableText canEat, canSleep, isRecording;
 
 
     // Start is called before the first frame update
@@ -168,5 +168,9 @@ public class scr_Menu_Faction : MonoBehaviour
 
         previousHour = currentHour;
         previousFaction = targetFaction;
+
+        var currentroom = scr_System_CampaignManager.current.CurrentRoom;
+        if (currentroom == null || !currentroom.HasRecording) isRecording.gameObject.SetActive(false);
+        else isRecording.gameObject.SetActive(true);
     }
 }

@@ -83,10 +83,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
 
     List<MessageLog> todo;
 
-    private void ClearLogs()
+    private void ClearLogs(bool clearAll = false)
     {
-        var clearLogsvalue = scr_System_CentralControl.current.DisplaySetting.clearLogs.value ? 0 : scr_System_CentralControl.current.DisplaySetting.MaxLogCount;
-        if (scr_System_CentralControl.current.DisplaySetting.clearLogs.value)
+        var clearLogsvalue = scr_System_CentralControl.current.DisplaySetting.clearLogs.value || clearAll ? 0 : scr_System_CentralControl.current.DisplaySetting.MaxLogCount;
+        //if (scr_System_CentralControl.current.DisplaySetting.clearLogs.value)
         
         while (LogsList.transform.childCount > clearLogsvalue)
         {
@@ -175,8 +175,11 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         animationLock = true;
         last = null;
         skipping = true;
+        int prevCount = -1;
         while (canAnimate)
         {
+            if (todo.Count == prevCount) break; // stuck (e.g. LLM query still animating), avoid infinite loop
+            prevCount = todo.Count;
             AnimateOneStep();
         }
         skipping = false;
@@ -200,10 +203,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
        // AnimateAll();
     }
 
-    private void OnLogsClear(bool flushOnly)
+    private void OnLogsClear(bool flushOnly, bool clearAll)
     {
         if (flushOnly) AnimateAll();
-        else this.ClearLogs();
+        else this.ClearLogs(clearAll);
     }
 
     protected override void Awake()

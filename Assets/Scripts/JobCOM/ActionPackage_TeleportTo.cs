@@ -119,7 +119,15 @@ public class ActionPackage_TeleportTo : ActionPackage
 
         toggleRepeat = false;
 
-        if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(-1, LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName), true, true);
+        bool visible = doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef);
+        bool recording = Doer.CurrentRoom != null && Doer.CurrentRoom.HasRecording;
+
+        if (visible || recording)
+        {
+            var s = LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName);
+            scr_System_CampaignManager.current.AddLog(visible, recording ? Doer.CurrentRoom : null, -1, s, true, true);
+
+        }
 
         scr_System_CampaignManager.current.MoveCharacterTo(doerRef, targetRoomRef);
         if (doerRef == 0)
@@ -144,7 +152,14 @@ public class ActionPackage_TeleportTo : ActionPackage
             //if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)  { }
 
         }
-        if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(-1, LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(targetRoomRef).DisplayName), true, true);
+
+        recording = Doer.CurrentRoom != null && Doer.CurrentRoom.HasRecording;
+        if (visible || recording)
+        {
+            var s = LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(targetRoomRef).DisplayName);
+            scr_System_CampaignManager.current.AddLog(visible, recording ? Doer.CurrentRoom : null, -1, s, true, true);
+        }
+        //if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(-1, LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(targetRoomRef).DisplayName), true, true);
         // Debug.Log("ActionPackage_PathTo [" + Doer.FirstName + "] toward [" + TargetRoom.DisplayName + "] NULL PATH ABORT, Doer currently at ["+scr_System_CampaignManager.current.Map.FindRoomByChara(Doer.RefID).DisplayName+"]");
 
     }

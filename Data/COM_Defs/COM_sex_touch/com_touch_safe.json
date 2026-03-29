@@ -1,0 +1,136 @@
+{
+    "COMs":
+    {
+    "list":[
+        {
+            "ID":"com_touch_safe_base",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_safe_base",
+            "timeScale":2,
+            "comTags":["touch", "safe"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":14 },
+            "DifficultyCheck":{ "baseD20Check":8 }
+        },
+        {
+            "parentCOMID":"com_touch_safe_base",
+            "ID":"com_touch_hug",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_hug_displayName",
+            "timeScale":2,
+            "comTags":["touch", "safe"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.5 }
+                        }
+                    }
+                ]
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":16 },
+            "DifficultyCheck":{ "baseD20Check":11 }
+        },
+        {
+            "parentCOMID":"com_touch_safe_base",
+            "ID":"com_touch_cheek",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_cheek_displayName",
+            "timeScale":2,
+            "comTags":["touch", "safe", "canbeignored"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.3 }
+                        }
+                    }
+                ]
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":14 },
+            "DifficultyCheck":{ "baseD20Check":8 }
+        },
+        {
+            "parentCOMID":"com_touch_safe_base",
+            "ID":"com_touch_hair",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_touch_hair_displayName",
+            "timeScale":2,
+            "comTags":["touch", "safe", "canbeignored"],
+            "requirements":{
+                "requirement":{
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Receivers":{
+                        "requireConscious":false,
+                        "requireAction": false
+                    }
+                }
+            },
+            "results":{
+                "results_character":
+                [
+                    {
+                        "entry_results":{
+                            "modifyStatusValue":{ "statusID":"chara_status_lust_hidden", "value":0.2 }
+                        }
+                    }
+                ]
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":15 },
+            "DifficultyCheck":{ "baseD20Check":9 }
+        }
+
+    ]
+},
+"Dictionary":
+{
+    "Entries":
+    {
+        "zh-cn":
+        {
+            "com_touch_safe_base":"健全系触摸指令"
+        },
+        "en-us":
+        {
+
+
+            
+                            
+        }
+    }
+}
+
+
+}

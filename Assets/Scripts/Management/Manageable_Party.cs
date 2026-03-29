@@ -31,6 +31,34 @@ public enum PartyAvailability
 
 public class Manageable_Party : I_IsJobGiver
 {
+
+
+
+    [JsonProperty] protected int rallyJobID = -1;
+    protected Job_MoveLocation _rallyJob = null;
+    [JsonIgnore]
+    public Job_MoveLocation FactionRallyJob
+    {
+        get
+        {
+            if (_rallyJob == null && this.MainExit != null)
+            {
+                if (rallyJobID == -1)
+                {
+                    _rallyJob = new Job_MoveLocation();
+                    _rallyJob.FactionOwner = this;
+                    rallyJobID = scr_System_CampaignManager.current.Register(_rallyJob);
+                }
+                else
+                {
+                    _rallyJob = scr_System_CampaignManager.current.FindJobInstanceByID(rallyJobID) as Job_MoveLocation;
+                }
+            }
+            return _rallyJob;
+        }
+    }
+
+    [JsonIgnore] public Manageable Faction { get { return null; } }
     [JsonIgnore]
     public string ExpeditionName
     {
@@ -50,6 +78,11 @@ public class Manageable_Party : I_IsJobGiver
     }
     [JsonIgnore]
     public bool isMealHour { get { return this.OwnerFaction.isMealHour; } }
+
+    public bool isMealHourAt(int hour)
+    {
+        return this.OwnerFaction.isMealHourAt(hour);
+    }
     public bool AllowPassNight = true;
     public int RecurringCooldown = 0;
     public bool IsRecurring = false;
@@ -136,7 +169,7 @@ public class Manageable_Party : I_IsJobGiver
         }
     }
 
-    public List<Job_Furniture> GetValidJobs_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false, List<int> restrictRoomList = null)
+    public List<Job_Furniture> GetValidJobs_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = true, List<int> restrictRoomList = null)
     {
         //Debug.Log("Begin getvalidRecreation");
 
@@ -526,7 +559,7 @@ public class Manageable_Party : I_IsJobGiver
         }
     }
 
-    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s, bool checkBlacklist = false)
+    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s, bool checkBlacklist = true)
     {
         return new List<Job_Furniture>();
     }
@@ -670,7 +703,7 @@ public class Manageable_Party : I_IsJobGiver
     public Dictionary<int, List<int>> ManagedRooms { get { return this.managedRoomRefs; } }
     [JsonIgnore] public Dictionary<COM, List<Job_Furniture>> NonjobPosts { get { return this.nonjobPosts; } }
 
-    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = false, List<int> restrictRoomList = null)
+    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = true, List<int> restrictRoomList = null)
     {
         //Debug.Log("Begin getvalidRecreation");
         List<Job_Furniture> possibleJobs;

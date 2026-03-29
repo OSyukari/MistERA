@@ -1,0 +1,58 @@
+{
+    "Items":{
+"list":[
+        {
+            "id":"item_recording_camera",
+            "displayName":"Camera",
+            "tooltip":"Camera. Allows one to record.",
+            "Tags":["item_recorder", "industrial","rarity_common"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Recorder",
+                    "comp_Recorder":{
+                        "storeItemID":"item_recording_camera_Tape",
+                        "resultItemID":"item_recorded_camera_Tape",
+                        "durationPerItem":120,
+                        "maxDuration":360
+                    }
+                }
+            ]
+        },
+        {
+            "id":"item_recording_camera_Tape",
+            "displayName":"Camera Tape",
+            "tooltip":"CameraTape, store recordings.",
+            "Tags":["industrial","rarity_common"]
+        },
+        {
+            "id":"item_recorded_camera_Tape",
+            "displayName":"Used Camera Tape",
+            "tooltip":"CameraTape, store recordings.",
+            "Tags":["industrial"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Records",
+                    "comp_Recorder":{ }
+                }
+            ]
+        }
+        
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                
+
+            },
+            "en-us":
+            {
+                
+            }
+        }
+    }
+    
+}

@@ -446,7 +446,7 @@
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
                     "sensitivityKeyword":"",
-                    "pauseXMinAfterMod":1
+                    "pauseXMinAfterMod":6
                 }
             } ,
             "variants":[
@@ -522,7 +522,7 @@
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"B", "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"B", "pauseXMinAfterMod":6
                 }
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_B",
@@ -544,7 +544,7 @@
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"M", "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"M", "pauseXMinAfterMod":6
                 }
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_M",
@@ -566,7 +566,7 @@
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"C", "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"C", "pauseXMinAfterMod":6
                 }
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_C",
@@ -588,7 +588,7 @@
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"V", "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"V", "pauseXMinAfterMod":6
                 }
             } ,
             "variantThresholdModStat":"stats_derived_maxSensitivity_V",
@@ -610,7 +610,7 @@
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"A", "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"A", "pauseXMinAfterMod":6
                 }
             } ,
             "variantThresholdModStat":"stats_derived_maxSensitivity_A",
@@ -632,7 +632,7 @@
                 },
                 "randomVariation":{
                     "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp",
-                    "sensitivityKeyword":"W", "pauseXMinAfterMod":1
+                    "sensitivityKeyword":"W", "pauseXMinAfterMod":6
                 }
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_W",
@@ -653,7 +653,7 @@
                     "baseValue":0, "decaySpeed":1
                 },
                 "randomVariation":{
-                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp", "sensitivityKeyword":"Mind", "pauseXMinAfterMod":1
+                    "$type":"Status_Base+RandomVariation_Sex, Assembly-CSharp", "sensitivityKeyword":"Mind", "pauseXMinAfterMod":6
                 }
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_Mind",

@@ -48,6 +48,20 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
+    [JsonIgnore]
+    public virtual bool RequireAdditionalLastUpdate
+    {
+        get
+        {
+            return false;
+        }
+    }
+
+    public virtual void LastUpdate()
+    {
+
+    }
+
     public virtual bool HasSpecialPermissionFor(COM com)
     {
         return false;
@@ -61,7 +75,7 @@ public class Job : IDisposable, I_Disposable
     [JsonProperty] protected string factionOwnerRef = "";
     [JsonProperty] protected string factionOwnerPartyRef = "";
     protected I_IsJobGiver factionOwner = null;
-    [JsonIgnore] public I_IsJobGiver FactionOwner 
+    [JsonIgnore] public virtual I_IsJobGiver FactionOwner 
     {
         get
         {
@@ -106,6 +120,11 @@ public class Job : IDisposable, I_Disposable
                 Debug.LogError("Error setting FactionOwner");
             }
         }
+    }
+
+    public virtual List<ActionPackage> GetConflictPackages(ActionPackage a)
+    {
+        return new List<ActionPackage>();
     }
 
     public DateTime GetActorLastJoinTime(int actorRef)
@@ -339,7 +358,7 @@ public class Job : IDisposable, I_Disposable
         foreach (var p in packages_previous)
         {
             if (p.Duration == 0) continue;  // package is ticked and should be naturally removed, let it
-            if (p.actorRefs.Contains(charaRef)) p.NotifyInterrupted();
+            if (p.actorRefs.Contains(charaRef)) p.isPaused = true;// p.NotifyInterrupted();
         }
         //if (this.actorRefID.Contains(charaRef) && this.actorRefIDStorage != null && this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
         if (this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
@@ -348,6 +367,7 @@ public class Job : IDisposable, I_Disposable
         {
             var p = packages_previous[i];
             if (p.Duration == 0) continue;  // package is ticked and should be naturally removed, let it
+            /*
             if (p.actorRefs.Contains(charaRef))
             {
                 // previous[i] might be the actor lock package, so be careful since removing that one might cause index out of bound
@@ -355,7 +375,7 @@ public class Job : IDisposable, I_Disposable
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("Job ["+DisplayName+"] RemoveActor ["+scr_System_CampaignManager.current.FindInstanceByID(charaRef).FirstName+"], unregistering package [" + p.DisplayName + "]");
                 scr_System_CampaignManager.current.Unregister(p);
                 packages_previous.Remove(p);
-            }
+            }*/
         }
         actorJobComplete.Remove(charaRef);
         _actors_cache = null;
@@ -388,17 +408,17 @@ public class Job : IDisposable, I_Disposable
     
     */
 
-    public List<ActionPackage> MakePackages(Character_Trainable c, string comID, bool allowInvalid = false, List<string> debug = null)
+    public List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, string comID, bool allowInvalid = false, List<string> debug = null)
     {
         actorRefIDStorage.Add(c.RefID, new COM_Match(comID));
-        return MakePackages(c, allowInvalid, debug);
+        return MakePackages(c, allowParent, allowChild, allowInvalid, debug);
     }
 
-    public virtual List<ActionPackage> MakePackages(Character_Trainable c, bool allowInvalid = false, List<string> debug = null)
+    public virtual List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, List<string> debug = null)
     {
-        if (actorRefIDStorage.ContainsKey(c.RefID))
+        if (actorRefIDStorage.ContainsKey(c.RefID) || allowInvalid)
         {
-            var possibleCOMs = actorRefIDStorage[c.RefID].Match(this);
+            var possibleCOMs = allowInvalid ? allusableCOMs : actorRefIDStorage[c.RefID].Match(this);
             possibleCOMs = possibleCOMs.FindAll(x => (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
                                                 );
 
@@ -582,7 +602,11 @@ public class Job : IDisposable, I_Disposable
 
     public virtual void RemovePackage(ActionPackage ap, bool logRemove = false)
     {
-        this.packages_previous.Remove(ap);
+        
+        if (this.packages_previous.Remove(ap) && ap.Duration > 0)
+        {
+            ap.NotifyInterrupted();
+        }
         this.packages_current.Remove(ap);
     }
 
@@ -686,10 +710,12 @@ public class Job : IDisposable, I_Disposable
             display = m.displayOverride || scr_UpdateHandler.current.DoDisplayCOM(ap);
             displayOngoing = scr_UpdateHandler.current.isLastUpdate();
         }
+        var room = ap.RoomKey == -1 ? null : scr_System_CampaignManager.current.Map.GetRoomByRef(ap.RoomKey);
+        bool recording = room != null && room.HasRecording;
 
-       // Debug.LogError($"CollectLogs Duration {ap.Duration} rightAlign {rightAlign}");
+        // Debug.LogError($"CollectLogs Duration {ap.Duration} rightAlign {rightAlign}");
 
-        if (ap.Duration >= 0) ap.LogMessage_Climax(m);
+        if (ap.Duration >= 0) ap.LogMessage_Climax(display, recording ? room : null, m);
         
 
         if (ap.Duration == -1 && packages_previous.FindAll(x => UtilityEX.ArePackagesEqual(x, ap)).Count < 1)
@@ -708,46 +734,41 @@ public class Job : IDisposable, I_Disposable
             {
                 if (ap.executeSuccessful)
                 {
-                    if (ap.repeated) ap.LogMessage_Begin_Ongoing(false, rightAlign, m);
-                    else ap.LogMessage_Begin(false, rightAlign, m, scr_System_CampaignManager.current.Player);
-
+                    if (ap.repeated) ap.LogMessage_Begin_Ongoing(display, recording ? room : null, false, rightAlign, m);
+                    else ap.LogMessage_Begin(display, recording ? room : null, false, rightAlign, m, scr_System_CampaignManager.current.Player);
                 }
                 else
                 {
-                    ap.LogMessage_Begin_Refuse(rightAlign, m);
+                    ap.LogMessage_Begin_Refuse(display, recording ? room : null, rightAlign, m);
                 }
                 ap.LoggedBegin = true;
             }
             if (display)
             {
-                ap.LogMessage_Kojo(m);
-            }
-            if (display)
-            {
-
-                ap.LogMessage_After(rightAlign, m);
+                ap.LogMessage_Kojo(display, recording ? room : null, m);
             }
 
+            ap.LogMessage_After(display, recording ? room : null, rightAlign, m);
+            
             m.exp.leftAlignOverride = !rightAlign;
         }
         //else if ( ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
         else if (!ap.LoggedBegin && !ap.isPaused)
         {   // one ticked
-            if (display)
-            {
-                // var checkResult = ap.GetCheckResult(out var tooltip, rightAlign);
-                //if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult, tooltip);
-                if (displayStrict)
-                {
-                    ap.LogCheckResult(rightAlign, false, m);
-                }
 
-                if (ap.repeated) ap.LogMessage_Begin_Ongoing(false, rightAlign, m);
-                else ap.LogMessage_Begin(false, rightAlign, m, scr_System_CampaignManager.current.Player);
+            // var checkResult = ap.GetCheckResult(out var tooltip, rightAlign);
+            //if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult, tooltip);
+            if (displayStrict && display)
+            {
+                ap.LogCheckResult(rightAlign, false, m);
             }
-            else ap.LoggedBegin = true;
+
+            if (ap.repeated) ap.LogMessage_Begin_Ongoing(display, recording ? room : null, false, rightAlign, m);
+            else ap.LogMessage_Begin(display, recording ? room : null, false, rightAlign, m, scr_System_CampaignManager.current.Player);
+
+            ap.LoggedBegin = true;
         }
-        else if (!ap.isPaused && display && rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(rightAlign, m, scr_System_CampaignManager.current.Player);
+        else if (!ap.isPaused && rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(display, recording ? room : null, rightAlign, m, scr_System_CampaignManager.current.Player);
     }
 
 
@@ -805,6 +826,7 @@ public class Job : IDisposable, I_Disposable
                     
                 }
                 packages_previous.RemoveAt(i);
+                // success remove
             }
         }
 
@@ -942,27 +964,33 @@ public class Job : IDisposable, I_Disposable
             if (package.isTimeStopped) continue;
             package.pausedTick += 1;
 
-            if (package.pausedTick < 6) continue;
-            else if (package.Validate())
+            if (package.pausedTick <= 6)
             {
-                scr_System_CampaignManager.current.Register(package, avoidConflict);
-                if (package.isPaused)
+                if (package.Validate())
                 {
-                    packages_previous.RemoveAt(i);
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to failing 3 times reregistration");
-                    package.NotifyInterrupted();
-                    this.actorJobComplete.AddRange(package.actorRefs);
+                    scr_System_CampaignManager.current.Register(package, avoidConflict);
+                    if (!package.isPaused)
+                    {
+                        foreach (var actor in package.Actors) actor.ChangeCurrentJob(this);
+                    }
+                    /*
+                    if (package.isPaused)
+                    {
+                        packages_previous.RemoveAt(i);
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to failing 3 times reregistration");
+                        package.NotifyInterrupted();
+                        this.actorJobComplete.AddRange(package.actorRefs);
 
+                    }*/
                 }
             }
             else
             {
-                Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to no longer passing internal validation check");
+                Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to failing 6 times reregistration");
                 package.NotifyInterrupted();
                 packages_previous.RemoveAt(i);
                 this.actorJobComplete.AddRange(package.actorRefs);
             }
-            
         }
     }
 
@@ -981,7 +1009,7 @@ public class Job : IDisposable, I_Disposable
 
     public virtual void DisposeInternal()
     {
-        this.FactionOwner = null;
+        //this.FactionOwner = null;
         this.allusableCOMs_cache = null;
     }
 
@@ -1013,6 +1041,7 @@ public class Job : IDisposable, I_Disposable
         if (m == null) m = this.m;
         // Im not sure if this triggers at all, let's keep it for a while if it doesnt then delete
         //Debug.Log("LogMessage_Begin_Replace");
+
         aprevious.LogMessage_Begin_Abort();
         /*
         if (!m.displayOverride && !isVisibleToPlayer) return;

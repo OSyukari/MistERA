@@ -18,5 +18,20 @@
     }
 
 ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "item_trash":"垃圾"
+
+            },
+            "en-us":
+            {
+  "item_trash": "Trash"
+            }
+        }
     }
 }

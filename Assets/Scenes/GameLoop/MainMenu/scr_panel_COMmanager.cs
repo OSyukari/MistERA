@@ -1,8 +1,10 @@
-using System.Collections.Generic;
-using UnityEngine;
 using System;
-using TMPro;
+using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using Unity.Jobs;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class scr_panel_COMmanager : scr_Menu
 {
@@ -49,11 +51,11 @@ public class scr_panel_COMmanager : scr_Menu
         ValidateAll();
     }
 
-    Dictionary<COMFilter, bool> filterState;
+    public Dictionary<COMFilter, bool> filterState;
     protected void ChangeCOMFilter(COMFilter filter, bool value)
     {
         if (!filterState.ContainsKey(filter)) filterState.Add(filter, value);
-        filterState[filter] = value;
+        else filterState[filter] = value;
     }
     protected bool GetCOMFilter(COMFilter filter)
     {
@@ -325,6 +327,7 @@ public class scr_panel_COMmanager : scr_Menu
     {
         base.Awake();
 
+        scr_System_CampaignManager.current.COMmanager = this;
         scr_System_CampaignManager.current.Observer_PlayerJob += OnPlayerJobChange;
         scr_System_CampaignManager.current.Observer_CurrentTarget += OnCurrentTargetChange;
         scr_System_CampaignManager.current.Observer_UpdateNotice += OnNotifyUpdate;
@@ -411,10 +414,11 @@ public class scr_panel_COMmanager : scr_Menu
                 case -6511: button.Initialize(this, new ButtonValidator_ChangeDeterministicRollsFilter(this, COMFilter.DeterministicRolls, button)); break;
                 case -6512: button.Initialize(this, new ButtonValidator_ChangeShorterLogs(this, COMFilter.ShorterLogs, button)); break;
                 case -6513: button.Initialize(this, new Button_ToggleLLM(this, COMFilter.LLM, button)); break;
-                case -6509:
-                    if (safeMode) button.gameObject.SetActive(false);
-                    else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Touch, button)); 
-                    break;
+                
+            case -6509:
+                if (safeMode) button.gameObject.SetActive(false);
+                else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Touch, button)); 
+                break;
                 case -6510:
                     if (safeMode) button.gameObject.SetActive(false);
                     else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Service, button)); 
@@ -483,11 +487,31 @@ public class scr_panel_COMmanager : scr_Menu
                     button.Initialize(this, new Button_LLM_Submit(this, button));
                     break;
 
+                case -6900:
+                    button.Initialize(this, new Button_RecentCOM(this, button, 0));
+                    break;
+
+                case -6901:
+                    button.Initialize(this, new Button_RecentCOM(this, button, 1));
+                    break;
+
+                case -6902:
+                    button.Initialize(this, new Button_RecentCOM(this, button, 2));
+                    break;
+
+                case -6903:
+                    button.Initialize(this, new Button_RecentCOM(this, button, 3));
+                    break;
+
+                case -6904:
+                    button.Initialize(this, new Button_RecentCOM(this, button, 4));
+                    break;
+
                 //case -7400: button.Initialize(this, new ButtonValidator_InitSexDebug(this, button)); break;
                 //case 7401: //hypnos;
-                 //   button.Initialize(this, new ButtonValidator_AddStatusDebug(this, button, Character_Status_Keyword.hypno)); break;
+                //   button.Initialize(this, new ButtonValidator_AddStatusDebug(this, button, Character_Status_Keyword.hypno)); break;
                 //case -7408://skip day
-                 //   button.Initialize(this, new ButtonValidator_AlwaysTrue(this)); break;
+                //   button.Initialize(this, new ButtonValidator_AlwaysTrue(this)); break;
                 case -7402: //timestop
                     if (safeMode) button.gameObject.SetActive(false);
                     else button.Initialize(this, new ButtonValidator_DebugTimeStop(this, button)); 
@@ -862,6 +886,8 @@ public class scr_panel_COMmanager : scr_Menu
                     // Debug.Log("Making Chara Job ");
                     foreach (COM c in jobChara.allusableCOMs)
                     {
+                        if (c.isHiddenParent || c.isHiddenChild) continue;
+
                         //Debug.Log("Making Chara COM " + c.ID);
                         if (c.comTags.Contains("initSex") || c.comTags.Contains("endSex"))
                         {
@@ -898,6 +924,8 @@ public class scr_panel_COMmanager : scr_Menu
 
                     foreach (COM c in jPlayer.allusableCOMs)
                     {
+                       // if (c.ParentCOM != null) continue;
+
                         if (c.comTags.Contains("interaction") || c.comTags.Contains("action"))
                         {
                            // Debug.Log("Making Player COM " + c.ID);
@@ -917,6 +945,8 @@ public class scr_panel_COMmanager : scr_Menu
                     currentSexJob = jdebug;
                     foreach (COM c in jdebug.allusableCOMs)
                     {
+                        if (c.isHiddenParent || c.isHiddenChild) continue;
+
                         var getrect = GetGrid(c.CategoryLabel);
                         MakeCOMButton(getrect, buttonPrefab_COM, jdebug, c);
                     }
@@ -946,7 +976,7 @@ public class scr_panel_COMmanager : scr_Menu
                             newRect.SetParent(Box_FurnitureCOMsList, false);
                             List<string> debugLogger = null;
                             List<string> coms = new List<string>();
-                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true, debugLogger))
+                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true, false, true, debugLogger))
                             {
                                 coms.Add(ap.targetCOM.DisplayName());
                                 MakeCOMButton(newScript.list, buttonPrefab_COM, j, ap.targetCOM, true, false, ap);
@@ -957,7 +987,7 @@ public class scr_panel_COMmanager : scr_Menu
                         else
                         {
                                                       
-                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true))
+                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player,true, false, true))
                             {
                                 MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, ap.targetCOM, ap.targetCOM.COMRepeat, false, ap);
                             }
@@ -1136,23 +1166,75 @@ public class scr_panel_COMmanager : scr_Menu
         RefreshTitle();
     }
 
-    protected bool ValidateCOMByTags(COM com)
+    protected bool ValidateCOMByTags(COM com, out int index)
     {
-        if (com.comTags.Contains("initSex") || com.comTags.Contains("endSex")) return scr_System_CampaignManager.current.displaySex || GetCOMFilter(COMFilter.Sex_Touch);
-        if (com.comTags.Contains("sex") && !scr_System_CampaignManager.current.displaySex) return false;
-        if (com.comTags.Contains("service") && !GetCOMFilter(COMFilter.Sex_Service)) return false;
-        if (com.comTags.Contains("vagina") && !GetCOMFilter(COMFilter.Sex_Vaginal)) return false;
-        if (com.comTags.Contains("anus") && !GetCOMFilter(COMFilter.Sex_Anal)) return false;
-        if (com.comTags.Contains("oral") && !GetCOMFilter(COMFilter.Sex_Oral)) return false;
-        if (com.comTags.Contains("breast") && !GetCOMFilter(COMFilter.Sex_Breast)) return false;
-        if (com.comTags.Contains("furniture") && !GetCOMFilter(COMFilter.Act_Room)) return false;
-        
-        if (com.comTags.Contains("touch") && !GetCOMFilter(COMFilter.Sex_Touch)) return false;
-        if ((com.comTags.Contains("touch") || com.comTags.Contains("massage") || com.comTags.Contains("service")) && scr_System_CampaignManager.current.displaySex && !com.comTags.Contains("sex")) return false;
+        if (com.comTags.Contains("initSex") || com.comTags.Contains("endSex"))
+        {
+            index = 1;
+            return scr_System_CampaignManager.current.displaySex || GetCOMFilter(COMFilter.Sex_Touch);
+        }
+        if (com.comTags.Contains("sex") && !scr_System_CampaignManager.current.displaySex) 
+        {
+            index = 2;
+            return false;
+        }
+        if (com.comTags.Contains("service") && !GetCOMFilter(COMFilter.Sex_Service))
+        {
+            index = 3;
+            return false;
+        }
+        if (com.comTags.Contains("vagina") && !GetCOMFilter(COMFilter.Sex_Vaginal))
+        {
+            index = 4;
+            return false;
+        }
+        if (com.comTags.Contains("anus") && !GetCOMFilter(COMFilter.Sex_Anal))
+        {
+            index = 5;
+            return false;
+        }
+        if (com.comTags.Contains("oral") && !GetCOMFilter(COMFilter.Sex_Oral))
+        {
+            index = 6;
+            return false;
+        }
+        if (com.comTags.Contains("breast") && !GetCOMFilter(COMFilter.Sex_Breast))
+        {
+            index = 7;
+            return false;
+        }
+        if (com.comTags.Contains("furniture") && !GetCOMFilter(COMFilter.Act_Room))
+        {
+            index = 8;
+            return false;
+        }
+
+        if (com.comTags.Contains("touch") && !GetCOMFilter(COMFilter.Sex_Touch))
+        {
+            index = 9;
+            return false;
+        }
+        if ((com.comTags.Contains("touch") || com.comTags.Contains("massage") || com.comTags.Contains("service")) && scr_System_CampaignManager.current.displaySex && !com.comTags.Contains("sex"))
+        {
+            index = 10;
+            return false;
+        }
+        index = 0;
         return true ;
     }
 
-    private void MakeCOMButton(RectTransform parent, RectTransform prefab, Job job, COM com, bool comRepeat = false, bool hidingOverride = false, ActionPackage ap = null)
+    /// <summary>
+    /// returns optionID
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="prefab"></param>
+    /// <param name="job"></param>
+    /// <param name="com"></param>
+    /// <param name="comRepeat"></param>
+    /// <param name="hidingOverride"></param>
+    /// <param name="ap"></param>
+    /// <returns></returns>
+    private int MakeCOMButton(RectTransform parent, RectTransform prefab, Job job, COM com, bool comRepeat = false, bool hidingOverride = false, ActionPackage ap = null)
     {
         var key = "|jobRef|"+ (job == null ? "": job.RefID) + "|comID|" + (com == null? "": com.ID) + "|doers|" + (ap == null? "": ap.DoerRefs.Sum().ToString());
         if (!indexCOM.ContainsKey(key))
@@ -1172,6 +1254,7 @@ public class scr_panel_COMmanager : scr_Menu
                 foreach (var i in removeList) indexCOM.Remove(i);
                // indexCOM.Remove(previousJob + "|" + com.ID + "|" + ap.DoerRefs.Sum().ToString());
                 indexCOM.Add(key, buttonsByID[hash].optionID);
+                return buttonsByID[hash].optionID;
             }
             else
             {
@@ -1193,8 +1276,10 @@ public class scr_panel_COMmanager : scr_Menu
                 comp.Validate();
 
                 indexCOM.Add(key, comp.optionID);
+                return comp.optionID;
             }
         }
+        return -1;
     }
 
     private ButtonValidator_validateAP MakeCOMButton(RectTransform parent, RectTransform prefab, ActionPackage ap, bool comRepeat = false, bool hidingOverride = false)
@@ -1335,6 +1420,8 @@ public class scr_panel_COMmanager : scr_Menu
             this.COMRepeat = COMRepeat;
             this.hidingOverride = hidingOverride;
             RemakePackage(AP);
+
+            this.noValidate = true;
         }
         
         public void RemakePackage(ActionPackage injectAP = null)
@@ -1367,10 +1454,10 @@ public class scr_panel_COMmanager : scr_Menu
             if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}\ntags: {String.Join(" ", package.ComTags)}{(package.targetCOM == null?"\n":$"\ncommand AC {package.targetCOM.baseAcceptanceValue}\n")}";
             else tooltip = "";
             
-            if (!parent.ValidateCOMByTags(com))
+            if (!parent.ValidateCOMByTags(com, out var index))
             {
                 returnVal = false;
-                tooltip += "package did not pass external validation";
+                tooltip += $"package did not pass external validation {index}";
                 //this.text.gameObject.SetActive(false);
                 display = false;
             }
@@ -1407,7 +1494,7 @@ public class scr_panel_COMmanager : scr_Menu
                         else if (!doers.Contains(0) && !receivers.Contains(0)) receivers.Add(0);
                         receivers.AddRange(targets);
 
-                        package.ResetRequest(doers, receivers, 0);
+                        package.ResetRequest(doers, receivers, cachedAP.masterRef);
                         //package.ReInitializeCOM(job, com, doers, receivers, 0, false);
                     }
                     else
@@ -1536,7 +1623,7 @@ public class scr_panel_COMmanager : scr_Menu
             cachedAP.JoinAP(actors);
             if (cachedAP.isPaused) scr_System_CampaignManager.current.Register(cachedAP, false);
             cachedAP.LoggedBegin = false;
-            scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
+            scr_System_CampaignManager.current.FreeUpdate(-1, cachedAP.DisplayName);
         }
     }
 
@@ -1584,6 +1671,9 @@ public class scr_panel_COMmanager : scr_Menu
             this.text = text;
             this.COMRepeat = COMRepeat;
             this.hidingOverride = hidingOverride;
+
+
+            this.noValidate = true;
         }
         public ButtonValidator_validateCOM(scr_Menu parent, int jobRefID, string comID, scr_SelectableText text, bool COMRepeat = false, bool hidingOverride = false) : base(parent)
         {
@@ -1593,6 +1683,8 @@ public class scr_panel_COMmanager : scr_Menu
             this.text = text;
             this.COMRepeat = COMRepeat;
             this.hidingOverride = hidingOverride;
+
+            this.noValidate = true;
         }
 
 
@@ -1654,7 +1746,7 @@ public class scr_panel_COMmanager : scr_Menu
             //returnVal = returnVal && (com != null) && (com.IsActorValid(0, scr_System_CampaignManager.current.CurrentTarget));
             bool display = true;
             //if (com.comTags.Contains("sex") && )
-
+            if (!parent.gameObject.activeInHierarchy) return false;
             if (package == null)
             {
                 Debug.LogError("COMVALIDATOR ISBUTTON VALID ERROR PACKAGE NULL");
@@ -1664,10 +1756,10 @@ public class scr_panel_COMmanager : scr_Menu
             if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}{(this.jobRefID != this.job.RefID ? " -> "+this.jobRefID : "")}\ntags: {String.Join(" ", package.ComTags)}{(package.targetCOM == null?"\n":$"\ncommand AC {package.targetCOM.baseAcceptanceValue}\n")}";
             else tooltip = "";
 
-            if (!parent.ValidateCOMByTags(com))
+            if (!parent.ValidateCOMByTags(com, out var index))
             {
                 returnVal = false;
-                tooltip += "package did not pass external validation";
+                tooltip += $"package did not pass external validation {index}";
                 //this.text.gameObject.SetActive(false);
                 display = false;
             }
@@ -1747,6 +1839,18 @@ public class scr_panel_COMmanager : scr_Menu
                     {
                         returnVal = returnVal && true;
                         tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
+
+                        var conflicts = job.GetConflictPackages(package);
+
+                        if (conflicts.Count > 0)
+                        {
+                            var names = new List<string>();
+                            foreach (var cf in conflicts)
+                            {
+                                names.Add(cf.DisplayName);
+                            }
+                            tooltip += $"\n\n{LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_conflictAP").Replace("$names$", String.Join(" ", names))}";
+                        }
                     }
 
                     if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
@@ -1792,7 +1896,24 @@ public class scr_panel_COMmanager : scr_Menu
                 }
             }
 
-            return returnVal;
+            if (returnVal && display && package.targetCOM != null && package.targetCOM.childCOMs.Count > 0)
+            {
+                this.text.isButtonToggle = true;
+                if (parent.childCOMPanel.Active && parent.childCOMPanel.ap != null)
+                {
+                    this.text.Toggle(true, parent.childCOMPanel.ap.job == package.job && parent.childCOMPanel.ap.targetCOM == package.targetCOM);
+                }
+                else
+                {
+                    this.text.Toggle(true, false);
+                }
+                return returnVal;
+            }
+            else
+            {
+                this.text.isButtonToggle = false;
+                return returnVal;
+            }
         }
 
         public override void Destroy()
@@ -1803,20 +1924,80 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
-            scr_System_CentralControl.current.AutoSave();
 
-            var ppp = package.Copy();
-            //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
-            //scr_System_CampaignManager.current.Player.ChangeCurrentJob(job);
-            foreach(var actor in ppp.actorRefs)
+            if (package.targetCOM != null && package.targetCOM.childCOMs.Count > 0)
             {
-                scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(job, ppp.targetCOM.ID);
+                // create panel
+                parent.LoadChildCOMPanel(job, package, package.targetCOM.childCOMs);
             }
+            else
+            {
 
-            job.AddPackage(new List<ActionPackage>() { ppp }, true); 
-            scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
+                parent.childCOMPanel.Active = false;
+                scr_System_CentralControl.current.AutoSave();
+
+                var ppp = package.Copy();
+
+                if (!package.isTemporaryAP)
+                {
+                    scr_System_CampaignManager.current.LogPlayerPackage(package.Copy());
+                }
+
+                //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
+                //scr_System_CampaignManager.current.Player.ChangeCurrentJob(job);
+                foreach (var actor in ppp.actorRefs)
+                {
+                    scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(job, ppp.targetCOM.ID);
+                }
+
+                job.AddPackage(new List<ActionPackage>() { ppp }, true);
+                scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
+            }
         }
     }
+
+    public scr_childCOMs childCOMPanel;
+
+    public void LoadChildCOMPanel(Job sourceJob, ActionPackage sourceAP, List<COM> childCOMs)
+    {
+        Vector2 mousePos = Input.mousePosition;
+        childCOMPanel.ap = sourceAP;
+        //Debug.Log($"mouse position {mousePos.x}");
+        childCOMPanel.verticalAlignment.anchoredPosition = new Vector2(mousePos.x - 400, childCOMPanel.verticalAlignment.anchoredPosition.y);
+        Utility.DestroyAllChildrenFrom(childCOMPanel.comList, 1);
+        // destroy button id — GameObjects already destroyed above, so only clean up dictionaries
+        foreach(var id in childCOMPanel.trackedIDs)
+        {
+            if (!buttonsByID.ContainsKey(id)) continue;
+
+            string matchKey = null;
+            foreach (var kvp in indexCOM)
+            {
+                if (kvp.Value == id) { matchKey = kvp.Key; break; }
+            }
+
+            ButtonValidator validator = validatorsByID[id];
+            buttonsByID.Remove(id);
+            validatorsByID.Remove(id);
+            validator.Destroy();
+
+            if (matchKey != null) indexCOM.Remove(matchKey);
+        }
+        childCOMPanel.trackedIDs.Clear();
+
+        childCOMPanel.title.SetText($"{sourceJob.DisplayName}: {sourceAP.targetCOM.DisplayName(sourceAP.COMVariantID)}");
+        childCOMPanel.Active = true;
+
+
+        foreach (var ap in sourceJob.MakePackages(scr_System_CampaignManager.current.Player, false, true, true))
+        {
+            if (ap.targetCOM.ParentCOM == null || ap.targetCOM.ParentCOM != sourceAP.targetCOM) continue;
+            var index = MakeCOMButton(childCOMPanel.comList, buttonPrefab_COM, sourceJob, ap.targetCOM, true, false, ap);
+            if (index != -1 && !childCOMPanel.trackedIDs.Contains(index)) childCOMPanel.trackedIDs.Add(index);
+        }
+
+    }
+
 
     public class ButtonValidator_ToggleXrayDebug : ButtonValidator, I_ButtonClickable
     {
@@ -2052,9 +2233,12 @@ public class scr_panel_COMmanager : scr_Menu
             text.useDisabledColorWhenUntoggled = true;
         }
 
+        bool currentval = false;
+
         public override bool IsButtonValid()
         {
-            if (parent.GetCOMFilter(filter)) text.Toggle(true, true);
+            currentval = parent.GetCOMFilter(filter);
+            if (currentval) text.Toggle(true, true);
             else text.Toggle(true, false);
 
             return true;
@@ -2062,7 +2246,7 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
-            parent.ChangeCOMFilter(filter, !parent.GetCOMFilter(filter));
+            parent.ChangeCOMFilter(filter, !currentval);
         }
     }
 
@@ -2161,6 +2345,144 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
+    public class Button_RecentCOM: ButtonValidator, I_ButtonClickable
+    {
+        new scr_panel_COMmanager parent;
+        scr_SelectableText text;
+        int selfIndex;
+        public Button_RecentCOM(scr_panel_COMmanager parent, scr_SelectableText text, int recentIndex) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+            this.selfIndex = recentIndex;
+        }
+        ActionPackage ap;
+        Job job;
+        COM com;
+        public override bool IsButtonValid()
+        {
+            tooltip = "";
+            var playerlogs = scr_System_CampaignManager.current.playerAPLogs;
+            if (playerlogs.Count < selfIndex + 1)
+            {
+                tooltip = $"fail 0, self index {selfIndex} logs count {playerlogs.Count}";
+                //return false;
+                return Deactivate();
+            }
+            ap = playerlogs[selfIndex];
+            if (ap == null)
+            {
+                tooltip = "fail 1";
+                //return false;
+                return Deactivate();
+            }
+            job = ap.job;
+            if (job == null)
+            {
+                tooltip = "fail 2";
+               // return false;
+                return Deactivate();
+            }
+            var job2 = scr_System_CampaignManager.current.FindJobInstanceByID(job.RefID);
+            if (job2 == null || job2 != job)
+            {
+                tooltip = "fail 3";
+               // return false;
+                return Deactivate();
+            }
+
+            Activate();
+            bool returnVal = true;
+            text.SetText(ap.DisplayName);
+            var room = scr_System_CampaignManager.current.Map.GetRoomByRef(ap.RoomKey);
+            if (room == null || room != scr_System_CampaignManager.current.CurrentRoom)
+            {
+                tooltip += "not in same room";
+                return false;
+            }
+            foreach(var actor in ap.Actors) 
+            { 
+                if (!room.RoomChara.Contains(actor))
+                {
+                    tooltip = $"{actor.FirstName} not in room";
+                    return false;
+                }
+            }
+
+            if (ap.targetCOM != null && !ap.targetCOM.ValidateJob(ap.job, out var msg))
+            {
+                returnVal = false;
+                tooltip += ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", msg));
+                return false;
+            }
+
+            if (!ap.Validate())
+            {
+                returnVal = false;
+                ap.tooltip.RemoveAll(x => x == "" || x.Length < 1);
+                tooltip += ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", ap.tooltip));
+                return false;
+            }/*
+            else if (job is Job_Furniture && job.ExecutingPackages.FindAll(x=>!x.isTemporaryAP).Count >= 0)
+            {
+                returnVal = false;
+                tooltip += "target furniture cannot accept new packages\n";
+            }*/
+            if (ap.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
+            {
+                returnVal = false;
+                tooltip += ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid"))
+                    .Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_cannotSleep"));
+                return false;
+            }
+
+            tooltip += ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
+            
+            if (ap.RequestRate * ap.ResponseRate == 0)
+            {
+                tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
+                return false;
+            }
+            else if (scr_System_CampaignManager.current.DeterministicRolls && ap.RequestRate * ap.ResponseRate / 100 < 65)
+            {
+                tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_deterministicRolls_tooltip")}";
+                return false;
+            }
+            
+            return returnVal;
+        }
+
+        void Activate()
+        {
+            text.gameObject.SetActive(true);
+        }
+        bool Deactivate()
+        {
+            ap = null;
+            job = null;
+            text.gameObject.SetActive(false);
+            return false;
+        }
+
+        public void OnClickButton()
+        {
+            parent.childCOMPanel.Active = false;
+
+            scr_System_CentralControl.current.AutoSave();
+            var ppp = ap.Copy();
+            
+            //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
+            //scr_System_CampaignManager.current.Player.ChangeCurrentJob(job);
+            foreach (var actor in ppp.actorRefs)
+            {
+                scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(job, ppp.targetCOM.ID);
+            }
+
+            job.AddPackage(new List<ActionPackage>() { ppp }, true);
+            scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
+            
+        }
+    }
 
     public class Button_LLM_Submit: ButtonValidator, I_ButtonClickable
     {

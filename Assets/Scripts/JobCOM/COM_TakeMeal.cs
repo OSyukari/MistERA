@@ -8,18 +8,14 @@ using Newtonsoft.Json;
 public class COM_TakeMeal : COM
 
 {
-    protected string parentCOMID = "com_furniture_getmeal";
     protected Item_Base baseItem = null;
-    protected COM baseCOM = null;
 
-    public void Initialize(COM baseCOM, Item_Base item)
+    public override void InitializeChildCOM(COM baseCOM, Item_Base item)
     {
+        base.InitializeChildCOM(baseCOM, item);
 
-        this.parentCOMID = baseCOM.ID;
-        this.baseCOM = baseCOM;
         //baseCOM = scr_System_Serializer.current.GetByNameOrID_COM(parentCOMID);
         this.baseItem = item;
-
 
         this.ID += ("_" + baseItem.ID);
         this.comTags.AddRange(item.Tags);
@@ -56,13 +52,13 @@ public class COM_TakeMeal : COM
     public override string DisplayName(int index = -1)
     {
         //Debug.Log($"getmeal displayname 1 on {this.ID} {baseItem.ID} {baseItem.DisplayName}");
-        return Replace(baseCOM.DisplayName(index));
+        return Replace(base.DisplayName(index));
     }
 
-    public override string DisplayName(List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false, int actorCountMult = 1)
+    public override string DisplayName(Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
         //Debug.Log("getmeal displayname 2");
-        return Replace(baseCOM.DisplayName(doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult));
+        return Replace(base.DisplayName(sourceJob, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult));
     }
 
     public override string Replace(string s)

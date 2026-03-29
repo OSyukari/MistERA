@@ -31,7 +31,6 @@ public class Status_Instance
 
 
     [JsonProperty] protected float severity;
-    public int pauseXMinAfterMod = 0;
 
     protected I_StatsManager owner = null;
     [JsonIgnore]
@@ -56,6 +55,9 @@ public class Status_Instance
     {
         this.maxed = true;
     }
+
+    // Per-instance pause timer: decay is frozen while this > 0
+    public int pauseXMinAfterMod = 0;
 
     Stats_Derived_Instance _variantThresholdMod = null;
     [JsonIgnore]
@@ -265,7 +267,6 @@ public class Status_Instance
         if (initialSeverity < 0.001f && initialSeverity > -0.001f) this.severity = Math.Clamp(0f, 0, 0);
         else this.severity = initialSeverity;
 
-        this.pauseXMinAfterMod = BaseRef.variationMode.pauseXMinAfterMod;
     }
 
     [JsonIgnore] public List<Stat_Modifier> SeverityModifiers

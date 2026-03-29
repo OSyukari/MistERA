@@ -24,6 +24,7 @@ public class DebugLogSettings
     public bool DLog_CurrentRoomJob = false;
     public bool DLog_UnimplementedKojo = false;
     public bool DLog_KojoEvents = false;
+    public bool DLog_KojoEvents_validations = false;
     public bool DLog_Portraits = false;
     public bool DLog_Pathing = false;
     public bool DLog_Equipping = false;

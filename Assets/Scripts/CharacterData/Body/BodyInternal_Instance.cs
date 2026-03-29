@@ -110,22 +110,38 @@ public class BodyInternal_Instance
         List<Item_Instance> delete = new List<Item_Instance>();
         foreach (var content in Contains)
         {
-            ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method = content.GetComp_Ingestible().ingestMethod.Find(x => this.hasTag(x.bodyTags));
-            if (method != null)
+            var comp = content.GetComp_Ingestible();
+            var methods = comp == null ? new List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod>() : comp.ingestMethod.FindAll(x => this.hasTag(x.bodyTags));
+
+            TimeSpan? updatetime = null;
+
+            if (methods.Count > 0)
             {
-                //if (!contain.ContainsKey(kvp.Key)) DigestDelays.Add(kvp.Key, Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
+                float amount = methods[0].digestSpeed;
                 if (ContainedRefs_Delays[content.RefID] > 0)
                 {
-                    int timeTick = Math.Min((int) t.Minutes, ContainedRefs_Delays[content.RefID]);
+                    int timeTick = Math.Min((int)t.Minutes, ContainedRefs_Delays[content.RefID]);
                     ContainedRefs_Delays[content.RefID] -= timeTick;
                     if (timeTick < t.Minutes)
                     {
-                        Digest(method, t - TimeSpan.FromMinutes(t.Minutes - timeTick), content, content.GetComp_Ingestible(), delete);
+                        updatetime = t - TimeSpan.FromMinutes(t.Minutes - timeTick);
                     }
                 }
                 else
                 {
-                    Digest(method, t, content, content.GetComp_Ingestible(), delete);
+                    updatetime = t;
+                }
+
+                if (updatetime != null)
+                {
+                    comp.amount += amount * t.Minutes;
+
+                    foreach(var method in methods)
+                    {
+                        Digest(method, t, amount);
+                    }
+
+                    if (comp.amount <= 0) delete.Add(content);
                 }
             }
         }
@@ -139,13 +155,9 @@ public class BodyInternal_Instance
         delete.Clear();
     }
 
-    private void Digest(ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method, TimeSpan t, Item_Instance i, ItemComponent_Ingestible comp, List<Item_Instance> delete)
+    private void Digest(ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method, TimeSpan t, float amount)
     {
-        float amount = method.digestSpeed;
-
-        comp.amount += amount * t.Minutes;
         if (method.giveStatus != null && method.giveStatus.Length > 0) this.owner.Stats.AddOrModStatus(method.giveStatus, -amount * method.amountMod * t.Minutes);
-        if (comp.amount <= 0) delete.Add(i);
     }
 
     public string baseID = "";

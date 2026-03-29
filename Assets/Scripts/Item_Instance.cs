@@ -85,7 +85,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
                     var execName = execMove == null ? "" : LocalizeDictionary.QueryThenParse("ItemComponent_Weapon_tooltip_execution").Replace("$name$", execMove.DisplayName);
                     cc.Replace("$execution$", execName);
                 }
-                compTooltips.Add(c.Tooltip);
+                compTooltips.Add(cc);
             }
             return LocalizeDictionary.QueryThenParse("Item_Instance_Tooltip")
                 .Replace("$tags$", $"[{String.Join("|", this.Tags)}]")
@@ -97,6 +97,8 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
     [JsonIgnore] public bool Equippable { get { return Parent.Equippable; } }
 
     [JsonIgnore] public bool isToken { get { return Parent.isTokenItem; } }
+    [JsonIgnore] public bool isFoodAdditive { get { return Parent.isFoodAdditive; } }
+    [JsonIgnore] public bool isFoodConsumable  { get { return Parent.isFoodConsumable; } }
     /// <summary>
     /// Print name only without count
     /// </summary>
@@ -181,6 +183,19 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
                 _weapon = GetComp("ItemComponent_Weapon") as ItemComponent_Weapon;
             }
             return _weapon;
+        }
+    }
+    ItemComponent_Records _records = null;
+    [JsonIgnore]
+    public ItemComponent_Records Comp_Records
+    {
+        get
+        {
+            if (_records == null)
+            {
+                _records = GetComp("ItemComponent_Records") as ItemComponent_Records;
+            }
+            return _records;
         }
     }
     public ItemComponent_Base GetComp(string name)

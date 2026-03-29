@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
-using System;
 
 public class initScript_ManagementOverview : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class initScript_ManagementOverview : MonoBehaviour
     public TMP_Text managerNames, floorNames, factionResource, factionPopulation, factionPopMaintenance;
     public TMP_Text dailyReport;
     public RectTransform linkedFactionGrid;
-    public TMP_Text prefab_factionEntry;
+    public scr_HoverableText prefab_factionEntry;
     public TMP_Text factionTimings;
 
 
@@ -129,17 +130,18 @@ public class initScript_ManagementOverview : MonoBehaviour
         Utility.DestroyAllChildrenFrom( linkedFactionGrid);
         if (m.ConnectedFactions.Count < 1)
         {
-            TMP_Text c_name = Instantiate(prefab_factionEntry);
-            c_name.text = "none";
-            c_name.rectTransform.SetParent(this.linkedFactionGrid, false);
+            var c_name = Instantiate(prefab_factionEntry);
+            c_name.SetText("none");//
+            c_name.SelfRect.SetParent(this.linkedFactionGrid, false);
         }
         else
         {
             foreach (var connect in m.ConnectedFactions)
             {
-                TMP_Text c_name = Instantiate(prefab_factionEntry);
-                c_name.text = connect.FactionDisplayName;
-                c_name.rectTransform.SetParent(this.linkedFactionGrid, false);
+                var c_name = Instantiate(prefab_factionEntry);
+                c_name.SetText(connect.FactionDisplayName);
+                c_name.SelfRect.SetParent(this.linkedFactionGrid, false);
+                c_name.SetExternalTooltip(LocalizeDictionary.QueryThenParse("ui_management_linkStatus_faction_tooltip").Replace("$mealhours$", connect.mealHours.Count < 1 ? "" : $"[ {String.Join(" ", connect.mealHours)} ]"));
             }
         }
 

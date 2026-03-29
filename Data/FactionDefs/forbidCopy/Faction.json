@@ -1,0 +1,195 @@
+{
+    "MapPlans":
+    {
+        "list":
+        [
+            {
+                "ID":"map_debug_store",
+                "initializeFaction":"jp_debug_store",
+                "salesCurrency":"currency_JPY",
+                "salesInventory":[
+                    
+                    { "matchByTags":["consumable","industrial","rarity_common"] },
+                    { "matchByID":"raw_rice","nameOverwrite":"jp_convenience_store_rice_bag_5kg", "itemCount":5000, "countOverride":true },
+                    { "matchByID":"currency_pyroxene","nameOverwrite":"jp_convenience_store_pyroxene_4800", "itemCount":4800, "countOverride":true },
+                    { "matchByID":"consumable_drug_sleepingpill","nameOverwrite":"jp_convenience_store_otcsleepingpills_6pack", "itemCount":6, "countOverride":true },
+                    { "matchByID":"consumable_alcohol_beer","nameOverwrite":"jp_convenience_store_beer_6pack", "itemCount":6, "countOverride":true },
+                    { "matchByID":"consumable_drug_rapedrug","nameOverwrite":"6 pack special drug", "itemCount":6, "countOverride":true }
+                ],
+                "priceMult":0,
+                "_comment":"here is faction initializer. Calling mapPlan init create a new instance of the faction following this same template.",
+                "_comment2":"called by MapPlan.Instantiate(args)",
+                "managerBaseIDs":[""],
+                "workHours":[],
+                "workAssignment":[]
+            }
+        ]
+    },
+    "Items":
+    {
+        "list":[
+            {
+                "id":"consumable_aphrodisiac_salve",
+                "displayName":"Aphrodisiac Salve",
+                "tooltip":"Skin balm that can be applied to intimate bits for increased sensitivity",
+                "Tags":["consumable","industrial","rarity_common","do_not_use"],
+                "itemComps_Template":[
+                    {
+                        "compType":"ItemComponent_Ingestible",
+                        "comp_Ingestible":{
+                            "ingestMethod":[
+                                {
+                                    "bodyTags":"clit",
+                                    "digestSpeed": -1,
+                                    "digestDelay":30,
+                                    "digestDelayVariation":15,
+                                    "amountMod":0.5,
+                                    "giveStatus":"chara_status_aphrodisiac"
+                                },
+                                {
+                                    "bodyTags":"vagina",
+                                    "digestSpeed": -1,
+                                    "digestDelay":3,
+                                    "digestDelayVariation":1,
+                                    "amountMod":2,
+                                    "giveStatus":"chara_status_aphrodisiac"
+                                },
+                                {
+                                    "bodyTags":"anus",
+                                    "digestSpeed": -1,
+                                    "digestDelay":3,
+                                    "digestDelayVariation":1,
+                                    "amountMod":2,
+                                    "giveStatus":"chara_status_aphrodisiac"
+                                }
+                            ],
+                            "amount":5,
+                            "modifiers":[
+                                {
+                                    "modType":"statusMod",
+                                    "value":["chara_status_sleep", 10]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "id":"consumable_stamina_drink",
+                "displayName":"Stamina Drink",
+                "tooltip":"Drink that enhance male stamina, currently has no use",
+                "Tags":["do_not_use"],
+                "itemComps_Template":[
+                    {
+                        "compType":"ItemComponent_Ingestible",
+                        "comp_Ingestible":{
+                            "ingestMethod":[
+                                {
+                                    "bodyTags":"mouth",
+                                    "digestSpeed": -1,
+                                    "digestDelay":30,
+                                    "digestDelayVariation":15,
+                                    "amountMod":0.5,
+                                    "giveStatus":"chara_status_alcohol"
+                                }
+                            ],
+                            "amount":5,
+                            "modifiers":[
+                                {
+                                    "modType":"statusMod",
+                                    "value":["chara_status_sleep", 10]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "id":"consumable_tlic_sterileeggs",
+                "displayName":"Sterile Eggs",
+                "tooltip":"Sterile egg, when ingested produces narcotic effect.",
+                "Tags":["do_not_use"],
+                "itemComps_Template":[
+                    {
+                        "compType":"ItemComponent_Ingestible",
+                        "comp_Ingestible":{
+                            "ingestMethod":[
+                                {
+                                    "bodyTags":"stomach",
+                                    "digestSpeed": -1,
+                                    "digestDelay":30,
+                                    "digestDelayVariation":10,
+                                    "amountMod":1.5,
+                                    "giveStatus":"chara_status_drugged"
+                                },
+                                {
+                                    "bodyTags":"anus",
+                                    "digestSpeed": -0.05,
+                                    "digestDelay":7,
+                                    "digestDelayVariation":3,
+                                    "amountMod":5,
+                                    "giveStatus":"chara_status_drugged"
+                                }
+                            ],
+                            "amount":20,
+                            "modifiers":[
+                                {
+                                    "modType":"statusMod",
+                                    "value":["chara_status_alcohol", 1]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "id":"consumable_drug_rapedrug",
+                "displayName":"Rape Drug",
+                "tooltip":"One single pill can make someone obedient for more than 3 hours.",
+                "Tags":["consumable","industrial","rarity_common","additive"],
+                "itemComps_Template":[
+                    {
+                        "compType":"ItemComponent_Ingestible",
+                        "comp_Ingestible":{
+                            "ingestMethod":[
+                                {
+                                    "bodyTags":"stomach",
+                                    "digestSpeed": -1,
+                                    "digestDelay":7,
+                                    "digestDelayVariation":3,
+                                    "amountMod":10,
+                                    "giveStatus":"chara_status_drugged"
+                                }
+                            ],
+                            "amount":5
+                        }
+                    }
+                ]
+            },
+            {
+                "id":"consumable_drug_ovulationpill",
+                "displayName":"Ovulation Inducer",
+                "tooltip":"Speed up ovulation cycle, and induce mild estrus (make touch and sex act easier).",
+                "Tags":["consumable","industrial","rarity_common","do_not_use"],
+                "itemComps_Template":[
+                    {
+                        "compType":"ItemComponent_Ingestible",
+                        "comp_Ingestible":{
+                            "ingestMethod":[
+                                {
+                                    "bodyTags":"stomach",
+                                    "digestSpeed": -1,
+                                    "digestDelay":30,
+                                    "digestDelayVariation":10,
+                                    "amountMod":8,
+                                    "giveStatus":"chara_status_aphrodisiac"
+                                }
+                            ],
+                            "amount":5
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -2,6 +2,7 @@
     "COMs": {
         "list": [
             {
+                "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_missionary",
                 "categoryTags":["com_category_v"],
                 "ActionPackageClass": "ActionPackage_Sex",
@@ -11,7 +12,7 @@
                     "sex",
                     "penetration",
                     "position_face",
-                    "position_equal"
+                    "position_equal","missionary"
                 ],
                 "requirements": {
                     "requirement": {

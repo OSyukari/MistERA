@@ -152,10 +152,11 @@ public class MessageCollect
     }
 }
 
-public class MessageCollect_KojoEntry
+public class MessageCollect_KojoEntry : I_Records
 {
     public int portraitRefID = -1;
     public List<string> portraitTags = new List<string>();
+    public List<int> relevantActors = new List<int>();
     public string message = "";
 
     public List<MessageCollect_KojoEntry> nexts = new List<MessageCollect_KojoEntry>();
@@ -174,5 +175,37 @@ public class MessageCollect_KojoEntry
         {
             this.nexts.Add(m);
         }
+        if (this.timestamp == DateTime.MinValue) this.timestamp = scr_System_Time.current.getCurrentTime();
     }
+
+    public void AddRelevantActors(List<Character_Trainable> cs)
+    {
+        foreach (var c in cs) AddRelevantActor(c);
+    }
+
+
+    public void AddRelevantActor(Character_Trainable c)
+    {
+        if (c == null) return;
+        if (this.relevantActors.Contains(c.RefID)) return;
+        this.relevantActors.Add(c.RefID);
+    }
+
+    public bool VisibleToChara(Character_Trainable c)
+    {
+        return portraitRefID == -1 || (c != null && c.RefID == portraitRefID) || relevantActors.Contains(c.RefID);
+    }
+
+    public DateTime timestamp = DateTime.MinValue;
+
+    [JsonIgnore] public DateTime Timestamp { get { return timestamp; } }
+
+    public MessageCollect_KojoEntry()  { }
+    public MessageCollect_KojoEntry(int portraitRefID)
+    {
+        this.portraitRefID = portraitRefID;
+        timestamp = scr_System_Time.current.getCurrentTime();
+
+    }
+
 }

@@ -45,6 +45,10 @@ public class Masterlist_Items : MonoBehaviour
     {
         return FarmRecipe.Find(x => x.compHarvestible_UID == key);
     }
+    public ItemComponentTemplate_Harvestable FindHarvest(string itemTag, string itemID)
+    {
+        return FarmRecipe.Find(x => x.growType == itemTag && x.yieldItemID == itemID);
+    }
 
     public static Item_Base GetByID(string id) { return Instance.Index.GetByID(id); }
 }

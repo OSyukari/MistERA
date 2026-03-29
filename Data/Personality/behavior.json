@@ -1,41 +1,65 @@
 {
-    "FindJobNodeRoots":{
-        "list":[
+    "FindJobNodeRoots": {
+        "list": [
             {
-                "ID":"behavior_default",
-                "nodes":[
-                    { "$type":"TryFindRedressNode, Assembly-CSharp" },
-                    { "$type":"TryFindSleepNode, Assembly-CSharp" },
-                    { "$type":"TryFindMealNode, Assembly-CSharp" },
-                    { "$type":"TryFindPartyExplorationJob, Assembly-CSharp" },
-                    { 
-                        "$type":"TryFindJobByIDNode, Assembly-CSharp",
-                        "Tags":["nsfw"],
-                        "targetID":"com_furniture_restroom",
-                        "randomChance":0.5,
-                        "cooldownHours":4, "cooldownID":"com_furniture_restroom"
+                "ID": "behavior_default",
+                "nodes": [
+                    {
+                        "$type": "TryFindRedressNode, Assembly-CSharp"
                     },
-                    { "$type":"TryFindScheduledJobNode, Assembly-CSharp" },
-                    { "$type":"TryFindRestNode, Assembly-CSharp" },
-                    { 
-                        "$type":"TryFindSexNode_Animal, Assembly-CSharp",
-                        "Tags":["nsfw"] 
+                    {
+                        "$type": "TryFindSleepNode, Assembly-CSharp"
                     },
-                    { "$type":"TryFindPrivateRoomCleaning, Assembly-CSharp" },
-                    { "$type":"TryStayInJailNode, Assembly-CSharp" },
-                    { 
-                        "$type":"TryFindNonJobByTagNode, Assembly-CSharp" ,
-                        "tag":"recreation",
-                        "skipPrivate":true,
-                        "shortestPathOnly":false,
-                        "checkBlackList":true
+                    {
+                        "$type": "TryFindMealNode, Assembly-CSharp"
                     },
-                    { 
-                        "$type":"TryFindNonJobByTagNode, Assembly-CSharp" ,
-                        "tag":"rest",
-                        "skipPrivate":false,
-                        "shortestPathOnly":true,
-                        "checkBlackList":false
+                    {
+                        "$type": "TryFindPartyExplorationJob, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindJobByIDNode, Assembly-CSharp",
+                        "Tags": [
+                            "nsfw"
+                        ],
+                        "targetID": "com_furniture_restroom",
+                        "randomChance": 0.5,
+                        "cooldownHours": 4,
+                        "cooldownID": "com_furniture_restroom"
+                    },
+                    {
+                        "$type": "TryFindScheduledJobNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryChangeLocaleNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindRestNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindSexNode_Animal, Assembly-CSharp",
+                        "Tags": [
+                            "nsfw"
+                        ]
+                    },
+                    {
+                        "$type": "TryFindPrivateRoomCleaning, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryStayInJailNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
+                        "tag": "recreation",
+                        "skipPrivate": true,
+                        "shortestPathOnly": false,
+                        "checkBlackList": true
+                    },
+                    {
+                        "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
+                        "tag": "rest",
+                        "skipPrivate": false,
+                        "shortestPathOnly": true,
+                        "checkBlackList": false
                     }
                 ]
             }

@@ -501,6 +501,10 @@ public class COM_Requirements
         public List<RequireRoomExisting_FurnitureBase> requiresFurniture = null;
         public List<RequireRoomExisting_ItemBase> requiresItem = null;
 
+        public bool requireHasRecording = false;
+        public bool requireNotRecording = false;
+
+
         public void Read(RequireRoomExisting req)
         {
             if (req.requiresFurniture != null)
@@ -513,12 +517,24 @@ public class COM_Requirements
                 if (this.requiresItem == null) this.requiresItem = new List<RequireRoomExisting_ItemBase>();
                 this.requiresItem.AddRange(requiresItem);
             }
+            this.requireHasRecording = this.requireHasRecording || req.requireHasRecording;
+            this.requireNotRecording = this.requireNotRecording || req.requireNotRecording;
         }
 
         public bool Validate(Room_Instance targetRoom, out string tooltip)
         {
             if (this.requiresFurniture != null) foreach (var req in requiresFurniture) if (!req.Validate(targetRoom, out tooltip)) return false;
             if (this.requiresItem != null) foreach (var req in requiresItem) if (!req.Validate(targetRoom, out tooltip)) return false;
+            if (requireHasRecording && !targetRoom.HasRecording)
+            {
+                tooltip = "require active recording in room";
+                return false;
+            }
+            if (requireNotRecording && targetRoom.HasRecording)
+            {
+                tooltip = "require no active recording in room";
+                return false;
+            }
             tooltip = "";
             return true;
         }
@@ -628,7 +644,7 @@ public class COM_Requirements
         public bool allowInPlayerFaction = true;
         public string jobKeyword = "";
         public string inventoryItemBaseID = "";
-
+        public bool requireCanPrepMeal = false;
         public bool Validate(I_IsJobGiver m, out string tooltip)
         {
             tooltip = "";
@@ -661,6 +677,36 @@ public class COM_Requirements
                         .Replace("$faction$", mm == null ? "-" : mm.FactionDisplayName)
                         .Replace("$name$", replace);
                 return false;
+            }
+            if (requireCanPrepMeal)
+            {
+                var nextHour = Math.Clamp(scr_System_Time.current.getCurrentTime().Hour + 1, 0, 23);
+                if (!m.isPlayerFaction)
+                {
+                    tooltip = "non player faction, can always prep";
+                }
+                else if (m.isMealHourAt(nextHour))
+                {
+                    tooltip = "next hour is already meal hour";
+                    return false;
+                }
+                else
+                {
+                    bool existFood = false;
+                    foreach (var item in m.Inventory.Contents)
+                    {
+                        if (item.isFoodConsumable)
+                        {
+                            existFood = true;
+                            break;
+                        }
+                    }
+                    if (!existFood)
+                    {
+                        tooltip = "no consumable item in faction inventory";
+                        return false;
+                    }
+                }
             }
             return true;
         }

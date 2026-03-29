@@ -15,6 +15,8 @@ public class PortraitManager
 
     public CharaPortrait CharaBanner = null;
 
+    public string portraitBaseIDOverride = "";
+
     public PortraitManager()
     {
         //Debug.Log("PortraitManager instantiate on null call");
@@ -79,21 +81,51 @@ public class PortraitManager
         }
     }
 
+    [JsonIgnore]
+    public Character_SerializableBase portraitTemplate
+    {
+        get
+        {
+            Character_SerializableBase returnvalue = null;
+            if (this.portraitBaseIDOverride != "")
+            {
+                returnvalue = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(portraitBaseIDOverride);
+                if (returnvalue != null) return returnvalue;
+            }
+            returnvalue = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(this.Owner.BaseID);
+            return returnvalue;
+        }
+    }
+
+    public void SetTemplate(Character_SerializableBase template)
+    {
+        if (template == null) this.portraitBaseIDOverride = "";
+        else
+        {
+            this.portraitBaseIDOverride = template.baseID;
+        }
+        ResetPortraits();
+    }
+
     public void ResetPortraits()
     {
 
         ClearInternal();
         ClearHandlerCache();
-        var baseTemplate = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(this.Owner.BaseID);
-
+        var baseTemplate = portraitTemplate;
         this.portraitPriorityList.Clear();
-        foreach(var pp in baseTemplate.Portrait.portraitPriorityList)
+
+        if (baseTemplate != null)
         {
-            this.portraitPriorityList.Add(pp.Copy());
+            foreach (var pp in baseTemplate.Portrait.portraitPriorityList)
+            {
+                this.portraitPriorityList.Add(pp.Copy());
+            }
         }
 
        // Debug.Log($"Portrait reset, preReset count {i} target template count {baseTemplate.Portrait.portraitPriorityList.Count} final count {this.portraitPriorityList.Count}");
         RebuildInternal(this.Owner);
+
     }
 
     public void Prepend(CharaPortrait cm)
@@ -113,7 +145,7 @@ public class PortraitManager
             return _transparent;    
         }
     }
-    protected void GetValidPortrait(List<string> keywords, out CharaPortrait handler, out string portrait, out string icon)
+    protected void GetValidPortrait(List<string> keywords, out CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
     {
         handler = null;
         portrait = "";
@@ -127,6 +159,7 @@ public class PortraitManager
             foreach (var i in portraitPriorityList)
             {
                 if (!i.isValid()) continue;
+                if (!i.isValidForBox(box)) continue;
                 if (keywords.Count < 1 && i.RequireContextKeys.Count > 0) continue;
                 if (!Utility.ListContainsStrict(keywords, i.RequireContextKeys))
                 {
@@ -204,7 +237,7 @@ public class PortraitManager
     {
         if (_cache_CombatPortrait == null || forceRefresh)
         {
-            GetValidPortrait(new List<string>() { "combat" }, out _cache_CombatPortrait, out _cache_CombatPortrait_path, out _cache_CombatPortrait_icon);
+            GetValidPortrait(new List<string>() { "combat" }, out _cache_CombatPortrait, out _cache_CombatPortrait_path, out _cache_CombatPortrait_icon, box);
             tags_combat = new List<string>() { "combat" };
         }
         if (box.currentHandler != _cache_CombatPortrait || box.currentPortrait != _cache_CombatPortrait_path)
@@ -237,7 +270,7 @@ public class PortraitManager
         if (_cache_ActivityPortrait == null || (tags != null && tags.Count > 0) || forceRefresh)
         {
             if (tags == null || tags.Count < 1) tags = GetOwnerActionTagsByPriority();
-            GetValidPortrait(tags, out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon);
+            GetValidPortrait(tags, out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon, box);
             tags_active = tags;
         }
         if (box.currentHandler != _cache_ActivityPortrait || box.currentPortrait != _cache_ActivityPortrait_path)
@@ -307,7 +340,7 @@ public class PortraitManager
         else if (box.isCurrentTargetBox) DrawActivityPortrait(box, tags);
         else
         {
-            box.currentPortrait = null;
+            DrawNeutralPortrait(box);
         }
     }
     public void DrawIcon(scr_CharIconBox box)
@@ -326,7 +359,7 @@ public class PortraitManager
         {
             if (!Enable) return false;
             if (Conditions == null || Conditions.Count < 1) return true;
-            foreach(var i in Conditions) if (!i.Validate(c)) return false;
+            foreach(var i in Conditions) if (c == null || !i.Validate(c)) return false;
 
             return true;
         }
@@ -399,6 +432,7 @@ public class PortraitManager
 
         public List<string> RequireContextKeys = new List<string>();
         public virtual bool isValid() { return false; }
+        public virtual bool isValidForBox(scr_CharPortraitBox box) { return true; }
         public virtual IEnumerator DrawIcon(scr_CharIconBox iconBox, string pathOverride)
         {
             iconBox.picture.sprite = SpriteAsset.transparent;
@@ -415,6 +449,7 @@ public class PortraitManager
             Debug.Log($"null drawportrait [{pathOverride}]");
             portraitBox.picture.gameObject.SetActive(true);
             if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
+            if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 0;
             //portraitBox.spineLoader.gameObject.SetActive(false);
             portraitBox.picture.sprite = SpriteAsset.transparent;
             portraitBox.currentPortrait = pathOverride;
@@ -559,6 +594,7 @@ public class PortraitManager
                 }
 
                 portraitBox.picture.gameObject.SetActive(true);
+                if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 0;
                 if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
 
                 portraitBox.currentPortrait = pathOverride;
@@ -736,7 +772,7 @@ public class PortraitManager
         {
             if (this.Variants != null)
             {
-                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement(i.PortraitVariantData);
+                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement(i.PortraitVariantData);
             }
             return this.addonAnimName;
         }
@@ -769,6 +805,7 @@ public class PortraitManager
                 //Debug.LogError($"PortraitAnimation name {PortraitAnimName}");
                 if (portraitBox == null || portraitBox.spineRect == null || !portraitBox.spineRect.gameObject.activeInHierarchy) yield break;
                 portraitBox.spineRect.gameObject.SetActive(true);
+                if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 0;
                 portraitBox.picture.gameObject.SetActive(false);
                 portraitBox.currentPortrait = pathOverride;
                 portraitBox.spineRect.SetParent(portraitBox.spineLoader.transform, false);
@@ -783,6 +820,111 @@ public class PortraitManager
             this.portrait_offset_x = offsetX;
             this.portrait_offset_y = offsetY;
             this.portrait_offset_size = offsetSize;
+        }
+    }
+
+    public class CharaPortrait_LandscapeImage : CharaPortrait
+    {
+        public string portrait_path = "";
+        public List<string> random_portrait_path = new List<string>();
+        public string random_portrait_folder = "";
+        public string icon_path = "";
+
+        public override void RebuildInternal()
+        {
+            if (this.random_portrait_folder != "")
+            {
+                this.random_portrait_path = scr_System_Serializer.current.GetAllImageFilesInFolder(this.random_portrait_folder);
+            }
+        }
+
+        public override CharaPortrait Copy()
+        {
+            var newEntry = new CharaPortrait_LandscapeImage();
+            newEntry.portrait_path = this.portrait_path;
+            newEntry.random_portrait_folder = this.random_portrait_folder;
+            newEntry.random_portrait_path = this.random_portrait_path;
+            newEntry.icon_offset_size = this.icon_offset_size;
+            newEntry.icon_offset_x = this.icon_offset_x;
+            newEntry.icon_offset_y = this.icon_offset_y;
+            newEntry.AllowXAxisFlip = this.AllowXAxisFlip;
+            newEntry.Disable = this.Disable;
+            newEntry.Variants = this.Variants;
+            newEntry.RequireContextKeys = this.RequireContextKeys;
+            newEntry.icon_path = this.icon_path;
+            return newEntry;
+        }
+
+        public override bool isValid() { return !Disable; }
+
+        public override bool isValidForBox(scr_CharPortraitBox box)
+        {
+            return box != null && box.picture_landscape_group != null;
+        }
+
+        internal override string PortraitPath(List<string> tags)
+        {
+            if (this.Variants != null)
+            {
+                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement(i.PortraitVariantData);
+            }
+            if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
+            else return portrait_path;
+        }
+
+        internal override string IconPath(List<string> tags)
+        {
+            return icon_path;
+        }
+        public override IEnumerator DrawIcon(scr_CharIconBox iconBox, string pathOverride)
+        {
+
+            if (pathOverride == "") yield return base.DrawIcon(iconBox, pathOverride);  // no fallback, draw transparent
+            else
+            {
+                if (scr_System_CentralControl.current.GetSprite(pathOverride, out var sprite))
+                {
+                    iconBox.picture.sprite = sprite;
+                }
+                else
+                {
+                    Texture2D loaded = null;
+                    yield return AssetsLoader.LoadTextureCoroutine(pathOverride, texture => loaded = texture);
+                    iconBox.picture.sprite = scr_System_CentralControl.current.MakeSprite(pathOverride, loaded);
+                }
+
+                iconBox.picture.SetNativeSize();
+                iconBox.picture.rectTransform.anchoredPosition = new Vector2(icon_offset_x, icon_offset_y);
+                iconBox.picture.rectTransform.localScale = new Vector3(icon_offset_size, icon_offset_size, icon_offset_size);
+            }
+        }
+
+        public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride)
+        {
+            if (pathOverride == "")
+            {
+                yield return base.DrawPortrait(portraitBox, pathOverride);
+            }
+            else
+            {
+                if (scr_System_CentralControl.current.GetSprite(pathOverride, out var sprite))
+                {
+                    portraitBox.picture_landscape.sprite = sprite;
+                }
+                else
+                {
+                    Texture2D loaded = null;
+                    yield return AssetsLoader.LoadTextureCoroutine(pathOverride, texture => loaded = texture);
+                    portraitBox.picture_landscape.sprite = scr_System_CentralControl.current.MakeSprite(pathOverride, loaded);
+                }
+
+                //portraitBox.picture_landscape.SetNativeSize();
+                if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
+                portraitBox.picture.gameObject.SetActive(false);
+                if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 1;
+                portraitBox.currentPortrait = pathOverride;
+                portraitBox.NotifyEndDraw();
+            }
         }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using NUnit.Framework;
 using UnityEngine;
 
 public interface I_StatsManager
@@ -643,6 +642,7 @@ public class StatsManager : I_StatsManager
 
     [JsonProperty] private int pauseXMinAfterMod = 0;
 
+    [JsonIgnore] public int pauseLLMTicks = 0;
 
     public void PreUpdateTimeTick()
     {
@@ -678,19 +678,13 @@ public class StatsManager : I_StatsManager
             int time = Owner.isTimeStopped ? t.Minutes : t_real.Minutes;
             var curr = _statusInstances[key];
 
-            if (curr.BaseRef.variationMode.pauseXMinAfterMod > 0)
-            {
-                curr.pauseXMinAfterMod += pauseXMinAfterMod;
-            }
+            // Sex-type statuses have their decay and duration paused while either timer is active:
+            // - curr.pauseXMinAfterMod: per-instance, refreshed when THIS status is stimulated
+            // - pauseLLMTicks: manager-level, set for the duration of an LLM sex interaction
+            bool sexPaused = curr.BaseRef.variationMode.pauseXMinAfterMod > 0 && (curr.pauseXMinAfterMod > 0 || pauseLLMTicks > 0);
+            if (curr.pauseXMinAfterMod > 0) curr.pauseXMinAfterMod = Math.Max(0, curr.pauseXMinAfterMod - time);
 
-            if (curr.pauseXMinAfterMod > 0)
-            {
-                time -= Math.Min(t.Minutes, curr.pauseXMinAfterMod);
-                curr.pauseXMinAfterMod -= Math.Min(t.Minutes, curr.pauseXMinAfterMod);
-            }
-
-
-            if (curr.pauseXMinAfterMod == 0 && time > 0 && curr.Decay != 0)
+            if (!sexPaused && time > 0 && curr.Decay != 0)
             {
                 var decay = curr.BaseRef.variationMode.baselineVariation.Decay(this, curr.Severity);
                 if (decay != 0)
@@ -699,7 +693,6 @@ public class StatsManager : I_StatsManager
                     if (curr.SeverityAdd(final)) refresh = true;
                 }
             }
-
 
             if (!curr.BaseRef.constant)
             {   // on status disappear
@@ -725,11 +718,10 @@ public class StatsManager : I_StatsManager
                         // throw error
                         Debug.LogError($"status {curr.ID} does not allow natural removal but lacking removal handling");
                     }
-
                 }
-                
+
                 // expired with time, allow removal with no calls
-                else if (curr.pauseXMinAfterMod <= 0 && curr.duration >= 0)
+                else if (!sexPaused && curr.duration >= 0)
                 {   // status tick
                     curr.duration = Math.Max(0, curr.duration - time);
                     if (curr.duration == 0)
@@ -760,7 +752,8 @@ public class StatsManager : I_StatsManager
                 }
             }
         }
-        pauseXMinAfterMod = Math.Max(pauseXMinAfterMod - t.Minutes, 0);
+        if (pauseLLMTicks > 0) pauseLLMTicks = Math.Max(pauseLLMTicks - t.Minutes, 0);
+        //else pauseXMinAfterMod = Math.Max(pauseXMinAfterMod - t.Minutes, 0);
         if (!hasSexualStimulation) consecutiveClimaxCount = 0;
 
         //Debug.LogError("Setting CurrentlyCliaxed to false");
@@ -938,21 +931,17 @@ public class StatsManager : I_StatsManager
                 else if (AfterClimax != null && AfterClimax.Severity < 0)
                 {
                     AfterClimax.SeverityAdd(Math.Min(Math.Abs(AfterClimax.Severity), modSeverity), severityCap);
-                    pauseXMinAfterMod = Math.Max(pauseXMinAfterMod, 1);
+                    //pauseXMinAfterMod = Math.Max(pauseXMinAfterMod, 1);
                 }
                 //Debug.LogError("MATH MIN ["+Math.Abs(afterClimax.Severity).ToString()+"] ["+ modSeverity.ToString() + "]");
+                //pauseXMinAfterMod = Math.Max(pauseXMinAfterMod, instance.BaseRef.variationMode.pauseXMinAfterMod);
+                instance.pauseXMinAfterMod = instance.BaseRef.variationMode.pauseXMinAfterMod;
             }
 
             //Debug.LogError("Stimulating status " + s + " with severityCap at " + severityCap);
             instance.SeverityAdd(modSeverity, severityCap);
 
             if (instance.duration != -1) instance.duration += modDuration;
-            instance.pauseXMinAfterMod = instance.BaseRef.variationMode.pauseXMinAfterMod;
-            if (instance.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
-            {
-                pauseXMinAfterMod = Math.Max(pauseXMinAfterMod, instance.BaseRef.variationMode.pauseXMinAfterMod);
-                //foreach (var inst in instances) if (inst.BaseRef.variationMode.variationType == Status_Base.Status_Variation_Type.sex) inst.pauseXMinAfterMod = inst.BaseRef.variationMode.pauseXMinAfterMod;
-            }
         }
         else
         {
@@ -984,13 +973,8 @@ public class StatsManager : I_StatsManager
 
             if (si.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
             {
-                foreach (var inst in _statusInstances)
-                {
-                    if (inst.Value.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)
-                    {
-                        inst.Value.pauseXMinAfterMod = inst.Value.BaseRef.variationMode.pauseXMinAfterMod;
-                    }
-                }
+                this.pauseXMinAfterMod = Math.Max(this.pauseXMinAfterMod, si.BaseRef.variationMode.pauseXMinAfterMod);
+                si.pauseXMinAfterMod = si.BaseRef.variationMode.pauseXMinAfterMod;
             }
         }
         else Debug.LogError("AddStatus Failed cuz target status ["+s+"] unfound");

@@ -68,6 +68,7 @@ public class MapPlan
     public List<int> mealHours = new List<int>();
     public List<CampaignSettings_Initializer> initializers = new List<CampaignSettings_Initializer>();
     public Dictionary<string, string> Lorebooks = new Dictionary<string, string>();
+    public double priceMult = 1;
     public class SalesInventoryInit
     {
         public List<string> matchByTags = new List<string>();

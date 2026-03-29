@@ -124,8 +124,12 @@ public class ActionPackage_LLM : ActionPackage
 
         job.m.displayOverride = true;
 
+        List<string> execresult = new List<string>();
 
-        foreach (var ap in innerJSON.GetActionPackages(out var tooltips2))
+        var aps = innerJSON.GetActionPackages(out var tooltips2);
+        aps.Sort((x, y) => x.PackagePriority.CompareTo(y.PackagePriority));
+
+        foreach (var ap in aps)
         {
             if (ap.Validate())
             {
@@ -139,25 +143,34 @@ public class ActionPackage_LLM : ActionPackage
                 { 
                     ap.ExecutePackageOutsideUpdate(job.m);
                 }
+                execresult.Add($"{ap.DisplayName} x{count}");
                 job.CollectLogs(ap);
                 ap.DisablePackage();
                 scr_System_CampaignManager.current.Unregister(ap);
             }
+            else
+            {
+                execresult.Add($"{ap.DisplayName} did not pass validate");
+            }
         }
+        Debug.Log($"End LLM Execution, executed package {execresult.Count}\n{String.Join("\n", execresult)}");
+        //scr_UpdateHandler.current.skipCurrentRoundClimaxCheck = true;
         job.m.exp.leftAlignOverride = true;
 
-        m.messages_before.Clear();
+        //m.messages_before.Clear();
         //m.messages_after.Clear();
-        m.messages_kojo.Clear();
-        m.messages_kojo_after.Clear();
+        //m.messages_kojo.Clear();
+        //m.messages_kojo_after.Clear();
 
         job.NotifyDescriptionsOutOfUpdate(false);
         scr_UpdateHandler.current.FlushCollectedLogs(true, true);
 
     }
 
-public override void DisablePackage(bool extraTick = false)
-{
-    base.DisablePackage(extraTick);
-}
+    public override void DisablePackage(bool extraTick = false)
+    {
+        base.DisablePackage(extraTick);
+    }
+
+
 }

@@ -1,0 +1,118 @@
+{
+    "Items":{
+"list":
+[
+    {
+        "id":"item_gamecd_ic6",
+        "displayName":"Iron Core 6",
+        "Tags":["furniture_playVideoGames","videogame","industrial","rarity_common"],
+        "value":8800
+    },
+    {
+        "id":"item_gamecd_DS3",
+        "Tags":["furniture_playVideoGames","videogame","industrial","rarity_common"],
+        "value":2980
+    },
+    {
+        "id":"item_gamecd_RW",
+        "Tags":["furniture_playVideoGames","videogame","industrial","rarity_common"],
+        "value":4980
+    },
+    {
+        "id":"item_videocd_pmmm_rebellion",
+        "Tags":["furniture_watchVideo","moviecd","industrial","rarity_common"],
+        "value":5800
+    },
+    {
+        "id":"item_videocd_bd_am",
+        "Tags":["furniture_watchVideo","moviecd","industrial","rarity_common"],
+        "value":6600
+    },
+    {
+        "id":"item_videocd_bd2049",
+        "Tags":["furniture_watchVideo","moviecd","industrial","rarity_common"],
+        "value":4180
+    },
+    {
+        "id":"item_videocd_wuwa3dot1",
+        "Tags":["furniture_watchVideo","moviecd","industrial","rarity_common"],
+        "value":4200
+    },
+    {
+        "id":"item_paperbooks_kvngt_5",
+        "Tags":["furniture_readBooks","paperbook","industrial","rarity_common"],
+        "value":902
+    },
+    {
+        "id":"item_paperbooks_cscz_guide",
+        "Tags":["furniture_readBooks","paperbook","industrial","rarity_common"],
+        "value":1980
+    },
+    {
+        "id":"item_paperbooks_mask_nyarla",
+        "Tags":["furniture_readBooks","paperbook","industrial","rarity_common"],
+        "value":4840
+    }
+
+]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "item_gamecd_ic6":"《钢铁核心6》",
+                "item_gamecd_DS3":"《深邃之魂3》",
+                "item_gamecd_RW":"《肋骨世界》",
+                "item_gamecd_OW":"《拓荒之外》",
+                "item_gamecd_OW_tooltip":"目光所及，只有墨黑无光的丝绒天幕上，大片金刚石、蓝宝石与祖母绿汇作的星尘。上帝的声音在那水晶般的火光里缭绕。",
+
+                "item_videocd_pmmm_rebellion":"《叛逆的物语》",
+                "item_videocd_bd_am":"《一丘之貉乐队》",
+                "item_videocd_bd2049":"《电子羊梦到了2049》",
+
+                "item_videocd_wuwa3dot1":"《远航星的告别》",
+                "item_videocd_wuwa3dot1_tooltip":"旅途愉快。",
+
+                "item_paperbooks_kvngt_5":"《5号飞碟》",
+                "item_paperbooks_kvngt_5_tooltip":"一部穿越时间的反战小说。事情就是这样。",
+
+                "item_paperbooks_cscz_guide":"《零点行动 攻略指南》",
+                "item_paperbooks_cscz_guide_tooltip":"某款FPS游戏的独立资料片的攻略书。上面记载了每个关卡的流程和遭遇。",
+
+                "item_paperbooks_mask_nyarla":"《奈亚的面具》",
+                "item_paperbooks_mask_nyarla_tooltip":"横跨五大洲的桌游剧本手册。"
+
+            },
+            "en-us":
+            {
+                "item_gamecd_ic6":"《钢铁核心6》",
+
+                "item_gamecd_DS3":"《深邃之魂3》",
+
+                "item_gamecd_RW":"《肋骨世界》",
+
+                "item_gamecd_OW":"《Outside Wilds》",
+                "item_gamecd_OW_tooltip":"There were only the great diamonds and sapphires and emerald mists and velvet inks of space, with God’s voice mingling among the crystal fires.",
+
+                "item_videocd_pmmm_rebellion":"《叛逆的物语》",
+
+                "item_videocd_bd_am":"《一丘之貉乐队》",
+
+
+                "item_videocd_bd2049":"《电子羊梦到了2049》",
+
+                "item_videocd_wuwa3dot1":"《Voyager Star's Farewell》",
+                "item_videocd_wuwa3dot1_tooltip":"Journey well.",
+
+                "item_paperbooks_kvngt_5":"《Saucer Five》",
+                "item_paperbooks_kvngt_5_tooltip":"A time-traveling anti-war novel. So it goes.",
+
+                "item_paperbooks_cscz_guide":"《Condition Zero: Strategy Guide》",
+
+                "item_paperbooks_mask_nyarla":"《Nyarla's Mask》"
+            }
+        }
+    }
+}

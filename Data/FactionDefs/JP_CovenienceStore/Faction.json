@@ -25,7 +25,11 @@
                 "mealHours":[0, 6, 12, 18],
                 "salesCurrency":"currency_JPY",
                 "salesInventory":[
+                    { "matchByTags":["industrial","rarity_common"] },
                     { "matchByTags":["consumable","industrial","rarity_common"] },
+                    { "matchByTags":["videogame","industrial","rarity_common"] },
+                    { "matchByTags":["moviecd","industrial","rarity_common"] },
+                    { "matchByTags":["paperbook","industrial","rarity_common"] },
                     { "matchByID":"raw_rice","nameOverwrite":"jp_convenience_store_rice_bag_5kg", "itemCount":5000, "countOverride":true },
                     { "matchByID":"currency_pyroxene","nameOverwrite":"jp_convenience_store_pyroxene_4800", "itemCount":4800, "countOverride":true },
                     { "matchByID":"consumable_drug_sleepingpill","nameOverwrite":"jp_convenience_store_otcsleepingpills_6pack", "itemCount":6, "countOverride":true },
@@ -369,7 +373,7 @@
                 "id":"consumable_drug_sleepingpill",
                 "displayName":"OTC Sleeping Pill",
                 "tooltip":"over the counter sleeping pill, not very effective.",
-                "Tags":["consumable","industrial","rarity_common","do_not_sell"],
+                "Tags":["consumable","industrial","rarity_common","do_not_sell","additive"],
                 "value":60,
                 "itemComps_Template":[
                     {

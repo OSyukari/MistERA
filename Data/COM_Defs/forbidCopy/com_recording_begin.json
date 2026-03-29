@@ -1,0 +1,249 @@
+{
+    "COMs": {
+        "list": [
+            {
+                "ID": "com_recording_begin",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_recording_begin_displayName_1",
+                "timeScale": 5,
+                "comTags": [
+                    "interaction",
+                    "recording",
+                    "canbeignored",
+                    "initRecording"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "cost_EN": 2
+                        }
+                    },
+                    "requireRoomExisting":{
+                        "requireNotRecording":true
+                    }
+                },
+                "GenerateCOM": {
+                    "itemTag": "item_recorder",
+                    "targetCOMClass": 
+                    {
+                        "$type": "COM_Recording, Assembly-CSharp",
+                        "ID": "com_recording_begin",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "COMRepeat": true,
+                        "HideWhenInvalid":true,
+                        "displayName": "recording",
+                        "timeScale": 5,
+                        "comTags": [
+                            "interaction",
+                            "recording",
+                            "canbeignored",
+                            "initRecording"
+                        ],
+                        "requirements": {
+                            "requirement": {
+                                "treatReceiverAsDoer": true,
+                                "req_Doers": {
+                                    "cost_EN": 5
+                                }
+                            },
+                            "requireRoomExisting":{
+                                "requireNotRecording":true
+                            }
+                        },
+                        "results": {
+                            "results_character": [
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_ST",
+                                        "value": "5"
+                                    }
+                                },
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true,
+                                        "attitudeGTE":4
+                                    },
+                                    "entry_results": {
+                                        "type": "statMod_EN",
+                                        "value": "4"
+                                    }
+                                }
+                            ]
+                        },
+                        "variants": [
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 1
+                                    }
+                                },
+                                "displayName": "com_recording_begin_displayName_variant_1"
+                            },
+                            {
+                                "requirements": {
+                                    "requirement": {
+                                        "doerCount": 1,
+                                        "receiverCount": 1
+                                    }
+                                },
+                                "displayName": "com_recording_begin_displayName_variant_2"
+                            }
+                        ],
+                        "AcceptanceCheck": {
+                            "baseAcceptanceValue": 5
+                        },
+                        "DifficultyCheck":{ "baseD20Check":0 },
+                        "description_begin":{ "Entries":[{"texts":["com_recording_begin_displayName_variant_begin_1"]}], "keepLooking":false },
+                        "description_ongoing":{ "Entries":[{"texts":["com_recording_begin_displayName_variant_ongoing_1"]}], "keepLooking":false }
+                    }
+                },
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_ST",
+                                "value": "10"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true,
+                                "attitudeGTE":4
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "4"
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_recording_begin_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName": "com_recording_begin_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 5
+                },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "com_recording_begin_displayName_begin_1" ] } ] },
+                "description_ongoing":{ "Entries":[ { "texts":["com_recording_begin_displayName_ongoing_1"]}], "keepLooking":false }
+            },
+            {
+                "ID": "com_recording_end",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "recording",
+                "timeScale": 1,
+                "comTags": [
+                    "interaction",
+                    "recording",
+                    "canbeignored",
+                    "endRecording"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "cost_EN": 2
+                        }
+                    },
+                    "requireRoomExisting":{
+                        "requireHasRecording":true
+                    }
+                },
+                "results": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "statMod_ST",
+                                "value": "10"
+                            }
+                        },
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true,
+                                "attitudeGTE":4
+                            },
+                            "entry_results": {
+                                "type": "statMod_EN",
+                                "value": "4"
+                            }
+                        }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "film"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName": "order filming"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 5
+                },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "com_furniture_watchVideo_description_begin_1" ] } ] },
+                "description_ongoing":{ "Entries":[ { "texts":["com_furniture_watchVideo_description_ongoing_1"]}], "keepLooking":false }
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"com_recording_begin_displayName_1":"录像",
+"com_recording_begin_displayName_2":"请求录像",
+"com_recording_begin_displayName_begin_1":"$doer.firstname$开始录像",
+"com_recording_begin_displayName_ongoing_1":"$doer.firstname$正在录像",
+
+"com_recording_begin_displayName_variant_1":"用$name$录像",
+"com_recording_begin_displayName_variant_2":"请求用$name$录像",
+"com_recording_begin_displayName_variant_begin_1":"$doer.firstname$开始用$name$录像",
+"com_recording_begin_displayName_variant_ongoing_1":"$doer.firstname$正在用$name$录像"
+                
+            },
+            "en-us":
+            {
+
+            }
+        }
+    }
+}

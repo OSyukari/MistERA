@@ -72,8 +72,6 @@ public class Job_PlayerCOM : Job
         }
     }
 
-
-
     protected override List<COM> UpdateAllUsableCOMs()
     {
        // Debug.Log("Updating player Job all valid COM");

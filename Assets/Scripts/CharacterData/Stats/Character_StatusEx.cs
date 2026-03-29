@@ -282,7 +282,7 @@ public class StatusEx_Instance : I_CacheValues
     [JsonIgnore] public List<string> Tags { get { return this.BaseRef.variants[SeverityIndex].tags; } }
 
 
-    [JsonProperty] protected int _severityIndex = -1;
+    protected int _severityIndex = -1;
     protected int SeverityIndex
     {
         get

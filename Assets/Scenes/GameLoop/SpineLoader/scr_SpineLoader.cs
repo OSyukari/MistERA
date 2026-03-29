@@ -100,7 +100,7 @@ public class scr_SpineLoader : MonoBehaviour
 
             byte[] ta = null;
             yield return AssetsLoader.LoadSkelCoroutine(skeletonJSON_path, text => ta = text);
-            var text = Encoding.UTF8.GetString(manager.dataHolder.skeletonTA, 0, 100);// manager.dataHolder.skeletonTA.text;
+            var text = Encoding.UTF8.GetString(ta, 0, 100);// manager.dataHolder.skeletonTA.text;
 
             if (text.Contains("4.0."))
             {

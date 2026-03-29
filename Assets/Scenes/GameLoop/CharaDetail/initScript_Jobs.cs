@@ -68,6 +68,7 @@ public class initScript_Relations : MonoBehaviour
         for (int i = c.Memory.Entries.Count - 1; i >= 0; i--)// Memory_Entry mem in chara.MemoryManager.entries)
         {
             var currEntry = c.Memory.Entries[i];
+            if (currEntry.noDisplay) continue;
             if (shorten || (current - currEntry.FinalEndTime).Days >= 7)
             {
                 shorten = true;
