@@ -346,6 +346,23 @@ public class scr_System_CentralControl : MonoBehaviour
     Dictionary<string, int> textureUseCounter = new Dictionary<string, int>();
     Dictionary<string, Sprite> texSprites = new Dictionary<string, Sprite>();
 
+    // ── Spine data cache ──────────────────────────────────────────────────
+    private Dictionary<string, SpineDataTiny> _spineDataCache = new();
+
+    public bool TryGetSpineCache(string skeletonPath, out SpineDataTiny data)
+        => _spineDataCache.TryGetValue(skeletonPath, out data) && data.initialized;
+
+    public void RegisterSpineCache(string skeletonPath, SpineDataTiny data)
+    {
+            _spineDataCache[skeletonPath] = data;
+    }
+
+    public void ClearSpineCache()
+    {
+        foreach (var entry in _spineDataCache.Values) entry.Clear();
+        _spineDataCache.Clear();
+    }
+
     private void Initialize()
     {
         

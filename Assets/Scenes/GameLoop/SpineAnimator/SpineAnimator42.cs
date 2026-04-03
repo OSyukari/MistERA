@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
@@ -187,8 +188,8 @@ public class SpineAnimator42 : SpineAnimatorBase
         if (manager.dataHolder is SpineDataTiny_42 existing
             && existing.initialized
             && existing.atlasPath == atlasPath
-            && existing.skeletonPath == skeletonPath
-            && existing.texturePath == texturePath)
+            && existing.skeletonPath == skeletonPath 
+            && existing.texturePath.SequenceEqual(texturePath))
             yield break;
 
         loading = true;

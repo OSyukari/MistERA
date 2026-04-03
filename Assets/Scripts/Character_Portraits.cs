@@ -674,8 +674,7 @@ public class PortraitManager
 
         public override void Destroy()
         {
-            if (dataHolder != null) dataHolder.Clear();
-            dataHolder = null;
+            dataHolder = null; // owned by CentralControl spine cache; do not clear here
         }
 
         public override void RebuildInternal()
@@ -691,6 +690,13 @@ public class PortraitManager
 
         private IEnumerator PreCacheCoroutine()
         {
+            if (scr_System_CentralControl.current != null &&
+                scr_System_CentralControl.current.TryGetSpineCache(skeletonJSON_path, out var cached))
+            {
+                dataHolder = cached;
+                yield break;
+            }
+
             string version = "";
             if (dataHolder?.skeletonTA != null)
             {
@@ -732,6 +738,9 @@ public class PortraitManager
             var animator = scr_System_CentralControl.current?.GetSpineAnimator(version);
             if (animator == null) yield break;
             yield return animator.PreCacheData(this, materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha);
+
+            if (dataHolder != null && dataHolder.initialized)
+                scr_System_CentralControl.current?.RegisterSpineCache(skeletonJSON_path, dataHolder);
         }
 
         public override bool isValid() { return !Disable; }

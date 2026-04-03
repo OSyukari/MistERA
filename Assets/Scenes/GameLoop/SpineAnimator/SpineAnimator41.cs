@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Spine_v41;
@@ -183,7 +184,7 @@ public class SpineAnimator41 : SpineAnimatorBase
             && existing.initialized
             && existing.atlasPath == atlasPath
             && existing.skeletonPath == skeletonPath
-            && existing.texturePath== texturePath)
+            && existing.texturePath.SequenceEqual(texturePath))
             yield break;
 
         loading = true;
