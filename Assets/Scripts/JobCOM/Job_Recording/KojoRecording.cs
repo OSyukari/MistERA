@@ -73,7 +73,7 @@ public class KojoRecording
             returnList = new List<I_Records>( kvp.Value);
             for (int i = returnList.Count - 1; i >= 0; i--)
             {
-                if (!returnList[i].VisibleToChara(from)) returnList.RemoveAt(i);
+                if (!returnList[i].VisibleTo(from)) returnList.RemoveAt(i);
             }
             if (returnList.Count > 0) break;
         }

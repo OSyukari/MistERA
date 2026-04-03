@@ -79,6 +79,21 @@ public class MessageLogManager
     {
         this.currentPortrait = null;
     }
+
+    public MessageLog AddLog(DescriptionCollector desc, Character_Trainable chara)
+    {
+        if (desc == null || desc.message.Length < 1) return null;
+        if (!desc.VisibleTo(chara)) return null;
+        if (desc.DirectlyRelated(chara) && desc.message.Length < 1) return null;
+        else if (!desc.DirectlyRelated(chara) && desc.message_excludeRelated.Length < 1) return null;
+        bool rA = desc.RightAlign(chara);
+
+        Message_Text log = new Message_Text(desc, desc.DirectlyRelated(chara), rA);       
+        return AddLog(log);
+    }
+
+
+
     /// <summary>
     /// 
     /// </summary>
@@ -222,6 +237,45 @@ public class Message_Text : MessageLog
         AddMessage(messages, rA);
         this.tooltip = tooltip;
     }
+
+
+    public Message_Text(string tooltip)
+    {
+        this.tooltip = tooltip;
+    }
+
+    public Message_Text(MessageCollect_KojoEntry m, bool ra, string tooltip)
+    {
+        var chara = scr_System_CampaignManager.current.FindInstanceByID(m.portraitRefID);
+        this.PortraitRef = chara == null ? null : chara.PortraitManager;
+        this.tagsOverride = m.portraitTags;
+        AddMessage(m.message, ra);
+        this.tooltip = tooltip;
+    }
+
+    public Message_Text(DescriptionCollector desc, bool isDirectlyRelated, bool rightAlign)
+    {
+
+        if (desc.portraitRefs.Count == 1)
+        {
+            var chara = scr_System_CampaignManager.current.FindInstanceByID(desc.portraitRefs[0]);
+            if (chara != null) this.PortraitRef = chara.PortraitManager;
+        }
+        else if (desc.portraitRefs.Count > 1)
+        {
+            foreach (var c in desc.portraitRefs)
+            {
+                var chara = scr_System_CampaignManager.current.FindInstanceByID(c);
+                if (chara != null) this.multipleChara.Add(chara);
+            }
+        }
+        AddMessage(isDirectlyRelated ? desc.message : desc.message_excludeRelated, rightAlign);
+        this.tooltip = desc.tooltip;
+        this.tagsOverride = desc.displayTagsOverride;
+        this.time = desc.Timestamp;
+    }
+
+    public Message_Text() { }
 
     public override bool DisplaPortrait { get {
             if (this.Messages.Any(x => !x.rightAlign)) return true;
@@ -453,6 +507,7 @@ public abstract class MessageLog
         if (time != default) this.time = time;
         else this.time = scr_System_Time.current.getCurrentTime();
     }
+    public MessageLog() { }
 
     public abstract void Animate();
    

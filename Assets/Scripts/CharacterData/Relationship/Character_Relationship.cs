@@ -260,11 +260,15 @@ public class Character_Relationship
                         .Replace("$target.name$", Target.CallName)
                         .Replace("$originalAttitude$", _currentAttitude.DisplayName)
                         .Replace("$newAttitude$", value.DisplayName);
+
+                    var desc = new DescriptionCollector(s, this);
+                    scr_UpdateHandler.current.AppendMessageAfter(desc, Owner.CurrentRoom);
+                    /*
                     if (visible) scr_UpdateHandler.current.AppendMessageAfter(s, false);
                     if (recording) 
                     {
-                        Owner.CurrentRoom.NotifyKojoCollect(new DescriptionCollector(s, this));
-                    }
+                        Owner.CurrentRoom.NotifyKojoCollect(new DescriptionCollector(s,  this));
+                    }*/
                 }
             }
             _currentAttitude = value;
@@ -362,7 +366,7 @@ public class Character_Relationship
 
                 // send event to ask permission
                 var evinst = new EventInstance(Owner, "RequestRelationshipChange", "");
-                LogKojoMessage(eventID, evinst.message);
+                LogKojoMessage(eventID,"", evinst.message);
                 evinst.Targets.Add("target", new List<Character_Trainable>() { Target });
 
                 var npcCallback = new List<Action>();
@@ -436,29 +440,32 @@ public class Character_Relationship
         v.disableRoomName = true;
     }
 
-    protected void LogKojoMessage(string s, MessageCollect m = null)
+    protected void LogKojoMessage(string s, string suffix = "", MessageCollect m = null)
     {
         if (s == "") return;
         if (Owner.RefID == 0) return;
-        var kojo = Owner.Relationships.Personality.GetKOJOMessage(s, this, new List<string>(), new List<string>());
-        if (kojo != null)
+        var kol = new KojoCollector(Owner, s, "");
+        kol.LoadRel(this);
+        kol = Owner.Relationships.GetKOJOMessage_Suffix(kol, m);
+        //var kojo = Owner.Relationships.Personality.GetKOJOMessage(s, this, new List<string>(), new List<string>());
+        if (kol != null)
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"[{Owner.FirstName}] -> [{Target.FirstName}] get kojomsg for event [{s}]");
-            kojo.message = kojo.message.Replace("$self$", Owner.FirstName).Replace("$target$", Target.FirstName);
-            bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
-            bool visible = Owner.RefID == 0 || Target.RefID == 0;
-
-            kojo.AddRelevantActor(Owner);
-            kojo.AddRelevantActor(Target);
+            kol.ReplaceString("$self$", Owner.FirstName);
+            kol.ReplaceString("$target$", Target.FirstName);
+            //kol.message = kojo.message.Replace("$self$", Owner.FirstName).Replace();
+           // bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
+            //bool visible = Owner.RefID == 0 || Target.RefID == 0;
 
             if (m == null)
             {
-                scr_UpdateHandler.current.AppendKojoMessage(kojo, visible, recording ? Owner.CurrentRoom : null);
-                if (visible) scr_UpdateHandler.current.FlushCollectedLogs_PreEvents();
+                scr_UpdateHandler.current.AppendKojoMessage(kol, Owner.CurrentRoom );
+                //scr_UpdateHandler.current.AppendKojoMessage(kojo, visible, recording ? Owner.CurrentRoom : null);
+               // if (visible) scr_UpdateHandler.current.FlushCollectedLogs_PreEvents();
             }
             else
             {
-                m.messages_kojo.Add(kojo);
+                m.AddKojo(kol, Owner.CurrentRoom);
             }
             
         }
@@ -535,11 +542,9 @@ public class Character_Relationship
 
             LogKojoMessage(eventID);
         }
-        else
-        {
-            if (Owner.RefID == 0) scr_UpdateHandler.current.AppendEndMessage($"[{memString}]");
-            if (Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording) Owner.CurrentRoom.NotifyKojoCollect(new DescriptionCollector($"[{memString}]", this));
-        }
+
+        var desc = new DescriptionCollector($"[{memString}]", this);
+        scr_UpdateHandler.current.AppendMessageAfter(desc, Owner.CurrentRoom, true);
 
         RelationshipCooldown = 6;
 

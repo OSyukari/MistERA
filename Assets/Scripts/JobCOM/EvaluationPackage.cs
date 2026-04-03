@@ -1024,7 +1024,7 @@ public partial class EvaluationPackage : I_ResultStorage
     /// <summary>
     /// Logs kojo automatically
     /// </summary>
-    public List<KojoCollector> LogMessage_Join(Character_Trainable injectChara, List<int> reactedRefs,  bool rightAlign = false, MessageCollect m = null)
+    public List<KojoCollector> LogMessage_Join(Character_Trainable injectChara, List<int> reactedRefs,  MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
         var responses = new List<KojoCollector>();
@@ -1040,7 +1040,7 @@ public partial class EvaluationPackage : I_ResultStorage
             //Doer.Relationships.GetKOJOMessage_Join(true, rightAlign, this, m, rel);
             var kol = new KojoCollector(Doer, targetCOM.tooltipID, "_Join");
             kol.LoadEP(this, injectChara);
-            var mm = Doer.Relationships.GetKOJOMessage_Suffix(kol, rightAlign, m);
+            var mm = Doer.Relationships.GetKOJOMessage_Suffix(kol, m);
             //var mm = Doer.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Join", injectChara, m);
             //if (mm != null) m.messages_before.Add(mm.message);
             if (mm != null) responses.Add(mm);
@@ -1062,7 +1062,7 @@ public partial class EvaluationPackage : I_ResultStorage
                 //if (mm != null) m.messages_before.Add(mm.message);
                 var kol = new KojoCollector(Receiver, targetCOM.tooltipID, "_Join");
                 kol.LoadEP(this, injectChara);
-                var mm = Doer.Relationships.GetKOJOMessage_Suffix(kol, rightAlign, m);
+                var mm = Doer.Relationships.GetKOJOMessage_Suffix(kol, m);
                 if (mm != null) responses.Add(mm);
 
                 returnval = true;
@@ -1076,7 +1076,7 @@ public partial class EvaluationPackage : I_ResultStorage
             {
                 var kol = new KojoCollector(injectChara, targetCOM.tooltipID, "_Joined");
                 kol.LoadEP(this, Doer);
-                var mm = injectChara.Relationships.GetKOJOMessage_Suffix(kol, rightAlign, m);
+                var mm = injectChara.Relationships.GetKOJOMessage_Suffix(kol, m);
                 if (mm != null) responses.Add(mm);
 
 
@@ -1095,7 +1095,7 @@ public partial class EvaluationPackage : I_ResultStorage
                 
                 var kol = new KojoCollector(injectChara, targetCOM.tooltipID, "_Joined");
                 kol.LoadEP(this, Receiver);
-                var mm = injectChara.Relationships.GetKOJOMessage_Suffix(kol, rightAlign, m);
+                var mm = injectChara.Relationships.GetKOJOMessage_Suffix(kol, m);
                 if (mm != null) responses.Add(mm);
 
 
@@ -1107,7 +1107,7 @@ public partial class EvaluationPackage : I_ResultStorage
     /// <summary>
     /// Logs kojo automatically
     /// </summary>
-    public List<KojoCollector> LogMessage_Begin(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
+    public List<KojoCollector> LogMessage_Begin(bool ignoreBegin = false, MessageCollect m = null, Character_Trainable injectChara = null)
     {
         if (m == null) m = this.job.m;
         List<KojoCollector> results = new List<KojoCollector>();
@@ -1241,7 +1241,7 @@ public partial class EvaluationPackage : I_ResultStorage
         {
             var kol = new KojoCollector(Doer, this.targetCOM.ID, "_Climax");
             kol.LoadEP(this, this.Receiver != null ? this.Receiver : this.Doer);
-            var msg = Doer.Relationships.GetKOJOMessage_Suffix(kol, false, m);
+            var msg = Doer.Relationships.GetKOJOMessage_Suffix(kol, m);
 
             //if (ep.targetCOM != null) message2.message = ep.targetCOM.Replace(message2.message);
             if (msg != null) results.Add(msg);
@@ -1251,7 +1251,7 @@ public partial class EvaluationPackage : I_ResultStorage
         {
             var kol = new KojoCollector(Receiver, this.targetCOM.ID, "_Climax");
             kol.LoadEP(this, this.Doer != null ? this.Doer : this.Receiver);
-            var msg = Receiver.Relationships.GetKOJOMessage_Suffix(kol, false, m);
+            var msg = Receiver.Relationships.GetKOJOMessage_Suffix(kol, m);
             if (msg != null) results.Add(msg);
 
             // Receiver.Relationships.GetKOJOMessage_Climax(false, this, m);

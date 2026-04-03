@@ -351,14 +351,20 @@ public class Job_Furniture : Job
 
                     var empty = new List<string>() { "" };
 
-                    var msg1 = c.Relationships.GetKOJOMessage_Suffix(pl2.targetCOM.ID, "_Tryjoin", rel.Target);
-                    ev.AppendStrings.Add("kojo_tryjoin", msg1 == null || msg1.message.Length < 1 ? empty : new List<string>() { msg1.message });
+                    var msg1 = new KojoCollector(c, pl2.targetCOM.ID, "_Tryjoin");
+                    msg1.LoadRel(rel);
+                    msg1 = c.Relationships.GetKOJOMessage_Suffix(msg1, null);
+                    ev.AppendStrings.Add("kojo_tryjoin", msg1 == null || msg1.collect == null || msg1.collect.message.Length < 1 ? empty : new List<string>() { msg1.collect.message });
 
-                    var msg2 = c.Relationships.GetKOJOMessage_Suffix(pl2.targetCOM.ID, "_Joined", rel.Target);
-                    ev.AppendStrings.Add("kojo_joined", msg2 == null || msg2.message.Length < 1 ? empty : new List<string>() { msg2.message });
+                    var msg2 = new KojoCollector(c, pl2.targetCOM.ID, "_Joined");
+                    msg2.LoadRel(rel);
+                    msg2 = c.Relationships.GetKOJOMessage_Suffix(msg2, null);
+                    ev.AppendStrings.Add("kojo_joined", msg2 == null || msg2.collect == null || msg2.collect.message.Length < 1 ? empty : new List<string>() { msg2.collect.message });
 
-                    var msg3 = c.Relationships.GetKOJOMessage_Suffix(pl2.targetCOM.ID, "_Join_Refused", rel.Target);
-                    ev.AppendStrings.Add("kojo_join_refused", msg3 == null || msg3.message.Length < 1 ? empty : new List<string>() { msg3.message });
+                    var msg3 = new KojoCollector(c, pl2.targetCOM.ID, "_Join_Refused");
+                    msg3.LoadRel(rel);
+                    msg3 = c.Relationships.GetKOJOMessage_Suffix(msg3, null);
+                    ev.AppendStrings.Add("kojo_join_refused", msg3 == null || msg3.collect == null || msg3.collect.message.Length < 1 ? empty : new List<string>() { msg3.collect.message });
 
                     var addMems = new List<Action>();
                     ev.FunctionCalls.Add("OnRefusedJoin", addMems);

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using UnityEditor;
 using UnityEngine;
 public class scr_System_CampaignManager_Serializable
 {
@@ -68,7 +67,6 @@ public class scr_System_CampaignManager : MonoBehaviour
 
 
         currentRoomRef = -1;
-        LogManager = new MessageLogManager();
     }
 
     protected void Start()
@@ -418,7 +416,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         RebuildExpeditionsList();
     }
 
-    private MessageLogManager LogManager;
+    public MessageLogManager LogManager = new MessageLogManager();
 
     public List<MessageLog> Logs { get { return LogManager.Logs; } }
 
@@ -439,6 +437,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         else return false;
     }
 
+    /// <summary>
+    /// Player past AP history
+    /// </summary>
     public List<ActionPackage> playerAPLogs = new List<ActionPackage>();
     public void LogPlayerPackage(ActionPackage ap)
     {
@@ -450,49 +451,31 @@ public class scr_System_CampaignManager : MonoBehaviour
         playerAPLogs.Add(ap);
     }
 
-
-    /// <summary>
-    /// RefID -1 no display
-    /// RefID -2 
-    /// </summary>
-    /// <param name="refID"></param>
-    /// <param name="s"></param>
-    /// <param name="animate"></param>
-    public void AddLog(bool visible, Room_Instance recording, int refID, string s, bool animate = false, bool rightAlign = false, string tooltip = "")
+    public void AddLog(I_Records record, Character_Trainable visible,  bool animate = false)
     {
-        if (s.Length < 1) return;
-        if (s == "\n")
-        {
-            //Debug.LogError("Detect addlog \\ n");
-            return;
-        }
-        if (s == "\n\n")
-        {
-            // Debug.LogError("Detect addlog \\ n 2");
-            return;
-        }
-        if (s == "\n\n\n")
-        {
-            // Debug.LogError("Detect addlog \\ n 3");
-            return;
-        }
-        if (s.Contains("<align=\"right\"></align>"))
-        {
-            Debug.LogError($"empty string dtected, full string [{s}]");
-            return;
-        }
-        var chara = refID >= 0 ? FindInstanceByID(refID) : null;
+        if (record == null) return;
 
-        if (visible)
+        if (record is DescriptionCollector) 
         {
-            var lg = LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, false, rightAlign);
-            Observer_MessageLogs?.Invoke(lg, animate);
+            var desc = record as DescriptionCollector;
+            if (desc == null) return;
+            if (desc.message.Length < 1) return;
+            var purged = desc.message.Replace("\n", "");
+            if (purged.Length < 1) return;
+
+            var log = LogManager.AddLog(desc, visible);
+            if (log != null) Observer_MessageLogs?.Invoke(log, animate);
+
         }
-        if (recording != null)
+        else if (record is KojoCollector)
         {
-            recording.NotifyKojoCollect(new DescriptionCollector(s, chara == null ? new List<int>() : new List<int>() { chara.RefID }));
+            var desc = record as KojoCollector;
+            // RefID -1 no display
+            // RefID -2 
+            if (desc == null) return;
+            if (desc.VisibleTo(visible, null)) AddLog(desc.collect, animate, desc.RightAlign(visible));
         }
-        //ChangeCurrentViewMode(ViewMode.View_Logs);
+
     }
 
 
@@ -532,22 +515,16 @@ public class scr_System_CampaignManager : MonoBehaviour
         //ChangeCurrentViewMode(ViewMode.View_Logs);
     }
 
-    public bool IsLogDisplayChara(Character_Trainable c)
-    {
-        if (c.RefID == 0) return true;
-        return false;
-    }
 
     public void AddLog(MessageCollect_KojoEntry m, bool animate = false, bool rightAlign = false, string tooltip = "")
     {
         if (m == null) return;
         if (m.message != null && m.message.Length > 0)
         {
-            var chara = FindInstanceByID(m.portraitRefID);
-            Message_Text msg = new Message_Text(chara, m.portraitTags, m.message, rightAlign, tooltip);
+            Message_Text msg = new Message_Text(m, rightAlign || m.rightAlign, tooltip);
             Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
         }
-        foreach(var next in m.nexts) AddLog(next, animate, rightAlign);
+        foreach(var next in m.nexts) AddLog(next, animate, rightAlign || m.rightAlign);
     }
 
     public void AddLogSingle(MessageCollect_KojoEntry m)

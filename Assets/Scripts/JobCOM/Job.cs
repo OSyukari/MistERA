@@ -994,10 +994,6 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
-    [JsonIgnore] public string MessagesChecks { get { return m.messages_checks.Count > 0 ? String.Join("\n", m.messages_checks) : ""; } }
-    [JsonIgnore] public string MessagesBefore { get { return m.messages_before.Count > 0 ? String.Join("\n", m.messages_before) : ""; } }
-    [JsonIgnore] public string MessagesAfter { get { return m.messages_after.Count > 0 ? String.Join("\n", m.messages_after) : ""; } }
-
 
     [JsonIgnore] public MessageCollect m = new MessageCollect();
 

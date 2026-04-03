@@ -1,22 +1,24 @@
 ﻿using Newtonsoft.Json;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
-using static UnityEngine.UI.GridLayoutGroup;
-
-public interface I_Records
-{
-
-    [JsonIgnore] public DateTime Timestamp { get; }
-    public bool VisibleToChara(Character_Trainable c);
-}
 
 
 public class KojoCollector : I_ResultStorage, I_Records
 {
+    public VisibilityLevel Visibility = VisibilityLevel.Roomwide;
+    public List<int> relevantActorRefs = new List<int>();
+
+    public void LoadRelevantActors(List<int> list)
+    {
+        if (list == null) return;
+        relevantActorRefs.AddRange(list);
+        relevantActorRefs = Utility.Distinct(relevantActorRefs);
+    }
+    public bool DirectlyRelated(Character_Trainable c)
+    {
+        return c == null || Owner == c || Target == c || doerRef == c.RefID || receiverRef == c.RefID;
+    }
     [JsonIgnore]
     public bool requestAccepted
     {
@@ -42,13 +44,14 @@ public class KojoCollector : I_ResultStorage, I_Records
         }
     }
 
-    public bool VisibleToChara(Character_Trainable c)
+    public string tooltip = "";
+    public bool VisibleTo(Character_Trainable c, Room_Instance room = null)
     {
         if (c == null) return true;
-        if (Owner == c) return true;
-        if (Target == c) return true;
-        if (doerRef == c.RefID || receiverRef == c.RefID) return true;
-        return false;
+        if (collect == null) return false;
+        if (Visibility == VisibilityLevel.Global) return true;
+        if (room != null && !room.RoomChara.Contains(c)) return false;
+        return DirectlyRelated(c) || relevantActorRefs.Contains(c.RefID);
     }
 
     // validate target baseID
@@ -170,6 +173,8 @@ public class KojoCollector : I_ResultStorage, I_Records
     public List<string> selfTags = new List<string>();
     public List<string> targetTags = new List<string>();
 
+    public bool requireAnimate = true;
+
     public bool rightAlign = false;
     public bool isDoer = true;
     public bool isPlayerInvolved = false;
@@ -218,19 +223,26 @@ public class KojoCollector : I_ResultStorage, I_Records
     public bool isStrongP = false;
 
     public KojoCollector() { }
-    public KojoCollector(Character_Trainable c, string eventID, string suffix = "")
+    public KojoCollector(Character_Trainable c, string eventID, string suffix = "", VisibilityLevel visibility = VisibilityLevel.Roomwide)
     {
         this.eventID = eventID;
         selfRef = c.RefID;
         this.suffix = suffix;
+        this.Visibility = visibility;
         this.timestamp = scr_System_Time.current.getCurrentTime();
-        //Debug.LogError("error did you remember to make selftags and targettags??");
     }
 
     public void LoadRel(Character_Relationship rel)
     {
+        if (rel == null)
+        {
+            Debug.LogError("error loadrel null");
+            return;
+        }
         this.Target = rel.Target;
-        this.isPlayerInvolved = this.isPlayerInvolved || Owner.CurrentJob.actorRefID.Contains(0) || Target.CurrentJob.actorRefID.Contains(0);
+        this.isPlayerInvolved = this.isPlayerInvolved 
+            || (Owner.CurrentJob != null && Owner.CurrentJob.actorRefID.Contains(0)) 
+            || (Target.CurrentJob != null && Target.CurrentJob.actorRefID.Contains(0));
     }
 
     /// <summary>
@@ -296,8 +308,20 @@ public class KojoCollector : I_ResultStorage, I_Records
         response = ep.Response;
     }
 
+    public bool RightAlign(Character_Trainable c)
+    {
+        return rightAlign || !DirectlyRelated(c);
+    }
+
     public DateTime timestamp = DateTime.MinValue;
     [JsonIgnore] public DateTime Timestamp { get { return timestamp; } }
 
+    public void ReplaceString(string oldstring, string newstring)
+    {
+        if (collect != null)
+        {
+            collect.ReplaceString(oldstring, newstring);
+        }
+    }
 }
 

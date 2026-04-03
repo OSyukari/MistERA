@@ -13,6 +13,8 @@ using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.UI.GridLayoutGroup;
 
+
+
 public class Map_Instance
 {
 
@@ -402,7 +404,7 @@ public class Map_Instance
                 if (xx.InteractionJob != null && xx.InteractionJob.isActive) continue;
                 if (xx.CurrentJob != null && !xx.CurrentJob.CanBeInterrupted) continue;
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
-                if (xx.Relationships.CheckInterrupt(i, selfTags) && xx.RefID != 0)
+                if (MapUtility.CheckInterrupt(xx, i, selfTags) && xx.RefID != 0)
                 {
                     interrupted = true;
                     ignoreList.AddRange(i.actorRefs);
@@ -441,7 +443,7 @@ public class Map_Instance
                     {
                         if (log) Debug.Log($"forbidGreeting from {yy.CallName} to {xx.CallName}");
                     }
-                    else if (greeting && CheckReverseInterrupt(yyEPs, yy, xx))
+                    else if (greeting && MapUtility.CheckReverseInterrupt(yyEPs, yy, xx))
                     {
                         if (log) Debug.Log($"CheckReverseInterrupt from {yy.CallName} to {xx.CallName}");
                     }
@@ -492,30 +494,6 @@ public class Map_Instance
         }
     }
 
-    protected bool CheckReverseInterrupt(List<EvaluationPackage> eps, Character_Trainable self, Character_Trainable target)
-    {
-        if (self == null || target == null) return false;
-        if (self.RefID == 0) return false;
-        var rel = self.Relationships.FindRelationshipWith(target);
-        if (rel == null) return false;
-
-        foreach(var ep in eps)
-        {
-            if (ep.job.Actors.Contains(self) && ep.job.Actors.Contains(target)) continue;
-            var msg = self.Relationships.Personality.GetKOJOMessage_Interrupt(ep.isDoer(self), ep, rel);
-            if (msg == null) continue;
-            msg.message = msg.message.Replace("$self$", self.FirstName).Replace("$target$", target.FirstName);
-
-            bool recording = self.CurrentRoom != null && self.CurrentRoom.HasRecording;
-
-            msg.AddRelevantActor(self);
-            msg.AddRelevantActor(target);
-
-            scr_UpdateHandler.current.AppendKojoMessage(msg, self.RefID == 0 || target.RefID == 0, recording ? self.CurrentRoom : null);
-            return true;
-        }
-        return false;
-    }
 
 
     public void UpdateAllRoom()

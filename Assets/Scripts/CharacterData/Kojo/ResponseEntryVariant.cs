@@ -110,7 +110,7 @@ public partial class ResponseEntry
             {
                 var newmessage = kol.Copy();
                 newmessage.eventID = selfEventCall;
-                sss = kol.Owner.Relationships.Personality.GetKOJOMessage(kol);
+                sss = newmessage.Owner.Relationships.Personality.GetKOJOMessage(newmessage);
             }
 
             var target = scr_System_CampaignManager.current.CurrentTarget;

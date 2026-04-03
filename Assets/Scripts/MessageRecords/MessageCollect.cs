@@ -3,24 +3,87 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Linq;
 using Newtonsoft.Json;
 
 
 
 public class MessageCollect
 {
+    public bool sendRecording = true;
     public bool displayOverride = false;
     public Dictionary<string, string> messages_checks = new Dictionary<string, string>();
-    public List<string> messages_before = new List<string>();
-    public List<string> messages_after = new List<string>();
+    public List<I_Records> messages_before = new List<I_Records>();
+    public List<I_Records> messages_after = new List<I_Records>();
     public List<MessageCollect_KojoEntry> messages_kojo = new List<MessageCollect_KojoEntry>();
     public ExperienceLog exp = new ExperienceLog();
     public List<MessageCollect_KojoEntry> messages_kojo_after = new List<MessageCollect_KojoEntry>();
 
-    public void FlushCollectLogs()
+    public void AddMessage_Before(I_Records desc, Room_Instance recording)
+    {
+        var player = scr_System_CampaignManager.current.Player;
+        bool visible = desc.VisibleTo(player, recording);
+        AddMessage_Before(desc, visible, recording, desc.RightAlign(player));
+    }
+    public void AddMessage_Before(I_Records desc, int recording)
+    {
+        var player = scr_System_CampaignManager.current.Player;
+        var room = scr_System_CampaignManager.current.Map.GetRoomByRef(recording);
+        bool visible = desc.VisibleTo(player, room);
+        AddMessage_Before(desc, visible, room, desc.RightAlign(player));
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="desc"></param>
+    /// <param name="visible">shorthand for player visibility, to avoid redundant checks</param>
+    /// <param name="recording"></param>
+    /// <param name="rightAlign"></param>
+    public void AddMessage_Before(I_Records desc, bool visible, Room_Instance recording, bool rightAlign)
+    {
+        if (visible) this.messages_before.Add(desc);
+        if (sendRecording && recording != null && recording.HasRecording) recording.NotifyKojoCollect(desc);
+    }
+    public void AddMessage_After(I_Records desc, Room_Instance recording)
+    {
+        var player = scr_System_CampaignManager.current.Player;
+        bool visible = desc.VisibleTo(player, recording);
+        AddMessage_After(desc, visible, recording, desc.RightAlign(player));
+    }
+    public void AddMessage_After(I_Records desc, bool visible, Room_Instance recording, bool rightAlign)
+    {
+        if (visible) this.messages_after.Add(desc);
+        if (sendRecording && recording != null && recording.HasRecording) recording.NotifyKojoCollect(desc);
+    }
+    public void AddKojo(KojoCollector m, Room_Instance room, bool tryMerge = true)
+    {
+        //Debug.Log("AppendKojoMessage");
+        var player = scr_System_CampaignManager.current.Player;
+        bool visible = m.VisibleTo(player, room);
+        bool record = room != null && room.HasRecording;
+
+        if (record) room.NotifyKojoCollect(m);
+        if (visible)
+        {
+            //this.messages_kojo.Add(m.collect);
+            if (tryMerge)
+            {
+                foreach (var kj in this.messages_kojo)
+                {
+                    if (kj.portraitRefID == m.collect.portraitRefID)
+                    {
+                        kj.Merge(m.collect);
+                        return;
+                    }
+                }
+            }
+            messages_kojo.Add(m.collect);
+        }
+    }
+
+    public void FlushCollectLogs(Character_Trainable visible = null)
     {
         var cnManager = scr_System_CampaignManager.current;
+        if (visible == null) visible = scr_System_CampaignManager.current.Player;
 
         if (messages_checks.Count > 0)
         {
@@ -29,7 +92,11 @@ public class MessageCollect
                 cnManager.AddLog(-1, check.Key, false, false, check.Value);
             }
         }
-        if (messages_before.Count > 0) cnManager.AddLog(-1, String.Join("\n", messages_before), false);
+        if (messages_before.Count > 0)
+        {
+            foreach (var msg in messages_before) cnManager.AddLog(msg, visible, true);
+           // cnManager.AddLog(-1, String.Join("\n", messages_before), false);
+        }
 
         foreach (var kvp in messages_kojo) cnManager.AddLog(kvp);
 
@@ -43,13 +110,19 @@ public class MessageCollect
        // cnManager.AddLog(-1, exp.PrintContent_Relations(), true);
         cnManager.AddLog(-1, exp.PrintContent_Exps(), true);
 
-        if (messages_after.Count > 0) cnManager.AddLog(-1, String.Join("\n", messages_after), true);
+        if (messages_after.Count > 0)
+        {
+            foreach (var msg in messages_after) cnManager.AddLog(msg, visible, true);
+            //cnManager.AddLog(-1, String.Join("\n", messages_after), true);
+        }
 
         Clear();
     }
 
-    public void FlushCollectLogsCallback()
+    public void FlushCollectLogsCallback(Character_Trainable visible = null)
     {
+
+        if (visible == null) visible = scr_System_CampaignManager.current.Player;
 
         if (messages_checks.Count > 0)
         {
@@ -58,8 +131,8 @@ public class MessageCollect
         }
         if (messages_before.Count > 0)
         {
-            var s = String.Join("\n", messages_before);
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, false));
+            foreach(var m in messages_before) scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true));
+           // var s = String.Join("\n", messages_before);
         }
 
         foreach (var kvp in messages_kojo)
@@ -88,8 +161,9 @@ public class MessageCollect
 
         if (messages_after.Count > 0)
         {
-            var s = String.Join("\n", messages_after);
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
+            //var s = String.Join("\n", messages_after);
+            foreach (var m in messages_after) scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true));
+           // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
         }
 
 
@@ -149,11 +223,15 @@ public class MessageCollect
         
         this.exp.MergeWith(m.exp, shorten);
         this.displayOverride = this.displayOverride || m.displayOverride;
+
+        m.Clear();
     }
 }
 
-public class MessageCollect_KojoEntry : I_Records
+public class MessageCollect_KojoEntry
 {
+
+    [JsonIgnore] public bool rightAlign = false;
     public int portraitRefID = -1;
     public List<string> portraitTags = new List<string>();
     public List<int> relevantActors = new List<int>();
@@ -189,6 +267,11 @@ public class MessageCollect_KojoEntry : I_Records
         if (c == null) return;
         if (this.relevantActors.Contains(c.RefID)) return;
         this.relevantActors.Add(c.RefID);
+    }
+    public void ReplaceString(string oldstring, string newstring)
+    {
+        if (message != null) message = message.Replace(oldstring, newstring);
+        if (this.nexts != null) foreach (var v in nexts) v.ReplaceString(oldstring, newstring);
     }
 
     public bool VisibleToChara(Character_Trainable c)

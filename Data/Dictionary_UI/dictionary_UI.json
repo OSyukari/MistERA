@@ -566,6 +566,7 @@
 "ui_update_elapsedTime":"经过$count$分钟",
 "ui_movement_leavesRoom":"$self$离开了$room$",
 "ui_movement_entersRoom":"$self$进入了$room$",
+"ui_movement_enters_leavesRoom":"$self$离开了$leaves$，进入了$enters$",
 "ui_movement_playerEntersRoom":"<align=\"center\">进入了$room$</align>",
 "ui_movement_charaInRoom":"<align=\"center\">房间内成员：$names$</align>",
 

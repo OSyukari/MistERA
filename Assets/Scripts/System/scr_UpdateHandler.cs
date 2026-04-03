@@ -794,35 +794,8 @@ public class scr_UpdateHandler : MonoBehaviour
        // Debug.Log("NotifyJobDescriptions");
         this.Message.Merge(m, shorten);
     }
-    public void NotifyJobDescriptions_PreEvents(MessageCollect m, bool shorten)
-    {
-        // Debug.Log("NotifyJobDescriptions");
-        if (m.messages_before.Count > 0)
-        {
-            Message.messages_before.AddRange(m.messages_before);
-            m.messages_before.Clear();
-        }
-        if (m.messages_checks.Count > 0)
-        {
-            foreach(var check in m.messages_checks)
-            {
-                Message.messages_checks[check.Key] = check.Value;
-            }
-            m.messages_checks.Clear();
-        }
-        if (m.messages_kojo.Count > 0)
-        {
-            Message.messages_kojo.AddRange(m.messages_kojo);
-            m.messages_kojo.Clear();
-        }
-    }
 
-
-    public void AppendMessageBefore(string s, bool rightalign)
-    {
-        if (s.Length < 1) return;
-        this.Message.messages_before.Add(rightalign ? $"<align=\"right\">{s}</align>": s);
-    }
+    /*
     public void AppendKojoMessage(MessageCollect_KojoEntry m, bool visible, Room_Instance recording)
     {
         //Debug.Log("AppendKojoMessage");
@@ -830,17 +803,29 @@ public class scr_UpdateHandler : MonoBehaviour
         if (!visible && recording == null) return;
         if (visible) this.Message.messages_kojo.Add(m);
         if (recording != null) recording.NotifyKojoCollect(m);
+    }*/
+
+    public void AppendKojoMessage(KojoCollector m, Room_Instance room)
+    {
+        //Debug.Log("AppendKojoMessage");
+        var player = scr_System_CampaignManager.current.Player;
+        bool visible = m.VisibleTo(player, room);
+        bool record = room != null && room.HasRecording;
+
+        if (visible)
+        {
+            m.collect.rightAlign = m.rightAlign;
+            this.Message.messages_kojo.Add(m.collect);
+           // FlushCollectedLogs_PreEvents();
+        }
+        if (record) room.NotifyKojoCollect(m);
+        if (visible && !Updating) this.Message.FlushCollectLogs(player);
     }
     public ExperienceLog GetExpLogs()
     {
         return this.Message.exp;
     }
 
-    public void AppendMessageAfter(string s, bool rightalign)
-    {
-        if (s.Length < 1) return;
-        this.Message.messages_after.Add(rightalign ? $"<align=\"right\">{s}</align>" : s);
-    }
 
     public void FlushCollectedLogs_PreEvents()
     {
@@ -862,17 +847,34 @@ public class scr_UpdateHandler : MonoBehaviour
     /// <param name="executeCallbacks"></param>
     public void FlushCollectedLogs(bool flushOut, bool firstLoop, bool executeCallbacks = false)
     {
-        if (flushOut) Message.FlushCollectLogs();
+        if (flushOut) Message.FlushCollectLogs(scr_System_CampaignManager.current.Player);
         else Message.Clear();
         if (executeCallbacks) ExecuteEventCallbacks(true);
     }
 
-    public void AppendEndMessage(string s)
+    public void AppendMessageBefore(DescriptionCollector desc, Room_Instance room, bool allowFlush = false)
     {
-        Message.messages_after.Add(s);
-        if (!Updating)
+        var player = scr_System_CampaignManager.current.Player;
+        var visible = desc.VisibleTo(player, room);
+        if (visible) this.Message.AddMessage_Before(desc, room);
+        if (room != null && room.HasRecording) room.NotifyKojoCollect(desc);
+
+        if (allowFlush && visible && !Updating)
         {
-            Debug.Log("Updatehandler AppendEndMessage !Updating, flushCollectedLogs");
+            Debug.Log("Updatehandler AppendMessageAfter !Updating, flushCollectedLogs");
+            FlushCollectedLogs(true, false);
+        }
+    }
+    public void AppendMessageAfter(DescriptionCollector desc, Room_Instance room, bool allowFlush = false)
+    {
+        var player = scr_System_CampaignManager.current.Player;
+        var visible = desc.VisibleTo(player, room);
+        if (visible) this.Message.AddMessage_After(desc, room);
+        if (room != null && room.HasRecording) room.NotifyKojoCollect(desc);
+
+        if (allowFlush && visible && !Updating)
+        {
+            Debug.Log("Updatehandler AppendMessageAfter !Updating, flushCollectedLogs");
             FlushCollectedLogs(true, false);
         }
     }

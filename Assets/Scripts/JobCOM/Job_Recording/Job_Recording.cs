@@ -230,12 +230,17 @@ public class Job_Recording : Job, I_CanEndJob
         if (FactionOwner == null || FactionOwner.Inventory == null)
         {
             // no storage
-            this.m.messages_after.Add("recording dumped, missing faction owner");
+            var desc = new DescriptionCollector("recording dumped, missing faction owner");
+            desc.LoadActors(actorRefID);
+            this.m.AddMessage_After(desc, ParentRoom);
+            //this.m.messages_after.Add( );
         }
         else if (recordComp == null || recordComp.Comp_Recorder == null || recordComp.Comp_Recorder.resultItemID == "")
         {
             // no storage
-            this.m.messages_after.Add($"recording dumped due to {(useItem == null ? $"cannot find item {recorderID}" : recordComp == null ||  recordComp.Comp_Recorder == null ? $"missing recorder comp in item {recorderID}" : "empty resultItemID")}");
+            var desc = new DescriptionCollector($"recording dumped due to {(useItem == null ? $"cannot find item {recorderID}" : recordComp == null || recordComp.Comp_Recorder == null ? $"missing recorder comp in item {recorderID}" : "empty resultItemID")}");
+            desc.LoadActors(actorRefID);
+            this.m.AddMessage_After(desc, ParentRoom);
         }
         else
         {
@@ -251,7 +256,9 @@ public class Job_Recording : Job, I_CanEndJob
                 if (consumeItems.Count < 1)
                 {
                     failed = true;
-                    this.m.messages_after.Add($"recording dumped, missing required storage item {recordComp.Comp_Recorder.storeItemID} (require {removeCount}, owns {FactionOwner.Inventory.GetItemCount(recordComp.Comp_Recorder.storeItemID)})");
+                    var desc = new DescriptionCollector($"recording dumped, missing required storage item {recordComp.Comp_Recorder.storeItemID} (require {removeCount}, owns {FactionOwner.Inventory.GetItemCount(recordComp.Comp_Recorder.storeItemID)})");
+                    desc.LoadActors(actorRefID);
+                    this.m.AddMessage_After(desc, ParentRoom);
                 }
             }
 
@@ -263,7 +270,9 @@ public class Job_Recording : Job, I_CanEndJob
                 if (createItem == null || createItem.Comp_Records == null) 
                 {
                     failed = true;
-                    this.m.messages_after.Add("recording dumped, failed to create result item");
+                    var desc = new DescriptionCollector("recording dumped, failed to create result item");
+                    desc.LoadActors(actorRefID);
+                    this.m.AddMessage_After(desc, ParentRoom);
                 }
                 else
                 {
@@ -271,7 +280,11 @@ public class Job_Recording : Job, I_CanEndJob
                     createItem.Comp_Records.LoadRecords(this.currentRecording);
                     createItem.nameOverwrite = "new tape";
                     FactionOwner.Inventory.AddItem(createItem);
-                    this.m.messages_after.Add($"successfully stored recording with {this.currentRecording.DebugTool}");
+
+
+                    var desc = new DescriptionCollector($"successfully stored recording with {this.currentRecording.DebugTool}");
+                    desc.LoadActors(actorRefID);
+                    this.m.AddMessage_After(desc, ParentRoom);
                 }
             }
         }

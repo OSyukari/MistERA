@@ -240,8 +240,8 @@ public class Character_Personality
         if (rel.Owner.RefID == 0) return null;
         if (!entries.ContainsKey(eventID))
         {
-            if (this.Fallback != null) return Fallback.GetKOJOMessage(eventID, selfEPs, targetEPs, rel);
-            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log( "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]");
+           // if (this.Fallback != null) return Fallback.GetKOJOMessage(eventID, selfEPs, targetEPs, rel);
+           // else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log( "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]");
             return null;
         }
         if (!entries[eventID].Validate(rel.Owner)) return null;
@@ -275,33 +275,7 @@ public class Character_Personality
         }
     }
 
-    public MessageCollect_KojoEntry GetKOJOMessage(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
-    {
-        string comID = ep.targetCOM.tooltipID;
-        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
-        //if (checkClimax) comID = $"{comID}_Climax";
-        if (!entries.ContainsKey(comID))
-        {
-            if (ep.targetCOM.ParentCOM != null)
-            {
-                string parentComID = ep.targetCOM.ParentCOM.tooltipID;
-                if (parentComID.Contains("_noSex")) parentComID = parentComID.Substring(0, parentComID.Length - 6);
-                //if (checkClimax) parentComID = $"{parentComID}_Climax";
-                if (entries.ContainsKey(parentComID)) { parentComID = entries[parentComID].CheckRedirect(parentComID); return entries[parentComID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep); }
-            }
-            if(this.Fallback != null) return Fallback.GetKOJOMessage(isDoer, ep, relation);
-            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log( "Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
-            return null;
-        }
 
-        comID = entries[comID].CheckRedirect(comID);
-        return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
-    }
-    public MessageCollect_KojoEntry GetKOJOMessage_Suffix(string id, string suffix, Character_Relationship relation)
-    {
-        var collect = new KojoCollector(relation.Owner, id, suffix);
-        return GetKOJOMessage(collect);
-    }
     public MessageCollect_KojoEntry GetKOJOMessage(KojoCollector kol)
     { if (kol.Owner.RefID == 0) return null;
         var key = $"{kol.eventID}{kol.suffix}";
@@ -347,67 +321,48 @@ public class Character_Personality
         return entries[eventID].GetResponse(kol);
     }
 
-    public MessageCollect_KojoEntry GetKOJOMessage_Suffix(string suffix, bool isDoer, bool isReceiver, EvaluationPackage ep, Character_Relationship relation)
+    /// <summary>
+    /// New API replacing GetKOJOMessage(string, Character_Trainable, List&lt;string&gt;, List&lt;EvaluationPackage&gt;).
+    /// Caller sets kol.eventID and kol.selfTags, then passes allEPs.
+    /// Iterates EPs to resolve the appropriate target, loads EP data into a kol copy, and delegates to GetKOJOMessage(KojoCollector).
+    /// </summary>
+    public MessageCollect_KojoEntry GetKOJOMessage(KojoCollector kol, List<EvaluationPackage> allEPs)
     {
-        string comID = ep.targetCOM.tooltipID;
-        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
-        comID = $"{comID}{suffix}";
-        if (!entries.ContainsKey(comID))
+        if (kol.Owner.RefID == 0) return null;
+
+        foreach (var ep in allEPs)
         {
-            if (ep.targetCOM.ParentCOM != null)
+            // Owner observing Doer (owner is not the Doer)
+            if (ep.Doer != null && ep.Doer != kol.Owner)
             {
-                string parentComID = ep.targetCOM.ParentCOM.tooltipID;
-                if (parentComID.Contains("_noSex")) parentComID = parentComID.Substring(0, parentComID.Length - 6);
-                parentComID = $"{parentComID}{suffix}";
-                if (entries.ContainsKey(parentComID)) { parentComID = entries[parentComID].CheckRedirect(parentComID); return entries[parentComID].GetResponse(relation, isDoer ? ep.DoerSelfTag : isReceiver ? ep.ReceiverSelfTag : new List<string>(), isDoer ? ep.ReceiverTargetTag : isReceiver ? ep.DoerTargetTag : new List<string>(), ep); }
+                var attempt = kol.Copy();
+                attempt.LoadEP(ep, ep.Doer);
+                var result = GetKOJOMessage(attempt);
+                if (result != null) return result;
             }
-            //if (this.Fallback != null) return Fallback.GetKOJOMessage_Suffix(suffix, isDoer, isReceiver, ep, relation);
-            //else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
-            return null;
-        }
 
-        comID = entries[comID].CheckRedirect(comID);
-        return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : isReceiver ? ep.ReceiverSelfTag : new List<string>(), isDoer ? ep.ReceiverTargetTag : isReceiver ? ep.DoerTargetTag : new List<string>(), ep);
-    }
-    public MessageCollect_KojoEntry GetKOJOMessage_Join(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
-    {
-        string comID = ep.targetCOM.tooltipID;
-        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
-        comID = $"{comID}_Join";
-        if (!entries.ContainsKey(comID))
-        {
-            if (ep.targetCOM.ParentCOM != null)
+            // Owner observing Receiver (owner is not the Receiver)
+            if (ep.Receiver != null && ep.Receiver != kol.Owner)
             {
-                string parentComID = ep.targetCOM.ParentCOM.tooltipID;
-                if (parentComID.Contains("_noSex")) parentComID = parentComID.Substring(0, parentComID.Length - 6);
-                parentComID = $"{parentComID}_Join";
-                if (entries.ContainsKey(parentComID)) { parentComID = entries[parentComID].CheckRedirect(parentComID); return entries[parentComID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep); }
+                var attempt = kol.Copy();
+                attempt.LoadEP(ep, ep.Receiver);
+                var result = GetKOJOMessage(attempt);
+                if (result != null) return result;
             }
-            //if (this.Fallback != null) return Fallback.GetKOJOMessage_Join(isDoer, ep, relation);
-            //else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
-            return null;
+
+            // Self-referencing: owner IS the Doer with no Receiver
+            if (ep.Doer == kol.Owner && ep.Receiver == null)
+            {
+                var attempt = kol.Copy();
+                attempt.LoadEP(ep, null);
+                var result = GetKOJOMessage(attempt);
+                if (result != null) return result;
+            }
         }
 
-        comID = entries[comID].CheckRedirect(comID);
-        return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
+        return null;
     }
-    public MessageCollect_KojoEntry GetKOJOMessage_Interrupt(bool isDoer, EvaluationPackage ep, Character_Relationship relation)
-    {
-        string comID = ep.targetCOM.tooltipID;
-        if (comID.Contains("_noSex")) comID = comID.Substring(0, comID.Length - 6);
-        comID = $"{comID}_Interrupt";
 
-        //Debug.Log($"GetKOJOMessage_Interrupt {comID}");
-
-        if (!entries.ContainsKey(comID))
-        {
-            if (this.Fallback != null) return Fallback.GetKOJOMessage_Interrupt(isDoer, ep, relation);
-            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log("Personality [" + this.DisplayName + "] unimplemented COM response for [" + comID + "] and for target [" + (relation == null ? "null" : relation.Target.FirstName) + "]");
-            return null;
-        }
-        comID = entries[comID].CheckRedirect(comID);
-        return entries[comID].GetResponse(relation, isDoer ? ep.DoerSelfTag : ep.ReceiverSelfTag, isDoer ? ep.ReceiverTargetTag : ep.DoerTargetTag, ep);
-    }
 
     public MessageCollect_KojoEntry GetKOJOMessage(string eventID, Character_Relationship rel)
     {

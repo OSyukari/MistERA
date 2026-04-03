@@ -333,6 +333,8 @@ public class RelationshipManager
         if (exp != null && newValue - _Pride != 0) exp.AddStats(this.Owner.RefID, "personality_selfesteem", newValue - _Pride);
     }*/
 
+
+
     public bool NotifyMeeting(Character_Trainable c, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs, string triggerEventID = "")
     {
         if (c == null || c.RefID < 0) return false;
@@ -353,25 +355,54 @@ public class RelationshipManager
         //Utility.GetEPsFrom(owner, c, out List<EvaluationPackage> selfEPs, out List<EvaluationPackage> targetEPs);
 
         if (triggerEventID == "") return false;
-        
-        var msg = this.Personality.GetKOJOMessage(triggerEventID, selfEPs, targetEPs, rel);
-        if (msg != null)
+
+        var kol = new KojoCollector(Owner, triggerEventID);
+        kol.LoadRel(rel);
+        kol = GetKojoMessage_anyEP(kol, c, selfEPs, targetEPs);
+        //var msg = this.Personality.GetKOJOMessage(triggerEventID, selfEPs, targetEPs, rel);
+        if (kol != null && kol.collect != null)
         {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("[" + Owner.FirstName + "] -> [" + c.FirstName + "] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + msg + "]");
-            msg.message = msg.message.Replace("$self$", Owner.FirstName).Replace("$target$", c.FirstName);
-
-            bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
-
-            msg.AddRelevantActor(Owner);
-            msg.AddRelevantActor(c);
-
-            scr_UpdateHandler.current.AppendKojoMessage(msg, Owner.RefID == 0 || c.RefID == 0, recording ? Owner.CurrentRoom : null);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("[" + Owner.FirstName + "] -> [" + c.FirstName + "] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + kol.collect.message + "]");
+            kol.ReplaceString("$self$", Owner.FirstName);
+            kol.ReplaceString("$target$", c.FirstName);//.message = msg.message.Replace().Replace();
+            scr_UpdateHandler.current.AppendKojoMessage(kol, Owner.CurrentRoom);
 
             return true;
         }
         return false;
 
     }
+    public KojoCollector GetKojoMessage_anyEP(KojoCollector kol, Character_Trainable target, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
+    {
+        // kol have initialized all stuff
+        KojoCollector kol2 = null;
+        foreach(var ep in selfEPs)
+        {
+            kol2 = kol.Copy();
+            kol2.LoadEP(ep, target);
+            var response = this.Personality.GetKOJOMessage(kol2);
+            if (response != null) 
+            {
+                kol.LoadEP(ep, target);
+                kol.collect = response;
+                return kol;
+            }
+        }
+        foreach (var ep in selfEPs)
+        {
+            kol2 = kol.Copy();
+            kol2.LoadEP(ep, target);
+            var response = this.Personality.GetKOJOMessage(kol2);
+            if (response != null)
+            {
+                kol.LoadEP(ep, target);
+                kol.collect = response;
+                return kol;
+            }
+        }
+        return null;
+    }
+
 
     public void ClearEPCache()
     {
@@ -379,35 +410,44 @@ public class RelationshipManager
         foreach (var rel in GenericRelationship) rel.Value.ClearEPCache();
     }
 
-
-    /// <summary>
-    /// Conditions are pre-filtered in Map pre CheckInterrupt calls <br/>
-    /// player will trigger interrupt but will skip kojo message logging (cuz messagelog is being taken care of from the other direction)
-    /// </summary>
-    /// <param name="ap"></param>
-    /// <param name="selfTags"></param>
-    public bool CheckInterrupt(ActionPackage ap, List<string> selfTags)
+    public KojoCollector GetKojoMessage_AP(KojoCollector kol, ActionPackage AP)
     {
-        // if any EP satisfy interrupt condition, every actor in ap are checked for relationship mod
-        var triggerEventID = "Interrupt";
-        var msg = Personality.GetKOJOMessage(triggerEventID, Owner, selfTags, ap.ListEP);
-        if (msg == null)
-        {
-            // for each ep check interrupt
-        }
-        if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.message != null && msg.message.Length > 0)
-        {
-            msg.message = $"<align=\"right\">{msg.message.Replace("$self$", Owner.FirstName)}</align>";//;
-            bool visible = scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID);
-            bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
+        // kol have initialized all stuff
+        KojoCollector kol2 = null;
 
-            msg.AddRelevantActor(Owner);
-            msg.AddRelevantActors(ap.Actors);
+        // kol should load the whole ap
+        MessageCollect_KojoEntry response = null;
 
-            scr_UpdateHandler.current.AppendKojoMessage(msg, visible, recording ? Owner.CurrentRoom : null);
-            return true;
+        foreach (var ep in AP.ListEP)
+        {
+            kol2 = kol.Copy();
+            if (response == null && ep.Doer != null)
+            {
+                kol2.LoadEP(ep, ep.Doer);
+                response = this.Personality.GetKOJOMessage(kol2);
+                if (response != null)
+                {
+                    response.ReplaceString("$epDescription$", ep.Description_Ongoing);
+                    if (kol.collect == null) kol.collect = response;
+                    else kol.collect.nexts.Add(response);
+                    break;
+                }
+            }
+            if (response == null && ep.Receiver != null)
+            {
+                kol2.LoadEP(ep, ep.Receiver);
+                response = this.Personality.GetKOJOMessage(kol2);
+                if (response != null)
+                {
+                    response.ReplaceString("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
+                    if (kol.collect == null) kol.collect = response;
+                    else kol.collect.nexts.Add(response);
+                    break;
+                }
+            }
         }
-        return false;
+        if (response != null) return kol;
+        else return null;
     }
 
     public void ReEstablishParent(Character_Trainable c)
@@ -558,34 +598,8 @@ public class RelationshipManager
         }
         return null;
     }
-    public MessageCollect_KojoEntry GetKOJOMessage_Suffix(string ID, string suffix, Character_Trainable c, MessageCollect m = null)
-    {
-        if (Owner.RefID == 0) return null;
-        var rel = Owner.Relationships.FindRelationshipWith(c);
 
-        KojoCollector kol = new KojoCollector(Owner, ID, suffix);
-        kol.LoadRel(rel);
-
-
-        MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);
-
-        /*
-        string cleanedID = ID;
-        if (cleanedID.Contains("_noSex")) cleanedID = cleanedID.Substring(0, cleanedID.Length - 6);
-
-        MessageCollect_KojoEntry message = rel == null ? this.Personality.GetKOJOMessage($"{cleanedID}{suffix}", Owner, new List<string>(), new List<EvaluationPackage>())
-            : this.Personality.GetKOJOMessage_Suffix(ID, suffix, rel);
-        */
-        if (message != null && message.message.Length > 0)
-        {
-            //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
-            kol.collect = message;
-            return message;
-        }
-        else return null;
-    }
-
-    public KojoCollector GetKOJOMessage_Suffix(KojoCollector kol, bool rightAlign, MessageCollect m)
+    public KojoCollector GetKOJOMessage_Suffix(KojoCollector kol, MessageCollect m)
     {
         if (Owner.RefID == 0) return null;
 

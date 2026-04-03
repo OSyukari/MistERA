@@ -119,57 +119,48 @@ public class ActionPackage_TeleportTo : ActionPackage
 
         toggleRepeat = false;
 
-        bool visible = doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef);
-        bool recording = Doer.CurrentRoom != null && Doer.CurrentRoom.HasRecording;
-
-        if (visible || recording)
-        {
-            var s = LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.FindRoomByChara(doerRef).DisplayName);
-            scr_System_CampaignManager.current.AddLog(visible, recording ? Doer.CurrentRoom : null, -1, s, true, true);
-
-        }
+        var prev = Doer.CurrentRoom;
 
         scr_System_CampaignManager.current.MoveCharacterTo(doerRef, targetRoomRef);
-        if (doerRef == 0)
+
+        var s_prev = LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$", prev == null ? "null" : prev.DisplayNameShort);
+        var s_next = LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", Doer.CurrentRoom == null ? "null" : Doer.CurrentRoom.DisplayNameShort);
+        var desc_prev = new DescriptionCollector("");
+        desc_prev.message_excludeRelated = s_prev;
+        desc_prev.LoadActors(Doer.RefID, true, false);
+        desc_prev.tooltip = s_next;
+        scr_UpdateHandler.current.AppendMessageBefore(desc_prev, prev);
+        //scr_System_CampaignManager.current.AddLog(desc_prev, prev, true);
+
+
+        Room_Instance room = Doer.CurrentRoom;
+        string s = LocalizeDictionary.QueryThenParse("ui_movement_playerEntersRoom").Replace("$room$", room.DisplayName);
+        var desc = new DescriptionCollector(s);
+
+        desc.LoadActors(Doer.RefID, true, false);
+        desc.message_excludeRelated = s_prev;
+        List<string> s2 = new List<string>();
+        //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
+
+        foreach (var c in room.RoomChara)
         {
-            Room_Instance room = scr_System_CampaignManager.current.Map.GetRoomByRef(targetRoomRef);
-            string s = LocalizeDictionary.QueryThenParse("ui_movement_playerEntersRoom").Replace("$room$", room.DisplayName);
-            List<string> s2 = new List<string>();
-            bool askBreak = false;
-            //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
-
-            foreach (var c in scr_System_CampaignManager.current.CharaInCurrentRoom)
-            {
-                if (c.RefID == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID)) continue;
-                if (c == null) continue;
-                s2.Add(c.FirstName);// += ", " + c.FirstName;
-                askBreak = true;
-                //scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName + " is in room" + room.DisplayName + ", currently " + c.GetJobDescription(), true);
-            }
-
-            //scr_System_CampaignManager.current.AddLog(scr_System_CentralControl.current.DisplaySetting.displayPlayerPortraitInLogs.value ? 0 : -1, s + (s2.Length > 0 ? $"\n{LocalizeDictionary.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", s2)}" : ""), true);
-            scr_System_CampaignManager.current.AddLog(scr_System_CentralControl.current.DisplaySetting.displayPlayerPortraitInLogs.value ? 0 : -1, s + (s2.Count > 0 ? $"\n{LocalizeDictionary.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", String.Join(", ", s2))}" : ""), true);
-            //if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)  { }
-
+            if (Doer.RefID == 0 && (c.RefID == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID))) continue;
+            if (Doer == c) continue;
+            if (c == null) continue;
+            s2.Add(c.FirstName);// += ", " + c.FirstName;
+                                //scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName + " is in room" + room.DisplayName + ", currently " + c.GetJobDescription(), true);
         }
+        if (s2.Count > 0) desc.message += $"\n{LocalizeDictionary.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", String.Join(", ", s2))}";
 
-        recording = Doer.CurrentRoom != null && Doer.CurrentRoom.HasRecording;
-        if (visible || recording)
-        {
-            var s = LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(targetRoomRef).DisplayName);
-            scr_System_CampaignManager.current.AddLog(visible, recording ? Doer.CurrentRoom : null, -1, s, true, true);
-        }
-        //if (doerRef > 0 && scr_System_CampaignManager.current.ShowCharaLog(doerRef)) scr_System_CampaignManager.current.AddLog(-1, LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", scr_System_CampaignManager.current.Map.GetRoomByRef(targetRoomRef).DisplayName), true, true);
-        // Debug.Log("ActionPackage_PathTo [" + Doer.FirstName + "] toward [" + TargetRoom.DisplayName + "] NULL PATH ABORT, Doer currently at ["+scr_System_CampaignManager.current.Map.FindRoomByChara(Doer.RefID).DisplayName+"]");
+        scr_UpdateHandler.current.AppendMessageBefore(desc, room);
+       // scr_System_CampaignManager.current.AddLog(desc, room, true);
+        //scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.DisplaySetting.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Count > 0 ? $"\n{LocalizeDictionary.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", String.Join(", ",s2))}":""), true);
+        //if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)  { }
 
     }
 
     public override void DisablePackage(bool extraTick = false)
     {
         base.DisablePackage(extraTick);
-    }
-    protected void QueryInitializer(scr_Menu menu)
-    {
-
     }
 }
