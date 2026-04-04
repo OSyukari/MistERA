@@ -263,6 +263,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         this._cachedJobDescription = string.Empty;
         Body.ClearLastInteractedRefs();
         this.Stats.PreUpdateTimeTick();
+        this.PortraitManager.ClearHandlerCache();
     }
 
     public bool CompareStatValue(string statID, LogicalOperand operand, string value)
@@ -322,7 +323,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     {
         this.Skills.FinalizeExperience();
         this._cachedJobDescription = string.Empty;
-        this.PortraitManager.ClearHandlerCache();
         this.Memory.Tick();
         if (!isTimeStoppedLoose)
         {

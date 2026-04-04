@@ -77,9 +77,9 @@ public class SpineLoaderTiny_42 : SpineLoaderTiny
 
 public class SpineAnimator42 : SpineAnimatorBase
 {
-    public override IEnumerator Initialize(PortraitManager.CharaPortrait_Spine manager, SpineLoaderTiny loader, List<string> texturePath, string atlasPath, string skeletonPath, bool straightAlpha, string idleAnimName = "idle", string addonAnimName = "action")
+    public override IEnumerator Initialize(PortraitManager.CharaPortrait_Spine manager, SpineLoaderTiny loader, List<string> texturePath, string atlasPath, string skeletonPath, bool straightAlpha, string idleAnimName = "idle", string addonAnimName = "action", bool lowPriority = false)
     {
-        if (loader is SpineLoaderTiny_42) yield return Initialize(manager, loader as SpineLoaderTiny_42, texturePath, atlasPath, skeletonPath, straightAlpha, idleAnimName, addonAnimName);
+        if (loader is SpineLoaderTiny_42) yield return Initialize(manager, loader as SpineLoaderTiny_42, texturePath, atlasPath, skeletonPath, straightAlpha, idleAnimName, addonAnimName, lowPriority);
         else
         {
             Debug.LogError("SpineAnimator42 Initialize called on wrong loader!");
@@ -89,15 +89,18 @@ public class SpineAnimator42 : SpineAnimatorBase
 
     Coroutine co = null;
 
-    public IEnumerator Initialize(PortraitManager.CharaPortrait_Spine manager, SpineLoaderTiny_42 loader, List<string> texturePath, string atlasPath, string skeletonPath, bool straightAlpha, string idleAnimName = "idle", string addonAnimName = "action")
+    public IEnumerator Initialize(PortraitManager.CharaPortrait_Spine manager, SpineLoaderTiny_42 loader, List<string> texturePath, string atlasPath, string skeletonPath, bool straightAlpha, string idleAnimName = "idle", string addonAnimName = "action", bool lowPriority = false)
     {
         bool refresh = false;
 
         SpineDataTiny_42 dataloader = null;
+        bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Portrait_Spine;
 
         if (manager.dataHolder == null)
         {
+
             dataloader = new SpineDataTiny_42();
+            
             manager.dataHolder = dataloader;
         }
         else
@@ -109,6 +112,7 @@ public class SpineAnimator42 : SpineAnimatorBase
         {
             loader.dataPointer = dataloader;
             refresh = true;
+            if (debug) Debug.Log("42 clear");
             loader.Clear();
         }
 
@@ -117,6 +121,7 @@ public class SpineAnimator42 : SpineAnimatorBase
             // SGmaterial.SetInt("_StraightAlphaInput", straightAlpha ? 1 : 0);
             loader.Clear();
             refresh = true;
+            if (debug) Debug.Log("42 reinit");
             yield return PreCacheData(manager, texturePath, atlasPath, skeletonPath, straightAlpha);
         }
 
@@ -126,6 +131,7 @@ public class SpineAnimator42 : SpineAnimatorBase
             //skeletonDataAsset.scale = skeletonScale;
             //Animation = SkeletonAnimation.AddToGameObject(this.gameObject, skeletonDataAsset);
 
+            if (debug) Debug.Log("42 new animation");
             loader.Animation = SkeletonAnimation.NewSkeletonAnimationGameObject(dataloader.skeletonDataAsset);
             loader.Animation.Initialize(false);
 
@@ -136,12 +142,16 @@ public class SpineAnimator42 : SpineAnimatorBase
             }
             // Optional: play animation
             loader.Animation.Skeleton.SetToSetupPose();
+            // Reset tracked names so the animation setup blocks always fire on a fresh skeleton
+            loader.idleAnimName = "";
+            loader.addonAnimName = "";
         }
 
 
+        bool animreset = false;
         if (loader.idleAnimName != idleAnimName)
         {
-            refresh = true;
+            if (debug) Debug.Log("42 idleanim reset");
             var idleAnim = loader.Animation.skeletonDataAsset.GetSkeletonData(true).FindAnimation(idleAnimName);
             if (idleAnim == null)
             {
@@ -151,13 +161,24 @@ public class SpineAnimator42 : SpineAnimatorBase
                 foreach (var i in list) names.Add(i.Name);
                 Debug.Log($"Spine animation name mismatch\nAtlasPath {atlasPath}\nValid Anims: {String.Join("|", names)}");
             }
-            // send looping idle animation
-            //self_SkeletonGraphic.AnimationState.AddAnimation(0, idleAnim, true, 0);
-            if (idleAnim != null) loader.Animation.AnimationState.SetAnimation(0, idleAnim, true);
+            if (idleAnim != null)
+            {
+                var next = lowPriority && !refresh ? loader.Animation.AnimationState.GetCurrent(0) : null;
+                if (next != null && next.Next != null)
+                {
+                    if (debug) Debug.Log("42 idleanim abort low priority has next");
+                }
+                else
+                {
+                    animreset = true;
+                    loader.Animation.AnimationState.AddAnimation(0, idleAnim, true, 0f);
+                    loader.idleAnimName = idleAnimName;
+                }
+            }
         }
         if (loader.addonAnimName != addonAnimName)
         {
-            refresh = true;
+            if (debug) Debug.Log("42 addon reset");
             var addonAnim = loader.Animation.skeletonDataAsset.GetSkeletonData(true).FindAnimation(addonAnimName);
             if (addonAnim == null)
             {
@@ -167,15 +188,27 @@ public class SpineAnimator42 : SpineAnimatorBase
                 foreach (var i in list) names.Add(i.Name);
                 Debug.Log($"Spine animation name mismatch\nAtlasPath {atlasPath}\nValid Anims: {String.Join("|", names)}");
             }
-            // send looping idle animation
-            //self_SkeletonGraphic.AnimationState.AddAnimation(0, idleAnim, true, 0);
-            if (addonAnim != null) loader.Animation.AnimationState.SetAnimation(1, addonAnim, true);
+            if (addonAnim != null)
+            {
+                var next = lowPriority ? loader.Animation.AnimationState.GetCurrent(1) : null;
+                if (next != null && next.Next != null)
+                {
+                    if (debug) Debug.Log("42 addon abort low priority has next");
+                }
+                else
+                {
+                    animreset = true;
+                    loader.Animation.AnimationState.AddAnimation(1, addonAnim, true, 0f);
+                    loader.addonAnimName = addonAnimName;
+                }
+            }
         }
 
-        if (refresh)
+        if (refresh || animreset)
         {
-            loader.Animation.Update(0);
-            loader.Animation.LateUpdate();
+            if (debug) Debug.Log("42 refresh");
+            loader.Animation.Update(Time.deltaTime);
+            //loader.Animation.LateUpdate();
         }
     }
 

@@ -495,6 +495,12 @@ public class Job : IDisposable, I_Disposable
             if (packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
         }
+        foreach (var ap in this.packages_completed)
+        {
+            if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
+            if (packages != null) packages.Add(ap);
+            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
+        }
         list = list.Distinct().ToList();
         ownerTags.AddRange(list);
 
@@ -801,31 +807,34 @@ public class Job : IDisposable, I_Disposable
     /// </summary>
     public virtual void PostUpdateTime()
     {
+        packages_completed.Clear();
         //Debug.Log("PostUpdateTime for job " + this.jobRefID);
         actorJobComplete.RemoveAll(x => !this.actorRefID.Contains(x));
         bool visible = isJobVisibleToPlayer;
         for ( int i = packages_previous.Count -1; i >= 0; i--)
         {
-            if (visible) CollectLogs(packages_previous[i]);
+            var p = packages_previous[i];
+            if (visible) CollectLogs(p);
             // Duration 0 meaning they just run, meaning
-            if (packages_previous[i].Duration <= 0)
+            if (p.Duration <= 0)
             {
                 
-                if (packages_previous[i].PackageRepeat)
+                if (p.PackageRepeat)
                 {
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("readding package " + packages_previous[i].DisplayName);
-                    packages_previous[i].Repeat();
-                    packages_current.Add(packages_previous[i]);
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("readding package " + p.DisplayName);
+                    p.Repeat();
+                    packages_current.Add(p);
                 }
                 else
                 {
-                   // var message = "deleting package " + packages_previous[i].DisplayName;
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("deleting package " + packages_previous[i].DisplayName + $" for {String.Join("|",packages_previous[i].actorRefs)}");
-                    //PackageRemoval(packages_previous[i]);
-                    if (!packages_previous[i].isTemporaryAP) actorJobComplete.AddRange(packages_previous[i].actorRefs);
+                   // var message = "deleting package " + p.DisplayName;
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("deleting package " + p.DisplayName + $" for {String.Join("|",p.actorRefs)}");
+                    //PackageRemoval(p);
+                    if (!p.isTemporaryAP) actorJobComplete.AddRange(p.actorRefs);
                     
                 }
                 packages_previous.RemoveAt(i);
+                packages_completed.Add(p);
                 // success remove
             }
         }

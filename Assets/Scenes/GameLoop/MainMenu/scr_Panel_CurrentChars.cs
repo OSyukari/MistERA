@@ -15,19 +15,21 @@ public class scr_Panel_CurrentChars : MonoBehaviour
         //scr_System_CampaignManager.current.displayAttach(this);
         thisBox = this.GetComponent<RectTransform>();
         scr_System_CampaignManager.current.Observer_UpdateNotice += OnUpdateNotice;
+        scr_System_CampaignManager.current.Observer_GameReload += OnGameReload;
         //scr_System_CampaignManager.current.Observer_CurrentRoom += OnCurrentRoomUpdate;
         scr_UpdateHandler.current.Observer_PostUpdateTime_3 += OnPostUpdateTime3;
 
         UpdateCharaCache();
     }
 
+    private void OnGameReload(bool b)
+    {
+        foreach (RectTransform child in thisBox) Destroy(child.gameObject);
+        trackedRefs.Clear();
+    }
+
     private void OnPostUpdateTime3()
     {
-        UpdateCharaCache();
-    }
-    private void OnCurrentRoomUpdate(int updateOrder, Room_Instance room) 
-    {
-        if (updateOrder != 2) return;
         UpdateCharaCache();
     }
 

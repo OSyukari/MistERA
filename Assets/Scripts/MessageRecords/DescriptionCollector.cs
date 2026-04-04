@@ -64,6 +64,25 @@ public class DescriptionCollector : I_Records
         this.timestamp = scr_UpdateHandler.current.UpdateTime;
     }
 
+    public void Load(MessageCollect_KojoEntry kojo)
+    {
+        if (kojo.portraitRefID != -1)
+        {
+            this.portraitRefs.Add(kojo.portraitRefID);
+            portraitRefs = Utility.Distinct(portraitRefs);
+        }
+
+        if (kojo.message.Length > 0) this.message += $"{(message.Length > 0 ? "\n" : "")}{kojo.message}";
+        
+        this.displayTagsOverride.AddRange(kojo.portraitTags);
+        this.displayTagsOverride = Utility.Distinct(displayTagsOverride);
+
+        this.relevantActors.AddRange(kojo.relevantActors);
+        this.relevantActors = Utility.Distinct(relevantActors);
+
+        foreach (var next in kojo.nexts) Load(next);
+    }
+
     public void LoadActors(Character_Relationship rel)
     {
         relevantActors.Add(rel.Owner.RefID);

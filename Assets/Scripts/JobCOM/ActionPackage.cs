@@ -1640,23 +1640,6 @@ public abstract class ActionPackage
             ep.Execute(m, injectResult);
             bool executed = ep.Response >= Memory_Response.Accept;
             executeSuccessful = executed && executeSuccessful;
-
-            /*
-            if (executed)
-            {
-                //this.job.LogMessage_Begin_CheckResult(ep);
-               // ep.ApplyCost(m);
-                if (ep.ReceiverTargetTag.Contains("job"))
-                {
-                    // ---------------- increase self esteem here
-                    if (ep.Response >= Memory_Response.Success)
-                    {
-                        if(ep.Doer != null) ep.Doer.Relationships.ModSelfEsteem(1);   
-                        if(ep.Receiver != null && ep.Receiver != ep.Doer) ep.Receiver.Relationships.ModSelfEsteem(1);
-                    }                  
-                }
-
-            }*/
         }
 
         var actors = new List<Character_Trainable>();
@@ -2148,18 +2131,9 @@ public abstract class ActionPackage
         UtilityEX.StringReplace(this, ref s);
         s = targetCOM.Replace(s);
 
+        var desc = new DescriptionCollector(s);
+        bool exist = s.Length > 0;
 
-        if (s.Length > 0)
-        {
-            var desc = new DescriptionCollector(s);
-            desc.LoadActors(this.job.actorRefID);
-            desc.message_excludeRelated = s;
-            //desc.LoadPortraits(this.actorRefs, true);
-            m.AddMessage_Before(desc, visible, recordingRoom, rightAlign);
-
-           // if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{s}</align>" : s);
-           // if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(s, this.actorRefs));
-        }
 
         if (shuffledList.Count < 1)
         {
@@ -2174,10 +2148,20 @@ public abstract class ActionPackage
             var responses = ep.LogMessage_Begin(ignoreBegin, m, target);
             foreach(var kol in responses)
             {
-                m.AddMessage_Before(kol, visible, recordingRoom, rightAlign);
+                //m.AddMessage_Before(kol, visible, recordingRoom, rightAlign);
+                exist = exist || kol.collect.message.Length > 0;
+                desc.Load(kol.collect);
                 if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
             }
             if (single && !ep.isPlayerEP) break;
+        }
+
+        if (exist)
+        {
+            desc.LoadActors(this.job.actorRefID);
+            desc.message_excludeRelated = desc.message;
+            //desc.LoadPortraits(this.actorRefs, true);
+            m.AddMessage_Before(desc, visible, recordingRoom, rightAlign);
         }
     }
     /// <summary>
@@ -2222,10 +2206,10 @@ public abstract class ActionPackage
         //Debug.Log("AP LogMessage_Ongoing");
         UtilityEX.StringReplace(this, ref s);
         s = targetCOM.Replace(s);
-        if (s.Length > 0) ss.Add(s);
-        //.Actors, ep.Description_Ongoing
 
+        bool exist = s.Length > 0;
 
+        var desc = new DescriptionCollector(s);
 
         if (shuffledList.Count < 1)
         {
@@ -2239,17 +2223,18 @@ public abstract class ActionPackage
             var responses = ep.LogMessage_Ongoing(rightAlign, m, target);
             foreach (var kol in responses)
             {
-                ss.Add(kol.collect.message);
+                //ss.Add(kol.collect.message);
+                desc.Load(kol.collect);
+                exist = exist || kol.collect.message.Length > 0;
                 //m.AddMessage_After(kol, visible, recordingRoom, rightAlign);
             }
             if (single && !ep.isPlayerEP) break;
         }
 
-        if (ss.Count > 0)
+        if (exist)
         {
-            var desc = new DescriptionCollector(String.Join("\n",ss));
             desc.LoadActors(this.job.actorRefID);
-            desc.message_excludeRelated = String.Join("\n", ss);
+            desc.message_excludeRelated = desc.message;
             m.AddMessage_After(desc, visible, recordingRoom, rightAlign);
         }
     }

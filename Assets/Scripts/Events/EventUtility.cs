@@ -1068,8 +1068,8 @@ public static class EventUtility
                     scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m5, false));
                    // var m3 = owner.message.exp.PrintContent_Relations();
                     //scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m3, false));
-                    var m4 = owner.message.exp.PrintContent_Exps();
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m4, false));
+                   // var m4 = owner.message.exp.PrintContent_Exps();
+                   // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m4, false));
                 }
                 return true;
             case Event.EventEntry.ExecutionType.FlushMessageAll:

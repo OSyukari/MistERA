@@ -437,8 +437,10 @@
                 "kojo_default_event_greeting_02": "($self$) $target$触发了$self$的角色导入口上",
                 "kojo_default_event_greeting_03": "$self$向$target$礼貌地打招呼",
                 "kojo_default_event_greeting_04": "$self$今天第一次问候$target$",
-                "kojo_default_event_interrupt_01": "<color=#373737>$self$看到1$epDescription$</color>",
-                "kojo_default_event_interrupt_02": "<color=#373737>$self$看到2$target$$epDescription$</color>",
+                "kojo_default_event_interrupt_01": "<link=\"kojo_default_event_interrupt_01_tooltip\"><color=#373737>$self$看到$epDescription$</color></link>",
+                "kojo_default_event_interrupt_01_tooltip": "interrupt 1",
+                "kojo_default_event_interrupt_02": "<link=\"kojo_default_event_interrupt_02_tooltip\"><color=#373737>$self$看到2$target$$epDescription$</color></link>",
+                "kojo_default_event_interrupt_02_tooltip": "interrupt 2",
                 "kojo_default_event_interrupt_03": "<color=#373737>工作中的$self$看到$target$$epDescription$</color>"
             },
             "en-us": {

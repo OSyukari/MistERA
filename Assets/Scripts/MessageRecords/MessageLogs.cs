@@ -22,7 +22,7 @@ public class MessageLogManager
 
     public bool SetLogChara(PortraitManager portrait, bool isAnimating = false)
     {
-        if (currentPortrait == portrait) return false;
+        if (currentPortrait == portrait) return true;
         if (this.Animating)
         {
             if (isAnimating)
@@ -277,10 +277,14 @@ public class Message_Text : MessageLog
 
     public Message_Text() { }
 
-    public override bool DisplaPortrait { get {
+    public override bool DisplaPortrait 
+    { 
+        get 
+        {
             if (this.Messages.Any(x => !x.rightAlign)) return true;
-            return multipleChara.Count > 0 || PortraitRef != null; ;
-        } }
+            return (multipleChara.Count > 0 || PortraitRef != null) && tagsOverride.Count > 0;
+        } 
+    }
     /// <summary>
     /// One paragraph that displays 
     /// </summary>
@@ -526,8 +530,13 @@ public abstract class MessageLog
 
     public bool ForceDraw()
     {
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"Forcedraw! {(PortraitRef == null ? "null" : PortraitRef.Owner.FirstName)} {multipleChara.Count}");
-        if (PortraitRef != null && PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, true);
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits)
+        {
+            Debug.Log($"Forcedraw! {(PortraitRef == null ? "null" : PortraitRef.Owner.FirstName)} {multipleChara.Count}");
+
+        }
+        
+        if (PortraitRef != null && PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, tagsOverride);
         else if (this.multipleChara.Count > 0)
         {
             var result = scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, tagsOverride);

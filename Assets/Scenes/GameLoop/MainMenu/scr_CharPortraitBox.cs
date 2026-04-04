@@ -263,6 +263,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         if (portrait == null)
         {
+            Debug.Log("updateImage null portrait disabling");
             picture.gameObject.SetActive(false);
             if(spineRect != null) spineRect.gameObject.SetActive(false);
             return;

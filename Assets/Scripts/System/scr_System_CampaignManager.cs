@@ -624,14 +624,18 @@ public class scr_System_CampaignManager : MonoBehaviour
 
 
     public event Action<PortraitManager, List<string>> Observer_LogsCharaChange;
-    public void Log_TrySetChara(PortraitManager refID, bool isAnimating)
+    public void Log_TrySetChara(PortraitManager refID, List<string> keywords)
     {
-        bool debug = true || scr_System_CentralControl.current.LogPrefs.DLog_Portraits;
-        if (debug) Debug.Log($"Log_TrySetChara {(refID == null ? "null" : refID.Owner.FirstName )} {isAnimating}");
-        if (LogManager.SetLogChara(refID, isAnimating))
+        bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Portraits;
+        //if (debug) Debug.Log($"Log_TrySetChara {(refID == null ? "null" : refID.Owner.FirstName )}, tags {String.Join("|", keywords)}");
+        if (LogManager.SetLogChara(refID, true))
         {
-            if (debug) Debug.Log("Log_TrySetChara true " + refID.Owner.CallName);
-            Observer_LogsCharaChange?.Invoke(refID, new List<string>());
+            if (debug)  Debug.Log($"Log_TrySetChara TRUE {(refID == null ? "null" : refID.Owner.FirstName)}, tags {String.Join("|", keywords)}");
+            Observer_LogsCharaChange?.Invoke(refID, keywords);
+        }
+        else if (debug)
+        {
+            Debug.Log($"Log_TrySetChara FAILED {(refID == null ? "null" : refID.Owner.FirstName)}, tags {String.Join("|", keywords)}");
         }
     }
     public PortraitManager Log_TrySetChara(List<Character_Trainable> list, List<string> keywords)

@@ -199,7 +199,7 @@ public class ActionPackage_PathTo : ActionPackage
             var desc = new DescriptionCollector(s);
 
             desc.LoadActors(Doer.RefID, true, false);
-            desc.message_excludeRelated = s_prev;
+            desc.message_excludeRelated = s_next;
             List<string> s2 = new List<string>();
             //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
                 

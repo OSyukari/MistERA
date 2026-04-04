@@ -1972,7 +1972,24 @@ public class ExperienceLog
                 lines.Add(!leftAlignOverride && RightAlign.ContainsKey(kvp_refID.Key) && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
             }
         }
-        return String.Join('\n', lines.ToArray());
+
+        // Debug.Log("EVP Explog, print");
+        List<string> lines2 = new List<string>();
+        // Only player character related relationship increase is logged
+        foreach (var kvp_refID in ExpLog)
+        {
+            if (kvp_refID.Value.Count > 0)
+            {
+                string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
+                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
+                if (s.Length < 1) continue;
+
+                s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
+                lines2.Add(!leftAlignOverride && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
+            }
+        }
+        bool breakline = lines.Count > 0 && lines2.Count > 0;
+        return $"{String.Join('\n', lines.ToArray())}{(breakline?"\n\n":"")}{(String.Join('\n', lines2.ToArray()))}" ;
     }
     /*
     public string PrintContent_Relations()
@@ -1994,25 +2011,6 @@ public class ExperienceLog
         }
         return String.Join('\n', lines.ToArray());
     }*/
-    public string PrintContent_Exps()
-    {
-        // Debug.Log("EVP Explog, print");
-        List<string> lines = new List<string>();
-        // Only player character related relationship increase is logged
-        foreach (var kvp_refID in ExpLog)
-        {
-            if (kvp_refID.Value.Count > 0)
-            {
-                string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
-                if (s.Length < 1) continue;
-
-                s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
-                lines.Add(!leftAlignOverride && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
-            }
-        }
-        return String.Join('\n', lines.ToArray());
-    }
     public string PrintContent_Messages()
     {
        // Debug.Log("EVP Explog, print");

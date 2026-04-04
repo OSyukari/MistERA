@@ -85,7 +85,7 @@ public class scr_SpineLoader : MonoBehaviour
     /// <param name="skeletonJSON_path"></param>
     /// <param name="skeletonScale"></param>
     /// <param name="idleAnimName"></param>
-    public IEnumerator SetBase(PortraitManager.CharaPortrait_Spine manager, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName, string addonAnimName)
+    public IEnumerator SetBase(PortraitManager.CharaPortrait_Spine manager, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName, string addonAnimName, bool lowPriority = false)
     {
         var version = "";
         if (manager.dataHolder != null && manager.dataHolder.skeletonTA != null && manager.dataHolder.skeletonPath == skeletonJSON_path)
@@ -135,7 +135,7 @@ public class scr_SpineLoader : MonoBehaviour
         }
 
         var animator = scr_System_CentralControl.current.GetSpineAnimator(tiny.Version);
-        yield return animator.Initialize(manager, tiny, materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName);
+        yield return animator.Initialize(manager, tiny, materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName, lowPriority);
         // yield return spineLoader.Initialize(materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName);
         HideAnimator(version);
     }

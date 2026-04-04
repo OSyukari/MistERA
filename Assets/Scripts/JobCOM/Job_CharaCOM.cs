@@ -152,7 +152,7 @@ public class Job_CharaCOM : Job
     {
         get
         {
-            return packages_previous.Count > 0;
+            return packages_previous.Count > 0 || packages_completed.Count > 0;
             return (packages_current.Count > 0 || packages_previous.Count > 0);
         }
     }

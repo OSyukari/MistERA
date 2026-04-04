@@ -26,6 +26,7 @@ public class DebugLogSettings
     public bool DLog_KojoEvents = false;
     public bool DLog_KojoEvents_validations = false;
     public bool DLog_Portraits = false;
+    public bool DLog_Portrait_Spine = false;
     public bool DLog_Pathing = false;
     public bool DLog_Equipping = false;
     public bool DLog_Events = false;

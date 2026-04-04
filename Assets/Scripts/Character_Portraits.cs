@@ -107,6 +107,9 @@ public class PortraitManager
         ResetPortraits();
     }
 
+    /// <summary>
+    /// Full reset of everything internal
+    /// </summary>
     public void ResetPortraits()
     {
 
@@ -188,6 +191,7 @@ public class PortraitManager
         _cache_NeutralPortrait = null;
         _cache_CombatPortrait = null;
         _cache_ActivityPortrait = null;
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"ClearHandlerCache on {Owner.FirstName}");
     }
 
 
@@ -261,24 +265,25 @@ public class PortraitManager
             box.Draw(_cache_CombatPortrait.DrawIcon(box, _cache_CombatPortrait_icon));
         }
     }
-    [JsonIgnore] public CharaPortrait _cache_ActivityPortrait = null;
+    protected CharaPortrait _cache_ActivityPortrait = null;
     protected string _cache_ActivityPortrait_path = "";
     protected string _cache_ActivityPortrait_icon = "";
-    protected void DrawActivityPortrait(scr_CharPortraitBox box, List<string> tags = null, bool forceRefresh = false)
+    protected void DrawActivityPortrait(scr_CharPortraitBox box, List<string> tags = null, bool forceRefresh = false, bool lowPriority = false)
     {
         //Debug.Log($"{Owner.CallName} DrawActivityPortrait");
-        if (_cache_ActivityPortrait == null || (tags != null && tags.Count > 0) || forceRefresh)
+        forceRefresh = tags == null;
+        if (_cache_ActivityPortrait == null || forceRefresh)
         {
-            if (tags == null || tags.Count < 1) tags = GetOwnerActionTagsByPriority();
+            if (tags == null) tags = tags_active.Count > 0 ? tags_active : GetOwnerActionTagsByPriority();
             GetValidPortrait(tags, out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon, box);
             tags_active = tags;
         }
         if (box.currentHandler != _cache_ActivityPortrait || box.currentPortrait != _cache_ActivityPortrait_path)
         {
-           if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_path}");
+           if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_path}, is same? {box.currentHandler == _cache_ActivityPortrait}");
             box.currentHandler = _cache_ActivityPortrait;
             //box.currentPortrait = _cache_ActivityPortrait_path;
-            box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path));
+            box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path, lowPriority));
         }
         else
         {
@@ -329,7 +334,7 @@ public class PortraitManager
         if (box != null && box.currentlyRunning == null)
         {
             // Debug.Log("clicked!");
-            DrawActivityPortrait(box, tags_active, true);
+            DrawActivityPortrait(box, null, false, true);
            // _cache_ActivityPortrait.Click();
         }
     }
@@ -444,7 +449,7 @@ public class PortraitManager
         /// <param name="portraitBox"></param>
         /// <param name="pathOverride"></param>
         /// <returns></returns>
-        public virtual IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride)
+        public virtual IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride, bool lowPriority = false)
         {
             Debug.Log($"null drawportrait [{pathOverride}]");
             portraitBox.picture.gameObject.SetActive(true);
@@ -572,7 +577,7 @@ public class PortraitManager
             else return portrait_path;
         }
 
-        public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride)
+        public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride, bool lowPriority = false)
         {
             if ( pathOverride == "")
             {
@@ -792,23 +797,23 @@ public class PortraitManager
         /// <param name="portraitBox"></param>
         /// <param name="pathOverride">pathOverride is its animation variant name</param>
         /// <returns></returns>
-        public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride)
+        public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride, bool lowPriority = false)
         {
             if (idleAnimName == "" && pathOverride == "")
             {
                 //portraitBox.spineLoader.gameObject.SetActive(false);
-                yield return base.DrawPortrait(portraitBox, pathOverride);
+                yield return base.DrawPortrait(portraitBox, pathOverride, lowPriority);
 
             }
             else
             {
                 if (idleAnimName == "")
                 {
-                    yield return portraitBox.spineLoader.SetBase(this, materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, pathOverride, "");
+                    yield return portraitBox.spineLoader.SetBase(this, materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, pathOverride, "", lowPriority);
                 }
                 else
                 {
-                    yield return portraitBox.spineLoader.SetBase(this, materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, pathOverride);
+                    yield return portraitBox.spineLoader.SetBase(this, materialTexturePaths, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, pathOverride, lowPriority);
                 }
                 // Debug.Log($"spine drawportrait [{pathOverride}]");
                 //Debug.LogError($"PortraitAnimation name {PortraitAnimName}");
@@ -908,7 +913,7 @@ public class PortraitManager
             }
         }
 
-        public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride)
+        public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride, bool lowPriority = false)
         {
             if (pathOverride == "")
             {

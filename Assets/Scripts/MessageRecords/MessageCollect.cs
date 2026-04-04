@@ -108,7 +108,7 @@ public class MessageCollect
 
         cnManager.AddLog(-1, exp.PrintContent_Stats(), true);
        // cnManager.AddLog(-1, exp.PrintContent_Relations(), true);
-        cnManager.AddLog(-1, exp.PrintContent_Exps(), true);
+      //  cnManager.AddLog(-1, exp.PrintContent_Exps(), true);
 
         if (messages_after.Count > 0)
         {
@@ -156,8 +156,8 @@ public class MessageCollect
        // var s5 = exp.PrintContent_Relations();
        // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s5, true));
 
-        var s6 = exp.PrintContent_Exps();
-        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s6, true));
+        //var s6 = exp.PrintContent_Exps();
+       // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s6, true));
 
         if (messages_after.Count > 0)
         {

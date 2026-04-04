@@ -70,10 +70,6 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
         if (destroy)
         {
-            scr_System_CampaignManager.current.Observer_CurrentTarget -= ReadCurrentChar;
-            scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= OnPostUpdateTime3;
-            scr_System_CampaignManager.current.Observer_UpdateNotice -= OnUpdateNotice;
-
             Destroy(this.gameObject);
         }
         else
@@ -189,6 +185,14 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
         }
 
+    }
+
+    public void OnDestroy()
+    {
+        //Debug.Log("Destroy");
+        scr_System_CampaignManager.current.Observer_CurrentTarget -= ReadCurrentChar;
+        scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= OnPostUpdateTime3;
+        scr_System_CampaignManager.current.Observer_UpdateNotice -= OnUpdateNotice;
     }
 
     public void ForceExit()
