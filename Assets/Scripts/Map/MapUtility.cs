@@ -63,7 +63,7 @@ public static class MapUtility
         var triggerEventID = "Interrupt";
 
         var kol = new KojoCollector(Owner, triggerEventID);
-        kol.selfTags = selfTags;
+        kol.LoadSelfTags(Owner, selfTags);
         kol = Owner.Relationships.GetKojoMessage_AP(kol, ap);
         /*
 var msg = Personality.GetKOJOMessage(triggerEventID, Owner, selfTags, ap.ListEP);

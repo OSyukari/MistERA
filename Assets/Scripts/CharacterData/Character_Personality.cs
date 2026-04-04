@@ -280,7 +280,7 @@ public class Character_Personality
     { if (kol.Owner.RefID == 0) return null;
         var key = $"{kol.eventID}{kol.suffix}";
 
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Character_Personality GetKOJOMessage evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.selfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Character_Personality GetKOJOMessage evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}");
 
         if (!entries.ContainsKey(key))
         {
@@ -388,7 +388,7 @@ public class Character_Personality
     {
         if (selfTags == null) selfTags = new List<string>();
         if (targetTags == null) targetTags = new List<string>();
-        //if (eventID == "Descriptor") Debug.Log($"Descriptor called on {rel.Owner.CallName}");
+        if (eventID == "Descriptor") Debug.Log($"Descriptor called on {rel.Owner.CallName}");
         if (!entries.ContainsKey(eventID))
         {
 
@@ -397,9 +397,6 @@ public class Character_Personality
             return null;
         }
 
-        var xx = rel.Owner;
-        var yy = rel.Target;
-        if (xx == null || yy == null) return null;
 
         eventID = entries[eventID].CheckRedirect(eventID);
         return entries[eventID].GetResponse(rel, selfTags, targetTags);

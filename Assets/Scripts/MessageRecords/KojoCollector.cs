@@ -170,7 +170,18 @@ public class KojoCollector : I_ResultStorage, I_Records
 
         return newinstance;
     }
-    public List<string> selfTags = new List<string>();
+
+    public void LoadSelfTags(Character_Trainable c, List<string> extraTags)
+    {
+        selfRef = c.RefID;
+        _owner = c;
+        this.selfTags.AddRange(extraTags);
+        UtilityEX.GetActorTag(ref this.selfTags, c);
+        selfTags = Utility.Distinct(selfTags);
+    }
+
+    [JsonIgnore] public List<string> SelfTags { get { return selfTags; } }
+    [JsonProperty] protected List<string> selfTags = new List<string>();
     public List<string> targetTags = new List<string>();
 
     public bool requireAnimate = true;
@@ -260,11 +271,16 @@ public class KojoCollector : I_ResultStorage, I_Records
         {
             if (ep.Receiver == null) this.selfTags = ep.DoerTargetTag;
             else this.selfTags = ep.DoerSelfTag;
+
+            UtilityEX.GetActorTag(ref this.selfTags, ep.Doer);
         }
         else if (ep.Receiver == Owner)
         {
             this.selfTags = ep.ReceiverSelfTag;
+
+            UtilityEX.GetActorTag(ref this.selfTags, ep.Receiver);
         }
+        selfTags = Utility.Distinct(selfTags);
 
         if (ep.Receiver != null)
         {
@@ -273,6 +289,7 @@ public class KojoCollector : I_ResultStorage, I_Records
             {
                 Target = ep.Receiver;
                 targetTags = ep.ReceiverTargetTag;
+                UtilityEX.GetActorTag(ref this.targetTags, ep.Receiver);
             }
             receiverAttitude = ep.ReceiverAttitude;
         }
@@ -283,9 +300,11 @@ public class KojoCollector : I_ResultStorage, I_Records
             {
                 Target = ep.Doer;
                 targetTags = ep.DoerTargetTag;
+                UtilityEX.GetActorTag(ref this.targetTags, ep.Doer);
             }
             doerAttitude = ep.DoerAttitude;
         }
+        targetTags = Utility.Distinct(targetTags);
 
         if (ep.Master != null) masterRef = ep.Master.RefID;
         else if (ep.Doer != null) masterRef = ep.Doer.RefID;

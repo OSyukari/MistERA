@@ -611,7 +611,7 @@ public class RelationshipManager
         MessageCollect_KojoEntry message = injectRel == null ? this.Personality.GetKOJOMessage($"{cleanedID}{suffix}", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
             : this.Personality.GetKOJOMessage_Suffix(suffix, ep.isDoer(Owner), ep.isReceiver(Owner), ep, injectRel);
         */
-        if (true || scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.selfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
+        if (true || scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
 
         if (message != null && message.message.Length > 0)
         {
@@ -640,7 +640,7 @@ public class RelationshipManager
         MessageCollect_KojoEntry message = injectRel == null ? this.Personality.GetKOJOMessage($"{cleanedID}{suffix}", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
             : this.Personality.GetKOJOMessage_Suffix(suffix, ep.isDoer(Owner), ep.isReceiver(Owner), ep, injectRel);
         */
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.selfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
 
         if (message != null && message.message.Length > 0)
         {

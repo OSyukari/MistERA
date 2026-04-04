@@ -177,6 +177,9 @@ public class ActionPackage_PathTo : ActionPackage
 
            // scr_System_CampaignManager.current.AddLog(visible, recording ? Doer.CurrentRoom : null, -1, s, true, true);
 
+
+
+
             scr_System_CampaignManager.current.MoveCharacterTo(Doer, pc.Target);
 
             // Leave room message
@@ -187,8 +190,9 @@ public class ActionPackage_PathTo : ActionPackage
             desc_prev.LoadActors(Doer.RefID, true, false);
             desc_prev.tooltip = s_next;
 
+            //Debug.Log($"before AppendMessageBefore, [{desc_prev.message}] [{desc_prev.message_excludeRelated}]");
             scr_UpdateHandler.current.AppendMessageBefore(desc_prev, prev);
-
+            //Debug.Log("after AppendMessageBefore");
            // scr_System_CampaignManager.current.AddLog(desc_prev, prev, true);
 
 

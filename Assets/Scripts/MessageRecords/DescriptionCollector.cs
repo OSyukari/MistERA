@@ -21,7 +21,12 @@ public class DescriptionCollector : I_Records
     public bool VisibleTo(Character_Trainable c, Room_Instance room = null)
     {
         if (c == null) return true;
-        if (Visibility == VisibilityLevel.Roomwide && room != null && !room.RoomChara.Contains(c)) return false;
+        if (Visibility == VisibilityLevel.Roomwide && room != null)
+        {
+            if (c.CurrentRoom == room || room.RoomChara.Contains(c)) { }
+            //else if (room == scr_System_CampaignManager.current.CurrentRoom) { }
+            else return false;
+        }
         if (DirectlyRelated(c)) return message.Length > 0;
         else return message_excludeRelated.Length > 0;
     }

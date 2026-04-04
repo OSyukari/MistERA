@@ -110,7 +110,9 @@ public partial class ResponseEntry
             {
                 var newmessage = kol.Copy();
                 newmessage.eventID = selfEventCall;
+
                 sss = newmessage.Owner.Relationships.Personality.GetKOJOMessage(newmessage);
+                Debug.Log($"SelfEventCall on kol {newmessage.eventID}{newmessage.suffix}, result {(sss == null ? "null" : sss.message)}");
             }
 
             var target = scr_System_CampaignManager.current.CurrentTarget;
@@ -179,8 +181,13 @@ public partial class ResponseEntry
                 result = result.Replace("$self$", rel.Owner.FirstName).Replace("$target$", rel.Target.FirstName);
             }
 
-            var sss = selfEventCall == "" ? null : rel.Owner.Relationships.Personality.GetKOJOMessage(selfEventCall, rel, selfTags, targetTags);
+            MessageCollect_KojoEntry sss = null;
+            if (selfEventCall != "")
+            {
+                Debug.Log($"SelfEventCall on {selfEventCall}");
+                sss = rel.Owner.Relationships.Personality.GetKOJOMessage(selfEventCall, rel, selfTags, targetTags);
 
+            }
             var target = scr_System_CampaignManager.current.CurrentTarget;
             var player = scr_System_CampaignManager.current.Player;
             if (hideWhenNotFocused && !isPlayerInvolved &&
@@ -245,7 +252,7 @@ public partial class ResponseEntry
 
             List<string> ttips = new List<string>();
 
-            if (!requirement.Validate(kol.Owner, kol.Target, kol.selfTags, kol.targetTags, kol, kol.Relation, out var hadlock)) return false;
+            if (!requirement.Validate(kol.Owner, kol.Target, kol.SelfTags, kol.targetTags, kol, kol.Relation, out var hadlock)) return false;
 
             return true;
         }

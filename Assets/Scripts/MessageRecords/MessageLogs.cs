@@ -82,7 +82,7 @@ public class MessageLogManager
 
     public MessageLog AddLog(DescriptionCollector desc, Character_Trainable chara)
     {
-        if (desc == null || desc.message.Length < 1) return null;
+        if (desc == null) return null;
         if (!desc.VisibleTo(chara)) return null;
         if (desc.DirectlyRelated(chara) && desc.message.Length < 1) return null;
         else if (!desc.DirectlyRelated(chara) && desc.message_excludeRelated.Length < 1) return null;

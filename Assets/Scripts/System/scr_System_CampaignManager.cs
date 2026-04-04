@@ -459,9 +459,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             var desc = record as DescriptionCollector;
             if (desc == null) return;
-            if (desc.message.Length < 1) return;
-            var purged = desc.message.Replace("\n", "");
-            if (purged.Length < 1) return;
+            if (desc.message.Length < 1 && desc.message_excludeRelated.Length < 1) return;
 
             var log = LogManager.AddLog(desc, visible);
             if (log != null) Observer_MessageLogs?.Invoke(log, animate);

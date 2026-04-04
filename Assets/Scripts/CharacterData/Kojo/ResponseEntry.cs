@@ -44,7 +44,7 @@ public partial class ResponseEntry
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"Character_Personality GetKOJOMessage evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}] self and target validation failed");
             return null;
-        }else if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojoResponse [" + ID + "] req [" + kol.Owner.FirstName + "->" + kol.Target.FirstName + "], self[" + String.Join("|", kol.selfTags) + "] target[" + String.Join("|", kol.targetTags) + "]");
+        }else if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojoResponse [" + ID + "] req [" + kol.Owner.FirstName + "->" + kol.Target.FirstName + "], self[" + String.Join("|", kol.SelfTags) + "] target[" + String.Join("|", kol.targetTags) + "]");
 
         MessageCollect_KojoEntry responses = null;
         bool playerInvolved = kol.isPlayerInvolved;
